@@ -11,7 +11,6 @@
 
 	<description>
 		Outputs the number of rows and columns of an incoming matrix, plus an additional information
-		which tells us whether the matrix is well-shaped or square.
 	</description>
 
 	<!--METADATA-->

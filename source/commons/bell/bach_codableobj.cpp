@@ -745,21 +745,12 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
     }
 }
 
-void codableclass_add_standard_methods(t_class *c)
+void codableclass_add_standard_methods_and_attrs(t_class *c)
 {
-    // @copy BACH_DOC_CODABLEOBJ_FORCEREAD
     class_addmethod(c, (method)codableobj_forceread,   "forceread",            A_DEFSYM,    0);
-
-    // @copy BACH_DOC_CODABLEOBJ_READ
     class_addmethod(c, (method)codableobj_read,   "read",            A_DEFSYM,    0);
-    
-    // @copy BACH_DOC_CODABLEOBJ_READAPPEND
     class_addmethod(c, (method)codableobj_readappend,   "readappend",            A_DEFSYM,    0);
-    
-    // @copy BACH_DOC_CODABLEOBJ_FORCEREADAPPEND
     class_addmethod(c, (method)codableobj_forcereadappend,   "forcereadappend",            A_DEFSYM,    0);
-    
-    // @copy BACH_DOC_CODABLEOBJ_WRITE
     class_addmethod(c, (method)codableobj_write, "write", A_DEFSYM, 0);
     
     class_addmethod(c, (method)codableobj_appendtodictionary,    "appendtodictionary", A_CANT, 0);
@@ -772,17 +763,13 @@ void codableclass_add_standard_methods(t_class *c)
     CLASS_ATTR_ATOM_LONG(c, "maxtime",    0,    t_codableobj, c_maxtime);
     CLASS_ATTR_LABEL(c, "maxtime", 0, "Maximum Duration Of Evaluation");
     CLASS_ATTR_FILTER_MIN(c, "maxtime", 0);
-    // @description The <m>maxtime</m> attribute allows setting a maximum evaluation time
-    // in milliseconds for the bell code provided.
-    // If it is reached, the evaluation aborts and the code returns null.
-    // If <m>maxtime</m> is set to 0, there is no time limit.
-    // The default is 60000 ms (1 minute).
 }
 
-void codableclass_add_standard_methods_ext(t_class *c)
+void codableclass_add_extended_methods_and_attrs(t_class *c)
 {
     // @method (doubleclick) @digest Edit bell code for <m>lambda</m> attribute
-    // @description Doubleclicking on the object forces a text editor to open up, where the bell code for the <m>lambda</m> attribute can be edited directly.
+    // @description Doubleclicking on the object forces a text editor to open up, where the bell code
+    // for the <m>lambda</m> attribute can be edited directly.
     class_addmethod(c, (method)codableobj_dblclick,  "dblclick",        A_CANT, 0);
     
     
@@ -809,8 +796,8 @@ void codableclass_add_standard_methods_ext(t_class *c)
     // of local variables to be passed to the bell code set by the <m>lambda</m> attribute.
     // It is structured as an llll consisting of one or more sublists,
     // each containing the name of a variable and its value to be passed to the code.
-    // For example, the llll <m>[ $foo 1 ] [ $bar [ 2 3 ] ]</m>
-    // will set the $foo and $bar local variables respectively to <m>1</m> and <m>[ 2 3 ]</m>.
+    // For example, the llll <b>[ $foo 1 ] [ $bar [ 2 3 ] ]</b>
+    // will set the $foo and $bar local variables respectively to <b>1</b> and <b>[ 2 3 ]</b>.
 }
 
 short codableobj_setup(t_codableobj *x, short ac, t_atom *av)

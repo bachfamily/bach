@@ -11,8 +11,6 @@
 
 	<description>
 		Pads the rows of an incoming matrix, in order to
-		have it properly rectangular (thus well-shaped).
-		It wraps elements too, if needed.
 	</description>
 
 	<!--METADATA-->

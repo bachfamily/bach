@@ -330,7 +330,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		At each step of the iteration, <o>bach.iter</o> also report if it has entered or exited a sublist,
-		and the addresses of the elements corresponding to the step.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -399,7 +398,6 @@
 		<entry name ="More details">
 			<description>
 		At each step of the iteration, <o>bach.iter</o> also report if it has entered or exited a sublist,
-		and the addresses of the elements corresponding to the step.
 			</description>
 		</entry>
 		<entry name ="Keywords">

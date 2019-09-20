@@ -11,9 +11,6 @@
 
 	<description>
 		Takes the incoming data and,
-		if its type belong to some specified types,
-		outputs it through its first outlet; otherwise
-		it outputs it through its second outlet.
 	</description>
 
 	<!--METADATA-->

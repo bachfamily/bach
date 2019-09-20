@@ -11,8 +11,6 @@
 
 	<description>
 		Finds the p-norm of a plain llll. For p = 2 (default case),
-		such norm is the euclidean norm,
-		i.e. the square root of the sum of the squares of the elements.
 	</description>
 
 	<!--METADATA-->
@@ -141,11 +139,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		In general, the p-norm of a vector is calculated by
-		raising all the absolute values of the elements
-		to the <m>p</m>-th power, summing all values, and taking
-		the <m>p</m>-th root (i.e. raising to 1/<m>p</m>).
-		The inf-norm, on the other hand, is the absolute value
-		of the maximum element in the llll.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -174,11 +167,6 @@
 		<entry name ="More details">
 			<description>
 		In general, the p-norm of a vector is calculated by
-		raising all the absolute values of the elements
-		to the <m>p</m>-th power, summing all values, and taking
-		the <m>p</m>-th root (i.e. raising to 1/<m>p</m>).
-		The inf-norm, on the other hand, is the absolute value
-		of the maximum element in the llll.
 			</description>
 		</entry>
 		<entry name ="Keywords">

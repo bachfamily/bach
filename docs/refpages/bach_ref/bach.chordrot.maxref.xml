@@ -11,8 +11,6 @@
 
 	<description>
 		Accepts an llll to rotate, an llll of reference durations,
-		and rotates only the elements of the left llll corresponding to non-negative elements in the
-		durations llll.<br />
 	</description>
 
 	<!--METADATA-->
@@ -160,9 +158,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.chordrot</o> is especially useful to perform taleas and rotate parameters like cents,
-		velocities or extras, without affecting the elements corresponding to rests. <br />
-		<o>bach.chordrot</o> also accepts lllls of depth 2, considering them to be a list for each voice,
-		and operates accordingly.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -201,9 +196,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.chordrot</o> is especially useful to perform taleas and rotate parameters like cents,
-		velocities or extras, without affecting the elements corresponding to rests. <br />
-		<o>bach.chordrot</o> also accepts lllls of depth 2, considering them to be a list for each voice,
-		and operates accordingly.
 			</description>
 		</entry>
 		<entry name ="Keywords">

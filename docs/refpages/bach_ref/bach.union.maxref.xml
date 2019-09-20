@@ -108,6 +108,16 @@
 
 	<!--MESSAGES-->
 	<methodlist>
+		<method name="(doubleclick)">
+			<arglist />
+			<digest>
+				Edit bell code for <m>lambda</m> attribute
+			</digest>
+			<description>
+				Doubleclicking on the object forces a text editor to open up, where the bell code
+				for the <m>lambda</m> attribute can be edited directly.
+			</description>
+		</method>
 		<method name="bang">
 			<arglist />
 			<digest>
@@ -115,6 +125,26 @@
 			</digest>
 			<description>
 				Return the union of the most recently received lllls.
+			</description>
+		</method>
+		<method name="forceread">
+			<arglist />
+			<digest>
+				Read code from file even if incorrect
+			</digest>
+			<description>
+				Loads a file containing bell code into the object,
+				but ignore it if the code is invalid.
+			</description>
+		</method>
+		<method name="forcereadappend">
+			<arglist />
+			<digest>
+				Read code from file and append it even if incorrect
+			</digest>
+			<description>
+				Appends the contents of a file containing bell code to the code already owned by the object,
+				keeping it even if it is invalid.
 			</description>
 		</method>
 		<method name="int">
@@ -145,10 +175,107 @@
 				In third inlet: the llll is converted into an int
 			</description>
 		</method>
+		<method name="read">
+			<arglist />
+			<digest>
+				Read code from file
+			</digest>
+			<description>
+				Loads a file containing bell code into the object,
+				keeping it even if it is invalid.
+			</description>
+		</method>
+		<method name="readappend">
+			<arglist />
+			<digest>
+				Read code from file and append it
+			</digest>
+			<description>
+				Appends the contents of a file containing bell code
+				to the code already owned by the object,
+				but ignore it if the code is invalid.
+			</description>
+		</method>
+		<method name="write">
+			<arglist />
+			<digest>
+				Save code to file
+			</digest>
+			<description>
+				Writes the bell code into a file.
+			</description>
+		</method>
 	</methodlist>
 
 	<!--ATTRIBUTES-->
 	<attributelist>
+		<attribute name="embed" get="1" set="1" type="int" size="1">
+			<digest>
+				Save Data With Patcher
+			</digest>
+			<description>
+				When set to 1, the bell code for the <m>lambda</m> attribute
+				is saved with the patcher, even if not set in the object box.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Save Data With Patcher" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="lambda" get="1" set="1" type="char_array" size="3276">
+			<digest>
+				Bell Expression For Lambda Function
+			</digest>
+			<description>
+				The <m>lambda</m> attribute allows setting a snipped of bell code
+				to be called instead of the lambda loop. If the lambda attribute is set,
+				the lambda loop will not be evaluated, and the provided code will be executed as well.
+				For each lambda outlet of the object, an input pseudovariable is passed to the lambda loop,
+				with their indices counted from left to right.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Bell Expression For Lambda Function" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="lambdaparams" get="1" set="1" type="llll" size="1">
+			<digest>
+				Extra Parameters To Lambda Function
+			</digest>
+			<description>
+				The <m>lambdaparams</m> attribute allows setting the values
+				of local variables to be passed to the bell code set by the <m>lambda</m> attribute.
+				It is structured as an llll consisting of one or more sublists,
+				each containing the name of a variable and its value to be passed to the code.
+				For example, the llll <b>[ $foo 1 ] [ $bar [ 2 3 ] ]</b>
+				will set the $foo and $bar local variables respectively to <b>1</b> and <b>[ 2 3 ]</b>.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Extra Parameters To Lambda Function" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="maxtime" get="1" set="1" type="int" size="1">
+			<digest>
+				Maximum Duration Of Evaluation
+			</digest>
+			<description>
+				The <m>maxtime</m> attribute allows setting a maximum evaluation time
+				in milliseconds for the bell code provided.
+				If it is reached, the evaluation aborts and the code returns null.
+				If <m>maxtime</m> is set to 0, there is no time limit.
+				The default is 60000 ms (1 minute).
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Duration Of Evaluation" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="out" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Outlet Types
@@ -184,18 +311,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		If either or both lllls contain repeated elements, the behavior is undefined.
-		A custom equality test can be provided through the lambda loop. <br />
-		A certain number of bach objects are equipped with "lambda" inlets and outlets. These inlets and outlets -
-		always the rightmost ones - serve the purpose of letting you define a function the object will base its behavior upon.
-		Such function is indeed a patching loop: parameters are taken from the lambda outlet(s), processed, and the "result" is
-		plugged in the lambda inlet(s). The type of function, and the corresponding expected result, depend on the object behavior;
-		for instance, cycles modifying elements will expect as "result" the modified element; cycles testing for custom equalities will
-		expect a 0/1 answer (0 meaning: not equal; 1 meaning: equal), as well as cycles testing custom inequalities and sorting (1 meaning: the two
-		elements are in the correct order; 0 meaning: the order is wrong). Refer to each specific object to know more about it.
-		With many objects, it is not mandatory to provide an evaluation cycle: if you don't, a default function will be used. <br />
-		It is important to know that the evaluation chain inside the lambda loop must be direct: you can't use objects such as <o>delay</o>,
-		<o>pipe</o>, <o>defer</o>; nor store the value anywhere waiting for some other event to trigger it. Also see #lambda in the bach Help Center.
-		<br /> <br />
 	</discussion>
 
 	<!--SEEALSO-->
@@ -274,18 +389,6 @@
 		<entry name ="More details">
 			<description>
 		If either or both lllls contain repeated elements, the behavior is undefined.
-		A custom equality test can be provided through the lambda loop. <br />
-		A certain number of bach objects are equipped with "lambda" inlets and outlets. These inlets and outlets -
-		always the rightmost ones - serve the purpose of letting you define a function the object will base its behavior upon.
-		Such function is indeed a patching loop: parameters are taken from the lambda outlet(s), processed, and the "result" is
-		plugged in the lambda inlet(s). The type of function, and the corresponding expected result, depend on the object behavior;
-		for instance, cycles modifying elements will expect as "result" the modified element; cycles testing for custom equalities will
-		expect a 0/1 answer (0 meaning: not equal; 1 meaning: equal), as well as cycles testing custom inequalities and sorting (1 meaning: the two
-		elements are in the correct order; 0 meaning: the order is wrong). Refer to each specific object to know more about it.
-		With many objects, it is not mandatory to provide an evaluation cycle: if you don't, a default function will be used. <br />
-		It is important to know that the evaluation chain inside the lambda loop must be direct: you can't use objects such as <o>delay</o>,
-		<o>pipe</o>, <o>defer</o>; nor store the value anywhere waiting for some other event to trigger it. Also see #lambda in the bach Help Center.
-		<br /> <br />
 			</description>
 		</entry>
 		<entry name ="Keywords">

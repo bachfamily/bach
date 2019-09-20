@@ -11,7 +11,6 @@
 
 	<description>
 		Performs additions between lllls or
-		between lllls and numbers.
 	</description>
 
 	<!--METADATA-->
@@ -132,8 +131,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The abstraction is equivalent to a sum performed
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -171,8 +168,6 @@
 		<entry name ="More details">
 			<description>
 		The abstraction is equivalent to a sum performed
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 			</description>
 		</entry>
 		<entry name ="Keywords">

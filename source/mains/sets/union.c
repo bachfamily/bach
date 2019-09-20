@@ -110,8 +110,8 @@ int T_EXPORT main()
 	
 	c = class_new("bach.union", (method)union_new, (method)union_free, (short)sizeof(t_union), 0L, A_GIMME, 0);
 	
-    codableclass_add_standard_methods(c);
-    codableclass_add_standard_methods_ext(c);
+    codableclass_add_standard_methods_and_attrs(c);
+    codableclass_add_extended_methods_and_attrs(c);
 
 	// @method llll @digest Store data and compute union
 	// @description

@@ -110,9 +110,8 @@ int T_EXPORT main()
 	
 	c = class_new("bach.intersection", (method)intersection_new, (method)intersection_free, (short)sizeof(t_intersection), 0L, A_GIMME, 0);
 	
-    codableclass_add_standard_methods(c);
-    codableclass_add_standard_methods_ext(c);
-
+    codableclass_add_standard_methods_and_attrs(c);
+    
 	// @method llll @digest Store data and compute intersection
 	// @description
 	// In first inlet: the llll in the right inlet is intersected with the llll and the result is output.<br />
@@ -120,7 +119,9 @@ int T_EXPORT main()
 	// In third inlet: the llll is converted into an int
 
 	class_addmethod(c, (method)intersection_anything,	"anything",		A_GIMME,	0);
-	
+    
+    codableclass_add_extended_methods_and_attrs(c);
+
 	// @method int @digest Lambda inlet
 	// @description Third inlet is a lambda inlet. <br /> 
 	// @copy BACH_DOC_LAMBDA_INLET_EQUALITY

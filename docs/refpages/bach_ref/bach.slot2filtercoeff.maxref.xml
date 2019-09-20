@@ -11,8 +11,6 @@
 
 	<description>
 		Converts the llll content of a given slot,
-		of type "dynfilter", into a list of messages for <o>line~</o> objects, which
-		will be used to drive a <o>filtercoeff~</o>, according to the slot content.
 	</description>
 
 	<!--METADATA-->

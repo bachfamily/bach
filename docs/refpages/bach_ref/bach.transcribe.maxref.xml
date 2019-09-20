@@ -11,9 +11,6 @@
 
 	<description>
 		The purpose of <o>bach.transcribe</o> is to act as a machine which, when turned on,
-		receives data containing cents, velocities and voice numbers (and optional durations),
-		and properly adds in real time the notes in the
-		connected <o>bach.roll</o> object.
 	</description>
 
 	<!--METADATA-->
@@ -281,8 +278,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.transcribe</o> is note-based: each MIDI triplets
-		refers to a note. If you want, a posteriori, to align notes into chords,
-		you should look at <o>bach.roll</o>'s <m>merge</m> message.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -326,8 +321,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.transcribe</o> is note-based: each MIDI triplets
-		refers to a note. If you want, a posteriori, to align notes into chords,
-		you should look at <o>bach.roll</o>'s <m>merge</m> message.
 			</description>
 		</entry>
 		<entry name ="Keywords">

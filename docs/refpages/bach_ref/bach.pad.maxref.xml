@@ -235,7 +235,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		If the required length is less than the original one, the llll can be trimmed, depending on the
-		<m>trim</m> attribute.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -274,7 +273,6 @@
 		<entry name ="More details">
 			<description>
 		If the required length is less than the original one, the llll can be trimmed, depending on the
-		<m>trim</m> attribute.
 			</description>
 		</entry>
 		<entry name ="Keywords">

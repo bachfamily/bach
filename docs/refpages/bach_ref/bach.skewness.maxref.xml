@@ -11,7 +11,6 @@
 
 	<description>
 		Finds the skewness (third standardized moment) of the
-		numbers in an llll.
 	</description>
 
 	<!--METADATA-->
@@ -127,8 +126,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The skewness is computed as mu_3/sigma^3, where mu_4 is the fourth moment about the
-		mean. It is a measure of the extent to which a distribution
-		"leans" to one side of the mean.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -160,8 +157,6 @@
 		<entry name ="More details">
 			<description>
 		The skewness is computed as mu_3/sigma^3, where mu_4 is the fourth moment about the
-		mean. It is a measure of the extent to which a distribution
-		"leans" to one side of the mean.
 			</description>
 		</entry>
 		<entry name ="Keywords">

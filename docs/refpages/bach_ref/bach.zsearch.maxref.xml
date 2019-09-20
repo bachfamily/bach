@@ -11,8 +11,6 @@
 
 	<description>
 		Performs a search for families of pitch-class sets having the
-		same interval vector, but whose elements are not pairwise related by a group tranformation
-		such as Transposition or Transposition/Inversion.
 	</description>
 
 	<!--METADATA-->
@@ -294,28 +292,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		Z-relation relies on the concept of "copies" and thus on the concept of group action. <br /> <br />
-		In Set Theory, two pitch-class sets are often considered to be "the same" when they are linked by the action of some simple transformation.
-		For instance, the sets <b>0 1 4</b> and <b>2 3 6</b> are linked by a transposition of 2 (corresponding, on the clock diagram, to a rotation of 2 steps).
-		Such "simple transformations" usually form a group. One thus usually needs to choose a group to determine a framework; this group will entail
-		the concept of "copy" of a pitch-class set: which is any other pitch-class set obtained by the action of a transformation of the group.
-		For instance, if our group is the group of transposition, <b>2 3 6</b> is a copy of <b>0 1 4</b>, and viceversa. <br />
-		The most common groups of such form in increasing nesting are: <br />
-		- the group of transposition: formed by all the transposition by a certain amount, and there are only 12 transposition if our modulo is 12, or
-		in general n transposition if our modulo is n (the mathemathicians would say that such group is isomorphic to the cyclic group Z_n).
-		For instance, a C major chord is the same as a D major chord, with respect to this group, but it is NOT the same as a C minor chord. <br />
-		- the group of transposition and inversions: formed by all the transposition of the previous group, plus all the combination of such transposition with
-		inversions, i.e. reflection with respect to any axis on the clock diagram. If our modulo is n, this group has 2n elements (the mathemathicians
-		would say that such group is isomorphic to the dihedral group D_n).
-		For instance, a C major chord is the same as a D major chord, with respect to this group, and also the same as a C minor chord. <br />
-		- the affine group of transposition, inversions, and multiplications: this group (here things get a little bit more complicated...) is formed
-		by all the elements of the previous group plus we add the transformation multiplying each pitch class by a certain number k (prime with the modulo).
-		Classical multiplications, with modulo = 12, are M_5 (multiplication by 5) and M_7 (multiplication by 7).
-		For instance, our <b>0 4 7</b> C major chord is the same as <b>0 8 11</b>, since 5 * (0 4 7) = (0 20 35) = (0 8 11). <br />
-		Up to the group of transposition and inversion, the interval vector of a pitch-class set is preserved. The affine group does not preserve the interval vector.
-		<br /> <br />
-		<br /> The object outputs a llll containing one level for each requested cardinality to be searched,
-		and then the found Z-related pitch-class sets in Z-Families (gathering all
-		the pitch-class sets sharing the same (multi-)interval vector in a single level of parenthesis).
 	</discussion>
 
 	<!--SEEALSO-->
@@ -366,28 +342,6 @@
 		<entry name ="More details">
 			<description>
 		Z-relation relies on the concept of "copies" and thus on the concept of group action. <br /> <br />
-		In Set Theory, two pitch-class sets are often considered to be "the same" when they are linked by the action of some simple transformation.
-		For instance, the sets <b>0 1 4</b> and <b>2 3 6</b> are linked by a transposition of 2 (corresponding, on the clock diagram, to a rotation of 2 steps).
-		Such "simple transformations" usually form a group. One thus usually needs to choose a group to determine a framework; this group will entail
-		the concept of "copy" of a pitch-class set: which is any other pitch-class set obtained by the action of a transformation of the group.
-		For instance, if our group is the group of transposition, <b>2 3 6</b> is a copy of <b>0 1 4</b>, and viceversa. <br />
-		The most common groups of such form in increasing nesting are: <br />
-		- the group of transposition: formed by all the transposition by a certain amount, and there are only 12 transposition if our modulo is 12, or
-		in general n transposition if our modulo is n (the mathemathicians would say that such group is isomorphic to the cyclic group Z_n).
-		For instance, a C major chord is the same as a D major chord, with respect to this group, but it is NOT the same as a C minor chord. <br />
-		- the group of transposition and inversions: formed by all the transposition of the previous group, plus all the combination of such transposition with
-		inversions, i.e. reflection with respect to any axis on the clock diagram. If our modulo is n, this group has 2n elements (the mathemathicians
-		would say that such group is isomorphic to the dihedral group D_n).
-		For instance, a C major chord is the same as a D major chord, with respect to this group, and also the same as a C minor chord. <br />
-		- the affine group of transposition, inversions, and multiplications: this group (here things get a little bit more complicated...) is formed
-		by all the elements of the previous group plus we add the transformation multiplying each pitch class by a certain number k (prime with the modulo).
-		Classical multiplications, with modulo = 12, are M_5 (multiplication by 5) and M_7 (multiplication by 7).
-		For instance, our <b>0 4 7</b> C major chord is the same as <b>0 8 11</b>, since 5 * (0 4 7) = (0 20 35) = (0 8 11). <br />
-		Up to the group of transposition and inversion, the interval vector of a pitch-class set is preserved. The affine group does not preserve the interval vector.
-		<br /> <br />
-		<br /> The object outputs a llll containing one level for each requested cardinality to be searched,
-		and then the found Z-related pitch-class sets in Z-Families (gathering all
-		the pitch-class sets sharing the same (multi-)interval vector in a single level of parenthesis).
 			</description>
 		</entry>
 		<entry name ="Keywords">

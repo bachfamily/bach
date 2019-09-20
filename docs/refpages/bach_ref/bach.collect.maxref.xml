@@ -11,8 +11,6 @@
 
 	<description>
 		Groups together data it receives,
-		and outputs them as lllls upon reception of an output command in the leftmost inlet.
-		The structure of the resulting lllls can be controlled through messages in the right inlet.
 	</description>
 
 	<!--METADATA-->
@@ -307,7 +305,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		More lllls can be built in parallel through the use of the <m>collection</m> messages,
-		and/or by providing an optional argument to <o>bach.collect</o>.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -350,7 +347,6 @@
 		<entry name ="More details">
 			<description>
 		More lllls can be built in parallel through the use of the <m>collection</m> messages,
-		and/or by providing an optional argument to <o>bach.collect</o>.
 			</description>
 		</entry>
 		<entry name ="Keywords">

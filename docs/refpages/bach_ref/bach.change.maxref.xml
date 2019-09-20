@@ -11,7 +11,6 @@
 
 	<description>
 		The purpose of <o>bach.change</o> is the to act like a <o>change</o> object for lllls,
-		outputting the incoming llll only if it differs from the one previously entered.
 	</description>
 
 	<!--METADATA-->
@@ -88,13 +87,13 @@
 			</description>
 		</method>
 		<method name="set">
-			<arg name="point" optional="0" type="llll" />
+			<arg name="" optional="0" type="" />
 			<arg name="llll" optional="0" type="llll" />
 			<digest>
 				Store llll without triggering any output
 			</digest>
 			<description>
-				Syntax: <b>set <m>&lt;llll: point&gt;</m> <m>&lt;llll: llll&gt;</m> </b><br />				<br />
+				Syntax: <b>set <m>&lt;: &gt;</m> <m>&lt;llll: llll&gt;</m> </b><br />				<br />
 				An <m>llll</m> after the <m>set</m> message is stored without triggering any output (as for
 				lllls coming in the second inlet).
 			</description>
@@ -138,9 +137,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.change</o> is initialized with a "null" llll, so if you send
-		a "null" llll as first llll, it will not be let through. <br />
-		A <m>matchtype</m> argument will tell if type has to be taken into account
-		for equality testing.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -181,9 +177,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.change</o> is initialized with a "null" llll, so if you send
-		a "null" llll as first llll, it will not be let through. <br />
-		A <m>matchtype</m> argument will tell if type has to be taken into account
-		for equality testing.
 			</description>
 		</entry>
 		<entry name ="Keywords">

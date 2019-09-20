@@ -11,9 +11,6 @@
 
 	<description>
 		Accepts an llll of element corresponding to chords,
-		an llll of elements corresponding to rests, and an llll corresponding to the
-		position of rests, and interlaces the two lists properly. This is typically
-		used in combination with <o>bach.toc&amp;r</o>.
 	</description>
 
 	<!--METADATA-->
@@ -127,8 +124,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.fromc&amp;r</o> is especially useful in combination with  <o>bach.toc&amp;r</o>
-		in order to perform different operations on the set of elements corresponding
-		to rests and to non-rests.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -172,8 +167,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.fromc&amp;r</o> is especially useful in combination with  <o>bach.toc&amp;r</o>
-		in order to perform different operations on the set of elements corresponding
-		to rests and to non-rests.
 			</description>
 		</entry>
 		<entry name ="Keywords">

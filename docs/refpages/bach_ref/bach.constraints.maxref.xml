@@ -11,7 +11,6 @@
 
 	<description>
 		Solves constraints satisfaction problems.
-		The rules for the evaluation of each constraint must be provided in the object's lambda loop, each associated to a unique arbitrary name.
 	</description>
 
 	<!--METADATA-->
@@ -459,7 +458,7 @@
 		<seealso name="bach.comb" />
 		<seealso name="bach.perm" />
 		<seealso name="bach.cartesianprod" />
-		<seealso name="03-Iterations" module="bach" type="tutorial" />
+		<seealso name="05-Slot Machines" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

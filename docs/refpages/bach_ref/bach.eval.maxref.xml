@@ -76,13 +76,14 @@
 				Double-clicking on the object forces a text editor to open up, where the expression can be edited directly.
 			</description>
 		</method>
-		<method name="bang">
+		<method name="(doubleclick)">
 			<arglist />
 			<digest>
-				Perform the last operation
+				Edit bell code for <m>lambda</m> attribute
 			</digest>
 			<description>
-				Return the result of the evaluation of the most recently received lllls and expression.
+				Doubleclicking on the object forces a text editor to open up, where the bell code
+				for the <m>lambda</m> attribute can be edited directly.
 			</description>
 		</method>
 		<method name="bang">
@@ -92,6 +93,15 @@
 			</digest>
 			<description>
 				Return the comparison result for the most recently received lllls.
+			</description>
+		</method>
+		<method name="bang">
+			<arglist />
+			<digest>
+				Perform the last operation
+			</digest>
+			<description>
+				Return the result of the evaluation of the most recently received lllls and expression.
 			</description>
 		</method>
 		<method name="expr">
@@ -104,6 +114,26 @@
 				For more details on the expression syntax, please refer to <o>bach.eval</o>'s help patcher.
 			</description>
 		</method>
+		<method name="forceread">
+			<arglist />
+			<digest>
+				Read code from file even if incorrect
+			</digest>
+			<description>
+				Loads a file containing bell code into the object,
+				but ignore it if the code is invalid.
+			</description>
+		</method>
+		<method name="forcereadappend">
+			<arglist />
+			<digest>
+				Read code from file and append it even if incorrect
+			</digest>
+			<description>
+				Appends the contents of a file containing bell code to the code already owned by the object,
+				keeping it even if it is invalid.
+			</description>
+		</method>
 		<method name="llll">
 			<arglist />
 			<digest>
@@ -114,11 +144,41 @@
 				An llll received in the leftmost inlet will trigger the evaluation and cause the result to be output.
 			</description>
 		</method>
+		<method name="read">
+			<arglist />
+			<digest>
+				Read code from file
+			</digest>
+			<description>
+				Loads a file containing bell code into the object,
+				keeping it even if it is invalid.
+			</description>
+		</method>
+		<method name="readappend">
+			<arglist />
+			<digest>
+				Read code from file and append it
+			</digest>
+			<description>
+				Appends the contents of a file containing bell code
+				to the code already owned by the object,
+				but ignore it if the code is invalid.
+			</description>
+		</method>
+		<method name="write">
+			<arglist />
+			<digest>
+				Save code to file
+			</digest>
+			<description>
+				Writes the bell code into a file.
+			</description>
+		</method>
 	</methodlist>
 
 	<!--ATTRIBUTES-->
 	<attributelist>
-		<attribute name="auto" get="1" set="1" type="atom" size="1">
+		<attribute name="auto" get="1" set="1" type="int" size="1">
 			<digest>
 				Automatically Run Code
 			</digest>
@@ -133,7 +193,7 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="directins" get="1" set="1" type="atom" size="1">
+		<attribute name="directins" get="1" set="1" type="int" size="1">
 			<digest>
 				Number of Direct Inlets
 			</digest>
@@ -148,7 +208,7 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="directouts" get="1" set="1" type="atom" size="1">
+		<attribute name="directouts" get="1" set="1" type="int" size="1">
 			<digest>
 				Number of Outlets
 			</digest>
@@ -163,14 +223,12 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="embed" get="1" set="1" type="atom" size="1">
+		<attribute name="embed" get="1" set="1" type="int" size="1">
 			<digest>
 				Save Data With Patcher
 			</digest>
 			<description>
 				When set to 1, the stored code is saved with the patcher.
-				This is a static attribute which can only be set by typing it in the object box.
-				<br /> <br />
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Save Data With Patcher" />
@@ -179,7 +237,7 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="extraoutlets" get="1" set="1" type="atom" size="1">
+		<attribute name="extraoutlets" get="1" set="1" type="int" size="1">
 			<digest>
 				Number of Extra Outlets
 			</digest>
@@ -194,7 +252,7 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="inlets" get="1" set="1" type="atom" size="1">
+		<attribute name="inlets" get="1" set="1" type="int" size="1">
 			<digest>
 				Number of Inlets
 			</digest>
@@ -205,6 +263,58 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of Inlets" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="lambda" get="1" set="1" type="char_array" size="3276">
+			<digest>
+				Bell Expression For Lambda Function
+			</digest>
+			<description>
+				The <m>lambda</m> attribute allows setting a snipped of bell code
+				to be called instead of the lambda loop. If the lambda attribute is set,
+				the lambda loop will not be evaluated, and the provided code will be executed as well.
+				For each lambda outlet of the object, an input pseudovariable is passed to the lambda loop,
+				with their indices counted from left to right.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Bell Expression For Lambda Function" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="lambdaparams" get="1" set="1" type="llll" size="1">
+			<digest>
+				Extra Parameters To Lambda Function
+			</digest>
+			<description>
+				The <m>lambdaparams</m> attribute allows setting the values
+				of local variables to be passed to the bell code set by the <m>lambda</m> attribute.
+				It is structured as an llll consisting of one or more sublists,
+				each containing the name of a variable and its value to be passed to the code.
+				For example, the llll <b>[ $foo 1 ] [ $bar [ 2 3 ] ]</b>
+				will set the $foo and $bar local variables respectively to <b>1</b> and <b>[ 2 3 ]</b>.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Extra Parameters To Lambda Function" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="maxtime" get="1" set="1" type="int" size="1">
+			<digest>
+				Maximum Duration Of Evaluation
+			</digest>
+			<description>
+				The <m>maxtime</m> attribute allows setting a maximum evaluation time
+				in milliseconds for the bell code provided.
+				If it is reached, the evaluation aborts and the code returns null.
+				If <m>maxtime</m> is set to 0, there is no time limit.
+				The default is 60000 ms (1 minute).
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Duration Of Evaluation" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
@@ -237,6 +347,24 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="params" get="1" set="1" type="llll" size="1">
+			<digest>
+				Extra Parameters
+			</digest>
+			<description>
+				The <m>params</m> attribute allows setting the values
+				of local variables to be passed to the code.
+				It is structured as an llll consisting of one or more sublists,
+				each containing the name of a variable and its value to be passed to the code.
+				For example, the llll <m>[ $foo 1 ] [ $bar [ 2 3 ] ]</m>
+				will set the $foo and $bar local variables respectively to <m>1</m> and <m>[ 2 3 ]</m>.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Extra Parameters" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>

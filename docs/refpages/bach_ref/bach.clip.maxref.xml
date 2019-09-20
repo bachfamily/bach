@@ -11,8 +11,6 @@
 
 	<description>
 		Constraints each element of the incoming llll
-		into a given numerical range, defined by a lower and
-		an upper boundary.
 	</description>
 
 	<!--METADATA-->
@@ -166,9 +164,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		Lower and upper boundaries must be coherent, namely
-		the upper one must always be greater or equal to the smaller one
-		(also element-wise, if any of them is a complex llll),
-		otherwise the result might be inconsistent.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -204,9 +199,6 @@
 		<entry name ="More details">
 			<description>
 		Lower and upper boundaries must be coherent, namely
-		the upper one must always be greater or equal to the smaller one
-		(also element-wise, if any of them is a complex llll),
-		otherwise the result might be inconsistent.
 			</description>
 		</entry>
 		<entry name ="Keywords">
