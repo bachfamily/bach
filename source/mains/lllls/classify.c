@@ -200,6 +200,7 @@ void classify_anything(t_classify *x, t_symbol *msg, long ac, t_atom *av)
                         x,
                         &lambdaContext
                     };
+                    llll_put_elems_in_lllls_in_lthing(ll);
                     ll = llll_classify(ll, (sort_fn) classify_code, &lambdaData);
                     llll_remove_lllls_from_lthing(ll);
                 } else {

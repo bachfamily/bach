@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 97.0, 163.0, 937.0, 579.0 ],
+		"rect" : [ 97.0, 100.0, 1029.0, 579.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 97.0, 189.0, 937.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -207,7 +207,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 251.0, 349.0, 298.0, 40.0 ],
+									"patching_rect" : [ 251.0, 349.0, 300.0, 40.0 ],
 									"text" : "@triggers ** means that all the global variables appearing in the code will trigger the result."
 								}
 
@@ -649,7 +649,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 937.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1675,7 +1675,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 937.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -2464,7 +2464,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 937.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -2859,7 +2859,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 937.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -3258,7 +3258,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 937.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -3361,7 +3361,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 69.5, 279.0, 91.0, 22.0 ],
+					"patching_rect" : [ 69.5, 279.0, 113.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -3370,7 +3370,7 @@
 						"tags" : ""
 					}
 ,
-					"text" : "p \"Help Center\"",
+					"text" : "p \"bell Help Center\"",
 					"varname" : "basic_tab[5]"
 				}
 
@@ -3413,7 +3413,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 937.0, 553.0 ],
+						"rect" : [ 97.0, 126.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -3834,7 +3834,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 937.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
