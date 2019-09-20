@@ -22,7 +22,6 @@
 	@brief	Common documentation about some basic concepts and syntaxes of bach.
 */
 
-
 #define BACH_DOC_PAINTJIT
     // The <m>paintjit</m> message, followed by the name of a jitter matrix,
     // mirrors the canvas of the object onto the jitter matrix.

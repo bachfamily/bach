@@ -1,3 +1,0 @@
-symparser:	symparser.l
-			
-clean:		

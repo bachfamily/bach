@@ -1,3 +1,0 @@
-exprparser:	exprparser.l
-									
-clean:		

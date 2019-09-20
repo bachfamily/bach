@@ -1,4 +1,0 @@
-pitchparser:	pitchparser.l
-			
-						
-clean:		

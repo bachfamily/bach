@@ -1,3 +1,0 @@
-strparser:	strparser.l
-						
-clean:		
