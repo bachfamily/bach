@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 100.0, 79.0, 644.0, 434.0 ],
+		"rect" : [ 100.0, 79.0, 606.0, 449.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 644.0, 408.0 ],
+						"rect" : [ 100.0, 105.0, 606.0, 423.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -88,13 +88,29 @@
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
-									"id" : "obj-4",
-									"maxclass" : "message",
-									"numinlets" : 2,
+									"attr" : "maxtime",
+									"id" : "obj-22",
+									"maxclass" : "attrui",
+									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 13.5, 325.0, 188.0, 23.0 ],
-									"text" : "lambdaparams [$modulo 1000]"
+									"patching_rect" : [ 86.0, 380.0, 171.0, 23.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"bubblepoint" : 0.9,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-3",
+									"linecount" : 8,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 263.5, 276.0, 336.0, 127.0 ],
+									"text" : "In the unfortunate case your code is very demanding, you can set a maximum evaluation time in milliseconds for each comparison evaluation through the maxtime attribute. If it is set to 0, no time limit is set. The default is 60000, that is, one minute.\nIf the time limit is reached null is returned, which will be interpreted as a failed evaluation test.\nDouble-click the object to see the rather stupid code."
 								}
 
 							}
@@ -102,14 +118,147 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"id" : "obj-26",
+									"id" : "obj-6",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 13.5, 380.0, 68.0, 23.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 80100
+									}
+,
+									"text" : "bach.print"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-7",
+									"maxclass" : "newobj",
+									"numinlets" : 2,
+									"numoutlets" : 2,
+									"outlettype" : [ "", "" ],
+									"patching_rect" : [ 138.5, 323.0, 66.0, 23.0 ],
+									"text" : "route text"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-8",
+									"maxclass" : "textedit",
+									"numinlets" : 1,
+									"numoutlets" : 4,
+									"outlettype" : [ "", "int", "", "" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 138.5, 295.0, 119.0, 23.0 ],
+									"text" : "6000 6400 6700"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-9",
+									"maxclass" : "button",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "bang" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 138.5, 268.0, 20.0, 20.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-10",
+									"maxclass" : "newobj",
+									"numinlets" : 2,
+									"numoutlets" : 2,
+									"outlettype" : [ "", "" ],
+									"patching_rect" : [ 13.5, 323.0, 66.0, 23.0 ],
+									"text" : "route text"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"code" : "## first do some pushups...\r\n$i = 0; while $i < 10000000000 do $i += 1  ;\r\n\r\n## ... and then compute the actual result\r\n## Unless the maxtime attribute is set to a very high value or 0 (no limit),\r\n## This part of the code will not actually be executed,\r\n## so null will be returned instead.\r\n$x1 % 1200 == $x2 % 1200 ",
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-11",
+									"maxclass" : "newobj",
+									"numinlets" : 3,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "" ],
+									"patching_rect" : [ 13.5, 353.0, 243.5, 23.0 ],
+									"saved_object_attributes" : 									{
+										"embed" : 1,
+										"versionnumber" : 80100
+									}
+,
+									"text" : "bach.intersection"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-12",
+									"maxclass" : "textedit",
+									"numinlets" : 1,
+									"numoutlets" : 4,
+									"outlettype" : [ "", "int", "", "" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 13.5, 295.0, 113.0, 23.0 ],
+									"text" : "7200 5700 7600"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-21",
+									"maxclass" : "button",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "bang" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 13.5, 268.0, 20.0, 20.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"bubblepoint" : 0.0,
+									"bubbleside" : 0,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-1",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 73.0, 490.0, 50.0 ],
-									"text" : "You can pass parameters to the bell code by setting initial vaiues to its local variables through the lambdaparams attribute. These initial settings will be restored at each run of the code.",
-									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+									"patching_rect" : [ 209.5, 192.0, 382.0, 69.0 ],
+									"text" : "You can pass parameters to the bell code by setting initial vaiues to its local variables through the lambdaparams attribute. These initial settings will be restored at each run of the code."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-4",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 13.5, 225.0, 188.0, 23.0 ],
+									"text" : "lambdaparams [$modulo 1000]"
 								}
 
 							}
@@ -121,7 +270,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 47.0, 276.0, 68.0, 23.0 ],
+									"patching_rect" : [ 47.0, 197.0, 68.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80100
 									}
@@ -139,7 +288,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 224.0, 188.0, 66.0, 23.0 ],
+									"patching_rect" : [ 224.0, 123.0, 66.0, 23.0 ],
 									"text" : "route text"
 								}
 
@@ -154,7 +303,7 @@
 									"numoutlets" : 4,
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 224.0, 160.0, 119.0, 23.0 ],
+									"patching_rect" : [ 224.0, 95.0, 119.0, 23.0 ],
 									"text" : "6000 6400 6700"
 								}
 
@@ -167,7 +316,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 224.0, 133.0, 20.0, 20.0 ]
+									"patching_rect" : [ 224.0, 68.0, 20.0, 20.0 ]
 								}
 
 							}
@@ -180,7 +329,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 47.0, 188.0, 66.0, 23.0 ],
+									"patching_rect" : [ 47.0, 123.0, 66.0, 23.0 ],
 									"text" : "route text"
 								}
 
@@ -196,7 +345,7 @@
 									"numinlets" : 3,
 									"numoutlets" : 3,
 									"outlettype" : [ "", "", "" ],
-									"patching_rect" : [ 47.0, 218.0, 373.0, 38.0 ],
+									"patching_rect" : [ 47.0, 153.0, 375.0, 38.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
 										"versionnumber" : 80100
@@ -216,7 +365,7 @@
 									"numoutlets" : 4,
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 47.0, 160.0, 113.0, 23.0 ],
+									"patching_rect" : [ 47.0, 95.0, 113.0, 23.0 ],
 									"text" : "7200 5700 7600"
 								}
 
@@ -229,7 +378,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 47.0, 133.0, 20.0, 20.0 ]
+									"patching_rect" : [ 47.0, 68.0, 20.0, 20.0 ]
 								}
 
 							}
@@ -251,6 +400,27 @@
 							}
  ],
 						"lines" : [ 							{
+								"patchline" : 								{
+									"destination" : [ "obj-11", 0 ],
+									"source" : [ "obj-10", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-6", 0 ],
+									"source" : [ "obj-11", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-10", 0 ],
+									"source" : [ "obj-12", 0 ]
+								}
+
+							}
+, 							{
 								"patchline" : 								{
 									"destination" : [ "obj-18", 1 ],
 									"source" : [ "obj-14", 0 ]
@@ -301,16 +471,52 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-12", 0 ],
+									"source" : [ "obj-21", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-11", 0 ],
+									"midpoints" : [ 95.5, 412.0, 7.0, 412.0, 7.0, 349.0, 23.0, 349.0 ],
+									"source" : [ "obj-22", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-18", 0 ],
-									"midpoints" : [ 23.0, 358.0, 6.75, 358.0, 6.75, 213.0, 56.5, 213.0 ],
+									"midpoints" : [ 23.0, 255.0, 6.75, 255.0, 6.75, 148.0, 56.5, 148.0 ],
 									"source" : [ "obj-4", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-11", 1 ],
+									"source" : [ "obj-7", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-7", 0 ],
+									"source" : [ "obj-8", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-8", 0 ],
+									"source" : [ "obj-9", 0 ]
 								}
 
 							}
  ]
 					}
 ,
-					"patching_rect" : [ 58.0, 202.0, 59.0, 22.0 ],
+					"patching_rect" : [ 58.0, 202.0, 139.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -319,7 +525,7 @@
 						"tags" : ""
 					}
 ,
-					"text" : "p params",
+					"text" : "p \"params and maxtime\"",
 					"varname" : "basic_tab[4]"
 				}
 
@@ -343,7 +549,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 644.0, 408.0 ],
+						"rect" : [ 0.0, 26.0, 606.0, 423.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -537,7 +743,6 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "$x1 % 600 = $x2 % 600 \n## notice the = operator (assignment) in place of the == operator (comparison) ",
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
 									"id" : "obj-18",
@@ -547,11 +752,11 @@
 									"outlettype" : [ "", "", "" ],
 									"patching_rect" : [ 162.0, 173.0, 270.0, 23.0 ],
 									"saved_object_attributes" : 									{
-										"embed" : 1,
+										"embed" : 0,
 										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.intersection"
+									"text" : "bach.intersection @embed 0"
 								}
 
 							}
@@ -716,7 +921,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 644.0, 408.0 ],
+						"rect" : [ 0.0, 26.0, 606.0, 423.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -746,6 +951,18 @@
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
+									"attr" : "embed",
+									"id" : "obj-12",
+									"maxclass" : "attrui",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 118.267990112304688, 381.0, 150.0, 23.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"bubble" : 1,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
@@ -754,8 +971,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 344.0, 321.0, 249.0, 83.0 ],
-									"text" : "The lambda attribute can also be set by double-clicking the object box and typing some text into it. For the code to be saved with the patch, the embed attribute must be set to 1."
+									"patching_rect" : [ 344.0, 321.0, 263.0, 83.0 ],
+									"text" : "The lambda attribute can also be set by double-clicking the object box and typing some text in the editor. By default the embed attribute is set to 1, which means that the code is saved with the patcher."
 								}
 
 							}
@@ -833,7 +1050,6 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "$x1 % 1000 == $x2 % 1000 ",
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
 									"id" : "obj-8",
@@ -847,7 +1063,7 @@
 										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.intersection @embed 1"
+									"text" : "bach.intersection"
 								}
 
 							}
@@ -1077,6 +1293,14 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-8", 0 ],
+									"midpoints" : [ 127.767990112304688, 408.0, 3.633995056152344, 408.0, 3.633995056152344, 347.0, 19.5, 347.0 ],
+									"source" : [ "obj-12", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-18", 1 ],
 									"source" : [ "obj-14", 0 ]
 								}
@@ -1195,7 +1419,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 105.0, 644.0, 408.0 ],
+						"rect" : [ 0.0, 26.0, 606.0, 423.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1851,7 +2075,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 644.0, 408.0 ],
+						"rect" : [ 0.0, 26.0, 606.0, 423.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -2207,7 +2431,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 644.0, 408.0 ],
+						"rect" : [ 0.0, 26.0, 606.0, 423.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,

@@ -821,7 +821,8 @@ short codableobj_setup(t_codableobj *x, short ac, t_atom *av)
     t_atom *attr_av = av + true_ac;
     
     x->c_ofTable = new t_ofTable;
-    
+    codableobj_ownedFunctionsSetup(x);
+
     long next = codableobj_parseLambdaAttrArg(x, &attr_ac, attr_av);
     
     if (next == -2) {

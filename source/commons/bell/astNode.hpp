@@ -456,7 +456,10 @@ public:
     
     t_llll *eval(t_execEnv const &context) {
         bell_release_llll(n1->eval(context));
-        return n2->eval(context);
+        if (!context.stopTimeReached())
+            return n2->eval(context);
+        else
+            return llll_get();
     }
 };
 
