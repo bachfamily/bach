@@ -776,25 +776,45 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     CLASS_ATTR_FILTER_MIN(c, "maxtime", 0);
     
     if (!isBachCode) {
-        //class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
+        // @method (doubleclick) @digest Edit bell code for <m>lambda</m> attribute
+        // @description Doubleclicking on the object forces a text editor to open up, where the bell code for the <m>lambda</m> attribute can be edited directly.
         class_addmethod(c, (method)codableobj_dblclick,  "dblclick",        A_CANT, 0);
+        
+        
         CLASS_ATTR_ATOM_LONG(c, "embed",    0,    t_codableobj, c_embed);
         CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);
         CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
         CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
         CLASS_ATTR_SAVE(c, "embed", 0);
-        //CLASS_ATTR_BASIC(c, "embed", 0);
-        
+        // @description When set to 1, the bell code for the <m>lambda</m> attribute
+        // is saved with the patcher, even if not set in the object box.
+
         CLASS_ATTR_CHAR_VARSIZE(c, "lambda", 0, t_codableobj, c_text, c_dummysize, 32767);
-        CLASS_ATTR_LABEL(c, "lambda", 0, "Expression For Lambda Function");
-        //CLASS_ATTR_SAVE(c, "lambda", 0);
-        //CLASS_ATTR_BASIC(c, "lambda", 0);
+        CLASS_ATTR_LABEL(c, "lambda", 0, "Bell Expression For Lambda Function");
         CLASS_ATTR_ACCESSORS(c, "lambda", codableobj_lambda_get, codableobj_lambda_set);
+        // @description The <m>lambda</m> attribute allows setting a snipped of bell code
+        // to be called instead of the lambda loop. If the lambda attribute is set,
+        // the lambda loop will not be evaluated, and the provided code will be executed as well.
+        // For each lambda outlet of the object, an input pseudovariable is passed to the lambda loop,
+        // with their indices counted from left to right.
+        
         CLASS_ATTR_LLLL(c, "lambdaparams", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
         CLASS_ATTR_LABEL(c, "lambdaparams", 0, "Extra Parameters To Lambda Function");
+        // @description The <m>lambdaparams</m> attribute allows setting the values
+        // of local variables to be passed to the bell code set by the <m>lambda</m> attribute.
+        // It is structured as an llll consisting of one or more sublists,
+        // each containing the name of a variable and its value to be passed to the code.
+        // For example, the llll <m>[ $foo 1 ] [ $bar [ 2 3 ] ]</m>
+        // will set the $foo and $bar local variables respectively to <m>1</m> and <m>[ 2 3 ]</m>.
     } else {
         CLASS_ATTR_LLLL(c, "params", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
         CLASS_ATTR_LABEL(c, "params", 0, "Extra Parameters");
+        // @description The <m>params</m> attribute allows setting the values
+        // of local variables to be passed to the code.
+        // It is structured as an llll consisting of one or more sublists,
+        // each containing the name of a variable and its value to be passed to the code.
+        // For example, the llll <m>[ $foo 1 ] [ $bar [ 2 3 ] ]</m>
+        // will set the $foo and $bar local variables respectively to <m>1</m> and <m>[ 2 3 ]</m>.
     }
 }
 

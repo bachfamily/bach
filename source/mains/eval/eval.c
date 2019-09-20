@@ -181,7 +181,6 @@ int T_EXPORT main()
     //CLASS_ATTR_BASIC(c, "embed", 0);
     //CLASS_ATTR_ACCESSORS(c, "embed", (method)NULL, (method)llllobj_dummy_setter)
     // @description When set to 1, the stored code is saved with the patcher.
-    // @copy BACH_DOC_STATIC_ATTR
 
     CLASS_ATTR_ATOM_LONG(c, "auto",    0,    t_codableobj, c_auto);
     CLASS_ATTR_LABEL(c, "auto", 0, "Automatically Run Code");
