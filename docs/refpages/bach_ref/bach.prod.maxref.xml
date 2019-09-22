@@ -139,7 +139,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.prod</o> only operates on numbers; each
-		non-number element is simply ignored.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -173,7 +172,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.prod</o> only operates on numbers; each
-		non-number element is simply ignored.
 			</description>
 		</entry>
 		<entry name ="Keywords">

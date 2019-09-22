@@ -11,8 +11,6 @@
 
 	<description>
 		Converts the information about the duration line of a note
-		into messages to drive a pitch line~ and a velocity line~.
-		The slopes of the duration line segments are ignored.
 	</description>
 
 	<!--METADATA-->

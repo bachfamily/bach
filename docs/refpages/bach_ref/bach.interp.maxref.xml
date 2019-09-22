@@ -162,9 +162,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The parameter for the interpolation is the number
-		of sampling points. Such points are sampled
-		linearly, unless the exponent is
-		set to a number different from 1.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -209,9 +206,6 @@
 		<entry name ="More details">
 			<description>
 		The parameter for the interpolation is the number
-		of sampling points. Such points are sampled
-		linearly, unless the exponent is
-		set to a number different from 1.
 			</description>
 		</entry>
 		<entry name ="Keywords">

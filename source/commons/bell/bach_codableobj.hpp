@@ -69,8 +69,8 @@ typedef struct _codableobj
 } t_codableobj;
 
 
-void codableclass_add_standard_methods(t_class *c);
-void codableclass_add_standard_methods_ext(t_class *c);
+void codableclass_add_standard_methods_and_attrs(t_class *c);
+void codableclass_add_extended_methods_and_attrs(t_class *c);
 
 
 

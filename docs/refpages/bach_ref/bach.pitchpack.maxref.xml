@@ -134,8 +134,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The abstraction is equivalent to calling the <b>makepitch</b> function
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -174,8 +172,6 @@
 		<entry name ="More details">
 			<description>
 		The abstraction is equivalent to calling the <b>makepitch</b> function
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 			</description>
 		</entry>
 		<entry name ="Keywords">

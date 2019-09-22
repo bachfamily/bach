@@ -226,7 +226,7 @@
 				"filename" : [ "bach.help.bell.040_variables.075_patchervariables.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "global+variable" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "patcher", "assignment", "pv" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "patcher", "assignment", "pv", "bach.pv", "scope" ],
 				"title" : [ "Patcher variables" ]
 			},
 			"Assigningoperators" : {
@@ -1142,6 +1142,43 @@
 			"seealso" : [  ],
 			"tags" : [ "llll", "pronounce", "pronounciation" ],
 			"title" : [ "How llll should be pronounced" ]
+		}
+	},
+	"Messages to bach" : {
+		"Donors" : {
+			"filename" : [ "bach.help.messages to bach.01_donors.maxpat" ],
+			"objects" : [  ],
+			"seealso" : [ "message+unlock" ],
+			"tags" : [ "message", "Patreon", "patron", "donor" ],
+			"title" : [ "Messages to bach: donors" ]
+		},
+		"Unlock" : {
+			"filename" : [ "bach.help.messages to bach.02_unlock.maxpat" ],
+			"objects" : [  ],
+			"seealso" : [ "message+donors" ],
+			"tags" : [ "message", "donors", "Patreon", "patron" ],
+			"title" : [ "Messages to bach: unlock" ]
+		},
+		"Versionandsendversion" : {
+			"filename" : [ "bach.help.messages to bach.03_versionandsendversion.maxpat" ],
+			"objects" : [  ],
+			"seealso" : [  ],
+			"tags" : [ "message", "version", "sendversion" ],
+			"title" : [ "Messages to bach: version and sendversion" ]
+		},
+		"Nonative" : {
+			"filename" : [ "bach.help.messages to bach.04_nonative.maxpat" ],
+			"objects" : [ "all" ],
+			"seealso" : [ "llll+outlet+native", "llll+outlet+text", "llll+outlet+max" ],
+			"tags" : [ "llll", "pronounce", "pronounciation" ],
+			"title" : [ "Messages to bach: nonative" ]
+		},
+		"Messagesforglobalvariables" : {
+			"filename" : [ "bach.help.messages to bach.05_messagesforglobalvariables.maxpat" ],
+			"objects" : [  ],
+			"seealso" : [  ],
+			"tags" : [ "messages", "printglobals", "printglobalswithvalues", "clearglobals", "bell", "global", "variable", "value", "bach.value" ],
+			"title" : [ "Messages to bach: management of global variables" ]
 		}
 	},
 	"Notation" : {

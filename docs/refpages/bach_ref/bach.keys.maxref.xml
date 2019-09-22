@@ -191,9 +191,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The usefulness of <o>bach.keys</o> is twofold:
-		it allows treating an llll as an associative array, and it allows routing lllls based upon their first elements.
-		It is very commonly used in conjunction with <o>bach.score</o> and <o>bach.roll</o>'s slots,
-		as well as in <o>bach.constraint</o>'s lambda loop.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -222,9 +219,6 @@
 		<entry name ="More details">
 			<description>
 		The usefulness of <o>bach.keys</o> is twofold:
-		it allows treating an llll as an associative array, and it allows routing lllls based upon their first elements.
-		It is very commonly used in conjunction with <o>bach.score</o> and <o>bach.roll</o>'s slots,
-		as well as in <o>bach.constraint</o>'s lambda loop.
 			</description>
 		</entry>
 		<entry name ="Keywords">

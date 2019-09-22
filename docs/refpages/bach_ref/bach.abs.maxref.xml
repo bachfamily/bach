@@ -110,7 +110,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The abstraction is equivalent to the <b>abs</b> function called
-		in a <o>bach.expr</o> object.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -139,7 +138,6 @@
 		<entry name ="More details">
 			<description>
 		The abstraction is equivalent to the <b>abs</b> function called
-		in a <o>bach.expr</o> object.
 			</description>
 		</entry>
 		<entry name ="Keywords">

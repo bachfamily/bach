@@ -11,7 +11,6 @@
 
 	<description>
 		Finds the kernel of an incoming matrix,
-		i.e. the set of vectors which are sent to 0 by the matrix multiplication.
 	</description>
 
 	<!--METADATA-->
@@ -144,14 +143,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.ker</o> finds the subspace of the vectors x such that Ax = 0, where
-		A is the incoming matrix. If a matrix is m x n, its kernel is a subspace
-		in n-dimensional euclidean space. Such subspace is defined by one of its
-		basis, which is indeed output. <br /> <br />
-		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
-		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
-		as the number of rows.
-		<br /> <br />
 	</discussion>
 
 	<!--SEEALSO-->
@@ -185,14 +176,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.ker</o> finds the subspace of the vectors x such that Ax = 0, where
-		A is the incoming matrix. If a matrix is m x n, its kernel is a subspace
-		in n-dimensional euclidean space. Such subspace is defined by one of its
-		basis, which is indeed output. <br /> <br />
-		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
-		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
-		as the number of rows.
-		<br /> <br />
 			</description>
 		</entry>
 		<entry name ="Keywords">

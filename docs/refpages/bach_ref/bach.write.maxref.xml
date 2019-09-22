@@ -261,8 +261,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The llll can be written in text or native format.
-		Text format is easily editable through any text editor,
-		native format yields exact storage of floats.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -289,8 +287,6 @@
 		<entry name ="More details">
 			<description>
 		The llll can be written in text or native format.
-		Text format is easily editable through any text editor,
-		native format yields exact storage of floats.
 			</description>
 		</entry>
 		<entry name ="Keywords">

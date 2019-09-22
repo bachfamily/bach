@@ -1020,7 +1020,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The incoming llll is displayed in tree form. Clicked elements (and addresses) are output from dedicated outlets.
-		Basic llll editing is possible via mouse and keyboard.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -1090,7 +1089,6 @@
 		<entry name ="More details">
 			<description>
 		The incoming llll is displayed in tree form. Clicked elements (and addresses) are output from dedicated outlets.
-		Basic llll editing is possible via mouse and keyboard.
 			</description>
 		</entry>
 		<entry name ="Keywords">

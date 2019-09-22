@@ -11,8 +11,6 @@
 
 	<description>
 		Tells if one or more elements belong to a given llll.
-		The condition for which an element belongs to the llll can be customized via
-		a lambda loop.
 	</description>
 
 	<!--METADATA-->
@@ -160,20 +158,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The lambda behavior work like for <o>bach.intersection</o>, of which
-		this abstraction is a small wrapper.
-		An element of the first collection is said to be equal to an element
-		of the second llll according the a custom operator.	<br /> <br />
-		A certain number of bach objects are equipped with "lambda" inlets and outlets. These inlets and outlets -
-		always the rightmost ones - serve the purpose of letting you define a function the object will base its behavior upon.
-		Such function is indeed a patching loop: parameters are taken from the lambda outlet(s), processed, and the "result" is
-		plugged in the lambda inlet(s). The type of function, and the corresponding expected result, depend on the object behavior;
-		for instance, cycles modifying elements will expect as "result" the modified element; cycles testing for custom equalities will
-		expect a 0/1 answer (0 meaning: not equal; 1 meaning: equal), as well as cycles testing custom inequalities and sorting (1 meaning: the two
-		elements are in the correct order; 0 meaning: the order is wrong). Refer to each specific object to know more about it.
-		With many objects, it is not mandatory to provide an evaluation cycle: if you don't, a default function will be used. <br />
-		It is important to know that the evaluation chain inside the lambda loop must be direct: you can't use objects such as <o>delay</o>,
-		<o>pipe</o>, <o>defer</o>; nor store the value anywhere waiting for some other event to trigger it. Also see #lambda in the bach Help Center.
-		<br /> <br />
 	</discussion>
 
 	<!--SEEALSO-->
@@ -249,20 +233,6 @@
 		<entry name ="More details">
 			<description>
 		The lambda behavior work like for <o>bach.intersection</o>, of which
-		this abstraction is a small wrapper.
-		An element of the first collection is said to be equal to an element
-		of the second llll according the a custom operator.	<br /> <br />
-		A certain number of bach objects are equipped with "lambda" inlets and outlets. These inlets and outlets -
-		always the rightmost ones - serve the purpose of letting you define a function the object will base its behavior upon.
-		Such function is indeed a patching loop: parameters are taken from the lambda outlet(s), processed, and the "result" is
-		plugged in the lambda inlet(s). The type of function, and the corresponding expected result, depend on the object behavior;
-		for instance, cycles modifying elements will expect as "result" the modified element; cycles testing for custom equalities will
-		expect a 0/1 answer (0 meaning: not equal; 1 meaning: equal), as well as cycles testing custom inequalities and sorting (1 meaning: the two
-		elements are in the correct order; 0 meaning: the order is wrong). Refer to each specific object to know more about it.
-		With many objects, it is not mandatory to provide an evaluation cycle: if you don't, a default function will be used. <br />
-		It is important to know that the evaluation chain inside the lambda loop must be direct: you can't use objects such as <o>delay</o>,
-		<o>pipe</o>, <o>defer</o>; nor store the value anywhere waiting for some other event to trigger it. Also see #lambda in the bach Help Center.
-		<br /> <br />
 			</description>
 		</entry>
 		<entry name ="Keywords">

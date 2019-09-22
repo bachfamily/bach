@@ -11,7 +11,6 @@
 
 	<description>
 		Converts an llll containing frequency ratios into an identically structured llll
-		containing the corresponding intervals (expressed in midicents).
 	</description>
 
 	<!--METADATA-->

@@ -11,7 +11,6 @@
 
 	<description>
 		Tells if the incoming number are coprime,
-		i.e. if their greatest common divisor is 1.
 	</description>
 
 	<!--METADATA-->

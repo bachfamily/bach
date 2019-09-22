@@ -131,7 +131,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.restrot</o> is especially useful to be applied on a list of durations,
-		in order to make rests rotate through a list.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -163,7 +162,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.restrot</o> is especially useful to be applied on a list of durations,
-		in order to make rests rotate through a list.
 			</description>
 		</entry>
 		<entry name ="Keywords">

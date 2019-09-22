@@ -2570,36 +2570,6 @@
 // - <b>filename</b> (default: not set): the name of the file to be written.
 // If set, this specification overrides the file name set as the first message argument.
 
-#define BACH_DOC_CODABLEOBJ_READ
-// @method read @digest Read code from file
-// @description
-// Load a file containing bell code into the object,
-// but ignore it if the code is invalid.
 
-#define BACH_DOC_CODABLEOBJ_FORCEREAD
-// @method forceread @digest Read code from file even if incorrect
-// @description
-// Load a file containing bell code into the object,
-// keeping it even if it is invalid.
-
-#define BACH_DOC_CODABLEOBJ_READAPPEND
-// @method read @digest Read code from file and append it
-// @description
-// Append the contents of a file containing bell code
-// to the code already owned by the object,
-// but ignore it if the code is invalid.
-
-#define BACH_DOC_CODABLEOBJ_FORCEREADAPPEND
-// @method forceread @digest Read code from file and append it even if incorrect
-// @description
-// Append the contents of a file containing bell code
-// to the code already owned by the object,
-// keeping it even if it is invalid.
-
-#define BACH_DOC_CODABLEOBJ_WRITE
-// @method write @digest Read code from file
-// @description
-// Load a file containing bell code into the object,
-// but ignore it if the code is invalid.
 
 

@@ -11,7 +11,6 @@
 
 	<description>
 		Extracts a set of linearly independent vectors from an incoming list of vectors.
-		Depending on its attributes, it can also transform the vectors so that they be orthogonal and/or unitary.
 	</description>
 
 	<!--METADATA-->
@@ -148,7 +147,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The algorithm used to extract the vectors is the Gauss elimination. Gram-Schmidt is used to make
-		vectors orthogonal.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -188,7 +186,6 @@
 		<entry name ="More details">
 			<description>
 		The algorithm used to extract the vectors is the Gauss elimination. Gram-Schmidt is used to make
-		vectors orthogonal.
 			</description>
 		</entry>
 		<entry name ="Keywords">
