@@ -2040,17 +2040,19 @@ t_symbol *xml_get_key_signature(t_score *x, mxml_node_t *attributesXML)
     return keysym;
 }
 
-long xml_get_divisions(t_score *x, mxml_node_t *attributesXML)
+void xml_get_divisions(t_score *x, mxml_node_t *attributesXML, long *divisions)
 {
-    long divisions = 0;
+    long d = 0;
     mxml_node_t *divisionsXML = mxmlFindElement(attributesXML, attributesXML, "divisions", NULL, NULL, MXML_DESCEND_FIRST);
-    if (divisionsXML)
-        divisions = mxmlGetInteger(divisionsXML) * 4;
-    if (!divisions) {
-        object_warn((t_object *) x, "Tag <divisions> missing or corrupted");
-        divisions = 4;
+    if (divisionsXML) {
+        d = mxmlGetInteger(divisionsXML) * 4;
+        if (d)
+            *divisions = d;
     }
-    return divisions;
+    if (*divisions == 0) {
+        object_warn((t_object *) x, "Tag <divisions> missing or corrupted");
+        *divisions = 4;
+    } 
 }
 
 t_llll *xml_get_tempi(t_score *x, mxml_node_t *measureXML, long divisions, t_bool isfirstmeasure, t_llll* &maintempo_ll)
@@ -2277,7 +2279,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                     theScore.setKey(xml_get_key_signature(x, attributesXML));
                 }
                 
-                divisions = xml_get_divisions(x, attributesXML);
+                xml_get_divisions(x, attributesXML, &divisions);
  
             } else if (isfirstmeasure) {
                 object_warn((t_object *) x, "Tag <divisions> missing or corrupted");
