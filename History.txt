@@ -72,7 +72,7 @@ Scroll down for very important things you should now about v0.8b
 
 - bach.roll, bach.score
 		Various improvements and fixes in the
-:qXML import and export
+        XML import and export
 		Brand new dynamics system, with many new features (see the Dynamics section in the help center)
 		New export as image, also in page view (see #exportimage)
 		New communication with Mira/miraweb via png export (see #bach+mira)
