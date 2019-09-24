@@ -150,6 +150,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
         
         // let's try to guess if it's xml
         sysfile_read(fh, &size, buffer);
+        buffer[size] = 0;
         if (size > 4 && !memcmp(buffer, "PK\x03\x04", 4)) {
 
 #ifdef MAC_VERSION

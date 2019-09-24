@@ -1157,7 +1157,11 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                             mxmlNewReal(alterxml, alter);
                         
                         // octave
-                        mxmlNewInteger(octavexml, note_get_screen_midicents(note) / 1200 - 1);
+                        long octave = note_get_screen_midicents(note) / 1200 - 1;
+                        if (octave < 0)
+                            object_warn((t_object *) x, "Octave lower than 1 in voice %ld, measure %ld doesn't comply with the MusicXML standard", voiceidx, measureidx);
+                        
+                        mxmlNewInteger(octavexml, octave);
                     } else {
                         mxmlNewElement(notexml, "rest");
                     }
