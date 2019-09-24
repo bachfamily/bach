@@ -38,16 +38,30 @@ Scroll down for very important things you should now about v0.8b
 		Now when partitions of 0 are requested a "null" list is output.
 
 - bach.value
-        The value contained in bach.value is kept even if all the bach.value objects are destroyed.
+        The value contained in bach.value is kept even if all the bach.value objects are destroyed
 
 ***********************
 *** VERSION CHANGES ***
 ***********************
 
+- overall architecture and behavior
+        bach now contains a small programming language, mainly exposed by the new bach.eval object but also accessible from a number of other objects and affecting some global features of bach
+        bach (that is, the invisible object to which all the visible bach objects refer) now accepts a few documented messages
+
 - all objects	Fixed issues with negative midicents
 		Updated help files for square brackets
 
-- bach.eval	New object and scripting language
+- all objects reading text files
+        Fixed potential data corruption
+
+- bach.eval	New object
+
+- bach.diff, bach.intersection, bach.symdiff, bach.union, bach.classify
+        Support the bell programming language and accept the relevant messages and attributes
+
+- bach.value, bach.pv
+        Now refer to bell variables
+        New @auto attribute
 
 - bach.recurser	New object
 
@@ -57,7 +71,8 @@ Scroll down for very important things you should now about v0.8b
 		Fixed wrong handling of preventedit for markers and breakpoints while moving onsets via keyboard in bach.roll
 
 - bach.roll, bach.score
-		Improved XML import and export
+		Various improvements and fixes in the
+:qXML import and export
 		Brand new dynamics system, with many new features (see the Dynamics section in the help center)
 		New export as image, also in page view (see #exportimage)
 		New communication with Mira/miraweb via png export (see #bach+mira)
@@ -94,6 +109,7 @@ Scroll down for very important things you should now about v0.8b
 		Now barlines can be shown as ticks or intermeasure barlines
 		Fixed bug causing wrong selection on multiple clicks on tied sequences
 		Fixed bug causing scrambled stuff when voices were moved up/down in bach.score
+        Fixed bug causing wrong display of dynamics slot in background
 
 - bach.n2mc	Now handles pitches as well 
 			(this entailed compatibility breaks with older patches, but such issues is now fixed)
@@ -121,10 +137,6 @@ Scroll down for very important things you should now about v0.8b
 
 - bach.value
         The value contained in bach.value is kept even if all the bach.value objects are destroyed.
-        New @auto attribute.
-
-- bach.pv
-        New @auto attribute.
 
 - bach.join
         Now accepts @triggers null typed in the object box.
