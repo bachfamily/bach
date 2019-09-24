@@ -71,8 +71,7 @@ Scroll down for very important things you should now about v0.8b
 		Fixed wrong handling of preventedit for markers and breakpoints while moving onsets via keyboard in bach.roll
 
 - bach.roll, bach.score
-		Various improvements and fixes in the
-        XML import and export
+		Various improvements and fixes in the XML import and export
 		Brand new dynamics system, with many new features (see the Dynamics section in the help center)
 		New export as image, also in page view (see #exportimage)
 		New communication with Mira/miraweb via png export (see #bach+mira)
