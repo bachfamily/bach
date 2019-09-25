@@ -13,7 +13,7 @@ bach for Max
 SYSTEM REQUIREMENTS
 ===================================================
 
-Intel-based Mac or Windows computer running Max 7.3.5 or higher.
+Intel-based Mac or Windows computer running Max 7.3.5 or higher (except for version 8.0.5 on Windows)
 
 
 ===================================================
