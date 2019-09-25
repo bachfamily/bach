@@ -98,12 +98,12 @@
 		</method>
 		<method name="clone">
 			<arg name="active_collection" optional="0" type="symbol" />
-			<arg name="" optional="0" type="symbol" />
+			<arg name="seed" optional="0" type="symbol" />
 			<digest>
 				Clone a stored llll
 			</digest>
 			<description>
-				Syntax: <b>clone <m>&lt;symbol: active_collection&gt;</m> <m>&lt;symbol: &gt;</m> </b><br />				<br />
+				Syntax: <b>clone <m>&lt;symbol: active_collection&gt;</m> <m>&lt;symbol: seed&gt;</m> </b><br />				<br />
 				The llll associated with the name given as the first argument is cloned,
 				and the clone is associated with the name given as the second argument.
 				The original llll and its name are kept.
@@ -264,6 +264,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Save Data With Patcher" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
