@@ -42,6 +42,10 @@
 #include "pwd.h"
 #endif
 
+#ifdef WIN_VERSION
+//#define BACH_SLEEP_BEFORE_INIT
+#endif
+
 #include "bell/ast.hpp"
 #include "bell/pvManager.hpp"
 
@@ -121,6 +125,9 @@ void initpargs_run_do(t_initpargs *x);
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 
 {
+#ifdef BACH_SLEEP_BEFORE_INIT
+	Sleep(60000);
+#endif
     hinst = hinstDLL;
     // Perform actions based on the reason for calling.    
     switch( fdwReason ) 
@@ -162,7 +169,9 @@ void ext_main(void *moduleRef)
 {
     t_class *c;
 
-    //Sleep(60000);
+#ifdef BACH_SLEEP_BEFORE_INIT
+    Sleep(60000);
+#endif
 
     if (gensym("bach")->s_thing) {
         if (!bach_exists)
