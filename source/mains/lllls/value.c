@@ -113,7 +113,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
         error("bach: bad installation");
-        return 1;
+        return;
     }
     
     c = class_new("bach.value", (method) value_new, (method) value_free, (short) sizeof(t_v), 0L, A_GIMME, 0);
@@ -160,7 +160,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     dev_post("bach.value compiled %s %s", __DATE__, __TIME__);
     
-    return 0;
+    return;
 }
 
 t_max_err value_setattr_auto(t_v *x, t_object *attr, long ac, t_atom *av)

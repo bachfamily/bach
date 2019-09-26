@@ -6740,7 +6740,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_register(CLASS_BOX, s_roll_class);
 
     dev_post("bach.roll compiled %s %s", __DATE__, __TIME__);
-    return 0;
+    return;
 }
 
 t_max_err roll_setattr_clefs(t_roll *x, t_object *attr, long ac, t_atom *av){
