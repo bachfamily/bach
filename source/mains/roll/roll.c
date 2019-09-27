@@ -4582,7 +4582,7 @@ void C74_EXPORT ext_main(void *moduleRef){
 
     if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
         error("bach: bad installation");
-        return 1;
+        return;
     }
     
     CLASS_NEW_CHECK_SIZE(c, "bach.roll", 

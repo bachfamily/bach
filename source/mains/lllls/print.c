@@ -97,7 +97,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}
 	
 	c = class_new("bach.print", (method)print_new, (method)print_free, (short)sizeof(t_print), 0L, A_GIMME, 0);
@@ -137,7 +137,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	dev_post("bach.print compiled %s %s", __DATE__, __TIME__);
 	
-	return 0;
+	return;
 }
 
 void print_bang(t_print *x)

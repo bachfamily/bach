@@ -113,7 +113,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}
 	
 	c = class_new("bach.find", (method)find_new, (method)find_free, (short)sizeof(t_find), 0L, A_GIMME, 0);
@@ -229,7 +229,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	dev_post("bach.find compiled %s %s", __DATE__, __TIME__);
 	
-	return 0;
+	return;
 }
 
 t_max_err find_op_set(t_find *x, t_object *attr, long argc, t_atom *argv)

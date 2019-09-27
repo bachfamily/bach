@@ -151,7 +151,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}
 	
 	c = class_new("bach.float2rat", (method)float2rat_new, (method)float2rat_free, (short)sizeof(t_float2rat), 0L, A_GIMME, 0);
@@ -230,7 +230,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	dev_post("bach.float2rat compiled %s %s", __DATE__, __TIME__);
 	
-	return 0;
+	return;
 }
 
 void float2rat_bang(t_float2rat *x)

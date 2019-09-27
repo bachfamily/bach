@@ -114,7 +114,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}
 	
 	c = class_new("bach.iter", (method)iter_new, (method)iter_free, (short)sizeof(t_iter), 0L, A_GIMME, 0);
@@ -245,7 +245,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	dev_post("bach.iter compiled %s %s", __DATE__, __TIME__);
 	
-	return 0;
+	return;
 }
 
 void iter_bang(t_iter *x)

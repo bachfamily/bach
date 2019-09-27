@@ -5378,9 +5378,9 @@
 		9157F586232F694C00A4ADAB /* utilities */ = {
 			isa = PBXGroup;
 			children = (
-				91B6BB6D18F01DD50093DA53 /* wordcloud.c */,
-				911FC5C217AF9895004E8E49 /* hypercomment.c */,
 				9151A45D131EDC370019DF19 /* args.c */,
+				911FC5C217AF9895004E8E49 /* hypercomment.c */,
+				91B6BB6D18F01DD50093DA53 /* wordcloud.c */,
 			);
 			path = utilities;
 			sourceTree = "<group>";
@@ -5522,11 +5522,6 @@
 		9157F59C232F6AFF00A4ADAB /* linearalgebra */ = {
 			isa = PBXGroup;
 			children = (
-				91D1893A130EC1D100A2E668 /* trace.c */,
-				91D18938130EC1D100A2E668 /* minfo.c */,
-				91D18936130EC1D100A2E668 /* mtimes.c */,
-				91D18939130EC1D100A2E668 /* submatrix.c */,
-				91DA808B131B341400FCB316 /* zsearch.c */,
 				91DA8084131B341400FCB316 /* adj.c */,
 				91F6A60E1DDDDED700237E9F /* convertbase.c */,
 				91D1893B130EC1D100A2E668 /* diag.c */,
@@ -5534,6 +5529,11 @@
 				91DA8088131B341400FCB316 /* extractbasis.c */,
 				91D18937130EC1D100A2E668 /* gausselim.c */,
 				91D18935130EC1D100A2E668 /* linearsolve.c */,
+				91D18938130EC1D100A2E668 /* minfo.c */,
+				91D18936130EC1D100A2E668 /* mtimes.c */,
+				91D18939130EC1D100A2E668 /* submatrix.c */,
+				91D1893A130EC1D100A2E668 /* trace.c */,
+				91DA808B131B341400FCB316 /* zsearch.c */,
 			);
 			path = linearalgebra;
 			sourceTree = "<group>";

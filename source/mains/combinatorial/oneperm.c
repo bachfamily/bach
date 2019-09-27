@@ -96,7 +96,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}
 	
 	
@@ -130,7 +130,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	dev_post("bach.oneperm compiled %s %s", __DATE__, __TIME__);
 	
-	return 0;
+	return;
 }
 
 void oneperm_bang(t_oneperm *x)

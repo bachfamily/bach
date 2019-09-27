@@ -103,7 +103,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}
 	
 	c = class_new("bach.diff", (method)diff_new, (method)diff_free, (short)sizeof(t_diff), 0L, A_GIMME, 0);
@@ -141,7 +141,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	dev_post("bach.diff compiled %s %s", __DATE__, __TIME__);
 	
-	return 0;
+	return;
 }
 
 void diff_bang(t_diff *x)

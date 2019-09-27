@@ -916,7 +916,7 @@ CLASS_ATTR_ACCESSORS(c, "mindepth", NULL, STRUCT_mindepth_set);
 		CLASS = class_new(name, mnew, mfree, size, mmenu, type, __VA_ARGS__); \
 	else { \
 		post("Class %s too large, size = %d", name, (int) size); \
-		return 0; \
+		return; \
 	} \
 }
 

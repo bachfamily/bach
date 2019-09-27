@@ -116,7 +116,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}
 	
 	c = class_new("bach.expr", (method)bach_expr_new, (method)bach_expr_free, (short)sizeof(t_bach_expr), 0L, A_GIMME, 0);
@@ -170,7 +170,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	dev_post("bach.expr compiled %s %s", __DATE__, __TIME__);
 	
-	return 0;
+	return;
 }
 
 void bach_expr_bang(t_bach_expr *x)
@@ -222,7 +222,7 @@ void bach_expr_anything(t_bach_expr *x, t_symbol *msg, long ac, t_atom *av)
     } else {
         t_lexpr *lexpr;
         if (msg != _sym_bang)
-            llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet) ? 1 : 0;
+            llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet);
         
         if (inlet == 0) {
             

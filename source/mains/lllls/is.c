@@ -91,7 +91,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}
 	
 	c = class_new("bach.is", (method)is_new, (method)is_free, (short)sizeof(t_is), 0L, A_GIMME, 0);
@@ -123,7 +123,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
 
-	return 0;
+	return;
 }
 
 void is_bang(t_is *x)

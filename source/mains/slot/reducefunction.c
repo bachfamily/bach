@@ -116,7 +116,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}	
 	
 	c = class_new("bach.reducefunction", (method)reducefunction_new, (method)reducefunction_free, (short)sizeof(t_reducefunction), 0L, A_GIMME, 0);
@@ -190,7 +190,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	dev_post("bach.reducefunction compiled %s %s", __DATE__, __TIME__);
 	
-	return 0;
+	return;
 }
 
 t_max_err reducefunction_setattr_algorithm(t_reducefunction *x, t_object *attr, long ac, t_atom *av){
