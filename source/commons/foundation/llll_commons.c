@@ -147,6 +147,10 @@ unsigned long bach_get_current_version(void)
 unsigned long bach_get_current_llll_version(void)
 {
     t_bach *b = ((t_bach *)gensym("bach")->s_thing);
+	if (b == NULL) {
+		object_new_typed(CLASS_NOBOX, gensym("bach"), 0, NULL);
+		b = (t_bach *)gensym("bach")->s_thing; // initialize global variable for this object!
+	}
 	if (!b || NOGOOD(b) || object_classname(b) != gensym("bach"))
 		return 0;
     unsigned long v = b->b_llll_version;
