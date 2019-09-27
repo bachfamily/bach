@@ -297,12 +297,12 @@
     <ClCompile Include="..\..\mains\bach\bach.c" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="..\..\resources\bach_resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="bach_lib.vcxproj">
       <Project>{df55a42a-cbf8-4f3d-9bf4-e99e6219cd31}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="..\..\resources\bach_resources.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

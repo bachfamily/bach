@@ -121,7 +121,7 @@ t_max_err initpargs_run(t_initpargs *x, t_symbol *msg, long ac, t_atom *av);
 void initpargs_run_do(t_initpargs *x);
 
 
-//#ifdef WIN_VERSION
+#ifdef WIN_VERSION
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 
 {
@@ -161,7 +161,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
     return TRUE; 
 }
 
-//#endif // #ifdef WIN_VERSION
+#endif // #ifdef WIN_VERSION
 
 
 
