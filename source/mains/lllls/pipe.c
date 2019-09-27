@@ -98,7 +98,7 @@ void pipe_dobang(t_pipedata *pipedata);
 t_int32_atomic pipe_counter;
 t_class *pipe_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

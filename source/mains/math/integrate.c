@@ -124,7 +124,7 @@ t_max_err integrate_setattr_origin(t_integrate *x, void *attr, long ac, t_atom *
 }
 
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

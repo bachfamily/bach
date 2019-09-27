@@ -94,7 +94,7 @@ void extractbasis_anything(t_extractbasis *x, t_symbol *msg, long ac, t_atom *av
 
 t_class *extractbasis_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

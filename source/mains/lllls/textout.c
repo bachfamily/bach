@@ -99,7 +99,7 @@ DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_textout, n_selectors, textout_getattr_selector
 
 t_class *textout_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
     

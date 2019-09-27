@@ -96,7 +96,7 @@ long union_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2);
 
 t_class *union_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

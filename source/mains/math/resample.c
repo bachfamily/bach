@@ -135,7 +135,7 @@ t_max_err resample_notify(t_resample *x, t_symbol *s, t_symbol *msg, void *sende
 
 t_class *resample_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

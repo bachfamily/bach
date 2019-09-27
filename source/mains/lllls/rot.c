@@ -85,7 +85,7 @@ DEFINE_STANDARD_MINDEPTH_SETTER(t_rot);
 
 t_class *rot_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

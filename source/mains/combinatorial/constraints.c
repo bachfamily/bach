@@ -319,7 +319,7 @@ void post_score_constraintwise(t_constraint *c, t_score_and_good *s);
 
 t_class *constraints_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
     

@@ -98,7 +98,7 @@ t_max_err append_setattr_set(t_append *x, t_object *attr, long ac, t_atom *av);
 
 t_class *append_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
     

@@ -312,7 +312,7 @@ t_max_err graph_setattr_maxtheta(t_graph *x, t_object *attr, long ac, t_atom *av
 }
 
 
-int T_EXPORT main(void){
+void C74_EXPORT ext_main(void *moduleRef){
 	t_class *c;
 	
 	common_symbols_init();

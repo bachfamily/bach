@@ -91,7 +91,7 @@ t_max_err comb_setattr_kend(t_comb *x, void *attr, long ac, t_atom *av);
 t_class *comb_class;
 
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
     

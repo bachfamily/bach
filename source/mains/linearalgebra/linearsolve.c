@@ -103,7 +103,7 @@ void linearsolve_anything(t_linearsolve *x, t_symbol *msg, long ac, t_atom *av);
 
 t_class *linearsolve_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

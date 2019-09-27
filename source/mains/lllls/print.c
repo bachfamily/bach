@@ -89,7 +89,7 @@ void print_setprintpopup(t_print *x, t_symbol *s, long ac, t_atom *av);
 
 t_class *print_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	common_symbols_init();

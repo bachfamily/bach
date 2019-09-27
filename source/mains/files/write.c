@@ -99,7 +99,7 @@ t_max_err write_setattr_indent(t_write *x, t_object *attr, long ac, t_atom *av);
 
 t_class *write_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

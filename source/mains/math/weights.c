@@ -104,7 +104,7 @@ long bach_weights_cmd(t_weights_iteration_data *x, long cmd);
 
 t_class *weights_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

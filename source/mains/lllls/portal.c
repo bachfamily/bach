@@ -104,7 +104,7 @@ void portal_remove_from_portalpatchers(t_portal *x);
 
 t_class *portal_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

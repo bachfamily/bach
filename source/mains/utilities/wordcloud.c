@@ -195,7 +195,7 @@ void wordcloud_end_preset(t_wordcloud *x);
 void wordcloud_setinterleaved(t_wordcloud *x, t_symbol *s, long argc, t_atom *argv);
 
 
-int T_EXPORT main(void){
+void C74_EXPORT ext_main(void *moduleRef){
 	t_class *c;
 	
 	common_symbols_init();

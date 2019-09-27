@@ -571,7 +571,7 @@ t_max_err tree_setattr_maxundosteps(t_tree *x, t_object *attr, long ac, t_atom *
     return MAX_ERR_NONE;
 }
 
-int T_EXPORT main(void){
+void C74_EXPORT ext_main(void *moduleRef){
     t_class *c;
     
     common_symbols_init();

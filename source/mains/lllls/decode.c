@@ -100,7 +100,7 @@ t_incoming *incoming_new(void);
 t_class *decode_class;
 t_class *incoming_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

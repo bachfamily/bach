@@ -105,7 +105,7 @@ long iter_lambda(t_iter *x, t_llll *lambda_ll);
 
 t_class *iter_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

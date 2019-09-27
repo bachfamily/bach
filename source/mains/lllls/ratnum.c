@@ -320,7 +320,8 @@ void ratnum_preset(t_ratnum *x){
 }
 
 
-int T_EXPORT main(void){
+void C74_EXPORT ext_main(void *moduleRef)
+{
 	t_class *c;
 	
 	common_symbols_init();
@@ -328,7 +329,7 @@ int T_EXPORT main(void){
 
 	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
-		return 1;
+		return;
 	}
 	
 	c = class_new("bach.ratnum", 
@@ -546,7 +547,7 @@ int T_EXPORT main(void){
 	class_register(CLASS_BOX, s_ratnum_class);
 	
 	dev_post("bach.ratnum compiled %s %s", __DATE__, __TIME__);
-	return 0;
+	return;
 }
 
 void ratnum_assist(t_ratnum *x, void *b, long m, long a, char *s){

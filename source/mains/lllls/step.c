@@ -120,7 +120,7 @@ long step_lambda(t_step *x, t_llll *lambda_ll);
 
 t_class *step_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

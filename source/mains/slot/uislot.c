@@ -389,7 +389,7 @@ myobject_end_preset
 
 */
 
-int T_EXPORT main(void){
+void C74_EXPORT ext_main(void *moduleRef){
     t_class *c;
     
     common_symbols_init();

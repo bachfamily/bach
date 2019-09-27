@@ -98,7 +98,7 @@ void reg_dblclick(t_reg *x);
 t_class *reg_class;
 
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
     

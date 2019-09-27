@@ -88,7 +88,7 @@ void textin_add_symbol_to_this(t_textin *x, t_symbol *sym);
 
 t_class *textin_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
     

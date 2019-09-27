@@ -87,7 +87,7 @@ t_max_err subs_setattr_set(t_subs *x, t_object *attr, long ac, t_atom *av);
 
 t_class *subs_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

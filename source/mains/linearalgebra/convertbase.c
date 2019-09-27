@@ -98,7 +98,7 @@ void convertbase_anything(t_convertbase *x, t_symbol *msg, long ac, t_atom *av);
 
 t_class *convertbase_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

@@ -88,7 +88,7 @@ void bachtree2omtree_anything(t_bachtree2omtree *x, t_symbol *msg, long ac, t_at
 
 t_class *bachtree2omtree_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

@@ -92,7 +92,7 @@ void llll2dict_setname(t_llll2dict *x, void *attr, long argc, t_atom *argv);
 
 t_class *llll2dict_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

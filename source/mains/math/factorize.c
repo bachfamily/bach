@@ -77,7 +77,7 @@ void factorize_float(t_factorize *x, double v);
 
 t_class *factorize_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

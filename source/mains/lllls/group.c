@@ -83,7 +83,7 @@ t_max_err group_check_count_llll(t_group *x, t_llll *ll);
 
 t_class *group_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

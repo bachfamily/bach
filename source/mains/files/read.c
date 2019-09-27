@@ -86,7 +86,7 @@ t_max_err read_getattr_ignore(t_read *x, t_object *attr, long *ac, t_atom **av);
 
 t_class *read_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

@@ -107,7 +107,7 @@ long bach_expr_cmd(t_expr_iteration_data *x, long cmd);
 
 t_class *bach_expr_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

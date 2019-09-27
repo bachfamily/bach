@@ -80,7 +80,7 @@ t_max_err slice_notify(t_slice *x, t_symbol *s, t_symbol *msg, void *sender, voi
 
 t_class *slice_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

@@ -166,7 +166,7 @@ t_class *xshelf_class;
 
 t_library *the_library; // only one exists!
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

@@ -85,7 +85,7 @@ t_class *pick_class;
 void pick_output(t_pick *x);
 
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

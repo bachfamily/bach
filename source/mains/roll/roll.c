@@ -4572,7 +4572,7 @@ t_max_err roll_setvalueof(t_roll *x, long ac, t_atom *av)
 
 
 
-int T_EXPORT main(void){
+void C74_EXPORT ext_main(void *moduleRef){
     t_class *c;
     
     common_symbols_init();

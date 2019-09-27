@@ -95,7 +95,7 @@ DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_pack, n_prepend, pack_prepend_attr_set)
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_pack, n_append, pack_append_attr_get)
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_pack, n_append, pack_append_attr_set)
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

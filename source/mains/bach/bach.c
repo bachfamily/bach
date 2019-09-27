@@ -165,7 +165,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
 
 
 
-void ext_main(void *moduleRef)
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
 

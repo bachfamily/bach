@@ -85,7 +85,7 @@ t_max_err flat_minlevel_set(t_flat *x, t_object *attr, long argc, t_atom *argv);
 
 t_class *flat_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

@@ -5388,19 +5388,19 @@
 		9157F587232F696C00A4ADAB /* math */ = {
 			isa = PBXGroup;
 			children = (
-				91DF79F31E91935A000EB3B8 /* resample.c */,
-				1E784FA120274C1200F11D75 /* recurser.c */,
+				917F0AA217E1BCD100814766 /* arithmser.c */,
+				91B1BD0D18DB256B0056AD47 /* derive.c */,
+				91D7CA521233D37500D767D4 /* expr.c */,
+				91BE0060125A0200002763D1 /* factorize.c */,
 				9112236818B0B4D900B6B86A /* float2rat.c */,
 				917FAA80171405B70049926A /* fft.c */,
-				91CD576513258FAC00644710 /* graph.c */,
-				91B1BD0D18DB256B0056AD47 /* derive.c */,
-				91B1BD0F18DB25830056AD47 /* integrate.c */,
-				91D7CA521233D37500D767D4 /* expr.c */,
-				917F0AA217E1BCD100814766 /* arithmser.c */,
-				91BE0060125A0200002763D1 /* factorize.c */,
 				917F0B4117E1F59000814766 /* geomser.c */,
+				91CD576513258FAC00644710 /* graph.c */,
+				91B1BD0F18DB25830056AD47 /* integrate.c */,
 				91BEFFA11259DFE9002763D1 /* prime.c */,
 				91BE00F7125A11DE002763D1 /* primeser.c */,
+				91DF79F31E91935A000EB3B8 /* resample.c */,
+				1E784FA120274C1200F11D75 /* recurser.c */,
 				91C1AC7E188EB80D008FD25B /* weights.c */,
 			);
 			path = math;
@@ -5500,21 +5500,21 @@
 		9157F59B232F6AC000A4ADAB /* notation */ = {
 			isa = PBXGroup;
 			children = (
+				1E5F440E1526153C0085FA87 /* bachtree2omtree.c */,
+				91C9726D1272304D008F76B6 /* beatbox.c */,
+				91E8F4CD1275C738007E7A0A /* beatunbox.c */,
 				91DA8085131B341400FCB316 /* circle.c */,
 				91DA8089131B341400FCB316 /* ivec.c */,
+				9108DB69145D65BA00C6289F /* mc2n.c */,
+				1ED51E2F1F73F5EA0021C2D5 /* mc2p.c */,
+				1E5F437E152610C70085FA87 /* omtree2bachtree.c */,
 				9108DB6B145D65CB00C6289F /* n2mc.c */,
 				1ED51E301F73F5EA0021C2D5 /* p2mc.c */,
 				91DA808A131B341400FCB316 /* primeform.c */,
-				9108DB69145D65BA00C6289F /* mc2n.c */,
-				1ED51E2F1F73F5EA0021C2D5 /* mc2p.c */,
 				916120411DD3D576003CEE3A /* playkeys.c */,
 				91C0A67512C5237000C31264 /* quantize.c */,
 				9112236A18B0B4F700B6B86A /* tonnetz.c */,
 				1ED42DBD1F8A9D52008EC1D9 /* transcribe.c */,
-				1E5F440E1526153C0085FA87 /* bachtree2omtree.c */,
-				91C9726D1272304D008F76B6 /* beatbox.c */,
-				91E8F4CD1275C738007E7A0A /* beatunbox.c */,
-				1E5F437E152610C70085FA87 /* omtree2bachtree.c */,
 			);
 			path = notation;
 			sourceTree = "<group>";

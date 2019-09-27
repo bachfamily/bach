@@ -88,7 +88,7 @@ long msort_func(t_msort *x, t_llllelem *a, t_llllelem *b);
 
 t_class *msort_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

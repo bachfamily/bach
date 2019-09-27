@@ -142,7 +142,7 @@ t_max_err float2rat_setattr_algorithm(t_float2rat *x, t_object *attr, long ac, t
 }	
 
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

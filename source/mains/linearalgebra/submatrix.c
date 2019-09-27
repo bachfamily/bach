@@ -97,7 +97,7 @@ void submatrix_anything(t_submatrix *x, t_symbol *msg, long ac, t_atom *av);
 
 t_class *submatrix_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

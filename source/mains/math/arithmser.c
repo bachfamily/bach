@@ -91,7 +91,7 @@ t_max_err arithmser_parse_llll(t_arithmser *x, t_llll *inlist, long inlet, const
 
 t_class *arithmser_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

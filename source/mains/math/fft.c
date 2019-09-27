@@ -107,7 +107,7 @@ t_max_err fft_notify(t_fft *x, t_symbol *s, t_symbol *msg, void *sender, void *d
 
 t_class *fft_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

@@ -158,7 +158,7 @@ static t_class *s_hypercomment_class = NULL;
 /**********************************************************************/
 // Class Definition and Life Cycle
 
-int T_EXPORT main(void)
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c; 
 	

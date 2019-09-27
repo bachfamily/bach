@@ -107,7 +107,7 @@ t_max_err reducefunction_setattr_algorithm(t_reducefunction *x, t_object *attr, 
 
 t_class *reducefunction_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

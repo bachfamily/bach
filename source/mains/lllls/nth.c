@@ -87,7 +87,7 @@ void nth_anything(t_nth *x, t_symbol *msg, long ac, t_atom *av);
 
 t_class *nth_class;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	

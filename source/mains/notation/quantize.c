@@ -444,7 +444,7 @@ void quantize_dynamicminimalunits(t_quantize *x, t_symbol *msg, long ac, t_atom 
 }
 
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
     

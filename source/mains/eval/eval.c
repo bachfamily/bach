@@ -101,7 +101,7 @@ t_max_err eval_check_triggers_llll(t_eval *x, t_llll *ll);
 t_class *eval_class;
 
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
     

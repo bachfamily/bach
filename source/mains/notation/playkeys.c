@@ -450,7 +450,7 @@ t_symbol *property_to_symbol(long property)
 
 
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
     

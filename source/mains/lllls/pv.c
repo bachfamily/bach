@@ -105,7 +105,7 @@ t_class *pv_class;
 
 extern t_bach* bach;
 
-int T_EXPORT main()
+void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
 	
