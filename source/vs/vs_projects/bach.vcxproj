@@ -294,6 +294,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\commonsyms.c" />
+    <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\dllmain_win.c" />
     <ClCompile Include="..\..\mains\bach\bach.c" />
   </ItemGroup>
   <ItemGroup>

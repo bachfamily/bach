@@ -118,50 +118,6 @@ void initpargs_free(t_initpargs *x);
 void initpargs_add(t_initpargs *x, t_symbol *msg, long ac, t_atom *av);
 void initpargs_remove(t_initpargs *x, t_symbol *msg, long ac, t_atom *av);
 t_max_err initpargs_run(t_initpargs *x, t_symbol *msg, long ac, t_atom *av);
-void initpargs_run_do(t_initpargs *x);
-
-
-#ifdef WIN_VERSION
-
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 
-{
-#ifdef BACH_SLEEP_BEFORE_INIT
-	Sleep(60000);
-#endif
-    hinst = hinstDLL;
-    // Perform actions based on the reason for calling.    
-    switch( fdwReason ) 
-    {         
-        case DLL_PROCESS_ATTACH:
-         // Initialize once for each new process.  Return FALSE to fail DLL load.
-            // Since we do nothing in our DLL_THREAD_ATTACH and DLL_THREAD_DETACH calls below, 
-            // we don't need to actually receive those calls. The below call tells the OS to 
-            // optimize those out.  
-            DisableThreadLibraryCalls(hinstDLL);
-#ifdef _DEBUG
-            {
-                char buff[_MAX_PATH];
-                OutputDebugString("DLL_PROCESS_ATTACH: ");
-                GetModuleFileName(hinstDLL, buff, _MAX_PATH);
-                OutputDebugString(buff);
-                OutputDebugString("\n");
-            }
-#endif
-            break;
-        case DLL_THREAD_ATTACH:         
-            // Do thread-specific initialization.
-            break;        
-        case DLL_THREAD_DETACH:
-            // Do thread-specific cleanup.            
-            break;
-        case DLL_PROCESS_DETACH:        
-            // Perform any necessary cleanup.
-            break;    
-    }    
-    return TRUE; 
-}
-
-#endif // #ifdef WIN_VERSION
 
 
 
@@ -754,7 +710,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 
 t_symbol *get_buildnumber_sym(void)
 {
-    
+    /*
     const std::string buildDate = __DATE__;
     const std::string buildTime = __TIME__;
     
@@ -797,7 +753,8 @@ t_symbol *get_buildnumber_sym(void)
     
     std::string bn;
     bn = year + monthNum + day + hour + min + sec;
-    return gensym(bn.c_str());
+    return gensym(bn.c_str());*/
+	return gensym("foo");
 }
 
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av)
@@ -1433,7 +1390,7 @@ t_uint32 murmur3(const t_uint32 key)
 }
 
 void bach_unlock(t_bach *x, t_atom_long l)
-{
+{/*
     t_datetime dt;
     systime_datetime(&dt);
     unsigned long h = murmur3(dt.year);
@@ -1469,11 +1426,11 @@ void bach_unlock(t_bach *x, t_atom_long l)
 
     std::string echo = "echo " + std::to_string(l) + " > " + dq + name + dq;
     system(mkdir.c_str());
-    system(echo.c_str());
+    system(echo.c_str());*/
 }
 
 t_bool bach_checkauth()
-{
+{/*
     std::string dq = "\"";
 
 #ifdef MAC_VERSION
@@ -1520,7 +1477,7 @@ t_bool bach_checkauth()
     h = murmur3(dt.year - 1);
     if (code == h)
         return true;
-    else
+    else*/
         return false;
 }
 
