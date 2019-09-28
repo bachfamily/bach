@@ -118,50 +118,6 @@ void initpargs_free(t_initpargs *x);
 void initpargs_add(t_initpargs *x, t_symbol *msg, long ac, t_atom *av);
 void initpargs_remove(t_initpargs *x, t_symbol *msg, long ac, t_atom *av);
 t_max_err initpargs_run(t_initpargs *x, t_symbol *msg, long ac, t_atom *av);
-void initpargs_run_do(t_initpargs *x);
-
-
-//#ifdef WIN_VERSION
-
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved ) 
-{
-#ifdef BACH_SLEEP_BEFORE_INIT
-	Sleep(60000);
-#endif
-    hinst = hinstDLL;
-    // Perform actions based on the reason for calling.    
-    switch( fdwReason ) 
-    {         
-        case DLL_PROCESS_ATTACH:
-         // Initialize once for each new process.  Return FALSE to fail DLL load.
-            // Since we do nothing in our DLL_THREAD_ATTACH and DLL_THREAD_DETACH calls below, 
-            // we don't need to actually receive those calls. The below call tells the OS to 
-            // optimize those out.  
-            DisableThreadLibraryCalls(hinstDLL);
-#ifdef _DEBUG
-            {
-                char buff[_MAX_PATH];
-                OutputDebugString("DLL_PROCESS_ATTACH: ");
-                GetModuleFileName(hinstDLL, buff, _MAX_PATH);
-                OutputDebugString(buff);
-                OutputDebugString("\n");
-            }
-#endif
-            break;
-        case DLL_THREAD_ATTACH:         
-            // Do thread-specific initialization.
-            break;        
-        case DLL_THREAD_DETACH:
-            // Do thread-specific cleanup.            
-            break;
-        case DLL_PROCESS_DETACH:        
-            // Perform any necessary cleanup.
-            break;    
-    }    
-    return TRUE; 
-}
-
-//#endif // #ifdef WIN_VERSION
 
 
 
@@ -746,7 +702,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     gensym("bach")->s_thing = (t_object *) x;
     
     bach_init_bifs(x);
-    x->b_thePvManager = pvManager::getPvManager();
+    x->b_thePvManager = new pvManager(); //// CULPRIT
     
     defer_low(x, (method) bach_init_print, NULL, 0, NULL);
     return x;
@@ -798,6 +754,7 @@ t_symbol *get_buildnumber_sym(void)
     std::string bn;
     bn = year + monthNum + day + hour + min + sec;
     return gensym(bn.c_str());
+	return gensym("foo");
 }
 
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av)
@@ -1288,8 +1245,9 @@ void bach_init_bifs(t_bach *x)
 {
     auto bifTable = x->b_bifTable = new std::unordered_map<std::string, t_function *>;
     x->b_gvt = new t_globalVariableTable;
-
-    (*bifTable)["$args"] = new t_fnArgs;
+	
+    // CULPRIT
+	(*bifTable)["$args"] = new t_fnArgs;
     (*bifTable)["$argcount"] = new t_fnArgcount;
     
     (*bifTable)["length"] = new t_fnLength;

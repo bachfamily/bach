@@ -24,15 +24,15 @@
 
 
 class pvManager final : private t_safe {
-private:
+public:
     pvManager() { };
     std::unordered_map<t_symbol*, class pvault*> name2pvault;
     ~pvManager() { };
     
-    static pvManager* self;
+    //static pvManager* self;
     
 public:
-    static pvManager* getPvManager();
+    //static pvManager* getPvManager();
     
     // call this at the end of ast creation
     t_patcherVariable* getVariable(t_symbol* name, t_object* obj);
