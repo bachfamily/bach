@@ -2253,7 +2253,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
                 double text_pad = 5 * zoom_y;
                 double curr_hairpin_start_x = 0;
                 long curr_hairpin_type = 0;
-                paint_dynamics(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad, dyn, jf_slot_dynamics, jf_slot_dynamics_roman, 18 * zoom_y, 9 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, NULL, NULL, 1, 0);
+                paint_dynamics(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad, dyn, jf_slot_dynamics, jf_slot_dynamics_roman, 18 * zoom_y, 9 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, NULL, NULL, 1, 0, true);
             }
         }
             break;
@@ -2853,7 +2853,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
                 case k_SLOT_TYPE_DYNAMICS:
                 {
                     char dyntext[1024];
-                    double width, height;
+                    double width;
                     t_dynamics *dyn = (slot->firstitem && slot->firstitem->item ? (t_dynamics *)slot->firstitem->item : NULL);
                     dyntext[0] = 0;
                     
@@ -2865,7 +2865,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
                     x_deplacement_text += width + 4 * zoom_y;
                      */
                     
-                    width = paint_dynamics(r_ob, g, &slot_color, nitem, pos_x_for_text + x_deplacement_text, -1, dyn, jf_slotdynamics, jf_slotdynamicsroman, r_ob->slot_background_font_size*2., r_ob->slot_background_font_size, pos_y_for_text, NULL, NULL, NULL, NULL, 2, 0);
+                    width = paint_dynamics(r_ob, g, &slot_color, nitem, pos_x_for_text + x_deplacement_text, -1, dyn, jf_slotdynamics, jf_slotdynamicsroman, r_ob->slot_background_font_size*2., r_ob->slot_background_font_size, pos_y_for_text, NULL, NULL, NULL, NULL, 2, 0, true);
                     x_deplacement_text += width + 4 * zoom_y;
 
                 }

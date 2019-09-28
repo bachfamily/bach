@@ -9882,7 +9882,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         if (x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.link_dynamics_to_slot <= CONST_MAX_SLOTS && !x->r_ob.slotinfo[x->r_ob.link_dynamics_to_slot-1].slot_singleslotfortiednotes)
                             must_paint = true;
                         if (must_paint)
-                                paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, dynamics_duration_x, dyn, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, 0, 0);
+                                paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, dynamics_duration_x, dyn, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, 0, 0, false);
                     }
                 }
 
@@ -10360,7 +10360,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             if (lastch)
                 curr_hairpin_end_x = ms_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
 //            curr_hairpin_end_x = onset_to_xposition_roll((t_notation_obj *)x, lastch->onset, NULL);
-            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &old_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, 0, 0);
+            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &old_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, 0, 0, false);
         }
     }
 
