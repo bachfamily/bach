@@ -111,7 +111,7 @@ public:
 
 
 
-static pvManager* thePvManager = bach->b_thePvManager;
+//static pvManager* thePvManager = bach->b_thePvManager;
 
 void pvault::pvPatchNode::introduceChild(pvPatchNode* child) {
 
@@ -362,7 +362,7 @@ void pvault::addClient(t_object *obj, long priority)
 
 
 
-pvManager* pvManager::self = nullptr;
+//pvManager* pvManager::self = nullptr;
 
 t_patcherVariable* pvManager::getVariable(t_symbol* name, t_object* obj) {
     pvault *v;
@@ -432,9 +432,11 @@ void pvManager::removeClient(t_symbol *name, t_object *obj)
     name2pvault[name]->removeClient(obj);
 }
 
+/*
 pvManager* pvManager::getPvManager()
 {
     if (self == nullptr)
         self = new pvManager();
     return self;
 }
+*/

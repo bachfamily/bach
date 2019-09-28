@@ -702,7 +702,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     gensym("bach")->s_thing = (t_object *) x;
     
     bach_init_bifs(x);
-    x->b_thePvManager = pvManager::getPvManager();
+    x->b_thePvManager = new pvManager(); //// CULPRIT
     
     defer_low(x, (method) bach_init_print, NULL, 0, NULL);
     return x;
@@ -710,7 +710,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 
 t_symbol *get_buildnumber_sym(void)
 {
-    /*
+    
     const std::string buildDate = __DATE__;
     const std::string buildTime = __TIME__;
     
@@ -753,7 +753,7 @@ t_symbol *get_buildnumber_sym(void)
     
     std::string bn;
     bn = year + monthNum + day + hour + min + sec;
-    return gensym(bn.c_str());*/
+    return gensym(bn.c_str());
 	return gensym("foo");
 }
 
@@ -1245,8 +1245,9 @@ void bach_init_bifs(t_bach *x)
 {
     auto bifTable = x->b_bifTable = new std::unordered_map<std::string, t_function *>;
     x->b_gvt = new t_globalVariableTable;
-
-    (*bifTable)["$args"] = new t_fnArgs;
+	
+    // CULPRIT
+	(*bifTable)["$args"] = new t_fnArgs;
     (*bifTable)["$argcount"] = new t_fnArgcount;
     
     (*bifTable)["length"] = new t_fnLength;
@@ -1390,7 +1391,7 @@ t_uint32 murmur3(const t_uint32 key)
 }
 
 void bach_unlock(t_bach *x, t_atom_long l)
-{/*
+{
     t_datetime dt;
     systime_datetime(&dt);
     unsigned long h = murmur3(dt.year);
@@ -1426,11 +1427,11 @@ void bach_unlock(t_bach *x, t_atom_long l)
 
     std::string echo = "echo " + std::to_string(l) + " > " + dq + name + dq;
     system(mkdir.c_str());
-    system(echo.c_str());*/
+    system(echo.c_str());
 }
 
 t_bool bach_checkauth()
-{/*
+{
     std::string dq = "\"";
 
 #ifdef MAC_VERSION
@@ -1477,7 +1478,7 @@ t_bool bach_checkauth()
     h = murmur3(dt.year - 1);
     if (code == h)
         return true;
-    else*/
+    else
         return false;
 }
 
