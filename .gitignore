@@ -30,6 +30,9 @@ Thumbs.db
 *.pbxuser
 *.mode*
 
+# Visual Studio User Data #
+###########################
+*.vcxproj.user
 
 # Emacs temp files for .gitignore and .gitattributes #
 ######################################################
