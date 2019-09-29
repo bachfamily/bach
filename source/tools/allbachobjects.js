@@ -6,7 +6,7 @@ var howMany = 1;
 var allPatches = [];
 
 var allObjects = [
-
+/*
 ["bach.append", ""],
 ["bach.classify", ""],
 ["bach.collect", ""],
@@ -32,7 +32,7 @@ var allObjects = [
 ["bach.mapelem", ""],
 ["bach.mdelace", ""],
 ["bach.minmax", ""],
-["bach.msort", ""],
+["bach.msort", ""], 
 ["bach.pack", "foo"],
 ["bach.pad", ""],
 ["bach.pick", 1],
@@ -43,7 +43,7 @@ var allObjects = [
 ["bach.pv", "foo"],
 ["bach.ratnum", ""],
 ["bach.reg", ""],
-["bach.rot", ""],
+["bach.rot", ""],*/
 ["bach.shelf", ""],
 ["bach.sort", ""],
 ["bach.ssort", ""],
@@ -60,7 +60,7 @@ var allObjects = [
 ["bach.trans", ""],
 ["bach.value", "foo"],
 
-
+/*
 
 ["bach.==", ""], 
 ["bach.>=", ""], 
@@ -136,7 +136,7 @@ var allObjects = [
 ["bach.linearsolve", ""], 
 ["bach.minfo", ""], 
 ["bach.mtimes", ""], 
-["bach.submatrix", ""], 
+["bach.submatrix", ""],
 ["bach.trace", ""], 
 ["bach.zsearch", ""], 
 
@@ -150,14 +150,14 @@ var allObjects = [
 ["bach.args", ""], 
 ["bach.hypercomment", ""], 
 ["bach.wordcloud", ""], 
-
+*/
 ];
 
 function createOne(value, index, array) {
 	myPatch = new Patcher(0, 0, 500, 500);
 	myPatch.message("front");
 	myPatch.message("title", value[0]);
-	allPatches.push(myPatch);
+	allPatches.push([myPatch, value[0]]);
 	for (i = 0; i < howMany; i++) {
 		var obj = myPatch.newdefault(0, i*20, value[0], value[1]);
 		//myPatch.remove(obj);
@@ -171,7 +171,8 @@ function copies(c) {
 }
 
 function destroyPatch(value, index, array) {
-	value.message("dispose");
+	post("closing " + value[1] + "\n");
+	value[0].message("dispose");
 }
 
 function bang()
@@ -184,4 +185,5 @@ function bang()
 function closeall()
 {
 	allPatches.forEach(destroyPatch);
+	allPatches = [];
 }
