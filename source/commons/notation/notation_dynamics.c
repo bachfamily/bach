@@ -708,7 +708,7 @@ double paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
     if (firstitem && (t_symbol *)firstitem->item){
         t_dynamics *dyn = (t_dynamics *)firstitem->item;
         if (dyn && dyn->firstmark)
-            return paint_dynamics(r_ob, g, color, item, center_x, duration_x, dyn, jf_dynamics, jf_dynamics_roman, font_size, roman_font_size, y_position, curr_hairpin_start_x, curr_hairpin_type, NULL, NULL, paint_mode, 0);
+            return paint_dynamics(r_ob, g, color, item, center_x, duration_x, dyn, jf_dynamics, jf_dynamics_roman, font_size, roman_font_size, y_position, curr_hairpin_start_x, curr_hairpin_type, NULL, NULL, paint_mode, 0, true);
     }
     return 0;
 }
@@ -808,7 +808,7 @@ double paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_no
                     double center_x, double slot_window_width, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman,
                     double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x,
                     long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char paint_mode,
-                    double min_hairpin_start_x)
+                    double min_hairpin_start_x, char force_show)
 {
     char boxed = (paint_mode == 1);
     double xpos = center_x, ypos = y_position;
@@ -835,7 +835,7 @@ double paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_no
 
     if (!item) {
         // only finish the hairpin
-        if ((r_ob->show_hairpins || boxed) && curr_hairpin_type && *curr_hairpin_type && curr_hairpin_start_x) {
+        if ((r_ob->show_hairpins || force_show) && curr_hairpin_type && *curr_hairpin_type && curr_hairpin_start_x) {
             if (h < 0 && w < 0)
                 h = w = 0;
             //                jfont_text_measure(jf_dynamics, dyntext, &w, &h);
@@ -953,7 +953,7 @@ double paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_no
             }
             
             double cur = xpos, end_previous_hairpin_here = xpos;
-            if (r_ob->show_dynamics || boxed) {
+            if (r_ob->show_dynamics || force_show) {
                 if (dynamics_mark_is_zero(mark)) {
                     if (!dont_paint)
                         paint_circle_stroken(g, *color, xpos + (paint_mode == 2 ? ZEROCIRCLE_RADIUS : 0), ypos, ZEROCIRCLE_RADIUS, 1);
@@ -1010,7 +1010,7 @@ double paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_no
                     cursor_x = cur;
             } else {
                 // we paint the previous hairpin
-                if ((r_ob->show_hairpins || paint_mode > 0) && !dont_paint && mark->prev && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < end_previous_hairpin_here) {
+                if ((r_ob->show_hairpins || force_show) && !dont_paint && mark->prev && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < end_previous_hairpin_here) {
                     paint_hairpin(g, *color, mark->prev->hairpin_to_next, prev_end_xpos, end_previous_hairpin_here, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH, 0);
                 }
             }

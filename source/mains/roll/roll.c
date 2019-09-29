@@ -11462,7 +11462,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             
             double end_pos = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
             
-            paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, dyn, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, 0, x->r_ob.fade_predomain ? 0 : predomain_width);
+            paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, dyn, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, 0, x->r_ob.fade_predomain ? 0 : predomain_width, false);
         }
     }
     
@@ -11573,7 +11573,7 @@ void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf
             double curr_hairpin_end_x = rect.width * 2;
             if (lastch)
                 curr_hairpin_end_x = onset_to_xposition_roll((t_notation_obj *)x, lastch->onset, NULL);
-            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, 0, x->r_ob.fade_predomain ? 0 : predomain_width);
+            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, 0, x->r_ob.fade_predomain ? 0 : predomain_width, false);
         }
     }
 }

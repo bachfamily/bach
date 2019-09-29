@@ -10348,7 +10348,7 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
 double paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                               double center_x, double duration_x, long slot, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double staff_bottom_y, double *curr_hairpin_start_x, long *curr_hairpin_type, char paint_mode);
 double paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char paint_mode, double min_hairpin_start_x);
+                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char paint_mode, double min_hairpin_start_x, char force_show);
 
 
 
