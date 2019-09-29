@@ -6,7 +6,7 @@ var howMany = 1;
 var allPatches = [];
 
 var allObjects = [
-/*
+
 ["bach.append", ""],
 ["bach.classify", ""],
 ["bach.collect", ""],
@@ -43,24 +43,35 @@ var allObjects = [
 ["bach.pv", "foo"],
 ["bach.ratnum", ""],
 ["bach.reg", ""],
-["bach.rot", ""],*/
-["bach.shelf", ""],
-["bach.sort", ""],
+["bach.rot", ""],
+["bach.shelf", ""], 
+["bach.sort", ""], 
+
+
 ["bach.ssort", ""],
 ["bach.step", ""],
 ["bach.tree", ""],
 ["bach.textin", ""],
 ["bach.textout", ""],
 ["bach.reshape", ""],
+
+
+
 ["bach.rev", ""],
 ["bach.slice", ""],
 ["bach.subs", ""],
 ["bach.swap", ""],
 ["bach.thin", ""],
-["bach.trans", ""],
-["bach.value", "foo"],
+["bach.trans", ""], 
 
-/*
+
+
+
+
+
+["bach.value", "foo"], 
+
+
 
 ["bach.==", ""], 
 ["bach.>=", ""], 
@@ -150,7 +161,7 @@ var allObjects = [
 ["bach.args", ""], 
 ["bach.hypercomment", ""], 
 ["bach.wordcloud", ""], 
-*/
+
 ];
 
 function createOne(value, index, array) {
@@ -158,12 +169,17 @@ function createOne(value, index, array) {
 	myPatch.message("front");
 	myPatch.message("title", value[0]);
 	allPatches.push([myPatch, value[0]]);
+	var obj = null;
 	for (i = 0; i < howMany; i++) {
-		var obj = myPatch.newdefault(0, i*20, value[0], value[1]);
+		obj = myPatch.newdefault(0, i*20, value[0], value[1]);
+		if (!obj)
+			break;
 		//myPatch.remove(obj);
 	}
-		
-	post("creating " + value[0] + "\n");
+	if (!obj)
+		error("Can't create " + value[0] + "\n");
+	else
+		post("created " + value[0] + "\n");
 }
 
 function copies(c) {
