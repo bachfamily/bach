@@ -54,6 +54,9 @@ Scroll down for very important things you should now about v0.8b
 - all objects reading text files
         Fixed potential data corruption
 
+- most objects writing files
+        Now files can be saved from unsaved patches as well
+
 - bach.eval	New object
 
 - bach.diff, bach.intersection, bach.symdiff, bach.union, bach.classify
