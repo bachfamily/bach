@@ -922,13 +922,6 @@
 			"seealso" : [  ],
 			"tags" : [ "introduction", "bach", "non", "composer", "non-composer", "llll" ],
 			"title" : [ "bach for a non-composer" ]
-		},
-		"Licenseandcredits" : {
-			"filename" : [ "bach.help.introduction.09_licenseandcredits.maxpat" ],
-			"objects" : [ "all" ],
-			"seealso" : [  ],
-			"tags" : [ "introduction", "bach", "license", "credit", "acknowledgment", "creative", "common" ],
-			"title" : [ "License and credits" ]
 		}
 	},
 	"Lisp-like linked lists" : {
