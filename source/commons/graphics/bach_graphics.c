@@ -4023,6 +4023,9 @@ void paint_polygon_debug_new(t_polygon *p, t_jgraphics *g, long iteration, char 
 t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, t_pt *pts_out, t_jgraphics *g)
 {
     const double EXTRUDE_AMOUNT = 10;
+
+    if (num_pts_in <= 0)
+        return beziercs_build(0, NULL, NULL, NULL);
     
     // Refining polygon to bezier curve
     t_pt *pts = NULL; // Building array of juxtaposed points [pts_in pts_out]

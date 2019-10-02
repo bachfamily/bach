@@ -3323,6 +3323,65 @@ void score_join(t_score *x)
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_JOIN_SELECTION); 
 }
 
+/*
+void score_tailstograces_for_chord(t_score *x, t_chord *chord, t_rational sym_dur)
+{
+    t_measure *meas = chord->parent;
+    if (chord && meas) {
+        t_chord *new_chord = clone_chord((t_notation_obj *) x, chord, k_CLONE_FOR_NEW);
+        new_chord->parent = chord->parent;
+        
+        new_chord->r_sym_duration = sym_dur;
+        new_chord->is_grace_chord = true;
+        new_chord->rhythmic_tree_elem = llll_insertobj_after(new_chord, chord->rhythmic_tree_elem);
+        erase_all_notationitem_slots((t_notation_obj *) x, (t_notation_item *)new_chord);
+        
+        t_note *nnt, *ont;
+        for (ont = chord->firstnote, nnt = new_chord->firstnote; ont && nnt; ont = ont->next, nnt = nnt->next) {
+            nnt->midicents = ont->midicents + ont->lastbreakpoint->delta_mc;
+            note_delete_breakpoints((t_notation_obj *) x, nnt);
+        }
+
+        chord_insert_in_measure((t_notation_obj *)x, meas, new_chord, chord, 0);
+    }
+}
+
+void score_tailstograces(t_score *x)
+{
+    t_notation_item *curr_it;
+    char changed = false;
+    
+    lock_general_mutex((t_notation_obj *)x);
+    
+    for (curr_it = x->r_ob.firstselecteditem; curr_it; curr_it = curr_it->next_selected) {
+        switch (curr_it->type) {
+            case k_CHORD:
+            {
+                t_chord *ch = notation_item_get_parent_chord((t_notation_obj *)x, curr_it);
+                if (ch && !ch->is_grace_chord) {
+                    score_tailstograces_for_chord(x, ch, genrat(1, 8));
+                    changed = true;
+                    recompute_all_for_measure((t_notation_obj *)x, ch->parent, true);
+                }
+            }
+                break;
+
+            default:
+                break;
+        }
+    }
+    
+    if (changed)
+        perform_analysis_and_change(x, NULL, NULL, NULL, x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_IGNORE ? k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE : k_BEAMING_CALCULATION_DONT_DELETE_LEVELS + k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    if (changed) {
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TAILS_TO_GRACES);
+    }
+}
+*/
 
 void score_mergegrace(t_score *x)
 {

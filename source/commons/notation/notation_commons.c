@@ -1745,7 +1745,7 @@ void paint_venn_label_families(t_notation_obj *r_ob, t_object *view, t_jgraphics
             fam->need_update_contour = false;
         }
         
-        if (fam->contour->num_segments > 1) {
+        if (fam->contour && fam->contour->num_segments > 1) {
             // painting
             t_jrgba color = label_family_to_color(r_ob, fam);
             t_jrgba color_inner = change_alpha(color, 0.05);
@@ -37415,12 +37415,8 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
         
         // applying function
         beziercs_free(fam->contour);
-
-#ifdef CONFIGURATION_Development
+        
         fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, NULL);
-#else
-        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, NULL);
-#endif
 
         bach_freeptr(pts_out);
     }
