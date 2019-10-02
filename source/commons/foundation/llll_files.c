@@ -87,11 +87,11 @@ t_max_err bach_openfile_write(t_symbol *filename_sym, const char *default_filena
         path = path_getdefault();
     }
     err = path_createsysfile(filename, path, 'TEXT', fh);
-    if (path == -1) {
+    /*if (path == -1) {
         if (fh && *fh)
             sysfile_close(*fh);
         return FILE_ERR_CANTOPEN;
-    }
+    }*/
     if (!*fh) {
         return FILE_ERR_CANTOPEN;
     }
