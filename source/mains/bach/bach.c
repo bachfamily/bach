@@ -754,7 +754,6 @@ t_symbol *get_buildnumber_sym(void)
     std::string bn;
     bn = year + monthNum + day + hour + min + sec;
     return gensym(bn.c_str());
-	return gensym("foo");
 }
 
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av)
