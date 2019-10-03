@@ -122,8 +122,8 @@ typedef struct _circle // [bach.circle] structure
     char                    j_has_focus;
     char                    show_focus;
     
-    long                    points[CONST_MAX_POINTS];
-    long                    vels[CONST_MAX_POINTS];
+    long                    *points; // will be allocated in the new() method and freed in the free() method
+    long                    *vels; // will be allocated in the new() method and freed in the free() method
     long                    num_points;
     long                    modulo;
     
@@ -138,7 +138,7 @@ typedef struct _circle // [bach.circle] structure
     double                    point_line_width;
     double                    line_width;
     
-    t_atom                    names[CONST_MAX_POINT_NAMES]; // name of each point
+    t_atom                  *names; // name of each point, will be allocated in the new() method and freed in the free() method
     long                    num_names; // number of assigned names
     char                    send_names_through_dump;
     
@@ -256,7 +256,7 @@ void C74_EXPORT ext_main(void *moduleRef){
         return;
     }
 
-    CLASS_NEW_DONT_CHECK_SIZE(c, "bach.circle", 
+    CLASS_NEW_CHECK_SIZE(c, "bach.circle",
                         (method)circle_new,
                         (method)circle_free,
                         sizeof(t_circle),
@@ -856,6 +856,9 @@ t_circle* circle_new(t_symbol *s, long argc, t_atom *argv){
     x->n_proxy[2] = proxy_new_debug((t_object *) x, 2, &x->n_in);
     x->n_proxy[1] = proxy_new_debug((t_object *) x, 1, &x->n_in);
 
+    x->points = (long *)bach_newptr(CONST_MAX_POINTS * sizeof(long));
+    x->vels = (long *)bach_newptr(CONST_MAX_POINTS * sizeof(long));
+    x->names = (t_atom *)bach_newptr(CONST_MAX_POINT_NAMES * sizeof(t_atom));
     x->num_points = 0;
     x->is_modulo_dragging = 0;
     x->show_focus = 1;
@@ -895,6 +898,9 @@ t_circle* circle_new(t_symbol *s, long argc, t_atom *argv){
 
 void circle_free(t_circle *x){
     long i;
+    bach_freeptr(x->points);
+    bach_freeptr(x->vels);
+    bach_freeptr(x->names);
     for (i = 1; i < 3; i++)
         object_free_debug(x->n_proxy[i]);
     jbox_free(&x->j_box.l_box);

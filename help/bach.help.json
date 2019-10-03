@@ -1152,13 +1152,6 @@
 			"tags" : [ "message", "donors", "Patreon", "patron" ],
 			"title" : [ "Messages to bach: unlock" ]
 		},
-		"Versionandsendversion" : {
-			"filename" : [ "bach.help.messages to bach.03_versionandsendversion.maxpat" ],
-			"objects" : [  ],
-			"seealso" : [  ],
-			"tags" : [ "message", "version", "sendversion" ],
-			"title" : [ "Messages to bach: version and sendversion" ]
-		},
 		"Nonative" : {
 			"filename" : [ "bach.help.messages to bach.04_nonative.maxpat" ],
 			"objects" : [ "all" ],
