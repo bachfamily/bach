@@ -288,7 +288,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.lib</TargetExt>
-    <OutDir>..\vs_stuff\lib\Debug\Win32\</OutDir>
+    <OutDir>..\vs_stuff\lib\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib</TargetName>
     <IncludePath>..\..\commons;..\..\commons\libraries\SDIF-3.11.4-src\include;..\..\commons\libraries\SDIF-3.11.4-src\sdif;$(IncludePath)</IncludePath>
@@ -297,7 +297,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.lib</TargetExt>
-    <OutDir>..\vs_stuff\lib\Debug\x64\</OutDir>
+    <OutDir>..\vs_stuff\lib\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib</TargetName>
     <IncludePath>..\..\commons;..\..\commons\libraries\SDIF-3.11.4-src\include;..\..\commons\libraries\SDIF-3.11.4-src\sdif;$(IncludePath)</IncludePath>
@@ -306,7 +306,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.lib</TargetExt>
-    <OutDir>..\vs_stuff\lib\Release\Win32\</OutDir>
+    <OutDir>..\vs_stuff\lib\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib</TargetName>
     <IncludePath>..\..\commons;..\..\commons\libraries\SDIF-3.11.4-src\include;..\..\commons\libraries\SDIF-3.11.4-src\sdif;$(IncludePath)</IncludePath>
@@ -315,7 +315,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.lib</TargetExt>
-    <OutDir>..\vs_stuff\lib\Release\x64</OutDir>
+    <OutDir>..\vs_stuff\lib\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib</TargetName>
     <IncludePath>..\..\commons;..\..\commons\libraries\SDIF-3.11.4-src\include;..\..\commons\libraries\SDIF-3.11.4-src\sdif;$(IncludePath)</IncludePath>
