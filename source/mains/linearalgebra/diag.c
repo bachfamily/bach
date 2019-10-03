@@ -103,7 +103,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 
-	c = class_new("bach.diag", (method)diag_new, (method)diag_free, (short)sizeof(t_diag), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.diag", (method)diag_new, (method)diag_free, (long) sizeof(t_diag), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Build matrix having incoming llll as diagonal.
 	// @description The object outputs a matrix having the incoming llll as diagonal, and zeros everywhere else. <br />

@@ -332,7 +332,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.ratnum", 
+    CLASS_NEW_CHECK_SIZE(c, "bach.ratnum", 
 						(method)ratnum_new,
 						(method)ratnum_free,
 						sizeof(t_ratnum),

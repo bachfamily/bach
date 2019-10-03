@@ -100,7 +100,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.textin", (method)textin_new, (method)textin_free, (short)sizeof(t_textin), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.textin", (method)textin_new, (method)textin_free, (long) sizeof(t_textin), 0L, A_GIMME, 0);
     
     // @method llll @digest A text-format llll received in any inlet
     // is interpreted according to specific rules set by the <m>ignore</m> attribute.

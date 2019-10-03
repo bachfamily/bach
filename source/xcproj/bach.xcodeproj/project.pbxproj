@@ -1068,6 +1068,13 @@
 			remoteGlobalIDString = 918129441611AEA700473F86;
 			remoteInfo = lib_bach;
 		};
+		9142BDB623462017003C19DE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 913D57CA232B97AD00BC6B45;
+			remoteInfo = bell_strparser;
+		};
 		9156DB591D2955D900002A01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -8165,6 +8172,7 @@
 				91BCCC541F56E42A002D8BE2 /* PBXTargetDependency */,
 				91BCCC641F602B49002D8BE2 /* PBXTargetDependency */,
 				91A5EC491F7D89D10052FBF6 /* PBXTargetDependency */,
+				9142BDB723462017003C19DE /* PBXTargetDependency */,
 			);
 			name = lib_bach;
 			productName = _lib_everything;
@@ -13270,6 +13278,11 @@
 			isa = PBXTargetDependency;
 			target = 918129441611AEA700473F86 /* lib_bach */;
 			targetProxy = 913F87821C20B59000C9CAE0 /* PBXContainerItemProxy */;
+		};
+		9142BDB723462017003C19DE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 913D57CA232B97AD00BC6B45 /* bell_strparser */;
+			targetProxy = 9142BDB623462017003C19DE /* PBXContainerItemProxy */;
 		};
 		9156DB581D2955D900002A01 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

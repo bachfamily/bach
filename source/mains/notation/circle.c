@@ -256,7 +256,7 @@ void C74_EXPORT ext_main(void *moduleRef){
         return;
     }
 
-    c = class_new("bach.circle", 
+    CLASS_NEW_DONT_CHECK_SIZE(c, "bach.circle", 
                         (method)circle_new,
                         (method)circle_free,
                         sizeof(t_circle),

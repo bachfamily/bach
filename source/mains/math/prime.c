@@ -94,7 +94,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.prime", (method)prime_new, NULL, (short)sizeof(t_prime), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.prime", (method)prime_new, NULL, (long) sizeof(t_prime), 0L, A_GIMME, 0);
 
 	// @method int @digest Perform the primality test
 	// @description The primality test is performed on the integer.

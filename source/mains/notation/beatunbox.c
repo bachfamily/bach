@@ -117,7 +117,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.beatunbox", (method)beatunbox_new, (method)beatunbox_free, (short)sizeof(t_beatunbox), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.beatunbox", (method)beatunbox_new, (method)beatunbox_free, (long) sizeof(t_beatunbox), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Receive score syntax and remove the measure parenthesis level. 
 	// @description 

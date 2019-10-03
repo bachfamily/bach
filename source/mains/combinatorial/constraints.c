@@ -331,7 +331,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.constraints", (method)constraints_new, (method)constraints_free, (short)sizeof(t_constraints), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.constraints", (method)constraints_new, (method)constraints_free, (long) sizeof(t_constraints), 0L, A_GIMME, 0);
     
     // @method llll @digest Function depends on inlet
     // @description

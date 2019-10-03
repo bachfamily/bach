@@ -115,7 +115,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.linearsolve", (method)linearsolve_new, (method)linearsolve_free, (short)sizeof(t_linearsolve), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.linearsolve", (method)linearsolve_new, (method)linearsolve_free, (long) sizeof(t_linearsolve), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Function depends on inlet
 	// @description In the first inlet, an llll sets the system matrix A and have bach.linearsolve solve the linear system. <br />

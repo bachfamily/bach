@@ -100,7 +100,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.msort", (method)msort_new, (method)msort_free, (short)sizeof(t_msort), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.msort", (method)msort_new, (method)msort_free, (long) sizeof(t_msort), 0L, A_GIMME, 0);
 	
 	class_addmethod(c, (method)msort_anything,		"anything",		A_GIMME,	0);
 	

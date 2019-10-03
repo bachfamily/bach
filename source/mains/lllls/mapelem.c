@@ -108,7 +108,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.mapelem", (method)mapelem_new, (method)mapelem_free, (short)sizeof(t_mapelem), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.mapelem", (method)mapelem_new, (method)mapelem_free, (long) sizeof(t_mapelem), 0L, A_GIMME, 0);
 	
     // @method llll @digest Function depends on inlet
     // @description An llll in the first inlet will trigger the mapping via the lambda loop.

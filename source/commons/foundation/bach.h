@@ -147,6 +147,26 @@
 		#define BACH_LLLLELEM_BOOK_SIZE (2 << (BACH_LLLLELEM_MAX_NUMBER_EXPONENT - BACH_LLLLELEM_PAGE_SIZE_EXPONENT - 1))
 
 
+#define BACH_STATIC_ASSERT(e, m) typedef char __BACH_STATIC_ASSERT__[(e)?1:-1]
+
+// A wrapper for class_new() also checking that the class size is acceptable
+// Useful for debugging huge objects such as bach.score
+
+#define CLASS_NEW_CHECK_SIZE(CLASS, name, mnew, mfree, size, mmenu, type, ...) \
+{ \
+    BACH_STATIC_ASSERT(size < 16384 - 16, "Class too large"); \
+    if (size < 16384 - 16) \
+        CLASS = class_new(name, mnew, mfree, size, mmenu, type, __VA_ARGS__); \
+    else { \
+        post("Class %s too large, size = %d", name, (int) size); \
+        return; \
+    } \
+}
+
+#define CLASS_NEW_DONT_CHECK_SIZE(CLASS, name, mnew, mfree, size, mmenu, type, ...) \
+{ CLASS = class_new(name, mnew, mfree, size, mmenu, type, __VA_ARGS__); }
+
+
 #include <assert.h>
 
 // a macro to mark exported symbols in the code without requiring an external file to define them

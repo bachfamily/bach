@@ -96,7 +96,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	CLASS_NEW_CHECK_SIZE(c, "bach.trans", (method)trans_new, (method)trans_free, (short)sizeof(t_trans), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.trans", (method)trans_new, (method)trans_free, (long) sizeof(t_trans), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Perform matrix transposition
 	// <o>bach.trans</o> returns an llll composed by a sublist with all the first elements of every sublist of the incoming llll;

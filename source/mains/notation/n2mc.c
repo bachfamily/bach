@@ -105,7 +105,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.n2mc", (method)n2mc_new, (method)n2mc_free, (short)sizeof(t_n2mc), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.n2mc", (method)n2mc_new, (method)n2mc_free, (long) sizeof(t_n2mc), 0L, A_GIMME, 0);
     
     // @method llll @digest Convert note names to midicents
     // @description The function outputs an llll formatted as the incoming one, but containing the midicents values 

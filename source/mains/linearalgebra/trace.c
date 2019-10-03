@@ -102,7 +102,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.trace", (method)trace_new, (method)trace_free, (short)sizeof(t_trace), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.trace", (method)trace_new, (method)trace_free, (long) sizeof(t_trace), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Output trace of incoming matrix
 	// @description The object outputs the trace of the incoming matrix. <br />

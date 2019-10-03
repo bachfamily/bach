@@ -1270,7 +1270,7 @@ static const flex_int16_t yy_nxt[4257] =
       222,  222,  222,  222,  222,  222,  222,  223,  223,  223,
       223,  223,  223,  223,  223,  223,  617,  223,  223,  223,
       223,  223,  223,  223,  224,  224,  224,  224,  224,  224,
-      224,  224,  224,  224,  224,  224,  224,  224,  224,  224,
+      224,  224,  224,  617,  224,  224,  224,  224,  224,  224,
       224,  228,  617,  228,  228,  228,  617,  617,  617,  228,
       228,  228,  228,  617,  617,  617,  228,  230,  617,  230,
       230,  617,  617,  617,  617,  230,  230,  230,  230,  617,
@@ -1742,7 +1742,7 @@ static const flex_int16_t yy_chk[4257] =
       631,  631,  631,  631,  631,  631,  631,  632,  632,  632,
       632,  632,  632,  632,  632,  632,    0,  632,  632,  632,
       632,  632,  632,  632,  633,  633,  633,  633,  633,  633,
-      633,  633,  633,  633,  633,  633,  633,  633,  633,  633,
+      633,  633,  633,    0,  633,  633,  633,  633,  633,  633,
       633,  634,    0,  634,  634,  634,    0,    0,    0,  634,
       634,  634,  634,    0,    0,    0,  634,  635,    0,  635,
       635,    0,    0,    0,    0,  635,  635,  635,  635,    0,
@@ -1785,9 +1785,27 @@ static const flex_int16_t yy_chk[4257] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
+    /*
+     *  stringparser.l
+     *
+     * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+     *
+     * This program is free software: you can redistribute it and/or modify it
+     * under the terms of the GNU General Public License
+     * as published by the Free Software Foundation,
+     * either version 3 of the License, or (at your option) any later version.
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+     * See the GNU General Public License for more details.
+     * You should have received a copy of the GNU General Public License
+     * along with this program.
+     * If not, see <https://www.gnu.org/licenses/>.
+     *
+     */
 
     #ifdef CONFIGURATION_Development
-    // #define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
+    //#define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
     #endif
     
     #ifndef code_dev_post
@@ -2720,14 +2738,14 @@ case 68:
 /* rule 68 can match eol */
 YY_RULE_SETUP
 {
-    code_dev_post("lex: block comment: %s", yytext);
+    code_dev_post("lex: block comment [^\\)]* : %s", yytext);
 }
 	YY_BREAK
 case 69:
 /* rule 69 can match eol */
 YY_RULE_SETUP
 {
-    code_dev_post("lex: block comment: %s", yytext);
+    code_dev_post("lex: block comment \")\"[^\\#]+ : )%s", yytext);
 }
 	YY_BREAK
 case 70:

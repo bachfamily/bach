@@ -99,7 +99,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.poset", (method)poset_new, (method)poset_free, (short)sizeof(t_poset), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.poset", (method)poset_new, (method)poset_free, (long) sizeof(t_poset), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Store data and compute poset
 	// @description

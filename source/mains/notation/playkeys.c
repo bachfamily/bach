@@ -462,7 +462,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.playkeys", (method)playkeys_new, (method)playkeys_free, (short)sizeof(t_playkeys), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.playkeys", (method)playkeys_new, (method)playkeys_free, (long) sizeof(t_playkeys), 0L, A_GIMME, 0);
     
     // @method llll @digest Search the llll for the specified playkeys
     // @description

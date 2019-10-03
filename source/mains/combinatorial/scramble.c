@@ -95,7 +95,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.scramble", (method)scramble_new, (method)scramble_free, (short)sizeof(t_scramble), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.scramble", (method)scramble_new, (method)scramble_free, (long) sizeof(t_scramble), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Scramble the llll
 	// @description A random permutation of the llll and its sublists, 

@@ -137,7 +137,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.args", (method)args_new, (method)args_free, (short)sizeof(t_args), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.args", (method)args_new, (method)args_free, (long) sizeof(t_args), 0L, A_GIMME, 0);
     
     // @method llll @digest lllls to the patch
     // @description

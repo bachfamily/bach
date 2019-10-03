@@ -164,7 +164,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	jpatcher_syms_init();
 	
-	c = class_new("bach.hypercomment", 
+    CLASS_NEW_CHECK_SIZE(c, "bach.hypercomment", 
 				  (method)hypercomment_new,
 				  (method)hypercomment_free,
 				  sizeof(t_hypercomment),

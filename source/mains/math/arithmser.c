@@ -103,7 +103,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.arithmser", (method)arithmser_new, (method)arithmser_free, (short)sizeof(t_arithmser), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.arithmser", (method)arithmser_new, (method)arithmser_free, (long) sizeof(t_arithmser), 0L, A_GIMME, 0);
 	
 	class_addmethod(c, (method)arithmser_int,		"int",			A_LONG, 0);
 

@@ -92,7 +92,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.slice", (method)slice_new, (method)slice_free, (short)sizeof(t_slice), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.slice", (method)slice_new, (method)slice_free, (long) sizeof(t_slice), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Split the llll
 	// @description The llll is divided in two, at the split point set by the <m>index</m> attribute, 

@@ -70,7 +70,6 @@ typedef struct _reg
     void                    *n_proxy;
     long                    n_embed;
     long                    n_in;
-    
     t_object                *m_editor;
 } t_reg;
 
@@ -110,7 +109,9 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.reg", (method)reg_new, (method)reg_free, (short)sizeof(t_reg), 0L, A_GIMME, 0);
+    long sizesize = sizeof(t_reg);
+    
+    CLASS_NEW_CHECK_SIZE(c, "bach.reg", (method)reg_new, (method)reg_free, (long) sizeof(t_reg), 0L, A_GIMME, 0);
 
     // @method llll @digest Store the llll
     // @description In left inlet: the llll is stored and output. <br />

@@ -119,7 +119,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.expr", (method)bach_expr_new, (method)bach_expr_free, (short)sizeof(t_bach_expr), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.expr", (method)bach_expr_new, (method)bach_expr_free, (long) sizeof(t_bach_expr), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Store values for the expression variables
 	// @description

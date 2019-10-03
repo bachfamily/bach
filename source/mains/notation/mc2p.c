@@ -104,7 +104,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}	
 	
-	c = class_new("bach.mc2p", (method)mc2p_new, (method)mc2p_free, (short)sizeof(t_mc2p), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.mc2p", (method)mc2p_new, (method)mc2p_free, (long) sizeof(t_mc2p), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Convert MIDIcents to pitches
 	// @description The function outputs an llll formatted as the incoming one, but containing the note name 

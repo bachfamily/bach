@@ -94,7 +94,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.is", (method)is_new, (method)is_free, (short)sizeof(t_is), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.is", (method)is_new, (method)is_free, (long) sizeof(t_is), 0L, A_GIMME, 0);
 	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
 	
 	// @method llll @digest Return the type of the incoming data

@@ -115,7 +115,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.collect", (method)collect_new, (method)collect_free, (short)sizeof(t_collect), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.collect", (method)collect_new, (method)collect_free, (long) sizeof(t_collect), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Append the llll
 	// @description An llll in every inlet except the leftmost and rightmost is appended to the corresponding llll being built by <o>bach.collect</o>.

@@ -98,7 +98,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.read", (method)read_new, (method)read_free, (short)sizeof(t_read), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.read", (method)read_new, (method)read_free, (long) sizeof(t_read), 0L, A_GIMME, 0);
 	
 	// @method read @digest Read an llll from disk
 	// @description The specified file is read from disk and the llll it contains is stored

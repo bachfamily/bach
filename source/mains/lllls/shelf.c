@@ -109,7 +109,7 @@ typedef struct _dumpedxshelf {
 } t_dumpedxshelf;
 
 
-t_library *library_new(void);
+t_library *library_new(t_symbol *s, short ac, t_atom *av);
 void library_free(t_library *x);
 t_xshelf *library_addxshelf(t_symbol *name);
 void library_releasexshelf(t_symbol *name);
@@ -129,7 +129,7 @@ t_dictionary *xshelf_serialize(t_xshelf *x);
 void xshelf_serialize_one(t_hashtab_entry *e, t_dictionary *dict);
 void xshelf_deserialize(t_xshelf *x, t_dictionary *dict);
 
-t_shelveditem *shelveditem_new(void);
+t_shelveditem *shelveditem_new(t_symbol *s, short ac, t_atom *av);
 void shelveditem_free(t_shelveditem *x);
 
 void shelf_store(t_shelf *x, t_symbol *msg, long ac, t_atom *av);
@@ -178,21 +178,21 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.library", (method)library_new, (method) library_free, (short)sizeof(t_library), 0L, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.library", (method)library_new, (method) library_free, (long) sizeof(t_library), 0L, A_GIMME, 0);
 	class_register(CLASS_NOBOX, c);
 	library_class = c;
 	
-	library_new();
+	library_new(NULL, 0, NULL);
 	
-	c = class_new("bach.shelveditem", (method)shelveditem_new, (method) shelveditem_free, (short)sizeof(t_shelveditem), 0L, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.shelveditem", (method)shelveditem_new, (method) shelveditem_free, (long) sizeof(t_shelveditem), 0L, A_GIMME, 0);
 	class_register(CLASS_NOBOX, c);
 	shelveditem_class = c;
 	
-	c = class_new("bach.xshelf", (method)xshelf_new, (method) xshelf_free, (short)sizeof(t_xshelf), 0L, A_SYM, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.xshelf", (method)xshelf_new, (method) xshelf_free, (long) sizeof(t_xshelf), 0L, A_SYM, 0);
 	class_register(CLASS_NOBOX, c);
 	xshelf_class = c;	
 	
-	c = class_new("bach.shelf", (method)shelf_new, (method)shelf_free, (short)sizeof(t_shelf), 0L, A_GIMME, 0);	
+    CLASS_NEW_CHECK_SIZE(c, "bach.shelf", (method)shelf_new, (method)shelf_free, (long) sizeof(t_shelf), 0L, A_GIMME, 0);	
 	
 	// @method store @digest Store an llll
 	// @description The argument llll is stored and associated with a unique name.
@@ -316,7 +316,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 }
 
 // only one exists!
-t_library *library_new(void)
+t_library *library_new(t_symbol *s, short ac, t_atom *av)
 {
 	t_library *x = (t_library *) object_alloc(library_class);
 	x->l_shelves = hashtab_new(0);
@@ -398,7 +398,7 @@ void xshelf_store(t_xshelf *x, t_symbol *name, t_llll *ll)
 	err = hashtab_lookup(shelved, name, (t_object **) &shelveditem);
 	if (err != MAX_ERR_NONE) { // that is, if there was nothing with that name
 //		llll_retain(ll); // llllobj_parse_llll already retained it for us!
-		shelveditem = shelveditem_new();
+		shelveditem = shelveditem_new(NULL, 0, NULL);
 		shelveditem->s_ll = ll;
 		hashtab_store_safe(shelved, name, (t_object *) shelveditem);
 	} else if (shelveditem->s_ll != ll) {
@@ -557,7 +557,7 @@ void xshelf_deserialize(t_xshelf *x, t_dictionary *dict)
 	sysmem_freeptr(key_atoms); // not bach_freeptr, as key_atoms has been allocated by dictionary_getatoms
 }
 
-t_shelveditem *shelveditem_new(void)
+t_shelveditem *shelveditem_new(t_symbol *s, short ac, t_atom *av)
 {
 	t_shelveditem *x = (t_shelveditem *) object_alloc_debug(shelveditem_class);
 	object_retain_debug((t_object *) x);

@@ -100,7 +100,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.print", (method)print_new, (method)print_free, (short)sizeof(t_print), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.print", (method)print_new, (method)print_free, (long) sizeof(t_print), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Print the llll
 	// @description The llll is displayed in text format on a single line.

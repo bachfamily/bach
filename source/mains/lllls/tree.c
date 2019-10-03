@@ -582,7 +582,7 @@ void C74_EXPORT ext_main(void *moduleRef){
         return;
     }
     
-    c = class_new("bach.tree",
+    CLASS_NEW_CHECK_SIZE(c, "bach.tree",
                   (method)tree_new,
                   (method)tree_free,
                   sizeof(t_tree),

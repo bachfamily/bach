@@ -103,7 +103,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.geomser", (method)geomser_new, (method)geomser_free, (short)sizeof(t_geomser), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.geomser", (method)geomser_new, (method)geomser_free, (long) sizeof(t_geomser), 0L, A_GIMME, 0);
 
 	class_addmethod(c, (method)geomser_int,		"int",			A_LONG, 0);
 

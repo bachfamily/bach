@@ -104,7 +104,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}	
 	
-	c = class_new("bach.llll2dict", (method)llll2dict_new, (method)llll2dict_free, (short)sizeof(t_llll2dict), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.llll2dict", (method)llll2dict_new, (method)llll2dict_free, (long) sizeof(t_llll2dict), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Convert llll to dictionary
 	// @description Any incoming <m>llll</m> is converted into a dictionary

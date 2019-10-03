@@ -117,7 +117,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.pv", (method) pv_new, (method) pv_free, (short) sizeof(t_pv), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.pv", (method) pv_new, (method) pv_free, (short) sizeof(t_pv), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Store and share the llll
 	// @description The llll is stored and shared between all the other instances of <o>bach.pv</o> with the same name,

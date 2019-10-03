@@ -111,7 +111,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.write", (method)write_new, (method)write_free, (short)sizeof(t_write), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.write", (method)write_new, (method)write_free, (long) sizeof(t_write), 0L, A_GIMME, 0);
 	
 	
 	// @method llll @digest Store the llll to be written

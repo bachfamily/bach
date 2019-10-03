@@ -45,7 +45,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     
     
     #ifdef CONFIGURATION_Development
-    // #define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
+    //#define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
     #endif
     
     #ifndef code_dev_post
@@ -511,12 +511,12 @@ typedef struct _bufstack {
     BEGIN BLOCKCOMMENT;
 }
 
-<BLOCKCOMMENT>[^)]* {
-    code_dev_post("lex: block comment: %s", yytext);
+<BLOCKCOMMENT>[^\)]* {
+    code_dev_post("lex: block comment [^\\)]* : %s", yytext);
 }
 
-<BLOCKCOMMENT>")"[^#]+ {
-    code_dev_post("lex: block comment: %s", yytext);
+<BLOCKCOMMENT>")"[^\)\#]+ {
+    code_dev_post("lex: block comment \")\"[^\\#]+ : )%s", yytext);
 }
 
 <BLOCKCOMMENT>")#" {

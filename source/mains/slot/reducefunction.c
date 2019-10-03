@@ -119,7 +119,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}	
 	
-	c = class_new("bach.reducefunction", (method)reducefunction_new, (method)reducefunction_free, (short)sizeof(t_reducefunction), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.reducefunction", (method)reducefunction_new, (method)reducefunction_free, (long) sizeof(t_reducefunction), 0L, A_GIMME, 0);
 	
     
     // @method llll @digest Simplify incoming breakpoint function

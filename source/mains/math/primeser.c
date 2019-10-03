@@ -101,7 +101,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.primeser", (method)primeser_new, (method)primeser_free, (short)sizeof(t_primeser), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.primeser", (method)primeser_new, (method)primeser_free, (long) sizeof(t_primeser), 0L, A_GIMME, 0);
 	
 	class_addmethod(c, (method)primeser_int,		"int",			A_LONG, 0);
 	class_addmethod(c, (method)primeser_float,		"float",		A_LONG, 0);

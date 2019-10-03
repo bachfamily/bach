@@ -97,7 +97,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}	
 	
-	c = class_new("bach.dict2llll", (method)dict2llll_new, (method)dict2llll_free, (short)sizeof(t_dict2llll), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.dict2llll", (method)dict2llll_new, (method)dict2llll_free, (long) sizeof(t_dict2llll), 0L, A_GIMME, 0);
 	
 	// @method dictionary @digest Convert dictionary to llll
 	// @description A <m>dictionary</m> message, followed by a name, will convert the dictionary identified by that name into an llll.

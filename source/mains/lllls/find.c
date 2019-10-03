@@ -116,7 +116,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.find", (method)find_new, (method)find_free, (short)sizeof(t_find), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.find", (method)find_new, (method)find_free, (long) sizeof(t_find), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Function depends on inlet
 	// @description

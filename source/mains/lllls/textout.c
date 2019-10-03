@@ -111,7 +111,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.textout", (method)textout_new, (method)textout_free, (short)sizeof(t_textout), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.textout", (method)textout_new, (method)textout_free, (long) sizeof(t_textout), 0L, A_GIMME, 0);
     
     // @method llll @digest An llll in any inlet is returned in text format from the corresponding outlet,
     // with some optional variants with respect to the standard textual representation.

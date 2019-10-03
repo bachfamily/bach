@@ -1005,7 +1005,7 @@ void C74_EXPORT ext_main(void *moduleRef){
 		return;
 	}
 
-	c = class_new("bach.tonnetz", 
+    CLASS_NEW_CHECK_SIZE(c, "bach.tonnetz", 
 						(method)tonnetz_new,
 						(method)tonnetz_free,
 						sizeof(t_tonnetz),

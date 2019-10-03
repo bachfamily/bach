@@ -132,7 +132,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.step", (method)step_new, (method)step_free, (short)sizeof(t_step), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.step", (method)step_new, (method)step_free, (long) sizeof(t_step), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Iterate through the llll
 	// @description

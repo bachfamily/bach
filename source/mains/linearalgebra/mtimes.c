@@ -111,7 +111,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 
-	c = class_new("bach.mtimes", (method)mtimes_new, (method)mtimes_free, (short)sizeof(t_mtimes), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.mtimes", (method)mtimes_new, (method)mtimes_free, (long) sizeof(t_mtimes), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Store matrix as factor, output the result
 	// @description The object take the incoming matrix (or vector, or scalar) and sets it either as left or as

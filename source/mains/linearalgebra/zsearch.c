@@ -119,7 +119,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.zsearch", (method)zsearch_new, (method)zsearch_free, (short)sizeof(t_zsearch), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.zsearch", (method)zsearch_new, (method)zsearch_free, (long) sizeof(t_zsearch), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Trigger prime form search for given cardinalities
 	// @description A single number k will trigger the search for all prime forms of cardinality k.

@@ -154,7 +154,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 
-	c = class_new("bach.transcribe", (method)transcribe_new, (method)transcribe_free, (short)sizeof(t_transcribe), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.transcribe", (method)transcribe_new, (method)transcribe_free, (long) sizeof(t_transcribe), 0L, A_GIMME, 0);
 	
     // @method list @digest Transcribe MIDI triplets/quadruplets
     // @description A <m>list</m> in the second inlet is expected to be in the form of a MIDI triplet containing three integers:

@@ -99,7 +99,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.subs", (method)subs_new, (method)subs_free, (short)sizeof(t_subs), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.subs", (method)subs_new, (method)subs_free, (long) sizeof(t_subs), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Function depends on inlet
 	// @description

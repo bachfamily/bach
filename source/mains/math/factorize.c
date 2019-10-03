@@ -89,7 +89,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.factorize", (method)factorize_new, (method)factorize_free, (short)sizeof(t_factorize), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.factorize", (method)factorize_new, (method)factorize_free, (long) sizeof(t_factorize), 0L, A_GIMME, 0);
 	
 	// @method int @digest Compute the factorization
 	// @description The factorization of the given integer is returned as an llll whose sublists contain each a prime factor and its exponent.

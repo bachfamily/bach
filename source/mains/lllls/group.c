@@ -95,7 +95,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.group", (method)group_new, (method)group_free, (short)sizeof(t_group), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.group", (method)group_new, (method)group_free, (long) sizeof(t_group), 0L, A_GIMME, 0);
 
 	// @method llll @digest Group the elements of the llll
 	// @description

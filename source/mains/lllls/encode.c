@@ -106,7 +106,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.encode", (method)encode_new, (method)encode_free, (short)sizeof(t_encode), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.encode", (method)encode_new, (method)encode_free, (long) sizeof(t_encode), 0L, A_GIMME, 0);
 	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
 	
 	class_addmethod(c, (method)encode_anything,		"anything",		A_GIMME,	0);

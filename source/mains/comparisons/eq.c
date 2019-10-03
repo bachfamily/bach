@@ -128,7 +128,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	
 	// nothing special here
-	c = class_new("bach.eq", (method)eq_new, (method)eq_free, (short)sizeof(t_eq), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.eq", (method)eq_new, (method)eq_free, (long) sizeof(t_eq), 0L, A_GIMME, 0);
 
 	
 	

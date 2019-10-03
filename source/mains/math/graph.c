@@ -323,7 +323,7 @@ void C74_EXPORT ext_main(void *moduleRef){
 		return;
 	}
 	
-	c = class_new("bach.graph", 
+    CLASS_NEW_CHECK_SIZE(c, "bach.graph", 
 						(method)graph_new,
 						(method)graph_free,
 						sizeof(t_graph),

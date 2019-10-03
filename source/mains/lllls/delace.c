@@ -95,7 +95,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.delace", (method)delace_new, (method)delace_free, (short)sizeof(t_delace), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.delace", (method)delace_new, (method)delace_free, (long) sizeof(t_delace), 0L, A_GIMME, 0);
 
 	// @method llll @digest De-interleave the llll
 	// @description In standard mode: the elements of the llll are redistributed into several output lllls 

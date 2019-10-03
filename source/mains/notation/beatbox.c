@@ -114,7 +114,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.beatbox", (method)beatbox_new, (method)beatbox_free, (short)sizeof(t_beatbox), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.beatbox", (method)beatbox_new, (method)beatbox_free, (long) sizeof(t_beatbox), 0L, A_GIMME, 0);
     
     // @method llll @digest Function depends on inlet
     // @description 

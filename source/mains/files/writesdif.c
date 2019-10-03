@@ -135,7 +135,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.writesdif", (method)writesdif_new, (method)writesdif_free, (short)sizeof(t_writesdif), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.writesdif", (method)writesdif_new, (method)writesdif_free, (long) sizeof(t_writesdif), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Function depends on inlet
 	// @description

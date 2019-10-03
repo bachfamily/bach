@@ -100,7 +100,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	}
 	
 	
-	c = class_new("bach.oneperm", (method)oneperm_new, (method)oneperm_free, (short)sizeof(t_oneperm), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.oneperm", (method)oneperm_new, (method)oneperm_free, (long) sizeof(t_oneperm), 0L, A_GIMME, 0);
 	
 	CLASS_ATTR_LONG(c, "order",	0,	t_oneperm, n_order);
 	CLASS_ATTR_LABEL(c, "order", 0, "Order");

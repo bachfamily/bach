@@ -97,7 +97,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.pick", (method)pick_new, (method)pick_free, (short)sizeof(t_pick), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.pick", (method)pick_new, (method)pick_free, (long) sizeof(t_pick), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Return specified elements
 	// When an llll is received, <o>bach.pick</o> extracts from it the elements specified through each of the object's arguments.

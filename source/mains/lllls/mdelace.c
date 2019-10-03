@@ -53,7 +53,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.mdelace", (method)mdelace_new, (method)mdelace_free, (short)sizeof(t_mdelace), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.mdelace", (method)mdelace_new, (method)mdelace_free, (long) sizeof(t_mdelace), 0L, A_GIMME, 0);
 	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
 
 	class_addmethod(c, (method)mdelace_anything,	"anything",		A_GIMME,	0);

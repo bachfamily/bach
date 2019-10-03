@@ -103,7 +103,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.partition", (method)partition_new, (method)partition_free, (short)sizeof(t_partition), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.partition", (method)partition_new, (method)partition_free, (long) sizeof(t_partition), 0L, A_GIMME, 0);
     
     // @method llll @digest Set set, output result
     // @description If the <m>mode</m> attribute is set to 1 (set), any <m>llll</m> in the second inlet is considered as the set to be partitioned.

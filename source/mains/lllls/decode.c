@@ -95,7 +95,7 @@ void decode_llll(t_decode *x, t_symbol *msg, long ac, t_atom *av);
 void decode_clear(t_decode *x, t_symbol *msg, long ac, t_atom *av);
 
 void incoming_free(t_incoming *x);
-t_incoming *incoming_new(void);
+t_incoming *incoming_new(t_symbol *s, short ac, t_atom *av);
 
 t_class *decode_class;
 t_class *incoming_class;
@@ -112,7 +112,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.decode", (method)decode_new, (method)decode_free, (short)sizeof(t_decode), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.decode", (method)decode_new, (method)decode_free, (long) sizeof(t_decode), 0L, A_GIMME, 0);
 	
 	class_addmethod(c, (method)decode_llll,		"llll",	A_GIMME,	0);
 	class_addmethod(c, (method)decode_clear,	"clear", A_GIMME, 0);
@@ -126,7 +126,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	class_register(CLASS_BOX, c);
 	decode_class = c;
 	
-	c = class_new("bach.incoming", (method)incoming_new, (method)incoming_free, (short)sizeof(t_incoming), 0L, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.incoming", (method)incoming_new, (method)incoming_free, (long) sizeof(t_incoming), 0L, A_GIMME, 0);
 	class_register(CLASS_NOBOX, c);
 	incoming_class = c;
 	dev_post("bach.decode compiled %s %s", __DATE__, __TIME__);
@@ -158,7 +158,7 @@ void decode_llll(t_decode *x, t_symbol *msg, long ac, t_atom *av)
 //	critical_enter(0);
 	existing = hashtab_lookup(x->n_embryos, (t_symbol *) id, (t_object **) &incoming);
 	if (existing != MAX_ERR_NONE) {
-		incoming = incoming_new();
+		incoming = incoming_new(NULL, 0, NULL);
 		incoming->i_id = id;
 		hashtab_store(x->n_embryos, (t_symbol *) id, (t_object *) incoming);
 	}
@@ -327,6 +327,6 @@ void incoming_free(t_incoming *x)
 	bach_remove_from_memmap(x); // only for debug!
 }
 
-t_incoming *incoming_new(void) {
+t_incoming *incoming_new(t_symbol *s, short ac, t_atom *av) {
 	return (t_incoming *) object_alloc_debug(incoming_class);
 }

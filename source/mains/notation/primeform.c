@@ -113,7 +113,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.primeform", (method)primeform_new, (method)primeform_free, (short)sizeof(t_primeform), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.primeform", (method)primeform_new, (method)primeform_free, (long) sizeof(t_primeform), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Compute prime form of pitch-class set 
 	// @description In the first inlet, a pitch-class set, in the form of a plain list, will trigger the output of its prime form. 	

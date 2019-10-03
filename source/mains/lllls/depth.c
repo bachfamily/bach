@@ -96,7 +96,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.depth", (method)depth_new, (method)depth_free, (short)sizeof(t_depth), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.depth", (method)depth_new, (method)depth_free, (long) sizeof(t_depth), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Return the depth of the llll
 	// @description

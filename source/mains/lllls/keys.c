@@ -112,7 +112,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.keys", (method)keys_new, (method)keys_free, (short)sizeof(t_keys), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.keys", (method)keys_new, (method)keys_free, (long) sizeof(t_keys), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Search the llll for the specified keys
 	// @description

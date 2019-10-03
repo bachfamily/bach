@@ -110,7 +110,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.convertbase", (method)convertbase_new, (method)convertbase_free, (short)sizeof(t_convertbase), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.convertbase", (method)convertbase_new, (method)convertbase_free, (long) sizeof(t_convertbase), 0L, A_GIMME, 0);
 	
     // @method llll @digest Set digits, output result
     // @description Any <m>llll</m> in the second inlet is considered as a plain list

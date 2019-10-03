@@ -147,7 +147,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}	
 	
-	c = class_new("bach.resample", (method)resample_new, (method)resample_free, (short)sizeof(t_resample), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.resample", (method)resample_new, (method)resample_free, (long) sizeof(t_resample), 0L, A_GIMME, 0);
 	
     
     // @method llll @digest Resample incoming llll

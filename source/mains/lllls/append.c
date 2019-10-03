@@ -110,7 +110,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
     
-    c = class_new("bach.append", (method)append_new, (method)append_free, (short)sizeof(t_append), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.append", (method)append_new, (method)append_free, (long) sizeof(t_append), 0L, A_GIMME, 0);
     
     // @method llll @digest Join the llll to the others
     // @description The llll will be joined to all the other lllls received in the other inlets, 

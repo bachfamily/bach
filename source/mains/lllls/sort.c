@@ -106,7 +106,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.sort", (method)sort_new, (method)sort_free, (short)sizeof(t_sort), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.sort", (method)sort_new, (method)sort_free, (long) sizeof(t_sort), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Sort the llll
 	// @description In first inlet: the llll is sorted. <br />

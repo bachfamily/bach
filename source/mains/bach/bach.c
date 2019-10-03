@@ -142,7 +142,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         error("Couldn't instantiate the bach common symbols table.");
         return;
     }
-    c = class_new("bach", (method) bach_new, NULL, sizeof(t_bach), 0, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c,"bach", (method) bach_new, NULL, sizeof(t_bach), 0, A_GIMME, 0);
 
     class_addmethod(c, (method) bach_poolstatus, "poolstatus", 0);
     class_addmethod(c, (method) bach_pooldump, "pooldump", 0);
@@ -184,7 +184,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     bach_version(b); // posts the version
     
-    c = class_new("bach.initpargs", (method)initpargs_new, (method)initpargs_free, (short)sizeof(t_initpargs), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c,"bach.initpargs", (method)initpargs_new, (method)initpargs_free, (long) sizeof(t_initpargs), 0L, A_GIMME, 0);
     
     class_addmethod(c, (method)initpargs_add,        "add",    A_GIMME,    0);
     class_addmethod(c, (method)initpargs_remove,    "remove",    A_GIMME,    0);

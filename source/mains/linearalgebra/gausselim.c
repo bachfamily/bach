@@ -113,7 +113,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 
-	c = class_new("bach.gausselim", (method)gausselim_new, (method)gausselim_free, (short)sizeof(t_gausselim), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.gausselim", (method)gausselim_new, (method)gausselim_free, (long) sizeof(t_gausselim), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Perform Gaussian elimination on incoming matrix
 	// @description The Gaussian elimination is performed on the incoming matrix and the matrix in echelon form is output. <br />

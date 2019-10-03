@@ -108,7 +108,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.recurser", (method)recurser_new, (method)recurser_free, (short)sizeof(t_recurser), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.recurser", (method)recurser_new, (method)recurser_free, (long) sizeof(t_recurser), 0L, A_GIMME, 0);
 	
 	class_addmethod(c, (method)recurser_int,		"int",			A_LONG, 0);
 

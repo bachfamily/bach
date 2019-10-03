@@ -901,26 +901,6 @@ CLASS_ATTR_ACCESSORS(c, "maxdepth", NULL, STRUCT_maxdepth_set);
 #define CLASS_ATTR_STANDARD_MINDEPTH_ACCESSORS(c, STRUCT) \
 CLASS_ATTR_ACCESSORS(c, "mindepth", NULL, STRUCT_mindepth_set);
 
-
-
-
-
-
-
-// A wrapper for class_new() also checking that the class size is acceptable
-// Useful for debugging huge objects such as bach.score
-
-#define CLASS_NEW_CHECK_SIZE(CLASS, name, mnew, mfree, size, mmenu, type, ...) \
-{ \
-	if (size < 16384 - 16) \
-		CLASS = class_new(name, mnew, mfree, size, mmenu, type, __VA_ARGS__); \
-	else { \
-		post("Class %s too large, size = %d", name, (int) size); \
-		return; \
-	} \
-}
-
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE
 #endif

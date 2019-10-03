@@ -96,7 +96,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 		return;
 	}
 	
-	c = class_new("bach.neq", (method)neq_new, (method)neq_free, (short)sizeof(t_neq), 0L, A_GIMME, 0);
+    CLASS_NEW_CHECK_SIZE(c, "bach.neq", (method)neq_new, (method)neq_free, (long) sizeof(t_neq), 0L, A_GIMME, 0);
 	
 	// @method llll @digest Store data and perform comparison
 	// @description

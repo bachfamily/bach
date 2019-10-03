@@ -293,7 +293,8 @@ void bach_ss_ui_boxscreenrectchanged(t_jbox *box, t_object *patcherview)
 
 void bach_ss_ui_classinit(void)
 {
-    t_class *c = class_new("bach_ss_ui", (method)bach_ss_ui_new, (method)bach_ss_ui_free, sizeof(t_bach_ss_ui), 0L, A_GIMME, 0L);
+    t_class *c;
+    CLASS_NEW_CHECK_SIZE(c, "bach_ss_ui", (method)bach_ss_ui_new, (method)bach_ss_ui_free, sizeof(t_bach_ss_ui), 0L, A_GIMME, 0L);
     
     c->c_flags |= CLASS_FLAG_NEWDICTIONARY;
     

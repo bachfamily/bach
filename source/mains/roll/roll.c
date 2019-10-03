@@ -4588,7 +4588,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_NEW_CHECK_SIZE(c, "bach.roll", 
                             (method)roll_new,
                             (method)roll_free,
-                            (short)sizeof(t_roll),
+                            (long) sizeof(t_roll),
                             (method)NULL,
                             A_GIMME,
                             0L);
