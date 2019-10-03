@@ -83,6 +83,7 @@ void bach_clearglobals(t_bach *x);
 void bach_sendbuildnumber(t_bach *x, t_symbol *s);
 void bach_sendversion(t_bach *x, t_symbol *s);
 void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s);
+void bach_sendplatform(t_bach *x, t_symbol *s);
 void bach_donors(t_bach *x);
 void bach_unlock(t_bach *x, t_atom_long l);
 void bach_nonative(t_bach *x, t_atom_long l);
@@ -152,6 +153,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method) bach_clearglobals, "clearglobals", 0);
     class_addmethod(c, (method) bach_sendversion, "sendversion", A_SYM, 0);
     class_addmethod(c, (method) bach_sendversionwithbuildnumber, "sendversionwithbuildnumber", A_SYM, 0);
+    class_addmethod(c, (method) bach_sendplatform, "sendplatform", A_SYM, 0);
     class_addmethod(c, (method) bach_sendbuildnumber, "sendbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_donors, "donors", 0);
     class_addmethod(c, (method) bach_unlock, "unlock", A_LONG, 0);
@@ -504,6 +506,24 @@ void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s)
         object_method_typed(s->s_thing, gensym(bach_get_current_version_string_verbose_with_build()), 1, &vnum, NULL);
     }
 }
+
+void bach_sendplatform(t_bach *x, t_symbol *s)
+{
+#ifdef MAC_VERSION
+    t_symbol *platform = gensym("Mac");
+#endif
+#ifdef WIN_VERSION
+    t_symbol *platform = gensym("Windows");
+#endif
+    t_atom arch;
+#ifdef C74_X64
+    atom_setlong(&arch, 64);
+#else
+    atom_setlong(&arch, 32);
+#endif
+    object_method_typed(s->s_thing, platform, 1, &arch, NULL);
+}
+
 
 void bach_donors(t_bach *x)
 {
