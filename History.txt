@@ -20,6 +20,8 @@ Scroll down for very important things you should now about v0.8b
 *** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
 
 - bach.roll, bach.score
+        The @highlightplay attribute is now by default 0
+            Turn it on if you needed it!
 		There's a new @applyslope attribute, by default set to 1, 
 			that applies range slopes in function slots automatically
 			to function segments or curves, to account for slot range slope

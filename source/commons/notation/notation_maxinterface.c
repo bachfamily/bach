@@ -2303,11 +2303,11 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 
 		CLASS_ATTR_CHAR(c,"highlightplay",0, t_notation_obj, highlight_played_notes);
 		CLASS_ATTR_STYLE_LABEL(c,"highlightplay",0,"onoff","Highlight Played Notes");
-		CLASS_ATTR_DEFAULT_SAVE(c,"highlightplay",0,"1");
+		CLASS_ATTR_DEFAULT_SAVE(c,"highlightplay",0,"0");
 		CLASS_ATTR_ACCESSORS(c, "highlightplay", (method)NULL, (method)notation_obj_setattr_highlightplay);
 		// @exclude bach.slot
 		// @description Toggle the ability to highlight the played notes with the <m>playcolor</m>.
-		// By default this is 1.
+        // By default this is 0; if you turn it on be aware that it takes significant CPU time with scores with many notes.
 		
 		CLASS_ATTR_CHAR(c,"playmarkers",0, t_notation_obj, play_markers);
 		CLASS_ATTR_STYLE_LABEL(c,"playmarkers",0,"onoff","Play Markers");
