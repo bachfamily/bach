@@ -478,7 +478,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
     t_eval *x = NULL;
     long true_ac, i;
     t_max_err err = 0;
-    t_dictionary *d = nullptr;
     
     //true_ac = attr_args_offset(ac, av);
 
@@ -495,7 +494,7 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         eval_ownedFunctionsSetup(x);
         x->n_ob.c_embed = 1;
         x->n_ob.c_maxtime = 60000;
-        
+        x->n_ob.c_watch = 1;
         true_ac = ac;
         
         t_atom_long dataInlets = -1, dataOutlets = -1, directInlets = -1, directOutlets = -1;
@@ -534,17 +533,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         if (codeac >= 0) {
             attr_args_process(x, ac - codeac, av + codeac);
         }
-
-        /*
-        if (dataInlets >= 0)
-            x->n_dataInlets = dataInlets;
-        if (dataOutlets >= 0)
-            x->n_dataOutlets = dataOutlets;
-        if (directInlets >= 0)
-            x->n_directInlets = directInlets;
-        if (directOutlets >= 0)
-            x->n_directOutlets = directOutlets;
-         */
         
         if (dataInlets > x->n_dataInlets)
             x->n_dataInlets = dataInlets;
@@ -581,8 +569,7 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         for (i = x->n_proxies; i > 0; i--)
             x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
         
-        d = (t_dictionary *)gensym("#D")->s_thing;
-        codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
+        codableobj_finalize((t_codableobj *) x);
         
         defer_low(x, (method)eval_setready, NULL, 0, NULL);
         if (x->n_ob.c_main) {

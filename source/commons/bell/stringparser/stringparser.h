@@ -8,8 +8,10 @@
 #ifndef stringparser_h
 #define stringparser_h
 
-#include<unordered_map>
-#include<unordered_set>
+#include "bell/fileid.hpp"
+
+#include <unordered_map>
+#include <unordered_set>
 
 typedef struct _parseParams {
     astNode *ast;
@@ -36,5 +38,20 @@ typedef struct _parseParams {
     t_ofTable *ofTable;
     t_codableobj *owner;
 } t_parseParams;
+
+
+struct t_lexparams {
+    struct t_bufstack *bufstack;
+    struct t_bufstack *this_bs;
+    fileidSet files;
+    int state;
+    
+    t_lexparams();
+    virtual ~t_lexparams();
+
+    int setState(int s);
+    
+    int getState();
+};
 
 #endif /* stringparser_h */

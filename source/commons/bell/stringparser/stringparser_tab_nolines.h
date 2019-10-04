@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.4.2.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Skeleton interface for Bison GLR parsers in C
 
-   Copyright (C) 2002-2015, 2018-2019 Free Software Foundation, Inc.
+   Copyright (C) 2002-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -153,8 +153,10 @@ extern int stringparser_debug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+
 union YYSTYPE
 {
+
 
     astNode *n;
     astFunctionCall *fc;
@@ -180,6 +182,7 @@ union YYSTYPE
 
 
 };
+
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

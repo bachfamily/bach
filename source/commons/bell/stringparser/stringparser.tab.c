@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.4.2.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Skeleton implementation for Bison GLR parsers in C
 
-   Copyright (C) 2002-2015, 2018-2019 Free Software Foundation, Inc.
+   Copyright (C) 2002-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,14 +32,11 @@
 
 /* C GLR parser skeleton written by Paul Hilfinger.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
-
 /* Identify Bison output.  */
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.4.2"
+#define YYBISON_VERSION "3.0.5"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "glr.c"
@@ -56,7 +53,9 @@
 #define yyerror stringparser_error
 #define yydebug stringparser_debug
 
-/* First part of user prologue.  */
+
+/* First part of user declarations.  */
+
 
     /*
      *  stringparser.y
@@ -76,6 +75,7 @@
      * If not, see <https://www.gnu.org/licenses/>.
      *
      */
+
 
     #ifdef CONFIGURATION_Development
     //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
@@ -109,14 +109,10 @@
 
 
 # ifndef YY_NULLPTR
-#  if defined __cplusplus
-#   if 201103L <= __cplusplus
-#    define YY_NULLPTR nullptr
-#   else
-#    define YY_NULLPTR 0
-#   endif
+#  if defined __cplusplus && 201103L <= __cplusplus
+#   define YY_NULLPTR nullptr
 #  else
-#   define YY_NULLPTR ((void*)0)
+#   define YY_NULLPTR 0
 #  endif
 # endif
 
@@ -136,7 +132,8 @@
    value is undefined, this behavior is technically correct.  */
 static YYSTYPE yyval_default;
 
-/* Second part of user prologue.  */
+/* Copy the second part of user declarations.  */
+
 
     #include "stringparser_tab_nolines.h"
     
@@ -145,14 +142,7 @@ static YYSTYPE yyval_default;
     
     #include "stringparser_lex_nolines.h"
     
-    
-    
-    typedef struct _bufstack {
-        YY_BUFFER_STATE bs; /* saved buffer */
-        char *name; /* name of this file */
-        char **th;
-        int *state;
-    } t_bufstack;
+
     
     int yylex(YYSTYPE *yylval_param, yyscan_t myscanner, struct _parseParams
     *params);
@@ -214,26 +204,19 @@ static YYSTYPE yyval_default;
 #define YYSIZEMAX ((size_t) -1)
 
 #ifdef __cplusplus
-  typedef bool yybool;
-# define yytrue true
-# define yyfalse false
+   typedef bool yybool;
 #else
-  /* When we move to stdbool, get rid of the various casts to yybool.  */
-  typedef unsigned char yybool;
-# define yytrue 1
-# define yyfalse 0
+   typedef unsigned char yybool;
 #endif
+#define yytrue 1
+#define yyfalse 0
 
 #ifndef YYSETJMP
 # include <setjmp.h>
 # define YYJMP_BUF jmp_buf
 # define YYSETJMP(Env) setjmp (Env)
-/* Pacify Clang and ICC.  */
-# define YYLONGJMP(Env, Val)                    \
- do {                                           \
-   longjmp (Env, Val);                          \
-   YYASSERT (0);                                \
- } while (yyfalse)
+/* Pacify clang.  */
+# define YYLONGJMP(Env, Val) (longjmp (Env, Val), YYASSERT (0))
 #endif
 
 #ifndef YY_ATTRIBUTE
@@ -254,22 +237,12 @@ static YYSTYPE yyval_default;
 # define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE ((__unused__))
 #endif
 
-/* The _Noreturn keyword of C11.  */
-#ifndef _Noreturn
-# if (defined __cplusplus \
-      && ((201103 <= __cplusplus && !(__GNUC__ == 4 && __GNUC_MINOR__ == 7)) \
-          || (defined _MSC_VER && 1900 <= _MSC_VER)))
-#  define _Noreturn [[noreturn]]
-# elif ((!defined __cplusplus || defined __clang__) \
-        && (201112 <= (defined __STDC_VERSION__ ? __STDC_VERSION__ : 0)  \
-            || 4 < __GNUC__ + (7 <= __GNUC_MINOR__)))
-   /* _Noreturn works as-is.  */
-# elif 2 < __GNUC__ + (8 <= __GNUC_MINOR__) || 0x5110 <= __SUNPRO_C
-#  define _Noreturn __attribute__ ((__noreturn__))
-# elif 1200 <= (defined _MSC_VER ? _MSC_VER : 0)
+#if !defined _Noreturn \
+     && (!defined __STDC_VERSION__ || __STDC_VERSION__ < 201112)
+# if defined _MSC_VER && 1200 <= _MSC_VER
 #  define _Noreturn __declspec (noreturn)
 # else
-#  define _Noreturn
+#  define _Noreturn YY_ATTRIBUTE ((__noreturn__))
 # endif
 #endif
 
@@ -280,7 +253,7 @@ static YYSTYPE yyval_default;
 # define YYUSE(E) /* empty */
 #endif
 
-#if defined __GNUC__ && ! defined __ICC && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
+#if defined __GNUC__ && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
 # define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN \
     _Pragma ("GCC diagnostic push") \
@@ -315,7 +288,7 @@ static YYSTYPE yyval_default;
 #define YYNNTS  35
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  239
-/* YYNSTATES -- Number of states.  */
+/* YYNRULES -- Number of states.  */
 #define YYNSTATES  418
 /* YYMAXRHS -- Maximum number of symbols on right-hand side of rule.  */
 #define YYMAXRHS 8
@@ -323,19 +296,14 @@ static YYSTYPE yyval_default;
    accessed by $0, $-1, etc., in any rule.  */
 #define YYMAXLEFT 0
 
-/* YYMAXUTOK -- Last valid token number (for yychar).  */
-#define YYMAXUTOK   360
-/* YYUNDEFTOK -- Symbol number (for yytoken) that denotes an unknown
-   token.  */
+/* YYTRANSLATE(X) -- Bison symbol number corresponding to X.  */
 #define YYUNDEFTOK  2
+#define YYMAXUTOK   360
 
-/* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
-   as returned by yylex, with out-of-bounds checking.  */
 #define YYTRANSLATE(YYX)                                                \
-  ((unsigned) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
+  ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
-/* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
-   as returned by yylex.  */
+/* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
 static const unsigned char yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -379,32 +347,32 @@ static const unsigned char yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const unsigned short yyrline[] =
+static const unsigned short int yyrline[] =
 {
-       0,   210,   210,   215,   221,   227,   235,   236,   242,   246,
-     268,   272,   278,   283,   288,   293,   298,   303,   308,   313,
-     318,   323,   330,   334,   340,   345,   353,   353,   369,   369,
-     387,   387,   408,   408,   435,   442,   448,   448,   465,   470,
-     474,   474,   487,   491,   497,   498,   505,   510,   515,   521,
-     527,   533,   537,   543,   547,   551,   557,   562,   563,   564,
-     570,   571,   572,   573,   574,   577,   578,   584,   585,   597,
-     608,   612,   617,   621,   625,   629,   633,   637,   641,   645,
-     649,   653,   657,   661,   665,   669,   673,   677,   681,   685,
-     689,   693,   697,   701,   705,   709,   713,   717,   721,   725,
-     729,   733,   737,   741,   745,   749,   753,   757,   761,   765,
-     769,   773,   777,   781,   786,   793,   798,   806,   810,   814,
-     818,   825,   826,   832,   833,   834,   838,   842,   846,   850,
-     854,   858,   862,   866,   870,   874,   878,   882,   886,   890,
-     894,   898,   902,   906,   910,   914,   918,   922,   926,   930,
-     934,   938,   942,   946,   950,   954,   959,   960,   964,   968,
-     972,   976,   980,   984,   988,   992,   996,  1000,  1004,  1008,
-    1012,  1016,  1020,  1024,  1028,  1032,  1036,  1040,  1044,  1048,
-    1052,  1056,  1060,  1064,  1068,  1072,  1076,  1080,  1085,  1089,
-    1093,  1097,  1101,  1105,  1109,  1113,  1117,  1121,  1125,  1129,
-    1133,  1137,  1141,  1145,  1149,  1153,  1157,  1161,  1165,  1169,
-    1176,  1180,  1184,  1188,  1192,  1196,  1200,  1205,  1211,  1217,
-    1223,  1229,  1235,  1241,  1250,  1254,  1257,  1261,  1267,  1272,
-    1277,  1278,  1281,  1282,  1283,  1286,  1294,  1302,  1307,  1312
+       0,   203,   203,   208,   214,   220,   228,   229,   235,   239,
+     261,   265,   271,   276,   281,   286,   291,   296,   301,   306,
+     311,   316,   323,   327,   333,   338,   346,   346,   362,   362,
+     380,   380,   401,   401,   428,   435,   441,   441,   458,   463,
+     467,   467,   480,   484,   490,   491,   498,   503,   508,   514,
+     520,   526,   530,   536,   540,   544,   550,   555,   556,   557,
+     563,   564,   565,   566,   567,   570,   571,   577,   578,   590,
+     601,   605,   610,   614,   618,   622,   626,   630,   634,   638,
+     642,   646,   650,   654,   658,   662,   666,   670,   674,   678,
+     682,   686,   690,   694,   698,   702,   706,   710,   714,   718,
+     722,   726,   730,   734,   738,   742,   746,   750,   754,   758,
+     762,   766,   770,   774,   779,   786,   791,   799,   803,   807,
+     811,   818,   819,   825,   826,   827,   831,   835,   839,   843,
+     847,   851,   855,   859,   863,   867,   871,   875,   879,   883,
+     887,   891,   895,   899,   903,   907,   911,   915,   919,   923,
+     927,   931,   935,   939,   943,   947,   952,   953,   957,   961,
+     965,   969,   973,   977,   981,   985,   989,   993,   997,  1001,
+    1005,  1009,  1013,  1017,  1021,  1025,  1029,  1033,  1037,  1041,
+    1045,  1049,  1053,  1057,  1061,  1065,  1069,  1073,  1078,  1082,
+    1086,  1090,  1094,  1098,  1102,  1106,  1110,  1114,  1118,  1122,
+    1126,  1130,  1134,  1138,  1142,  1146,  1150,  1154,  1158,  1162,
+    1169,  1173,  1177,  1181,  1185,  1189,  1193,  1198,  1204,  1210,
+    1216,  1222,  1228,  1234,  1243,  1247,  1250,  1254,  1260,  1265,
+    1270,  1271,  1274,  1275,  1276,  1279,  1287,  1295,  1300,  1305
 };
 #endif
 
@@ -444,7 +412,7 @@ static const char *const yytname[] =
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-static const short yypact[] =
+static const short int yypact[] =
 {
      762,  -157,  -157,  -157,  -157,  -157,  -157,    36,  -157,    42,
     -157,  -157,  -157,  -157,  -157,  -157,   112,  -157,  -157,  -157,
@@ -540,7 +508,7 @@ static const unsigned char yydefact[] =
 };
 
   /* YYPGOTO[NTERM-NUM].  */
-static const short yypgoto[] =
+static const short int yypgoto[] =
 {
     -157,  -157,   -20,  -157,  -157,  -157,  -157,     0,  -157,  -157,
     -157,  -157,  -157,  -157,  -157,  -157,   123,  -157,  -117,  -157,
@@ -549,7 +517,7 @@ static const short yypgoto[] =
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
-static const short yydefgoto[] =
+static const short int yydefgoto[] =
 {
       -1,    38,    39,    40,    41,    42,    65,    66,    43,   169,
       69,   331,   173,    44,   153,   395,    45,    46,    47,   235,
@@ -560,7 +528,7 @@ static const short yydefgoto[] =
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
      positive, shift that token.  If negative, reduce the rule whose
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const short yytable[] =
+static const short int yytable[] =
 {
       62,    63,   225,    68,    86,    71,    64,    86,   245,   389,
      157,    72,   390,   241,   241,   170,    87,   327,   242,   242,
@@ -740,7 +708,7 @@ static const short yytable[] =
        0,     0,   123,     0,   124
 };
 
-static const short yycheck[] =
+static const short int yycheck[] =
 {
       20,    21,   119,    23,    22,    25,    18,    22,   124,    27,
       18,    18,    30,   123,   124,    18,    50,   163,   123,   124,
@@ -1119,7 +1087,7 @@ static const yybool yyimmediate[] =
    list of conflicting reductions corresponding to action entry for
    state STATE-NUM in yytable.  0 means no conflicts.  The list in
    yyconfl is terminated by a rule number of 0.  */
-static const unsigned short yyconflp[] =
+static const unsigned short int yyconflp[] =
 {
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
@@ -1301,7 +1269,7 @@ static const unsigned short yyconflp[] =
 
 /* YYCONFL[I] -- lists of conflicting rule numbers, each terminated by
    0, pointed into by YYCONFLP.  */
-static const short yyconfl[] =
+static const short int yyconfl[] =
 {
        0,   237,     0,   237,     0,   237,     0,   237,     0,    58,
        0,    58,     0,    58,     0,    58,     0,    58,     0,    58,
@@ -1415,37 +1383,35 @@ typedef enum { yyok, yyaccept, yyabort, yyerr } YYRESULTTAG;
   } while (0)
 
 
-/*-----------------------------------.
-| Print this symbol's value on YYO.  |
-`-----------------------------------*/
+/*----------------------------------------.
+| Print this symbol's value on YYOUTPUT.  |
+`----------------------------------------*/
 
 static void
-yy_symbol_value_print (FILE *yyo, int yytype, YYSTYPE const * const yyvaluep, void *scanner, struct _parseParams *params)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, void *scanner, struct _parseParams *params)
 {
-  FILE *yyoutput = yyo;
-  YYUSE (yyoutput);
+  FILE *yyo = yyoutput;
+  YYUSE (yyo);
   YYUSE (scanner);
   YYUSE (params);
   if (!yyvaluep)
     return;
-  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   YYUSE (yytype);
-  YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
 
-/*---------------------------.
-| Print this symbol on YYO.  |
-`---------------------------*/
+/*--------------------------------.
+| Print this symbol on YYOUTPUT.  |
+`--------------------------------*/
 
 static void
-yy_symbol_print (FILE *yyo, int yytype, YYSTYPE const * const yyvaluep, void *scanner, struct _parseParams *params)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, void *scanner, struct _parseParams *params)
 {
-  YYFPRINTF (yyo, "%s %s (",
+  YYFPRINTF (yyoutput, "%s %s (",
              yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
 
-  yy_symbol_value_print (yyo, yytype, yyvaluep, scanner, params);
-  YYFPRINTF (yyo, ")");
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, scanner, params);
+  YYFPRINTF (yyoutput, ")");
 }
 
 # define YY_SYMBOL_PRINT(Title, Type, Value, Location)                  \
@@ -1565,10 +1531,7 @@ yytnamerr (char *yyres, const char *yystr)
           case '\\':
             if (*++yyp != '\\')
               goto do_not_strip_quotes;
-            else
-              goto append;
-
-          append:
+            /* Fall through.  */
           default:
             if (yyres)
               yyres[yyn] = *yyp;
@@ -1586,7 +1549,7 @@ yytnamerr (char *yyres, const char *yystr)
   if (! yyres)
     return strlen (yystr);
 
-  return (size_t) (yystpcpy (yyres, yystr) - yyres);
+  return yystpcpy (yyres, yystr) - yyres;
 }
 # endif
 
@@ -1602,7 +1565,7 @@ typedef int yyRuleNum;
 typedef int yySymbol;
 
 /** Item references, as in LALR(1) machine */
-typedef short yyItemNum;
+typedef short int yyItemNum;
 
 typedef struct yyGLRState yyGLRState;
 typedef struct yyGLRStateSet yyGLRStateSet;
@@ -1624,7 +1587,7 @@ struct yyGLRState {
   size_t yyposn;
   union {
     /** First in a chain of alternative reductions producing the
-     *  nonterminal corresponding to this state, threaded through
+     *  non-terminal corresponding to this state, threaded through
      *  yynext.  */
     yySemanticOption* yyfirstVal;
     /** Semantic value for this state.  */
@@ -1685,7 +1648,7 @@ struct yyGLRStack {
 static void yyexpandGLRStack (yyGLRStack* yystackp);
 #endif
 
-_Noreturn static void
+static _Noreturn void
 yyFail (yyGLRStack* yystackp, void *scanner, struct _parseParams *params, const char* yymsg)
 {
   if (yymsg != YY_NULLPTR)
@@ -1693,7 +1656,7 @@ yyFail (yyGLRStack* yystackp, void *scanner, struct _parseParams *params, const 
   YYLONGJMP (yystackp->yyexception_buffer, 1);
 }
 
-_Noreturn static void
+static _Noreturn void
 yyMemoryExhausted (yyGLRStack* yystackp)
 {
   YYLONGJMP (yystackp->yyexception_buffer, 2);
@@ -1736,32 +1699,6 @@ yyfillin (yyGLRStackItem *yyvsp, int yylow0, int yylow1)
     }
 }
 
-
-/** If yychar is empty, fetch the next token.  */
-static inline yySymbol
-yygetToken (int *yycharp, yyGLRStack* yystackp, void *scanner, struct _parseParams *params)
-{
-  yySymbol yytoken;
-  YYUSE (scanner);
-  YYUSE (params);
-  if (*yycharp == YYEMPTY)
-    {
-      YYDPRINTF ((stderr, "Reading a token: "));
-      *yycharp = yylex (&yylval, scanner, params);
-    }
-  if (*yycharp <= YYEOF)
-    {
-      *yycharp = yytoken = YYEOF;
-      YYDPRINTF ((stderr, "Now at end of input.\n"));
-    }
-  else
-    {
-      yytoken = YYTRANSLATE (*yycharp);
-      YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
-    }
-  return yytoken;
-}
-
 /* Do nothing if YYNORMAL or if *YYLOW <= YYLOW1.  Otherwise, fill in
  * YYVSP[YYLOW1 .. *YYLOW-1] as in yyfillin and set *YYLOW = YYLOW1.
  * For convenience, always return YYLOW1.  */
@@ -1784,11 +1721,11 @@ yyfill (yyGLRStackItem *yyvsp, int *yylow, int yylow1, yybool yynormal)
  *  (@$).  Returns yyok for normal return, yyaccept for YYACCEPT,
  *  yyerr for YYERROR, yyabort for YYABORT.  */
 static YYRESULTTAG
-yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
+yyuserAction (yyRuleNum yyn, size_t yyrhslen, yyGLRStackItem* yyvsp,
               yyGLRStack* yystackp,
               YYSTYPE* yyvalp, void *scanner, struct _parseParams *params)
 {
-  yybool yynormal YY_ATTRIBUTE_UNUSED = (yybool) (yystackp->yysplitPoint == YY_NULLPTR);
+  yybool yynormal YY_ATTRIBUTE_UNUSED = (yystackp->yysplitPoint == YY_NULLPTR);
   int yylow;
   YYUSE (yyvalp);
   YYUSE (scanner);
@@ -1807,7 +1744,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 # undef yyclearin
 # define yyclearin (yychar = YYEMPTY)
 # undef YYFILL
-# define YYFILL(N) yyfill (yyvsp, &yylow, (N), yynormal)
+# define YYFILL(N) yyfill (yyvsp, &yylow, N, yynormal)
 # undef YYBACKUP
 # define YYBACKUP(Token, Value)                                              \
   return yyerror (scanner, params, YY_("syntax error: cannot back up")),     \
@@ -1820,56 +1757,69 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *yyvalp = yyvsp[YYFILL (1-yyrhslen)].yystate.yysemantics.yysval;
   switch (yyn)
     {
-  case 2:
+        case 2:
+
     {
     params->ast = new astConst(llll_get(), params->owner);
     *params->codeac = -1;
     code_dev_post ("parse: empty program\n");
 }
+
     break;
 
   case 3:
+
     {
     params->ast = new astConst(llll_get(), params->owner);
     *params->codeac = 0;
     code_dev_post ("parse: NAMEDPARAM: empty program\n");
     YYACCEPT;
 }
+
     break;
 
   case 4:
+
     {
     params->ast = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n);
     *params->codeac = -1;
     code_dev_post("codeac: %ld", *params->codeac);
     code_dev_post ("parse: sequence: program\n");
 }
+
     break;
 
   case 5:
+
     {
     params->ast = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n);
     code_dev_post("codeac: %ld", *params->codeac);
     code_dev_post ("parse: sequence NAMEDPARAM: program\n");
     YYACCEPT;
 }
+
     break;
 
   case 7:
+
     {
     ((*yyvalp).n) = new astSequence((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: seq\n");
 }
+
     break;
 
   case 8:
+
     {
     ((*yyvalp).n) = new astIfThenElse((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), nullptr, params->owner);
     code_dev_post ("parse: if then\n");
 }
+
     break;
 
   case 9:
+
     {
     // ask JLG: this causes 26 r/r conflicts.
     // Putting
@@ -1891,132 +1841,168 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astIfThenElse((((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: if then else\n");
 }
+
     break;
 
   case 10:
+
     {
     ((*yyvalp).n) = new astWhileLoop<E_LOOP_DO>((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: while...do\n");
 }
+
     break;
 
   case 11:
+
     {
     ((*yyvalp).n) = new astWhileLoop<E_LOOP_COLLECT>((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: while...collect\n");
 }
+
     break;
 
   case 12:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.fal), nullptr, nullptr, nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList DO_KW list\n");
 }
+
     break;
 
   case 13:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.fal), nullptr, nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: forargList WITH_KW argsByNameList DO_KW list\n");
 }
+
     break;
 
   case 14:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.fal), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList AS_KW sequence DO_KW list\n");
 }
+
     break;
 
   case 15:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((((yyGLRStackItem const *)yyvsp)[YYFILL (-6)].yystate.yysemantics.yysval.fal), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList DO_KW list\n");
 }
+
     break;
 
   case 16:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((((yyGLRStackItem const *)yyvsp)[YYFILL (-6)].yystate.yysemantics.yysval.fal), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.snpl), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence DO_KW list\n");
 }
+
     break;
 
   case 17:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.fal), nullptr, nullptr, nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList COLLECT_KW list\n");
 }
+
     break;
 
   case 18:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.fal), nullptr, nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: forargList WITH_KW argsByNameList COLLECT_KW list\n");
 }
+
     break;
 
   case 19:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.fal), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList AS_KW sequence COLLECT_KW list\n");
 }
+
     break;
 
   case 20:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((((yyGLRStackItem const *)yyvsp)[YYFILL (-6)].yystate.yysemantics.yysval.fal), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList COLLECT_KW list\n");
 }
+
     break;
 
   case 21:
+
     {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((((yyGLRStackItem const *)yyvsp)[YYFILL (-6)].yystate.yysemantics.yysval.fal), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.snpl), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence COLLECT_KW list\n");
 }
+
     break;
 
   case 22:
+
     {
     ((*yyvalp).fal) = new countedList<forArg *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.forarg));
     code_dev_post ("parse: for iterator (first term)\n");
 }
+
     break;
 
   case 23:
+
     {
     ((*yyvalp).fal) = new countedList<forArg *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.forarg), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.fal));
     code_dev_post ("parse: for iterator (subsequent term)\n");
 }
+
     break;
 
   case 24:
+
     {
     ((*yyvalp).forarg) = new forArg((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.sym), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n));
     addVariableToScope(params, (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: for iterator with index");
 }
+
     break;
 
   case 25:
+
     {
     addVariableToScope(params, (((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.sym));
     addVariableToScope(params, (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.sym));
     ((*yyvalp).forarg) = new forArg((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.sym), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.sym), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n));
     code_dev_post ("parse: for iterator with index and address");
 }
+
     break;
 
   case 26:
+
     {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     *++(params->implicitArgumentsStack) = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.funarglist);
 }
+
     break;
 
   case 27:
+
     {
     t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     ((*yyvalp).n) = new astConst(fn, params->owner);
@@ -2029,9 +2015,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->implicitArgumentsStack);
     code_dev_post ("parse: user defined function");
 }
+
     break;
 
   case 28:
+
     {
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
@@ -2039,9 +2027,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     params->fnDepth++;
     *++(params->implicitArgumentsStack) = nullptr;
 }
+
     break;
 
   case 29:
+
     {
     t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     ((*yyvalp).n) = new astConst(fn, params->owner);
@@ -2054,9 +2044,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->implicitArgumentsStack);
     code_dev_post ("parse: user defined function");
 }
+
     break;
 
   case 30:
+
     {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
@@ -2067,9 +2059,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     }
     *++(params->implicitArgumentsStack) = (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.funarglist);
 }
+
     break;
 
   case 31:
+
     {
     t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     ((*yyvalp).n) = new astConst(fn, params->owner);
@@ -2082,9 +2076,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->implicitArgumentsStack);
     code_dev_post ("parse: user defined function");
 }
+
     break;
 
   case 32:
+
     {
     params->fnDepth++;
     ++(params->localVariablesStack);
@@ -2099,9 +2095,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *++(params->implicitArgumentsStack) = nullptr;
 
 }
+
     break;
 
   case 33:
+
     {
     t_function *fn = new t_userFunction(*++(params->implicitArgumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     ((*yyvalp).n) = new astConst(fn, params->owner);
@@ -2114,9 +2112,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->implicitArgumentsStack);
     code_dev_post ("parse: user defined function");
 }
+
     break;
 
   case 34:
+
     {
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
@@ -2124,18 +2124,22 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     (**(params->localVariablesAuxMapStack))[(((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)] = 1;
     code_dev_post ("parse: funargList (first term, no default)\n");
 }
+
     break;
 
   case 35:
+
     {
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg(gensym("<...>")));
     code_dev_post ("parse: ELLIPSIS");
 }
+
     break;
 
   case 36:
+
     {
     // two levels are pushed:
     // one for the function, whose definition is beginning here,
@@ -2145,9 +2149,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     (**(params->localVariablesAuxMapStack))[(((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.sym)] = 1;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
 }
+
     break;
 
   case 37:
+
     {
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.sym), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), *(params->localVariablesStack)));
     delete *(params->localVariablesAuxMapStack);
@@ -2157,32 +2163,40 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesStack--) = nullptr;
     code_dev_post ("parse: funargList (first term, with default)\n");
 }
+
     break;
 
   case 38:
+
     {
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.funarglist));
     (**(params->localVariablesAuxMapStack))[(((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)] = 1;
     code_dev_post ("parse: funargList (subsequent term, no default)\n");
 }
+
     break;
 
   case 39:
+
     {
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg(gensym("<...>")), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.funarglist));
     code_dev_post ("parse: funargList (subsequent term, no default)\n");
 }
+
     break;
 
   case 40:
+
     {
     (**(params->localVariablesAuxMapStack))[(((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.sym)] = 1;
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
 }
+
     break;
 
   case 41:
+
     {
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.sym), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), *(params->localVariablesStack)), (((yyGLRStackItem const *)yyvsp)[YYFILL (-5)].yystate.yysemantics.yysval.funarglist));
     delete *(params->localVariablesAuxMapStack);
@@ -2190,128 +2204,162 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesStack--) = nullptr;
     code_dev_post ("parse: funargList (subsequent term, with default)\n");
 }
+
     break;
 
   case 42:
+
     {
     ((*yyvalp).liftedarglist) = new countedList<t_symbol *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: liftedargList (first term)\n");
 }
+
     break;
 
   case 43:
+
     {
     ((*yyvalp).liftedarglist) = new countedList<t_symbol *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.liftedarglist));
     code_dev_post ("parse: liftedargList (subsequent term)\n");
 }
+
     break;
 
   case 45:
+
     {
     (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc)->addOopStyleArg((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n));
     code_dev_post ("parse: term APPLY funcall");
     ((*yyvalp).fc) = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc);
 }
+
     break;
 
   case 46:
+
     {
     ((*yyvalp).fc) = new astFunctionCall((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.nl), nullptr, params->owner);
     delete (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.nl);
     code_dev_post ("parse: function call with args by position");
 }
+
     break;
 
   case 47:
+
     {
     ((*yyvalp).fc) = new astFunctionCall((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), nullptr, (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl), params->owner);
     delete (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl);
     code_dev_post ("parse: function call with args by name");
 }
+
     break;
 
   case 48:
+
     {
     ((*yyvalp).fc) = new astFunctionCall((((yyGLRStackItem const *)yyvsp)[YYFILL (-5)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.nl), (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl), params->owner);
     delete (((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.nl);
     delete (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl);
     code_dev_post ("parse: function call with args by position and by name");
 }
+
     break;
 
   case 49:
+
     {
     ((*yyvalp).fc) = new astFunctionCall((((yyGLRStackItem const *)yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.nl), (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl), params->owner);
     delete (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.nl);
     delete (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl);
     code_dev_post ("parse: function call with args by position and by name");
 }
+
     break;
 
   case 50:
+
     {
     ((*yyvalp).fc) = new astFunctionCall((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), nullptr, nullptr, params->owner);
     code_dev_post ("parse: function call with no args");
 }
+
     break;
 
   case 51:
+
     {
     ((*yyvalp).nl) = new countedList<astNode *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n));
     code_dev_post ("parse: argsByPositionList (first term)\n");
 }
+
     break;
 
   case 52:
+
     {
     ((*yyvalp).nl) = new countedList<astNode *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.nl));
     code_dev_post ("parse: argsByPositionList (subsequent term)\n");
 }
+
     break;
 
   case 53:
+
     {
     ((*yyvalp).snpl) = new countedList<symNodePair *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.snp));
     code_dev_post ("parse: argsByNameList (first term)\n");
 }
+
     break;
 
   case 54:
+
     {
     ((*yyvalp).snpl) = new countedList<symNodePair *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.snp), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl));
     code_dev_post ("parse: argsByNameList (subsequent term)\n");
 }
+
     break;
 
   case 55:
+
     {
     ((*yyvalp).snpl) = new countedList<symNodePair *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.snp), (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl));
     code_dev_post ("parse: argsByNameList (subsequent term)\n");
 }
+
     break;
 
   case 56:
+
     {
     ((*yyvalp).snp) = new symNodePair((((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.sym), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n));
     code_dev_post ("parse: named parameter %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.sym)->s_name);
 }
+
     break;
 
   case 59:
+
     {
     ((*yyvalp).n) = new astConcat((((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: cat\n");
 }
+
     break;
 
   case 66:
+
     {
     ((*yyvalp).n) = new astConcat((((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: cat\n");
 }
+
     break;
 
   case 68:
+
     {
     if (params->dataOutlets && (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.l) > *(params->dataOutlets))
         *(params->dataOutlets) = (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.l);
@@ -2324,9 +2372,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
     code_dev_post("parse: OUTLET ASSIGN list");
 }
+
     break;
 
   case 69:
+
     {
     if (params->directOutlets && (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.l) > *(params->directOutlets))
         *(params->directOutlets) = (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.l);
@@ -2336,319 +2386,409 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
     code_dev_post("parse: DIROUTLET ASSIGN list");
 }
+
     break;
 
   case 70:
+
     {
     ((*yyvalp).n) = new astAssign((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ASSIGN list");
 }
+
     break;
 
   case 71:
+
     {
     addVariableToScope(params, (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.sym));
     ((*yyvalp).n) = new astInit((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.sym), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: INIT LOCALVAR ASSIGN list");
 }
+
     break;
 
   case 72:
+
     {
     ((*yyvalp).n) = new astRichAssignment<E_RA_STANDARD>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ASSIGN list");
 }
+
     break;
 
   case 73:
+
     {
     ((*yyvalp).n) = new astOperatorAPlus((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var APLUS list");
 }
+
     break;
 
   case 74:
+
     {
     ((*yyvalp).n) = new astOperatorRAPlus((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APLUS list");
 }
+
     break;
 
   case 75:
+
     {
     ((*yyvalp).n) = new astOperatorAMinus((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var AMINUS list");
 }
+
     break;
 
   case 76:
+
     {
     ((*yyvalp).n) = new astOperatorRAMinus((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AMINUS list");
 }
+
     break;
 
   case 77:
+
     {
     ((*yyvalp).n) = new astOperatorATimes((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ATIMES list");
 }
+
     break;
 
   case 78:
+
     {
     ((*yyvalp).n) = new astOperatorRATimes((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ATIMES list");
 }
+
     break;
 
   case 79:
+
     {
     ((*yyvalp).n) = new astOperatorAPow((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var APOWOP list");
 }
+
     break;
 
   case 80:
+
     {
     ((*yyvalp).n) = new astOperatorRAPow((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APOWOP list");
 }
+
     break;
 
   case 81:
+
     {
     ((*yyvalp).n) = new astOperatorADiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ADIV list");
 }
+
     break;
 
   case 82:
+
     {
     ((*yyvalp).n) = new astOperatorRADiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIV list");
 }
+
     break;
 
   case 83:
+
     {
     ((*yyvalp).n) = new astOperatorADivdiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ADIVDIV list");
 }
+
     break;
 
   case 84:
+
     {
     ((*yyvalp).n) = new astOperatorRADivdiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIVDIV list");
 }
+
     break;
 
   case 85:
+
     {
     ((*yyvalp).n) = new astOperatorARemainder((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var AREM list");
 }
+
     break;
 
   case 86:
+
     {
     ((*yyvalp).n) = new astOperatorRARemainder((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AREM list");
 }
+
     break;
 
   case 87:
+
     {
     ((*yyvalp).n) = new astOperatorABitAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ABITAND list");
 }
+
     break;
 
   case 88:
+
     {
     ((*yyvalp).n) = new astOperatorRABitAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITAND list");
 }
+
     break;
 
   case 89:
+
     {
     ((*yyvalp).n) = new astOperatorABitXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ABITXOR list");
 }
+
     break;
 
   case 90:
+
     {
     ((*yyvalp).n) = new astOperatorRABitXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITXOR list");
 }
+
     break;
 
   case 91:
+
     {
     ((*yyvalp).n) = new astOperatorABitOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: localVar ABITOR list");
 }
+
     break;
 
   case 92:
+
     {
     ((*yyvalp).n) = new astOperatorRABitOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITOR list");
 }
+
     break;
 
   case 93:
+
     {
     ((*yyvalp).n) = new astOperatorALShift((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALSHIFT list");
 }
+
     break;
 
   case 94:
+
     {
     ((*yyvalp).n) = new astOperatorRALShift((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALSHIFT list");
 }
+
     break;
 
   case 95:
+
     {
     ((*yyvalp).n) = new astOperatorARShift((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ARSHIFT list");
 }
+
     break;
 
   case 96:
+
     {
     ((*yyvalp).n) = new astOperatorRARShift((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARSHIFT list");
 }
+
     break;
 
   case 97:
+
     {
     ((*yyvalp).n) = new astSCAAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGAND list");
 }
+
     break;
 
   case 98:
+
     {
     ((*yyvalp).n) = new astLogRASCAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGAND list");
 }
+
     break;
 
   case 99:
+
     {
     ((*yyvalp).n) = new astSCAAndExt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGANDEXT list");
 }
+
     break;
 
   case 100:
+
     {
     ((*yyvalp).n) = new astSCRichAccessAndExt<astRichAssignment<E_RA_SHORTCIRCUIT>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGANDEXT list");
 }
+
     break;
 
   case 101:
+
     {
     ((*yyvalp).n) = new astLogAXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGXOR list");
 }
+
     break;
 
   case 102:
+
     {
     ((*yyvalp).n) = new astLogRAXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGXOR list");
 }
+
     break;
 
   case 103:
+
     {
     ((*yyvalp).n) = new astSCAOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGOR list");
 }
+
     break;
 
   case 104:
+
     {
     ((*yyvalp).n) = new astLogRASCOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOR list");
 }
+
     break;
 
   case 105:
+
     {
     ((*yyvalp).n) = new astSCAOrExt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGOREXT list");
 }
+
     break;
 
   case 106:
+
     {
     ((*yyvalp).n) = new astSCRichAccessOrExt<astRichAssignment<E_RA_SHORTCIRCUIT>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOREXT list");
 }
+
     break;
 
   case 107:
+
     {
     ((*yyvalp).n) = new astNthAssignOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: var ANTHOP list op\n");
 }
+
     break;
 
   case 108:
+
     {
     ((*yyvalp).n) = new astRichAccessNthOp<astRichAssignment<E_RA_STANDARD>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ANTHOP list");
 }
+
     break;
 
   case 109:
+
     {
     ((*yyvalp).n) = new astConcatAssignOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: var ACONCAT list op\n");
 }
+
     break;
 
   case 110:
+
     {
     ((*yyvalp).n) = new astRichAccessConcatOp<astRichAssignment<E_RA_STANDARD>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ACONCAT list");
 }
+
     break;
 
   case 111:
+
     {
     ((*yyvalp).n) = new astRevConcatAssignOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: var ARCONCAT list op\n");
 }
+
     break;
 
   case 112:
+
     {
     ((*yyvalp).n) = new astRichAccessRConcatOp<astRichAssignment<E_RA_STANDARD>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
+
     break;
 
   case 113:
+
     {
     (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc)->addOopStyleArg((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lv));
     ((*yyvalp).n) = new astAssign(new astLocalVar((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lv)), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), params->owner);
     code_dev_post ("parse: localVar AAPPLY funcall");
 }
+
     break;
 
   case 114:
+
     {
     (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc)->addOopStyleArg((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.pv));
     astPatcherVar *v = new astPatcherVar((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.pv));
@@ -2656,761 +2796,975 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astAssign(v, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), params->owner);
     code_dev_post ("parse: patcherVar AAPPLY funcall");
 }
+
     break;
 
   case 115:
+
     {
     (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc)->addOopStyleArg((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.gv));
     ((*yyvalp).n) = new astAssign(new astGlobalVar((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.gv)), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), params->owner);
     code_dev_post ("parse: globalVar AAPPLY funcall");
 }
+
     break;
 
   case 116:
+
     {
     (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc)->addOopStyleArg(new astConst(params->owner));
     ((*yyvalp).n) = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
+
     break;
 
   case 117:
+
     {
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_NTH, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n)));
     code_dev_post ("parse: lvalueStepList (NTH first term)");
 }
+
     break;
 
   case 118:
+
     {
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_KEY, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n)));
     code_dev_post ("parse: lvalueStepList (KEY first term)");
 }
+
     break;
 
   case 119:
+
     {
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_NTH, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n)), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl));
     code_dev_post ("parse: lvalueStepList (NTH subsequent term)");
 }
+
     break;
 
   case 120:
+
     {
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_KEY, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n)), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl));
     code_dev_post ("parse: lvalueStepList (KEY subsequent term)");
 }
+
     break;
 
   case 122:
+
     {
     ((*yyvalp).n) = new astConcat((((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: cat\n");
 }
+
     break;
 
   case 124:
+
     { ((*yyvalp).n) = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n); }
+
     break;
 
   case 125:
+
     {
     ((*yyvalp).n) = new astOperatorUMinus((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: U-\n");
 }
+
     break;
 
   case 126:
+
     {
     ((*yyvalp).n) = new astLogNot((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: !\n");
 }
+
     break;
 
   case 127:
+
     {
     ((*yyvalp).n) = new astOperatorBitNot((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: ~\n");
 }
+
     break;
 
   case 128:
+
     {
     ((*yyvalp).n) = new astOperatorPlus((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: +\n");
 }
+
     break;
 
   case 129:
+
     {
     ((*yyvalp).n) = new astOperatorMinus((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: -\n");
 }
+
     break;
 
   case 130:
+
     {
     ((*yyvalp).n) = new astOperatorTimes((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: *\n");
 }
+
     break;
 
   case 131:
+
     {
     ((*yyvalp).n) = new astOperatorDiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: /\n");
 }
+
     break;
 
   case 132:
+
     {
     ((*yyvalp).n) = new astOperatorDivdiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: //\n");
 }
+
     break;
 
   case 133:
+
     {
     ((*yyvalp).n) = new astOperatorRemainder((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: %\n");
 }
+
     break;
 
   case 134:
+
     {
     ((*yyvalp).n) = new astOperatorPow((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: **\n");
 }
+
     break;
 
   case 135:
+
     {
     ((*yyvalp).n) = new astOperatorBitAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &\n");
 }
+
     break;
 
   case 136:
+
     {
     ((*yyvalp).n) = new astOperatorBitXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ^\n");
 }
+
     break;
 
   case 137:
+
     {
     ((*yyvalp).n) = new astOperatorBitOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: |\n");
 }
+
     break;
 
   case 138:
+
     {
     ((*yyvalp).n) = new astOperatorBitOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <<\n");
 }
+
     break;
 
   case 139:
+
     {
     ((*yyvalp).n) = new astOperatorBitOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: >>\n");
 }
+
     break;
 
   case 140:
+
     {
     ((*yyvalp).n) = new astComparatorEq((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ==\n");
 }
+
     break;
 
   case 141:
+
     {
     ((*yyvalp).n) = new astComparatorNeq((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: !=\n");
 }
+
     break;
 
   case 142:
+
     {
     ((*yyvalp).n) = new astComparatorLt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
+
     break;
 
   case 143:
+
     {
     ((*yyvalp).n) = new astComparatorGt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
+
     break;
 
   case 144:
+
     {
     ((*yyvalp).n) = new astComparatorLeq((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <=\n");
 }
+
     break;
 
   case 145:
+
     {
     ((*yyvalp).n) = new astComparatorGeq((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: >=\n");
 }
+
     break;
 
   case 146:
+
     {
     ((*yyvalp).n) = new astSCOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ||\n");
 }
+
     break;
 
   case 147:
+
     {
     ((*yyvalp).n) = new astSCAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
+
     break;
 
   case 148:
+
     {
     ((*yyvalp).n) = new astLogXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
+
     break;
 
   case 149:
+
     {
     ((*yyvalp).n) = new astSCOrExt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: |||\n");
 }
+
     break;
 
   case 150:
+
     {
     ((*yyvalp).n) = new astSCAndExt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&&\n");
 }
+
     break;
 
   case 151:
+
     {
     ((*yyvalp).n) = new astNthOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: nthop\n");
 }
+
     break;
 
   case 152:
+
     {
     ((*yyvalp).n) = new astPickOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: nthop\n");
 }
+
     break;
 
   case 153:
+
     {
     ((*yyvalp).n) = new astRangeOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
+
     break;
 
   case 154:
+
     {
     ((*yyvalp).n) = new astKeyOp<e_keyOpStandard>((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: access\n");
 }
+
     break;
 
   case 155:
+
     {
     ((*yyvalp).n) = new astKeyOp<e_keyOpUnwrapping>((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: access\n");
 }
+
     break;
 
   case 156:
+
     { ((*yyvalp).n) = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n); }
+
     break;
 
   case 157:
+
     {
     ((*yyvalp).n) = new astOperatorUMinus((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: U-\n");
 }
+
     break;
 
   case 158:
+
     {
     ((*yyvalp).n) = new astLogNot((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: !\n");
 }
+
     break;
 
   case 159:
+
     {
     ((*yyvalp).n) = new astOperatorBitNot((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: ~\n");
 }
+
     break;
 
   case 160:
+
     {
     ((*yyvalp).n) = new astOperatorPlus((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: +\n");
 }
+
     break;
 
   case 161:
+
     {
     ((*yyvalp).n) = new astOperatorMinus((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: -\n");
 }
+
     break;
 
   case 162:
+
     {
     ((*yyvalp).n) = new astOperatorTimes((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: *\n");
 }
+
     break;
 
   case 163:
+
     {
     ((*yyvalp).n) = new astOperatorDiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: /\n");
 }
+
     break;
 
   case 164:
+
     {
     ((*yyvalp).n) = new astOperatorDivdiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: //\n");
 }
+
     break;
 
   case 165:
+
     {
     ((*yyvalp).n) = new astOperatorRemainder((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: %\n");
 }
+
     break;
 
   case 166:
+
     {
     ((*yyvalp).n) = new astOperatorPow((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: **\n");
 }
+
     break;
 
   case 167:
+
     {
     ((*yyvalp).n) = new astOperatorBitAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &\n");
 }
+
     break;
 
   case 168:
+
     {
     ((*yyvalp).n) = new astOperatorBitXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ^\n");
 }
+
     break;
 
   case 169:
+
     {
     ((*yyvalp).n) = new astOperatorBitOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: |\n");
 }
+
     break;
 
   case 170:
+
     {
     ((*yyvalp).n) = new astOperatorBitOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <<\n");
 }
+
     break;
 
   case 171:
+
     {
     ((*yyvalp).n) = new astOperatorBitOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: >>\n");
 }
+
     break;
 
   case 172:
+
     {
     ((*yyvalp).n) = new astComparatorEq((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ==\n");
 }
+
     break;
 
   case 173:
+
     {
     ((*yyvalp).n) = new astComparatorNeq((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: !=\n");
 }
+
     break;
 
   case 174:
+
     {
     ((*yyvalp).n) = new astComparatorLt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
+
     break;
 
   case 175:
+
     {
     ((*yyvalp).n) = new astComparatorGt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
+
     break;
 
   case 176:
+
     {
     ((*yyvalp).n) = new astComparatorLeq((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <=\n");
 }
+
     break;
 
   case 177:
+
     {
     ((*yyvalp).n) = new astComparatorGeq((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: >=\n");
 }
+
     break;
 
   case 178:
+
     {
     ((*yyvalp).n) = new astSCOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ||\n");
 }
+
     break;
 
   case 179:
+
     {
     ((*yyvalp).n) = new astSCAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
+
     break;
 
   case 180:
+
     {
     ((*yyvalp).n) = new astLogXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
+
     break;
 
   case 181:
+
     {
     ((*yyvalp).n) = new astSCOrExt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: |||\n");
 }
+
     break;
 
   case 182:
+
     {
     ((*yyvalp).n) = new astSCAndExt((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&&\n");
 }
+
     break;
 
   case 183:
+
     {
     ((*yyvalp).n) = new astNthOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: nthop\n");
 }
+
     break;
 
   case 184:
+
     {
     ((*yyvalp).n) = new astPickOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: nthop\n");
 }
+
     break;
 
   case 185:
+
     {
     ((*yyvalp).n) = new astRangeOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
+
     break;
 
   case 186:
+
     {
     ((*yyvalp).n) = new astKeyOp<e_keyOpStandard>((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: access\n");
 }
+
     break;
 
   case 187:
+
     {
     ((*yyvalp).n) = new astKeyOp<e_keyOpUnwrapping>((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: access_unwrap\n");
 }
+
     break;
 
   case 188:
+
     {
     ((*yyvalp).n) = new astRichEdit<E_RA_STANDARD>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ASSIGN list");
 }
+
     break;
 
   case 189:
+
     {
     ((*yyvalp).n) = new astOperatorREPlus((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APLUS list");
 }
+
     break;
 
   case 190:
+
     {
     ((*yyvalp).n) = new astOperatorREMinus((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AMINUS list");
 }
+
     break;
 
   case 191:
+
     {
     ((*yyvalp).n) = new astOperatorRETimes((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ATIMES list");
 }
+
     break;
 
   case 192:
+
     {
     ((*yyvalp).n) = new astOperatorREPow((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APOWOP list");
 }
+
     break;
 
   case 193:
+
     {
     ((*yyvalp).n) = new astOperatorREDiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIV list");
 }
+
     break;
 
   case 194:
+
     {
     ((*yyvalp).n) = new astOperatorREDivdiv((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIVDIV list");
 }
+
     break;
 
   case 195:
+
     {
     ((*yyvalp).n) = new astOperatorRERemainder((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AREM list");
 }
+
     break;
 
   case 196:
+
     {
     ((*yyvalp).n) = new astOperatorREBitAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITAND list");
 }
+
     break;
 
   case 197:
+
     {
     ((*yyvalp).n) = new astOperatorREBitXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITXOR list");
 }
+
     break;
 
   case 198:
+
     {
     ((*yyvalp).n) = new astOperatorREBitOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITOR list");
 }
+
     break;
 
   case 199:
+
     {
     ((*yyvalp).n) = new astOperatorRELShift((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALSHIFT list");
 }
+
     break;
 
   case 200:
+
     {
     ((*yyvalp).n) = new astOperatorRERShift((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARSHIFT list");
 }
+
     break;
 
   case 201:
+
     {
     ((*yyvalp).n) = new astLogRESCAnd((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGAND list");
 }
+
     break;
 
   case 202:
+
     {
     ((*yyvalp).n) = new astSCRichAccessAndExt<astRichEdit<E_RA_SHORTCIRCUIT>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGANDEXT list");
 }
+
     break;
 
   case 203:
+
     {
     ((*yyvalp).n) = new astLogREXor((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGXOR list");
 }
+
     break;
 
   case 204:
+
     {
     ((*yyvalp).n) = new astLogRESCOr((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOR list");
 }
+
     break;
 
   case 205:
+
     {
     ((*yyvalp).n) = new astSCRichAccessOrExt<astRichEdit<E_RA_SHORTCIRCUIT>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOREXT list");
 }
+
     break;
 
   case 206:
+
     {
     ((*yyvalp).n) = new astRichAccessNthOp<astRichEdit<E_RA_STANDARD>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ANTHOP list");
 }
+
     break;
 
   case 207:
+
     {
     ((*yyvalp).n) = new astRichAccessConcatOp<astRichEdit<E_RA_STANDARD>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ACONCAT list");
 }
+
     break;
 
   case 208:
+
     {
     ((*yyvalp).n) = new astRichAccessRConcatOp<astRichEdit<E_RA_STANDARD>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
+
     break;
 
   case 209:
+
     {
     (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc)->addOopStyleArg(new astConst(params->owner));
     ((*yyvalp).n) = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>((((yyGLRStackItem const *)yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
+
     break;
 
   case 210:
+
     {
     ((*yyvalp).n) = new astConst((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post("parse: INT %ld", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
+
     break;
 
   case 211:
+
     {
     ((*yyvalp).n) = new astConst((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.r), params->owner);
     code_dev_post("parse: RAT_LITERAL %ld/%ld", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.r).num(), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.r).den());
 }
+
     break;
 
   case 212:
+
     {
     ((*yyvalp).n) = new astConst((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.d), params->owner);
     code_dev_post("parse: DOUBLE_LITERAL %lf", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.d));
 }
+
     break;
 
   case 213:
+
     {
     ((*yyvalp).n) = new astConst((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.p), params->owner);
     code_dev_post("parse: PITCH_LITERAL %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.p).toSym()->s_name);
 }
+
     break;
 
   case 214:
+
     {
     ((*yyvalp).n) = new astConst((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), params->owner);
     code_dev_post("parse: SYMBOL_LITERAL %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
+
     break;
 
   case 215:
+
     {
     ((*yyvalp).n) = new astConst(llll_get(), params->owner);
     code_dev_post("parse: NULL");
 }
+
     break;
 
   case 216:
+
     {
     auto fnConst = new astConst((*(params->bifs))["$argcount"], params->owner);
     ((*yyvalp).n) = new astFunctionCall(fnConst, nullptr, nullptr, params->owner);
     code_dev_post("parse: ARGCOUNT");
 }
+
     break;
 
   case 217:
+
     {
     t_llll *ll = llll_get();
     llll_appendllll(ll, llll_get());
     ((*yyvalp).n) = new astConst(ll, params->owner);
     code_dev_post("parse: NIL");
 }
+
     break;
 
   case 218:
+
     {
     if (params->dataInlets && params->fnDepth == 0 && (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l) > *(params->dataInlets))
         *(params->dataInlets) = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l);
     ((*yyvalp).n) = new astInlet((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: INLET %ld", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
+
     break;
 
   case 219:
+
     {
     if (params->dataInlets && params->fnDepth == 0 && (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l) > *(params->dataInlets))
     *(params->dataInlets) = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l);
     ((*yyvalp).n) = new astConvInlet<hatom_fn_int>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: INTINLET %ld", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
+
     break;
 
   case 220:
+
     {
     if (params->dataInlets && params->fnDepth == 0 && (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l) > *(params->dataInlets))
     *(params->dataInlets) = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l);
     ((*yyvalp).n) = new astConvInlet<hatom_fn_rat>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: RATINLET %ld", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
+
     break;
 
   case 221:
+
     {
     if (params->dataInlets && params->fnDepth == 0 && (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l) > *(params->dataInlets))
     *(params->dataInlets) = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l);
     ((*yyvalp).n) = new astConvInlet<hatom_fn_float>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: FLOATINLET %ld", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
+
     break;
 
   case 222:
+
     {
     if (params->dataInlets && params->fnDepth == 0 && (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l) > *(params->dataInlets))
     *(params->dataInlets) = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l);
     ((*yyvalp).n) = new astConvInlet<hatom_fn_pitch>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: PITCHINLET %ld", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
+
     break;
 
   case 223:
+
     {
     if (params->directInlets && (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l) > *(params->directInlets))
         *(params->directInlets) = (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l);
@@ -3420,93 +3774,116 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
     code_dev_post("parse: DIRINLET");
 }
+
     break;
 
   case 224:
+
     {
     ((*yyvalp).n) = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n);
     code_dev_post ("parse: []\n");
 }
+
     break;
 
   case 225:
+
     {
     ((*yyvalp).n) = new astConst(llll_get(), params->owner);
 }
+
     break;
 
   case 226:
+
     {
     ((*yyvalp).n) = new astWrap((((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: []\n");
 }
+
     break;
 
   case 227:
+
     {
     t_llll *ll = llll_get();
     llll_appendllll(ll, llll_get());
     ((*yyvalp).n) = new astConst(ll, params->owner);
     code_dev_post("parse: PushPop");
 }
+
     break;
 
   case 228:
+
     {
     t_function *fn = (*(params->bifs))[(((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name];
     ((*yyvalp).n) = new astConst(fn, params->owner);
     code_dev_post("parse: bif %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
+
     break;
 
   case 229:
+
     {
     t_function *fn = (*(params->ofTable))[(((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name];
     ((*yyvalp).n) = new astConst(fn, params->owner);
     code_dev_post("parse: owned function %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
+
     break;
 
   case 235:
+
     {
     astGlobalVar *v = new astGlobalVar(params->gvt, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), params->owner);
     params->globalVariables->insert(v->getVar());
     ((*yyvalp).gv) = v;
     code_dev_post ("parse: Global variable %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
+
     break;
 
   case 236:
+
     {
     astPatcherVar *v = new astPatcherVar((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), params->owner);
     (*params->name2patcherVars)[(((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)].insert(v);
     ((*yyvalp).pv) = v;
     code_dev_post ("parse: Patcher variable %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
+
     break;
 
   case 237:
+
     {
     ((*yyvalp).lv) = new astLocalVar((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), params->owner);
     addVariableToScope(params, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: Local variable %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
+
     break;
 
   case 238:
+
     {
     ((*yyvalp).lv) = new astKeep((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), params->owner);
     addVariableToScope(params, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: Keep local variable %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
+
     break;
 
   case 239:
+
     {
     ((*yyvalp).lv) = new astUnkeep((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), params->owner);
     addVariableToScope(params, (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: Unkeep local variable %s", (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
+
     break;
 
 
@@ -3613,7 +3990,7 @@ yylhsNonterm (yyRuleNum yyrule)
 static inline yybool
 yyisDefaultedState (yyStateNum yystate)
 {
-  return (yybool) yypact_value_is_default (yypact[yystate]);
+  return yypact_value_is_default (yypact[yystate]);
 }
 
 /** The default reduction for YYSTATE, assuming it has one.  */
@@ -3626,7 +4003,7 @@ yydefaultAction (yyStateNum yystate)
 #define yytable_value_is_error(Yytable_value) \
   0
 
-/** The action to take in YYSTATE on seeing YYTOKEN.
+/** Set *YYACTION to the action to take in YYSTATE on seeing YYTOKEN.
  *  Result R means
  *    R < 0:  Reduce on rule -R.
  *    R = 0:  Error.
@@ -3634,25 +4011,26 @@ yydefaultAction (yyStateNum yystate)
  *  Set *YYCONFLICTS to a pointer into yyconfl to a 0-terminated list
  *  of conflicting reductions.
  */
-static inline int
-yygetLRActions (yyStateNum yystate, yySymbol yytoken, const short** yyconflicts)
+static inline void
+yygetLRActions (yyStateNum yystate, int yytoken,
+                int* yyaction, const short int** yyconflicts)
 {
   int yyindex = yypact[yystate] + yytoken;
-  if (yyisDefaultedState (yystate)
+  if (yypact_value_is_default (yypact[yystate])
       || yyindex < 0 || YYLAST < yyindex || yycheck[yyindex] != yytoken)
     {
+      *yyaction = -yydefact[yystate];
       *yyconflicts = yyconfl;
-      return -yydefact[yystate];
     }
   else if (! yytable_value_is_error (yytable[yyindex]))
     {
+      *yyaction = yytable[yyindex];
       *yyconflicts = yyconfl + yyconflp[yyindex];
-      return yytable[yyindex];
     }
   else
     {
+      *yyaction = 0;
       *yyconflicts = yyconfl + yyconflp[yyindex];
-      return 0;
     }
 }
 
@@ -3673,13 +4051,13 @@ yyLRgotoState (yyStateNum yystate, yySymbol yysym)
 static inline yybool
 yyisShiftAction (int yyaction)
 {
-  return (yybool) (0 < yyaction);
+  return 0 < yyaction;
 }
 
 static inline yybool
 yyisErrorAction (int yyaction)
 {
-  return (yybool) (yyaction == 0);
+  return yyaction == 0;
 }
 
                                 /* GLRStates */
@@ -3733,20 +4111,17 @@ yyinitStateSet (yyGLRStateSet* yyset)
 {
   yyset->yysize = 1;
   yyset->yycapacity = 16;
-  yyset->yystates
-    = (yyGLRState**) YYMALLOC (yyset->yycapacity * sizeof yyset->yystates[0]);
+  yyset->yystates = (yyGLRState**) YYMALLOC (16 * sizeof yyset->yystates[0]);
   if (! yyset->yystates)
     return yyfalse;
   yyset->yystates[0] = YY_NULLPTR;
-  yyset->yylookaheadNeeds
-    = (yybool*) YYMALLOC (yyset->yycapacity * sizeof yyset->yylookaheadNeeds[0]);
+  yyset->yylookaheadNeeds =
+    (yybool*) YYMALLOC (16 * sizeof yyset->yylookaheadNeeds[0]);
   if (! yyset->yylookaheadNeeds)
     {
       YYFREE (yyset->yystates);
       return yyfalse;
     }
-  memset (yyset->yylookaheadNeeds,
-          0, yyset->yycapacity * sizeof yyset->yylookaheadNeeds[0]);
   return yytrue;
 }
 
@@ -3791,7 +4166,7 @@ yyexpandGLRStack (yyGLRStack* yystackp)
   yyGLRStackItem* yyp0, *yyp1;
   size_t yynewSize;
   size_t yyn;
-  size_t yysize = (size_t) (yystackp->yynextFree - yystackp->yyitems);
+  size_t yysize = yystackp->yynextFree - yystackp->yyitems;
   if (YYMAXDEPTH - YYHEADROOM < yysize)
     yyMemoryExhausted (yystackp);
   yynewSize = 2*yysize;
@@ -3910,7 +4285,7 @@ yyremoveDeletes (yyGLRStack* yystackp)
           if (yyj != yyi)
             {
               YYDPRINTF ((stderr, "Rename stack %lu -> %lu.\n",
-                          (unsigned long) yyi, (unsigned long) yyj));
+                          (unsigned long int) yyi, (unsigned long int) yyj));
             }
           yyj += 1;
         }
@@ -3963,24 +4338,24 @@ yyglrShiftDefer (yyGLRStack* yystackp, size_t yyk, yyStateNum yylrState,
 # define YY_REDUCE_PRINT(Args)
 #else
 # define YY_REDUCE_PRINT(Args)          \
-  do {                                  \
-    if (yydebug)                        \
-      yy_reduce_print Args;             \
-  } while (0)
+do {                                    \
+  if (yydebug)                          \
+    yy_reduce_print Args;               \
+} while (0)
 
 /*----------------------------------------------------------------------.
 | Report that stack #YYK of *YYSTACKP is going to be reduced by YYRULE. |
 `----------------------------------------------------------------------*/
 
 static inline void
-yy_reduce_print (yybool yynormal, yyGLRStackItem* yyvsp, size_t yyk,
+yy_reduce_print (int yynormal, yyGLRStackItem* yyvsp, size_t yyk,
                  yyRuleNum yyrule, void *scanner, struct _parseParams *params)
 {
   int yynrhs = yyrhsLength (yyrule);
   int yyi;
   YYFPRINTF (stderr, "Reducing stack %lu by rule %d (line %lu):\n",
-             (unsigned long) yyk, yyrule - 1,
-             (unsigned long) yyrline[yyrule]);
+             (unsigned long int) yyk, yyrule - 1,
+             (unsigned long int) yyrline[yyrule]);
   if (! yynormal)
     yyfillin (yyvsp, 1, -yynrhs);
   /* The symbols being reduced.  */
@@ -3989,7 +4364,8 @@ yy_reduce_print (yybool yynormal, yyGLRStackItem* yyvsp, size_t yyk,
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr,
                        yystos[yyvsp[yyi - yynrhs + 1].yystate.yylrState],
-                       &yyvsp[yyi - yynrhs + 1].yystate.yysemantics.yysval                       , scanner, params);
+                       &yyvsp[yyi - yynrhs + 1].yystate.yysemantics.yysval
+                                              , scanner, params);
       if (!yyvsp[yyi - yynrhs + 1].yystate.yyresolved)
         YYFPRINTF (stderr, " (unresolved)");
       YYFPRINTF (stderr, "\n");
@@ -4015,9 +4391,9 @@ yydoAction (yyGLRStack* yystackp, size_t yyk, yyRuleNum yyrule,
       yyGLRStackItem* yyrhs = (yyGLRStackItem*) yystackp->yytops.yystates[yyk];
       YYASSERT (yyk == 0);
       yystackp->yynextFree -= yynrhs;
-      yystackp->yyspaceLeft += (size_t) yynrhs;
+      yystackp->yyspaceLeft += yynrhs;
       yystackp->yytops.yystates[0] = & yystackp->yynextFree[-1].yystate;
-      YY_REDUCE_PRINT ((yytrue, yyrhs, yyk, yyrule, scanner, params));
+      YY_REDUCE_PRINT ((1, yyrhs, yyk, yyrule, scanner, params));
       return yyuserAction (yyrule, yynrhs, yyrhs, yystackp,
                            yyvalp, scanner, params);
     }
@@ -4035,7 +4411,7 @@ yydoAction (yyGLRStack* yystackp, size_t yyk, yyRuleNum yyrule,
         }
       yyupdateSplit (yystackp, yys);
       yystackp->yytops.yystates[yyk] = yys;
-      YY_REDUCE_PRINT ((yyfalse, yyrhsVals + YYMAXRHS + YYMAXLEFT - 1, yyk, yyrule, scanner, params));
+      YY_REDUCE_PRINT ((0, yyrhsVals + YYMAXRHS + YYMAXLEFT - 1, yyk, yyrule, scanner, params));
       return yyuserAction (yyrule, yynrhs, yyrhsVals + YYMAXRHS + YYMAXLEFT - 1,
                            yystackp, yyvalp, scanner, params);
     }
@@ -4066,7 +4442,7 @@ yyglrReduce (yyGLRStack* yystackp, size_t yyk, yyRuleNum yyrule,
       if (yyflag == yyerr && yystackp->yysplitPoint != YY_NULLPTR)
         {
           YYDPRINTF ((stderr, "Parse on stack %lu rejected by rule #%d.\n",
-                     (unsigned long) yyk, yyrule - 1));
+                     (unsigned long int) yyk, yyrule - 1));
         }
       if (yyflag != yyok)
         return yyflag;
@@ -4094,7 +4470,7 @@ yyglrReduce (yyGLRStack* yystackp, size_t yyk, yyRuleNum yyrule,
       YYDPRINTF ((stderr,
                   "Reduced stack %lu by rule #%d; action deferred.  "
                   "Now in state %d.\n",
-                  (unsigned long) yyk, yyrule - 1, yynewLRState));
+                  (unsigned long int) yyk, yyrule - 1, yynewLRState));
       for (yyi = 0; yyi < yystackp->yytops.yysize; yyi += 1)
         if (yyi != yyk && yystackp->yytops.yystates[yyi] != YY_NULLPTR)
           {
@@ -4107,8 +4483,8 @@ yyglrReduce (yyGLRStack* yystackp, size_t yyk, yyRuleNum yyrule,
                     yyaddDeferredAction (yystackp, yyk, yyp, yys0, yyrule);
                     yymarkStackDeleted (yystackp, yyk);
                     YYDPRINTF ((stderr, "Merging stack %lu into stack %lu.\n",
-                                (unsigned long) yyk,
-                                (unsigned long) yyi));
+                                (unsigned long int) yyk,
+                                (unsigned long int) yyi));
                     return yyok;
                   }
                 yyp = yyp->yypred;
@@ -4130,8 +4506,10 @@ yysplitStack (yyGLRStack* yystackp, size_t yyk)
     }
   if (yystackp->yytops.yysize >= yystackp->yytops.yycapacity)
     {
-      yyGLRState** yynewStates = YY_NULLPTR;
+      yyGLRState** yynewStates;
       yybool* yynewLookaheadNeeds;
+
+      yynewStates = YY_NULLPTR;
 
       if (yystackp->yytops.yycapacity
           > (YYSIZEMAX / (2 * sizeof yynewStates[0])))
@@ -4346,8 +4724,8 @@ yyreportTree (yySemanticOption* yyx, int yyindent)
   else
     YYFPRINTF (stderr, "%*s%s -> <Rule %d, tokens %lu .. %lu>\n",
                yyindent, "", yytokenName (yylhsNonterm (yyx->yyrule)),
-               yyx->yyrule - 1, (unsigned long) (yys->yyposn + 1),
-               (unsigned long) yyx->yystate->yyposn);
+               yyx->yyrule - 1, (unsigned long int) (yys->yyposn + 1),
+               (unsigned long int) yyx->yystate->yyposn);
   for (yyi = 1; yyi <= yynrhs; yyi += 1)
     {
       if (yystates[yyi]->yyresolved)
@@ -4358,8 +4736,8 @@ yyreportTree (yySemanticOption* yyx, int yyindent)
           else
             YYFPRINTF (stderr, "%*s%s <tokens %lu .. %lu>\n", yyindent+2, "",
                        yytokenName (yystos[yystates[yyi]->yylrState]),
-                       (unsigned long) (yystates[yyi-1]->yyposn + 1),
-                       (unsigned long) yystates[yyi]->yyposn);
+                       (unsigned long int) (yystates[yyi-1]->yyposn + 1),
+                       (unsigned long int) yystates[yyi]->yyposn);
         }
       else
         yyreportTree (yystates[yyi]->yysemantics.yyfirstVal, yyindent+2);
@@ -4506,9 +4884,9 @@ yycompressStack (yyGLRStack* yystackp)
        yyr = yyp, yyp = yyq, yyq = yyp->yypred)
     yyp->yypred = yyr;
 
-  yystackp->yyspaceLeft += (size_t) (yystackp->yynextFree - yystackp->yyitems);
+  yystackp->yyspaceLeft += yystackp->yynextFree - yystackp->yyitems;
   yystackp->yynextFree = ((yyGLRStackItem*) yystackp->yysplitPoint) + 1;
-  yystackp->yyspaceLeft -= (size_t) (yystackp->yynextFree - yystackp->yyitems);
+  yystackp->yyspaceLeft -= yystackp->yynextFree - yystackp->yyitems;
   yystackp->yysplitPoint = YY_NULLPTR;
   yystackp->yylastDeleted = YY_NULLPTR;
 
@@ -4531,7 +4909,7 @@ yyprocessOneStack (yyGLRStack* yystackp, size_t yyk,
     {
       yyStateNum yystate = yystackp->yytops.yystates[yyk]->yylrState;
       YYDPRINTF ((stderr, "Stack %lu Entering state %d\n",
-                  (unsigned long) yyk, yystate));
+                  (unsigned long int) yyk, yystate));
 
       YYASSERT (yystate != YYFINAL);
 
@@ -4542,7 +4920,7 @@ yyprocessOneStack (yyGLRStack* yystackp, size_t yyk,
           if (yyrule == 0)
             {
               YYDPRINTF ((stderr, "Stack %lu dies.\n",
-                          (unsigned long) yyk));
+                          (unsigned long int) yyk));
               yymarkStackDeleted (yystackp, yyk);
               return yyok;
             }
@@ -4552,7 +4930,7 @@ yyprocessOneStack (yyGLRStack* yystackp, size_t yyk,
               YYDPRINTF ((stderr,
                           "Stack %lu dies "
                           "(predicate failure or explicit user error).\n",
-                          (unsigned long) yyk));
+                          (unsigned long int) yyk));
               yymarkStackDeleted (yystackp, yyk);
               return yyok;
             }
@@ -4563,19 +4941,35 @@ yyprocessOneStack (yyGLRStack* yystackp, size_t yyk,
         {
           yySymbol yytoken;
           int yyaction;
-          const short* yyconflicts;
+          const short int* yyconflicts;
 
           yystackp->yytops.yylookaheadNeeds[yyk] = yytrue;
-          yytoken = yygetToken (&yychar, yystackp, scanner, params);
-          yyaction = yygetLRActions (yystate, yytoken, &yyconflicts);
+          if (yychar == YYEMPTY)
+            {
+              YYDPRINTF ((stderr, "Reading a token: "));
+              yychar = yylex (&yylval, scanner, params);
+            }
+
+          if (yychar <= YYEOF)
+            {
+              yychar = yytoken = YYEOF;
+              YYDPRINTF ((stderr, "Now at end of input.\n"));
+            }
+          else
+            {
+              yytoken = YYTRANSLATE (yychar);
+              YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
+            }
+
+          yygetLRActions (yystate, yytoken, &yyaction, &yyconflicts);
 
           while (*yyconflicts != 0)
             {
               YYRESULTTAG yyflag;
               size_t yynewStack = yysplitStack (yystackp, yyk);
               YYDPRINTF ((stderr, "Splitting off stack %lu from %lu.\n",
-                          (unsigned long) yynewStack,
-                          (unsigned long) yyk));
+                          (unsigned long int) yynewStack,
+                          (unsigned long int) yyk));
               yyflag = yyglrReduce (yystackp, yynewStack,
                                     *yyconflicts,
                                     yyimmediate[*yyconflicts], scanner, params);
@@ -4585,7 +4979,7 @@ yyprocessOneStack (yyGLRStack* yystackp, size_t yyk,
               else if (yyflag == yyerr)
                 {
                   YYDPRINTF ((stderr, "Stack %lu dies.\n",
-                              (unsigned long) yynewStack));
+                              (unsigned long int) yynewStack));
                   yymarkStackDeleted (yystackp, yynewStack);
                 }
               else
@@ -4598,7 +4992,7 @@ yyprocessOneStack (yyGLRStack* yystackp, size_t yyk,
           else if (yyisErrorAction (yyaction))
             {
               YYDPRINTF ((stderr, "Stack %lu dies.\n",
-                          (unsigned long) yyk));
+                          (unsigned long int) yyk));
               yymarkStackDeleted (yystackp, yyk);
               break;
             }
@@ -4611,7 +5005,7 @@ yyprocessOneStack (yyGLRStack* yystackp, size_t yyk,
                   YYDPRINTF ((stderr,
                               "Stack %lu dies "
                               "(predicate failure or explicit user error).\n",
-                              (unsigned long) yyk));
+                              (unsigned long int) yyk));
                   yymarkStackDeleted (yystackp, yyk);
                   break;
                 }
@@ -4696,8 +5090,7 @@ yyreportSyntaxError (yyGLRStack* yystackp, void *scanner, struct _parseParams *p
                 yyarg[yycount++] = yytokenName (yyx);
                 {
                   size_t yysz = yysize + yytnamerr (YY_NULLPTR, yytokenName (yyx));
-                  if (yysz < yysize)
-                    yysize_overflow = yytrue;
+                  yysize_overflow |= yysz < yysize;
                   yysize = yysz;
                 }
               }
@@ -4722,8 +5115,7 @@ yyreportSyntaxError (yyGLRStack* yystackp, void *scanner, struct _parseParams *p
 
   {
     size_t yysz = yysize + strlen (yyformat);
-    if (yysz < yysize)
-      yysize_overflow = yytrue;
+    yysize_overflow |= yysz < yysize;
     yysize = yysz;
   }
 
@@ -4766,13 +5158,15 @@ yyreportSyntaxError (yyGLRStack* yystackp, void *scanner, struct _parseParams *p
 static void
 yyrecoverSyntaxError (yyGLRStack* yystackp, void *scanner, struct _parseParams *params)
 {
+  size_t yyk;
+  int yyj;
+
   if (yystackp->yyerrState == 3)
     /* We just shifted the error token and (perhaps) took some
        reductions.  Skip tokens until we can proceed.  */
     while (yytrue)
       {
         yySymbol yytoken;
-        int yyj;
         if (yychar == YYEOF)
           yyFail (yystackp, scanner, params, YY_NULLPTR);
         if (yychar != YYEMPTY)
@@ -4780,9 +5174,19 @@ yyrecoverSyntaxError (yyGLRStack* yystackp, void *scanner, struct _parseParams *
             yytoken = YYTRANSLATE (yychar);
             yydestruct ("Error: discarding",
                         yytoken, &yylval, scanner, params);
-            yychar = YYEMPTY;
           }
-        yytoken = yygetToken (&yychar, yystackp, scanner, params);
+        YYDPRINTF ((stderr, "Reading a token: "));
+        yychar = yylex (&yylval, scanner, params);
+        if (yychar <= YYEOF)
+          {
+            yychar = yytoken = YYEOF;
+            YYDPRINTF ((stderr, "Now at end of input.\n"));
+          }
+        else
+          {
+            yytoken = YYTRANSLATE (yychar);
+            YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
+          }
         yyj = yypact[yystackp->yytops.yystates[0]->yylrState];
         if (yypact_value_is_default (yyj))
           return;
@@ -4797,25 +5201,22 @@ yyrecoverSyntaxError (yyGLRStack* yystackp, void *scanner, struct _parseParams *
       }
 
   /* Reduce to one stack.  */
-  {
-    size_t yyk;
-    for (yyk = 0; yyk < yystackp->yytops.yysize; yyk += 1)
-      if (yystackp->yytops.yystates[yyk] != YY_NULLPTR)
-        break;
-    if (yyk >= yystackp->yytops.yysize)
-      yyFail (yystackp, scanner, params, YY_NULLPTR);
-    for (yyk += 1; yyk < yystackp->yytops.yysize; yyk += 1)
-      yymarkStackDeleted (yystackp, yyk);
-    yyremoveDeletes (yystackp);
-    yycompressStack (yystackp);
-  }
+  for (yyk = 0; yyk < yystackp->yytops.yysize; yyk += 1)
+    if (yystackp->yytops.yystates[yyk] != YY_NULLPTR)
+      break;
+  if (yyk >= yystackp->yytops.yysize)
+    yyFail (yystackp, scanner, params, YY_NULLPTR);
+  for (yyk += 1; yyk < yystackp->yytops.yysize; yyk += 1)
+    yymarkStackDeleted (yystackp, yyk);
+  yyremoveDeletes (yystackp);
+  yycompressStack (yystackp);
 
   /* Now pop stack until we find a state that shifts the error token.  */
   yystackp->yyerrState = 3;
   while (yystackp->yytops.yystates[0] != YY_NULLPTR)
     {
       yyGLRState *yys = yystackp->yytops.yystates[0];
-      int yyj = yypact[yys->yylrState];
+      yyj = yypact[yys->yylrState];
       if (! yypact_value_is_default (yyj))
         {
           yyj += YYTERROR;
@@ -4875,6 +5276,7 @@ yyparse (void *scanner, struct _parseParams *params)
   yylval = yyval_default;
 
   /* User initialization code.  */
+  
 {
     #ifdef YYDEBUG
     #if YYDEBUG == 1
@@ -4905,13 +5307,17 @@ yyparse (void *scanner, struct _parseParams *params)
       /* Standard mode */
       while (yytrue)
         {
+          yyRuleNum yyrule;
+          int yyaction;
+          const short int* yyconflicts;
+
           yyStateNum yystate = yystack.yytops.yystates[0]->yylrState;
           YYDPRINTF ((stderr, "Entering state %d\n", yystate));
           if (yystate == YYFINAL)
             goto yyacceptlab;
           if (yyisDefaultedState (yystate))
             {
-              yyRuleNum yyrule = yydefaultAction (yystate);
+              yyrule = yydefaultAction (yystate);
               if (yyrule == 0)
                 {
                   yyreportSyntaxError (&yystack, scanner, params);
@@ -4921,9 +5327,25 @@ yyparse (void *scanner, struct _parseParams *params)
             }
           else
             {
-              yySymbol yytoken = yygetToken (&yychar, yystackp, scanner, params);
-              const short* yyconflicts;
-              int yyaction = yygetLRActions (yystate, yytoken, &yyconflicts);
+              yySymbol yytoken;
+              if (yychar == YYEMPTY)
+                {
+                  YYDPRINTF ((stderr, "Reading a token: "));
+                  yychar = yylex (&yylval, scanner, params);
+                }
+
+              if (yychar <= YYEOF)
+                {
+                  yychar = yytoken = YYEOF;
+                  YYDPRINTF ((stderr, "Now at end of input.\n"));
+                }
+              else
+                {
+                  yytoken = YYTRANSLATE (yychar);
+                  YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
+                }
+
+              yygetLRActions (yystate, yytoken, &yyaction, &yyconflicts);
               if (*yyconflicts != 0)
                 break;
               if (yyisShiftAction (yyaction))
@@ -4936,7 +5358,8 @@ yyparse (void *scanner, struct _parseParams *params)
                     yystack.yyerrState -= 1;
                 }
               else if (yyisErrorAction (yyaction))
-                {                  yyreportSyntaxError (&yystack, scanner, params);
+                {
+                  yyreportSyntaxError (&yystack, scanner, params);
                   goto yyuser_error;
                 }
               else
@@ -4950,7 +5373,7 @@ yyparse (void *scanner, struct _parseParams *params)
           size_t yys;
 
           for (yys = 0; yys < yystack.yytops.yysize; yys += 1)
-            yystackp->yytops.yylookaheadNeeds[yys] = (yybool) (yychar != YYEMPTY);
+            yystackp->yytops.yylookaheadNeeds[yys] = yychar != YYEMPTY;
 
           /* yyprocessOneStack returns one of three things:
 
@@ -4995,17 +5418,18 @@ yyparse (void *scanner, struct _parseParams *params)
           yyposn += 1;
           for (yys = 0; yys < yystack.yytops.yysize; yys += 1)
             {
+              int yyaction;
+              const short int* yyconflicts;
               yyStateNum yystate = yystack.yytops.yystates[yys]->yylrState;
-              const short* yyconflicts;
-              int yyaction = yygetLRActions (yystate, yytoken_to_shift,
+              yygetLRActions (yystate, yytoken_to_shift, &yyaction,
                               &yyconflicts);
               /* Note that yyconflicts were handled by yyprocessOneStack.  */
-              YYDPRINTF ((stderr, "On stack %lu, ", (unsigned long) yys));
+              YYDPRINTF ((stderr, "On stack %lu, ", (unsigned long int) yys));
               YY_SYMBOL_PRINT ("shifting", yytoken_to_shift, &yylval, &yylloc);
               yyglrShift (&yystack, yys, yyaction, yyposn,
                           &yylval);
               YYDPRINTF ((stderr, "Stack %lu now in state #%d\n",
-                          (unsigned long) yys,
+                          (unsigned long int) yys,
                           yystack.yytops.yystates[yys]->yylrState));
             }
 
@@ -5087,7 +5511,7 @@ yy_yypstack (yyGLRState* yys)
       YYFPRINTF (stderr, " -> ");
     }
   YYFPRINTF (stderr, "%d@%lu", yys->yylrState,
-             (unsigned long) yys->yyposn);
+             (unsigned long int) yys->yyposn);
 }
 
 static void
@@ -5118,18 +5542,18 @@ yypdumpstack (yyGLRStack* yystackp)
   for (yyp = yystackp->yyitems; yyp < yystackp->yynextFree; yyp += 1)
     {
       YYFPRINTF (stderr, "%3lu. ",
-                 (unsigned long) (yyp - yystackp->yyitems));
+                 (unsigned long int) (yyp - yystackp->yyitems));
       if (*(yybool *) yyp)
         {
           YYASSERT (yyp->yystate.yyisState);
           YYASSERT (yyp->yyoption.yyisState);
           YYFPRINTF (stderr, "Res: %d, LR State: %d, posn: %lu, pred: %ld",
                      yyp->yystate.yyresolved, yyp->yystate.yylrState,
-                     (unsigned long) yyp->yystate.yyposn,
-                     (long) YYINDEX (yyp->yystate.yypred));
+                     (unsigned long int) yyp->yystate.yyposn,
+                     (long int) YYINDEX (yyp->yystate.yypred));
           if (! yyp->yystate.yyresolved)
             YYFPRINTF (stderr, ", firstVal: %ld",
-                       (long) YYINDEX (yyp->yystate
+                       (long int) YYINDEX (yyp->yystate
                                              .yysemantics.yyfirstVal));
         }
       else
@@ -5138,15 +5562,15 @@ yypdumpstack (yyGLRStack* yystackp)
           YYASSERT (!yyp->yyoption.yyisState);
           YYFPRINTF (stderr, "Option. rule: %d, state: %ld, next: %ld",
                      yyp->yyoption.yyrule - 1,
-                     (long) YYINDEX (yyp->yyoption.yystate),
-                     (long) YYINDEX (yyp->yyoption.yynext));
+                     (long int) YYINDEX (yyp->yyoption.yystate),
+                     (long int) YYINDEX (yyp->yyoption.yynext));
         }
       YYFPRINTF (stderr, "\n");
     }
   YYFPRINTF (stderr, "Tops:");
   for (yyi = 0; yyi < yystackp->yytops.yysize; yyi += 1)
-    YYFPRINTF (stderr, "%lu: %ld; ", (unsigned long) yyi,
-               (long) YYINDEX (yystackp->yytops.yystates[yyi]));
+    YYFPRINTF (stderr, "%lu: %ld; ", (unsigned long int) yyi,
+               (long int) YYINDEX (yystackp->yytops.yystates[yyi]));
   YYFPRINTF (stderr, "\n");
 }
 #endif
@@ -5166,18 +5590,14 @@ yypdumpstack (yyGLRStack* yystackp)
 
 
 
+
 t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *directInlets, t_atom_long *directOutlets)
 {
     yyscan_t myscanner;
     
-    t_bufstack bs[256], *this_bs;
-    bs[0].name = nullptr;
-    bs[0].th = nullptr;
-    int state = INITIAL;
-    bs[0].state = &state;
-    this_bs = bs;
+    t_lexparams lexparams;
     
-    stringparser_lex_init_extra(&this_bs, &myscanner);
+    stringparser_lex_init_extra(&lexparams, &myscanner);
     stringparser_scan_string(myscanner, x->c_text);
     
     t_parseParams params;
@@ -5222,6 +5642,8 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
             params.name2patcherVars,
             x
         );
+        codableobj_clear_filewatchers(x);
+        codableobj_add_filewatchers(x, &lexparams.files);
         return mainFunction;
     } else {
         object_error((t_object *) x, "Syntax errors present — couldn't parse code");

@@ -458,7 +458,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE struct _bufstack **
+#define YY_EXTRA_TYPE t_lexparams*
 
 int yylex_init (yyscan_t* scanner);
 

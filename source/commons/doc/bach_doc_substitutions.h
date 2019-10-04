@@ -69,6 +69,14 @@ class_addmethod(c, (method)codableobj_forcereadappend,   "forcereadappend",     
 // @description Writes the bell code into a file.
 class_addmethod(c, (method)codableobj_write, "write", A_DEFSYM, 0);
 //
+// @method readagain @digest Reread file
+// @description Rereads the previous file
+class_addmethod(c, (method)codableobj_readagain, "readagain", 0);
+//
+// @method writeagain @digest Rewrite file
+// @description Rewrite the previous file
+class_addmethod(c, (method)codableobj_writeagain, "writeagain", 0);
+//
 CLASS_ATTR_ATOM_LONG(c, "maxtime",    0,    t_codableobj, c_maxtime);
 CLASS_ATTR_LABEL(c, "maxtime", 0, "Maximum Duration Of Evaluation");
 CLASS_ATTR_FILTER_MIN(c, "maxtime", 0);
@@ -77,6 +85,25 @@ CLASS_ATTR_FILTER_MIN(c, "maxtime", 0);
 // If it is reached, the evaluation aborts and the code returns null.
 // If <m>maxtime</m> is set to 0, there is no time limit.
 // The default is 60000 ms (1 minute).
+//
+CLASS_ATTR_LONG(c, "watch", 0, t_codableobj, c_watch);
+CLASS_ATTR_LABEL(c, "watch", 0, "Reload files if changed");
+CLASS_ATTR_ACCESSORS(c, "watch", nullptr, codableobj_watch_set);
+CLASS_ATTR_FILTER_CLIP(c, "watch", 0, 1);
+CLASS_ATTR_STYLE(c, "watch", 0, "onoff");
+// @description If the <m>watch</m> attribute is set to 1
+// (as by default), whenever the loaded bell code file
+// or one of the files included by the code is changed
+// the code is reloaded and rebuilt.
+//
+CLASS_ATTR_SYM(c, "file", 0, t_codableobj, c_file);
+CLASS_ATTR_LABEL(c, "file", 0, "Code file to be read at initialization");
+CLASS_ATTR_ACCESSORS(c, "file", nullptr, codableobj_file_set);
+// @description The <m>file</m> attribute allows setting a file name
+// to be loaded automatically when the object is created.
+// Its contents override those of the code in both the object box
+// and the editor.
+// @copy BACH_DOC_STATIC_ATTR
 
 
 #define codableclass_add_extended_methods_and_attrs

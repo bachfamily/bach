@@ -1805,7 +1805,7 @@ static const flex_int16_t yy_chk[4257] =
      */
 
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
+    #define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
     #endif
     
     #ifndef code_dev_post
@@ -1833,18 +1833,38 @@ static const flex_int16_t yy_chk[4257] =
     
     #define YY_NO_UNISTD_H
 
-typedef struct _bufstack {
-    YY_BUFFER_STATE bs; /* saved buffer */
-    char *name; /* name of this file */
-    char **th;
-    int *state;
-} t_bufstack;
-
     int stringparser_newfile(yyscan_t myscanner, char *s);
     int stringparser_popfile(yyscan_t myscanner);
     
     #define UNARY_NOARGS (INITIAL)
     
+    struct t_bufstack {
+        YY_BUFFER_STATE bs; /* saved buffer */
+        char *name; /* name of this file */
+        char *text;
+        int *state;
+    };
+    
+    t_lexparams::t_lexparams() {
+        bufstack = (t_bufstack*) bach_newptr(256 * sizeof(t_bufstack));
+        this_bs = bufstack;
+        this_bs->text = nullptr;
+        this_bs->name = nullptr;
+        state = 0;
+    }
+    
+    t_lexparams::~t_lexparams() {
+        bach_freeptr(bufstack);
+    }
+    
+    int t_lexparams::setState(int s) {
+        return state = s;
+    }
+    
+    int t_lexparams::getState() {
+        return state;
+    }
+
 #define INITIAL 0
 #define NOUNARY_NOARGS 1
 #define NOUNARY_ARGS 2
@@ -1861,7 +1881,7 @@ typedef struct _bufstack {
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE struct _bufstack **
+#define YY_EXTRA_TYPE t_lexparams*
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -2122,7 +2142,7 @@ YY_DECL
 
 	{
 
-    struct _bufstack **bs = yyextra;
+    t_lexparams *lexparams = yyextra;
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -2179,7 +2199,8 @@ case 1:
 YY_RULE_SETUP
 {
         code_dev_post("lex: OPEN\n");
-        BEGIN (*((*bs)->state) = UNARY_NOARGS);
+        BEGIN lexparams->setState(UNARY_NOARGS);
+        // was: BEGIN (*((*bs)->state) = UNARY_NOARGS);
         return OPEN;
     }
 	YY_BREAK
@@ -2188,7 +2209,7 @@ case 2:
 YY_RULE_SETUP
 {
         code_dev_post("lex: START PARAMETERS");
-        BEGIN (*((*bs)->state) = UNARY_NOARGS);
+        BEGIN lexparams->setState(UNARY_NOARGS);
         return STARTPARAMS;
     }
 	YY_BREAK
@@ -2197,7 +2218,7 @@ case 3:
 YY_RULE_SETUP
 {
     code_dev_post("lex: CLOSED\n");
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return CLOSEDROUND;
 }
 	YY_BREAK
@@ -2205,7 +2226,7 @@ case 4:
 YY_RULE_SETUP
 {
     code_dev_post("lex: PUSH\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return PUSH;
 }
 	YY_BREAK
@@ -2213,7 +2234,7 @@ case 5:
 YY_RULE_SETUP
 {
     code_dev_post("lex: POP\n");
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return POP;
 }
 	YY_BREAK
@@ -2221,7 +2242,7 @@ case 6:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR +=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return APLUS;
 }
 	YY_BREAK
@@ -2229,7 +2250,7 @@ case 7:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR -=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return AMINUS;
 }
 	YY_BREAK
@@ -2237,7 +2258,7 @@ case 8:
 YY_RULE_SETUP
 {
     code_dev_post("lex: FUNCTION DEFINITION\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return FUNDEF;
 }
 	YY_BREAK
@@ -2245,7 +2266,7 @@ case 9:
 YY_RULE_SETUP
 {
     code_dev_post("lex: LIFT\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LIFT;
 }
 	YY_BREAK
@@ -2256,7 +2277,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR UNARY +\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return UPLUS;
 }
 	YY_BREAK
@@ -2267,7 +2288,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR UNARY -\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return UMINUS;
 }
 	YY_BREAK
@@ -2275,7 +2296,7 @@ case 12:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR BINARY +\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return PLUS;
 }
 	YY_BREAK
@@ -2283,7 +2304,7 @@ case 13:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR BINARY -\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return MINUS;
 }
 	YY_BREAK
@@ -2291,7 +2312,7 @@ case 14:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR *=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ATIMES;
 }
 	YY_BREAK
@@ -2299,7 +2320,7 @@ case 15:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR *\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return TIMES;
 }
 	YY_BREAK
@@ -2307,7 +2328,7 @@ case 16:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR **=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return APOWOP;
 }
 	YY_BREAK
@@ -2315,7 +2336,7 @@ case 17:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR **\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return POWOP;
 }
 	YY_BREAK
@@ -2323,7 +2344,7 @@ case 18:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR /=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ADIV;
 }
 	YY_BREAK
@@ -2331,7 +2352,7 @@ case 19:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR /\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return DIV;
 }
 	YY_BREAK
@@ -2339,7 +2360,7 @@ case 20:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR //\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ADIVDIV;
 }
 	YY_BREAK
@@ -2347,7 +2368,7 @@ case 21:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR //\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return DIVDIV;
 }
 	YY_BREAK
@@ -2355,7 +2376,7 @@ case 22:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR %=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return AREM;
 }
 	YY_BREAK
@@ -2363,7 +2384,7 @@ case 23:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR %\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return REM;
 }
 	YY_BREAK
@@ -2371,7 +2392,7 @@ case 24:
 YY_RULE_SETUP
 {
     code_dev_post("lex: ASSIGNMENT\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ASSIGN;
 }
 	YY_BREAK
@@ -2379,7 +2400,7 @@ case 25:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR ==\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return EQUAL;
 }
 	YY_BREAK
@@ -2387,7 +2408,7 @@ case 26:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR !\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LOGNOT;
 }
 	YY_BREAK
@@ -2395,7 +2416,7 @@ case 27:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR !\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return BITNOT;
 }
 	YY_BREAK
@@ -2403,7 +2424,7 @@ case 28:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR !=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return NEQ;
 }
 	YY_BREAK
@@ -2411,7 +2432,7 @@ case 29:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR <\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LT;
 }
 	YY_BREAK
@@ -2419,7 +2440,7 @@ case 30:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR >\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return GT;
 }
 	YY_BREAK
@@ -2427,7 +2448,7 @@ case 31:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR <=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LEQ;
 }
 	YY_BREAK
@@ -2435,7 +2456,7 @@ case 32:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR >=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return GEQ;
 }
 	YY_BREAK
@@ -2443,7 +2464,7 @@ case 33:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR &=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ABITAND;
 }
 	YY_BREAK
@@ -2451,7 +2472,7 @@ case 34:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR &\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return BITAND;
 }
 	YY_BREAK
@@ -2459,7 +2480,7 @@ case 35:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR ^=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ABITXOR;
 }
 	YY_BREAK
@@ -2467,7 +2488,7 @@ case 36:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR ^\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return BITXOR;
 }
 	YY_BREAK
@@ -2475,7 +2496,7 @@ case 37:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR |=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ABITOR;
 }
 	YY_BREAK
@@ -2483,7 +2504,7 @@ case 38:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR |\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return BITOR;
 }
 	YY_BREAK
@@ -2491,7 +2512,7 @@ case 39:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR &&=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ALOGAND;
 }
 	YY_BREAK
@@ -2499,7 +2520,7 @@ case 40:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR &&\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LOGAND;
 }
 	YY_BREAK
@@ -2507,7 +2528,7 @@ case 41:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR &&&=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ALOGANDEXT;
 }
 	YY_BREAK
@@ -2515,7 +2536,7 @@ case 42:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR &&&\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LOGANDEXT;
 }
 	YY_BREAK
@@ -2523,7 +2544,7 @@ case 43:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR ^^=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ALOGXOR;
 }
 	YY_BREAK
@@ -2531,7 +2552,7 @@ case 44:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR ^^\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LOGXOR;
 }
 	YY_BREAK
@@ -2539,7 +2560,7 @@ case 45:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR ||=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ALOGOR;
 }
 	YY_BREAK
@@ -2547,7 +2568,7 @@ case 46:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR ||\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LOGOR;
 }
 	YY_BREAK
@@ -2555,7 +2576,7 @@ case 47:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR |||=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ALOGOREXT;
 }
 	YY_BREAK
@@ -2563,7 +2584,7 @@ case 48:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR |||\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LOGOREXT;
 }
 	YY_BREAK
@@ -2571,7 +2592,7 @@ case 49:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR <<=\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ALSHIFT;
 }
 	YY_BREAK
@@ -2579,7 +2600,7 @@ case 50:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR <<\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return LSHIFT;
 }
 	YY_BREAK
@@ -2587,7 +2608,7 @@ case 51:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR >>\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ARSHIFT;
 }
 	YY_BREAK
@@ -2595,7 +2616,7 @@ case 52:
 YY_RULE_SETUP
 {
     code_dev_post("lex: OPERATOR >>\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return RSHIFT;
 }
 	YY_BREAK
@@ -2603,7 +2624,7 @@ case 53:
 YY_RULE_SETUP
 {
     code_dev_post("lex: ELLIPSIS\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ELLIPSIS;
 }
 	YY_BREAK
@@ -2611,7 +2632,7 @@ case 54:
 YY_RULE_SETUP
 {
     code_dev_post("lex: ANTHOP\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ANTHOP;
 }
 	YY_BREAK
@@ -2619,7 +2640,7 @@ case 55:
 YY_RULE_SETUP
 {
     code_dev_post("lex: PICKOP\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return PICKOP;
 }
 	YY_BREAK
@@ -2627,7 +2648,7 @@ case 56:
 YY_RULE_SETUP
 {
     code_dev_post("lex: NTHOP\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return NTHOP;
 }
 	YY_BREAK
@@ -2635,7 +2656,7 @@ case 57:
 YY_RULE_SETUP
 {
     code_dev_post("lex: ASSIGN APPLY\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return AAPPLY;
 }
 	YY_BREAK
@@ -2643,7 +2664,7 @@ case 58:
 YY_RULE_SETUP
 {
     code_dev_post("lex: ASSIGN CONCAT\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ACONCAT;
 }
 	YY_BREAK
@@ -2651,7 +2672,7 @@ case 59:
 YY_RULE_SETUP
 {
     code_dev_post("lex: ASSIGN REVERSE CONCAT\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ARCONCAT;
 }
 	YY_BREAK
@@ -2659,7 +2680,7 @@ case 60:
 YY_RULE_SETUP
 {
     code_dev_post("lex: RANGE\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return RANGE;
 }
 	YY_BREAK
@@ -2667,7 +2688,7 @@ case 61:
 YY_RULE_SETUP
 {
     code_dev_post("lex: ACCESS\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return APPLY;
 }
 	YY_BREAK
@@ -2688,7 +2709,7 @@ YY_RULE_SETUP
     code_dev_post("lex: switching to file %s", yytext);
     if (stringparser_newfile(yyscanner, yytext))
         yyterminate();
-    BEGIN *((*bs)->state);
+    BEGIN lexparams->getState();
 }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -2752,7 +2773,7 @@ case 70:
 YY_RULE_SETUP
 {
     code_dev_post("lex: end block comment");
-    BEGIN *((*bs)->state);
+    BEGIN lexparams->getState();
 }
 	YY_BREAK
 case 71:
@@ -2764,7 +2785,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: IF_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return IF_KW;
 }
 	YY_BREAK
@@ -2777,7 +2798,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: THEN_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return THEN_KW;
 }
 	YY_BREAK
@@ -2790,7 +2811,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: ELSE_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return ELSE_KW;
 }
 	YY_BREAK
@@ -2803,7 +2824,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: FOR_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return FOR_KW;
 }
 	YY_BREAK
@@ -2816,7 +2837,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: IN_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return IN_KW;
 }
 	YY_BREAK
@@ -2829,7 +2850,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: IN_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return WITH_KW;
 }
 	YY_BREAK
@@ -2842,7 +2863,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: AS_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return AS_KW;
 }
 	YY_BREAK
@@ -2855,7 +2876,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: WHILE_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return WHILE_KW;
 }
 	YY_BREAK
@@ -2868,7 +2889,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: DO_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return DO_KW;
 }
 	YY_BREAK
@@ -2881,7 +2902,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: COLLECT_KW\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return COLLECT_KW;
 }
 	YY_BREAK
@@ -2895,7 +2916,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: BIF %s", yytext);
     yylval->sym = gensym(yytext);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
 	YY_BREAK
@@ -2909,7 +2930,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: BIF %s", yytext);
     yylval->sym = gensym(yytext);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
 	YY_BREAK
@@ -2923,7 +2944,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: BIF %s", yytext);
     yylval->sym = gensym(yytext);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
 	YY_BREAK
@@ -2937,7 +2958,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: BIF %s", yytext);
     yylval->sym = gensym(yytext);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
 	YY_BREAK
@@ -2951,7 +2972,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: OWNED FUNCTION %s", yytext);
     yylval->sym = gensym(yytext);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return OF;
 }
 	YY_BREAK
@@ -2964,7 +2985,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: KEEP");
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     return KEEP;
 }
 	YY_BREAK
@@ -2977,7 +2998,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: UNKEEP");
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     return UNKEEP;
 }
 	YY_BREAK
@@ -2990,7 +3011,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: INIT");
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     return INIT;
 }
 	YY_BREAK
@@ -2998,7 +3019,7 @@ case 89:
 YY_RULE_SETUP
 {
     code_dev_post("lex: ;");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return SEQ;
 }
 	YY_BREAK
@@ -3006,7 +3027,7 @@ case 90:
 YY_RULE_SETUP
 {
     code_dev_post("lex: ,");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return COMMA;
 }
 	YY_BREAK
@@ -3019,7 +3040,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: null");
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return BACHNULL;
 }
 	YY_BREAK
@@ -3032,7 +3053,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: nil");
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return BACHNIL;
 }
 	YY_BREAK
@@ -3045,7 +3066,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: INTEGER %d\n", atoi(yytext));
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->l = atoi(yytext);
     return LONG_LITERAL;
 }
@@ -3059,7 +3080,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: ARGCOUNT\n");
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     return ARGCOUNT;
 }
 	YY_BREAK
@@ -3072,7 +3093,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: PI\n", atof(yytext));
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->d = M_PI;
     return DOUBLE_LITERAL;
 }
@@ -3086,7 +3107,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: DOUBLE_LITERAL %lf\n", atof(yytext));
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->d = atof(yytext);
     return DOUBLE_LITERAL;
 }
@@ -3100,7 +3121,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: DOUBLE_LITERAL %lf\n", atof(yytext));
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->d = atof(yytext);
     return DOUBLE_LITERAL;
 }
@@ -3113,7 +3134,7 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
     return PITCH_LITERAL;
 }
@@ -3126,7 +3147,7 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->p = t_parser::eatPitchAsNameIntAcc(yytext);
     return PITCH_LITERAL;
 }
@@ -3139,7 +3160,7 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->p = t_parser::eatPitchAsNameAccIntRatT(yytext);
     return PITCH_LITERAL;
 }
@@ -3154,7 +3175,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 3);
     code_dev_post("lex: INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return INLET;
 }
 	YY_BREAK
@@ -3168,7 +3189,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 2);
     code_dev_post("lex: INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return INLET;
 }
 	YY_BREAK
@@ -3182,7 +3203,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 3);
     code_dev_post("lex: INT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return INTINLET;
 }
 	YY_BREAK
@@ -3196,7 +3217,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 2);
     code_dev_post("lex: INT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return INTINLET;
 }
 	YY_BREAK
@@ -3210,7 +3231,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 3);
     code_dev_post("lex: RAT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return RATINLET;
 }
 	YY_BREAK
@@ -3224,7 +3245,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 2);
     code_dev_post("lex: RAT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return RATINLET;
 }
 	YY_BREAK
@@ -3238,7 +3259,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 3);
     code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return FLOATINLET;
 }
 	YY_BREAK
@@ -3252,7 +3273,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 2);
     code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return FLOATINLET;
 }
 	YY_BREAK
@@ -3266,7 +3287,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 3);
     code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return PITCHINLET;
 }
 	YY_BREAK
@@ -3280,7 +3301,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 2);
     code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return PITCHINLET;
 }
 	YY_BREAK
@@ -3294,7 +3315,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 3);
     code_dev_post("lex: OUTLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return OUTLET;
 }
 	YY_BREAK
@@ -3308,7 +3329,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 2);
     code_dev_post("lex: OUTLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return OUTLET;
 }
 	YY_BREAK
@@ -3322,7 +3343,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 4);
     code_dev_post("lex: DIRECT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return DIRINLET;
 }
 	YY_BREAK
@@ -3336,7 +3357,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 3);
     code_dev_post("lex: DIRECT INLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return DIRINLET;
 }
 	YY_BREAK
@@ -3350,7 +3371,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 4);
     code_dev_post("lex: DIRECT OUTLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return DIROUTLET;
 }
 	YY_BREAK
@@ -3364,7 +3385,7 @@ YY_RULE_SETUP
 {
     yylval->l = atoi(yytext + 3);
     code_dev_post("lex: DIRECT OUTLET VARIABLE %d\n", yylval->l);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return DIROUTLET;
 }
 	YY_BREAK
@@ -3378,7 +3399,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: LOCAL VARIABLE %s\n", yytext + 1);
     yylval->sym = gensym(yytext + 1);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return LOCALVAR;
 }
 	YY_BREAK
@@ -3392,7 +3413,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: LOCAL VARIABLE %s\n", yytext + 2);
     yylval->sym = gensym(yytext + 2);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return LOCALVAR;
 }
 	YY_BREAK
@@ -3406,7 +3427,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: NAMED FUNCTION PARAMETER %s\n", yytext + 1);
     yylval->sym = gensym(yytext + 1);
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     return NAMEDPARAM;
 }
 	YY_BREAK
@@ -3420,7 +3441,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: PATCHER VARIABLE %s\n", yytext + 1);
     yylval->sym = gensym(yytext + 1);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return PATCHERVAR;
 }
 	YY_BREAK
@@ -3434,7 +3455,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: GLOBAL VARIABLE %s\n", yytext);
     yylval->sym = gensym(yytext);
-    BEGIN (*((*bs)->state) = NOUNARY_ARGS);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
     return GLOBALVAR;
 }
 	YY_BREAK
@@ -3447,7 +3468,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: BACKTICKED SYMBOL_LITERAL %s\n", yytext + 1);
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->sym = gensym(yytext + 1);
     return SYMBOL_LITERAL;
 }
@@ -3461,7 +3482,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: DOUBLE-QUOTED SYMBOL_LITERAL %s\n", yytext);
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     char *s = (char *) bach_newptr(yyleng - 1);
     strncpy_zero(s, yytext + 1, yyleng - 1);
     for (char *c = s; *c; c++) {
@@ -3484,7 +3505,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: SINGLE-QUOTED SYMBOL_LITERAL %s\n", yytext);
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     char *s = (char *) bach_newptr(yyleng - 1);
     strncpy_zero(s, yytext + 1, yyleng - 1);
     for (char *c = s; *c; c++) {
@@ -3507,7 +3528,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: EMPTY DOUBLE-QUOTED SYMBOL_LITERAL\n");
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->sym = gensym("");
     return SYMBOL_LITERAL;
 }
@@ -3521,7 +3542,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: EMPTY SINGLE-QUOTED SYMBOL_LITERAL\n");
-    BEGIN (*((*bs)->state) = NOUNARY_NOARGS);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->sym = gensym("");
     return SYMBOL_LITERAL;
 }
@@ -3531,14 +3552,14 @@ case 127:
 YY_RULE_SETUP
 {
     code_dev_post("lex: Whitespace\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
 }
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
 {
     code_dev_post("lex: Atom Separator\n");
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     (*params->codeac)++;
 }
 	YY_BREAK
@@ -3547,7 +3568,7 @@ case 129:
 YY_RULE_SETUP
 {
     code_dev_post("lex: UNRECOGNIZED CHARACTER %s (%d)\n", yytext, *yytext);
-    BEGIN (*((*bs)->state) = UNARY_NOARGS);
+    BEGIN lexparams->setState(UNARY_NOARGS);
     return UNRECOGNIZED;
 }
 	YY_BREAK
@@ -4739,8 +4760,8 @@ YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf)
     YY_BUFFER_STATE bp;
     bp = yy_scan_string(buf, myscanner);
     yy_switch_to_buffer(bp, myscanner);
-    t_bufstack **bufstack = yyget_extra(myscanner);
-    (*bufstack)->bs = bp;
+    t_lexparams *lexparams = yyget_extra(myscanner);
+    lexparams->this_bs->bs = bp;
     return bp;
 }
 
@@ -4772,27 +4793,37 @@ int stringparser_newfile(yyscan_t myscanner, char *s)
     // allocate some empty memory to receive text
     texthandle = sysmem_newhandle(0);
     sysfile_readtextfile(fh, texthandle, 0, TEXT_NULL_TERMINATE);     // see flags explanation below
-    code_dev_post("the file has %ld characters", sysmem_handlesize(texthandle));
+    size_t size = sysmem_handlesize(texthandle);
+    code_dev_post("the file has %ld characters", size);
     sysfile_close(fh);
-    t_bufstack **bufstack = yyget_extra(myscanner);
-    (*bufstack)++;
-    (*bufstack)->name = filename;
-    (*bufstack)->th = texthandle;
-    (*bufstack)->state = ((*bufstack) - 1)->state;
-    (*bufstack)->bs = stringparser_scan_string(myscanner, *texthandle);
+    
+    char *text = (char *) bach_newptr((size + 1) * sizeof(char));
+    strncpy_zero(text, *texthandle, size);
+    sysmem_freehandle(texthandle);
+    if (!isspace(text[size - 2])) {
+        text[size - 1] = ' ';
+        text[size] = 0;
+    }
+    t_lexparams *lexparams = yyget_extra(myscanner);
+    (lexparams->this_bs)++;
+    lexparams->this_bs->name = filename;
+    lexparams->this_bs->text = text;
+    lexparams->this_bs->bs = stringparser_scan_string(myscanner, text);
+    lexparams->files.insert({path, filename});
     return 0;
 }
 
 int stringparser_popfile(yyscan_t myscanner)
 {
-    t_bufstack **bufstack = yyget_extra(myscanner);
-    stringparser_flush_and_delete_buffer(myscanner, (*bufstack)->bs);
-    if (!(*bufstack)->name)
+    t_lexparams *lexparams = yyget_extra(myscanner);
+    
+    stringparser_flush_and_delete_buffer(myscanner, lexparams->this_bs->bs);
+    if (!lexparams->this_bs->name)
         return 1;
-    bach_freeptr((*bufstack)->name);
-    sysmem_freehandle((*bufstack)->th);
-    --(*bufstack);
-    yy_switch_to_buffer((*bufstack)->bs, myscanner);
+    bach_freeptr(lexparams->this_bs->name);
+    bach_freeptr(lexparams->this_bs->text);
+    --(lexparams->this_bs);
+    yy_switch_to_buffer(lexparams->this_bs->bs, myscanner);
     return 0;
 }
 
