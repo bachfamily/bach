@@ -533,7 +533,21 @@ public:
     
 };
 
-
+class astRepeatOp : public astNode
+{
+protected:
+    astNode *dataNode;
+    astNode *repeatNode;
+public:
+    astRepeatOp(astNode *dataNode, astNode *repeatNode, t_codableobj *owner) : astNode(owner), dataNode(dataNode), repeatNode(repeatNode) { }
+    
+    ~astRepeatOp() {
+        delete dataNode;
+        delete repeatNode;
+    }
+    
+    t_llll *eval(t_execEnv const &context);
+};
 
 
 

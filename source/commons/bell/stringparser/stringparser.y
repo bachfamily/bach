@@ -114,6 +114,7 @@
 %left BITAND
 %left LT GT LEQ GEQ
 %left EQUAL NEQ
+%left REPEAT
 %left RANGE
 %left LSHIFT RSHIFT
 %left PLUS MINUS
@@ -940,6 +941,10 @@ exp: term %dprec 2
     $$ = new astRangeOp($1, $3, params->owner);
     code_dev_post ("parse: range\n");
 }
+| exp REPEAT listEnd {
+    $$ = new astRepeatOp($1, $3, params->owner);
+    code_dev_post ("parse: range\n");
+}
 | exp APPLY listEnd %dprec 1 {
     $$ = new astKeyOp<e_keyOpStandard>($1, $3, params->owner);
     code_dev_post ("parse: access\n");
@@ -1064,6 +1069,10 @@ exp: term %dprec 2
 }
 | exp RANGE exp {
     $$ = new astRangeOp($1, $3, params->owner);
+    code_dev_post ("parse: range\n");
+}
+| exp REPEAT exp {
+    $$ = new astRepeatOp($1, $3, params->owner);
     code_dev_post ("parse: range\n");
 }
 | exp APPLY exp {
