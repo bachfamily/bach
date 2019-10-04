@@ -86,14 +86,14 @@
 #include "ext_strings.h"
 #include "ext_boxstyle.h"
 
-#define CONST_MAX_POINTS 448
+#define CONST_MAX_POINTS 480
 #define CONST_PIXEL_TOLERANCE_CLICK 4
 #define CONST_DRAGGING_MODULO 20.
 #define CONST_DRAGGING_VELOCITY 1.
 #define CONST_DEFAULT_VELOCITY 100
 #define CONST_MIN_VELOCITY 1
 #define CONST_MAX_VELOCITY 127
-#define CONST_MAX_POINT_NAMES 448
+#define CONST_MAX_POINT_NAMES 480
 
 /*
 #ifndef class_attr_setstyle
