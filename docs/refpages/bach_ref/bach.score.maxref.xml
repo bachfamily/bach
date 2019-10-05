@@ -9785,11 +9785,11 @@
 			</digest>
 			<description>
 				Toggle the ability to highlight the played notes with the <m>playcolor</m>.
-				By default this is 1.
+				By default this is 0; if you turn it on be aware that it takes significant CPU time with scores with many notes.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Highlight Played Notes" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />

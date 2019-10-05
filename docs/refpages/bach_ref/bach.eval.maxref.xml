@@ -154,6 +154,15 @@
 				keeping it even if it is invalid.
 			</description>
 		</method>
+		<method name="readagain">
+			<arglist />
+			<digest>
+				Reread file
+			</digest>
+			<description>
+				Rereads the previous file
+			</description>
+		</method>
 		<method name="readappend">
 			<arglist />
 			<digest>
@@ -172,6 +181,15 @@
 			</digest>
 			<description>
 				Writes the bell code into a file.
+			</description>
+		</method>
+		<method name="writeagain">
+			<arglist />
+			<digest>
+				Rewrite file
+			</digest>
+			<description>
+				Rewrite the previous file
 			</description>
 		</method>
 	</methodlist>
@@ -248,6 +266,24 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of Extra Outlets" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="file" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Code file to be read at initialization
+			</digest>
+			<description>
+				The <m>file</m> attribute allows setting a file name
+				to be loaded automatically when the object is created.
+				Its contents override those of the code in both the object box
+				and the editor.
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Code file to be read at initialization" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
@@ -409,6 +445,22 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Triggers" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="watch" get="1" set="1" type="int" size="1">
+			<digest>
+				Reload files if changed
+			</digest>
+			<description>
+				If the <m>watch</m> attribute is set to 1
+				(as by default), whenever the loaded bell code file
+				or one of the files included by the code is changed
+				the code is reloaded and rebuilt.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Reload files if changed" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
