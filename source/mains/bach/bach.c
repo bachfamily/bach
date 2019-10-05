@@ -22,6 +22,8 @@
 #include "ext_common.h"
 #include "graphics/bach_cursors.h"
 #include <stdlib.h>
+#include <algorithm>
+#include <string>
 #ifdef BACH_TRACK_MEMORY_ALLOCATION
 #ifdef MAC_VERSION
 #include <execinfo.h>
@@ -773,6 +775,7 @@ t_symbol *get_buildnumber_sym(void)
     
     std::string bn;
     bn = year + monthNum + day + hour + min + sec;
+    std::replace(bn.begin(), bn.end(), ' ', '0');
     return gensym(bn.c_str());
 }
 
