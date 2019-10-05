@@ -513,6 +513,42 @@ t_llll* astRangeOp::eval(t_execEnv const &context) {
 }
 
 
+////////////
+
+t_llll* astRepeatOp::eval(t_execEnv const &context) {
+    t_llll *datall = dataNode->eval(context);
+    t_llll *repeatll = repeatNode->eval(context);
+    t_llll *res = llll_clone(datall);
+    if (repeatll->l_depth == 1) {
+        t_llll *current = datall;
+        t_llllelem *prevelem;
+        for (t_llllelem *relem = repeatll->l_tail; relem; relem = prevelem) {
+            long n = hatom_getlong(&relem->l_hatom);
+            if (n == 0) {
+                llll_free(res);
+                res = llll_get();
+            } else {
+                for (int i = 1; i < n; i++) {
+                    llll_chain(res, llll_clone(current));
+                }
+            }
+            prevelem = relem->l_prev;
+            if (current != datall)
+                llll_free(current);
+            if (prevelem) {
+                llll_wrap(&res);
+                current = llll_clone(res);
+            }
+        }
+    } else {
+        object_error((t_object *) context.obj, "Repeat operator: bad llll");
+        res = llll_get();
+    }
+    bell_release_llll(datall);
+    bell_release_llll(repeatll);
+    return res;
+}
+
 //////////
 
 t_llll* astAssign::eval(t_execEnv const &context) {

@@ -114,6 +114,7 @@
 %left BITAND
 %left LT GT LEQ GEQ
 %left EQUAL NEQ
+%left REPEAT
 %left RANGE
 %left LSHIFT RSHIFT
 %left PLUS MINUS
@@ -152,14 +153,7 @@
     
     #include "stringparser_lex_nolines.h"
     
-    
-    
-    typedef struct _bufstack {
-        YY_BUFFER_STATE bs; /* saved buffer */
-        char *name; /* name of this file */
-        char **th;
-        int *state;
-    } t_bufstack;
+
     
     int yylex(YYSTYPE *yylval_param, yyscan_t myscanner, struct _parseParams
     *params);
@@ -947,6 +941,10 @@ exp: term %dprec 2
     $$ = new astRangeOp($1, $3, params->owner);
     code_dev_post ("parse: range\n");
 }
+| exp REPEAT listEnd {
+    $$ = new astRepeatOp($1, $3, params->owner);
+    code_dev_post ("parse: range\n");
+}
 | exp APPLY listEnd %dprec 1 {
     $$ = new astKeyOp<e_keyOpStandard>($1, $3, params->owner);
     code_dev_post ("parse: access\n");
@@ -1071,6 +1069,10 @@ exp: term %dprec 2
 }
 | exp RANGE exp {
     $$ = new astRangeOp($1, $3, params->owner);
+    code_dev_post ("parse: range\n");
+}
+| exp REPEAT exp {
+    $$ = new astRepeatOp($1, $3, params->owner);
     code_dev_post ("parse: range\n");
 }
 | exp APPLY exp {
@@ -1324,14 +1326,9 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
 {
     yyscan_t myscanner;
     
-    t_bufstack bs[256], *this_bs;
-    bs[0].name = nullptr;
-    bs[0].th = nullptr;
-    int state = INITIAL;
-    bs[0].state = &state;
-    this_bs = bs;
+    t_lexparams lexparams;
     
-    stringparser_lex_init_extra(&this_bs, &myscanner);
+    stringparser_lex_init_extra(&lexparams, &myscanner);
     stringparser_scan_string(myscanner, x->c_text);
     
     t_parseParams params;
@@ -1376,6 +1373,8 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
             params.name2patcherVars,
             x
         );
+        codableobj_clear_filewatchers(x);
+        codableobj_add_filewatchers(x, &lexparams.files);
         return mainFunction;
     } else {
         object_error((t_object *) x, "Syntax errors present — couldn't parse code");

@@ -20,12 +20,19 @@
 #include "bell/bach_codableobj.hpp"
 #include "bell/ast.hpp"
 #include "bell/pvManager.hpp"
+#include "bell/fileid.hpp"
 
-void codableobj_doread(t_codableobj *x, t_symbol *s);
-void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short path);
+void codableobj_doread(t_codableobj *x, t_symbol *s, long ac, t_atom *av);
+t_bool codableobj_readfile(t_codableobj *x, char *filename, short path);
+t_bool codableobj_doreadagain(t_codableobj *x, t_symbol *s, long ac, t_atom *av);
 
-void codableobj_dowrite(t_codableobj *x, t_symbol *s);
+void codableobj_dowrite(t_codableobj *x, t_symbol *s, long ac, t_atom *av);
+void codableobj_dowriteagain(t_codableobj *x, t_symbol *s, long ac, t_atom *av);
 void codableobj_writefile(t_codableobj *x, char *filename, short path);
+
+void codableobj_accept_good_code(t_codableobj *x, t_mainFunction* oldMain, char* oldCode);
+void codableobj_reject_bad_code(t_codableobj *x, t_mainFunction* oldMain, char* oldCode);
+
 
 
 long bach_atoms2text(long ac, t_atom *av, char **buf)
@@ -140,15 +147,13 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
     err = codableobj_buildAst(x, &dummyfirstattr);
     
     if (!err) {
-        sysmem_freeptr(oldCode);
-        if (oldMain)
-            oldMain->decrease();
-        if (x->c_filename)
+        codableobj_accept_good_code(x, oldMain, oldCode);
+        if (x->c_filename) {
             *result = 0;
-        else
+            codableobj_add_default_filewatcher(x);
+        } else {
             *result = 3;
-        if (x->c_auto)
-            object_method(x, _sym_bang);
+        }
     } else {
         {
             t_object *wind = object_attr_getobj(x->c_editor, _sym_wind);
@@ -169,18 +174,16 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
                     sysmem_freeptr(oldCode);
                     if (oldMain)
                         oldMain->decrease();
-                    if (x->c_filename)
+                    codableobj_clear_filewatchers(x);
+                    if (x->c_filename) {
                         *result = 0;
-                    else
+                        codableobj_add_default_filewatcher(x);
+                    } else
                         *result = 3;
                     object_error((t_object *) x, "Ignoring bad code in the editor");
                     break;
                 case 3: // revert
-                    x->c_text = oldCode;
-                    sysmem_freeptr(newCode);
-                    if (x->c_main)
-                        (x->c_main)->decrease();
-                    x->c_main = oldMain;
+                    codableobj_reject_bad_code(x, oldMain, oldCode);
                     *result = 3;
                     break;
                 case 2: // stop
@@ -476,6 +479,20 @@ void codableobj_forceread(t_codableobj *x, t_symbol *s)
     defer(x, (method) codableobj_doread, s, 0, NULL);
 }
 
+void codableobj_readagain(t_codableobj *x)
+{
+    x->c_forceread = false;
+    x->c_readappend = false;
+    defer(x, (method) codableobj_doreadagain, NULL, 0, NULL);
+}
+
+void codableobj_forcereadagain(t_codableobj *x)
+{
+    x->c_forceread = true;
+    x->c_readappend = false;
+    defer(x, (method) codableobj_doreadagain, NULL, 0, NULL);
+}
+
 void codableobj_readappend(t_codableobj *x, t_symbol *s)
 {
     x->c_forceread = false;
@@ -490,7 +507,7 @@ void codableobj_forcereadappend(t_codableobj *x, t_symbol *s)
     defer(x, (method) codableobj_doread, s, 0, NULL);
 }
 
-void codableobj_doread(t_codableobj *x, t_symbol *s)
+void codableobj_doread(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
 {
     t_fourcc filetype[2] = {'TEXT', 'BELL'}, outtype;
     char filename[MAX_PATH_CHARS];
@@ -506,22 +523,35 @@ void codableobj_doread(t_codableobj *x, t_symbol *s)
         }
     }
     // we have a file
-    codableobj_readfile(x, s, filename, path);
+    codableobj_readfile(x, filename, path);
+    x->c_forceread = false;
+    x->c_readappend = false;
 }
 
-void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short path)
+t_bool codableobj_doreadagain(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
+{
+    if (x->c_filename != nullptr) {
+        return codableobj_readfile(x, x->c_filename, x->c_path);
+    } else {
+        object_error((t_object *) x, "no previously open file");
+        return false;
+    }
+}
+
+t_bool codableobj_readfile(t_codableobj *x, char *filename, short path)
 {
     t_filehandle fh;
     char *newCode = NULL;
     char *oldCode = NULL;
     t_max_err err;
+    
     t_mainFunction *oldMain = x->c_main;
     if (oldMain)
         oldMain->increase();
     t_ptr_size codeLen;
     if (path_opensysfile(filename, path, &fh, READ_PERM)) {
         object_error((t_object *) x, "error opening %s", filename);
-        return;
+        return false;
     }
     // allocate memory block that is the size of the file
     sysfile_geteof(fh, &codeLen);
@@ -554,18 +584,14 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
     err = codableobj_buildAst(x, &dummyfirstattr);
     
     if (!err) {
-        sysmem_freeptr(oldCode);
-        if (oldMain)
-            oldMain->decrease();
-        codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
-        if (x->c_auto) {
-            object_method(x, _sym_bang);
-        }
         if (x->c_filename)
             bach_freeptr(x->c_filename);
         x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
         strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
         x->c_path = path;
+        codableobj_add_default_filewatcher(x);
+        codableobj_accept_good_code(x, oldMain, oldCode);
+        return true;
     } else {
         if (x->c_forceread) {
             x->c_text = newCode;
@@ -578,16 +604,17 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
             x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
             strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
             x->c_path = path;
+            codableobj_clear_filewatchers(x);
+            codableobj_add_default_filewatcher(x);
+            if (x->c_watch)
+                codableobj_start_filewatchers(x);
+            return true;
         } else {
-            sysmem_freeptr(newCode);
-            x->c_text = oldCode;
-            if (oldMain)
-                oldMain->increase();
-            x->c_main = oldMain;
+            codableobj_reject_bad_code(x, oldMain, oldCode);
+            return false;
         }
     }
 }
-
 
 void codableobj_write(t_codableobj *x, t_symbol *s)
 {
@@ -597,7 +624,15 @@ void codableobj_write(t_codableobj *x, t_symbol *s)
         object_error((t_object *) x, "No text to write");
 }
 
-void codableobj_dowrite(t_codableobj *x, t_symbol *s)
+void codableobj_writeagain(t_codableobj *x)
+{
+    if (x->c_text)
+        defer(x, (method)codableobj_dowriteagain, NULL, 0, NULL);
+    else
+        object_error((t_object *) x, "No text to write");
+}
+
+void codableobj_dowrite(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
 {
     t_fourcc filetype = 'BELL', outtype;
     //short numtypes = 1;
@@ -614,7 +649,12 @@ void codableobj_dowrite(t_codableobj *x, t_symbol *s)
     codableobj_writefile(x, filename, path);
 }
 
-
+void codableobj_dowriteagain(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
+{
+    char filename[MAX_FILENAME_CHARS];
+    strcpy(filename, x->c_filename);
+    codableobj_writefile(x, filename, x->c_path);
+}
 
 void codableobj_writefile(t_codableobj *x, char *filename, short path)
 {
@@ -626,6 +666,12 @@ void codableobj_writefile(t_codableobj *x, char *filename, short path)
     t_handle h = sysmem_newhandle(0);
     sysmem_ptrandhand(x->c_text, h, strlen(x->c_text) + 1); // +1 if you want to copy the null termination, but not necessary here
     err = sysfile_writetextfile(fh, h, TEXT_LB_NATIVE);
+    if (!err) {
+        x->c_path = path;
+        if (x->c_filename)
+            sysmem_freeptr(x->c_filename);
+        strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
+    }
     sysfile_close(fh);
     sysmem_freehandle(h);
 }
@@ -659,8 +705,11 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
         t_max_err err = dictionary_getstring(d, gensym("code"), (const char **) &newCode);
         if (err == MAX_ERR_NONE && newCode) {
             if (x->c_main) {
-                if (x->c_text && *x->c_text && strcmp(newCode, x->c_text) != 0)
+                if (x->c_text && *x->c_text && strcmp(newCode, x->c_text) != 0) {
+                    // if the object was saved with bad code in the editor, we don't preserve the previous main
+                    x->c_main->decrease();
                     object_warn((t_object *) x, "Code in the editor overrides code in the object box");
+                }
             }
             sysmem_freeptr(x->c_text);
             size_t codeLen = strlen(newCode);
@@ -677,6 +726,9 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
             long dummy;
             if (codableobj_buildAst(x, &dummy, dataInlets, dataOutlets, directInlets, directOutlets) != MAX_ERR_NONE) {
                 object_error((t_object *) x, "Ignoring bad code in the editor");
+            } else {
+                if (x->c_watch)
+                    codableobj_start_filewatchers(x);
             }
         }
     }
@@ -689,7 +741,7 @@ void codableobj_removeAllVarTriggers(t_codableobj* x)
     
     for (auto i = 0; i < x->c_triggerPVsCount; i++) {
         t_symbol *name = x->c_triggerPVs[i].first;
-        pvm->removeVariable(x->c_triggerPVs[i].first, (t_object *) x);
+        pvm->removeVariable(name, (t_object *) x);
     }
     
     for (auto i = 0; i < x->c_triggerGVsCount; i++) {
@@ -716,11 +768,36 @@ void codableobj_free(t_codableobj *x)
         llll_free(x->c_paramsvalues[i]);
     llll_free(x->c_paramsll);
     codableobj_removeAllVarTriggers(x);
+    codableobj_clear_filewatchers(x);
     delete x->c_ofTable;
     object_free_debug(x->c_editor);
     llllobj_obj_free((t_llllobj_object *) x);
 }
 
+void codableobj_accept_good_code(t_codableobj *x, t_mainFunction* oldMain, char* oldCode)
+{
+    if (oldCode)
+        sysmem_freeptr(oldCode);
+    if (oldMain)
+        oldMain->decrease();
+    codableobj_resolvepatchervars(x, NULL, 0, NULL);
+    codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
+    if (x->c_watch)
+        codableobj_start_filewatchers(x);
+    if (x->c_auto) {
+        object_method(x, _sym_bang);
+    }
+}
+
+void codableobj_reject_bad_code(t_codableobj *x, t_mainFunction* oldMain, char* oldCode)
+{
+    object_error((t_object *) x, "Invalid code, reverting to previous");
+    sysmem_freeptr(x->c_text);
+    x->c_text = oldCode;
+    if (oldMain)
+        oldMain->increase();
+    x->c_main = oldMain;
+}
 
 void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
 {
@@ -733,17 +810,53 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
     long dummy;
     err = codableobj_buildAst(x, &dummy);
     if (!err) {
-        sysmem_freeptr(oldText);
-        if (oldMain)
-            oldMain->decrease();
-        codableobj_resolvepatchervars(x, NULL, 0, NULL);
-        codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
-        if (x->c_auto)
-            object_method(x, _sym_bang);
+        codableobj_accept_good_code(x, oldMain, oldText);
     } else {
-        object_error((t_object *) x, "Invalid code");
+        codableobj_reject_bad_code(x, oldMain, oldText);
     }
 }
+
+void codableobj_watch_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        x->c_watch = atom_getlong(av);
+        if (x->c_watch)
+            codableobj_start_filewatchers(x);
+        else
+            codableobj_stop_filewatchers(x);
+    }
+}
+
+void codableobj_file_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        if (t_symbol *s = atom_getsym(av); s && s != gensym("")) {
+            defer_low(x, (method) codableobj_doread, s, 0, NULL);
+        }
+    }
+}
+
+void codableobj_filechanged(t_codableobj *x, char *filename, short path)
+{
+    object_post((t_object *) x, "Reloading %s", filename);
+    if (x->c_filename && !strncmp(filename, x->c_filename, MAX_PATH_CHARS) &&
+        path == x->c_path) {
+        codableobj_doreadagain(x, NULL, 0, NULL);
+    } else {
+        t_mainFunction *oldMain = x->c_main;
+        if (oldMain)
+            oldMain->increase();
+        long dummyfirstattr;
+        t_max_err err = codableobj_buildAst(x, &dummyfirstattr);
+        if (!err) {
+            codableobj_accept_good_code(x, oldMain, nullptr);
+        } else {
+            codableobj_reject_bad_code(x, oldMain, nullptr);
+        }
+    }
+}
+
+
 
 void codableclass_add_standard_methods_and_attrs(t_class *c)
 {
@@ -752,6 +865,9 @@ void codableclass_add_standard_methods_and_attrs(t_class *c)
     class_addmethod(c, (method)codableobj_readappend,   "readappend",            A_DEFSYM,    0);
     class_addmethod(c, (method)codableobj_forcereadappend,   "forcereadappend",            A_DEFSYM,    0);
     class_addmethod(c, (method)codableobj_write, "write", A_DEFSYM, 0);
+    class_addmethod(c, (method)codableobj_readagain, "readagain", 0);
+    class_addmethod(c, (method)codableobj_writeagain, "writeagain", 0);
+
     
     class_addmethod(c, (method)codableobj_appendtodictionary,    "appendtodictionary", A_CANT, 0);
     
@@ -760,10 +876,24 @@ void codableclass_add_standard_methods_and_attrs(t_class *c)
     
     class_addmethod(c, (method)codableobj_setpatchervariable, "setpatchervariable", A_CANT, 0);
     
+    class_addmethod(c, (method)codableobj_filechanged, "filechanged", A_CANT, 0);
+    
     CLASS_ATTR_ATOM_LONG(c, "maxtime",    0,    t_codableobj, c_maxtime);
     CLASS_ATTR_LABEL(c, "maxtime", 0, "Maximum Duration Of Evaluation");
     CLASS_ATTR_FILTER_MIN(c, "maxtime", 0);
+    
+    CLASS_ATTR_LONG(c, "watch", 0, t_codableobj, c_watch);
+    CLASS_ATTR_LABEL(c, "watch", 0, "Reload files if changed");
+    CLASS_ATTR_ACCESSORS(c, "watch", nullptr, codableobj_watch_set);
+    CLASS_ATTR_FILTER_CLIP(c, "watch", 0, 1);
+    CLASS_ATTR_STYLE(c, "watch", 0, "onoff");
+    
+    CLASS_ATTR_SYM(c, "file", 0, t_codableobj, c_file);
+    CLASS_ATTR_LABEL(c, "file", 0, "Code file to be read at initialization");
+    CLASS_ATTR_ACCESSORS(c, "file", nullptr, codableobj_file_set);
 }
+
+
 
 void codableclass_add_extended_methods_and_attrs(t_class *c)
 {
@@ -818,10 +948,18 @@ short codableobj_setup(t_codableobj *x, short ac, t_atom *av)
     
     x->c_embed = 1;
     x->c_maxtime = 60000;
+    x->c_watch = 1;
     attr_args_process(x, attr_ac, attr_av); // the attributes before @lambda
     if (next >= 0)
         attr_args_process(x, orig_attr_ac - next, attr_av + next);
     return true_ac;
+}
+
+void codableobj_finalize(t_codableobj *x)
+{
+    object_attr_setdisabled((t_object *)x, gensym("watch"), true);
+    t_dictionary* d = (t_dictionary *)gensym("#D")->s_thing;
+    codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
 }
 
 
@@ -839,3 +977,65 @@ t_llll *codableobj_run(t_codableobj* x, t_execEnv &context)
     context.stopTime = x->c_maxtime > 0 ? x->c_maxtime + systime_ms() : 0;
     return x->c_main->call(context);
 }
+
+void codableobj_clear_filewatchers(t_codableobj* x)
+{
+    bach_atomic_lock(&x->c_fw_lock);
+    long n = x->c_nfilewatchers;
+    for (int i = 0; i < n; i++) {
+        object_free_debug(x->c_filewatchers[i]);
+    }
+    x->c_nfilewatchers = 0;
+    bach_atomic_unlock(&x->c_fw_lock);
+}
+
+void codableobj_add_filewatchers(t_codableobj* x, const fileidSet* files)
+{
+    bach_atomic_lock(&x->c_fw_lock);
+    int i = x->c_nfilewatchers;
+    auto j = files->begin();
+    for ( ; j != files->end(); i++, j++) {
+        x->c_filewatchers[i] = (t_object *) filewatcher_new((t_object *) x, j->path, j->name.c_str());
+    }
+    x->c_nfilewatchers = i;
+    bach_atomic_unlock(&x->c_fw_lock);
+}
+
+void codableobj_add_one_filewatcher(t_codableobj *x, const t_fileid* file)
+{
+    codableobj_add_one_filewatcher(x, file->path, file->name.c_str());
+}
+
+
+void codableobj_add_one_filewatcher(t_codableobj *x, const short path, const char* name)
+{
+    bach_atomic_lock(&x->c_fw_lock);
+    x->c_filewatchers[x->c_nfilewatchers++] = (t_object *) filewatcher_new((t_object *) x, path, name);
+    bach_atomic_unlock(&x->c_fw_lock);
+}
+
+void codableobj_add_default_filewatcher(t_codableobj *x)
+{
+    if (x->c_filename) {
+        codableobj_add_one_filewatcher(x, x->c_path, x->c_filename);
+    }
+}
+
+void codableobj_start_filewatchers(t_codableobj* x)
+{
+    bach_atomic_lock(&x->c_fw_lock);
+    int n = x->c_nfilewatchers;
+    for (int i = 0; i < n; i++)
+        filewatcher_start(x->c_filewatchers[i]);
+    bach_atomic_unlock(&x->c_fw_lock);
+}
+
+void codableobj_stop_filewatchers(t_codableobj* x)
+{
+    bach_atomic_lock(&x->c_fw_lock);
+    int n = x->c_nfilewatchers;
+    for (int i = 0; i < n; i++)
+        filewatcher_stop(x->c_filewatchers[i]);
+    bach_atomic_unlock(&x->c_fw_lock);
+}
+

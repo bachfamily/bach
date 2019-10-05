@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.4.2.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Skeleton interface for Bison GLR parsers in C
 
-   Copyright (C) 2002-2015, 2018-2019 Free Software Foundation, Inc.
+   Copyright (C) 2002-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -129,32 +129,35 @@ extern int stringparser_debug;
     BITOR = 339,
     BITXOR = 340,
     BITAND = 341,
-    RANGE = 342,
-    LSHIFT = 343,
-    RSHIFT = 344,
-    REM = 345,
-    NTHOP = 346,
-    PICKOP = 347,
-    APPLY = 348,
-    ACCESS_UNWRAP = 349,
-    LVALUESTEPPARAMS = 350,
-    AS_KW = 351,
-    WITH_KW = 352,
-    UPLUS = 353,
-    LOGNOT = 354,
-    BITNOT = 355,
-    UMINUS = 356,
-    POWOP = 357,
-    KEEP = 358,
-    UNKEEP = 359,
-    INIT = 360
+    REPEAT = 342,
+    RANGE = 343,
+    LSHIFT = 344,
+    RSHIFT = 345,
+    REM = 346,
+    NTHOP = 347,
+    PICKOP = 348,
+    APPLY = 349,
+    ACCESS_UNWRAP = 350,
+    LVALUESTEPPARAMS = 351,
+    AS_KW = 352,
+    WITH_KW = 353,
+    UPLUS = 354,
+    LOGNOT = 355,
+    BITNOT = 356,
+    UMINUS = 357,
+    POWOP = 358,
+    KEEP = 359,
+    UNKEEP = 360,
+    INIT = 361
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+
 union YYSTYPE
 {
+
 
     astNode *n;
     astFunctionCall *fc;
@@ -180,6 +183,7 @@ union YYSTYPE
 
 
 };
+
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

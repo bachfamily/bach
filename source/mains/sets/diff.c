@@ -351,8 +351,8 @@ t_diff *diff_new(t_symbol *s, short ac, t_atom *av)
 			x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
 		x->n_empty = llll_get();
         
-        t_dictionary* d = (t_dictionary *)gensym("#D")->s_thing;
-        codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
+        codableobj_finalize((t_codableobj *) x);
+
         
 	} else
 		error(BACH_CANT_INSTANTIATE);

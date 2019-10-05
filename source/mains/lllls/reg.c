@@ -108,9 +108,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         error("bach: bad installation");
         return;
     }
-    
-    long sizesize = sizeof(t_reg);
-    
+        
     CLASS_NEW_CHECK_SIZE(c, "bach.reg", (method)reg_new, (method)reg_free, (long) sizeof(t_reg), 0L, A_GIMME, 0);
 
     // @method llll @digest Store the llll

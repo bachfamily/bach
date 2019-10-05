@@ -387,7 +387,6 @@
 		913D57B1232B972E00BC6B45 /* operator.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 913D5783232B972C00BC6B45 /* operator.hpp */; };
 		913D57B2232B972E00BC6B45 /* llllIterator.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 913D5784232B972C00BC6B45 /* llllIterator.hpp */; };
 		913D57B5232B972E00BC6B45 /* stringparser_tab_nolines.h in Headers */ = {isa = PBXBuildFile; fileRef = 913D5788232B972C00BC6B45 /* stringparser_tab_nolines.h */; };
-		913D57B6232B972E00BC6B45 /* stringparser.c in Sources */ = {isa = PBXBuildFile; fileRef = 913D5789232B972C00BC6B45 /* stringparser.c */; };
 		913D57B7232B972E00BC6B45 /* stringparser_nolines.c in Sources */ = {isa = PBXBuildFile; fileRef = 913D578A232B972C00BC6B45 /* stringparser_nolines.c */; };
 		913D57B9232B972E00BC6B45 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 913D578C232B972C00BC6B45 /* makefile */; };
 		913D57BA232B972E00BC6B45 /* stringparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 913D578E232B972C00BC6B45 /* stringparser.h */; };
@@ -3586,6 +3585,7 @@
 		91FE0ECE190AAB57007B6BED /* llll_comparisons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = llll_comparisons.h; sourceTree = "<group>"; };
 		91FE0ECF190AAB57007B6BED /* llll_comparisons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = llll_comparisons.c; sourceTree = "<group>"; };
 		91FE309E18B4BA470024CF0F /* bach.readsdif.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.readsdif.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		91FEE6F823474658001F74B2 /* fileid.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fileid.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5242,6 +5242,7 @@
 		913D5770232B972B00BC6B45 /* bell */ = {
 			isa = PBXGroup;
 			children = (
+				91FEE6F823474658001F74B2 /* fileid.hpp */,
 				916B4CF22330222E00AC9F03 /* eval.h */,
 				913D5785232B972C00BC6B45 /* stringparser */,
 				91071DB02100DB5900452762 /* bach_codableobj.hpp */,
@@ -5304,18 +5305,18 @@
 			isa = PBXGroup;
 			children = (
 				9157F58C232F6A4300A4ADAB /* bach */,
-				9157F560232F687500A4ADAB /* lllls */,
-				9157F58A232F69F300A4ADAB /* comparisons */,
 				9157F589232F69CE00A4ADAB /* combinatorial */,
-				9157F588232F69A500A4ADAB /* sets */,
+				9157F58A232F69F300A4ADAB /* comparisons */,
+				9157F58B232F6A3200A4ADAB /* eval */,
+				9157F58F232F6A7E00A4ADAB /* files */,
+				9157F59C232F6AFF00A4ADAB /* linearalgebra */,
+				9157F560232F687500A4ADAB /* lllls */,
 				9157F587232F696C00A4ADAB /* math */,
 				9157F59B232F6AC000A4ADAB /* notation */,
 				9157F58D232F6A5400A4ADAB /* roll */,
 				9157F58E232F6A6400A4ADAB /* score */,
+				9157F588232F69A500A4ADAB /* sets */,
 				9157F5A5232F6CD400A4ADAB /* slot */,
-				9157F59C232F6AFF00A4ADAB /* linearalgebra */,
-				9157F58F232F6A7E00A4ADAB /* files */,
-				9157F58B232F6A3200A4ADAB /* eval */,
 				9157F586232F694C00A4ADAB /* utilities */,
 			);
 			path = mains;
@@ -12405,7 +12406,6 @@
 				913D57AD232B972E00BC6B45 /* function.cpp in Sources */,
 				913D57B9232B972E00BC6B45 /* makefile in Sources */,
 				91FDDC371FBE2BC90040D803 /* bach_symparser.c in Sources */,
-				913D57B6232B972E00BC6B45 /* stringparser.c in Sources */,
 				91CA0C5F1DF937B40068B29D /* notation_dynamics.c in Sources */,
 				91C6044F18C0D9F50027BB79 /* SdifFrameType.c in Sources */,
 				913D57A2232B972E00BC6B45 /* pvManager.cpp in Sources */,
