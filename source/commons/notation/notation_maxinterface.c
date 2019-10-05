@@ -2303,11 +2303,11 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 
 		CLASS_ATTR_CHAR(c,"highlightplay",0, t_notation_obj, highlight_played_notes);
 		CLASS_ATTR_STYLE_LABEL(c,"highlightplay",0,"onoff","Highlight Played Notes");
-		CLASS_ATTR_DEFAULT_SAVE(c,"highlightplay",0,"1");
+		CLASS_ATTR_DEFAULT_SAVE(c,"highlightplay",0,"0");
 		CLASS_ATTR_ACCESSORS(c, "highlightplay", (method)NULL, (method)notation_obj_setattr_highlightplay);
 		// @exclude bach.slot
 		// @description Toggle the ability to highlight the played notes with the <m>playcolor</m>.
-		// By default this is 1.
+        // By default this is 0; if you turn it on be aware that it takes significant CPU time with scores with many notes.
 		
 		CLASS_ATTR_CHAR(c,"playmarkers",0, t_notation_obj, play_markers);
 		CLASS_ATTR_STYLE_LABEL(c,"playmarkers",0,"onoff","Play Markers");
@@ -2798,14 +2798,12 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"showdynamics",0, t_notation_obj, show_dynamics);
         CLASS_ATTR_STYLE_LABEL(c,"showdynamics",0,"onoff","Show Dynamics");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showdynamics", 0, "1");
-//        CLASS_ATTR_ACCESSORS(c, "showdynamics", (method)NULL, (method)notation_obj_setattr_showlyrics);
         // @exclude bach.slot
         // @description Toggles the display of dynamics.
 
         CLASS_ATTR_CHAR(c,"showhairpins",0, t_notation_obj, show_hairpins);
         CLASS_ATTR_STYLE_LABEL(c,"showhairpins",0,"onoff","Show Hairpins for Dynamics");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showhairpins", 0, "1");
-//        CLASS_ATTR_ACCESSORS(c, "showdynamics", (method)NULL, (method)notation_obj_setattr_showlyrics);
         // @exclude bach.slot
         // @description Toggles the display of hairpins for dynamics.
 
@@ -2813,6 +2811,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
 		CLASS_ATTR_CHAR(c,"ruler",0, t_notation_obj, ruler);
 		CLASS_ATTR_STYLE_LABEL(c,"ruler",0,"enumindex","Show Ruler");
 		CLASS_ATTR_ENUMINDEX(c,"ruler", 0, "Never Above Below Both");
+        CLASS_ATTR_ACCESSORS(c, "ruler", (method)NULL, (method)notation_obj_setattr_ruler);
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"ruler",0,"0");
 		// @exclude bach.slot
 		// @description Toggles the display of the ruler. Four options are possible: <br />
@@ -2829,7 +2828,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
 		
 		CLASS_ATTR_CHAR(c,"rulerlabels",0, t_notation_obj, show_ruler_labels);
 		CLASS_ATTR_STYLE_LABEL(c,"rulerlabels",0,"onoff","Show Ruler Labels");
-		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rulerlabels",0,"0");
+		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rulerlabels",0,"1");
 		// @exclude bach.slot
 		// @description Toggles the display of the ruler labels.
 		
@@ -5404,6 +5403,16 @@ t_max_err notation_obj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, 
 		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 	}
 	return MAX_ERR_NONE;
+}
+
+t_max_err notation_obj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && av) {
+        long z = atom_getlong(av);
+        r_ob->ruler = CLAMP(z, 0, 3);
+        object_attr_setdisabled((t_object *)r_ob, gensym("rulerlabels"), z == 0);
+        notationobj_redraw(r_ob);
+    }
+    return MAX_ERR_NONE;
 }
 
 // beware!!! if (force_assign_if_elem_is_wrong) is defined, this is destructive on elem: changes elem if not long or llll,

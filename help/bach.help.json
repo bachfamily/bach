@@ -810,13 +810,6 @@
 				}
 			}
 		},
-		"Sourcecodefiles" : {
-			"filename" : [ "bach.help.bell.070_sourcecodefiles.maxpat" ],
-			"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-			"seealso" : [  ],
-			"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "source", "code", "file", "read", "include" ],
-			"title" : [ "Source code files" ]
-		},
 		"Object specific features" : {
 			"Multipleoutlets" : {
 				"filename" : [ "bach.help.bell.080_object specific features.010_multipleoutlets.maxpat" ],
@@ -1151,6 +1144,13 @@
 			"seealso" : [ "message+donors" ],
 			"tags" : [ "message", "donors", "Patreon", "patron" ],
 			"title" : [ "Messages to bach: unlock" ]
+		},
+		"Versionsendversionandsendplatform" : {
+			"filename" : [ "bach.help.messages to bach.03_versionsendversionandsendplatform.maxpat" ],
+			"objects" : [  ],
+			"seealso" : [  ],
+			"tags" : [ "message", "version", "sendversion" ],
+			"title" : [ "Messages to bach: version, sendversion and sendplatform" ]
 		},
 		"Nonative" : {
 			"filename" : [ "bach.help.messages to bach.04_nonative.maxpat" ],
