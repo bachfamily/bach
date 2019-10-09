@@ -873,6 +873,17 @@ void llllobj_outlet_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type,
     }
 }
 
+void llllobj_outlet_llll_defer_do(t_object *x, t_symbol *dummy, long ac, t_atom *av)
+{
+	e_llllobj_obj_types type = (e_llllobj_obj_types) atom_getlong(av);
+	long outnum = atom_getlong(av + 1);
+	t_llll *ll = (t_llll*) atom_getobj(av + 2);
+	long flags = atom_getlong(av + 3);
+	llllobj_outlet_llll(x, type, outnum, ll, flags);
+	llll_release(ll);
+}
+
+
 void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll, long flags)
 {
     t_atom outatom;

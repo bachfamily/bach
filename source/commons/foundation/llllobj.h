@@ -321,6 +321,31 @@ void llllobj_outlet_symbol_couple_as_llll(t_object *x, e_llllobj_obj_types llllo
 // flags are e_llll_deparse_flags
 void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll, long flags = 0);
 
+typedef enum {
+    E_DEFER = 0,
+    E_DEFERLOW
+} e_defer_kind;
+
+// private
+void llllobj_outlet_llll_defer_do(t_object *x, t_symbol *dummy, long ac, t_atom *av);
+
+// the same as llllobj_outlet_llll, but the output is either deferred or deferlow-ed,
+// according to the value of the parameter KIND
+template<e_defer_kind KIND = E_DEFER>
+void llllobj_outlet_llll_defer(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll, long flags)
+{
+    t_atom av[4];
+    atom_setlong(av, type);
+    atom_setlong(av + 1, outnum);
+    atom_setobj(av + 2, llll_retain(in_ll));
+    atom_setlong(av + 3, flags);
+    if constexpr (KIND == E_DEFER)
+        defer(x, (method) llllobj_outlet_llll_defer_do, NULL, 4, av);
+    else
+        defer_low(x, (method) llllobj_outlet_llll_defer_do, NULL, 4, av);
+}
+
+
 
 // (unused)
 // directly outlets a llll
