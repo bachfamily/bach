@@ -332,7 +332,7 @@ void llllobj_outlet_llll_defer_do(t_object *x, t_symbol *dummy, long ac, t_atom 
 // the same as llllobj_outlet_llll, but the output is either deferred or deferlow-ed,
 // according to the value of the parameter KIND
 template<e_defer_kind KIND = E_DEFER>
-void llllobj_outlet_llll_defer(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll, long flags)
+void llllobj_outlet_llll_defer(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll, long flags = 0)
 {
     t_atom av[4];
     atom_setlong(av, type);

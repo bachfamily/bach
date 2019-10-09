@@ -163,6 +163,7 @@ typedef struct _tree // [bach.tree] structure
     char					need_send_changed_bang;
     t_llllelem				*need_set_clicked_treenode_on_this;
     char                    need_set_clicked_treenode_on_root;
+    t_treenode              *need_set_inscreenpos_on_this;
     char					also_send_clicked_elem;
     char					need_send_domainpixels;
     
@@ -235,6 +236,8 @@ typedef struct _tree // [bach.tree] structure
     double					needed_height[CONST_MAX_DEPTH];
     long					last_cmd;
     double					temp; // temporary field
+    char                    need_to_transfer_mousedown; // private
+    t_llllelem              *mousedownelem; // private
     
     // global check for the whole llll
     t_atom_long              global_check_value;
@@ -313,7 +316,7 @@ void tree_restore_preset(t_tree *x, t_symbol *s, long argc, t_atom *argv);
 void tree_end_preset(t_tree *x);
 
 void send_domainpixels(t_tree *x);
-void send_clicked_node_address_and_content(t_tree *x);
+void send_clicked_node_address_and_content(t_tree *x, char deferlow);
 t_llllelem *get_next_open_llllelem(t_tree *x, t_llllelem *elem, char force_open_levels);
 t_llllelem *get_prev_open_llllelem(t_tree *x, t_llllelem *elem, char force_open_levels);
 
@@ -322,6 +325,7 @@ void tree_setcheckvalues(t_tree *x, t_symbol *s, long argc, t_atom *argv, char m
 void tree_sendcheckvalues(t_tree *x, t_symbol *s, long argc, t_atom *argv);
 void tree_sendcheckitems(t_tree *x, t_symbol *s, long argc, t_atom *argv);
 t_llll *get_checkvalues_as_llll(t_tree *x, char checked_elements_only);
+void tree_set_and_send_clicked_treenode_do(t_tree *x, char deferlow);
 
 void tree_send_openstate(t_tree *x, t_symbol *s, long argc, t_atom *argv);
 void set_openstate_from_llll(t_tree *x, t_llll *values);
@@ -1235,6 +1239,9 @@ long build_all_tree_nodes_fn(void *data, t_hatom *a, const t_llll *address){
     tnd->leavesneededwidth = -1; // dummy for this algorithm
     tnd->elem = address && address->l_head ? llll_hatom2elem(a) : NULL;
     
+    if (x->need_to_transfer_mousedown && x->mousedownelem == tnd->elem)
+        x->clicked_node = tnd;
+    
     if (hatom_gettype(a) == H_LLLL) {
         t_llll *ll = hatom_getllll(a);
         if ((x->maxdepth > 0 && x->maxdepth == tnd->depth) || (x->maxdepth < 0 && ll->l_depth == -x->maxdepth - 1)) {
@@ -1511,7 +1518,11 @@ void rebuild_treenodes(t_tree *x, t_rect view_rect){
     
     if (x->mode == k_TREE_CHECKEDOUTLINE || x->mode == k_TREE_OUTLINE)  {
         x->temp = x->y_inset;
+        x->need_to_transfer_mousedown = need_to_transfer_mousedown;
+        x->mousedownelem = mousedown_elem;
         llll_funall(x->tree_as_llll, build_all_tree_nodes_fn, x, 1, x->maxdepth, FUNALL_PROCESS_WHOLE_SUBLISTS);
+        x->need_to_transfer_mousedown = 0;
+        x->mousedownelem = NULL;
         x->need_rebuid_tree_nodes = false;
         return; // we are done
     } else {
@@ -1819,6 +1830,9 @@ void click_on_node(t_tree *x, t_llll *node_address, char also_send_clicked_elem,
             x->also_send_clicked_elem = also_send_clicked_elem;
             jbox_redraw((t_jbox *) x);
         }
+        
+        // must be sent straight away, not in the paint method
+        tree_set_and_send_clicked_treenode_do(x, false);
     }
 }
 
@@ -1826,6 +1840,7 @@ void tree_click(t_tree *x, t_symbol *s, long argc, t_atom *argv){ //argv+1
     t_llll *incomingllll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     systhread_mutex_lock(x->c_mutex);
     click_on_node(x, incomingllll, true, true);
+    jbox_redraw((t_jbox *) x);
     systhread_mutex_unlock(x->c_mutex);
     llll_free(incomingllll);
 }
@@ -2109,6 +2124,42 @@ void send_domainpixels(t_tree *x)
     }
 }
 
+void tree_set_and_send_clicked_treenode_do(t_tree *x, char deferlow)
+{
+    if (x->need_set_clicked_treenode_on_root) {
+        t_llllelem *temp;
+        for (temp = x->treenodes->l_head; temp; temp = temp->l_next){
+            t_treenode *tempnode = (t_treenode *)hatom_getobj(&temp->l_hatom);
+            if (tempnode->elem == NULL){
+                x->clicked_node = tempnode;
+                if (x->also_send_clicked_elem) {
+                    send_clicked_node_address_and_content(x, deferlow);
+                    x->also_send_clicked_elem = false;
+                }
+                x->need_set_inscreenpos_on_this = tempnode;
+                break;
+            }
+        }
+        x->need_set_clicked_treenode_on_root = false;
+    } else if (x->need_set_clicked_treenode_on_this) {
+        t_llllelem *temp;
+        for (temp = x->treenodes->l_head; temp; temp = temp->l_next){
+            t_treenode *tempnode = (t_treenode *)hatom_getobj(&temp->l_hatom);
+            if (tempnode->elem == x->need_set_clicked_treenode_on_this ||
+                (!tempnode->elem && x->need_set_clicked_treenode_on_this == WHITENULL_llllelem)){
+                x->clicked_node = tempnode;
+                if (x->also_send_clicked_elem) {
+                    send_clicked_node_address_and_content(x, deferlow);
+                    x->also_send_clicked_elem = false;
+                }
+                x->need_set_inscreenpos_on_this = tempnode;
+                break;
+            }
+        }
+        x->need_set_clicked_treenode_on_this = NULL;
+    }
+}
+
 void tree_paint(t_tree *x, t_object *view){
     
     t_jgraphics *g;
@@ -2129,37 +2180,11 @@ void tree_paint(t_tree *x, t_object *view){
     if (x->need_rebuid_tree_nodes)
         rebuild_treenodes(x, rect);
     
-    if (x->need_set_clicked_treenode_on_root) {
-        t_llllelem *temp;
-        for (temp = x->treenodes->l_head; temp; temp = temp->l_next){
-            t_treenode *tempnode = (t_treenode *)hatom_getobj(&temp->l_hatom);
-            if (tempnode->elem == NULL){
-                x->clicked_node = tempnode;
-                if (x->also_send_clicked_elem) {
-                    send_clicked_node_address_and_content(x);
-                    x->also_send_clicked_elem = false;
-                }
-                node_inscreenpos(x, rect, tempnode, 0.5, true, false);
-                break;
-            }
-        }
-        x->need_set_clicked_treenode_on_root = false;
-    } else if (x->need_set_clicked_treenode_on_this) {
-        t_llllelem *temp;
-        for (temp = x->treenodes->l_head; temp; temp = temp->l_next){
-            t_treenode *tempnode = (t_treenode *)hatom_getobj(&temp->l_hatom);
-            if (tempnode->elem == x->need_set_clicked_treenode_on_this ||
-                (!tempnode->elem && x->need_set_clicked_treenode_on_this == WHITENULL_llllelem)){
-                x->clicked_node = tempnode;
-                if (x->also_send_clicked_elem) {
-                    send_clicked_node_address_and_content(x);
-                    x->also_send_clicked_elem = false;
-                }
-                node_inscreenpos(x, rect, tempnode, 0.5, true, false);
-                break;
-            }
-        }
-        x->need_set_clicked_treenode_on_this = NULL;
+    tree_set_and_send_clicked_treenode_do(x, true);
+    
+    if (x->need_set_inscreenpos_on_this) {
+        node_inscreenpos(x, rect, x->need_set_inscreenpos_on_this, 0.5, true, false);
+        x->need_set_inscreenpos_on_this = NULL;
     }
     
     if (x->treenodes) {
@@ -2418,7 +2443,8 @@ void tree_mouseleave(t_tree *x, t_object *patcherview, t_pt pt, long modifiers) 
     jbox_redraw((t_jbox *)x);
 }
 
-void send_clicked_node_address_and_content(t_tree *x)
+
+void send_clicked_node_address_and_content(t_tree *x, char deferlow)
 {
     t_treenode *the_clicked_node = x->clicked_node;
     
@@ -2428,17 +2454,27 @@ void send_clicked_node_address_and_content(t_tree *x)
     t_llll *address = llll_clone(the_clicked_node->address);
     
     // sending address
-    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 2, address);
+    if (deferlow)
+        llllobj_outlet_llll_defer<E_DEFERLOW>((t_object *) x, LLLL_OBJ_UI, 2, address);
+    else
+        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 2, address);
     
     // sending content
     if (address->l_size == 0) {
         if (x->first_elem_in_llll_is_llll_name && x->output_llll_names_when_llll_clicked && x->tree_as_llll->l_head) {
             t_llll *outllll = llll_get();
             llll_appendhatom_clone(outllll, &x->tree_as_llll->l_head->l_hatom, 0, WHITENULL_llll);
-            llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 1, outllll);
+            if (deferlow)
+                llllobj_outlet_llll_defer<E_DEFERLOW>((t_object *) x, LLLL_OBJ_UI, 1, outllll);
+            else
+                llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 1, outllll);
             llll_free(outllll);
-        } else
-            llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 1, x->tree_as_llll);
+        } else {
+            if (deferlow)
+                llllobj_outlet_llll_defer<E_DEFERLOW>((t_object *) x, LLLL_OBJ_UI, 1, x->tree_as_llll);
+            else
+                llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 1, x->tree_as_llll);
+        }
     } else {
         t_llll *babyllll = llll_get();
         t_llll *outllll = llll_get();
@@ -2457,7 +2493,11 @@ void send_clicked_node_address_and_content(t_tree *x)
         } else if (x->unwrap) {
             llll_flat(outllll, 0, 1, 0, LLLL_FREETHING_DONT);
         }
-        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 1, outllll);
+        
+        if (deferlow)
+            llllobj_outlet_llll_defer<E_DEFERLOW>((t_object *) x, LLLL_OBJ_UI, 1, outllll);
+        else
+            llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 1, outllll);
         
         llll_free(outllll);
         llll_free(babyllll);
@@ -2954,7 +2994,7 @@ void tree_mousedown(t_tree *x, t_object *patcherview, t_pt pt, long modifiers){
         }
     } else if (the_clicked_node && !the_clicked_node->is_dummy_node) {
         x->clicked_node = the_clicked_node;
-        send_clicked_node_address_and_content(x);
+        send_clicked_node_address_and_content(x, true);
     } else {
         x->clicked_node = the_clicked_node;
     }
