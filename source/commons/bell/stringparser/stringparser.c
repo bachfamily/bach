@@ -1805,7 +1805,7 @@ static const flex_int16_t yy_chk[4261] =
      */
 
     #ifdef CONFIGURATION_Development
-    #define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
+    //#define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
     #endif
     
     #ifndef code_dev_post

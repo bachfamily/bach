@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 97.0, 126.0, 1029.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -109,7 +109,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 322.00799560546875, 324.5, 230.0, 40.0 ],
-									"presentation_linecount" : 2,
 									"text" : "... and what happens if you have @auto 1 and your file changes?"
 								}
 
@@ -196,7 +195,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "54 ",
+									"code" : "68 ",
 									"fontname" : "Arial",
 									"id" : "obj-51",
 									"maxclass" : "newobj",
@@ -524,7 +523,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 469.0, 379.0, 36.0 ],
+									"patching_rect" : [ 10.0, 469.0, 380.0, 36.0 ],
 									"text" : "The watch attribute also watches the files included by your code (see the help center for more information about included files).",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -676,7 +675,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
+						"rect" : [ 97.0, 126.0, 1029.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -718,7 +717,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "John Paul #George #Ringo ",
+									"code" : "Syd Roger #Rick #Nick ",
 									"color" : [ 0.501960784313725, 0.0, 0.0, 1.0 ],
 									"id" : "obj-34",
 									"linecount" : 2,
@@ -726,13 +725,13 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 493.0, 455.0, 229.0, 38.0 ],
+									"patching_rect" : [ 493.0, 455.0, 207.0, 38.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
-										"versionnumber" : 80007
+										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.eval John Paul #George #Ringo @triggers [** -20] @out m"
+									"text" : "bach.eval Syd Roger #Rick #Nick @triggers [** -20] @out m"
 								}
 
 							}
@@ -750,7 +749,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "John Paul #George #Ringo ",
+									"code" : "Syd Roger #Rick #Nick ",
 									"color" : [ 0.435294117647059, 0.0, 1.0, 1.0 ],
 									"id" : "obj-32",
 									"linecount" : 2,
@@ -758,13 +757,13 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 251.0, 455.0, 229.0, 38.0 ],
+									"patching_rect" : [ 251.0, 455.0, 207.0, 38.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
-										"versionnumber" : 80007
+										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.eval John Paul #George #Ringo @triggers [#* -5] @out m"
+									"text" : "bach.eval Syd Roger #Rick #Nick @triggers [#* -5] @out m"
 								}
 
 							}
@@ -778,7 +777,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 732.0, 425.0, 175.0, 98.0 ],
+									"patching_rect" : [ 705.0, 425.0, 175.0, 98.0 ],
 									"text" : "You can set priorities for wildcards just like for regular variable names. The priority applies to all the variables. If not specified, it defaults to 0. "
 								}
 
@@ -797,7 +796,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "John Paul #George #Ringo ",
+									"code" : "Syd Roger #Rick #Nick ",
 									"color" : [ 0.0, 0.501960784313725, 0.501960784313725, 1.0 ],
 									"id" : "obj-30",
 									"linecount" : 2,
@@ -805,13 +804,13 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.0, 455.0, 229.0, 38.0 ],
+									"patching_rect" : [ 11.0, 455.0, 207.0, 38.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
-										"versionnumber" : 80007
+										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.eval John Paul #George #Ringo @triggers [* 10] @out m"
+									"text" : "bach.eval Syd Roger #Rick #Nick @triggers [* 10] @out m"
 								}
 
 							}
@@ -825,7 +824,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 251.0, 349.0, 300.0, 40.0 ],
+									"patching_rect" : [ 224.0, 349.0, 300.0, 40.0 ],
 									"text" : "@triggers ** means that all the global variables appearing in the code will trigger the result."
 								}
 
@@ -844,7 +843,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "John Paul #George #Ringo ",
+									"code" : "Syd Roger #Rick #Nick ",
 									"color" : [ 0.823529411764706, 0.705882352941177, 0.549019607843137, 1.0 ],
 									"id" : "obj-25",
 									"linecount" : 2,
@@ -852,13 +851,13 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.0, 349.0, 229.0, 38.0 ],
+									"patching_rect" : [ 11.0, 349.0, 207.0, 38.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
-										"versionnumber" : 80007
+										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.eval John Paul #George #Ringo @triggers ** @out m"
+									"text" : "bach.eval Syd Roger #Rick #Nick @triggers ** @out m"
 								}
 
 							}
@@ -872,7 +871,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 251.0, 270.0, 310.0, 40.0 ],
+									"patching_rect" : [ 224.0, 270.0, 310.0, 40.0 ],
 									"text" : "@triggers #* means that all the patcher variables appearing in the code will trigger the result."
 								}
 
@@ -891,7 +890,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "John Paul #George #Ringo ",
+									"code" : "Syd Roger #Rick #Nick ",
 									"color" : [ 0.996078431372549, 0.525490196078431, 0.698039215686274, 1.0 ],
 									"id" : "obj-22",
 									"linecount" : 2,
@@ -899,41 +898,13 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.0, 270.0, 229.0, 38.0 ],
+									"patching_rect" : [ 11.0, 270.0, 207.0, 38.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
-										"versionnumber" : 80007
+										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.eval John Paul #George #Ringo @triggers #* @out m"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-18",
-									"maxclass" : "number",
-									"numinlets" : 1,
-									"numoutlets" : 2,
-									"outlettype" : [ "", "bang" ],
-									"parameter_enable" : 0,
-									"patching_rect" : [ 758.0, 122.0, 50.0, 23.0 ]
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-19",
-									"maxclass" : "newobj",
-									"numinlets" : 1,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 758.0, 153.0, 123.0, 23.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80007
-									}
-,
-									"text" : "bach.value #Keith 6"
+									"text" : "bach.eval Syd Roger #Rick #Nick @triggers #* @out m"
 								}
 
 							}
@@ -956,12 +927,12 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 618.0, 153.0, 113.0, 23.0 ],
+									"patching_rect" : [ 618.0, 153.0, 119.0, 23.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80007
+										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.value Mick 5"
+									"text" : "bach.value David 5"
 								}
 
 							}
@@ -975,8 +946,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 251.0, 191.0, 334.0, 69.0 ],
-									"text" : "@triggers * means that all the global and patcher variables appearing in the code will trigger the result. \nChanges to variables that are not in the code (such as Mick and #Keith) cause no triggering."
+									"patching_rect" : [ 224.0, 191.0, 334.0, 69.0 ],
+									"text" : "@triggers * means that all the global and patcher variables appearing in the code will trigger the result. \nChanges to variables that are not in the code (such as David) cause no triggering."
 								}
 
 							}
@@ -1035,8 +1006,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 454.0, 153.0, 102.0, 23.0 ],
-									"text" : "bach.pv Ringo 4"
+									"patching_rect" : [ 454.0, 153.0, 94.0, 23.0 ],
+									"text" : "bach.pv Nick 4"
 								}
 
 							}
@@ -1047,8 +1018,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 315.0, 153.0, 112.0, 23.0 ],
-									"text" : "bach.pv George 3"
+									"patching_rect" : [ 315.0, 153.0, 94.0, 23.0 ],
+									"text" : "bach.pv Rick 3"
 								}
 
 							}
@@ -1059,12 +1030,12 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 168.0, 153.0, 112.0, 23.0 ],
+									"patching_rect" : [ 168.0, 153.0, 121.0, 23.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80007
+										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.value Paul 2"
+									"text" : "bach.value Roger 2"
 								}
 
 							}
@@ -1075,12 +1046,12 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.0, 153.0, 114.0, 23.0 ],
+									"patching_rect" : [ 11.0, 153.0, 108.0, 23.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80007
+										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.value John 1"
+									"text" : "bach.value Syd 1"
 								}
 
 							}
@@ -1098,7 +1069,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "John Paul #George #Ringo ",
+									"code" : "Syd Roger #Rick #Nick ",
 									"color" : [ 0.0, 1.0, 1.0, 1.0 ],
 									"id" : "obj-1",
 									"linecount" : 2,
@@ -1106,13 +1077,13 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 11.0, 191.0, 229.0, 38.0 ],
+									"patching_rect" : [ 11.0, 191.0, 207.0, 38.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
-										"versionnumber" : 80007
+										"versionnumber" : 80100
 									}
 ,
-									"text" : "bach.eval John Paul #George #Ringo @triggers * @out m"
+									"text" : "bach.eval Syd Roger #Rick #Nick @triggers * @out m"
 								}
 
 							}
@@ -1186,13 +1157,6 @@
 								"patchline" : 								{
 									"destination" : [ "obj-17", 0 ],
 									"source" : [ "obj-16", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-19", 0 ],
-									"source" : [ "obj-18", 0 ]
 								}
 
 							}
@@ -4525,7 +4489,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.welcome.maxpat",
+				"name" : "bach.help.bell.040_variables.070_queryingandresettingglobalvariables.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",

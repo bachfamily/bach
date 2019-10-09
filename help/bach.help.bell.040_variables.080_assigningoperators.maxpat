@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 1,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -76,7 +76,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "X %= 12 ",
+					"code" : "A %= 12 ",
 					"id" : "obj-25",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -84,10 +84,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 256.5, 404.5, 167.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80100
 					}
 ,
-					"text" : "bach.eval X %= 12 @out m"
+					"text" : "bach.eval A %= 12 @out m"
 				}
 
 			}
@@ -116,7 +117,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "X **= 1/2 ",
+					"code" : "A **= 1/2 ",
 					"id" : "obj-22",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -124,10 +125,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 10.0, 404.5, 169.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80100
 					}
 ,
-					"text" : "bach.eval X **= 1/2 @out m"
+					"text" : "bach.eval A **= 1/2 @out m"
 				}
 
 			}
@@ -156,7 +158,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "X /= 2 ",
+					"code" : "A /= 2 ",
 					"id" : "obj-19",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -164,10 +166,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 211.0, 285.5, 151.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80100
 					}
 ,
-					"text" : "bach.eval X /= 2 @out m"
+					"text" : "bach.eval A /= 2 @out m"
 				}
 
 			}
@@ -196,7 +199,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "X *= 2 ",
+					"code" : "A *= 2 ",
 					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -204,10 +207,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 10.0, 285.5, 153.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80100
 					}
 ,
-					"text" : "bach.eval X *= 2 @out m"
+					"text" : "bach.eval A *= 2 @out m"
 				}
 
 			}
@@ -236,7 +240,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "X = X + 1 ",
+					"code" : "A = A + 1 ",
 					"id" : "obj-9",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -244,10 +248,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 211.0, 166.5, 171.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80100
 					}
 ,
-					"text" : "bach.eval X = X + 1 @out m"
+					"text" : "bach.eval A = A + 1 @out m"
 				}
 
 			}
@@ -276,7 +281,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "X += 1 ",
+					"code" : "A += 1 ",
 					"id" : "obj-1",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -284,10 +289,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 10.0, 166.5, 155.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80100
 					}
 ,
-					"text" : "bach.eval X += 1 @out m"
+					"text" : "bach.eval A += 1 @out m"
 				}
 
 			}
@@ -308,7 +314,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "X = 1 ",
+					"code" : "A = 1 ",
 					"id" : "obj-4",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -316,10 +322,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 10.0, 85.5, 151.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80100
 					}
 ,
-					"text" : "bach.eval X = 1 @auto 1"
+					"text" : "bach.eval A = 1 @auto 1"
 				}
 
 			}
