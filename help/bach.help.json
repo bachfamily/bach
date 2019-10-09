@@ -92,6 +92,13 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "picking", "element", "triple", "dot", "range" ],
 				"title" : [ "Range operator" ]
 			},
+			"Repeatoperator" : {
+				"filename" : [ "bach.help.bell.010_basics.105_repeatoperator.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+llll", "concatenation" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "element", "repeat" ],
+				"title" : [ "Repeat operator" ]
+			},
 			"Print" : {
 				"filename" : [ "bach.help.bell.010_basics.110_print.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
@@ -809,6 +816,13 @@
 					"title" : [ "The depth / level arguments" ]
 				}
 			}
+		},
+		"Theincludedirective" : {
+			"filename" : [ "bach.help.bell.070_theincludedirective.maxpat" ],
+			"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+			"seealso" : [  ],
+			"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "source", "code", "file", "read", "include" ],
+			"title" : [ "The \"include\" directive" ]
 		},
 		"Object specific features" : {
 			"Multipleoutlets" : {
