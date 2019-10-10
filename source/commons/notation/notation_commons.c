@@ -41422,23 +41422,25 @@ void swapelem_voicewise_arrays(t_notation_obj *r_ob, long idx1, long idx2){
 
 void remove_label_families_data_for_notation_item(t_notation_item *it)
 {
-    if (it->label_families && it->label_families->l_size > 0) {
+    if (it && it->label_families && it->label_families->l_size > 0) {
         t_llllelem *elem = it->label_families->l_head, *nextelem = NULL;
         while (elem) {
             nextelem = elem->l_next;
             t_llll *ll = hatom_getllll(&elem->l_hatom);
-            t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&ll->l_head->l_hatom);
-            t_llllelem *fam_elem = fam->llelem;
-            t_llllelem *llelem_to_delete = (t_llllelem *)hatom_getobj(&ll->l_head->l_next->l_hatom);
-            t_llll *ll_family = llelem_to_delete->l_parent;
-            llll_destroyelem(llelem_to_delete);
-            
-            if (ll_family->l_size == 0) {
-                // must delete whole family.
-                free_label_family(fam);
-                llll_destroyelem(fam_elem);
-            } else {
-                fam->need_update_contour = true;
+            if (ll) {
+                t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&ll->l_head->l_hatom);
+                t_llllelem *fam_elem = fam->llelem;
+                t_llllelem *llelem_to_delete = (t_llllelem *)hatom_getobj(&ll->l_head->l_next->l_hatom);
+                t_llll *ll_family = llelem_to_delete->l_parent;
+                llll_destroyelem(llelem_to_delete);
+                
+                if (ll_family->l_size == 0) {
+                    // must delete whole family.
+                    free_label_family(fam);
+                    llll_destroyelem(fam_elem);
+                } else {
+                    fam->need_update_contour = true;
+                }
             }
             
             llll_destroyelem(elem);
