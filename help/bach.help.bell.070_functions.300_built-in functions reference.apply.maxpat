@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 6,
+			"minor" : 1,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 96.0, 156.0, 617.0, 539.0 ],
+		"rect" : [ 1080.0, 175.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -48,7 +48,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 256.0, 400.5, 216.0, 40.0 ],
-					"presentation_linecount" : 2,
 					"text" : "You can pass named arguments as key-value sublists."
 				}
 
@@ -61,7 +60,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 382.0, 130.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "[exponent 2] [base 3]"
 				}
 
@@ -106,7 +104,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 236.0, 293.5, 308.0, 40.0 ],
-					"presentation_linecount" : 3,
 					"text" : "... which means that if you actually want to pass a deep llll you have to wrap it one extra level."
 				}
 
@@ -119,7 +116,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 282.0, 92.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "[[1 2 3] [2 4 6]]"
 				}
 
@@ -164,7 +160,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 240.0, 208.0, 232.0, 40.0 ],
-					"presentation_linecount" : 3,
 					"text" : "first-level lllls are unwrapped and passed as individual arguments..."
 				}
 
@@ -188,7 +183,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 187.0, 84.0, 23.0 ],
-					"presentation_linecount" : 6,
 					"text" : "[1 2 3] [2 4 6]"
 				}
 
@@ -274,7 +268,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 39.0, 545.0, 36.0 ],
-					"text" : "The $apply() function calls another function by passing it individual parameters expressed as two llll, one for arguments passed by position, the other for arguments passed by name.",
+					"text" : "The apply() function calls another function by passing it individual parameters expressed as two lllls, one for arguments passed by position, the other for arguments passed by name.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -336,8 +330,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 201.0, 23.0 ],
-					"text" : "$apply() function reference",
+					"patching_rect" : [ 6.0, 8.0, 193.0, 23.0 ],
+					"text" : "apply() function reference",
 					"varname" : "title"
 				}
 
