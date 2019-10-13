@@ -682,6 +682,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     // prepare the dynamics slot
     //////////////////
     char dynamics_slot_is_text = false;
+    char dynamics_slot_spans_ties = true;
     if (dynamics_slot > 0) {
         if (dynamics_slot > CONST_MAX_SLOTS) {
             object_warn((t_object *) x, "Slot %ld does not exist", dynamics_slot);
@@ -689,6 +690,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
         } else {
             t_slotinfo *this_slot_info = &x->r_ob.slotinfo[dynamics_slot - 1];
             long slot_type = this_slot_info->slot_type;
+            dynamics_slot_spans_ties = this_slot_info->slot_singleslotfortiednotes;
             if (slot_type == k_SLOT_TYPE_NONE) {
                 object_warn((t_object *) x, "Slot %ld is of type none", dynamics_slot);
                 dynamics_slot = 0;
@@ -961,7 +963,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 if (chord_has_dynamics(chord)) {
                     mxml_node_t *directionxml = NULL;
                     t_dynamics *dyn = chord_get_dynamics(chord);
-                    if (dyn) {
+                    t_notation_item *dynitem = notation_item_get_bearing_dynamics((t_notation_obj *) x, (t_notation_item *)chord, dynamics_slot);
+                    if (dyn && // there's a dynamics
+                        !(dynamics_slot_spans_ties && dynitem && dynitem->type == k_NOTE && ((t_note *)dynitem)->tie_from)) { // and it's not attached to a note with a tie-from (in case the dynamics slot spans ties)
                         t_rational dyndur = dynamics_get_symduration((t_notation_obj *) x, dyn);
                         double last_offset = -1.;
                         for (t_dynamics_mark* mark = dyn->firstmark;

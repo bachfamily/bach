@@ -2902,10 +2902,10 @@
 			},
 			"Slicechordinscore" : {
 				"filename" : [ "bach.help.notation.messages.18_slicechordinscore.maxpat" ],
-				"objects" : [ "bach.roll" ],
+				"objects" : [ "bach.score" ],
 				"seealso" : [ "timepoint+syntax", "split", "undo", "subroll", "sel" ],
 				"tags" : [ "message", "split", "splitting", "slice", "slicing", "divide", "notes", "chords" ],
-				"title" : [ "Slicing chords in bach.roll" ]
+				"title" : [ "Slicing chords in bach.score" ]
 			},
 			"Splitchordinscore" : {
 				"filename" : [ "bach.help.notation.messages.19_splitchordinscore.maxpat" ],
