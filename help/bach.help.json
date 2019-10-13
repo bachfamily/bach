@@ -512,7 +512,7 @@
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 					"seealso" : [ "$argcount" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "$args" ],
-					"title" : [ "$apply() function reference" ]
+					"title" : [ "apply() function reference" ]
 				},
 				"Args" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.args.maxpat" ],
@@ -1514,8 +1514,8 @@
 					"filename" : [ "bach.help.notation.appearance.40_slots.01_backgroundslots.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "slot+type" ],
-					"tags" : [ "appearance", "slot", "background", "bgslots", "bgslot" ],
-					"title" : [ "Keeping slots in background" ]
+					"tags" : [ "appearance", "slot", "background", "bgslots", "bgslot", "show", "hide", "display", "displaying", "score" ],
+					"title" : [ "Displaying slots in the score" ]
 				},
 				"Slotzoom" : {
 					"filename" : [ "bach.help.notation.appearance.40_slots.02_slotzoom.maxpat" ],
