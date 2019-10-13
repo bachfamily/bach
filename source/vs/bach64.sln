@@ -257,6 +257,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.recurser", "vs_project
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach", "vs_projects\bach.vcxproj", "{134C07D6-AB52-4E79-BF87-0E8F22E02FB4}"
 EndProject
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "Max", "..\..\..\..\..\..\..\..\Program Files\Cycling '74\Max 8\Max.exe", "{FB5582F9-A871-4267-8B3F-35648D372114}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = C:\Program Files\Cycling '74\Max 8\Max.exe
+		RemoteMachine = DESKTOP-VRO78FE
+		StartingDirectory = C:\Program Files\Cycling '74\Max 8
+		Environment = Default
+		LaunchingEngine = 00000000-0000-0000-0000-000000000000
+		UseLegacyDebugEngines = No
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1285,6 +1298,10 @@ Global
 		{134C07D6-AB52-4E79-BF87-0E8F22E02FB4}.Release|x64.ActiveCfg = Release|x64
 		{134C07D6-AB52-4E79-BF87-0E8F22E02FB4}.Release|x64.Build.0 = Release|x64
 		{134C07D6-AB52-4E79-BF87-0E8F22E02FB4}.Release|x64.Deploy.0 = Release|x64
+		{FB5582F9-A871-4267-8B3F-35648D372114}.Debug|Win32.ActiveCfg = Release|x64
+		{FB5582F9-A871-4267-8B3F-35648D372114}.Debug|x64.ActiveCfg = Release|x64
+		{FB5582F9-A871-4267-8B3F-35648D372114}.Release|Win32.ActiveCfg = Release|x64
+		{FB5582F9-A871-4267-8B3F-35648D372114}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
