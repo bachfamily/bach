@@ -7,6 +7,9 @@ var allPatches = [];
 
 var allObjects = [
 
+
+
+
 ["bach.append", ""],
 ["bach.classify", ""],
 ["bach.collect", ""],
