@@ -192,6 +192,8 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)initpargs_remove,    "remove",    A_GIMME,    0);
     class_addmethod(c, (method)initpargs_run,        "run",    A_GIMME,    0);
     
+    bachobject_class_add_fileusage_method(c);
+
     class_register(CLASS_NOBOX, c);
     initpargs_class = c;
     

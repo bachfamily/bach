@@ -236,7 +236,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     // For example, the llll <m>[ $foo 1 ] [ $bar [ 2 3 ] ]</m>
     // will set the $foo and $bar local variables respectively to <m>1</m> and <m>[ 2 3 ]</m>.
     
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
     // @copy BACH_DOC_STATIC_ATTR
 
     //CLASS_ATTR_ACCESSORS(c, "out", (method)NULL, (method)llllobj_dummy_setter)

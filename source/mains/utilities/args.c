@@ -222,7 +222,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     // @description An optional set of keywords to be considered as attributes, and therefore output as attribute-style arguments. <br />
     // @copy BACH_DOC_STATIC_ATTR
  
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
     // @copy BACH_DOC_STATIC_ATTR
 
     CLASS_ATTR_ACCESSORS(c, "out", (method)NULL, (method)llllobj_dummy_setter)

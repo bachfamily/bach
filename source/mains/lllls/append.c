@@ -130,7 +130,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)append_assist,        "assist",        A_CANT,        0);
     class_addmethod(c, (method)append_inletinfo,    "inletinfo",    A_CANT,        0);
     
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA); // every object with llll outlets must call this function in its main() function
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA); // every object with llll outlets must call this function in its main() function
     
     
     CLASS_ATTR_LONG_VARSIZE(c, "triggers",    0,    t_append, n_triggers, n_ntriggers, LLLL_MAX_INLETS);

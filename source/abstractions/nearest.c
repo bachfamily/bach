@@ -87,7 +87,7 @@
 
 void main_foo() {
 
-llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 
 CLASS_ATTR_CHAR(c, "absolute", 0, t_nearest, absolute); 
 CLASS_ATTR_STYLE_LABEL(c,"absolute",0,"text","Output Absolute Distances");

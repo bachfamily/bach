@@ -171,7 +171,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	class_addmethod(c, (method)float2rat_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)float2rat_inletinfo,	"inletinfo",	A_CANT,		0);
 
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 
 
 	CLASS_ATTR_ATOM(c, "tolerance", 0, t_float2rat, tolerance_as_atom); 

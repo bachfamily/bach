@@ -157,7 +157,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	// @exclude bach.flat
 
 	
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 	
 	
 

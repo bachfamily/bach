@@ -370,7 +370,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) circle_inletinfo, "inletinfo", A_CANT, 0);
     class_addmethod(c, (method) circle_assist, "assist", A_CANT, 0);
 
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_UI);
 
     CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 120 120"); // new dimensions
     // @exclude bach.circle

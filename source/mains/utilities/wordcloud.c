@@ -253,7 +253,8 @@ void C74_EXPORT ext_main(void *moduleRef){
 	class_addmethod(c, (method) wordcloud_oksize, "oksize", A_CANT, 0);
 	
 	llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_UI);
-	
+    bachobject_class_add_fileusage_method(c);
+
 	CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 200 300"); // new dimensions
 	// @exclude bach.wordcloud
 

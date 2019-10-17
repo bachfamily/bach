@@ -121,7 +121,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	// @description
 	// Number of output sublists in mono mode; ignored in standard mode.
 	
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 	
 
 	class_register(CLASS_BOX, c);

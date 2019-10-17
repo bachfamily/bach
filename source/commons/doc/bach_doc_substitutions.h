@@ -33,7 +33,7 @@ CLASS_ATTR_BASIC(c, "out", 0);
 // @description @copy BACH_DOC_OUT
 
 
-#define llllobj_class_add_default_bach_attrs
+#define llllobj_class_add_default_bach_attrs_and_methods
 CLASS_ATTR_SYM(c, "out", 0, t_llllobj_object, l_outtypes);
 CLASS_ATTR_ACCESSORS(c, "out", NULL, llllobj_obj_setout);
 CLASS_ATTR_STYLE(c, "out", 0, "text");

@@ -2232,8 +2232,33 @@ void llllobj_class_add_versionnumber_attr(t_class *c, e_llllobj_obj_types type)
     // @exclude all
 }
 
-void llllobj_class_add_default_bach_attrs(t_class *c, e_llllobj_obj_types type)
+
+ void bachobject_fileusage(t_object *x, void *w)
+ {
+	 t_atom a;
+	 t_atomarray *aa = atomarray_new(0, NULL);
+	 atom_setsym(&a, gensym("extensions")); // add any package folders you need explicitly
+	 atomarray_appendatom(aa, &a);
+	 atom_setsym(&a, gensym("externals"));
+	 atomarray_appendatom(aa, &a);
+	 atom_setsym(&a, gensym("init"));
+	 atomarray_appendatom(aa, &a);
+	 atom_setsym(&a, gensym("interfaces"));
+	 atomarray_appendatom(aa, &a);
+
+	 fileusage_addpackage(w, "bach", (t_object*)aa);
+ // fileusage takes ownership of aa and thus will take care of freeing it
+ }
+
+void bachobject_class_add_fileusage_method(t_class *c)
 {
+	class_addmethod(c, (method)bachobject_fileusage, "fileusage", A_CANT, 0);
+}
+
+
+void llllobj_class_add_default_bach_attrs_and_methods(t_class *c, e_llllobj_obj_types type)
+{
+	bachobject_class_add_fileusage_method(c);
     llllobj_class_add_out_attr(c, type);
     llllobj_class_add_versionnumber_attr(c, type);
 }

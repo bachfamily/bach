@@ -179,7 +179,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     // - If <m>roundalign</m> is 1 = <b>Right</b>, one more element is given at the left padding side. <br />
     
     
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
     
 
     class_register(CLASS_BOX, c);

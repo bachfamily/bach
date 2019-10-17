@@ -560,7 +560,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
 
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 
     class_register(CLASS_BOX, c);
     playkeys_class = c;

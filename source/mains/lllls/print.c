@@ -116,6 +116,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	class_addmethod(c, (method)print_inletinfo,	"inletinfo",	A_CANT,		0);
 	
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+    bachobject_class_add_fileusage_method(c);
 
 	CLASS_ATTR_CHAR(c, "error",	0,	t_print, n_error);
 	CLASS_ATTR_STYLE_LABEL(c, "error", 0, "enumindex", "Error Message");

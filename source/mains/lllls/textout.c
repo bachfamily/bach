@@ -138,58 +138,59 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)textout_inletinfo,	"inletinfo",	A_CANT,		0);
     
     class_addmethod(c, (method)textout_patchlineupdate,	"patchlineupdate",	A_CANT,		0);
-
+    
     
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
-
-     CLASS_ATTR_LONG(c, "escape",	0,	t_textout, n_flags_escape);
-     CLASS_ATTR_FILTER_CLIP(c, "escape", 0, 1);
-     CLASS_ATTR_LABEL(c, "escape", 0, "Escaping style");
-     CLASS_ATTR_ENUMINDEX(c,"escape", 0, "None Backtick");
-     // @description When set to 1 (default), all the symbols that could be interpreted as different data types
-     // (e.g., the symbol <b>12</b>, the symbol <b>1/3</b> or the symbol <b>A1</b>,
-     // distinct from the corresponding integer, rational or pitch, but potentially interpreted as such by any bach object)
-     // are returned with a preceding backtick (in the above example, respectively <b>`12</b>, <b>`1/3</b>, <b>`A1</b>).
-     // This is the normal behavior for the llll text format.<br />
-     // When set to 0, no backtick is added. <br />
-     // @copy BACH_DOC_STATIC_ATTR
-
+    bachobject_class_add_fileusage_method(c);
     
-     CLASS_ATTR_LONG(c, "negativeoctaves",	0,	t_textout, n_flags_negative_octaves);
-     CLASS_ATTR_FILTER_CLIP(c, "negativeoctaves", 0, 1);
-     CLASS_ATTR_LABEL(c, "negativeoctaves", 0, "Use Negative Octaves");
-     CLASS_ATTR_STYLE(c, "negativeoctaves", 0, "onoff");
-     // @description When set to 0 (default), pitches at octaves lower than octave 0
-     // are returned as negative pitches, that is, as the inversion of the interval they form with C0.
-     // For example, the pitch A-1 (one minor third below C0) is returned as its equivalent form -Eb0 (still one minor third below C0).
-     // This is the normal behavior for the llll text format,
-     // and is more likely to be convenient as very low pitches are usually employed to denote descending intervals.
-     // Notice that the pitch class of -Eb0 is A anyway.<br />
-     // When set to 1, pitches at octaves lower then octave 0 are represented as positive pitches with negative octaves.
-     // For example, the pitch A-1 and its equivalent form -Eb0 are both represented as A-1. <br />
-     // @copy BACH_DOC_STATIC_ATTR
-
-     CLASS_ATTR_LLLL(c, "selectors", 0, t_textout, n_selectors, textout_getattr_selectors, (method)llllobj_dummy_setter);
-     CLASS_ATTR_LABEL(c, "selectors", 0, "Potential Message Selectors");
-     // @description Through the <m>selectors</m> attribute, it is possible to specify a list
-     // of symbols that, when encountered at the beginning of an llll, 
-     // are output with a preceding backtick, to prevent them from being interpreted
-     // as message selectors by other Max objects.
-     // This list adds up to the names of the attributes of the objects connected to <o>bach.textout</o>'s rightmost outlet,
-     // and to the usual set of reserved symbols that are backticked anyway. <br />
-     // @copy BACH_DOC_STATIC_ATTR
-
-     CLASS_ATTR_LONG(c, "parens",    0,    t_textout, n_flags_parens);
-     CLASS_ATTR_FILTER_CLIP(c, "parens", 0, 1);
-     CLASS_ATTR_LABEL(c, "parens", 0, "Use Parens");
-     CLASS_ATTR_STYLE(c, "parens", 0, "onoff");
-     CLASS_ATTR_ACCESSORS(c, "parens", (method)NULL, (method)llllobj_dummy_setter)
-     // @description When set to 0 (default),
-     // list levels are marked by square brackets.
-     // When set to 1, they are marked by parens.
-     // This is especially useful when exporting data to Lisp programs. <br />
-     // @copy BACH_DOC_STATIC_ATTR
-
+    CLASS_ATTR_LONG(c, "escape",	0,	t_textout, n_flags_escape);
+    CLASS_ATTR_FILTER_CLIP(c, "escape", 0, 1);
+    CLASS_ATTR_LABEL(c, "escape", 0, "Escaping style");
+    CLASS_ATTR_ENUMINDEX(c,"escape", 0, "None Backtick");
+    // @description When set to 1 (default), all the symbols that could be interpreted as different data types
+    // (e.g., the symbol <b>12</b>, the symbol <b>1/3</b> or the symbol <b>A1</b>,
+    // distinct from the corresponding integer, rational or pitch, but potentially interpreted as such by any bach object)
+    // are returned with a preceding backtick (in the above example, respectively <b>`12</b>, <b>`1/3</b>, <b>`A1</b>).
+    // This is the normal behavior for the llll text format.<br />
+    // When set to 0, no backtick is added. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+    
+    
+    CLASS_ATTR_LONG(c, "negativeoctaves",	0,	t_textout, n_flags_negative_octaves);
+    CLASS_ATTR_FILTER_CLIP(c, "negativeoctaves", 0, 1);
+    CLASS_ATTR_LABEL(c, "negativeoctaves", 0, "Use Negative Octaves");
+    CLASS_ATTR_STYLE(c, "negativeoctaves", 0, "onoff");
+    // @description When set to 0 (default), pitches at octaves lower than octave 0
+    // are returned as negative pitches, that is, as the inversion of the interval they form with C0.
+    // For example, the pitch A-1 (one minor third below C0) is returned as its equivalent form -Eb0 (still one minor third below C0).
+    // This is the normal behavior for the llll text format,
+    // and is more likely to be convenient as very low pitches are usually employed to denote descending intervals.
+    // Notice that the pitch class of -Eb0 is A anyway.<br />
+    // When set to 1, pitches at octaves lower then octave 0 are represented as positive pitches with negative octaves.
+    // For example, the pitch A-1 and its equivalent form -Eb0 are both represented as A-1. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+    
+    CLASS_ATTR_LLLL(c, "selectors", 0, t_textout, n_selectors, textout_getattr_selectors, (method)llllobj_dummy_setter);
+    CLASS_ATTR_LABEL(c, "selectors", 0, "Potential Message Selectors");
+    // @description Through the <m>selectors</m> attribute, it is possible to specify a list
+    // of symbols that, when encountered at the beginning of an llll, 
+    // are output with a preceding backtick, to prevent them from being interpreted
+    // as message selectors by other Max objects.
+    // This list adds up to the names of the attributes of the objects connected to <o>bach.textout</o>'s rightmost outlet,
+    // and to the usual set of reserved symbols that are backticked anyway. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+    
+    CLASS_ATTR_LONG(c, "parens",    0,    t_textout, n_flags_parens);
+    CLASS_ATTR_FILTER_CLIP(c, "parens", 0, 1);
+    CLASS_ATTR_LABEL(c, "parens", 0, "Use Parens");
+    CLASS_ATTR_STYLE(c, "parens", 0, "onoff");
+    CLASS_ATTR_ACCESSORS(c, "parens", (method)NULL, (method)llllobj_dummy_setter)
+    // @description When set to 0 (default),
+    // list levels are marked by square brackets.
+    // When set to 1, they are marked by parens.
+    // This is especially useful when exporting data to Lisp programs. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+    
     class_register(CLASS_BOX, c);
     textout_class = c;
     

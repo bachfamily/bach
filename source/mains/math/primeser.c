@@ -135,7 +135,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	class_register(CLASS_BOX, c);
 	primeser_class = c;
 	
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 	
 
 	dev_post("bach.primeser compiled %s %s", __DATE__, __TIME__);

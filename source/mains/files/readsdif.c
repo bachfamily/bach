@@ -189,7 +189,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	// @description When set to 1, the contents of the SDIF file
 	// are automatically output immediately after being read from disk.
 
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 	
 	SdifGenInitCond("");
 	SdifSetExitFunc((SdifExitFuncT) readsdif_fakeexit);

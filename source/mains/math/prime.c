@@ -116,6 +116,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	class_addmethod(c, (method)prime_inletinfo,		"inletinfo",	A_CANT,		0);
 
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+    bachobject_class_add_fileusage_method(c);
 
 	class_register(CLASS_BOX, c);
 	prime_class = c;

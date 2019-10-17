@@ -813,7 +813,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     
     
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_UI);
     //    llllobj_class_add_version_number_attr(c, LLLL_OBJ_UI);
     
     

@@ -134,7 +134,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)reg_edclose,         "edclose",        A_CANT, 0);
     class_addmethod(c, (method)reg_okclose,         "okclose",      A_CANT, 0);
     
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
     
     CLASS_ATTR_LONG(c, "embed",    0,    t_reg, n_embed);
     CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);

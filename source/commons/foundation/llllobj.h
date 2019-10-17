@@ -675,8 +675,12 @@ void llllobj_class_add_out_attr(t_class *c, e_llllobj_obj_types type);
 // add the invisible versionnumber attr
 void llllobj_class_add_versionnumber_attr(t_class *c, e_llllobj_obj_types type);
 
-// add the out and versionnumber attrs
-void llllobj_class_add_default_bach_attrs(t_class *c, e_llllobj_obj_types type);
+// add the fileusage method
+void bachobject_class_add_fileusage_method(t_class *c);
+
+// add the out and versionnumber attrs,
+// and the fileusage method
+void llllobj_class_add_default_bach_attrs_and_methods(t_class *c, e_llllobj_obj_types type);
 
 // to be called from the object constructor
 // returns the object version number, as stored in the object dictionary,

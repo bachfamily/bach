@@ -127,6 +127,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	encode_class = c;
 
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+    bachobject_class_add_fileusage_method(c);
 
 	dev_post("bach.encode compiled %s %s", __DATE__, __TIME__);
 	

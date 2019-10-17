@@ -212,6 +212,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	
 	
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+    bachobject_class_add_fileusage_method(c);
 
 	
 	

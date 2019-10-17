@@ -136,7 +136,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     // @description If <m>mode</m> is 1 (Sets), this attribute toggles the ability to only output distinct partitions of a set (in case
     // some elements are repeated inside the set).
 
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
     
 
     class_register(CLASS_BOX, c);

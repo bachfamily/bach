@@ -237,7 +237,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	CLASS_ATTR_LABEL(c, "outwrap", 0, "Wrap Output");
 	// @description @copy BACH_DOC_OUTWRAP
 	
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 
 	class_register(CLASS_BOX, c);
 	collect_class = c;

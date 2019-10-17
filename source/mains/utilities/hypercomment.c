@@ -76,6 +76,7 @@
 #include "jgraphics.h"
 #include "graphics/bach_graphics.h"
 #include "ext_boxstyle.h"
+#include "foundation/llllobj.h"
 
 #define CONST_MAX_LINK_PER_COMMENT 100
 #define MAX_LINK_START_SYMBOLS 100
@@ -192,6 +193,7 @@ void C74_EXPORT ext_main(void *moduleRef)
   
 //  hypercomment is not an LLLLOBJ, so it doesn't have this. I don't think it'll need it.
 //    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_UI);
+    bachobject_class_add_fileusage_method(c);
 
     
 	CLASS_STICKY_ATTR(c,"category",0,"Color");

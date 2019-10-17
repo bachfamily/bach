@@ -111,7 +111,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)textin_int,         "int",			A_LONG,		0);
     class_addmethod(c, (method)textin_float,		"float",		A_FLOAT,	0);
     class_addmethod(c, (method)textin_anything,	"list",			A_GIMME,	0);
-
+    
     class_addmethod(c, (method)textin_bang,		"bang",			0);
     
     class_addmethod(c, (method)textin_assist,		"assist",		A_CANT,		0);
@@ -120,50 +120,51 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+    bachobject_class_add_fileusage_method(c);
     
-     CLASS_ATTR_SYM(c, "ignore",	0,	t_textin, n_ignore_sym);
-     CLASS_ATTR_LABEL(c, "ignore", 0, "Ignore Categories");
-     //CLASS_ATTR_BASIC(c, "ignore", 0);
-     // CLASS_ATTR_ACCESSORS(c, "ignore", (method)NULL, (method)llllobj_dummy_setter)
-     // @description The <m>ignore</m> attribute allows preventing certain categories
-     // of elements from being interpreted according to the usual bach syntax.
-     // Categories are expressed by letters, according to the following table:<br />
-     // - <b>L</b> stands for all the open and closed parens marking llll sublists:
-     // if this category is set, parens and symbols containing parens
-     // are interpreted just as symbols, as if they were preceded by a backtick. <br />
-     // - <b>l</b> stands for open and closed parens marking llll sublists,
-     // only if they do not appear in a symbol of their own
-     // (i.e., with the <b>l</b> category set,
-     // <b>[</b> is interpreted as the beginning of a sublist,
-     // whereas <b>[1</b> is interpreted just as a plain symbol,
-     // as opposed to what would happen normally,
-     // when it would mark the beginning of a sublist
-     // whose first element is <b>1</b>). <br />
-     // - <b>r</b> stands for rationals. <br />
-     // - <b>p</b> stands for pitches. <br />
-     // - <b>e</b> stands for floating-point numbers in scientific notation. <br />
-     // - <b>s</b> stands for the special symbols <b>nil</b> and <b>null</b>. <br />
-     // - <b>b</b> causes symbols beginning with a backtick
-     // to be interpreted with the backtick included
-     // (e.g., the <b>`foo</b> symbol is read as it is, including the backtick,
-     // as opposed to what would happen normally, when it would be read as <b>foo</b>). <br />
-     // - <b>-</b> reverses the selection, that is, makes the characters detailed above
-     // indicate the categories <i>not</i> to be ignored. <br />
-     // - <b>1</b> stands for ignoring all the above categories.
-     // If it is present alongside other specifiers (e.g., <b>alp</b>), it overrides them. <br />
-     // - <b>0</b> stands for no category, and is the default.
-     // If it is present alongside other specifiers (e.g., <b>-p</b>), it is ignored. <br />
-     // For example, the <m>ignore</m> attribute could be set to <b>lp</b>,
-     // which would cause a message containing <b>[ a001 Mahler[Bernstein].aif ]</b>
-     // to be interpreted as an llll containing a sublist, 
-     // containing in turn the symbols <b>a001</b> and <b>Mahler[Bernstein].aif</b>.
-     // Without setting the <m>ignore</m> attribute, the same message would be interpreted
-     // as an llll containing a sublist containing the pitch <b>A1</b>,
-     // the symbol <b>Mahler</b>,
-     // a further sublist only containing the symbol <b>Bernstein</b>,
-     // and finally the symbol <b>.aif</b>. <br />
-     // @copy BACH_DOC_STATIC_ATTR
- 
+    CLASS_ATTR_SYM(c, "ignore",	0,	t_textin, n_ignore_sym);
+    CLASS_ATTR_LABEL(c, "ignore", 0, "Ignore Categories");
+    //CLASS_ATTR_BASIC(c, "ignore", 0);
+    // CLASS_ATTR_ACCESSORS(c, "ignore", (method)NULL, (method)llllobj_dummy_setter)
+    // @description The <m>ignore</m> attribute allows preventing certain categories
+    // of elements from being interpreted according to the usual bach syntax.
+    // Categories are expressed by letters, according to the following table:<br />
+    // - <b>L</b> stands for all the open and closed parens marking llll sublists:
+    // if this category is set, parens and symbols containing parens
+    // are interpreted just as symbols, as if they were preceded by a backtick. <br />
+    // - <b>l</b> stands for open and closed parens marking llll sublists,
+    // only if they do not appear in a symbol of their own
+    // (i.e., with the <b>l</b> category set,
+    // <b>[</b> is interpreted as the beginning of a sublist,
+    // whereas <b>[1</b> is interpreted just as a plain symbol,
+    // as opposed to what would happen normally,
+    // when it would mark the beginning of a sublist
+    // whose first element is <b>1</b>). <br />
+    // - <b>r</b> stands for rationals. <br />
+    // - <b>p</b> stands for pitches. <br />
+    // - <b>e</b> stands for floating-point numbers in scientific notation. <br />
+    // - <b>s</b> stands for the special symbols <b>nil</b> and <b>null</b>. <br />
+    // - <b>b</b> causes symbols beginning with a backtick
+    // to be interpreted with the backtick included
+    // (e.g., the <b>`foo</b> symbol is read as it is, including the backtick,
+    // as opposed to what would happen normally, when it would be read as <b>foo</b>). <br />
+    // - <b>-</b> reverses the selection, that is, makes the characters detailed above
+    // indicate the categories <i>not</i> to be ignored. <br />
+    // - <b>1</b> stands for ignoring all the above categories.
+    // If it is present alongside other specifiers (e.g., <b>alp</b>), it overrides them. <br />
+    // - <b>0</b> stands for no category, and is the default.
+    // If it is present alongside other specifiers (e.g., <b>-p</b>), it is ignored. <br />
+    // For example, the <m>ignore</m> attribute could be set to <b>lp</b>,
+    // which would cause a message containing <b>[ a001 Mahler[Bernstein].aif ]</b>
+    // to be interpreted as an llll containing a sublist, 
+    // containing in turn the symbols <b>a001</b> and <b>Mahler[Bernstein].aif</b>.
+    // Without setting the <m>ignore</m> attribute, the same message would be interpreted
+    // as an llll containing a sublist containing the pitch <b>A1</b>,
+    // the symbol <b>Mahler</b>,
+    // a further sublist only containing the symbol <b>Bernstein</b>,
+    // and finally the symbol <b>.aif</b>. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+    
     
     class_register(CLASS_BOX, c);
     textin_class = c;

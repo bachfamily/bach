@@ -146,7 +146,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	class_register(CLASS_BOX, c);
 	arithmser_class = c;
 	
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 	
 
 	dev_post("bach.arithmser compiled %s %s", __DATE__, __TIME__);

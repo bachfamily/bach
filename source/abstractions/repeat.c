@@ -87,7 +87,7 @@
 
 void main_foo() {
 
-llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 
 CLASS_ATTR_LONG(c, "inwrap", 0, t_repeat, inwrap);
 CLASS_ATTR_STYLE_LABEL(c,"inwrap",0,"text","Wrap Input");

@@ -138,7 +138,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	// For instance, if the llll <b>a b [c d e]</b> is input and its third element is requested,
 	// <b>c d e</b> will be output instead of <b>[c d e]</b>.
 	
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 	
 
 	class_register(CLASS_BOX, c);

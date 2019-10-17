@@ -144,7 +144,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	// When set to 0, numbers with different types but equal value (i.e. 1.5 and 3/2) are considered as equal. 
 	// When set to 1, they are considered different.
 	
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 
 	class_register(CLASS_BOX, c);
 	classify_class = c;

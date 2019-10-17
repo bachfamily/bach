@@ -85,7 +85,7 @@
 
 void main_foo() {
 
-llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 
 CLASS_ATTR_LONG(c, "slotinfo", 0, t_combinevoices, slotinfo); 
 CLASS_ATTR_STYLE_LABEL(c,"slotinfo",0,"text","Preserve Slotinfo");

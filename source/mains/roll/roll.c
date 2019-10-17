@@ -6498,7 +6498,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) roll_getmaxID, "getmaxid", 0); // undocumented
     class_addmethod(c, (method) roll_notify, "bachnotify", A_CANT, 0);
 
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_UI);
 
 
     notation_class_add_notation_attributes(c, k_NOTATION_OBJECT_ROLL);
