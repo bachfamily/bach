@@ -708,6 +708,7 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
                 if (x->c_text && *x->c_text && strcmp(newCode, x->c_text) != 0) {
                     // if the object was saved with bad code in the editor, we don't preserve the previous main
                     x->c_main->decrease();
+                    x->c_main = nullptr;
                     object_warn((t_object *) x, "Code in the editor overrides code in the object box");
                 }
             }
