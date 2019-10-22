@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 6,
+			"minor" : 1,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -43,12 +43,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-31",
-					"linecount" : 7,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 332.0, 355.5, 262.0, 112.0 ],
-					"text" : "Can you figure out what this one does before trying it? —By the way, notice the space after `wrote: it's necessary, as symbols have to be preceded by backticks which would eat up everything that follows until the next space, including operators and parentheses."
+					"patching_rect" : [ 318.5, 391.5, 190.0, 40.0 ],
+					"text" : "Can you figure out what this one does before trying it?"
 				}
 
 			}

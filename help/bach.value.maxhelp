@@ -293,7 +293,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 635.0, 368.0 ],
+						"rect" : [ 100.0, 126.0, 635.0, 368.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -383,12 +383,12 @@
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
 									"id" : "obj-18",
-									"linecount" : 6,
+									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 251.0, 581.0, 94.0 ],
-									"text" : "The documentation of previous versions of bach stated that it is perfectly safe to use regular send/receive pairs with lllls. In fact, this is not completely accurate, as there are scenarios in which it might not work.\nUsing networks of bach.value objects, on the other hand, is guaranteed to always work.\nIf you prefer a more traditional interface, you can use the bach.send/bach.receive modules instead, which in fact are just wrappers for bach.value @auto 1.",
+									"patching_rect" : [ 10.0, 251.0, 581.0, 65.0 ],
+									"text" : "The documentation of previous versions of bach stated that it is perfectly safe to use regular send/receive pairs with lllls. In fact, this is not completely accurate, as there are scenarios in which it might not work.\nUsing networks of bach.value objects, on the other hand, is guaranteed to always work.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -521,7 +521,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 635.0, 368.0 ],
+						"rect" : [ 0.0, 26.0, 635.0, 368.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
