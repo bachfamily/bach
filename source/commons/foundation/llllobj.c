@@ -2245,7 +2245,9 @@ void llllobj_class_add_versionnumber_attr(t_class *c, e_llllobj_obj_types type)
 	 atomarray_appendatom(aa, &a);
 	 atom_setsym(&a, gensym("interfaces"));
 	 atomarray_appendatom(aa, &a);
-
+	 atom_setsym(&a, gensym("fonts"));
+	 atomarray_appendatom(aa, &a);
+	 
 	 fileusage_addpackage(w, "bach", (t_object*)aa);
  // fileusage takes ownership of aa and thus will take care of freeing it
  }

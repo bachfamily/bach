@@ -6,7 +6,8 @@
 // Name & Version
 //PRODUCT_NAME = $(PROJECT_NAME)
 //PRODUCT_VERSION = 0.7.7
-ARCHS = i386 x86_64
+//ARCHS = i386 x86_64
+ARCHS = x86_64
 
 // Paths
 MAXSDK = $(SRCROOT)/../../../max-sdk-7.3.3
