@@ -14681,6 +14681,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
+				CODE_SIGN_IDENTITY = "Mac Developer: danieleghisi@gmail.com (TKA6DCAUF8)";
 				DSTROOT = "";
 				LLLL_VERSION = 0.8.0.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -14697,6 +14698,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
+				CODE_SIGN_IDENTITY = "Mac Developer: danieleghisi@gmail.com (TKA6DCAUF8)";
 				DSTROOT = "";
 				LLLL_VERSION = 0.8.0.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
