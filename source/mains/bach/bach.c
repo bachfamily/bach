@@ -549,8 +549,8 @@ void bach_donors(t_bach *x)
     post(" - Michele Zaccagnini");
     //
     post("...as well as all our patrons:");
-    post("Paolo Aralla, audiophil, Jean-Julien Filatriau, Louis Goldford, Matthew Goodheart, Nikola Kołodziejczyk, Hans Leeuw,");
-    post("MF Liau, linazero, Daniel Lujan, Tomislav Oliver, Alessandro Ratoci, Micha Seidenberg, TJ Shredder,");
+    post("Paolo Aralla, audiophil, Chris Chandler, Jean-Julien Filatriau, Louis Goldford, Matthew Goodheart, Nikola Kołodziejczyk,");
+    post("Hans Leeuw, MF Liau, linazero, Daniel Lujan, Tomislav Oliver, Alessandro Ratoci, Micha Seidenberg, TJ Shredder,");
     post("Christopher Michael Trapani, Pierre Alexandre Tremblay, Hans Tutschku, Joost Van Kerkhoven, Viktor Velthuijs, Vens R.");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
