@@ -1,6 +1,15 @@
 VERSION NOTES:
 
-v0.8.1b
+v0.8.0.99b
+
+THIS IS A MAC ONLY PRERELEASE of 0.8.1b, RELEASED AS THE LAST RELEASE WITH MAC 32-bit SUPPORT (***32 bits IS STILL SUPPORTED ON WINDOWS***)
+
+USE THIS RELEASE IF YOU 
+1) ARE ON MAC OS
+2) NEED 32-bit SUPPORT
+3) NEED NEW 0.8 FEATURES
+
+
 
 Scroll down for very important things you should now about v0.8b
 
