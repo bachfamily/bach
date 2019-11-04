@@ -17,7 +17,7 @@
 # *
 # */
 
-symparser:	symparser.l
+symparser install:	symparser.l
 			/usr/local/opt/bison/bin/bison --version
 			/usr/local/opt/flex/bin/flex --version
 			/usr/local/opt/bison/bin/bison -ld symparser.y

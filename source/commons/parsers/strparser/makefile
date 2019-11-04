@@ -17,7 +17,7 @@
 # *
 # */
 
-strparser:	strparser.l
+strparser install:	strparser.l
 			/usr/local/opt/bison/bin/bison --version
 			/usr/local/opt/flex/bin/flex --version
 			/usr/local/opt/bison/bin/bison -d strparser.y

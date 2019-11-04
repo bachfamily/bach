@@ -231,109 +231,126 @@ long create_raw_midi_data_buffer(t_llll **track_ll, long num_tracks, long format
 		chunksize_pos = pos;
 		write_to_buf_value(0, buffer, 4, &pos, &size);
 		t_llllelem *this_event;
-		for (this_event = (*this_track_ll)->l_head; this_event; this_event = this_event->l_next) {
-			t_llllelem *this_elem = this_event->l_hatom.h_w.w_llll->l_head;
+        
+        t_llll *prev_elem_ll = NULL;
+        for (this_event = (*this_track_ll)->l_head; this_event; this_event = this_event->l_next) {
+            t_llll *this_elem_ll = hatom_getllll(&this_event->l_hatom);
+			t_llllelem *this_elem = this_elem_ll->l_head;
 			e_midievent_types event_type = (e_midievent_types) this_elem->l_hatom.h_w.w_long;
 			
 			this_elem = this_elem->l_next;
-			long event_abs_time = this_elem->l_hatom.h_w.w_long;
-			long event_deltatime = event_abs_time - last_onset;
-			chunksize += write_to_buf_vlen_value(event_deltatime, buffer, &pos, &size);
-			
-			switch (event_type) {
-				case E_NOTEON:
-				case E_NOTEOFF: {
-					this_elem = this_elem->l_next;
-					long pitch = hatom_getlong(&this_elem->l_hatom);
-					
-					this_elem = this_elem->l_next;
-					long velocity = event_type == E_NOTEON ? hatom_getlong(&this_elem->l_hatom) : 0;	
-					
-					this_elem = this_elem->l_next;
-					long channel = hatom_getlong(&this_elem->l_hatom);	
-					
-					unsigned char midievent = (event_type == E_NOTEON ? 0x90 : 0x80) + channel;
-					
-					write_to_buf_value(midievent, buffer, 1, &pos, &size);
-					write_to_buf_value(pitch, buffer, 1, &pos, &size);
-					write_to_buf_value(velocity, buffer, 1, &pos, &size);
-					chunksize += 3;
-					break;
-				}
-				case E_TEMPO: {
-					write_to_buf_value(0xFF, buffer, 1, &pos, &size);
-					write_to_buf_value(0x51, buffer, 1, &pos, &size);
-					chunksize += 2;
-					chunksize += write_to_buf_vlen_value(3, buffer, &pos, &size); // len
-					this_elem = this_elem->l_next;
-					write_to_buf_value(hatom_getlong(&this_elem->l_hatom), buffer, 3, &pos, &size);
-					chunksize += 3;
-					break;
-				}
-				case E_TIMESIG: {
-					long timesig_den, timesig_den_cooked, metro;
-					write_to_buf_value(0xFF, buffer, 1, &pos, &size);
-					write_to_buf_value(0x58, buffer, 1, &pos, &size);
-					chunksize += 2;
-					chunksize += write_to_buf_vlen_value(4, buffer, &pos, &size); // len
-					this_elem = this_elem->l_next;
-					write_to_buf_value(hatom_getlong(&this_elem->l_hatom), buffer, 1, &pos, &size); // numerator
-					this_elem = this_elem->l_next;
-					timesig_den = hatom_getlong(&this_elem->l_hatom);
-					timesig_den_cooked = log2(timesig_den) + 0.5;
-					write_to_buf_value(timesig_den_cooked, buffer, 1, &pos, &size); // denominator
-					metro = 96 / timesig_den;
-					write_to_buf_value(metro, buffer, 1, &pos, &size);
-					write_to_buf_value(8, buffer, 1, &pos, &size);
-					chunksize += 4;
-					break;
-				}
-				case E_KEYSIG: {
-					write_to_buf_value(0xFF, buffer, 1, &pos, &size);
-					write_to_buf_value(0x59, buffer, 1, &pos, &size);
-					chunksize += 2;
-					chunksize += write_to_buf_vlen_value(2, buffer, &pos, &size); // len
-					this_elem = this_elem->l_next;
-					write_to_buf_value(hatom_getlong(&this_elem->l_hatom), buffer, 1, &pos, &size); // key
-					this_elem = this_elem->l_next;
-					write_to_buf_value(hatom_getlong(&this_elem->l_hatom), buffer, 1, &pos, &size);	// mode
-					chunksize += 2;
-					break;
-				}
-				case E_BARLINE: {
-					const char *barline_txt = "bach barline";
-					const long barline_txt_size = 12; // doesn't contain terminator
-					write_to_buf_value(0xFF, buffer, 1, &pos, &size);
-					write_to_buf_value(0x06, buffer, 1, &pos, &size);
-					chunksize += 2;
-					chunksize += write_to_buf_vlen_value(barline_txt_size, buffer, &pos, &size); // len
-					write_to_buf_ptr(barline_txt, buffer, barline_txt_size, &pos, &size);
-					chunksize += barline_txt_size;
-					break;
-				}
-				case E_MARKER: {
-					t_atomarray *name;
-					char *name_txt = NULL;
-					long name_txt_size = 0, name_ac = 0;
-					t_atom *name_av;
-					write_to_buf_value(0xFF, buffer, 1, &pos, &size);
-					write_to_buf_value(0x06, buffer, 1, &pos, &size);
-					chunksize += 2;
-					this_elem = this_elem->l_next;
-					name = (t_atomarray *) hatom_getobj(&this_elem->l_hatom);
-					atomarray_getatoms(name, &name_ac, &name_av);
-					atom_gettext(name_ac, name_av, &name_txt_size, &name_txt, 
-								 OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE |
-								 OBEX_UTIL_ATOM_GETTEXT_NUM_HI_RES);
-					name_txt_size--; // ignore the terminator
-					chunksize += write_to_buf_vlen_value(name_txt_size, buffer, &pos, &size); // len
-					write_to_buf_ptr(name_txt, buffer, name_txt_size, &pos, &size);
-					chunksize += name_txt_size;
-					object_free_debug(name);
-					break;
-				}
-			}
-			last_onset = event_abs_time;
+            
+            if ((event_type != E_TEMPO && event_type != E_TIMESIG) ||
+                !llll_eq_matchtype(this_elem_ll, prev_elem_ll)) {
+                long event_abs_time = this_elem->l_hatom.h_w.w_long;
+                long event_deltatime = event_abs_time - last_onset;
+                
+                
+                
+                chunksize += write_to_buf_vlen_value(event_deltatime, buffer, &pos, &size);
+                
+                switch (event_type) {
+                    case E_NOTEON:
+                    case E_NOTEOFF: {
+                        this_elem = this_elem->l_next;
+                        long pitch = hatom_getlong(&this_elem->l_hatom);
+                        
+                        this_elem = this_elem->l_next;
+                        long velocity = event_type == E_NOTEON ? hatom_getlong(&this_elem->l_hatom) : 0;
+                        
+                        this_elem = this_elem->l_next;
+                        long channel = hatom_getlong(&this_elem->l_hatom);
+                        
+                        unsigned char midievent = (event_type == E_NOTEON ? 0x90 : 0x80) + channel;
+                        
+                        write_to_buf_value(midievent, buffer, 1, &pos, &size);
+                        write_to_buf_value(pitch, buffer, 1, &pos, &size);
+                        write_to_buf_value(velocity, buffer, 1, &pos, &size);
+                        chunksize += 3;
+                        break;
+                    }
+                    case E_TEMPO: {
+                        if (llll_eq_matchtype(this_elem_ll, prev_elem_ll))
+                            break;
+                        write_to_buf_value(0xFF, buffer, 1, &pos, &size);
+                        write_to_buf_value(0x51, buffer, 1, &pos, &size);
+                        chunksize += 2;
+                        chunksize += write_to_buf_vlen_value(3, buffer, &pos, &size); // len
+                        this_elem = this_elem->l_next;
+                        write_to_buf_value(hatom_getlong(&this_elem->l_hatom), buffer, 3, &pos, &size);
+                        chunksize += 3;
+                        break;
+                    }
+                    case E_TIMESIG: {
+                        if (llll_eq_matchtype(this_elem_ll, prev_elem_ll))
+                            break;
+                        long timesig_den, timesig_den_cooked, metro;
+                        write_to_buf_value(0xFF, buffer, 1, &pos, &size);
+                        write_to_buf_value(0x58, buffer, 1, &pos, &size);
+                        chunksize += 2;
+                        chunksize += write_to_buf_vlen_value(4, buffer, &pos, &size); // len
+                        this_elem = this_elem->l_next;
+                        write_to_buf_value(hatom_getlong(&this_elem->l_hatom), buffer, 1, &pos, &size); // numerator
+                        this_elem = this_elem->l_next;
+                        timesig_den = hatom_getlong(&this_elem->l_hatom);
+                        timesig_den_cooked = log2(timesig_den) + 0.5;
+                        write_to_buf_value(timesig_den_cooked, buffer, 1, &pos, &size); // denominator
+                        metro = 96 / timesig_den;
+                        write_to_buf_value(metro, buffer, 1, &pos, &size);
+                        write_to_buf_value(8, buffer, 1, &pos, &size);
+                        chunksize += 4;
+                        break;
+                    }
+                    case E_KEYSIG: {
+                        write_to_buf_value(0xFF, buffer, 1, &pos, &size);
+                        write_to_buf_value(0x59, buffer, 1, &pos, &size);
+                        chunksize += 2;
+                        chunksize += write_to_buf_vlen_value(2, buffer, &pos, &size); // len
+                        this_elem = this_elem->l_next;
+                        write_to_buf_value(hatom_getlong(&this_elem->l_hatom), buffer, 1, &pos, &size); // key
+                        this_elem = this_elem->l_next;
+                        write_to_buf_value(hatom_getlong(&this_elem->l_hatom), buffer, 1, &pos, &size);	// mode
+                        chunksize += 2;
+                        break;
+                    }
+                    case E_BARLINE: {
+                        if (llll_eq_matchtype(this_elem_ll, prev_elem_ll))
+                            break;
+                        const char *barline_txt = "bach barline";
+                        const long barline_txt_size = 12; // doesn't contain terminator
+                        write_to_buf_value(0xFF, buffer, 1, &pos, &size);
+                        write_to_buf_value(0x06, buffer, 1, &pos, &size);
+                        chunksize += 2;
+                        chunksize += write_to_buf_vlen_value(barline_txt_size, buffer, &pos, &size); // len
+                        write_to_buf_ptr(barline_txt, buffer, barline_txt_size, &pos, &size);
+                        chunksize += barline_txt_size;
+                        break;
+                    }
+                    case E_MARKER: {
+                        t_atomarray *name;
+                        char *name_txt = NULL;
+                        long name_txt_size = 0, name_ac = 0;
+                        t_atom *name_av;
+                        write_to_buf_value(0xFF, buffer, 1, &pos, &size);
+                        write_to_buf_value(0x06, buffer, 1, &pos, &size);
+                        chunksize += 2;
+                        this_elem = this_elem->l_next;
+                        name = (t_atomarray *) hatom_getobj(&this_elem->l_hatom);
+                        atomarray_getatoms(name, &name_ac, &name_av);
+                        atom_gettext(name_ac, name_av, &name_txt_size, &name_txt,
+                                     OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE |
+                                     OBEX_UTIL_ATOM_GETTEXT_NUM_HI_RES);
+                        name_txt_size--; // ignore the terminator
+                        chunksize += write_to_buf_vlen_value(name_txt_size, buffer, &pos, &size); // len
+                        write_to_buf_ptr(name_txt, buffer, name_txt_size, &pos, &size);
+                        chunksize += name_txt_size;
+                        object_free_debug(name);
+                        break;
+                    }
+                }
+                last_onset = event_abs_time;
+            }
+            prev_elem_ll = this_elem_ll;
 		}
 		// track end event
 		chunksize += write_to_buf_vlen_value(0, buffer, &pos, &size);
