@@ -89,7 +89,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 34.0, 233.0, 453.0, 21.0 ],
 					"showhand" : 0,
-					"text" : "– format (default: 1): the MIDI file format (0 = single track, 1 = multiple tracks)",
+					"text" : "– format (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"underline" : 0
 				}

@@ -200,7 +200,7 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 	unsigned long next_good_ts_onset = 0;
 	t_llllelem *first_voice_elem = NULL;
 	double ticksperms = 0;
-	unsigned long format_type = 0;
+	unsigned long format_type = 1;
     t_timesignature ts;
     
 	// allocate memory block that is the size of the file
