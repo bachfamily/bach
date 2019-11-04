@@ -14681,10 +14681,10 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
-				CODE_SIGN_IDENTITY = "Mac Developer: danieleghisi@gmail.com (TKA6DCAUF8)";
+				CODE_SIGN_IDENTITY = "";
 				DSTROOT = "";
 				LLLL_VERSION = 0.8.0.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PRODUCT_VERSION = 0.8.1;
@@ -14698,10 +14698,10 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
-				CODE_SIGN_IDENTITY = "Mac Developer: danieleghisi@gmail.com (TKA6DCAUF8)";
+				CODE_SIGN_IDENTITY = "";
 				DSTROOT = "";
 				LLLL_VERSION = 0.8.0.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PRODUCT_VERSION = 0.8.1;
@@ -15655,7 +15655,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(ZULU_INSTALL_PATH)";
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15689,7 +15688,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(ZULU_INSTALL_PATH)";
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -16172,7 +16170,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = "$(HEADER_SEARCH_PATHS)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PREBINDING = YES;
 				SEPARATE_STRIP = NO;
 				STRIP_STYLE = "non-global";
@@ -16197,7 +16194,6 @@
 					"$(HEADER_SEARCH_PATHS)",
 					"$(HEADER_SEARCH_PATHS_LIB)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PREBINDING = YES;
 				SEPARATE_STRIP = NO;
 				STRIP_STYLE = "non-global";
@@ -18619,7 +18615,6 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(AA_INSTALL_PATH)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 			};
 			name = Development;
 		};
@@ -18635,7 +18630,6 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INSTALL_PATH = "$(AA_INSTALL_PATH)";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 			};
 			name = Deployment;
 		};

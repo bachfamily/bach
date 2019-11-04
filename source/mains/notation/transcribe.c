@@ -356,7 +356,7 @@ void transcribe_send_tail(t_transcribe *x, double t)
 }
 
 
-void transcribe_send_unsel(t_transcribe *x, double onset, double cents, long voice)
+t_llll *transcribe_get_unsel_llll(t_transcribe *x, double onset, double cents, long voice)
 {
     t_llll *out = llll_get();
     llll_appendsym(out, _llllobj_sym_unsel);
@@ -365,6 +365,13 @@ void transcribe_send_unsel(t_transcribe *x, double onset, double cents, long voi
     llll_appenddouble(out, cents);
     llll_appenddouble(out, cents);
     llll_appendlong(out, voice);
+    return out;
+}
+
+
+void transcribe_send_unsel(t_transcribe *x, double onset, double cents, long voice)
+{
+    t_llll *out = transcribe_get_unsel_llll(x, onset, cents, voice);
     llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, out);
     llll_free(out);
 }
@@ -382,20 +389,25 @@ void transcribe_send_sel(t_transcribe *x, double onset, double cents, long voice
     llll_free(out);
 }
 
-void transcribe_send_unsel_long(t_transcribe *x, long name)
+t_llll *transcribe_get_unsel_long_llll(t_transcribe *x, long name)
 {
     t_llll *out = llll_get();
     llll_appendsym(out, _llllobj_sym_unsel);
     llll_appendlong(out, name);
-    llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, out);
-    llll_free(out);
+    return out;
 }
 
-void transcribe_send_sel_long(t_transcribe *x, long name)
+t_llll *transcribe_get_sel_long_llll(t_transcribe *x, long name)
 {
     t_llll *out = llll_get();
     llll_appendsym(out, _llllobj_sym_sel);
     llll_appendlong(out, name);
+    return out;
+}
+
+void transcribe_send_unsel_long(t_transcribe *x, long name)
+{
+    t_llll *out = transcribe_get_unsel_long_llll(x, name);
     llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, out);
     llll_free(out);
 }
@@ -418,20 +430,24 @@ void transcribe_clear_active_notes(t_transcribe *x)
 }
 
 
-void transcribe_event_noteoff(t_transcribe *x, t_transcribe_event *ev)
+// return noteoff llll
+t_llll *transcribe_event_noteoff(t_transcribe *x, t_transcribe_event *ev)
 {
+    t_llll *out;
     if (x->n_use_names)
-        transcribe_send_unsel_long(x, ev->n_assigned_name);
+        out = transcribe_get_unsel_long_llll(x, ev->n_assigned_name);
     else
-        transcribe_send_unsel(x, ev->n_onset, hatom_gettype(&ev->n_pitch) == H_PITCH ? hatom_getpitch(&ev->n_pitch).toMC() : hatom_getdouble(&ev->n_pitch), ev->n_voice);
+        out = transcribe_get_unsel_llll(x, ev->n_onset, hatom_gettype(&ev->n_pitch) == H_PITCH ? hatom_getpitch(&ev->n_pitch).toMC() : hatom_getdouble(&ev->n_pitch), ev->n_voice);
     llll_destroyelem(ev->n_parent);
     bach_freeptr(ev);
+    return out;
 }
 
 
 void transcribe_allnotesoff(t_transcribe *x)
 {
     transcribe_send_tail(x, transcribe_get_time(x));
+    systhread_mutex_lock(x->n_mutex);
     for (t_llllelem *el = x->n_active_notes->l_head; el; el = el->l_next) {
         t_transcribe_event *ev = (t_transcribe_event *)hatom_getobj(&el->l_hatom);
         if (x->n_use_names)
@@ -440,6 +456,7 @@ void transcribe_allnotesoff(t_transcribe *x)
             transcribe_send_unsel(x, ev->n_onset, hatom_gettype(&ev->n_pitch) == H_PITCH ? hatom_getpitch(&ev->n_pitch).toMC() : hatom_getdouble(&ev->n_pitch), ev->n_voice);
     }
     transcribe_clear_active_notes(x);
+    systhread_mutex_unlock(x->n_mutex);
 }
 
 
@@ -740,14 +757,18 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                     
                     systhread_mutex_lock(x->n_mutex);
                     ev = transcribe_retrieve(x, voice, &args->l_head->l_hatom);
-                    systhread_mutex_unlock(x->n_mutex);
                     
                     if (ev) {
+                        t_llll *noteoff_ll = transcribe_event_noteoff(x, ev);
+                        
+                        systhread_mutex_unlock(x->n_mutex);
+
                         transcribe_send_time(x, t);
                         transcribe_send_tail(x, t);
-                        transcribe_event_noteoff(x, ev);
+                        llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, noteoff_ll);
                         transcribe_send_inscreenpos(x, t);
                     } else {
+                        systhread_mutex_unlock(x->n_mutex);
                         object_warn((t_object *)x, "Unmatched note-off!");
                     }
                 }
@@ -783,7 +804,8 @@ void transcribe_assist(t_transcribe *x, void *b, long m, long a, char *s)
 
 void transcribe_inletinfo(t_transcribe *x, void *b, long a, char *t)
 {
-    *t = 1;
+    return; // both inlets are "hot" since turning on/off the recoring (1st inlet) may trigger some output messages (such as clear, etc.),
+            // and of course data in the right inlet will trigger the insertion of the recorded notes.
 }
 
 
