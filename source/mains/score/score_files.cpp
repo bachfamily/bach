@@ -327,7 +327,7 @@ t_rational ticks2rat(long ticks, long time_division)
 
 t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
 {
-    long format = 0;
+    long format = 1;
     long num_tracks;
     long time_division = 960;
     double tempo = 60;
@@ -468,20 +468,23 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
                         t_rational next_tempo_onset_rat = get_sym_durations_between_timepoints(this_scorevoice, voice_start_tp, next_tempo_onset_tp);
                         long next_tempo_onset_ticks = rat2ticks(&next_tempo_onset_rat, time_division);
                         t_rational interp_dur_rat = get_sym_durations_between_timepoints(this_scorevoice, this_tempo_onset_tp, next_tempo_onset_tp);
-                        long interp_dur_ticks = rat2ticks(&interp_dur_rat, time_division);
-                        long interp_dur_ticks_div2 = interp_dur_ticks / 2;
+                        double interp_dur_ticks = rat2ticks(&interp_dur_rat, time_division);
                         long this_tempo_sample;
                         
-                        for (this_tempo_sample = this_tempo_onset_ticks; 
+                        for (this_tempo_sample = this_tempo_onset_ticks + tempo_interp_sampling_interval;
                              this_tempo_sample <= next_tempo_onset_ticks; 
                              this_tempo_sample += tempo_interp_sampling_interval) {
-                            long this_tempo_sampling_point;
-                            if (this_tempo_sample + interp_dur_ticks <= next_tempo_onset_ticks)
-                                this_tempo_sampling_point = this_tempo_sample + interp_dur_ticks_div2;
-                            else
-                                this_tempo_sampling_point = (next_tempo_onset_ticks - this_tempo_sample) / 2;
-                            double this_step_bpm = 1. / (((1. / tempo) * ((this_tempo_sample - this_tempo_onset_ticks) / interp_dur_ticks)) +
-                                                         ((1. / next_tempo_bpm) * (next_tempo_onset_ticks - this_tempo_sample) / interp_dur_ticks));
+                            
+#define inverse_tempo_interpolation
+#ifdef inverse_tempo_interpolation
+                            double this_step_bpm = 1. / (1. / tempo * (1. - (this_tempo_sample - this_tempo_onset_ticks) / interp_dur_ticks) +
+                                                         1. / next_tempo_bpm * ((this_tempo_sample - this_tempo_onset_ticks) / interp_dur_ticks));
+#else
+
+                            double this_step_bpm = tempo * (1. - (this_tempo_sample - this_tempo_onset_ticks) / interp_dur_ticks) +
+                                                   next_tempo_bpm * ((this_tempo_sample - this_tempo_onset_ticks) / interp_dur_ticks);
+#endif
+                            
                             append_tempo_to_midi_export(track_ll[0], this_step_bpm, this_tempo_sample);
                         }
                     }
