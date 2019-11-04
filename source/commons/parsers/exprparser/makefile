@@ -17,7 +17,7 @@
 # *
 # */
 
-exprparser:	exprparser.l
+exprparser install:	exprparser.l
 			/usr/local/opt/bison/bin/bison --version
 			/usr/local/opt/flex/bin/flex --version
 			/usr/local/opt/flex/bin/flex -L -o exprparser.c exprparser.l

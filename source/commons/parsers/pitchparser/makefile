@@ -17,7 +17,7 @@
 # *
 # */
 
-pitchparser:	pitchparser.l
+pitchparser install:	pitchparser.l
 			/usr/local/opt/bison/bin/bison --version
 			/usr/local/opt/flex/bin/flex --version
 			/usr/local/opt/flex/bin/flex -L -o pitchparser.c pitchparser.l

@@ -6221,7 +6221,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @mattr exportmarkers @type int @default 1 @digest If non-zero, exports all the markers
     // @mattr exportbarlines @type int @default 1 @digest Barline markers are exported as MIDI marker events, with the name "bach barline"
     // @mattr voices @type llll @default null @digest Numbers of voices to be exported (<b>null</b> means: all voices)
-    // @mattr format @type int @default 0 @digest MIDI file format (0 = single track, 1 = multiple tracks)
+    // @mattr format @type int @default 1 @digest MIDI file format (0 = single track, 1 = multiple tracks)
     // @mattr resolution @type int @default 960 @digest Number of MIDI ticks per beat
     // @example exportmidi @caption export MIDI file via dialog box
     // @example exportmidi mymidi.mid @caption export MIDI file
