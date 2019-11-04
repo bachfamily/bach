@@ -6385,7 +6385,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr exportmarkers @type int @default 1 @digest If non-zero, exports all the markers
     // @mattr voices @type llll @default null @digest Numbers of voices to be exported (<b>null</b> means: all voices)
-    // @mattr format @type int @default 0 @digest MIDI file format (0 = single track, 1 = multiple tracks)
+    // @mattr format @type int @default 1 @digest MIDI file format (0 = single track, 1 = multiple tracks)
     // @mattr resolution @type int @default 960 @digest Number of MIDI ticks per beat
     // @mattr temporampsamplingrate @type int @default 240 @digest Maximum duration, in MIDI ticks, for a single tempo step during tempo interpolations
     // @example exportmidi @caption export MIDI file via dialog box
