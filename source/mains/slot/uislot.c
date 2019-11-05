@@ -1030,7 +1030,9 @@ void uislot_copy_slot(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
 void uislot_change_slot_item(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    lock_general_mutex((t_notation_obj *)x);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_MODIFY_ONE);
+    unlock_general_mutex((t_notation_obj *)x);
     llll_release(args);
 }
 
@@ -1040,7 +1042,9 @@ void uislot_append_slot_item(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     if (args->l_head)
         llll_insertlong_after(1, args->l_head); // inserting dummy position
+    lock_general_mutex((t_notation_obj *)x);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_APPEND);
+    unlock_general_mutex((t_notation_obj *)x);
     llll_release(args);
 }
 
@@ -1050,14 +1054,18 @@ void uislot_prepend_slot_item(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     if (args->l_head)
         llll_insertlong_after(1, args->l_head); // inserting dummy position
+    lock_general_mutex((t_notation_obj *)x);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_PREPEND);
+    unlock_general_mutex((t_notation_obj *)x);
     llll_release(args);
 }
 
 void uislot_insert_slot_item(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    lock_general_mutex((t_notation_obj *)x);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_INSERT_AUTO);
+    unlock_general_mutex((t_notation_obj *)x);
     llll_release(args);
 }
 
@@ -1065,7 +1073,9 @@ void uislot_insert_slot_item(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
 void uislot_delete_slot_item(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    lock_general_mutex((t_notation_obj *)x);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_DELETE_ONE);
+    unlock_general_mutex((t_notation_obj *)x);
     llll_release(args);
 }
 
