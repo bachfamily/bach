@@ -39740,6 +39740,11 @@ void create_simple_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item
         return;
     }
     
+    // We need to get the information on score structures, we need to lock the general mutex (if it wasn't locked already!)
+    char must_unlock = true;
+    if (trylock_general_mutex(r_ob))
+        must_unlock = false; // already locked
+
     if (modif_type == k_UNDO_MODIFICATION_CHANGE_FLAG)
         content = get_multiple_flags_for_undo(r_ob, item);
     else if (modif_type == k_UNDO_MODIFICATION_CHANGE_NAME)
@@ -39748,6 +39753,9 @@ void create_simple_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item
         content = notation_item_get_values_as_llll_for_undo(r_ob, item);
     else 
         content = llll_get();
+    
+    if (must_unlock)
+        unlock_general_mutex(r_ob);
 
     notation_item_to_measure_and_voice_numbers(r_ob, item, &meas_number, &voice_number);
         
@@ -43771,6 +43779,11 @@ void unlock_deparse_mutex(t_notation_obj *r_ob)
 void lock_general_mutex(t_notation_obj *r_ob)
 {
     systhread_mutex_lock(r_ob->c_general_mutex);
+}
+
+long trylock_general_mutex(t_notation_obj *r_ob)
+{
+    return systhread_mutex_trylock(r_ob->c_general_mutex);
 }
 
 void unlock_general_mutex(t_notation_obj *r_ob)

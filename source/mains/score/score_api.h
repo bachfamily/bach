@@ -328,14 +328,14 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_acc_bogus, t_jfont *jf_text, t_jfont *jf_ts, t_jfont *jf_tempi,
                          char *there_is_legend, char *legend_text);
 
-void create_whole_score_undo_tick(t_score *x);
+void create_whole_score_undo_tick_nolock(t_score *x);
 void check_if_need_to_splatter_level_when_turning_note_to_rest(t_score *x, t_chord *chord);
 void check_if_need_to_flatten_level_when_turning_rest_to_note(t_score *x, t_chord *chord);
 
 void change_marker_attachment(t_score *x, t_marker *mk, char new_attachment, long voicenum);
 char move_selected_measure_attached_markers(t_score *x, double delta_ux, char magnetic);
 t_measure *create_and_insert_new_measure(t_score *x, t_scorevoice *voice, t_measure *refmeasure, char direction, unsigned long force_ID, t_measure *refmeasure_for_measureinfo, char clone_tempi);
-void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, long *out_num_meas = NULL);
+void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, long *out_num_meas, char also_lock_general_mutex);
 
 //t_scorevoice *voice_get_first_visible(t_score *x);
 //t_scorevoice *voice_get_last_visible(t_score *x);

@@ -3436,9 +3436,9 @@ void roll_sel_add_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     char lambda = (s == _llllobj_sym_lambda);
     char changed = 0;
     
+    lock_general_mutex((t_notation_obj *)x);
     if (slot_as_llll) {
         t_notation_item *curr_it;
-        lock_general_mutex((t_notation_obj *)x);
         curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
         while (curr_it) {
             if (curr_it->type == k_NOTE) {
@@ -3467,13 +3467,13 @@ void roll_sel_add_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
             }
             curr_it = lambda ? NULL : curr_it->next_selected;
         }
-        unlock_general_mutex((t_notation_obj *)x);
     }
     
     llll_free(slot_as_llll);
     
     if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
+    unlock_general_mutex((t_notation_obj *)x);
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_SLOTS_TO_SELECTION);
 }
@@ -3497,8 +3497,10 @@ void roll_sel_erase_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
     notationobj_sel_erase_slot((t_notation_obj *)x, slotnum, lambda);
     
+    lock_general_mutex((t_notation_obj *)x);
     if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
+    unlock_general_mutex((t_notation_obj *)x);
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
 }
@@ -3522,10 +3524,14 @@ void roll_sel_move_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         return;
     }
     
+    lock_general_mutex((t_notation_obj *)x);
+
     notationobj_sel_move_slot((t_notation_obj *)x, from, to, false, lambda);
 
     if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
+    
+    unlock_general_mutex((t_notation_obj *)x);
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MOVE_SLOTS_FOR_SELECTION);
 }
@@ -3549,10 +3555,15 @@ void roll_sel_copy_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         return;
     }
     
+    lock_general_mutex((t_notation_obj *)x);
+    
     notationobj_sel_move_slot((t_notation_obj *)x, from, to, true, lambda);
     
     if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_COPY_SLOTS_FOR_SELECTION);
 }
@@ -3584,11 +3595,17 @@ void roll_sel_sendcommand(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 void roll_sel_change_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+
+    lock_general_mutex((t_notation_obj *)x);
+    
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_MODIFY_ONE);
     llll_release(args);
     
     if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 
@@ -3597,11 +3614,17 @@ void roll_sel_append_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     if (args->l_head)
         llll_insertlong_after(1, args->l_head); // inserting dummy position
+
+    lock_general_mutex((t_notation_obj *)x);
+
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_APPEND);
     llll_release(args);
 
     if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
+
+    unlock_general_mutex((t_notation_obj *)x);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 
@@ -3610,32 +3633,50 @@ void roll_sel_prepend_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     if (args->l_head)
         llll_insertlong_after(1, args->l_head); // inserting dummy position
+
+    lock_general_mutex((t_notation_obj *)x);
+
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_PREPEND);
     llll_release(args);
 
     if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
+
+    unlock_general_mutex((t_notation_obj *)x);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 void roll_sel_insert_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    
+    lock_general_mutex((t_notation_obj *)x);
+
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_INSERT_AUTO);
     llll_release(args);
     
     if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 
 void roll_sel_delete_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+
+    lock_general_mutex((t_notation_obj *)x);
+
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_DELETE_ONE);
     llll_release(args);
 
     if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 
