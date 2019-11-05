@@ -2899,10 +2899,18 @@ t_max_err score_setattr_clefs(t_score *x, t_object *attr, long ac, t_atom *av){
 
     x->r_ob.private_flag = 0;
     t_max_err err = notation_obj_setattr_clefs((t_notation_obj *)x, attr, ac, av);
+
+    char must_unlock = true;
+    if (trylock_general_mutex((t_notation_obj *)x))
+        must_unlock = false; // already locked
+
     recompute_all_except_for_beamings_and_autocompletion_and_redraw(x);
     if (x->r_ob.private_flag) {
         perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS + k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS + k_BEAMING_CALCULATION_DONT_CHANGE_TIES);
     }
+    
+    if (must_unlock)
+        unlock_general_mutex((t_notation_obj *)x);
     return err;
 }
 
@@ -2913,12 +2921,21 @@ void compute_all_notes_approximations(t_score *x, char also_put_show_accidental_
             compute_note_approximations_for_measure((t_notation_obj *)x, temp_meas, also_put_show_accidental_to_false);
 }
 
-t_max_err score_setattr_keys(t_score *x, t_object *attr, long ac, t_atom *av){
+t_max_err score_setattr_keys(t_score *x, t_object *attr, long ac, t_atom *av)
+{
+    char must_unlock = true;
+    if (trylock_general_mutex((t_notation_obj *)x))
+        must_unlock = false; // already locked
+
     t_max_err err = notation_obj_setattr_keys((t_notation_obj *)x, attr, ac, av);
     check_all_voices_fullaccpatterns((t_notation_obj *)x);
     compute_all_notes_approximations(x, true); 
     recalculate_all_chord_parameters(x);
     recalculate_all_beams_positions(x); // by calling this it will also validate the accidentals for all measures.
+    
+    if (must_unlock)
+        unlock_general_mutex((t_notation_obj *)x);
+    
     notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
     return err;
 }
@@ -3139,8 +3156,21 @@ void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll,
 }
 
 
+void create_whole_score_undo_tick_nolock(t_score *x) {
+    if (x->r_ob.inhibited_undo)
+        return;
+    if (!(atom_gettype(&x->r_ob.max_undo_steps) == A_LONG && atom_getlong(&x->r_ob.max_undo_steps) == 0)) {
+        //        notation_obj_check_force((t_notation_obj *)x, true);
+        t_llll *content = get_score_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, true, true, false, true);
+        // we clone the content outside the memory pool so that it does not fill it
+        t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
+        t_undo_redo_information *operation = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
+        llll_free(content);
+        create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
+    }
+}
 
-void create_whole_score_undo_tick(t_score *x){
+void create_whole_score_undo_tick(t_score *x) {
     if (x->r_ob.inhibited_undo)
         return;
     if (!(atom_gettype(&x->r_ob.max_undo_steps) == A_LONG && atom_getlong(&x->r_ob.max_undo_steps) == 0)) {
@@ -3153,6 +3183,7 @@ void create_whole_score_undo_tick(t_score *x){
         create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
 }
+
 
 
 void set_score_from_llll_from_xml(t_score *x, t_llll* inputlist)
@@ -3553,6 +3584,7 @@ void score_snap_pitch_to_grid(t_score *x, t_symbol *s, long argc, t_atom *argv)
 // voicenum >= 0: specific voice (0-based)
 // voicenum = -1: all voices, up to current num_voices
 // voicenum = -2: all voices, up to CONST_MAX_VOICES
+// this function must be put within a mutex
 void clear_score_body(t_score *x, long voicenum)
 {
     // clears all the score (or just a specific voice)
@@ -3611,7 +3643,7 @@ void clear_score_body(t_score *x, long voicenum)
     notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
-
+// this function must be put inside a mutex
 void score_clear_all(t_score *x)
 {
     clear_score_body(x, -2);
@@ -4048,6 +4080,7 @@ void insert_measure(t_score *x, t_scorevoice *voice, t_measure *measure_to_inser
 }
 
 
+// this function must be put within a mutex
 void turn_chord_into_rest_or_into_note(t_score *x, t_chord *chord, double mc) {
     if (chord->r_sym_duration.r_num > 0) {
         turn_chord_into_rest(x, chord);
@@ -5966,7 +5999,7 @@ void calculate_tuttipoints(t_score *x)
         for (i = 0; i < x->r_ob.num_voices; i++) {
             t_rational r_measure_onset = long2rat(0);
             double measure_onset_ms = 0;
-            for (this_meas = this_tpt->measure[i]; (this_tpt->next && this_meas != this_tpt->next->measure[i]) || (!this_tpt->next && this_meas); this_meas = this_meas->next) {
+            for (this_meas = this_tpt->measure[i]; (this_tpt->next && this_meas != this_tpt->next->measure[i]) || (!this_tpt->next && this_meas); this_meas = this_meas->next) { // TODO: check that this_meas exists?
                 this_meas->tuttipoint_reference = this_tpt;
                 this_meas->r_tuttipoint_onset_sec = r_measure_onset;
                 this_meas->tuttipoint_onset_ms = measure_onset_ms;
@@ -11419,7 +11452,7 @@ t_measure *create_and_insert_new_measure(t_score *x, t_scorevoice *voice, t_meas
     
 
 // ceil all the voices so that they have the SAME number of measures
-void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, long *out_num_meas)
+void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, long *out_num_meas, char also_lock_general_mutex)
 {
     long max_num_meas = 0, i = 0;
     t_scorevoice *voice;
@@ -11438,7 +11471,8 @@ void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, lo
     }
     
     if (max_num_meas > 0) {
-        lock_general_mutex((t_notation_obj *)x);
+        if (also_lock_general_mutex)
+            lock_general_mutex((t_notation_obj *)x);
         for (voice = from; voice && voice->v_ob.number < x->r_ob.num_voices && voice->v_ob.number <= to->v_ob.number; voice = voice->next) {
             char ref_for_measureinfo_is_not_this_voice = (voice->lastmeasure == NULL);
             for (i = voice->num_measures; i < max_num_meas; i++) {
@@ -11467,10 +11501,11 @@ void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, lo
             if (voice == to)
                 break;
         }
-        unlock_general_mutex((t_notation_obj *)x);
+        
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS + k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS + k_BEAMING_CALCULATION_DONT_CHANGE_TIES);
+        if (also_lock_general_mutex)
+            unlock_general_mutex((t_notation_obj *)x);
     }
-    
-    perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS + k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS + k_BEAMING_CALCULATION_DONT_CHANGE_TIES);
     
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CEIL_MEASURES);
 }
@@ -11575,8 +11610,6 @@ void score_swap_voices(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
     long idx1 = v1->v_ob.number;
     long idx2 = v2->v_ob.number;
     
-    lock_general_mutex((t_notation_obj *)x);
-    
     if (x->firstvoice == v1)
         x->firstvoice = v2;
     else if (x->firstvoice == v2)
@@ -11624,22 +11657,13 @@ void score_swap_voices(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
     elem2 = llll_getindex(x->r_ob.voicenames_as_llll, idx2 + 1, I_STANDARD);
     llll_swapelems(elem1, elem2);
     set_voicenames_from_llll((t_notation_obj *)x, x->r_ob.voicenames_as_llll, false);
-    
-    unlock_general_mutex((t_notation_obj *)x);
-    
-    if (x->r_ob.link_vzoom_to_height)
-        auto_set_rectangle_size((t_notation_obj *) x);
-    else
-        calculate_voice_offsets((t_notation_obj *) x);
-    recompute_all_and_redraw(x);
-    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-    
 }
-
 
 void score_swap_voiceensembles(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
 {
     t_notation_obj *r_ob = (t_notation_obj *)x;
+
+    lock_general_mutex(r_ob);
     t_voice *first1 = voiceensemble_get_firstvoice(r_ob, (t_voice *)v1);
     t_voice *last1 = voiceensemble_get_lastvoice(r_ob, (t_voice *)v1);
     t_voice *first2 = voiceensemble_get_firstvoice(r_ob, (t_voice *)v2);
@@ -11668,6 +11692,14 @@ void score_swap_voiceensembles(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
         if (temp2 == last2)
             break;
     }
+    unlock_general_mutex(r_ob);
+    
+    if (x->r_ob.link_vzoom_to_height)
+        auto_set_rectangle_size((t_notation_obj *) x);
+    else
+        calculate_voice_offsets((t_notation_obj *) x);
+    recompute_all_and_redraw(x);
+    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
 
 
@@ -11751,9 +11783,9 @@ void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this
         
         if (ceilmeasure_from_this_voice) {
             if (ceilmeasure_from_this_voice->v_ob.number < voice_to_move->v_ob.number)
-                score_ceilmeasures_ext(x, ceilmeasure_from_this_voice, voice_to_move, NULL);
+                score_ceilmeasures_ext(x, ceilmeasure_from_this_voice, voice_to_move, NULL, false);
             else if (ceilmeasure_from_this_voice->v_ob.number > voice_to_move->v_ob.number)
-                score_ceilmeasures_ext(x, voice_to_move, ceilmeasure_from_this_voice, NULL);
+                score_ceilmeasures_ext(x, voice_to_move, ceilmeasure_from_this_voice, NULL, false);
             
             recompute_all(x);
             perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);

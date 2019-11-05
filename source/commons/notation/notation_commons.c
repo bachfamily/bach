@@ -43773,6 +43773,11 @@ void lock_general_mutex(t_notation_obj *r_ob)
     systhread_mutex_lock(r_ob->c_general_mutex);
 }
 
+long trylock_general_mutex(t_notation_obj *r_ob)
+{
+    return systhread_mutex_trylock(r_ob->c_general_mutex);
+}
+
 void unlock_general_mutex(t_notation_obj *r_ob)
 {
     systhread_mutex_unlock(r_ob->c_general_mutex);

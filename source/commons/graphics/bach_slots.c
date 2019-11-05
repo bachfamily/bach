@@ -10513,12 +10513,12 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
 }
 
 
+// this function must be mutex-locked
 void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto, char keeporiginal, char lambda)
 {
     t_notation_item *curr_it;
     char changed = 0;
     
-    lock_general_mutex(r_ob);
     curr_it = lambda ? (t_notation_item *) shashtable_retrieve(r_ob->IDtable, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
     while (curr_it) {
         if (curr_it->type == k_NOTE) {
@@ -10565,14 +10565,13 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
         }
         curr_it = lambda ? NULL : curr_it->next_selected;
     }
-    unlock_general_mutex(r_ob);
-    
 }
 
 
 
 
 // arguments are: slot#, position, new value (as llll).
+// this function must be mutexed
 void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *args_orig, char lambda, e_slot_changeslotitem_modes mode)
 {
     long slotnum, position;
@@ -10622,8 +10621,6 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
     if (args) {
         t_notation_item *curr_it;
 
-        lock_general_mutex(r_ob);
-        
         curr_it = lambda ? (t_notation_item *) shashtable_retrieve(r_ob->IDtable, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
         while (curr_it) {
             if (curr_it->type == k_NOTE) {
@@ -10674,11 +10671,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
             }
             curr_it = lambda ? NULL : curr_it->next_selected;
         }
-        
-        unlock_general_mutex(r_ob);
     }
     
     llll_free(args);
-    
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }

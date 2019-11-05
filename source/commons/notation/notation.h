@@ -18574,6 +18574,15 @@ void lock_general_mutex(t_notation_obj *r_ob);
 void unlock_general_mutex(t_notation_obj *r_ob);
 
 
+/** Try to lock the notation object's general mutex, corresponding to the field t_notation_obj::c_general_mutex.
+    Returns non-zero if cannot enter the code
+    @ingroup    miscellanea
+    @param        r_ob            The notation object
+    @return            Returns non-zero if there was a problem entering.
+ */
+long trylock_general_mutex(t_notation_obj *r_ob);
+
+
 // Internal
 void lock_deparse_mutex(t_notation_obj *r_ob);
 void unlock_deparse_mutex(t_notation_obj *r_ob);
