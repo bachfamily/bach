@@ -42442,7 +42442,7 @@ long infer_most_appropriate_clef(t_notation_obj *r_ob, t_llll *pitches, double c
     long clefs_to_test[1024];
     long backup_clef = k_CLEF_FFGG;
     long found = -1, i;
-    double best_diff = max - min;
+    double best_diff = DBL_MAX;
     
     if (allowed_clefs) {
         i = 0;
