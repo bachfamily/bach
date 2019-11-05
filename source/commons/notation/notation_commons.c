@@ -39740,6 +39740,8 @@ void create_simple_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item
         return;
     }
     
+    // TODOMUTEX should we trylock the general mutex here? maybe we should!!!
+    
     if (modif_type == k_UNDO_MODIFICATION_CHANGE_FLAG)
         content = get_multiple_flags_for_undo(r_ob, item);
     else if (modif_type == k_UNDO_MODIFICATION_CHANGE_NAME)
