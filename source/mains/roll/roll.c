@@ -15828,6 +15828,7 @@ void roll_exit_linear_edit(t_roll *x)
 //    if (x->r_ob.notation_cursor.voice)
 //        end_editing_measure_in_linear_edit(x, x->r_ob.notation_cursor.measure);
     
+    lock_general_mutex((t_notation_obj *)x);
     x->r_ob.num_speedy_tuplets = 0;
     x->r_ob.notation_cursor.voice = NULL;    // This means: NO cursor
     x->r_ob.notation_cursor.measure = NULL;
@@ -15838,6 +15839,7 @@ void roll_exit_linear_edit(t_roll *x)
     x->r_ob.is_linear_editing = false;
     update_all_accidentals_if_needed((t_notation_obj *)x);
     recompute_total_length((t_notation_obj *) x);
+    unlock_general_mutex((t_notation_obj *)x);
     notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
 
@@ -15856,7 +15858,7 @@ void roll_force_inscreen_ms_rolling_while_editing(t_roll *x)
         return;
     
     if (x->r_ob.notation_cursor.onset < x->r_ob.screen_ms_start || x->r_ob.notation_cursor.onset > x->r_ob.screen_ms_end)
-    force_inscreenpos_ms(x, 0.2, x->r_ob.notation_cursor.onset, true, false, false);
+        force_inscreenpos_ms(x, 0.2, x->r_ob.notation_cursor.onset, true, false, false);
 }
 
 t_chord *roll_change_pitch_from_linear_edit(t_roll *x, long diatonic_step)
@@ -16051,6 +16053,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
         if (modifiers & eControlKey) {
             if (x->r_ob.notation_cursor.chord) {
                 t_note *note;
+                lock_general_mutex((t_notation_obj *)x);
                 for (note = x->r_ob.notation_cursor.chord->firstnote; note; note = note->next) {
                     if (modifiers & eAltKey)
                         note->duration *= 2.;
@@ -16058,6 +16061,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                         note->duration = round(note->duration + 1 * (modifiers & eShiftKey ? 10 : 1));
                 }
                 recompute_total_length((t_notation_obj *)x);
+                unlock_general_mutex((t_notation_obj *)x);
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
             } else {
                 if (modifiers & eAltKey)
@@ -16068,10 +16072,12 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                 notationobj_redraw((t_notation_obj *)x);
             }
         } else {
+            lock_general_mutex((t_notation_obj *)x);
             t_chord *ch = roll_make_chord_or_note_sharp_or_flat_on_linear_edit(x, 1);    // edited chord
             if (ch)
                 ch->need_recompute_parameters = true;
-            
+            unlock_general_mutex((t_notation_obj *)x);
+
             handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_SHARP);
             
             if (x->r_ob.playback_during_linear_editing && ch)
@@ -16081,6 +16087,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
     } else if (keycode == '-') {
         if (modifiers & eControlKey) {
             if (x->r_ob.notation_cursor.chord) {
+                lock_general_mutex((t_notation_obj *)x);
                 t_note *note;
                 for (note = x->r_ob.notation_cursor.chord->firstnote; note; note = note->next) {
                     if (modifiers & eAltKey)
@@ -16090,6 +16097,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                     note->duration = MAX(note->duration, 0);
                 }
                 recompute_total_length((t_notation_obj *)x);
+                unlock_general_mutex((t_notation_obj *)x);
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
             } else {
                 if (modifiers & eAltKey)
@@ -16100,10 +16108,12 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                 notationobj_redraw((t_notation_obj *)x);
             }
         } else {
+            lock_general_mutex((t_notation_obj *)x);
             t_chord *ch = roll_make_chord_or_note_sharp_or_flat_on_linear_edit(x, -1);    // edited chord
             if (ch)
                 ch->need_recompute_parameters = true;
-            
+            unlock_general_mutex((t_notation_obj *)x);
+
             handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_FLAT);
             
             if (x->r_ob.playback_during_linear_editing && ch)
@@ -16124,6 +16134,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                 break;
             case JKEY_LEFTARROW:
             {
+                lock_general_mutex((t_notation_obj *)x);
                 if (modifiers & eCommandKey) {
                     t_chord *new_ch = x->r_ob.notation_cursor.chord ? chord_get_prev(x->r_ob.notation_cursor.chord) : chord_get_first_before_ms((t_notation_obj *)x, x->r_ob.notation_cursor.voice, x->r_ob.notation_cursor.onset);
                     if (new_ch) {
@@ -16143,7 +16154,8 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                 } else {
                     roll_linear_edit_move_onset(x, -1, modifiers & eShiftKey, false);
                 }
-                
+                unlock_general_mutex((t_notation_obj *)x);
+
                 roll_force_inscreen_ms_rolling_while_editing(x);
                 
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
@@ -16152,6 +16164,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
             }
             case JKEY_RIGHTARROW:
             {
+                lock_general_mutex((t_notation_obj *)x);
                 if (modifiers & eCommandKey) {
                     t_chord *new_ch = x->r_ob.notation_cursor.chord ? chord_get_next(x->r_ob.notation_cursor.chord) : chord_get_first_after_ms((t_notation_obj *)x, x->r_ob.notation_cursor.voice, x->r_ob.notation_cursor.onset);
                     double old_ch_tail = x->r_ob.notation_cursor.chord ? x->r_ob.notation_cursor.chord->onset + chord_get_max_duration((t_notation_obj *)x, x->r_ob.notation_cursor.chord) : 0;
@@ -16169,7 +16182,8 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                 } else {
                     roll_linear_edit_move_onset(x, 1, modifiers & eShiftKey, false);
                 }
-                
+                unlock_general_mutex((t_notation_obj *)x);
+
                 roll_force_inscreen_ms_rolling_while_editing(x);
                 
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
@@ -16178,6 +16192,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
             }
             case JKEY_UPARROW:
             {
+                lock_general_mutex((t_notation_obj *)x);
                 if (modifiers & eCommandKey) {
                     t_voice *prev = voice_get_prev((t_notation_obj *)x, x->r_ob.notation_cursor.voice);
                     if (prev) {
@@ -16188,12 +16203,15 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                     move_linear_edit_cursor_depending_on_edit_ranges((t_notation_obj *)x, modifiers & eShiftKey ? 7 : 1, modifiers);
                     x->r_ob.notation_cursor.midicents = scaleposition_to_midicents(x->r_ob.notation_cursor.step);
                 }
+                unlock_general_mutex((t_notation_obj *)x);
+                
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 return 1;
                 break;
             }
             case JKEY_DOWNARROW:
             {
+                lock_general_mutex((t_notation_obj *)x);
                 if (modifiers & eCommandKey) {
                     t_voice *next = x->r_ob.notation_cursor.voice && x->r_ob.notation_cursor.voice->number >= x->r_ob.num_voices - 1 ? NULL : voice_get_next((t_notation_obj *)x, x->r_ob.notation_cursor.voice);
                     if (next) {
@@ -16204,6 +16222,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                     move_linear_edit_cursor_depending_on_edit_ranges((t_notation_obj *)x, modifiers & eShiftKey ? -7 : -1, modifiers);
                     x->r_ob.notation_cursor.midicents = scaleposition_to_midicents(x->r_ob.notation_cursor.step);
                 }
+                unlock_general_mutex((t_notation_obj *)x);
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 return 1;
                 break;
@@ -16214,10 +16233,12 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                 if (x->r_ob.notation_cursor.chord) {
                     // change pitch of active chord
                     
+                    lock_general_mutex((t_notation_obj *)x);
                     create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.chord, k_UNDO_MODIFICATION_CHANGE);
                     
                     roll_change_pitch_from_linear_edit(x, ((keycode - 'a') + 5) % 7);
-                    
+                    unlock_general_mutex((t_notation_obj *)x);
+
                     if (x->r_ob.playback_during_linear_editing && x->r_ob.notation_cursor.chord)
                         send_chord_as_llll((t_notation_obj *) x, x->r_ob.notation_cursor.chord, 6, k_CONSIDER_FOR_DUMPING, -1);
                     
@@ -16237,10 +16258,13 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
             case 'n': // add new note to chord
             {
                 if (x->r_ob.notation_cursor.chord) {
+                    lock_general_mutex((t_notation_obj *)x);
                     roll_add_note_to_chord_from_linear_edit(x, 4, -1, true);
                     if (x->r_ob.auto_jump_to_next_chord)
                         roll_linear_edit_move_onset(x, 1, false, true);
+                    unlock_general_mutex((t_notation_obj *)x);
                     roll_force_inscreen_ms_rolling_while_editing(x);
+                    
                     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_NOTE);
                     if (x->r_ob.playback_during_linear_editing && x->r_ob.notation_cursor.chord)
                         send_chord_as_llll((t_notation_obj *) x, x->r_ob.notation_cursor.chord, 6, k_CONSIDER_FOR_DUMPING, -1);
@@ -16256,6 +16280,10 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                 if (ch) {
                     if (modifiers & eShiftKey){
                         t_note *nt;
+                        e_undo_operations op = k_UNDO_OP_UNKNOWN;
+                        t_chord *to_send = NULL;
+                        
+                        lock_general_mutex((t_notation_obj *)x);
                         for (nt = ch->firstnote; nt; nt = nt->next) {
                             if (note_get_screen_midicents(nt) == x->r_ob.notation_cursor.midicents) {
                                 char num_notes = ch->num_notes;
@@ -16263,24 +16291,32 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                                     create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_ADD);
                                     chord_delete((t_notation_obj *) x, ch, ch->prev, false);
                                     x->r_ob.notation_cursor.chord = NULL;
-                                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_DELETE_CHORD);
                                 } else  {
                                     create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
                                     note_delete((t_notation_obj *)x, nt, false);
                                     ch->need_recompute_parameters = true;
                                     
                                     if (x->r_ob.playback_during_linear_editing && ch)
-                                        send_chord_as_llll((t_notation_obj *) x, ch, 6, k_CONSIDER_FOR_DUMPING, -1);
-                                    
-                                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_DELETE_NOTE);
+                                        to_send = ch;
                                 }
                                 break;
                             }
                         }
+                        unlock_general_mutex((t_notation_obj *)x);
+
+                        if (to_send)
+                            send_chord_as_llll((t_notation_obj *) x, to_send, 6, k_CONSIDER_FOR_DUMPING, -1);
+                        
+                        if (op != k_UNDO_OP_UNKNOWN)
+                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, op);
+
                     } else {
+                        lock_general_mutex((t_notation_obj *)x);
                         create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_ADD);
                         chord_delete((t_notation_obj *) x, ch, ch->prev, false);
                         x->r_ob.notation_cursor.chord = NULL;
+                        unlock_general_mutex((t_notation_obj *)x);
+                        
                         handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_DELETE_CHORD);
                     }
                 }
@@ -16326,6 +16362,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                         e_undo_operations op = k_UNDO_OP_LINEAR_EDIT_ADD_CHORD;
                         t_chord *edited_chord = NULL;
 
+                        lock_general_mutex((t_notation_obj *)x);
                         if (x->r_ob.notation_cursor.chord) {
                             // there's already a chord, we change its duration
                             create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.chord, k_UNDO_MODIFICATION_CHANGE);
@@ -16343,6 +16380,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                             create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)edited_chord, k_UNDO_MODIFICATION_DELETE);
                             
                         }
+                        unlock_general_mutex((t_notation_obj *)x);
 
                         if (x->r_ob.playback_during_linear_editing && edited_chord && keycode != 46)
                             send_chord_as_llll((t_notation_obj *) x, edited_chord, 6, k_CONSIDER_FOR_DUMPING, -1);
@@ -16350,7 +16388,10 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                         if (x->r_ob.auto_jump_to_next_chord)
                             roll_linear_edit_move_onset(x, 1, false, true);
                         
+                        lock_general_mutex((t_notation_obj *)x);
                         recompute_total_length((t_notation_obj *)x);
+                        unlock_general_mutex((t_notation_obj *)x);
+
                         roll_force_inscreen_ms_rolling_while_editing(x);
                         
                         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, op);
