@@ -9992,7 +9992,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 					if (lyrics_dashed_going_on)
 						left_dashed_ux = lyrics_end_ux;
 					
-					if (x->r_ob.show_lyrics_word_extensions) {
+					if (x->r_ob.show_lyrics_word_extensions && !curr_ch->lyrics->lyrics_dashed_extension) {
 						lyrics_word_extensions_start_chord = curr_ch;
 						lyrics_word_extension_going_on = true;
 						left_word_extension_ux = lyrics_end_ux + 1;
