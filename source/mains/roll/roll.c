@@ -1047,7 +1047,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     active_slots_elem = temp5;
                     active_IDs_elem = temp6;
                 } else {
-                    llll_appendlong(this_event_ties, 1, 0, WHITENULL_llll);
+                    llll_appendlong(this_event_ties, hatom_getlong(&active_IDs_elem->l_hatom), 0, WHITENULL_llll);
                     active_cents_elem = active_cents_elem->l_next;
                     active_velocities_elem = active_velocities_elem->l_next;
                     active_slots_elem = active_slots_elem->l_next;
@@ -1068,7 +1068,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     if (tmp_chord->onset + note->duration == next_onset) {
                         llll_appendlong(this_event_ties, 0, 0, WHITENULL_llll);
                     } else {
-                        llll_appendlong(this_event_ties, 1, 0, WHITENULL_llll);
+                        llll_appendlong(this_event_ties, note->r_it.ID, 0, WHITENULL_llll);
                         // we put the note into the active list
                         llll_appenddouble(active_cents, note->midicents, 0, WHITENULL_llll);
                         llll_appendlong(active_velocities, note->velocity, 0, WHITENULL_llll);
@@ -1166,7 +1166,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         active_slots_elem = temp5;
                         active_IDs_elem = temp6;
                     } else {
-                        llll_appendlong(this_middle_event_ties, 1, 0, WHITENULL_llll);
+                        llll_appendlong(this_middle_event_ties, hatom_getlong(&active_IDs_elem->l_hatom), 0, WHITENULL_llll);
                         active_cents_elem = active_cents_elem->l_next;
                         active_velocities_elem = active_velocities_elem->l_next;
                         active_graphic_elem = active_graphic_elem->l_next;

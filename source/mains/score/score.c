@@ -827,7 +827,7 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
                     llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
                     llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
                     llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
-                    llll_appendlong(this_event_ties, note->tie_to ? 1 : 0, 0, WHITENULL_llll);
+                    llll_appendlong(this_event_ties, note->tie_to ? (note->tie_to != WHITENULL ? note->tie_to->r_it.ID : 1) : 0, 0, WHITENULL_llll);
                     llll_appendlong(this_event_IDs, note->r_it.ID, 0, WHITENULL_llll);
                 }
                 

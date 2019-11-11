@@ -92,7 +92,7 @@
         //#define BACH_RHYTHMIC_TREE_DEBUG                ///< Print verbosely rhythmic trees at each step, and do additional checking. Only works on Mac
         //#define BACH_POST_IDS_IN_RHYTHMIC_TREE_DEBUG    ///< Also post IDs in rhythmic tree debug
         //#define BACH_PLAY_DEBUG                        ///< Debug the playing task with messages about next scheduled chords
-        //#define BACH_QUANTIZE_DEBUG                    ///< Debug the quantize task
+        #define BACH_QUANTIZE_DEBUG                    ///< Debug the quantize task
         //#define BACH_SPACING_DEBUG                    ///< Debug the spacing task (and display alignment points)
         //#define BACH_PAINT_IDS                        ///< Paint the IDs for all elements having one
         //#define BACH_UNDO_DEBUG                        ///< Debug the undo task
@@ -13285,7 +13285,7 @@ char is_at_least_a_note_tied_in_llllelem(t_llllelem *tie_elem);
     @param  mark_created_info_upon_split    If non-zero, marks the llllelem in <new_info> created during split (the "tied" ones) with a WHITENULL l_thing field
     @return 0 if check_completeness is non-zero and some box aren't complete; 1 otherwise
  */
-char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *boxes, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, char check_completeness, char mark_created_info_upon_split);
+char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *boxes, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, char check_completeness, char mark_created_info_upon_split, char ties_have_ids);
 
 
 /**    Calls the note_compute_approximation() function on all the notes of a chord.

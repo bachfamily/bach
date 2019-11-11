@@ -514,7 +514,7 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
                     if (measures_elem) measures_elem = measures_elem->l_next;
                 }
             
-                split_rhythm_to_boxes(voice_durations, voice_infos, voice_ties, boxes, &boxed_voice_durations, &boxed_voice_infos, &boxed_voice_ties, false, false);
+                split_rhythm_to_boxes(voice_durations, voice_infos, voice_ties, boxes, &boxed_voice_durations, &boxed_voice_infos, &boxed_voice_ties, false, false, false);
                 
                 // now we split the boxed_infos into:
                 boxed_voice_cents = llll_get(); boxed_voice_velocities = llll_get(); 

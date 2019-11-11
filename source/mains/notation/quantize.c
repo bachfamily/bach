@@ -84,7 +84,7 @@
 
 #define QUANTIZE_MARK_TIED_INFOS true
 
-#define QUANTIZE_MERGE_WHEN (k_MERGE_WHEN_DRAWABLE)
+#define QUANTIZE_MERGE_WHEN (k_MERGE_WHEN_DRAWABLE) // < WHY??? WHY is it "merge when drawable"???? We should merge things no matter what, shouldn't we?
 
 #define CONST_MAX_MINIMAL_UNITS 20
 #define CONST_TOLERANCE_MC 0.1
@@ -1520,7 +1520,7 @@ char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_
     
     char completed = split_rhythm_to_boxes(rough_rat_durations, voice_infos, voice_ties, rough_quant_boxes_ms,
                                            unquantized_boxed_voice_durations, unquantized_boxed_voice_infos, unquantized_boxed_voice_ties,
-                                           true, QUANTIZE_MARK_TIED_INFOS);
+                                           true, QUANTIZE_MARK_TIED_INFOS, true);
     
     llll_check(*unquantized_boxed_voice_durations);
     
@@ -1684,6 +1684,12 @@ long make_ids_fn(void *data, t_hatom *a, const t_llll *address)
         hatom_setlong(a, *num);
         (*num)++;
     }
+    return 0;
+}
+
+long make_01_fn(void *data, t_hatom *a, const t_llll *address){
+    if (hatom_gettype(a) == H_LONG)
+        hatom_setlong(a, hatom_getlong(a) > 0 ? 1 : 0);
     return 0;
 }
 
@@ -2373,7 +2379,7 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                     // obtain split rhythm
                     completed = split_rhythm_to_boxes(voice_ratdurations, voice_infos, voice_ties, quant_boxes,
                                                       &unquantized_boxed_voice_durations, &unquantized_boxed_voice_infos, &unquantized_boxed_voice_ties,
-                                                      true, QUANTIZE_MARK_TIED_INFOS);
+                                                      true, QUANTIZE_MARK_TIED_INFOS, true);
                     
                     llll_free(voice_ratdurations);
                     llll_free(voice_ts);
@@ -2422,9 +2428,6 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                  t_llllelem *debug_elem1 = llll_getindex(llll_getindex(unquantized_boxed_voice_infos, 1, I_NON_NEGATIVE)->l_hatom.h_w.w_llll, 1, I_NON_NEGATIVE);
                  t_llllelem *debug_elem2 = llll_getindex(llll_getindex(unquantized_boxed_voice_infos, 1, I_NON_NEGATIVE)->l_hatom.h_w.w_llll, 2, I_NON_NEGATIVE);
                  t_llllelem *debug_elem3 = llll_getindex(llll_getindex(unquantized_boxed_voice_infos, 1, I_NON_NEGATIVE)->l_hatom.h_w.w_llll, 3, I_NON_NEGATIVE);
-                 //				llll_to_char_array(unquantized_boxed_voice_durations, debug1, 999); //debug1 + 100
-                 //				llll_to_char_array(unquantized_boxed_voice_infos, debug2, 999);  //debug2 + 440
-                 //				llll_to_char_array(unquantized_boxed_voice_ties, debug3, 999);
                  llll_to_char_array(hatom_getllll(&debug_elem1->l_hatom), debug1, 999);
                  llll_to_char_array(hatom_getllll(&debug_elem2->l_hatom), debug2, 999);
                  llll_to_char_array(hatom_getllll(&debug_elem3->l_hatom), debug3, 999);
@@ -2432,6 +2435,12 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                  //				post("%s", debug1);
                  }
                  */
+/*
+                char debug1[1000], debug2[1000], debug3[1000];
+                llll_to_char_array(unquantized_boxed_voice_durations, debug1, 999); //debug1 + 100
+                llll_to_char_array(unquantized_boxed_voice_infos, debug2, 999);  //debug2 + 440
+                llll_to_char_array(unquantized_boxed_voice_ties, debug3, 999); // debug3 + 100
+*/
                 long c = 1;
                 for (boxed_voice_durations_llllelem = unquantized_boxed_voice_durations->l_head,
                      boxed_voice_infos_llllelem = unquantized_boxed_voice_infos->l_head,
@@ -2445,11 +2454,12 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                     
                     t_llll *quantized_box_durations, *quantized_box_infos, *quantized_box_ties;
                     
-                    /*					char debug1[1000], debug2[1000], debug3[1000];
+                    /*
+                    					char debug1[1000], debug2[1000], debug3[1000];
                      llll_to_char_array(hatom_getllll(&boxed_voice_durations_llllelem->l_hatom), debug1, 999);
                      llll_to_char_array(hatom_getllll(&boxed_voice_infos_llllelem->l_hatom), debug2, 999);
                      llll_to_char_array(hatom_getllll(&boxed_voice_ties_llllelem->l_hatom), debug3, 999);
-                     */
+                    */
                     
                     // we quantize this single box
                     quantize_box(x, hatom_getrational(&quant_boxes_llllelem->l_hatom),
@@ -2477,6 +2487,14 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                     else
                         llll_appendllll(quantized_ties, get_nilnil());
                     
+                    /*
+                    llll_to_char_array(quantized_box_durations, debug1, 999);  //debug2 + 430
+                    llll_to_char_array(quantized_box_infos, debug2, 999);  //debug2 + 430
+                    llll_to_char_array(quantized_box_ties, debug3, 999);  //debug2 + 430
+                    
+                    llll_to_char_array(quantized_box_ties, debug3, 999);  //debug2 + 430
+                     */
+
                 }
                 
                 //				llll_to_char_array(quantized_infos, debug2, 999);  //debug2 + 430
@@ -2515,6 +2533,9 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                     }
                 }
                 
+                // clip ties from 0 and 1, i.e. remove IDs
+                llll_funall(quantized_ties, (fun_fn)make_01_fn, NULL, 0, -1); //CLIP BETWEEN 0 and 1, i.e. remove IDs
+
                 // *****************************************
                 // BEATBOX-LIKE PART: we construct the score
                 // *****************************************
@@ -2524,7 +2545,7 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                  llll_to_char_array(measure_boxes, debug1, 999); //debug1 + 50 */
                 
                 split_rhythm_to_boxes(quantized_durations, quantized_infos, quantized_ties, measure_boxes,
-                                      &boxed_voice_durations, &boxed_voice_infos, &boxed_voice_ties, false, QUANTIZE_MARK_TIED_INFOS);
+                                      &boxed_voice_durations, &boxed_voice_infos, &boxed_voice_ties, false, QUANTIZE_MARK_TIED_INFOS, true);
                 
                 /*				llll_to_char_array(boxed_voice_durations, debug1, 999); //debug1 + 80
                  llll_to_char_array(llll_getindex(boxed_voice_infos, 2, I_NONNEGATIVE)->l_hatom.h_w.w_llll, debug2, 999);  //debug2 + 400 */
@@ -2929,7 +2950,7 @@ void quantize_collapse(t_llll **measureinfo, t_llll **cents, t_llll **durations,
                             t_llll *note_ll = hatom_getllll(&note_el->l_hatom);
                             t_llllelem *tie_el = llll_getindex(note_ll, 3, I_STANDARD);
                             if (tie_el && hatom_gettype(&tie_el->l_hatom) == H_LONG)
-                                hatom_setlong(&tie_el->l_hatom, 1);
+                                hatom_setlong(&tie_el->l_hatom, 1); // TO DO: how to handle this now that ties are ID-ed?
                         }
                     }
                 }
@@ -4304,13 +4325,13 @@ long info_to_num_notes(t_llllelem *info_elem){
 }
 
 
-char get_num_1s_in_llll(t_llll *ll){
+char get_num_positives_in_llll(t_llll *ll){
     t_llllelem *elem;
     long count = 0;
     if (!ll || !ll->l_head)
         return 0;
     for (elem = ll->l_head; elem; elem = elem->l_next){
-        if (hatom_gettype(&elem->l_hatom) == H_LONG && hatom_getlong(&elem->l_hatom) == 1)
+        if (hatom_gettype(&elem->l_hatom) == H_LONG && hatom_getlong(&elem->l_hatom) >= 1)
             count++;
     }
     return count;
@@ -4598,8 +4619,8 @@ void destroy_rhythm_element_or_turn_it_into_grace(t_quantize *x, t_llllelem *rhy
                 next_elem_infos->l_thing.w_obj = NULL;
         }
         
-        // check if previous ties have to be broken
-        if (prev_elem_infos && prev_elem_ties && next_elem_infos && next_elem_ties && next_duration.r_num > 0 && prev_duration.r_num > 0) {
+        // check if previous ties have to be broken, or have to be transferred
+        if (prev_elem_infos && prev_elem_ties && next_elem_infos && next_elem_ties && next_duration.r_num >= 0 && prev_duration.r_num >= 0) {
             t_llllelem *tieelem, *idelem;
             
             // marking these_ties as non-treated on lthing field
@@ -4610,10 +4631,16 @@ void destroy_rhythm_element_or_turn_it_into_grace(t_quantize *x, t_llllelem *rhy
                 long this_id = hatom_getlong(&idelem->l_hatom);
                 long this_tie = hatom_getlong(&tieelem->l_hatom);
                 
+                long l = 0; t_llllelem *tel;
                 if (this_tie && // there was a tie
-                    is_long_in_llll_first_level(next_IDs, this_id)) { // and the sequence of ties spanned across the element to be deleted
-                    // nothing to do, we keep the tie
+                    (is_long_in_llll_first_level(next_IDs, this_id) || // tied to "itself" (used by roll)
+                     ((l = locate_long_in_llll_first_level(these_IDs, this_tie)) && (l >= 1 && l <= these_ties->l_size) && (tel = llll_getindex(these_ties, l, I_NON_NEGATIVE)) && hatom_getlong(&tel->l_hatom)))) // tied to something that was tied to something
+                { // and the sequence of ties spanned across the element to be deleted
+                    // we keep the tie
+                    if (l) // transfer tie
+                        hatom_setlong(&tieelem->l_hatom, hatom_getlong(&tel->l_hatom));
                 } else if (this_tie) {
+                    // KNOWN BUG: this causes issues with bach.score, because one may have a tie going from one note to another with different IDs
                     hatom_setlong(&tieelem->l_hatom, 0);	// we remove the tie
                     //                    if (QUANTIZE_MARK_TIED_INFOS && !tieelem->l_prev)
                     //                        these_infos->l_thing.w_obj = NULL;
@@ -4808,7 +4835,7 @@ void merge_infos(t_llll *where, t_llll *what, char where_is_a_pause, t_llll *whi
 }
 
 char is_chord_as_llllelem_all_tied_to(t_llllelem *rhythm, t_llllelem *infos, t_llllelem *ties, t_llllelem *next_elem_infos){
-    long num_ties = ties ? get_num_1s_in_llll(hatom_getllll(&ties->l_hatom)) : 0;
+    long num_ties = ties ? get_num_positives_in_llll(hatom_getllll(&ties->l_hatom)) : 0;
     t_llllelem *nextmcelem = info_to_midicents(next_elem_infos);
     long num_next_notes = nextmcelem && hatom_gettype(&nextmcelem->l_hatom) == H_LLLL ? hatom_getllll(&nextmcelem->l_hatom)->l_size : 0;
     if (num_ties <= num_next_notes){
@@ -4828,7 +4855,7 @@ char is_chord_as_llllelem_all_tied_to(t_llllelem *rhythm, t_llllelem *infos, t_l
 }
 
 char is_chord_as_llllelem_all_tied_from(t_llllelem *rhythm, t_llllelem *infos, t_llllelem *prev_elem_infos, t_llllelem *prev_elem_ties){
-    long num_prev_ties = prev_elem_ties ? get_num_1s_in_llll(hatom_getllll(&prev_elem_ties->l_hatom)) : 0;
+    long num_prev_ties = prev_elem_ties ? get_num_positives_in_llll(hatom_getllll(&prev_elem_ties->l_hatom)) : 0;
     t_llllelem *thismcelem = info_to_midicents(infos);
     long num_notes = thismcelem && hatom_gettype(&thismcelem->l_hatom) == H_LLLL ? hatom_getllll(&thismcelem->l_hatom)->l_size : 0;
     if (num_prev_ties <= num_notes){
@@ -4873,7 +4900,7 @@ char in_chord_as_llllelem_all_notes_has_tie(t_llllelem *rhythm, t_llllelem *info
         char found = false;
         double this_mcs_double = hatom_getdouble(&elem->l_hatom);
         
-        if (hatom_getlong(&tie_elem->l_hatom) == 1 && is_double_in_llll_first_level_with_tolerance(next_mc, this_mcs_double, CONST_TOLERANCE_MC))
+        if (hatom_getlong(&tie_elem->l_hatom) >= 1 && is_double_in_llll_first_level_with_tolerance(next_mc, this_mcs_double, CONST_TOLERANCE_MC))
             found = true;
         
         if (!found) {
@@ -4883,7 +4910,7 @@ char in_chord_as_llllelem_all_notes_has_tie(t_llllelem *rhythm, t_llllelem *info
             for (prevelem = prev_mc->l_head, prevelem_ties = are_ties_llll ? hatom_getllll(&prev_elem_ties->l_hatom)->l_head : prev_elem_ties; 
                  prevelem && prevelem_ties; 
                  prevelem = prevelem->l_next, prevelem_ties = are_ties_llll ? prevelem_ties->l_next : prevelem_ties)
-                if (fabs(hatom_getdouble(&prevelem->l_hatom) - this_mcs_double) < CONST_TOLERANCE_MC && hatom_getlong(&prevelem_ties->l_hatom) == 1) {
+                if (fabs(hatom_getdouble(&prevelem->l_hatom) - this_mcs_double) < CONST_TOLERANCE_MC && hatom_getlong(&prevelem_ties->l_hatom) >= 1) {
                     found = true;
                     break;
                 }
