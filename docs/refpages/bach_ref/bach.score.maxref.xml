@@ -3734,7 +3734,7 @@
 				Message attributes:<br />
 				<m>@exportmarkers</m> (int, default: 1): If non-zero, exports all the markers<br />
 				<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
-				<m>@format</m> (int, default: 0): MIDI file format (0 = single track, 1 = multiple tracks)<br />
+				<m>@format</m> (int, default: 1): MIDI file format (0 = single track, 1 = multiple tracks)<br />
 				<m>@resolution</m> (int, default: 960): Number of MIDI ticks per beat<br />
 				<m>@temporampsamplingrate</m> (int, default: 240): Maximum duration, in MIDI ticks, for a single tempo step during tempo interpolations<br />
 				<br />

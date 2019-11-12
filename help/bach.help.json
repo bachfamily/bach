@@ -3689,7 +3689,7 @@
 				"filename" : [ "bach.help.notation.messages.68_realtime.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "undo", "legend", "highlightplay" ],
-				"tags" : [ "message", "realtime", "real", "time", "toggle", "mode", "cpu", "optimize" ],
+				"tags" : [ "message", "realtime", "real", "time", "toggle", "mode", "cpu", "optimize", "maxundosteps", "legend", "highlightplay", "highlight", "play", "undo", "step", "max" ],
 				"title" : [ "Toggle real-time mode" ]
 			},
 			"Collapse" : {
@@ -6078,7 +6078,7 @@
 			"Autoclefs" : {
 				"filename" : [ "bach.help.notation.voice properties.04_autoclefs.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "numvoices", "voice", "clef+change" ],
+				"seealso" : [ "numvoices", "voice", "clef+change", "clef+auto+scope" ],
 				"tags" : [ "clef", "change", "modify", "automatic", "detect", "infer", "auto", "autoclef" ],
 				"title" : [ "Automatic clef detection" ]
 			},

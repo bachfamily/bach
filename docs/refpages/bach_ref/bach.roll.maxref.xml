@@ -2796,7 +2796,7 @@
 				<m>@exportmarkers</m> (int, default: 1): If non-zero, exports all the markers<br />
 				<m>@exportbarlines</m> (int, default: 1): Barline markers are exported as MIDI marker events, with the name "bach barline"<br />
 				<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
-				<m>@format</m> (int, default: 0): MIDI file format (0 = single track, 1 = multiple tracks)<br />
+				<m>@format</m> (int, default: 1): MIDI file format (0 = single track, 1 = multiple tracks)<br />
 				<m>@resolution</m> (int, default: 960): Number of MIDI ticks per beat<br />
 				<br />
 				The <m>exportmidi</m> message saves the content of the <o>bach.roll</o> as a MIDI file.
