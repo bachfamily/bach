@@ -12965,6 +12965,11 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     } else {
                                         create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
                                         pop_tempo_over_chord(x, meas->firstchord, false);
+                                        
+                                        // this line below is important, since if we perform the analysis and change, then this "duplicate" tempo
+                                        // may be hidden out, which we don't want. We want to leave room for the user to modify it. Only then will
+                                        // we perform the analysis and change.
+                                        x->r_ob.need_perform_analysis_and_change = false;
                                     }
                                 } else {
                                     create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);

@@ -235,11 +235,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: message, realtime, real, time, toggle, mode, cpu, optimize",
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
+					"text" : "Tags: message, realtime, real, time, toggle, mode, cpu, optimize, maxundosteps, legend, highlightplay, highlight, play, undo, step, max",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

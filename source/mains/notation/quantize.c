@@ -84,7 +84,7 @@
 
 #define QUANTIZE_MARK_TIED_INFOS true
 
-#define QUANTIZE_MERGE_WHEN (k_MERGE_WHEN_DRAWABLE) // < WHY??? WHY is it "merge when drawable"???? We should merge things no matter what, shouldn't we?
+#define QUANTIZE_MERGE_WHEN (k_MERGE_WHEN_DRAWABLE) // < TO DO : WHY??? why is it "merge when drawable"???? We should merge things no matter what, shouldn't we?
 
 #define CONST_MAX_MINIMAL_UNITS 20
 #define CONST_TOLERANCE_MC 0.1
@@ -200,7 +200,7 @@ typedef struct _quantize
     
     char				autoclear;
     char				ceilmeasures;
-    char				output_separate;	// output separate syntax from all outlets, or just gathered syntax from the first one?
+    char				separate_mode;	// _input_ and _output_ separate syntax from all outlets, or just gathered syntax from the first one?
     
     // internal
     long				current_voice_being_quantized;
@@ -326,7 +326,7 @@ t_max_err quantize_setattr_smalleventshandling(t_quantize *x, t_object *attr, lo
 
 t_max_err quantize_setattr_separate(t_quantize *x, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
-        x->output_separate = atom_getlong(av) ? 1 : 0;
+        x->separate_mode = atom_getlong(av) ? 1 : 0;
         x->n_ob.l_rebuild = true;
     }
     return MAX_ERR_NONE;
@@ -764,11 +764,11 @@ void quantize_bang(t_quantize *x)
         
         if (x->pickup_added_time >= 0.) {
             t_llll *pickupll = symbol_and_double_to_llll(gensym("pickup"), x->pickup_added_time);
-            llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, x->output_separate ? 7 : 1, pickupll);
+            llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, x->separate_mode ? 7 : 1, pickupll);
             llll_free(pickupll);
         }
         
-        if (x->output_separate) {
+        if (x->separate_mode) {
             if (x->autoclear)
                 llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, 0, _llllobj_sym_clear, 0, NULL);
             
@@ -1709,7 +1709,7 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
     if (msg == _llllobj_sym_clearall) {
         x->rt_last_length = 0;
         x->rt_achieved_length = 0;
-        for (i = 0; i < (x->output_separate ? 6 : 1); i++)
+        for (i = 0; i < (x->separate_mode ? 6 : 1); i++)
             llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), i);
         
         if (x->marker_info) {
@@ -1850,7 +1850,7 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
             object_error((t_object *)x, "doesn't understand \"%s\".", router->s_name);
             return;
         } else {
-            if (x->output_separate && inlet == 1) {
+            if (x->separate_mode && inlet == 1) {
                 // assign fake IDs, one for each note.
                 if (x->noteIDs)
                     llll_free(x->noteIDs);
@@ -1859,7 +1859,7 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                 long num = 1;
                 llll_funall(x->noteIDs, make_ids_fn, &num, 1, -1, FUNALL_ONLY_PROCESS_ATOMS);
             }
-            llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, arguments, !x->output_separate && inlet == 2 ? 6 : inlet);
+            llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, arguments, !x->separate_mode && inlet == 2 ? 6 : inlet);
         }
         x->n_ob.l_rebuild = 1;
     }
@@ -2682,7 +2682,7 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
              llll_to_char_array(measures, debug3, 999);*/
             
             
-            if (x->output_separate) {
+            if (x->separate_mode) {
                 if (collapse) {
                     // copying measureinfo properly for each voice
                     while (measures->l_head && (long)measures->l_size < num_voices)
@@ -2899,6 +2899,7 @@ void quantize_collapse(t_llll **measureinfo, t_llll **cents, t_llll **durations,
     
     char is_rest = true;
     t_llll *collapsed = llll_get();
+    long *transients = (long *)bach_newptr(num_voices * sizeof(long));
     while (true) {
         
         // A) finding next transient
@@ -2920,7 +2921,6 @@ void quantize_collapse(t_llll **measureinfo, t_llll **cents, t_llll **durations,
         
         
         // B) finding all synchronous transients
-        long *transients = (long *)bach_newptr(num_voices * sizeof(long));
         long how_many_transients = 0;
         double orig_best_onset = best_onset;
         for (i = 0; i < num_voices; i++) {
@@ -2942,15 +2942,19 @@ void quantize_collapse(t_llll **measureinfo, t_llll **cents, t_llll **durations,
                 t_llll *cloned = llll_clone(hatom_getllll(&hatom_getllll(&active[i]->l_hatom)->l_tail->l_hatom));
                 
                 // if in the next cycle there is NO transient for the i-th voice, it means that this lapse for voice i continues,
-                // thus we have to set all note ties to 1.
+                // thus we have to set all note ties to their note ID (or to 1 if there's none)
                 if (!is_long_in_long_array(transients, how_many_transients, i)) {
                     t_llllelem *note_el;
                     for (note_el = cloned->l_head; note_el; note_el = note_el->l_next) {
                         if (hatom_gettype(&note_el->l_hatom) == H_LLLL){
                             t_llll *note_ll = hatom_getllll(&note_el->l_hatom);
                             t_llllelem *tie_el = llll_getindex(note_ll, 3, I_STANDARD);
-                            if (tie_el && hatom_gettype(&tie_el->l_hatom) == H_LONG)
-                                hatom_setlong(&tie_el->l_hatom, 1); // TO DO: how to handle this now that ties are ID-ed?
+                            t_llllelem *id_el = llll_getindex(note_ll, 7, I_STANDARD);
+                            if (tie_el && hatom_gettype(&tie_el->l_hatom) == H_LONG) {
+//                                t_llllelem *info_el = llll_getindex(note_ll, 2, I_STANDARD);
+                                long note_id = (id_el && hatom_gettype(&id_el->l_hatom) == H_LONG ? hatom_getlong(&id_el->l_hatom) : 1);
+                                hatom_setlong(&tie_el->l_hatom, note_id); // TO DO: how to handle this now that ties are ID-ed?
+                            }
                         }
                     }
                 }
@@ -2993,10 +2997,11 @@ void quantize_collapse(t_llll **measureinfo, t_llll **cents, t_llll **durations,
         }
         
         // 4. (freeing stuff)
-        bach_freeptr(transients);
         cur_onset_general = best_onset;
     }
-    
+
+    bach_freeptr(transients);
+
     llll_behead(collapsed); // first element is a foo "0" element
     
     bach_freeptr(active);
@@ -3167,10 +3172,10 @@ void quantize_assist(t_quantize *x, void *b, long m, long a, char *s)
         if (a == 0)															// @in 0 @type llll/bang @digest Measureinfo or bang
             sprintf(s, "llll: Measureinfo or auto or bang to Trigger");		// @description @copy BACH_DOC_MEASUREINFO_SYNTAX
         else if (a == 1)	// @in 1 @type llll @digest The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or MIDIcents
-            sprintf(s, x->output_separate ? "llll: Pitches or Cents" : "llll from bach.roll or bach.score");
+            sprintf(s, x->separate_mode ? "llll: Pitches or Cents" : "llll from bach.roll or bach.score");
         else if (a == 2)	// @in 2 @type llll @digest The Regularity Boxes for the quantization – or in <m>separate</m> mode: Durations
             // @description @copy BACH_DOC_REGULARITYBOXES
-            sprintf(s, x->output_separate ? "llll: Durations" : "llll: Regularity Boxes");
+            sprintf(s, x->separate_mode ? "llll: Durations" : "llll: Regularity Boxes");
         else if (a == 3)	// @in 3 @type llll @digest Velocities (in <m>separate</m> mode only)
             sprintf(s, "llll: Velocities");
         else if (a == 4)	// @in 4 @type llll @digest Ties (in <m>separate</m> mode only)
@@ -3189,12 +3194,12 @@ void quantize_assist(t_quantize *x, void *b, long m, long a, char *s)
             //				If the <m>separate</m> attribute is set, this sends messages to score (such as "clear"
             //				if <m>autoclear</m> is active) and a bang to properly build the score from
             //				the separate parameters
-            sprintf(s, x->output_separate ? "llll (%s): Messages for bach.score's First Inlet" : "llll (%s): Score in Gathered Syntax", type);
+            sprintf(s, x->separate_mode ? "llll (%s): Messages for bach.score's First Inlet" : "llll (%s): Score in Gathered Syntax", type);
         else if (a == 1)	//	@out 1 @type llll @digest Notifications (in standard mode), or Measureinfo (in <m>separate</m> mode)
             //  @description Unless the <m>separate</m> attribute is set, this sends out the notifications obtained
             //  from marker quantization (such as the pickup added time).
             //  If the <m>separate</m> argument is set, this sends out the Measureinfo (in <m>separate</m> mode only)
-            sprintf(s, x->output_separate ? "llll (%s): Measureinfo" : "llll (%s): Notifications", type);
+            sprintf(s, x->separate_mode ? "llll (%s): Measureinfo" : "llll (%s): Notifications", type);
         else if (a == 2)	//  @out 2 @type llll @digest The quantized Pitches or cents (in <m>separate</m> mode only)
             sprintf(s, "llll (%s): Pitches", type);
         else if (a == 3)	//  @out 3 @type llll @digest The quantized Durations (in <m>separate</m> mode only)
@@ -3228,7 +3233,7 @@ void quantize_free(t_quantize *x) // we must free cache!!!
     
     bach_freeptr(x->articulations_typo_preferences.artpref);
     
-    if (x->output_separate) {
+    if (x->separate_mode) {
         for (i = 1; i < 7; i++)
             object_free_debug(x->n_proxy[i]);
     } else {
@@ -3268,12 +3273,12 @@ t_quantize *quantize_new(t_symbol *s, short ac, t_atom *av)
     
     if ((x = (t_quantize *) object_alloc_debug(quantize_class))) {
         // @arg 0 @name separate @optional 1 @type symbol @digest Separate parameters mode
-        // @description Put a "separate" symbol as argument if you want to output the separate parameters (and not the bach.score gathered syntax).
-        x->output_separate = true_ac && atom_gettype(av) == A_SYM && atom_getsym(av) == _llllobj_sym_separate;
+        // @description Put a "separate" symbol as argument if you want to input and output the separate parameters (and not the bach.score gathered syntax).
+        x->separate_mode = true_ac && atom_gettype(av) == A_SYM && atom_getsym(av) == _llllobj_sym_separate;
         
-        object_attr_setdisabled((t_object *)x, gensym("autoclear"), !x->output_separate); // if outputs are NOT separated, the score is of course always cleared
+        object_attr_setdisabled((t_object *)x, gensym("autoclear"), !x->separate_mode); // if outputs are NOT separated, the score is of course always cleared
         
-        if (x->output_separate) {
+        if (x->separate_mode) {
             x->n_proxy[6] = proxy_new_debug((t_object *) x, 6, &x->n_in);
             x->n_proxy[5] = proxy_new_debug((t_object *) x, 5, &x->n_in);
             x->n_proxy[4] = proxy_new_debug((t_object *) x, 4, &x->n_in);
@@ -3357,7 +3362,7 @@ t_quantize *quantize_new(t_symbol *s, short ac, t_atom *av)
             x->use_dynamic_minimal_units = 0;
         }
         
-        llllobj_obj_setup((t_llllobj_object *) x, 7, x->output_separate ? "44444444" : "44", NULL);
+        llllobj_obj_setup((t_llllobj_object *) x, 7, x->separate_mode ? "44444444" : "44", NULL);
         
     } else
         error(BACH_CANT_INSTANTIATE);
