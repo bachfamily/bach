@@ -1058,7 +1058,8 @@ char is_double_in_llll_first_level(t_llll *inllll, double num){
 	return false;
 }
 
-char is_long_in_llll_first_level(t_llll *inllll, long num){
+char is_long_in_llll_first_level(t_llll *inllll, long num)
+{
 	t_llllelem *elem;
 	if (!inllll || inllll->l_size == 0) 
 		return false;
@@ -1066,6 +1067,18 @@ char is_long_in_llll_first_level(t_llll *inllll, long num){
 		if ((hatom_gettype(&elem->l_hatom) == H_LONG || hatom_gettype(&elem->l_hatom) == H_RAT) && hatom_getlong(&elem->l_hatom) == num)
 			return true;
 	return false;
+}
+
+long locate_long_in_llll_first_level(t_llll *inllll, long num)
+{
+    t_llllelem *elem;
+    if (!inllll || inllll->l_size == 0)
+        return 0;
+    long i = 1;
+    for (elem = inllll->l_head; elem; elem = elem->l_next, i++)
+        if ((hatom_gettype(&elem->l_hatom) == H_LONG || hatom_gettype(&elem->l_hatom) == H_RAT) && hatom_getlong(&elem->l_hatom) == num)
+            return i;
+    return 0;
 }
 
 char is_symbol_in_llll_first_level(t_llll *inllll, t_symbol *sym){

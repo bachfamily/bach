@@ -605,6 +605,9 @@ char has_llll_symbols_in_first_level(t_llll *inllll);
  */
 char is_long_in_llll_first_level(t_llll *inllll, long num);
 
+// TBD
+long locate_long_in_llll_first_level(t_llll *inllll, long num);
+
 
 /**	Tell if a double is contained in an element at the base level of a llll (precisely!!! there's no threshold).
 	@ingroup		llll_utilities

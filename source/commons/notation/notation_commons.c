@@ -21994,7 +21994,10 @@ char split_rhythm_to_boxes_OLD(t_llll *rhythm, t_llll *infos, t_llll *ties, t_ll
                     llll_appendrat(box_rhythm_llll[i], rat_long_prod(rat_rat_diff(box_summed_elem_rat, box_summed_elem_rat_prev), rhythm_elem_sign), 0, WHITENULL_llll);
                     if (infos_elem) llll_appendhatom_clone(box_infos_llll[i], &infos_elem->l_hatom, 0, WHITENULL_llll);
                     else llll_appendllll(box_infos_llll[i], llll_get(), 0, WHITENULL_llll);
-                    llll_appendllll(box_ties_llll[i], repeat_long_for_llllelem_len((rhythm_elem_sign == 1) ? 1 : 0, ties_elem), 0, WHITENULL_llll);
+                    if (rhythm_elem_sign && infos_elem && hatom_gettype(&infos_elem->l_hatom) == H_LLLL && hatom_getllll(&infos_elem->l_hatom)->l_tail && hatom_gettype(&hatom_getllll(&infos_elem->l_hatom)->l_tail->l_hatom) == H_LLLL)
+                        llll_appendllll(box_ties_llll[i], llll_clone(hatom_getllll(&hatom_getllll(&infos_elem->l_hatom)->l_tail->l_hatom))); // appending IDs
+                    else
+                        llll_appendllll(box_ties_llll[i], repeat_long_for_llllelem_len((rhythm_elem_sign == 1) ? 1 : 0, ties_elem), 0, WHITENULL_llll);
                     i++;
                     if (i >= (long)boxes->l_size) break;
                     box_summed_elem_rat_prev = box_summed_elem_rat;
@@ -22057,7 +22060,7 @@ char split_rhythm_to_boxes_OLD(t_llll *rhythm, t_llll *infos, t_llll *ties, t_ll
 
 
 
-char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *boxes, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, char check_completeness, char mark_created_info_upon_split)
+char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *boxes, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, char check_completeness, char mark_created_info_upon_split, char ties_have_ids)
 {
 // splits a given rhythm with respect to a box pattern, possibly splitting also the infos information, which has to be a llll composed by lllls, one for each rhythm element,
 // associated 1-to-1 with a rhythm element, that may contain whatever you want (e.g. cents, velocity, ties...) 
@@ -22181,7 +22184,10 @@ char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *
                             new_infos_elem = llll_appendelem_clone_preserve_lthing(box_infos_llll[i], infos_elem, 0, WHITENULL_llll);
                         else 
                             new_infos_elem = llll_appendllll(box_infos_llll[i], llll_get(), 0, WHITENULL_llll);
-                        llll_appendllll(box_ties_llll[i], repeat_long_for_llllelem_len((rhythm_elem_sign == 1) ? 1 : 0, ties_elem), 0, WHITENULL_llll);
+                        if (ties_have_ids && rhythm_elem_sign && infos_elem && hatom_gettype(&infos_elem->l_hatom) == H_LLLL && hatom_getllll(&infos_elem->l_hatom)->l_tail && hatom_gettype(&hatom_getllll(&infos_elem->l_hatom)->l_tail->l_hatom) == H_LLLL)
+                            llll_appendllll(box_ties_llll[i], llll_clone(hatom_getllll(&hatom_getllll(&infos_elem->l_hatom)->l_tail->l_hatom))); // appending IDs
+                        else
+                            llll_appendllll(box_ties_llll[i], repeat_long_for_llllelem_len((rhythm_elem_sign == 1) ? 1 : 0, ties_elem), 0, WHITENULL_llll);
                         
                         if (mark_created_info_upon_split && count > 0)
                             new_infos_elem->l_thing.w_obj = WHITENULL_llll;
@@ -42618,6 +42624,7 @@ long trans_mode2_fn(void *data, t_hatom *a, const t_llll *address){
     }
     return 0;
 }
+
 
 long prepend_extras_sym_fn(void *data, t_hatom *a, const t_llll *address){
     if (hatom_gettype(a) == H_LLLL && address->l_size > 0){

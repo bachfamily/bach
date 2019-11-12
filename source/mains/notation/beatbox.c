@@ -84,7 +84,7 @@ typedef struct _beatbox
     long                n_in;
     
     char                autoclear;
-    char                output_separate; // < output separate parameters?
+    char                separate_mode; // < output separate parameters?
     
     t_systhread_mutex    n_mutex;
     
@@ -167,7 +167,7 @@ void beatbox_bang(t_beatbox *x)
     if (x->n_ob.l_rebuild != 0 || proxy_getinlet((t_object *) x) != 0)
         beatbox_anything(x, _sym_bang, 0, NULL);
     else {
-        if (x->output_separate) {
+        if (x->separate_mode) {
             if (x->autoclear)
                 llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, 0, _llllobj_sym_clear, 0, NULL);
             llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 6);
@@ -204,7 +204,7 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
     if (msg == _llllobj_sym_clearall) {
         for (i = 0; i < 6; i++)
             llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), i);
-        if (x->output_separate) {
+        if (x->separate_mode) {
             for (i = 1; i < 6; i++)
                 llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), i);
         } else {
@@ -514,7 +514,7 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
                     if (measures_elem) measures_elem = measures_elem->l_next;
                 }
             
-                split_rhythm_to_boxes(voice_durations, voice_infos, voice_ties, boxes, &boxed_voice_durations, &boxed_voice_infos, &boxed_voice_ties, false, false);
+                split_rhythm_to_boxes(voice_durations, voice_infos, voice_ties, boxes, &boxed_voice_durations, &boxed_voice_infos, &boxed_voice_ties, false, false, false);
                 
                 // now we split the boxed_infos into:
                 boxed_voice_cents = llll_get(); boxed_voice_velocities = llll_get(); 
@@ -684,7 +684,7 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
             llll_to_char_array(boxed_cents, debug5, 999);
             llll_to_char_array(measures, debug6, 999);*/
             
-            if (x->output_separate) {
+            if (x->separate_mode) {
                 llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, boxed_extras, 6);
                 llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, boxed_ties, 5);
                 llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, boxed_velocities, 4);
@@ -777,7 +777,7 @@ void beatbox_assist(t_beatbox *x, void *b, long m, long a, char *s)
         char *type = NULL;
         llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
         if (a == 0) {                                                        // @out 0 @type anything @digest Messages for bach.score
-            if (x->output_separate)                                            // @description    Unless the <m>separate</m> attribute is set, this sends
+            if (x->separate_mode)                                            // @description    Unless the <m>separate</m> attribute is set, this sends
                                                                             //                the score gathered-syntax which construct the boxed score.
                                                                             //                If the <m>separate</m> attribute is set, this sends messages to score (such as "clear"
                                                                             //                if <m>autoclear</m> is active) and a bang to properly build the score from
@@ -827,8 +827,8 @@ t_beatbox *beatbox_new(t_symbol *s, short ac, t_atom *av)
     if ((x = (t_beatbox *) object_alloc_debug(beatbox_class))) {
         // @arg 0 @name separate @optional 1 @type symbol @digest Separate parameters mode  
         // @description Put a "separate" symbol as argument if you want to output the separate parameters (and not the bach.score gathered syntax).
-        x->output_separate = true_ac && atom_gettype(av) == A_SYM && atom_getsym(av) == _llllobj_sym_separate;    
-        object_attr_setdisabled((t_object *)x, gensym("autoclear"), !x->output_separate); 
+        x->separate_mode = true_ac && atom_gettype(av) == A_SYM && atom_getsym(av) == _llllobj_sym_separate;    
+        object_attr_setdisabled((t_object *)x, gensym("autoclear"), !x->separate_mode); 
 
         // if outputs are NOT separated, the score is of course always cleared
 
@@ -843,7 +843,7 @@ t_beatbox *beatbox_new(t_symbol *s, short ac, t_atom *av)
         attr_args_process(x, ac, av);
         systhread_mutex_new_debug(&x->n_mutex, 0);
 
-          llllobj_obj_setup((t_llllobj_object *) x, 6, x->output_separate ? "444444a" : "4", NULL);
+          llllobj_obj_setup((t_llllobj_object *) x, 6, x->separate_mode ? "444444a" : "4", NULL);
 
     } else 
         error(BACH_CANT_INSTANTIATE);
