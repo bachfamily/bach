@@ -2,15 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
-			"revision" : 0,
+			"major" : 8,
+			"minor" : 0,
+			"revision" : 5,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 263.0, 79.0, 660.0, 330.0 ],
-		"bglocked" : 1,
+		"classnamespace" : "box",
+		"rect" : [ 263.0, 79.0, 666.0, 359.0 ],
+		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
 		"default_fontface" : 0,
@@ -38,15 +39,33 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-59",
-					"maxclass" : "comment",
+					"id" : "obj-31",
+					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 254.060974, 580.0, 20.0 ],
-					"style" : "",
-					"text" : "This is the farthest we can go. Hope this helped you!"
+					"patching_rect" : [ 200.5, 96.0, 69.0, 22.0 ],
+					"saved_object_attributes" : 					{
+						"allwindowsactive" : 0,
+						"appicon_mac" : "",
+						"appicon_win" : "",
+						"audiosupport" : 1,
+						"bundleidentifier" : "com.mycompany.myprogram",
+						"cantclosetoplevelpatchers" : 1,
+						"cefsupport" : 1,
+						"copysupport" : 1,
+						"database" : 0,
+						"extensions" : 1,
+						"gensupport" : 1,
+						"midisupport" : 1,
+						"noloadbangdefeating" : 0,
+						"overdrive" : 0,
+						"preffilename" : "Max 7 Preferences",
+						"searchformissingfiles" : 1,
+						"statusvisible" : 1,
+						"usesearchpath" : 0
+					}
+,
+					"text" : "standalone"
 				}
 
 			}
@@ -54,14 +73,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"id" : "obj-58",
-					"linecount" : 9,
+					"id" : "obj-29",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 125.060974, 623.0, 127.0 ],
-					"style" : "",
-					"text" : "This is really not advised, but in principle you can delete any module you're not using.\nHowever, due to abstractions, things are not as easy as they seem.\nFor instance you might only be using bach.sieve, so you'll just get rid of all other modules (patchers/externals). This is an awful idea, since bach.sieve is an abstraction, containing a bach.iter inside it, as well as many other bach things.\n\nHowever, you can rely on the \"File > List Externals and Subpatcher Files\" command in Max, which will list all the dependencies you need. Feel free to delete any external/abstraction you don't see there, but in any case ALWAYS KEEP \"extensions\" and \"init\" files."
+					"patching_rect" : [ 5.0, 281.060973999999987, 625.0, 20.0 ],
+					"text" : "You should seriously consider stopping here."
 				}
 
 			}
@@ -69,14 +86,27 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"id" : "obj-27",
-					"linecount" : 2,
+					"id" : "obj-28",
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 45.060974, 606.0, 33.0 ],
-					"style" : "",
-					"text" : "...unless your REALLY REALLY KNOW what you are doing (and we can't stress enough that we can't stress this enough!). In which case you might want to delete externals or abstractions (inside \"patchers\") you don't use."
+					"patching_rect" : [ 5.0, 232.060973999999987, 626.0, 47.0 ],
+					"text" : "If your application is for Macintosh, you might want to delete all the Windows .mxe and .mxe64 files in the \"externals\" and \"extensions\" folders. If, on the other hand, your application is for Windows, you might want to delete all the Macintosh .mxo files in the \"externals\" and \"extensions\" folders."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-23",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 5.0, 43.060974000000002, 632.0, 47.0 ],
+					"text" : "Ok, if you are bothered by the fact that the application is so big, and if you REALLY KNOW what you are doing (and we can't stress this enough!), you can pick'n'choose elements to delete. But as a preliminary note, most of the size of the application does not depend from bach. "
 				}
 
 			}
@@ -85,15 +115,13 @@
 					"fontface" : 2,
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"hidden" : 1,
 					"id" : "obj-25",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 182.0, 294.5, 428.0, 33.0 ],
-					"style" : "",
-					"text" : "Ok, I trusted you, I didn't pick'n'choose, and I ended up with a 350MB+ file which only displays two notes. This doesn't make any sense, I'm so angry!",
+					"patching_rect" : [ 162.5, 308.5, 319.0, 33.0 ],
+					"text" : "... but my friend has an old 56k router, and I need to send him a patch within the next 2 minutes or the world will end!",
 					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
 				}
 
@@ -106,9 +134,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 85.060974, 472.0, 30.0 ],
-					"style" : "",
-					"text" : "4. Pick'n'choose elements to delete"
+					"patching_rect" : [ 5.0, 165.060973999999987, 472.0, 30.0 ],
+					"text" : "3. Pick'n'choose folders to delete"
 				}
 
 			}
@@ -122,8 +149,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 318.0, 332.0, 81.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 318.0, 377.0, 81.0, 22.0 ],
 					"text" : "clean, wclose",
 					"varname" : "wclose"
 				}
@@ -139,9 +165,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 288.0, 384.5, 243.0, 22.0 ],
-					"style" : "",
-					"text" : "linksections 1 0 d \"Standalone Applications\""
+					"patching_rect" : [ 303.0, 429.5, 241.0, 22.0 ],
+					"text" : "linksections 1 1 d \"Standalone Applications\""
 				}
 
 			}
@@ -155,9 +180,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 318.0, 357.0, 69.0, 22.0 ],
+					"patching_rect" : [ 318.0, 402.0, 69.0, 22.0 ],
 					"save" : [ "#N", "thispatcher", ";", "#Q", "end", ";" ],
-					"style" : "",
 					"text" : "thispatcher"
 				}
 
@@ -171,7 +195,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 5.0, 19.0, 444.0, 20.0 ],
-					"style" : "",
 					"text" : "_________________________________________________________________"
 				}
 
@@ -179,28 +202,54 @@
 , 			{
 				"box" : 				{
 					"fontname" : "Arial Italic",
-					"fontsize" : 16.787033,
+					"fontsize" : 16.787033000000001,
 					"id" : "obj-2",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 288.0, 7.74086, 477.0, 25.0 ],
-					"style" : "",
-					"text" : "- hardcore size reduction"
+					"patching_rect" : [ 288.0, 7.74086, 120.0, 25.0 ],
+					"text" : "- reducing size"
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"fontname" : "Arial",
-					"fontsize" : 22.256727,
+					"fontsize" : 22.256727000000001,
 					"id" : "obj-3",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 5.0, 2.924051, 285.0, 31.0 ],
-					"style" : "",
 					"text" : "Standalone Applications (d)"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-13",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 5.0, 197.060973999999987, 646.0, 33.0 ],
+					"text" : "Open the copied \"bach\" folder. You might probably get rid of all the \"help\" and \"doc\" subfolders (most likely yuo won't need them in standalone applications). You might want to delete the \"extras\" folder and the \"media\" folder as well."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-32",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 5.0, 101.0, 653.0, 47.0 ],
+					"text" : "Our suggestion is to use the handy                        object and unitck from its inspector anything you won't need (e.g. do you really need CEF support? Do you use the [jweb] object?). Refer to the Max documentation for this operations. We'll only discuss how to reduce the size of the bach packages folder inside your standalone application."
 				}
 
 			}
@@ -212,8 +261,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 5.0, 430.0, 140.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 5.0, 451.0, 140.0, 22.0 ],
 					"text" : "pcontrol",
 					"varname" : "pcontrolA"
 				}
@@ -227,8 +275,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 5.0, 405.0, 140.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 5.0, 426.0, 140.0, 22.0 ],
 					"text" : "prepend load",
 					"varname" : "prependA"
 				}
@@ -242,8 +289,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 5.0, 380.0, 140.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 5.0, 401.0, 140.0, 22.0 ],
 					"text" : "tosymbol",
 					"varname" : "tosymbolA"
 				}
@@ -257,9 +303,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 5.0, 355.0, 154.0, 22.0 ],
-					"style" : "",
-					"text" : "Standalone Applications [c]",
+					"patching_rect" : [ 5.0, 376.0, 154.0, 22.0 ],
+					"text" : "Standalone Applications (c)",
 					"varname" : "messageA"
 				}
 
@@ -272,8 +317,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "bang" ],
-					"patching_rect" : [ 5.0, 330.0, 40.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 5.0, 351.0, 40.0, 22.0 ],
 					"text" : "t b b",
 					"varname" : "triggerA"
 				}
@@ -290,10 +334,96 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "int" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 5.0, 305.0, 151.0, 20.0 ],
-					"style" : "",
+					"patching_rect" : [ 5.0, 326.0, 151.0, 20.0 ],
 					"text" : "Back to section (c)",
 					"varname" : "textbuttonA"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-11",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 499.0, 451.0, 140.0, 22.0 ],
+					"text" : "pcontrol",
+					"varname" : "pcontrolB"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-12",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 499.0, 426.0, 140.0, 22.0 ],
+					"text" : "prepend load",
+					"varname" : "prependB"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-14",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 499.0, 401.0, 140.0, 22.0 ],
+					"text" : "tosymbol",
+					"varname" : "tosymbolB"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-16",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 499.0, 376.0, 156.0, 22.0 ],
+					"text" : "Standalone Applications (e)",
+					"varname" : "messageB"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-17",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "bang", "bang" ],
+					"patching_rect" : [ 499.0, 351.0, 40.0, 22.0 ],
+					"text" : "t b b",
+					"varname" : "triggerB"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bgcolor" : [ 0.75, 0.75, 0.75, 1.0 ],
+					"bgoncolor" : [ 0.51, 0.59, 0.64, 1.0 ],
+					"fontface" : 2,
+					"id" : "obj-20",
+					"maxclass" : "textbutton",
+					"numinlets" : 1,
+					"numoutlets" : 3,
+					"outlettype" : [ "", "", "int" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 499.0, 326.0, 151.0, 20.0 ],
+					"text" : "Continue to section (e)",
+					"varname" : "textbuttonB"
 				}
 
 			}
@@ -301,7 +431,6 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-8", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-10", 0 ]
 				}
@@ -309,8 +438,47 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-11", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-12", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-12", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-14", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-14", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-16", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-17", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-19", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-17", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-90", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-19", 0 ]
 				}
@@ -319,17 +487,23 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-90", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
-					"midpoints" : [ 297.5, 410.5, 309.5, 410.5, 309.5, 352.0, 327.5, 352.0 ],
+					"midpoints" : [ 312.5, 455.5, 309.5, 455.5, 309.5, 397.0, 327.5, 397.0 ],
 					"source" : [ "obj-198", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-17", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-20", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-4", 0 ]
 				}
@@ -338,7 +512,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-5", 0 ]
 				}
@@ -347,7 +520,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-5", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-7", 0 ]
 				}
@@ -356,7 +528,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-19", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-8", 0 ]
 				}
@@ -365,7 +536,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-8", 1 ]
 				}
@@ -374,7 +544,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-198", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-90", 0 ]
 				}
@@ -384,6 +553,7 @@
 		"dependency_cache" : [ 			{
 				"name" : "linksections.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/docs/tutorial-patchers",
+				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
