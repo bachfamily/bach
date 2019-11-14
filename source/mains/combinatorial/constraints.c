@@ -857,7 +857,7 @@ void constraints_outpos(t_constraints *x, long current_var, long double tree_siz
         if (current_var > 0) {
             pos_in_tree = 1;
             for (i = 1; i <= current_var; i++) {
-                pos_in_tree += positions[i] * pos_weights[i];
+                pos_in_tree += (positions[i] - 1) * pos_weights[i];
             }
             pos_in_tree *= tree_size_inv;
         } else
