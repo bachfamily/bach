@@ -136,6 +136,7 @@ Scroll down for very important things you should now about v0.8b
 		Works after entering an invalid or empty llll in the first inlet
 		Now weak and hungry engines also accept and deal with non-integer scores
 		Fixed bug causing crashes with provisionals in parallel mode
+		Position values from the middle outlet with strong engine are now correct
 
 - bach.delace	Fixed crash in mono mode without count argument
 
