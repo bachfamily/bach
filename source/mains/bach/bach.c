@@ -21,6 +21,7 @@
 #include "ext_globalsymbol.h"
 #include "ext_common.h"
 #include "graphics/bach_cursors.h"
+#include "patreon/patrons.h"
 #include <stdlib.h>
 #include <algorithm>
 #include <string>
@@ -534,26 +535,18 @@ void bach_donors(t_bach *x)
     post(" ");
     post("**************************************************************************");
     post("bach: automated composer's helper would like to thank our top supporters:");
-    //post(" - Micha Seidenberg"); // uncomment starting from december 2019
-    //post(" - Francisco Colasanto"); // uncomment starting from june 2020
-    //post(" - Yan Maresz"); // uncomment starting from june 2020
-    //post(" - Julien Vincenot"); // uncomment starting from june 2020
-    //post(" - Michele Zaccagnini") // uncomment starting from august 2020
-    //post(" - Jean-Baptiste Barrière") // uncomment starting from may 2020
-    post(" - Jean-Baptiste Barrière");
-    post(" - Cody Brookshire");
-    post(" - Francisco Colasanto");
-    post(" - Dimitri Fergadis (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research, proprietor of Halocyan Records)");
-    post(" - Pete Kellock");
-    post(" - Yan Maresz");
-    post(" - Micha Seidenberg");
-    post(" - Julien Vincenot");
-    post(" - Michele Zaccagnini");
-    //
+    
+    // Pre-Patreon Supporters:
+    post("- Cody Brookshire");
+    post("- Dimitri Fergadis (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research, proprietor of Halocyan Records)");
+    post("- Pete Kellock");
+    
+    // Patreon supporters:
+    post_top_supporters();
+
     post("...as well as all our patrons:");
-    post("Paolo Aralla, audiophil, Jean-Baptiste Barrière, Chris Chandler, Jean-Julien Filatriau, Louis Goldford, Matthew Goodheart,");
-    post("Nikola Kołodziejczyk, Hans Leeuw, MF Liau, linazero, Daniel Lujan, Tomislav Oliver, Alessandro Ratoci, Micha Seidenberg,");
-    post("TJ Shredder, Christopher Michael Trapani, Pierre Alexandre Tremblay, Hans Tutschku, Joost Van Kerkhoven, Viktor Velthuijs, Vens R.");
+    post_all_patrons();
+    
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");

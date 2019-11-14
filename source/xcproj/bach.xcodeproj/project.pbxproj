@@ -232,6 +232,7 @@
 		1EB4D4821610CB740041ABFB /* roll_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4801610CB740041ABFB /* roll_files.h */; };
 		1EB4D4A11610CCB20041ABFB /* score_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D49F1610CCB20041ABFB /* score_files.h */; };
 		1EB4D4A21610CCB20041ABFB /* score_files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D4A01610CCB20041ABFB /* score_files.cpp */; };
+		1EBB9D2D237D95F600818B5C /* patrons.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBB9D2C237D95F600818B5C /* patrons.h */; };
 		1EC5F4731BDFC21600669257 /* bach_graphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EC5F4711BDFC21600669257 /* bach_graphics.h */; };
 		1EC5F4741BDFC21600669257 /* bach_graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EC5F4721BDFC21600669257 /* bach_graphics.c */; };
 		1ED42DB51F8A9D17008EC1D9 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
@@ -2798,6 +2799,7 @@
 		1EB99F4915164BE900B02E03 /* mxml-set.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-set.c"; sourceTree = "<group>"; };
 		1EB99F4A15164BE900B02E03 /* mxml-string.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-string.c"; sourceTree = "<group>"; };
 		1EB99F4B15164BE900B02E03 /* mxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mxml.h; sourceTree = "<group>"; };
+		1EBB9D2C237D95F600818B5C /* patrons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patrons.h; sourceTree = "<group>"; };
 		1EC5F4711BDFC21600669257 /* bach_graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_graphics.h; sourceTree = "<group>"; };
 		1EC5F4721BDFC21600669257 /* bach_graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_graphics.c; sourceTree = "<group>"; };
 		1ED42DBB1F8A9D17008EC1D9 /* bach.transcribe.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.transcribe.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5011,6 +5013,14 @@
 			path = mxml;
 			sourceTree = "<group>";
 		};
+		1EBB9D2B237D8EA200818B5C /* patreon */ = {
+			isa = PBXGroup;
+			children = (
+				1EBB9D2C237D95F600818B5C /* patrons.h */,
+			);
+			path = patreon;
+			sourceTree = "<group>";
+		};
 		911BB20617CBA88F00B513E8 /* c74support */ = {
 			isa = PBXGroup;
 			children = (
@@ -5881,6 +5891,7 @@
 		91C79922123156FB00165F4A /* commons */ = {
 			isa = PBXGroup;
 			children = (
+				1EBB9D2B237D8EA200818B5C /* patreon */,
 				9157F5AD232F6F2C00A4ADAB /* doc */,
 				9157F5AC232F6F1500A4ADAB /* libraries */,
 				9157F5AA232F6E2B00A4ADAB /* graphics */,
@@ -6214,6 +6225,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EBB9D2D237D95F600818B5C /* patrons.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
