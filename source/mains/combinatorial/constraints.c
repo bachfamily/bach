@@ -862,7 +862,7 @@ void constraints_outpos(t_constraints *x, long current_var, long double tree_siz
             pos_in_tree *= tree_size_inv;
         } else
             pos_in_tree = 1;
-    } else {
+    } else {	
         pos_in_tree = 0;
     }
     if (!x->n_thread) {

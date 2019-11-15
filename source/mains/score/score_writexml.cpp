@@ -595,8 +595,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                          gensym("glissandi"), &export_glissandi
                                          );
     
-    if (!export_slots)
-        llll_appendlong(export_slots, x->r_ob.link_annotation_to_slot);
+    if (!export_slots) {
+        export_slots = get_num_ll(x->r_ob.link_annotation_to_slot);
+    }
     
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
