@@ -38,15 +38,15 @@
 	<objarglist>
 		<objarg name="playkeys" optional="0" type="anything">
 			<digest>
-				parameters
+				Parameters
 			</digest>
 			<description>
 				The names of the parameters to retrieve.
-				Use an llll of type <b>(slot <m>number</m>)</b> or
-				<b>(slot <m>name</m>)</b> to retrieve a given slot.
+				Use an llll of type <b>[slot <m>number</m>]</b> or
+				<b>[slot <m>name</m>]</b> to retrieve a given slot.
 				If you need to retrieve multiple slots you can also
 				join them in a single llll in the form
-				<b>(slot <m>name_or_number</m> <m>name_or_number</m>...)</b>.
+				<b>[slot <m>name_or_number</m> <m>name_or_number</m>...]</b>.
 				Allowed parameters to retrieve correspond to the following symbols:
 				"type", "onset", "symonset", "cents", "pitch", "duration", "symduration", "tail", "velocity",
 				"midichannel", "tie", "voicenumber", "chordindex", "noteindex, "path" (these last three only meaningful
@@ -94,6 +94,20 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
+		<attribute name="annotationslot" get="1" set="1" type="atom" size="1">
+			<digest>
+				Annotation Slot Number
+			</digest>
+			<description>
+				Sets the number of the slot containing textual annotations (0 if none).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Slot Number" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="articulationsslot" get="1" set="1" type="atom" size="1">
 			<digest>
 				Articulations Slot Number
@@ -166,14 +180,14 @@
 		</attribute>
 		<attribute name="noteheadslot" get="1" set="1" type="atom" size="1">
 			<digest>
-				Noteheads Slot Number
+				Notehead Slot Number
 			</digest>
 			<description>
 				Sets the number of the slot containing noteheads (0 if none).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Noteheads Slot Number" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notehead Slot Number" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
@@ -232,11 +246,11 @@
 				List of router symbols which will be accepted. Leave empty to process all possible routers.
 				E.g. <b>note tempo</b> will only accept "note"- and "tempo"-routed playout lllls. <br />
 				You can have <o>bach.playkeys</o> intercept commands as well, provided that you set aliases via an llll starting
-				with "note", "chord" or "rest" (depending on the type of alias). E.g. <b>@routers note (note mynotecommand1 mynotecommand2)</b>
+				with "note", "chord" or "rest" (depending on the type of alias). E.g. <b>@routers note [note mynotecommand1 mynotecommand2]</b>
 				will intercept <b>note</b> messages, as well as note commands <b>mynotecommand1</b> and <b>mynotecommand2</b>.
-				To only intercept commands, simply use something like <b>@routers (note mynotecommand1 mynotecommand2)</b>.
+				To only intercept commands, simply use something like <b>@routers [note mynotecommand1 mynotecommand2]</b>.
 				If you want to add some commands for acceptance (and to keep everything else accepted) use "+" as first element, such as in
-				<b>@routers + (rest myrestcommand)</b>.
+				<b>@routers + [rest myrestcommand]</b>.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />

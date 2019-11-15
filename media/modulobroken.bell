@@ -1,0 +1,2 @@
+$x1 % 600 = $x2 % 600 
+## notice the = operator (assignment) in place of the == operator (comparison)

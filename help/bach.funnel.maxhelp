@@ -196,7 +196,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 15.0, 96.0, 120.0, 46.0 ],
-									"text" : "a b c d (X) ((Y)) ()"
+									"text" : "a b c d [X] [[Y]] []"
 								}
 
 							}
@@ -528,7 +528,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 311.0, 246.5, 184.0, 34.0 ],
-									"text" : "(john L) (george (H M)) (ringo S) (brian E) (paul McC) pete"
+									"text" : "[john L] [george [H M]] [ringo S] [brian E] [paul McC] pete"
 								}
 
 							}
@@ -644,7 +644,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 47.0, 196.0, 120.0, 46.0 ],
-									"text" : "a b c d (X) ((Y)) ()"
+									"text" : "a b c d [X] [[Y]] []"
 								}
 
 							}

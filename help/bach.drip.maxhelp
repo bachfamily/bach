@@ -521,7 +521,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 10.0, 170.0, 118.0, 37.0 ],
 									"style" : "",
-									"text" : "1 (2 3 (4 5 6))"
+									"text" : "1 [2 3 [4 5 6]]"
 								}
 
 							}

@@ -328,7 +328,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Into The Matrix (b)",
+					"text" : "Into The Matrix [b]",
 					"id" : "obj-10",
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -427,7 +427,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Into The Matrix (d)",
+					"text" : "Into The Matrix [d]",
 					"id" : "obj-26",
 					"numinlets" : 2,
 					"numoutlets" : 1,

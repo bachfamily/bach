@@ -11,7 +11,6 @@
 
 	<description>
 		Provides the display and interface for the content of a slot window.
-		You can perfectly imagine its content as the whole slot content of an hidden dummy note.
 	</description>
 
 	<!--METADATA-->
@@ -226,37 +225,37 @@
 			<description>
 				Syntax: <b>addslot <m>&lt;int/symbol: slot_number_or_name&gt;</m> </b><br />
 				Examples:<br />
-				• <b>addslot (6 0.512)</b>   <i>→ fill (float) slot 6 with number 0.512</i><br />
-				• <b>addslot (5 42)</b>   <i>→ fill (int) slot 5 with number 42</i><br />
-				• <b>addslot (7 "Lorem Ipsum" )</b>   <i>→ fill (text) slot 7 with some text</i><br />
-				• <b>addslot (10 (John George (Ringo) (Brian)) )</b>   <i>→ fill (llll) slot 10 with an llll</i><br />
-				• <b>addslot (3 10 20 30)</b>   <i>→ fill (intlist) slot 3 of selected notes with list of values 10, 20, 30</i><br />
-				• <b>addslot (2 (0 0 0) (0.5 0 1) (1 1 0.2)</b>   <i>→ fill (function) slot 2 with a breakpoint function in (x y slope) form</i><br />
-				• <b>addslot (amplienv (0 0 0) (0.5 0 1) (1 1 0.2))</b>   <i>→ the same for slot named 'amplienv'</i><br />
-				• <b>addslot (active (0 0 0) (0.5 0 1) (1 1 0.2))</b>   <i>→ the same for currently open slot</i><br />
-				• <b>addslot (3 10 20 30) (2 (0 0 0) (0.5 0 1) (1 1 0.2))</b>   <i>→ set more slots at once</i><br />
+				• <b>addslot [6 0.512]</b>   <i>→ fill (float) slot 6 with number 0.512</i><br />
+				• <b>addslot [5 42]</b>   <i>→ fill (int) slot 5 with number 42</i><br />
+				• <b>addslot [7 "Lorem Ipsum" ]</b>   <i>→ fill (text) slot 7 with some text</i><br />
+				• <b>addslot [10 [John George [Ringo] [Brian]] ]</b>   <i>→ fill (llll) slot 10 with an llll</i><br />
+				• <b>addslot [3 10 20 30]</b>   <i>→ fill (intlist) slot 3 of selected notes with list of values 10, 20, 30</i><br />
+				• <b>addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2]</b>   <i>→ fill (function) slot 2 with a breakpoint function in (x y slope) form</i><br />
+				• <b>addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for slot named 'amplienv'</i><br />
+				• <b>addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for currently open slot</i><br />
+				• <b>addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ set more slots at once</i><br />
 				<br />
 				An <m>addslot</m> message will modify all the content of one or more slots.
-				The syntax is <b>addslot (<m>slot_number</m> <m>SLOT_CONTENT</m>) (<m>slot_number</m> <m>SLOT_CONTENT</m>)...</b>. <br />
+				The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -264,8 +263,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -288,9 +287,9 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
@@ -342,26 +341,26 @@
 				The element content is a single element in the lists of the slot content syntax: a single point for a slot <m>function</m>, a single number for an <m>intlist</m> or <m>floatlist</m> slot,
 				and so on. Such element must be unwrapped from its outer level of parentheses (if any). For instance, for a function,
 				a good syntax is <b>changeslotvalue 2 3 0.5 20 0</b> which will change the 3rd point of the function contained in the second slot
-				to the point <b>(0.5 20 0)</b>. <br />
+				to the point <b>[0.5 20 0]</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -369,8 +368,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -393,9 +392,9 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
@@ -433,9 +432,11 @@
 				• <b>copy slot 1</b>   <i>→ copy first slot</i><br />
 				• <b>copy slot active</b>   <i>→ copy currently open slot</i><br />
 				• <b>copy slot all</b>   <i>→ copy all slot</i><br />
+				• <b>copy slotinfo 3</b>   <i>→ copy structure of slot 3</i><br />
 				<br />
 				Copies into the global clipboard slot data.
-				A "slot" symbol is always expected as argument.
+				A "slot" or "slotinfo" symbol is always expected as argument. In the first case, slot data is copied, in the second case,
+				the structure of the slot (slotinfo) is copied. <br />
 				With no further arguments, the content of the open slot window is copied; if in addition to the "slot" symbol an integer
 				is given, such integer is the number of the slot whose content is copied; finally, this integer can
 				be substituted by the "all" symbol to copy the content of all slots.
@@ -490,8 +491,8 @@
 				Syntax: <b>deleteslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int/llll: element_position_or_wrapped_xcoord&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>deleteslotitem 3 2</b>   <i>→ delete 2nd item of 3rd slot</i><br />
-				• <b>deleteslotitem 3 (0.7)</b>   <i>→ delete item 3rd slot matching X = 0.7</i><br />
-				• <b>deleteslotitem 3 (0.7) @thresh 0.1</b>   <i>→ the same, with a tolerance of 0.1</i><br />
+				• <b>deleteslotitem 3 [0.7]</b>   <i>→ delete item 3rd slot matching X = 0.7</i><br />
+				• <b>deleteslotitem 3 [0.7] @thresh 0.1</b>   <i>→ the same, with a tolerance of 0.1</i><br />
 				<br />
 				Message attributes:<br />
 				<m>@thresh</m> (float, default: 0.): Tolerance threshold for X matching<br />
@@ -561,11 +562,11 @@
 				If the symbol "header" or "slotinfo" is given as argument, the <m>SLOTS_CONTENT</m> will not be dumped.
 				If a list of integers is given as output, they are considered slot indices, and only the content of the related slots will be dumped.
 				<br /> <br />
-				The general syntax for a slotinfo llll in a notation object header is: <b>(slotinfo (<m>slot_num1</m> <m>SPECIFICATIONS1</m>) (<m>slot_num2</m> <m>SPECIFICATIONS2</m>)...)</b>,
+				The general syntax for a slotinfo llll in a notation object header is: <b>[slotinfo [<m>slot_num1</m> <m>SPECIFICATIONS1</m>] [<m>slot_num2</m> <m>SPECIFICATIONS2</m>]...]</b>,
 				where the <m>slot_num</m> are the slot numbers (1 to 30), followed by their corresponding slotinfo specification. You don't need to give the information about all slots
 				at input (only the one that you will use), nor the slot numbers have to be sorted in any way. On the other hand, at output, the slotinfo
 				is always output for all slots, sorted in ascending order.
-				Each <m>SPECIFICATIONS</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+				Each <m>SPECIFICATIONS</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 				each <m>parameter</m> is a symbol followed by some content specifying a field of the slotinfo.
 				The complete list of parameters symbols and their corresponding expected content is the following one: <br />
 				– <b>name</b>: expects the name you want to give to the slot (given as a unique symbol). <br />
@@ -599,7 +600,7 @@
 				– <b>representation</b>: it could expect one of the following things. 1: Symbols defining units of measurement (e.g. "Hz", "ms"...), for numeric
 				slots one symbol is expected, for function slots if one symbol is given, it is applied to the Y axis, if two symbols are given they are
 				applied to the X and Y axis, for 3dfunction slots up to three symbols can be given, the third one referring to the Z axis, use <b>nil</b> or
-				<b>()</b> to skip assignment for an axis. For filter and dynfilter slots, you can assign "Hz" or "cents" as unit of measurement
+				<b>[]</b> to skip assignment for an axis. For filter and dynfilter slots, you can assign "Hz" or "cents" as unit of measurement
 				and it will be used to display the cutoff frequency accordingly. 2: An enumeration list (only for int
 				and intlist slots), mapping each integer to an element of this enumeration list (e.g. in an int slot from 1 to 3, a
 				slot_representation "(one two three)" will display "one" at the place of 1, "two" at the place of 2, "three" at the place of 3).
@@ -630,31 +631,31 @@
 				This information is constantly synchronized with the <m>rightclickslot</m> attribute. <br />
 				- <b>linkto</b> (except bach.slot): this field defines the possible slot linkage. Slot linkage is a way to entangle some notation or
 				display features to the content of a given slot. You can specify here to which feature the slot should be linked,
-				via one of the following symbols: "none", "lyrics", "notecolor", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
+				via one of the following symbols: "none", "lyrics", "color", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
 				<br />
 				The <m>slots</m> specification informs about the content of each one (or a subset) of the slots of a note.
-				It is given by an llll in the form <b>(slots <m>SLOT1</m> <m>SLOT2</m>...)</b>,
+				It is given by an llll in the form <b>[slots <m>SLOT1</m> <m>SLOT2</m>...]</b>,
 				where each one of the <m>SLOT</m> is an llll containing the information about one slot, in the form
-				<b>(<m>slot_number</m> <m>SLOT_CONTENT</m>)</b>. <br />
+				<b>[<m>slot_number</m> <m>SLOT_CONTENT</m>]</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -662,8 +663,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -686,9 +687,9 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
@@ -728,10 +729,10 @@
 				Moreover, each query can have in bach as very first argument a label, kept inside the query answer,
 				which can be useful to retrieve queries separately (for instance to keep track of queries coming from different threads).
 				To assign a label to a query, you have to put as very first argument after the query message (before any other query argument) an llll in the form
-				<b>(label <m>label_name</m>)</b>, where <m>label_name</m> is a symbol you want to assign to the label.
+				<b>[label <m>label_name</m>]</b>, where <m>label_name</m> is a symbol you want to assign to the label.
 				When the answer of a labelled query is output from the playout, after the first router symbol, the label will appear, thus yielding a
 				general form <b><m>query_router_symbol</m> <m>label_name</m> <m>QUERY_ANSWER</m></b>. Just to make an example,
-				the answer of <b>pixeltotime (label john) 6000</b> might be something like <b>pixel john 300.</b>.
+				the answer of <b>pixeltotime [label john] 6000</b> might be something like <b>pixel john 300.</b>.
 				It works accordingly for any other query.
 				<br /> <br />
 			</description>
@@ -753,10 +754,10 @@
 				Moreover, each query can have in bach as very first argument a label, kept inside the query answer,
 				which can be useful to retrieve queries separately (for instance to keep track of queries coming from different threads).
 				To assign a label to a query, you have to put as very first argument after the query message (before any other query argument) an llll in the form
-				<b>(label <m>label_name</m>)</b>, where <m>label_name</m> is a symbol you want to assign to the label.
+				<b>[label <m>label_name</m>]</b>, where <m>label_name</m> is a symbol you want to assign to the label.
 				When the answer of a labelled query is output from the playout, after the first router symbol, the label will appear, thus yielding a
 				general form <b><m>query_router_symbol</m> <m>label_name</m> <m>QUERY_ANSWER</m></b>. Just to make an example,
-				the answer of <b>pixeltotime (label john) 6000</b> might be something like <b>pixel john 300.</b>.
+				the answer of <b>pixeltotime [label john] 6000</b> might be something like <b>pixel john 300.</b>.
 				It works accordingly for any other query.
 				<br /> <br />
 			</description>
@@ -814,9 +815,9 @@
 				• <b>interp 2 0.4</b>   <i>→ get y value of slot 2 at x = 0.4</i><br />
 				• <b>interp ampenv 0.4</b>   <i>→ the same for slot named "ampenv"</i><br />
 				• <b>interp active 0.4</b>   <i>→ the same for currently open slot</i><br />
-				• <b>interp (1 2 3) 0.4</b>   <i>→ interpolate slots 1, 2, 3 at once</i><br />
-				• <b>interp active (0.2 0.4 0.9)</b>   <i>→ interpolate active slot on multiple values</i><br />
-				• <b>interp (1 2 3) (0.2 0.4 0.9)</b>   <i>→ interpolate slots 1, 2, 3 on multiple values</i><br />
+				• <b>interp [1 2 3] 0.4</b>   <i>→ interpolate slots 1, 2, 3 at once</i><br />
+				• <b>interp active [0.2 0.4 0.9]</b>   <i>→ interpolate active slot on multiple values</i><br />
+				• <b>interp [1 2 3] [0.2 0.4 0.9]</b>   <i>→ interpolate slots 1, 2, 3 on multiple values</i><br />
 				<br />
 				An <m>interp</m> message will return the interpolated value in the range of a function slot,
 				corresponding to the input domain value.
@@ -840,11 +841,11 @@
 				The <m>SLOTINFO</m> is the only part of header which <o>bach.slot</o> can have.
 				The <m>SLOTS_CONTENT</m> is the body of the object, with all the content
 				of all the slots. <br /> <br />
-				The general syntax for a slotinfo llll in a notation object header is: <b>(slotinfo (<m>slot_num1</m> <m>SPECIFICATIONS1</m>) (<m>slot_num2</m> <m>SPECIFICATIONS2</m>)...)</b>,
+				The general syntax for a slotinfo llll in a notation object header is: <b>[slotinfo [<m>slot_num1</m> <m>SPECIFICATIONS1</m>] [<m>slot_num2</m> <m>SPECIFICATIONS2</m>]...]</b>,
 				where the <m>slot_num</m> are the slot numbers (1 to 30), followed by their corresponding slotinfo specification. You don't need to give the information about all slots
 				at input (only the one that you will use), nor the slot numbers have to be sorted in any way. On the other hand, at output, the slotinfo
 				is always output for all slots, sorted in ascending order.
-				Each <m>SPECIFICATIONS</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+				Each <m>SPECIFICATIONS</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 				each <m>parameter</m> is a symbol followed by some content specifying a field of the slotinfo.
 				The complete list of parameters symbols and their corresponding expected content is the following one: <br />
 				– <b>name</b>: expects the name you want to give to the slot (given as a unique symbol). <br />
@@ -878,7 +879,7 @@
 				– <b>representation</b>: it could expect one of the following things. 1: Symbols defining units of measurement (e.g. "Hz", "ms"...), for numeric
 				slots one symbol is expected, for function slots if one symbol is given, it is applied to the Y axis, if two symbols are given they are
 				applied to the X and Y axis, for 3dfunction slots up to three symbols can be given, the third one referring to the Z axis, use <b>nil</b> or
-				<b>()</b> to skip assignment for an axis. For filter and dynfilter slots, you can assign "Hz" or "cents" as unit of measurement
+				<b>[]</b> to skip assignment for an axis. For filter and dynfilter slots, you can assign "Hz" or "cents" as unit of measurement
 				and it will be used to display the cutoff frequency accordingly. 2: An enumeration list (only for int
 				and intlist slots), mapping each integer to an element of this enumeration list (e.g. in an int slot from 1 to 3, a
 				slot_representation "(one two three)" will display "one" at the place of 1, "two" at the place of 2, "three" at the place of 3).
@@ -909,31 +910,31 @@
 				This information is constantly synchronized with the <m>rightclickslot</m> attribute. <br />
 				- <b>linkto</b> (except bach.slot): this field defines the possible slot linkage. Slot linkage is a way to entangle some notation or
 				display features to the content of a given slot. You can specify here to which feature the slot should be linked,
-				via one of the following symbols: "none", "lyrics", "notecolor", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
+				via one of the following symbols: "none", "lyrics", "color", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
 				<br />
 				The <m>slots</m> specification informs about the content of each one (or a subset) of the slots of a note.
-				It is given by an llll in the form <b>(slots <m>SLOT1</m> <m>SLOT2</m>...)</b>,
+				It is given by an llll in the form <b>[slots <m>SLOT1</m> <m>SLOT2</m>...]</b>,
 				where each one of the <m>SLOT</m> is an llll containing the information about one slot, in the form
-				<b>(<m>slot_number</m> <m>SLOT_CONTENT</m>)</b>. <br />
+				<b>[<m>slot_number</m> <m>SLOT_CONTENT</m>]</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -941,8 +942,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -965,9 +966,9 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
@@ -1020,6 +1021,19 @@
 				<br />				See also:<m>addslot</m><br />
 			</description>
 		</method>
+		<method name="paintjit">
+			<arglist />
+			<digest>
+				Draw the slot onto a jitter matrix
+			</digest>
+			<description>
+				The <m>paintjit</m> message, followed by the name of a jitter matrix,
+				mirrors the canvas of the object onto the jitter matrix.
+				The matrix should have either 1 or 4 planes, and should have at least 2 dimensions.
+				The first two dimensions are used; the matrix is automatically resized to the needed dimensions.
+				Retina resolution is not supported (retina objects are mirrored in standard resolution).
+			</description>
+		</method>
 		<method name="paste">
 			<arg name="slot" optional="0" type="symbol" />
 			<arg name="slot_number" optional="1" type="int/symbol" />
@@ -1034,9 +1048,11 @@
 				• <b>paste slot 3</b>   <i>→ paste copied slot to slot 3</i><br />
 				• <b>paste slot ampenv</b>   <i>→ paste copied slot to "ampenv" slot</i><br />
 				• <b>paste slot active</b>   <i>→ paste copied slot to currently open slot</i><br />
+				• <b>paste slotinfo 4</b>   <i>→ paste slotinfo onto slot 4</i><br />
 				<br />
 				Pastes the content contained in the global clipboard, if the clipboard contains slot content. <br />
-				A "slot" symbol is always expected as argument.
+				A "slot" of "slotinfo" symbol is always expected as argument. In the first case, the content of a slot is pasted,
+				in the second case, the information about the structure of the slot is pasted.
 				The second integer argument sets the slot into which content has to be pasted.
 				This number can be replaced with the "active" symbol, and the
 				slot content will be applied to the open slot window.
@@ -1200,7 +1216,7 @@
 				Furthermore, some message attributes are available, for fine-tuning of the text formatting.
 				Available attributes are: <br />
 				- <b>maxdecimals</b> (default: 10): the precision for floating-point numbers. <br />
-				- <b>indent</b> (default: <b>tab</b>): if set to <m>tab</m>, every sublist that is encountered (up to <b>maxdepth</b>, see below)
+				- <b>indent</b> [default: <b>tab</b>]: if set to <m>tab</m>, every sublist that is encountered [up to <b>maxdepth</b>, see below)
 				will be placed on a new line, indented by a number of tabs equal to the depth level of the sublist itself.
 				If set to an integer, the indentation for each depth level will be the corresponding number of spaces.<br />
 				- <b>maxdepth</b> (default: -1, i.e. no limitation): the maximum depth at which sublists are placed in new lines.
@@ -1332,6 +1348,44 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="dynamicsoutputmode" get="1" set="1" type="int" size="1">
+			<digest>
+				Dynamics Output Mode
+			</digest>
+			<description>
+				Sets the way in which information in slots of type dynamics is output (N.B.: this does not affect the
+				behavior at input, since in this case all syntaxes are supported):
+				0 = Plain: dynamics are output as a plain list. Manual positioning are obtained by
+				having dynamic markings preceded by a
+				floating point number (the relative positioning, between 0 and 1); breakpoint attachments are signaled with symbols bearing the
+				breakpoint index preceded by '@' (e.g. "@3"). This is the most humanly readable option; <br />
+				1 = Structured: syntax is an llll containing the information structured in an llll; each dynamic marking is represented by
+				an llll, whose form depends on the attachment mode. If the marking attachment is "auto", then the form is
+				<b>[auto <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>; if the marking attachment is "manual", then the form is
+				<b>[<m>relative_position</m> <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>; if the marking attachment is "breakpoint", then
+				the form is
+				<b>[[breakpoint <m>breakpoint_index</m>] <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>.
+				This option is useful when you prefer to handle lllls, but, differently from the following one, it only bears
+				the minimum amount of information to assign the dynamics correctly (e.g.: no need for a relative position if we are attaching
+				the dynamic to a breakpoint); <br />
+				2 = Full (default): syntax is an llll containing, but always output all the information,
+				as a sequence of dynamic markings each represented
+				by an llll in the form
+				<b>[[<m>attachment_mode</m> <m>breakpoint_attachment</m> <m>relative_position</m>] <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>.
+				If a dynamic marking is set to be attached to a breakpoint ("breakpoint" attachment mode),
+				both the breakpoint number and the relative position of the breakpoint are correctly output.
+				If the attachment mode is "manual" or "auto", then <m>breakpoint_attachment</m> is meaningless (and left to 0),
+				but in both cases the <m>relative_position</m> is correct.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="2" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Dynamics Output Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="embed" get="1" set="1" type="int" size="1">
 			<digest>
 				Save Data With Patcher
@@ -1347,6 +1401,53 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="fontface" get="1" set="1" type="" size="1">
+			<digest>
+				
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="fontname" get="1" set="1" type="" size="1">
+			<digest>
+				
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="fontsize" get="1" set="1" type="" size="1">
+			<digest>
+				
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jitmatrix" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Mirror To Jitter Matrix
+			</digest>
+			<description>
+				Sets the name of a jitter matrix to which the canvas should be mirrored
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mirror To Jitter Matrix" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="maxundosteps" get="1" set="1" type="atom" size="1">
@@ -1383,7 +1484,7 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="notificationsformessages" get="1" set="1" type="int" size="1">
+		<attribute name="notifymessages" get="1" set="1" type="int" size="1">
 			<digest>
 				Notifications When Changed Via Messages
 			</digest>
@@ -1413,6 +1514,23 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify About Open Slot" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="notifypaint" get="1" set="1" type="int" size="1">
+			<digest>
+				Notifications When Display Is Refreshed
+			</digest>
+			<description>
+				Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
+				whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Display Is Refreshed" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -1515,16 +1633,16 @@
 				The llll must contain at its root level: <br />
 				- either single symbols, with the items or features names to be completely "locked", e.g. <b>preventedit measure lyrics inspector</b> will prevent the editing of all measures
 				(one cannot create, delete, modify them), lyrics, and will not allow the opening of the bach inspector; <br />
-				- or lllls in the form <b>(<m>item_or_feature_name</m> <m>property1</m> <m>property2</m> <m>property3</m>...)</b>, where properties are symbols which restrict the locking
-				only to a given aspect of the item or feature. For instance, <b>preventedit (measure create delete) (marker onset)</b> will prevent the creation and deletion of measures
+				- or lllls in the form <b>[<m>item_or_feature_name</m> <m>property1</m> <m>property2</m> <m>property3</m>...]</b>, where properties are symbols which restrict the locking
+				only to a given aspect of the item or feature. For instance, <b>preventedit [measure create delete] [marker onset]</b> will prevent the creation and deletion of measures
 				(but not their modification!), and will also prevent the movement of existing markers (but not the creation of new ones!). <br/>
 				The two approaches. <br />
 				Here is the complete list of symbols which can be used to define items and feature names; parentheses list symbols for the single properties which one can block for them: <br />
 				notes (create, delete, onset, duration, pitch, velocity, modify), measures (create, delete, rhythmictree, modify), voice (create, delete, name, clef, key, position, modify),
 				breakpoints (create, delete, onset, pitch, velocity, modify), tempi (create, delete, modify), slots, markers (create, delete, onset, name, modify), articulations (create, delete),
 				selection, zooming, dilationrectangle, groups, inspector, popup, slotinfo, lyrics, cursor, loop, scrollbar, drop. <br />
-				The "modify" symbol only refers to modification different from the previously defined ones. For instance: <b>preventedit (breakpoints modify)</b> will not
-				prevent the modification of breakpoints onsets, but will, as an example, prevent the modification of breakpoints slopes. Use <b>preventedit (breakpoints onset modify)</b> to do both.
+				The "modify" symbol only refers to modification different from the previously defined ones. For instance: <b>preventedit [breakpoints modify]</b> will not
+				prevent the modification of breakpoints onsets, but will, as an example, prevent the modification of breakpoints slopes. Use <b>preventedit [breakpoints onset modify]</b> to do both.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />

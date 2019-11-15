@@ -2,15 +2,15 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
+			"major" : 8,
 			"minor" : 1,
 			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
+		"classnamespace" : "box",
 		"rect" : [ 549.0, 79.0, 617.0, 539.0 ],
-		"bgcolor" : [ 1.0, 1.0, 1.0, 0.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -48,7 +48,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 225.0, -65.5, 160.0, 23.0 ],
-					"style" : "",
 					"text" : "bubble 1, textcolor 0 0 0 1"
 				}
 
@@ -64,7 +63,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 362.0, -129.0, 40.0, 23.0 ],
-					"style" : "",
 					"text" : "defer"
 				}
 
@@ -81,7 +79,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 354.0, 393.0, 40.0 ],
-					"style" : "",
 					"text" : "You might want to edit a certain page and copy some content: don't hesitate to open the patch separately and do that!"
 				}
 
@@ -98,7 +95,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 404.0, 447.0, 54.0 ],
-					"style" : "",
 					"text" : "You will often find references of tags to be searched, either directly in the help text (marked with a #, and clickable), or in the \"Also search for\" zone. Don't hesitate to click on them for more information!"
 				}
 
@@ -114,7 +110,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 555.5, -73.0, 160.0, 23.0 ],
-					"style" : "",
 					"text" : "bubble 0, textcolor 0 0 0 0"
 				}
 
@@ -130,7 +125,6 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "" ],
 					"patching_rect" : [ 362.0, -101.0, 44.0, 23.0 ],
-					"style" : "",
 					"text" : "sel all"
 				}
 
@@ -146,7 +140,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 362.0, -155.0, 156.0, 22.0 ],
-					"style" : "",
 					"text" : "r bach.help.sendtobpatcher"
 				}
 
@@ -162,8 +155,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 225.0, 5.0, 245.0, 40.0 ],
-					"style" : "",
+					"patching_rect" : [ 210.0, 5.0, 245.0, 40.0 ],
 					"text" : "Tutorials are a very good way to start!"
 				}
 
@@ -177,7 +169,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 154.5, 141.0, 215.0, 23.0 ],
-					"style" : "",
 					"text" : "Welcome to the Help Center of",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 				}
@@ -193,7 +184,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 21.5, 59.0, 371.0, 50.0 ],
-					"style" : "",
 					"text" : "Use + to jointly search multiple tags.\nUse spaces to search either one of the tags.\nExamples: \"keys\", \"marker+role\", \"measureinfo\", \"undo redo\"...",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -225,7 +215,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 7.0, 5.0, 191.0, 54.0 ],
-					"style" : "",
 					"text" : "If you have a precise idea on what you want to search, write some tags here"
 				}
 
@@ -240,9 +229,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 287.0, 281.0, 40.0 ],
-					"style" : "",
-					"text" : "If you prefer to have a sistematic look at the documentation run through the list of topics."
+					"patching_rect" : [ 6.0, 287.0, 334.0, 40.0 ],
+					"text" : "If you prefer to have a systematic look at the documentation, you can run through the list of topics."
 				}
 
 			}
@@ -255,7 +243,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "See Also: ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
@@ -271,8 +258,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
-					"style" : "",
-					"text" : "Objects: bach.roll, bach.score, bach.slot, bach.quantize, all",
+					"text" : "Objects: bach.roll, bach.score, bach.slot, bach.quantize, bach.eval, all",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -288,7 +274,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 158.5, 123.0, 259.0, 23.0 ],
-					"style" : "",
 					"text" : "Welcome to the bach Help Center",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 					"varname" : "title"
@@ -304,7 +289,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"style" : "",
 					"text" : "Tags: welcome, help",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
@@ -315,7 +299,6 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-3", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-16", 0 ]
 				}
@@ -324,7 +307,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-21", 0 ]
 				}
@@ -333,7 +315,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-16", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-29", 0 ]
 				}
@@ -342,7 +323,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-21", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-3", 0 ]
 				}
@@ -351,7 +331,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-8", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-3", 1 ]
 				}
@@ -360,7 +339,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-8", 0 ]
 				}
@@ -368,7 +346,8 @@
 			}
  ],
 		"dependency_cache" : [  ],
-		"autosave" : 0
+		"autosave" : 0,
+		"bgcolor" : [ 1.0, 1.0, 1.0, 0.0 ]
 	}
 
 }

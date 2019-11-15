@@ -727,7 +727,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 197.0, 229.5, 88.0, 23.0 ],
 									"style" : "",
-									"text" : "(john george)"
+									"text" : "[john george]"
 								}
 
 							}
@@ -802,7 +802,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 156.0, 229.5, 32.5, 23.0 ],
 									"style" : "",
-									"text" : "()"
+									"text" : "[]"
 								}
 
 							}
@@ -863,7 +863,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 22.0, 179.0, 318.0, 43.0 ],
 									"style" : "",
-									"text" : "a b c 32 (john george) e () 1 foo 32 s 3 () 32 f f 32"
+									"text" : "a b c 32 [john george] e [] 1 foo 32 s 3 [] 32 f f 32"
 								}
 
 							}

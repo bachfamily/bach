@@ -107,7 +107,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 79.666664, 284.0, 110.0, 23.0 ],
 					"style" : "",
-					"text" : "((C6+1/3t)), bang"
+					"text" : "[[C6+1/3t]], bang"
 				}
 
 			}
@@ -122,7 +122,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 153.0, 130.0, 290.0, 23.0 ],
 					"style" : "",
-					"text" : "((C5 D5 Eb5 F5 F#5 G#5 A#5 B#5) (C#6)), bang"
+					"text" : "[[C5 D5 Eb5 F5 F#5 G#5 A#5 B#5] [C#6]], bang"
 				}
 
 			}

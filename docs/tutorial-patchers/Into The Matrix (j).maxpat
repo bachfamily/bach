@@ -625,7 +625,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Into The Matrix (i)",
+					"text" : "Into The Matrix [i]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -724,7 +724,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Into The Matrix (k)",
+					"text" : "Into The Matrix [k]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,

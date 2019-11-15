@@ -35,7 +35,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 (20 40)) (55 (66)) 44",
+					"text" : "[1 [20 40]] [55 [66]] 44",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 532.0, 354.0, 133.0, 18.0 ],
@@ -310,7 +310,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 (20 40)) (55 (66)) 44",
+					"text" : "[1 [20 40]] [55 [66]] 44",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 194.0, 188.0, 133.0, 18.0 ],
@@ -803,7 +803,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (b)",
+					"text" : "Iterations [b]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 677.0, 573.0, 140.0, 18.0 ],

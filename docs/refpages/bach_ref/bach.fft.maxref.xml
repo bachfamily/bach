@@ -11,8 +11,6 @@
 
 	<description>
 		Performs the Fast Fourier transform on
-		the incoming llll (whatever its size is), and outputs
-		either the cartesian or the polar representation.
 	</description>
 
 	<!--METADATA-->
@@ -131,7 +129,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>

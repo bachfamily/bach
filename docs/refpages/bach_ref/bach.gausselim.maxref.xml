@@ -11,7 +11,6 @@
 
 	<description>
 		Applies the Gaussian elimination algorithm to reduce the incoming matrix to a row echelon form.
-		It also outputs some additional information, such as determinant and rank.
 	</description>
 
 	<!--METADATA-->
@@ -98,7 +97,7 @@
 			<description>
 				The Gaussian elimination is performed on the incoming matrix and the matrix in echelon form is output. <br />
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
@@ -172,14 +171,10 @@
 	<!--DISCUSSION-->
 	<discussion>
 		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-		For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 		as the number of rows.
 		<br /> <br />
-		The algorithm has attributes to admit column swap, and to perform (in addition) also the reversed Gauss elimination.
-		To know more: http://mathworld.wolfram.com/GaussianElimination.html <br />
-		Rank and determinant are immediate to compute once the matrix is in echelon form, so no big further additional
-		computation is required. Indeed, the bach.rank and bach.det abstractions are little wrappers of bach.gausselim.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -237,14 +232,10 @@
 		<entry name ="More details">
 			<description>
 		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-		For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 		as the number of rows.
 		<br /> <br />
-		The algorithm has attributes to admit column swap, and to perform (in addition) also the reversed Gauss elimination.
-		To know more: http://mathworld.wolfram.com/GaussianElimination.html <br />
-		Rank and determinant are immediate to compute once the matrix is in echelon form, so no big further additional
-		computation is required. Indeed, the bach.rank and bach.det abstractions are little wrappers of bach.gausselim.
 			</description>
 		</entry>
 		<entry name ="Keywords">

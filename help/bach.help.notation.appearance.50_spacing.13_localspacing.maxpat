@@ -99,7 +99,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 158.0, 290.0, 34.0 ],
-					"text" : "((nil nil (widthfactor 0.3)) (nil nil (widthfactor 1.4)) (nil nil (width 40))), bang"
+					"text" : "[[nil nil [widthfactor 0.3]] [nil nil [widthfactor 1.4]] [nil nil [width 40]]], bang"
 				}
 
 			}

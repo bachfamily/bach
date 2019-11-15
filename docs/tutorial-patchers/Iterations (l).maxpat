@@ -532,7 +532,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (k)",
+					"text" : "Iterations [k]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -631,7 +631,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (m)",
+					"text" : "Iterations [m]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,

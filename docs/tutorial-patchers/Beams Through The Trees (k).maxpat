@@ -390,7 +390,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Beams Through The Trees (j)",
+					"text" : "Beams Through The Trees [j]",
 					"patching_rect" : [ 5.0, 515.0, 165.0, 18.0 ],
 					"id" : "obj-7",
 					"fontname" : "Arial",
@@ -489,7 +489,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Beams Through The Trees (l)",
+					"text" : "Beams Through The Trees [l]",
 					"patching_rect" : [ 591.0, 515.0, 165.0, 18.0 ],
 					"id" : "obj-16",
 					"fontname" : "Arial",

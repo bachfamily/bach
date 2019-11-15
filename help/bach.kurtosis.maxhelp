@@ -120,7 +120,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 40.0, 212.0, 146.0, 19.0 ],
-									"text" : "-10 a 8 -5/3 0 zzz 4 (-3)"
+									"text" : "-10 a 8 -5/3 0 zzz 4 [-3]"
 								}
 
 							}
@@ -432,7 +432,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 17.0, 161.0, 114.0, 49.0 ],
-									"text" : "-10 a 8 -5/3 0 zzz 4 (-3)"
+									"text" : "-10 a 8 -5/3 0 zzz 4 [-3]"
 								}
 
 							}

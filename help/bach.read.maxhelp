@@ -2,13 +2,14 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
+			"major" : 8,
+			"minor" : 0,
 			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
+		"classnamespace" : "box",
 		"rect" : [ 100.0, 100.0, 773.0, 488.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -49,13 +50,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
+							"major" : 8,
+							"minor" : 0,
 							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 100.0, 126.0, 773.0, 462.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -96,7 +98,7 @@
 									"out" : "nnnn",
 									"outlettype" : [ "", "", "", "", "bang" ],
 									"patching_rect" : [ 360.0, 320.0, 406.0, 116.0 ],
-									"versionnumber" : 80000,
+									"versionnumber" : 80005,
 									"whole_tree_data_0000000000" : [ "`(", "`null", "`)", "`(a0", "B1", "C2", "`z3)", "`(", "3/4", "`5e6", "`)", "`(", "``backtick!!!", "`)" ],
 									"whole_tree_data_count" : [ 1 ]
 								}
@@ -113,7 +115,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 596.0, 244.5, 170.0, 54.0 ],
-									"style" : "",
 									"text" : "Whenever you change the ignore attribute, the file has to be read again."
 								}
 
@@ -136,7 +137,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 472.0, 259.0, 118.0, 23.0 ],
-									"style" : "",
 									"text" : "read ignoramus.txt"
 								}
 
@@ -151,7 +151,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 393.0, 25.0, 255.0, 21.0 ],
-									"style" : "",
 									"text" : "Try different values for the ignore attribute:"
 								}
 
@@ -167,7 +166,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 518.0, 205.5, 178.0, 40.0 ],
-									"style" : "",
 									"text" : "Ignore everything except rationals and pitches"
 								}
 
@@ -182,7 +180,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 518.0, 177.0, 111.0, 25.0 ],
-									"style" : "",
 									"text" : "Ignore nothing"
 								}
 
@@ -195,7 +192,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 446.0, 177.0, 57.0, 23.0 ],
-									"style" : "",
 									"text" : "ignore 0"
 								}
 
@@ -210,7 +206,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 518.0, 142.0, 166.0, 25.0 ],
-									"style" : "",
 									"text" : "Ignore all the categories"
 								}
 
@@ -226,7 +221,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 518.0, 86.0, 204.0, 40.0 ],
-									"style" : "",
 									"text" : "Ignore parens in symbols and floats in scientific notation"
 								}
 
@@ -239,7 +233,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 446.0, 94.5, 65.0, 23.0 ],
-									"style" : "",
 									"text" : "ignore le"
 								}
 
@@ -253,9 +246,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 518.0, 52.0, 178.0, 25.0 ],
-									"style" : "",
-									"text" : "Ignore parens and pitches"
+									"patching_rect" : [ 518.0, 52.0, 184.0, 25.0 ],
+									"text" : "Ignore parens and rationals"
 								}
 
 							}
@@ -267,7 +259,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 446.0, 214.0, 66.0, 23.0 ],
-									"style" : "",
 									"text" : "ignore -rp"
 								}
 
@@ -280,7 +271,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 446.0, 142.0, 57.0, 23.0 ],
-									"style" : "",
 									"text" : "ignore 1"
 								}
 
@@ -293,7 +283,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 446.0, 53.0, 65.0, 23.0 ],
-									"style" : "",
 									"text" : "ignore Lr"
 								}
 
@@ -310,7 +299,6 @@
 										"versionnumber" : 80000
 									}
 ,
-									"style" : "",
 									"text" : "bach.read @auto 1"
 								}
 
@@ -325,7 +313,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 12.0, 259.0, 326.0, 36.0 ],
-									"style" : "",
 									"text" : "...plus the special characters 0 (don't ignore anything), 1 (ignore everything), - (invert the selection) ",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -341,7 +328,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 30.5, 120.0, 359.0, 137.0 ],
-									"style" : "",
 									"text" : "l: parens inside symbols are NOT llll levels (but symbols composed by parens only are kept as llll levels!)\nL: ALL parens are not parsed as llll levels\np: ignore pitches (keep them as symbols)\nr: ignore rationals (keep them as symbols)\ne: ignore floating-point scientific notation (keep it as symbol)\ns: keep the special symbols nil and null as symbols\nb: symbols with a backtick are interpreted literally (with the backtick included)",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -356,8 +342,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 12.0, 82.0, 301.0, 36.0 ],
-									"style" : "",
+									"patching_rect" : [ 12.0, 82.0, 301.0, 50.0 ],
 									"text" : "The ignore attribute can be set to any combination of the following characters:\n",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -375,7 +360,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 209.354187, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 209.33599853515625, 57.599853515625 ]
 								}
 
 							}
@@ -443,11 +428,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p \"more about ignore\"",
 					"varname" : "basic_tab[3]"
 				}
@@ -464,13 +447,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
+							"major" : 8,
+							"minor" : 0,
 							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 773.0, 462.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -508,8 +492,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 239.0, 276.0, 94.0 ],
-									"style" : "",
+									"patching_rect" : [ 10.0, 239.0, 277.0, 94.0 ],
 									"text" : "If the \"ignore\" attribute is not set, what can be interpreted as a pitch (from A001 to G007) is. If the attribute is set to p, the symbols that potentially represent pitches are not interpreted as such, but left alone and read as they are.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -528,7 +511,6 @@
 										"versionnumber" : 80000
 									}
 ,
-									"style" : "",
 									"text" : "bach.reg"
 								}
 
@@ -545,7 +527,6 @@
 										"versionnumber" : 80000
 									}
 ,
-									"style" : "",
 									"text" : "bach.read @auto 1"
 								}
 
@@ -563,7 +544,6 @@
 										"versionnumber" : 80000
 									}
 ,
-									"style" : "",
 									"text" : "bach.reg"
 								}
 
@@ -576,7 +556,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 121.0, 164.0, 23.0 ],
-									"style" : "",
 									"text" : "read topitchornottopitch.txt"
 								}
 
@@ -593,7 +572,6 @@
 										"versionnumber" : 80000
 									}
 ,
-									"style" : "",
 									"text" : "bach.read @ignore p @auto 1"
 								}
 
@@ -608,7 +586,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 74.0, 495.0, 36.0 ],
-									"style" : "",
 									"text" : "The ignore attribute allows preventing some categories of symbols, such as parens, pitches and more, to be read according to the usual bach syntax.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -626,7 +603,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 209.354187, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 209.33599853515625, 57.599853515625 ]
 								}
 
 							}
@@ -670,11 +647,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p \"ignore basics\"",
 					"varname" : "basic_tab[2]"
 				}
@@ -691,13 +666,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
+							"major" : 8,
+							"minor" : 0,
 							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 773.0, 462.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -737,7 +713,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 238.0, 143.0, 203.0, 54.0 ],
-									"style" : "",
 									"text" : "If the \"auto\" attribute is set to 1, the llll is automatically output after having been read."
 								}
 
@@ -753,7 +728,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 228.0, 131.0, 77.0, 23.0 ],
-									"style" : "",
 									"text" : "loadmess 1"
 								}
 
@@ -768,7 +742,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 31.0, 217.5, 167.0, 25.0 ],
-									"style" : "",
 									"text" : "No longer need to bang!"
 								}
 
@@ -781,8 +754,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 184.0, 152.0, 20.0, 20.0 ],
-									"style" : ""
+									"patching_rect" : [ 184.0, 152.0, 20.0, 20.0 ]
 								}
 
 							}
@@ -796,7 +768,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 184.0, 175.0, 54.0, 23.0 ],
-									"style" : "",
 									"text" : "auto $1"
 								}
 
@@ -808,8 +779,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 10.0, 220.0, 20.0, 20.0 ],
-									"style" : ""
+									"parameter_enable" : 0,
+									"patching_rect" : [ 10.0, 220.0, 20.0, 20.0 ]
 								}
 
 							}
@@ -823,7 +794,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 74.0, 143.0, 107.0, 23.0 ],
-									"style" : "",
 									"text" : "read example.txt"
 								}
 
@@ -838,7 +808,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 29.0, 143.0, 38.0, 23.0 ],
-									"style" : "",
 									"text" : "read"
 								}
 
@@ -850,8 +819,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 131.0, 282.0, 20.0, 20.0 ],
-									"style" : ""
+									"parameter_enable" : 0,
+									"patching_rect" : [ 131.0, 282.0, 20.0, 20.0 ]
 								}
 
 							}
@@ -868,7 +837,6 @@
 										"versionnumber" : 80000
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -887,7 +855,6 @@
 										"versionnumber" : 80000
 									}
 ,
-									"style" : "",
 									"text" : "bach.read @auto 1"
 								}
 
@@ -902,7 +869,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 74.0, 403.0, 50.0 ],
-									"style" : "",
 									"text" : "If the auto attribute is 0 (default), the list you load is not automatically output. You must send bach.read a bang to retrieve it.\nWith auto 1, the list is output immediately after having been loaded.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -920,7 +886,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 209.354187, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 209.354186999999996, 57.567627000000002 ]
 								}
 
 							}
@@ -991,11 +957,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p auto",
 					"varname" : "basic_tab[1]"
 				}
@@ -1016,7 +980,6 @@
 						"parameter_enable" : 0
 					}
 ,
-					"style" : "",
 					"text" : "js helpstarter.js bach.read"
 				}
 
@@ -1032,13 +995,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
+							"major" : 8,
+							"minor" : 0,
 							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 773.0, 462.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -1077,7 +1041,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 191.25, 194.5, 305.0, 36.0 ],
-									"style" : "",
 									"text" : "bach.read can open files both in native (.llll) and text (.txt) format. ",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1094,7 +1057,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 89.0, 244.0, 197.0, 40.0 ],
-									"style" : "",
 									"text" : "Send a bang to output the llll from the left outlet"
 								}
 
@@ -1110,7 +1072,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 178.5, 113.5, 249.0, 54.0 ],
-									"style" : "",
 									"text" : "Send a \"read\" message to open a file via a dialog box, or write explicitly the file name as argument"
 								}
 
@@ -1122,8 +1083,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 63.0, 254.0, 20.0, 20.0 ],
-									"style" : ""
+									"parameter_enable" : 0,
+									"patching_rect" : [ 63.0, 254.0, 20.0, 20.0 ]
 								}
 
 							}
@@ -1138,7 +1099,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 178.5, 315.0, 233.5, 40.0 ],
-									"style" : "",
 									"text" : "A bang is output from the right outlet when the file has been read."
 								}
 
@@ -1153,7 +1113,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 63.0, 131.0, 108.0, 23.0 ],
-									"style" : "",
 									"text" : "read example.txt"
 								}
 
@@ -1168,7 +1127,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 18.0, 131.0, 38.0, 23.0 ],
-									"style" : "",
 									"text" : "read"
 								}
 
@@ -1180,8 +1138,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 148.0, 323.0, 20.0, 20.0 ],
-									"style" : ""
+									"parameter_enable" : 0,
+									"patching_rect" : [ 148.0, 323.0, 20.0, 20.0 ]
 								}
 
 							}
@@ -1198,7 +1156,6 @@
 										"versionnumber" : 80000
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -1217,7 +1174,6 @@
 										"versionnumber" : 80000
 									}
 ,
-									"style" : "",
 									"text" : "bach.read"
 								}
 
@@ -1231,7 +1187,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 191.25, 175.5, 289.0, 21.0 ],
-									"style" : "",
 									"text" : "You can drag'n'drop files onto bach.read as well.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1270,7 +1225,6 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 295.125, 254.0, 20.0, 20.0 ],
 									"rounded" : 60.0,
-									"style" : "",
 									"text" : "3",
 									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
 									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
@@ -1297,7 +1251,6 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 435.5, 131.0, 20.0, 20.0 ],
 									"rounded" : 60.0,
-									"style" : "",
 									"text" : "1",
 									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
 									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
@@ -1324,7 +1277,6 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 422.0, 323.0, 20.0, 20.0 ],
 									"rounded" : 60.0,
-									"style" : "",
 									"text" : "2",
 									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
 									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
@@ -1379,11 +1331,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p basic",
 					"varname" : "basic_tab"
 				}
@@ -1401,7 +1351,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 10.0, 10.0, 209.354187, 57.567627 ]
+					"patching_rect" : [ 10.0, 10.0, 209.354186999999996, 57.567627000000002 ]
 				}
 
 			}
@@ -1416,13 +1366,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
+							"major" : 8,
+							"minor" : 0,
 							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 773.0, 462.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -1461,11 +1412,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p ?",
 					"varname" : "q_tab"
 				}

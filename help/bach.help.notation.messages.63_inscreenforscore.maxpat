@@ -80,7 +80,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 70.0, 291.5, 111.0, 23.0 ],
 					"style" : "",
-					"text" : "inscreenpos 0 (1)"
+					"text" : "inscreenpos 0 [1]"
 				}
 
 			}
@@ -111,7 +111,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 44.0, 213.0, 144.0, 23.0 ],
 					"style" : "",
-					"text" : "inscreenpos 0.6 (5 1/4)"
+					"text" : "inscreenpos 0.6 [5 1/4]"
 				}
 
 			}
@@ -142,7 +142,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 52.0, 253.5, 147.0, 23.0 ],
 					"style" : "",
-					"text" : "inscreenpos 0. (2 5 1/4)"
+					"text" : "inscreenpos 0. [2 5 1/4]"
 				}
 
 			}
@@ -187,7 +187,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 21.0, 172.0, 102.0, 23.0 ],
 					"style" : "",
-					"text" : "inscreen (5 1/4)"
+					"text" : "inscreen [5 1/4]"
 				}
 
 			}
@@ -202,7 +202,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 141.0, 80.0, 23.0 ],
 					"style" : "",
-					"text" : "inscreen (5)"
+					"text" : "inscreen [5]"
 				}
 
 			}

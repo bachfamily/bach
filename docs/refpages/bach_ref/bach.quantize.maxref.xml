@@ -11,8 +11,6 @@
 
 	<description>
 		In its simplest usage, <o>bach.quantize</o> converts a <o>bach.roll</o> into a bach.score, by using specific time signatures
-		and tempi, or by handling the information about the position of barlines. In its most extensive usage, it
-		performs a general quantization of incoming data.
 	</description>
 
 	<!--METADATA-->
@@ -32,37 +30,37 @@
 			<description>
 				Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
 				This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
-				an llll in the form <b>(<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
+				an llll in the form <b>[<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
 				All elements except for the <m>TIME_SIGNATURE</m> are optional. <br /> <br />
 				The <m>TIME_SIGNATURE</m> is an llll containing the measure time signature, in one of the following forms: <br />
-				- <b>(<m>numerator</m> <m>denominator</m>)</b> for standard time signatures. For instance, <b>(4 4)</b> corresponds to a 4/4 time signature. <br />
-				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
-				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
+				- <b>[<m>numerator</m> <m>denominator</m>]</b> for standard time signatures. For instance, <b>[4 4]</b> corresponds to a 4/4 time signature. <br />
+				- <b>[[<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...] <m>denominator</m>]</b> for time
+				signatures where the numerator is a sum of numbers.For instance <b>[[3 2 3] 8]</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
 				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
 				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
-				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
-				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>)</b> will assign the tempo value to the specified symbolic unit and will put the
-				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>(3/8 40 1/4)</b> will set a tempo of a dotted quarter = 40
+				- <b>[<m>tempo_value</m>]</b> will assign a quarter tempo at the beginning of the measure. For instance <b>[60]</b> will set a 1/4 = 60 tempo. <br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m>]</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
+				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>[3/8 40]</b> will set a tempo of a dotted quarter = 40.<br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>]</b> will assign the tempo value to the specified symbolic unit and will put the
+				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>[3/8 40 1/4]</b> will set a tempo of a dotted quarter = 40
 				but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b> will do exactly as the previous case
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b> will do exactly as the previous case
 				but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
-				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>(3/8 40 1/4 1)</b>
+				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>[3/8 40 1/4 1]</b>
 				will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
 				If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
-				<b>(<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...)</b>, where each tempo must be in one the forms explained above. As an example, consider
-				<b>((60) (1/4 70 1/16) (1/8 60 1/8 1) (1/8 80 3/8))</b>, where four tempi have been defined. The order of tempi is irrelevant,
+				<b>[<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...]</b>, where each tempo must be in one the forms explained above. As an example, consider
+				<b>[[60] [1/4 70 1/16] [1/8 60 1/8 1] [1/8 80 3/8]]</b>, where four tempi have been defined. The order of tempi is irrelevant,
 				only their onset is accounted for. <br />
 				Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
-				certain number of measures, such as <b>(<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
-				For instance <b>(5 (4 4) ((80) (1/4 160 1/2)))</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
+				certain number of measures, such as <b>[<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
+				For instance <b>[5 [4 4] [[80] [1/4 160 1/2]]]</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
 				until 1/4 = 160 exactly at half of the measure. For instance
-				<b> (((4 4) (1/8 60)) ((2 4) (1/4 50 1/4 1)) (4 (4 4)) (nil (180)))</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
+				<b> [[[4 4] [1/8 60]] [[2 4] [1/4 50 1/4 1]] [4 [4 4]] [nil [180]]]</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
 				pass at 2/4 and quarter = 50 after 1/4 of measure 2, and at that moment, an accelerando starts. The accelerando lasts during 4 4/4-measures,
 				and then ends at the following measure on a new tempo of quarter = 180. <br /> <br />
-				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>(<m>parameter_name</m> <m>parameter_value</m>)</b>.
+				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>[<m>parameter_name</m> <m>parameter_value</m>]</b>.
 				The <m>parameter_name</m> is a symbol identifying the parameter. The complete list of parameters symbols and their corresponding
 				values is the following one: <br />
 				- <b>width</b>: assigns a fixed width to a measure. It expects as value a fixed width in pixels that the measure will have (referred to the default
@@ -75,18 +73,19 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
-				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>(shownumber -4)</b> will
+				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
 				assigned measure number (default). <br />
 				- <b>boxes</b>: assign custom beaming boxes. It expects custom beaming boxes for the measure, as a plain list of rational numbers.
 				Custom boxing allows you to handle beam grouping inside the measure differently than beat-wise.
 				Each number of the expected list is the symbolic width of each beaming box inside the measure.
 				If the given boxes don't fill the whole measure, the last one is padded. For instance, in a 4/4 measure,
-				<b>(boxes 1/8)</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
-				This is equivalent to <b>(boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8)</b>.
-				Analogously, <b>(boxes 1/2 1/8 1/4 1/8)</b> is a more exotic boxing for the same time signature. <br />
+				<b>[boxes 1/8]</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
+				This is equivalent to <b>[boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8]</b>.
+				Analogously, <b>[boxes 1/2 1/8 1/4 1/8]</b> is a more exotic boxing for the same time signature. <br />
 				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 				compresses the measure by a factor of two, hides its final barline and its number.
 				<br /> <br />
@@ -94,7 +93,7 @@
 		</inlet>
 		<inlet id="1" type="INLET_TYPE">
 			<digest>
-				The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or cents
+				The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or MIDIcents
 			</digest>
 			<description>
 			</description>
@@ -109,9 +108,9 @@
 				on the time signature in general), and then performs the quantization in each box. This allows things falling almost exactly on box boundaries to be kept exactly on the box boundaries,
 				so that they may not float due to quantization errors. You can assign custom boxes by explicitely saying which boxes you want.
 				You have to give a llll for each voice (in our case, just one), containing for each measure: either a rational number, which represents the
-				width of each box (e.g. <b>1/8</b>) and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>(1/4 3/4)</b>.
-				This has to be done for each voice, so that for instance a list like <b>(1/8 2/4) () ((1/4 3/4) 1/8)</b> sets to 1/8 the boxes for firt measure of first voice,
-				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>(1/4 3/4)</b> the boxes for
+				width of each box (e.g. <b>1/8</b>] and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>[1/4 3/4]</b>.
+				This has to be done for each voice, so that for instance a list like <b>[1/8 2/4] [] [[1/4 3/4] 1/8]</b> sets to 1/8 the boxes for firt measure of first voice,
+				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>[1/4 3/4]</b> the boxes for
 				the first measure of the third voice and then to 1/8 for all the following ones.
 				<br /> <br />
 			</description>
@@ -147,9 +146,9 @@
 				on the time signature in general), and then performs the quantization in each box. This allows things falling almost exactly on box boundaries to be kept exactly on the box boundaries,
 				so that they may not float due to quantization errors. You can assign custom boxes by explicitely saying which boxes you want.
 				You have to give a llll for each voice (in our case, just one), containing for each measure: either a rational number, which represents the
-				width of each box (e.g. <b>1/8</b>) and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>(1/4 3/4)</b>.
-				This has to be done for each voice, so that for instance a list like <b>(1/8 2/4) () ((1/4 3/4) 1/8)</b> sets to 1/8 the boxes for firt measure of first voice,
-				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>(1/4 3/4)</b> the boxes for
+				width of each box (e.g. <b>1/8</b>] and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>[1/4 3/4]</b>.
+				This has to be done for each voice, so that for instance a list like <b>[1/8 2/4] [] [[1/4 3/4] 1/8]</b> sets to 1/8 the boxes for firt measure of first voice,
+				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>[1/4 3/4]</b> the boxes for
 				the first measure of the third voice and then to 1/8 for all the following ones.
 				<br /> <br />
 			</description>
@@ -231,7 +230,7 @@
 				Separate parameters mode
 			</digest>
 			<description>
-				Put a "separate" symbol as argument if you want to output the separate parameters (and not the bach.score gathered syntax).
+				Put a "separate" symbol as argument if you want to input and output the separate parameters (and not the bach.score gathered syntax).
 			</description>
 		</objarg>
 	</objarglist>
@@ -246,8 +245,8 @@
 			<description>
 				Syntax: <b>allow <m>[&lt;llll: allowed_configurations&gt;]</m> </b><br />
 				Examples:<br />
-				• <b>allow (1/16 1/16 1/8) (1/8 1/16 1/16) (1/4)</b>   <i>→ only allow some patterns</i><br />
-				• <b>allow ((1/16 1/16 1/8) (1/8 1/16 1/16) (1/4)) ((1/16 1/8 1/16) (1/8 1/8))</b>   <i>→ allow differen patterns for different voices</i><br />
+				• <b>allow [1/16 1/16 1/8] [1/8 1/16 1/16] [1/4]</b>   <i>→ only allow some patterns</i><br />
+				• <b>allow [[1/16 1/16 1/8] [1/8 1/16 1/16] [1/4]] [[1/16 1/8 1/16] [1/8 1/8]]</b>   <i>→ allow differen patterns for different voices</i><br />
 				<br />
 				Via an <m>allow</m> message one can allow the output of each box to be only in one of a given list of rhythmic configurations (thus forbidding any other option).
 				For instance "allow (1/16 1/16 1/16 1/16) (1/16 1/16 1/8) (1/8 1/8) (1/4)" only allows each box to have one of the four given possibilities (one for each sublist).
@@ -272,9 +271,9 @@
 				and the content as fourth parameter. Alternatively, roles and content can be set via the marker inspector.
 				Roles can be: <br />
 				<m>Time Signature</m>: set by the symbol "timesig", it represents a time signature, and expects the time signature llll as content.
-				For instance, a message to add such a marker could be <b>addmarker 0 foo timesig (4 4)</b>.<br />
+				For instance, a message to add such a marker could be <b>addmarker 0 foo timesig [4 4]</b>.<br />
 				<m>Tempo</m>: set by the symbol "tempo", it represents a time signature, and expects the tempo llll as content (tempo figure and tempo
-				value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo (1/8 50)</b>, meaning
+				value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo [1/8 50]</b>, meaning
 				that the tempo is 1/8 = 50.<br />
 				<m>Measure Barlines</m>: set by the symbol "barline", it represents a barline, and expects no content.
 				For instance, a message to add such a marker could be <b>addmarker 0 foo barline</b>. <br />
@@ -304,13 +303,13 @@
 			<description>
 				Syntax: <b>forbid <m>[&lt;llll: forbidden_configurations&gt;]</m> </b><br />
 				Examples:<br />
-				• <b>forbid (1/16 1/16 1/8) (1/8 1/16 1/16) (1/4)</b>   <i>→ forbid some patterns</i><br />
-				• <b>forbid ((1/16 1/16 1/8) (1/8 1/16 1/16) (1/4)) ((1/16 1/8 1/16) (1/8 1/8))</b>   <i>→ forbid differen patterns for different voices</i><br />
+				• <b>forbid [1/16 1/16 1/8] [1/8 1/16 1/16] [1/4]</b>   <i>→ forbid some patterns</i><br />
+				• <b>forbid [[1/16 1/16 1/8] [1/8 1/16 1/16] [1/4]] [[1/16 1/8 1/16] [1/8 1/8]]</b>   <i>→ forbid differen patterns for different voices</i><br />
 				<br />
 				Via a <m>forbid</m> message one can force a box NOT to have some rhythmic configurations.
-				For instance <b>forbid (1/16 1/8 1/16) (1/16 1/16 1/8)</b> denies the two given possibilities (one for each sublist).
+				For instance <b>forbid [1/16 1/8 1/16] [1/16 1/16 1/8]</b> denies the two given possibilities (one for each sublist).
 				Just use <b>forbid</b> with no further arguments in order to revert to the default behaviour of no configurations denied.
-				If an <m>forbid</m> list has one more level of parenthesis, such as <b>forbid ((1/16 1/8 1/16)) ((1/16 3/16))</b>
+				If an <m>forbid</m> list has one more level of parenthesis, such as <b>forbid [[1/16 1/8 1/16]] [[1/16 3/16]]</b>
 				bach considers that different <m>forbid</m> specification will apply to the different voices (possibly looping the last one, if needed).
 			</description>
 		</method>
@@ -332,37 +331,37 @@
 				chord is a list of elements, one for each note).  <br /> <br />
 				Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
 				This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
-				an llll in the form <b>(<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
+				an llll in the form <b>[<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
 				All elements except for the <m>TIME_SIGNATURE</m> are optional. <br /> <br />
 				The <m>TIME_SIGNATURE</m> is an llll containing the measure time signature, in one of the following forms: <br />
-				- <b>(<m>numerator</m> <m>denominator</m>)</b> for standard time signatures. For instance, <b>(4 4)</b> corresponds to a 4/4 time signature. <br />
-				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
-				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
+				- <b>[<m>numerator</m> <m>denominator</m>]</b> for standard time signatures. For instance, <b>[4 4]</b> corresponds to a 4/4 time signature. <br />
+				- <b>[[<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...] <m>denominator</m>]</b> for time
+				signatures where the numerator is a sum of numbers.For instance <b>[[3 2 3] 8]</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
 				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
 				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
-				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
-				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>)</b> will assign the tempo value to the specified symbolic unit and will put the
-				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>(3/8 40 1/4)</b> will set a tempo of a dotted quarter = 40
+				- <b>[<m>tempo_value</m>]</b> will assign a quarter tempo at the beginning of the measure. For instance <b>[60]</b> will set a 1/4 = 60 tempo. <br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m>]</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
+				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>[3/8 40]</b> will set a tempo of a dotted quarter = 40.<br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>]</b> will assign the tempo value to the specified symbolic unit and will put the
+				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>[3/8 40 1/4]</b> will set a tempo of a dotted quarter = 40
 				but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b> will do exactly as the previous case
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b> will do exactly as the previous case
 				but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
-				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>(3/8 40 1/4 1)</b>
+				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>[3/8 40 1/4 1]</b>
 				will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
 				If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
-				<b>(<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...)</b>, where each tempo must be in one the forms explained above. As an example, consider
-				<b>((60) (1/4 70 1/16) (1/8 60 1/8 1) (1/8 80 3/8))</b>, where four tempi have been defined. The order of tempi is irrelevant,
+				<b>[<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...]</b>, where each tempo must be in one the forms explained above. As an example, consider
+				<b>[[60] [1/4 70 1/16] [1/8 60 1/8 1] [1/8 80 3/8]]</b>, where four tempi have been defined. The order of tempi is irrelevant,
 				only their onset is accounted for. <br />
 				Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
-				certain number of measures, such as <b>(<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
-				For instance <b>(5 (4 4) ((80) (1/4 160 1/2)))</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
+				certain number of measures, such as <b>[<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
+				For instance <b>[5 [4 4] [[80] [1/4 160 1/2]]]</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
 				until 1/4 = 160 exactly at half of the measure. For instance
-				<b> (((4 4) (1/8 60)) ((2 4) (1/4 50 1/4 1)) (4 (4 4)) (nil (180)))</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
+				<b> [[[4 4] [1/8 60]] [[2 4] [1/4 50 1/4 1]] [4 [4 4]] [nil [180]]]</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
 				pass at 2/4 and quarter = 50 after 1/4 of measure 2, and at that moment, an accelerando starts. The accelerando lasts during 4 4/4-measures,
 				and then ends at the following measure on a new tempo of quarter = 180. <br /> <br />
-				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>(<m>parameter_name</m> <m>parameter_value</m>)</b>.
+				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>[<m>parameter_name</m> <m>parameter_value</m>]</b>.
 				The <m>parameter_name</m> is a symbol identifying the parameter. The complete list of parameters symbols and their corresponding
 				values is the following one: <br />
 				- <b>width</b>: assigns a fixed width to a measure. It expects as value a fixed width in pixels that the measure will have (referred to the default
@@ -375,18 +374,19 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
-				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>(shownumber -4)</b> will
+				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
 				assigned measure number (default). <br />
 				- <b>boxes</b>: assign custom beaming boxes. It expects custom beaming boxes for the measure, as a plain list of rational numbers.
 				Custom boxing allows you to handle beam grouping inside the measure differently than beat-wise.
 				Each number of the expected list is the symbolic width of each beaming box inside the measure.
 				If the given boxes don't fill the whole measure, the last one is padded. For instance, in a 4/4 measure,
-				<b>(boxes 1/8)</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
-				This is equivalent to <b>(boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8)</b>.
-				Analogously, <b>(boxes 1/2 1/8 1/4 1/8)</b> is a more exotic boxing for the same time signature. <br />
+				<b>[boxes 1/8]</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
+				This is equivalent to <b>[boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8]</b>.
+				Analogously, <b>[boxes 1/2 1/8 1/4 1/8]</b> is a more exotic boxing for the same time signature. <br />
 				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 				compresses the measure by a factor of two, hides its final barline and its number.
 				<br /> <br />
@@ -395,9 +395,9 @@
 				on the time signature in general), and then performs the quantization in each box. This allows things falling almost exactly on box boundaries to be kept exactly on the box boundaries,
 				so that they may not float due to quantization errors. You can assign custom boxes by explicitely saying which boxes you want.
 				You have to give a llll for each voice (in our case, just one), containing for each measure: either a rational number, which represents the
-				width of each box (e.g. <b>1/8</b>) and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>(1/4 3/4)</b>.
-				This has to be done for each voice, so that for instance a list like <b>(1/8 2/4) () ((1/4 3/4) 1/8)</b> sets to 1/8 the boxes for firt measure of first voice,
-				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>(1/4 3/4)</b> the boxes for
+				width of each box (e.g. <b>1/8</b>] and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>[1/4 3/4]</b>.
+				This has to be done for each voice, so that for instance a list like <b>[1/8 2/4] [] [[1/4 3/4] 1/8]</b> sets to 1/8 the boxes for firt measure of first voice,
+				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>[1/4 3/4]</b> the boxes for
 				the first measure of the third voice and then to 1/8 for all the following ones.
 				<br /> <br />
 			</description>
@@ -842,13 +842,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.quantize</o> typically performs the task of converting a <o>bach.roll</o> object into a <o>bach.score</o> object.
-		Yet, it can be used for a much wider range of purposes (e.g. for performing a score-to-score quantization).
-		Generally speaking, it approximates a list of durations with combinations of a given set of so-called "minimal-units".
-		To accomplish this, bach.quantize implements a box-wise algorithm: it performs an initial subdivision of the original
-		rhythm into "boxes" where the quantization has to be achieved; then it quantizes each box separately;
-		finally the boxes are merged into the requested measures. The criterion to decide the bounty of an approximation
-		is simply the euclidean distance of quantized durations with the original durations, but a lot of attributes
-		can partially modify this behaviour.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -868,37 +861,37 @@
 				Measureinfo or bang.
 				Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
 				This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
-				an llll in the form <b>(<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
+				an llll in the form <b>[<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
 				All elements except for the <m>TIME_SIGNATURE</m> are optional. <br /> <br />
 				The <m>TIME_SIGNATURE</m> is an llll containing the measure time signature, in one of the following forms: <br />
-				- <b>(<m>numerator</m> <m>denominator</m>)</b> for standard time signatures. For instance, <b>(4 4)</b> corresponds to a 4/4 time signature. <br />
-				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
-				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
+				- <b>[<m>numerator</m> <m>denominator</m>]</b> for standard time signatures. For instance, <b>[4 4]</b> corresponds to a 4/4 time signature. <br />
+				- <b>[[<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...] <m>denominator</m>]</b> for time
+				signatures where the numerator is a sum of numbers.For instance <b>[[3 2 3] 8]</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
 				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
 				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
-				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
-				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>)</b> will assign the tempo value to the specified symbolic unit and will put the
-				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>(3/8 40 1/4)</b> will set a tempo of a dotted quarter = 40
+				- <b>[<m>tempo_value</m>]</b> will assign a quarter tempo at the beginning of the measure. For instance <b>[60]</b> will set a 1/4 = 60 tempo. <br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m>]</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
+				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>[3/8 40]</b> will set a tempo of a dotted quarter = 40.<br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>]</b> will assign the tempo value to the specified symbolic unit and will put the
+				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>[3/8 40 1/4]</b> will set a tempo of a dotted quarter = 40
 				but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b> will do exactly as the previous case
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b> will do exactly as the previous case
 				but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
-				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>(3/8 40 1/4 1)</b>
+				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>[3/8 40 1/4 1]</b>
 				will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
 				If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
-				<b>(<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...)</b>, where each tempo must be in one the forms explained above. As an example, consider
-				<b>((60) (1/4 70 1/16) (1/8 60 1/8 1) (1/8 80 3/8))</b>, where four tempi have been defined. The order of tempi is irrelevant,
+				<b>[<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...]</b>, where each tempo must be in one the forms explained above. As an example, consider
+				<b>[[60] [1/4 70 1/16] [1/8 60 1/8 1] [1/8 80 3/8]]</b>, where four tempi have been defined. The order of tempi is irrelevant,
 				only their onset is accounted for. <br />
 				Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
-				certain number of measures, such as <b>(<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
-				For instance <b>(5 (4 4) ((80) (1/4 160 1/2)))</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
+				certain number of measures, such as <b>[<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
+				For instance <b>[5 [4 4] [[80] [1/4 160 1/2]]]</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
 				until 1/4 = 160 exactly at half of the measure. For instance
-				<b> (((4 4) (1/8 60)) ((2 4) (1/4 50 1/4 1)) (4 (4 4)) (nil (180)))</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
+				<b> [[[4 4] [1/8 60]] [[2 4] [1/4 50 1/4 1]] [4 [4 4]] [nil [180]]]</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
 				pass at 2/4 and quarter = 50 after 1/4 of measure 2, and at that moment, an accelerando starts. The accelerando lasts during 4 4/4-measures,
 				and then ends at the following measure on a new tempo of quarter = 180. <br /> <br />
-				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>(<m>parameter_name</m> <m>parameter_value</m>)</b>.
+				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>[<m>parameter_name</m> <m>parameter_value</m>]</b>.
 				The <m>parameter_name</m> is a symbol identifying the parameter. The complete list of parameters symbols and their corresponding
 				values is the following one: <br />
 				- <b>width</b>: assigns a fixed width to a measure. It expects as value a fixed width in pixels that the measure will have (referred to the default
@@ -911,18 +904,19 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
-				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>(shownumber -4)</b> will
+				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
 				assigned measure number (default). <br />
 				- <b>boxes</b>: assign custom beaming boxes. It expects custom beaming boxes for the measure, as a plain list of rational numbers.
 				Custom boxing allows you to handle beam grouping inside the measure differently than beat-wise.
 				Each number of the expected list is the symbolic width of each beaming box inside the measure.
 				If the given boxes don't fill the whole measure, the last one is padded. For instance, in a 4/4 measure,
-				<b>(boxes 1/8)</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
-				This is equivalent to <b>(boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8)</b>.
-				Analogously, <b>(boxes 1/2 1/8 1/4 1/8)</b> is a more exotic boxing for the same time signature. <br />
+				<b>[boxes 1/8]</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
+				This is equivalent to <b>[boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8]</b>.
+				Analogously, <b>[boxes 1/2 1/8 1/4 1/8]</b> is a more exotic boxing for the same time signature. <br />
 				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 				compresses the measure by a factor of two, hides its final barline and its number.
 				<br /> <br />
@@ -930,7 +924,7 @@
 		</entry>
 		<entry name ="Inlet 2 (llll)">
 			<description>
-				The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or cents.
+				The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or MIDIcents.
 			</description>
 		</entry>
 		<entry name ="Inlet 3 (llll)">
@@ -941,9 +935,9 @@
 				on the time signature in general), and then performs the quantization in each box. This allows things falling almost exactly on box boundaries to be kept exactly on the box boundaries,
 				so that they may not float due to quantization errors. You can assign custom boxes by explicitely saying which boxes you want.
 				You have to give a llll for each voice (in our case, just one), containing for each measure: either a rational number, which represents the
-				width of each box (e.g. <b>1/8</b>) and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>(1/4 3/4)</b>.
-				This has to be done for each voice, so that for instance a list like <b>(1/8 2/4) () ((1/4 3/4) 1/8)</b> sets to 1/8 the boxes for firt measure of first voice,
-				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>(1/4 3/4)</b> the boxes for
+				width of each box (e.g. <b>1/8</b>] and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>[1/4 3/4]</b>.
+				This has to be done for each voice, so that for instance a list like <b>[1/8 2/4] [] [[1/4 3/4] 1/8]</b> sets to 1/8 the boxes for firt measure of first voice,
+				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>[1/4 3/4]</b> the boxes for
 				the first measure of the third voice and then to 1/8 for all the following ones.
 				<br /> <br />
 			</description>
@@ -971,9 +965,9 @@
 				on the time signature in general), and then performs the quantization in each box. This allows things falling almost exactly on box boundaries to be kept exactly on the box boundaries,
 				so that they may not float due to quantization errors. You can assign custom boxes by explicitely saying which boxes you want.
 				You have to give a llll for each voice (in our case, just one), containing for each measure: either a rational number, which represents the
-				width of each box (e.g. <b>1/8</b>) and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>(1/4 3/4)</b>.
-				This has to be done for each voice, so that for instance a list like <b>(1/8 2/4) () ((1/4 3/4) 1/8)</b> sets to 1/8 the boxes for firt measure of first voice,
-				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>(1/4 3/4)</b> the boxes for
+				width of each box (e.g. <b>1/8</b>] and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>[1/4 3/4]</b>.
+				This has to be done for each voice, so that for instance a list like <b>[1/8 2/4] [] [[1/4 3/4] 1/8]</b> sets to 1/8 the boxes for firt measure of first voice,
+				to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>[1/4 3/4]</b> the boxes for
 				the first measure of the third voice and then to 1/8 for all the following ones.
 				<br /> <br />
 			</description>
@@ -1035,13 +1029,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.quantize</o> typically performs the task of converting a <o>bach.roll</o> object into a <o>bach.score</o> object.
-		Yet, it can be used for a much wider range of purposes (e.g. for performing a score-to-score quantization).
-		Generally speaking, it approximates a list of durations with combinations of a given set of so-called "minimal-units".
-		To accomplish this, bach.quantize implements a box-wise algorithm: it performs an initial subdivision of the original
-		rhythm into "boxes" where the quantization has to be achieved; then it quantizes each box separately;
-		finally the boxes are merged into the requested measures. The criterion to decide the bounty of an approximation
-		is simply the euclidean distance of quantized durations with the original durations, but a lot of attributes
-		can partially modify this behaviour.
 			</description>
 		</entry>
 		<entry name ="Keywords">

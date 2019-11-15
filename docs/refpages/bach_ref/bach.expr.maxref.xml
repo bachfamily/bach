@@ -86,7 +86,7 @@
 		<method name="llll">
 			<arglist />
 			<digest>
-				Store values to the expression variables
+				Store values for the expression variables
 			</digest>
 			<description>
 				The lllls are iterated against each other (as in <o>bach.iter</o> with <m>recursionmode 1</m>),
@@ -110,6 +110,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Variables" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -152,6 +153,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Scalar Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -166,9 +168,10 @@
 	<seealsolist>
 		<seealso name="bach.+" />
 		<seealso name="bach.-" />
-		<seealso name="bach.*" />
-		<seealso name="bach./" />
-		<seealso name="bach.%" />
+		<seealso name="bach.times" display="bach.*" type="refpage" />
+		<seealso name="bach.div" display="bach./" type="refpage" />
+		<seealso name="bach.remainder" display="bach.%" type="refpage" />
+		<seealso name="bach.eval" />
 		<seealso name="expr" />
 		<seealso name="vexpr" />
 	</seealsolist>

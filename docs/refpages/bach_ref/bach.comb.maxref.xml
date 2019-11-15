@@ -75,7 +75,7 @@
 			<description>
 				Returns all the combinations of the given llll, within the optionally given cardinality range.
 				Combinations are grouped in sublists one by one, and these sublists are utterly grouped by cardinality.
-				For instance the llll <b>a b c</b>, with no cardinality limits, will trigger the result <b>(()) ((a)(b)(c)) ((a b)(a c)(b c)) ((a b c))</b>
+				For instance the llll <b>a b c</b>, with no cardinality limits, will trigger the result <b>[[]] [[a][b][c]] [[a b][a c][b c]] [[a b c]]</b>
 			</description>
 		</method>
 	</methodlist>
@@ -84,25 +84,41 @@
 	<attributelist>
 		<attribute name="kend" get="1" set="1" type="atom" size="1">
 			<digest>
-				End cardinality
+				End Cardinality
 			</digest>
 			<description>
 				End cardinality.
 			</description>
 			<attributelist>
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="End cardinality" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="End Cardinality" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="kstart" get="1" set="1" type="int" size="1">
 			<digest>
-				Start cardinality
+				Start Cardinality
 			</digest>
 			<description>
 				Start cardinality.
 			</description>
 			<attributelist>
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Start cardinality" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Start Cardinality" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="maxcount" get="1" set="1" type="int" size="1">
+			<digest>
+				Maximum Number of Combinations
+			</digest>
+			<description>
+				Maximum number of combinations to return.
+				If set to 0 (default), all the combinations of the input llll are returned.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Number of Combinations" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -132,7 +148,22 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="repeat" get="1" set="1" type="int" size="1">
+			<digest>
+				Allow Repetitions
+			</digest>
+			<description>
+				Allow repetition of elements in the output (i.e. compute arrangements with repetitions).
+				By default this is 0, and standard combinations are computed.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Allow Repetitions" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 	</attributelist>
@@ -173,7 +204,7 @@
 		</entry>
 		<entry name ="Keywords">
 			<description>
-combination, combinatory, element.
+combination, combinatory, element, arrange, arrangement.
 			</description>
 		</entry>
 	</misc>

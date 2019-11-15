@@ -85,7 +85,7 @@
     <OutDir>..\..\..\externals</OutDir>
     <IntDir>..\vs_stuff\ext_temp\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\commons;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -94,7 +94,7 @@
     <OutDir>..\..\..\externals</OutDir>
     <IntDir>..\vs_stuff\ext_temp\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\commons;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes\x64;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes\x64;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -103,7 +103,7 @@
     <OutDir>..\..\..\externals</OutDir>
     <IntDir>..\vs_stuff\ext_temp\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\commons;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -112,13 +112,13 @@
     <OutDir>..\..\..\externals</OutDir>
     <IntDir>..\vs_stuff\ext_temp\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\commons;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN_VERSION;WIN32;_DEBUG;_WINDOWS;_USRDLL;WIN_EXT_VERSION;BACH_MAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling />
@@ -136,6 +136,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).mxe</OutputFile>
@@ -157,7 +158,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN_VERSION;WIN32;_DEBUG;_WINDOWS;_USRDLL;WIN_EXT_VERSION;BACH_MAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling />
@@ -175,6 +176,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).mxe64</OutputFile>
@@ -201,7 +203,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN_VERSION;WIN32;NDEBUG;_WINDOWS;_USRDLL;WIN_EXT_VERSION;BACH_MAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling />
@@ -218,6 +220,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).mxe</OutputFile>
@@ -246,7 +249,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN_VERSION;WIN32;NDEBUG;_WINDOWS;_USRDLL;WIN_EXT_VERSION;BACH_MAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling />
@@ -263,6 +266,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).mxe64</OutputFile>
@@ -286,7 +290,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\commonsyms.c" />
     <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\dllmain_win.c" />
-    <ClCompile Include="..\..\mains\dg\convertbase.c" />
+    <ClCompile Include="..\..\mains\linearalgebra\convertbase.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bach_lib.vcxproj">

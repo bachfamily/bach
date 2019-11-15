@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 7.0, 54.5, 162.0, 23.0 ],
 					"style" : "",
-					"text" : "cleartempi, addtempo (50)"
+					"text" : "cleartempi, addtempo [50]"
 				}
 
 			}
@@ -93,7 +93,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 102.0, 242.0, 149.0, 23.0 ],
 					"style" : "",
-					"text" : "addtempo 1 (1/4 60 0 1)"
+					"text" : "addtempo 1 [1/4 60 0 1]"
 				}
 
 			}
@@ -138,7 +138,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 83.0, 175.5, 149.0, 23.0 ],
 					"style" : "",
-					"text" : "addtempo 3 (3/8 90 1/4)"
+					"text" : "addtempo 3 [3/8 90 1/4]"
 				}
 
 			}
@@ -153,7 +153,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 93.0, 208.5, 209.0, 23.0 ],
 					"style" : "",
-					"text" : "addtempo 2 (1/4 114) @voices 2 3"
+					"text" : "addtempo 2 [1/4 114] @voices 2 3"
 				}
 
 			}
@@ -183,7 +183,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 64.0, 143.5, 128.0, 23.0 ],
 					"style" : "",
-					"text" : "addtempo 3 (3/8 72)"
+					"text" : "addtempo 3 [3/8 72]"
 				}
 
 			}
@@ -228,7 +228,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 43.0, 116.5, 128.0, 23.0 ],
 					"style" : "",
-					"text" : "addtempo 1 (1/4 60)"
+					"text" : "addtempo 1 [1/4 60]"
 				}
 
 			}

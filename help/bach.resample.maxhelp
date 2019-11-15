@@ -1141,7 +1141,7 @@
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 575.0, 236.0, 126.0, 23.0 ],
 									"style" : "",
-									"text" : "bach.pick (1 1) (1 2)"
+									"text" : "bach.pick [1 1] [1 2]"
 								}
 
 							}
@@ -1207,7 +1207,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 72.5, 772.0, 36.0 ],
 									"style" : "",
-									"text" : "Right outlet outputs information about resampling coefficient. For each output sample there's a corresponding llll element in the form\n((el_idx1 coef1) (el_idx2 coef2)...). Sample will then be computed as el1*coef1 + el2*coef2...",
+									"text" : "Right outlet outputs information about resampling coefficient. For each output sample there's a corresponding llll element in the form\n[[el_idx1 coef1] [el_idx2 coef2]...]. Sample will then be computed as el1*coef1 + el2*coef2...",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -1464,7 +1464,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 267.0, 120.0, 254.0, 23.0 ],
 									"style" : "",
-									"text" : "((0 0.1) 1) ((4 1.1) 4) ((2 0.4) 3) ((4 -0.2) 5)"
+									"text" : "[[0 0.1] 1] [[4 1.1] 4] [[2 0.4] 3] [[4 -0.2] 5]"
 								}
 
 							}
@@ -1502,7 +1502,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 22.0, 120.0, 128.0, 23.0 ],
 									"style" : "",
-									"text" : "(0 1) (4 4) (2 3) (4 5)"
+									"text" : "[0 1] [4 4] [2 3] [4 5]"
 								}
 
 							}

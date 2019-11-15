@@ -471,7 +471,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ -428.0, 147.0, 457.0, 246.0 ],
-					"text" : "roll ( slotinfo ( 1 \"amplitude envelope\" function 0. 127. 97 0. ( ) ) ( 2 \"slot function\" function 0. 1. 113 0. ( ) ) ( 3 \"slot longlist\" intlist 0. 127. 119 0. ( ) ) ( 4 \"slot floatlist\" floatlist 0. 1. 101 0. ( ) ) ( 5 \"slot long\" int 0. 127. 114 0. ( ) ) ( 6 \"slot float\" float 0. 1. 116 0. ( ) ) ( 7 \"slot text\" text 0. 1. 121 0. ( ) ) ( 8 filelist filelist 0. 1. 117 0. ( ) ) ( 9 spat spat 0. 10. 105 0. ( ) ) ( 10 \"slot 10\" none 0. 1. 0 0. ( ) ) ( 11 \"slot 11\" none 0. 1. 0 0. ( ) ) ( 12 \"slot 12\" none 0. 1. 0 0. ( ) ) ( 13 \"slot 13\" none 0. 1. 0 0. ( ) ) ( 14 \"slot 14\" none 0. 1. 0 0. ( ) ) ( 15 \"slot 15\" none 0. 1. 0 0. ( ) ) ( 16 \"slot 16\" none 0. 1. 0 0. ( ) ) ( 17 \"slot 17\" none 0. 1. 0 0. ( ) ) ( 18 \"slot 18\" none 0. 1. 0 0. ( ) ) ( 19 \"slot 19\" none 0. 1. 0 0. ( ) ) ( 20 \"slot 20\" none 0. 1. 0 0. ( ) ) ( 21 \"slot 21\" none 0. 1. 0 0. ( ) ) ( 22 \"slot 22\" none 0. 1. 0 0. ( ) ) ( 23 \"slot 23\" none 0. 1. 0 0. ( ) ) ( 24 \"slot 24\" none 0. 1. 0 0. ( ) ) ( 25 \"slot 25\" none 0. 1. 0 0. ( ) ) ( 26 \"slot 26\" none 0. 1. 0 0. ( ) ) ( 27 \"slot 27\" none 0. 1. 0 0. ( ) ) ( 28 \"slot 28\" none 0. 1. 0 0. ( ) ) ( 29 \"slot 29\" none 0. 1. 0 0. ( ) ) ( 30 \"slot 30\" none 0. 1. 0 0. ( ) ) ) ( commands ( 1 notecmd chordcmd 0 ) ( 2 notecmd chordcmd 0 ) ( 3 notecmd chordcmd 0 ) ( 4 notecmd chordcmd 0 ) ( 5 notecmd chordcmd 0 ) ) ( midichannels 1 ) ( ( 92. ( 7240. 442. 100 0 ) 0 ) ( 668. ( 6800. 842. 100 0 ) ( 7300. 842. 100 0 ) ( 7900. 842. 100 0 ) 0 ) ( 1328. ( 5900. 2742. 100 0 ) 0 ) ( 1760. ( 6700. 442. 100 0 ) 0 ) ( 1952. ( 7400. 442. 100 0 ) 0 ) ( 2528. ( 7600. 1542. 100 0 ) 0 ) )"
+					"text" : "roll [ slotinfo [ 1 \"amplitude envelope\" function 0. 127. 97 0. [ ] ] [ 2 \"slot function\" function 0. 1. 113 0. [ ] ] [ 3 \"slot longlist\" intlist 0. 127. 119 0. [ ] ] [ 4 \"slot floatlist\" floatlist 0. 1. 101 0. [ ] ] [ 5 \"slot long\" int 0. 127. 114 0. ( ) ) ( 6 \"slot float\" float 0. 1. 116 0. ( ) ) ( 7 \"slot text\" text 0. 1. 121 0. ( ) ) ( 8 filelist filelist 0. 1. 117 0. ( ) ) ( 9 spat spat 0. 10. 105 0. ( ) ) ( 10 \"slot 10\" none 0. 1. 0 0. ( ) ) ( 11 \"slot 11\" none 0. 1. 0 0. ( ) ) ( 12 \"slot 12\" none 0. 1. 0 0. ( ) ) ( 13 \"slot 13\" none 0. 1. 0 0. ( ) ) ( 14 \"slot 14\" none 0. 1. 0 0. ( ) ) ( 15 \"slot 15\" none 0. 1. 0 0. ( ) ) ( 16 \"slot 16\" none 0. 1. 0 0. ( ) ) ( 17 \"slot 17\" none 0. 1. 0 0. ( ) ) ( 18 \"slot 18\" none 0. 1. 0 0. ( ) ) ( 19 \"slot 19\" none 0. 1. 0 0. ( ) ) ( 20 \"slot 20\" none 0. 1. 0 0. ( ) ) ( 21 \"slot 21\" none 0. 1. 0 0. ( ) ) ( 22 \"slot 22\" none 0. 1. 0 0. ( ) ) ( 23 \"slot 23\" none 0. 1. 0 0. ( ) ) ( 24 \"slot 24\" none 0. 1. 0 0. ( ) ) ( 25 \"slot 25\" none 0. 1. 0 0. ( ) ) ( 26 \"slot 26\" none 0. 1. 0 0. ( ) ) ( 27 \"slot 27\" none 0. 1. 0 0. ( ) ) ( 28 \"slot 28\" none 0. 1. 0 0. ( ) ) ( 29 \"slot 29\" none 0. 1. 0 0. ( ) ) ( 30 \"slot 30\" none 0. 1. 0 0. ( ) ) ) ( commands ( 1 notecmd chordcmd 0 ) ( 2 notecmd chordcmd 0 ) ( 3 notecmd chordcmd 0 ) ( 4 notecmd chordcmd 0 ) ( 5 notecmd chordcmd 0 ) ) ( midichannels 1 ) ( ( 92. ( 7240. 442. 100 0 ) 0 ) ( 668. ( 6800. 842. 100 0 ) ( 7300. 842. 100 0 ) ( 7900. 842. 100 0 ) 0 ) ( 1328. ( 5900. 2742. 100 0 ) 0 ) ( 1760. ( 6700. 442. 100 0 ) 0 ) ( 1952. ( 7400. 442. 100 0 ) 0 ) ( 2528. ( 7600. 1542. 100 0 ) 0 ) )"
 				}
 
 			}
@@ -559,7 +559,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 577.0, 174.0, 18.0 ],
-					"text" : "Through The Looking Glass (e)",
+					"text" : "Through The Looking Glass [e]",
 					"varname" : "messageA"
 				}
 
@@ -659,7 +659,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 529.0, 577.0, 174.0, 18.0 ],
-					"text" : "Through The Looking Glass (g)",
+					"text" : "Through The Looking Glass [g]",
 					"varname" : "messageB"
 				}
 

@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: sdif
+Description: the Sound Description Interchange File Format library
+Version: @SDIF_VERSION_MAJOR@.@SDIF_VERSION_MINOR@.@SDIF_VERSION_RELEASE@
+Libs: -L${libdir} -lsdif @PTHREAD_CFLAGS@ @PTHREAD_LIBS@
+Cflags: -I${includedir} @PTHREAD_CFLAGS@

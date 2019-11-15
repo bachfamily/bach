@@ -108,7 +108,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(0 0 0) (0 0 0) (0 0 0)",
+					"text" : "[0 0 0] [0 0 0] [0 0 0]",
 					"linecount" : 3,
 					"id" : "obj-120",
 					"numinlets" : 2,
@@ -123,7 +123,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "( 2 3 5 ) ( -4 2 3 )",
+					"text" : "[ 2 3 5 ] [ -4 2 3 ]",
 					"linecount" : 2,
 					"id" : "obj-121",
 					"numinlets" : 2,
@@ -138,7 +138,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(-2 1 -1 1) (1 -1 3 1) (-1 0 2 2) (-4 2 -2 2)",
+					"text" : "[-2 1 -1 1] [1 -1 3 1] [-1 0 2 2] [-4 2 -2 2]",
 					"linecount" : 4,
 					"id" : "obj-122",
 					"numinlets" : 2,
@@ -153,7 +153,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(-2 1 -1 1) (1 -1 3 1) (-1 0 2 2) (-4 2 -2 3)",
+					"text" : "[-2 1 -1 1] [1 -1 3 1] [-1 0 2 2] [-4 2 -2 3]",
 					"linecount" : 4,
 					"id" : "obj-123",
 					"numinlets" : 2,
@@ -168,7 +168,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3) (4 5 6) (2 1 9)",
+					"text" : "[1 2 3] [4 5 6] [2 1 9]",
 					"linecount" : 3,
 					"id" : "obj-11",
 					"numinlets" : 2,
@@ -250,7 +250,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(-2 1 -1 1) (1 -1 3 1) (-1 0 2 2) (-4 2 -2 3)",
+					"text" : "[-2 1 -1 1] [1 -1 3 1] [-1 0 2 2] [-4 2 -2 3]",
 					"linecount" : 4,
 					"id" : "obj-111",
 					"numinlets" : 2,
@@ -416,7 +416,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 1) (2 2)",
+					"text" : "[1 1] [2 2]",
 					"id" : "obj-21",
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -430,7 +430,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 3) (2 2)",
+					"text" : "[1 3] [2 2]",
 					"id" : "obj-20",
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -578,7 +578,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Into The Matrix (n)",
+					"text" : "Into The Matrix [n]",
 					"id" : "obj-7",
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -677,7 +677,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Into The Matrix (p)",
+					"text" : "Into The Matrix [p]",
 					"id" : "obj-16",
 					"numinlets" : 2,
 					"numoutlets" : 1,

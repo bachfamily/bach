@@ -11,8 +11,6 @@
 
 	<description>
 		Converts a <o>bach.score</o> object into
-		a <o>bach.roll</o> object containing the exact same content, only
-		in proportional notation, also preserving markers.
 	</description>
 
 	<!--METADATA-->

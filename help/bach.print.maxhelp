@@ -105,7 +105,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 214.0, 123.0, 79.0, 19.0 ],
-									"text" : "(1 0) (1 2 3)"
+									"text" : "[1 0] [1 2 3]"
 								}
 
 							}
@@ -149,7 +149,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 302.0, 123.0, 110.0, 19.0 ],
-									"text" : "(0 (1 2) (3 4 5) 6)"
+									"text" : "[0 [1 2] [3 4 5] 6]"
 								}
 
 							}
@@ -813,7 +813,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 18.0, 290.5, 110.0, 19.0 ],
-									"text" : "(0 (1 2) (3 4 5) 6)"
+									"text" : "[0 [1 2] [3 4 5] 6]"
 								}
 
 							}
@@ -904,7 +904,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 134.0, 189.0, 19.0 ],
-									"text" : "(george (john yoko) paul) ringo"
+									"text" : "[george [john yoko] paul] ringo"
 								}
 
 							}
@@ -918,7 +918,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 85.0, 194.0, 189.0, 19.0 ],
-									"text" : "(george (john yoko) paul) ringo"
+									"text" : "[george [john yoko] paul] ringo"
 								}
 
 							}

@@ -104,6 +104,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -112,10 +113,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		If you connect the object to bach.score, don't forget to set the bach.score @treehandling attribute to 0
-		(Take For Granted) and @maketreecompatiblewithts attribute to 0, if you wish all rhythmic levels to be kept
-		exactly the same as the OpenMusic levels!
-		Otherwise, as usual, bach will process the tree according to the mode you had defined via the @treehandling
-		attribute, and possibly reboxes your rhythm if your maketreecompatiblewithts is 1.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -150,10 +147,6 @@
 		<entry name ="More details">
 			<description>
 		If you connect the object to bach.score, don't forget to set the bach.score @treehandling attribute to 0
-		(Take For Granted) and @maketreecompatiblewithts attribute to 0, if you wish all rhythmic levels to be kept
-		exactly the same as the OpenMusic levels!
-		Otherwise, as usual, bach will process the tree according to the mode you had defined via the @treehandling
-		attribute, and possibly reboxes your rhythm if your maketreecompatiblewithts is 1.
 			</description>
 		</entry>
 		<entry name ="Keywords">

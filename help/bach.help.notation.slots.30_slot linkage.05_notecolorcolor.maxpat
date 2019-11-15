@@ -159,7 +159,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.0, 131.0, 415.0, 19.0 ],
-					"text" : "(slotinfo (1 (name color) (type color) (width 130))), linknotecolortoslot 1"
+					"text" : "[slotinfo [1 [name color] [type color] [width 130]]], linknotecolortoslot 1"
 				}
 
 			}

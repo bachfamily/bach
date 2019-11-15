@@ -73,7 +73,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 (20 40)) (55 (66)) 44",
+					"text" : "[1 [20 40]] [55 [66]] 44",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 399.0, 126.0, 133.0, 18.0 ],
@@ -205,7 +205,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 (20 40)) (55 (66)) 44",
+					"text" : "[1 [20 40]] [55 [66]] 44",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 440.0, 255.0, 133.0, 18.0 ],
@@ -412,7 +412,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 (20 40)) (55 (66)) 44",
+					"text" : "[1 [20 40]] [55 [66]] 44",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 492.0, 49.0, 133.0, 18.0 ],
@@ -665,7 +665,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (a)",
+					"text" : "Iterations [a]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 587.0, 140.0, 18.0 ],
@@ -764,7 +764,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (c)",
+					"text" : "Iterations [c]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 560.0, 587.0, 140.0, 18.0 ],

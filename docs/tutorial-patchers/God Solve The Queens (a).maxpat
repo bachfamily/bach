@@ -634,7 +634,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 615.0, 577.0, 152.0, 22.0 ],
 					"style" : "",
-					"text" : "God Solve The Queens (b)",
+					"text" : "God Solve The Queens [b]",
 					"varname" : "messageB"
 				}
 

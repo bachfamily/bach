@@ -11,7 +11,6 @@
 
 	<description>
 		Performs additions between lllls or
-		between lllls and numbers.
 	</description>
 
 	<!--METADATA-->
@@ -131,16 +130,14 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The abstraction is equivalent to a sum performed
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 	</discussion>
 
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.expr" />
 		<seealso name="bach.-" />
-		<seealso name="bach.*" />
-		<seealso name="bach./" />
+		<seealso name="bach.times" display="bach.*" type="refpage" />
+		<seealso name="bach.div" display="bach./" type="refpage" />
 		<seealso name="+" />
 		<seealso name="bach.mod+" />
 	</seealsolist>
@@ -170,8 +167,6 @@
 		<entry name ="More details">
 			<description>
 		The abstraction is equivalent to a sum performed
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 			</description>
 		</entry>
 		<entry name ="Keywords">

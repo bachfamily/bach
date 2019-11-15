@@ -126,8 +126,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The standard deviation is the square root of the variance, which in turns
-		is the second central moment (the expected value of the
-		square deviations of numbers from their mean).
 	</discussion>
 
 	<!--SEEALSO-->
@@ -159,8 +157,6 @@
 		<entry name ="More details">
 			<description>
 		The standard deviation is the square root of the variance, which in turns
-		is the second central moment (the expected value of the
-		square deviations of numbers from their mean).
 			</description>
 		</entry>
 		<entry name ="Keywords">

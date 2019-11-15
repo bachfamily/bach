@@ -166,7 +166,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 200.5, 278.0, 72.0, 19.0 ],
-					"text" : "(4 4) ( $1 )"
+					"text" : "[4 4] [ $1 ]"
 				}
 
 			}
@@ -233,7 +233,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 24.0, 120.5, 141.0, 19.0 ],
-					"text" : "addmarker (2 1 1/4) fix"
+					"text" : "addmarker [2 1 1/4] fix"
 				}
 
 			}

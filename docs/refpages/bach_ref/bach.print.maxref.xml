@@ -82,6 +82,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Decimal Digits" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -90,7 +91,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The llll is displayed on a single line, in text format.
-		If a line in the Max window is double-clicked, the <o>bach.print</o> object that wrote it is highlighted.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -111,7 +111,6 @@
 		<entry name ="More details">
 			<description>
 		The llll is displayed on a single line, in text format.
-		If a line in the Max window is double-clicked, the <o>bach.print</o> object that wrote it is highlighted.
 			</description>
 		</entry>
 		<entry name ="Keywords">

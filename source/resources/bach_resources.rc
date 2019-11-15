@@ -1,5 +1,6 @@
 cursor_addpoint		RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\cursors\\cursor_addpoint.png"
 cursor_changecolor	RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\cursors\\cursor_changecolor.png"
+cursor_changedynamics	RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\cursors\\cursor_changedynamics.png"
 cursor_changevelocity	RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\cursors\\cursor_changevelocity.png"
 cursor_curve		RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\cursors\\cursor_curve.png"
 cursor_cut		RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\cursors\\cursor_cut.png"

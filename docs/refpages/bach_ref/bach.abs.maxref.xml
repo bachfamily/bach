@@ -101,6 +101,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -109,7 +110,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The abstraction is equivalent to the <b>abs</b> function called
-		in a <o>bach.expr</o> object.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -138,7 +138,6 @@
 		<entry name ="More details">
 			<description>
 		The abstraction is equivalent to the <b>abs</b> function called
-		in a <o>bach.expr</o> object.
 			</description>
 		</entry>
 		<entry name ="Keywords">

@@ -193,7 +193,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 241.0, 153.0, 290.0, 23.0 ],
 					"style" : "",
-					"text" : "((C5 D5 Eb5 F5 F#5 G#5 A#5 B#5) (C#6)), bang"
+					"text" : "[[C5 D5 Eb5 F5 F#5 G#5 A#5 B#5] [C#6]], bang"
 				}
 
 			}

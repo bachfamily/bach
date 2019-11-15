@@ -113,7 +113,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 4.0, 295.0, 633.0, 18.0 ],
-					"text" : "(slotinfo (1 (name little** ) (type dynfilter) (range 0 22500) (slope 0.6) (domain 0 1) (domainslope 0) (width temporal)))"
+					"text" : "[slotinfo [1 [name little** ] [type dynfilter] [range 0 22500] [slope 0.6] [domain 0 1] [domainslope 0] [width temporal]]]"
 				}
 
 			}
@@ -160,7 +160,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 4.0, 67.0, 535.0, 18.0 ],
-					"text" : "(slotinfo (1 (name little* ) (type filter) (domain 0 22500) (domainslope 0.6) (range -24 24) (slope 0)))"
+					"text" : "[slotinfo [1 [name little* ] [type filter] [domain 0 22500] [domainslope 0.6] [range -24 24] [slope 0]]]"
 				}
 
 			}
@@ -342,7 +342,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 556.0, 140.0, 18.0 ],
-					"text" : "Filter Filter Little Star (b)",
+					"text" : "Filter Filter Little Star [b]",
 					"varname" : "messageA"
 				}
 
@@ -442,7 +442,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 723.0, 556.0, 140.0, 18.0 ],
-					"text" : "Filter Filter Little Star (d)",
+					"text" : "Filter Filter Little Star [d]",
 					"varname" : "messageB"
 				}
 

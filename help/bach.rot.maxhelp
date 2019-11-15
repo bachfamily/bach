@@ -161,7 +161,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 174.0, 143.5, 237.0, 40.0 ],
-									"text" : "0 1 2 3 (4 5 6) (5 4 (a b c d (x y z)))"
+									"text" : "0 1 2 3 [4 5 6] [5 4 [a b c d [x y z]]]"
 								}
 
 							}
@@ -703,7 +703,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 33.0, 163.0, 119.0, 56.0 ],
-									"text" : "0 1 2 3 (4 5 6) john paul (george ringo)"
+									"text" : "0 1 2 3 [4 5 6] john paul [george ringo]"
 								}
 
 							}

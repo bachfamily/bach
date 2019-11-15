@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 68.0, 186.0, 245.0, 23.0 ],
 					"style" : "",
-					"text" : "subscore (1 3) (1 2) (clefs markers body)"
+					"text" : "subscore [1 3] [1 2] [clefs markers body]"
 				}
 
 			}
@@ -109,7 +109,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 53.0, 150.0, 195.0, 23.0 ],
 					"style" : "",
-					"text" : "subscore (1 3) (1 2) (keys body)"
+					"text" : "subscore [1 3] [1 2] [keys body]"
 				}
 
 			}
@@ -139,7 +139,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 33.5, 116.0, 164.0, 23.0 ],
 					"style" : "",
-					"text" : "subscore (1 3) (1 2) (body)"
+					"text" : "subscore [1 3] [1 2] [body]"
 				}
 
 			}
@@ -170,7 +170,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 79.0, 124.0, 23.0 ],
 					"style" : "",
-					"text" : "subscore (1 3) (2 4)"
+					"text" : "subscore [1 3] [2 4]"
 				}
 
 			}

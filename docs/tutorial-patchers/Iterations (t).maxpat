@@ -63,7 +63,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(pitch E) (title (key and lock)) (key C) (tempo 120)",
+					"text" : "[pitch E] [title [key and lock]] [key C] [tempo 120]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -207,7 +207,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(kirk 1 2 3 (spock 4 5 6)) (mccoy 7 8 9) (doctor mccoy) (kirk is the captain)",
+					"text" : "[kirk 1 2 3 [spock 4 5 6]] [mccoy 7 8 9] [doctor mccoy] [kirk is the captain]",
 					"linecount" : 2,
 					"numinlets" : 2,
 					"fontsize" : 12.0,
@@ -236,7 +236,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : ";\rfwd (to_john 11) (to_george (attracts me like) (no other)) (to_ringo 7 7 7 7)",
+					"text" : ";\rfwd [to_john 11] [to_george [attracts me like] [no other]] [to_ringo 7 7 7 7]",
 					"linecount" : 2,
 					"numinlets" : 2,
 					"fontsize" : 12.0,
@@ -318,7 +318,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : ";\rfwd (to_john 20) (to_george (something in the air) (she moves)) (to_ringo 8 pus (garden))",
+					"text" : ";\rfwd [to_john 20] [to_george [something in the air] [she moves]] [to_ringo 8 pus [garden]]",
 					"linecount" : 2,
 					"numinlets" : 2,
 					"fontsize" : 12.0,
@@ -498,7 +498,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (s)",
+					"text" : "Iterations [s]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -597,7 +597,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (u)",
+					"text" : "Iterations [u]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,

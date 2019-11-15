@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 100.5, 300.5, 167.0, 23.0 ],
 					"style" : "",
-					"text" : "interp ((1 3) 8) (0.2 0.5 0.9)"
+					"text" : "interp [[1 3] 8] [0.2 0.5 0.9]"
 				}
 
 			}
@@ -93,7 +93,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 83.5, 265.0, 128.0, 23.0 ],
 					"style" : "",
-					"text" : "interp 1 (0.2 0.5 0.9)"
+					"text" : "interp 1 [0.2 0.5 0.9]"
 				}
 
 			}
@@ -108,7 +108,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 46.5, 183.0, 268.0, 23.0 ],
 					"style" : "",
-					"text" : "interp (( myenv 3) \"yet again a function\" ) 0.5"
+					"text" : "interp [[ myenv 3] \"yet again a function\" ] 0.5"
 				}
 
 			}
@@ -139,7 +139,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 57.5, 226.0, 117.0, 23.0 ],
 					"style" : "",
-					"text" : "interp (1 2 3 8) 0.5"
+					"text" : "interp [1 2 3 8] 0.5"
 				}
 
 			}
@@ -171,7 +171,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 34.5, 158.0, 233.0, 23.0 ],
 					"style" : "",
-					"text" : "interp ((1 3) \"yet again a function\" ) 0.5"
+					"text" : "interp [[1 3] \"yet again a function\" ] 0.5"
 				}
 
 			}
@@ -231,7 +231,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 14.0, 101.0, 102.0, 23.0 ],
 					"style" : "",
-					"text" : "interp (1 3 8) $1"
+					"text" : "interp [1 3 8] $1"
 				}
 
 			}

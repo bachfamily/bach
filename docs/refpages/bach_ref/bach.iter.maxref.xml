@@ -62,8 +62,8 @@
 				The address of an element in a sublist is a list composed by the position of the element in the sublist,
 				preceded by the position of the sublist in the parent llll,
 				and so on up to the root level, as a sort of "path" to the element.<br />
-				For instance, given the llll <b>a b c (d e (f g) h i) j k</b> the position of <b>c</b> is <b>3</b>;
-				the position of <b>(d e (f g) h i)</b> is <b>4</b>;
+				For instance, given the llll <b>a b c [d e [f g] h i] j k</b> the position of <b>c</b> is <b>3</b>;
+				the position of <b>[d e [f g] h i]</b> is <b>4</b>;
 				the position if <b>e</b> is <b>4 2</b> since to reach it it takes to go to the 4th element of the root level, which is a sublist,
 				and to the 2nd element of that sublist.
 				By reading the address from right to left, it can be seen that this is equivalent to saying
@@ -135,8 +135,8 @@
 				The address of an element in a sublist is a list composed by the position of the element in the sublist,
 				preceded by the position of the sublist in the parent llll,
 				and so on up to the root level, as a sort of "path" to the element.<br />
-				For instance, given the llll <b>a b c (d e (f g) h i) j k</b> the position of <b>c</b> is <b>3</b>;
-				the position of <b>(d e (f g) h i)</b> is <b>4</b>;
+				For instance, given the llll <b>a b c [d e [f g] h i] j k</b> the position of <b>c</b> is <b>3</b>;
+				the position of <b>[d e [f g] h i]</b> is <b>4</b>;
 				the position if <b>e</b> is <b>4 2</b> since to reach it it takes to go to the 4th element of the root level, which is a sublist,
 				and to the 2nd element of that sublist.
 				By reading the address from right to left, it can be seen that this is equivalent to saying
@@ -189,6 +189,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Iteration Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
@@ -203,6 +204,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lambda Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -222,6 +224,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Depth" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -264,6 +267,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Recursion Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -277,6 +281,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Scalar Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -286,13 +291,13 @@
 			</digest>
 			<description>
 				A spike in an llll is a sequence of parentheses at least two of which are opposite:
-				for instance, <b>()</b> or <b>((()</b> or <b>))()(</b>.
+				for instance, <b>[]</b> or <b>[[[]</b> or <b>]][][</b>.
 				The <m>spikemode</m> attribute controls <o>bach.iter</o>'s behavior when a spike is met.
 				When set to 0 (the default), a distinct integer for each sequence of same-direction parentheses
 				is output from the rightmost outlet:
-				for instance, <b>()</b> will cause the sequence <m>1</m>, <m>-1</m> to be output;
-				<b>((()</b> will cause <m>3</m>, <m>-1</m> to be output;
-				<b>))()(</b> will cause <m>-2</m>, <m>1</m>, <m>-1</m>, <m>1</m> to be output.
+				for instance, <b>[]</b> will cause the sequence <m>1</m>, <m>-1</m> to be output;
+				<b>[[[]</b> will cause <m>3</m>, <m>-1</m> to be output;
+				<b>]][][</b> will cause <m>-2</m>, <m>1</m>, <m>-1</m>, <m>1</m> to be output.
 				This setting is most useful in conjunction with <o>bach.collect</o>. <br />
 				When the <m>spikemode</m> attribute is set to 1, a single integer is output from the rightmost outlet for the whole spike.
 				The integer represents the depth difference between the last element before the spike and the first element after it.
@@ -302,6 +307,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Spike Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
@@ -314,6 +320,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Unwrap" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -322,7 +329,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		At each step of the iteration, <o>bach.iter</o> also report if it has entered or exited a sublist,
-		and the addresses of the elements corresponding to the step.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -365,8 +371,8 @@
 				The address of an element in a sublist is a list composed by the position of the element in the sublist,
 				preceded by the position of the sublist in the parent llll,
 				and so on up to the root level, as a sort of "path" to the element.<br />
-				For instance, given the llll <b>a b c (d e (f g) h i) j k</b> the position of <b>c</b> is <b>3</b>;
-				the position of <b>(d e (f g) h i)</b> is <b>4</b>;
+				For instance, given the llll <b>a b c [d e [f g] h i] j k</b> the position of <b>c</b> is <b>3</b>;
+				the position of <b>[d e [f g] h i]</b> is <b>4</b>;
 				the position if <b>e</b> is <b>4 2</b> since to reach it it takes to go to the 4th element of the root level, which is a sublist,
 				and to the 2nd element of that sublist.
 				By reading the address from right to left, it can be seen that this is equivalent to saying
@@ -391,7 +397,6 @@
 		<entry name ="More details">
 			<description>
 		At each step of the iteration, <o>bach.iter</o> also report if it has entered or exited a sublist,
-		and the addresses of the elements corresponding to the step.
 			</description>
 		</entry>
 		<entry name ="Keywords">

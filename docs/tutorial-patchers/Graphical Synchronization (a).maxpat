@@ -338,7 +338,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Graphical Synchronization (b)",
+					"text" : "Graphical Synchronization [b]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"hidden" : 1,

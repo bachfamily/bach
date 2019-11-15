@@ -284,7 +284,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 131.0, 39.0, 18.0 ],
-					"text" : "( $1 )"
+					"text" : "[ $1 ]"
 				}
 
 			}
@@ -899,7 +899,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 545.0, 152.0, 18.0 ],
-					"text" : "God Solve The Queens (h)",
+					"text" : "God Solve The Queens [h]",
 					"varname" : "messageA"
 				}
 
@@ -999,7 +999,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 728.0, 545.0, 148.0, 18.0 ],
-					"text" : "God Solve The Queens (j)",
+					"text" : "God Solve The Queens [j]",
 					"varname" : "messageB"
 				}
 

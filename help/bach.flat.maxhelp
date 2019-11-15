@@ -282,7 +282,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 13.0, 131.0, 134.0, 38.0 ],
-									"text" : "a (b (c (d e))) ((f g) h)"
+									"text" : "a [b [c [d e]]] [[f g] h]"
 								}
 
 							}
@@ -810,7 +810,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 52.0, 179.0, 164.0, 62.0 ],
 									"presentation_rect" : [ 31.0, 180.0, 0.0, 0.0 ],
-									"text" : "0 (4 5 6) john (paul (george ringo)) 1 2 3"
+									"text" : "0 [4 5 6] john [paul [george ringo]] 1 2 3"
 								}
 
 							}

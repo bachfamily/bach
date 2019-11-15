@@ -183,7 +183,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 135.0, 225.0, 219.0, 46.0 ],
 									"style" : "",
-									"text" : "(C0+1/4t A0-1/24t C5 Db5 Eq6) (Ed6 Fx#7+1/12t)"
+									"text" : "[C0+1/4t A0-1/24t C5 Db5 Eq6] [Ed6 Fx#7+1/12t]"
 								}
 
 							}
@@ -276,7 +276,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 85.0, 139.0, 241.0, 23.0 ],
 									"style" : "",
-									"text" : "(C4 A#4 C5 Db5 Eq6) (Ed6 Fx#7+1/12t)"
+									"text" : "[C4 A#4 C5 Db5 Eq6] [Ed6 Fx#7+1/12t]"
 								}
 
 							}

@@ -138,7 +138,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 235.0, 410.0, 19.0 ],
-					"text" : "Denn alles Fleisch (All the (flesh carne)) es ist wie Gras (is like grass)"
+					"text" : "Denn alles Fleisch [All the [flesh carne]] es ist wie Gras [is like grass]"
 				}
 
 			}

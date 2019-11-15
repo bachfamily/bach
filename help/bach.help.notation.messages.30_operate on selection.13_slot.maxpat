@@ -157,7 +157,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 31.0, 243.5, 369.0, 23.0 ],
 					"style" : "",
-					"text" : "addslot ( \"amplitude envelope\" (0. 0. 0.) (0.5 20 0.) (1. 100 0.))"
+					"text" : "addslot [ \"amplitude envelope\" [0. 0. 0.] [0.5 20 0.] [1. 100 0.]]"
 				}
 
 			}
@@ -188,7 +188,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 40.0, 277.0, 277.0, 23.0 ],
 					"style" : "",
-					"text" : "addslot (active (0. 0. 0.) (0.5 20 0.) (1. 100 0.))"
+					"text" : "addslot [active [0. 0. 0.] [0.5 20 0.] [1. 100 0.]]"
 				}
 
 			}
@@ -235,7 +235,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 22.0, 179.0, 313.0, 23.0 ],
 					"style" : "",
-					"text" : "addslot (3 10 20 30) (2 (0. 0. 0.) (0.5 0.9 0.) (1. 1 0.))"
+					"text" : "addslot [3 10 20 30] [2 [0. 0. 0.] [0.5 0.9 0.] [1. 1 0.]]"
 				}
 
 			}
@@ -266,7 +266,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 132.5, 127.0, 23.0 ],
 					"style" : "",
-					"text" : "addslot (3 10 20 30)"
+					"text" : "addslot [3 10 20 30]"
 				}
 
 			}

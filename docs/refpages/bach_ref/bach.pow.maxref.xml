@@ -11,7 +11,6 @@
 
 	<description>
 		Raises all elements of an llll (or a number) coming in first inlet,
-		to the power defined by another llll (or number).
 	</description>
 
 	<!--METADATA-->
@@ -123,6 +122,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -131,14 +131,12 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The abstraction is equivalent to an exponentiation performed
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 	</discussion>
 
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.expr" />
-		<seealso name="bach.*" />
+		<seealso name="bach.times" display="bach.*" type="refpage" />
 		<seealso name="pow" />
 		<seealso name="bach.mpow" />
 	</seealsolist>
@@ -168,8 +166,6 @@
 		<entry name ="More details">
 			<description>
 		The abstraction is equivalent to an exponentiation performed
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 			</description>
 		</entry>
 		<entry name ="Keywords">

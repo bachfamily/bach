@@ -275,7 +275,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 54.0, 253.0, 234.0, 19.0 ],
-					"text" : "preventedit (notes onset delete create)"
+					"text" : "preventedit [notes onset delete create]"
 				}
 
 			}
@@ -289,7 +289,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 47.0, 207.5, 155.0, 19.0 ],
-					"text" : "preventedit (notes onset)"
+					"text" : "preventedit [notes onset]"
 				}
 
 			}

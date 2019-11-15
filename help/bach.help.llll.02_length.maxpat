@@ -338,7 +338,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 218.0, 289.0, 186.0, 23.0 ],
 					"style" : "",
-					"text" : "((John Paul) George) ( Ringo )"
+					"text" : "[[John Paul] George] [ Ringo ]"
 				}
 
 			}

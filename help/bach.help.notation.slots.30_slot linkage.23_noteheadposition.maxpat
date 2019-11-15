@@ -124,7 +124,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 306.0, 601.0, 48.0 ],
-					"text" : "(slotinfo (1 (name notehead) (type int) (range 0 256) (width 150) (key h)) (2 (name noteheadfont) (type text) (width 100))(3 (name noteheadadj) (type floatlist) (default 0) (range -20. 20.))), linknoteheadtoslot 1, linknoteheadfonttoslot 2, linknoteheadadjusttoslot 3"
+					"text" : "[slotinfo [1 [name notehead] [type int] [range 0 256] [width 150] [key h]] [2 [name noteheadfont] [type text] [width 100]][3 [name noteheadadj] [type floatlist] [default 0] [range -20. 20.]]], linknoteheadtoslot 1, linknoteheadfonttoslot 2, linknoteheadadjusttoslot 3"
 				}
 
 			}
@@ -205,7 +205,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 98.0, 250.0, 34.0 ],
-					"text" : "(slotinfo (3 (name noteheadadj) (type floatlist) (default 0) (range -20. 20.)))"
+					"text" : "[slotinfo [3 [name noteheadadj] [type floatlist] [default 0] [range -20. 20.]]]"
 				}
 
 			}

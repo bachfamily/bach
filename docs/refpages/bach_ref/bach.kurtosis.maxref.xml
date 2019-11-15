@@ -11,7 +11,6 @@
 
 	<description>
 		Finds the kurtosis (fourth standardized moment) of the
-		numbers in an llll.
 	</description>
 
 	<!--METADATA-->
@@ -127,11 +126,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The kurtosis calculated is the fourth standardized moment
-		beta_4 = mu_4/sigma^4, where mu_4 is the fourth moment about the
-		mean and sigma is the standard deviation. Another definition of
-		the kurtosis can be the forth cumulant divided by the second
-		cumulant; if you need this definition, just remove 3 at the
-		previous definition (implemented by the bach object).
 	</discussion>
 
 	<!--SEEALSO-->
@@ -163,11 +157,6 @@
 		<entry name ="More details">
 			<description>
 		The kurtosis calculated is the fourth standardized moment
-		beta_4 = mu_4/sigma^4, where mu_4 is the fourth moment about the
-		mean and sigma is the standard deviation. Another definition of
-		the kurtosis can be the forth cumulant divided by the second
-		cumulant; if you need this definition, just remove 3 at the
-		previous definition (implemented by the bach object).
 			</description>
 		</entry>
 		<entry name ="Keywords">

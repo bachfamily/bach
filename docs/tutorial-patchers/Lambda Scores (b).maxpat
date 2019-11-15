@@ -69,7 +69,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (name frequency) (type float) (range 0 22500) (representation Hz))), bgslots 1",
+					"text" : "[slotinfo [1 [name frequency] [type float] [range 0 22500] [representation Hz]]], bgslots 1",
 					"linecount" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 6.0, 147.0, 432.0, 32.0 ],
@@ -263,7 +263,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Lambda Scores (a)",
+					"text" : "Lambda Scores [a]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 420.0, 140.0, 18.0 ],
 					"id" : "obj-8",
@@ -362,7 +362,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Lambda Scores (c)",
+					"text" : "Lambda Scores [c]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 616.0, 420.0, 140.0, 18.0 ],
 					"id" : "obj-17",

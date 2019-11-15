@@ -197,7 +197,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 409.0, 158.0, 90.0, 51.0 ],
-									"text" : "1 2 (3 4) 5."
+									"text" : "1 2 [3 4] 5."
 								}
 
 							}
@@ -253,7 +253,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 303.0, 158.0, 91.0, 51.0 ],
-									"text" : "1 2 (3 4) 5"
+									"text" : "1 2 [3 4] 5"
 								}
 
 							}
@@ -530,7 +530,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 114.0, 152.0, 90.0, 51.0 ],
-									"text" : "1 2 (3 4) foo"
+									"text" : "1 2 [3 4] foo"
 								}
 
 							}
@@ -586,7 +586,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 15.0, 152.0, 91.0, 51.0 ],
-									"text" : "1 2 (3 4) 5"
+									"text" : "1 2 [3 4] 5"
 								}
 
 							}

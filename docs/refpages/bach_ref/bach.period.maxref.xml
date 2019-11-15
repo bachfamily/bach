@@ -11,7 +11,6 @@
 
 	<description>
 		Finds the minimal period of an incoming llll,
-		i.e. the shortest llll which, if repeated, yields the original llll.
 	</description>
 
 	<!--METADATA-->

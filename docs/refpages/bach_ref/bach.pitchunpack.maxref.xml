@@ -19,7 +19,7 @@
 		<metadata name="tag">bach</metadata>
 		<metadata name="tag">bach abstractions</metadata>
 		<metadata name="tag">bach math</metadata>
-		<metadata name="tag">pitch</metadata>
+		<metadata name="tag">bach pitches</metadata>
 	</metadatalist>
 
 	<!--INLETS-->
@@ -96,6 +96,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output Degrees As Letters" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -125,6 +126,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>

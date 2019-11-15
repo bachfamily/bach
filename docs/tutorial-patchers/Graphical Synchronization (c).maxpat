@@ -650,7 +650,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Graphical Synchronization (b)",
+					"text" : "Graphical Synchronization [b]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -749,7 +749,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Graphical Synchronization (d)",
+					"text" : "Graphical Synchronization [d]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,

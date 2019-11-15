@@ -11,7 +11,6 @@
 
 	<description>
 		Extracts a set of linearly independent vectors from an incoming list of vectors.
-		Depending on its attributes, it can also transform the vectors so that they be orthogonal and/or unitary.
 	</description>
 
 	<!--METADATA-->
@@ -30,7 +29,7 @@
 			</digest>
 			<description>
 				This is expected to be a list of plain lists, where each vector corresponds to a sublist.
-				such as <b>(0 0 1) (0 1 1) (0 2 0) (1 2 1)</b>.
+				such as <b>[0 0 1] [0 1 1] [0 2 0] [1 2 1]</b>.
 			</description>
 		</inlet>
 	</inletlist>
@@ -77,7 +76,7 @@
 			<description>
 				The object outputs the eigenvalues and the eigenvectors of the incoming matrix. <br />
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
@@ -148,7 +147,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The algorithm used to extract the vectors is the Gauss elimination. Gram-Schmidt is used to make
-		vectors orthogonal.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -165,7 +163,7 @@
 			<description>
 				The original vectors.
 				This is expected to be a list of plain lists, where each vector corresponds to a sublist.
-				such as <b>(0 0 1) (0 1 1) (0 2 0) (1 2 1)</b>.
+				such as <b>[0 0 1] [0 1 1] [0 2 0] [1 2 1]</b>.
 			</description>
 		</entry>
 	</misc>
@@ -188,7 +186,6 @@
 		<entry name ="More details">
 			<description>
 		The algorithm used to extract the vectors is the Gauss elimination. Gram-Schmidt is used to make
-		vectors orthogonal.
 			</description>
 		</entry>
 		<entry name ="Keywords">

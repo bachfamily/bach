@@ -99,6 +99,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Depth" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -136,7 +137,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.sum</o> only operates on numbers; each
-		non-number element is simply ignored.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -172,7 +172,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.sum</o> only operates on numbers; each
-		non-number element is simply ignored.
 			</description>
 		</entry>
 		<entry name ="Keywords">

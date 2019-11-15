@@ -111,7 +111,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 336.0, 231.0, 175.0, 19.0 ],
-					"text" : "(((4 4) nil (width 150))), bang"
+					"text" : "[[[4 4] nil [width 150]]], bang"
 				}
 
 			}
@@ -320,7 +320,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 404.0, 88.0, 137.0, 34.0 ],
-					"text" : "sel (1 0) (1 3/8) nil nil, split 8, clearselection"
+					"text" : "sel [1 0] [1 3/8] nil nil, split 8, clearselection"
 				}
 
 			}

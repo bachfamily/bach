@@ -87,6 +87,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Dictionary Name" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -124,7 +125,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		A dictionary in llll form can be visualized by <o>bach.tree</o>'s Outline mode (similar to <o>dict.view</o>, but with a few
-		more features).
 	</discussion>
 
 	<!--SEEALSO-->
@@ -154,7 +154,6 @@
 		<entry name ="More details">
 			<description>
 		A dictionary in llll form can be visualized by <o>bach.tree</o>'s Outline mode (similar to <o>dict.view</o>, but with a few
-		more features).
 			</description>
 		</entry>
 		<entry name ="Keywords">

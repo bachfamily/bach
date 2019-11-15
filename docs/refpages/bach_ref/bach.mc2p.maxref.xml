@@ -161,8 +161,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The pitches are inferred automatically from the cents, by snapping it to the
-		nearest element of the current microtonal grid (see the <m>tonedivision</m> attribute),
-		depending on the values of the other attributes.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -170,6 +168,7 @@
 		<seealso name="bach.p2mc" />
 		<seealso name="bach.f2mc" />
 		<seealso name="bach.mc2f" />
+		<seealso name="bach.approx" />
 	</seealsolist>
 
 	<misc name = "Input">
@@ -192,13 +191,11 @@
 		<entry name ="More details">
 			<description>
 		The pitches are inferred automatically from the cents, by snapping it to the
-		nearest element of the current microtonal grid (see the <m>tonedivision</m> attribute),
-		depending on the values of the other attributes.
 			</description>
 		</entry>
 		<entry name ="Keywords">
 			<description>
-convert, midicent, cent, note, name, pitch.
+convert, midicent, cent, note, name, bach pitches.
 			</description>
 		</entry>
 	</misc>

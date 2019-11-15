@@ -353,7 +353,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 303.0, 393.0, 197.0, 23.0 ],
 									"style" : "",
-									"text" : "changeslotitem 1 1 (0.5 20 0.5)"
+									"text" : "changeslotitem 1 1 [0.5 20 0.5]"
 								}
 
 							}
@@ -368,7 +368,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 303.0, 370.0, 170.0, 23.0 ],
 									"style" : "",
-									"text" : "addslot (1 (0 0 0) (1 127 0))"
+									"text" : "addslot [1 [0 0 0] [1 127 0]]"
 								}
 
 							}
@@ -444,7 +444,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 303.0, 450.0, 209.0, 23.0 ],
 									"style" : "",
-									"text" : "(slotinfo (3 (type text) (name foo)))"
+									"text" : "[slotinfo [3 [type text] [name foo]]]"
 								}
 
 							}

@@ -1,10 +1,4 @@
-// Xcode target configuration settings for the Max 5 SDK
-// Used as the basis for Xcode projects to build Max externals.
-//
-// Changes to the settings in this file will be applied to all SDK examples
-// To change settings for only one of the examples, override the settings using
-// Xcode's target inspector.
-//
+// Based upon the Xcode target configuration settings for the Max 5 SDK
 // by Timothy Place
 // Copyright © 2008, Cycling '74
 
@@ -15,8 +9,11 @@
 ARCHS = i386 x86_64
 
 // Paths
-C74SUPPORT = $(SRCROOT)/../../../max-sdk-7.3.3/source/c74support
-HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes" "$(SRCROOT)/../../../code/source/code" "$(SRCROOT)/../../../code/source/code/stringparser"
+MAXSDK = $(SRCROOT)/../../../max-sdk-7.3.3
+C74SUPPORT = $(MAXSDK)/source/c74support
+MAINS_ROOT = $(SRCROOT)/../mains
+COMMONS_ROOT = $(SRCROOT)/../commons
+HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes" "$(COMMONS_ROOT)"
 FRAMEWORK_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
 
 // *** UNCOMMENT FOR MAX6 INSTALL
@@ -25,11 +22,11 @@ FRAMEWORK_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-include
 //DSTROOT = /Applications/Max 6.1/packages/bach
 // (This next path is relative to DSTROOT)
 DSTROOT = $(SRCROOT)/../../
+LIB_DSTROOT = $(SRCROOT)/../lib
 INSTALL_PATH = /
 AA_INSTALL_PATH = /externals
 DG_INSTALL_PATH = /externals
 EXT_INSTALL_PATH = /extensions
-ZULU_INSTALL_PATH = /../zulu/externals
 
 
 // *** UNCOMMENT FOR MAX5 INSTALL
@@ -65,14 +62,14 @@ GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)" "DENORM_WANT_FIX
 
 // Static Configuration (don't change these)
 WRAPPER_EXTENSION = mxo;
-WARNING_CFLAGS = -Wmost -Wno-four-char-constants -Wno-unknown-pragmas
+WARNING_CFLAGS = -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -Wno-c++17-extensions
 DEPLOYMENT_LOCATION = YES
 GENERATE_PKGINFO_FILE = YES
 
 // Flags to enforce some build-time checks for the symbols used while not actually performing a hard link
-
 C74_SYM_LINKER_FLAGS = @$(C74SUPPORT)/max-includes/c74_linker_flags.txt
 OTHER_LDFLAGS = $(C74_SYM_LINKER_FLAGS) $(C74_SYM_LINKER_FLAGS)
+// OTHER_LDFLAGS = -framework JitterAPI $(C74_SYM_LINKER_FLAGS) $(C74_SYM_LINKER_FLAGS)
 
 // hide all symbols by default
 // mark a function to be exported with the C74_EXPORT macro -- most likely this will only apply to the main() function

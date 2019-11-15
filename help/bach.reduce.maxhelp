@@ -127,7 +127,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 155.0, 213.5, 32.5, 19.0 ],
 									"presentation_rect" : [ 31.0, 107.0, 0.0, 0.0 ],
-									"text" : "()"
+									"text" : "[]"
 								}
 
 							}
@@ -141,7 +141,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 87.5, 147.5, 59.0, 19.0 ],
-									"text" : "(2 5 3 4)"
+									"text" : "[2 5 3 4]"
 								}
 
 							}
@@ -1131,7 +1131,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 20.5, 180.0, 151.5, 31.0 ],
-									"text" : "1 2 (3 -4) 0.5"
+									"text" : "1 2 [3 -4] 0.5"
 								}
 
 							}

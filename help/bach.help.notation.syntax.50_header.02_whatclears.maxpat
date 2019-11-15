@@ -39,7 +39,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 417.950012, 278.0, 189.0, 34.0 ],
 					"presentation_rect" : [ 492.450012, 296.5, 0.0, 0.0 ],
-					"text" : "(slotinfo (3 (name mylist) (type floatlist))) (slots (3 10 20 30))"
+					"text" : "[slotinfo [3 [name mylist] [type floatlist]]] [slots [3 10 20 30]]"
 				}
 
 			}
@@ -71,7 +71,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 227.850006, 278.0, 187.149994, 48.0 ],
 					"presentation_rect" : [ 55.125, 298.0, 0.0, 0.0 ],
-					"text" : "(keys DM Dm) ((((4 4) ()) (4/4 (G3 100 0)))) ((((4 4) ()) (4/4 (Ab3 100 0))))"
+					"text" : "[keys DM Dm] [[[[4 4] []] [4/4 [G3 100 0]]]] [[[[4 4] []] [4/4 [Ab3 100 0]]]]"
 				}
 
 			}
@@ -87,7 +87,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.450012, 278.0, 188.0, 34.0 ],
 					"presentation_rect" : [ 57.0, 279.0, 0.0, 0.0 ],
-					"text" : "roll (clefs Alto F) ((580. (6400. 806. 100) (7400. 806. 100))) ()"
+					"text" : "roll [clefs Alto F] [[580. [6400. 806. 100] [7400. 806. 100]]] []"
 				}
 
 			}
@@ -135,7 +135,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 19.450012, 185.5, 242.0, 19.0 ],
-					"text" : "(slotinfo (3 (name mylist) (type floatlist)))"
+					"text" : "[slotinfo [3 [name mylist] [type floatlist]]]"
 				}
 
 			}
@@ -199,7 +199,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 120.0, 142.0, 238.0, 19.0 ],
-					"text" : "(midichannels 5 7) (markers (100 john))"
+					"text" : "[midichannels 5 7] [markers [100 john]]"
 				}
 
 			}
@@ -229,7 +229,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 142.0, 107.0, 19.0 ],
-					"text" : "(clefs Alto Tenor)"
+					"text" : "[clefs Alto Tenor]"
 				}
 
 			}

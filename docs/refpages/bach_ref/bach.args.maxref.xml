@@ -11,8 +11,6 @@
 
 	<description>
 		Parses and retrieves the subpatcher's "normal" and attribute-style arguments.
-		<o>bach.args</o> should be used in every subpatch or abstraction accepting arguments,
-		and all the patcher's inlets should be connected to it.
 	</description>
 
 	<!--METADATA-->
@@ -124,6 +122,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Known Attributes" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -139,6 +138,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Backtick bach Object Arguments" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -153,6 +153,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output 'done' Message" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -183,6 +184,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -197,6 +199,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Null Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -222,11 +225,13 @@
 				The native output is recommended, unless communication with standard Max messages is needed.
 				Disabling unused outputs can be useful if extreme optimization of the patch is needed.
 				<br /> <br />
-				llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -246,6 +251,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output &amp;quot;out&amp;quot; patcher attribute" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -254,15 +260,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The basic behavior of <m>bach.args</m> is similar to <m>patcherargs</m>'s,
-		with improved support for correct synchronization and order preservation of messages and arguments.
-		Everytime the subpatch is loaded, all its arguments and attribute-style arguments are parsed and output, or substituted by specified defaults.
-		If a patch containing nested subpatches or abstractions each with its own instance of <m>bach.args</m> is loaded,
-		the various instances of <o>bach.args</o> will output their arguments in order of depth:
-		that is, the deepest instances will output first, the less deep ones last.
-		The output order of different <o>bach.args</o> objects at the same depth is undefined.
-		<o>bach.args</o> also has a communication mechanism with <o>bach.portal</o>,
-		assuring that each subpatcher's <o>bach.portal</o> is ready when the <o>bach.args</o> object in the same subpatch outputs its arguments.
-		In this way, it is safe for the arguments of the patch to trigger messages to the outside of the patch itself.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -312,15 +309,6 @@
 		<entry name ="More details">
 			<description>
 		The basic behavior of <m>bach.args</m> is similar to <m>patcherargs</m>'s,
-		with improved support for correct synchronization and order preservation of messages and arguments.
-		Everytime the subpatch is loaded, all its arguments and attribute-style arguments are parsed and output, or substituted by specified defaults.
-		If a patch containing nested subpatches or abstractions each with its own instance of <m>bach.args</m> is loaded,
-		the various instances of <o>bach.args</o> will output their arguments in order of depth:
-		that is, the deepest instances will output first, the less deep ones last.
-		The output order of different <o>bach.args</o> objects at the same depth is undefined.
-		<o>bach.args</o> also has a communication mechanism with <o>bach.portal</o>,
-		assuring that each subpatcher's <o>bach.portal</o> is ready when the <o>bach.args</o> object in the same subpatch outputs its arguments.
-		In this way, it is safe for the arguments of the patch to trigger messages to the outside of the patch itself.
 			</description>
 		</entry>
 		<entry name ="Keywords">

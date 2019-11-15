@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 74.0, 104.0, 1002.0, 582.0 ],
+		"rect" : [ 299.0, 104.0, 1002.0, 582.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -93,7 +93,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 472.0, 149.0, 386.0, 21.0 ],
-									"presentation_rect" : [ 538.0, 144.0, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "This means: ignore all the categories except parens and rationals",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -109,7 +108,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 623.0, 242.0, 167.0, 23.0 ],
 									"style" : "",
-									"text" : "( null nil ) (a b c) ( 6/8 5e6 )"
+									"text" : "[ null nil ] [a b c] [ 6/8 5e6 ]"
 								}
 
 							}
@@ -125,9 +124,8 @@
 									"out" : "nnnn",
 									"outlettype" : [ "", "", "", "", "bang" ],
 									"patching_rect" : [ 472.0, 274.0, 318.0, 94.0 ],
-									"presentation_rect" : [ 537.222412, 213.0, 0.0, 0.0 ],
-									"versionnumber" : 80000,
-									"whole_tree_data_0000000000" : [ "(", "`null", "`nil", ")", "(", "a", "b", "c", ")", "(", "3/4", "`5e6", ")" ],
+									"versionnumber" : 80001,
+									"whole_tree_data_0000000000" : [ "[", "`null", "`nil", "]", "[", "a", "b", "c", "]", "[", "3/4", "`5e6", "]" ],
 									"whole_tree_data_count" : [ 1 ]
 								}
 
@@ -158,7 +156,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 472.0, 207.0, 167.0, 23.0 ],
 									"style" : "",
-									"text" : "( null nil ) (a b c) ( 6/8 5e6 )"
+									"text" : "[ null nil ] [a b c] [ 6/8 5e6 ]"
 								}
 
 							}
@@ -172,7 +170,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 472.0, 83.0, 370.0, 50.0 ],
-									"presentation_rect" : [ 537.0, 80.0, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "A - sign in the ignore attribute means that the selection is inverted — that is, the categories not to be ignored are specified.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -187,9 +184,8 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 186.222397, 370.0, 167.0, 23.0 ],
-									"presentation_rect" : [ 186.222397, 380.0, 0.0, 0.0 ],
 									"style" : "",
-									"text" : "( null nil ) (a b c) ( 3/4 5e6 )"
+									"text" : "[ null nil ] [a b c] [ 3/4 5e6 ]"
 								}
 
 							}
@@ -205,9 +201,8 @@
 									"out" : "nnnn",
 									"outlettype" : [ "", "", "", "", "bang" ],
 									"patching_rect" : [ 35.222397, 402.0, 318.0, 94.0 ],
-									"presentation_rect" : [ 35.222397, 412.0, 0.0, 0.0 ],
-									"versionnumber" : 80000,
-									"whole_tree_data_0000000000" : [ "(", "(", ")", ")", "(", "a", "b", "c", ")", "(", "3/4", "_x_x_x_x_bach_float64_x_x_x_x_", 0, 1095963344, ")" ],
+									"versionnumber" : 80001,
+									"whole_tree_data_0000000000" : [ "[", "[", "]", "]", "[", "a", "b", "c", "]", "[", "3/4", "_x_x_x_x_bach_float64_x_x_x_x_", 0, 1095963344, "]" ],
 									"whole_tree_data_count" : [ 1 ]
 								}
 
@@ -238,7 +233,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 35.222397, 335.0, 167.0, 23.0 ],
 									"style" : "",
-									"text" : "( null nil ) (a b c) ( 6/8 5e6 )"
+									"text" : "[ null nil ] [a b c] [ 6/8 5e6 ]"
 								}
 
 							}
@@ -251,8 +246,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 25.0, 303.0, 378.0, 36.0 ],
-									"presentation_rect" : [ 25.0, 313.0, 0.0, 0.0 ],
+									"patching_rect" : [ 25.0, 294.0, 379.0, 36.0 ],
 									"style" : "",
 									"text" : "If it is set to 0, no category is ignored. This is actually equivalent to not setting the attribute, so you may want to ignore this part.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -268,7 +262,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 186.222397, 149.0, 167.0, 23.0 ],
 									"style" : "",
-									"text" : "( null nil ) (a b c) ( 6/8 5e6 )"
+									"text" : "[ null nil ] [a b c] [ 6/8 5e6 ]"
 								}
 
 							}
@@ -284,8 +278,8 @@
 									"out" : "nnnn",
 									"outlettype" : [ "", "", "", "", "bang" ],
 									"patching_rect" : [ 35.222397, 181.0, 318.0, 94.0 ],
-									"versionnumber" : 80000,
-									"whole_tree_data_0000000000" : [ "(", "(", ")", ")", "(", "a", "b", "c", ")", "(", "3/4", "_x_x_x_x_bach_float64_x_x_x_x_", 0, 1095963344, ")" ],
+									"versionnumber" : 80001,
+									"whole_tree_data_0000000000" : [ "`[", "`null", "`nil", "`]", "`[a", "b", "`c]", "`[", "`6/8", "`5e6", "`]" ],
 									"whole_tree_data_count" : [ 1 ]
 								}
 
@@ -316,7 +310,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 35.222397, 114.0, 167.0, 23.0 ],
 									"style" : "",
-									"text" : "( null nil ) (a b c) ( 6/8 5e6 )"
+									"text" : "[ null nil ] [a b c] [ 6/8 5e6 ]"
 								}
 
 							}
@@ -420,7 +414,6 @@
 					}
 ,
 					"patching_rect" : [ 21.0, 127.0, 66.0, 22.0 ],
-					"presentation_rect" : [ 21.0, 127.0, 0.0, 0.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -1025,7 +1018,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 74.0, 130.0, 1002.0, 556.0 ],
+						"rect" : [ 0.0, 26.0, 1002.0, 556.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1065,8 +1058,8 @@
 									"out" : "nnnn",
 									"outlettype" : [ "", "", "", "", "bang" ],
 									"patching_rect" : [ 107.0, 296.0, 343.333313, 114.0 ],
-									"versionnumber" : 80000,
-									"whole_tree_data_0000000000" : [ "(", "`1/2", "1/2+1/4", "`f(x)+g(x)", ")", "(", "`1/3", "1/3p", "1/3q", "`a(b(x))", ")" ],
+									"versionnumber" : 80001,
+									"whole_tree_data_0000000000" : [ "[", "`1/2", "1/2+1/4", "`f[x]+g[x]", "]", "[", "`1/3", "1/3p", "1/3q", "`a(b(x))", "]" ],
 									"whole_tree_data_count" : [ 1 ]
 								}
 
@@ -1096,9 +1089,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 162.0, 155.0, 281.0, 23.0 ],
+									"patching_rect" : [ 162.0, 155.0, 276.0, 23.0 ],
 									"style" : "",
-									"text" : "( 1/2 1/2+1/4 f(x)+g(x) ) ( 1/3 1/3p 1/3q a(b(x)) )"
+									"text" : "[ 1/2 1/2+1/4 f[x]+g[x] ] [ 1/3 1/3p 1/3q a(b(x)) ]"
 								}
 
 							}
@@ -1146,7 +1139,7 @@
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 188.0, 209.0, 144.141487, 39.0 ],
-									"presentation_rect" : [ 188.0, 209.0, 144.141487, 39.0 ]
+									"presentation_rect" : [ 188.0, 209.0, 144.141479, 39.0 ]
 								}
 
 							}
@@ -1295,7 +1288,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 1002.0, 556.0 ],
+						"rect" : [ 299.0, 130.0, 1002.0, 556.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1327,12 +1320,28 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
+									"id" : "obj-10",
+									"linecount" : 4,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 724.0, 105.0, 250.0, 65.0 ],
+									"presentation_rect" : [ 315.0, 136.0, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Both square brackets and normal parentheses are equivalently interpreted as list delimiters, unless they are purposely ignored or backticked.)",
+									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
 									"id" : "obj-19",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 202.0, 522.0, 346.0, 21.0 ],
-									"presentation_rect" : [ 203.0, 509.0, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "...plus the special characters 0, 1, - (see the \"special\" tab).",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -1349,7 +1358,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 220.5, 383.0, 359.0, 137.0 ],
-									"presentation_rect" : [ 220.0, 364.0, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "l: parens inside symbols are NOT llll levels (but symbols composed by parens only are kept as llll levels!)\nL: ALL parens are not parsed as llll levels\np: ignore pitches (keep them as symbols)\nr: ignore rationals (keep them as symbols)\ne: ignore floating-point scientific notation (keep it as symbol)\ns: keep the special symbols nil and null as symbols\nb: symbols with a backtick are interpreted literally (with the backtick included)",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -1381,9 +1389,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 516.0, 244.0, 307.0, 23.0 ],
+									"patching_rect" : [ 516.0, 244.0, 301.0, 23.0 ],
 									"style" : "",
-									"text" : "( 1/2 3e4 1/2+1/4 f(x)+g(x) ) ( 1/3 1/3p 1/3q a(b(x)) )"
+									"text" : "[ 1/2 3e4 1/2+1/4 f[x]+g[x] ] [ 1/3 1/3p 1/3q a(b(x)) ]"
 								}
 
 							}
@@ -1396,7 +1404,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 202.0, 345.0, 300.0, 36.0 ],
+									"patching_rect" : [ 202.0, 345.0, 301.0, 36.0 ],
 									"style" : "",
 									"text" : "The ignore attribute can be set to any combination of the following characters:\n",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -1431,8 +1439,8 @@
 									"out" : "nnnn",
 									"outlettype" : [ "", "", "", "", "bang" ],
 									"patching_rect" : [ 583.0, 322.5, 385.0, 109.0 ],
-									"versionnumber" : 80000,
-									"whole_tree_data_0000000000" : [ "(", "1/2", "`3e4", "1/2+1/4", "`f(x)+g(x)", ")", "(", "1/3", "1/3p", "1/3q", "`a(b(x))", ")" ],
+									"versionnumber" : 80001,
+									"whole_tree_data_0000000000" : [ "[", "1/2", "`3e4", "1/2+1/4", "`f[x]+g[x]", "]", "[", "1/3", "1/3p", "1/3q", "`a(b(x))", "]" ],
 									"whole_tree_data_count" : [ 1 ]
 								}
 
@@ -1463,9 +1471,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 406.0, 151.5, 307.0, 23.0 ],
+									"patching_rect" : [ 406.0, 151.5, 301.0, 23.0 ],
 									"style" : "",
-									"text" : "( 1/2 3e4 1/2+1/4 f(x)+g(x) ) ( 1/3 1/3p 1/3q a(b(x)) )"
+									"text" : "[ 1/2 3e4 1/2+1/4 f[x]+g[x] ] [ 1/3 1/3p 1/3q a(b(x)) ]"
 								}
 
 							}
@@ -1578,7 +1586,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 163.0, 246.0, 38.0 ],
 									"style" : "",
-									"text" : "(ListOfCodes B001 B002 B003 B004) (ListOfOwners John George Paul Ringo)"
+									"text" : "[ListOfCodes B001 B002 B003 B004] [ListOfOwners John George Paul Ringo]"
 								}
 
 							}

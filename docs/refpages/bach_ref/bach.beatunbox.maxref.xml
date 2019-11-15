@@ -11,8 +11,6 @@
 
 	<description>
 		Removes the measure parenthesis levels in the <o>bach.score</o> parameters syntax.
-		More specifically, it converts the measure-wise score syntax into a plain sequence of separate parameters
-		(boxed only voice-wise, and no longer measure-wise).
 	</description>
 
 	<!--METADATA-->
@@ -163,6 +161,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Merge Chords" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
@@ -192,6 +191,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -200,11 +200,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		bach.beatunbox is the complementary object with respect to bach.beatbox. It converts a measure-wise packets of
-		data into a continuous flow, gathering (where possible) the tied elements, and merging sequences of rests.
-		The basic usage is by connecting its inlet with score's gathered syntax dump.
-		If you use the "separate" mode (by putting the "separate" argument), be sure that the score output of the
-		separate parameters be not in rhythmic-tree
-		form, by checking the @outputtrees bach.score attribute (by default it is not).
 	</discussion>
 
 	<!--SEEALSO-->
@@ -281,11 +276,6 @@
 		<entry name ="More details">
 			<description>
 		bach.beatunbox is the complementary object with respect to bach.beatbox. It converts a measure-wise packets of
-		data into a continuous flow, gathering (where possible) the tied elements, and merging sequences of rests.
-		The basic usage is by connecting its inlet with score's gathered syntax dump.
-		If you use the "separate" mode (by putting the "separate" argument), be sure that the score output of the
-		separate parameters be not in rhythmic-tree
-		form, by checking the @outputtrees bach.score attribute (by default it is not).
 			</description>
 		</entry>
 		<entry name ="Keywords">

@@ -11,10 +11,6 @@
 
 	<description>
 		The purpose of <o>bach.circle</o> is to act as a simple clock diagram,
-		where each point can represent any abstract concept as pitch-classes
-		or rhythmic positions on a looped grid.
-		Each point may have a velocity also. Some of the points can be selected, thus representing
-		for instance pitch-class sets ("chords" or "scales"...) or rhythmic patterns. <br /> <br />
 	</description>
 
 	<!--METADATA-->
@@ -126,10 +122,10 @@
 				Syntax: <b>add <m>&lt;llll: points&gt;</m> </b><br />
 				Examples:<br />
 				• <b>add 2 4 5</b>   <i>→ add some points</i><br />
-				• <b>add (2 60) (4 100 (5 120)</b>   <i>→ add some points with their velocities</i><br />
+				• <b>add [2 60] [4 100 [5 120]</b>   <i>→ add some points with their velocities</i><br />
 				<br />
 				Add a point to the diagram. The argument can be, as in the standard <m>llll</m> method,
-				either a plain list (representing point indices) or an interlaced list <b>(<m>pt1</m> <m>vel1</m>) (<m>pt2</m> <m>vel2</m>)...</b>
+				either a plain list (representing point indices) or an interlaced list <b>[<m>pt1</m> <m>vel1</m>] [<m>pt2</m> <m>vel2</m>]...</b>
 				representing points and velocities
 				<br />				See also:<m>delete</m><br />
 			</description>
@@ -722,19 +718,6 @@
 		In the standard framework, the modulo is the number of subdivision of the octave (represented as a circle). The modulo is thus the number of
 		points in this circle. The default and most common modulo is 12 (corresponding to semitonal grid). Modulo 24 is the quartertone grid, and so on.
 		<br /> <br />
-		A pitch-class set is a plain collection of pitch-classes. A pitch class is nothing but the representative of a set of pitches.
-		Traditionally, it corresponds to the concept of "note", once we abstract it from its octave.
-		For instance, the semitonal framework (when the modulo is 12), all the C belong to the same pitch-class
-		which will be named 0 = {..., C-1, C0, C1, C2, C3, C4, C5, ...}. The pitch-class 1 will be the one containing all C#'s (or Db's); pitch-class
-		2 will contain all D's, and so on. One will use to name pitch class numbers from 0 to the modulo - 1: indeed, with modulo = 12, pitch-class 12 will coincide
-		with pitch-class 0 (it'll be the C one octave higher). One can thus think at pitch-classes as equally spaced points on a clock, and transposing
-		means rotating them on the clock. A pitch class set is thus represented just by a plain list of pitch classes, such <b>0 4 7</b>, representing the
-		C major chord. Notice that this coincides with any other representation such as <b>12 4 19</b> or <b>0 -8 -5</b>, but the canonical form, where numbers
-		are from 0 to the modulo-1 is always preferred. Also for pitch-class sets the order of elements is immaterial, and thus
-		<b>0 4 7</b> or <b>4 0 7</b> or <b>7 4 0</b> will all represent the same set.
-		On the other hand a pitch-class (as an abstract concept) can be used to represent things other than pitches,
-		as for instance temporal position in a rhythmic pattern (loop) having a certain number (the modulo) of equally spaced elements.
-		<br /> <br />
 	</discussion>
 
 	<!--SEEALSO-->
@@ -794,19 +777,6 @@
 			<description>
 		In the standard framework, the modulo is the number of subdivision of the octave (represented as a circle). The modulo is thus the number of
 		points in this circle. The default and most common modulo is 12 (corresponding to semitonal grid). Modulo 24 is the quartertone grid, and so on.
-		<br /> <br />
-		A pitch-class set is a plain collection of pitch-classes. A pitch class is nothing but the representative of a set of pitches.
-		Traditionally, it corresponds to the concept of "note", once we abstract it from its octave.
-		For instance, the semitonal framework (when the modulo is 12), all the C belong to the same pitch-class
-		which will be named 0 = {..., C-1, C0, C1, C2, C3, C4, C5, ...}. The pitch-class 1 will be the one containing all C#'s (or Db's); pitch-class
-		2 will contain all D's, and so on. One will use to name pitch class numbers from 0 to the modulo - 1: indeed, with modulo = 12, pitch-class 12 will coincide
-		with pitch-class 0 (it'll be the C one octave higher). One can thus think at pitch-classes as equally spaced points on a clock, and transposing
-		means rotating them on the clock. A pitch class set is thus represented just by a plain list of pitch classes, such <b>0 4 7</b>, representing the
-		C major chord. Notice that this coincides with any other representation such as <b>12 4 19</b> or <b>0 -8 -5</b>, but the canonical form, where numbers
-		are from 0 to the modulo-1 is always preferred. Also for pitch-class sets the order of elements is immaterial, and thus
-		<b>0 4 7</b> or <b>4 0 7</b> or <b>7 4 0</b> will all represent the same set.
-		On the other hand a pitch-class (as an abstract concept) can be used to represent things other than pitches,
-		as for instance temporal position in a rhythmic pattern (loop) having a certain number (the modulo) of equally spaced elements.
 		<br /> <br />
 			</description>
 		</entry>

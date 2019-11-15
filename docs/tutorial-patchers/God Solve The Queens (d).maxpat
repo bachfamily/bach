@@ -162,7 +162,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(fifth (1 2))",
+					"text" : "[fifth [1 2]]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 50.0, 145.0, 66.0, 18.0 ],
@@ -412,7 +412,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "God Solve The Queens (c)",
+					"text" : "God Solve The Queens [c]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 5.0, 512.0, 151.0, 18.0 ],
@@ -511,7 +511,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "God Solve The Queens (e)",
+					"text" : "God Solve The Queens [e]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 655.0, 512.0, 152.0, 18.0 ],

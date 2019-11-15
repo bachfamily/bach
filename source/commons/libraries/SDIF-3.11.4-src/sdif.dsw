@@ -1,0 +1,179 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "querysdif"=.\tools\querysdif.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "sdif"=.\sdif\sdif.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "sdifextract"=.\tools\sdifextract.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "sdiftotext"=.\tools\sdiftotext.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "sdifusage"=.\tools\sdifusage.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test"=.\test\test.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test1"=.\test\test1.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test2"=.\test\test2.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "testcheck"=.\test\testcheck.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "testselect"=.\test\testselect.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "tosdif"=.\tools\tosdif.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name sdif
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

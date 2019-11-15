@@ -86,7 +86,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 377.0, 171.0, 21.0 ],
-					"text" : "bach.nth -1 (3 (2 5) (-3 1) 4)"
+					"text" : "bach.nth -1 [3 [2 5] [-3 1] 4]"
 				}
 
 			}
@@ -100,7 +100,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 349.0, 393.0, 19.0 ],
-					"text" : "(one two three four five six seven) (all good children go to heaven)"
+					"text" : "[one two three four five six seven] [all good children go to heaven]"
 				}
 
 			}
@@ -128,7 +128,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 251.0, 103.0, 20.0 ],
-					"text" : "bach.nth 1 ((1 5))"
+					"text" : "bach.nth 1 [[1 5]]"
 				}
 
 			}
@@ -142,7 +142,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 219.0, 392.0, 19.0 ],
-					"text" : "(one two three four five six seven) (all good children go to heaven)"
+					"text" : "[one two three four five six seven] [all good children go to heaven]"
 				}
 
 			}
@@ -186,7 +186,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 122.0, 95.0, 20.0 ],
-					"text" : "bach.nth 1 (1 3)"
+					"text" : "bach.nth 1 [1 3]"
 				}
 
 			}
@@ -204,7 +204,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 110.5, 243.0, 401.0, 54.0 ],
 					"presentation_rect" : [ 6.0, 306.0, 0.0, 0.0 ],
-					"text" : "I might want to access all the elements from \"one\" to \"five\". Yes, I can do it with 1 (1 2 3 4 5). But if I use the range syntax, I can simply type 1 ((1 5))."
+					"text" : "I might want to access all the elements from \"one\" to \"five\". Yes, I can do it with 1 (1 2 3 4 5). But if I use the range syntax, I can simply type 1 [[1 5]]."
 				}
 
 			}
@@ -236,7 +236,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 90.0, 259.0, 19.0 ],
-					"text" : "(one two three four) can I have a little more"
+					"text" : "[one two three four] can I have a little more"
 				}
 
 			}

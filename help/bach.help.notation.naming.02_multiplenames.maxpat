@@ -123,7 +123,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 241.0, 240.0, 158.0, 23.0 ],
 					"style" : "",
-					"text" : "name (High 2) (Natural 1)"
+					"text" : "name [High 2] [Natural 1]"
 				}
 
 			}
@@ -153,7 +153,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 241.0, 221.0, 138.0, 23.0 ],
 					"style" : "",
-					"text" : "name (High 1) (Flat 1)"
+					"text" : "name [High 1] [Flat 1]"
 				}
 
 			}

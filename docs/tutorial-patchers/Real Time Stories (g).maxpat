@@ -522,7 +522,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Real Time Stories (f)",
+					"text" : "Real Time Stories [f]",
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 486.0, 140.0, 18.0 ],
 					"id" : "obj-8",
@@ -621,7 +621,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Real Time Stories (h)",
+					"text" : "Real Time Stories [h]",
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 645.0, 486.0, 140.0, 18.0 ],
 					"id" : "obj-16",

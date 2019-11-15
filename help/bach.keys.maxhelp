@@ -331,7 +331,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 375.0, 300.0, 195.0, 56.0 ],
-									"text" : "(title (key to my house)) (pitch E) (key C) (tempo 120)"
+									"text" : "[title [key to my house]] [pitch E] [key C] [tempo 120]"
 								}
 
 							}
@@ -716,7 +716,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 106.0, 166.0, 178.0, 62.0 ],
-									"text" : "(1 2 3) (5 10 15) (10 20 30)"
+									"text" : "[1 2 3] [5 10 15] [10 20 30]"
 								}
 
 							}
@@ -1029,7 +1029,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 375.0, 252.0, 226.0, 49.0 ],
-									"text" : "(kirk 1 2 3 (spock 4 5 6)) (mccoy 7 8 9) (doctor mccoy) (kirk is the captain)"
+									"text" : "[kirk 1 2 3 [spock 4 5 6]] [mccoy 7 8 9] [doctor mccoy] [kirk is the captain]"
 								}
 
 							}
@@ -1177,7 +1177,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 44.0, 108.0, 219.0, 59.0 ],
-									"text" : "(kirk 1 2 3 (spock 4 5 6)) (mccoy 7 8 9) (doctor mccoy) (kirk is the captain)"
+									"text" : "[kirk 1 2 3 [spock 4 5 6]] [mccoy 7 8 9] [doctor mccoy] [kirk is the captain]"
 								}
 
 							}
@@ -1473,7 +1473,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 211.5, 233.0, 317.0, 19.0 ],
-									"text" : "(table 12 13.5 15) (bycicle 18 19 21.4) (oven 23 23.1)"
+									"text" : "[table 12 13.5 15] [bycicle 18 19 21.4] [oven 23 23.1]"
 								}
 
 							}
@@ -1488,7 +1488,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 211.5, 187.0, 303.0, 34.0 ],
-									"text" : "(kirk 1 2 3 (kirk 4 5 6)) (spock 7 8 9) (doctor spock) (is kirk the captain?)"
+									"text" : "[kirk 1 2 3 [kirk 4 5 6]] [spock 7 8 9] [doctor spock] [is kirk the captain?]"
 								}
 
 							}
@@ -1646,7 +1646,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 20.0, 187.0, 182.333328, 63.0 ],
-									"text" : "(kirk 1 2 3 (spock 4 5 6)) (mccoy 7 8 9) (doctor mccoy) (kirk is the captain)"
+									"text" : "[kirk 1 2 3 [spock 4 5 6]] [mccoy 7 8 9] [doctor mccoy] [kirk is the captain]"
 								}
 
 							}

@@ -75,7 +75,7 @@
 			<description>
 				The second argument sets the element used for padding (or elements, in "Loop" <m>mode</m>).
 				This can be a single symbol or integer, such as <b>0</b> or <b>foo</b>, or a complex llll of size 1, such as
-				<b>(1 2 4)</b>, or - in "Loop" <m>mode</m> - any complex <m>llll</m>, from which the padding elements should be picked.
+				<b>[1 2 4]</b>, or - in "Loop" <m>mode</m> - any complex <m>llll</m>, from which the padding elements should be picked.
 				Not setting this argument, or setting it as <b>null</b> forces <o>bach.pad</o> to repeat the
 				elements of the incoming list (default).
 			</description>
@@ -112,7 +112,7 @@
 				In second inlet: the incoming llll is converted into an <m>int</m>.<br />
 				In third inlet: sets the padding element (or elements, for "Loop" <m>mode</m>).
 				This can be a single symbol or integer, such as <b>0</b> or <b>foo</b>, or a complex llll of size 1, such as
-				<b>(1 2 4)</b>, or - in "Loop" <m>mode</m> - any complex <m>llll</m>, from which the padding elements should be picked.
+				<b>[1 2 4]</b>, or - in "Loop" <m>mode</m> - any complex <m>llll</m>, from which the padding elements should be picked.
 				Setting <b>null</b> forces <o>bach.pad</o> to repeat the elements of the incoming list (default).
 			</description>
 		</method>
@@ -165,7 +165,6 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Padding Mode" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
@@ -235,7 +234,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		If the required length is less than the original one, the llll can be trimmed, depending on the
-		<m>trim</m> attribute.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -274,7 +272,6 @@
 		<entry name ="More details">
 			<description>
 		If the required length is less than the original one, the llll can be trimmed, depending on the
-		<m>trim</m> attribute.
 			</description>
 		</entry>
 		<entry name ="Keywords">

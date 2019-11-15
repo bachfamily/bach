@@ -73,7 +73,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 309.5, 335.0, 34.0 ],
-					"text" : "(slotinfo (1 (type 3dfunction) (range 0 127) (zrange 0 1) (ysnap (0 20 60 90 127)) (zsnap (0 0.2 0.4 0.6 0.8 1.))))"
+					"text" : "[slotinfo [1 [type 3dfunction] [range 0 127] [zrange 0 1] [ysnap [0 20 60 90 127]] [zsnap [0 0.2 0.4 0.6 0.8 1.]]]]"
 				}
 
 			}
@@ -122,7 +122,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 123.0, 263.5, 139.0, 19.0 ],
-					"text" : "(slotinfo (1 (ysnap ())))"
+					"text" : "[slotinfo [1 [ysnap []]]]"
 				}
 
 			}
@@ -184,7 +184,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 80.5, 227.0, 19.0 ],
-					"text" : "(slotinfo (1 (ysnap (0 20 60 90 127))))"
+					"text" : "[slotinfo [1 [ysnap [0 20 60 90 127]]]]"
 				}
 
 			}

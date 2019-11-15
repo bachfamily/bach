@@ -192,7 +192,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "The World Outside (b)",
+					"text" : "The World Outside [b]",
 					"patching_rect" : [ 607.0, 331.0, 140.0, 18.0 ],
 					"numinlets" : 2,
 					"fontsize" : 12.0,

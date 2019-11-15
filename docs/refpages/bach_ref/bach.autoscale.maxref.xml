@@ -11,7 +11,6 @@
 
 	<description>
 		Linearly rescales all the numbers in an llll so that the minimum
-		and the maximum be two given numbers.
 	</description>
 
 	<!--METADATA-->
@@ -142,6 +141,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -150,7 +150,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		If all the elements of the incoming llll are the same,
-		they will be set to the mean of the given minimum and maximum.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -191,7 +190,6 @@
 		<entry name ="More details">
 			<description>
 		If all the elements of the incoming llll are the same,
-		they will be set to the mean of the given minimum and maximum.
 			</description>
 		</entry>
 		<entry name ="Keywords">

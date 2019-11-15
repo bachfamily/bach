@@ -11,8 +11,6 @@
 
 	<description>
 		Performs subtractions between lllls or
-		between lllls and numbers, with reversed inlets:
-		Left operand goes in right inlet and right operand goes in left inlet.
 	</description>
 
 	<!--METADATA-->
@@ -124,6 +122,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -132,8 +131,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The abstraction is equivalent to a (reverse) subtraction performed
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -169,8 +166,6 @@
 		<entry name ="More details">
 			<description>
 		The abstraction is equivalent to a (reverse) subtraction performed
-		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
-		attribute set to 1.
 			</description>
 		</entry>
 		<entry name ="Keywords">

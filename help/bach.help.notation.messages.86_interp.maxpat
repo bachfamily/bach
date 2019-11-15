@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 320.5, 161.0, 85.0, 23.0 ],
 					"style" : "",
-					"text" : "interp (1 1/4)"
+					"text" : "interp [1 1/4]"
 				}
 
 			}

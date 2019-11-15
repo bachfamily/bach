@@ -201,7 +201,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 54.0, 215.0, 146.0, 38.0 ],
 									"style" : "",
-									"text" : "clear, addchord 2 ( 0 ( 7100 100 0 ) ) @sel 1"
+									"text" : "clear, addchord 2 [ 0 [ 7100 100 0 ] ] @sel 1"
 								}
 
 							}
@@ -950,7 +950,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 464.0, 364.0, 251.0, 23.0 ],
 									"style" : "",
-									"text" : "(slotinfo (1 (temporalmode milliseconds)))"
+									"text" : "[slotinfo [1 [temporalmode milliseconds]]]"
 								}
 
 							}
@@ -1037,7 +1037,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 72.0, 275.0, 266.0, 23.0 ],
 									"style" : "",
-									"text" : "clear, addchord 1 ( 0 ( 7100 100 0 ) ) @sel 1"
+									"text" : "clear, addchord 1 [ 0 [ 7100 100 0 ] ] @sel 1"
 								}
 
 							}

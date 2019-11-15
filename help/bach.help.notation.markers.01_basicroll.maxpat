@@ -206,7 +206,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 35.0, 125.5, 168.0, 23.0 ],
 					"style" : "",
-					"text" : "addmarker 2500 (foo fee 4)"
+					"text" : "addmarker 2500 [foo fee 4]"
 				}
 
 			}

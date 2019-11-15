@@ -101,6 +101,16 @@
 
 	<!--MESSAGES-->
 	<methodlist>
+		<method name="(doubleclick)">
+			<arglist />
+			<digest>
+				Edit bell code for <m>lambda</m> attribute
+			</digest>
+			<description>
+				Doubleclicking on the object forces a text editor to open up, where the bell code
+				for the <m>lambda</m> attribute can be edited directly.
+			</description>
+		</method>
 		<method name="bang">
 			<arglist />
 			<digest>
@@ -110,6 +120,26 @@
 				Returns the difference of the most recently received lllls.  <br />
 				<br /> N.B.: The object is not aware of changes you make in the lambda loop.
 				If you change the lambda loop, you might want to re-input the most recent llll rather than just sending a <m>bang</m>.
+			</description>
+		</method>
+		<method name="forceread">
+			<arglist />
+			<digest>
+				Read code from file even if incorrect
+			</digest>
+			<description>
+				Loads a file containing bell code into the object,
+				but ignore it if the code is invalid.
+			</description>
+		</method>
+		<method name="forcereadappend">
+			<arglist />
+			<digest>
+				Read code from file and append it even if incorrect
+			</digest>
+			<description>
+				Appends the contents of a file containing bell code to the code already owned by the object,
+				keeping it even if it is invalid.
 			</description>
 		</method>
 		<method name="int">
@@ -140,10 +170,143 @@
 				In third inlet: the llll is converted into an int
 			</description>
 		</method>
+		<method name="read">
+			<arglist />
+			<digest>
+				Read code from file
+			</digest>
+			<description>
+				Loads a file containing bell code into the object,
+				keeping it even if it is invalid.
+			</description>
+		</method>
+		<method name="readagain">
+			<arglist />
+			<digest>
+				Reread file
+			</digest>
+			<description>
+				Rereads the previous file
+			</description>
+		</method>
+		<method name="readappend">
+			<arglist />
+			<digest>
+				Read code from file and append it
+			</digest>
+			<description>
+				Appends the contents of a file containing bell code
+				to the code already owned by the object,
+				but ignore it if the code is invalid.
+			</description>
+		</method>
+		<method name="write">
+			<arglist />
+			<digest>
+				Save code to file
+			</digest>
+			<description>
+				Writes the bell code into a file.
+			</description>
+		</method>
+		<method name="writeagain">
+			<arglist />
+			<digest>
+				Rewrite file
+			</digest>
+			<description>
+				Rewrite the previous file
+			</description>
+		</method>
 	</methodlist>
 
 	<!--ATTRIBUTES-->
 	<attributelist>
+		<attribute name="embed" get="1" set="1" type="int" size="1">
+			<digest>
+				Save Data With Patcher
+			</digest>
+			<description>
+				When set to 1, the bell code for the <m>lambda</m> attribute
+				is saved with the patcher, even if not set in the object box.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Save Data With Patcher" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="file" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Code file to be read at initialization
+			</digest>
+			<description>
+				The <m>file</m> attribute allows setting a file name
+				to be loaded automatically when the object is created.
+				Its contents override those of the code in both the object box
+				and the editor.
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Code file to be read at initialization" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="lambda" get="1" set="1" type="char_array" size="3276">
+			<digest>
+				Bell Expression For Lambda Function
+			</digest>
+			<description>
+				The <m>lambda</m> attribute allows setting a snipped of bell code
+				to be called instead of the lambda loop. If the lambda attribute is set,
+				the lambda loop will not be evaluated, and the provided code will be executed as well.
+				For each lambda outlet of the object, an input pseudovariable is passed to the lambda loop,
+				with their indices counted from left to right.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Bell Expression For Lambda Function" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="lambdaparams" get="1" set="1" type="llll" size="1">
+			<digest>
+				Extra Parameters To Lambda Function
+			</digest>
+			<description>
+				The <m>lambdaparams</m> attribute allows setting the values
+				of local variables to be passed to the bell code set by the <m>lambda</m> attribute.
+				It is structured as an llll consisting of one or more sublists,
+				each containing the name of a variable and its value to be passed to the code.
+				For example, the llll <b>[ $foo 1 ] [ $bar [ 2 3 ] ]</b>
+				will set the $foo and $bar local variables respectively to <b>1</b> and <b>[ 2 3 ]</b>.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Extra Parameters To Lambda Function" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="maxtime" get="1" set="1" type="int" size="1">
+			<digest>
+				Maximum Duration Of Evaluation
+			</digest>
+			<description>
+				The <m>maxtime</m> attribute allows setting a maximum evaluation time
+				in milliseconds for the bell code provided.
+				If it is reached, the evaluation aborts and the code returns null.
+				If <m>maxtime</m> is set to 0, there is no time limit.
+				The default is 60000 ms (1 minute).
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Duration Of Evaluation" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="out" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Outlet Types
@@ -170,7 +333,24 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="watch" get="1" set="1" type="int" size="1">
+			<digest>
+				Reload files if changed
+			</digest>
+			<description>
+				If the <m>watch</m> attribute is set to 1
+				(as by default), whenever the loaded bell code file
+				or one of the files included by the code is changed
+				the code is reloaded and rebuilt.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Reload files if changed" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 	</attributelist>

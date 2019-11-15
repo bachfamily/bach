@@ -127,7 +127,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 408.0, 130.0, 196.0, 23.0 ],
 					"style" : "",
-					"text" : "preventedit (breakpoints modify)"
+					"text" : "preventedit [breakpoints modify]"
 				}
 
 			}
@@ -313,7 +313,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 232.0, 301.0, 223.0, 23.0 ],
 					"style" : "",
-					"text" : "preventedit (measures create delete)"
+					"text" : "preventedit [measures create delete]"
 				}
 
 			}

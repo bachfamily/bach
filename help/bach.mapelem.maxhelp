@@ -161,7 +161,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 39.0, 128.0, 194.0, 19.0 ],
-									"text" : "1 2 3 4 (5 6 7 8) 9 10 12 13 (14)"
+									"text" : "1 2 3 4 [5 6 7 8] 9 10 12 13 [14]"
 								}
 
 							}
@@ -400,7 +400,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 131.0, 186.0, 19.0 ],
-									"text" : "(1 2 3 4) (1 4 8 10) (1 9 15 24)"
+									"text" : "[1 2 3 4] [1 4 8 10] [1 9 15 24]"
 								}
 
 							}
@@ -656,7 +656,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 25.0, 138.0, 188.0, 45.0 ],
-									"text" : "(a b c) ((d e f) ((g) (h h) (i i i i i i))) (l m n) ((()))"
+									"text" : "[a b c] [[d e f] [[g] [h h] [i i i i i i]]] [l m n] [[[]]]"
 								}
 
 							}
@@ -981,7 +981,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 20.5, 164.0, 151.5, 48.0 ],
-									"text" : "(a b c) ((d e f) ((g) (h h) (i i i i i i))) (l m n)"
+									"text" : "[a b c] [[d e f] [[g] [h h] [i i i i i i]]] [l m n]"
 								}
 
 							}

@@ -424,7 +424,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 431.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Real Time Stories (e)",
+					"text" : "Real Time Stories [e]",
 					"varname" : "messageA"
 				}
 
@@ -517,7 +517,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 638.0, 431.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Real Time Stories (g)",
+					"text" : "Real Time Stories [g]",
 					"varname" : "messageB"
 				}
 

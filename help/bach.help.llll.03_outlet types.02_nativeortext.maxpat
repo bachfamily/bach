@@ -102,7 +102,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 297.5, 153.0, 19.0 ],
 					"presentation_rect" : [ 6.0, 263.5, 0.0, 0.0 ],
-					"text" : "((John Paul) Ringo) Paul"
+					"text" : "[[John Paul] Ringo] Paul"
 				}
 
 			}
@@ -116,7 +116,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 422.5, 176.0, 19.0 ],
-					"text" : "( Ringo ( Paul John ) ) Paul"
+					"text" : "[ Ringo [ Paul John ] ] Paul"
 				}
 
 			}
@@ -212,7 +212,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 71.5, 153.0, 19.0 ],
-					"text" : "((John Paul) Ringo) Paul"
+					"text" : "[[John Paul] Ringo] Paul"
 				}
 
 			}

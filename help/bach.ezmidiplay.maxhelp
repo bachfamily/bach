@@ -1163,7 +1163,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 449.0, 185.0, 298.0, 38.0 ],
 									"style" : "",
-									"text" : "addchord (now (mycents++ now-prev 100)), code prev = now;\r"
+									"text" : "addchord [now [mycents++ now-prev 100]], code prev = now;\r"
 								}
 
 							}

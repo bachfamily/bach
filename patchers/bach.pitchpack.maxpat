@@ -2,13 +2,14 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
-			"revision" : 3,
+			"major" : 8,
+			"minor" : 0,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
+		"classnamespace" : "box",
 		"rect" : [ 249.0, 118.0, 230.0, 223.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -39,14 +40,14 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"comment" : "llll: Octaves",
+					"cool" : 1,
 					"id" : "obj-5",
-					"index" : 3,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 136.333328, 15.0, 25.0, 25.0 ],
-					"style" : ""
+					"patching_rect" : [ 136.333327999999995, 15.0, 25.0, 25.0 ]
 				}
 
 			}
@@ -61,7 +62,10 @@
 					"numoutlets" : 6,
 					"outlettype" : [ "bang", "", "", "", "", "" ],
 					"patching_rect" : [ 15.0, 50.0, 201.0, 22.0 ],
-					"style" : "",
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
 					"text" : "bach.args @ins 3"
 				}
 
@@ -76,7 +80,10 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 15.0, 139.0, 112.0, 22.0 ],
-					"style" : "",
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
 					"text" : "bach.portal @out p"
 				}
 
@@ -92,7 +99,10 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 87.0, 202.0, 35.0 ],
-					"style" : "",
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
 					"text" : "bach.expr makepitch($x1\\, $x2\\, $x3) @scalarmode 1"
 				}
 
@@ -101,26 +111,25 @@
 				"box" : 				{
 					"comment" : "llll: Pitches",
 					"id" : "obj-3",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 15.0, 176.0, 25.0, 25.0 ],
-					"style" : ""
+					"patching_rect" : [ 15.0, 176.0, 25.0, 25.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"comment" : "llll: Alterations",
+					"cool" : 1,
 					"id" : "obj-2",
-					"index" : 2,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 75.666664, 15.0, 25.0, 25.0 ],
-					"style" : ""
+					"patching_rect" : [ 75.666663999999997, 15.0, 25.0, 25.0 ]
 				}
 
 			}
@@ -128,13 +137,12 @@
 				"box" : 				{
 					"comment" : "llll: Degrees",
 					"id" : "obj-1",
-					"index" : 1,
+					"index" : 0,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 15.0, 25.0, 25.0 ],
-					"style" : ""
+					"patching_rect" : [ 15.0, 15.0, 25.0, 25.0 ]
 				}
 
 			}
@@ -142,8 +150,6 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-1", 0 ]
 				}
 
@@ -151,8 +157,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 1 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-2", 0 ]
 				}
 
@@ -160,8 +164,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-6", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-4", 0 ]
 				}
 
@@ -169,8 +171,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 2 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-5", 0 ]
 				}
 
@@ -178,8 +178,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-3", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-6", 0 ]
 				}
 
@@ -187,8 +185,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 2 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-7", 3 ]
 				}
 
@@ -196,8 +192,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 1 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-7", 2 ]
 				}
 
@@ -205,13 +199,25 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-7", 1 ]
 				}
 
 			}
- ]
+ ],
+		"dependency_cache" : [ 			{
+				"name" : "bach.expr.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.portal.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.args.mxo",
+				"type" : "iLaX"
+			}
+ ],
+		"autosave" : 0
 	}
 
 }

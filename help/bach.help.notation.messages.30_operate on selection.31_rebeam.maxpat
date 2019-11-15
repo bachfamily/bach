@@ -47,7 +47,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 485.0, 183.0, 121.0, 35.0 ],
 					"style" : "",
-					"text" : "sel (1 1/2) (1 3/4) nil nil 1"
+					"text" : "sel [1 1/2] [1 3/4] nil nil 1"
 				}
 
 			}
@@ -154,7 +154,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 343.0, 268.0, 154.0, 23.0 ],
 					"style" : "",
-					"text" : "sel (1 1/2) (1 3/4) nil nil 1"
+					"text" : "sel [1 1/2] [1 3/4] nil nil 1"
 				}
 
 			}
@@ -231,7 +231,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 343.0, 245.0, 143.0, 23.0 ],
 					"style" : "",
-					"text" : "sel (1 0) (1 1/2) nil nil 1"
+					"text" : "sel [1 0] [1 1/2] nil nil 1"
 				}
 
 			}

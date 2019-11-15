@@ -11,11 +11,6 @@
 
 	<description>
 		Accepts an llll of elements and an llll of reference durations:
-		the element of the former corresponding to non-negative reference durations
-		(non-rest elements) are output from the first outlet, while the ones corresponding
-		to negative reference durations (rest elements) are output from the second outlet.
-		Third outlet outputs the position of rest element, for a future reassembling of
-		the llll via <o>bach.fromc&amp;r</o>.
 	</description>
 
 	<!--METADATA-->
@@ -133,7 +128,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -156,8 +150,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.toc&amp;r</o> is especially useful in combination with <o>bach.fromc&amp;r</o>
-		in order to perform different operations on the set of elements corresponding
-		to rests and to non-rests.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -205,8 +197,6 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.toc&amp;r</o> is especially useful in combination with <o>bach.fromc&amp;r</o>
-		in order to perform different operations on the set of elements corresponding
-		to rests and to non-rests.
 			</description>
 		</entry>
 		<entry name ="Keywords">

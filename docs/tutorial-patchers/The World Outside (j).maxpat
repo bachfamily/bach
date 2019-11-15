@@ -276,7 +276,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "The World Outside (i)",
+					"text" : "The World Outside [i]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 5.0, 521.0, 140.0, 18.0 ],
@@ -375,7 +375,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "The World Outside (k)",
+					"text" : "The World Outside [k]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 384.0, 521.0, 140.0, 18.0 ],

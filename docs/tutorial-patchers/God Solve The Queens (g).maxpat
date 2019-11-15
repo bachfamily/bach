@@ -1322,7 +1322,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 544.0, 148.0, 22.0 ],
 					"style" : "",
-					"text" : "God Solve The Queens (f)",
+					"text" : "God Solve The Queens [f]",
 					"varname" : "messageA"
 				}
 
@@ -1415,7 +1415,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 779.0, 544.0, 152.0, 22.0 ],
 					"style" : "",
-					"text" : "God Solve The Queens (h)",
+					"text" : "God Solve The Queens [h]",
 					"varname" : "messageB"
 				}
 

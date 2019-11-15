@@ -172,6 +172,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -180,7 +181,6 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The mapping is always linear. If elements are outside
-		the input range, the result will be an extrapolation.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -231,7 +231,6 @@
 		<entry name ="More details">
 			<description>
 		The mapping is always linear. If elements are outside
-		the input range, the result will be an extrapolation.
 			</description>
 		</entry>
 		<entry name ="Keywords">

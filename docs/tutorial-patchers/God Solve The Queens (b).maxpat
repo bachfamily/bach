@@ -422,7 +422,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "God Solve The Queens (a)",
+					"text" : "God Solve The Queens [a]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 5.0, 414.0, 152.0, 18.0 ],
@@ -521,7 +521,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "God Solve The Queens (c)",
+					"text" : "God Solve The Queens [c]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 554.0, 414.0, 151.0, 18.0 ],

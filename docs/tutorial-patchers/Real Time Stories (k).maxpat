@@ -1646,7 +1646,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "tail $1, clearselection 2, addchord 2 ( $1 ( $2 0 $3 ) ), inscreenpos 0.5 $1, select $1 $1 nil nil 2",
+					"text" : "tail $1, clearselection 2, addchord 2 [ $1 [ $2 0 $3 ] ], inscreenpos 0.5 $1, select $1 $1 nil nil 2",
 					"linecount" : 4,
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
@@ -3772,7 +3772,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "tail $1, clearselection 1, addchord 1 ( $1 ( $2 0 $3 ) ), inscreenpos 0.5 $1, select $1 $1 nil nil 1",
+					"text" : "tail $1, clearselection 1, addchord 1 [ $1 [ $2 0 $3 ] ], inscreenpos 0.5 $1, select $1 $1 nil nil 1",
 					"linecount" : 4,
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
@@ -3933,7 +3933,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Real Time Stories (j)",
+					"text" : "Real Time Stories [j]",
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
 					"hidden" : 1,
@@ -4032,7 +4032,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Real Time Stories (l)",
+					"text" : "Real Time Stories [l]",
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
 					"hidden" : 1,
