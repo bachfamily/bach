@@ -198,9 +198,14 @@ void value_dblclick(t_v *x)
     
     char *buf = NULL;
     
-    llll_to_text_buf_pretty(x->n_var->eval(), &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
+    t_llll *ll = x->n_var->eval();
+    
+    llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
+    
+    llll_release(ll);
     
     void *rv = object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));
+    bach_freeptr(buf);
     if (rv) {
         t_object *ed = x->m_editor;
         x->m_editor = NULL;
@@ -221,9 +226,11 @@ void value_edclose(t_v *x, char **ht, long size)
         return;
     if (ht) {
         t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
+        sysmem_freehandle(ht);
         
         if (ll) {
             x->n_var->assign(ll);
+            llll_release(ll);
         } else
             object_error((t_object *)x, "Can't modify llll: it is wrongly formatted.");
     }
@@ -262,6 +269,7 @@ void value_anything(t_v *x, t_symbol *msg, long ac, t_atom *av)
     if (!in_ll)
         return;
     x->n_var->assign(in_ll);
+    llll_release(in_ll);
 }
 
 void value_assist(t_v *x, void *b, long m, long a, char *s)

@@ -27,7 +27,7 @@
 
 %{
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
+    #define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
     #endif
     
     #ifndef code_dev_post
@@ -931,7 +931,7 @@ exp: term %dprec 2
 }
 | exp NTHOP listEnd {
     $$ = new astNthOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP listEnd)\n");
 }
 | exp PICKOP listEnd {
     $$ = new astPickOp($1, $3, params->owner);
@@ -1061,7 +1061,7 @@ exp: term %dprec 2
 }
 | exp NTHOP exp {
     $$ = new astNthOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP exp)\n");
 }
 | exp PICKOP exp {
     $$ = new astPickOp($1, $3, params->owner);

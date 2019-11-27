@@ -389,7 +389,7 @@ void eval_run(t_eval *x, long inlet)
     }
     
     for (int i = 0; i < dataInlets; i++) {
-        llll_release(context.argv[i]);
+        llll_release(context.argv[i + 1]);
     }
 }
 

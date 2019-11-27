@@ -78,7 +78,7 @@
 
 
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
+    #define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
     #endif
     
     #ifndef code_dev_post
@@ -3106,7 +3106,7 @@ yyuserAction (yyRuleNum yyn, size_t yyrhslen, yyGLRStackItem* yyvsp,
 
     {
     ((*yyvalp).n) = new astNthOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP listEnd)\n");
 }
 
     break;
@@ -3400,7 +3400,7 @@ yyuserAction (yyRuleNum yyn, size_t yyrhslen, yyGLRStackItem* yyvsp,
 
     {
     ((*yyvalp).n) = new astNthOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP exp)\n");
 }
 
     break;

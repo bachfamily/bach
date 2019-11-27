@@ -186,6 +186,7 @@ void reg_edclose(t_reg *x, char **ht, long size)
         return;
     if (ht) {
         t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
+        sysmem_freehandle(ht);
         if (ll) {
             llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);
             llll_retain(ll);
