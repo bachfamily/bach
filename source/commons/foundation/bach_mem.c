@@ -809,8 +809,7 @@ void llll_fix_owner_for_check(t_llll *ll)
 
 void llll_free_nocheck(t_llll *ll)
 {
-    t_llll_stack *stack;
-    t_llllelem *elem, *nextelem;
+
     if (!ll)
         return;
 #ifdef BACH_CHECK_LLLLS
@@ -825,7 +824,15 @@ void llll_free_nocheck(t_llll *ll)
     
     if (ATOMIC_DECREMENT_32(&ll->l_count)) // release
         return;
+    
+    llll_destroy(ll);
+}
 
+void llll_destroy(t_llll *ll)
+{
+    t_llll_stack *stack;
+    t_llllelem *elem, *nextelem;
+    
     if (!(ll->l_flags & (OBJ_FLAG_DATA | OBJ_FLAG_REF))) {
         
         stack = llll_stack_new();
@@ -834,12 +841,12 @@ void llll_free_nocheck(t_llll *ll)
         while (1) {
             while (elem) {
                 nextelem = elem->l_next;
-                if (elem->l_hatom.h_type != H_LLLL || 
+                if (elem->l_hatom.h_type != H_LLLL ||
                     elem->l_flags & (OBJ_FLAG_DATA | OBJ_FLAG_REF)) {
                     llllelem_dispose(elem);
                     elem = nextelem;
                 } else {
-//                    elem->l_parent = ll; // just to be sure, or we'll lose ourselves!
+                    //                    elem->l_parent = ll; // just to be sure, or we'll lose ourselves!
                     llll_stack_push(stack, elem);
                     ll = elem->l_hatom.h_w.w_llll;
                     elem = ll->l_head;
@@ -908,7 +915,7 @@ void llll_release_unsafe(t_llll *ll)
     if (!ll)
         return;
     if (--(ll->l_count) == 0)
-        llll_dispose(ll);
+        llll_destroy(ll);
 }
 
 void llll_release(t_llll *ll)

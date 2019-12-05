@@ -1,5 +1,17 @@
 VERSION NOTES:
 
+v0.8.2b
+
+***********************
+*** VERSION CHANGES ***
+***********************
+
+- bell: fixed various memory leaks
+
+- bach.reg, bach.value, bach.pv
+    Fixed memory leak related to the text editor window
+
+
 v0.8.1b
 
 Scroll down for very important things you should now about v0.8b
