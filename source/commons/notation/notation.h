@@ -10631,7 +10631,9 @@ double get_slot_window_bottom_inset_uheight(t_notation_obj *r_ob, long slot_num)
     @param    y1                The y of the top-left corner of the text box, considering that (0, 0) is already indented for x and y insets
     @see                    write_text()
  */ 
-void write_text_simple_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+void write_text_standard_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+
+void write_text_standard_account_for_insets_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
 
 /**    Convenience wrapper for writing left-aligned single-lined non-ellipsed text, whereas the top-left corner (0, 0) also takes into account
@@ -10645,13 +10647,15 @@ void write_text_simple_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, 
     @param    y1                The y of the top-left corner of the text box, considering that (0, 0) is already indented for vertical inset
     @see                    write_text()
  */ 
-void write_text_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+
+void write_text_standard_account_for_vinset_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
 #endif
 
 #ifdef BACH_JUCE
-void write_text_simple_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
-void write_text_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+void write_text_standard_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 #endif
 
 

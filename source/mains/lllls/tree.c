@@ -2273,11 +2273,11 @@ void tree_paint(t_tree *x, t_object *view){
                                             tnd->width, tnd->height, 0.5);
                         
                         if (x->textdecayfactor == 1.)
-                            write_text_simple(g, jf_text, tnd == x->clicked_node ? x->j_clickedtextcolor : (tnd == x->hovered_node ? x->j_hovered_text_color : x->j_textcolor), tnd->text, x1, y1, maxwidth, maxheight);
+                            write_text_standard_singleline(g, jf_text, tnd == x->clicked_node ? x->j_clickedtextcolor : (tnd == x->hovered_node ? x->j_hovered_text_color : x->j_textcolor), tnd->text, x1, y1, maxwidth, maxheight);
                         else {
                             t_jfont *jf_text2 = jfont_create_debug(jbox_get_fontname((t_object *)x)->s_name, (t_jgraphics_font_slant)jbox_get_font_slant((t_object *)x),
                                                                    (t_jgraphics_font_weight)jbox_get_font_weight((t_object *)x), jbox_get_fontsize((t_object *)x) * pow(x->textdecayfactor, tnd->depth - 1));
-                            write_text_simple(g, jf_text2, tnd == x->clicked_node ? x->j_clickedtextcolor : (tnd == x->hovered_node ? x->j_hovered_text_color : x->j_textcolor), tnd->text, x1, y1, maxwidth, maxheight);
+                            write_text_standard_singleline(g, jf_text2, tnd == x->clicked_node ? x->j_clickedtextcolor : (tnd == x->hovered_node ? x->j_hovered_text_color : x->j_textcolor), tnd->text, x1, y1, maxwidth, maxheight);
                             jfont_destroy_debug(jf_text2);
                         }
                     }

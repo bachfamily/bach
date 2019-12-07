@@ -111,9 +111,14 @@ void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double heig
 // ******************* MAX VERSION **************************
 #ifdef BACH_MAX
 
-void write_text_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
 {
-    write_text_simple(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, r_ob->width - x1 + 30 * r_ob->zoom_y, r_ob->height - y1 + 30 * r_ob->zoom_y);
+    write_text_standard(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, r_ob->width - x1 + 30 * r_ob->zoom_y, r_ob->height - y1 + 30 * r_ob->zoom_y);
+}
+
+void write_text_standard_account_for_vinset_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+{
+    write_text_standard_singleline(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, r_ob->width - x1 + 30 * r_ob->zoom_y, r_ob->height - y1 + 30 * r_ob->zoom_y);
 }
 
 void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, double direction)
@@ -133,9 +138,14 @@ void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double
     jgraphics_fill(g);    
 }
 
-void write_text_simple_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+void write_text_standard_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
 {
-    write_text_simple(g, jf, textcolor, text, r_ob->j_inset_x + x1, r_ob->j_inset_y + y1, r_ob->inner_width - x1, r_ob->inner_height - y1);
+    write_text_standard(g, jf, textcolor, text, r_ob->j_inset_x + x1, r_ob->j_inset_y + y1, r_ob->inner_width - x1, r_ob->inner_height - y1);
+}
+
+void write_text_standard_account_for_insets_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+{
+    write_text_standard_singleline(g, jf, textcolor, text, r_ob->j_inset_x + x1, r_ob->j_inset_y + y1, r_ob->inner_width - x1, r_ob->inner_height - y1);
 }
 
 #endif // MAX_VERSION
@@ -143,15 +153,15 @@ void write_text_simple_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, 
 // ******************* JUCE VERSION **************************
 #ifdef BACH_JUCE
 
-void write_text_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
 {
-    write_text_simple(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, (r_ob->inner_width + r_ob->j_inset_x) - x1, r_ob->inner_height - y1);
+    write_text_standard(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, (r_ob->inner_width + r_ob->j_inset_x) - x1, r_ob->inner_height - y1);
 }
 
 // wrong one: it is the same as the previous one, but I don't wanna touch things! :)
-void write_text_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
 { // write the text, without deleting truncated letters
-    write_text_simple(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, (r_ob->inner_width + r_ob->j_inset_x) - x1, r_ob->inner_height - y1);
+    write_text_standard(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, (r_ob->inner_width + r_ob->j_inset_x) - x1, r_ob->inner_height - y1);
 }
 
 void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, double direction)
@@ -167,9 +177,9 @@ void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double
 }
 
 // char is supposed being encoded as UTF-8
-void write_text_simple_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+void write_text_standard_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
 {
-    write_text_simple(g, jf, textcolor, text, r_ob->j_inset_x + x1, r_ob->j_inset_y + y1, r_ob->inner_width - x1, r_ob->inner_height - y1);
+    write_text_standard(g, jf, textcolor, text, r_ob->j_inset_x + x1, r_ob->j_inset_y + y1, r_ob->inner_width - x1, r_ob->inner_height - y1);
 }
 #endif // JUCE_VERSION
 
@@ -395,7 +405,7 @@ void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* 
                 get_names_as_text(marker->r_it.names, buf, 1000);
                 if (namewidth)
                     jfont_text_measure(jf, buf, namewidth, &height);
-                write_text_account_for_vinset(r_ob, g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y: marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker));
+                write_text_standard_account_for_vinset(r_ob, g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y: marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker));
             }
         } else if ((marker->role == k_MARKER_ROLE_TEMPO || marker->role == k_MARKER_ROLE_TIME_SIGNATURE) && marker->content) {
             char *buf = NULL;
@@ -585,9 +595,9 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     const char *octave_text = NULL;
 
     if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_GG) ||  (clef == k_CLEF_G))
-        write_text_simple_account_for_insets(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift) * step_y);
+        write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift) * step_y);
     if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_FF) ||  (clef == k_CLEF_F))
-        write_text_simple_account_for_insets(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + clef_uy_shift) * step_y);
+        write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + clef_uy_shift) * step_y);
     
     
     if (octave_shift != 0 || (r_ob->show_aux_clefs && (clef == k_CLEF_FFGG || clef == k_CLEF_FGG || clef == k_CLEF_FFG || clef == k_CLEF_GG || clef == k_CLEF_FF))) {
@@ -598,11 +608,11 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
 
     if (r_ob->show_aux_clefs && jf_littleclefnumber) {
         if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_GG)) {
-            write_text_simple_account_for_insets(r_ob, g, jf, auxcolor, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + 2 * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + 2 * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + 2 * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
         if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FF)) {
-            write_text_simple_account_for_insets(r_ob, g, jf, auxcolor, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 - 2 * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 - 2 * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 - 2 * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
     }
@@ -610,25 +620,25 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     switch (clef) {
         case k_CLEF_G15ma:
         case k_CLEF_G8va:
-            write_text_simple_account_for_insets(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_G15mb:
         case k_CLEF_G8vb:
-            write_text_simple_account_for_insets(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
             
         case k_CLEF_F15ma:
         case k_CLEF_F8va:
-            write_text_simple_account_for_insets(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_F15mb:
         case k_CLEF_F8vb:
-            write_text_simple_account_for_insets(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
@@ -636,15 +646,15 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
         case k_CLEF_TENOR:
         case k_CLEF_MEZZO:
         case k_CLEF_SOPRANO:
-            write_text_simple_account_for_insets(r_ob, g, jf, color, Cclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift - 4) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Cclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift - 4) * step_y);
             break;
 
         case k_CLEF_BARYTONE:
-            write_text_simple_account_for_insets(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + clef_uy_shift + 0) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + clef_uy_shift + 0) * step_y);
             break;
             
         case k_CLEF_PERCUSSION:
-            write_text_simple_account_for_insets(r_ob, g, jf, color, Pclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift + 2) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Pclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift + 2) * step_y);
             break;
             
         default:
@@ -1575,23 +1585,23 @@ void notationobj_build_notation_item_surfaces(t_notation_obj *r_ob, t_object *vi
     bach_freeptr(noteheadchar_utf);
 
     if (g_context1) {
-        write_text_simple(g_context1, jf, r_ob->j_note_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
+        write_text_standard(g_context1, jf, r_ob->j_note_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
         jgraphics_destroy(g_context1); 
     }
     if (g_context2) {
-        write_text_simple(g_context2, jf, r_ob->j_selection_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
+        write_text_standard(g_context2, jf, r_ob->j_selection_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
         jgraphics_destroy(g_context2); 
     }
     if (g_context3) {
-        write_text_simple(g_context3, jf, r_ob->j_solo_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
+        write_text_standard(g_context3, jf, r_ob->j_solo_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
         jgraphics_destroy(g_context3); 
     }
     if (g_context4) {
-        write_text_simple(g_context4, jf, r_ob->j_muted_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
+        write_text_standard(g_context4, jf, r_ob->j_muted_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
         jgraphics_destroy(g_context4); 
     }
     if (g_context5) {
-        write_text_simple(g_context5, jf, r_ob->j_locked_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
+        write_text_standard(g_context5, jf, r_ob->j_locked_rgba, noteheadchar, 0, r_ob->j_inset_y, size, size);
         jgraphics_destroy(g_context5); 
     }
     
@@ -1871,7 +1881,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
         jgraphics_translate(g, -note_x_textbox, -note_y_textbox);
     } else {
 //        dev_post("note_textbox_x: %.2f", note_textbox_x);
-        write_text_account_for_vinset(r_ob, g, notehead_need_custom_font ? jf_custom_noteheads : jf, *notecolor, noteheadchar, note_x_textbox, note_y_textbox);
+        write_text_standard_account_for_vinset_singleline(r_ob, g, notehead_need_custom_font ? jf_custom_noteheads : jf, *notecolor, noteheadchar, note_x_textbox, note_y_textbox);
     }
     
     if (notehead_need_custom_font)
@@ -2274,7 +2284,7 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, vo
         articulation_utf = charset_unicodetoutf8_debug(&this_art->character, 1, &articulation_utf_len);
         strncpy(articulation_txt, articulation_utf, 4);
         bach_freeptr(articulation_utf);
-        write_text_account_for_vinset(r_ob, g, jf_art, *color, articulation_txt, stem_x + this_art->x_pos, this_art->y_pos);
+        write_text_standard_account_for_vinset(r_ob, g, jf_art, *color, articulation_txt, stem_x + this_art->x_pos, this_art->y_pos);
         
         if (r_ob->articulations_typo_preferences.extension_line_char[this_art->articulation_ID] > 0 && r_ob->show_articulations_extensions) { // extension line
             double total_width = extension_end_x - (stem_x + this_art->x_pos + this_art->width/2.) - CONST_ARTICULATION_EXTENSION_END_UTRIM * r_ob->zoom_y;
@@ -2296,7 +2306,7 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, vo
                     all_chars_txt[i] = r_ob->articulations_typo_preferences.extension_line_char[this_art->articulation_ID];
                 all_chars_txt[i] = 0;
                 utf = charset_unicodetoutf8_debug(all_chars_txt, num_chars, &utflen);
-                write_text_account_for_vinset(r_ob, g, jf_art, *color, utf, stem_x + this_art->x_pos + this_art->width, 
+                write_text_standard_account_for_vinset(r_ob, g, jf_art, *color, utf, stem_x + this_art->x_pos + this_art->width,
                                               this_art->y_pos - r_ob->articulations_typo_preferences.extension_line_uy_offset[this_art->articulation_ID] * r_ob->zoom_y);
                 bach_freeptr(utf);
                 bach_freeptr(all_chars_txt);
@@ -2549,7 +2559,7 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
     articulation_utf = charset_unicodetoutf8_debug(&art->character, 1, &articulation_utf_len);
     strncpy(articulation_txt, articulation_utf, 4);
     bach_freeptr(articulation_utf);
-    write_text_account_for_vinset(r_ob, g, jf_art, *color, articulation_txt, stem_x + art->x_pos, real_y_pos);
+    write_text_standard_account_for_vinset_singleline(r_ob, g, jf_art, *color, articulation_txt, stem_x + art->x_pos, real_y_pos);
     
     if (r_ob->articulations_typo_preferences.artpref[art->articulation_ID].extension_line_char > 0 && r_ob->show_articulations_extensions) { // extension line
         double total_width = extension_end_x - (stem_x + art->x_pos + art->width/2.) - CONST_ARTICULATION_EXTENSION_END_UTRIM * r_ob->zoom_y;
@@ -2571,7 +2581,7 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
                 all_chars_txt[i] = r_ob->articulations_typo_preferences.artpref[art->articulation_ID].extension_line_char;
             all_chars_txt[i] = 0;
             utf = charset_unicodetoutf8_debug(all_chars_txt, num_chars, &utflen);
-            write_text_account_for_vinset(r_ob, g, jf_art, *color, utf, stem_x + art->x_pos + art->width,
+            write_text_standard_account_for_vinset_singleline(r_ob, g, jf_art, *color, utf, stem_x + art->x_pos + art->width,
                                           real_y_pos - r_ob->articulations_typo_preferences.artpref[art->articulation_ID].extension_line_uy_offset * r_ob->zoom_y);
             bach_freeptr(utf);
             bach_freeptr(all_chars_txt);
@@ -2651,7 +2661,7 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
             if (chord->topmost_y_noacc > staff_top_y)
                 chord->topmost_y_noacc = staff_top_y;
             y_pos = chord->topmost_y_noacc - pad - ann_height;
-            write_text_account_for_vinset(r_ob, g, jf_ann, *color, buf, x_pos, y_pos);
+            write_text_standard_account_for_vinset_singleline(r_ob, g, jf_ann, *color, buf, x_pos, y_pos);
             chord->topmost_y_noacc = chord->topmost_y_noacc - ann_height - 2 * pad;
             
             *annotation_line_y_pos = y_pos + 7 * r_ob->zoom_y;
@@ -2664,7 +2674,7 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
             jfont_text_measure(jf_ann, buf, &ann_width, &ann_height);
             if (chord->topmost_y_noacc > staff_top_y)
                 chord->topmost_y_noacc = staff_top_y;
-            write_text_account_for_vinset(r_ob, g, jf_ann, *color, buf_clearing_sym, x_pos, chord->topmost_y_noacc - pad - ann_height);
+            write_text_standard_account_for_vinset_singleline(r_ob, g, jf_ann, *color, buf_clearing_sym, x_pos, chord->topmost_y_noacc - pad - ann_height);
             chord->topmost_y_noacc = chord->topmost_y_noacc - ann_height - 2 * pad;
         }
         
@@ -3386,7 +3396,7 @@ double paint_label_for_ruler(t_notation_obj *r_ob, t_jgraphics* g, double millis
         snprintf_zero(text, 1000, (sign >= 0) ? "%ld'%02ld\"%03ld" : "%ld'%02ld\"%03ld", mins, secs, millisecs);
     jfont_text_measure(text_font, text, &width, &height); // we get how much space do we need
     paint_filledrectangle(g, r_ob->j_background_rgba , x_pos - width / 2., v_alignment > 0 ? y_pos : y_pos - height, width, height);
-    write_text_simple(g, text_font, r_ob->j_ruler_rgba, text, x_pos - width / 2., v_alignment > 0 ? y_pos : y_pos - height, width + 10, height + 10);
+    write_text_standard_singleline(g, text_font, r_ob->j_ruler_rgba, text, x_pos - width / 2., v_alignment > 0 ? y_pos : y_pos - height, width + 10, height + 10);
     jfont_destroy_debug(text_font);
 
     return x_pos + width/2.;
@@ -3957,7 +3967,7 @@ void paint_small_note(t_notation_obj *r_ob,  t_jgraphics* g, t_jrgba color, t_ra
         if (tuplet_number > 1) {
             char text[35]; 
             snprintf_zero(text, 35, "%ld", tuplet_number);  
-            write_text_account_for_vinset(r_ob, g, jf_tuplets, color, text, stem_x - notewidth, stem_top - 8.2 * r_ob->zoom_y);
+            write_text_standard_account_for_vinset_singleline(r_ob, g, jf_tuplets, color, text, stem_x - notewidth, stem_top - 8.2 * r_ob->zoom_y);
         }
             
         // draw noteflag
@@ -3997,7 +4007,7 @@ void paint_small_note(t_notation_obj *r_ob,  t_jgraphics* g, t_jrgba color, t_ra
                 int j = (howmanyflags >= 2) ? ((i > 0) ? 4 : 2) : 0;
                 double this_flag_x = (r_ob->notation_typo_preferences.flag_noteheadaligned[j] == 1) ? 
                 flag_x - notewidth * r_ob->zoom_y * ratio + 1.45 : flag_x; 
-                write_text_account_for_vinset(r_ob, g, jf, color, 
+                write_text_standard_account_for_vinset_singleline(r_ob, g, jf, color,
                                        (i == 0) ? firsttailcharacter : followingtailcharacter, this_flag_x, 
                                        (i == 0) ? firstshift_y : secondshift_y - (i - 2) * nextstep_y);
                 if (i == 0) i++; // we skip the 1/16 flag: we've already drawn that
@@ -4013,7 +4023,7 @@ void paint_small_note(t_notation_obj *r_ob,  t_jgraphics* g, t_jrgba color, t_ra
         noteheadchars_utf = charset_unicodetoutf8_debug(&notehead_char, 1, &noteheadchars_len);
         strncpy(noteheadchars, noteheadchars_utf, 14);
         bach_freeptr(noteheadchars_utf);
-        write_text_account_for_vinset(r_ob, g, jf, color, noteheadchars, note_x + stem_adj_x, note_y);
+        write_text_standard_account_for_vinset_singleline(r_ob, g, jf, color, noteheadchars, note_x + stem_adj_x, note_y);
         
         // draw dot(s) if needed
         dot_x_offset = 1.5 * notewidth * r_ob->zoom_y * ratio;
@@ -4026,7 +4036,7 @@ void paint_small_note(t_notation_obj *r_ob,  t_jgraphics* g, t_jrgba color, t_ra
             strncpy(dot_txt, dot_utf, 4);
             bach_freeptr(dot_utf);
 
-            write_text_account_for_vinset(r_ob, g, jf, color, dot_txt, note_x + dot_x_offset, dot_y);
+            write_text_standard_account_for_vinset_singleline(r_ob, g, jf, color, dot_txt, note_x + dot_x_offset, dot_y);
             dot_x_offset += CONST_DOT_DOT_USEPARATION * r_ob->zoom_y * ratio;
             if (*width < note_x + dot_x_offset - x_pos) 
                 *width = note_x + dot_x_offset - x_pos;

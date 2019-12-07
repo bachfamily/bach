@@ -1393,7 +1393,9 @@ void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text
     @param    max_height        A maximale height of the text box in pixels (for safety, this can be more than the needed height) 
     @see                    write_text()
  */ 
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height);
+void write_text_standard(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height);
+
+void write_text_standard_singleline(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height);
 
 
 /**    Write a given text in a graphic context, but in vertical.
@@ -1428,7 +1430,7 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
 #endif
 
 #ifdef BACH_JUCE
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft);
+void write_text_standard(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft);
 void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft, char single_line, char use_ellipsis);
 char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen);
 #endif
