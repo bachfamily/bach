@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 1,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -70,6 +70,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 13.0, 136.0, 228.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -87,7 +88,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 414.0, 97.0, 131.0, 65.0 ],
-					"text" : "Arguments:\nmin (default: none)\nmax (default: none)\nmaxcount (default: 0)",
+					"text" : "Arguments:\nmin (default: 2)\nmax (default: null)\nmaxcount (default: 0)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
