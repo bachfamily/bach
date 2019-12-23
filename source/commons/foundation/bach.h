@@ -155,6 +155,7 @@
 #define CLASS_NEW_CHECK_SIZE(CLASS, name, mnew, mfree, size, mmenu, type, ...) \
 { \
     BACH_STATIC_ASSERT(size < 16384 - 16, "Class too large"); \
+    { __BACH_STATIC_ASSERT__ dummy; dummy[0] = 0; }\
     if (size < 16384 - 16) \
         CLASS = class_new(name, mnew, mfree, size, mmenu, type, __VA_ARGS__); \
     else { \
