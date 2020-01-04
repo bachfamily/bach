@@ -422,6 +422,7 @@ void codableobj_dblclick_helper(t_codableobj *x, t_symbol *title)
         object_method(x->c_editor, gensym("filename"), x->c_filename, x->c_path);
     else
         object_attr_setsym(x->c_editor, gensym("title"), gensym("code"));
+    object_method(x->c_editor, gensym("openwindow"));
 }
 
 void codableobj_edclose(t_codableobj *x, char **ht, long size)
