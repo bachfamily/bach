@@ -1373,8 +1373,8 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
             params.name2patcherVars,
             x
         );
-        codableobj_clear_filewatchers(x);
-        codableobj_add_filewatchers(x, &lexparams.files);
+        codableobj_clear_included_filewatchers(x);
+        codableobj_add_included_filewatchers(x, &lexparams.files);
         return mainFunction;
     } else {
         object_error((t_object *) x, "Syntax errors present — couldn't parse code");

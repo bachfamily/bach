@@ -60,6 +60,7 @@ typedef struct _codableobj
     
     long c_watch;
     t_object *c_filewatchers[32];
+    t_object *c_default_filewatcher;
     long c_nfilewatchers;
     t_bach_atomic_lock c_fw_lock;
     
@@ -163,13 +164,14 @@ t_llll *codableobj_run(t_codableobj* x, class t_execEnv &context);
 t_max_err codableobj_params_get(t_codableobj *x, t_object *attr, long *ac, t_atom **av);
 void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av);
 
-void codableobj_clear_filewatchers(t_codableobj* x);
-void codableobj_add_filewatchers(t_codableobj* x, const fileidSet* files);
-void codableobj_add_one_filewatcher(t_codableobj *x, const t_fileid* file);
-void codableobj_add_one_filewatcher(t_codableobj *x, const short path, const char* name);
-void codableobj_add_default_filewatcher(t_codableobj *x);
-void codableobj_start_filewatchers(t_codableobj* x);
-void codableobj_stop_filewatchers(t_codableobj* x);
+void codableobj_clear_all_filewatchers(t_codableobj* x);
+void codableobj_clear_included_filewatchers(t_codableobj* x);
+void codableobj_add_included_filewatchers(t_codableobj* x, const fileidSet* files);
+t_object* codableobj_add_one_filewatcher(t_codableobj *x, const t_fileid* file);
+t_object* codableobj_add_one_filewatcher(t_codableobj *x, const short path, const char* name);
+void codableobj_replace_default_filewatcher(t_codableobj *x);
+void codableobj_start_all_filewatchers(t_codableobj* x);
+void codableobj_stop_all_filewatchers(t_codableobj* x);
 
 
 
