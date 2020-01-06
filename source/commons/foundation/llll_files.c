@@ -21,6 +21,10 @@
 #include "foundation/llll_files.h"
 #include "ext_strings.h"
 
+#ifdef MAC_VERSION
+#include "pwd.h"
+#endif
+
 t_max_err llll_dowritetxt(t_object *x, t_symbol *s, long ac, t_atom *av);
 t_max_err llll_dowritenative(t_object *x, t_symbol *s, long ac, t_atom *av);
 
@@ -389,3 +393,48 @@ long bach_fix_filename_extension(t_symbol **s, const char *ext)
     }
     return 0;
 }
+
+
+std::string bach_get_cache_path(void)
+{
+    static const std::string dq = "\"";
+    
+#ifdef MAC_VERSION
+    passwd* pw = getpwuid(getuid());
+    std::string home = pw->pw_dir;
+    std::string folder = home + "/Library/Application Support/bach/cache";
+    std::string mkdir = "mkdir -p " + dq + folder + dq;
+#endif
+    
+#ifdef WIN_VERSION
+    static const std::string bs = "\\";
+    TCHAR appDataPath[MAX_PATH];
+    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
+        return;
+    std::string home = appDataPath;
+    std::string folder = home + bs + "bach";
+    std::string mkdir;
+    std::string mkdir = "md " + dq + folder + dq;
+#endif
+    system(mkdir.c_str());
+    return folder;
+}
+
+
+std::string bach_get_user_folder_path(void)
+{
+#ifdef MAC_VERSION
+    return getpwuid(getuid())->pw_dir;
+#endif
+#ifdef WIN_VERSION
+    TCHAR appDataPath[MAX_PATH];
+    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
+        return "";
+    return appDataPath;
+#endif
+}
+
+
+
+
+

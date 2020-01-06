@@ -41,6 +41,7 @@ typedef struct _codableobj
     t_symbol *c_file;
     char *c_filename;
     short c_path;
+    t_bool c_scratchpad;
     
     t_mainFunction *c_main;
     t_atom_long c_embed;
@@ -57,7 +58,8 @@ typedef struct _codableobj
     t_atom_long c_maxtime;
     bool c_forceread;
     bool c_readappend;
-    
+    bool c_filechanged;
+
     long c_watch;
     t_object *c_filewatchers[32];
     t_object *c_default_filewatcher;
@@ -173,6 +175,7 @@ void codableobj_replace_default_filewatcher(t_codableobj *x);
 void codableobj_start_all_filewatchers(t_codableobj* x);
 void codableobj_stop_all_filewatchers(t_codableobj* x);
 
+void codableobj_delete_scratchpad(t_codableobj *x);
 
 
 #endif /* bach_codableobj_hpp */

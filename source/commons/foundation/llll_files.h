@@ -21,6 +21,7 @@
 #define _LLLL_FILES_H_
 
 #include "foundation/llllobj.h"
+#include <string>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE
@@ -73,6 +74,10 @@ t_max_err bach_write_dictionary(t_symbol *filename_sym, const char *default_file
 // if *s is not empty and has no specified extension, add .<ext> to it - that is, s will point to a new symbol
 // return 1 if *s has changed, 0 if not
 long bach_fix_filename_extension(t_symbol **s, const char *ext);
+
+
+std::string bach_get_cache_path(void);
+std::string bach_get_user_folder_path(void);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE

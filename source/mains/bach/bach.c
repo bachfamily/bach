@@ -17,7 +17,7 @@
  *
  */
 
-#include "foundation/llllobj.h"
+#include "foundation/llll_files.h"
 #include "ext_globalsymbol.h"
 #include "ext_common.h"
 #include "graphics/bach_cursors.h"
@@ -1423,47 +1423,33 @@ void bach_unlock(t_bach *x, t_atom_long l)
     post("bach authorized until January 31, %lu", dt.year + 1);
     bach->b_no_ss = true;
     
-    std::string dq = "\"";
+    static const std::string dq = "\"";
 
+    std::string folder = bach_get_cache_path();
+    
 #ifdef MAC_VERSION
-    passwd* pw = getpwuid(getuid());
-    std::string home = pw->pw_dir;
-    std::string folder = home + "/Library/Application Support/bach/cache";
     std::string name = folder + "/bachutil.mxo";
-    std::string mkdir = "mkdir -p " + dq + folder + dq;
 #endif
 
 #ifdef WIN_VERSION
-    std::string bs = "\\";
-    TCHAR appDataPath[MAX_PATH];
-    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
-        return;
-    std::string home = appDataPath;
-    std::string folder = home + bs + "bach";
+    static const std::string bs = "\\";
     std::string name = folder + bs + "bachutil.mxe64";
-    std::string mkdir = "md " + dq + folder + dq;
 #endif
 
     std::string echo = "echo " + std::to_string(l) + " > " + dq + name + dq;
-    system(mkdir.c_str());
     system(echo.c_str());
 }
 
 t_bool bach_checkauth()
 {
-    std::string dq = "\"";
+    static const std::string dq = "\"";
+    std::string home = bach_get_user_folder_path();
 
 #ifdef MAC_VERSION
-    passwd* pw = getpwuid(getuid());
-    std::string home = pw->pw_dir;
     std::string name = home + "/Library/Application Support/bach/cache/bachutil.mxo";
 #endif
 #ifdef WIN_VERSION
-    std::string bs = "\\";
-    TCHAR appDataPath[MAX_PATH];
-    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
-        return false;
-    std::string home = appDataPath;
+    static const std::string bs = "\\";
     std::string folder = home + bs + "bach";
     std::string name = folder + bs + "bachutil.mxe64";
 #endif

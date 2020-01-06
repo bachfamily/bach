@@ -496,6 +496,8 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         x->n_ob.c_maxtime = 60000;
         x->n_ob.c_watch = 1;
         true_ac = ac;
+        x->n_ob.c_text = (char *) bach_newptr(2);
+        strncpy_zero(x->n_ob.c_text, " ", 2);
         
         t_atom_long dataInlets = -1, dataOutlets = -1, directInlets = -1, directOutlets = -1;
         
