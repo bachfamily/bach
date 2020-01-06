@@ -1413,14 +1413,20 @@ void bach_unlock(t_bach *x, t_atom_long l)
 {
     t_datetime dt;
     systime_datetime(&dt);
-    unsigned long h = murmur3(dt.year);
+    t_uint32 year = dt.year;
+    unsigned long h = murmur3(year);
     
     if (l != h) {
-        object_error((t_object *) x, "Bad authorization code");
+        if (dt.month == 1) {
+            --year;
+            h = murmur3(year);
+        }
+        if (l != h)
+            object_error((t_object *) x, "Bad splashscreen removal code");
         return;
     }
     
-    post("bach authorized until January 31, %lu", dt.year + 1);
+    post("bach splashscreen removed until January 31, %lu", year + 1);
     bach->b_no_ss = true;
     
     std::string dq = "\"";
