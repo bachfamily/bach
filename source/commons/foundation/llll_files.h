@@ -83,6 +83,10 @@ std::string bach_get_cache_path(void);
 std::string bach_get_user_folder_path(void);
 std::string bach_get_package_path(void);
 
+#ifdef WIN_VERSION
+std::string bach_get_win_appdata_path(void)
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE
 #endif

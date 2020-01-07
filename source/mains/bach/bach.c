@@ -1428,14 +1428,12 @@ void bach_unlock(t_bach *x, t_atom_long l)
 t_bool bach_checkauth()
 {
     static const std::string dq = "\"";
-    std::string home = bach_get_user_folder_path();
-
+    std::string folder = bach_get_cache_path();
+    
 #ifdef MAC_VERSION
-    std::string name = home + "/Library/Application Support/bach/cache/bachutil.mxo";
+    std::string name = folder + "/bachutil.mxo";
 #endif
 #ifdef WIN_VERSION
-    static const std::string bs = "\\";
-    std::string folder = home + bs + "bach";
     std::string name = folder + bs + "bachutil.mxe64";
 #endif
 
@@ -1475,9 +1473,9 @@ t_bool bach_checkauth()
 
 void bach_installatompackage(t_bach *x)
 {
-#ifdef MAC_VERSION
     const static std::string dq = "\"";
     std::string home = bach_get_user_folder_path();
+#ifdef MAC_VERSION
     std::string atomFolder = home + "/.atom/packages";
     char filename[MAX_PATH_CHARS];
     strncpy_zero(filename, atomFolder.c_str(), MAX_PATH_CHARS);
@@ -1490,7 +1488,22 @@ void bach_installatompackage(t_bach *x)
     }
     std::string atomPackageFolder = bach_get_package_path() + "/language-bell";
     std::string cmd = "ln -s " + dq + atomPackageFolder + dq + " " + dq + atomFolder + dq;
-    system(cmd.c_str());
 #endif
+#ifdef WIN_VERSION
+    std::string atomFolder = home + "\\.atom\\packages";
+    char filename[MAX_PATH_CHARS];
+    strncpy_zero(filename, atomFolder.c_str(), MAX_PATH_CHARS);
+    short path = 0;
+    t_fourcc outtype = 0;
+    long err = locatefile_extended(filename, &path, &outtype, nullptr, 0);
+    if (err || outtype != 'fold') {
+        object_error((t_object *) x, "Can't find atom");
+        return;
+    }
+    std::string link = atomFolder + "\\language-bell";
+    std::string atomPackageFolder = bach_get_package_path() + "\\language-bell";
+    std::string cmd = "mklink " + dq + atomPackageFolder + dq + " " + dq + link + dq;
+#endif
+    system(cmd.c_str());
 }
 
