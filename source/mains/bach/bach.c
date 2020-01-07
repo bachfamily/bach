@@ -88,6 +88,7 @@ void bach_sendversion(t_bach *x, t_symbol *s);
 void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s);
 void bach_sendplatform(t_bach *x, t_symbol *s);
 void bach_donors(t_bach *x);
+void bach_installatompackage(t_bach *x);
 void bach_unlock(t_bach *x, t_atom_long l);
 void bach_nonative(t_bach *x, t_atom_long l);
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
@@ -159,6 +160,8 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method) bach_sendplatform, "sendplatform", A_SYM, 0);
     class_addmethod(c, (method) bach_sendbuildnumber, "sendbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_donors, "donors", 0);
+    class_addmethod(c, (method) bach_installatompackage, "installatompackage", 0);
+
     class_addmethod(c, (method) bach_unlock, "unlock", A_LONG, 0);
     class_addmethod(c, (method) bach_nonative, "nonative", A_LONG, 0);
 
@@ -1169,28 +1172,11 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
 char bach_load_default_font(void)
 {
     //Sleep(60000);
-    t_fourcc type = 0;
-    char *filepath;
-    size_t bachlen = 8;
-    filepath = bach_ezlocate_file("bach.mxo", &type);
-    if (!filepath) {
-        filepath = bach_ezlocate_file("bach.mxe", &type);
-        if (!filepath) {
-            filepath = bach_ezlocate_file("bach.mxe64", &type);
-            bachlen = 10;
-        }
-    }
-    if (!filepath) {
-        error("can't load font!");
-        return 0;
-    }
 
-    
-    char *pastehere = filepath + strlen(filepath) - (bachlen + 11);
-    strncpy_zero(pastehere, "fonts/November for bach.otf", 28);
+    std::string fontsPath = bach_get_package_path() + "/fonts/November for bach.otf";
     
 #ifdef WIN_VERSION
-    AddFontResourceExA(filepath, FR_PRIVATE, 0);
+    AddFontResourceExA(fontsPath, FR_PRIVATE, 0);
 #endif
     
 #ifdef WIN_VERSION_old
@@ -1224,8 +1210,7 @@ char bach_load_default_font(void)
     CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
     //CFURLRef fontURL = mainBundle ? CFBundleCopyResourceURL(mainBundle, CFSTR("johannsebastian"), CFSTR("dat"), NULL) : NULL;
     
-    CFStringRef path = CFStringCreateWithCString(NULL, filepath, kCFStringEncodingMacRoman);
-    bach_freeptr(filepath);
+    CFStringRef path = CFStringCreateWithCString(NULL, fontsPath.c_str(), kCFStringEncodingMacRoman);
     CFURLRef fontURL = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
     
     if (!mainBundle || !fontURL) {
@@ -1488,4 +1473,24 @@ t_bool bach_checkauth()
 }
 
 
+void bach_installatompackage(t_bach *x)
+{
+#ifdef MAC_VERSION
+    const static std::string dq = "\"";
+    std::string home = bach_get_user_folder_path();
+    std::string atomFolder = home + "/.atom/packages";
+    char filename[MAX_PATH_CHARS];
+    strncpy_zero(filename, atomFolder.c_str(), MAX_PATH_CHARS);
+    short path = 0;
+    t_fourcc outtype = 0;
+    long err = locatefile_extended(filename, &path, &outtype, nullptr, 0);
+    if (err || outtype != 'fold') {
+        object_error((t_object *) x, "Can't find atom");
+        return;
+    }
+    std::string atomPackageFolder = bach_get_package_path() + "/language-bell";
+    std::string cmd = "ln -s " + dq + atomPackageFolder + dq + " " + dq + atomFolder + dq;
+    system(cmd.c_str());
+#endif
+}
 

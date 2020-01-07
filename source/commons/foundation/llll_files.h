@@ -76,8 +76,12 @@ t_max_err bach_write_dictionary(t_symbol *filename_sym, const char *default_file
 long bach_fix_filename_extension(t_symbol **s, const char *ext);
 
 
+char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type);
+
+
 std::string bach_get_cache_path(void);
 std::string bach_get_user_folder_path(void);
+std::string bach_get_package_path(void);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE
