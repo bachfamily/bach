@@ -1,0 +1,15 @@
+{
+  "name": "language-bell",
+  "main": "./lib/language-bell",
+  "version": "0.0.1",
+  "description": "Syntax coloring for bell",
+  "keywords": [
+  ],
+  "repository": "https://github.com/bachproject/bach",
+  "license": "GPLv3",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+  }
+}

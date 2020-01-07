@@ -3230,6 +3230,7 @@
 		918129451611AEA700473F86 /* lib_bach.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib_bach.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9182E8CB145F086A00CDFBA9 /* bach.pipe.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.pipe.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		9182E8D0145F093800CDFBA9 /* pipe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pipe.c; sourceTree = "<group>"; };
+		9188A93723C40B73003C8D7D /* language-bell */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "language-bell"; path = "interfaces/language-bell"; sourceTree = "<group>"; };
 		918C3BCB124A512D003D216B /* bach.mdelace.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.mdelace.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		918C3BCF124A516F003D216B /* mdelace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mdelace.c; sourceTree = "<group>"; };
 		918C3C12124B3323003D216B /* bach.union.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.union.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5766,6 +5767,7 @@
 				91BA46B31F71599F0002D515 /* interfaces */,
 				91BA46B41F71599F0002D515 /* License.rtf */,
 				91BA46B51F71599F0002D515 /* License.txt */,
+				9188A93723C40B73003C8D7D /* language-bell */,
 				91BA46B61F71599F0002D515 /* media */,
 				91BA46B71F71599F0002D515 /* object-prototypes */,
 				91BA46B81F71599F0002D515 /* package-info.json */,
