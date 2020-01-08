@@ -4,13 +4,13 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 1,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 68.0, 85.0, 949.0, 579.0 ],
+		"rect" : [ 62.0, 116.0, 949.0, 579.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -52,13 +52,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 68.0, 111.0, 949.0, 553.0 ],
+						"rect" : [ 62.0, 142.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -149,7 +149,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 620.0, 247.5, 211.0, 21.0 ],
-									"presentation_linecount" : 3,
 									"text" : "Install the Atom language package:"
 								}
 
@@ -162,7 +161,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 620.0, 195.0, 153.0, 36.0 ],
-									"presentation_linecount" : 3,
 									"text" : "Install Atom\n(we can't do this for you!)"
 								}
 
@@ -174,8 +172,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 596.0, 80.104274583899453, 128.0, 27.0 ],
-									"presentation_linecount" : 2,
+									"patching_rect" : [ 596.0, 80.104274583899453, 128.0, 28.0 ],
 									"text" : "The easy way:"
 								}
 
@@ -200,20 +197,20 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 620.0, 144.0, 206.0, 38.0 ],
-									"text" : ";\rmax launchbrowser https://atom.io"
+									"text" : ";\r\nmax launchbrowser https://atom.io"
 								}
 
 							}
 , 							{
 								"box" : 								{
 									"id" : "obj-18",
-									"linecount" : 3,
+									"linecount" : 4,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 620.0, 357.0, 158.0, 52.0 ],
-									"text" : ";\rmax externaleditor Atom, useexternaleditor 1"
+									"patching_rect" : [ 620.0, 357.0, 285.0, 68.0 ],
+									"text" : ";\r\nmax externaleditor C:/Users/andag/AppData/Local/atom/atom.exe, useexternaleditor 1"
 								}
 
 							}
@@ -224,7 +221,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 80.0, 554.0, 166.0 ],
+									"patching_rect" : [ 10.0, 80.0, 554.0, 171.0 ],
 									"text" : "Writing bell code with the minimal text editor integrated in Max can be quite frustrating. \nFor this reason, it is advisable to select an external text editor and set it as the editor for Max through the Max preferences (\"External text editor\" and \"Always use external text editor\").\nIf you do so, the custom text editor will not only work when you explicitly refer to a file (through the \"file\" attribute, or the \"read\" and \"write\" messages), but also if you just want to type code to be stored within the object itself. In the latter case, a \"scratchpad\" file will be created, but it will be entirely and transparently managed for you by bach.eval, so you can work without worrying about it. The only difference is that you don't need to close the editor to reload the code, you only have to save the scratchpad. Unless you specify otherwise, the scratchpad will eventually be destroyed when you delete the object or close the patch, and the code will be saved within the patcher itself."
 								}
 
@@ -236,7 +233,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 401.0, 554.0, 50.0 ],
+									"patching_rect" : [ 10.0, 401.0, 554.0, 51.0 ],
 									"text" : "This is done once for all: unless you uninstall it, you will not need to repeat this step anymore.\nNow, whenever you open a bell file (including the scratchpad) with Atom, the text will feature syntax coloring."
 								}
 
@@ -250,7 +247,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 620.0, 275.0, 152.0, 38.0 ],
-									"text" : ";\rbach installatompackage"
+									"text" : ";\r\nbach installatompackage"
 								}
 
 							}
@@ -261,7 +258,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 286.0, 554.0, 79.0 ],
+									"patching_rect" : [ 10.0, 286.0, 554.0, 81.0 ],
 									"text" : "The specific text editor we recommend is Atom, a modern, free, cross-platform and highly customizable text editor which you can download from https://atom.io.\n\nOnce you installed Atom, you can add a syntax coloring package which will make your code much more readable and help you spot errors. Just click on this:"
 								}
 
@@ -278,7 +275,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 201.00799560546875, 57.599853515625 ]
+									"patching_rect" : [ 10.0, 10.0, 201.00799560546875, 57.600002288818359 ]
 								}
 
 							}
@@ -443,7 +440,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -568,7 +565,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 318.00799560546875, 195.5, 230.0, 54.0 ],
+									"patching_rect" : [ 318.00799560546875, 195.5, 230.0, 55.0 ],
 									"text" : "If you set the watch attribute to 0, the file will not be automatically reloaded when the file changes."
 								}
 
@@ -630,7 +627,7 @@
 										"appversion" : 										{
 											"major" : 8,
 											"minor" : 1,
-											"revision" : 1,
+											"revision" : 2,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -900,7 +897,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 260.00799560546875, 85.5, 229.0, 54.0 ],
+									"patching_rect" : [ 260.00799560546875, 85.5, 229.0, 55.0 ],
 									"text" : "The @file attribute (which can only be set in the object box) loads automatically a bell code file."
 								}
 
@@ -1060,7 +1057,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1168,7 +1165,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 705.0, 425.0, 175.0, 98.0 ],
+									"patching_rect" : [ 705.0, 425.0, 175.0, 100.0 ],
 									"text" : "You can set priorities for wildcards just like for regular variable names. The priority applies to all the variables. If not specified, it defaults to 0. "
 								}
 
@@ -1337,7 +1334,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 224.0, 191.0, 334.0, 69.0 ],
+									"patching_rect" : [ 224.0, 191.0, 334.0, 70.0 ],
 									"text" : "@triggers * means that all the global and patcher variables appearing in the code will trigger the result. \nChanges to variables that are not in the code (such as David) cause no triggering."
 								}
 
@@ -1616,7 +1613,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1690,7 +1687,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 591.0, 400.5, 182.0, 54.0 ],
+									"patching_rect" : [ 591.0, 400.5, 182.0, 55.0 ],
 									"text" : "You can even set trigger variables that don't appear in the actual expression."
 								}
 
@@ -1716,7 +1713,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 437.5, 401.5, 148.0, 52.0 ],
+									"patching_rect" : [ 437.5, 401.5, 148.0, 53.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
 										"versionnumber" : 80007
@@ -1736,7 +1733,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 697.0, 479.5, 203.0, 54.0 ],
+									"patching_rect" : [ 697.0, 479.5, 203.0, 55.0 ],
 									"text" : "Look here for discovering how the triggers attribute affects the scope of patcher variables."
 								}
 
@@ -1753,7 +1750,7 @@
 										"appversion" : 										{
 											"major" : 8,
 											"minor" : 1,
-											"revision" : 1,
+											"revision" : 2,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -1806,7 +1803,7 @@
 														"appversion" : 														{
 															"major" : 8,
 															"minor" : 1,
-															"revision" : 1,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -2030,7 +2027,7 @@
 														"appversion" : 														{
 															"major" : 8,
 															"minor" : 1,
-															"revision" : 1,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -2259,7 +2256,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 195.0, 408.5, 213.0, 69.0 ],
+									"patching_rect" : [ 195.0, 408.5, 213.0, 70.0 ],
 									"text" : "You can mix inlet numbers and variable names!\n(By the way, the ||| operator is a handy way for setting defaults.)"
 								}
 
@@ -2298,7 +2295,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 10.0, 417.0, 175.0, 52.0 ],
+									"patching_rect" : [ 10.0, 417.0, 175.0, 53.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
 										"versionnumber" : 80007
@@ -2318,7 +2315,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 412.0, 262.5, 244.0, 54.0 ],
+									"patching_rect" : [ 412.0, 262.5, 244.0, 55.0 ],
 									"text" : "The same goes for patcher variables. Notice that in bach.eval the name of the variable is preceded by a # sign."
 								}
 
@@ -2450,7 +2447,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 412.0, 146.5, 261.0, 54.0 ],
+									"patching_rect" : [ 412.0, 146.5, 261.0, 55.0 ],
 									"text" : "When either green object changes the value of X, the yellow objects performs its calculation and returns the value."
 								}
 
@@ -2527,7 +2524,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 76.0, 460.0, 50.0 ],
+									"patching_rect" : [ 10.0, 76.0, 460.0, 51.0 ],
 									"text" : "If the triggers attribute contains a global or patcher variable name, then whenever that variable is modified by another bach.eval, bach.value or bach.pv object the evaluation will be performed and the result will be output."
 								}
 
@@ -2642,7 +2639,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -2712,7 +2709,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 603.0, 309.0, 54.0, 17.0 ],
+									"patching_rect" : [ 603.0, 309.0, 54.0, 18.0 ],
 									"text" : "loadmess 30"
 								}
 
@@ -2726,7 +2723,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 530.0, 309.0, 54.0, 17.0 ],
+									"patching_rect" : [ 530.0, 309.0, 54.0, 18.0 ],
 									"text" : "loadmess 20"
 								}
 
@@ -2763,7 +2760,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 458.0, 309.0, 54.0, 17.0 ],
+									"patching_rect" : [ 458.0, 309.0, 54.0, 18.0 ],
 									"text" : "loadmess 10"
 								}
 
@@ -2986,7 +2983,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 458.0, 147.0, 54.0, 17.0 ],
+									"patching_rect" : [ 458.0, 147.0, 54.0, 18.0 ],
 									"text" : "loadmess 10"
 								}
 
@@ -3025,7 +3022,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 630.0, 205.0, 200.0, 54.0 ],
+									"patching_rect" : [ 630.0, 205.0, 200.0, 55.0 ],
 									"text" : "... or more than one (notice -1 standing for \"the first one, counting from the right\")..."
 								}
 
@@ -3084,7 +3081,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 154.0, 147.0, 54.0, 17.0 ],
+									"patching_rect" : [ 154.0, 147.0, 54.0, 18.0 ],
 									"text" : "loadmess 30"
 								}
 
@@ -3110,7 +3107,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 10.0, 147.0, 54.0, 17.0 ],
+									"patching_rect" : [ 10.0, 147.0, 54.0, 18.0 ],
 									"text" : "loadmess 10"
 								}
 
@@ -3181,7 +3178,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 76.0, 460.0, 65.0 ],
+									"patching_rect" : [ 10.0, 76.0, 460.0, 66.0 ],
 									"text" : "The triggers attribute sets the hot data inlets of bach.eval, counting from 1.\nIf you hover the mouse over the inlets, the circle's color will be set accordingly.\n(For more about the distinction between different types of inlets in bach.eval, please refer to the help center)."
 								}
 
@@ -3431,7 +3428,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -3472,7 +3469,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 565.0, 219.0, 292.0, 79.0 ],
+									"patching_rect" : [ 565.0, 219.0, 292.0, 81.0 ],
 									"text" : "The readappend message appends the contents of a file to the bell code already contained in the object, but only if the new code is valid.\nThe forcereadappend message does the same, but retains even invelid code."
 								}
 
@@ -3595,7 +3592,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 487.0, 90.0, 355.0, 65.0 ],
+									"patching_rect" : [ 487.0, 90.0, 355.0, 66.0 ],
 									"text" : "The read message loads a file from disk but rejects it if the code is invalid, whereas the forceread message loads it anyway. \nThe write message writes the code as a text file. "
 								}
 
@@ -3825,7 +3822,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -3869,7 +3866,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 646.0, 239.0, 204.0, 69.0 ],
+									"patching_rect" : [ 646.0, 239.0, 204.0, 70.0 ],
 									"text" : "The extraoutlets, directins and directouts attributes are only useful in advanced scenarios described in the help center."
 								}
 
@@ -3921,7 +3918,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 610.0, 64.0, 244.0, 112.0 ],
+									"patching_rect" : [ 610.0, 64.0, 244.0, 115.0 ],
 									"text" : "The inlets attribute allows creating an arbitrary number of inlets, exceeding the ones declared in the object-box code.\nThis is useful if you plan to load other programs from disk, or set them with the \"expr\" message."
 								}
 
@@ -3955,7 +3952,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 204.0, 356.5, 231.0, 83.0 ],
+									"patching_rect" : [ 204.0, 356.5, 231.0, 85.0 ],
 									"text" : "The params attribute allows setting the values of local variables.\n(What on earth is a local variable? Check out the help center to know more!)"
 								}
 
@@ -3982,7 +3979,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 204.0, 208.0, 218.0, 69.0 ],
+									"patching_rect" : [ 204.0, 208.0, 218.0, 70.0 ],
 									"text" : "If the embed attribute is set to 1 (which is the default), the code contained in the text editor is saved with the patcher."
 								}
 
@@ -3997,7 +3994,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 164.0, 71.0, 251.0, 83.0 ],
+									"patching_rect" : [ 164.0, 71.0, 251.0, 85.0 ],
 									"text" : "The auto attribute causes the code to be executed as soon as it is received (that is, when the object is created, or when the text editor is closed, or when a file is loaded)."
 								}
 
@@ -4011,7 +4008,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 469.0, 638.0, 50.0 ],
+									"patching_rect" : [ 10.0, 469.0, 638.0, 51.0 ],
 									"text" : "... user-defined variables and functions, and more. In fact, bach.eval implements a small but Turing-complete programming language, conceived to be as much compatible with the expr family as possible. \nPlease, refer to the \"Help Center\" tab to know everything about both the language and the object in itself."
 								}
 
@@ -4127,7 +4124,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 372.0, 181.0, 52.0 ],
+									"patching_rect" : [ 17.5, 372.0, 181.0, 53.0 ],
 									"saved_object_attributes" : 									{
 										"embed" : 1,
 										"versionnumber" : 80005
@@ -4226,7 +4223,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -4302,7 +4299,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 213.007995999999991, 10.0, 91.0, 23.0 ],
+									"patching_rect" : [ 213.007995999999991, 10.0, 91.0, 24.0 ],
 									"text" : "Help Center"
 								}
 
@@ -4381,7 +4378,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -4438,7 +4435,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 469.0, 648.0, 50.0 ],
+									"patching_rect" : [ 10.0, 469.0, 648.0, 51.0 ],
 									"text" : "... user-defined variables and functions, and more. In fact, bach.eval implements a small but Turing-complete programming language called \"bell\" and conceived to be as much compatible with the expr family as possible. \nPlease, refer to the \"Help Center\" tab to know everything about both the language and the object in itself."
 								}
 
@@ -4816,7 +4813,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 1,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -4890,230 +4887,230 @@
 			}
 , 			{
 				"name" : "bach.help.home.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.help.welcome.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.lookup.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.replace.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.sum.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.filter.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.filternull.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.change.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.histo.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.repeat.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.-.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.+.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.split.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.eval.mxo",
-				"type" : "iLaX"
+				"name" : "bach.eval.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.print.mxo",
-				"type" : "iLaX"
+				"name" : "bach.print.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.tree.mxo",
-				"type" : "iLaX"
+				"name" : "bach.tree.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.iter.mxo",
-				"type" : "iLaX"
+				"name" : "bach.iter.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.depth.mxo",
-				"type" : "iLaX"
+				"name" : "bach.depth.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.collect.mxo",
-				"type" : "iLaX"
+				"name" : "bach.collect.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.keys.mxo",
-				"type" : "iLaX"
+				"name" : "bach.keys.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.nth.mxo",
-				"type" : "iLaX"
+				"name" : "bach.nth.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.reg.mxo",
-				"type" : "iLaX"
+				"name" : "bach.reg.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.portal.mxo",
-				"type" : "iLaX"
+				"name" : "bach.portal.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.args.mxo",
-				"type" : "iLaX"
+				"name" : "bach.args.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.hypercomment.mxo",
-				"type" : "iLaX"
+				"name" : "bach.hypercomment.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.find.mxo",
-				"type" : "iLaX"
+				"name" : "bach.find.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.flat.mxo",
-				"type" : "iLaX"
+				"name" : "bach.flat.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.subs.mxo",
-				"type" : "iLaX"
+				"name" : "bach.subs.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.slice.mxo",
-				"type" : "iLaX"
+				"name" : "bach.slice.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.rev.mxo",
-				"type" : "iLaX"
+				"name" : "bach.rev.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.length.mxo",
-				"type" : "iLaX"
+				"name" : "bach.length.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.eq.mxo",
-				"type" : "iLaX"
+				"name" : "bach.eq.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.join.mxo",
-				"type" : "iLaX"
+				"name" : "bach.join.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.expr.mxo",
-				"type" : "iLaX"
+				"name" : "bach.expr.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.is.mxo",
-				"type" : "iLaX"
+				"name" : "bach.is.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.neq.mxo",
-				"type" : "iLaX"
+				"name" : "bach.neq.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.pick.mxo",
-				"type" : "iLaX"
+				"name" : "bach.pick.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.contains.mxo",
-				"type" : "iLaX"
+				"name" : "bach.contains.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.dict2llll.mxo",
-				"type" : "iLaX"
+				"name" : "bach.dict2llll.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.intersection.mxo",
-				"type" : "iLaX"
+				"name" : "bach.intersection.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.sort.mxo",
-				"type" : "iLaX"
+				"name" : "bach.sort.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.leq.mxo",
-				"type" : "iLaX"
+				"name" : "bach.leq.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.mapelem.mxo",
-				"type" : "iLaX"
+				"name" : "bach.mapelem.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.arithmser.mxo",
-				"type" : "iLaX"
+				"name" : "bach.arithmser.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.wordcloud.mxo",
-				"type" : "iLaX"
+				"name" : "bach.wordcloud.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.value.mxo",
-				"type" : "iLaX"
+				"name" : "bach.value.mxe64",
+				"type" : "mx64"
 			}
 , 			{
-				"name" : "bach.pv.mxo",
-				"type" : "iLaX"
+				"name" : "bach.pv.mxe64",
+				"type" : "mx64"
 			}
  ],
 		"autosave" : 0
