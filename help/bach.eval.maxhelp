@@ -89,75 +89,180 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"bubble" : 1,
+									"bubblepoint" : 0.1,
+									"bubbleside" : 0,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
+									"id" : "obj-21",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 645.5, 484.0, 107.0, 40.0 ],
+									"text" : "Double-click me!"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"code" : "$foo = length(1 `two 3) ",
+									"id" : "obj-19",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 620.0, 456.0, 198.0, 23.0 ],
+									"saved_object_attributes" : 									{
+										"embed" : 1,
+										"versionnumber" : 80100
+									}
+,
+									"text" : "bach.eval $foo = length(1 `two 3)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-15",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 620.0, 431.0, 64.0, 21.0 ],
+									"text" : "Have fun!"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-12",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 620.0, 331.0, 191.0, 21.0 ],
+									"text" : "Configure the Max preferences:"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-9",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 620.0, 247.5, 211.0, 21.0 ],
+									"presentation_linecount" : 3,
+									"text" : "Install the Atom language package:"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"id" : "obj-7",
 									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 322.00799560546875, 324.5, 230.0, 40.0 ],
-									"text" : "... and what happens if you have @auto 1 and your file changes?"
+									"patching_rect" : [ 620.0, 195.0, 153.0, 36.0 ],
+									"presentation_linecount" : 3,
+									"text" : "Install Atom\n(we can't do this for you!)"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"bubble" : 1,
-									"fontname" : "Arial",
-									"fontsize" : 13.0,
-									"id" : "obj-49",
-									"linecount" : 3,
+									"fontsize" : 18.399758251897243,
+									"id" : "obj-5",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 318.00799560546875, 195.5, 230.0, 54.0 ],
-									"text" : "If you set the watch attribute to 0, the file will not be automatically reloaded when the file changes."
+									"patching_rect" : [ 596.0, 80.104274583899453, 128.0, 27.0 ],
+									"presentation_linecount" : 2,
+									"text" : "The easy way:"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"bubble" : 1,
-									"bubbleside" : 3,
-									"fontname" : "Arial",
-									"fontsize" : 13.0,
-									"id" : "obj-47",
+									"id" : "obj-4",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 667.5, 151.0, 117.0, 25.0 ],
-									"text" : "Change the file!"
+									"patching_rect" : [ 620.0, 118.0, 103.0, 21.0 ],
+									"text" : "Download Atom:"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"bubble" : 1,
-									"fontname" : "Arial",
-									"fontsize" : 13.0,
-									"id" : "obj-1",
-									"linecount" : 3,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 260.00799560546875, 85.5, 230.0, 54.0 ],
-									"text" : "The @file attribute (which can only be set in the object box) loads automatically a bell code file."
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"fontname" : "Arial",
-									"fontsize" : 13.0,
-									"id" : "obj-23",
+									"id" : "obj-3",
 									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 620.0, 144.0, 206.0, 38.0 ],
+									"text" : ";\rmax launchbrowser https://atom.io"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-18",
+									"linecount" : 3,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 620.0, 357.0, 158.0, 52.0 ],
+									"text" : ";\rmax externaleditor Atom, useexternaleditor 1"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-11",
+									"linecount" : 11,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 469.0, 380.0, 36.0 ],
-									"text" : "The watch attribute also watches the files included by your code (see the help center for more information about included files).",
-									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+									"patching_rect" : [ 10.0, 80.0, 554.0, 166.0 ],
+									"text" : "Writing bell code with the minimal text editor integrated in Max can be quite frustrating. \nFor this reason, it is advisable to select an external text editor and set it as the editor for Max through the Max preferences (\"External text editor\" and \"Always use external text editor\").\nIf you do so, the custom text editor will not only work when you explicitly refer to a file (through the \"file\" attribute, or the \"read\" and \"write\" messages), but also if you just want to type code to be stored within the object itself. In the latter case, a \"scratchpad\" file will be created, but it will be entirely and transparently managed for you by bach.eval, so you can work without worrying about it. The only difference is that you don't need to close the editor to reload the code, you only have to save the scratchpad. Unless you specify otherwise, the scratchpad will eventually be destroyed when you delete the object or close the patch, and the code will be saved within the patcher itself."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-8",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 10.0, 401.0, 554.0, 50.0 ],
+									"text" : "This is done once for all: unless you uninstall it, you will not need to repeat this step anymore.\nNow, whenever you open a bell file (including the scratchpad) with Atom, the text will feature syntax coloring."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-6",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 620.0, 275.0, 152.0, 38.0 ],
+									"text" : ";\rbach installatompackage"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-13",
+									"linecount" : 5,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 10.0, 286.0, 554.0, 79.0 ],
+									"text" : "The specific text editor we recommend is Atom, a modern, free, cross-platform and highly customizable text editor which you can download from https://atom.io.\n\nOnce you installed Atom, you can add a syntax coloring package which will make your code much more readable and help you spot errors. Just click on this:"
 								}
 
 							}
@@ -174,6 +279,136 @@
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 10.0, 10.0, 201.00799560546875, 57.599853515625 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-14",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 596.0, 431.0, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "5",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-10",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 596.0, 331.0, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "4",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-17",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 596.0, 247.5, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "3",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-20",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 596.0, 118.0, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "1",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-16",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 596.0, 195.0, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "2",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
 								}
 
 							}
@@ -4182,6 +4417,20 @@
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
+									"fontface" : 0,
+									"id" : "obj-5",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 489.0, 325.5, 276.0, 36.0 ],
+									"text" : "Have a look at the \"editor\" tab of this help file, it contains important information!",
+									"textcolor" : [ 0.996078431372549, 0.0, 0.0, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
 									"id" : "obj-23",
@@ -4189,8 +4438,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 469.0, 638.0, 50.0 ],
-									"text" : "... user-defined variables and functions, and more. In fact, bach.eval implements a small but Turing-complete programming language, conceived to be as much compatible with the expr family as possible. \nPlease, refer to the \"Help Center\" tab to know everything about both the language and the object in itself."
+									"patching_rect" : [ 10.0, 469.0, 648.0, 50.0 ],
+									"text" : "... user-defined variables and functions, and more. In fact, bach.eval implements a small but Turing-complete programming language called \"bell\" and conceived to be as much compatible with the expr family as possible. \nPlease, refer to the \"Help Center\" tab to know everything about both the language and the object in itself."
 								}
 
 							}
@@ -4429,8 +4678,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 246.0, 310.0, 236.0, 55.0 ],
-									"text" : "You can double-click on the object box to open the expression in a text editor"
+									"patching_rect" : [ 246.0, 310.0, 241.0, 55.0 ],
+									"text" : "You can double-click on the object box to open the expression in a text editor."
 								}
 
 							}
@@ -4647,7 +4896,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.bell.050_loops.060_forloopswithclause.maxpat",
+				"name" : "bach.help.welcome.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",

@@ -35,11 +35,14 @@
 
 #ifdef MAC_VERSION
 #include "pwd.h"
-HINSTANCE hinst;
 #endif
 
 #ifdef WIN_VERSION
 //#define BACH_SLEEP_BEFORE_INIT
+#endif
+
+#ifdef WIN_VERSION_old
+HINSTANCE hinst;
 #endif
 
 #include "bell/ast.hpp"
