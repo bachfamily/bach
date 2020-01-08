@@ -25,6 +25,11 @@
 #include "pwd.h"
 #endif
 
+#ifdef WIN_VERSION
+#include <windows.h>
+#include <ShlObj.h>
+#endif
+
 t_max_err llll_dowritetxt(t_object *x, t_symbol *s, long ac, t_atom *av);
 t_max_err llll_dowritenative(t_object *x, t_symbol *s, long ac, t_atom *av);
 
@@ -419,7 +424,6 @@ std::string bach_get_cache_path(void)
     static const std::string bs = "\\";
     std::string home = bach_get_win_appdata_path();
     std::string folder = home + bs + "bach";
-    std::string mkdir;
     std::string mkdir = "md " + dq + folder + dq;
 #endif
     system(mkdir.c_str());
@@ -441,7 +445,7 @@ std::string bach_get_user_folder_path(void)
 }
 
 
-char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type)
+char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type, long style, long type)
 {
     char filename[MAX_FILENAME_CHARS];
     short path = 0;
@@ -458,8 +462,7 @@ char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type)
         if (!locatefile_extended(file_path_str, &path, &type, &type, -1))  {
             char *filenameok2 = (char *) bach_newptr(MAX_FILENAME_CHARS);
             path_topathname(path, file_path_str, filename);
-            path_nameconform(filename, filenameok2, PATH_STYLE_MAX,
-                             PATH_TYPE_BOOT);
+            path_nameconform(filename, filenameok2, style, type);
             if (file_type) *file_type = type;
             return filenameok2;
         }
@@ -467,8 +470,7 @@ char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type)
         char filenameok[MAX_FILENAME_CHARS];
         char *filenameok2 = (char *) bach_newptr(MAX_FILENAME_CHARS);
         path_topathname(path, filename, filenameok);
-        path_nameconform(filenameok, filenameok2, PATH_STYLE_MAX,
-                         PATH_TYPE_BOOT);
+        path_nameconform(filenameok, filenameok2, style, type);
         return filenameok2;
     }
     
@@ -479,18 +481,18 @@ std::string bach_get_package_path(void)
 {
     t_fourcc type = 0;
     char *filepath;
-    filepath = bach_ezlocate_file("bach.mxo", &type);
+    filepath = bach_ezlocate_file("bach.mxo", &type, PATH_STYLE_NATIVE, PATH_TYPE_ABSOLUTE);
     if (!filepath) {
-        filepath = bach_ezlocate_file("bach.mxe", &type);
+        filepath = bach_ezlocate_file("bach.mxe", &type, PATH_STYLE_NATIVE, PATH_TYPE_ABSOLUTE);
         if (!filepath) {
-            filepath = bach_ezlocate_file("bach.mxe64", &type);
+            filepath = bach_ezlocate_file("bach.mxe64", &type, PATH_STYLE_NATIVE, PATH_TYPE_ABSOLUTE);
         }
     }
     std::string pathStr = filepath;
     bach_freeptr(filepath);
-    size_t cut = pathStr.find_last_of("/");
+    size_t cut = pathStr.find_last_of("/\\");
     pathStr.erase(cut);
-    cut = pathStr.find_last_of("/");
+    cut = pathStr.find_last_of("/\\");
     pathStr.erase(cut);
     return pathStr;
 }

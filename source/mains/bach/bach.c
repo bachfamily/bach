@@ -33,16 +33,9 @@
 
 #include "graphics/bach_graphics.h"
 
-#ifdef WIN_VERSION
-
-    #include <windows.h>
-    #include <ShlObj.h>
-    HINSTANCE hinst;
-
-#endif
-
 #ifdef MAC_VERSION
 #include "pwd.h"
+HINSTANCE hinst;
 #endif
 
 #ifdef WIN_VERSION
@@ -1176,7 +1169,7 @@ char bach_load_default_font(void)
     std::string fontsPath = bach_get_package_path() + "/fonts/November for bach.otf";
     
 #ifdef WIN_VERSION
-    AddFontResourceExA(fontsPath, FR_PRIVATE, 0);
+    AddFontResourceExA(fontsPath.c_str(), FR_PRIVATE, 0);
 #endif
     
 #ifdef WIN_VERSION_old
@@ -1434,7 +1427,7 @@ t_bool bach_checkauth()
     std::string name = folder + "/bachutil.mxo";
 #endif
 #ifdef WIN_VERSION
-    std::string name = folder + bs + "bachutil.mxe64";
+    std::string name = folder + "\\bachutil.mxe64";
 #endif
 
     t_fourcc filetype = 0, outtype;
@@ -1502,7 +1495,7 @@ void bach_installatompackage(t_bach *x)
     }
     std::string link = atomFolder + "\\language-bell";
     std::string atomPackageFolder = bach_get_package_path() + "\\language-bell";
-    std::string cmd = "mklink " + dq + atomPackageFolder + dq + " " + dq + link + dq;
+    std::string cmd = "mklink /J " + dq + link + dq + " " + dq + atomPackageFolder + dq;
 #endif
     system(cmd.c_str());
 }

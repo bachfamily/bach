@@ -76,7 +76,7 @@ t_max_err bach_write_dictionary(t_symbol *filename_sym, const char *default_file
 long bach_fix_filename_extension(t_symbol **s, const char *ext);
 
 
-char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type);
+char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type, long style = PATH_STYLE_MAX, long type = PATH_TYPE_BOOT);
 
 
 std::string bach_get_cache_path(void);
@@ -84,7 +84,7 @@ std::string bach_get_user_folder_path(void);
 std::string bach_get_package_path(void);
 
 #ifdef WIN_VERSION
-std::string bach_get_win_appdata_path(void)
+std::string bach_get_win_appdata_path(void);
 #endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
