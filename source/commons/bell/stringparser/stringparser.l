@@ -729,18 +729,28 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 }
 
 {NOTENAME}{ACCIDENTAL}?[-+]?{UINT}/{SEPARATOR} {
+    code_dev_post("lex: PITCH_LITERAL %s\n", yytext);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
     return PITCH_LITERAL;
 }
 
 {NOTENAME}[-+]?{UINT}{ACCIDENTAL}/{SEPARATOR} {
+    code_dev_post("lex: PITCH_LITERAL %s\n", yytext);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->p = t_parser::eatPitchAsNameIntAcc(yytext);
     return PITCH_LITERAL;
 }
 
-{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}+t/{SEPARATOR} {
+{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}t/{SEPARATOR} {
+    code_dev_post("lex: PITCH_LITERAL %s\n", yytext);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
+    yylval->p = t_parser::eatPitchAsNameAccIntIntT(yytext);
+    return PITCH_LITERAL;
+}
+
+{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}"/"{UINT}t/{SEPARATOR} {
+    code_dev_post("lex: PITCH_LITERAL %s\n", yytext);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
     yylval->p = t_parser::eatPitchAsNameAccIntRatT(yytext);
     return PITCH_LITERAL;
