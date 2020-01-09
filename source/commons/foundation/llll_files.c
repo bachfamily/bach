@@ -462,7 +462,12 @@ char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type, long style,
         if (!locatefile_extended(file_path_str, &path, &type, &type, -1))  {
             char *filenameok2 = (char *) bach_newptr(MAX_FILENAME_CHARS);
             path_topathname(path, file_path_str, filename);
-            path_nameconform(filename, filenameok2, style, type);
+#ifdef WIN_VERSION
+            path_nameconform(filename, filenameok2, PATH_STYLE_NATIVE, PATH_TYPE_ABSOLUTE);
+#endif
+#ifdef MAC_VERSION
+            path_nameconform(filename, filenameok2, PATH_STYLE_MAX_PLAT, PATH_TYPE_PATH);
+#endif
             if (file_type) *file_type = type;
             return filenameok2;
         }
@@ -481,11 +486,11 @@ std::string bach_get_package_path(void)
 {
     t_fourcc type = 0;
     char *filepath;
-    filepath = bach_ezlocate_file("bach.mxo", &type, PATH_STYLE_NATIVE, PATH_TYPE_ABSOLUTE);
+    filepath = bach_ezlocate_file("bach.mxo", &type, PATH_STYLE_NATIVE);
     if (!filepath) {
-        filepath = bach_ezlocate_file("bach.mxe", &type, PATH_STYLE_NATIVE, PATH_TYPE_ABSOLUTE);
+        filepath = bach_ezlocate_file("bach.mxe", &type, PATH_STYLE_NATIVE);
         if (!filepath) {
-            filepath = bach_ezlocate_file("bach.mxe64", &type, PATH_STYLE_NATIVE, PATH_TYPE_ABSOLUTE);
+            filepath = bach_ezlocate_file("bach.mxe64", &type, PATH_STYLE_NATIVE);
         }
     }
     std::string pathStr = filepath;
