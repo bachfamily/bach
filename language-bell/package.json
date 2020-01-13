@@ -6,7 +6,7 @@
   "keywords": [
   ],
   "repository": "https://github.com/bachproject/bach",
-  "license": "GPLv3",
+  "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
