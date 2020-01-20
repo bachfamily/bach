@@ -17,7 +17,7 @@
  *
  */
 
-#include "foundation/llllobj.h"
+#include "foundation/llll_files.h"
 #include "ext_globalsymbol.h"
 #include "ext_common.h"
 #include "graphics/bach_cursors.h"
@@ -33,20 +33,16 @@
 
 #include "graphics/bach_graphics.h"
 
-#ifdef WIN_VERSION
-
-    #include <windows.h>
-    #include <ShlObj.h>
-    HINSTANCE hinst;
-
-#endif
-
 #ifdef MAC_VERSION
 #include "pwd.h"
 #endif
 
 #ifdef WIN_VERSION
 //#define BACH_SLEEP_BEFORE_INIT
+#endif
+
+#ifdef WIN_VERSION_old
+HINSTANCE hinst;
 #endif
 
 #include "bell/ast.hpp"
@@ -88,6 +84,7 @@ void bach_sendversion(t_bach *x, t_symbol *s);
 void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s);
 void bach_sendplatform(t_bach *x, t_symbol *s);
 void bach_donors(t_bach *x);
+void bach_installatompackage(t_bach *x);
 void bach_unlock(t_bach *x, t_atom_long l);
 void bach_nonative(t_bach *x, t_atom_long l);
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
@@ -159,6 +156,8 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method) bach_sendplatform, "sendplatform", A_SYM, 0);
     class_addmethod(c, (method) bach_sendbuildnumber, "sendbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_donors, "donors", 0);
+    class_addmethod(c, (method) bach_installatompackage, "installatompackage", 0);
+
     class_addmethod(c, (method) bach_unlock, "unlock", A_LONG, 0);
     class_addmethod(c, (method) bach_nonative, "nonative", A_LONG, 0);
 
@@ -1169,28 +1168,11 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
 char bach_load_default_font(void)
 {
     //Sleep(60000);
-    t_fourcc type = 0;
-    char *filepath;
-    size_t bachlen = 8;
-    filepath = bach_ezlocate_file("bach.mxo", &type);
-    if (!filepath) {
-        filepath = bach_ezlocate_file("bach.mxe", &type);
-        if (!filepath) {
-            filepath = bach_ezlocate_file("bach.mxe64", &type);
-            bachlen = 10;
-        }
-    }
-    if (!filepath) {
-        error("can't load font!");
-        return 0;
-    }
 
-    
-    char *pastehere = filepath + strlen(filepath) - (bachlen + 11);
-    strncpy_zero(pastehere, "fonts/November for bach.otf", 28);
+    std::string fontsPath = bach_get_package_path() + "/fonts/November for bach.otf";
     
 #ifdef WIN_VERSION
-    AddFontResourceExA(filepath, FR_PRIVATE, 0);
+    AddFontResourceExA(fontsPath.c_str(), FR_PRIVATE, 0);
 #endif
     
 #ifdef WIN_VERSION_old
@@ -1224,8 +1206,7 @@ char bach_load_default_font(void)
     CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
     //CFURLRef fontURL = mainBundle ? CFBundleCopyResourceURL(mainBundle, CFSTR("johannsebastian"), CFSTR("dat"), NULL) : NULL;
     
-    CFStringRef path = CFStringCreateWithCString(NULL, filepath, kCFStringEncodingMacRoman);
-    bach_freeptr(filepath);
+    CFStringRef path = CFStringCreateWithCString(NULL, fontsPath.c_str(), kCFStringEncodingMacRoman);
     CFURLRef fontURL = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
     
     if (!mainBundle || !fontURL) {
@@ -1429,49 +1410,33 @@ void bach_unlock(t_bach *x, t_atom_long l)
     post("bach splashscreen removed until January 31, %lu", year + 1);
     bach->b_no_ss = true;
     
-    std::string dq = "\"";
+    static const std::string dq = "\"";
 
+    std::string folder = bach_get_cache_path();
+    
 #ifdef MAC_VERSION
-    passwd* pw = getpwuid(getuid());
-    std::string home = pw->pw_dir;
-    std::string folder = home + "/Library/Application Support/bach/cache";
     std::string name = folder + "/bachutil.mxo";
-    std::string mkdir = "mkdir -p " + dq + folder + dq;
 #endif
 
 #ifdef WIN_VERSION
-    std::string bs = "\\";
-    TCHAR appDataPath[MAX_PATH];
-    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
-        return;
-    std::string home = appDataPath;
-    std::string folder = home + bs + "bach";
+    static const std::string bs = "\\";
     std::string name = folder + bs + "bachutil.mxe64";
-    std::string mkdir = "md " + dq + folder + dq;
 #endif
 
     std::string echo = "echo " + std::to_string(l) + " > " + dq + name + dq;
-    system(mkdir.c_str());
     system(echo.c_str());
 }
 
 t_bool bach_checkauth()
 {
-    std::string dq = "\"";
-
+    static const std::string dq = "\"";
+    std::string folder = bach_get_cache_path();
+    
 #ifdef MAC_VERSION
-    passwd* pw = getpwuid(getuid());
-    std::string home = pw->pw_dir;
-    std::string name = home + "/Library/Application Support/bach/cache/bachutil.mxo";
+    std::string name = folder + "/bachutil.mxo";
 #endif
 #ifdef WIN_VERSION
-    std::string bs = "\\";
-    TCHAR appDataPath[MAX_PATH];
-    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
-        return false;
-    std::string home = appDataPath;
-    std::string folder = home + bs + "bach";
-    std::string name = folder + bs + "bachutil.mxe64";
+    std::string name = folder + "\\bachutil.mxe64";
 #endif
 
     t_fourcc filetype = 0, outtype;
@@ -1508,4 +1473,39 @@ t_bool bach_checkauth()
 }
 
 
+void bach_installatompackage(t_bach *x)
+{
+    const static std::string dq = "\"";
+    std::string home = bach_get_user_folder_path();
+#ifdef MAC_VERSION
+    std::string atomFolder = home + "/.atom/packages";
+    char filename[MAX_PATH_CHARS];
+    strncpy_zero(filename, atomFolder.c_str(), MAX_PATH_CHARS);
+    short path = 0;
+    t_fourcc outtype = 0;
+    long err = locatefile_extended(filename, &path, &outtype, nullptr, 0);
+    if (err || outtype != 'fold') {
+        object_error((t_object *) x, "Can't find atom");
+        return;
+    }
+    std::string atomPackageFolder = bach_get_package_path() + "/language-bell";
+    std::string cmd = "ln -s " + dq + atomPackageFolder + dq + " " + dq + atomFolder + dq;
+#endif
+#ifdef WIN_VERSION
+    std::string atomFolder = home + "\\.atom\\packages";
+    char filename[MAX_PATH_CHARS];
+    strncpy_zero(filename, atomFolder.c_str(), MAX_PATH_CHARS);
+    short path = 0;
+    t_fourcc outtype = 0;
+    long err = locatefile_extended(filename, &path, &outtype, nullptr, 0);
+    if (err || outtype != 'fold') {
+        object_error((t_object *) x, "Can't find atom");
+        return;
+    }
+    std::string link = atomFolder + "\\language-bell";
+    std::string atomPackageFolder = bach_get_package_path() + "\\language-bell";
+    std::string cmd = "mklink /J " + dq + link + dq + " " + dq + atomPackageFolder + dq;
+#endif
+    system(cmd.c_str());
+}
 

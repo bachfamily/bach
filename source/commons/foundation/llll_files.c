@@ -21,6 +21,15 @@
 #include "foundation/llll_files.h"
 #include "ext_strings.h"
 
+#ifdef MAC_VERSION
+#include "pwd.h"
+#endif
+
+#ifdef WIN_VERSION
+#include <windows.h>
+#include <ShlObj.h>
+#endif
+
 t_max_err llll_dowritetxt(t_object *x, t_symbol *s, long ac, t_atom *av);
 t_max_err llll_dowritenative(t_object *x, t_symbol *s, long ac, t_atom *av);
 
@@ -389,3 +398,109 @@ long bach_fix_filename_extension(t_symbol **s, const char *ext)
     }
     return 0;
 }
+
+
+#ifdef WIN_VERSION
+std::string bach_get_win_appdata_path(void)
+{
+    TCHAR appDataPath[MAX_PATH];
+    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
+        return "";
+    return appDataPath;
+}
+#endif
+
+std::string bach_get_cache_path(void)
+{
+    static const std::string dq = "\"";
+    
+#ifdef MAC_VERSION
+    std::string home = bach_get_user_folder_path();
+    std::string folder = home + "/Library/Application Support/bach/cache";
+    std::string mkdir = "mkdir -p " + dq + folder + dq;
+#endif
+    
+#ifdef WIN_VERSION
+    static const std::string bs = "\\";
+    std::string home = bach_get_win_appdata_path();
+    std::string folder = home + bs + "bach";
+    std::string mkdir = "md " + dq + folder + dq;
+#endif
+    system(mkdir.c_str());
+    return folder;
+}
+
+
+std::string bach_get_user_folder_path(void)
+{
+#ifdef MAC_VERSION
+    return getpwuid(getuid())->pw_dir;
+#endif
+#ifdef WIN_VERSION
+    TCHAR userPath[MAX_PATH];
+    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, userPath)))
+        return "";
+    return userPath;
+#endif
+}
+
+
+char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type, long style, long type)
+{
+    char filename[MAX_FILENAME_CHARS];
+    short path = 0;
+    
+    if (!file_name)
+        return NULL;
+    
+    if (file_type) *file_type = 0;
+    
+    if (path_frompathname(file_name, &path, filename)) {
+        t_fourcc type;
+        char file_path_str[MAX_FILENAME_CHARS];
+        strncpy_zero(file_path_str, file_name, MAX_FILENAME_CHARS);
+        if (!locatefile_extended(file_path_str, &path, &type, &type, -1))  {
+            char *filenameok2 = (char *) bach_newptr(MAX_FILENAME_CHARS);
+            path_topathname(path, file_path_str, filename);
+#ifdef WIN_VERSION
+            path_nameconform(filename, filenameok2, PATH_STYLE_NATIVE, PATH_TYPE_ABSOLUTE);
+#endif
+#ifdef MAC_VERSION
+            path_nameconform(filename, filenameok2, PATH_STYLE_MAX_PLAT, PATH_TYPE_PATH);
+#endif
+            if (file_type) *file_type = type;
+            return filenameok2;
+        }
+    } else {
+        char filenameok[MAX_FILENAME_CHARS];
+        char *filenameok2 = (char *) bach_newptr(MAX_FILENAME_CHARS);
+        path_topathname(path, filename, filenameok);
+        path_nameconform(filenameok, filenameok2, style, type);
+        return filenameok2;
+    }
+    
+    return NULL;
+}
+
+std::string bach_get_package_path(void)
+{
+    t_fourcc type = 0;
+    char *filepath;
+    filepath = bach_ezlocate_file("bach.mxo", &type, PATH_STYLE_NATIVE);
+    if (!filepath) {
+        filepath = bach_ezlocate_file("bach.mxe", &type, PATH_STYLE_NATIVE);
+        if (!filepath) {
+            filepath = bach_ezlocate_file("bach.mxe64", &type, PATH_STYLE_NATIVE);
+        }
+    }
+    std::string pathStr = filepath;
+    bach_freeptr(filepath);
+    size_t cut = pathStr.find_last_of("/\\");
+    pathStr.erase(cut);
+    cut = pathStr.find_last_of("/\\");
+    pathStr.erase(cut);
+    return pathStr;
+}
+
+
+
