@@ -45,6 +45,7 @@ struct t_lexparams {
     struct t_bufstack *this_bs;
     fileidSet files;
     int state;
+    int line;
     
     t_lexparams();
     virtual ~t_lexparams();

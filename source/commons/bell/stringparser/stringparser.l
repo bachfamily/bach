@@ -19,7 +19,7 @@
      */
 %}
 
-%option noyywrap nodefault reentrant bison-bridge
+%option noyywrap nodefault yylineno reentrant bison-bridge
 %option never-interactive
 %option outfile="stringparser.c"
 %option header-file="stringparser.lex.h"
@@ -45,7 +45,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     
     
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
+    #define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
     #endif
     
     #ifndef code_dev_post
@@ -86,6 +86,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
         char *name; /* name of this file */
         char *text;
         int *state;
+        int line;
     };
     
 
@@ -120,6 +121,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 
 %{
     t_lexparams *lexparams = yyextra;
+    yylineno = 1;
 %}
 
 <NOUNARY_NOARGS,INITIAL>{
@@ -957,6 +959,13 @@ $[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?/{SEPARATOR} {
     return SYMBOL_LITERAL;
 }
 
+
+\n {
+    yylineno++;
+    code_dev_post("lex: Newline: %d\n", yylineno);
+    BEGIN lexparams->setState(UNARY_NOARGS);
+}
+
 [[:space:]] {
     code_dev_post("lex: Whitespace\n");
     BEGIN lexparams->setState(UNARY_NOARGS);
@@ -968,7 +977,7 @@ $[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?/{SEPARATOR} {
     (*params->codeac)++;
 }
 
-<*>.|\n {
+<*>. {
     code_dev_post("lex: UNRECOGNIZED CHARACTER %s (%d)\n", yytext, *yytext);
     BEGIN lexparams->setState(UNARY_NOARGS);
     return UNRECOGNIZED;
@@ -1026,7 +1035,9 @@ int stringparser_newfile(yyscan_t myscanner, char *s)
         text[size] = 0;
     }
     t_lexparams *lexparams = yyget_extra(myscanner);
+    lexparams->this_bs->line = yyget_lineno(myscanner);
     (lexparams->this_bs)++;
+    yyset_lineno(1, myscanner);
     lexparams->this_bs->name = filename;
     lexparams->this_bs->text = text;
     lexparams->this_bs->bs = stringparser_scan_string(myscanner, text);
@@ -1044,12 +1055,20 @@ int stringparser_popfile(yyscan_t myscanner)
     bach_freeptr(lexparams->this_bs->name);
     bach_freeptr(lexparams->this_bs->text);
     --(lexparams->this_bs);
+    yyset_lineno(lexparams->this_bs->line, myscanner);
     yy_switch_to_buffer(lexparams->this_bs->bs, myscanner);
     return 0;
 }
 
 
-
+int stringparser_error(yyscan_t myscanner, t_parseParams *params, const char *s)
+{
+    params->ast = nullptr;
+    object_error((t_object *) params->owner, "%d: error %s\n", yyget_lineno(myscanner), s);
+    cpost("error: %s\n", s);
+    
+    return 0;
+}
 
 
 
