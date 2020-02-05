@@ -1524,10 +1524,11 @@ void bach_clearatomcachefolder(t_bach *x)
     if (r == 1)
         return;
     const static std::string dq = "\"";
+    std::string cache = bach_get_cache_path();
 #ifdef WIN_VERSION
+    std::string cmd = "del /f " + dq + cache + dq + "\\scratchpad*.bell";
 #endif
 #ifdef MAC_VERSION
-    std::string cache = bach_get_cache_path();
     std::string cmd = "rm -f " + dq + cache + dq + "/scratchpad*.bell";
 #endif
     system(cmd.c_str());
