@@ -85,6 +85,7 @@ void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s);
 void bach_sendplatform(t_bach *x, t_symbol *s);
 void bach_donors(t_bach *x);
 void bach_installatompackage(t_bach *x);
+void bach_clearatomcachefolder(t_bach *x);
 void bach_unlock(t_bach *x, t_atom_long l);
 void bach_nonative(t_bach *x, t_atom_long l);
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
@@ -157,6 +158,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method) bach_sendbuildnumber, "sendbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_donors, "donors", 0);
     class_addmethod(c, (method) bach_installatompackage, "installatompackage", 0);
+    class_addmethod(c, (method) bach_clearatomcachefolder, "clearatomcachefolder", 0);
 
     class_addmethod(c, (method) bach_unlock, "unlock", A_LONG, 0);
     class_addmethod(c, (method) bach_nonative, "nonative", A_LONG, 0);
@@ -1489,6 +1491,7 @@ void bach_installatompackage(t_bach *x)
         return;
     }
     std::string atomPackageFolder = bach_get_package_path() + "/language-bell";
+    std::string rmcmd = "rm -f " + dq + atomFolder + "/language-bell" + dq;
     std::string cmd = "ln -s " + dq + atomPackageFolder + dq + " " + dq + atomFolder + dq;
 #endif
 #ifdef WIN_VERSION
@@ -1504,8 +1507,29 @@ void bach_installatompackage(t_bach *x)
     }
     std::string link = atomFolder + "\\language-bell";
     std::string atomPackageFolder = bach_get_package_path() + "\\language-bell";
+    std::string rmcmd = "del /f " + dq + link + dq;
     std::string cmd = "mklink /J " + dq + link + dq + " " + dq + atomPackageFolder + dq;
 #endif
+    system(rmcmd.c_str());
     system(cmd.c_str());
 }
 
+void bach_clearatomcachefolder(t_bach *x)
+{
+    short r = wind_advise_explain(nullptr, const_cast<char *>("Are you sure that you want to clear the atom editor cache?"),
+                                  const_cast<char *>("You will lose any unsaved changes"),
+                                  const_cast<char *>("Cancel"),
+                                  const_cast<char *>("Clear the cache"),
+                                  nullptr);
+    if (r == 1)
+        return;
+    const static std::string dq = "\"";
+    std::string cache = bach_get_cache_path();
+#ifdef WIN_VERSION
+    std::string cmd = "del /f " + dq + cache + dq + "\\scratchpad*.bell";
+#endif
+#ifdef MAC_VERSION
+    std::string cmd = "rm -f " + dq + cache + dq + "/scratchpad*.bell";
+#endif
+    system(cmd.c_str());
+}
