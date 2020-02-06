@@ -608,8 +608,10 @@ t_bool codableobj_readfile(t_codableobj *x, char *filename, short path)
     err = codableobj_buildAst(x, &dummyfirstattr);
     
     if (!err) {
-        codableobj_delete_scratchpad(x);
-        x->c_scratchpad = false;
+        if (!x->c_filechanged) {
+            codableobj_delete_scratchpad(x);
+            x->c_scratchpad = false;
+        }
         if (x->c_filename)
             bach_freeptr(x->c_filename);
         x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
@@ -627,8 +629,10 @@ t_bool codableobj_readfile(t_codableobj *x, char *filename, short path)
             if (oldMain)
                 oldMain->decrease();
             x->c_main = nullptr;
-            codableobj_delete_scratchpad(x);
-            x->c_scratchpad = false;
+            if (!x->c_filechanged) {
+                codableobj_delete_scratchpad(x);
+                x->c_scratchpad = false;
+            }
             if (x->c_filename)
                 bach_freeptr(x->c_filename);
             x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
