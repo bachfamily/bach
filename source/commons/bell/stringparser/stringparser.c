@@ -1877,6 +1877,8 @@ static const flex_int32_t yy_rule_can_match_eol[134] =
     
     #define UNARY_NOARGS (INITIAL)
     
+    #define YY_USER_ACTION { yycolumn += yyleng; code_dev_post("yycolumn = %d", yycolumn); }
+    
     struct t_bufstack {
         YY_BUFFER_STATE bs; /* saved buffer */
         char *name; /* name of this file */
@@ -2183,7 +2185,6 @@ YY_DECL
 	{
 
     t_lexparams *lexparams = yyextra;
-    yylineno = 1;
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -3629,8 +3630,8 @@ case 129:
 /* rule 129 can match eol */
 YY_RULE_SETUP
 {
-    yylineno++;
     code_dev_post("lex: Newline: %d\n", yylineno);
+    code_dev_post("lex: that is: %d\n", yyget_lineno(yyscanner));
     BEGIN lexparams->setState(UNARY_NOARGS);
 }
 	YY_BREAK
@@ -4859,6 +4860,7 @@ YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf)
     yy_switch_to_buffer(bp, myscanner);
     t_lexparams *lexparams = yyget_extra(myscanner);
     lexparams->this_bs->bs = bp;
+    yyset_lineno(1, myscanner);
     return bp;
 }
 
@@ -4904,7 +4906,7 @@ int stringparser_newfile(yyscan_t myscanner, char *s)
     t_lexparams *lexparams = yyget_extra(myscanner);
     lexparams->this_bs->line = yyget_lineno(myscanner);
     (lexparams->this_bs)++;
-    yyset_lineno(1, myscanner);
+    //yyset_lineno(1, myscanner);
     lexparams->this_bs->name = filename;
     lexparams->this_bs->text = text;
     lexparams->this_bs->bs = stringparser_scan_string(myscanner, text);
@@ -4930,7 +4932,19 @@ int stringparser_popfile(yyscan_t myscanner)
 int stringparser_error(yyscan_t myscanner, t_parseParams *params, const char *s)
 {
     params->ast = nullptr;
-    object_error((t_object *) params->owner, "%d: error %s\n", yyget_lineno(myscanner), s);
+    int line = yyget_lineno(myscanner);
+    if (line) {
+        std::string errorString = s;
+        for (int i = 0; i < (sizeof(tokenNames) / sizeof(t_tokenNames)); i++) {
+            size_t pos = errorString.find(tokenNames[i].original);
+            if (pos != std::string::npos) {
+                errorString.replace(pos, tokenNames[i].original.size(), tokenNames[i].replacement);
+            }
+        }
+        object_error((t_object *) params->owner, "Line %d: %s", yyget_lineno(myscanner), errorString.c_str());
+    } else {
+        object_error((t_object *) params->owner, "Unexpected end of code");
+    }
     cpost("error: %s\n", s);
     
     return 0;
