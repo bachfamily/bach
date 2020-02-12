@@ -7339,7 +7339,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_STYLE_LABEL(c,"showbarlines", 0, "onoff", "Show Barlines");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showbarlines", 0, "1");
     // @description Toggles the display of barlines.
-    
+
+    CLASS_ATTR_DOUBLE(c,"barlineshift", 0, t_notation_obj, barline_ushift_for_proportional_spacing);
+    CLASS_ATTR_STYLE_LABEL(c,"barlineshift", 0, "text", "Barline Shift In Proportional Spacing");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"barlineshift", 0, "0");
+    // @description Sets a barline shift for proportional spacing display
+
     CLASS_ATTR_CHAR(c,"showbarlinelocks", 0, t_notation_obj, show_barline_locks);
     CLASS_ATTR_STYLE_LABEL(c,"showbarlinelocks", 0, "onoff", "Show Barline Locks");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showbarlinelocks", 0, "1");
@@ -7359,7 +7364,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // blue lines correspond to refined levels, violet lines correspond to display-only levels.
             
     CLASS_ATTR_CHAR(c,"showtimesignatures", 0, t_notation_obj, show_time_signatures);
-    CLASS_ATTR_STYLE_LABEL(c,"showtimesignatures", 0, "onoff", "Show Time Signatures");
+    CLASS_ATTR_STYLE_LABEL(c,"showtimesignatures",0,"enumindex","Show Time Signatures");
+    CLASS_ATTR_ENUMINDEX(c,"showtimesignatures", 0, "Hide Classically Above Staff");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtimesignatures", 0, "1");
     CLASS_ATTR_ACCESSORS(c, "showtimesignatures", (method)NULL, (method)score_setattr_showtimesignatures);
     // @description Toggles the display of time signatures.

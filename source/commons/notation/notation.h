@@ -3061,6 +3061,7 @@ typedef struct _measure
     double            start_barline_offset_ux;    ///< Unscaled offset (in pixels) of the measure start barline with respect to the start pixel of the reference tuttipoint
     double            width_ux;                    ///< Unscaled width (in pixels) of the measure
     double            timesignature_uwidth;        ///< Unscaled width (in pixels) of the rectangle needed to write the time signature on the score 
+    double            timesignature_spacing_uwidth;///< Unscaled width of the spacing needed to paint the of the rectangle for the time signatures (coincides with <timesignature_uwidth> unless show_timesignature is set to 0 or 2).
 
     // spacing
     char            is_spacing_fixed;                        ///< Flag telling if the measure <width_ux> is fixed or floating. 
@@ -4600,7 +4601,8 @@ typedef struct _notation_obj
     char        show_barlines;                            ///< Flag telling if we want to show barlines
     char        show_barline_locks;                        ///< Flag telling if we want to show the barline locks (appearing when barline width has been locked, fixed)
     char        draw_barlines_across_staves;            ///< Flag telling if we want to draw the barlines across all the staves, when possible
-    char        show_time_signatures;                    ///< Flag telline if we want to show the time signatures
+    double      barline_ushift_for_proportional_spacing;    ///< unscaled shift of barlines in proportional spacing display
+    char        show_time_signatures;                    ///< Flag telline if we want to show the time signatures (0 = hide, 1 = classically, 2 = above staff)
     long        measure_number_offset;                    ///< Offset for the measure numbering (by default: 0)
     e_show_accidentals_preferences   show_accidentals_preferences;            ///< Preferences for accidental handling. When do we want to show the accidentals.
     e_show_accidentals_tie_preferences        show_accidentals_tie_preferences;        ///< Flag telling when we want to show accidentals at the end of a tie.
@@ -10204,8 +10206,9 @@ void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice
     @param    clef            The clef or clef combination, as one of the #e_clefs
     @param    staff_top        The topmost y pixel in the staff or staff combination
     @param    curr_meas        The measure of which we need to paint the time signature
+    @param    big               Flag telling if the time signature is in "big" form (double size, e.g. above the staff)
  */ 
-void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont *jf_ts, long clef, double staff_top, t_measure *curr_meas);
+void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont *jf_ts, long clef, double staff_top, t_measure *curr_meas, char big);
 
 
 /**    Paint the semi-transparent selection rectangle. This is used also to paint the zooming rectangle (just by changing the color parameters).
@@ -13112,6 +13115,8 @@ double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature *ts);
 
 
 // TBD
+double ts_get_spacing_uwidth(t_notation_obj *r_ob, t_timesignature *ts);
+
 void ts_adapt_to_symduration(t_timesignature *ts, t_rational new_measure_duration);
 
 
@@ -13748,6 +13753,9 @@ char is_chord_a_whole_measure_rest(t_notation_obj *r_ob, t_chord *chord);
     @return            1 if the barline exists in the same position in all the voices of the score, 0 otherwise.
  */
 char is_barline_tuttipoint(t_notation_obj *r_ob, t_measure_end_barline *barline);
+
+//TBD
+char is_barline_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_measure_end_barline *barline);
 
 
 /**    Obtain all the barlines falling together with a given barline.

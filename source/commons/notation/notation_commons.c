@@ -225,23 +225,28 @@ t_symbol *get_querying_label_from_GIMME(t_notation_obj *r_ob, t_symbol *s, long 
 }
 
 // painting stuff
-void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont *jf_ts, long clef, double staff_top, t_measure *curr_meas)
+void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont *jf_ts, long clef, double staff_top, t_measure *curr_meas, char big)
 {
     long i;
     int num_ts = ((clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FFGG) || (clef == k_CLEF_FG)) ? 2 : 1; // number of time signatures to paint
     double *tsbox_y1a = (double *) bach_newptr(num_ts * sizeof(double));
     double *tsbox_y1b = (double *) bach_newptr(num_ts * sizeof(double));
     double tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux + CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS); 
-    double tsbox_x_width = curr_meas->timesignature_uwidth * r_ob->zoom_y;
+    double tsbox_x_width = curr_meas->timesignature_uwidth * r_ob->zoom_y * (big ? 2 : 1);
     double tsbox_y_height;
     char num_txt[150]; char den_txt[50]; 
     long len_utf_num, len_utf_den;
     char *num_utf, *den_utf;
     
-    if (r_ob->spacing_type == k_SPACING_PROPORTIONAL)
-        tsbox_x1 = tsbox_x1 - 2 * CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS - tsbox_x_width;
+    if (r_ob->spacing_type == k_SPACING_PROPORTIONAL) {
+        if (r_ob->show_time_signatures != 2)
+            tsbox_x1 = tsbox_x1 - 2 * CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS - tsbox_x_width;
+        else {
+            tsbox_x1 = tsbox_x1 - CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS - tsbox_x_width / 2.;
+        }
+    }
     
-    for (i=0; i<num_ts; i++) {
+    for (i = 0; i < num_ts; i++) {
         double this_staff_top, this_staff_bottom;
         switch (clef) {
             case k_CLEF_FFGG: case k_CLEF_GG: case k_CLEF_FGG: 
@@ -255,9 +260,15 @@ void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_
                 break; 
             }
         }
+
+        if (r_ob->show_time_signatures == 2) {
+            this_staff_top -= 10 * r_ob->step_y * (big ? 2 : 1) + 2.5 * r_ob->step_y;
+        }
+        
         this_staff_bottom = this_staff_top + 8 * r_ob->step_y;
-        tsbox_y1a[i] = this_staff_top + r_ob->notation_typo_preferences.ts_uy_shift * r_ob->zoom_y; 
-        tsbox_y1b[i] = tsbox_y1a[i] + (this_staff_bottom - this_staff_top) / 2.;
+        
+        tsbox_y1a[i] = this_staff_top + r_ob->notation_typo_preferences.ts_uy_shift * r_ob->zoom_y * (big ? 2 : 1);
+        tsbox_y1b[i] = tsbox_y1a[i] + (big ? 2 : 1) * (this_staff_bottom - this_staff_top) / 2.;
         
         tsbox_y_height = 80 * r_ob->zoom_y; 
         num_utf = charset_unicodetoutf8_debug(curr_meas->timesignature.num_unicode, curr_meas->timesignature.len_num, &len_utf_num);
@@ -2702,6 +2713,23 @@ char is_barline_tuttipoint(t_notation_obj *r_ob, t_measure_end_barline *barline)
             meas->next->tuttipoint_reference->all_voices_are_together) ||
         (!meas->next && r_ob->all_voices_end_together))
         return 1;
+    return 0;
+}
+
+char is_barline_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_measure_end_barline *barline)
+{
+    if (is_barline_tuttipoint(r_ob, barline)) {
+        t_measure *meas = barline->owner;
+        if (!meas->next)
+            return 0;
+        t_tuttipoint *tpt = meas->next->tuttipoint_reference;
+        if (tpt) {
+            for (long i = 1; i < r_ob->num_voices; i++)
+                if (!ts_are_equal(&tpt->measure[i-1]->timesignature, &tpt->measure[i]->timesignature))
+                    return 0;
+            return 1;
+        }
+    }
     return 0;
 }
 
@@ -10952,6 +10980,7 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
     newmeasure->width_ux= measure->width_ux;
     newmeasure->end_barline->barline_type = measure->end_barline->barline_type;
     newmeasure->timesignature_uwidth = measure->timesignature_uwidth;
+    newmeasure->timesignature_spacing_uwidth = measure->timesignature_spacing_uwidth;
     newmeasure->locked = measure->locked;
     newmeasure->muted = measure->muted;
     newmeasure->solo = measure->solo;
@@ -21919,7 +21948,8 @@ double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature *ts)
     char *num_utf, *den_utf;
     double num_width = 0.; double num_height = 0.;
     double den_width = 0.; double den_height = 0.;
-    if (r_ob->show_time_signatures == 0) return 0.;
+    if (r_ob->show_time_signatures == 0)
+        return 0.;
     jf_ts = jfont_create_debug(r_ob->noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->notation_typo_preferences.base_pt_ts);
     num_utf = charset_unicodetoutf8_debug(ts->num_unicode, ts->len_num, &len_utf_num);
     den_utf = charset_unicodetoutf8_debug(ts->den_unicode, ts->len_den, &len_utf_den);
@@ -21933,6 +21963,13 @@ double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature *ts)
     
     jfont_destroy_debug(jf_ts);
     return MAX(den_width, num_width);
+}
+
+double ts_get_spacing_uwidth(t_notation_obj *r_ob, t_timesignature *ts)
+{
+    if (r_ob->show_time_signatures == 0 || r_ob->show_time_signatures == 2)
+        return 0.;
+    return ts_get_uwidth(r_ob, ts);
 }
 
 char split_rhythm_to_boxes_OLD(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *boxes, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, t_llll *garbage, char check_completeness, long max_num) {

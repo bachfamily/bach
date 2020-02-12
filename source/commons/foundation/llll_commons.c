@@ -173,7 +173,6 @@ char *bach_get_current_version_string_verbose_with_build(void)
 
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create a new legal llll from text (but s is ignored, so all the list must be inside av[])
 // or an illegal llll if ac == 0
