@@ -5252,9 +5252,9 @@
 		913D5770232B972B00BC6B45 /* bell */ = {
 			isa = PBXGroup;
 			children = (
+				913D5785232B972C00BC6B45 /* stringparser */,
 				91FEE6F823474658001F74B2 /* fileid.hpp */,
 				916B4CF22330222E00AC9F03 /* eval.h */,
-				913D5785232B972C00BC6B45 /* stringparser */,
 				91071DB02100DB5900452762 /* bach_codableobj.hpp */,
 				91071DAF2100DB5900452762 /* bach_codableobj.cpp */,
 				913D579D232B972D00BC6B45 /* ast.hpp */,

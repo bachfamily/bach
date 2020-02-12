@@ -655,14 +655,14 @@ t_llll* t_fnGroup::call(const t_execEnv &context) {
 
 
 t_fnPrimeser::t_fnPrimeser() : t_builtInFunction("primeser") {
-    setArgument("min");
-    setArgument("max");
+    setArgument("min", -1);
+    setArgument("max", -1);
     setArgument("maxcount", 0l);
 }
 
 t_llll* t_fnPrimeser::call(const t_execEnv &context) {
     long min = llll_getlong(context.argv[1]);
-    long max = llll_getlong(context.argv[2]);
+    long max = context.argv[2]->l_size && hatom_is_number(&context.argv[2]->l_head->l_hatom) ?  llll_getlong(context.argv[2]) : -1;
     long maxcount = llll_getlong(context.argv[3]);
     t_llll *ll = llll_primeser(min, max, maxcount);
     return ll;

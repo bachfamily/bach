@@ -68,8 +68,10 @@ t_bool astSCOr_core(t_llll *first, astNode *second, t_execEnv const &context)
         if (llll_istrue(v2)) {
             llll_release(v2);
             return true;
-        } else
+        } else {
+            llll_release(v2);
             return false;
+        }
     }
 }
 
@@ -87,8 +89,10 @@ t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv const &con
         if (llll_istrue(v2)) {
             llll_release(v2);
             return true;
-        } else
+        } else {
+            llll_release(v2);
             return false;
+        }
     }
 }
 
@@ -97,16 +101,18 @@ t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv const &con
 t_bool astSCAnd_core(t_llll *first, astNode *second, t_execEnv const &context)
 {
     if (!llll_istrue(first)) {
-        llll_release(first);
+        bell_release_llll(first);
         return false;
     } else {
         bell_release_llll(first);
         t_llll *v2 = second->eval(context);
         if (!llll_istrue(v2)) {
-            llll_release(v2);
+            bell_release_llll(v2);
             return false;
-        } else
+        } else {
+            bell_release_llll(v2);
             return true;
+        }
     }
 }
 
@@ -124,8 +130,10 @@ t_bool astSCAnd_hatom(const t_hatom *first, astNode *second, t_execEnv const &co
         if (!llll_istrue(v2)) {
             llll_release(v2);
             return false;
-        } else
+        } else {
+            llll_release(v2);
             return true;
+        }
     }
 }
 

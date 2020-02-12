@@ -224,6 +224,8 @@ void pv_edclose(t_pv *x, char **ht, long size)
         return;
     if (ht) {
         t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
+        sysmem_freehandle(ht);
+        
         if (ll) {
             x->n_var->set(ll, (t_object *) x);
             llll_free(ll);

@@ -2889,7 +2889,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 151:
     {
     ((*yyvalp).n) = new astNthOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP listEnd)\n");
 }
     break;
 
@@ -3117,7 +3117,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 184:
     {
     ((*yyvalp).n) = new astNthOp((((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP exp)\n");
 }
     break;
 
