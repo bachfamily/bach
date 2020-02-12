@@ -2,7 +2,7 @@
  *  patrons.h
  * (This file has been generated automatically by Doctor Max. You may not want to edit this file directly).
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -37,8 +37,8 @@ void post_top_supporters()
 
 void post_all_patrons()
 {
-	post("Alessandro Ratoci, audiophil, Chris Chandler, Chris Poovey, Christopher Michael Trapani, Daniel Lujan, Francisco Colasanto, ");
-	post("Hans Leeuw, Hans Tutschku, Jean-Baptiste Barrière, Jean-Julien Filatriau, Joost Van kerkhoven, Julien Vincenot, linazero, ");
-	post("Louis Goldford, Matthew Goodheart, Michele Zaccagnini, Nikola Kołodziejczyk, Pierre Alexandre Tremblay, Seidenberg, Tj Shredder, ");
+	post("Alessandro Ratoci, audiophil, Chris Chandler, Chris Poovey, Christopher Michael Trapani, Francisco Colasanto, Hans Leeuw, ");
+	post("Hans Tutschku, Jean-Baptiste Barrière, Jean-Julien Filatriau, Joost Van kerkhoven, Julien Vincenot, linazero, Louis Goldford, ");
+	post("Matthew Goodheart, Michele Zaccagnini, Nikola Kołodziejczyk, OH Jung-Woong, Pierre Alexandre Tremblay, Seidenberg, Tj Shredder, ");
 	post("Tomislav Oliver, Vens R., Viktor Velthuijs, Yan Maresz.");
 }

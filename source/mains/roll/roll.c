@@ -9433,6 +9433,14 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
                             llll_destroyelem(pivot); 
                             if (firstllll && firstllll->l_head)
                                 set_clefs_from_llll(x, firstllll);
+                        } else if (pivotsym == _llllobj_sym_voicespacing) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                notationobj_set_voicespacing_from_llll((t_notation_obj *)x, firstllll);
+                        } else if (pivotsym == _llllobj_sym_hidevoices) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                notationobj_set_hidevoices_from_llll((t_notation_obj *)x, firstllll);
                         } else if (pivotsym == _llllobj_sym_keys) {
                             llll_destroyelem(pivot); 
                             if (firstllll && firstllll->l_head)
@@ -11338,9 +11346,25 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     
     double label_family_chord_shape_radius = CONST_LABEL_FAMILY_NOTE_STARTING_URADIUS * x->r_ob.zoom_y;
     
+    // we draw the ledger lines first
+    {
+        double ledger_lines_y[CONST_MAX_LEDGER_LINES];
+        for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) { // cycle on the notes
+            if (is_notehead_inscreen_for_painting(x, curr_nt)) {
+                int num_ledger_lines = 0; int i;
+                long scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
+                get_ledger_lines((t_notation_obj *) x, (t_voice *) voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
+                double note_x_real = stem_x + get_notehead_ux_shift((t_notation_obj *) x, curr_nt) * x->r_ob.zoom_y + curr_nt->notecenter_stem_delta_ux * x->r_ob.zoom_y;
+
+                for (i = 0; i < num_ledger_lines; i++)
+                    paint_line(g, x->r_ob.j_mainstaves_rgba, note_x_real - CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i],
+                               note_x_real + CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i], 1.);
+            }
+        }
+    }
+    
     // we draw the notes and the accidentals
     for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) { // cycle on the notes
-        // is the note IN the screen?
         if (is_notehead_inscreen_for_painting(x, curr_nt)) {
             
             // selection (or preselection):
@@ -11352,7 +11376,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             char is_note_played, is_note_locked, is_note_muted, is_note_solo;
             double note_y_real, note_x_real;
             double ledger_lines_y[CONST_MAX_LEDGER_LINES];
-            int num_ledger_lines; int i;
+            int num_ledger_lines = 0; int i;
             long scaleposition;
             double notehead_uwidth;
             double end_pos = onset_to_xposition_roll((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
@@ -11397,11 +11421,11 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             
             // draw ledger lines if needed
             scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
-            get_ledger_lines((t_notation_obj *) x, (t_voice *) voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
+/*            get_ledger_lines((t_notation_obj *) x, (t_voice *) voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
             for (i = 0; i < num_ledger_lines; i++)
                 paint_line(g, x->r_ob.j_mainstaves_rgba, note_x_real - CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i],
                            note_x_real + CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i], 1.);
-            
+            */
             
             //                            paint_line(g, build_jrgba(1, 0, 0, 0.5), chord_alignment_x, 0, chord_alignment_x, rect.height, 1.);
             //                            dev_post("note voice %ld; alignment_pt: %.2f, stem_x: %.2f, notehead_width: %.2f", voice->v_ob.number + 1,chord_alignment_x, stem_x, curr_nt->notehead_uwidth * x->r_ob.zoom_y);

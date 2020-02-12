@@ -2875,6 +2875,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
     }
 }
 
+
 void set_clefs_from_llll(t_score *x, t_llll* clefs)
 {
     if (clefs) {
@@ -3331,6 +3332,14 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
                             llll_destroyelem(pivot);
                             if (firstllll && firstllll->l_head)
                                 set_clefs_from_llll(x, firstllll);
+                        } else if (pivotsym == _llllobj_sym_voicespacing) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                notationobj_set_voicespacing_from_llll((t_notation_obj *)x, firstllll);
+                        } else if (pivotsym == _llllobj_sym_hidevoices) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                notationobj_set_hidevoices_from_llll((t_notation_obj *)x, firstllll);
                         } else if (pivotsym == _llllobj_sym_keys) {
                             llll_destroyelem(pivot);
                             if (firstllll && firstllll->l_head)
@@ -8974,8 +8983,15 @@ char need_to_show_ts(t_score *x, t_measure *measure)
 {
     char must_show = (measure->voiceparent->v_ob.part_index == 0 && (!measure->prev || !ts_are_equal(&measure->prev->timesignature, &measure->timesignature)));
     
-    if (must_show && x->r_ob.show_time_signatures == 2 && measure->voiceparent && measure->voiceparent->prev && (!measure->prev || is_barline_tuttipoint_with_same_ts((t_notation_obj *)x, measure->prev->end_barline)))
-        must_show = false;
+    if (must_show && x->r_ob.show_time_signatures == 2 && measure->voiceparent && (t_voice *)measure->voiceparent != voice_get_first_visible((t_notation_obj *)x)) {
+        if (!measure->prev) {
+            if (is_tuttipoint_with_same_ts((t_notation_obj *)x, measure->tuttipoint_reference))
+                must_show = false;
+        } else {
+            if (is_barline_tuttipoint_with_same_ts((t_notation_obj *)x, measure->prev->end_barline))
+                must_show = false;
+        }
+    }
     
     return must_show;
 }
@@ -9454,7 +9470,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         double note_y, note_y_real, note_x_real, notehead_uwidth;
                         long scaleposition;
                         double ledger_lines_y[CONST_MAX_LEDGER_LINES]; 
-                        int num_ledger_lines; int i;
+                        int num_ledger_lines = 0; int i;
                         double additional_notehead_correction;
                         char j;
                         double dot_x_offset, dot_y_offset;
@@ -10173,7 +10189,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             end_barline_x = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, tuttipoint_ux + curr_meas->start_barline_offset_ux + curr_meas->width_ux));
             
             if (x->r_ob.spacing_type == k_SPACING_PROPORTIONAL) {
-                end_barline_x += x->r_ob.barline_ushift_for_proportional_spacing * x->r_ob.zoom_y;
+                end_barline_x += x->r_ob.barline_ushift_for_proportional_spacing * x->r_ob.zoom_y; // barline_ushift_for_proportional_spacing is not exposed, so it's constantly 0
             }
             
             barline_type = curr_meas->end_barline->barline_type;
@@ -10648,7 +10664,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
             for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
                 if (voice->firstmeasure && voice->firstmeasure && unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.firsttuttipoint->offset_ux) > 0) {
                     if (need_to_show_ts(x, voice->firstmeasure)) {
-                        char big = (x->r_ob.show_time_signatures == 2);
+                        char big = (x->r_ob.show_time_signatures == 2 && is_tuttipoint_with_same_ts((t_notation_obj *)x, voice->firstmeasure->tuttipoint_reference));
                         paint_timesignature((t_notation_obj *) x, g, x->r_ob.j_mainstaves_rgba, big ? jf_ts_big : jf_ts, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, true), voice->firstmeasure, big);
                     }
                 }
@@ -10875,7 +10891,7 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
     jf_acc_bogus = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(8.8 * x->r_ob.zoom_y)); 
     jf_text_fractions = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_TEXT_FRACTIONS_PT * x->r_ob.zoom_y);
     jf_ts = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt_ts * x->r_ob.zoom_y);
-    jf_ts_big = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt_ts * x->r_ob.zoom_y * 2.);
+    jf_ts_big = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt_ts * x->r_ob.zoom_y * x->r_ob.big_time_signatures_ratio);
     jf_tempi = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(8.8 * x->r_ob.zoom_y));
     jf_measure_num = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.measure_numbers_font_size * x->r_ob.zoom_y));
 

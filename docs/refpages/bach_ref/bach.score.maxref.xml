@@ -8978,6 +8978,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="bigtsratio" get="1" set="1" type="float" size="1">
+			<digest>
+				Big Time Signatures Ratio
+			</digest>
+			<description>
+				Sets the expansion ratio for big time signatures
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Big Time Signatures Ratio" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="bordercolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Border Color
@@ -12134,7 +12150,7 @@
 				Show Barlines
 			</digest>
 			<description>
-				Toggles the display of barlines.
+				Sets a barline shift for proportional spacing display
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
@@ -12740,7 +12756,9 @@
 				Show Time Signatures
 			</digest>
 			<description>
-				Toggles the display of time signatures.
+				Toggles the display of time signatures: 0 = Hide, 1 = Classical display, 2 = Time signatures are
+				displayed above the staff (and with a single big time signature if they coincide across all voices, see also
+				the <m>bigtsratio</m> attribute.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
@@ -12748,7 +12766,7 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Time Signatures" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="showtupletspreferences" get="1" set="1" type="int" size="1">

@@ -690,6 +690,8 @@ typedef enum _header_elems {
     k_HEADER_NOTEHEADINFO = 2048,    ///< Custom noteheads information
     k_HEADER_NUMPARTS = 4096,        ///< Voice to part assignment information
     k_HEADER_LOOP = 8192,          ///< Loop position
+    k_HEADER_VOICESPACING = 16384,        ///< Voice spacing information
+    k_HEADER_HIDEVOICES = 32768,        ///< Voice hiding information
     k_HEADER_ALL = 0xFFFFFFFF,        ///< All the other #e_header_elems together
 } e_header_elems;
 
@@ -4603,6 +4605,7 @@ typedef struct _notation_obj
     char        draw_barlines_across_staves;            ///< Flag telling if we want to draw the barlines across all the staves, when possible
     double      barline_ushift_for_proportional_spacing;    ///< unscaled shift of barlines in proportional spacing display
     char        show_time_signatures;                    ///< Flag telline if we want to show the time signatures (0 = hide, 1 = classically, 2 = above staff)
+    double      big_time_signatures_ratio;              ///< Expansion ratio for big time signatures
     long        measure_number_offset;                    ///< Offset for the measure numbering (by default: 0)
     e_show_accidentals_preferences   show_accidentals_preferences;            ///< Preferences for accidental handling. When do we want to show the accidentals.
     e_show_accidentals_tie_preferences        show_accidentals_tie_preferences;        ///< Flag telling when we want to show accidentals at the end of a tie.
@@ -12227,6 +12230,10 @@ t_voice *voice_get_last_visible(t_notation_obj *r_ob);
  */
 t_llll *get_voicenames_as_llll(t_notation_obj *r_ob, char prepend_router);
 
+// TBD
+t_llll *get_voicespacing_as_llll(t_notation_obj *r_ob, char prepend_router);
+t_llll *get_hidevoices_as_llll(t_notation_obj *r_ob, char prepend_router);
+
 
 /**    Obtain an llll containing all clefs as symbols 
     @ingroup            notation_data
@@ -13756,6 +13763,7 @@ char is_barline_tuttipoint(t_notation_obj *r_ob, t_measure_end_barline *barline)
 
 //TBD
 char is_barline_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_measure_end_barline *barline);
+char is_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_tuttipoint *tpt);
 
 
 /**    Obtain all the barlines falling together with a given barline.
@@ -19167,6 +19175,8 @@ void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboar
 void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked_elem_ptr, long *clicked_elem_type);
 void notationobj_toggle_realtime_mode(t_notation_obj *r_ob, char realtime);
 void notationobj_setnotationcolors(t_notation_obj *r_ob, t_llll *ll);
+void notationobj_set_voicespacing_from_llll(t_notation_obj *r_ob, t_llll* voicespacing);
+void notationobj_set_hidevoices_from_llll(t_notation_obj *r_ob, t_llll* hidevoices);
 void tempo_to_char_buf(t_tempo *tempo, char *buf, long buf_size, long max_decimals);
 void time_to_char_buf(t_notation_obj *r_ob, double time_ms, char *buf, long buf_size);
 void select_markers_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);

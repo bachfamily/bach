@@ -5497,6 +5497,30 @@ t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, 
 	return MAX_ERR_NONE;
 }
 
+t_llll *get_voicespacing_as_llll(t_notation_obj *r_ob, char prepend_router)
+{
+    t_llll *outlist = llll_get();
+    long v = 0;
+    if (prepend_router)
+        llll_appendsym(outlist, _llllobj_sym_voicespacing);
+    for (v = 0; v < r_ob->num_voices+1; v++) {
+        llll_appenddouble(outlist, r_ob->voiceuspacing_as_floatlist[v]);
+    }
+    return outlist;
+}
+
+t_llll *get_hidevoices_as_llll(t_notation_obj *r_ob, char prepend_router)
+{
+    t_llll *outlist = llll_get();
+    long v = 0;
+    if (prepend_router)
+        llll_appendsym(outlist, _llllobj_sym_hidevoices);
+    for (v = 0; v < r_ob->num_voices; v++) {
+        llll_appendlong(outlist, r_ob->hidevoices_as_charlist[v]);
+    }
+    return outlist;
+}
+
 
 t_llll *get_voicenames_as_llll(t_notation_obj *r_ob, char prepend_router){
 	t_llll *outlist = llll_get();

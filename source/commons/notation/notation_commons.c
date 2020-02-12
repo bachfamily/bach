@@ -224,6 +224,18 @@ t_symbol *get_querying_label_from_GIMME(t_notation_obj *r_ob, t_symbol *s, long 
     return outsym;
 }
 
+
+char measure_has_visible_tempo(t_measure *meas)
+{
+    if (!meas)
+        return false;
+    for (t_tempo *tempo = meas->firsttempo; tempo; tempo = tempo->next) {
+        if (!tempo->hidden)
+            return true;
+    }
+    return false;
+}
+
 // painting stuff
 void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont *jf_ts, long clef, double staff_top, t_measure *curr_meas, char big)
 {
@@ -232,7 +244,7 @@ void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_
     double *tsbox_y1a = (double *) bach_newptr(num_ts * sizeof(double));
     double *tsbox_y1b = (double *) bach_newptr(num_ts * sizeof(double));
     double tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux + CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS); 
-    double tsbox_x_width = curr_meas->timesignature_uwidth * r_ob->zoom_y * (big ? 2 : 1);
+    double tsbox_x_width = curr_meas->timesignature_uwidth * r_ob->zoom_y * (big ? r_ob->big_time_signatures_ratio : 1);
     double tsbox_y_height;
     char num_txt[150]; char den_txt[50]; 
     long len_utf_num, len_utf_den;
@@ -250,8 +262,11 @@ void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_
         double this_staff_top, this_staff_bottom;
         switch (clef) {
             case k_CLEF_FFGG: case k_CLEF_GG: case k_CLEF_FGG: 
-            {    
-                this_staff_top = (i == 0) ? staff_top + 14 * r_ob->step_y : staff_top + (14 + 12) * r_ob->step_y; 
+            {
+                if (r_ob->show_time_signatures == 2)
+                    this_staff_top = (i == 0) ? staff_top : staff_top + 12 * r_ob->step_y;
+                else
+                    this_staff_top = (i == 0) ? staff_top + 14 * r_ob->step_y : staff_top + (14 + 12) * r_ob->step_y;
                 break; 
             }
             default: 
@@ -262,13 +277,20 @@ void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_
         }
 
         if (r_ob->show_time_signatures == 2) {
-            this_staff_top -= 10 * r_ob->step_y * (big ? 2 : 1) + 2.5 * r_ob->step_y;
+            this_staff_top -= 8 * r_ob->step_y * (big ? r_ob->big_time_signatures_ratio : 1);
+            
+            if (curr_meas && measure_has_visible_tempo(curr_meas))
+                this_staff_top -= 8 * r_ob->step_y + MAX(0, (r_ob->tempi_uy_pos - 24) * r_ob->zoom_y) + 4.5 * r_ob->step_y; // account for tempo, avoid overlapping
+            else if (curr_meas && !curr_meas->voiceparent->prev)
+                this_staff_top -= 4.5 * r_ob->step_y;
+            else
+                this_staff_top -= 2.5 * r_ob->step_y;
         }
         
         this_staff_bottom = this_staff_top + 8 * r_ob->step_y;
         
-        tsbox_y1a[i] = this_staff_top + r_ob->notation_typo_preferences.ts_uy_shift * r_ob->zoom_y * (big ? 2 : 1);
-        tsbox_y1b[i] = tsbox_y1a[i] + (big ? 2 : 1) * (this_staff_bottom - this_staff_top) / 2.;
+        tsbox_y1a[i] = this_staff_top + r_ob->notation_typo_preferences.ts_uy_shift * r_ob->zoom_y * (big ? r_ob->big_time_signatures_ratio : 1);
+        tsbox_y1b[i] = tsbox_y1a[i] + (big ? r_ob->big_time_signatures_ratio : 1) * (this_staff_bottom - this_staff_top) / 2.;
         
         tsbox_y_height = 80 * r_ob->zoom_y; 
         num_utf = charset_unicodetoutf8_debug(curr_meas->timesignature.num_unicode, curr_meas->timesignature.len_num, &len_utf_num);
@@ -1341,7 +1363,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     
     // ledger lines
     double ledger_lines_y[CONST_MAX_LEDGER_LINES]; 
-    int num_ledger_lines, i;
+    int num_ledger_lines = 0, i;
     get_ledger_lines(r_ob, voice, midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(foo)), &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
     for (i = 0; i < num_ledger_lines; i++)
         paint_line(g, r_ob->j_mainstaves_rgba, notehead_center_x - CONST_LEDGER_LINES_HALF_UWIDTH * small_note_ratio * r_ob->zoom_y, ledger_lines_y[i], 
@@ -2716,19 +2738,24 @@ char is_barline_tuttipoint(t_notation_obj *r_ob, t_measure_end_barline *barline)
     return 0;
 }
 
+char is_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_tuttipoint *tpt)
+{
+    if (tpt) {
+        for (long i = 1; i < r_ob->num_voices; i++)
+            if (!ts_are_equal(&tpt->measure[i-1]->timesignature, &tpt->measure[i]->timesignature))
+                return 0;
+        return 1;
+    }
+    return 0;
+}
+
 char is_barline_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_measure_end_barline *barline)
 {
     if (is_barline_tuttipoint(r_ob, barline)) {
         t_measure *meas = barline->owner;
         if (!meas->next)
             return 0;
-        t_tuttipoint *tpt = meas->next->tuttipoint_reference;
-        if (tpt) {
-            for (long i = 1; i < r_ob->num_voices; i++)
-                if (!ts_are_equal(&tpt->measure[i-1]->timesignature, &tpt->measure[i]->timesignature))
-                    return 0;
-            return 1;
-        }
+        return is_tuttipoint_with_same_ts(r_ob, meas->next->tuttipoint_reference);
     }
     return 0;
 }
@@ -11142,11 +11169,22 @@ char check_notes_order(t_chord *chord)
 }
 
 
+void append_ledger_line(double ypos, double *ledger_y, int *num_ledger_lines)
+{
+    if (*num_ledger_lines < CONST_MAX_LEDGER_LINES) {
+        for (long i = 0; i < *num_ledger_lines; i++) {
+            if (ypos == ledger_y[i])
+                return;
+        }
+        ledger_y[*num_ledger_lines] = ypos;
+        (*num_ledger_lines)++;
+    }
+}
+
 void get_ledger_lines(t_notation_obj *r_ob, t_voice *v_ob, long scaleposition, int *num_ledger_lines, double *ledger_y){
 // fills *ledger_y with the list of y ledger lines for the position scaleposition, and *num_ledger_lines with the number of ledger_lines
 // ledger_y must be sized at least CONST_MAX_LEDGER_LINES
 
-    int ledger_count = 0;
     int clef = get_voice_clef(r_ob, v_ob);
     
     if (r_ob->show_ledger_lines == 0) {
@@ -11161,9 +11199,7 @@ void get_ledger_lines(t_notation_obj *r_ob, t_voice *v_ob, long scaleposition, i
             if ((scaleposition + clef) % 2 != 0) 
                 scaleposition += 1; // increase scale position if on a space
             while (scaleposition <= (- clef) - 2 + 2 * (v_ob->min_staff_line - 1)) { 
-                ledger_count ++;
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition += 2;
             }
         }
@@ -11171,179 +11207,129 @@ void get_ledger_lines(t_notation_obj *r_ob, t_voice *v_ob, long scaleposition, i
             if ((scaleposition + clef) % 2 != 0) 
                 scaleposition -= 1; // decrease scale position if on a space
             while (scaleposition >= (- clef) + 10 + (v_ob->max_staff_line - 5) * 2)  { // higher ledger lines
-                ledger_count ++;
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition -= 2;
             }
         }
     } else if (clef == k_CLEF_FFGG) { 
         // ledger lines needed in scalepositions ranges: (0 0) (12 14) (26 inf) (-12 -14) (-26 -inf)
         if (scaleposition == 0) { // case of middleC 
-            ledger_count ++;
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = v_ob->middleC_y;
+            append_ledger_line(v_ob->middleC_y, ledger_y, num_ledger_lines);
         }
         if ((scaleposition >= 12 && scaleposition <= 14) || (scaleposition > 14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, 12, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, 12, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition == 14 || (scaleposition > 14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, 14, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, 14, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition >= 26) {    
             if (scaleposition % 2 != 0) scaleposition -= 1; // decrease scale position if on a space
             while (scaleposition >= 26)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition -= 2;
             }
         }
         if ((scaleposition <= -12 && scaleposition >= -14) || (scaleposition < -14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, -12, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, -12, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition == -14 || (scaleposition < -14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, -14, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, -14, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition <= -26) {    
             if (scaleposition % 2 != 0) scaleposition += 1; // decrease scale position if on a space
             while (scaleposition <= -26)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition += 2;
             }
         }
     } else if (clef == k_CLEF_FFG) { 
         // ledger lines needed in scalepositions ranges: (0 0) (12 inf) (-12 -14) (-26 -inf)
         if (scaleposition == 0) { // case of middleC 
-            ledger_count ++;
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = v_ob->middleC_y;
+            append_ledger_line(v_ob->middleC_y, ledger_y, num_ledger_lines);
         }
         if (scaleposition >= 12) {    
             if (scaleposition % 2 != 0) scaleposition -= 1; // decrease scale position if on a space
             while (scaleposition >= 12)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition -= 2;
             }
         }
         if ((scaleposition <= -12 && scaleposition >= -14) || (scaleposition < -14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, -12, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, -12, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition == -14 || (scaleposition < -14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, -14, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, -14, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition <= -26) {    
             if (scaleposition % 2 != 0) scaleposition += 1; // decrease scale position if on a space
             while (scaleposition <= -26)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition += 2;
             }
         }    
     } else if (clef == k_CLEF_FGG) { 
         // ledger lines needed in scalepositions ranges: (0 0) (12 14) (26 inf) (-12 -inf)
         if (scaleposition == 0) { // case of middleC 
-            ledger_count ++;
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = v_ob->middleC_y;
+            append_ledger_line(v_ob->middleC_y, ledger_y, num_ledger_lines);
         }
         if ((scaleposition >= 12 && scaleposition <= 14) || (scaleposition > 14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, 12, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, 12, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition == 14 || (scaleposition > 14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, 14, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, 14, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition >= 26) {    
             if (scaleposition % 2 != 0) scaleposition -= 1; // decrease scale position if on a space
             while (scaleposition >= 26)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition -= 2;
             }
         }
         if (scaleposition <= -12) {    
             if (scaleposition % 2 != 0) scaleposition += 1; // decrease scale position if on a space
             while (scaleposition <= -12)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition += 2;
             }
         }
     } else if (clef == k_CLEF_GG) { 
         // ledger lines needed in scalepositions ranges: (0 -inf) (12 14) (26 inf)
         if ((scaleposition >= 12 && scaleposition <= 14) || (scaleposition > 14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, 12, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, 12, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition == 14 || (scaleposition > 14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, 14, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, 14, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition >= 26) {    
             if (scaleposition % 2 != 0) scaleposition -= 1; // decrease scale position if on a space
             while (scaleposition >= 26)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition -= 2;
             }
         }
         if (scaleposition <= 0) {    
             if (scaleposition % 2 != 0) scaleposition += 1; // decrease scale position if on a space
             while (scaleposition <= 0)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition += 2;
             }
         }
     } else if (clef == k_CLEF_FG) { 
         // ledger lines needed in scalepositions ranges: (0 0) (12 inf) (-12 -inf)
         if (scaleposition == 0) { // case of middleC 
-            ledger_count ++;
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = v_ob->middleC_y;
+            append_ledger_line(v_ob->middleC_y, ledger_y, num_ledger_lines);
         }
         if (scaleposition >= 12) {    
             if (scaleposition % 2 != 0) scaleposition -= 1; // decrease scale position if on a space
             while (scaleposition >= 12)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition -= 2;
             }
         }
         if (scaleposition <= -12) {    
             if (scaleposition % 2 != 0) scaleposition += 1; // decrease scale position if on a space
             while (scaleposition <= -12)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition += 2;
             }
         }
@@ -11352,36 +11338,26 @@ void get_ledger_lines(t_notation_obj *r_ob, t_voice *v_ob, long scaleposition, i
         if (scaleposition >= 0) {    
             if (scaleposition % 2 != 0) scaleposition -= 1; // decrease scale position if on a space
             while (scaleposition >= 0)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition -= 2;
             }
         }
         if ((scaleposition <= -12 && scaleposition >= -14) || (scaleposition < -14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, -12, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, -12, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition == -14 || (scaleposition < -14 && r_ob->show_ledger_lines == 2)) {    
-            ledger_count ++;    
-            if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-            ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, -14, v_ob); 
+            append_ledger_line(scaleposition_to_yposition(r_ob, -14, v_ob), ledger_y, num_ledger_lines);
         }
         if (scaleposition <= -26) {    
             if (scaleposition % 2 != 0) scaleposition += 1; // decrease scale position if on a space
             while (scaleposition <= -26)  { // higher ledger lines
-                ledger_count ++;    
-                if (ledger_count > CONST_MAX_LEDGER_LINES) {    *num_ledger_lines = ledger_count - 1; return;    }
-                ledger_y[ledger_count - 1] = scaleposition_to_yposition(r_ob, scaleposition, v_ob);
+                append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
                 scaleposition += 2;
             }
         }    
     } else {
         // wrong combination: no ledger lines
     }
-    
-    *num_ledger_lines = ledger_count;
 }
 
 
@@ -22379,6 +22355,10 @@ e_header_elems header_objects_to_long(t_llll *inllll){
                 res = (e_header_elems) (res | k_HEADER_SLOTINFO);
             else if (this_sym == _llllobj_sym_voicenames)
                 res = (e_header_elems) (res | k_HEADER_VOICENAMES);
+            else if (this_sym == _llllobj_sym_voicespacing)
+                res = (e_header_elems) (res | k_HEADER_VOICESPACING);
+            else if (this_sym == _llllobj_sym_hidevoices)
+                res = (e_header_elems) (res | k_HEADER_HIDEVOICES);
             else if (this_sym == _llllobj_sym_stafflines)
                 res = (e_header_elems) (res | k_HEADER_STAFFLINES);
             else if (this_sym == _llllobj_sym_articulationinfo)
@@ -35712,7 +35692,6 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     // randomizing
     srand(time(NULL));
 
-    
     // Inspector is bach inspector
     r_ob->m_inspector.bach_managing = true;
     
@@ -35747,6 +35726,8 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->default_noteslots = llll_get();
     r_ob->default_velocity = CONST_DEFAULT_NEW_NOTE_VELOCITY;
     
+    r_ob->big_time_signatures_ratio = 2.;
+
     r_ob->force_diatonic_step = -1;
     r_ob->linear_edit_last_inserted_dur = '4';
 
@@ -37943,6 +37924,26 @@ double get_max_key_uwidth(t_notation_obj *r_ob) {
     return max_width;
 }
 
+
+void notationobj_set_voicespacing_from_llll(t_notation_obj *r_ob, t_llll* voicespacing)
+{
+    if (voicespacing) {
+        t_atom *av = NULL;
+        long ac = llll_deparse(voicespacing, &av, 0, LLLL_D_NONE);
+        notation_obj_setattr_voicespacing(r_ob, NULL, ac, av);
+        if (av) bach_freeptr(av);
+    }
+}
+
+void notationobj_set_hidevoices_from_llll(t_notation_obj *r_ob, t_llll* hidevoices)
+{
+    if (hidevoices) {
+        t_atom *av = NULL;
+        long ac = llll_deparse(hidevoices, &av, 0, LLLL_D_NONE);
+        notation_obj_setattr_hidevoices(r_ob, NULL, ac, av);
+        if (av) bach_freeptr(av);
+    }
+}
 
 t_max_err notation_obj_setattr_showmeasurenumbers(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
@@ -41292,7 +41293,13 @@ t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, ch
         
         if (dump_what & k_HEADER_VOICENAMES)
             llll_appendllll(out_llll, get_voicenames_as_llll(r_ob, true), 0, WHITENULL_llll);
-        
+
+        if (dump_what & k_HEADER_VOICESPACING)
+            llll_appendllll(out_llll, get_voicespacing_as_llll(r_ob, true), 0, WHITENULL_llll);
+
+        if (dump_what & k_HEADER_HIDEVOICES)
+            llll_appendllll(out_llll, get_hidevoices_as_llll(r_ob, true), 0, WHITENULL_llll);
+
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
             if (dump_what & k_HEADER_GROUPS) 
                 llll_appendllll(out_llll, get_groups_for_dump_as_llll(r_ob, 0, 0, 0), 0, WHITENULL_llll);

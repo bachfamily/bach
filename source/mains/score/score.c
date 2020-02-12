@@ -7340,9 +7340,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showbarlines", 0, "1");
     // @description Toggles the display of barlines.
 
-    CLASS_ATTR_DOUBLE(c,"barlineshift", 0, t_notation_obj, barline_ushift_for_proportional_spacing);
-    CLASS_ATTR_STYLE_LABEL(c,"barlineshift", 0, "text", "Barline Shift In Proportional Spacing");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"barlineshift", 0, "0");
+    // this one is not exposed.
+//    CLASS_ATTR_DOUBLE(c,"barlineshift", 0, t_notation_obj, barline_ushift_for_proportional_spacing);
+//    CLASS_ATTR_STYLE_LABEL(c,"barlineshift", 0, "text", "Barline Shift In Proportional Spacing");
+//    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"barlineshift", 0, "0");
+    // @ignore all
     // @description Sets a barline shift for proportional spacing display
 
     CLASS_ATTR_CHAR(c,"showbarlinelocks", 0, t_notation_obj, show_barline_locks);
@@ -7368,7 +7370,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_ENUMINDEX(c,"showtimesignatures", 0, "Hide Classically Above Staff");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtimesignatures", 0, "1");
     CLASS_ATTR_ACCESSORS(c, "showtimesignatures", (method)NULL, (method)score_setattr_showtimesignatures);
-    // @description Toggles the display of time signatures.
+    // @description Toggles the display of time signatures: 0 = Hide, 1 = Classical display, 2 = Time signatures are
+    // displayed above the staff (and with a single big time signature if they coincide across all voices, see also
+    // the <m>bigtsratio</m> attribute.
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
@@ -7391,6 +7395,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // If less symbols are entered, the other elements are considered to be 1.
     // Hiding voices does not affect the spacing of existing voices, which will continue to take into account the hidden voices.
     
+    CLASS_ATTR_DOUBLE(c,"bigtsratio",0, t_notation_obj, big_time_signatures_ratio);
+    CLASS_ATTR_STYLE_LABEL(c,"bigtsratio",0,"text","Big Time Signatures Ratio");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bigtsratio",0,"2.");
+    CLASS_ATTR_BASIC(c,"bigtsratio",0);
+    // @description Sets the expansion ratio for big time signatures
+
     CLASS_ATTR_DOUBLE(c,"zoom",0, t_notation_obj, horizontal_zoom);
     CLASS_ATTR_STYLE_LABEL(c,"zoom",0,"text","Horizontal Zoom %");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"zoom",0,"100.");

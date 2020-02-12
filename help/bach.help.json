@@ -1409,8 +1409,15 @@
 				"tags" : [ "appearance", "tempo", "synchronous", "tempi", "showsynchronoustempionce", "show", "display" ],
 				"title" : [ "Synchronous tempi" ]
 			},
+			"Timesignatures" : {
+				"filename" : [ "bach.help.notation.appearance.23_timesignatures.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "tempo" ],
+				"tags" : [ "appearance", "time", "signature", "timesignature", "timesig", "big", "large", "display" ],
+				"title" : [ "Time signature display" ]
+			},
 			"Tiesdisplay" : {
-				"filename" : [ "bach.help.notation.appearance.23_tiesdisplay.maxpat" ],
+				"filename" : [ "bach.help.notation.appearance.24_tiesdisplay.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "change+pitch", "tie", "slot+tie" ],
 				"tags" : [ "appearance", "display single", "duration", "line", "span", "dlspansties", "dl", "tie", "edittiedelementstogether", "together", "sequence", "hide", "hidden" ],
@@ -5836,11 +5843,18 @@
 					"title" : [ "Output header" ]
 				},
 				"Keysclefsnamesmidichannels" : {
-					"filename" : [ "bach.help.notation.syntax.50_header.10_keysclefsnamesmidichannels.maxpat" ],
+					"filename" : [ "bach.help.notation.syntax.50_header.09_keysclefsnamesmidichannels.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "gathered+syntax+whole", "syntax+header", "voice+clef", "voice+key+signature", "voice+name", "voice+midichannel" ],
 					"tags" : [ "header", "syntax", "clef", "key", "signature", "midi", "channel", "midichannel", "voice", "name", "voicename" ],
 					"title" : [ "Clefs, keys, voice names, MIDI channels" ]
+				},
+				"Voicespacinghidevoices" : {
+					"filename" : [ "bach.help.notation.syntax.50_header.10_voicespacinghidevoices.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "voicespacing", "hidevoices" ],
+					"tags" : [ "header", "syntax", "voice", "space", "spacing", "hide", "hidevoices", "voicespacing" ],
+					"title" : [ "Voice spacing, hide voices" ]
 				},
 				"Stafflines" : {
 					"filename" : [ "bach.help.notation.syntax.50_header.11_stafflines.maxpat" ],
