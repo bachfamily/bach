@@ -17,6 +17,7 @@
  *
  */
 
+#include "foundation/llll_files.h"
 #include "bell/bach_codableobj.hpp"
 #include "bell/ast.hpp"
 #include "bell/pvManager.hpp"
@@ -150,7 +151,7 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
         codableobj_accept_good_code(x, oldMain, oldCode);
         if (x->c_filename) {
             *result = 0;
-            codableobj_add_default_filewatcher(x);
+            codableobj_replace_default_filewatcher(x);
         } else {
             *result = 3;
         }
@@ -174,10 +175,10 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
                     sysmem_freeptr(oldCode);
                     if (oldMain)
                         oldMain->decrease();
-                    codableobj_clear_filewatchers(x);
+                    codableobj_clear_all_filewatchers(x);
                     if (x->c_filename) {
                         *result = 0;
-                        codableobj_add_default_filewatcher(x);
+                        codableobj_replace_default_filewatcher(x);
                     } else
                         *result = 3;
                     object_error((t_object *) x, "Ignoring bad code in the editor");
@@ -418,10 +419,33 @@ void codableobj_dblclick_helper(t_codableobj *x, t_symbol *title)
         object_free(ed);
         return;
     }
-    if (x->c_filename)
+    if (x->c_filename) {
         object_method(x->c_editor, gensym("filename"), x->c_filename, x->c_path);
-    else
-        object_attr_setsym(x->c_editor, gensym("title"), gensym("code"));
+    } else {
+        std::string folder = bach_get_cache_path();
+        char *folder_cstr = (char *) bach_newptr(folder.length() + 1);
+        std::strcpy(folder_cstr, folder.c_str());
+        short path = 0;
+        t_fourcc type;
+        locatefile_extended(folder_cstr, &path, &type, NULL, 0);
+        std::string spName = "scratchpad.bell";
+        t_fileinfo dummy;
+        for (long i = 1; !path_fileinfo(spName.c_str(), path, &dummy); i++) {
+            spName = "scratchpad";
+            spName += std::to_string(i);
+            spName += ".bell";
+        }
+        char *spName_cstr = (char *) bach_newptr(spName.length() + 1);
+        strncpy_zero(spName_cstr, spName.c_str(), spName.length() + 1);
+        codableobj_writefile(x, spName_cstr, path);
+        x->c_filename = spName_cstr;
+        x->c_path = path;
+        x->c_scratchpad = true;
+        codableobj_replace_default_filewatcher(x);
+        object_method(x->c_editor, gensym("filename"), x->c_filename, x->c_path);
+        bach_freeptr(folder_cstr);
+    }
+    object_method(x->c_editor, gensym("openwindow"));
 }
 
 void codableobj_edclose(t_codableobj *x, char **ht, long size)
@@ -533,7 +557,7 @@ t_bool codableobj_doreadagain(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
     if (x->c_filename != nullptr) {
         return codableobj_readfile(x, x->c_filename, x->c_path);
     } else {
-        object_error((t_object *) x, "no previously open file");
+        object_error((t_object *) x, "no open file");
         return false;
     }
 }
@@ -584,13 +608,19 @@ t_bool codableobj_readfile(t_codableobj *x, char *filename, short path)
     err = codableobj_buildAst(x, &dummyfirstattr);
     
     if (!err) {
+        if (!x->c_filechanged) {
+            codableobj_delete_scratchpad(x);
+            x->c_scratchpad = false;
+        }
         if (x->c_filename)
             bach_freeptr(x->c_filename);
         x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
         strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
         x->c_path = path;
-        codableobj_add_default_filewatcher(x);
+        if (!x->c_filechanged)
+            codableobj_replace_default_filewatcher(x);
         codableobj_accept_good_code(x, oldMain, oldCode);
+        x->c_filechanged = false;
         return true;
     } else {
         if (x->c_forceread) {
@@ -599,18 +629,23 @@ t_bool codableobj_readfile(t_codableobj *x, char *filename, short path)
             if (oldMain)
                 oldMain->decrease();
             x->c_main = nullptr;
+            if (!x->c_filechanged) {
+                codableobj_delete_scratchpad(x);
+                x->c_scratchpad = false;
+            }
             if (x->c_filename)
                 bach_freeptr(x->c_filename);
             x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
             strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
             x->c_path = path;
-            codableobj_clear_filewatchers(x);
-            codableobj_add_default_filewatcher(x);
-            if (x->c_watch)
-                codableobj_start_filewatchers(x);
+            codableobj_clear_included_filewatchers(x);
+            if (!x->c_filechanged)
+                codableobj_replace_default_filewatcher(x);
+            x->c_filechanged = false;
             return true;
         } else {
             codableobj_reject_bad_code(x, oldMain, oldCode);
+            x->c_filechanged = false;
             return false;
         }
     }
@@ -632,13 +667,29 @@ void codableobj_writeagain(t_codableobj *x)
         object_error((t_object *) x, "No text to write");
 }
 
+void codableobj_delete_scratchpad(t_codableobj *x)
+{
+    if (x->c_scratchpad) {
+        std::string home = bach_get_user_folder_path();
+#ifdef MAC_VERSION
+        std::string name = home + "/Library/Application Support/bach/cache/" + x->c_filename;
+#endif
+#ifdef WIN_VERSION
+        static const std::string bs = "\\";
+        std::string folder = home + bs + "bach";
+        std::string name = folder + bs + x->c_filename;
+#endif
+        remove(name.c_str());
+    }
+}
+
 void codableobj_dowrite(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
 {
     t_fourcc filetype = 'BELL', outtype;
     //short numtypes = 1;
     char filename[MAX_FILENAME_CHARS];
     short path;
-    if (s == gensym("")) {      // if no argument supplied, ask for file
+    if (!s || s == gensym("")) {      // if no argument supplied, ask for file
         strncpy_zero(filename, "untitled.bell", MAX_FILENAME_CHARS);
         if (saveasdialog_extended(filename, &path, &outtype, &filetype, 1))     // non-zero: user cancelled
             return;
@@ -646,14 +697,20 @@ void codableobj_dowrite(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
         strcpy(filename, s->s_name);
         path = path_getdefault();
     }
+    
     codableobj_writefile(x, filename, path);
+    codableobj_replace_default_filewatcher(x);
 }
 
 void codableobj_dowriteagain(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
 {
-    char filename[MAX_FILENAME_CHARS];
-    strcpy(filename, x->c_filename);
-    codableobj_writefile(x, filename, x->c_path);
+    if (x->c_filename && !x->c_scratchpad) {
+        char filename[MAX_FILENAME_CHARS];
+        strcpy(filename, x->c_filename);
+        codableobj_writefile(x, filename, x->c_path);
+    } else {
+        object_error((t_object *) x, "no open file");
+    }
 }
 
 void codableobj_writefile(t_codableobj *x, char *filename, short path)
@@ -668,9 +725,18 @@ void codableobj_writefile(t_codableobj *x, char *filename, short path)
     err = sysfile_writetextfile(fh, h, TEXT_LB_NATIVE);
     if (!err) {
         x->c_path = path;
+        codableobj_delete_scratchpad(x);
         if (x->c_filename)
             sysmem_freeptr(x->c_filename);
+        x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
         strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
+        if (x->c_scratchpad) {
+            if (x->c_editor) {
+                object_free(x->c_editor);
+                codableobj_dblclick_helper(x, nullptr);
+            }
+            x->c_scratchpad = false;
+        }
     }
     sysfile_close(fh);
     sysmem_freehandle(h);
@@ -729,7 +795,7 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
                 object_error((t_object *) x, "Ignoring bad code in the editor");
             } else {
                 if (x->c_watch)
-                    codableobj_start_filewatchers(x);
+                    codableobj_start_all_filewatchers(x);
             }
         }
     }
@@ -763,13 +829,14 @@ void codableobj_free(t_codableobj *x)
         x->c_main->decrease();
     //if (x->c_text)
     //    sysmem_freeptr(x->c_text);
+    codableobj_delete_scratchpad(x);
     if (x->c_filename)
         bach_freeptr(x->c_filename);
     for (int i = 0; i < x->c_nparams; i++)
         llll_free(x->c_paramsvalues[i]);
     llll_free(x->c_paramsll);
     codableobj_removeAllVarTriggers(x);
-    codableobj_clear_filewatchers(x);
+    codableobj_clear_all_filewatchers(x);
     delete x->c_ofTable;
     object_free_debug(x->c_editor);
     llllobj_obj_free((t_llllobj_object *) x);
@@ -784,7 +851,7 @@ void codableobj_accept_good_code(t_codableobj *x, t_mainFunction* oldMain, char*
     codableobj_resolvepatchervars(x, NULL, 0, NULL);
     codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
     if (x->c_watch)
-        codableobj_start_filewatchers(x);
+        codableobj_start_all_filewatchers(x);
     if (x->c_auto) {
         object_method(x, _sym_bang);
     }
@@ -822,9 +889,9 @@ void codableobj_watch_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
     if (ac && av) {
         x->c_watch = atom_getlong(av);
         if (x->c_watch)
-            codableobj_start_filewatchers(x);
+            codableobj_start_all_filewatchers(x);
         else
-            codableobj_stop_filewatchers(x);
+            codableobj_stop_all_filewatchers(x);
     }
 }
 
@@ -842,6 +909,7 @@ void codableobj_filechanged(t_codableobj *x, char *filename, short path)
     object_post((t_object *) x, "Reloading %s", filename);
     if (x->c_filename && !strncmp(filename, x->c_filename, MAX_PATH_CHARS) &&
         path == x->c_path) {
+        x->c_filechanged = true;
         codableobj_doreadagain(x, NULL, 0, NULL);
     } else {
         t_mainFunction *oldMain = x->c_main;
@@ -940,7 +1008,10 @@ short codableobj_setup(t_codableobj *x, short ac, t_atom *av)
     
     x->c_ofTable = new t_ofTable;
     codableobj_ownedFunctionsSetup(x);
-
+    
+    x->c_text = (char *) bach_newptr(2);
+    strncpy_zero(x->c_text, " ", 2);
+    
     long next = codableobj_parseLambdaAttrArg(x, &attr_ac, attr_av);
     
     if (next == -2) {
@@ -979,18 +1050,28 @@ t_llll *codableobj_run(t_codableobj* x, t_execEnv &context)
     return x->c_main->call(context);
 }
 
-void codableobj_clear_filewatchers(t_codableobj* x)
+void codableobj_clear_all_filewatchers(t_codableobj* x)
+{
+    codableobj_clear_included_filewatchers(x);
+    bach_atomic_lock(&x->c_fw_lock);
+    if (x->c_default_filewatcher) {
+        object_free(x->c_default_filewatcher);
+        x->c_default_filewatcher = nullptr;
+    }
+    bach_atomic_unlock(&x->c_fw_lock);
+}
+
+void codableobj_clear_included_filewatchers(t_codableobj* x)
 {
     bach_atomic_lock(&x->c_fw_lock);
     long n = x->c_nfilewatchers;
     for (int i = 0; i < n; i++) {
-        object_free_debug(x->c_filewatchers[i]);
+        object_free(x->c_filewatchers[i]);
     }
-    x->c_nfilewatchers = 0;
     bach_atomic_unlock(&x->c_fw_lock);
 }
 
-void codableobj_add_filewatchers(t_codableobj* x, const fileidSet* files)
+void codableobj_add_included_filewatchers(t_codableobj* x, const fileidSet* files)
 {
     bach_atomic_lock(&x->c_fw_lock);
     int i = x->c_nfilewatchers;
@@ -1002,41 +1083,56 @@ void codableobj_add_filewatchers(t_codableobj* x, const fileidSet* files)
     bach_atomic_unlock(&x->c_fw_lock);
 }
 
-void codableobj_add_one_filewatcher(t_codableobj *x, const t_fileid* file)
+t_object* codableobj_add_one_filewatcher(t_codableobj *x, const t_fileid* file)
 {
-    codableobj_add_one_filewatcher(x, file->path, file->name.c_str());
+    return codableobj_add_one_filewatcher(x, file->path, file->name.c_str());
 }
 
-
-void codableobj_add_one_filewatcher(t_codableobj *x, const short path, const char* name)
+t_object* codableobj_add_one_filewatcher(t_codableobj *x, const short path, const char* name)
 {
+    t_object *fw = (t_object *) filewatcher_new((t_object *) x, path, name);
     bach_atomic_lock(&x->c_fw_lock);
-    x->c_filewatchers[x->c_nfilewatchers++] = (t_object *) filewatcher_new((t_object *) x, path, name);
+    x->c_filewatchers[x->c_nfilewatchers++] = fw;
     bach_atomic_unlock(&x->c_fw_lock);
+    return fw;
 }
 
-void codableobj_add_default_filewatcher(t_codableobj *x)
+void codableobj_replace_default_filewatcher(t_codableobj *x)
 {
     if (x->c_filename) {
-        codableobj_add_one_filewatcher(x, x->c_path, x->c_filename);
+        bach_atomic_lock(&x->c_fw_lock);
+        if (x->c_default_filewatcher) {
+            if (x->c_watch || x->c_scratchpad)
+                filewatcher_stop(x->c_default_filewatcher);
+            object_free(x->c_default_filewatcher);
+        }
+        x->c_default_filewatcher = (t_object *) filewatcher_new((t_object *) x, x->c_path, x->c_filename);
+        if (x->c_watch || x->c_scratchpad)
+            filewatcher_start(x->c_default_filewatcher);
+        bach_atomic_unlock(&x->c_fw_lock);
     }
 }
 
-void codableobj_start_filewatchers(t_codableobj* x)
+
+void codableobj_start_all_filewatchers(t_codableobj* x)
 {
     bach_atomic_lock(&x->c_fw_lock);
     int n = x->c_nfilewatchers;
     for (int i = 0; i < n; i++)
         filewatcher_start(x->c_filewatchers[i]);
+    if (x->c_default_filewatcher)
+        filewatcher_start(x->c_default_filewatcher);
     bach_atomic_unlock(&x->c_fw_lock);
 }
 
-void codableobj_stop_filewatchers(t_codableobj* x)
+void codableobj_stop_all_filewatchers(t_codableobj* x)
 {
     bach_atomic_lock(&x->c_fw_lock);
     int n = x->c_nfilewatchers;
     for (int i = 0; i < n; i++)
         filewatcher_stop(x->c_filewatchers[i]);
+    if (x->c_default_filewatcher)
+        filewatcher_stop(x->c_default_filewatcher);
     bach_atomic_unlock(&x->c_fw_lock);
 }
 
