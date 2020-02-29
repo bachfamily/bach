@@ -6,7 +6,11 @@ v0.8.2b
 *** VERSION CHANGES ***
 ***********************
 
+authorization: now the code for a given year can be entered until January of the next year
+
 - bell: fixed various memory leaks
+    primeser: the second argument may be left unset
+    fixed parsing of pitch literals
 
 - bach.reg, bach.value, bach.pv
     Fixed memory leak related to the text editor window

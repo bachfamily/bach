@@ -162,6 +162,7 @@
     t_parseParams *params,
     const char *s);
     
+    
     YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf);
     void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
     
@@ -1373,8 +1374,8 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
             params.name2patcherVars,
             x
         );
-        codableobj_clear_filewatchers(x);
-        codableobj_add_filewatchers(x, &lexparams.files);
+        codableobj_clear_included_filewatchers(x);
+        codableobj_add_included_filewatchers(x, &lexparams.files);
         return mainFunction;
     } else {
         object_error((t_object *) x, "Syntax errors present — couldn't parse code");
@@ -1382,11 +1383,4 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     }
 }
 
-int yyerror(yyscan_t myscanner, t_parseParams *params, const char *s)
-{
-    params->ast = nullptr;
-    object_error((t_object *) params->owner, "error: %s\n", s);
-    cpost("error: %s\n", s);
 
-    return 0;
-}
