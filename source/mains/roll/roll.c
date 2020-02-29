@@ -9977,7 +9977,13 @@ t_chord* addchord_from_notes(t_roll *x, long voicenumber, double onset, long unu
     
     // compute the approximation
     curr_nt = this_ch->firstnote;  
-    while(curr_nt) {
+    while (curr_nt) {
+        
+#ifdef BACH_NOTES_HAVE_ID
+        if (curr_nt->r_it.ID <= 0)
+            curr_nt->r_it.ID = shashtable_insert(x->r_ob.IDtable, curr_nt);
+#endif
+       
         curr_nt->parent = this_ch;
         curr_nt = curr_nt->next;
     }
