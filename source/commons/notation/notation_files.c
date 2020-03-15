@@ -136,6 +136,22 @@ void append_barline_to_midi_export(t_llll *track_ll, long time)
 	llll_appendllll(track_ll, barline_ll, 0, WHITENULL_llll);
 }
 
+void append_division_to_midi_export(t_llll *track_ll, long time)
+{
+    t_llll *barline_ll = llll_get();
+    llll_appendlong(barline_ll, E_DIVISION, 0, WHITENULL_llll);
+    llll_appendlong(barline_ll, time, 0, WHITENULL_llll);
+    llll_appendllll(track_ll, barline_ll, 0, WHITENULL_llll);
+}
+
+void append_subdivision_to_midi_export(t_llll *track_ll, long time)
+{
+    t_llll *barline_ll = llll_get();
+    llll_appendlong(barline_ll, E_SUBDIVISION, 0, WHITENULL_llll);
+    llll_appendlong(barline_ll, time, 0, WHITENULL_llll);
+    llll_appendllll(track_ll, barline_ll, 0, WHITENULL_llll);
+}
+
 void get_timesig_from_marker(t_llll *marker_contents_ll, long *timesig_num, long *timesig_den)
 {
 	*timesig_den = hatom_getlong(&marker_contents_ll->l_tail->l_hatom);
@@ -318,6 +334,32 @@ long create_raw_midi_data_buffer(t_llll **track_ll, long num_tracks, long format
                             break;
                         const char *barline_txt = "bach barline";
                         const long barline_txt_size = 12; // doesn't contain terminator
+                        write_to_buf_value(0xFF, buffer, 1, &pos, &size);
+                        write_to_buf_value(0x06, buffer, 1, &pos, &size);
+                        chunksize += 2;
+                        chunksize += write_to_buf_vlen_value(barline_txt_size, buffer, &pos, &size); // len
+                        write_to_buf_ptr(barline_txt, buffer, barline_txt_size, &pos, &size);
+                        chunksize += barline_txt_size;
+                        break;
+                    }
+                    case E_DIVISION: {
+                        if (llll_eq_matchtype(this_elem_ll, prev_elem_ll))
+                            break;
+                        const char *barline_txt = "bach division";
+                        const long barline_txt_size = 13; // doesn't contain terminator
+                        write_to_buf_value(0xFF, buffer, 1, &pos, &size);
+                        write_to_buf_value(0x06, buffer, 1, &pos, &size);
+                        chunksize += 2;
+                        chunksize += write_to_buf_vlen_value(barline_txt_size, buffer, &pos, &size); // len
+                        write_to_buf_ptr(barline_txt, buffer, barline_txt_size, &pos, &size);
+                        chunksize += barline_txt_size;
+                        break;
+                    }
+                    case E_SUBDIVISION: {
+                        if (llll_eq_matchtype(this_elem_ll, prev_elem_ll))
+                            break;
+                        const char *barline_txt = "bach subdivision";
+                        const long barline_txt_size = 16; // doesn't contain terminator
                         write_to_buf_value(0xFF, buffer, 1, &pos, &size);
                         write_to_buf_value(0x06, buffer, 1, &pos, &size);
                         chunksize += 2;
