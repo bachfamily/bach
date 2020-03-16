@@ -515,7 +515,7 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
                                 }
                                 if (markdivisions) {
                                     while ((long) next_division < next_good_ts_onset && (long) next_division <= abstime) {
-                                        append_division_to_midi_import(all_events, markers_ll, next_division);
+                                        llll_appendobj(all_calculated_divisions, append_division_to_midi_import(all_events, markers_ll, next_division));
                                         next_division += beat_duration;
                                     }
                                 }
@@ -588,6 +588,37 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 		hashtab_clear(noteons);
 	}
 	
+    
+    if (are_there_imported_barlines) {
+        if (all_calculated_barlines->l_size) {
+            object_warn((t_object*) x, "Removed calculated barlines as there are barline markers in the MIDI file");
+        }
+        for (t_llllelem *barline_ref = all_calculated_barlines->l_head; barline_ref; barline_ref = barline_ref->l_next) {
+            t_llllelem *event_elem = barline_ref->l_hatom.h_w.w_llllelem; // contained in all_events
+            t_llll *this_marker_ll = event_elem->l_hatom.h_w.w_llll->l_tail->l_hatom.h_w.w_llll;
+            t_bool check1 = event_elem->l_parent == all_events;
+            t_bool check2 = this_marker_ll->l_owner->l_parent == markers_ll;
+            
+            llll_destroyelem(event_elem);
+            llll_destroyelem(this_marker_ll->l_owner);
+        }
+    }
+    
+    if (are_there_imported_divisions) {
+        if (all_calculated_divisions->l_size) {
+            object_warn((t_object*) x, "Removed calculated divisions as there are division markers in the MIDI file");
+        }
+        for (t_llllelem *division_ref = all_calculated_divisions->l_head; division_ref; division_ref = division_ref->l_next) {
+            t_llllelem *event_elem = division_ref->l_hatom.h_w.w_llllelem; // contained in all_events
+            t_llll *this_marker_ll = event_elem->l_hatom.h_w.w_llll->l_tail->l_hatom.h_w.w_llll;
+            t_bool check1 = event_elem->l_parent == all_events;
+            t_bool check2 = this_marker_ll->l_owner->l_parent == markers_ll;
+            
+            llll_destroyelem(event_elem);
+            llll_destroyelem(this_marker_ll->l_owner);
+        }
+    }
+    
 	llll_insertllll_after(markers_ll, roll_ll->l_head, 0, WHITENULL_llll);
 	markers_ll = NULL; // don't free it anymore
 	
@@ -633,24 +664,7 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 	} else
 		llll_free(keys_ll);
 	keys_ll = NULL; // don't free it anymore
-	
-    if (are_there_imported_barlines) {
-        if (all_calculated_barlines->l_size) {
-            object_warn((t_object*) x, "Removed calculated barlines as there are barline markers in the MIDI file");
-        }
-        for (t_llllelem *barline_ref = all_calculated_barlines->l_head; barline_ref; barline_ref = barline_ref->l_next) {
-            llll_destroyelem((t_llllelem *) barline_ref->l_hatom.h_w.w_obj);
-        }
-    }
-    
-    if (are_there_imported_divisions) {
-        if (all_calculated_barlines->l_size) {
-            object_warn((t_object*) x, "Removed calculated divisions as there are division markers in the MIDI file");
-        }
-        for (t_llllelem *division_ref = all_calculated_divisions->l_head; division_ref; division_ref = division_ref->l_next) {
-            llll_destroyelem((t_llllelem *) division_ref->l_hatom.h_w.w_obj);
-        }
-    }
+
     
 	// now we need to sort all_events according to time, and change all the onsets and durations according to the tempi
 	t_llll *all_events_sorted;
