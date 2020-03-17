@@ -549,7 +549,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     code_dev_post("lex: block comment [^\\)]* : %s", yytext);
 }
 
-<BLOCKCOMMENT>")"[^\)\#]+ {
+<BLOCKCOMMENT>")"[^\)\#]* {
     code_dev_post("lex: block comment \")\"[^\\#]+ : )%s", yytext);
 }
 

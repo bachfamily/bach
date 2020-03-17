@@ -101,8 +101,10 @@ void hatom_fn_max(t_hatom *h1, t_hatom *h2, t_hatom *res);
 
 
 void hatom_op_plus(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_op_plus_with_symbols(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_minus(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_op_times_with_symbols(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_div(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_uminus(t_hatom *h1, t_hatom *res);

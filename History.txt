@@ -2,6 +2,17 @@ VERSION NOTES:
 
 v0.8.2b
 
+*****************
+*** IMPORTANT ***
+*****************
+
+*** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
+
+- bach.roll:
+    MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
+        New "importdivisions" message attribute, overriding "markdivisions"
+
+
 ***********************
 *** VERSION CHANGES ***
 ***********************
@@ -15,6 +26,12 @@ authorization: now the code for a given year can be entered until January of the
 - bach.reg, bach.value, bach.pv
     Fixed memory leak related to the text editor window
 
+- bach.roll:
+    MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
+        New "importdivisions" message attribute, overriding "markdivisions"
+        New "importsubdivisions" message attribute
+    exportmidi: new "exportbarlines" message attribute
+        new "exportdivisions" message attribute
 
 v0.8.1b
 
