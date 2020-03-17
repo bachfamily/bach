@@ -6420,6 +6420,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // Furthermore, some exporting specifications are available, and each has to be given as llll after the (optional) file name.
     // Such lllls will be in the form <b>[<m>specification_name</m> <m>specification_value</m>]</b>). Available specifications are: <br />
     // - <b>exportmarkers</b> (default: 1): if non-0, all the markers in the score will be exported. <br />
+    // - <b>exportbarlines</b> (default: 1): if non-0, a "bach barline" marker will be added at each measure. <br />
+    // - <b>exportdivisions</b> (default: 1): if non-0, a "bach division" marker will be added at each beat. <br />
     // - <b>voices</b> [default: <b>[]</b>): if a list of voices is provided, then only the specified voices will be exported.
     // If no list is provided, then all the voices of the score will be exported. Ranges can also be
     // expressed, as sublists. For example, <b>[voices 1 3 5]</b> will export the first, third and fifth voice,
@@ -6434,6 +6436,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // It is guaranteed that the overall duration of the tempo ramp will be consistent with the original.
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr exportmarkers @type int @default 1 @digest If non-zero, exports all the markers
+    // @mattr exportbarlines @type int @default 1 @digest If non-zero, a "bach barline" marker is added at each measure
+    // @mattr exportdivisions @type int @default 1 @digest If non-zero, a "bach division" marker is added at each beat
     // @mattr voices @type llll @default null @digest Numbers of voices to be exported (<b>null</b> means: all voices)
     // @mattr format @type int @default 1 @digest MIDI file format (0 = single track, 1 = multiple tracks)
     // @mattr resolution @type int @default 960 @digest Number of MIDI ticks per beat

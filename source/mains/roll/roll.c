@@ -6196,13 +6196,17 @@ void C74_EXPORT ext_main(void *moduleRef){
     // * <b>markmeasures</b> and <b>markdivisions</b>: if non-0, a special "barline" or "division" marker will be added for each measure/division
     // in the MIDI file, according to the current time signature (this is especially recommended if you need to later quantize the <o>bach.roll</o> content) <br />
     // * <b>importbarlines</b> (default: 1): all the MIDI markers named "bach barline" are imported as barline markers.
-    // In general, importbarlines and markmeasure should not be on at the same time. <br />
+    // * <b>importdivisions</b> (default: 1): all the MIDI markers named "bach division" are imported as division markers.
+    // * <b>importsubdivisions</b> (default: 1): all the MIDI markers named "bach subdivision" are imported as subdivision markers.
+    // If importbarlines and markmeasures are on at the same time, and barline markers are present, markmeasures is ignored. <br />
+    // If importdivision and markdivisions are on at the same time, and division markers are present, markdivisions is ignored. <br />
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr tracks2voices @type int @default 1 if the MIDI file format is 1, else 0 @digest For MIDI files, if non-zero, each MIDI track will be converted into a separate voice (default: )
     // @mattr chans2voices @type int @default 0 if the MIDI file format is 1, else 1 @digest For MIDI files, if non-zero, each MIDI channel will be converted into a separate voice
-    // @mattr markmeasures @type int @default 1 @digest For MIDI files, if non-zero, adds barline markers
-    // @mattr markdivisions @type int @default 0 @digest For MIDI files, if non-zero, adds divisions markers
-    // @mattr importbarlines @type int @default 1 @digest For MIDI files, if non-zero MIDI markers named "bach barline" are imported as barline markers
+    // @mattr markmeasures @type int @default 1 @digest For MIDI files, if non-zero, adds barline markers. Ignored if <m>importbarlines</m> is on and barline markers are actually imported.
+    // @mattr markdivisions @type int @default 0 @digest For MIDI files, if non-zero, adds divisions markers. Ignored if <m>importdivisions</m> is on and division markers are actually imported.
+    // @mattr importbarlines @type int @default 1 @digest For MIDI files, if non-zero, MIDI markers named "bach barline" are imported as barline markers
+    // @mattr importdivisions @type int @default 1 @digest For MIDI files, if non-zero, MIDI markers named "bach division" are imported as division markers
     // @example read @caption open file via dialog box
     // @example read rollexample.txt @caption open specific bach text file
     // @example read goldberg3.mid @markmeasures 1 @caption open MIDI file and convert barlines to markers
@@ -6258,9 +6262,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // - <b>format</b> (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks). <br />
     // – <b>resolution</b> (default: 960): the number of MIDI ticks per beat. <br />
     // - <b>exportbarlines</b> (default: 1): the barline markers are exported as MIDI marker events, with the name "bach barline". <br />
+    // - <b>exportdivisions</b> (default: 1): the division markers are exported as MIDI marker events, with the name "bach division". <br />
+    // - <b>exportsubdivisions</b> (default: 1): the subdivision markers are exported as MIDI marker events, with the name "bach subdivision". <br />
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr exportmarkers @type int @default 1 @digest If non-zero, exports all the markers
     // @mattr exportbarlines @type int @default 1 @digest Barline markers are exported as MIDI marker events, with the name "bach barline"
+    // @mattr exportdivisions @type int @default 1 @digest Division markers are exported as MIDI marker events, with the name "bach division"
+    // @mattr exportsubdivisions @type int @default 1 @digest Subdivision markers are exported as MIDI marker events, with the name "bach subdivision"
     // @mattr voices @type llll @default null @digest Numbers of voices to be exported (<b>null</b> means: all voices)
     // @mattr format @type int @default 1 @digest MIDI file format (0 = single track, 1 = multiple tracks)
     // @mattr resolution @type int @default 960 @digest Number of MIDI ticks per beat
