@@ -352,15 +352,20 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     t_scorevoice *longest_voice = NULL;
     long longest_voice_num = 0;
     t_timepoint longest_voice_start;
+    long exportbarlines = 1;
+    long exportdivisions = 1;
 
     
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiil",
-                   _sym_filename, &filename_sym,
-                   gensym("exportmarkers"), &export_markers,
-                   gensym("format"), &format,
-                   gensym("resolution"), &time_division,
-                   gensym("temporampsamplingrate"), &tempo_interp_sampling_interval,
-                   gensym("voices"), &voices_to_write);
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiil",
+        _sym_filename, &filename_sym,
+        gensym("exportmarkers"), &export_markers,
+        gensym("exportbarlines"), &exportbarlines,
+        gensym("exportdivisions"), &exportdivisions,
+        gensym("format"), &format,
+        gensym("resolution"), &time_division,
+        gensym("temporampsamplingrate"), &tempo_interp_sampling_interval,
+        gensym("voices"), &voices_to_write
+        );
     
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -437,10 +442,24 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             measure_start_tp = build_timepoint_with_voice(this_measure_number, long2rat(0), voice_num);
             measure_start_rat = get_sym_durations_between_timepoints(this_scorevoice, voice_start_tp, measure_start_tp);
             
+            long measure_start_ticks = rat2ticks(&measure_start_rat, time_division);
+            
+            if (exportbarlines && this_measure_number != 0) {
+                append_barline_to_midi_export(track_ll[0], measure_start_ticks);
+            }
+            
             if ((this_measure_number == 0 && voice_num == 0) || new_ts_num != timesig_num || new_ts_den != timesig_den) {
                 timesig_num = new_ts_num;
                 timesig_den = new_ts_den;
-                append_timesig_to_midi_export(track_ll[0], timesig_num, timesig_den, rat2ticks(&measure_start_rat, time_division));
+                append_timesig_to_midi_export(track_ll[0], timesig_num, timesig_den, measure_start_ticks);
+            }
+            
+            if (exportdivisions) {
+                t_rational ts_rat({timesig_num, timesig_den});
+                t_rational div({1, timesig_den});
+                for (t_rational divpos({1, timesig_den}); divpos < ts_rat; divpos += div) {
+                    append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divpos, time_division));
+                }
             }
             
             // if there is no tempo at the beginning of the score, start with the default tempo 

@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 6,
+			"minor" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -38,6 +38,22 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-7",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 128.0, 354.5, 469.0, 36.0 ],
+					"presentation_linecount" : 2,
+					"text" : "Because of a known bug, it is generally necessary to wrap in parentheses each access to the : operator, if more than one are present in the same program.",
+					"textcolor" : [ 0.996078431372549, 0.0, 0.0, 1.0 ]
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-6",
 					"items" : [ "strawberry", ",", "scrambled", "eggs", ",", "savoy", "truffle", ",", "octopus" ],
@@ -158,20 +174,20 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "`The `ballad `of $x2:($x1+1 1) `and $x2:($x1+1 2) ",
+					"code" : "`The `ballad `of ($x2:($x1+1 1)) `and ($x2:($x1+1 2)) ",
 					"fontname" : "Arial",
 					"id" : "obj-105",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 322.5, 402.0, 23.0 ],
+					"patching_rect" : [ 18.0, 322.5, 419.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80005
+						"versionnumber" : 80101
 					}
 ,
-					"text" : "bach.eval `The `ballad `of $x2:($x1+1 1) `and $x2:($x1+1 2) @out m"
+					"text" : "bach.eval `The `ballad `of ($x2:($x1+1 1)) `and ($x2:($x1+1 2)) @out m"
 				}
 
 			}

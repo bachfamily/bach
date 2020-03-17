@@ -1359,9 +1359,9 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["#!"] = new t_mathUnaryFunctionAA<hatom_op_lognot>("#!");
     (*bifTable)["#~"] = new t_mathUnaryFunctionAA<hatom_op_bitnot>("#~");
     
-    (*bifTable)["#+"] = new t_mathBinaryFunctionAAA<hatom_op_plus>("#+");
+    (*bifTable)["#+"] = new t_mathBinaryFunctionAAA<hatom_op_plus_with_symbols>("#+");
     (*bifTable)["#-"] = new t_mathBinaryFunctionAAA<hatom_op_minus>("#-");
-    (*bifTable)["#*"] = new t_mathBinaryFunctionAAA<hatom_op_times>("#*");
+    (*bifTable)["#*"] = new t_mathBinaryFunctionAAA<hatom_op_times_with_symbols>("#*");
     (*bifTable)["#/"] = new t_mathBinaryFunctionAAA<hatom_op_div>("#/");
     (*bifTable)["#//"] = new t_mathBinaryFunctionAAA<hatom_op_divdiv>("#//");
     (*bifTable)["#%"] = new t_mathBinaryFunctionAAA<hatom_fn_remainder>("#%");
