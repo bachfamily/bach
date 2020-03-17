@@ -2795,6 +2795,8 @@
 				Message attributes:<br />
 				<m>@exportmarkers</m> (int, default: 1): If non-zero, exports all the markers<br />
 				<m>@exportbarlines</m> (int, default: 1): Barline markers are exported as MIDI marker events, with the name "bach barline"<br />
+				<m>@exportdivisions</m> (int, default: 1): Division markers are exported as MIDI marker events, with the name "bach division"<br />
+				<m>@exportsubdivisions</m> (int, default: 1): Subdivision markers are exported as MIDI marker events, with the name "bach subdivision"<br />
 				<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
 				<m>@format</m> (int, default: 1): MIDI file format (0 = single track, 1 = multiple tracks)<br />
 				<m>@resolution</m> (int, default: 960): Number of MIDI ticks per beat<br />
@@ -2812,6 +2814,8 @@
 				- <b>format</b> (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks). <br />
 				– <b>resolution</b> (default: 960): the number of MIDI ticks per beat. <br />
 				- <b>exportbarlines</b> (default: 1): the barline markers are exported as MIDI marker events, with the name "bach barline". <br />
+				- <b>exportdivisions</b> (default: 1): the division markers are exported as MIDI marker events, with the name "bach division". <br />
+				- <b>exportsubdivisions</b> (default: 1): the subdivision markers are exported as MIDI marker events, with the name "bach subdivision". <br />
 				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportimage</m><br />
 			</description>
 		</method>
@@ -5113,9 +5117,10 @@
 				Message attributes:<br />
 				<m>@tracks2voices</m> (int, default: 1): For MIDI files, if non-zero, each MIDI track will be converted into a separate voice (default: )<br />
 				<m>@chans2voices</m> (int, default: 0): For MIDI files, if non-zero, each MIDI channel will be converted into a separate voice<br />
-				<m>@markmeasures</m> (int, default: 1): For MIDI files, if non-zero, adds barline markers<br />
-				<m>@markdivisions</m> (int, default: 0): For MIDI files, if non-zero, adds divisions markers<br />
-				<m>@importbarlines</m> (int, default: 1): For MIDI files, if non-zero MIDI markers named "bach barline" are imported as barline markers<br />
+				<m>@markmeasures</m> (int, default: 1): For MIDI files, if non-zero, adds barline markers. Ignored if <m>importbarlines</m> is on and barline markers are actually imported.<br />
+				<m>@markdivisions</m> (int, default: 0): For MIDI files, if non-zero, adds divisions markers. Ignored if <m>importdivisions</m> is on and division markers are actually imported.<br />
+				<m>@importbarlines</m> (int, default: 1): For MIDI files, if non-zero, MIDI markers named "bach barline" are imported as barline markers<br />
+				<m>@importdivisions</m> (int, default: 1): For MIDI files, if non-zero, MIDI markers named "bach division" are imported as division markers<br />
 				<br />
 				The <m>read</m> message will open any file that <o>bach.roll</o> is able to read.
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
@@ -5131,7 +5136,10 @@
 				* <b>markmeasures</b> and <b>markdivisions</b>: if non-0, a special "barline" or "division" marker will be added for each measure/division
 				in the MIDI file, according to the current time signature (this is especially recommended if you need to later quantize the <o>bach.roll</o> content) <br />
 				* <b>importbarlines</b> (default: 1): all the MIDI markers named "bach barline" are imported as barline markers.
-				In general, importbarlines and markmeasure should not be on at the same time. <br />
+				* <b>importdivisions</b> (default: 1): all the MIDI markers named "bach division" are imported as division markers.
+				* <b>importsubdivisions</b> (default: 1): all the MIDI markers named "bach subdivision" are imported as subdivision markers.
+				If importbarlines and markmeasures are on at the same time, and barline markers are present, markmeasures is ignored. <br />
+				If importdivision and markdivisions are on at the same time, and division markers are present, markdivisions is ignored. <br />
 				<br />				See also:<m>write</m>,<m>writetxt</m><br />
 			</description>
 		</method>

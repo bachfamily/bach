@@ -3733,6 +3733,8 @@
 				<br />
 				Message attributes:<br />
 				<m>@exportmarkers</m> (int, default: 1): If non-zero, exports all the markers<br />
+				<m>@exportbarlines</m> (int, default: 1): If non-zero, a "bach barline" marker is added at each measure<br />
+				<m>@exportdivisions</m> (int, default: 1): If non-zero, a "bach division" marker is added at each beat<br />
 				<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
 				<m>@format</m> (int, default: 1): MIDI file format (0 = single track, 1 = multiple tracks)<br />
 				<m>@resolution</m> (int, default: 960): Number of MIDI ticks per beat<br />
@@ -3744,6 +3746,8 @@
 				Furthermore, some exporting specifications are available, and each has to be given as llll after the (optional) file name.
 				Such lllls will be in the form <b>[<m>specification_name</m> <m>specification_value</m>]</b>). Available specifications are: <br />
 				- <b>exportmarkers</b> (default: 1): if non-0, all the markers in the score will be exported. <br />
+				- <b>exportbarlines</b> (default: 1): if non-0, a "bach barline" marker will be added at each measure. <br />
+				- <b>exportdivisions</b> (default: 1): if non-0, a "bach division" marker will be added at each beat. <br />
 				- <b>voices</b> [default: <b>[]</b>): if a list of voices is provided, then only the specified voices will be exported.
 				If no list is provided, then all the voices of the score will be exported. Ranges can also be
 				expressed, as sublists. For example, <b>[voices 1 3 5]</b> will export the first, third and fifth voice,

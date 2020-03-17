@@ -99,6 +99,13 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "element", "repeat" ],
 				"title" : [ "Repeat operator" ]
 			},
+			"Symboloperators" : {
+				"filename" : [ "bach.help.bell.010_basics.107_symboloperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+llll", "concatenation" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "symbol", "concatenation", "times", "plus" ],
+				"title" : [ "Symbol operators" ]
+			},
 			"Print" : {
 				"filename" : [ "bach.help.bell.010_basics.110_print.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
@@ -1236,7 +1243,7 @@
 				"filename" : [ "bach.help.notation.accidentals and microtones.20_accidentalsrepeat.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "cautionary+accidental" ],
-				"tags" : [ "accidental", "repeat", "hide", "repeating", "hiding", "show", "preference", "showaccidentalspreferences", "alter", "altered", "repetition", "natural", "never", "always", "classical", "show", "preference", "policy", "display" ],
+				"tags" : [ "accidental", "repeat", "hide", "repeating", "hiding", "show", "preference", "showaccidentalspreferences", "alter", "altered", "repetition", "natural", "never", "always", "classical", "show", "preference", "policy", "display", "cautionary", "caution", "decay", "accidentaldecay" ],
 				"title" : [ "Accidental display policy" ]
 			},
 			"Accidentalsandties" : {
@@ -4493,7 +4500,7 @@
 					"filename" : [ "bach.help.notation.save and load.10_MIDI.11_midiimportandmeasures.maxpat" ],
 					"objects" : [ "bach.roll" ],
 					"seealso" : [ "marker+role", "midi+quantize", "export+midi", "exportbarlines", "midi+export" ],
-					"tags" : [ "data", "read", "midi", "import", "markmeasures", "file", "message", "importbarlines", "barline", "measure", "mark", "import", "barline", "markdivisions", "division" ],
+					"tags" : [ "data", "read", "midi", "import", "markmeasures", "file", "message", "importbarlines", "importdivisions", "importsubdivisions", "barline", "measure", "mark", "import", "barline", "markdivisions", "division", "subdivision" ],
 					"title" : [ "MIDI import and measure markers" ]
 				},
 				"Midiimportscore" : {
@@ -4507,7 +4514,7 @@
 					"filename" : [ "bach.help.notation.save and load.10_MIDI.13_midiexport.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "import+midi", "temporampsamplingrate" ],
-					"tags" : [ "data", "midi", "export", "exportmidi", "markers", "exportmarkers", "format", "resolution", "voices", "file" ],
+					"tags" : [ "data", "midi", "export", "exportmidi", "markers", "exportmarkers", "format", "resolution", "voices", "file", "exportbarlines", "exportdivisions" ],
 					"title" : [ "MIDI export" ]
 				},
 				"Midiexportandmeasures" : {
