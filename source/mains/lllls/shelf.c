@@ -555,7 +555,7 @@ void xshelf_deserialize(t_xshelf *x, t_dictionary *dict)
 			xshelf_store(x, name, ll);
 //		llll_free(ll);
 	}
-	sysmem_freeptr(key_atoms); // not bach_freeptr, as key_atoms has been allocated by dictionary_getatoms
+	//sysmem_freeptr(key_atoms); // not bach_freeptr, as key_atoms has been allocated by dictionary_getatoms
 }
 
 t_shelveditem *shelveditem_new(t_symbol *s, short ac, t_atom *av)

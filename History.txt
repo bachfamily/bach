@@ -22,6 +22,7 @@ authorization: now the code for a given year can be entered until January of the
 - bell: fixed various memory leaks
     primeser: the second argument may be left unset
     fixed parsing of pitch literals
+    new built-in functions: mc2f, f2mc, minimum, maximum
 
 - bach.reg, bach.value, bach.pv
     Fixed memory leak related to the text editor window
@@ -32,6 +33,8 @@ authorization: now the code for a given year can be entered until January of the
         New "importsubdivisions" message attribute
     exportmidi: new "exportbarlines" message attribute
         new "exportdivisions" message attribute
+
+- bach.shelf: fixed crash with @embed 1 when reopening patch
 
 v0.8.1b
 
