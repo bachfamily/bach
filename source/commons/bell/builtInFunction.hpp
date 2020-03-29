@@ -197,6 +197,20 @@ public:
     t_llll* call(const t_execEnv &context);
 };
 
+class t_fnMinimum : public t_builtInFunction
+{
+public:
+    t_fnMinimum();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnMaximum : public t_builtInFunction
+{
+public:
+    t_fnMaximum();
+    t_llll* call(const t_execEnv &context);
+};
+
 class t_fnPerm : public t_builtInFunction
 {
 public:
@@ -260,5 +274,18 @@ public:
     t_llll* call(const t_execEnv &context);
 };
 
+class t_fnMc2f : public t_builtInFunction
+{
+public:
+    t_fnMc2f();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnF2mc : public t_builtInFunction
+{
+public:
+    t_fnF2mc();
+    t_llll* call(const t_execEnv &context);
+};
 
 #endif /* builtInFunction_hpp */

@@ -203,8 +203,9 @@ char double_double_cmp_with_threshold(double num1, double num2, double threshold
 	@return						The midicents value
  */
 double f2mc(double freq, double reference_freq);
+double f2mc(double f, double basefreq, double basepitch);
+t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch);
 
-	
 /**	Convert a midicents value into a frequence.
 	@ingroup	math
 	@param		mc				The midicents value
@@ -212,6 +213,8 @@ double f2mc(double freq, double reference_freq);
 	@return						The frequence value in Hz
  */
 double mc2f(double mc, double reference_freq);
+double mc2f(double mc, double basefreq, double basepitch);
+t_llll *llll_mc2f(t_llll *ll, double basefreq, double basepitch);
 
 
 /**	Compute an integer power. Only works for non-negative exponents.
@@ -483,7 +486,6 @@ t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_
 	@ingroup					math
  */
 double angle_dist(double angle1, double angle2, double modulo);
-
 
 
 

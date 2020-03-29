@@ -3628,7 +3628,7 @@ void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t
     long deepenough;
     t_int32 depth = 1;
     
-    if (!ll || !minaddress || !maxaddress)
+    if (!ll)
         return;
     
     if (mindepth == 0)
@@ -3640,7 +3640,7 @@ void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t
         return;
     
     deepenough = (mindepth == 1 || ll->l_depth < -mindepth);
-    address = llll_get();
+    address = (minaddress && maxaddress) ? llll_get() : NULL;
     llll_appendlong(address, LLLL_IDX_BASE, 0, WHITENULL_llll);
     stack = llll_stack_new();
     elem = ll->l_head;
@@ -3656,39 +3656,51 @@ void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t
                 elem = subll->l_head;
                 depth++;
                 deepenough = ((mindepth >= 0 && depth >= mindepth) || (subll->l_depth <= -mindepth));
-                llll_appendlong(address, LLLL_IDX_BASE, 0, WHITENULL_llll);
+                if (address)
+                    llll_appendlong(address, LLLL_IDX_BASE, 0, WHITENULL_llll);
             } else {
                 if (deepenough && hatom_type_is_number(elem_type)) {
                     if (mintype == H_NULL) {
-                        *min = *max = &elem->l_hatom;
+                        t_hatom *h = &elem->l_hatom;
+                        if (min) *min = h;
+                        if (max) *max = h;
                         mintype = maxtype = elem_type;
-                        llll_clone_upon(address, minaddress);
-                        llll_clone_upon(address, maxaddress);
+                        if (address) {
+                            llll_clone_upon(address, minaddress);
+                            llll_clone_upon(address, maxaddress);
+                        }
                     } else {
-                        if (llll_lt_hatom(&elem->l_hatom, *min)) {
+                        if (min && llll_lt_hatom(&elem->l_hatom, *min)) {
                             *min = &elem->l_hatom;
                             mintype = elem_type;
                             min_changed = 1;
-                            llll_clear(minaddress);
-                            llll_clone_upon(address, minaddress);
+                            if (address) {
+                                llll_clear(minaddress);
+                                llll_clone_upon(address, minaddress);
+                            }
                         }
-                        if (!min_changed && llll_gt_hatom(&elem->l_hatom, *max)) {
+                        if (max && !min_changed && llll_gt_hatom(&elem->l_hatom, *max)) {
                             *max = &elem->l_hatom;
                             maxtype = elem_type;
-                            llll_clear(maxaddress);
-                            llll_clone_upon(address, maxaddress);
+                            if (address) {
+                                llll_clear(maxaddress);
+                                llll_clone_upon(address, maxaddress);
+                            }
                         }
                     }
                 }
-                address->l_tail->l_hatom.h_w.w_long++;
+                if (address)
+                    address->l_tail->l_hatom.h_w.w_long++;
                 elem = elem->l_next;
             }
         }
         if (depth <= 1)
             break;
         elem = (t_llllelem *) llll_stack_pop(stack);
-        llll_destroyelem(address->l_tail);
-        address->l_tail->l_hatom.h_w.w_long++;
+        if (address) {
+            llll_destroyelem(address->l_tail);
+            address->l_tail->l_hatom.h_w.w_long++;
+        }
         depth--;
         deepenough = elem && ((mindepth > 0 && depth >= mindepth) || (elem->l_parent->l_depth <= -mindepth));
     }
@@ -8809,10 +8821,17 @@ t_bool llll_istrue(const t_llll *ll)
     }
 }
 
-t_llll *get_num_ll(const t_atom_long n)
+t_llll *get_long_ll(const t_atom_long n)
 {
     t_llll *ll = llll_get();
     llll_appendlong(ll, n);
+    return ll;
+}
+
+t_llll *get_double_ll(const double d)
+{
+    t_llll *ll = llll_get();
+    llll_appenddouble(ll, d);
     return ll;
 }
 

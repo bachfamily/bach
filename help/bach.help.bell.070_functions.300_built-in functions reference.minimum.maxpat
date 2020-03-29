@@ -91,7 +91,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 305.0, 297.0, 29.5, 23.0 ],
+					"patching_rect" : [ 312.0, 297.0, 29.5, 23.0 ],
 					"text" : "1"
 				}
 
@@ -103,7 +103,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 264.0, 297.0, 29.5, 23.0 ],
+					"patching_rect" : [ 271.0, 297.0, 29.5, 23.0 ],
 					"text" : "-1"
 				}
 
@@ -133,19 +133,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "minmax($x1 @maxdepth $x2 ||| 1) ",
+					"code" : "minimum($x1 @maxdepth $x2 ||| 1) ",
 					"id" : "obj-8",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 337.0, 315.0, 23.0 ],
+					"patching_rect" : [ 9.0, 337.0, 322.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80102
 					}
 ,
-					"text" : "bach.eval minmax($x1 @maxdepth $x2 ||| 1) @out m"
+					"text" : "bach.eval minimum($x1 @maxdepth $x2 ||| 1) @out m"
 				}
 
 			}
@@ -174,19 +174,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "minmax($x1) ",
+					"code" : "minimum($x1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 150.0, 192.0, 23.0 ],
+					"patching_rect" : [ 9.0, 150.0, 199.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80102
 					}
 ,
-					"text" : "bach.eval minmax($x1) @out m"
+					"text" : "bach.eval minimum($x1) @out m"
 				}
 
 			}
@@ -210,12 +210,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 383.0, 50.0 ],
-					"text" : "The minmax() function returns an llll composed of four elements, respectively the minimum value in the llll, its address, the maximum value and its address.",
+					"patching_rect" : [ 9.0, 39.0, 360.0, 21.0 ],
+					"text" : "The minimum() function returns the smallest number in an llll.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -229,7 +228,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: nth, colon, minimum, maximum, min, max",
+					"text" : "See Also: minmax, maximum, min",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -259,8 +258,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 210.0, 23.0 ],
-					"text" : "minmax() function reference",
+					"patching_rect" : [ 6.0, 8.0, 220.0, 23.0 ],
+					"text" : "minimum() function reference",
 					"varname" : "title"
 				}
 
@@ -274,7 +273,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, minmax, minimum, maximum, address",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, minimum",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

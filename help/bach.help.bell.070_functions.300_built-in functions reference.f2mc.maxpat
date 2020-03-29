@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 209.0, 198.0, 617.0, 539.0 ],
+		"rect" : [ 84.0, 81.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -40,15 +40,95 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-28",
+					"id" : "obj-9",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 17.0, 441.0, 199.0, 21.0 ],
-					"text" : "makepitch (degree, octave, alter)",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 253.0, 280.0, 99.0, 21.0 ],
+					"text" : "\"scientific pitch\""
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 240.0, 81.0, 23.0 ],
+					"presentation_linecount" : 2,
+					"text" : "128 256 512"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-3",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 9.0, 311.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "f2mc($x1, 256, C5) ",
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 280.0, 228.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 1,
+						"versionnumber" : 80102
+					}
+,
+					"text" : "bach.eval f2mc($x1\\, 256\\, C5) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 110.0, 81.0, 23.0 ],
+					"text" : "220 330 440"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 9.0, 181.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "f2mc($x1) ",
+					"id" : "obj-7",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 150.0, 175.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 1,
+						"versionnumber" : 80102
+					}
+,
+					"text" : "bach.eval f2mc($x1) @out m"
 				}
 
 			}
@@ -56,100 +136,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-27",
+					"id" : "obj-6",
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 17.0, 422.0, 111.0, 21.0 ],
-					"text" : "Ternary functions:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-26",
-					"linecount" : 16,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 256.0, 116.0, 164.0, 239.0 ],
-					"text" : "#>>\r#|\r#||\r#|||\rapprox (pitch, tonedivision)\ratan2\rbessel (x, order)\renharm\rfmod\rhypot\rmakepitchsc (steps, cents)\rmax\rmin\rmod\rpow (base, exponent)\rrandom",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-25",
-					"linecount" : 16,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 209.0, 116.0, 33.0, 239.0 ],
-					"text" : "#-\r#!=\r#*\r#/\r#//\r#&\r#&&\r#^\r#^^\r#+\r#<\r#<<\r#<=\r#==\r#>\r#>=",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-24",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 209.0, 91.0, 105.0, 21.0 ],
-					"text" : "Binary functions:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-23",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 17.0, 91.0, 102.0, 21.0 ],
-					"text" : "Unary functions:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-22",
-					"linecount" : 18,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 80.0, 116.0, 47.0, 268.0 ],
-					"text" : "float\rfloor\rint\rlog\rlog10\rlog2\rnum\roctave\rpitch\rrat\rround\rsgn\rsin\rsinh\rsqrt\rtan\rtanh\rtrunc",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-19",
-					"linecount" : 19,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 17.0, 116.0, 49.0, 282.0 ],
-					"text" : "#!\r#~\r#u-\rabs\racos\racosh\ralter\rasin\rasinh\ratan\ratanh\rceil\rcents\rcos\rcosh\rdegree\rden\rexp\rexp2",
+					"patching_rect" : [ 317.0, 129.0, 152.0, 65.0 ],
+					"text" : "Arguments:\nllll\nbasefreq (default: 440)\nbasepitch (default: 6900)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -163,8 +156,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 393.0, 36.0 ],
-					"text" : "The following math functions are implemented in bell.\nThe argument names are always x, y, z unless otherwise specified.",
+					"patching_rect" : [ 9.0, 39.0, 450.0, 36.0 ],
+					"text" : "The f2mc() function converts all the numbers in an llll from frequency to midicents, with optional reference frequency and pitch.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -178,7 +171,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also:",
+					"text" : "See Also: mc2f",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -208,8 +201,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 187.0, 23.0 ],
-					"text" : "Math functions reference",
+					"patching_rect" : [ 6.0, 8.0, 194.0, 23.0 ],
+					"text" : "f2mc() function reference",
 					"varname" : "title"
 				}
 
@@ -223,15 +216,47 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, math, mathematics, functional, form, operator",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, midicents, frequency, conversion",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
 
 			}
  ],
-		"lines" : [  ],
-		"dependency_cache" : [  ],
+		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-3", 0 ],
+					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-7", 0 ]
+				}
+
+			}
+ ],
+		"dependency_cache" : [ 			{
+				"name" : "bach.eval.mxo",
+				"type" : "iLaX"
+			}
+ ],
 		"autosave" : 0
 	}
 
