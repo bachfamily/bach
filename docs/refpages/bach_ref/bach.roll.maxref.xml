@@ -7803,6 +7803,20 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="markersfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Markers Font
+			</digest>
+			<description>
+				Sets the font size of markers
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Markers Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
 		<attribute name="markersfontsize" get="1" set="1" type="float" size="1">
 			<digest>
 				Markers Font Size
@@ -9867,6 +9881,20 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="voicenamesfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Voice Names Font
+			</digest>
+			<description>
+				Sets the font size of voice names
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Names Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="voicenamesfontsize" get="1" set="1" type="float" size="1">

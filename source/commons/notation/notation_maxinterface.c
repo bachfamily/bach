@@ -2988,6 +2988,13 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Sets the font size of ruler labels (rescaled according to the <m>vzoom</m>). 
 		
+        CLASS_ATTR_SYM(c,"voicenamesfont", 0, t_notation_obj, voice_names_font);
+        CLASS_ATTR_STYLE_LABEL(c, "voicenamesfont", 0, "font", "Voice Names Font");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"voicenamesfont", 0, "Arial");
+        CLASS_ATTR_ACCESSORS(c, "voicenamesfont", (method)NULL, (method)notation_obj_setattr_voicenames_font);
+        // @exclude bach.slot
+        // @description Sets the font size of voice names
+
 		CLASS_ATTR_DOUBLE(c,"voicenamesfontsize",0, t_notation_obj, voice_names_font_size);
 		CLASS_ATTR_STYLE_LABEL(c,"voicenamesfontsize",0,"text","Voice Names Font Size");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"voicenamesfontsize", 0, "11");
@@ -2995,6 +3002,13 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Sets the font size of voice names (rescaled according to the <m>vzoom</m>). 
 		
+        CLASS_ATTR_SYM(c,"markersfont", 0, t_notation_obj, markers_font);
+        CLASS_ATTR_STYLE_LABEL(c, "markersfont", 0, "font", "Markers Font");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markersfont", 0, "Arial");
+        CLASS_ATTR_ACCESSORS(c, "markersfont", (method)NULL, (method)notation_obj_setattr_markers_font);
+        // @exclude bach.slot
+        // @description Sets the font size of markers
+
 		CLASS_ATTR_DOUBLE(c,"markersfontsize",0, t_notation_obj, markers_font_size);
 		CLASS_ATTR_STYLE_LABEL(c,"markersfontsize",0,"text","Markers Font Size");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markersfontsize", 0, "9");
@@ -3541,6 +3555,16 @@ t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *a
 	return MAX_ERR_NONE;
 }
 
+t_max_err notation_obj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && atom_gettype(av) == A_SYM)
+        r_ob->voice_names_font = atom_getsym(av);
+    recalculate_voicenames_width(r_ob);
+    update_hscrollbar(r_ob, 0);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
 t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
 	if (ac && is_atom_number(av))
 		r_ob->voice_names_font_size = atom_getfloat(av);
@@ -3550,7 +3574,21 @@ t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_obje
 	return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notation_obj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && atom_gettype(av) == A_SYM)
+        r_ob->markers_font = atom_getsym(av);
+    if (r_ob->firstmarker){
+        t_marker *marker;
+        for (marker = r_ob->firstmarker; marker; marker = marker->next)
+        recalculate_marker_name_uwidth(r_ob, marker);
+    }
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
+t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
 	if (ac && is_atom_number(av))
 		r_ob->markers_font_size = atom_getfloat(av);
 	if (r_ob->firstmarker){
@@ -4542,7 +4580,7 @@ void start_editing_voicename(t_notation_obj *r_ob, t_object *patcherview, t_voic
 	
 	object_attr_setlong(r_ob, gensym("fontface"), 0);
 	
-	jf_voice_names = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->voice_names_font_size * r_ob->zoom_y); 
+	jf_voice_names = jfont_create_debug(r_ob->voice_names_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->voice_names_font_size * r_ob->zoom_y);
 	get_names_as_text(voice->r_it.names, buf, 1000);
 	jfont_text_measure(jf_voice_names, buf, &text_width, &text_height);
 	

@@ -276,14 +276,14 @@ void score_exportom(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
     t_llll *score_as_llll_for_om = get_score_values_as_llll(x, k_CONSIDER_FOR_EXPORT_OM, k_HEADER_ALL, false, false, true, false);
-    llll_writetxt((t_object *) x, score_as_llll_for_om, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
+    llll_writetxt((t_object *) x, score_as_llll_for_om, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_PARENS, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 void score_exportpwgl(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
     t_llll *score_as_llll_for_pwgl = get_score_values_as_llll_for_pwgl(x);
-    llll_writetxt((t_object *) x, score_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
+    llll_writetxt((t_object *) x, score_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_PARENS, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 void score_exportmidi(t_score *x, t_symbol *s, long argc, t_atom *argv)

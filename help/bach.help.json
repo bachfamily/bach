@@ -1402,6 +1402,13 @@
 				"tags" : [ "appearance", "font", "change", "notationfont", "accidentalsfont", "notation", "accidental", "articulation", "articulationsfont" ],
 				"title" : [ "Change fonts" ]
 			},
+			"B_otherfonts" : {
+				"filename" : [ "bach.help.notation.appearance.20b_otherfonts.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "notationfont", "accidentalsfont" ],
+				"tags" : [ "appearance", "font", "annotationfontsize", "annotation", "annotationsfont", "articulationsfont", "bgslotfontsize", "background", "slot", "font", "dynamicsfontsize", "dynamicsexprfontsize", "legendfontsize", "legend", "dynamics", "size", "lyrics", "lyricsfont", "lyricsfontsize", "markersfontsize", "voicenames", "voice" ],
+				"title" : [ "Change other fonts" ]
+			},
 			"Supportedfonts" : {
 				"filename" : [ "bach.help.notation.appearance.21_supportedfonts.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],

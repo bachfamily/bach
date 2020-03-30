@@ -4428,6 +4428,7 @@ typedef struct _notation_obj
     char        show_voice_names;                    ///< Flag telling if we want to show the voice names (1) or not (0)
     double        voice_names_uwidth;                    ///< Unscaled width (in pixels) of the space needed to write the staff names at the beginning of the staff lines
     char        voice_names_alignment;                ///< Alignment type for the voice names: -1 = left, 0 = middle, 1 = right
+    t_symbol      *voice_names_font;                ///< Font used to write the voice names
     double        voice_names_font_size;                ///< Size in pt of the font used to write the voice names (for zoom_y = 1)
     char        there_are_voice_names;                ///< Flag telling if there are voice names to paint
 
@@ -4675,6 +4676,7 @@ typedef struct _notation_obj
     t_marker    *firstmarker;        ///< Pointer to the first marker in the score
     t_marker    *lastmarker;        ///< Pointer to the last marker in the score
     long        num_markers;        ///< Number of markers in the score
+    t_symbol      *markers_font;        ///< Font used to display marker text
     double        markers_font_size;    ///< Size in pt of the font for writing the marker names (for <zoom_y> = 1)
 
     
@@ -17457,6 +17459,7 @@ t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, l
 t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -17464,6 +17467,7 @@ t_max_err notation_obj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long a
 t_max_err notation_obj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);

@@ -34117,7 +34117,7 @@ void recalculate_marker_name_uwidth(t_notation_obj *r_ob, t_marker *marker)
 {
     if (marker) {
         double width = 0, height = 0;
-        t_jfont *jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, r_ob->markers_font_size);
+        t_jfont *jf_text_markers = jfont_create_debug(r_ob->markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, r_ob->markers_font_size);
         if (marker->role == k_MARKER_ROLE_NONE) {
             if (marker->r_it.names->l_size > 0) {
                 char buf[1000];

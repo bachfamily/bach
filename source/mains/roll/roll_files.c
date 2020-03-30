@@ -774,14 +774,14 @@ void roll_exportom(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *roll_as_llll = get_roll_values_as_llll(x, k_CONSIDER_FOR_EXPORT_OM, k_HEADER_ALL, true, false); // we save everything
-	llll_writetxt((t_object *) x, roll_as_llll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
+	llll_writetxt((t_object *) x, roll_as_llll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_PARENS, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 void roll_exportpwgl(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *roll_as_llll_for_pwgl = get_roll_values_as_llll_for_pwgl(x);
-	llll_writetxt((t_object *) x, roll_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
+	llll_writetxt((t_object *) x, roll_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_PARENS, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 unsigned long midi_getvalue(unsigned char **buf, unsigned long bytes)

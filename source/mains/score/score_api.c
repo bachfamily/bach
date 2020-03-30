@@ -10475,7 +10475,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
         // defining fonts
         jf_text_small = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small)
         jf_text_smallbold = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small and bold)
-        jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.markers_font_size * x->r_ob.zoom_y));  // text font for markers
+        jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.markers_font_size * x->r_ob.zoom_y));  // text font for markers
         jf_tempi_italic = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_ITALIC , JGRAPHICS_FONT_WEIGHT_NORMAL, round(8.8 * x->r_ob.zoom_y)); 
         jf_tempi_figure = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, CONST_TEMPI_FIGURE_PT * x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y);
         jf_tuplets = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(CONST_TUPLET_BASE_PT * x->r_ob.zoom_y));
@@ -10636,7 +10636,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
     t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer2"), rect.width, rect.height) : force_graphic_context;
     
     if (g) {
-        t_jfont *jf_voice_names = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y); 
+        t_jfont *jf_voice_names = jfont_create_debug(x->r_ob.voice_names_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y); 
         double end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start - CONST_X_LEFT_START_DELETE_UX_SCORE) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
         double fadestart_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start - CONST_X_LEFT_START_FADE_UX_SCORE / x->r_ob.zoom_x) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
         t_scorevoice *voice;

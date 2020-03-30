@@ -6604,7 +6604,6 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_ACCESSORS(c, "annotationsfont", (method)NULL, (method)notation_obj_setattr_annotations_font);
     // @description @copy BACH_DOC_ANNOTATIONS_FONT
 
-    
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
     
@@ -11162,7 +11161,7 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
     // markers, if any
     if (x->r_ob.show_markers && x->r_ob.firstmarker) {
         t_marker *marker;
-        t_jfont *jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
+        t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
 
         double playhead_y1, playhead_y2;
         get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
@@ -11212,7 +11211,7 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
     // markers, if any
     if (x->r_ob.show_markers && x->r_ob.firstmarker) {
         t_marker *marker;
-        t_jfont *jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
+        t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
         
         double playhead_y1, playhead_y2;
         get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
@@ -11965,7 +11964,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
         t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer2"), rect.width, rect.height) : force_graphic_context;
         
         if (g) {
-            t_jfont *jf_voice_names = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y);
+            t_jfont *jf_voice_names = jfont_create_debug(x->r_ob.voice_names_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y);
             double system_jump = x->r_ob.system_jump;
             
             t_rollvoice *voice;
@@ -12161,7 +12160,7 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
     t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer2"), rect.width, rect.height) : force_graphic_context;
     
     if (g) {
-        t_jfont *jf_voice_names = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y); 
+        t_jfont *jf_voice_names = jfont_create_debug(x->r_ob.voice_names_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y);
         double system_jump = x->r_ob.system_jump;
         
         t_rollvoice *voice;
