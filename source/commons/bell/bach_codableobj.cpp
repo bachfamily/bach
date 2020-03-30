@@ -612,10 +612,13 @@ t_bool codableobj_readfile(t_codableobj *x, char *filename, short path)
             codableobj_delete_scratchpad(x);
             x->c_scratchpad = false;
         }
+        // keep away trouble if filename is x->c_filename
+        char filename_tmp[MAX_PATH_CHARS];
+        strncpy_zero(filename_tmp, filename, MAX_PATH_CHARS);
         if (x->c_filename)
             bach_freeptr(x->c_filename);
         x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
-        strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
+        strncpy_zero(x->c_filename, filename_tmp, MAX_PATH_CHARS);
         x->c_path = path;
         if (!x->c_filechanged)
             codableobj_replace_default_filewatcher(x);
@@ -1116,6 +1119,7 @@ void codableobj_replace_default_filewatcher(t_codableobj *x)
 
 void codableobj_start_all_filewatchers(t_codableobj* x)
 {
+    //codableobj_stop_all_filewatchers(x);
     bach_atomic_lock(&x->c_fw_lock);
     int n = x->c_nfilewatchers;
     for (int i = 0; i < n; i++)
