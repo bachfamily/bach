@@ -3782,6 +3782,92 @@ t_max_err llll_sum(t_llll *ll, t_hatom *sum, t_int32 mindepth, t_int32 maxdepth)
     return MAX_ERR_NONE;
 }
 
+void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
+{
+    switch (prod->h_type) {
+        case H_LONG:
+            switch (a->h_type) {
+                case H_LONG:
+                    prod->h_w.w_long *= a->h_w.w_long;
+                    break;
+                case H_RAT:
+                    hatom_setrational(prod, rat_long_prod(a->h_w.w_rat, prod->h_w.w_long));
+                    break;
+                case H_DOUBLE:
+                    hatom_setdouble(prod, prod->h_w.w_long * a->h_w.w_double);
+                    break;
+                case H_PITCH:
+                    prod->h_w.w_long *= t_atom_long(a->h_w.w_pitch.toMC());
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case H_RAT:
+            switch (a->h_type) {
+                case H_LONG:
+                    prod->h_w.w_rat = rat_long_prod(prod->h_w.w_rat, a->h_w.w_long);
+                    break;
+                case H_RAT:
+                    prod->h_w.w_rat *= a->h_w.w_rat;
+                    break;
+                case H_DOUBLE:
+                    hatom_setdouble(prod, hatom_getdouble(prod) * a->h_w.w_double);
+                    break;
+                case H_PITCH:
+                    prod->h_w.w_rat *= a->h_w.w_pitch.toMC();
+                default:
+                    break;
+            }
+            break;
+        case H_DOUBLE:
+            switch (a->h_type) {
+                case H_LONG:
+                    prod->h_w.w_double *= a->h_w.w_long;
+                    break;
+                case H_RAT:
+                    prod->h_w.w_double *= hatom_getdouble(a);
+                    break;
+                case H_DOUBLE:
+                    prod->h_w.w_double *= a->h_w.w_double;
+                    break;
+                case H_PITCH:
+                    prod->h_w.w_double *= double(a->h_w.w_pitch.toMC());
+                default:
+                    break;
+            }
+            break;
+        case H_PITCH:
+            switch (a->h_type) {
+                case H_LONG:
+                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    break;
+                case H_RAT:
+                    hatom_setrational(prod, a->h_w.w_rat * prod->h_w.w_pitch.toMC());
+                    break;
+                case H_DOUBLE:
+                    hatom_setdouble(prod, a->h_w.w_double * double(prod->h_w.w_pitch.toMC()));
+                    break;
+                case H_PITCH:
+//                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    hatom_setdouble(prod, double(a->h_w.w_pitch.toMC()) * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    break;
+            }
+        default:
+            break;
+    }
+}
+
+
+t_max_err llll_prod(t_llll *ll, t_hatom *prod, t_int32 mindepth, t_int32 maxdepth)
+{
+    if (!ll || !prod)
+        return MAX_ERR_GENERIC;
+    hatom_setlong(prod, 1);
+    llll_funall(ll, (fun_fn) llll_prod_one, prod, mindepth, maxdepth, 0);
+    pedantic_llll_check(ll);
+    return MAX_ERR_NONE;
+}
 
 
 /*

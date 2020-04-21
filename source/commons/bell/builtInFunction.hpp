@@ -260,5 +260,18 @@ public:
     t_llll* call(const t_execEnv &context);
 };
 
+class t_fnSum : public t_builtInFunction
+{
+public:
+    t_fnSum();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnProd : public t_builtInFunction
+{
+public:
+    t_fnProd();
+    t_llll* call(const t_execEnv &context);
+};
 
 #endif /* builtInFunction_hpp */

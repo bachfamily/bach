@@ -53,7 +53,7 @@ patterns: [ # An array of individual pattern declarations.
     name: 'keyword.other.bell'
   }
   {
-    match: '(length|depth|is|nth|sort|contains|rev|rot|trans|flat|slice|left|right|subs|insert|find|finditems|findaddrs|scramble|minmax|perm|comb|cartesianprod|wrap|group|delace|thin|classify|union|intersection|symdiff|diff|primeser|arithmser|geomser|map|reduce|apply)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    match: '(length|depth|is|nth|sort|contains|rev|rot|trans|flat|slice|left|right|subs|insert|find|finditems|findaddrs|scramble|minmax|perm|comb|cartesianprod|wrap|group|delace|thin|classify|union|intersection|symdiff|diff|primeser|arithmser|geomser|map|reduce|apply|sum|prod)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
     name: 'support.function.general.bell'
   }
   {

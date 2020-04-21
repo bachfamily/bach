@@ -842,6 +842,9 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address);
 // calculate the sum of all the numbers in ll, and put it into sum
 t_max_err llll_sum(t_llll *ll, t_hatom *sum, t_int32 mindepth, t_int32 maxdepth);
 
+// calculate the product of all the numbers in ll, and put it into sum
+t_max_err llll_prod(t_llll *ll, t_hatom *prod, t_int32 mindepth, t_int32 maxdepth);
+
 
 // find the minimum, maximum, address of the minimum and address of the maximum number in a list
 void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t_llll *maxaddress, t_int32 mindepth, t_int32 maxdepth);

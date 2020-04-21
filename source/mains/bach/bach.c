@@ -1299,6 +1299,8 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["map"] = new t_fnMap;
     (*bifTable)["reduce"] = new t_fnReduce;
     (*bifTable)["apply"] = new t_fnApply;
+    (*bifTable)["sum"] = new t_fnSum;
+    (*bifTable)["prod"] = new t_fnProd;
 
     (*bifTable)["outlet"] = new t_fnOutlet;
     (*bifTable)["inlet"] = new t_fnInlet;
