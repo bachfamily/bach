@@ -45,7 +45,9 @@ public:
         }
     }
     
-    // with these, we disable reference counting for built in functions, thus preventing them from being deleted
+    // by uncommenting the following two lines,
+    // you can disable reference counting for built in functions
+    // thus preventing them from being deleted
     //virtual void increase() { }
     //virtual void decrease() { }
 };

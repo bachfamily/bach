@@ -418,8 +418,8 @@ t_llll* t_fnInsert::call(const t_execEnv &context)
 
 ///////////////
 
-
-t_fnKeysubs::t_fnKeysubs() : t_builtInFunction("insert")
+// UNUSED
+t_fnKeysubs::t_fnKeysubs() : t_builtInFunction("keysubs")
 {
     setArgument("llll");
     setArgument("keys");
@@ -786,7 +786,7 @@ t_llll* t_fnMc2f::call(const t_execEnv &context) {
     double basepitch = llll_getdouble(context.argv[3], 6900.);
 
     t_llll *ll = llll_mc2f(mc, basefreq, basepitch);
-    llll_free(mc);
+    //llll_free(mc);
     return ll;
 }
 
@@ -807,6 +807,6 @@ t_llll* t_fnF2mc::call(const t_execEnv &context) {
     double basepitch = llll_getdouble(context.argv[3], 6900.);
     
     t_llll *ll = llll_f2mc(f, basefreq, basepitch);
-    llll_free(f);
+    //llll_free(f);
     return ll;
 }

@@ -74,6 +74,8 @@ typedef struct _pv
     t_patcherVariable   *n_var;
     long                n_auto[2];
     t_object            *m_editor;
+    
+    long                n_retry;
 } t_pv;
 
 
@@ -241,7 +243,15 @@ void pv_setpatchervariable(t_pv *x, t_symbol *name, t_patcherVariable *var)
 }
 
 void pv_bang(t_pv *x)
-{	
+{
+    if (!x->n_var) {
+        if (!x->n_retry) {
+            defer_low(x, (method) pv_bang, NULL, 0, NULL);
+            x->n_retry = 1;
+        } else
+            object_bug((t_object *) x, "No associated variable");
+        return;
+    }
     t_llll *out_ll = x->n_var->get();
 	llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, out_ll);
 	llll_release(out_ll);
