@@ -4959,8 +4959,8 @@ int stringparser_popfile(yyscan_t myscanner)
     bach_freeptr(lexparams->this_bs->name);
     bach_freeptr(lexparams->this_bs->text);
     --(lexparams->this_bs);
-    yyset_lineno(lexparams->this_bs->line, myscanner);
     yy_switch_to_buffer(lexparams->this_bs->bs, myscanner);
+    yyset_lineno(lexparams->this_bs->line, myscanner);
     return 0;
 }
 
