@@ -720,7 +720,6 @@ t_llll* t_fnGeomser::call(const t_execEnv &context) {
 
 ///////////////
 
-#error DG4AA: SUM AND PROD FUNCTIONS MUST BE IMPLEMENTED BETTER: I'll leave this to you since you'll do that more efficiently with all your expr-stuff :)
 t_fnSum::t_fnSum() : t_builtInFunction("sum")
 {
     setArgument("llll");
