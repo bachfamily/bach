@@ -1674,7 +1674,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 246.0, 454.0, 358.0, 74.0 ],
 					"style" : "",
-					"text" : "Notice that, by combining the accidental sign and the alteration, it is possible to build alternative representation of the same pitch. The rightmost message box, for example, contains an A flat plus eighth-tone, which is equivalent to an a quarter-flat minus an eighth-tone. The latter is the representation chosen for output."
+					"text" : "Notice that, by combining the accidental sign and the alteration, it is possible to build alternative representation of the same pitch. The rightmost message box, for example, contains an A flat plus eighth-tone, which is equivalent to an A quarter-flat minus an eighth-tone. The latter is the representation chosen for output."
 				}
 
 			}
