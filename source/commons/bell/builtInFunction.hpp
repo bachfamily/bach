@@ -290,4 +290,18 @@ public:
     t_llll* call(const t_execEnv &context);
 };
 
+class t_fnMc2f : public t_builtInFunction
+{
+public:
+    t_fnMc2f();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnF2mc : public t_builtInFunction
+{
+public:
+    t_fnF2mc();
+    t_llll* call(const t_execEnv &context);
+};
+
 #endif /* builtInFunction_hpp */

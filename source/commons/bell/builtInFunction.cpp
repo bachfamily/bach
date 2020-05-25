@@ -819,3 +819,41 @@ t_llll* t_fnProd::call(const t_execEnv &context)
 ///////////////
 
 
+
+t_fnMc2f::t_fnMc2f() : t_builtInFunction("mc2f") {
+    setArgument("mc", llll_get());
+    setArgument("basefreq", 440.);
+    setArgument("basepitch", 6900.);
+}
+
+t_llll* t_fnMc2f::call(const t_execEnv &context) {
+    
+    t_llll *mc = context.argv[1];
+    double basefreq = llll_getdouble(context.argv[2], 440.);
+    double basepitch = llll_getdouble(context.argv[3], 6900.);
+
+    t_llll *ll = llll_mc2f(mc, basefreq, basepitch);
+    //llll_free(mc);
+    return ll;
+}
+
+
+///////////////
+
+
+t_fnF2mc::t_fnF2mc() : t_builtInFunction("f2mc") {
+    setArgument("mc", llll_get());
+    setArgument("basefreq", 440.);
+    setArgument("basepitch", 6900.);
+}
+
+t_llll* t_fnF2mc::call(const t_execEnv &context) {
+    
+    t_llll *f = context.argv[1];
+    double basefreq = llll_getdouble(context.argv[2], 440.);
+    double basepitch = llll_getdouble(context.argv[3], 6900.);
+    
+    t_llll *ll = llll_f2mc(f, basefreq, basepitch);
+    //llll_free(f);
+    return ll;
+}
