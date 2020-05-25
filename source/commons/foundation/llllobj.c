@@ -2754,3 +2754,8 @@ t_atom_long llll_getlong(t_llll *ll, t_atom_long def)
     return ll->l_head ? hatom_getlong(&ll->l_head->l_hatom) : def;
 }
 
+
+double llll_getdouble(t_llll *ll, double def)
+{
+	return ll->l_head ? hatom_getdouble(&ll->l_head->l_hatom) : def;
+}

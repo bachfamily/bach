@@ -596,7 +596,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                          );
     
     if (!export_slots) {
-        export_slots = get_num_ll(x->r_ob.link_annotation_to_slot);
+        export_slots = get_long_ll(x->r_ob.link_annotation_to_slot);
     }
     
     if (arguments->l_size) {

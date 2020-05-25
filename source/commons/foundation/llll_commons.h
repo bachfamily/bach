@@ -1324,8 +1324,10 @@ void llll_remove_lllls_from_lthing(t_llll *ll);
 void llll_destroy_everything_but_head(t_llll *ll);
 
 t_bool llll_istrue(const t_llll *ll);
-t_llll *get_num_ll(const t_atom_long n);
+t_llll *get_long_ll(const t_atom_long n);
+t_llll *get_double_ll(const double d);
 t_atom_long llll_getlong(t_llll *ll, t_atom_long def = 0);
+double llll_getdouble(t_llll *ll, double def = 0.);
 
 void dev_llll_send(t_llll *x, const char* receiver);
 

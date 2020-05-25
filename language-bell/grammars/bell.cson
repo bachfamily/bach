@@ -57,7 +57,7 @@ patterns: [ # An array of individual pattern declarations.
     name: 'support.function.general.bell'
   }
   {
-    match: '(cos|sin|tan|exp|log|acos|asin|atan|cosh|sinh|tanh|exp2|log2|sqrt|ceil|acosh|asinh|atanh|log10|floor|round|trunc|fmod|atan2|hypot|pow|int|rat|num|den|abs|sgn|float|pitch|degree|octave|alter|cents|pow|mod|min|max|random|bessel|approx|enharm|makepitch|makepitchsc|outlet|inlet|\\$args|directin|directout|print|\\$argcount)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    match: '(cos|sin|tan|exp|log|acos|asin|atan|cosh|sinh|tanh|exp2|log2|sqrt|ceil|acosh|asinh|atanh|log10|floor|round|trunc|fmod|atan2|hypot|pow|int|rat|num|den|abs|sgn|float|pitch|degree|octave|alter|cents|pow|mod|min|max|random|bessel|approx|enharm|makepitch|makepitchsc|outlet|inlet|\\$args|directin|directout|print|\\$argcount|minimum|maximum|mc2f|f2mc)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
     name: 'support.function.general.bell'
   }
   {

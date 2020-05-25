@@ -25,7 +25,7 @@ t_llll *astLogNot::eval(t_execEnv const &context) {
     t_llll *v = n1->eval(context);
     res = !llll_istrue(v);
     bell_release_llll(v);
-    return get_num_ll(res);
+    return get_long_ll(res);
 }
 
 
@@ -43,7 +43,7 @@ t_bool astLogXor_core(t_llll *first, astNode *second, t_execEnv const &context)
 
 t_llll *astLogXor_run(t_llll *first, astNode *second, t_execEnv const &context)
 {
-    return get_num_ll(astLogXor_core(first, second, context));
+    return get_long_ll(astLogXor_core(first, second, context));
 }
 
 t_bool astLogXor_hatom(const t_hatom *first, astNode *second, t_execEnv const &context)
@@ -77,7 +77,7 @@ t_bool astSCOr_core(t_llll *first, astNode *second, t_execEnv const &context)
 
 t_llll* astSCOr_run(t_llll *first, astNode *second, t_execEnv const &context)
 {
-    return get_num_ll(astSCOr_core(first, second, context));
+    return get_long_ll(astSCOr_core(first, second, context));
 }
 
 t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv const &context)
@@ -118,7 +118,7 @@ t_bool astSCAnd_core(t_llll *first, astNode *second, t_execEnv const &context)
 
 t_llll *astSCAnd_run(t_llll *first, astNode *second, t_execEnv const &context)
 {
-    return get_num_ll(astSCAnd_core(first, second, context));
+    return get_long_ll(astSCAnd_core(first, second, context));
 }
 
 t_bool astSCAnd_hatom(const t_hatom *first, astNode *second, t_execEnv const &context)

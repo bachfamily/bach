@@ -18,6 +18,7 @@
  */
 
 #include "bell/builtInFunction.hpp"
+#include "math/bach_math_utilities.h"
 
 t_fnLength::t_fnLength() : t_builtInFunction("length") {
     setArgument("llll");
@@ -127,7 +128,7 @@ t_fnArgcount::t_fnArgcount() : t_builtInFunction() {
 }
 
 t_llll* t_fnArgcount::call(const t_execEnv &context) {
-    return get_num_ll(context.parent->argc);
+    return get_long_ll(context.parent->argc);
 }
 
 
@@ -160,7 +161,7 @@ t_llll* t_fnOutlet::call(const t_execEnv &context) {
 t_fnInlet::t_fnInlet() : t_builtInFunction("inlet", true) { }
 
 t_llll* t_fnInlet::call(const t_execEnv &context) {
-    t_llll *in = get_num_ll(context.mainFunc->getInlet());
+    t_llll *in = get_long_ll(context.mainFunc->getInlet());
     return llll_clone(in);
 }
 
@@ -225,7 +226,7 @@ t_llll* t_fnContains::call(const t_execEnv &context)
     t_atom_long mindepth, maxdepth;
     getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
     t_atom_long contains = llll_contains(ll, mindepth, maxdepth);
-    return get_num_ll(contains);
+    return get_long_ll(contains);
 }
 
 
@@ -417,8 +418,8 @@ t_llll* t_fnInsert::call(const t_execEnv &context)
 
 ///////////////
 
-
-t_fnKeysubs::t_fnKeysubs() : t_builtInFunction("insert")
+// UNUSED
+t_fnKeysubs::t_fnKeysubs() : t_builtInFunction("keysubs")
 {
     setArgument("llll");
     setArgument("keys");
@@ -492,6 +493,57 @@ t_llll *t_fnMinmax::call(const t_execEnv &context)
 
 ///////////////
 
+
+t_fnMinimum::t_fnMinimum() : t_builtInFunction("minimum")
+{
+    setArgument("llll");
+    setArgument("depth");
+    setArgument("mindepth", 1);
+    setArgument("maxdepth", 1);
+}
+
+t_llll *t_fnMinimum::call(const t_execEnv &context)
+{
+    t_llll *ll = context.argv[1];
+    t_atom_long mindepth, maxdepth;
+    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+    t_hatom *min;
+    llll_minmax(ll, &min, nullptr, nullptr, nullptr, mindepth, maxdepth);
+    t_llll *res = llll_get();
+    if (min->h_type != H_NOTHING) {
+        llll_appendhatom_clone(res, min);
+    }
+    return res;
+}
+
+
+///////////////
+
+
+t_fnMaximum::t_fnMaximum() : t_builtInFunction("minimum")
+{
+    setArgument("llll");
+    setArgument("depth");
+    setArgument("mindepth", 1);
+    setArgument("maxdepth", 1);
+}
+
+t_llll *t_fnMaximum::call(const t_execEnv &context)
+{
+    t_llll *ll = context.argv[1];
+    t_atom_long mindepth, maxdepth;
+    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+    t_hatom *max;
+    llll_minmax(ll, nullptr, &max, nullptr, nullptr, mindepth, maxdepth);
+    t_llll *res = llll_get();
+    if (max->h_type != H_NOTHING) {
+        llll_appendhatom_clone(res, max);
+    }
+    return res;
+}
+
+
+///////////////
 
 t_fnPerm::t_fnPerm() : t_builtInFunction("perm")
 {
@@ -638,7 +690,7 @@ t_llll* t_fnDelace::call(const t_execEnv &context) {
 
 t_fnGroup::t_fnGroup() : t_builtInFunction("group") {
     setArgument("llll");
-    setArgument("modulos", get_num_ll(1));
+    setArgument("modulos", get_long_ll(1));
     setArgument("overlap", 0l);
 }
 

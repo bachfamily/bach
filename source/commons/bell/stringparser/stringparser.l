@@ -498,7 +498,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return REPEAT;
 }
 
-<NOUNARY_NOARGS,NOUNARY_ARGS>"." {
+"." {
     code_dev_post("lex: ACCESS\n");
     BEGIN lexparams->setState(UNARY_NOARGS);
     return APPLY;
@@ -633,7 +633,14 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return BIF;
 }
 
-("cos"|"sin"|"tan"|"exp"|"log"|"acos"|"asin"|"atan"|"cosh"|"sinh"|"tanh"|"exp2"|"log2"|"sqrt"|"ceil"|"acosh"|"asinh"|"atanh"|"log10"|"floor"|"round"|"trunc"|"fmod"|"atan2"|"hypot"|"pow"|"int"|"rat"|"num"|"den"|"abs"|"sgn"|"float"|"pitch"|"degree"|"octave"|"alter"|"cents"|"pow"|"mod"|"min"|"max"|"random"|"bessel"|"approx"|"enharm"|"makepitch"|"makepitchsc"|"outlet"|"inlet")/{SEPARATOR} {
+("cos"|"sin"|"tan"|"exp"|"log"|"acos"|"asin"|"atan"|"cosh"|"sinh"|"tanh"|"exp2"|"log2"|"sqrt"|"ceil"|"acosh"|"asinh"|"atanh"|"log10"|"floor"|"round"|"trunc"|"fmod"|"atan2"|"hypot"|"pow"|"int"|"rat"|"num"|"den"|"abs"|"sgn"|"float"|"pitch"|"degree"|"octave"|"alter"|"cents"|"pow"|"mod"|"min"|"max"|"random"|"bessel"|"approx"|"enharm"|"makepitch"|"makepitchsc"|"mc2f"|"f2mc"|"minimum"|"maximum")/{SEPARATOR} {
+    code_dev_post("lex: BIF %s", yytext);
+    yylval->sym = gensym(yytext);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
+    return BIF;
+}
+
+("outlet"|"inlet")/{SEPARATOR} {
     code_dev_post("lex: BIF %s", yytext);
     yylval->sym = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
@@ -1056,8 +1063,8 @@ int stringparser_popfile(yyscan_t myscanner)
     bach_freeptr(lexparams->this_bs->name);
     bach_freeptr(lexparams->this_bs->text);
     --(lexparams->this_bs);
-    yyset_lineno(lexparams->this_bs->line, myscanner);
     yy_switch_to_buffer(lexparams->this_bs->bs, myscanner);
+    yyset_lineno(lexparams->this_bs->line, myscanner);
     return 0;
 }
 

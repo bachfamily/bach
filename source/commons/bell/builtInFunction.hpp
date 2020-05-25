@@ -45,7 +45,9 @@ public:
         }
     }
     
-    // with these, we disable reference counting for built in functions, thus preventing them from being deleted
+    // by uncommenting the following two lines,
+    // you can disable reference counting for built in functions
+    // thus preventing them from being deleted
     //virtual void increase() { }
     //virtual void decrease() { }
 };
@@ -194,6 +196,20 @@ class t_fnMinmax : public t_builtInFunction
 {
 public:
     t_fnMinmax();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnMinimum : public t_builtInFunction
+{
+public:
+    t_fnMinimum();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnMaximum : public t_builtInFunction
+{
+public:
+    t_fnMaximum();
     t_llll* call(const t_execEnv &context);
 };
 

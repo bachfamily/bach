@@ -498,11 +498,6 @@ void hatom_fn_enharm(t_hatom *a1, t_hatom *a2, t_hatom *res)
     hatom_setpitch(res, p.enharm(hatom_getlong(a2)));
 }
 
-
-
-
-
-
 void hatom_op_uminus(t_hatom *h1, t_hatom *res)
 {
     switch (hatom_gettype(h1)) {
