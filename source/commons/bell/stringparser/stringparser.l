@@ -498,7 +498,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return REPEAT;
 }
 
-<NOUNARY_NOARGS,NOUNARY_ARGS>"." {
+"." {
     code_dev_post("lex: ACCESS\n");
     BEGIN lexparams->setState(UNARY_NOARGS);
     return APPLY;

@@ -26,6 +26,7 @@ authorization: now the code for a given year can be entered until January of the
     fixed parsing of pitch literals
     new built-in functions: mc2f, f2mc, minimum, maximum
     fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
+    now dot operator can be preceded by whitespace
 
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor
