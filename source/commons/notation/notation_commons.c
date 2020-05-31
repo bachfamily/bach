@@ -4133,6 +4133,14 @@ long yposition_to_systemnumber(t_notation_obj *r_ob, double yposition){
     }
 }
 
+inline double get_ux_left_start(t_notation_obj *r_ob)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL || r_ob->spacing_type == k_SPACING_PROPORTIONAL)
+        return CONST_ROLL_UX_LEFT_START * r_ob->show_clefs;
+    else
+        return CONST_SCORE_UX_LEFT_START * r_ob->show_clefs;
+}
+
 // for roll only!
 double onset_to_xposition_roll(t_notation_obj *r_ob, double onset, long *system)
 {
@@ -4146,9 +4154,9 @@ double onset_to_xposition_roll(t_notation_obj *r_ob, double onset, long *system)
         this_system = 0;
     
     if (r_ob->view == k_VIEW_SCROLL)
-        res = r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (onset - r_ob->screen_ms_start) * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
+        res = r_ob->zoom_y * (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (onset - r_ob->screen_ms_start) * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
     else
-        res = r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (onset - this_system * r_ob->ms_on_a_line) * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
+        res = r_ob->zoom_y * (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (onset - this_system * r_ob->ms_on_a_line) * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
     
     if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
         t_llll *ll = llll_get();
@@ -4186,7 +4194,7 @@ double get_predomain_width_pixels(t_notation_obj *r_ob)
 double xposition_to_onset(t_notation_obj *r_ob, double xposition, long system)
 {
     double res = system * r_ob->ms_on_a_line + r_ob->screen_ms_start +
-                (((xposition - r_ob->j_inset_x) / r_ob->zoom_y) - CONST_ROLL_UX_LEFT_START - r_ob->key_signature_uwidth - r_ob->voice_names_uwidth - r_ob->additional_ux_start_pad) / (CONST_X_SCALING * r_ob->zoom_x);
+                (((xposition - r_ob->j_inset_x) / r_ob->zoom_y) - get_ux_left_start(r_ob) - r_ob->key_signature_uwidth - r_ob->voice_names_uwidth - r_ob->additional_ux_start_pad) / (CONST_X_SCALING * r_ob->zoom_x);
     if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
         t_llll *ll = llll_get();
         r_ob->lambda_val = res;
@@ -4216,14 +4224,14 @@ double deltaonset_to_deltaxpixels(t_notation_obj *r_ob, double deltaonset){
 
 // mostly for bach.score, but also used by bach.roll
 double unscaled_xposition_to_xposition(t_notation_obj *r_ob, double unscaled_x_pos){
-    double const_left_start = ((r_ob->spacing_type == k_SPACING_PROPORTIONAL || r_ob->obj_type == k_NOTATION_OBJECT_ROLL) ? CONST_ROLL_UX_LEFT_START : CONST_SCORE_UX_LEFT_START);
+    double const_left_start = get_ux_left_start(r_ob);
     double const_x_scaling = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? 1. : CONST_X_SCALING_SCORE);
 
     return r_ob->j_inset_x + (const_left_start + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y + const_x_scaling * (unscaled_x_pos - r_ob->screen_ux_start) * r_ob->zoom_x * r_ob->zoom_y;
 }
 
 double xposition_to_unscaled_xposition(t_notation_obj *r_ob, double x_position){
-    double const_left_start = ((r_ob->spacing_type == k_SPACING_PROPORTIONAL || r_ob->obj_type == k_NOTATION_OBJECT_ROLL) ? CONST_ROLL_UX_LEFT_START : CONST_SCORE_UX_LEFT_START);
+    double const_left_start = get_ux_left_start(r_ob);
     double const_x_scaling = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? 1. : CONST_X_SCALING_SCORE);
     
     return r_ob->screen_ux_start + (x_position - r_ob->j_inset_x - (const_left_start + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (const_x_scaling * r_ob->zoom_x * r_ob->zoom_y);
@@ -5860,7 +5868,7 @@ void update_domain(t_notation_obj *r_ob) {
 
     if (object_type == k_NOTATION_OBJECT_ROLL) {
 
-        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (1 * r_ob->zoom_x * r_ob->zoom_y);
+        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (1 * r_ob->zoom_x * r_ob->zoom_y);
  
 //        dev_post("domain_ux: %.2f", r_ob->domain_ux);
         
@@ -5877,7 +5885,7 @@ void update_domain(t_notation_obj *r_ob) {
             
         }
     } else if (object_type == k_NOTATION_OBJECT_SCORE) {
-        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_SCORE_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
+        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
         r_ob->screen_ux_end = r_ob->screen_ux_start + r_ob->domain_ux;
     }
 }
@@ -15713,13 +15721,13 @@ long simplify_tuplets_for_level_fn(void *data, t_hatom *a, const t_llll *address
 */
                         if (rightend && leftstart && rightenddur && leftstartdur && rightend != leftstart){
                             t_llll *temp = llll_wrap_element_range(leftstartdur, rightenddur);
-                            t_llll *wrapped = llll_clone_extended(temp, WHITENULL_llll, 0, clone_rhythm_level_properties_fn); // we test the new tuplet
+                            t_llll *wrapped = llll_clone_extended(temp, WHITENULL_llll, 0, clone_rhythm_level_properties_fn); 
+                            // we test the new tuplet
 
                             if (temp->l_owner)
                                 llll_splatter(temp->l_owner, LLLL_FREETHING_MEM);
                             
                             llll_flat(wrapped, 0, 1, 0, LLLL_FREETHING_MEM); // FLAT UNTIL TUPLET???
-//                            llll_flat(wrapped, 0, 0, 0, LLLL_FREETHING_MEM); // or FLAT UNTIL TUPLET???
 
                             cpost_llll_rt(wrapped, "Testing simplified solution");
                             
@@ -20584,7 +20592,7 @@ void calculate_chords_and_tempi_measure_onsets(t_notation_obj *r_ob, t_measure *
 double chord_get_onset_ms(t_chord *chord){
     if (!chord->is_score_chord)
         return chord->onset;
-    return 1000 * rat2double(chord->r_measure_onset_sec) + chord->parent->tuttipoint_onset_ms + chord->parent->tuttipoint_reference->onset_ms;
+    return 1000 * rat2double(chord->r_measure_onset_sec) + chord->parent->tuttipoint_onset_ms + (chord->parent->tuttipoint_reference ? chord->parent->tuttipoint_reference->onset_ms : 0);
 }
 
 double get_tempo_onset_ms(t_tempo *tempo){
@@ -32750,7 +32758,7 @@ void recompute_all_for_measure_ext(t_notation_obj *r_ob, t_measure *meas, char a
     set_need_perform_analysis_and_change_flag(r_ob);
     
     // recomputing domain_ux // WHY ON EARTH DID WE DO THAT HERE???
-    r_ob->domain_ux = (r_ob->inner_width + r_ob->j_inset_x - (r_ob->j_inset_x + CONST_SCORE_UX_LEFT_START * r_ob->zoom_y)) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
+    r_ob->domain_ux = (r_ob->inner_width + r_ob->j_inset_x - (r_ob->j_inset_x + get_ux_left_start(r_ob) * r_ob->zoom_y)) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
 }
 
 void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings)
@@ -37746,7 +37754,7 @@ void calculate_voice_offsets(t_notation_obj *r_ob)
 void calculate_ms_on_a_line(t_notation_obj *r_ob) {
     // TODO: CONST_RIGHT_UPAD is equivalent to r_ob->postdomain_width. Harmonize them.
     r_ob->ms_on_a_line = (((r_ob->width - CONST_RIGHT_UPAD - get_max_vscrollbar_width_or_inset_x(r_ob)) / r_ob->zoom_y)  -
-                          (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth)) / (CONST_X_SCALING * r_ob->zoom_x);
+                          (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth)) / (CONST_X_SCALING * r_ob->zoom_x);
 }
 
 

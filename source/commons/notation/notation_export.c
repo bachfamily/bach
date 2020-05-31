@@ -269,9 +269,9 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                     if (mspersystem != r_ob->domain && mspersystem > 0) {
                         // either we change the inner_width or we change the zoom factor.
                         if (adaptwidth) {
-                            r_ob->inner_width = r_ob->postdomain_width + mspersystem * (CONST_X_SCALING * r_ob->zoom_x * r_ob->zoom_y) - (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y);
+                            r_ob->inner_width = r_ob->postdomain_width + mspersystem * (CONST_X_SCALING * r_ob->zoom_x * r_ob->zoom_y) - (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y);
                         } else {
-                            r_ob->zoom_x = (r_ob->inner_width + (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) - r_ob->postdomain_width) / (mspersystem * CONST_X_SCALING * r_ob->zoom_y);
+                            r_ob->zoom_x = (r_ob->inner_width + (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) - r_ob->postdomain_width) / (mspersystem * CONST_X_SCALING * r_ob->zoom_y);
                         }
                     }
                     r_ob->inner_height = notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y;

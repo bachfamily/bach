@@ -439,7 +439,7 @@
 #define CONST_X_MOUSEWHEEL_FACTOR 15                    ///< Factor for horizontal scrolling while using the mousewheel
 #define CONST_Y_MOUSEWHEEL_FACTOR 15                    ///< Factor for vertical scrolling while using the mousewheel
 
-#define CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE 1.5    ///< Unscaled tolerance (in pixels) around a barline, such that if one clicks at left or at right of the measure barline 
+#define CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE 2.5    ///< Unscaled tolerance (in pixels) around a barline, such that if one clicks at left or at right of the measure barline 
                                                         ///< by at most #CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE, the barline is still selected
 
 // articulations
@@ -5025,6 +5025,8 @@ BEGIN_CHECK_LINKAGE
  */
 double onset_to_xposition_roll(t_notation_obj *r_ob, double onset, long *system); 
 
+// private
+double get_ux_left_start(t_notation_obj *r_ob);
 
 /**    Convert a x position in pixels into an onset in milliseconds (only usable by [bach.roll]) 
     @ingroup            conversions
