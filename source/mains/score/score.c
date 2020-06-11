@@ -2773,8 +2773,11 @@ void score_addtempo(t_score *x, long meas_num, t_llll *tempo_ll, t_llll *voices_
             }
         }
     }
-    recompute_all(x);
+    recompute_all_except_for_beamings_and_autocompletion(x);
+    perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+
     unlock_general_mutex((t_notation_obj *)x);
+    redraw_hscrollbar((t_notation_obj *)x, 0);
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_TEMPO);
 }
 

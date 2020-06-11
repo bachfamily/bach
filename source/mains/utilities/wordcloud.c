@@ -813,7 +813,8 @@ void wordcloud_paint(t_wordcloud *x, t_object *view)
 		t_jrgba color = x->mouseclick_tag == i ? j_mousedown_text_color_r : (x->mousemove_tag == i ? j_mouseover_textcolor_r : j_textcolor_r);
 		jf = jfont_create_debug(font_name->s_name, (t_jgraphics_font_slant) font_slant, (t_jgraphics_font_weight) font_weight, size);
 
-		write_text(g, jf, color, this_tag.tag->s_name, this_tag.rect.x, this_tag.rect.y, this_tag.rect.width, this_tag.rect.height, JGRAPHICS_TEXT_JUSTIFICATION_TOPLEFT, false, false);
+        write_text_standard_singleline(g, jf, color, this_tag.tag->s_name, this_tag.rect.x, this_tag.rect.y, this_tag.rect.width + 300, this_tag.rect.height + 300);
+//		write_text(g, jf, color, this_tag.tag->s_name, this_tag.rect.x, this_tag.rect.y, this_tag.rect.width + 300, this_tag.rect.height, JGRAPHICS_TEXT_JUSTIFICATION_TOPLEFT, false, false);
 		
 		if (x->underline && x->mousemove_tag == i) {
 			double underline_shift = size * 1.05;

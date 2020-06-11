@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 6,
+			"revision" : 5,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -187,11 +187,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, function, user, defined, name, named, position, variable, local",
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, function, user, defined, name, named, position, variable, local, default, argument",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

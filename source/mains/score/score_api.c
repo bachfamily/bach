@@ -3821,9 +3821,13 @@ void score_cleartempi(t_score *x, t_symbol *s, long argc, t_atom *argv)
         }
     }
     
-    recompute_all(x);
-    perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
-    close_slot_window((t_notation_obj *)x); // if we were in slot view...
+    recompute_all_except_for_beamings_and_autocompletion(x);
+    perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+
+//  DG, 2020.06.11 why was this???
+//    perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
+//    close_slot_window((t_notation_obj *)x); // if we were in slot view...
+
     unlock_general_mutex((t_notation_obj *)x);
     
     redraw_hscrollbar((t_notation_obj *)x, 0);
