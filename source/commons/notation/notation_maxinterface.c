@@ -5260,6 +5260,19 @@ t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note
 }
 
 
+t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord){
+    t_chord *chord1 = chord_get_first_in_tieseq(chord);
+    t_chord *chord2 = chord_get_last_in_tieseq(chord);
+    t_chord *temp;
+    t_llll *out = llll_get();
+    for (temp = chord1; temp; temp = chord_get_next(temp)) {
+        llll_appendobj(out, temp);
+        if (temp == chord2)
+            break;
+    }
+    return out;
+}
+
 t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord){
 	t_chord *chord1 = chord_get_first_in_tieseq(chord);
 	t_chord *chord2 = chord_get_last_in_tieseq(chord);
@@ -5271,6 +5284,19 @@ t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_cho
 			break;
 	}
 	return out;
+}
+
+t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord){
+    t_chord *chord1 = rest_get_first_in_seq(chord, 0);
+    t_chord *chord2 = rest_get_last_in_seq(chord, 0);
+    t_chord *temp;
+    t_llll *out = llll_get();
+    for (temp = chord1; temp; temp = chord_get_next(temp)) {
+        llll_appendobj(out, temp);
+        if (temp == chord2)
+            break;
+    }
+    return out;
 }
 
 t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord){

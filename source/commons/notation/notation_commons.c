@@ -20828,41 +20828,193 @@ void fill_measure_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *fir
 
 
 /// BEWARE: this function is 1-based!!!
-void global_chord_number_to_measure_and_chord_index(t_notation_obj *r_ob, long voice_num, long global_chord_num, long *local_chord_num, long *meas_num)
+void global_chord_number_to_measure_and_chord_index(t_notation_obj *r_ob, long voice_num, long global_chord_num,
+                                                    long *local_chord_num, long *meas_num,
+                                                    char tiemode_all, char skiprests, char restseqmode_all)
 {
     t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
     if (voice) {
-        if (global_chord_num >= 0) {
-            for (t_measure *meas = voice->firstmeasure; meas; meas = meas->next) {
-                if (global_chord_num <= meas->num_chords) {
-                    *local_chord_num = global_chord_num;
-                    *meas_num = meas->measure_number + 1;
-                    return;
-                } else {
-                    global_chord_num -= meas->num_chords;
+        if (global_chord_num == 0) {
+            *meas_num = 0;
+            *local_chord_num = 0;
+        } else if (global_chord_num > 0) {
+            if (tiemode_all || skiprests || restseqmode_all) {
+                long count = 0;
+                t_chord *chord = voice_get_first_chord(r_ob, (t_voice *)voice);
+                for (; chord && count < global_chord_num; ) {
+                    if (chord->firstnote) {
+                        count++;
+                        if (count >= global_chord_num)
+                            break;
+                        if (tiemode_all) {
+                            while (chord && chord_is_all_tied_to(r_ob, chord, false, NULL))
+                                chord = chord_get_next(chord);
+                        }
+                    } else {
+                        if (!skiprests)
+                            count++;
+                        if (count >= global_chord_num)
+                            break;
+                        if (restseqmode_all) {
+                            t_chord *temp;
+                            while ((temp = chord_get_next(chord)) && !temp->firstnote)
+                                chord = temp;
+                        }
+                    }
+                    chord = chord_get_next(chord);
                 }
+                if (count == global_chord_num && chord) {
+                    *meas_num = chord->parent->measure_number + 1;
+                    *local_chord_num = chord_get_position(r_ob, chord);
+                } else {
+                    *meas_num = 0;
+                    *local_chord_num = 0;
+                }
+            } else {
+                for (t_measure *meas = voice->firstmeasure; meas; meas = meas->next) {
+                    if (global_chord_num <= meas->num_chords) {
+                        *local_chord_num = global_chord_num;
+                        *meas_num = meas->measure_number + 1;
+                        return;
+                    } else {
+                        global_chord_num -= meas->num_chords;
+                    }
+                }
+                *local_chord_num = global_chord_num;
+                *meas_num = voice->num_measures;
             }
-            *local_chord_num = global_chord_num;
-            *meas_num = voice->num_measures;
         } else if (global_chord_num < 0) {
-            for (t_measure *meas = voice->lastmeasure; meas; meas = meas->prev) {
-                if (-global_chord_num <= meas->num_chords) {
-                    *local_chord_num = global_chord_num;
-                    *meas_num = meas->measure_number + 1;
-                    return;
-                } else {
-                    global_chord_num += meas->num_chords;
+            if (tiemode_all || skiprests || restseqmode_all) {
+                long count = 0;
+                t_chord *chord = voice_get_last_chord(r_ob, (t_voice *)voice);
+                global_chord_num = -global_chord_num;
+                for (; chord && count < global_chord_num; ) {
+                    if (chord->firstnote) {
+                        if (tiemode_all) {
+                            while (chord && chord_is_all_tied_from(chord, false))
+                                chord = chord_get_prev(chord);
+                        }
+                        count++;
+                    } else {
+                        if (restseqmode_all) {
+                            t_chord *temp;
+                            while ((temp = chord_get_prev(chord)) && !temp->firstnote)
+                                chord = temp;
+                        }
+                        if (!skiprests)
+                            count++;
+                    }
+                    if (count >= global_chord_num)
+                        break;
+                    chord = chord_get_prev(chord);
                 }
+                if (count == global_chord_num && chord) {
+                    *meas_num = chord->parent->measure_number + 1;
+                    *local_chord_num = chord_get_position(r_ob, chord);
+                } else {
+                    *meas_num = 0;
+                    *local_chord_num = 0;
+                }
+            } else {
+                for (t_measure *meas = voice->lastmeasure; meas; meas = meas->prev) {
+                    if (-global_chord_num <= meas->num_chords) {
+                        *local_chord_num = global_chord_num;
+                        *meas_num = meas->measure_number + 1;
+                        return;
+                    } else {
+                        global_chord_num += meas->num_chords;
+                    }
+                }
+                *local_chord_num = global_chord_num;
+                *meas_num = voice->num_measures;
             }
-            *local_chord_num = global_chord_num;
-            *meas_num = voice->num_measures;
         }
         return;
     }
 }
 
+// inputs are 1-based
+void handle_params_for_chord_number_in_measure(t_notation_obj *r_ob, long voice_num, long meas_num, long *chord_num, char tiemode_all, char skiprests, char restseqmode_all)
+{
+    if ((!tiemode_all) && (!skiprests) && (!restseqmode_all))
+        return;
+    
+    t_voice *voice = nth_voice(r_ob, voice_num-1);
+    if (!voice)
+        return;
+    
+    t_measure *meas = nth_measure_of_scorevoice((t_scorevoice *)voice, meas_num-1);
+    if (!meas)
+        return;
+    
+    long cn = *chord_num;
+    if (cn == 0) {
+        // nothing to do
+    } else if (cn > 0) {
+        long count = 0, chord_index = 0;
+        t_chord *chord = meas->firstchord;
+        for (; chord && count < cn; ) {
+            chord_index++;
+            if (chord->firstnote) {
+                count++;
+                if (count >= cn)
+                    break;
+                if (tiemode_all) {
+                    while (chord && chord_is_all_tied_to(r_ob, chord, true, NULL))
+                        chord = chord->next;
+                }
+            } else {
+                if (!skiprests)
+                    count++;
+                if (count >= cn)
+                    break;
+                if (restseqmode_all) {
+                    t_chord *temp;
+                    while ((temp = chord->next) && !temp->firstnote)
+                        chord = temp;
+                }
+            }
+            chord = chord->next;
+        }
+        if (count == cn && chord) {
+            *chord_num = chord_index;
+        }
+    } else {
+        long count = 0, chord_index = meas->num_chords+1;
+        t_chord *chord = meas->lastchord;
+        cn = -cn;
+        for (; chord && count < cn; ) {
+            chord_index--;
+            if (chord->firstnote) {
+                if (tiemode_all) {
+                    while (chord && chord_is_all_tied_from(chord, true))
+                        chord = chord->prev;
+                }
+                count++;
+            } else {
+                if (restseqmode_all) {
+                    t_chord *temp;
+                    while ((temp = chord->prev) && !temp->firstnote)
+                        chord = temp;
+                }
+                if (!skiprests)
+                    count++;
+            }
+            if (count >= cn)
+                break;
+            chord = chord->prev;
+        }
+        if (count == cn && chord) {
+            *chord_num = chord_index;
+        }
+        
+    }
+    
+}
+
 void fill_chord_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first_llllelem,
-                                         long *voice_num, long *meas_num, long *chord_num)
+                                         long *voice_num, long *meas_num, long *chord_num,
+                                         char tiemode_all, char skiprests, char restseqmode_all)
 {
     // initializing stuff
     if (voice_num)
@@ -20893,7 +21045,8 @@ void fill_chord_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first
         if (tot_size == 1 && is_hatom_number(&first_llllelem->l_hatom)) {
 //            *chord_num = hatom_getlong(&first_llllelem->l_hatom);
             long global_chord_num = hatom_getlong(&first_llllelem->l_hatom);
-            global_chord_number_to_measure_and_chord_index(r_ob, *voice_num, global_chord_num, chord_num, meas_num);
+            global_chord_number_to_measure_and_chord_index(r_ob, *voice_num, global_chord_num, chord_num, meas_num,
+                                                           tiemode_all, skiprests, restseqmode_all);
 
         } else if (tot_size >= 2) {
             if (tot_size >= 3) {
@@ -20907,19 +21060,23 @@ void fill_chord_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first
                 long global_chord_num = 1;
                 if (is_hatom_number(&first_llllelem->l_next->l_hatom))
                     global_chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
-                global_chord_number_to_measure_and_chord_index(r_ob, *voice_num, global_chord_num, chord_num, meas_num);
+                global_chord_number_to_measure_and_chord_index(r_ob, *voice_num, global_chord_num, chord_num, meas_num,
+                                                               tiemode_all, skiprests, restseqmode_all);
             } else {
                 if (is_hatom_number(&first_llllelem->l_hatom))
                     *meas_num = hatom_getlong(&first_llllelem->l_hatom);
-                if (is_hatom_number(&first_llllelem->l_next->l_hatom))
+                if (is_hatom_number(&first_llllelem->l_next->l_hatom)) {
                     *chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
+                    handle_params_for_chord_number_in_measure(r_ob, *voice_num, *meas_num, chord_num, tiemode_all, skiprests, restseqmode_all);
+                }
             }
         }
     }
 }
 
 void fill_note_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first_llllelem, 
-                                        long *voice_num, long *meas_num, long *chord_num, long *note_num)
+                                        long *voice_num, long *meas_num, long *chord_num, long *note_num,
+                                        char tiemode_all, char skiprests, char restseqmode_all)
 {
     // initializing stuff
     if (voice_num)
@@ -20977,12 +21134,14 @@ void fill_note_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first_
                     global_chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
                 if (is_hatom_number(&first_llllelem->l_next->l_next->l_hatom))
                     *note_num = hatom_getlong(&first_llllelem->l_next->l_next->l_hatom);
-                global_chord_number_to_measure_and_chord_index(r_ob, *voice_num, global_chord_num, chord_num, meas_num);
+                global_chord_number_to_measure_and_chord_index(r_ob, *voice_num, global_chord_num, chord_num, meas_num, tiemode_all, skiprests, restseqmode_all);
             } else {
                 if (is_hatom_number(&first_llllelem->l_hatom))
                     *meas_num = hatom_getlong(&first_llllelem->l_hatom);
-                if (is_hatom_number(&first_llllelem->l_next->l_hatom))
+                if (is_hatom_number(&first_llllelem->l_next->l_hatom)) {
                     *chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
+                    handle_params_for_chord_number_in_measure(r_ob, *voice_num, *meas_num, chord_num, tiemode_all, skiprests, restseqmode_all);
+                }
                 if (is_hatom_number(&first_llllelem->l_next->l_next->l_hatom))
                     *note_num = hatom_getlong(&first_llllelem->l_next->l_next->l_hatom);
             }
@@ -21107,17 +21266,17 @@ t_marker *get_marker_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllele
     return get_marker_from_path(r_ob, marker_num);
 }
 
-t_chord *chord_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem)
+t_chord *chord_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem, char tiemode_all, char skiprests, char restseqmode_all)
 {
     long voice_num = 1, meas_num = 1, chord_num = 1;
-    fill_chord_path_from_llllelem_range(r_ob, start_llllelem, &voice_num, &meas_num, &chord_num);
+    fill_chord_path_from_llllelem_range(r_ob, start_llllelem, &voice_num, &meas_num, &chord_num, tiemode_all, skiprests, restseqmode_all);
     return chord_get_from_path(r_ob, voice_num, meas_num, chord_num);
 }
 
-t_note *note_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem)
+t_note *note_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem, char tiemode_all, char skiprests, char restseqmode_all)
 {
     long voice_num = 1, meas_num = 1, chord_num = 1, note_num = 1;
-    fill_note_path_from_llllelem_range(r_ob, start_llllelem, &voice_num, &meas_num, &chord_num, &note_num);
+    fill_note_path_from_llllelem_range(r_ob, start_llllelem, &voice_num, &meas_num, &chord_num, &note_num, tiemode_all, skiprests, restseqmode_all);
     return note_get_from_path(r_ob, voice_num, meas_num, chord_num, note_num);
 }
 
@@ -36806,6 +36965,14 @@ t_chord *voice_get_first_chord(t_notation_obj *r_ob, t_voice *voice)
     return NULL;
 }
 
+t_chord *voice_get_last_chord(t_notation_obj *r_ob, t_voice *voice)
+{
+    for (t_measure *meas = ((t_scorevoice *)voice)->lastmeasure; meas; meas = meas->prev) {
+        if (meas->lastchord)
+            return meas->lastchord;
+    }
+    return NULL;
+}
 
 t_notation_item *notation_item_cast(t_notation_obj *r_ob, t_notation_item *nitem, e_element_types new_type, char also_cast_downwards)
 {

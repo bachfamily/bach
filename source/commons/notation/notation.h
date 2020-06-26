@@ -713,9 +713,6 @@ typedef enum _scheduling_type {
 
 
 
-
-
-
 typedef enum _nametoslot_chordname_policy {
     k_NAMETOSLOT_CHORDNAME_IGNORE = 0,
     k_NAMETOSLOT_CHORDNAME_REPLACE = 1,
@@ -7884,6 +7881,10 @@ t_symbol *notation_item_get_role_for_lexpr(t_notation_obj *r_ob, t_notation_item
 
 // TBD
 t_notation_item *notation_item_cast(t_notation_obj *r_ob, t_notation_item *nitem, e_element_types new_type, char also_cast_downwards);
+t_chord *voice_get_first_chord(t_notation_obj *r_ob, t_voice *voice);
+t_chord *voice_get_last_chord(t_notation_obj *r_ob, t_voice *voice);
+t_tempo *voice_get_first_tempo(t_notation_obj *r_ob, t_voice *voice);
+t_marker *voice_get_first_marker(t_notation_obj *r_ob, t_voice *voice);
 
 
 /** Obtain a time signature in llll representation
@@ -8009,9 +8010,12 @@ t_timesignature build_3compound_timesignature(t_notation_obj *r_ob, long numerat
     @ingroup        notation
     @param    r_ob    The notation object
     @param    start_llllelem    The llllelem starting the path
+    @param    tiemode_all       Flag telling whether sequence of tied chords should be consider a single one
+    @param    skiprests       Flag telling whether rests should be skipped
+    @param    restseqmode_all       Flag telling whether sequence of rests should be considered a single one
     @return            The chord at the given path, or NULL if none
  */
-t_chord *chord_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem);
+t_chord *chord_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem, char tiemode_all, char skiprests, char restseqmode_all);
 
 
 /**    Get a note from its path in the score. The path is given as a starting llllelem, and is considered to be the following elements.
@@ -8023,9 +8027,12 @@ t_chord *chord_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem 
     @ingroup        notation
     @param    r_ob    The notation object
     @param    start_llllelem    The llllelem starting the path
+    @param    tiemode_all       Flag telling whether sequence of tied chords should be consider a single one
+    @param    skiprests       Flag telling whether rests should be skipped
+    @param    restseqmode_all       Flag telling whether sequence of rests should be considered a single one
     @return            The note at the given path, or NULL if none
  */
-t_note *note_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem);
+t_note *note_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem, char tiemode_all, char skiprests, char restseqmode_all);
 
 
 /**    Get a measure from its path in the score. The path is given as a starting llllelem, and is considered to be the following elements.
@@ -12114,6 +12121,8 @@ t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note
     @seealso            chord_get_path_in_notationobj()
  */
 t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord);
+
 
 
 /**    Same as get_tied_chords_sequence_path_in_notationobj() but for sequences of consecutive rests.
@@ -12124,6 +12133,7 @@ t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_cho
     @seealso            get_tied_chords_sequence_path_in_notationobj()
  */
 t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord);
 
 
 /**    Obtain the information about the groups defined in the notation object in llll form. The form is: [GROUP1 GROUP2 GROUP3...],

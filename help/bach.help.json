@@ -356,7 +356,7 @@
 				"filename" : [ "bach.help.bell.060_functions.030_userdefinedfunctions.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "local+variable" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "name", "named", "position", "variable", "local" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "name", "named", "position", "variable", "local", "default", "argument" ],
 				"title" : [ "User-defined functions" ]
 			},
 			"Globalfunctionsandfunctionassignment" : {
@@ -598,6 +598,13 @@
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet", "directout", "direct", "out" ],
 					"title" : [ "directout() function reference" ]
 				},
+				"F2mc" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.f2mc.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "mc2f" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "midicents", "frequency", "conversion" ],
+					"title" : [ "f2mc() function reference" ]
+				},
 				"Find" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.find.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
@@ -682,10 +689,31 @@
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "map" ],
 					"title" : [ "map() function reference" ]
 				},
+				"Maximum" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.maximum.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "minmax", "minimum", "max" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "maximum" ],
+					"title" : [ "maximum() function reference" ]
+				},
+				"Mc2f" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.mc2f.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "f2mc" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "frequency", "midicents", "conversion" ],
+					"title" : [ "mc2f() function reference" ]
+				},
+				"Minimum" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.minimum.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "minmax", "maximum", "min" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "minimum" ],
+					"title" : [ "minimum() function reference" ]
+				},
 				"Minmax" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.minmax.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [ "nth", "colon" ],
+					"seealso" : [ "nth", "colon", "minimum", "maximum", "min", "max" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "minmax", "minimum", "maximum", "address" ],
 					"title" : [ "minmax() function reference" ]
 				},
@@ -723,6 +751,13 @@
 					"seealso" : [  ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
 					"title" : [ "print() function reference" ]
+				},
+				"Prod" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.prod.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "sum" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "prod", "product", "llll" ],
+					"title" : [ "prod() function reference" ]
 				},
 				"Reduce" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.reduce.maxpat" ],
@@ -779,6 +814,13 @@
 					"seealso" : [ "pick", "colon", "insert", "substitution+assignment", "nth" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "subs", "substitution", "address", "delete", "replace" ],
 					"title" : [ "subs() function reference" ]
+				},
+				"Sum" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.sum.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "prod" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "sum", "add", "llll", "summation" ],
+					"title" : [ "sum() function reference" ]
 				},
 				"Symdiff" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.symdiff.maxpat" ],
@@ -2998,6 +3040,13 @@
 					"seealso" : [ "sel", "unsel", "select", "sel+voices" ],
 					"tags" : [ "message", "selection", "chord", "index", "position", "single", "path", "sel", "unsel", "select", "global", "measure", "measure-wise", "any" ],
 					"title" : [ "Selecting single chords" ]
+				},
+				"B_selectingsinglechordsoptions" : {
+					"filename" : [ "bach.help.notation.messages.20_selection.20b_selectingsinglechordsoptions.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "sel", "unsel", "select", "sel+voices" ],
+					"tags" : [ "message", "selection", "chord", "index", "position", "single", "path", "sel", "unsel", "select", "global", "measure", "measure-wise", "any", "tie", "rest", "sequence", "avoid", "count", "once", "option", "influence", "tiemode", "restseqmode", "skiprests", "skip" ],
+					"title" : [ "Ties and rests influence in chord selection" ]
 				},
 				"Selectingsinglenotes" : {
 					"filename" : [ "bach.help.notation.messages.20_selection.21_selectingsinglenotes.maxpat" ],

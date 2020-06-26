@@ -7181,7 +7181,7 @@
 				Select items
 			</digest>
 			<description>
-				Syntax: <b>sel <m>&lt;llll: arguments&gt;</m> </b><br />
+				Syntax: <b>sel <m>&lt;llll: arguments&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>sel all</b>   <i>→ select everything</i><br />
 				• <b>sel notes</b>   <i>→ select all notes</i><br />
@@ -7193,6 +7193,9 @@
 				• <b>sel measures</b>   <i>→ select all measures</i><br />
 				• <b>sel chord 3 2</b>   <i>→ select 2rd chord of 3nd measure (of 1st voice)</i><br />
 				• <b>sel chord any 20</b>   <i>→ select 20th chord of 1st voice (in any measure)</i><br />
+				• <b>sel chord any 20 @tiemode all</b>   <i>→ the same, but consider tied chords as a single one</i><br />
+				• <b>sel chord any 20 @tiemode all @skiprests 1</b>   <i>→ the same, but ignore rests</i><br />
+				• <b>sel chord any 20 @restseqmode all</b>   <i>→ select 20th chord of 1st voice, consider rest sequences as one</i><br />
 				• <b>sel chord 2 5 4</b>   <i>→ select 4th chord of 5th measure 2nd voice</i><br />
 				• <b>sel chord 4 any 21</b>   <i>→ select 21th chord of 4st voice (in any measure)</i><br />
 				• <b>sel chord -1 -2 -1</b>   <i>→ select last chord of one-but-last measure of last voice</i><br />
@@ -7238,6 +7241,11 @@
 				• <b>sel marker if onset &gt; 5000</b>   <i>→ select all markers with onset &gt;5s</i><br />
 				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
 				• <b>sel tail if cents &gt; 6000</b>   <i>→ select all tails above middle C</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@tiemode</m> (symbol, default: each): If "all", tied sequences of chords are counted as one<br />
+				<m>@skiprests</m> (int, default: 0): If non-zero, rests are not counted at all<br />
+				<m>@restseqmode</m> (int, default: each): If "all", sequences of consecutive rests are counted as one<br />
 				<br />
 				The word <m>sel</m> add some notation items to the current selection. In the basic behavior,
 				the word must be followed by four elements, specifying: <br />

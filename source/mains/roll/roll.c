@@ -1795,13 +1795,13 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             t_chord *to_select;
             lock_general_mutex((t_notation_obj *)x);
             if (selectllll->l_depth == 1) {
-                if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
+                if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next, 0, 0, 0)))
                     add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
             } else {
                 t_llllelem *elem;
                 for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
                     if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                        if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
+                        if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
                             add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
             }
             move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
@@ -1936,13 +1936,13 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             t_note *to_select;
             lock_general_mutex((t_notation_obj *)x);
             if (selectllll->l_depth == 1) {
-                if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
+                if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next, 0, 0, 0)))
                     notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
             } else {
                 t_llllelem *elem;
                 for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
                     if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                        if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
+                        if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
                             notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
             }
             move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);

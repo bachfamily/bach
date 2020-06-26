@@ -1336,6 +1336,40 @@ void select_rests_with_lexpr(t_score *x, e_selection_modes mode)
     unlock_general_mutex((t_notation_obj *)x);
 }
 
+t_llll *score_select_extend_chord_for_options(t_score *x, t_chord *ch, char tiemode_all, char restseqmode_all)
+{
+    if (ch->firstnote && tiemode_all) {
+        return get_tied_chords_sequence((t_notation_obj *)x, ch);
+    } else if (!ch->firstnote && restseqmode_all) {
+        return get_rests_sequence((t_notation_obj *)x, ch);
+    } else {
+        t_llll *out = llll_get();
+        llll_appendobj(out, ch);
+        return out;
+    }
+}
+
+t_llll *score_select_extend_note_for_options(t_score *x, t_note *nt, char tiemode_all)
+{
+    if (tiemode_all) {
+        t_chord *ch = nt->parent;
+        long noteindex = note_get_position((t_notation_obj *)x, nt);
+        t_llll *chs_ll = score_select_extend_chord_for_options(x, ch, true, false);
+        t_llll *out = llll_get();
+        for (t_llllelem *el = chs_ll->l_head; el; el = el->l_next) {
+            t_chord *c = (t_chord *)hatom_getobj(&el->l_hatom);
+            t_note *n = nth_note(c, noteindex-1); // 0-based
+            if (n)
+                llll_appendobj(out, n);
+        }
+        return out;
+    } else {
+        t_llll *out = llll_get();
+        llll_appendobj(out, nt);
+        return out;
+    }
+}
+
 void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
 // select all the elements within a given region
@@ -1343,6 +1377,10 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
     e_selection_modes mode = symbol_to_mode((t_notation_obj *)x, s);
     t_llll *selectllll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
+
+    t_symbol *tiemode = _llllobj_sym_each, *restseqmode = _llllobj_sym_each;
+    long skiprests = 0;
+    llll_parseargs_and_attrs_destructive((t_object *) x, selectllll, "ssi", gensym("tiemode"), &tiemode, gensym("restseqmode"), &restseqmode, gensym("skiprests"), &skiprests);
 
     if (selectllll) { 
         double ux1, ux2, mc1, mc2;
@@ -1434,21 +1472,31 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 t_chord *to_select;
                 lock_general_mutex((t_notation_obj *)x);
                 if (selectllll->l_depth == 1) {
-                    if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next))) {
-                        if (to_select->firstnote)
-                            add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
-                        else
-                            notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                    if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next,
+                                                                           tiemode == _llllobj_sym_all, skiprests, restseqmode == _llllobj_sym_all))) {
+                        t_llll *to_select_ll = score_select_extend_chord_for_options(x, to_select, tiemode == _llllobj_sym_all, restseqmode == _llllobj_sym_all);
+                        for (t_llllelem *el = to_select_ll->l_head; el; el = el->l_next) {
+                            t_chord *c = (t_chord *)hatom_getobj(&el->l_hatom);
+                            if (c->firstnote)
+                                add_all_chord_notes_to_preselection((t_notation_obj *)x, c);
+                            else
+                                notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)c);
+                        }
                     }
                 } else {
                     t_llllelem *elem;
                     for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
                         if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                            if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head))) {
-                                if (to_select->firstnote)
-                                    add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
-                                else
-                                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                            if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head,
+                                                                                   tiemode == _llllobj_sym_all, skiprests, restseqmode == _llllobj_sym_all))) {
+                                t_llll *to_select_ll = score_select_extend_chord_for_options(x, to_select, tiemode == _llllobj_sym_all, restseqmode == _llllobj_sym_all);
+                                for (t_llllelem *el = to_select_ll->l_head; el; el = el->l_next) {
+                                    t_chord *c = (t_chord *)hatom_getobj(&el->l_hatom);
+                                    if (c->firstnote)
+                                        add_all_chord_notes_to_preselection((t_notation_obj *)x, c);
+                                    else
+                                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)c);
+                                }
                             }
                 }
                 move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
@@ -1460,14 +1508,26 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 
                 lock_general_mutex((t_notation_obj *)x);
                 if (selectllll->l_depth == 1) {
-                    if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
-                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                    if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next,
+                                                                          tiemode == _llllobj_sym_all, skiprests, restseqmode == _llllobj_sym_all))) {
+                        t_llll *to_select_ll = score_select_extend_note_for_options(x, to_select, tiemode == _llllobj_sym_all);
+                        for (t_llllelem *el = to_select_ll->l_head; el; el = el->l_next) {
+                            t_note *n = (t_note *)hatom_getobj(&el->l_hatom);
+                            notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)n);
+                        }
+                    }
                 } else {
                     t_llllelem *elem;
                     for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
                         if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                            if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
-                                notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                            if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head,
+                                                                                  tiemode == _llllobj_sym_all, skiprests, restseqmode == _llllobj_sym_all))) {
+                                t_llll *to_select_ll = score_select_extend_note_for_options(x, to_select, tiemode == _llllobj_sym_all);
+                                for (t_llllelem *el = to_select_ll->l_head; el; el = el->l_next) {
+                                    t_note *n = (t_note *)hatom_getobj(&el->l_hatom);
+                                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)n);
+                                }
+                            }
                 }
                 move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
                 unlock_general_mutex((t_notation_obj *)x);
@@ -5630,6 +5690,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     // - If the word <m>sel</m> is followed by any other symbol or sequence of symbols, these are interpreted as names, and the notation items
     // matching all these names (or a single name, if just one symbol is entered) are selected. <br />
     // @marg 0 @name arguments @optional 0 @type llll
+    // @mattr tiemode @type symbol @default each @digest If "all", tied sequences of chords are counted as one
+    // @mattr skiprests @type int @default 0 @digest If non-zero, rests are not counted at all
+    // @mattr restseqmode @type int @default each @digest If "all", sequences of consecutive rests are counted as one
     // @example sel all @caption select everything
     // @example sel notes @caption select all notes
     // @example sel chords @caption select all chords
@@ -5640,6 +5703,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example sel measures @caption select all measures
     // @example sel chord 3 2 @caption select 2rd chord of 3nd measure (of 1st voice)
     // @example sel chord any 20 @caption select 20th chord of 1st voice (in any measure)
+    // @example sel chord any 20 @tiemode all @caption the same, but consider tied chords as a single one
+    // @example sel chord any 20 @tiemode all @skiprests 1 @caption the same, but ignore rests
+    // @example sel chord any 20 @restseqmode all @caption select 20th chord of 1st voice, consider rest sequences as one
     // @example sel chord 2 5 4 @caption select 4th chord of 5th measure 2nd voice
     // @example sel chord 4 any 21 @caption select 21th chord of 4st voice (in any measure)
     // @example sel chord -1 -2 -1 @caption select last chord of one-but-last measure of last voice
