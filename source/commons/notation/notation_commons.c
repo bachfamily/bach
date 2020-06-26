@@ -38960,6 +38960,75 @@ void notationobj_invalidate_notation_static_layer_and_redraw(t_notation_obj *r_o
     notationobj_redraw(r_ob);
 }
 
+// direction = 0: horizontal, direction = 1: vertical
+void notationobj_scroll(t_notation_obj *r_ob, t_symbol *direction, double amount, t_symbol *unit, char delta)
+{
+    if (direction == gensym("horizontal") || direction == gensym("h")) {
+        if (unit == gensym("pixel")) {
+            if (delta)
+                r_ob->hscrollbar_x += amount;
+            else
+                r_ob->hscrollbar_x = amount;
+            redraw_hscrollbar(r_ob, 0);
+        } else if (unit == gensym("normalizedpixel")) {
+            amount *= r_ob->zoom_y;
+            if (delta)
+                r_ob->hscrollbar_x += amount;
+            else
+                r_ob->hscrollbar_x = amount;
+            redraw_hscrollbar(r_ob, 0);
+        } else if (unit == gensym("relative")) {
+            if (delta)
+                r_ob->hscrollbar_pos += amount;
+            else
+                r_ob->hscrollbar_pos = amount;
+            redraw_hscrollbar(r_ob, 1);
+        }
+    } else if (direction == gensym("vertical") || direction == gensym("v")) {
+        if (unit == gensym("pixel")) {
+            if (delta)
+                r_ob->vscrollbar_y += amount;
+            else
+                r_ob->vscrollbar_y = amount;
+            redraw_vscrollbar(r_ob, 0);
+        } else if (unit == gensym("normalizedpixel")) {
+            amount *= r_ob->zoom_y;
+            if (delta)
+                r_ob->vscrollbar_y += amount;
+            else
+                r_ob->vscrollbar_y = amount;
+            redraw_vscrollbar(r_ob, 0);
+        } else if (unit == gensym("relative")) {
+            if (delta)
+                r_ob->vscrollbar_pos += amount;
+            else
+                r_ob->vscrollbar_pos = amount;
+            redraw_vscrollbar(r_ob, 1);
+        }
+    }
+}
+
+void notationobj_scroll_from_gimme(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *ll = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    t_symbol *direction = gensym("horizontal");
+    t_symbol *unit = gensym("pixel");
+    long delta = 0;
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, ll, "ssi", gensym("direction"), &direction, gensym("unit"), &unit, gensym("delta"), &delta);
+    if (ll && ll->l_head) {
+        t_llllelem *el = ll->l_head;
+        if (hatom_gettype(&el->l_hatom) == H_SYM) {
+            direction = hatom_getsym(&el->l_hatom);
+            el = el->l_next;
+        }
+        if (el) {
+            notationobj_scroll(r_ob, direction, hatom_getdouble(&el->l_hatom), unit, delta);
+        }
+    }
+    llll_free(ll);
+}
+
+
 void get_playhead_ypos(t_notation_obj *r_ob, t_rect rect, double *y1, double *y2){
     *y1 = r_ob->j_inset_y + 10 * r_ob->zoom_y;
     *y2 = rect.height - (CONST_XSCROLLBAR_UHEIGHT + 10) * r_ob->zoom_y;

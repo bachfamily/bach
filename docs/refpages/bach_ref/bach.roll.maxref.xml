@@ -3515,7 +3515,7 @@
 				The message <m>inscreen</m> followed by a temporal position specified in milliseconds forces such
 				position to be displayed inside the domain, by changing the scrollbar position.
 				The millisecond position can be replaced by the element name or by one of the following symbols: "cursor", "end".
-				<br />				See also:<m>inscreenpos</m><br />
+				<br />				See also:<m>inscreenpos</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="inscreenpos">
@@ -3535,7 +3535,7 @@
 				It has to be followed by two argument: a value between 0 and 1, specifying the relative location inside the screen in which the temporal
 				point should be displayed (0 represents the screen beginning, 1 the screen end), and the position in milliseconds.
 				The millisecond position can be replaced by the element name or by one of the following symbols: "cursor", "end".
-				<br />				See also:<m>inscreen</m><br />
+				<br />				See also:<m>inscreen</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="insertslotitem">
@@ -5338,6 +5338,28 @@
 				<br />				See also:<m>interp</m>,<m>getcurrentchord</m><br />
 			</description>
 		</method>
+		<method name="scroll">
+			<arg name="amount" optional="0" type="float" />
+			<digest>
+				Scroll the object horizontally or vertically
+			</digest>
+			<description>
+				Syntax: <b>scroll <m>&lt;float: amount&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>scroll vertical 10</b>   <i>→ scroll 10 pixels vertically</i><br />
+				• <b>scroll vertical 0.5 @unit relative</b>   <i>→ scroll vertically in the center</i><br />
+				• <b>scroll horizontal 0.5 @unit relative</b>   <i>→ the same, horizontally</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@direction</m> (symbol, default: horizontal): Scrolling direction<br />
+				<m>@unit</m> (symbol, default: pixel): Amount unit ("pixel", "normalizedpixel" or "relative")<br />
+				<m>@delta</m> (int, default: 0): Scroll amount is relative<br />
+				<br />
+				The message <m>scroll</m> moves the portion of displayed object either horizontally or vertically,
+				in a similar way of moving horizontal or vertical scrollbars.
+				<br />				See also:<m>inscreenpos</m>,<m>inscreen</m><br />
+			</description>
+		</method>
 		<method name="sel">
 			<arg name="arguments" optional="0" type="llll" />
 			<digest>
@@ -6175,6 +6197,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6214,6 +6237,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidentals Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6522,6 +6546,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulations Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6618,6 +6643,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.4 0.4 0.4 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Auxiliary Staff Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6632,6 +6658,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="1. 1. 1. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Background Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6711,6 +6738,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.6 0.6 0.6 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7138,6 +7166,7 @@
 			<description>
 			</description>
 			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7148,6 +7177,7 @@
 			<description>
 			</description>
 			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7158,6 +7188,7 @@
 			<description>
 			</description>
 			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7354,6 +7385,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Key Signature Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7415,6 +7447,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.5 0.5 0.5 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mouseover Legend Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7705,6 +7738,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Region" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -7766,6 +7800,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -7951,6 +7986,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -7965,6 +8001,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Note Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8083,6 +8120,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -8864,6 +8902,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.2 0.2 0.2 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Selection Legend Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8878,6 +8917,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.8 0. 0.8 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Selection Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9678,6 +9718,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Main Staff Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9701,6 +9742,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Staff Lines" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -9862,6 +9904,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Names" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -9927,6 +9970,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Spacing" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>

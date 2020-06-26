@@ -6204,7 +6204,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example inscreenpos 0.2 [4.5] @caption the same, for the position at half of measure 4
     // @example inscreenpos 0.2 [4 1/4] @caption the same, for the position in measure 4 after 1/4 (of first voice) in domain
     // @example inscreenpos 0.2 [3 4 1/4] @caption the same, for the position of 1/4 after beginning of measure 4 in 3rd voice in domain
-    // @seealso inscreen, inscreenmeas
+    // @seealso inscreen, inscreenmeas, scroll
     class_addmethod(c, (method) score_inscreenpos, "inscreenpos", A_GIMME, 0);
     
     
@@ -6220,8 +6220,22 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example inscreenmeas 5 10 @caption set domain to display measures 5 through 10
     // @example inscreenmeas 5 10 4 @caption the same, for voice 4
     // @example inscreenmeas 5 10 4 @caption the same, for voice 4
-    // @seealso domain, inscreen, inscreenpos, resetwidthfactors
+    // @seealso domain, inscreen, inscreenpos, resetwidthfactors, scroll
     class_addmethod(c, (method) score_inscreenmeas, "inscreenmeas", A_GIMME, 0);
+
+    
+    // @method scroll @digest Scroll the object horizontally or vertically
+    // @description The message <m>scroll</m> moves the portion of displayed object either horizontally or vertically,
+    // in a similar way of moving horizontal or vertical scrollbars.
+    // @marg 0 @name amount @optional 0 @type float
+    // @mattr direction @type symbol @default horizontal @digest Scrolling direction
+    // @mattr unit @type symbol @default pixel @digest Amount unit ("pixel", "normalizedpixel" or "relative")
+    // @mattr delta @type int @default 0 @digest Scroll amount is relative
+    // @example scroll vertical 10 @caption scroll 10 pixels vertically
+    // @example scroll vertical 0.5 @unit relative @caption scroll vertically in the center
+    // @example scroll horizontal 0.5 @unit relative @caption the same, horizontally
+    // @seealso inscreenpos, inscreen
+    class_addmethod(c, (method) notationobj_scroll_from_gimme, "scroll", A_GIMME, 0);
 
 
     // @method split @digest Split selected chords

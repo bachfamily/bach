@@ -4424,7 +4424,7 @@
 				The two arguments are the starting and ending numbers of the measures to be displayed in the screen.
 				If a third argument is given, this is the voice number to which the measure range refers (by default: first voice).
 				For instance, <b>inscreenmeas 4 7 3</b> shows exactly in the screen measures 4 to 7 of voice 3.
-				<br />				See also:<m>domain</m>,<m>inscreen</m>,<m>inscreenpos</m>,<m>resetwidthfactors</m><br />
+				<br />				See also:<m>domain</m>,<m>inscreen</m>,<m>inscreenpos</m>,<m>resetwidthfactors</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="inscreenpos">
@@ -4473,7 +4473,7 @@
 				For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
 				<b>[3 any 27/4]</b> does the same for voice 3.
 				<br /> <br />
-				<br />				See also:<m>inscreen</m>,<m>inscreenmeas</m><br />
+				<br />				See also:<m>inscreen</m>,<m>inscreenmeas</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="insertmeasure">
@@ -6096,22 +6096,6 @@
 		<method name="name">
 			<arg name="names" optional="0" type="llll" />
 			<digest>
-				Append name(s) to selected items
-			</digest>
-			<description>
-				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
-				Examples:<br />
-				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
-				• <b>name [Ringo Starr] [[Low High Snare] [Sizzle Crash]]</b>   <i>→ append complex llll name</i><br />
-				<br />
-				Works like the <m>name</m> message, but appends the given names
-				to the already existing ones (see <m>name</m>).
-				<br />				See also:<m>name</m>,<m>clearnames</m><br />
-			</description>
-		</method>
-		<method name="name">
-			<arg name="names" optional="0" type="llll" />
-			<digest>
 				Assign name(s) to selected items
 			</digest>
 			<description>
@@ -6136,6 +6120,22 @@
 				If a <b>@progeny 1</b> attribute is added and chords are selected, not only the chord name is changed, but also the name of all its notes.
 				This is handy for instance, if one needs to send <b>name @progeny 1</b> to delete all names of selected chords and notes.
 				<br />				See also:<m>nameappend</m>,<m>clearnames</m>,<m>sel</m>,<m>unsel</m>,<m>select</m><br />
+			</description>
+		</method>
+		<method name="name">
+			<arg name="names" optional="0" type="llll" />
+			<digest>
+				Append name(s) to selected items
+			</digest>
+			<description>
+				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
+				Examples:<br />
+				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
+				• <b>name [Ringo Starr] [[Low High Snare] [Sizzle Crash]]</b>   <i>→ append complex llll name</i><br />
+				<br />
+				Works like the <m>name</m> message, but appends the given names
+				to the already existing ones (see <m>name</m>).
+				<br />				See also:<m>name</m>,<m>clearnames</m><br />
 			</description>
 		</method>
 		<method name="nametoslot">
@@ -7175,6 +7175,28 @@
 				otherwise markers are set for each measure of each voice.
 			</description>
 		</method>
+		<method name="scroll">
+			<arg name="amount" optional="0" type="float" />
+			<digest>
+				Scroll the object horizontally or vertically
+			</digest>
+			<description>
+				Syntax: <b>scroll <m>&lt;float: amount&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>scroll vertical 10</b>   <i>→ scroll 10 pixels vertically</i><br />
+				• <b>scroll vertical 0.5 @unit relative</b>   <i>→ scroll vertically in the center</i><br />
+				• <b>scroll horizontal 0.5 @unit relative</b>   <i>→ the same, horizontally</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@direction</m> (symbol, default: horizontal): Scrolling direction<br />
+				<m>@unit</m> (symbol, default: pixel): Amount unit ("pixel", "normalizedpixel" or "relative")<br />
+				<m>@delta</m> (int, default: 0): Scroll amount is relative<br />
+				<br />
+				The message <m>scroll</m> moves the portion of displayed object either horizontally or vertically,
+				in a similar way of moving horizontal or vertical scrollbars.
+				<br />				See also:<m>inscreenpos</m>,<m>inscreen</m><br />
+			</description>
+		</method>
 		<method name="sel">
 			<arg name="arguments" optional="0" type="llll" />
 			<digest>
@@ -7229,7 +7251,7 @@
 				• <b>sel [] [2 2 3/8] [] [] 2</b>   <i>→ select all notes before measure 3/8 after beginning of measure 2, voice 2 only</i><br />
 				• <b>sel note if cents == 6000</b>   <i>→ select all middle C's</i><br />
 				• <b>sel note if [cents % 1200] == 0</b>   <i>→ select all C's</i><br />
-				• <b>sel note if [cents &lt; 6000] &amp;&amp; [duration &lt; 1000]</b>   <i>→ select all notes &lt;1s below middle C</i><br />
+				• <b>sel note if [cents &lt; 6000] &amp;&amp; [duration &lt; 1000]�</b>   <i>→ select all notes &lt;1s below middle C</i><br />
 				• <b>sel note if symduration &gt; 1/4</b>   <i>→ select all notes longer than 1/4</i><br />
 				• <b>sel note if [symonset &gt; 1/4] &amp;&amp; [tie == 0]</b>   <i>→ select all notes whose onset in their measure is greater than 1/4 and have no starting or ending tie</i><br />
 				• <b>sel note if tie == 1</b>   <i>→ select notes that start a tie but do not end one</i><br />

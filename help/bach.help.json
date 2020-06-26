@@ -3699,6 +3699,13 @@
 				"tags" : [ "message", "measure", "parameter", "set", "setmeasureparameters" ],
 				"title" : [ "Setting measure parameters" ]
 			},
+			"Scroll" : {
+				"filename" : [ "bach.help.notation.messages.59_scroll.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "inscreenpos", "inscreen" ],
+				"tags" : [ "message", "example", "real-time", "real", "time", "scrollbar", "interaction", "horizontal", "scroll", "vertical", "delta", "unit", "direction", "move", "pixel", "normalizedpixel", "relative" ],
+				"title" : [ "Direct scrollbar interaction" ]
+			},
 			"Domain" : {
 				"filename" : [ "bach.help.notation.messages.60_domain.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -3716,14 +3723,14 @@
 			"Inscreen" : {
 				"filename" : [ "bach.help.notation.messages.62_inscreen.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [  ],
+				"seealso" : [ "scroll" ],
 				"tags" : [ "message", "inscreen", "display", "change", "inscreenpos", "screen", "window", "scrollbar", "domain" ],
-				"title" : [ "Scrollbar interaction" ]
+				"title" : [ "Scrollbar interaction with milliseconds" ]
 			},
 			"Inscreenforscore" : {
 				"filename" : [ "bach.help.notation.messages.63_inscreenforscore.maxpat" ],
 				"objects" : [ "bach.score" ],
-				"seealso" : [ "timepoint+syntax" ],
+				"seealso" : [ "timepoint+syntax", "scroll" ],
 				"tags" : [ "message", "inscreen", "timepoint", "display", "change", "inscreenpos", "screen", "window", "scrollbar", "domain" ],
 				"title" : [ "Scrollbar interaction with timepoints" ]
 			},

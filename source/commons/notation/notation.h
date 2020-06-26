@@ -9936,6 +9936,11 @@ void notationobj_invalidate_notation_static_layer_and_redraw(t_notation_obj *r_o
 void notationobj_redraw(t_notation_obj *r_ob);
 
 
+// TBD
+void notationobj_scroll(t_notation_obj *r_ob, t_symbol *direction, double amount, t_symbol *mode, char delta);
+void notationobj_scroll_from_gimme(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+
+
 /**    Paint a tie (as a simple cubic bezier curve).
     @ingroup            notation_paint
     @param    r_ob        The notation object

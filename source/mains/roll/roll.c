@@ -3898,7 +3898,6 @@ void roll_inscreen(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     }
 }
 
-
 void roll_inscreenpos(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     if (argc >= 2) {
         double screenpos = atom_getfloat(argv);
@@ -4723,7 +4722,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example inscreen john @caption display element named 'john' in domain
     // @example inscreen cursor @caption display playhead the domain
     // @example inscreen end @caption display end of roll the domain
-    // @seealso inscreenpos
+    // @seealso inscreenpos, scroll
     class_addmethod(c, (method) roll_inscreen, "inscreen", A_GIMME, 0);
 
 
@@ -4738,8 +4737,22 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example inscreenpos 0.9 john @caption display element named 'john' at 90% of the domain
     // @example inscreenpos 0.9 cursor @caption display playhead at 90% of the domain
     // @example inscreenpos 0.9 end @caption display end of roll at 90% of the domain
-    // @seealso inscreen
+    // @seealso inscreen, scroll
     class_addmethod(c, (method) roll_inscreenpos, "inscreenpos", A_GIMME, 0);
+
+    
+    // @method scroll @digest Scroll the object horizontally or vertically
+    // @description The message <m>scroll</m> moves the portion of displayed object either horizontally or vertically,
+    // in a similar way of moving horizontal or vertical scrollbars.
+    // @marg 0 @name amount @optional 0 @type float
+    // @mattr direction @type symbol @default horizontal @digest Scrolling direction
+    // @mattr unit @type symbol @default pixel @digest Amount unit ("pixel", "normalizedpixel" or "relative")
+    // @mattr delta @type int @default 0 @digest Scroll amount is relative
+    // @example scroll vertical 10 @caption scroll 10 pixels vertically
+    // @example scroll vertical 0.5 @unit relative @caption scroll vertically in the center
+    // @example scroll horizontal 0.5 @unit relative @caption the same, horizontally
+    // @seealso inscreenpos, inscreen
+    class_addmethod(c, (method) notationobj_scroll_from_gimme, "scroll", A_GIMME, 0);
 
 
     // @method clock @digest Select a clock source
