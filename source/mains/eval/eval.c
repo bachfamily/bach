@@ -293,7 +293,7 @@ t_max_err eval_setattr_triggers(t_eval *x, t_object *attr, long ac, t_atom *av)
             eval_parse_all_triggers(x);
             bach_atomic_unlock(&x->n_ob.c_triggers_lock);
             llll_free(free_me);
-            if (x->n_ready)
+            if (x->n_ob.c_ready)
                 codableobj_resolve_trigger_vars((t_codableobj*) x, NULL, 0, NULL);
         }
     }
@@ -336,7 +336,7 @@ void eval_dblclick(t_eval *x)
 
 void eval_bang_deferred(t_eval *x, t_symbol *s, long ac, t_atom *av)
 {
-    if (x->n_ready) {
+    if (x->n_ob.c_ready) {
         t_atom_long inlet = atom_getlong(av);
         eval_run(x, inlet);
     } else {
@@ -347,7 +347,7 @@ void eval_bang_deferred(t_eval *x, t_symbol *s, long ac, t_atom *av)
 void eval_bang(t_eval *x)
 {
     t_atom_long inlet = proxy_getinlet((t_object *) x) + 1;
-    if (x->n_ready)
+    if (x->n_ob.c_ready)
         eval_run(x, inlet);
     else {
         t_atom a;
@@ -573,7 +573,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         
         codableobj_finalize((t_codableobj *) x);
         
-        defer_low(x, (method)eval_setready, NULL, 0, NULL);
         if (x->n_ob.c_main) {
             x->n_ob.c_main->setOutlets(x->n_dataOutlets);
             defer_low(x, (method)codableobj_resolvepatchervars, NULL, 0, NULL);
@@ -597,11 +596,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
 void eval_deferbang(t_eval *x, t_symbol *msg, long ac, t_atom *av)
 {
     eval_bang(x);
-}
-
-void eval_setready(t_eval *x, t_symbol *msg, long ac, t_atom *av)
-{
-    x->n_ready = true;
 }
 
 void eval_ownedFunctionsSetup(t_eval *x)

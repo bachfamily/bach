@@ -219,13 +219,21 @@ t_max_err codableobj_lambda_get(t_codableobj *x, t_object *attr, long *ac, t_ato
 void codableobj_lambda_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
-        defer_low(x, (method) codableobj_expr_do, nullptr, ac, av);
+        if (x->c_ready)
+            defer(x, (method) codableobj_expr_do, nullptr, ac, av);
+        else
+            defer_low(x, (method) codableobj_expr_do, nullptr, ac, av);
     } else {
         x->c_main->decrease();
         x->c_main = nullptr;
     }
     x->c_ob.l_rebuild = 1;
     return;
+}
+
+void codableobj_setready(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
+{
+    x->c_ready = true;
 }
 
 // ac is set to the number of arguments before @lambda
@@ -1035,6 +1043,9 @@ void codableobj_finalize(t_codableobj *x)
     object_attr_setdisabled((t_object *)x, gensym("watch"), true);
     t_dictionary* d = (t_dictionary *)gensym("#D")->s_thing;
     codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
+    if (x->c_main)
+        defer_low(x, (method)codableobj_resolvepatchervars, NULL, 0, NULL);
+    defer_low(x, (method)codableobj_setready, NULL, 0, NULL);
 }
 
 

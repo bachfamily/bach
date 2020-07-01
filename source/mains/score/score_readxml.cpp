@@ -426,7 +426,7 @@ private:
         bool grace;
         std::vector<note *> notes;
         note* currentNote;
-        bool tied;
+        int ties;
         bool rest; // if a chord is a rest it will anyway have a dummy note
         
         chord(voice *owner, t_rational duration, bool grace = false);
@@ -863,7 +863,7 @@ private:
         }
         
         void adjustTies() {
-            if (!prevChord || !prevChord->tied)
+            if (!prevChord || prevChord->ties == 0)
                 return;
             
             std::vector<note*>::iterator currentNoteIterator = currentChord->notes.begin();
@@ -892,8 +892,11 @@ private:
                         if (!prevChord->grace)
                             (*currentNoteIterator)->prevDuration += prevChord->duration;
                         currentNoteIterator++;
-                    } else
+                    } else {
                         object_error((t_object *) owner->owner->obj, "Tie mismatch");
+                        prevNote->tied = false;
+                        prevChord->ties--;
+                    }
                 }
             }
         }
@@ -1048,7 +1051,8 @@ private:
             }
             note *n = new note{c, pitch, velocity, tie};
             c->addNote(n);
-            c->tied |= tie;
+            if (tie)
+                c->ties++;
             return n;
         }
         
@@ -1654,7 +1658,7 @@ score::chord::chord(voice *owner, bool grace) :
     duration(t_rational{0, 1}),
     grace(grace),
     currentNote(nullptr),
-    tied(false),
+    ties(0),
     rest(false)
 { }
 

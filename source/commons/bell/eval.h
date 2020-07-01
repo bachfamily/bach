@@ -53,8 +53,6 @@ typedef struct _eval
     long n_triggerInlets[256];
     long n_triggerInletsCount;
     
-    t_bool n_ready;
-    
 } t_eval;
 
 #endif /* eval_h */
