@@ -504,7 +504,7 @@ const char *bach_xml_acc2name(t_rational acc, long *mc_alter)
         acc_name = "sharp";
         *mc_alter = 100;
     } else if (acc.r_num == 3 && acc.r_den == 4) {
-        acc_name = "three-quarter-sharp";
+        acc_name = "three-quarters-sharp";
         *mc_alter = 150;
     } else if (acc.r_num == 2 && acc.r_den == 1) {
         acc_name = "double-sharp";
@@ -516,7 +516,7 @@ const char *bach_xml_acc2name(t_rational acc, long *mc_alter)
         acc_name = "flat";
         *mc_alter = 100;
     } else if (acc.r_num == -3 && acc.r_den == 4) {
-        acc_name = "three-quarter-flat";
+        acc_name = "three-quarters-flat";
         *mc_alter = 150;
     } else if (acc.r_num == -2 && acc.r_den == 1) {
         acc_name = "double-flat";
