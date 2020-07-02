@@ -626,7 +626,6 @@ private:
                 den = lcm(den, mxmlGetInteger(beat_typeXML));
             }
             long beat_type = 0;
-            long beats = 1;
             if (den == 0) { // which means that one of the beat_types is 0 - thus we prevent division by 0 below
                 object_error((t_object *) x, "Bad time signature");
             } else {
@@ -639,9 +638,17 @@ private:
                     if (!beat_typeXML)
                         break;
                     beat_type = mxmlGetInteger(beat_typeXML);
-                    beats = mxmlGetInteger(beatsXML);
-                    num.push_back(beats * den / beat_type);
-                    valid = true;
+                    long d = den / beat_type;
+                    
+                    char *rest = bach_newptr(2048);
+                    const char *beatstxt = mxmlGetOpaque(beatsXML);
+                    strncpy_zero(rest, beatstxt, 2048);
+                    char *tok;
+                    while ((tok = strtok_r(rest, "+", &rest))) {
+                        long beats = strtol(tok, nullptr, 10);
+                        num.push_back(beats * d);
+                        valid = true;
+                    }
                 }
             }
         }
@@ -2816,7 +2823,6 @@ mxml_type_t xml_load_cb(mxml_node_t *node)
     
     if (!strcmp(name, "divisions") ||
         !strcmp(name, "fifths") ||
-        !strcmp(name, "beats") ||
         !strcmp(name, "beat-type") ||
         !strcmp(name, "line") ||
         !strcmp(name, "duration") ||
@@ -2837,7 +2843,8 @@ mxml_type_t xml_load_cb(mxml_node_t *node)
         return MXML_REAL;
     else if (!strcmp(name, "per-minute"))
         return MXML_TEXT;
-    else if (!strcmp(name, "words"))
+    else if (!strcmp(name, "words") ||
+             !strcmp(name, "beats"))
         return MXML_OPAQUE;
     else
         return MXML_TEXT;

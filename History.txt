@@ -40,6 +40,7 @@ authorization: now the code for a given year can be entered until January of the
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
     XML import and export: three-quarters-sharp and -flat accidentals have correct name now (was "three-quarter")
+        complex time signatures are correctly handled
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
