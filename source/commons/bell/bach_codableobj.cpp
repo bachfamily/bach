@@ -491,7 +491,7 @@ long codableobj_edsave(t_codableobj *x, char **ht, long size)
 
 void codableobj_appendtodictionary(t_codableobj *x, t_dictionary *d)
 {
-    if (x->c_embed && x->c_text && *(x->c_text)) {
+    if (x->c_embed && x->c_text && *(x->c_text) && strcmp(x->c_text, " ")) {
         dictionary_appendstring(d, gensym("code"), x->c_text);
     }
 }
@@ -780,7 +780,7 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
     if (d) {
         char *newCode = nullptr;
         t_max_err err = dictionary_getstring(d, gensym("code"), (const char **) &newCode);
-        if (err == MAX_ERR_NONE && newCode) {
+        if (err == MAX_ERR_NONE && newCode && strcmp(newCode, " ")) {
             if (x->c_main) {
                 if (x->c_text && *x->c_text && strcmp(newCode, x->c_text) != 0) {
                     // if the object was saved with bad code in the editor, we don't preserve the previous main

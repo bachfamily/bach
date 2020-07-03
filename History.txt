@@ -35,6 +35,9 @@ authorization: now the code for a given year can be entered until January of the
     fixed potential crash when reloading a file or re-opening the text editor
     "expr" and "lambda" message processing is now deferred, not deferlow-ed unless at object instantiation
 
+- all the bell-compliant objects except bach.eval:
+    fixed very general issue preventing objects from working unless they had a bell lambda function
+
 - bach.reg, bach.value, bach.pv
     Fixed memory leak related to the text editor window
 
