@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 4,
+			"minor" : 1,
+			"revision" : 5,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -116,6 +117,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 419.0, 403.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -171,6 +173,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 252.0, 561.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -226,6 +229,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 105.0, 255.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -243,7 +247,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 270.0, 61.5, 158.0, 108.0 ],
-					"text" : "Arguments:\nllll\nmodfunction (default: null)\naskfunction (default: null)\ndepth\nmindepth (default: 1)\nmaxdepth (default: -1)",
+					"text" : "Arguments:\nllll\nmodfunction (default: null)\naskfunction (default: null)\ndepth\nmindepth (default: 1)\nmaxdepth (default: 1)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -377,7 +381,7 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "bach.help.searchtag.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
