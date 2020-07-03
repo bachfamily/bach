@@ -55,7 +55,7 @@ authorization: now the code for a given year can be entered until January of the
 
 - bach.shelf: fixed crash with @embed 1 when reopening patch
 
-
+- bach.textin: now works correctly with lllls starting with a number
 
 
 
