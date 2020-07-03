@@ -30,6 +30,7 @@ authorization: now the code for a given year can be entered until January of the
     dot operator can be preceded by whitespace
     _= operator optimized
     :* operator returns null for non-negative repeat counts
+    map function works correctly with mindepth
 
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor
