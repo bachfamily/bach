@@ -433,7 +433,7 @@ t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg,
 
     } else {
         if (msg == _sym_list || msg == _sym_int || msg == _sym_float || msg == NULL) {
-            inlist = llll_parse(ac, av);
+            inlist = llll_parse(ac, av, ignore);
         } else {
             new_ac = ac + 1;
             new_av = (t_atom *) bach_newptr(sizeof (t_atom) * new_ac);

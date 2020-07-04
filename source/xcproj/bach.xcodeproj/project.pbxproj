@@ -5255,9 +5255,9 @@
 			children = (
 				913D5785232B972C00BC6B45 /* stringparser */,
 				91FEE6F823474658001F74B2 /* fileid.hpp */,
-				916B4CF22330222E00AC9F03 /* eval.h */,
 				91071DB02100DB5900452762 /* bach_codableobj.hpp */,
 				91071DAF2100DB5900452762 /* bach_codableobj.cpp */,
+				916B4CF22330222E00AC9F03 /* eval.h */,
 				913D579D232B972D00BC6B45 /* ast.hpp */,
 				913D577B232B972C00BC6B45 /* value.hpp */,
 				913D5777232B972C00BC6B45 /* astNode.hpp */,
