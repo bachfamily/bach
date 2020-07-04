@@ -626,7 +626,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return BIF;
 }
 
-("length"|"depth"|"is"|"nth"|"sort"|"contains"|"rev"|"rot"|"trans"|"flat"|"slice"|"left"|"right"|"subs"|"insert"|"find"|"finditems"|"findaddrs"|"scramble"|"minmax"|"perm"|"comb"|"cartesianprod"|"wrap"|"group"|"delace"|"thin"|"classify"|"union"|"intersection"|"symdiff"|"diff"|"primeser"|"arithmser"|"geomser"|"map"|"reduce"|"apply"|"sum"|"prod")/{SEPARATOR} {
+("length"|"depth"|"is"|"nth"|"sort"|"contains"|"rev"|"rot"|"trans"|"flat"|"slice"|"left"|"right"|"subs"|"insert"|"find"|"finditems"|"findaddrs"|"scramble"|"minmax"|"perm"|"comb"|"cartesianprod"|"wrap"|"group"|"delace"|"thin"|"classify"|"union"|"intersection"|"symdiff"|"diff"|"primeser"|"arithmser"|"geomser"|"map"|"reduce"|"apply")/{SEPARATOR} {
     code_dev_post("lex: BIF %s", yytext);
     yylval->sym = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
