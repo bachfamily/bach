@@ -26,6 +26,9 @@
 
 #define CONST_DYNAMICS_TEXT_ALLOC_SIZE 2048
 
+
+//#define SCORE_READXML_POSTLL
+
 t_rational xml_name_and_dots_to_value(const char *chordtype, long dots);
 
 mxml_type_t xml_load_cb(mxml_node_t *node);
@@ -787,6 +790,17 @@ private:
         t_llll *getllll() {
             t_llll *ll = llll_get();
             llll_appendllll(ll, llll_clone(getMeasureInfo()->getllll()));
+            if (number == 0) {
+                t_rational fullDur = getMeasureInfo()->fullDuration;
+                t_rational missing = fullDur - usedDuration;
+                if (missing > 0) {
+                    auto l = level();
+                    auto c = chord(owner, missing);
+                    c.rest = true;
+                    l.addChord(&c);
+                    llll_chain(ll, l.getllll());
+                }
+            }
             llll_chain(ll, firstLevel.getllll());
             return ll;
         }
@@ -2202,6 +2216,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                             long directionsslot)
 {
     long new_tonedivision = 2;
+    t_bool startfromzero = false;
     mxml_node_t *scoreXML = mxmlLoadString(NULL, (char *) buffer, xml_load_cb);
     
     mxml_node_t *score_partwiseXML = mxmlFindElement(scoreXML, scoreXML, "score-partwise", NULL, NULL, MXML_DESCEND_FIRST);
@@ -2255,7 +2270,7 @@ t_llll *score_readxmlbuffer(t_score *x,
         // iterate on the measures for this part
         mxml_node_t *measureXML;
         long isfirstmeasure = 1;
-        long measure_number = 1;
+        long measure_number;
         
        //// char dynamics_text[CONST_DYNAMICS_TEXT_ALLOC_SIZE];
         
@@ -2274,6 +2289,19 @@ t_llll *score_readxmlbuffer(t_score *x,
                 //// measurell[i] = llll_get();
                 //// used_duration[i] = t_rational(0);
             //// }
+            
+            if (isfirstmeasure) {
+                const char* number = mxmlElementGetAttr(measureXML, "number");
+                if (number) {
+                    int n = atoi(number);
+                    if (n == 0) {
+                        measure_number = 0;
+                        startfromzero = true;
+                    } else {
+                        measure_number = 1;
+                    }
+                }
+            }
             
             //measure theMeasure;
             theScore.createNewMeasure();
@@ -2788,9 +2816,14 @@ t_llll *score_readxmlbuffer(t_score *x,
         object_attr_setlong(x, gensym("tonedivision"), lcm(tone_division, 4));
     }
     
-    //dev_llll_post(scorell, 1, -1, 10, x, NULL);
+    object_attr_setlong(x, gensym("measurenumberoffset"), startfromzero ? -1 : 0);
+    
     t_llll *scorell = theScore.getllll();
     
+#ifdef SCORE_READXML_POSTLL
+    dev_llll_print(scorell, (t_object *) x);
+#endif // SCORE_READXML_POSTLL
+
     return scorell;
 }
 
