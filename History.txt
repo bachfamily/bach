@@ -9,7 +9,10 @@ v0.8.2b
 *** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
 
 - bell: fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
-    * operator returns null for non-negative repeat counts
+    :* operator returns null for non-positive repeat counts
+    evaluation precedence of ** operator is now between + and *
+
+
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
@@ -29,8 +32,9 @@ authorization: now the code for a given year can be entered until January of the
     fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
     dot operator can be preceded by whitespace
     _= operator optimized
-    :* operator returns null for non-negative repeat counts
+    :* operator returns null for non-positive repeat counts
     map function works correctly with mindepth
+    evaluation precedence of ** operator is now between + and *
 
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor
