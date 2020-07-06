@@ -168,7 +168,7 @@
 				"filename" : [ "bach.help.bell.020_conditionals.060_conditionalbooleans.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "if+then", "if+then+else" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "condition", "conditional", "true", "false", "zero", "null", "boolean", "logical", "and", "or", "short-circuit", "operator" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "condition", "conditional", "true", "false", "zero", "null", "boolean", "logical", "and", "or", "short-circuit", "operator", "default", "fallback", "hierarchy", "hierarchies" ],
 				"title" : [ "Conditional booleans" ]
 			}
 		},
