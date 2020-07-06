@@ -26,6 +26,9 @@
 
 #define CONST_DYNAMICS_TEXT_ALLOC_SIZE 2048
 
+
+//#define SCORE_READXML_POSTLL
+
 t_rational xml_name_and_dots_to_value(const char *chordtype, long dots);
 
 mxml_type_t xml_load_cb(mxml_node_t *node);
@@ -426,7 +429,7 @@ private:
         bool grace;
         std::vector<note *> notes;
         note* currentNote;
-        bool tied;
+        int ties;
         bool rest; // if a chord is a rest it will anyway have a dummy note
         
         chord(voice *owner, t_rational duration, bool grace = false);
@@ -626,7 +629,6 @@ private:
                 den = lcm(den, mxmlGetInteger(beat_typeXML));
             }
             long beat_type = 0;
-            long beats = 1;
             if (den == 0) { // which means that one of the beat_types is 0 - thus we prevent division by 0 below
                 object_error((t_object *) x, "Bad time signature");
             } else {
@@ -639,9 +641,17 @@ private:
                     if (!beat_typeXML)
                         break;
                     beat_type = mxmlGetInteger(beat_typeXML);
-                    beats = mxmlGetInteger(beatsXML);
-                    num.push_back(beats * den / beat_type);
-                    valid = true;
+                    long d = den / beat_type;
+                    
+                    char *rest = bach_newptr(2048);
+                    const char *beatstxt = mxmlGetOpaque(beatsXML);
+                    strncpy_zero(rest, beatstxt, 2048);
+                    char *tok;
+                    while ((tok = strtok_r(rest, "+", &rest))) {
+                        long beats = strtol(tok, nullptr, 10);
+                        num.push_back(beats * d);
+                        valid = true;
+                    }
                 }
             }
         }
@@ -780,6 +790,17 @@ private:
         t_llll *getllll() {
             t_llll *ll = llll_get();
             llll_appendllll(ll, llll_clone(getMeasureInfo()->getllll()));
+            if (number == 0) {
+                t_rational fullDur = getMeasureInfo()->fullDuration;
+                t_rational missing = fullDur - usedDuration;
+                if (missing > 0) {
+                    auto l = level();
+                    auto c = chord(owner, missing);
+                    c.rest = true;
+                    l.addChord(&c);
+                    llll_chain(ll, l.getllll());
+                }
+            }
             llll_chain(ll, firstLevel.getllll());
             return ll;
         }
@@ -863,7 +884,7 @@ private:
         }
         
         void adjustTies() {
-            if (!prevChord || !prevChord->tied)
+            if (!prevChord || prevChord->ties == 0)
                 return;
             
             std::vector<note*>::iterator currentNoteIterator = currentChord->notes.begin();
@@ -892,8 +913,11 @@ private:
                         if (!prevChord->grace)
                             (*currentNoteIterator)->prevDuration += prevChord->duration;
                         currentNoteIterator++;
-                    } else
+                    } else {
                         object_error((t_object *) owner->owner->obj, "Tie mismatch");
+                        prevNote->tied = false;
+                        prevChord->ties--;
+                    }
                 }
             }
         }
@@ -1048,7 +1072,8 @@ private:
             }
             note *n = new note{c, pitch, velocity, tie};
             c->addNote(n);
-            c->tied |= tie;
+            if (tie)
+                c->ties++;
             return n;
         }
         
@@ -1654,7 +1679,7 @@ score::chord::chord(voice *owner, bool grace) :
     duration(t_rational{0, 1}),
     grace(grace),
     currentNote(nullptr),
-    tied(false),
+    ties(0),
     rest(false)
 { }
 
@@ -2191,6 +2216,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                             long directionsslot)
 {
     long new_tonedivision = 2;
+    t_bool startfromzero = false;
     mxml_node_t *scoreXML = mxmlLoadString(NULL, (char *) buffer, xml_load_cb);
     
     mxml_node_t *score_partwiseXML = mxmlFindElement(scoreXML, scoreXML, "score-partwise", NULL, NULL, MXML_DESCEND_FIRST);
@@ -2244,7 +2270,7 @@ t_llll *score_readxmlbuffer(t_score *x,
         // iterate on the measures for this part
         mxml_node_t *measureXML;
         long isfirstmeasure = 1;
-        long measure_number = 1;
+        long measure_number;
         
        //// char dynamics_text[CONST_DYNAMICS_TEXT_ALLOC_SIZE];
         
@@ -2263,6 +2289,19 @@ t_llll *score_readxmlbuffer(t_score *x,
                 //// measurell[i] = llll_get();
                 //// used_duration[i] = t_rational(0);
             //// }
+            
+            if (isfirstmeasure) {
+                const char* number = mxmlElementGetAttr(measureXML, "number");
+                if (number) {
+                    int n = atoi(number);
+                    if (n == 0) {
+                        measure_number = 0;
+                        startfromzero = true;
+                    } else {
+                        measure_number = 1;
+                    }
+                }
+            }
             
             //measure theMeasure;
             theScore.createNewMeasure();
@@ -2777,9 +2816,14 @@ t_llll *score_readxmlbuffer(t_score *x,
         object_attr_setlong(x, gensym("tonedivision"), lcm(tone_division, 4));
     }
     
-    //dev_llll_post(scorell, 1, -1, 10, x, NULL);
+    object_attr_setlong(x, gensym("measurenumberoffset"), startfromzero ? -1 : 0);
+    
     t_llll *scorell = theScore.getllll();
     
+#ifdef SCORE_READXML_POSTLL
+    dev_llll_print(scorell, (t_object *) x);
+#endif // SCORE_READXML_POSTLL
+
     return scorell;
 }
 
@@ -2812,7 +2856,6 @@ mxml_type_t xml_load_cb(mxml_node_t *node)
     
     if (!strcmp(name, "divisions") ||
         !strcmp(name, "fifths") ||
-        !strcmp(name, "beats") ||
         !strcmp(name, "beat-type") ||
         !strcmp(name, "line") ||
         !strcmp(name, "duration") ||
@@ -2833,7 +2876,8 @@ mxml_type_t xml_load_cb(mxml_node_t *node)
         return MXML_REAL;
     else if (!strcmp(name, "per-minute"))
         return MXML_TEXT;
-    else if (!strcmp(name, "words"))
+    else if (!strcmp(name, "words") ||
+             !strcmp(name, "beats"))
         return MXML_OPAQUE;
     else
         return MXML_TEXT;

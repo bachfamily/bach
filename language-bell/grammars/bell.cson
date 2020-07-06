@@ -49,10 +49,6 @@ patterns: [ # An array of individual pattern declarations.
     name: 'storage.modifier.bell'
   }
   {
-    match: '<\\.\\.\\.>|-\\^'
-    name: 'keyword.other.bell'
-  }
-  {
     match: '(length|depth|is|nth|sort|contains|rev|rot|trans|flat|slice|left|right|subs|insert|find|finditems|findaddrs|scramble|minmax|perm|comb|cartesianprod|wrap|group|delace|thin|classify|union|intersection|symdiff|diff|primeser|arithmser|geomser|map|reduce|apply|sum|prod)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
     name: 'support.function.general.bell'
   }
@@ -67,6 +63,10 @@ patterns: [ # An array of individual pattern declarations.
   {
     match: '#\\+|#-|#u-|#\\*|#/|#//|#%|#==|#!=|#<|#>|#<=|#>=|#&|#\\^|#\\||#&&|#\\^\\^|#\\|\\||#&&&|#\\|\\|\\||#<<|#>>'
     name: 'support.function.general.bell'
+  }
+  {
+    match: '<\\.\\.\\.>|-\\^'
+    name: 'keyword.other.bell'
   }
   {
     match: ';|\\[|\\]|\\.'

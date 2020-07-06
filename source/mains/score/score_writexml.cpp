@@ -504,19 +504,19 @@ const char *bach_xml_acc2name(t_rational acc, long *mc_alter)
         acc_name = "sharp";
         *mc_alter = 100;
     } else if (acc.r_num == 3 && acc.r_den == 4) {
-        acc_name = "three-quarter-sharp";
+        acc_name = "three-quarters-sharp";
         *mc_alter = 150;
     } else if (acc.r_num == 2 && acc.r_den == 1) {
         acc_name = "double-sharp";
         *mc_alter = 200;
-    } else if (acc.r_num == - 1 && acc.r_den == 4) {
+    } else if (acc.r_num == -1 && acc.r_den == 4) {
         acc_name = "quarter-flat";
         *mc_alter = 50;
     } else if (acc.r_num == -1 && acc.r_den == 2) {
         acc_name = "flat";
         *mc_alter = 100;
     } else if (acc.r_num == -3 && acc.r_den == 4) {
-        acc_name = "three-quarter-flat";
+        acc_name = "three-quarters-flat";
         *mc_alter = 150;
     } else if (acc.r_num == -2 && acc.r_den == 1) {
         acc_name = "double-flat";
@@ -904,10 +904,15 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         bach_mxmlNewIntElement(timexml, "beat-type", 0, ts->denominator);
                     } else { // composite time signature
                         long i;
-                        for (i = 0; i < ts->num_numerator_elements; i++) {
-                            bach_mxmlNewIntElement(timexml, "beats", 0, ts->numerator_elements[i]);
-                            bach_mxmlNewIntElement(timexml, "beat-type", 0, ts->denominator);
+                        char buf[2048];
+                        char *this_buf = buf;
+                        this_buf += snprintf_zero(this_buf, 10, "%d", ts->numerator_elements[0]);
+                        for (i = 1; i < ts->num_numerator_elements; i++) {
+                            this_buf += snprintf_zero(this_buf, 10, " + %d", ts->numerator_elements[i]);
                         }
+                        
+                        bach_mxmlNewTextElement(timexml, "beats", 0, buf);
+                        bach_mxmlNewIntElement(timexml, "beat-type", 0, ts->denominator);
                     }
                 }
                 

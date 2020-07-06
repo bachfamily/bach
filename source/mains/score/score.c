@@ -6593,7 +6593,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // difficult. What might be handy to do, with Finale, is to export quartertone accidentals as if they were parenthesized versions
     // of the standard accidentals. You can easily map inside finale the parenthesized accidentals to the glyphs of
     // quartertone accidentals, via your favorite quartertone accidental font. A parenthesized natural will be displayed as
-    // a quarter-sharp; a parenthesized sharp as a three-quarter-sharp, and so on. Everything, if parenthesized, will step up a
+    // a quarter-sharp; a parenthesized sharp as a three-quarters-sharp, and so on. Everything, if parenthesized, will step up a
     // quarter tone. Once you have set up your new Finale document in this way, you can use the <b>[parenthesizedquartertones 1]</b>
     // specification in order to export quartertones in this way.
     // @marg 0 @name filename @optional 1 @type symbol

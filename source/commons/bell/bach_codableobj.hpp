@@ -78,6 +78,8 @@ typedef struct _codableobj
     t_bool c_allGVTrigger;
     long c_allGVPriority;
     
+    t_bool c_ready;
+    
 } t_codableobj;
 
 
@@ -158,6 +160,8 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
 
 short codableobj_setup(t_codableobj *x, short ac, t_atom *av);
 void codableobj_finalize(t_codableobj *x);
+
+void codableobj_setready(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
 
 void codableobj_ownedFunctionsSetup(t_codableobj *x);
 
