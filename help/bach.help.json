@@ -2989,7 +2989,7 @@
 					"filename" : [ "bach.help.notation.messages.20_selection.02_selectingallelements.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "unsel", "select" ],
-					"tags" : [ "message", "selection", "sel", "unsel", "select", "marker", "note", "chord", "content", "class", "element", "classes", "pitch", "breakpoint" ],
+					"tags" : [ "message", "selection", "sel", "unsel", "select", "marker", "note", "chord", "content", "class", "element", "classes", "pitch", "breakpoint", "multiple", "item", "all", "voice" ],
 					"title" : [ "Selecting classes of elements" ]
 				},
 				"Selectingregion" : {

@@ -7251,7 +7251,7 @@
 				• <b>sel [] [2 2 3/8] [] [] 2</b>   <i>→ select all notes before measure 3/8 after beginning of measure 2, voice 2 only</i><br />
 				• <b>sel note if cents == 6000</b>   <i>→ select all middle C's</i><br />
 				• <b>sel note if [cents % 1200] == 0</b>   <i>→ select all C's</i><br />
-				• <b>sel note if [cents &lt; 6000] &amp;&amp; [duration &lt; 1000]�</b>   <i>→ select all notes &lt;1s below middle C</i><br />
+				• <b>sel note if [cents &lt; 6000] &amp;&amp; [duration &lt; 1000]</b>   <i>→ select all notes &lt;1s below middle C</i><br />
 				• <b>sel note if symduration &gt; 1/4</b>   <i>→ select all notes longer than 1/4</i><br />
 				• <b>sel note if [symonset &gt; 1/4] &amp;&amp; [tie == 0]</b>   <i>→ select all notes whose onset in their measure is greater than 1/4 and have no starting or ending tie</i><br />
 				• <b>sel note if tie == 1</b>   <i>→ select notes that start a tie but do not end one</i><br />

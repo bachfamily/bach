@@ -1595,25 +1595,6 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 
                 
                 
-            // (un)sel(ect) marker by index
-            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next) {
-                t_marker *to_select;
-                lock_general_mutex((t_notation_obj *)x);
-                if (selectllll->l_depth == 1) {
-                    if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
-                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
-                } else {
-                    t_llllelem *elem;
-                    for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next)
-                        if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                            if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
-                                notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
-                }
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
-                unlock_general_mutex((t_notation_obj *)x);
-                
-                
-                
             // (un)sel(ect) marker if
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next &&
                        hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
@@ -1640,6 +1621,25 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                     object_error((t_object *) x, "Bad expression!");
                 }
 
+                
+            // (un)sel(ect) marker by index
+            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next) {
+                t_marker *to_select;
+                lock_general_mutex((t_notation_obj *)x);
+                if (selectllll->l_depth == 1) {
+                    if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
+                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                } else {
+                    t_llllelem *elem;
+                    for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next)
+                        if (hatom_gettype(&elem->l_hatom) == H_LLLL)
+                            if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
+                                notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                }
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                unlock_general_mutex((t_notation_obj *)x);
+                
+                
                 
             // (un)sel(ect) all markers
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
