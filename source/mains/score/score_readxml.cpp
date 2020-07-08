@@ -26,7 +26,9 @@
 
 #define CONST_DYNAMICS_TEXT_ALLOC_SIZE 2048
 
-
+#ifdef WIN_VERSION
+#define strtok_r strtok_s
+#endif 
 //#define SCORE_READXML_POSTLL
 
 t_rational xml_name_and_dots_to_value(const char *chordtype, long dots);
