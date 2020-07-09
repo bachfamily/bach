@@ -4133,7 +4133,7 @@ long yposition_to_systemnumber(t_notation_obj *r_ob, double yposition){
     }
 }
 
-inline double get_ux_left_start(t_notation_obj *r_ob)
+double get_ux_left_start(t_notation_obj *r_ob)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL || r_ob->spacing_type == k_SPACING_PROPORTIONAL)
         return CONST_ROLL_UX_LEFT_START * r_ob->show_clefs;
