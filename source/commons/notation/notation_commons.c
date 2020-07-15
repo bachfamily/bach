@@ -26975,8 +26975,20 @@ long notationitem_onset_leq(void *data, t_llllelem *a, t_llllelem *b)
     t_notation_item *a_it = (t_notation_item *)hatom_getobj(&a->l_hatom);
     t_notation_item *b_it = (t_notation_item *)hatom_getobj(&b->l_hatom);
     
-    if (a_it && b_it)
-        return (notation_item_get_onset_ms(r_ob, a_it) <= notation_item_get_onset_ms(r_ob, b_it));
+    if (a_it && b_it) {
+        double a_onset = notation_item_get_onset_ms(r_ob, a_it);
+        double b_onset = notation_item_get_onset_ms(r_ob, b_it);
+        if (a_onset < b_onset)
+            return 1;
+        else if (a_onset > b_onset)
+            return 0;
+        else { // markers before anything
+            if (a_it->type != k_MARKER && b_it->type == k_MARKER)
+                return 0;
+            else
+                return 1;
+        }
+    }
     
     return 1;
 }
@@ -26988,7 +27000,20 @@ long notationitem_onset_geq(void *data, t_llllelem *a, t_llllelem *b)
     t_notation_item *b_it = (t_notation_item *)hatom_getobj(&b->l_hatom);
     
     if (a_it && b_it)
-        return (notation_item_get_onset_ms(r_ob, a_it) >= notation_item_get_onset_ms(r_ob, b_it));
+    {
+        double a_onset = notation_item_get_onset_ms(r_ob, a_it);
+        double b_onset = notation_item_get_onset_ms(r_ob, b_it);
+        if (a_onset < b_onset)
+            return 0;
+        else if (a_onset > b_onset)
+            return 1;
+        else { // markers before anything
+            if (a_it->type == k_MARKER && b_it->type != k_MARKER)
+                return 0;
+            else
+                return 1;
+        }
+    }
     
     return 1;
 }
@@ -36199,7 +36224,12 @@ double notation_item_get_onset_ms(t_notation_obj *r_ob, t_notation_item *it)
         case k_MEASURE: return ((t_measure *)it)->tuttipoint_onset_ms + ((t_measure *)it)->tuttipoint_reference->onset_ms;
         case k_TEMPO: return ((t_tempo *)it)->onset;
         case k_VOICE: return 0;
-        case k_MARKER: return ((t_marker *)it)->position_ms;
+        case k_MARKER:
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && ((t_marker *)it)->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
+                t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, (t_marker *)it);
+                return timepoint_to_ms(r_ob, tp, tp.voice_num);
+            } else
+                return ((t_marker *)it)->position_ms;
         case k_LOOP_START: case k_LOOP_REGION: return r_ob->loop_region.start.position_ms;
         case k_LOOP_END: return r_ob->loop_region.end.position_ms;
         default: return 0;
