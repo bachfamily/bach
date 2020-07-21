@@ -815,11 +815,93 @@ long articulation_to_lilypond_buf(t_notation_obj *r_ob, long articulation_ID, ch
 }
 
 
+long dynamic_mark_to_lilypond(t_dynamics_mark *mark, char *buf, long bufalloc)
+{
+    long cur = 0;
+    if (bufalloc <= 0)
+        return 0;
+    
+    buf[0] = 0;
+    if (mark->num_words == 0) {
+        // nothing
+    } else if (mark->num_words > 1) {
+        // this is a direction
+    } else if (mark->num_words == 1 && (!mark->text_deparsed[0] || strlen(mark->text_deparsed[0]->s_name) == 0)) {
+        // nothing
+    } else {
+        char *n = mark->text_deparsed[0]->s_name;
+        if (strcmp(n, "|") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\!");
+        else if (strcmp(n, "ppppp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\ppppp");
+        else if (strcmp(n, "pppp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\pppp");
+        else if (strcmp(n, "ppp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\ppp");
+        else if (strcmp(n, "pp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\pp");
+        else if (strcmp(n, "p") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\p");
+        else if (strcmp(n, "mp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\mp");
+        else if (strcmp(n, "mf") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\mf");
+        else if (strcmp(n, "f") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\f");
+        else if (strcmp(n, "ff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\ff");
+        else if (strcmp(n, "fff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\fff");
+        else if (strcmp(n, "ffff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\ffff");
+        else if (strcmp(n, "fffff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\fffff");
+        else if (strcmp(n, "fp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\fp");
+        else if (strcmp(n, "sf") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\sf");
+        else if (strcmp(n, "sff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\sff");
+        else if (strcmp(n, "sp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\sp");
+        else if (strcmp(n, "spp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\spp");
+        else if (strcmp(n, "sfz") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\sfz");
+        else if (strcmp(n, "rfz") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\rfz");
+    }
+    return cur;
+}
+
+long dynamics_to_lilypond(t_dynamics *dyn, char *buf, long bufalloc)
+{
+    long cur = 0;
+    buf[0] = 0;
+    
+    if (!dyn)
+        return cur;
+    
+    for (t_dynamics_mark *mark = dyn->firstmark; mark; mark = mark->next) {
+        if (dyn->text_deparsed == gensym("|"))
+            cur += snprintf_zero(buf+cur, bufalloc-cur, "\\!");
+        else
+            cur += dynamic_mark_to_lilypond(mark, buf+cur, bufalloc-cur);
+
+        if (mark->hairpin_to_next > 0)
+            cur += snprintf_zero(buf+cur, bufalloc-cur, "\\<");
+        else if (mark->hairpin_to_next < 0)
+            cur += snprintf_zero(buf+cur, bufalloc-cur, "\\>");
+    }
+    return cur;
+}
+
 long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
 {
     long cur = 0, j;
     char is_all_chord_tie_to_next = chord_is_all_tied_to(r_ob, ch, false, NULL);
-    
+    t_dynamics *dyn = chord_get_dynamics(ch);
+
     // estimating (upper bound!) on length of the string
     long estimated_buffer_length = 0;
     t_note *note;
@@ -829,7 +911,13 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
     estimated_buffer_length += 2; // in case we have a chord
     estimated_buffer_length += 20; // chars needed to write the duration (uuuupper bound)
     estimated_buffer_length += ch->num_dots; // number of dots
-    for (note = ch->firstnote; note; note = note->next) 
+    
+    char dynbuf[2048];
+    dynbuf[0] = 0;
+    if (dyn)
+        estimated_buffer_length += dynamics_to_lilypond(dyn, dynbuf, 2048);
+    
+    for (note = ch->firstnote; note; note = note->next)
         estimated_buffer_length += 40 * note->num_articulations;
     estimated_buffer_length += 40 * ch->num_articulations;
 
@@ -888,6 +976,11 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
     long i; 
     for (i = 0; i < ch->num_dots; i++)
         (*buf)[cur++] = '.';
+
+    if (dyn) {
+        strncpy((*buf) + cur, dynbuf, strlen(dynbuf));
+        cur += strlen(dynbuf);
+    }
 
     // articulations
     if (ch->num_notes == 1) {
@@ -1044,7 +1137,7 @@ void write_tempo_interp_if_needed(t_notation_obj *r_ob, char *must_start_tempo_s
 
 t_max_err score_dowritelilypond_pdf(t_score *x, t_symbol *s, long ac, t_atom *av)
 {
-    char filename[MAX_FILENAME_CHARS];
+    char filename[MAX_PATH_CHARS];
     char fullname[MAX_PATH_CHARS];
     char fullname_conform[MAX_PATH_CHARS];
     short path = 0;
@@ -1056,7 +1149,8 @@ t_max_err score_dowritelilypond_pdf(t_score *x, t_symbol *s, long ac, t_atom *av
     t_max_err err = score_dowritelilypond(x, s, 4, new_av);
 
     if (!err) {
-        path_topathname(path, filename, fullname);
+        if (path_topathname(path, filename, fullname))
+            strncpy(fullname, filename, MAX_PATH_CHARS);
         long l = strlen(fullname);
 #ifdef MAC_VERSION
         path_nameconform(fullname, fullname_conform, PATH_STYLE_MAX, PATH_TYPE_BOOT);
@@ -1197,8 +1291,13 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
                 err = MAX_ERR_GENERIC;
             }
         } else {
-            strncpy_zero(filename, filename_sym->s_name, MAX_PATH_CHARS);
-            *path = path_getdefault();
+            char *located = bach_ezlocate_file(filename_sym->s_name, NULL);
+            if (located) {
+                snprintf_zero(filename, MAX_PATH_CHARS, "%s", located);
+                bach_freeptr(located);
+            }
+//            strncpy_zero(filename, filename_sym->s_name, MAX_PATH_CHARS);
+//            *path = path_getdefault();
         }
         
         if (!err) {

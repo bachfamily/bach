@@ -4268,6 +4268,10 @@ void score_task(t_score *x)
                                 if (count < max_chord_per_scheduler_tick)
                                     items_to_send[count++] = (t_notation_item *)temp_ch;
                                 x->r_ob.chord_play_cursor[voice->v_ob.number] = temp_ch;
+                                
+                                if (x->r_ob.play_mode == k_PLAYMODE_CHORDWISE && !x->r_ob.play_tied_elements_separately && chord_is_all_tied_to((t_notation_obj *)x, temp_ch, false, NULL)) {
+                                    x->r_ob.chord_play_cursor[voice->v_ob.number] = temp_ch = chord_get_last_in_tieseq(temp_ch);
+                                }
                             } else if (temp_ch->onset > x->r_ob.scheduled_ms) {
                                 break;
                             }
