@@ -471,7 +471,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 588.0, 210.0, 224.0, 79.0 ],
+									"patching_rect" : [ 588.0, 210.0, 225.0, 79.0 ],
 									"text" : "If you don't wan't polyphonic behaviours, consider using the \"poly\" message to bach.roll first.\nIf you additionally don't want any rest, you might consider sending",
 									"textcolor" : [ 0.501961, 0.501961, 0.501961, 1.0 ]
 								}
@@ -759,7 +759,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.welcome.maxpat",
+				"name" : "bach.help.notation.quantization.03_score2score.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
