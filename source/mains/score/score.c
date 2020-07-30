@@ -783,7 +783,7 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *out_durations = llll_get();
     t_llll *out_velocities = llll_get();
     t_llll *out_ties = llll_get();
-    t_llll *out_graphic = llll_get();
+//    t_llll *out_graphic = llll_get();
     t_llll *out_breakpoints = llll_get();
     t_llll *out_slots = llll_get();
     t_llll *out_extras = llll_get();
@@ -795,7 +795,7 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_chord *chord;
     t_scorevoice *voice;
     
-    llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
+//    llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
     llll_appendsym(out_breakpoints, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
     llll_appendsym(out_slots, _llllobj_sym_slots, 0, WHITENULL_llll);
     
@@ -822,7 +822,10 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 t_llll *this_event_IDs = llll_get();
                 
                 for (note = chord->firstnote; note; note = note->next){
-                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
+                    t_hatom h;
+                    note_get_poc((t_notation_obj *)x, note, &h);
+                    llll_appendhatom_clone(this_event_cents, &h);
+//                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
                     llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
                     llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
                     llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
@@ -864,14 +867,14 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
         llll_appendllll(out_durations, out_voice_durations, 0, WHITENULL_llll);
         llll_appendllll(out_velocities, out_voice_velocities, 0, WHITENULL_llll);
         llll_appendllll(out_ties, out_voice_ties, 0, WHITENULL_llll);
-        llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
+//        llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
         llll_appendllll(out_breakpoints, out_voice_breakpoints, 0, WHITENULL_llll);
         llll_appendllll(out_slots, out_voice_slots, 0, WHITENULL_llll);
         llll_appendllll(out_IDs, out_voice_IDs, 0, WHITENULL_llll);
     }
     
     // building extras
-    llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);
+//    llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);
     llll_appendllll(out_extras, out_breakpoints, 0, WHITENULL_llll);
     llll_appendllll(out_extras, out_slots, 0, WHITENULL_llll);
     

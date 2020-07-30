@@ -25406,7 +25406,6 @@ void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h)
         hatom_setdouble(h, note->midicents);
 }
 
-
 void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
 {
     note->pitch_original = pitch;
