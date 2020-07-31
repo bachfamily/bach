@@ -25406,6 +25406,13 @@ void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h)
         hatom_setdouble(h, note->midicents);
 }
 
+void note_set_velocity(t_notation_obj *r_ob, t_note *note, long velocity)
+{
+    note->velocity = velocity;
+    if (note->firstbreakpoint)
+        note->firstbreakpoint->velocity = velocity;
+}
+
 void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
 {
     note->pitch_original = pitch;
@@ -28300,7 +28307,8 @@ t_llll* note_get_partial_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note 
 
 
 t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, 
-                                           double *new_start_midicents, double *new_start_velocity){
+                                           double *new_start_midicents, double *new_start_velocity)
+{
 // if mode == 2 it is a partialnote, and new_start_midicents is filled
     t_bpt *temp;
     double start_x_pos = 0., start_y_pos = 0., start_vel;
@@ -31031,7 +31039,7 @@ void set_rollnote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* n
                 note->midicents = CONST_DEFAULT_NEW_NOTE_CENTS;
 
             note->duration = is_hatom_number(&notevalues->l_head->l_next->l_hatom) ? hatom_getdouble(&notevalues->l_head->l_next->l_hatom) : CONST_DEFAULT_NEW_NOTE_DURATION;
-            note->velocity = is_hatom_number(&notevalues->l_head->l_next->l_next->l_hatom) ? hatom_getlong(&notevalues->l_head->l_next->l_next->l_hatom) : CONST_DEFAULT_NEW_NOTE_VELOCITY;
+            note_set_velocity(r_ob, note, is_hatom_number(&notevalues->l_head->l_next->l_next->l_hatom) ? hatom_getlong(&notevalues->l_head->l_next->l_next->l_hatom) : CONST_DEFAULT_NEW_NOTE_VELOCITY);
             clip_long(&note->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
             
             // Old flag compatibility
@@ -32480,7 +32488,7 @@ void set_scorenote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* 
             } else
                 note->midicents = CONST_DEFAULT_NEW_NOTE_CENTS;
 
-            note->velocity = (notevalues->l_size >= 2 && is_hatom_number(&notevalues->l_head->l_next->l_hatom)) ? hatom_getlong(&notevalues->l_head->l_next->l_hatom) : CONST_DEFAULT_NEW_NOTE_VELOCITY;
+            note_set_velocity(r_ob, note, (notevalues->l_size >= 2 && is_hatom_number(&notevalues->l_head->l_next->l_hatom)) ? hatom_getlong(&notevalues->l_head->l_next->l_hatom) : CONST_DEFAULT_NEW_NOTE_VELOCITY);
             
             // Handling ties
             note->tie_to = NULL;
@@ -33501,9 +33509,7 @@ char change_selection_velocity(t_notation_obj *r_ob, double delta_velocity){
                         create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                     
                     note->draggingvelocity = new_vel;
-                    note->velocity = round(new_vel);
-                    if (note->firstbreakpoint)
-                        note->firstbreakpoint->velocity = note->velocity;
+                    note_set_velocity(r_ob, note, round(new_vel));
                     if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) {
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                             recompute_all_for_measure(r_ob, note->parent->parent, false);
@@ -33527,8 +33533,7 @@ char change_selection_velocity(t_notation_obj *r_ob, double delta_velocity){
                             create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                         
                         temp->draggingvelocity = new_vel;
-                        temp->velocity = round(new_vel);
-                        if (temp->firstbreakpoint) temp->firstbreakpoint->velocity = temp->velocity;
+                        note_set_velocity(r_ob, temp, round(new_vel));
                         changed = 1;
                     }
                     temp = temp->next;
@@ -34166,9 +34171,7 @@ char change_note_velocity_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *note,
     if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)note)) && (lexpr || (new_velocity && new_velocity->l_head))) {
         create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)note, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
         change_long(r_ob, &note->velocity, lexpr, new_velocity ? new_velocity->l_head : NULL, 0, (t_notation_item *)note);
-        note->velocity = CLAMP(note->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
-        if (note->firstbreakpoint) 
-            note->firstbreakpoint->velocity = note->velocity;
+        note_set_velocity(r_ob, note, CLAMP(note->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY));
         if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE)
             note->parent->need_recompute_parameters = true;
         changed = 1;
@@ -34184,8 +34187,8 @@ char change_chord_velocity_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *cho
         if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) && (lexpr || thiselem)) {
             create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
             change_long(r_ob, &nt->velocity, lexpr, thiselem, 0, (t_notation_item *)nt);
-            nt->velocity = CLAMP(nt->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
-            if (thiselem && thiselem->l_next) 
+            note_set_velocity(r_ob, nt, CLAMP(nt->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY));
+            if (thiselem && thiselem->l_next)
                 thiselem = thiselem->l_next;
             changed = 1;
         }

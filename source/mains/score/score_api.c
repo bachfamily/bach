@@ -2039,7 +2039,7 @@ void set_measure_velocities_values_from_llll(t_score *x, t_llll* measure_velocit
                                 long vel = hatom_getlong(&subelem->l_hatom);
                                 clip_long(&vel, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
                                 if (note) { // there's already a note: we change its cents
-                                    note->velocity = vel;
+                                    note_set_velocity((t_notation_obj *)x, note, vel);
                                     note = note->next;
                                 } else { // we create a note within the same chord!
                                     t_note *this_nt;
@@ -2093,7 +2093,7 @@ void set_measure_velocities_values_from_llll(t_score *x, t_llll* measure_velocit
                 if (chord->r_sym_duration.r_num > 0) {
                     t_note *note = chord->firstnote;
                     while (note) {
-                        note->velocity = vel;
+                        note_set_velocity((t_notation_obj *)x, note, vel);
                         note = note->next;
                     }
                 }

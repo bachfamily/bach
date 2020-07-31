@@ -9433,6 +9433,16 @@ t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note);
 // TBD: pitch-or-cents
 void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h);
 
+
+/**    Set the velocity of a note, and also sync the velocity of the first breakpoint (that should always coincide
+        with the main velocity.
+ @ingroup                        notation_actions
+ @param    r_ob                    The notation object
+ @param    note                    The note
+ @param    velocity                    The velocity
+ */
+void note_set_velocity(t_notation_obj *r_ob, t_note *note, long velocity);
+
 /**    Revert the enharmony of a note to its default value (e.g. turns Eb to D#, and leaves D# to D#, differently from enharmonically_retranscribe_note())
     @ingroup        notation_actions
     @param    r_ob    The notation object

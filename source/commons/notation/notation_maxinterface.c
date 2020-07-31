@@ -5996,21 +5996,23 @@ void notation_obj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long 
 
 void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut)
 {
-    if (clipboard->gathered_syntax)
-        llll_free(clipboard->gathered_syntax);
-    
-    // we copy the duration line
-    clipboard->gathered_syntax = note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL);
-    clipboard->type = k_DURATION_LINE;
-    clipboard->object = k_NOTATION_OBJECT_ANY;
-    
-    if (cut) { // cut
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
-            r_ob->whole_obj_undo_tick_function(r_ob);
-        else
-            create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_CHANGE);
-        note_delete_breakpoints(r_ob, note);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_DURATION_LINE);
+    if (note) {
+        if (clipboard->gathered_syntax)
+            llll_free(clipboard->gathered_syntax);
+        
+        // we copy the duration line
+        clipboard->gathered_syntax = note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL);
+        clipboard->type = k_DURATION_LINE;
+        clipboard->object = k_NOTATION_OBJECT_ANY;
+        
+        if (cut) { // cut
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
+                r_ob->whole_obj_undo_tick_function(r_ob);
+            else
+                create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_CHANGE);
+            note_delete_breakpoints(r_ob, note);
+            handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_DURATION_LINE);
+        }
     }
 }
 

@@ -2324,6 +2324,7 @@ void score_sel_change_velocity(t_score *x, t_symbol *s, long argc, t_atom *argv)
                             create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                             change_long((t_notation_obj *)x, &nt->velocity, lexpr, thiselem, 0, (t_notation_item *)nt);
                             clip_long(&nt->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
+                            note_set_velocity((t_notation_obj *)x, nt, nt->velocity); // to set it to breakpoint too
                             if (thiselem && thiselem->l_next)
                                 thiselem = thiselem->l_next;
                             changed = 1;

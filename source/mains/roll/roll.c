@@ -8501,7 +8501,7 @@ void set_voice_velocities_values_from_llll(t_roll *x, t_llll* velocities, t_roll
                         if ((subtype == H_LONG) || (subtype == H_DOUBLE) || (subtype == H_RAT)) {
                             long velocity = CLAMP(hatom_getlong(&subelem->l_hatom), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
                             if (note){ // there's already a note: we change its cents
-                                note->velocity = velocity;
+                                note_set_velocity((t_notation_obj *)x, note, velocity);
                                 note = note->next;
                             } else { // we create a note within the same chord!
                                 t_note *this_nt;
@@ -8540,7 +8540,7 @@ void set_voice_velocities_values_from_llll(t_roll *x, t_llll* velocities, t_roll
             if (chord) { // there's already a chord: we change all its cents
                 t_note *note = chord->firstnote;
                 while (note) {
-                    note->velocity = velocity;
+                    note_set_velocity((t_notation_obj *)x, note, velocity);
                     note = note->next;
                 }
                 chord = chord->next;
@@ -8563,7 +8563,7 @@ void set_voice_velocities_values_from_llll(t_roll *x, t_llll* velocities, t_roll
         t_note *nt;
         if (chord->prev && chord->prev->firstnote)
             for (nt = chord->firstnote; nt; nt = nt->next)
-                nt->velocity = chord->prev->firstnote->velocity;
+                note_set_velocity((t_notation_obj *)x, nt, chord->prev->firstnote->velocity);
     }
 
     //    check_chords_order_for_voice(x, voice); // NO MORE NEEDED HERE
@@ -9165,7 +9165,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                                 
                                 // updating velocity 
                                 if (velocity > 0)
-                                    foundnt->velocity = CLAMP(((foundnt->velocity * foundnt->duration) + (velocity * duration))/(foundnt->duration + duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
+                                    note_set_velocity((t_notation_obj *)x, foundnt, CLAMP(((foundnt->velocity * foundnt->duration) + (velocity * duration))/(foundnt->duration + duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY));
                                 
                                 // updating duration
                                 foundnt->duration = onset + duration - foundnt->parent->onset; //update duration
@@ -9256,7 +9256,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                                     
                                     // updating velocity
                                     if (this_velocity > 0)
-                                        temp->velocity = CLAMP(((temp->velocity * temp->duration) + (this_velocity * this_duration))/(temp->duration + this_duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
+                                        note_set_velocity((t_notation_obj *)x, temp, CLAMP(((temp->velocity * temp->duration) + (this_velocity * this_duration))/(temp->duration + this_duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY));
 
                                     // updating duration
                                     temp->duration = final_duration;
@@ -10393,11 +10393,11 @@ char merge(t_roll *x, double threshold_ms, double threshold_cents, char gatherin
                         //  we change the pitch of the first note
                         if (gathering_policy_cents > 0) { // align to last pitch
                             note->midicents = last_pitch;
-                            note->velocity = last_velocity;
+                            note_set_velocity((t_notation_obj *)x, note, last_velocity);
                         }
                         else if (gathering_policy_cents == 0) { // align to average pitch
                             note->midicents = gathering_average_pitch;
-                            note->velocity = gathering_average_velocity;
+                            note_set_velocity((t_notation_obj *)x, note, gathering_average_velocity);
                         }
                         // else: nothing to do: it stays aligned to first pitch
                     }    
