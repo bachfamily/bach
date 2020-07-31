@@ -9625,17 +9625,17 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                             selected_breakpoint = temp;
                                         bptcolor = tail_get_color((t_notation_obj *) x, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
                                         if (x->r_ob.breakpoints_have_noteheads) {
-                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, 0);
+                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE);
                                         } else {
-                                            paint_rhomboid(g, x->r_ob.j_background_rgba, bptcolor, bpt_x, bpt_y, CONST_BPT_UHEIGHT * 0.3 * x->r_ob.zoom_y * grace_ratio, CONST_BPT_UHEIGHT * 0.5 * x->r_ob.zoom_y * grace_ratio, 0.9);
+                                            paint_rhomboid(g, x->r_ob.j_background_rgba, bptcolor, bpt_x, bpt_y, x->r_ob.breakpoints_size * 0.6 * x->r_ob.zoom_y * grace_ratio, x->r_ob.breakpoints_size * x->r_ob.zoom_y * grace_ratio, 0.9);
                                         }
                                     } else { //tail
                                         if (x->r_ob.breakpoints_have_noteheads && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
-                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, note_end_pos, curr_nt, 0);
+                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, note_end_pos, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE);
                                         } else { 
                                             if (x->r_ob.show_tails) {
                                                 double bpt_y = mc_to_ypos((t_notation_obj *) x, note_get_screen_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
-                                                paint_line(g, tailcolor, note_end_pos, bpt_y - 2. * x->r_ob.zoom_y, note_end_pos, bpt_y + 2. * x->r_ob.zoom_y * grace_ratio, x->r_ob.durations_line_width * x->r_ob.zoom_y * grace_ratio);
+                                                paint_line(g, tailcolor, note_end_pos, bpt_y - x->r_ob.breakpoints_size * 0.666 * x->r_ob.zoom_y, note_end_pos, bpt_y + x->r_ob.breakpoints_size * 0.666 * x->r_ob.zoom_y * grace_ratio, x->r_ob.durations_line_width * x->r_ob.zoom_y * grace_ratio);
                                             }
                                         }
                                     }

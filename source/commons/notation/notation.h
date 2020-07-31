@@ -276,7 +276,7 @@
 #define CONST_DEFAULT_ROLLVOICES_SPACING_UY 17        ///< Default vertical distance between two voices in [bach.roll]
 #define CONST_DEFAULT_SCOREVOICES_SPACING_UY 26        ///< Default vertical distance between two voices in [bach.score]
 
-#define CONST_BPT_UHEIGHT 6.                        ///< Unscaled height of a pitch breakpoint rhomboid 
+// #define CONST_BPT_UHEIGHT 3.                        ///< Unscaled height of a pitch breakpoint rhomboid 
 #define CONST_NOTETAIL_UWIDTH 2.                    ///< Unscaled width of a note tail
 
 #define CONST_USHIFT_TEMPI_LEFT 9                    ///< Unscaled additional left shift (in pixels) of the tempo writing box.
@@ -4304,6 +4304,7 @@ typedef struct _notation_obj
     char        show_durations;                ///< Flag telling if we want to show the duration-lines for the notes
     char        show_tails;                    ///< Flag telling if we want to display the note tails at the end of each notes (only works if #show_durations is set)
     double        durations_line_width;        ///< Width of the duration line in pixels
+    double      breakpoints_size;              ///< Breakpoints size (diamond shape)
     char        dl_spans_ties;              ///< Duration line spans a sequence of tied notes?
     char        velocity_handling;            ///< Parameter handling the way we display the velocity on screen. This must be one of #e_velocity_handling 
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
@@ -7541,6 +7542,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
     @remark            This is used in calculate_chord_parameters().
 */ 
 void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note);
+double velocity_to_notesize_factor(long velocity);
 
 
 /**    Retrieve the y position of the ledger lines relative to a given scaleposition (see the <scaleposition> field in the #t_note structure). 
@@ -10365,10 +10367,11 @@ void paint_small_note(t_notation_obj *r_ob,  t_jgraphics* g, t_jrgba color, t_ra
     @param    notehead_center_x        The center x pixel of the notehead
     @param    note_attachment            Note to which this notehead is attached, e.g. because it represents graphically a pitch breakpoint of this note
     @param    system_shift        The additional y shift due to the fact that the system is not the first one.
+    @param    small_note_ratio    Note size ratio (defaults to the grace note size)
     @remark    This is used for drawing breakpoints as notes.
 */
 void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_object *view, t_jgraphics *g, t_jrgba notecolor, double midicents, 
-                                                double notehead_center_x, t_note *note_attachment, double system_shift);
+                                                double notehead_center_x, t_note *note_attachment, double system_shift, double small_note_ratio = CONST_GRACE_CHORD_SIZE);
 
 
 // TBD

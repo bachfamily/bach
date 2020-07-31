@@ -1334,11 +1334,10 @@ long chord_get_max_velocity(t_notation_obj *r_ob, t_chord *chord)
 }
 
 // DRAFT FOR HAVING NOTES INSTEAD OF RHOMBOIDS. COULD BE MADE FASTER IF "foo" note and chords were stored somewhere in the breakpoints.
-void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_object *view, t_jgraphics *g, t_jrgba notecolor, double midicents, double notehead_center_x, t_note *note_attachment, double system_shift)
+void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_object *view, t_jgraphics *g, t_jrgba notecolor, double midicents, double notehead_center_x, t_note *note_attachment, double system_shift, double small_note_ratio)
 {
     t_jrgba color = notecolor;
     t_voice *voice = !note_attachment ? NULL : (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)note_attachment->parent->voiceparent : (t_voice *)note_attachment->parent->parent->voiceparent);
-    const double small_note_ratio = CONST_GRACE_CHORD_SIZE;
     t_jfont *jf_smallnote = jfont_create_debug(r_ob->noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, small_note_ratio * r_ob->notation_typo_preferences.base_pt * r_ob->zoom_y);
     t_jfont *jf_smallacc = jfont_create_debug(r_ob->accidentals_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, small_note_ratio * r_ob->notation_typo_preferences.base_pt * r_ob->zoom_y);
     t_jfont *jf_smallaccbogus = jfont_create_debug(r_ob->accidentals_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, small_note_ratio * r_ob->notation_typo_preferences.base_pt * r_ob->zoom_y);
@@ -1372,6 +1371,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     notehead_left_x = notehead_center_x - notehead_get_uwidth(r_ob, RAT_1OVER4, NULL, false) * small_note_ratio / 2;
     
     // notehead and accidentals
+    foo->notehead_resize = 1.;
     paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, mc_to_yposition_in_scale_for_notes(r_ob, foo, voice, 0.7), system_shift, small_note_ratio);
     paint_noteaccidentals(r_ob, g, jf_smallacc, jf_text_fractions, jf_smallaccbogus, &color, foo, 
                           get_voice_clef(r_ob, voice), mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(foo), voice), notehead_left_x, NULL, NULL);
@@ -1540,17 +1540,17 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                 bptcolor = tail_get_color(r_ob, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, false, r_ob->breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
                     
                 if (r_ob->breakpoints_have_noteheads) {
-                    paint_default_small_notehead_with_accidentals(r_ob, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, system_shift);
+                    paint_default_small_notehead_with_accidentals(r_ob, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE );
                 } else { 
-                    paint_rhomboid(g, r_ob->j_background_rgba, bptcolor, bpt_x, bpt_y, CONST_BPT_UHEIGHT * 0.3 * r_ob->zoom_y, CONST_BPT_UHEIGHT * 0.5 * r_ob->zoom_y, 0.9);
+                    paint_rhomboid(g, r_ob->j_background_rgba, bptcolor, bpt_x, bpt_y, r_ob->breakpoints_size * 0.6 * r_ob->zoom_y, r_ob->breakpoints_size * r_ob->zoom_y, 0.9);
                 }
             } else { //it's a tail
                 if (r_ob->breakpoints_have_noteheads && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
-                    paint_default_small_notehead_with_accidentals(r_ob, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, end_pos, curr_nt, system_shift);
+                    paint_default_small_notehead_with_accidentals(r_ob, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, end_pos, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE);
                 } else { 
                     if (r_ob->show_tails) {
                         double bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
-                        paint_line(g, tailcolor, end_pos, bpt_y - 2. * r_ob->zoom_y, end_pos, bpt_y + 2. * r_ob->zoom_y, CONST_NOTETAIL_UWIDTH * r_ob->zoom_y);
+                        paint_line(g, tailcolor, end_pos, bpt_y - r_ob->breakpoints_size * 0.666 * r_ob->zoom_y, end_pos, bpt_y + r_ob->breakpoints_size * 0.666 * r_ob->zoom_y, CONST_NOTETAIL_UWIDTH * r_ob->zoom_y);
                     }
                 }
             }
@@ -1870,7 +1870,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
     }
     
     if (curr_nt->parent->is_grace_chord)
-        notehead_resize *= CONST_GRACE_CHORD_SIZE;
+        notehead_resize *= grace_ratio;
     
     if (notehead_resize != 1.){
         t_voice *voice = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? ((t_voice *)curr_nt->parent->parent->voiceparent) : ((t_voice *)curr_nt->parent->voiceparent));
@@ -24306,7 +24306,10 @@ void chord_assign_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dyn
 
 
 
-
+double velocity_to_notesize_factor(long velocity)
+{
+    return rescale_with_slope(velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY, 0.4, 1., 0);
+}
 
 // also calculate note size from velocity_handling, if needed
 void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note){
@@ -24335,7 +24338,7 @@ void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note){
     }
     
     if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) {
-        double factor = rescale_with_slope(note->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY, 0.4, 1., 0);
+        double factor = velocity_to_notesize_factor(note->velocity);
         note->accidentals_resize *= factor;
         note->notehead_resize *= factor;
     }
@@ -25900,7 +25903,7 @@ int is_in_tail_shape(t_notation_obj *r_ob, t_note *note, long point_x, long poin
         tail_y = r_ob->system_jump * system_num + mc_to_yposition(r_ob, note_get_screen_midicents(note) + tail_correction, chord_get_voice(r_ob, chord));
     }
     //    double note_y = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(note));
-    if ((fabs(point_x - tail_x) < ((r_ob->durations_line_width * 1.9 * r_ob->zoom_y) / 2.)) && (fabs(tail_y - point_y) < 2.9 * r_ob->zoom_y))
+    if ((fabs(point_x - tail_x) < ((r_ob->durations_line_width * (CONST_NOTETAIL_UWIDTH - 0.1) * r_ob->zoom_y) / 2.)) && (fabs(tail_y - point_y) < (r_ob->breakpoints_size * 0.666 + 1) * r_ob->zoom_y))
         return 1;
     else
         return 0;
@@ -26005,7 +26008,7 @@ int is_in_breakpoint_shape(t_notation_obj *r_ob, t_bpt *breakpoint, long point_x
     double bpt_x, bpt_y;
     breakpoint_get_pt(r_ob, breakpoint, &bpt_x, &bpt_y, NULL, NULL);
 
-    if ((fabs(point_x - bpt_x) <= CONST_BPT_UHEIGHT * 0.3 * r_ob->zoom_y) && (fabs(point_y - bpt_y) <= CONST_BPT_UHEIGHT * 0.5 * r_ob->zoom_y))
+    if ((fabs(point_x - bpt_x) <= r_ob->breakpoints_size * 0.6 * r_ob->zoom_y) && (fabs(point_y - bpt_y) <= r_ob->breakpoints_size * r_ob->zoom_y))
         return 1;
     else
         return 0;

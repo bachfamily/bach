@@ -2025,14 +2025,20 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 		// <m>vzoom</m>). Defaults to 7.
 
 		CLASS_ATTR_DOUBLE(c, "durationlinewidth", 0, t_notation_obj, durations_line_width);
-		CLASS_ATTR_STYLE_LABEL(c,"durationlinewidth",0,"text","Width of the duration line");
+		CLASS_ATTR_STYLE_LABEL(c,"durationlinewidth",0,"text","Duration Line Width");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"durationlinewidth",0,"2.");
 		// @exclude bach.slot
 		// @description Sets the width of the duration lines (when displayed: see <m>showdurations</m>).
 		// In case the <m>showvelocity</m> attribute handles velocities via duration line width, this width is the maximum possible
 		// width (corresponding to a velocity of 127), and will be rescaled according to the note (or breakpoint) velocity.
 		// Defaults to 2.
-		
+
+        CLASS_ATTR_DOUBLE(c, "breakpointsize", 0, t_notation_obj, breakpoints_size);
+        CLASS_ATTR_STYLE_LABEL(c,"breakpointsize",0,"text","Pitch Breakpoint Size");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointsize",0,"3.");
+        // @exclude bach.slot
+        // @description Sets the size of diamond shaped breakpoints (when displayed: see <m>breakpointshavenoteheads</m>).
+        
 		CLASS_ATTR_CHAR(c,"nonantialiasedstafflines",0, t_notation_obj, force_non_antialiased_staff_lines);
 		CLASS_ATTR_STYLE_LABEL(c,"nonantialiasedstafflines",0,"onoff","Only Non-Antialiased Staff");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"nonantialiasedstafflines",0,"1");
