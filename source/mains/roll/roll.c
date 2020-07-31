@@ -17405,7 +17405,9 @@ char change_selection_tail(t_roll *x, double delta_ms){
 */
 
 char align_selection_onsets(t_roll *x){
-//align all the onsets to the first onset
+    // align all the onsets to the first onset
+    // (it has to be like this in order for breakpoint alignment to work properly, otherwise one should
+    // take precautions of perhaps sorting in reversed order)
 
     // find leftmost onset
     t_rollvoice *voice;
@@ -17424,6 +17426,10 @@ char align_selection_onsets(t_roll *x){
         } else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next) { // it is a note tail
             double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
             if (leftmost_onset == -32000 || thisonset < leftmost_onset) 
+                leftmost_onset = thisonset;
+        } else if (curr_it->type == k_PITCH_BREAKPOINT && ((t_bpt *)curr_it)->next) { // it is an inner breakpoint
+            double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
+            if (leftmost_onset == -32000 || thisonset < leftmost_onset)
                 leftmost_onset = thisonset;
         }
         curr_it = curr_it->next_selected;
