@@ -1421,7 +1421,7 @@ e_goto_error notationobj_goto(t_notation_obj *r_ob, t_goto_params *par)
 //    if (err == k_GOTO_ERROR_NONE)
 //        err = goto_set_selection_from_llll(r_ob, par, toselect);
     
-    if (par->force_inscreen && r_ob->force_notation_item_inscreen) {
+    if (par->force_inscreen && r_ob->force_notation_item_inscreen && toselect) {
         for (t_llllelem *el = toselect->l_head; el; el = el->l_next)
             (r_ob->force_notation_item_inscreen)(r_ob, (t_notation_item *)hatom_getobj(&el->l_hatom), NULL);
     }
