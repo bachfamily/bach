@@ -1646,7 +1646,9 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 
             // (un)sel(ect) all markers
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
-                select_all_markers((t_notation_obj *) x, mode);
+                t_symbol *role_sym = NULL;
+                llll_parseattrs((t_object *)x, selectllll, false, "s", _llllobj_sym_role, &role_sym);
+                select_all_markers((t_notation_obj *) x, mode, role_sym && role_sym != _llllobj_sym_all ? sym_to_marker_role(role_sym) : -1);
 
             // (un)sel(ect) all voices
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_voices) {
@@ -16922,7 +16924,7 @@ void select_all(t_score *x){
         voice = voice->next;
     }
     lock_markers_mutex((t_notation_obj *)x);
-    select_all_markers((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT);
+    select_all_markers((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, -1);
     unlock_markers_mutex((t_notation_obj *)x);
     unlock_general_mutex((t_notation_obj *)x);
     handle_change_selection((t_notation_obj *)x);

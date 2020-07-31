@@ -17644,8 +17644,9 @@ t_marker *markername2marker(t_notation_obj *r_ob, t_llll *names);
     @ingroup        selection
     @param    r_ob    The notation object
     @param mode      The selection mode (one of the #e_selection_modes)
+    @param only_this_marker_role    One of the e_marker_roles, or -1 if ALL markers should be selected
  */
-void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode);
+void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode, long only_this_marker_role);
 
 
 /** Select all the voices

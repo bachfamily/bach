@@ -35009,11 +35009,11 @@ t_llll *make_marker_name_unique(t_notation_obj *r_ob, t_llll *names){
     }
 }
 
-void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode)
+void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode, long only_this_marker_role)
 {
     t_marker *marker;
     for (marker = r_ob->firstmarker; marker; marker = marker->next)
-//        if (!notation_item_is_selected(r_ob, (t_notation_item *)marker))
+        if (only_this_marker_role < 0 || marker->role == only_this_marker_role)
             notation_item_add_to_preselection(r_ob, (t_notation_item *)marker);
     move_preselecteditems_to_selection(r_ob, mode, false, false);
 }

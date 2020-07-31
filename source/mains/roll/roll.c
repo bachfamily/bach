@@ -1883,7 +1883,9 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             
         // (un)sel(ect) all markers
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
-            select_all_markers((t_notation_obj *)x, mode);
+            t_symbol *role_sym = NULL;
+            llll_parseattrs((t_object *)x, selectllll, false, "s", _llllobj_sym_role, &role_sym);
+            select_all_markers((t_notation_obj *) x, mode, role_sym && role_sym != _llllobj_sym_all ? sym_to_marker_role(role_sym) : -1);
 
         // (un)sel(ect) all notes
         } else if (head_type == H_SYM && (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_notes || hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_chords)) {
@@ -4813,7 +4815,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     // Other selection modes are possible: <br />
     // - If the word <m>sel</m> is followed by the symbol <b>all</b>, all notes, chords and markers are selected. <br />
     // - If the word <m>sel</m> is followed by a category plural symbol, all the corresponding elements are selected.
-    // Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>breakpoints</b>, <b>tails</b>, <b>voices</b>. <br />
+    // Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>breakpoints</b>, <b>tails</b>, <b>voices</b>.
+    // In case of markers, an additional "role" message attribute specify a specific role for markers to be selected (defaulting to "all", i.e.
+    // all marker will be selected, regardless of their role). <br />
     // - If the word <m>sel</m> is followed by the symbol <b>voice</b> followed by one or more integers, the corresponding voices are selected
     // (negative numbers count from the last voice). <br />
     // - If the word <m>sel</m> is followed by the symbol <b>chord</b> followed by one or two integers (representing an address), a certain chord is selected.
@@ -4840,9 +4844,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // - If the word <m>sel</m> is followed by any other symbol or sequence of symbols, these are interpreted as names, and the notation items
     // matching all these names (or a single name, if just one symbol is entered) are selected. <br />
     // @marg 0 @name arguments @optional 0 @type llll
+    // @mattr role @type symbol @default all @digest Role for markers to be selected
     // @example sel all @caption select everything
     // @example sel chords @caption select all chords
     // @example sel markers @caption select all markers
+    // @example sel markers @role none @caption select all markers that have no role
+    // @example sel markers @role barline @caption select all markers with barline role
     // @example sel breakpoints @caption select all breakpoints
     // @example sel tails @caption select all tails
     // @example sel chord 3 @caption select 3rd chord (of 1st voice)
@@ -17599,7 +17606,7 @@ void select_all(t_roll *x){
         voice = voice->next;
     }
     lock_markers_mutex((t_notation_obj *)x);
-    select_all_markers((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT);
+    select_all_markers((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, -1);
     unlock_markers_mutex((t_notation_obj *)x);
     unlock_general_mutex((t_notation_obj *)x);
     handle_change_selection((t_notation_obj *)x);
