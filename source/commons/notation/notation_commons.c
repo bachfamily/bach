@@ -41869,7 +41869,8 @@ char change_selection_name(t_notation_obj *r_ob, t_llll *newnames, t_llll *only_
             if (!is_editable(r_ob, k_MARKER, k_MODIFICATION_NAME)) continue;
             t_llll *newnames_ok = NULL;
             create_header_undo_tick(r_ob, k_HEADER_MARKERS);
-            if (incremental && names->l_head && ((t_marker *)curr_it)->role == k_MARKER_ROLE_NONE)
+//            if (incremental && names->l_head && ((t_marker *)curr_it)->role == k_MARKER_ROLE_NONE)
+            if (incremental && names->l_head) // && ((t_marker *)curr_it)->role == k_MARKER_ROLE_NONE)
                 newnames_ok = find_unused_marker_names(r_ob, &names->l_head->l_hatom, (t_marker *) curr_it);
             else 
                 newnames_ok = llll_clone(names);
