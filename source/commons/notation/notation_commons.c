@@ -3334,9 +3334,9 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
                 time_to_char_buf(r_ob, nt->parent->onset + bpt->rel_x_pos * nt->duration, pos_text, 256);
                 
                 if (r_ob->breakpoints_have_velocity)
-                    snprintf(legend_text, 255, "Position %s   Cents %.1f (Δ %s%.1f)   Velocity %ld", pos_text, nt->midicents + bpt->delta_mc, bpt->delta_mc >= 0 ? "+" : "", bpt->delta_mc, (long)bpt->velocity);
+                    snprintf(legend_text, 255, "Position %s (%d%%)   Cents %.1f (Δ %s%.1f)   Velocity %ld", pos_text, (int)round(bpt->rel_x_pos*100), nt->midicents + bpt->delta_mc, bpt->delta_mc >= 0 ? "+" : "", bpt->delta_mc, (long)bpt->velocity);
                 else
-                    snprintf(legend_text, 255, "Position %s   Cents %.1f (Δ %s%.1f)", pos_text, nt->midicents+bpt->delta_mc, bpt->delta_mc >= 0 ? "+" : "", bpt->delta_mc);
+                    snprintf(legend_text, 255, "Position %s (%d%%)  Cents %.1f (Δ %s%.1f)", pos_text, (int)round(bpt->rel_x_pos*100), nt->midicents+bpt->delta_mc, bpt->delta_mc >= 0 ? "+" : "", bpt->delta_mc);
             }
         }
         
@@ -34104,6 +34104,10 @@ char change_breakpoint_onset_from_lexpr_or_llll(t_notation_obj *r_ob, t_bpt *bpt
             double rel_x_pos = CLAMP((bpt_onset - notation_item_get_onset_ms(r_ob, (t_notation_item *)note->parent))/(notation_item_get_duration_ms(r_ob, (t_notation_item *)note)), 0, 1);
             rel_x_pos = CLAMP(rel_x_pos, bpt->prev->rel_x_pos, bpt->next->rel_x_pos);
             bpt->rel_x_pos = rel_x_pos;
+            if (bpt->next && bpt->rel_x_pos == 1.) {
+                object_warn((t_object *) r_ob, "Warning: breakpoints can't trespass the note tail, last-but-one breakpoint nudged left");
+                bpt->rel_x_pos = MAX(bpt->prev ? bpt->prev->rel_x_pos : 0, 1. - CONST_EPSILON_DOUBLE_EQ);
+            }
         } else {
             // change duration
             trim_note_end(r_ob, note, bpt_onset - orig_bpt_onset);
@@ -34111,6 +34115,16 @@ char change_breakpoint_onset_from_lexpr_or_llll(t_notation_obj *r_ob, t_bpt *bpt
         changed = 1;
     }
     return changed;
+}
+
+
+char change_breakpoint_onset(t_notation_obj *r_ob, t_bpt *bpt, double new_onset)
+{
+    t_llll *temp = llll_get();
+    llll_appenddouble(temp, new_onset);
+    char res = change_breakpoint_onset_from_lexpr_or_llll(r_ob, bpt, NULL, temp);
+    llll_free(temp);
+    return res;
 }
 
 

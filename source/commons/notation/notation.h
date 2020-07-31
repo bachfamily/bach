@@ -14335,6 +14335,8 @@ char change_chord_ioi_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t
  */
 char change_breakpoint_onset_from_lexpr_or_llll(t_notation_obj *r_ob, t_bpt *bpt, t_lexpr *lexpr, t_llll *new_onset);
 
+char change_breakpoint_onset(t_notation_obj *r_ob, t_bpt *bpt, double new_onset);
+
 
 /**    Change the velocity of a note, based on a valid lexpr or (if such lexpr is NULL) on the content of an llll.
     The llll is supposed to contain only the new note velocity (as a single element).

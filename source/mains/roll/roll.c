@@ -17453,6 +17453,13 @@ char align_selection_onsets(t_roll *x){
                 bpt->owner->duration = MAX(0, leftmost_onset - bpt->owner->parent->onset);
                 changed = 1;
             }
+        } else if (curr_it->type == k_PITCH_BREAKPOINT && ((t_bpt *)curr_it)->next) { // it is breakpoint but not a note tail
+            t_bpt *bpt = (t_bpt *)curr_it;
+            if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)bpt->owner)) {
+                create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)bpt->owner->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
+                change_breakpoint_onset((t_notation_obj *)x, bpt, leftmost_onset);
+                changed = 1;
+            }
         }
         curr_it = curr_it->next_selected;
     }
@@ -17495,6 +17502,10 @@ char equally_respace_selection_onsets(t_roll *x){
             llll_appendobj(onsets_and_chords[1], curr_it, 0, WHITENULL_llll);
             llll_appenddouble(onsets_and_chords[0], ((t_chord *)curr_it)->onset, 0, WHITENULL_llll);
             changed = true;
+        } else if (curr_it->type == k_PITCH_BREAKPOINT) { // it is a breakpoint
+            llll_appendobj(onsets_and_chords[1], curr_it, 0, WHITENULL_llll);
+            llll_appenddouble(onsets_and_chords[0], notation_item_get_onset_ms((t_notation_obj *)x, curr_it), 0, WHITENULL_llll);
+            changed = true;
         } else if (curr_it->type == k_MARKER) { // it is a marker
             llll_appendobj(onsets_and_chords[1], curr_it, 0, WHITENULL_llll);
             llll_appenddouble(onsets_and_chords[0], ((t_marker *)curr_it)->position_ms, 0, WHITENULL_llll);
@@ -17525,14 +17536,22 @@ char equally_respace_selection_onsets(t_roll *x){
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch)) {
                     create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
                     ch->onset = this_onset;
-                    ch->r_it.flags = (e_bach_internal_notation_flags) (ch->r_it.flags & ~k_FLAG_COUNT);
+//                    ch->r_it.flags = (e_bach_internal_notation_flags) (ch->r_it.flags & ~k_FLAG_COUNT);
+                }
+            } else if (item->type == k_PITCH_BREAKPOINT) {
+                t_bpt *bpt = (t_bpt *)item;
+                if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)bpt)) {
+                    t_chord *ch = bpt->owner->parent;
+                    create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
+                    change_breakpoint_onset((t_notation_obj *)x, bpt, this_onset);
+//                    ch->r_it.flags = (e_bach_internal_notation_flags) (ch->r_it.flags & ~k_FLAG_COUNT);
                 }
             } else if (item->type == k_MARKER) {
                 t_marker *mk = (t_marker *)item;
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)mk)) {
                     create_header_undo_tick((t_notation_obj *)x, k_HEADER_MARKERS);
                     mk->position_ms = this_onset;
-                    mk->r_it.flags = (e_bach_internal_notation_flags) (mk->r_it.flags & ~k_FLAG_COUNT);
+//                    mk->r_it.flags = (e_bach_internal_notation_flags) (mk->r_it.flags & ~k_FLAG_COUNT);
                 }
             }
         }
