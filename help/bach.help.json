@@ -1360,8 +1360,15 @@
 				"tags" : [ "appearance", "stem", "display", "better", "enhance", "enhancement", "enhancedstems", "neat", "neater", "clear", "alignment", "align" ],
 				"title" : [ "Stem enhancement" ]
 			},
-			"Clefs" : {
-				"filename" : [ "bach.help.notation.appearance.09_clefs.maxpat" ],
+			"A_breakpoints" : {
+				"filename" : [ "bach.help.notation.appearance.09a_breakpoints.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "breakpointshavevelocity", "showvelocity" ],
+				"tags" : [ "appearance", "breakpoint", "breakpointsize", "breakpointshavenoteheads", "breakpointshavevelocity", "showvelocity", "durationlinewidth", "size", "pitch", "velocity", "line", "glissando" ],
+				"title" : [ "Breakpoint appearance" ]
+			},
+			"B_clefs" : {
+				"filename" : [ "bach.help.notation.appearance.09b_clefs.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "clef" ],
 				"tags" : [ "appearance", "clef", "auxclef", "auxiliary", "clefcolor", "auxclefcolor", "showclefs", "showauxclefs" ],
@@ -2704,7 +2711,7 @@
 				"filename" : [ "bach.help.notation.markers.03_attachment.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "marker", "marker+syntax" ],
-				"tags" : [ "marker", "attach", "addmarker", "measure", "symbolic", "position", "absolute", "relative", "attachment" ],
+				"tags" : [ "marker", "attach", "addmarker", "measure", "symbolic", "position", "absolute", "relative", "attachment", "red", "blue" ],
 				"title" : [ "Marker attachment" ]
 			},
 			"Markersinterface" : {
@@ -2731,8 +2738,8 @@
 			"Selection" : {
 				"filename" : [ "bach.help.notation.markers.10_selection.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "selection", "timepoint", "autoclear", "inspector" ],
-				"tags" : [ "marker", "clearselection", "selection", "sel", "unsel", "select", "onset", "change" ],
+				"seealso" : [ "sel", "unsel", "subsel", "timepoint", "marker+role" ],
+				"tags" : [ "marker", "clearselection", "selection", "sel", "unsel", "select", "onset", "change", "subsel", "role", "timesig", "none", "barline", "tempo" ],
 				"title" : [ "Marker selection and onset change" ]
 			},
 			"Changename" : {

@@ -7261,8 +7261,8 @@
 				• <b>sel note if [measure == 4] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select notes in measure 4 with velocity &gt; 100</i><br />
 				• <b>sel rest if symduration &lt;= 1/8</b>   <i>→ select all rests shorter than 1/8</i><br />
 				• <b>sel marker if onset &gt; 5000</b>   <i>→ select all markers with onset &gt;5s</i><br />
-				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
-				• <b>sel tail if cents &gt; 6000</b>   <i>→ select all tails above middle C</i><br />
+				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100] n</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
+				• <b>sel tail if cents &gt; 6000i</b>   <i>→ select all tails above middle C</i><br />
 				<br />
 				Message attributes:<br />
 				<m>@tiemode</m> (symbol, default: each): If "all", tied sequences of chords are counted as one<br />
@@ -9076,6 +9076,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="breakpointsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Pitch Breakpoint Size
+			</digest>
+			<description>
+				Sets the size of diamond shaped breakpoints (when displayed: see <m>breakpointshavenoteheads</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="3." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Pitch Breakpoint Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="breakrootlevelbeam" get="1" set="1" type="int" size="1">
 			<digest>
 				Always Break Root Level Beam
@@ -9382,7 +9398,7 @@
 		</attribute>
 		<attribute name="durationlinewidth" get="1" set="1" type="float" size="1">
 			<digest>
-				Width of the duration line
+				Duration Line Width
 			</digest>
 			<description>
 				Sets the width of the duration lines (when displayed: see <m>showdurations</m>).
@@ -9393,7 +9409,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Width of the duration line" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Duration Line Width" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />

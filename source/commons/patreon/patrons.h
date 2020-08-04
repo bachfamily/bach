@@ -29,7 +29,6 @@ void post_top_supporters()
 {
 	post("- Carmine Emanuele Cella");
 	post("- Francisco Colasanto");
-	post("- Isandro Ojeda");
 	post("- Jean-Baptiste Barrière");
 	post("- Julien Vincenot");
 	post("- Michele Zaccagnini");
@@ -42,9 +41,9 @@ void post_all_patrons()
 {
 	post("Alessandro Ratoci, Alvaro, Andrew Milne, Billy Newman, Carmine Emanuele Cella, Chris Chandler, Chris Poovey, Christopher Lane, ");
 	post("Christopher Michael Trapani, Daniel, Douglas Geers, Francisco Colasanto, Gabriel José Bolaños, Gratkowski, Gustavo Chritaro, ");
-	post("Hans Leeuw, Hans Tutschku, Isandro Ojeda, Jean-Baptiste Barrière, Jean-Julien Filatriau, Jeremy Hunt, Johannes MacDonald, ");
+	post("Hans Leeuw, Hans Tutschku, Jean-Baptiste Barrière, Jean-Julien Filatriau, Jeremy Hunt, Jim Poole, Johannes MacDonald, ");
 	post("Joost Van kerkhoven, Jose Miguel Fernandez, Joseph Norman, José Martínez, Julien Vincenot, Kenneth Stewart, Lotus Open Factory, ");
-	post("Louis Goldford, Mario Estrada Mari, Mark Gorrie, Mathilde, Matthew Goodheart, Michele Zaccagnini, Nikola Kołodziejczyk, ");
+	post("Louis Goldford, Mark Gorrie, Mathilde, Matthew Goodheart, Michele Zaccagnini, Monica Lim, Nikola Kołodziejczyk, Paolo Aralla, ");
 	post("Pierre Alexandre Tremblay, Robert Appleton, Rune Glerup, Sean Ferguson, Sebastián García Surianu, Seidenberg, Seth Shafer, ");
 	post("Tj Shredder, Tomislav Oliver, Vens R., Viktor Velthuijs, Yan Maresz, Yoshiaki Onishi, audiophil, linazero, micron.");
 }
