@@ -408,13 +408,13 @@ t_llll* astConcatAssignOp::eval(t_execEnv const &context) {
     t_variable *v = varNode->getVar(context);
     t_llll *v1 = v->get();
     t_llll *v2 = dataNode->eval(context);
-    //t_llll *x = llll_clone(v1);
+    t_llll *x = llll_clone(v1);
     t_llll *giver = llll_clone(v2);
-    llll_chain(v1, giver);
-    //bell_release_llll(v1);
+    llll_chain(x, giver);
+    bell_release_llll(v1);
     bell_release_llll(v2);
-    //v->set(x);
-    return v1;
+    v->set(x);
+    return x;
 }
 
 ////////////
