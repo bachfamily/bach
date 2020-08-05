@@ -4355,7 +4355,7 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode)
 }
 
 
-double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode)
+double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode, char accurate)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         return xposition_to_onset(r_ob, unscaled_xposition_to_xposition(r_ob, ux),0);
@@ -4411,23 +4411,28 @@ double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode)
         //        right = NULL;
         
         if (left && right){
+            double left_onset = accurate ? notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)left) : left->onset;
+            double right_onset = accurate ? notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)right) : right->onset;
             if (left_ux == right_ux)
-                return left->onset;
+                return left_onset;
             else
-                return left->onset + (right->onset - left->onset) * (MIN(ux, right_ux) - left_ux)/(right_ux - left_ux);
+                return left_onset + (right_onset - left_onset) * (MIN(ux, right_ux) - left_ux)/(right_ux - left_ux);
         } else if (right) {
+            double right_onset = accurate ? notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)right) : right->onset;
             if (ux == right_ux || right_ux == 0)
-                return right->onset;
+                return right_onset;
             else
-                return right->onset * MIN(ux, right_ux) / right_ux; // was (right_ux - ux) at the denominator
+                return right_onset * MIN(ux, right_ux) / right_ux; // was (right_ux - ux) at the denominator
         } else if (left) {
+            double left_onset = accurate ? notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)left) : left->onset;
+            double left_duration = accurate ? notation_item_get_duration_ms_accurate(r_ob, (t_notation_item *)left) : left->duration_ms;
             double ux_measure_end = left->parent->tuttipoint_reference->offset_ux + left->parent->start_barline_offset_ux + left->parent->width_ux;
             if (ux == left_ux)
-                return left->onset;
+                return left_onset;
             else if (ux_measure_end == left_ux)
-                return left->onset + left->duration_ms;
+                return left_onset + left_duration;
             else
-                return left->onset + left->duration_ms * (ux - left_ux) / (ux_measure_end - left_ux);
+                return left_onset + left_duration * (ux - left_ux) / (ux_measure_end - left_ux);
         } else 
             return 0.;
     } else
@@ -4692,19 +4697,20 @@ double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, cha
 
 
 
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord)
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, char accurate)
 {
     t_llll *temp = llll_get();
     char res = 0;
     llll_appendhatom_clone(temp, &arguments->l_hatom, 0, WHITENULL_llll);
-    res = parse_open_timepoint_syntax(r_ob, temp, ux, ms, tp, false);
+    res = parse_open_timepoint_syntax(r_ob, temp, ux, ms, tp, false, accurate);
     llll_free(temp);
     return res;
 }
 
 // returns true if error, false otherwise
 // open timepoint syntax is <name>, or <ms>, or (<measure>) or (<measure> <position_in_measure>) or (<voice> <measure> <position_in_measure>)
-char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord)
+char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp,
+                                 char zero_pim_is_measure_first_chord, char accurate)
 {
     double unscaled_x = 0;
     double arguments_ms = 0;
@@ -4745,7 +4751,7 @@ char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double
             if (ux || ms)
                 unscaled_x = timepoint_to_unscaled_xposition(r_ob, arguments_tp, is_voice_defined ? false : true, zero_pim_is_measure_first_chord);
             if (ms)
-                arguments_ms = unscaled_xposition_to_ms(r_ob, unscaled_x, 1);
+                arguments_ms = unscaled_xposition_to_ms(r_ob, unscaled_x, 1, accurate);
         }
         if (tp) {
             arguments_tp.voice_num = MAX(0, arguments_tp.voice_num);
