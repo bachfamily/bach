@@ -8,15 +8,22 @@ v0.8.2b
 
 *** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
 
+- bell, bach.expr:
+    makepitch function now treats negative degrees as descending steps (e.g., makepitch(-1, 0, 5) returns B4)
+    evaluation precedence of ** operator is now between + and * (2 ** 3 * 4 now returns 4096, previously was 32)
+
 - bell: fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
     :* operator returns null for non-positive repeat counts
-    evaluation precedence of ** operator is now between + and *
 
+- bach.expr:
+    evaluation precedence of unary minus operator is now highest (-2 ** 2 now returns 4, previously -4)
 
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
         New "importdivisions" message attribute, overriding "markdivisions"
+
+- bach.pitchpack now treats negative degrees as descending steps (see the bell / bach.expr makepitch function)
 
 
 ***********************
@@ -24,6 +31,9 @@ v0.8.2b
 ***********************
 
 authorization: now the code for a given year can be entered until January of the next year
+
+- bell, bach.expr:
+    makepitch function now treats negative degrees as descending steps (e.g. makepitch(-1, 0, 5) returns B4)
 
 - bell: fixed various memory leaks
     primeser: the second argument may be left unset
@@ -42,6 +52,9 @@ authorization: now the code for a given year can be entered until January of the
 
 - all the bell-compliant objects except bach.eval:
     fixed very general issue preventing objects from working unless they had a bell lambda function
+
+- bach.expr:
+    evaluation precedence of unary minus operator is now highest (-2 ** 2 now returns 4, previously -4)
 
 - bach.reg, bach.value, bach.pv
     Fixed memory leak related to the text editor window

@@ -632,6 +632,7 @@ t_llll *llll_mc2f(t_llll *ll, double basefreq, double basepitch)
                 t_llll *subres = llll_get();
                 llll_appendllll(res, subres);
                 res = subres;
+                elem = subll->l_head;
             } else {
                 double mc = hatom_getdouble(&elem->l_hatom);
                 double f = mc2f(mc, basefreq, basepitch);
@@ -664,6 +665,7 @@ t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch)
                 t_llll *subres = llll_get();
                 llll_appendllll(res, subres);
                 res = subres;
+                elem = subll->l_head;
             } else {
                 double f = hatom_getdouble(&elem->l_hatom);
                 double mc = f2mc(f, basefreq, basepitch);
