@@ -5300,9 +5300,10 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode);
     @param r_ob                The notation object
     @param ux               The unscaled x position
     @param mode             If this is 1,  the position is computed only BEFORE the next barline.
+    @param accurate         If accurate is 1, then a slower but more accurate computation is used than the one based on the item fields
     @return                    The millisecond position
  */
-double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode);
+double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode, char accurate = false);
 
 
 /**    Convert an horizontal pixel position into a millisecond position.
@@ -5382,8 +5383,8 @@ t_timepoint ms_to_timepoint_autochoose_voice(t_notation_obj *r_ob, double ms, ch
 t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum);
 t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode);
 double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, char sample_all_voices, char zero_pim_is_first_chord);
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord);
-char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord);
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, char accurate = false);
+char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, char accurate = false);
 
 
 

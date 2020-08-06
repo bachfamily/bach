@@ -1216,7 +1216,7 @@ t_llll *goto_time(t_notation_obj *r_ob, t_goto_params *par, long *error)
             llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
         }
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, true);
+        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, true, true); // accurate parsing
         llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
     }
     
