@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 4,
+			"minor" : 1,
+			"revision" : 5,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -39,6 +39,7 @@
 		"subpatcher_template" : "",
 		"showrootpatcherontab" : 0,
 		"showontab" : 0,
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -51,14 +52,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 956.0, 490.0 ],
+						"rect" : [ 0.0, 26.0, 956.0, 490.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -86,6 +87,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-42",
@@ -106,7 +108,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 213.079971313476562, 227.0, 34.0, 23.0 ],
-									"presentation_linecount" : 2,
 									"text" : "3/19"
 								}
 
@@ -119,7 +120,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 688.0, 155.0, 74.0, 23.0 ],
-									"presentation_linecount" : 4,
 									"text" : "F^7+5/152t"
 								}
 
@@ -144,8 +144,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 750.0, 276.0, 50.0, 23.0 ],
-									"text" : "4"
+									"patching_rect" : [ 750.0, 276.0, 50.0, 23.0 ]
 								}
 
 							}
@@ -157,8 +156,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 565.0, 276.0, 50.0, 23.0 ],
-									"text" : "0"
+									"patching_rect" : [ 565.0, 276.0, 50.0, 23.0 ]
 								}
 
 							}
@@ -218,7 +216,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 603.0, 155.0, 32.0, 23.0 ],
-									"presentation_linecount" : 2,
 									"text" : "Eb5"
 								}
 
@@ -243,8 +240,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 366.0, 276.0, 50.0, 23.0 ],
-									"text" : "0"
+									"patching_rect" : [ 366.0, 276.0, 50.0, 23.0 ]
 								}
 
 							}
@@ -258,7 +254,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 366.0, 110.0, 277.0, 36.0 ],
-									"presentation_linecount" : 2,
 									"text" : "The degree, alter and octave function return the corresponding parameter of a pitch:",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -290,8 +285,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 10.0, 302.0, 76.0, 23.0 ],
-									"text" : "C^5+5/152t"
+									"patching_rect" : [ 10.0, 302.0, 76.0, 23.0 ]
 								}
 
 							}
@@ -339,7 +333,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 148.5, 227.0, 31.0, 23.0 ],
-									"presentation_linecount" : 2,
 									"text" : "-1/4"
 								}
 
@@ -418,7 +411,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 110.0, 274.5, 79.0 ],
+									"patching_rect" : [ 10.0, 110.0, 277.0, 79.0 ],
 									"text" : "The makepitch function accepts a degree (from 0 = C to 6 = B), an alteration (expressed as a fraction of a tone) and an octave (with middle C at the beginning of octave 5), and returns the corresponding pitch:",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -636,7 +629,6 @@
 					}
 ,
 					"patching_rect" : [ 10.0, 328.0, 104.0, 22.0 ],
-					"presentation_linecount" : 2,
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -662,8 +654,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -697,6 +689,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"bubble" : 1,
@@ -1162,14 +1155,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 956.0, 490.0 ],
+						"rect" : [ 100.0, 126.0, 956.0, 490.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1197,6 +1190,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -1245,7 +1239,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 318.0, 779.0, 166.0 ],
+									"patching_rect" : [ 10.0, 318.0, 780.0, 166.0 ],
 									"text" : "mod (positive modulo)\npow, sqrt, exp, exp2, log, log2, log10\ncos, sin, tan, acos, asin, atan, atan2, cosh, sinh, tanh, acosh, asinh, atanh, hypot\nbessel (integer-order bessel functions. First parameter is order, second is x).\nsgn, abs, floor, ceil, round, trunc, fmod\nrandom (int random number within a range - takes two arguments)\nint, float, rat (force to the corresponding data type)\nnum, den (return the corresponding element of a rational)\n\nall the functions always return floats, except pow, abs (whose return type depends on the incoming types), sgn, int, num, den, random (which return ints), rat (which returns a rational or an int), makepitch, degree, alter and octave (see the \"pitch functions\" tab).",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
@@ -1276,7 +1270,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 92.0, 276.0, 195.0 ],
-									"text" : "13  ** right to left\n12  ! ~ + - (unary) right to left\n11  * / % // left to right\n10 + - left to right\n9   << >> left to right\n8   < <= > >= left to right\n7   == != left to right\n6   & left to right\n5   ^ left to right\n4   | left to right\n3  && left to right\n2  ^^ left to right\n1  || left to right",
+									"text" : "13  ! ~ + - (unary) right to left\n12  * / % // left to right\n11  ** right to left\n10 + - left to right\n9   << >> left to right\n8   < <= > >= left to right\n7   == != left to right\n6   & left to right\n5   ^ left to right\n4   | left to right\n3  && left to right\n2  ^^ left to right\n1  || left to right",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
@@ -1327,8 +1321,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1362,6 +1356,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"bubble" : 1,
@@ -1757,8 +1752,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1792,6 +1787,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -2216,8 +2212,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -2251,6 +2247,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"bubble" : 1,
@@ -2899,8 +2896,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -2934,6 +2931,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"bubble" : 1,
@@ -3383,8 +3381,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -3418,6 +3416,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"bubble" : 1,
@@ -3900,8 +3899,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -3935,6 +3934,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [  ],
 						"lines" : [  ]
 					}
@@ -3981,14 +3981,14 @@
 			}
 , 			{
 				"name" : "bach.+.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.help.searchtag.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
