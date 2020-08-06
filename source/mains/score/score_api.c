@@ -3839,7 +3839,7 @@ char pop_tempo_over_chord(t_score *x, t_chord *chord, char in_all_voices)
     t_scorevoice *voice = chord->parent->voiceparent;
     t_measure *meas = chord->parent;
     t_rational figure_tempo_value, tempo_value, tempo_figure; char interpolation;
-    t_timepoint tp = build_timepoint(chord->parent->measure_number, chord->r_sym_onset);
+    t_timepoint tp = build_timepoint_with_voice(chord->parent->measure_number, chord->r_sym_onset, voice->v_ob.number);
     t_tempo *tempo;
     get_tempo_at_timepoint((t_notation_obj *)x, voice, tp, &figure_tempo_value, &tempo_figure, &tempo_value, &interpolation);
     
@@ -5650,7 +5650,7 @@ t_rational get_grace_note_equivalent(t_score *x, t_chord *gracechord)
     t_rational figure_tempo_value = long2rat(60), tempo_figure = RAT_1OVER4, tempo_value = long2rat(60);
     t_rational lim;
 
-    get_tempo_at_timepoint((t_notation_obj *)x, gracechord->parent->voiceparent, build_timepoint(gracechord->parent->measure_number, gracechord->r_sym_onset), &figure_tempo_value, &tempo_figure, &tempo_value, &interp);
+    get_tempo_at_timepoint((t_notation_obj *)x, gracechord->parent->voiceparent, build_timepoint_with_voice(gracechord->parent->measure_number, gracechord->r_sym_onset, gracechord->parent->voiceparent->v_ob.number), &figure_tempo_value, &tempo_figure, &tempo_value, &interp);
     tempo_value = approx_rat_with_rat(tempo_value, 100000, 10);
 
     tot_sym = rat_rat_sum(rat_rat_sum(total_grace_chords_r_sym_duraions_before_chord(gracechord), total_grace_chords_r_sym_duraions_after_chord(gracechord)), rat_abs(gracechord->r_sym_duration));
@@ -5699,7 +5699,7 @@ void calculate_all_chords_remaining_onsets(t_score *x)
                     t_chord *prevch;
                     if (grace_equiv.r_num == 0)
                         grace_equiv = get_grace_note_equivalent(x, chord);
-                    get_tempo_at_timepoint((t_notation_obj *)x, voice, build_timepoint(measure->measure_number, chord->r_sym_onset), &figure_tempo_value, &tempo_figure, &tempo_value, &interp);
+                    get_tempo_at_timepoint((t_notation_obj *)x, voice, build_timepoint_with_voice(measure->measure_number, chord->r_sym_onset, voice->v_ob.number), &figure_tempo_value, &tempo_figure, &tempo_value, &interp);
                     tempo_value = approx_rat_with_rat(tempo_value, 100000, 10);
                     
                     t_rational diff_sym = rat_long_prod(rat_rat_prod(rat_rat_sum(total_grace_chords_r_sym_duraions_after_chord(chord),
@@ -5745,7 +5745,7 @@ void calculate_all_chords_remaining_onsets(t_score *x)
                 measure->lastchord->play_r_duration_sec = rat_rat_diff(measure->r_total_duration_sec, measure->lastchord->play_r_measure_onset_sec);
                 if (measure->lastchord->is_grace_chord) {
                     t_rational grace_equiv = get_grace_note_equivalent(x, measure->lastchord);
-                    get_tempo_at_timepoint((t_notation_obj *)x, voice, build_timepoint(measure->measure_number, measure->lastchord->r_sym_onset), &figure_tempo_value, &tempo_figure, &tempo_value, &interp);
+                    get_tempo_at_timepoint((t_notation_obj *)x, voice, build_timepoint_with_voice(measure->measure_number, measure->lastchord->r_sym_onset, voice->v_ob.number), &figure_tempo_value, &tempo_figure, &tempo_value, &interp);
                     measure->lastchord->duration_ms = rat2double(rat_abs(measure->lastchord->r_sym_duration)) * rat2double(grace_equiv) * 8 * 4 * 60000 / rat2double(tempo_value);
                     measure->lastchord->r_duration_sec = rat_rat_div(rat_long_prod(rat_rat_prod(rat_abs(measure->lastchord->r_sym_duration), grace_equiv), 8*4*60), tempo_value);
                 } else {

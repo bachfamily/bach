@@ -4893,7 +4893,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // being the chord notes active at
     // the given time instant, each in the standard note gathered syntax, with two important variations:
     // there is no tie element, and for each slot marked as temporal only the slot element at the given time instant
-    // is output (e.g. the interpolated function point of a function slot). <br /> <br />
+    // is output (e.g. the interpolated function point of a function slot). <br />
+    // If the <m>interp</m> message is followed by the <m>tempo</m> symbol, before any other argument, then the tempo
+    // is retrieved at the specified position in time, for every voice. <br />
+    // If the <m>interp</m> message is followed by the <m>timesig</m> symbol, before any other argument, then the time signature
+    // is retrieved at the specified position in time, for every voice. <br /> <br />
     // @copy BACH_DOC_NOTE_GATHERED_SYNTAX_SCORE
     // @marg 0 @name time @optional 0 @type float/llll
     // @example interp 1000 @caption get info on chords being played at 1s
@@ -4901,6 +4905,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example interp [3.5] @caption get info on chords being played at half of measure 3
     // @example interp [3 1/4] @caption get info on chords being played after 1/4 of measure 3
     // @example interp [2 3 1/4] @caption get info on chords being played after 1/4 of measure 3 of voice 2 (but retrieve all voices!)
+    // @example interp tempo [3] @caption get tempo at beginning of measure 3
+    // @example interp tempo 1s @caption get tempo at 1s
+    // @example interp tempo [2 3 1/4] @caption get info on tempo after 1/4 of measure 3 of voice 2
+    // @example interp timesig [3] @caption get time signature at beginning of measure 3
+    // @example interp timesig 1s @caption get time signature at 1s
+    // @example interp timesig [2 3 0] @caption get info on time signatures at measure 3 of voice 2
     // @seealso getcurrentchord, sample
     class_addmethod(c, (method) score_anything, "interp", A_GIMME, 0);
     
@@ -9438,12 +9448,30 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         recompute_all_and_redraw(x);
                         
                     } else if (firstelem->l_next && router == _llllobj_sym_interp) {
-                        double ms = 0;
-                        parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next, NULL, &ms, NULL, false);
-                        t_llll *out = notationobj_get_interp((t_notation_obj *)x, ms);
-                        llll_prependsym(out, _llllobj_sym_interp, 0, WHITENULL_llll);
-                        llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, out);
-                        llll_free(out);
+                        if (firstelem->l_next->l_next && hatom_getsym(&firstelem->l_next->l_hatom) == _llllobj_sym_tempo) {
+                            t_timepoint tp;
+                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next->l_next, NULL, NULL, &tp, false);
+                            t_llll *out = notationobj_get_interp_tempo((t_notation_obj *)x, tp);
+                            llll_prependsym(out, _llllobj_sym_tempo);
+                            llll_prependsym(out, _llllobj_sym_interp);
+                            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, out);
+                            llll_free(out);
+                        } else if (firstelem->l_next->l_next && hatom_getsym(&firstelem->l_next->l_hatom) == _llllobj_sym_timesig) {
+                            t_timepoint tp;
+                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next->l_next, NULL, NULL, &tp, false);
+                            t_llll *out = notationobj_get_interp_timesig((t_notation_obj *)x, tp);
+                            llll_prependsym(out, _llllobj_sym_timesig);
+                            llll_prependsym(out, _llllobj_sym_interp);
+                            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, out);
+                            llll_free(out);
+                        } else {
+                            double ms = 0;
+                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next, NULL, &ms, NULL, false);
+                            t_llll *out = notationobj_get_interp((t_notation_obj *)x, ms);
+                            llll_prependsym(out, _llllobj_sym_interp, 0, WHITENULL_llll);
+                            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, out);
+                            llll_free(out);
+                        }
                         
                     } else if (router == gensym("overtype")) {
                         if (firstelem->l_next && firstelem->l_next->l_next && hatom_gettype(&firstelem->l_next->l_hatom) == H_LLLL && hatom_gettype(&firstelem->l_next->l_next->l_hatom) == H_LLLL) {

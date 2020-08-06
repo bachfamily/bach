@@ -5218,6 +5218,12 @@
 				• <b>interp [3.5]</b>   <i>→ get info on chords being played at half of measure 3</i><br />
 				• <b>interp [3 1/4]</b>   <i>→ get info on chords being played after 1/4 of measure 3</i><br />
 				• <b>interp [2 3 1/4]</b>   <i>→ get info on chords being played after 1/4 of measure 3 of voice 2 (but retrieve all voices!)</i><br />
+				• <b>interp tempo [3]</b>   <i>→ get tempo at beginning of measure 3</i><br />
+				• <b>interp tempo 1s</b>   <i>→ get tempo at 1s</i><br />
+				• <b>interp tempo [2 3 1/4]</b>   <i>→ get info on tempo after 1/4 of measure 3 of voice 2</i><br />
+				• <b>interp timesig [3]</b>   <i>→ get time signature at beginning of measure 3</i><br />
+				• <b>interp timesig 1s</b>   <i>→ get time signature at 1s</i><br />
+				• <b>interp timesig [2 3 0]</b>   <i>→ get info on time signatures at measure 3 of voice 2</i><br />
 				<br />
 				The <m>interp</m> message, followed by a time value (in milliseconds) retrieves
 				the instantaneous data of all the notes which are active at the given time instant.
@@ -5227,7 +5233,11 @@
 				being the chord notes active at
 				the given time instant, each in the standard note gathered syntax, with two important variations:
 				there is no tie element, and for each slot marked as temporal only the slot element at the given time instant
-				is output (e.g. the interpolated function point of a function slot). <br /> <br />
+				is output (e.g. the interpolated function point of a function slot). <br />
+				If the <m>interp</m> message is followed by the <m>tempo</m> symbol, before any other argument, then the tempo
+				is retrieved at the specified position in time, for every voice. <br />
+				If the <m>interp</m> message is followed by the <m>timesig</m> symbol, before any other argument, then the time signature
+				is retrieved at the specified position in time, for every voice. <br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, the <m>tie?</m> value is 1 only if the note starts a tie and 0 otherwise, and
@@ -7261,8 +7271,8 @@
 				• <b>sel note if [measure == 4] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select notes in measure 4 with velocity &gt; 100</i><br />
 				• <b>sel rest if symduration &lt;= 1/8</b>   <i>→ select all rests shorter than 1/8</i><br />
 				• <b>sel marker if onset &gt; 5000</b>   <i>→ select all markers with onset &gt;5s</i><br />
-				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100] n</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
-				• <b>sel tail if cents &gt; 6000i</b>   <i>→ select all tails above middle C</i><br />
+				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
+				• <b>sel tail if cents &gt; 6000</b>   <i>→ select all tails above middle C</i><br />
 				<br />
 				Message attributes:<br />
 				<m>@tiemode</m> (symbol, default: each): If "all", tied sequences of chords are counted as one<br />

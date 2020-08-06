@@ -21302,10 +21302,26 @@ void add_all_chord_notes_to_preselection(t_notation_obj *r_ob, t_chord *chord){
 }
 
 
+void get_timesig_at_timepoint(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp, t_timesignature *timesig) {
+    if (tp.voice_num  != voice->v_ob.number) {
+        double ms = timepoint_to_ms(r_ob, tp, tp.voice_num);
+        tp = ms_to_timepoint(r_ob, ms, voice->v_ob.number, k_MS_TO_TP_RETURN_INTERPOLATION);
+    }
+    
+    tp.measure_num = CLAMP(tp.measure_num, 0, voice->num_measures-1);
+    t_measure *meas = nth_measure_of_scorevoice(voice, tp.measure_num);
+    *timesig = meas->timesignature;
+}
 
 
 void get_tempo_at_timepoint(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp, t_rational *figure_tempo_value, t_rational *tempo_figure, t_rational *tempo_value, char *interpolation){
-// calculates the tempo at a given timepoint. Fills the four last pointers given as argument 
+    
+    if (tp.voice_num  != voice->v_ob.number) {
+        double ms = timepoint_to_ms(r_ob, tp, tp.voice_num);
+        tp = ms_to_timepoint(r_ob, ms, voice->v_ob.number, k_MS_TO_TP_RETURN_INTERPOLATION);
+    }
+    
+// calculates the tempo at a given timepoint. Fills the four last pointers given as argument
     t_measure *meas = nth_measure_of_scorevoice(voice, tp.measure_num);
 
     if (meas) {
@@ -21360,7 +21376,7 @@ void get_tempo_at_timepoint(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoi
         // if we're here, it means that we have both <before> and <after>
         if (before->interpolation_type)
             new_tempo_value = rat_rat_sum(before->tempo_value, rat_rat_prod(get_sym_durations_between_timepoints(voice, build_timepoint(before->owner->measure_number, before->changepoint), tp), 
-                                                                        rat_rat_div(rat_rat_diff(after->tempo_value, before->tempo_value), 
+                                                                        rat_rat_div(rat_rat_diff(after->tempo_value, before->tempo_value),
                                                                                     get_sym_durations_between_timepoints(voice, build_timepoint(before->owner->measure_number, before->changepoint), build_timepoint(after->owner->measure_number, after->changepoint)))));
         else
             new_tempo_value = before->tempo_value;
@@ -41442,7 +41458,7 @@ t_llll *bach_measure_to_pwgl_measure(t_notation_obj *r_ob, t_measure *meas, char
         tempo_value = meas->firsttempo->tempo_value;
         interpolation = meas->firsttempo->interpolation_type;
     } else
-        get_tempo_at_timepoint(r_ob, meas->voiceparent, build_timepoint(meas->measure_number, long2rat(0)), &figure_tempo_value, &tempo_figure, &tempo_value, &interpolation);
+        get_tempo_at_timepoint(r_ob, meas->voiceparent, build_timepoint_with_voice(meas->measure_number, long2rat(0), meas->voiceparent->v_ob.number), &figure_tempo_value, &tempo_figure, &tempo_value, &interpolation);
 
     llll_appendlong(metronome_llll, long_rat_div(1, tempo_figure).r_num, 0, WHITENULL_llll);
     llll_appendlong(metronome_llll, (long)round(rat2double(figure_tempo_value)), 0, WHITENULL_llll);
@@ -44320,6 +44336,55 @@ t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice)
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
         return ((t_rollvoice *)voice)->lastchord;
     return NULL;
+}
+
+
+t_llll *notationobj_get_interp_timesig(t_notation_obj *r_ob, t_timepoint tp)
+{
+    t_voice *voice;
+    t_llll *out = llll_get();
+    
+    lock_general_mutex(r_ob);
+    for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        t_timesignature timesig;
+        get_timesig_at_timepoint(r_ob, (t_scorevoice *)voice, tp, &timesig);
+        llll_appendllll(out, get_timesignature_as_llll(&timesig));
+    }
+    unlock_general_mutex(r_ob);
+    
+    return out;
+}
+
+t_llll *notationobj_get_interp_tempo(t_notation_obj *r_ob, t_timepoint tp)
+{
+    t_voice *voice;
+    t_llll *out = llll_get();
+    
+    lock_general_mutex(r_ob);
+    for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        t_llll *voice_ll = llll_get();
+        
+        t_tempo tempo;
+        tempo.tempo_figure = RAT_1OVER4;
+        tempo.figure_tempo_value = long2rat(60);
+        tempo.interpolation_type = 0;
+        tempo.tempo_value = long2rat(60);
+        get_tempo_at_timepoint(r_ob, (t_scorevoice *)voice, tp, &tempo.figure_tempo_value, &tempo.tempo_figure, &tempo.tempo_value, &tempo.interpolation_type);
+        
+        llll_appenddouble(voice_ll, rat2double(tempo.tempo_value)); // instantaneous quartertempo value
+        {
+            t_llll *sub_ll = llll_get();
+            llll_appendrat(sub_ll, tempo.tempo_figure);
+            llll_appenddouble(sub_ll, rat2double(tempo.figure_tempo_value));
+            llll_appendlong(sub_ll, tempo.interpolation_type);
+            llll_appendllll(voice_ll, sub_ll);
+        }
+        
+        llll_appendllll(out, voice_ll);
+    }
+    unlock_general_mutex(r_ob);
+    
+    return out;
 }
 
 t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms)

@@ -11583,6 +11583,7 @@ t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_da
 
 
 // Private
+t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode);
 t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types mode);
 
 
@@ -13766,8 +13767,9 @@ long get_tie_corresponding_to_mc(t_llll *ties, t_llll *mc, double this_mc, doubl
     @ingroup            notation
     @param    r_ob        The notation object
     @param    voice        The reference scorevoice (since voices may have different tempi) 
-    @param    tp            The timepoint in which the tempo has to be retrieven, relatively to the scorevoice #voice. 
-                        Notice that the t_timepoint::voice_num field is ignored, since the voice is explicitely given as the previous input parameter.
+    @param    tp            The timepoint in which the tempo has to be retrieven.
+                            If the timepoint voice is not equal to the scorevoice #voice, then the timepoint is computed with respect to
+                            another voice
     @param    figure_tempo_value        Pointer which will be filled with the tempo value with respect to the followingly retrieven tempo figure (e.g., in 3/8 = 72, this will be filled with 72)
     @param    tempo_figure            Pointer which will be filled with the tempo figure (the symbolic duration to which the tempo is referred, e.g. in 3/8 = 72 this will be filled with 3/8)
     @param    tempo_value                Pointer which will be filled with the tempo value with respect to 1/4 note (e.g. in 3/8 = 72 this will be filled with 108)
@@ -13775,6 +13777,9 @@ long get_tie_corresponding_to_mc(t_llll *ties, t_llll *mc, double this_mc, doubl
     @remark    See #t_tempo to know more about tempo fields.
  */
 void get_tempo_at_timepoint(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp, t_rational *figure_tempo_value, t_rational *tempo_figure, t_rational *tempo_value, char *interpolation);
+
+// TBD
+void get_timesig_at_timepoint(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp, t_timesignature *timesig);
 
 
 /**    Tell if a chord is a whole-measure-rest (which means: it is a rest, and it is the only rest in the measure).
@@ -19199,6 +19204,8 @@ void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double heig
 t_chord *chord_get_first(t_notation_obj *r_ob, t_voice *voice);
 t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice);
 t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms);
+t_llll *notationobj_get_interp_tempo(t_notation_obj *r_ob, t_timepoint tp);
+t_llll *notationobj_get_interp_timesig(t_notation_obj *r_ob, t_timepoint tp);
 t_llll *notationobj_get_sampling(t_notation_obj *r_ob, long num_points);
 t_llll *notationobj_get_sampling_ms(t_notation_obj *r_ob, double delta_ms);
 void notation_obj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);

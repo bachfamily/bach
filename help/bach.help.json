@@ -3814,9 +3814,23 @@
 			"Interp" : {
 				"filename" : [ "bach.help.notation.messages.86_interp.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "getcurrentchord", "interp+slot", "note+gathered+syntax", "temporal+slot" ],
+				"seealso" : [ "getcurrentchord", "interp+tempo", "interp+slot", "note+gathered+syntax", "temporal+slot" ],
 				"tags" : [ "message", "interp", "get", "chord", "note", "position", "instant", "interpolate", "generic", "moment" ],
 				"title" : [ "Retrieving notes at a generic instant" ]
+			},
+			"B_interptempo" : {
+				"filename" : [ "bach.help.notation.messages.86b_interptempo.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "interp", "tempo" ],
+				"tags" : [ "message", "interp", "get", "tempo", "position", "instant", "interpolate", "generic", "moment", "speed" ],
+				"title" : [ "Retrieving tempo at a generic instant" ]
+			},
+			"C_interptimesig" : {
+				"filename" : [ "bach.help.notation.messages.86c_interptimesig.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "interp", "tempo", "interp+tempo" ],
+				"tags" : [ "message", "interp", "get", "meter", "time", "signature", "timesig", "position", "instant", "interpolate", "generic", "moment" ],
+				"title" : [ "Retrieving time signature at a generic instant" ]
 			},
 			"Sample" : {
 				"filename" : [ "bach.help.notation.messages.87_sample.maxpat" ],
