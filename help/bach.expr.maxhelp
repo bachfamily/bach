@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 100.0, 100.0, 956.0, 516.0 ],
+		"rect" : [ 138.0, 486.0, 956.0, 516.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -1162,7 +1162,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 956.0, 490.0 ],
+						"rect" : [ 138.0, 512.0, 956.0, 490.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1265,12 +1265,12 @@
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
 									"id" : "obj-1",
-									"linecount" : 13,
+									"linecount" : 14,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 92.0, 276.0, 195.0 ],
-									"text" : "13  ! ~ + - (unary) right to left\n12  * / % // left to right\n11  ** right to left\n10 + - left to right\n9   << >> left to right\n8   < <= > >= left to right\n7   == != left to right\n6   & left to right\n5   ^ left to right\n4   | left to right\n3  && left to right\n2  ^^ left to right\n1  || left to right",
+									"patching_rect" : [ 10.0, 92.0, 276.0, 210.0 ],
+									"text" : "14 ! ~ right to left\n13  ** right to left\n12  + - (unary) right to left\n11  * / % // left to right\n10 + - left to right\n9   << >> left to right\n8   < <= > >= left to right\n7   == != left to right\n6   & left to right\n5   ^ left to right\n4   | left to right\n3  && left to right\n2  ^^ left to right\n1  || left to right",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
