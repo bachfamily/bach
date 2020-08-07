@@ -55,6 +55,7 @@ authorization: now the code for a given year can be entered until January of the
 - bach.expr:
     evaluation precedence of the ** operator is now right-to-left, as per the documentation (2**3**2 now returns 512, previously 64)
     evaluation precedence of the ! and ~ operators is now higher than exponentiation
+    unary minus after exponentiation operator now works
 
 - bach.reg, bach.value, bach.pv
     Fixed memory leak related to the text editor window
