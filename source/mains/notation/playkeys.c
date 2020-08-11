@@ -825,6 +825,39 @@ char incoming_is_from_roll(long incoming)
     }
 }
 
+char are_slots_output_by_name(long incoming, t_llll *in_ll)
+{
+    for (t_llllelem *startnoteel = getindex_2levels(in_ll, 4, incoming_is_from_roll(incoming) ? 2 : 5); startnoteel; startnoteel = startnoteel->l_next) {
+        if (hatom_gettype(&startnoteel->l_hatom) != H_LLLL)
+            break;
+        t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
+        if (!can_llll_be_a_note(notell))
+            break;
+        
+        t_llllelem *target_el;
+        if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_slots))) {
+            if (hatom_gettype(&target_el->l_hatom) != H_LLLL)
+                break;
+            
+            t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
+            if (slotsll->l_head) {
+                for (t_llllelem *temp = slotsll->l_head->l_next; temp; temp = temp->l_next) {
+                    if (hatom_gettype(&temp->l_hatom) == H_LLLL) {
+                        t_llll *this_slot_ll = hatom_getllll(&temp->l_hatom);
+                        if (this_slot_ll && this_slot_ll->l_head) {
+                            if (hatom_gettype(&this_slot_ll->l_head->l_hatom) == H_SYM)
+                                return true;
+                            if (hatom_gettype(&this_slot_ll->l_head->l_hatom) == H_LONG)
+                                return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
 void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
 {
     t_playkeys_key *this_key;
@@ -931,6 +964,9 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
 
     t_llllelem *target_el = NULL;
     if (must_process_incoming) {
+        
+        char outputslotnames = -1; // are slot output via their names? -1 = we still don't know
+        
         for (outlet = 0, this_key = x->n_keys; this_key && this_key->property != k_PLAYKEYS_NONE; this_key++, outlet++) {
             x->n_keys[outlet].exists = 0;
             
@@ -1914,25 +1950,52 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
                                         
                                         t_hatom spec = this_key->specification;
-                                        if (this_key->property == k_PLAYKEYS_DYNAMICS)
-                                            hatom_setatom(&spec, &x->n_dynamicsslot);
-                                        if (this_key->property == k_PLAYKEYS_LYRICS)
-                                            hatom_setatom(&spec, &x->n_lyricsslot);
-                                        if (this_key->property == k_PLAYKEYS_ARTICULATIONS)
-                                            hatom_setatom(&spec, &x->n_articulationsslot);
-                                        if (this_key->property == k_PLAYKEYS_NOTEHEAD)
-                                            hatom_setatom(&spec, &x->n_noteheadslot);
-                                        if (this_key->property == k_PLAYKEYS_ANNOTATION)
-                                            hatom_setatom(&spec, &x->n_annotationslot);
-                                        if (spec.h_type == H_LONG) {
-                                            if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec))))
-                                                llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        if (this_key->property == k_PLAYKEYS_DYNAMICS) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_dynamicsslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_dynamics);
                                             else
+                                                hatom_setatom(&spec, &x->n_dynamicsslot);
+                                        }
+                                        if (this_key->property == k_PLAYKEYS_LYRICS) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_lyricsslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_lyrics);
+                                            else
+                                                hatom_setatom(&spec, &x->n_lyricsslot);
+                                        }
+                                        if (this_key->property == k_PLAYKEYS_ARTICULATIONS) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_articulationsslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_articulations);
+                                            else
+                                                hatom_setatom(&spec, &x->n_articulationsslot);
+                                        }
+                                        if (this_key->property == k_PLAYKEYS_NOTEHEAD) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_noteheadslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_notehead);
+                                            else
+                                                hatom_setatom(&spec, &x->n_noteheadslot);
+                                        }
+                                        if (this_key->property == k_PLAYKEYS_ANNOTATION) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_annotationslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_annotation);
+                                            else
+                                                hatom_setatom(&spec, &x->n_annotationslot);
+                                        }
+                                        if (spec.h_type == H_LONG) {
+                                            if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec)))) {
+                                                if (outputslotnames < 0) outputslotnames = false;
+                                                llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        } else
                                                 llll_appendllll(found, llll_get());
                                         } else if (spec.h_type == H_SYM) {
-                                            if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec))))
+                                            if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec)))) {
+                                                if (outputslotnames < 0) outputslotnames = true;
                                                 llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
-                                            else
+                                            } else
                                                 llll_appendllll(found, llll_get());
                                         }
                                         
@@ -1958,25 +2021,52 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
                                     
                                     t_hatom spec = this_key->specification;
-                                    if (this_key->property == k_PLAYKEYS_DYNAMICS)
-                                        hatom_setatom(&spec, &x->n_dynamicsslot);
-                                    if (this_key->property == k_PLAYKEYS_LYRICS)
-                                        hatom_setatom(&spec, &x->n_lyricsslot);
-                                    if (this_key->property == k_PLAYKEYS_ARTICULATIONS)
-                                        hatom_setatom(&spec, &x->n_articulationsslot);
-                                    if (this_key->property == k_PLAYKEYS_NOTEHEAD)
-                                        hatom_setatom(&spec, &x->n_noteheadslot);
-                                    if (this_key->property == k_PLAYKEYS_ANNOTATION)
-                                        hatom_setatom(&spec, &x->n_annotationslot);
-                                    if (spec.h_type == H_LONG) {
-                                        if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec))))
-                                            llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                    if (this_key->property == k_PLAYKEYS_DYNAMICS) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_dynamicsslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_dynamics);
                                         else
+                                            hatom_setatom(&spec, &x->n_dynamicsslot);
+                                    }
+                                    if (this_key->property == k_PLAYKEYS_LYRICS) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_lyricsslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_lyrics);
+                                        else
+                                            hatom_setatom(&spec, &x->n_lyricsslot);
+                                    }
+                                    if (this_key->property == k_PLAYKEYS_ARTICULATIONS) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_articulationsslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_articulations);
+                                        else
+                                            hatom_setatom(&spec, &x->n_articulationsslot);
+                                    }
+                                    if (this_key->property == k_PLAYKEYS_NOTEHEAD) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_noteheadslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_notehead);
+                                        else
+                                            hatom_setatom(&spec, &x->n_noteheadslot);
+                                    }
+                                    if (this_key->property == k_PLAYKEYS_ANNOTATION) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_annotationslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_annotation);
+                                        else
+                                            hatom_setatom(&spec, &x->n_annotationslot);
+                                    }
+                                    if (spec.h_type == H_LONG) {
+                                        if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec)))) {
+                                            if (outputslotnames < 0) outputslotnames = false;
+                                            llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        } else
                                             llll_appendllll(found, llll_get());
                                     } else if (spec.h_type == H_SYM) {
-                                        if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec))))
+                                        if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec)))) {
+                                            if (outputslotnames < 0) outputslotnames = true;
                                             llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
-                                        else
+                                        } else
                                             llll_appendllll(found, llll_get());
                                     }
                                     
