@@ -2795,8 +2795,10 @@
 				Message attributes:<br />
 				<m>@exportmarkers</m> (int, default: 1): If non-zero, exports all the markers<br />
 				<m>@exportbarlines</m> (int, default: 1): Barline markers are exported as MIDI marker events, with the name "bach barline"<br />
+				<m>@exportdivisions</m> (int, default: 1): Division markers are exported as MIDI marker events, with the name "bach division"<br />
+				<m>@exportsubdivisions</m> (int, default: 1): Subdivision markers are exported as MIDI marker events, with the name "bach subdivision"<br />
 				<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
-				<m>@format</m> (int, default: 0): MIDI file format (0 = single track, 1 = multiple tracks)<br />
+				<m>@format</m> (int, default: 1): MIDI file format (0 = single track, 1 = multiple tracks)<br />
 				<m>@resolution</m> (int, default: 960): Number of MIDI ticks per beat<br />
 				<br />
 				The <m>exportmidi</m> message saves the content of the <o>bach.roll</o> as a MIDI file.
@@ -2812,6 +2814,8 @@
 				- <b>format</b> (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks). <br />
 				– <b>resolution</b> (default: 960): the number of MIDI ticks per beat. <br />
 				- <b>exportbarlines</b> (default: 1): the barline markers are exported as MIDI marker events, with the name "bach barline". <br />
+				- <b>exportdivisions</b> (default: 1): the division markers are exported as MIDI marker events, with the name "bach division". <br />
+				- <b>exportsubdivisions</b> (default: 1): the subdivision markers are exported as MIDI marker events, with the name "bach subdivision". <br />
 				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportimage</m><br />
 			</description>
 		</method>
@@ -3511,7 +3515,7 @@
 				The message <m>inscreen</m> followed by a temporal position specified in milliseconds forces such
 				position to be displayed inside the domain, by changing the scrollbar position.
 				The millisecond position can be replaced by the element name or by one of the following symbols: "cursor", "end".
-				<br />				See also:<m>inscreenpos</m><br />
+				<br />				See also:<m>inscreenpos</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="inscreenpos">
@@ -3531,7 +3535,7 @@
 				It has to be followed by two argument: a value between 0 and 1, specifying the relative location inside the screen in which the temporal
 				point should be displayed (0 represents the screen beginning, 1 the screen end), and the position in milliseconds.
 				The millisecond position can be replaced by the element name or by one of the following symbols: "cursor", "end".
-				<br />				See also:<m>inscreen</m><br />
+				<br />				See also:<m>inscreen</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="insertslotitem">
@@ -5113,9 +5117,10 @@
 				Message attributes:<br />
 				<m>@tracks2voices</m> (int, default: 1): For MIDI files, if non-zero, each MIDI track will be converted into a separate voice (default: )<br />
 				<m>@chans2voices</m> (int, default: 0): For MIDI files, if non-zero, each MIDI channel will be converted into a separate voice<br />
-				<m>@markmeasures</m> (int, default: 1): For MIDI files, if non-zero, adds barline markers<br />
-				<m>@markdivisions</m> (int, default: 0): For MIDI files, if non-zero, adds divisions markers<br />
-				<m>@importbarlines</m> (int, default: 1): For MIDI files, if non-zero MIDI markers named "bach barline" are imported as barline markers<br />
+				<m>@markmeasures</m> (int, default: 1): For MIDI files, if non-zero, adds barline markers. Ignored if <m>importbarlines</m> is on and barline markers are actually imported.<br />
+				<m>@markdivisions</m> (int, default: 0): For MIDI files, if non-zero, adds divisions markers. Ignored if <m>importdivisions</m> is on and division markers are actually imported.<br />
+				<m>@importbarlines</m> (int, default: 1): For MIDI files, if non-zero, MIDI markers named "bach barline" are imported as barline markers<br />
+				<m>@importdivisions</m> (int, default: 1): For MIDI files, if non-zero, MIDI markers named "bach division" are imported as division markers<br />
 				<br />
 				The <m>read</m> message will open any file that <o>bach.roll</o> is able to read.
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
@@ -5131,7 +5136,10 @@
 				* <b>markmeasures</b> and <b>markdivisions</b>: if non-0, a special "barline" or "division" marker will be added for each measure/division
 				in the MIDI file, according to the current time signature (this is especially recommended if you need to later quantize the <o>bach.roll</o> content) <br />
 				* <b>importbarlines</b> (default: 1): all the MIDI markers named "bach barline" are imported as barline markers.
-				In general, importbarlines and markmeasure should not be on at the same time. <br />
+				* <b>importdivisions</b> (default: 1): all the MIDI markers named "bach division" are imported as division markers.
+				* <b>importsubdivisions</b> (default: 1): all the MIDI markers named "bach subdivision" are imported as subdivision markers.
+				If importbarlines and markmeasures are on at the same time, and barline markers are present, markmeasures is ignored. <br />
+				If importdivision and markdivisions are on at the same time, and division markers are present, markdivisions is ignored. <br />
 				<br />				See also:<m>write</m>,<m>writetxt</m><br />
 			</description>
 		</method>
@@ -5330,17 +5338,41 @@
 				<br />				See also:<m>interp</m>,<m>getcurrentchord</m><br />
 			</description>
 		</method>
+		<method name="scroll">
+			<arg name="amount" optional="0" type="float" />
+			<digest>
+				Scroll the object horizontally or vertically
+			</digest>
+			<description>
+				Syntax: <b>scroll <m>&lt;float: amount&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>scroll vertical 10</b>   <i>→ scroll 10 pixels vertically</i><br />
+				• <b>scroll vertical 0.5 @unit relative</b>   <i>→ scroll vertically in the center</i><br />
+				• <b>scroll horizontal 0.5 @unit relative</b>   <i>→ the same, horizontally</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@direction</m> (symbol, default: horizontal): Scrolling direction<br />
+				<m>@unit</m> (symbol, default: pixel): Amount unit ("pixel", "normalizedpixel" or "relative")<br />
+				<m>@delta</m> (int, default: 0): Scroll amount is relative<br />
+				<br />
+				The message <m>scroll</m> moves the portion of displayed object either horizontally or vertically,
+				in a similar way of moving horizontal or vertical scrollbars.
+				<br />				See also:<m>inscreenpos</m>,<m>inscreen</m><br />
+			</description>
+		</method>
 		<method name="sel">
 			<arg name="arguments" optional="0" type="llll" />
 			<digest>
 				Select items
 			</digest>
 			<description>
-				Syntax: <b>sel <m>&lt;llll: arguments&gt;</m> </b><br />
+				Syntax: <b>sel <m>&lt;llll: arguments&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>sel all</b>   <i>→ select everything</i><br />
 				• <b>sel chords</b>   <i>→ select all chords</i><br />
 				• <b>sel markers</b>   <i>→ select all markers</i><br />
+				• <b>sel markers @role none</b>   <i>→ select all markers that have no role</i><br />
+				• <b>sel markers @role barline</b>   <i>→ select all markers with barline role</i><br />
 				• <b>sel breakpoints</b>   <i>→ select all breakpoints</i><br />
 				• <b>sel tails</b>   <i>→ select all tails</i><br />
 				• <b>sel chord 3</b>   <i>→ select 3rd chord (of 1st voice)</i><br />
@@ -5369,6 +5401,9 @@
 				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt; 100</i><br />
 				• <b>sel tail if cents &gt; 6000</b>   <i>→ select all tails above middle C</i><br />
 				<br />
+				Message attributes:<br />
+				<m>@role</m> (symbol, default: all): Role for markers to be selected<br />
+				<br />
 				The word <m>sel</m> add some notation items to the current selection. In the basic behavior,
 				the word must be followed by four elements, specifying: <br />
 				- the starting temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>[]</b> if you want to select from the beginning); <br />
@@ -5378,7 +5413,9 @@
 				Other selection modes are possible: <br />
 				- If the word <m>sel</m> is followed by the symbol <b>all</b>, all notes, chords and markers are selected. <br />
 				- If the word <m>sel</m> is followed by a category plural symbol, all the corresponding elements are selected.
-				Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>breakpoints</b>, <b>tails</b>, <b>voices</b>. <br />
+				Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>breakpoints</b>, <b>tails</b>, <b>voices</b>.
+				In case of markers, an additional "role" message attribute specify a specific role for markers to be selected (defaulting to "all", i.e.
+				all marker will be selected, regardless of their role). <br />
 				- If the word <m>sel</m> is followed by the symbol <b>voice</b> followed by one or more integers, the corresponding voices are selected
 				(negative numbers count from the last voice). <br />
 				- If the word <m>sel</m> is followed by the symbol <b>chord</b> followed by one or two integers (representing an address), a certain chord is selected.
@@ -6739,6 +6776,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="breakpointsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Pitch Breakpoint Size
+			</digest>
+			<description>
+				Sets the size of diamond shaped breakpoints (when displayed: see <m>breakpointshavenoteheads</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="3." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Pitch Breakpoint Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="catchplay" get="1" set="1" type="int" size="1">
 			<digest>
 				Catch Play Head
@@ -6912,7 +6965,7 @@
 		</attribute>
 		<attribute name="durationlinewidth" get="1" set="1" type="float" size="1">
 			<digest>
-				Width of the duration line
+				Duration Line Width
 			</digest>
 			<description>
 				Sets the width of the duration lines (when displayed: see <m>showdurations</m>).
@@ -6923,7 +6976,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Width of the duration line" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Duration Line Width" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -7793,6 +7846,20 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="markersfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Markers Font
+			</digest>
+			<description>
+				Sets the font size of markers
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Markers Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="markersfontsize" get="1" set="1" type="float" size="1">
@@ -9859,6 +9926,20 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="voicenamesfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Voice Names Font
+			</digest>
+			<description>
+				Sets the font size of voice names
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Names Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="voicenamesfontsize" get="1" set="1" type="float" size="1">

@@ -1,7 +1,7 @@
 /*
  *  score.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -783,7 +783,7 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *out_durations = llll_get();
     t_llll *out_velocities = llll_get();
     t_llll *out_ties = llll_get();
-    t_llll *out_graphic = llll_get();
+//    t_llll *out_graphic = llll_get();
     t_llll *out_breakpoints = llll_get();
     t_llll *out_slots = llll_get();
     t_llll *out_extras = llll_get();
@@ -795,7 +795,7 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_chord *chord;
     t_scorevoice *voice;
     
-    llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
+//    llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
     llll_appendsym(out_breakpoints, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
     llll_appendsym(out_slots, _llllobj_sym_slots, 0, WHITENULL_llll);
     
@@ -822,12 +822,15 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 t_llll *this_event_IDs = llll_get();
                 
                 for (note = chord->firstnote; note; note = note->next){
-                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
+                    t_hatom h;
+                    note_get_poc((t_notation_obj *)x, note, &h);
+                    llll_appendhatom_clone(this_event_cents, &h);
+//                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
                     llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
                     llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
                     llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
                     llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
-                    llll_appendlong(this_event_ties, note->tie_to ? 1 : 0, 0, WHITENULL_llll);
+                    llll_appendlong(this_event_ties, note->tie_to ? (note->tie_to != WHITENULL ? note->tie_to->r_it.ID : 1) : 0, 0, WHITENULL_llll);
                     llll_appendlong(this_event_IDs, note->r_it.ID, 0, WHITENULL_llll);
                 }
                 
@@ -864,14 +867,14 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
         llll_appendllll(out_durations, out_voice_durations, 0, WHITENULL_llll);
         llll_appendllll(out_velocities, out_voice_velocities, 0, WHITENULL_llll);
         llll_appendllll(out_ties, out_voice_ties, 0, WHITENULL_llll);
-        llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
+//        llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
         llll_appendllll(out_breakpoints, out_voice_breakpoints, 0, WHITENULL_llll);
         llll_appendllll(out_slots, out_voice_slots, 0, WHITENULL_llll);
         llll_appendllll(out_IDs, out_voice_IDs, 0, WHITENULL_llll);
     }
     
     // building extras
-    llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);
+//    llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);
     llll_appendllll(out_extras, out_breakpoints, 0, WHITENULL_llll);
     llll_appendllll(out_extras, out_slots, 0, WHITENULL_llll);
     
@@ -1336,6 +1339,40 @@ void select_rests_with_lexpr(t_score *x, e_selection_modes mode)
     unlock_general_mutex((t_notation_obj *)x);
 }
 
+t_llll *score_select_extend_chord_for_options(t_score *x, t_chord *ch, char tiemode_all, char restseqmode_all)
+{
+    if (ch->firstnote && tiemode_all) {
+        return get_tied_chords_sequence((t_notation_obj *)x, ch);
+    } else if (!ch->firstnote && restseqmode_all) {
+        return get_rests_sequence((t_notation_obj *)x, ch);
+    } else {
+        t_llll *out = llll_get();
+        llll_appendobj(out, ch);
+        return out;
+    }
+}
+
+t_llll *score_select_extend_note_for_options(t_score *x, t_note *nt, char tiemode_all)
+{
+    if (tiemode_all) {
+        t_chord *ch = nt->parent;
+        long noteindex = note_get_position((t_notation_obj *)x, nt);
+        t_llll *chs_ll = score_select_extend_chord_for_options(x, ch, true, false);
+        t_llll *out = llll_get();
+        for (t_llllelem *el = chs_ll->l_head; el; el = el->l_next) {
+            t_chord *c = (t_chord *)hatom_getobj(&el->l_hatom);
+            t_note *n = nth_note(c, noteindex-1); // 0-based
+            if (n)
+                llll_appendobj(out, n);
+        }
+        return out;
+    } else {
+        t_llll *out = llll_get();
+        llll_appendobj(out, nt);
+        return out;
+    }
+}
+
 void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
 // select all the elements within a given region
@@ -1343,6 +1380,10 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
     e_selection_modes mode = symbol_to_mode((t_notation_obj *)x, s);
     t_llll *selectllll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
+
+    t_symbol *tiemode = _llllobj_sym_each, *restseqmode = _llllobj_sym_each;
+    long skiprests = 0;
+    llll_parseargs_and_attrs_destructive((t_object *) x, selectllll, "ssi", gensym("tiemode"), &tiemode, gensym("restseqmode"), &restseqmode, gensym("skiprests"), &skiprests);
 
     if (selectllll) { 
         double ux1, ux2, mc1, mc2;
@@ -1434,21 +1475,31 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 t_chord *to_select;
                 lock_general_mutex((t_notation_obj *)x);
                 if (selectllll->l_depth == 1) {
-                    if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next))) {
-                        if (to_select->firstnote)
-                            add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
-                        else
-                            notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                    if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next,
+                                                                           tiemode == _llllobj_sym_all, skiprests, restseqmode == _llllobj_sym_all))) {
+                        t_llll *to_select_ll = score_select_extend_chord_for_options(x, to_select, tiemode == _llllobj_sym_all, restseqmode == _llllobj_sym_all);
+                        for (t_llllelem *el = to_select_ll->l_head; el; el = el->l_next) {
+                            t_chord *c = (t_chord *)hatom_getobj(&el->l_hatom);
+                            if (c->firstnote)
+                                add_all_chord_notes_to_preselection((t_notation_obj *)x, c);
+                            else
+                                notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)c);
+                        }
                     }
                 } else {
                     t_llllelem *elem;
                     for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
                         if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                            if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head))) {
-                                if (to_select->firstnote)
-                                    add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
-                                else
-                                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                            if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head,
+                                                                                   tiemode == _llllobj_sym_all, skiprests, restseqmode == _llllobj_sym_all))) {
+                                t_llll *to_select_ll = score_select_extend_chord_for_options(x, to_select, tiemode == _llllobj_sym_all, restseqmode == _llllobj_sym_all);
+                                for (t_llllelem *el = to_select_ll->l_head; el; el = el->l_next) {
+                                    t_chord *c = (t_chord *)hatom_getobj(&el->l_hatom);
+                                    if (c->firstnote)
+                                        add_all_chord_notes_to_preselection((t_notation_obj *)x, c);
+                                    else
+                                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)c);
+                                }
                             }
                 }
                 move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
@@ -1460,14 +1511,26 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 
                 lock_general_mutex((t_notation_obj *)x);
                 if (selectllll->l_depth == 1) {
-                    if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
-                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                    if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next,
+                                                                          tiemode == _llllobj_sym_all, skiprests, restseqmode == _llllobj_sym_all))) {
+                        t_llll *to_select_ll = score_select_extend_note_for_options(x, to_select, tiemode == _llllobj_sym_all);
+                        for (t_llllelem *el = to_select_ll->l_head; el; el = el->l_next) {
+                            t_note *n = (t_note *)hatom_getobj(&el->l_hatom);
+                            notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)n);
+                        }
+                    }
                 } else {
                     t_llllelem *elem;
                     for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
                         if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                            if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
-                                notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                            if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head,
+                                                                                  tiemode == _llllobj_sym_all, skiprests, restseqmode == _llllobj_sym_all))) {
+                                t_llll *to_select_ll = score_select_extend_note_for_options(x, to_select, tiemode == _llllobj_sym_all);
+                                for (t_llllelem *el = to_select_ll->l_head; el; el = el->l_next) {
+                                    t_note *n = (t_note *)hatom_getobj(&el->l_hatom);
+                                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)n);
+                                }
+                            }
                 }
                 move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
                 unlock_general_mutex((t_notation_obj *)x);
@@ -1535,25 +1598,6 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 
                 
                 
-            // (un)sel(ect) marker by index
-            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next) {
-                t_marker *to_select;
-                lock_general_mutex((t_notation_obj *)x);
-                if (selectllll->l_depth == 1) {
-                    if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
-                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
-                } else {
-                    t_llllelem *elem;
-                    for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next)
-                        if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                            if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
-                                notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
-                }
-                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
-                unlock_general_mutex((t_notation_obj *)x);
-                
-                
-                
             // (un)sel(ect) marker if
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next &&
                        hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
@@ -1581,9 +1625,30 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 }
 
                 
+            // (un)sel(ect) marker by index
+            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next) {
+                t_marker *to_select;
+                lock_general_mutex((t_notation_obj *)x);
+                if (selectllll->l_depth == 1) {
+                    if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
+                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                } else {
+                    t_llllelem *elem;
+                    for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next)
+                        if (hatom_gettype(&elem->l_hatom) == H_LLLL)
+                            if ((to_select = get_marker_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
+                                notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+                }
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                unlock_general_mutex((t_notation_obj *)x);
+                
+                
+                
             // (un)sel(ect) all markers
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
-                select_all_markers((t_notation_obj *) x, mode);
+                t_symbol *role_sym = NULL;
+                llll_parseattrs((t_object *)x, selectllll, false, "s", _llllobj_sym_role, &role_sym);
+                select_all_markers((t_notation_obj *) x, mode, role_sym && role_sym != _llllobj_sym_all ? sym_to_marker_role(role_sym) : -1);
 
             // (un)sel(ect) all voices
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_voices) {
@@ -2261,6 +2326,7 @@ void score_sel_change_velocity(t_score *x, t_symbol *s, long argc, t_atom *argv)
                             create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                             change_long((t_notation_obj *)x, &nt->velocity, lexpr, thiselem, 0, (t_notation_item *)nt);
                             clip_long(&nt->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
+                            note_set_velocity((t_notation_obj *)x, nt, nt->velocity); // to set it to breakpoint too
                             if (thiselem && thiselem->l_next)
                                 thiselem = thiselem->l_next;
                             changed = 1;
@@ -2773,8 +2839,11 @@ void score_addtempo(t_score *x, long meas_num, t_llll *tempo_ll, t_llll *voices_
             }
         }
     }
-    recompute_all(x);
+    recompute_all_except_for_beamings_and_autocompletion(x);
+    perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+
     unlock_general_mutex((t_notation_obj *)x);
+    redraw_hscrollbar((t_notation_obj *)x, 0);
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_TEMPO);
 }
 
@@ -4205,6 +4274,10 @@ void score_task(t_score *x)
                                 if (count < max_chord_per_scheduler_tick)
                                     items_to_send[count++] = (t_notation_item *)temp_ch;
                                 x->r_ob.chord_play_cursor[voice->v_ob.number] = temp_ch;
+                                
+                                if (x->r_ob.play_mode == k_PLAYMODE_CHORDWISE && !x->r_ob.play_tied_elements_separately && chord_is_all_tied_to((t_notation_obj *)x, temp_ch, false, NULL)) {
+                                    x->r_ob.chord_play_cursor[voice->v_ob.number] = temp_ch = chord_get_last_in_tieseq(temp_ch);
+                                }
                             } else if (temp_ch->onset > x->r_ob.scheduled_ms) {
                                 break;
                             }
@@ -4820,7 +4893,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // being the chord notes active at
     // the given time instant, each in the standard note gathered syntax, with two important variations:
     // there is no tie element, and for each slot marked as temporal only the slot element at the given time instant
-    // is output (e.g. the interpolated function point of a function slot). <br /> <br />
+    // is output (e.g. the interpolated function point of a function slot). <br />
+    // If the <m>interp</m> message is followed by the <m>tempo</m> symbol, before any other argument, then the tempo
+    // is retrieved at the specified position in time, for every voice. <br />
+    // If the <m>interp</m> message is followed by the <m>timesig</m> symbol, before any other argument, then the time signature
+    // is retrieved at the specified position in time, for every voice. <br /> <br />
     // @copy BACH_DOC_NOTE_GATHERED_SYNTAX_SCORE
     // @marg 0 @name time @optional 0 @type float/llll
     // @example interp 1000 @caption get info on chords being played at 1s
@@ -4828,6 +4905,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example interp [3.5] @caption get info on chords being played at half of measure 3
     // @example interp [3 1/4] @caption get info on chords being played after 1/4 of measure 3
     // @example interp [2 3 1/4] @caption get info on chords being played after 1/4 of measure 3 of voice 2 (but retrieve all voices!)
+    // @example interp tempo [3] @caption get tempo at beginning of measure 3
+    // @example interp tempo 1s @caption get tempo at 1s
+    // @example interp tempo [2 3 1/4] @caption get info on tempo after 1/4 of measure 3 of voice 2
+    // @example interp timesig [3] @caption get time signature at beginning of measure 3
+    // @example interp timesig 1s @caption get time signature at 1s
+    // @example interp timesig [2 3 0] @caption get info on time signatures at measure 3 of voice 2
     // @seealso getcurrentchord, sample
     class_addmethod(c, (method) score_anything, "interp", A_GIMME, 0);
     
@@ -5627,6 +5710,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     // - If the word <m>sel</m> is followed by any other symbol or sequence of symbols, these are interpreted as names, and the notation items
     // matching all these names (or a single name, if just one symbol is entered) are selected. <br />
     // @marg 0 @name arguments @optional 0 @type llll
+    // @mattr tiemode @type symbol @default each @digest If "all", tied sequences of chords are counted as one
+    // @mattr skiprests @type int @default 0 @digest If non-zero, rests are not counted at all
+    // @mattr restseqmode @type int @default each @digest If "all", sequences of consecutive rests are counted as one
     // @example sel all @caption select everything
     // @example sel notes @caption select all notes
     // @example sel chords @caption select all chords
@@ -5637,6 +5723,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example sel measures @caption select all measures
     // @example sel chord 3 2 @caption select 2rd chord of 3nd measure (of 1st voice)
     // @example sel chord any 20 @caption select 20th chord of 1st voice (in any measure)
+    // @example sel chord any 20 @tiemode all @caption the same, but consider tied chords as a single one
+    // @example sel chord any 20 @tiemode all @skiprests 1 @caption the same, but ignore rests
+    // @example sel chord any 20 @restseqmode all @caption select 20th chord of 1st voice, consider rest sequences as one
     // @example sel chord 2 5 4 @caption select 4th chord of 5th measure 2nd voice
     // @example sel chord 4 any 21 @caption select 21th chord of 4st voice (in any measure)
     // @example sel chord -1 -2 -1 @caption select last chord of one-but-last measure of last voice
@@ -6135,7 +6224,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example inscreenpos 0.2 [4.5] @caption the same, for the position at half of measure 4
     // @example inscreenpos 0.2 [4 1/4] @caption the same, for the position in measure 4 after 1/4 (of first voice) in domain
     // @example inscreenpos 0.2 [3 4 1/4] @caption the same, for the position of 1/4 after beginning of measure 4 in 3rd voice in domain
-    // @seealso inscreen, inscreenmeas
+    // @seealso inscreen, inscreenmeas, scroll
     class_addmethod(c, (method) score_inscreenpos, "inscreenpos", A_GIMME, 0);
     
     
@@ -6151,8 +6240,22 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example inscreenmeas 5 10 @caption set domain to display measures 5 through 10
     // @example inscreenmeas 5 10 4 @caption the same, for voice 4
     // @example inscreenmeas 5 10 4 @caption the same, for voice 4
-    // @seealso domain, inscreen, inscreenpos, resetwidthfactors
+    // @seealso domain, inscreen, inscreenpos, resetwidthfactors, scroll
     class_addmethod(c, (method) score_inscreenmeas, "inscreenmeas", A_GIMME, 0);
+
+    
+    // @method scroll @digest Scroll the object horizontally or vertically
+    // @description The message <m>scroll</m> moves the portion of displayed object either horizontally or vertically,
+    // in a similar way of moving horizontal or vertical scrollbars.
+    // @marg 0 @name amount @optional 0 @type float
+    // @mattr direction @type symbol @default horizontal @digest Scrolling direction
+    // @mattr unit @type symbol @default pixel @digest Amount unit ("pixel", "normalizedpixel" or "relative")
+    // @mattr delta @type int @default 0 @digest Scroll amount is relative
+    // @example scroll vertical 10 @caption scroll 10 pixels vertically
+    // @example scroll vertical 0.5 @unit relative @caption scroll vertically in the center
+    // @example scroll horizontal 0.5 @unit relative @caption the same, horizontally
+    // @seealso inscreenpos, inscreen
+    class_addmethod(c, (method) notationobj_scroll_from_gimme, "scroll", A_GIMME, 0);
 
 
     // @method split @digest Split selected chords
@@ -6420,6 +6523,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // Furthermore, some exporting specifications are available, and each has to be given as llll after the (optional) file name.
     // Such lllls will be in the form <b>[<m>specification_name</m> <m>specification_value</m>]</b>). Available specifications are: <br />
     // - <b>exportmarkers</b> (default: 1): if non-0, all the markers in the score will be exported. <br />
+    // - <b>exportbarlines</b> (default: 1): if non-0, a "bach barline" marker will be added at each measure. <br />
+    // - <b>exportdivisions</b> (default: 1): if non-0, a "bach division" marker will be added at each beat. <br />
     // - <b>voices</b> [default: <b>[]</b>): if a list of voices is provided, then only the specified voices will be exported.
     // If no list is provided, then all the voices of the score will be exported. Ranges can also be
     // expressed, as sublists. For example, <b>[voices 1 3 5]</b> will export the first, third and fifth voice,
@@ -6434,6 +6539,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // It is guaranteed that the overall duration of the tempo ramp will be consistent with the original.
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr exportmarkers @type int @default 1 @digest If non-zero, exports all the markers
+    // @mattr exportbarlines @type int @default 1 @digest If non-zero, a "bach barline" marker is added at each measure
+    // @mattr exportdivisions @type int @default 1 @digest If non-zero, a "bach division" marker is added at each beat
     // @mattr voices @type llll @default null @digest Numbers of voices to be exported (<b>null</b> means: all voices)
     // @mattr format @type int @default 1 @digest MIDI file format (0 = single track, 1 = multiple tracks)
     // @mattr resolution @type int @default 960 @digest Number of MIDI ticks per beat
@@ -6506,7 +6613,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // difficult. What might be handy to do, with Finale, is to export quartertone accidentals as if they were parenthesized versions
     // of the standard accidentals. You can easily map inside finale the parenthesized accidentals to the glyphs of
     // quartertone accidentals, via your favorite quartertone accidental font. A parenthesized natural will be displayed as
-    // a quarter-sharp; a parenthesized sharp as a three-quarter-sharp, and so on. Everything, if parenthesized, will step up a
+    // a quarter-sharp; a parenthesized sharp as a three-quarters-sharp, and so on. Everything, if parenthesized, will step up a
     // quarter tone. Once you have set up your new Finale document in this way, you can use the <b>[parenthesizedquartertones 1]</b>
     // specification in order to export quartertones in this way.
     // @marg 0 @name filename @optional 1 @type symbol
@@ -7339,7 +7446,14 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_STYLE_LABEL(c,"showbarlines", 0, "onoff", "Show Barlines");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showbarlines", 0, "1");
     // @description Toggles the display of barlines.
-    
+
+    // this one is not exposed.
+//    CLASS_ATTR_DOUBLE(c,"barlineshift", 0, t_notation_obj, barline_ushift_for_proportional_spacing);
+//    CLASS_ATTR_STYLE_LABEL(c,"barlineshift", 0, "text", "Barline Shift In Proportional Spacing");
+//    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"barlineshift", 0, "0");
+    // @ignore all
+    // @description Sets a barline shift for proportional spacing display
+
     CLASS_ATTR_CHAR(c,"showbarlinelocks", 0, t_notation_obj, show_barline_locks);
     CLASS_ATTR_STYLE_LABEL(c,"showbarlinelocks", 0, "onoff", "Show Barline Locks");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showbarlinelocks", 0, "1");
@@ -7359,10 +7473,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // blue lines correspond to refined levels, violet lines correspond to display-only levels.
             
     CLASS_ATTR_CHAR(c,"showtimesignatures", 0, t_notation_obj, show_time_signatures);
-    CLASS_ATTR_STYLE_LABEL(c,"showtimesignatures", 0, "onoff", "Show Time Signatures");
+    CLASS_ATTR_STYLE_LABEL(c,"showtimesignatures",0,"enumindex","Show Time Signatures");
+    CLASS_ATTR_ENUMINDEX(c,"showtimesignatures", 0, "Hide Classically Above Staff");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtimesignatures", 0, "1");
     CLASS_ATTR_ACCESSORS(c, "showtimesignatures", (method)NULL, (method)score_setattr_showtimesignatures);
-    // @description Toggles the display of time signatures.
+    // @description Toggles the display of time signatures: 0 = Hide, 1 = Classical display, 2 = Time signatures are
+    // displayed above the staff (and with a single big time signature if they coincide across all voices, see also
+    // the <m>bigtsratio</m> attribute.
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
@@ -7385,6 +7502,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // If less symbols are entered, the other elements are considered to be 1.
     // Hiding voices does not affect the spacing of existing voices, which will continue to take into account the hidden voices.
     
+    CLASS_ATTR_DOUBLE(c,"bigtsratio",0, t_notation_obj, big_time_signatures_ratio);
+    CLASS_ATTR_STYLE_LABEL(c,"bigtsratio",0,"text","Big Time Signatures Ratio");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bigtsratio",0,"2.");
+    CLASS_ATTR_BASIC(c,"bigtsratio",0);
+    // @description Sets the expansion ratio for big time signatures
+
     CLASS_ATTR_DOUBLE(c,"zoom",0, t_notation_obj, horizontal_zoom);
     CLASS_ATTR_STYLE_LABEL(c,"zoom",0,"text","Horizontal Zoom %");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"zoom",0,"100.");
@@ -9325,12 +9448,30 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         recompute_all_and_redraw(x);
                         
                     } else if (firstelem->l_next && router == _llllobj_sym_interp) {
-                        double ms = 0;
-                        parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next, NULL, &ms, NULL, false);
-                        t_llll *out = notationobj_get_interp((t_notation_obj *)x, ms);
-                        llll_prependsym(out, _llllobj_sym_interp, 0, WHITENULL_llll);
-                        llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, out);
-                        llll_free(out);
+                        if (firstelem->l_next->l_next && hatom_getsym(&firstelem->l_next->l_hatom) == _llllobj_sym_tempo) {
+                            t_timepoint tp;
+                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next->l_next, NULL, NULL, &tp, false);
+                            t_llll *out = notationobj_get_interp_tempo((t_notation_obj *)x, tp);
+                            llll_prependsym(out, _llllobj_sym_tempo);
+                            llll_prependsym(out, _llllobj_sym_interp);
+                            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, out);
+                            llll_free(out);
+                        } else if (firstelem->l_next->l_next && hatom_getsym(&firstelem->l_next->l_hatom) == _llllobj_sym_timesig) {
+                            t_timepoint tp;
+                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next->l_next, NULL, NULL, &tp, false);
+                            t_llll *out = notationobj_get_interp_timesig((t_notation_obj *)x, tp);
+                            llll_prependsym(out, _llllobj_sym_timesig);
+                            llll_prependsym(out, _llllobj_sym_interp);
+                            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, out);
+                            llll_free(out);
+                        } else {
+                            double ms = 0;
+                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next, NULL, &ms, NULL, false);
+                            t_llll *out = notationobj_get_interp((t_notation_obj *)x, ms);
+                            llll_prependsym(out, _llllobj_sym_interp, 0, WHITENULL_llll);
+                            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, out);
+                            llll_free(out);
+                        }
                         
                     } else if (router == gensym("overtype")) {
                         if (firstelem->l_next && firstelem->l_next->l_next && hatom_gettype(&firstelem->l_next->l_hatom) == H_LLLL && hatom_gettype(&firstelem->l_next->l_next->l_hatom) == H_LLLL) {
@@ -12965,6 +13106,11 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     } else {
                                         create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
                                         pop_tempo_over_chord(x, meas->firstchord, false);
+                                        
+                                        // this line below is important, since if we perform the analysis and change, then this "duplicate" tempo
+                                        // may be hidden out, which we don't want. We want to leave room for the user to modify it. Only then will
+                                        // we perform the analysis and change.
+                                        x->r_ob.need_perform_analysis_and_change = false;
                                     }
                                 } else {
                                     create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
@@ -16806,7 +16952,7 @@ void select_all(t_score *x){
         voice = voice->next;
     }
     lock_markers_mutex((t_notation_obj *)x);
-    select_all_markers((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT);
+    select_all_markers((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, -1);
     unlock_markers_mutex((t_notation_obj *)x);
     unlock_general_mutex((t_notation_obj *)x);
     handle_change_selection((t_notation_obj *)x);

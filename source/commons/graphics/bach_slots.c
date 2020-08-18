@@ -1,7 +1,7 @@
 /*
  *  bach_slots.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -2006,7 +2006,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 							
 							// do we display it at left or at right, w.r. to the bar?
 							if (bar_width < h_cell_size/2.) {
-								write_text_simple(g, jf_slot_smallvalues, slot_textcolor, value_str, 
+								write_text_standard_singleline(g, jf_slot_smallvalues, slot_textcolor, value_str,
 												  slot_window_table_x1 + col * h_cell_size + bar_width + 2, slot_window_table_y1 + row * v_cell_size, h_cell_size - bar_width - 2, v_cell_size);
 							} else {
 								write_text(g, jf_slot_smallvalues, slot_textcolor, value_str, 
@@ -2712,7 +2712,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 					long size = (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT || r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT) ? 1 : slot->length;
 					number_slot_to_text_buf(r_ob, slot->firstitem, size, &number_txt, r_ob->slotinfo[slotnum].slot_type, slotnum);
 					jfont_text_measure(jf_slotbold, number_txt, &width, &height);
-					write_text_account_for_vinset(r_ob, g, jf_slotbold, slot_color, number_txt, pos_x_for_numbers + x_deplacement_numbers, pos_y_for_numbers);
+					write_text_standard_account_for_vinset(r_ob, g, jf_slotbold, slot_color, number_txt, pos_x_for_numbers + x_deplacement_numbers, pos_y_for_numbers);
 					x_deplacement_numbers += width + 4 * zoom_y;
 					if (number_txt) 
 						bach_freeptr(number_txt);
@@ -2728,7 +2728,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 						long size = (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT || r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT) ? 1 : slot->length;
 						number_slot_to_text_buf(r_ob, slot->firstitem, size, &number_txt, r_ob->slotinfo[slotnum].slot_type, slotnum);
 						jfont_text_measure(jf_slotbold, number_txt, &width, &height);
-						write_text_account_for_vinset(r_ob, g, jf_slotbold, slot_color, number_txt, pos_x_for_numbers + x_deplacement_numbers, pos_y_for_numbers);
+						write_text_standard_account_for_vinset(r_ob, g, jf_slotbold, slot_color, number_txt, pos_x_for_numbers + x_deplacement_numbers, pos_y_for_numbers);
 						x_deplacement_numbers += width + 4 * zoom_y;
 						if (number_txt) 
 							bach_freeptr(number_txt);
@@ -2747,7 +2747,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 
                         char *buf = articulation_to_text_buf(&r_ob->articulations_typo_preferences, id);
                         jfont_text_measure(jf_art, buf, &width, &height);
-                        write_text_account_for_vinset(r_ob, g, jf_art, slot_color, buf, pos_x_for_text + x_deplacement_text, pos_y_for_text - 0.75 * fontsize);
+                        write_text_standard_account_for_vinset(r_ob, g, jf_art, slot_color, buf, pos_x_for_text + x_deplacement_text, pos_y_for_text - 0.75 * fontsize);
                         x_deplacement_text += width + 4 * zoom_y;
                         bach_freeptr(buf);
                         jfont_destroy_debug(jf_art);
@@ -2767,7 +2767,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
                         
                         char *buf = notehead_to_text_buf(r_ob, id, notation_item_get_symduration(r_ob, nitem));
                         jfont_text_measure(jf_nh, buf, &width, &height);
-                        write_text_account_for_vinset(r_ob, g, jf_nh, slot_color, buf, pos_x_for_text + x_deplacement_text, pos_y_for_text - 0.75 * fontsize);
+                        write_text_standard_account_for_vinset(r_ob, g, jf_nh, slot_color, buf, pos_x_for_text + x_deplacement_text, pos_y_for_text - 0.75 * fontsize);
                         x_deplacement_text += width + 4 * zoom_y;
                         bach_freeptr(buf);
                         jfont_destroy_debug(jf_nh);
@@ -2788,7 +2788,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 						text[0] = 0;
 					}
 					jfont_text_measure(jf_slottext, text, &width, &height);
-					write_text_account_for_vinset(r_ob, g, jf_slottext, slot_color, text, pos_x_for_text + x_deplacement_text, pos_y_for_text);
+					write_text_standard_account_for_vinset(r_ob, g, jf_slottext, slot_color, text, pos_x_for_text + x_deplacement_text, pos_y_for_text);
 					x_deplacement_text += width + 4 * zoom_y;
 					bach_freeptr(text);
 				}
@@ -2802,7 +2802,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 						char *buf = NULL;
 						llll_to_text_buf((t_llll *) slot->firstitem->item, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 						jfont_text_measure(jf_slottext, buf, &width, &height);
-						write_text_account_for_vinset(r_ob, g, jf_slottext, slot_color, buf, pos_x_for_text + x_deplacement_text, pos_y_for_text);
+						write_text_standard_account_for_vinset(r_ob, g, jf_slottext, slot_color, buf, pos_x_for_text + x_deplacement_text, pos_y_for_text);
 						x_deplacement_text += width + 4 * zoom_y;
 						bach_freeptr(buf);
 					}
@@ -2820,7 +2820,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 						file = ((t_file *)temp->item);		
 						strncpy_zero(textf, file->filename, MAX_PATH_CHARS);
 						jfont_text_measure(temp == active ? jf_slotbold : jf_slottext, textf, &width, &height);
-						write_text_account_for_vinset(r_ob, g, temp == active ? jf_slotbold : jf_slottext, slot_color, textf, pos_x_for_text + x_deplacement_text, pos_y_for_text);
+						write_text_standard_account_for_vinset(r_ob, g, temp == active ? jf_slotbold : jf_slottext, slot_color, textf, pos_x_for_text + x_deplacement_text, pos_y_for_text);
 						if (!file->exists)
 							paint_line(g, slot_color, pos_x_for_text + x_deplacement_text, pos_y_for_text + height/2, pos_x_for_text + x_deplacement_text + width, pos_y_for_text + height/2, 1);
 						x_deplacement_text += width + 4 * zoom_y;
@@ -2861,7 +2861,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
                     if (dyn)
                         snprintf_zero(dyntext, 1024, "%s", dyn->text_deparsed->s_name);
                     jfont_text_measure(jf_slottext, dyntext, &width, &height);
-                    write_text_account_for_vinset(r_ob, g, jf_slottext, slot_color, dyntext, pos_x_for_text + x_deplacement_text, pos_y_for_text);
+                    write_text_standard_account_for_vinset(r_ob, g, jf_slottext, slot_color, dyntext, pos_x_for_text + x_deplacement_text, pos_y_for_text);
                     x_deplacement_text += width + 4 * zoom_y;
                      */
                     
@@ -3801,7 +3801,7 @@ void paint_colorpalette(t_notation_obj *r_ob, t_jgraphics* g, t_rect palette_rec
 		char coeff_str[200];
 		snprintf_zero(coeff_str, 200, "R: %.2f G: %.2f B: %.2f A: %.2f", selected_color.red, selected_color.green, selected_color.blue, selected_color.alpha);
 		paint_rectangle(g, coeff_bg_color, coeff_bg_color, palette_x, palette_y + palette_height, palette_width, 10 * zoom, 0);
-		write_text_simple(g, coeff_font, coeff_color, coeff_str, palette_x, palette_y + palette_height, palette_width, 200 * zoom);
+		write_text_standard_singleline(g, coeff_font, coeff_color, coeff_str, palette_x, palette_y + palette_height, palette_width, 200 * zoom);
 	}
 	
 	if (show_circle){

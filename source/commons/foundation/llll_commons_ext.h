@@ -1,7 +1,7 @@
 /*
  *  llll_commons_ext.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -604,6 +604,9 @@ char has_llll_symbols_in_first_level(t_llll *inllll);
 	@return			1 if the number is found, 0 otherwise
  */
 char is_long_in_llll_first_level(t_llll *inllll, long num);
+
+// TBD
+long locate_long_in_llll_first_level(t_llll *inllll, long num);
 
 
 /**	Tell if a double is contained in an element at the base level of a llll (precisely!!! there's no threshold).

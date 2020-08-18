@@ -1,7 +1,7 @@
 /*
  *  join.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -372,7 +372,7 @@ t_join *join_new(t_symbol *s, short ac, t_atom *av)
 		proxies = true_ac ? MAX(atom_getlong(av) - 1, 0) : 1;
 		x->n_set = llll_get();
 
-        x->n_triggers = get_num_ll(1);
+        x->n_triggers = get_long_ll(1);
         
 		attr_args_process(x, ac, av); // this must be called before llllobj_obj_setup
 		// among the other things, it will parse the out attribute

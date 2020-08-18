@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 1,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 164.0, 617.0, 539.0 ],
+		"rect" : [ 148.0, 202.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -84,14 +85,14 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 192.0, 70.0, 23.0 ],
-					"text" : "6000 7200"
+					"patching_rect" : [ 6.0, 192.0, 37.0, 23.0 ],
+					"text" : "1 0.5"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "mc2f($x1, 442) ",
+					"code" : "A2dB($x1, 20) ",
 					"fontsize" : 13.0,
 					"id" : "obj-20",
 					"maxclass" : "newobj",
@@ -100,10 +101,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 220.0, 204.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80102
 					}
 ,
-					"text" : "bach.eval mc2f($x1\\, 442) @out m"
+					"text" : "bach.eval A2dB($x1\\, 20) @out m"
 				}
 
 			}
@@ -140,26 +142,27 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 100.0, 70.0, 23.0 ],
-					"text" : "6000 7200"
+					"patching_rect" : [ 6.0, 100.0, 37.0, 23.0 ],
+					"text" : "1 0.5"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "mc2f($x1) ",
+					"code" : "A2dB($x1) ",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 129.0, 175.0, 23.0 ],
+					"patching_rect" : [ 6.0, 129.0, 178.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80102
 					}
 ,
-					"text" : "bach.eval mc2f($x1) @out m"
+					"text" : "bach.eval A2dB($x1) @out m"
 				}
 
 			}
@@ -180,20 +183,21 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "mc2f = ($mc, $pitch = 440 -> $pitch * (2 ** (1/1200)) ** ($mc - 6900)) ",
+					"code" : "A2dB = ($a, $dBfs = 0 -> 20 * log10($a) + $dBfs) ",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 37.0, 239.0, 52.0 ],
+					"patching_rect" : [ 6.0, 37.0, 213.0, 38.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80102
 					}
 ,
-					"text" : "bach.eval mc2f = ($mc\\, $pitch = 440 -> $pitch * (2 ** (1/1200)) ** ($mc - 6900)) @auto 1"
+					"text" : "bach.eval A2dB = ($a\\, $dBfs = 0 -> 20 * log10($a) + $dBfs) @auto 1"
 				}
 
 			}

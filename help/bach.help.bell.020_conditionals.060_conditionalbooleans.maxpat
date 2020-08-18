@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 1,
+			"revision" : 5,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -136,6 +137,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.5, 347.0, 265.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -212,6 +214,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 373.5, 217.0, 176.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -291,6 +294,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.5, 217.0, 193.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -364,11 +368,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, condition, conditional, true, false, zero, null, boolean, logical, and, or, short-circuit, operator",
+					"patching_rect" : [ 6.0, 476.0, 695.0, 31.0 ],
+					"text" : "Tags: evaluation, language, script, scripting, code, condition, conditional, true, false, zero, null, boolean, logical, and, or, short-circuit, operator, default, fallback, hierarchy, hierarchies",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

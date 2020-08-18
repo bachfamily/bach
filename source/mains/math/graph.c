@@ -1,7 +1,7 @@
 /*
  *  graph.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -1290,16 +1290,16 @@ void graph_paint(t_graph *x, t_object *view){
 			for (p = x->labels_x_step; p < x->max_x && center_x + p * scale_x < rect.width - CONST_ARROW_SIZE - 4; p += x->labels_x_step) {
 				number_to_label_text(x, p, text);
 				jfont_text_measure(jf_labels, text, &width, &height);
-				write_text_simple(g, jf_labels, x->j_textcolor, text, center_x + p * scale_x - width/2., y_pos_for_writing, width+20, height+20);
+				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, center_x + p * scale_x - width/2., y_pos_for_writing, width+20, height+20);
 			}
 			for (p = -x->labels_x_step; p > x->min_x; p -= x->labels_x_step) {
 				number_to_label_text(x, p, text);
 				jfont_text_measure(jf_labels, text, &width, &height);
-				write_text_simple(g, jf_labels, x->j_textcolor, text, center_x + p * scale_x - width/2., y_pos_for_writing, width+20, height+20);
+				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, center_x + p * scale_x - width/2., y_pos_for_writing, width+20, height+20);
 			}
 			if (x->show_xy_labels) {
 				jfont_text_measure(jf_axisnames, "x", &width, &height);
-				write_text_simple(g, jf_axisnames, x->j_textcolor, "x", rect.width - width - 12, y_pos_for_writing, width+20, height+20);
+				write_text_standard_singleline(g, jf_axisnames, x->j_textcolor, "x", rect.width - width - 12, y_pos_for_writing, width+20, height+20);
 			}
 		}
 		if (x->labels_y_step > 0) {
@@ -1308,16 +1308,16 @@ void graph_paint(t_graph *x, t_object *view){
 			for (p = x->labels_y_step; p < x->max_y; p += x->labels_y_step) {
 				number_to_label_text(x, p, text);
 				jfont_text_measure(jf_labels, text, &width, &height);
-				write_text_simple(g, jf_labels, x->j_textcolor, text, writing_direction < 0  ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);
+				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, writing_direction < 0  ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);
 			}
 			for (p = -x->labels_x_step; p > x->min_x && center_x + p * scale_x > CONST_ARROW_SIZE + 4; p -= x->labels_y_step) {
 				number_to_label_text(x, p, text);
 				jfont_text_measure(jf_labels, text, &width, &height);
-				write_text_simple(g, jf_labels, x->j_textcolor, text, writing_direction < 0 ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);
+				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, writing_direction < 0 ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);
 			}
 			if (x->show_xy_labels) {
 				jfont_text_measure(jf_axisnames, "y", &width, &height);
-				write_text_simple(g, jf_axisnames, x->j_textcolor, "y", writing_direction < 0 ? center_x - offset_x + 6 : center_x + offset_x - width - 6, 4, width+20, height+20);
+				write_text_standard_singleline(g, jf_axisnames, x->j_textcolor, "y", writing_direction < 0 ? center_x - offset_x + 6 : center_x + offset_x - width - 6, 4, width+20, height+20);
 			}
 		}
 	}

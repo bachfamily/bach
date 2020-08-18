@@ -1,7 +1,7 @@
 /*
  *  llllobj.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -433,7 +433,7 @@ t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg,
 
     } else {
         if (msg == _sym_list || msg == _sym_int || msg == _sym_float || msg == NULL) {
-            inlist = llll_parse(ac, av);
+            inlist = llll_parse(ac, av, ignore);
         } else {
             new_ac = ac + 1;
             new_av = (t_atom *) bach_newptr(sizeof (t_atom) * new_ac);
@@ -2754,36 +2754,8 @@ t_atom_long llll_getlong(t_llll *ll, t_atom_long def)
     return ll->l_head ? hatom_getlong(&ll->l_head->l_hatom) : def;
 }
 
-char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type)
+
+double llll_getdouble(t_llll *ll, double def)
 {
-    char filename[MAX_FILENAME_CHARS];
-    short path = 0;
-    
-    if (!file_name)
-        return NULL;
-    
-    if (file_type) *file_type = 0;
-    
-    if (path_frompathname(file_name, &path, filename)) {
-        t_fourcc type;
-        char file_path_str[MAX_FILENAME_CHARS];
-        strncpy_zero(file_path_str, file_name, MAX_FILENAME_CHARS);
-        if (!locatefile_extended(file_path_str, &path, &type, &type, -1))  {
-            char *filenameok2 = (char *) bach_newptr(MAX_FILENAME_CHARS);
-            path_topathname(path, file_path_str, filename);
-            path_nameconform(filename, filenameok2, PATH_STYLE_MAX,
-                             PATH_TYPE_BOOT);
-            if (file_type) *file_type = type;
-            return filenameok2;
-        }
-    } else {
-        char filenameok[MAX_FILENAME_CHARS];
-        char *filenameok2 = (char *) bach_newptr(MAX_FILENAME_CHARS);
-        path_topathname(path, filename, filenameok);
-        path_nameconform(filenameok, filenameok2, PATH_STYLE_MAX,
-                         PATH_TYPE_BOOT);
-        return filenameok2;
-    }
-    
-    return NULL;
+	return ll->l_head ? hatom_getdouble(&ll->l_head->l_hatom) : def;
 }

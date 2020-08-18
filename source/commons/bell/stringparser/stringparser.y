@@ -2,7 +2,7 @@
     /*
      *  stringparser.y
      *
-     * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -118,6 +118,7 @@
 %left RANGE
 %left LSHIFT RSHIFT
 %left PLUS MINUS
+%right POWOP
 %left TIMES DIV DIVDIV REM
 %left NTHOP PICKOP APPLY ACCESS_UNWRAP
 %nonassoc LVALUESTEPPARAMS
@@ -126,7 +127,6 @@
 %nonassoc ELSE_KW
 %right UPLUS
 %right LOGNOT BITNOT UMINUS
-%right POWOP
 %nonassoc KEEP UNKEEP INIT
 
 
@@ -161,6 +161,7 @@
     int yyerror(yyscan_t myscanner,
     t_parseParams *params,
     const char *s);
+    
     
     YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf);
     void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
@@ -931,7 +932,7 @@ exp: term %dprec 2
 }
 | exp NTHOP listEnd {
     $$ = new astNthOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP listEnd)\n");
 }
 | exp PICKOP listEnd {
     $$ = new astPickOp($1, $3, params->owner);
@@ -1061,7 +1062,7 @@ exp: term %dprec 2
 }
 | exp NTHOP exp {
     $$ = new astNthOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP exp)\n");
 }
 | exp PICKOP exp {
     $$ = new astPickOp($1, $3, params->owner);
@@ -1373,8 +1374,8 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
             params.name2patcherVars,
             x
         );
-        codableobj_clear_filewatchers(x);
-        codableobj_add_filewatchers(x, &lexparams.files);
+        codableobj_clear_included_filewatchers(x);
+        codableobj_add_included_filewatchers(x, &lexparams.files);
         return mainFunction;
     } else {
         object_error((t_object *) x, "Syntax errors present — couldn't parse code");
@@ -1382,11 +1383,4 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     }
 }
 
-int yyerror(yyscan_t myscanner, t_parseParams *params, const char *s)
-{
-    params->ast = nullptr;
-    object_error((t_object *) params->owner, "error: %s\n", s);
-    cpost("error: %s\n", s);
 
-    return 0;
-}

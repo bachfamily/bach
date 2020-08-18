@@ -230,7 +230,7 @@
 				Separate parameters mode
 			</digest>
 			<description>
-				Put a "separate" symbol as argument if you want to output the separate parameters (and not the bach.score gathered syntax).
+				Put a "separate" symbol as argument if you want to input and output the separate parameters (and not the bach.score gathered syntax).
 			</description>
 		</objarg>
 	</objarglist>

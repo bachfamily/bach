@@ -1,7 +1,7 @@
 /*
  *  llll_commons.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -166,7 +166,6 @@ char *bach_get_current_version_string_verbose_with_build(void)
 {
     return ((t_bach *)gensym("bach")->s_thing)->b_version_string_verbose_with_build;
 }
-
 
 
 
@@ -1575,50 +1574,52 @@ void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_
                 subll_depth = 0;
             }
             if (dontenter) {
-                t_llll *outll = llll_get();
-                llll_appendhatom_clone(outll, hatom);
-                t_llll *rv = (mod_fn)(data, outll, old_address, new_address);
-                llll_free(outll);
-                if (rv) {
-                    if (rv->l_size == 0) {
-                        llll_destroyelem(elem);
-                        new_address->l_tail->l_hatom.h_w.w_long--;
-                    } else {
-                        t_llll *parent = elem->l_parent;
-                        t_llllelem *prev = elem->l_prev;
-                        t_llllelem *next = elem->l_next;
-                        llll_destroyelem(elem);
-                        llll_adopt(rv, parent);
-                        if (prev) {
-                            rv->l_head->l_prev = prev;
-                            prev->l_next = rv->l_head;
+                if (deepenough) {
+                    t_llll *outll = llll_get();
+                    llll_appendhatom_clone(outll, hatom);
+                    t_llll *rv = (mod_fn)(data, outll, old_address, new_address);
+                    llll_free(outll);
+                    if (rv) {
+                        if (rv->l_size == 0) {
+                            llll_destroyelem(elem);
+                            new_address->l_tail->l_hatom.h_w.w_long--;
                         } else {
-                            parent->l_head = rv->l_head;
-                            //rv->l_head->l_prev = NULL;
-                        }
-                        if (next) {
-                            rv->l_tail->l_next = next;
-                            next->l_prev = rv->l_tail;
-                        } else {
-                            parent->l_tail = rv->l_tail;
-                            //rv->l_tail->l_next = NULL;
-                        }
-                        parent->l_size += rv->l_size;
-                        new_address->l_tail->l_hatom.h_w.w_long += rv->l_size - 1;
-                        
-                        if (subll_depth) {
-                            if (rv->l_depth > subll_depth + 1) {
-                                for (t_llllelem *this_elem = rv->l_head; this_elem != rv->l_tail; this_elem = this_elem->l_next) {
-                                    t_llll *this_subll;
-                                    if ((this_subll = hatom_getllll(&this_elem->l_hatom)))
-                                        llll_upgrade_depth(this_subll);
-                                }
+                            t_llll *parent = elem->l_parent;
+                            t_llllelem *prev = elem->l_prev;
+                            t_llllelem *next = elem->l_next;
+                            llll_destroyelem(elem);
+                            llll_adopt(rv, parent);
+                            if (prev) {
+                                rv->l_head->l_prev = prev;
+                                prev->l_next = rv->l_head;
+                            } else {
+                                parent->l_head = rv->l_head;
+                                //rv->l_head->l_prev = NULL;
                             }
-                            else if (rv->l_depth <= subll_depth) {
-                                llll_downgrade_depth(parent);
+                            if (next) {
+                                rv->l_tail->l_next = next;
+                                next->l_prev = rv->l_tail;
+                            } else {
+                                parent->l_tail = rv->l_tail;
+                                //rv->l_tail->l_next = NULL;
                             }
+                            parent->l_size += rv->l_size;
+                            new_address->l_tail->l_hatom.h_w.w_long += rv->l_size - 1;
                             
-                            deepenough = ((mindepth >= 0 && depth >= mindepth) || (parent->l_depth <= -mindepth));
+                            if (subll_depth) {
+                                if (rv->l_depth > subll_depth + 1) {
+                                    for (t_llllelem *this_elem = rv->l_head; this_elem != rv->l_tail; this_elem = this_elem->l_next) {
+                                        t_llll *this_subll;
+                                        if ((this_subll = hatom_getllll(&this_elem->l_hatom)))
+                                            llll_upgrade_depth(this_subll);
+                                    }
+                                }
+                                else if (rv->l_depth <= subll_depth) {
+                                    llll_downgrade_depth(parent);
+                                }
+                                
+                                deepenough = ((mindepth >= 0 && depth >= mindepth) || (parent->l_depth <= -mindepth));
+                            }
                         }
                     }
                 }
@@ -3629,7 +3630,7 @@ void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t
     long deepenough;
     t_int32 depth = 1;
     
-    if (!ll || !minaddress || !maxaddress)
+    if (!ll)
         return;
     
     if (mindepth == 0)
@@ -3641,7 +3642,7 @@ void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t
         return;
     
     deepenough = (mindepth == 1 || ll->l_depth < -mindepth);
-    address = llll_get();
+    address = (minaddress && maxaddress) ? llll_get() : NULL;
     llll_appendlong(address, LLLL_IDX_BASE, 0, WHITENULL_llll);
     stack = llll_stack_new();
     elem = ll->l_head;
@@ -3657,39 +3658,51 @@ void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t
                 elem = subll->l_head;
                 depth++;
                 deepenough = ((mindepth >= 0 && depth >= mindepth) || (subll->l_depth <= -mindepth));
-                llll_appendlong(address, LLLL_IDX_BASE, 0, WHITENULL_llll);
+                if (address)
+                    llll_appendlong(address, LLLL_IDX_BASE, 0, WHITENULL_llll);
             } else {
                 if (deepenough && hatom_type_is_number(elem_type)) {
                     if (mintype == H_NULL) {
-                        *min = *max = &elem->l_hatom;
+                        t_hatom *h = &elem->l_hatom;
+                        if (min) *min = h;
+                        if (max) *max = h;
                         mintype = maxtype = elem_type;
-                        llll_clone_upon(address, minaddress);
-                        llll_clone_upon(address, maxaddress);
+                        if (address) {
+                            llll_clone_upon(address, minaddress);
+                            llll_clone_upon(address, maxaddress);
+                        }
                     } else {
-                        if (llll_lt_hatom(&elem->l_hatom, *min)) {
+                        if (min && llll_lt_hatom(&elem->l_hatom, *min)) {
                             *min = &elem->l_hatom;
                             mintype = elem_type;
                             min_changed = 1;
-                            llll_clear(minaddress);
-                            llll_clone_upon(address, minaddress);
+                            if (address) {
+                                llll_clear(minaddress);
+                                llll_clone_upon(address, minaddress);
+                            }
                         }
-                        if (!min_changed && llll_gt_hatom(&elem->l_hatom, *max)) {
+                        if (max && !min_changed && llll_gt_hatom(&elem->l_hatom, *max)) {
                             *max = &elem->l_hatom;
                             maxtype = elem_type;
-                            llll_clear(maxaddress);
-                            llll_clone_upon(address, maxaddress);
+                            if (address) {
+                                llll_clear(maxaddress);
+                                llll_clone_upon(address, maxaddress);
+                            }
                         }
                     }
                 }
-                address->l_tail->l_hatom.h_w.w_long++;
+                if (address)
+                    address->l_tail->l_hatom.h_w.w_long++;
                 elem = elem->l_next;
             }
         }
         if (depth <= 1)
             break;
         elem = (t_llllelem *) llll_stack_pop(stack);
-        llll_destroyelem(address->l_tail);
-        address->l_tail->l_hatom.h_w.w_long++;
+        if (address) {
+            llll_destroyelem(address->l_tail);
+            address->l_tail->l_hatom.h_w.w_long++;
+        }
         depth--;
         deepenough = elem && ((mindepth > 0 && depth >= mindepth) || (elem->l_parent->l_depth <= -mindepth));
     }
@@ -3783,6 +3796,92 @@ t_max_err llll_sum(t_llll *ll, t_hatom *sum, t_int32 mindepth, t_int32 maxdepth)
     return MAX_ERR_NONE;
 }
 
+void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
+{
+    switch (prod->h_type) {
+        case H_LONG:
+            switch (a->h_type) {
+                case H_LONG:
+                    prod->h_w.w_long *= a->h_w.w_long;
+                    break;
+                case H_RAT:
+                    hatom_setrational(prod, rat_long_prod(a->h_w.w_rat, prod->h_w.w_long));
+                    break;
+                case H_DOUBLE:
+                    hatom_setdouble(prod, prod->h_w.w_long * a->h_w.w_double);
+                    break;
+                case H_PITCH:
+                    prod->h_w.w_long *= t_atom_long(a->h_w.w_pitch.toMC());
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case H_RAT:
+            switch (a->h_type) {
+                case H_LONG:
+                    prod->h_w.w_rat = rat_long_prod(prod->h_w.w_rat, a->h_w.w_long);
+                    break;
+                case H_RAT:
+                    prod->h_w.w_rat *= a->h_w.w_rat;
+                    break;
+                case H_DOUBLE:
+                    hatom_setdouble(prod, hatom_getdouble(prod) * a->h_w.w_double);
+                    break;
+                case H_PITCH:
+                    prod->h_w.w_rat *= a->h_w.w_pitch.toMC();
+                default:
+                    break;
+            }
+            break;
+        case H_DOUBLE:
+            switch (a->h_type) {
+                case H_LONG:
+                    prod->h_w.w_double *= a->h_w.w_long;
+                    break;
+                case H_RAT:
+                    prod->h_w.w_double *= hatom_getdouble(a);
+                    break;
+                case H_DOUBLE:
+                    prod->h_w.w_double *= a->h_w.w_double;
+                    break;
+                case H_PITCH:
+                    prod->h_w.w_double *= double(a->h_w.w_pitch.toMC());
+                default:
+                    break;
+            }
+            break;
+        case H_PITCH:
+            switch (a->h_type) {
+                case H_LONG:
+                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    break;
+                case H_RAT:
+                    hatom_setrational(prod, a->h_w.w_rat * prod->h_w.w_pitch.toMC());
+                    break;
+                case H_DOUBLE:
+                    hatom_setdouble(prod, a->h_w.w_double * double(prod->h_w.w_pitch.toMC()));
+                    break;
+                case H_PITCH:
+//                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    hatom_setdouble(prod, double(a->h_w.w_pitch.toMC()) * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    break;
+            }
+        default:
+            break;
+    }
+}
+
+
+t_max_err llll_prod(t_llll *ll, t_hatom *prod, t_int32 mindepth, t_int32 maxdepth)
+{
+    if (!ll || !prod)
+        return MAX_ERR_GENERIC;
+    hatom_setlong(prod, 1);
+    llll_funall(ll, (fun_fn) llll_prod_one, prod, mindepth, maxdepth, 0);
+    pedantic_llll_check(ll);
+    return MAX_ERR_NONE;
+}
 
 
 /*
@@ -8810,10 +8909,17 @@ t_bool llll_istrue(const t_llll *ll)
     }
 }
 
-t_llll *get_num_ll(const t_atom_long n)
+t_llll *get_long_ll(const t_atom_long n)
 {
     t_llll *ll = llll_get();
     llll_appendlong(ll, n);
+    return ll;
+}
+
+t_llll *get_double_ll(const double d)
+{
+    t_llll *ll = llll_get();
+    llll_appenddouble(ll, d);
     return ll;
 }
 

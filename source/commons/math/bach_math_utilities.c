@@ -1,7 +1,7 @@
 /*
  *  bach_math_utilities.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -604,8 +604,83 @@ double random_double_in_range(double a, double b) {
     double diff = b - a;
     double r = random * diff;
     return a + r;
+}
+
+
+double mc2f(double mc, double basefreq, double basepitch)
+{
+    return basefreq * pow(2, (mc - basepitch) / 1200.);
+}
+
+double f2mc(double f, double basefreq, double basepitch)
+{
+    return basepitch + log2(f / basefreq) * 1200;
+}
+
+t_llll *llll_mc2f(t_llll *ll, double basefreq, double basepitch)
+{
+    t_llllelem **elempile = (t_llllelem**) bach_newptr(ll->l_depth * sizeof(t_llllelem*));
+    t_llll *res = llll_get();
+
+    t_llllelem *elem = ll->l_head;
     
+    while (1) {
+        while (elem) {
+            if (t_llll *subll = hatom_getllll(&elem->l_hatom) ; subll) {
+                *(elempile++) = elem->l_next;
+                ll = subll;
+                t_llll *subres = llll_get();
+                llll_appendllll(res, subres);
+                res = subres;
+                elem = subll->l_head;
+            } else {
+                double mc = hatom_getdouble(&elem->l_hatom);
+                double f = mc2f(mc, basefreq, basepitch);
+                llll_appenddouble(res, f);
+                elem = elem->l_next;
+            }
+        }
+        if (!res->l_owner)
+            break;
+        res = res->l_owner->l_parent;
+        elem = *(--elempile);
+    }
     
+    bach_freeptr(elempile);
+    return res;
+}
+
+t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch)
+{
+    t_llllelem **elempile = (t_llllelem**) bach_newptr(ll->l_depth * sizeof(t_llllelem*));
+    t_llll *res = llll_get();
+    
+    t_llllelem *elem = ll->l_head;
+    
+    while (1) {
+        while (elem) {
+            if (t_llll *subll = hatom_getllll(&elem->l_hatom) ; subll) {
+                *(elempile++) = elem->l_next;
+                ll = subll;
+                t_llll *subres = llll_get();
+                llll_appendllll(res, subres);
+                res = subres;
+                elem = subll->l_head;
+            } else {
+                double f = hatom_getdouble(&elem->l_hatom);
+                double mc = f2mc(f, basefreq, basepitch);
+                llll_appenddouble(res, mc);
+                elem = elem->l_next;
+            }
+        }
+        if (!res->l_owner)
+            break;
+        res = res->l_owner->l_parent;
+        elem = *(--elempile);
+    }
+    
+    bach_freeptr(elempile);
+    return res;
 }
 
 t_lexpr_token get_times_operator(){

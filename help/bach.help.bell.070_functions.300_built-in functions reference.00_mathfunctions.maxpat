@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 1,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -74,7 +75,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 220.0, 116.0, 164.0, 239.0 ],
+					"patching_rect" : [ 256.0, 116.0, 164.0, 239.0 ],
 					"text" : "#>>\r#|\r#||\r#|||\rapprox (pitch, tonedivision)\ratan2\rbessel (x, order)\renharm\rfmod\rhypot\rmakepitchsc (steps, cents)\rmax\rmin\rmod\rpow (base, exponent)\rrandom",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -89,7 +90,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 173.0, 116.0, 33.0, 239.0 ],
+					"patching_rect" : [ 209.0, 116.0, 33.0, 239.0 ],
 					"text" : "#-\r#!=\r#*\r#/\r#//\r#&\r#&&\r#^\r#^^\r#+\r#<\r#<<\r#<=\r#==\r#>\r#>=",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -103,7 +104,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 173.0, 91.0, 105.0, 21.0 ],
+					"patching_rect" : [ 209.0, 91.0, 105.0, 21.0 ],
 					"text" : "Binary functions:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}

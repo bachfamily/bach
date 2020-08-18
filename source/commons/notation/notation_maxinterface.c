@@ -1,7 +1,7 @@
 /*
  *  notation_maxinterface.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -2025,14 +2025,20 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 		// <m>vzoom</m>). Defaults to 7.
 
 		CLASS_ATTR_DOUBLE(c, "durationlinewidth", 0, t_notation_obj, durations_line_width);
-		CLASS_ATTR_STYLE_LABEL(c,"durationlinewidth",0,"text","Width of the duration line");
+		CLASS_ATTR_STYLE_LABEL(c,"durationlinewidth",0,"text","Duration Line Width");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"durationlinewidth",0,"2.");
 		// @exclude bach.slot
 		// @description Sets the width of the duration lines (when displayed: see <m>showdurations</m>).
 		// In case the <m>showvelocity</m> attribute handles velocities via duration line width, this width is the maximum possible
 		// width (corresponding to a velocity of 127), and will be rescaled according to the note (or breakpoint) velocity.
 		// Defaults to 2.
-		
+
+        CLASS_ATTR_DOUBLE(c, "breakpointsize", 0, t_notation_obj, breakpoints_size);
+        CLASS_ATTR_STYLE_LABEL(c,"breakpointsize",0,"text","Pitch Breakpoint Size");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointsize",0,"3.");
+        // @exclude bach.slot
+        // @description Sets the size of diamond shaped breakpoints (when displayed: see <m>breakpointshavenoteheads</m>).
+        
 		CLASS_ATTR_CHAR(c,"nonantialiasedstafflines",0, t_notation_obj, force_non_antialiased_staff_lines);
 		CLASS_ATTR_STYLE_LABEL(c,"nonantialiasedstafflines",0,"onoff","Only Non-Antialiased Staff");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"nonantialiasedstafflines",0,"1");
@@ -2988,6 +2994,13 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Sets the font size of ruler labels (rescaled according to the <m>vzoom</m>). 
 		
+        CLASS_ATTR_SYM(c,"voicenamesfont", 0, t_notation_obj, voice_names_font);
+        CLASS_ATTR_STYLE_LABEL(c, "voicenamesfont", 0, "font", "Voice Names Font");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"voicenamesfont", 0, "Arial");
+        CLASS_ATTR_ACCESSORS(c, "voicenamesfont", (method)NULL, (method)notation_obj_setattr_voicenames_font);
+        // @exclude bach.slot
+        // @description Sets the font size of voice names
+
 		CLASS_ATTR_DOUBLE(c,"voicenamesfontsize",0, t_notation_obj, voice_names_font_size);
 		CLASS_ATTR_STYLE_LABEL(c,"voicenamesfontsize",0,"text","Voice Names Font Size");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"voicenamesfontsize", 0, "11");
@@ -2995,6 +3008,13 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Sets the font size of voice names (rescaled according to the <m>vzoom</m>). 
 		
+        CLASS_ATTR_SYM(c,"markersfont", 0, t_notation_obj, markers_font);
+        CLASS_ATTR_STYLE_LABEL(c, "markersfont", 0, "font", "Markers Font");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markersfont", 0, "Arial");
+        CLASS_ATTR_ACCESSORS(c, "markersfont", (method)NULL, (method)notation_obj_setattr_markers_font);
+        // @exclude bach.slot
+        // @description Sets the font size of markers
+
 		CLASS_ATTR_DOUBLE(c,"markersfontsize",0, t_notation_obj, markers_font_size);
 		CLASS_ATTR_STYLE_LABEL(c,"markersfontsize",0,"text","Markers Font Size");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markersfontsize", 0, "9");
@@ -3541,6 +3561,16 @@ t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *a
 	return MAX_ERR_NONE;
 }
 
+t_max_err notation_obj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && atom_gettype(av) == A_SYM)
+        r_ob->voice_names_font = atom_getsym(av);
+    recalculate_voicenames_width(r_ob);
+    update_hscrollbar(r_ob, 0);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
 t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
 	if (ac && is_atom_number(av))
 		r_ob->voice_names_font_size = atom_getfloat(av);
@@ -3550,7 +3580,21 @@ t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_obje
 	return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notation_obj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && atom_gettype(av) == A_SYM)
+        r_ob->markers_font = atom_getsym(av);
+    if (r_ob->firstmarker){
+        t_marker *marker;
+        for (marker = r_ob->firstmarker; marker; marker = marker->next)
+        recalculate_marker_name_uwidth(r_ob, marker);
+    }
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
+t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
 	if (ac && is_atom_number(av))
 		r_ob->markers_font_size = atom_getfloat(av);
 	if (r_ob->firstmarker){
@@ -4542,7 +4586,7 @@ void start_editing_voicename(t_notation_obj *r_ob, t_object *patcherview, t_voic
 	
 	object_attr_setlong(r_ob, gensym("fontface"), 0);
 	
-	jf_voice_names = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->voice_names_font_size * r_ob->zoom_y); 
+	jf_voice_names = jfont_create_debug(r_ob->voice_names_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->voice_names_font_size * r_ob->zoom_y);
 	get_names_as_text(voice->r_it.names, buf, 1000);
 	jfont_text_measure(jf_voice_names, buf, &text_width, &text_height);
 	
@@ -5222,6 +5266,19 @@ t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note
 }
 
 
+t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord){
+    t_chord *chord1 = chord_get_first_in_tieseq(chord);
+    t_chord *chord2 = chord_get_last_in_tieseq(chord);
+    t_chord *temp;
+    t_llll *out = llll_get();
+    for (temp = chord1; temp; temp = chord_get_next(temp)) {
+        llll_appendobj(out, temp);
+        if (temp == chord2)
+            break;
+    }
+    return out;
+}
+
 t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord){
 	t_chord *chord1 = chord_get_first_in_tieseq(chord);
 	t_chord *chord2 = chord_get_last_in_tieseq(chord);
@@ -5233,6 +5290,19 @@ t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_cho
 			break;
 	}
 	return out;
+}
+
+t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord){
+    t_chord *chord1 = rest_get_first_in_seq(chord, 0);
+    t_chord *chord2 = rest_get_last_in_seq(chord, 0);
+    t_chord *temp;
+    t_llll *out = llll_get();
+    for (temp = chord1; temp; temp = chord_get_next(temp)) {
+        llll_appendobj(out, temp);
+        if (temp == chord2)
+            break;
+    }
+    return out;
 }
 
 t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord){
@@ -5495,6 +5565,30 @@ t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, 
 	notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 	
 	return MAX_ERR_NONE;
+}
+
+t_llll *get_voicespacing_as_llll(t_notation_obj *r_ob, char prepend_router)
+{
+    t_llll *outlist = llll_get();
+    long v = 0;
+    if (prepend_router)
+        llll_appendsym(outlist, _llllobj_sym_voicespacing);
+    for (v = 0; v < r_ob->num_voices+1; v++) {
+        llll_appenddouble(outlist, r_ob->voiceuspacing_as_floatlist[v]);
+    }
+    return outlist;
+}
+
+t_llll *get_hidevoices_as_llll(t_notation_obj *r_ob, char prepend_router)
+{
+    t_llll *outlist = llll_get();
+    long v = 0;
+    if (prepend_router)
+        llll_appendsym(outlist, _llllobj_sym_hidevoices);
+    for (v = 0; v < r_ob->num_voices; v++) {
+        llll_appendlong(outlist, r_ob->hidevoices_as_charlist[v]);
+    }
+    return outlist;
 }
 
 
@@ -5908,21 +6002,23 @@ void notation_obj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long 
 
 void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut)
 {
-    if (clipboard->gathered_syntax)
-        llll_free(clipboard->gathered_syntax);
-    
-    // we copy the duration line
-    clipboard->gathered_syntax = note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL);
-    clipboard->type = k_DURATION_LINE;
-    clipboard->object = k_NOTATION_OBJECT_ANY;
-    
-    if (cut) { // cut
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
-            r_ob->whole_obj_undo_tick_function(r_ob);
-        else
-            create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_CHANGE);
-        note_delete_breakpoints(r_ob, note);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_DURATION_LINE);
+    if (note) {
+        if (clipboard->gathered_syntax)
+            llll_free(clipboard->gathered_syntax);
+        
+        // we copy the duration line
+        clipboard->gathered_syntax = note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL);
+        clipboard->type = k_DURATION_LINE;
+        clipboard->object = k_NOTATION_OBJECT_ANY;
+        
+        if (cut) { // cut
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
+                r_ob->whole_obj_undo_tick_function(r_ob);
+            else
+                create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_CHANGE);
+            note_delete_breakpoints(r_ob, note);
+            handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_DURATION_LINE);
+        }
     }
 }
 

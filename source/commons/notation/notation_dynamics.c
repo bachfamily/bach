@@ -1,7 +1,7 @@
 /*
  *  notation_dynamics.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -2301,7 +2301,7 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
             // sticky assignment of the left dynamics to the chord
             if (!dynamics_mark_to_velocity(r_ob, prev_mark, &velocity, dyn_vel_associations, params, -1)) {
                 for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
-                    nt->velocity = velocity;
+                    note_set_velocity(r_ob, nt, velocity);
                     if (r_ob->breakpoints_have_velocity) {
                         
                         if (bptmode >= 1 && dynamics_has_internal_relativeposition(left_dyn)) {
@@ -2416,7 +2416,7 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                     if (last_hairpin * (right_velocity - left_velocity) > 0) {
                         velocity = rescale_with_slope(CLAMP(ch_onset, left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                         for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
-                            nt->velocity = velocity;
+                            note_set_velocity(r_ob, nt, velocity);
                             if (r_ob->breakpoints_have_velocity) {
                                 for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next) {
                                     if (!bpt->prev)
@@ -2448,7 +2448,7 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
         } else if (prev_mark) {
             if (!dynamics_mark_to_velocity(r_ob, prev_mark, &velocity, dyn_vel_associations, params, 1)) {
                 for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
-                    nt->velocity = velocity;
+                    note_set_velocity(r_ob, nt, velocity);
                     if (r_ob->breakpoints_have_velocity) {
                         for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next)
                             bpt->velocity = velocity;

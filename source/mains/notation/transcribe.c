@@ -1,7 +1,7 @@
 /*
  *  transcribe.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -119,6 +119,7 @@ typedef struct _transcribe
 	void				*n_proxy[2];
 	long				n_in;
 
+    long    n_verbose;
     t_systhread_mutex	n_mutex;
 
 } t_transcribe;
@@ -251,7 +252,10 @@ void C74_EXPORT ext_main(void *moduleRef)
     // a more accurate retrieval. Defaults to 0 (off).
 
     
-
+    CLASS_ATTR_LONG(c, "verbose", 0, t_transcribe, n_verbose);
+    CLASS_ATTR_STYLE_LABEL(c,"verbose",0,"onoff","Post Warnings");
+    // @description Toggles the ability to post warning signs for incoming data
+    
 	class_register(CLASS_BOX, c);
 	transcribe_class = c;
 	
@@ -769,7 +773,8 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                         transcribe_send_inscreenpos(x, t);
                     } else {
                         systhread_mutex_unlock(x->n_mutex);
-                        object_warn((t_object *)x, "Unmatched note-off!");
+                        if (x->n_verbose)
+                            object_warn((t_object *)x, "Unmatched note-off!");
                     }
                 }
             }
@@ -843,6 +848,7 @@ t_transcribe *transcribe_new(t_symbol *s, short ac, t_atom *av)
         x->n_use_names = 0;
         x->n_use_Max_logical_time = 0;
         x->n_active_notes = llll_get();
+        x->n_verbose = true;
         
         for (long i = 0; i <= CONST_MAX_VOICES; i++)
             x->n_active_slotitems[i] = (t_hatom *)bach_newptr(CONST_MAX_SLOTS * sizeof(t_hatom));

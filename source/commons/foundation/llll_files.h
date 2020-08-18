@@ -1,7 +1,7 @@
 /*
  *  llll_files.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
 #define _LLLL_FILES_H_
 
 #include "foundation/llllobj.h"
+#include <string>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE
@@ -73,6 +74,18 @@ t_max_err bach_write_dictionary(t_symbol *filename_sym, const char *default_file
 // if *s is not empty and has no specified extension, add .<ext> to it - that is, s will point to a new symbol
 // return 1 if *s has changed, 0 if not
 long bach_fix_filename_extension(t_symbol **s, const char *ext);
+
+
+char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type, long style = PATH_STYLE_MAX, long type = PATH_TYPE_BOOT);
+
+
+std::string bach_get_cache_path(void);
+std::string bach_get_user_folder_path(void);
+std::string bach_get_package_path(void);
+
+#ifdef WIN_VERSION
+std::string bach_get_win_appdata_path(void);
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE

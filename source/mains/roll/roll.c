@@ -1,7 +1,7 @@
 /*
  *  roll.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -916,7 +916,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *out_durations = llll_get();
     t_llll *out_velocities = llll_get();
     t_llll *out_ties = llll_get();
-    t_llll *out_graphic = llll_get();
+//    t_llll *out_graphic = llll_get();
     t_llll *out_breakpoints = llll_get();
     t_llll *out_slots = llll_get();
     t_llll *out_extras = llll_get();
@@ -928,7 +928,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_chord *chord;
     t_rollvoice *voice;
     
-    llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
+//    llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
     llll_appendsym(out_breakpoints, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
     llll_appendsym(out_slots, _llllobj_sym_slots, 0, WHITENULL_llll);
     
@@ -1019,7 +1019,8 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             active_until_elem = active_until->l_head;
             while (active_cents_elem && active_velocities_elem && active_until_elem && active_graphic_elem && active_slots_elem && active_IDs_elem) {
                 double end_of_this_event = hatom_getdouble(&active_until_elem->l_hatom);
-                llll_appenddouble(this_event_cents, hatom_getdouble(&active_cents_elem->l_hatom), 0, WHITENULL_llll);
+//                llll_appenddouble(this_event_cents, hatom_getdouble(&active_cents_elem->l_hatom), 0, WHITENULL_llll);
+                llll_appendhatom_clone(this_event_cents, &active_cents_elem->l_hatom);
                 llll_appendlong(this_event_velocities, hatom_getdouble(&active_velocities_elem->l_hatom), 0, WHITENULL_llll);
                 llll_appendhatom_clone(this_event_graphic, &active_graphic_elem->l_hatom, 0, WHITENULL_llll);
                 llll_appendllll(this_event_breakpoints, llll_get(), 0, WHITENULL_llll);
@@ -1047,7 +1048,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     active_slots_elem = temp5;
                     active_IDs_elem = temp6;
                 } else {
-                    llll_appendlong(this_event_ties, 1, 0, WHITENULL_llll);
+                    llll_appendlong(this_event_ties, hatom_getlong(&active_IDs_elem->l_hatom), 0, WHITENULL_llll);
                     active_cents_elem = active_cents_elem->l_next;
                     active_velocities_elem = active_velocities_elem->l_next;
                     active_slots_elem = active_slots_elem->l_next;
@@ -1059,7 +1060,10 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             tmp_chord = chord;
             while (tmp_chord) {
                 for (note = tmp_chord->firstnote; note; note = note->next){
-                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
+                    t_hatom h;
+                    note_get_poc((t_notation_obj *)x, note, &h);
+                    llll_appendhatom_clone(this_event_cents, &h);
+//                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
                     llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
                     llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
                     llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
@@ -1068,7 +1072,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     if (tmp_chord->onset + note->duration == next_onset) {
                         llll_appendlong(this_event_ties, 0, 0, WHITENULL_llll);
                     } else {
-                        llll_appendlong(this_event_ties, 1, 0, WHITENULL_llll);
+                        llll_appendlong(this_event_ties, note->r_it.ID, 0, WHITENULL_llll);
                         // we put the note into the active list
                         llll_appenddouble(active_cents, note->midicents, 0, WHITENULL_llll);
                         llll_appendlong(active_velocities, note->velocity, 0, WHITENULL_llll);
@@ -1166,7 +1170,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         active_slots_elem = temp5;
                         active_IDs_elem = temp6;
                     } else {
-                        llll_appendlong(this_middle_event_ties, 1, 0, WHITENULL_llll);
+                        llll_appendlong(this_middle_event_ties, hatom_getlong(&active_IDs_elem->l_hatom), 0, WHITENULL_llll);
                         active_cents_elem = active_cents_elem->l_next;
                         active_velocities_elem = active_velocities_elem->l_next;
                         active_graphic_elem = active_graphic_elem->l_next;
@@ -1218,7 +1222,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         llll_appendllll(out_durations, out_voice_durations, 0, WHITENULL_llll);
         llll_appendllll(out_velocities, out_voice_velocities, 0, WHITENULL_llll);
         llll_appendllll(out_ties, out_voice_ties, 0, WHITENULL_llll);
-        llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
+//        llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
         llll_appendllll(out_breakpoints, out_voice_breakpoints, 0, WHITENULL_llll);
         llll_appendllll(out_slots, out_voice_slots, 0, WHITENULL_llll);
         llll_appendllll(out_IDs, out_voice_IDs, 0, WHITENULL_llll);
@@ -1232,7 +1236,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     }
     
     // building extras
-    llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);    
+//    llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);
     llll_appendllll(out_extras, out_breakpoints, 0, WHITENULL_llll);    
     llll_appendllll(out_extras, out_slots, 0, WHITENULL_llll);    
     
@@ -1795,13 +1799,13 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             t_chord *to_select;
             lock_general_mutex((t_notation_obj *)x);
             if (selectllll->l_depth == 1) {
-                if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
+                if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next, 0, 0, 0)))
                     add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
             } else {
                 t_llllelem *elem;
                 for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
                     if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                        if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
+                        if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
                             add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
             }
             move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
@@ -1879,7 +1883,9 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             
         // (un)sel(ect) all markers
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
-            select_all_markers((t_notation_obj *)x, mode);
+            t_symbol *role_sym = NULL;
+            llll_parseattrs((t_object *)x, selectllll, false, "s", _llllobj_sym_role, &role_sym);
+            select_all_markers((t_notation_obj *) x, mode, role_sym && role_sym != _llllobj_sym_all ? sym_to_marker_role(role_sym) : -1);
 
         // (un)sel(ect) all notes
         } else if (head_type == H_SYM && (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_notes || hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_chords)) {
@@ -1936,13 +1942,13 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             t_note *to_select;
             lock_general_mutex((t_notation_obj *)x);
             if (selectllll->l_depth == 1) {
-                if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next)))
+                if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next, 0, 0, 0)))
                     notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
             } else {
                 t_llllelem *elem;
                 for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
                     if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                        if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
+                        if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
                             notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
             }
             move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
@@ -3898,7 +3904,6 @@ void roll_inscreen(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     }
 }
 
-
 void roll_inscreenpos(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     if (argc >= 2) {
         double screenpos = atom_getfloat(argv);
@@ -4723,7 +4728,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example inscreen john @caption display element named 'john' in domain
     // @example inscreen cursor @caption display playhead the domain
     // @example inscreen end @caption display end of roll the domain
-    // @seealso inscreenpos
+    // @seealso inscreenpos, scroll
     class_addmethod(c, (method) roll_inscreen, "inscreen", A_GIMME, 0);
 
 
@@ -4738,8 +4743,22 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example inscreenpos 0.9 john @caption display element named 'john' at 90% of the domain
     // @example inscreenpos 0.9 cursor @caption display playhead at 90% of the domain
     // @example inscreenpos 0.9 end @caption display end of roll at 90% of the domain
-    // @seealso inscreen
+    // @seealso inscreen, scroll
     class_addmethod(c, (method) roll_inscreenpos, "inscreenpos", A_GIMME, 0);
+
+    
+    // @method scroll @digest Scroll the object horizontally or vertically
+    // @description The message <m>scroll</m> moves the portion of displayed object either horizontally or vertically,
+    // in a similar way of moving horizontal or vertical scrollbars.
+    // @marg 0 @name amount @optional 0 @type float
+    // @mattr direction @type symbol @default horizontal @digest Scrolling direction
+    // @mattr unit @type symbol @default pixel @digest Amount unit ("pixel", "normalizedpixel" or "relative")
+    // @mattr delta @type int @default 0 @digest Scroll amount is relative
+    // @example scroll vertical 10 @caption scroll 10 pixels vertically
+    // @example scroll vertical 0.5 @unit relative @caption scroll vertically in the center
+    // @example scroll horizontal 0.5 @unit relative @caption the same, horizontally
+    // @seealso inscreenpos, inscreen
+    class_addmethod(c, (method) notationobj_scroll_from_gimme, "scroll", A_GIMME, 0);
 
 
     // @method clock @digest Select a clock source
@@ -4796,7 +4815,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     // Other selection modes are possible: <br />
     // - If the word <m>sel</m> is followed by the symbol <b>all</b>, all notes, chords and markers are selected. <br />
     // - If the word <m>sel</m> is followed by a category plural symbol, all the corresponding elements are selected.
-    // Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>breakpoints</b>, <b>tails</b>, <b>voices</b>. <br />
+    // Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>breakpoints</b>, <b>tails</b>, <b>voices</b>.
+    // In case of markers, an additional "role" message attribute specify a specific role for markers to be selected (defaulting to "all", i.e.
+    // all marker will be selected, regardless of their role). <br />
     // - If the word <m>sel</m> is followed by the symbol <b>voice</b> followed by one or more integers, the corresponding voices are selected
     // (negative numbers count from the last voice). <br />
     // - If the word <m>sel</m> is followed by the symbol <b>chord</b> followed by one or two integers (representing an address), a certain chord is selected.
@@ -4823,9 +4844,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     // - If the word <m>sel</m> is followed by any other symbol or sequence of symbols, these are interpreted as names, and the notation items
     // matching all these names (or a single name, if just one symbol is entered) are selected. <br />
     // @marg 0 @name arguments @optional 0 @type llll
+    // @mattr role @type symbol @default all @digest Role for markers to be selected
     // @example sel all @caption select everything
     // @example sel chords @caption select all chords
     // @example sel markers @caption select all markers
+    // @example sel markers @role none @caption select all markers that have no role
+    // @example sel markers @role barline @caption select all markers with barline role
     // @example sel breakpoints @caption select all breakpoints
     // @example sel tails @caption select all tails
     // @example sel chord 3 @caption select 3rd chord (of 1st voice)
@@ -6196,13 +6220,17 @@ void C74_EXPORT ext_main(void *moduleRef){
     // * <b>markmeasures</b> and <b>markdivisions</b>: if non-0, a special "barline" or "division" marker will be added for each measure/division
     // in the MIDI file, according to the current time signature (this is especially recommended if you need to later quantize the <o>bach.roll</o> content) <br />
     // * <b>importbarlines</b> (default: 1): all the MIDI markers named "bach barline" are imported as barline markers.
-    // In general, importbarlines and markmeasure should not be on at the same time. <br />
+    // * <b>importdivisions</b> (default: 1): all the MIDI markers named "bach division" are imported as division markers.
+    // * <b>importsubdivisions</b> (default: 1): all the MIDI markers named "bach subdivision" are imported as subdivision markers.
+    // If importbarlines and markmeasures are on at the same time, and barline markers are present, markmeasures is ignored. <br />
+    // If importdivision and markdivisions are on at the same time, and division markers are present, markdivisions is ignored. <br />
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr tracks2voices @type int @default 1 if the MIDI file format is 1, else 0 @digest For MIDI files, if non-zero, each MIDI track will be converted into a separate voice (default: )
     // @mattr chans2voices @type int @default 0 if the MIDI file format is 1, else 1 @digest For MIDI files, if non-zero, each MIDI channel will be converted into a separate voice
-    // @mattr markmeasures @type int @default 1 @digest For MIDI files, if non-zero, adds barline markers
-    // @mattr markdivisions @type int @default 0 @digest For MIDI files, if non-zero, adds divisions markers
-    // @mattr importbarlines @type int @default 1 @digest For MIDI files, if non-zero MIDI markers named "bach barline" are imported as barline markers
+    // @mattr markmeasures @type int @default 1 @digest For MIDI files, if non-zero, adds barline markers. Ignored if <m>importbarlines</m> is on and barline markers are actually imported.
+    // @mattr markdivisions @type int @default 0 @digest For MIDI files, if non-zero, adds divisions markers. Ignored if <m>importdivisions</m> is on and division markers are actually imported.
+    // @mattr importbarlines @type int @default 1 @digest For MIDI files, if non-zero, MIDI markers named "bach barline" are imported as barline markers
+    // @mattr importdivisions @type int @default 1 @digest For MIDI files, if non-zero, MIDI markers named "bach division" are imported as division markers
     // @example read @caption open file via dialog box
     // @example read rollexample.txt @caption open specific bach text file
     // @example read goldberg3.mid @markmeasures 1 @caption open MIDI file and convert barlines to markers
@@ -6258,9 +6286,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // - <b>format</b> (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks). <br />
     // – <b>resolution</b> (default: 960): the number of MIDI ticks per beat. <br />
     // - <b>exportbarlines</b> (default: 1): the barline markers are exported as MIDI marker events, with the name "bach barline". <br />
+    // - <b>exportdivisions</b> (default: 1): the division markers are exported as MIDI marker events, with the name "bach division". <br />
+    // - <b>exportsubdivisions</b> (default: 1): the subdivision markers are exported as MIDI marker events, with the name "bach subdivision". <br />
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr exportmarkers @type int @default 1 @digest If non-zero, exports all the markers
     // @mattr exportbarlines @type int @default 1 @digest Barline markers are exported as MIDI marker events, with the name "bach barline"
+    // @mattr exportdivisions @type int @default 1 @digest Division markers are exported as MIDI marker events, with the name "bach division"
+    // @mattr exportsubdivisions @type int @default 1 @digest Subdivision markers are exported as MIDI marker events, with the name "bach subdivision"
     // @mattr voices @type llll @default null @digest Numbers of voices to be exported (<b>null</b> means: all voices)
     // @mattr format @type int @default 1 @digest MIDI file format (0 = single track, 1 = multiple tracks)
     // @mattr resolution @type int @default 960 @digest Number of MIDI ticks per beat
@@ -6596,7 +6628,6 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_ACCESSORS(c, "annotationsfont", (method)NULL, (method)notation_obj_setattr_annotations_font);
     // @description @copy BACH_DOC_ANNOTATIONS_FONT
 
-    
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
     
@@ -8477,7 +8508,7 @@ void set_voice_velocities_values_from_llll(t_roll *x, t_llll* velocities, t_roll
                         if ((subtype == H_LONG) || (subtype == H_DOUBLE) || (subtype == H_RAT)) {
                             long velocity = CLAMP(hatom_getlong(&subelem->l_hatom), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
                             if (note){ // there's already a note: we change its cents
-                                note->velocity = velocity;
+                                note_set_velocity((t_notation_obj *)x, note, velocity);
                                 note = note->next;
                             } else { // we create a note within the same chord!
                                 t_note *this_nt;
@@ -8516,7 +8547,7 @@ void set_voice_velocities_values_from_llll(t_roll *x, t_llll* velocities, t_roll
             if (chord) { // there's already a chord: we change all its cents
                 t_note *note = chord->firstnote;
                 while (note) {
-                    note->velocity = velocity;
+                    note_set_velocity((t_notation_obj *)x, note, velocity);
                     note = note->next;
                 }
                 chord = chord->next;
@@ -8539,7 +8570,7 @@ void set_voice_velocities_values_from_llll(t_roll *x, t_llll* velocities, t_roll
         t_note *nt;
         if (chord->prev && chord->prev->firstnote)
             for (nt = chord->firstnote; nt; nt = nt->next)
-                nt->velocity = chord->prev->firstnote->velocity;
+                note_set_velocity((t_notation_obj *)x, nt, chord->prev->firstnote->velocity);
     }
 
     //    check_chords_order_for_voice(x, voice); // NO MORE NEEDED HERE
@@ -9141,7 +9172,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                                 
                                 // updating velocity 
                                 if (velocity > 0)
-                                    foundnt->velocity = CLAMP(((foundnt->velocity * foundnt->duration) + (velocity * duration))/(foundnt->duration + duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
+                                    note_set_velocity((t_notation_obj *)x, foundnt, CLAMP(((foundnt->velocity * foundnt->duration) + (velocity * duration))/(foundnt->duration + duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY));
                                 
                                 // updating duration
                                 foundnt->duration = onset + duration - foundnt->parent->onset; //update duration
@@ -9232,7 +9263,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                                     
                                     // updating velocity
                                     if (this_velocity > 0)
-                                        temp->velocity = CLAMP(((temp->velocity * temp->duration) + (this_velocity * this_duration))/(temp->duration + this_duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
+                                        note_set_velocity((t_notation_obj *)x, temp, CLAMP(((temp->velocity * temp->duration) + (this_velocity * this_duration))/(temp->duration + this_duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY));
 
                                     // updating duration
                                     temp->duration = final_duration;
@@ -9433,6 +9464,14 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
                             llll_destroyelem(pivot); 
                             if (firstllll && firstllll->l_head)
                                 set_clefs_from_llll(x, firstllll);
+                        } else if (pivotsym == _llllobj_sym_voicespacing) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                notationobj_set_voicespacing_from_llll((t_notation_obj *)x, firstllll);
+                        } else if (pivotsym == _llllobj_sym_hidevoices) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                notationobj_set_hidevoices_from_llll((t_notation_obj *)x, firstllll);
                         } else if (pivotsym == _llllobj_sym_keys) {
                             llll_destroyelem(pivot); 
                             if (firstllll && firstllll->l_head)
@@ -9969,7 +10008,13 @@ t_chord* addchord_from_notes(t_roll *x, long voicenumber, double onset, long unu
     
     // compute the approximation
     curr_nt = this_ch->firstnote;  
-    while(curr_nt) {
+    while (curr_nt) {
+        
+#ifdef BACH_NOTES_HAVE_ID
+        if (curr_nt->r_it.ID <= 0)
+            curr_nt->r_it.ID = shashtable_insert(x->r_ob.IDtable, curr_nt);
+#endif
+       
         curr_nt->parent = this_ch;
         curr_nt = curr_nt->next;
     }
@@ -10355,11 +10400,11 @@ char merge(t_roll *x, double threshold_ms, double threshold_cents, char gatherin
                         //  we change the pitch of the first note
                         if (gathering_policy_cents > 0) { // align to last pitch
                             note->midicents = last_pitch;
-                            note->velocity = last_velocity;
+                            note_set_velocity((t_notation_obj *)x, note, last_velocity);
                         }
                         else if (gathering_policy_cents == 0) { // align to average pitch
                             note->midicents = gathering_average_pitch;
-                            note->velocity = gathering_average_velocity;
+                            note_set_velocity((t_notation_obj *)x, note, gathering_average_velocity);
                         }
                         // else: nothing to do: it stays aligned to first pitch
                     }    
@@ -11140,7 +11185,7 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
     // markers, if any
     if (x->r_ob.show_markers && x->r_ob.firstmarker) {
         t_marker *marker;
-        t_jfont *jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
+        t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
 
         double playhead_y1, playhead_y2;
         get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
@@ -11190,7 +11235,7 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
     // markers, if any
     if (x->r_ob.show_markers && x->r_ob.firstmarker) {
         t_marker *marker;
-        t_jfont *jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
+        t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
         
         double playhead_y1, playhead_y2;
         get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
@@ -11296,7 +11341,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
 #ifdef BACH_PAINT_IDS
     char text[140];
     snprintf_zero(text, 140, "%ld", curr_ch->r_it.ID);
-    write_text(g, jf_text_markers, build_jrgba(0.3, 0, 0, 1), text, curr_ch->stem_x,
+    write_text(g, jf_text_smallbold, build_jrgba(0.3, 0, 0, 1), text, curr_ch->stem_x,
                staff_top_y - 40, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM, true, false);
 #endif
     
@@ -11338,9 +11383,25 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     
     double label_family_chord_shape_radius = CONST_LABEL_FAMILY_NOTE_STARTING_URADIUS * x->r_ob.zoom_y;
     
+    // we draw the ledger lines first
+    {
+        double ledger_lines_y[CONST_MAX_LEDGER_LINES];
+        for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) { // cycle on the notes
+            if (is_notehead_inscreen_for_painting(x, curr_nt)) {
+                int num_ledger_lines = 0; int i;
+                long scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
+                get_ledger_lines((t_notation_obj *) x, (t_voice *) voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
+                double note_x_real = stem_x + get_notehead_ux_shift((t_notation_obj *) x, curr_nt) * x->r_ob.zoom_y + curr_nt->notecenter_stem_delta_ux * x->r_ob.zoom_y;
+
+                for (i = 0; i < num_ledger_lines; i++)
+                    paint_line(g, x->r_ob.j_mainstaves_rgba, note_x_real - CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i],
+                               note_x_real + CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i], 1.);
+            }
+        }
+    }
+    
     // we draw the notes and the accidentals
     for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) { // cycle on the notes
-        // is the note IN the screen?
         if (is_notehead_inscreen_for_painting(x, curr_nt)) {
             
             // selection (or preselection):
@@ -11352,7 +11413,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             char is_note_played, is_note_locked, is_note_muted, is_note_solo;
             double note_y_real, note_x_real;
             double ledger_lines_y[CONST_MAX_LEDGER_LINES];
-            int num_ledger_lines; int i;
+            int num_ledger_lines = 0; int i;
             long scaleposition;
             double notehead_uwidth;
             double end_pos = onset_to_xposition_roll((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
@@ -11397,11 +11458,11 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             
             // draw ledger lines if needed
             scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
-            get_ledger_lines((t_notation_obj *) x, (t_voice *) voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
+/*            get_ledger_lines((t_notation_obj *) x, (t_voice *) voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
             for (i = 0; i < num_ledger_lines; i++)
                 paint_line(g, x->r_ob.j_mainstaves_rgba, note_x_real - CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i],
                            note_x_real + CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i], 1.);
-            
+            */
             
             //                            paint_line(g, build_jrgba(1, 0, 0, 0.5), chord_alignment_x, 0, chord_alignment_x, rect.height, 1.);
             //                            dev_post("note voice %ld; alignment_pt: %.2f, stem_x: %.2f, notehead_width: %.2f", voice->v_ob.number + 1,chord_alignment_x, stem_x, curr_nt->notehead_uwidth * x->r_ob.zoom_y);
@@ -11416,7 +11477,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             if (curr_nt->r_it.ID > 0) {
                 char text[140];
                 snprintf_zero(text, 140, "%ld", curr_nt->r_it.ID);
-                write_text(g, jf_text_markers, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + notehead_uwidth * x->r_ob.zoom_y,
+                write_text(g, jf_text_smallbold, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + notehead_uwidth * x->r_ob.zoom_y,
                            note_y_real, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             }
 #endif
@@ -11541,7 +11602,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             char is_lyrics_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->lyrics);
             t_jrgba lyrics_color = x->r_ob.j_lyrics_rgba;
             change_color_depending_on_playlockmute((t_notation_obj *) x, &lyrics_color, is_lyrics_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, false);
-            write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, lyrics_color, curr_ch->lyrics->label, pos_x, pos_y);
+            write_text_standard_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, lyrics_color, curr_ch->lyrics->label, pos_x, pos_y);
         }
         
         double ldx;
@@ -11558,13 +11619,13 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             
             if (num_dash_needed == 1) {
                 double x_module = (this_left_x - ldx - CONST_UX_MINIMUM_SPACE_FOR_DASH)/2;
-                write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", ldx + x_module, pos_y);
+                write_text_standard_account_for_vinset_singleline((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", ldx + x_module, pos_y);
             } else if (num_dash_needed > 1) {
                 long i;
                 double x_module = (this_left_x - ldx)/num_dash_needed;
                 for (i = 0; i < num_dash_needed; i++){
                     double this_x = ldx + x_module/2. + i * x_module;
-                    write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
+                    write_text_standard_account_for_vinset_singleline((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
                 }
             }
         }
@@ -11629,13 +11690,13 @@ void roll_paint_last_dashed_lines(t_roll *x, t_jgraphics *g, t_jfont *jf_lyrics,
         
         if (num_dash_needed == 1) {
             double x_module = (this_left_x - left_dashed_x)/2;
-            write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", left_dashed_x + x_module, pos_y);
+            write_text_standard_account_for_vinset_singleline((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", left_dashed_x + x_module, pos_y);
         } else if (num_dash_needed > 1) {
             long i;
             double x_module = (this_left_x - left_dashed_x)/num_dash_needed;
             for (i = 0; i < num_dash_needed; i++){
                 double this_x = left_dashed_x + x_module/2. + i * x_module;
-                write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
+                write_text_standard_account_for_vinset_singleline((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
             }
         }
     }
@@ -11721,7 +11782,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 #ifdef BACH_PAINT_IDS
             char text[20];
             snprintf_zero(text, 40, "%ld", voice->v_ob.r_it.ID);
-            write_text(g, jf_text_markers, build_jrgba(0, 0.3, 0, 1), text, x->r_ob.j_inset_x + 20 * x->r_ob.zoom_y, staff_top_y - 40, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM, true, false);
+            write_text(g, jf_text_smallbold, build_jrgba(0, 0.3, 0, 1), text, x->r_ob.j_inset_x + 20 * x->r_ob.zoom_y, staff_top_y - 40, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM, true, false);
 #endif
             
             // chords and notes!
@@ -11884,7 +11945,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
 #ifdef BACH_PAINT_IDS
                 char text[20];
                 snprintf_zero(text, 40, "%ld", voice->v_ob.r_it.ID);
-                write_text(g, jf_text_markers, build_jrgba(0, 0.3, 0, 1), text, x->r_ob.j_inset_x + 20 * x->r_ob.zoom_y, staff_top_y - 40, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM, true, false);
+                write_text(g, jf_text_smallbold, build_jrgba(0, 0.3, 0, 1), text, x->r_ob.j_inset_x + 20 * x->r_ob.zoom_y, staff_top_y - 40, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM, true, false);
 #endif
                 
                 // chords and notes!
@@ -11927,7 +11988,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
         t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer2"), rect.width, rect.height) : force_graphic_context;
         
         if (g) {
-            t_jfont *jf_voice_names = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y);
+            t_jfont *jf_voice_names = jfont_create_debug(x->r_ob.voice_names_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y);
             double system_jump = x->r_ob.system_jump;
             
             t_rollvoice *voice;
@@ -12123,7 +12184,7 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
     t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer2"), rect.width, rect.height) : force_graphic_context;
     
     if (g) {
-        t_jfont *jf_voice_names = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y); 
+        t_jfont *jf_voice_names = jfont_create_debug(x->r_ob.voice_names_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y);
         double system_jump = x->r_ob.system_jump;
         
         t_rollvoice *voice;
@@ -17351,7 +17412,9 @@ char change_selection_tail(t_roll *x, double delta_ms){
 */
 
 char align_selection_onsets(t_roll *x){
-//align all the onsets to the first onset
+    // align all the onsets to the first onset
+    // (it has to be like this in order for breakpoint alignment to work properly, otherwise one should
+    // take precautions of perhaps sorting in reversed order)
 
     // find leftmost onset
     t_rollvoice *voice;
@@ -17370,6 +17433,10 @@ char align_selection_onsets(t_roll *x){
         } else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next) { // it is a note tail
             double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
             if (leftmost_onset == -32000 || thisonset < leftmost_onset) 
+                leftmost_onset = thisonset;
+        } else if (curr_it->type == k_PITCH_BREAKPOINT && ((t_bpt *)curr_it)->next) { // it is an inner breakpoint
+            double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
+            if (leftmost_onset == -32000 || thisonset < leftmost_onset)
                 leftmost_onset = thisonset;
         }
         curr_it = curr_it->next_selected;
@@ -17397,6 +17464,13 @@ char align_selection_onsets(t_roll *x){
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)bpt->owner)) {
                 create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)bpt->owner->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
                 bpt->owner->duration = MAX(0, leftmost_onset - bpt->owner->parent->onset);
+                changed = 1;
+            }
+        } else if (curr_it->type == k_PITCH_BREAKPOINT && ((t_bpt *)curr_it)->next) { // it is breakpoint but not a note tail
+            t_bpt *bpt = (t_bpt *)curr_it;
+            if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)bpt->owner)) {
+                create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)bpt->owner->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
+                change_breakpoint_onset((t_notation_obj *)x, bpt, leftmost_onset);
                 changed = 1;
             }
         }
@@ -17441,6 +17515,10 @@ char equally_respace_selection_onsets(t_roll *x){
             llll_appendobj(onsets_and_chords[1], curr_it, 0, WHITENULL_llll);
             llll_appenddouble(onsets_and_chords[0], ((t_chord *)curr_it)->onset, 0, WHITENULL_llll);
             changed = true;
+        } else if (curr_it->type == k_PITCH_BREAKPOINT) { // it is a breakpoint
+            llll_appendobj(onsets_and_chords[1], curr_it, 0, WHITENULL_llll);
+            llll_appenddouble(onsets_and_chords[0], notation_item_get_onset_ms((t_notation_obj *)x, curr_it), 0, WHITENULL_llll);
+            changed = true;
         } else if (curr_it->type == k_MARKER) { // it is a marker
             llll_appendobj(onsets_and_chords[1], curr_it, 0, WHITENULL_llll);
             llll_appenddouble(onsets_and_chords[0], ((t_marker *)curr_it)->position_ms, 0, WHITENULL_llll);
@@ -17471,14 +17549,22 @@ char equally_respace_selection_onsets(t_roll *x){
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch)) {
                     create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
                     ch->onset = this_onset;
-                    ch->r_it.flags = (e_bach_internal_notation_flags) (ch->r_it.flags & ~k_FLAG_COUNT);
+//                    ch->r_it.flags = (e_bach_internal_notation_flags) (ch->r_it.flags & ~k_FLAG_COUNT);
+                }
+            } else if (item->type == k_PITCH_BREAKPOINT) {
+                t_bpt *bpt = (t_bpt *)item;
+                if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)bpt)) {
+                    t_chord *ch = bpt->owner->parent;
+                    create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
+                    change_breakpoint_onset((t_notation_obj *)x, bpt, this_onset);
+//                    ch->r_it.flags = (e_bach_internal_notation_flags) (ch->r_it.flags & ~k_FLAG_COUNT);
                 }
             } else if (item->type == k_MARKER) {
                 t_marker *mk = (t_marker *)item;
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)mk)) {
                     create_header_undo_tick((t_notation_obj *)x, k_HEADER_MARKERS);
                     mk->position_ms = this_onset;
-                    mk->r_it.flags = (e_bach_internal_notation_flags) (mk->r_it.flags & ~k_FLAG_COUNT);
+//                    mk->r_it.flags = (e_bach_internal_notation_flags) (mk->r_it.flags & ~k_FLAG_COUNT);
                 }
             }
         }
@@ -17520,7 +17606,7 @@ void select_all(t_roll *x){
         voice = voice->next;
     }
     lock_markers_mutex((t_notation_obj *)x);
-    select_all_markers((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT);
+    select_all_markers((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, -1);
     unlock_markers_mutex((t_notation_obj *)x);
     unlock_general_mutex((t_notation_obj *)x);
     handle_change_selection((t_notation_obj *)x);

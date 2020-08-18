@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 6,
+			"revision" : 5,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -46,7 +46,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 441.0, 578.0, 36.0 ],
+					"patching_rect" : [ 6.0, 441.0, 581.0, 36.0 ],
 					"text" : "—but if you follow the advice of using capitalized names, you don't have to remember any of those, and you're guaranteed that they won't be added to the list in the future.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -57,12 +57,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
-					"linecount" : 13,
+					"linecount" : 15,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 485.0, 83.0, 87.0, 195.0 ],
-					"text" : "sinh\nslice\nsort\rsqrt\rsubs\rsymdiff\rtan\rtanh\rthin\rtrans\rtrunc\runion\rwrap",
+					"patching_rect" : [ 485.0, 83.0, 87.0, 224.0 ],
+					"text" : "sin\nsinh\nslice\nsort\rsqrt\rsubs\nsum\rsymdiff\rtan\rtanh\rthin\rtrans\rtrunc\runion\rwrap",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -77,7 +77,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 385.0, 83.0, 81.0, 355.0 ],
-					"text" : "makepitchsc\nmap\nmax\rmin\rminmax\rmod\rnth\rnum\roctave\noutlet\rperm\rpitch\rpow\rprimeser\rrandom\rrat\rreduce\rrev\rright\rrot\rround\rscramble\rsgn\rsin",
+					"text" : "makepitchsc\nmap\nmax\rmin\rminmax\rmod\rnth\rnum\roctave\noutlet\rperm\rpitch\rpow\rprimeser\nprod\rrandom\rrat\rreduce\rrev\rright\rrot\rround\rscramble\rsgn",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

@@ -1,7 +1,7 @@
 /*
  *  conditional.cpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -25,7 +25,7 @@ t_llll *astLogNot::eval(t_execEnv const &context) {
     t_llll *v = n1->eval(context);
     res = !llll_istrue(v);
     bell_release_llll(v);
-    return get_num_ll(res);
+    return get_long_ll(res);
 }
 
 
@@ -43,7 +43,7 @@ t_bool astLogXor_core(t_llll *first, astNode *second, t_execEnv const &context)
 
 t_llll *astLogXor_run(t_llll *first, astNode *second, t_execEnv const &context)
 {
-    return get_num_ll(astLogXor_core(first, second, context));
+    return get_long_ll(astLogXor_core(first, second, context));
 }
 
 t_bool astLogXor_hatom(const t_hatom *first, astNode *second, t_execEnv const &context)
@@ -68,14 +68,16 @@ t_bool astSCOr_core(t_llll *first, astNode *second, t_execEnv const &context)
         if (llll_istrue(v2)) {
             llll_release(v2);
             return true;
-        } else
+        } else {
+            llll_release(v2);
             return false;
+        }
     }
 }
 
 t_llll* astSCOr_run(t_llll *first, astNode *second, t_execEnv const &context)
 {
-    return get_num_ll(astSCOr_core(first, second, context));
+    return get_long_ll(astSCOr_core(first, second, context));
 }
 
 t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv const &context)
@@ -87,8 +89,10 @@ t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv const &con
         if (llll_istrue(v2)) {
             llll_release(v2);
             return true;
-        } else
+        } else {
+            llll_release(v2);
             return false;
+        }
     }
 }
 
@@ -97,22 +101,24 @@ t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv const &con
 t_bool astSCAnd_core(t_llll *first, astNode *second, t_execEnv const &context)
 {
     if (!llll_istrue(first)) {
-        llll_release(first);
+        bell_release_llll(first);
         return false;
     } else {
         bell_release_llll(first);
         t_llll *v2 = second->eval(context);
         if (!llll_istrue(v2)) {
-            llll_release(v2);
+            bell_release_llll(v2);
             return false;
-        } else
+        } else {
+            bell_release_llll(v2);
             return true;
+        }
     }
 }
 
 t_llll *astSCAnd_run(t_llll *first, astNode *second, t_execEnv const &context)
 {
-    return get_num_ll(astSCAnd_core(first, second, context));
+    return get_long_ll(astSCAnd_core(first, second, context));
 }
 
 t_bool astSCAnd_hatom(const t_hatom *first, astNode *second, t_execEnv const &context)
@@ -124,8 +130,10 @@ t_bool astSCAnd_hatom(const t_hatom *first, astNode *second, t_execEnv const &co
         if (!llll_istrue(v2)) {
             llll_release(v2);
             return false;
-        } else
+        } else {
+            llll_release(v2);
             return true;
+        }
     }
 }
 

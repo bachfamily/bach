@@ -1,7 +1,7 @@
 /*
  *  playkeys.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -2331,7 +2331,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                                     hatom_setsym(&this_keys->specification, ts);
                                     
                                     long prop = symbol_to_property(ts);
-                                    if (prop == k_PLAYKEYS_ANNOTATION || prop == k_PLAYKEYS_NOTEHEAD || prop == k_PLAYKEYS_ARTICULATIONS || prop == k_PLAYKEYS_DYNAMICS || k_PLAYKEYS_LYRICS) {
+                                    if (prop == k_PLAYKEYS_ANNOTATION || prop == k_PLAYKEYS_NOTEHEAD || prop == k_PLAYKEYS_ARTICULATIONS || prop == k_PLAYKEYS_DYNAMICS || prop == k_PLAYKEYS_LYRICS) {
                                         this_keys->property = prop;
                                         this_keys->specification.h_type = H_NULL;
                                         this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);

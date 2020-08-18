@@ -99,6 +99,13 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "element", "repeat" ],
 				"title" : [ "Repeat operator" ]
 			},
+			"Symboloperators" : {
+				"filename" : [ "bach.help.bell.010_basics.107_symboloperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+llll", "concatenation" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "symbol", "concatenation", "times", "plus" ],
+				"title" : [ "Symbol operators" ]
+			},
 			"Print" : {
 				"filename" : [ "bach.help.bell.010_basics.110_print.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
@@ -161,7 +168,7 @@
 				"filename" : [ "bach.help.bell.020_conditionals.060_conditionalbooleans.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "if+then", "if+then+else" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "condition", "conditional", "true", "false", "zero", "null", "boolean", "logical", "and", "or", "short-circuit", "operator" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "condition", "conditional", "true", "false", "zero", "null", "boolean", "logical", "and", "or", "short-circuit", "operator", "default", "fallback", "hierarchy", "hierarchies" ],
 				"title" : [ "Conditional booleans" ]
 			}
 		},
@@ -349,7 +356,7 @@
 				"filename" : [ "bach.help.bell.060_functions.030_userdefinedfunctions.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "local+variable" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "name", "named", "position", "variable", "local" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "name", "named", "position", "variable", "local", "default", "argument" ],
 				"title" : [ "User-defined functions" ]
 			},
 			"Globalfunctionsandfunctionassignment" : {
@@ -591,6 +598,13 @@
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet", "directout", "direct", "out" ],
 					"title" : [ "directout() function reference" ]
 				},
+				"F2mc" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.f2mc.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "mc2f" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "midicents", "frequency", "conversion" ],
+					"title" : [ "f2mc() function reference" ]
+				},
 				"Find" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.find.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
@@ -675,10 +689,31 @@
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "map" ],
 					"title" : [ "map() function reference" ]
 				},
+				"Maximum" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.maximum.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "minmax", "minimum", "max" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "maximum" ],
+					"title" : [ "maximum() function reference" ]
+				},
+				"Mc2f" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.mc2f.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "f2mc" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "frequency", "midicents", "conversion" ],
+					"title" : [ "mc2f() function reference" ]
+				},
+				"Minimum" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.minimum.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "minmax", "maximum", "min" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "minimum" ],
+					"title" : [ "minimum() function reference" ]
+				},
 				"Minmax" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.minmax.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [ "nth", "colon" ],
+					"seealso" : [ "nth", "colon", "minimum", "maximum", "min", "max" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "minmax", "minimum", "maximum", "address" ],
 					"title" : [ "minmax() function reference" ]
 				},
@@ -716,6 +751,13 @@
 					"seealso" : [  ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
 					"title" : [ "print() function reference" ]
+				},
+				"Prod" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.prod.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "sum" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "prod", "product", "llll" ],
+					"title" : [ "prod() function reference" ]
 				},
 				"Reduce" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.reduce.maxpat" ],
@@ -772,6 +814,13 @@
 					"seealso" : [ "pick", "colon", "insert", "substitution+assignment", "nth" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "subs", "substitution", "address", "delete", "replace" ],
 					"title" : [ "subs() function reference" ]
+				},
+				"Sum" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.sum.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "prod" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "sum", "add", "llll", "summation" ],
+					"title" : [ "sum() function reference" ]
 				},
 				"Symdiff" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.symdiff.maxpat" ],
@@ -1236,7 +1285,7 @@
 				"filename" : [ "bach.help.notation.accidentals and microtones.20_accidentalsrepeat.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "cautionary+accidental" ],
-				"tags" : [ "accidental", "repeat", "hide", "repeating", "hiding", "show", "preference", "showaccidentalspreferences", "alter", "altered", "repetition", "natural", "never", "always", "classical", "show", "preference", "policy", "display" ],
+				"tags" : [ "accidental", "repeat", "hide", "repeating", "hiding", "show", "preference", "showaccidentalspreferences", "alter", "altered", "repetition", "natural", "never", "always", "classical", "show", "preference", "policy", "display", "cautionary", "caution", "decay", "accidentaldecay" ],
 				"title" : [ "Accidental display policy" ]
 			},
 			"Accidentalsandties" : {
@@ -1311,8 +1360,15 @@
 				"tags" : [ "appearance", "stem", "display", "better", "enhance", "enhancement", "enhancedstems", "neat", "neater", "clear", "alignment", "align" ],
 				"title" : [ "Stem enhancement" ]
 			},
-			"Clefs" : {
-				"filename" : [ "bach.help.notation.appearance.09_clefs.maxpat" ],
+			"A_breakpoints" : {
+				"filename" : [ "bach.help.notation.appearance.09a_breakpoints.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "breakpointshavevelocity", "showvelocity" ],
+				"tags" : [ "appearance", "breakpoint", "breakpointsize", "breakpointshavenoteheads", "breakpointshavevelocity", "showvelocity", "durationlinewidth", "size", "pitch", "velocity", "line", "glissando" ],
+				"title" : [ "Breakpoint appearance" ]
+			},
+			"B_clefs" : {
+				"filename" : [ "bach.help.notation.appearance.09b_clefs.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "clef" ],
 				"tags" : [ "appearance", "clef", "auxclef", "auxiliary", "clefcolor", "auxclefcolor", "showclefs", "showauxclefs" ],
@@ -1395,6 +1451,13 @@
 				"tags" : [ "appearance", "font", "change", "notationfont", "accidentalsfont", "notation", "accidental", "articulation", "articulationsfont" ],
 				"title" : [ "Change fonts" ]
 			},
+			"B_otherfonts" : {
+				"filename" : [ "bach.help.notation.appearance.20b_otherfonts.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "notationfont", "accidentalsfont" ],
+				"tags" : [ "appearance", "font", "annotationfontsize", "annotation", "annotationsfont", "articulationsfont", "bgslotfontsize", "background", "slot", "font", "dynamicsfontsize", "dynamicsexprfontsize", "legendfontsize", "legend", "dynamics", "size", "lyrics", "lyricsfont", "lyricsfontsize", "markersfontsize", "voicenames", "voice" ],
+				"title" : [ "Change other fonts" ]
+			},
 			"Supportedfonts" : {
 				"filename" : [ "bach.help.notation.appearance.21_supportedfonts.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -1409,8 +1472,15 @@
 				"tags" : [ "appearance", "tempo", "synchronous", "tempi", "showsynchronoustempionce", "show", "display" ],
 				"title" : [ "Synchronous tempi" ]
 			},
+			"Timesignatures" : {
+				"filename" : [ "bach.help.notation.appearance.23_timesignatures.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "tempo" ],
+				"tags" : [ "appearance", "time", "signature", "timesignature", "timesig", "big", "large", "display" ],
+				"title" : [ "Time signature display" ]
+			},
 			"Tiesdisplay" : {
-				"filename" : [ "bach.help.notation.appearance.23_tiesdisplay.maxpat" ],
+				"filename" : [ "bach.help.notation.appearance.24_tiesdisplay.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "change+pitch", "tie", "slot+tie" ],
 				"tags" : [ "appearance", "display single", "duration", "line", "span", "dlspansties", "dl", "tie", "edittiedelementstogether", "together", "sequence", "hide", "hidden" ],
@@ -2641,7 +2711,7 @@
 				"filename" : [ "bach.help.notation.markers.03_attachment.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "marker", "marker+syntax" ],
-				"tags" : [ "marker", "attach", "addmarker", "measure", "symbolic", "position", "absolute", "relative", "attachment" ],
+				"tags" : [ "marker", "attach", "addmarker", "measure", "symbolic", "position", "absolute", "relative", "attachment", "red", "blue" ],
 				"title" : [ "Marker attachment" ]
 			},
 			"Markersinterface" : {
@@ -2668,8 +2738,8 @@
 			"Selection" : {
 				"filename" : [ "bach.help.notation.markers.10_selection.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "selection", "timepoint", "autoclear", "inspector" ],
-				"tags" : [ "marker", "clearselection", "selection", "sel", "unsel", "select", "onset", "change" ],
+				"seealso" : [ "sel", "unsel", "subsel", "timepoint", "marker+role" ],
+				"tags" : [ "marker", "clearselection", "selection", "sel", "unsel", "select", "onset", "change", "subsel", "role", "timesig", "none", "barline", "tempo" ],
 				"title" : [ "Marker selection and onset change" ]
 			},
 			"Changename" : {
@@ -2926,7 +2996,7 @@
 					"filename" : [ "bach.help.notation.messages.20_selection.02_selectingallelements.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "unsel", "select" ],
-					"tags" : [ "message", "selection", "sel", "unsel", "select", "marker", "note", "chord", "content", "class", "element", "classes", "pitch", "breakpoint" ],
+					"tags" : [ "message", "selection", "sel", "unsel", "select", "marker", "note", "chord", "content", "class", "element", "classes", "pitch", "breakpoint", "multiple", "item", "all", "voice" ],
 					"title" : [ "Selecting classes of elements" ]
 				},
 				"Selectingregion" : {
@@ -2977,6 +3047,13 @@
 					"seealso" : [ "sel", "unsel", "select", "sel+voices" ],
 					"tags" : [ "message", "selection", "chord", "index", "position", "single", "path", "sel", "unsel", "select", "global", "measure", "measure-wise", "any" ],
 					"title" : [ "Selecting single chords" ]
+				},
+				"B_selectingsinglechordsoptions" : {
+					"filename" : [ "bach.help.notation.messages.20_selection.20b_selectingsinglechordsoptions.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "sel", "unsel", "select", "sel+voices" ],
+					"tags" : [ "message", "selection", "chord", "index", "position", "single", "path", "sel", "unsel", "select", "global", "measure", "measure-wise", "any", "tie", "rest", "sequence", "avoid", "count", "once", "option", "influence", "tiemode", "restseqmode", "skiprests", "skip" ],
+					"title" : [ "Ties and rests influence in chord selection" ]
 				},
 				"Selectingsinglenotes" : {
 					"filename" : [ "bach.help.notation.messages.20_selection.21_selectingsinglenotes.maxpat" ],
@@ -3629,6 +3706,13 @@
 				"tags" : [ "message", "measure", "parameter", "set", "setmeasureparameters" ],
 				"title" : [ "Setting measure parameters" ]
 			},
+			"Scroll" : {
+				"filename" : [ "bach.help.notation.messages.59_scroll.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "inscreenpos", "inscreen" ],
+				"tags" : [ "message", "example", "real-time", "real", "time", "scrollbar", "interaction", "horizontal", "scroll", "vertical", "delta", "unit", "direction", "move", "pixel", "normalizedpixel", "relative" ],
+				"title" : [ "Direct scrollbar interaction" ]
+			},
 			"Domain" : {
 				"filename" : [ "bach.help.notation.messages.60_domain.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -3646,14 +3730,14 @@
 			"Inscreen" : {
 				"filename" : [ "bach.help.notation.messages.62_inscreen.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [  ],
+				"seealso" : [ "scroll" ],
 				"tags" : [ "message", "inscreen", "display", "change", "inscreenpos", "screen", "window", "scrollbar", "domain" ],
-				"title" : [ "Scrollbar interaction" ]
+				"title" : [ "Scrollbar interaction with milliseconds" ]
 			},
 			"Inscreenforscore" : {
 				"filename" : [ "bach.help.notation.messages.63_inscreenforscore.maxpat" ],
 				"objects" : [ "bach.score" ],
-				"seealso" : [ "timepoint+syntax" ],
+				"seealso" : [ "timepoint+syntax", "scroll" ],
 				"tags" : [ "message", "inscreen", "timepoint", "display", "change", "inscreenpos", "screen", "window", "scrollbar", "domain" ],
 				"title" : [ "Scrollbar interaction with timepoints" ]
 			},
@@ -3689,7 +3773,7 @@
 				"filename" : [ "bach.help.notation.messages.68_realtime.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "undo", "legend", "highlightplay" ],
-				"tags" : [ "message", "realtime", "real", "time", "toggle", "mode", "cpu", "optimize" ],
+				"tags" : [ "message", "realtime", "real", "time", "toggle", "mode", "cpu", "optimize", "maxundosteps", "legend", "highlightplay", "highlight", "play", "undo", "step", "max" ],
 				"title" : [ "Toggle real-time mode" ]
 			},
 			"Collapse" : {
@@ -3730,9 +3814,23 @@
 			"Interp" : {
 				"filename" : [ "bach.help.notation.messages.86_interp.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "getcurrentchord", "interp+slot", "note+gathered+syntax", "temporal+slot" ],
+				"seealso" : [ "getcurrentchord", "interp+tempo", "interp+slot", "note+gathered+syntax", "temporal+slot" ],
 				"tags" : [ "message", "interp", "get", "chord", "note", "position", "instant", "interpolate", "generic", "moment" ],
 				"title" : [ "Retrieving notes at a generic instant" ]
+			},
+			"B_interptempo" : {
+				"filename" : [ "bach.help.notation.messages.86b_interptempo.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "interp", "tempo" ],
+				"tags" : [ "message", "interp", "get", "tempo", "position", "instant", "interpolate", "generic", "moment", "speed" ],
+				"title" : [ "Retrieving tempo at a generic instant" ]
+			},
+			"C_interptimesig" : {
+				"filename" : [ "bach.help.notation.messages.86c_interptimesig.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "interp", "tempo", "interp+tempo" ],
+				"tags" : [ "message", "interp", "get", "meter", "time", "signature", "timesig", "position", "instant", "interpolate", "generic", "moment" ],
+				"title" : [ "Retrieving time signature at a generic instant" ]
 			},
 			"Sample" : {
 				"filename" : [ "bach.help.notation.messages.87_sample.maxpat" ],
@@ -4486,7 +4584,7 @@
 					"filename" : [ "bach.help.notation.save and load.10_MIDI.11_midiimportandmeasures.maxpat" ],
 					"objects" : [ "bach.roll" ],
 					"seealso" : [ "marker+role", "midi+quantize", "export+midi", "exportbarlines", "midi+export" ],
-					"tags" : [ "data", "read", "midi", "import", "markmeasures", "file", "message", "importbarlines", "barline", "measure", "mark", "import", "barline", "markdivisions", "division" ],
+					"tags" : [ "data", "read", "midi", "import", "markmeasures", "file", "message", "importbarlines", "importdivisions", "importsubdivisions", "barline", "measure", "mark", "import", "barline", "markdivisions", "division", "subdivision" ],
 					"title" : [ "MIDI import and measure markers" ]
 				},
 				"Midiimportscore" : {
@@ -4500,7 +4598,7 @@
 					"filename" : [ "bach.help.notation.save and load.10_MIDI.13_midiexport.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "import+midi", "temporampsamplingrate" ],
-					"tags" : [ "data", "midi", "export", "exportmidi", "markers", "exportmarkers", "format", "resolution", "voices", "file" ],
+					"tags" : [ "data", "midi", "export", "exportmidi", "markers", "exportmarkers", "format", "resolution", "voices", "file", "exportbarlines", "exportdivisions" ],
 					"title" : [ "MIDI export" ]
 				},
 				"Midiexportandmeasures" : {
@@ -5836,11 +5934,18 @@
 					"title" : [ "Output header" ]
 				},
 				"Keysclefsnamesmidichannels" : {
-					"filename" : [ "bach.help.notation.syntax.50_header.10_keysclefsnamesmidichannels.maxpat" ],
+					"filename" : [ "bach.help.notation.syntax.50_header.09_keysclefsnamesmidichannels.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "gathered+syntax+whole", "syntax+header", "voice+clef", "voice+key+signature", "voice+name", "voice+midichannel" ],
 					"tags" : [ "header", "syntax", "clef", "key", "signature", "midi", "channel", "midichannel", "voice", "name", "voicename" ],
 					"title" : [ "Clefs, keys, voice names, MIDI channels" ]
+				},
+				"Voicespacinghidevoices" : {
+					"filename" : [ "bach.help.notation.syntax.50_header.10_voicespacinghidevoices.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "voicespacing", "hidevoices" ],
+					"tags" : [ "header", "syntax", "voice", "space", "spacing", "hide", "hidevoices", "voicespacing" ],
+					"title" : [ "Voice spacing, hide voices" ]
 				},
 				"Stafflines" : {
 					"filename" : [ "bach.help.notation.syntax.50_header.11_stafflines.maxpat" ],
@@ -6078,7 +6183,7 @@
 			"Autoclefs" : {
 				"filename" : [ "bach.help.notation.voice properties.04_autoclefs.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "numvoices", "voice", "clef+change" ],
+				"seealso" : [ "numvoices", "voice", "clef+change", "clef+auto+scope" ],
 				"tags" : [ "clef", "change", "modify", "automatic", "detect", "infer", "auto", "autoclef" ],
 				"title" : [ "Automatic clef detection" ]
 			},

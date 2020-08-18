@@ -1,7 +1,7 @@
 /*
  *  notation.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -276,7 +276,7 @@
 #define CONST_DEFAULT_ROLLVOICES_SPACING_UY 17        ///< Default vertical distance between two voices in [bach.roll]
 #define CONST_DEFAULT_SCOREVOICES_SPACING_UY 26        ///< Default vertical distance between two voices in [bach.score]
 
-#define CONST_BPT_UHEIGHT 6.                        ///< Unscaled height of a pitch breakpoint rhomboid 
+// #define CONST_BPT_UHEIGHT 3.                        ///< Unscaled height of a pitch breakpoint rhomboid 
 #define CONST_NOTETAIL_UWIDTH 2.                    ///< Unscaled width of a note tail
 
 #define CONST_USHIFT_TEMPI_LEFT 9                    ///< Unscaled additional left shift (in pixels) of the tempo writing box.
@@ -439,7 +439,7 @@
 #define CONST_X_MOUSEWHEEL_FACTOR 15                    ///< Factor for horizontal scrolling while using the mousewheel
 #define CONST_Y_MOUSEWHEEL_FACTOR 15                    ///< Factor for vertical scrolling while using the mousewheel
 
-#define CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE 1.5    ///< Unscaled tolerance (in pixels) around a barline, such that if one clicks at left or at right of the measure barline 
+#define CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE 2.5    ///< Unscaled tolerance (in pixels) around a barline, such that if one clicks at left or at right of the measure barline 
                                                         ///< by at most #CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE, the barline is still selected
 
 // articulations
@@ -690,6 +690,8 @@ typedef enum _header_elems {
     k_HEADER_NOTEHEADINFO = 2048,    ///< Custom noteheads information
     k_HEADER_NUMPARTS = 4096,        ///< Voice to part assignment information
     k_HEADER_LOOP = 8192,          ///< Loop position
+    k_HEADER_VOICESPACING = 16384,        ///< Voice spacing information
+    k_HEADER_HIDEVOICES = 32768,        ///< Voice hiding information
     k_HEADER_ALL = 0xFFFFFFFF,        ///< All the other #e_header_elems together
 } e_header_elems;
 
@@ -708,9 +710,6 @@ typedef enum _scheduling_type {
     k_SCHEDULING_OFFLINE = 1,      ///< Off-line play (no scheduling)
     k_SCHEDULING_PRESCHEDULE = 2      ///< Accurate online scheduling (but won't respond to modifications in the score, and loops and lambda won't work)
 } e_scheduling_type;
-
-
-
 
 
 
@@ -3061,6 +3060,7 @@ typedef struct _measure
     double            start_barline_offset_ux;    ///< Unscaled offset (in pixels) of the measure start barline with respect to the start pixel of the reference tuttipoint
     double            width_ux;                    ///< Unscaled width (in pixels) of the measure
     double            timesignature_uwidth;        ///< Unscaled width (in pixels) of the rectangle needed to write the time signature on the score 
+    double            timesignature_spacing_uwidth;///< Unscaled width of the spacing needed to paint the of the rectangle for the time signatures (coincides with <timesignature_uwidth> unless show_timesignature is set to 0 or 2).
 
     // spacing
     char            is_spacing_fixed;                        ///< Flag telling if the measure <width_ux> is fixed or floating. 
@@ -4304,6 +4304,7 @@ typedef struct _notation_obj
     char        show_durations;                ///< Flag telling if we want to show the duration-lines for the notes
     char        show_tails;                    ///< Flag telling if we want to display the note tails at the end of each notes (only works if #show_durations is set)
     double        durations_line_width;        ///< Width of the duration line in pixels
+    double      breakpoints_size;              ///< Breakpoints size (diamond shape)
     char        dl_spans_ties;              ///< Duration line spans a sequence of tied notes?
     char        velocity_handling;            ///< Parameter handling the way we display the velocity on screen. This must be one of #e_velocity_handling 
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
@@ -4425,6 +4426,7 @@ typedef struct _notation_obj
     char        show_voice_names;                    ///< Flag telling if we want to show the voice names (1) or not (0)
     double        voice_names_uwidth;                    ///< Unscaled width (in pixels) of the space needed to write the staff names at the beginning of the staff lines
     char        voice_names_alignment;                ///< Alignment type for the voice names: -1 = left, 0 = middle, 1 = right
+    t_symbol      *voice_names_font;                ///< Font used to write the voice names
     double        voice_names_font_size;                ///< Size in pt of the font used to write the voice names (for zoom_y = 1)
     char        there_are_voice_names;                ///< Flag telling if there are voice names to paint
 
@@ -4600,7 +4602,9 @@ typedef struct _notation_obj
     char        show_barlines;                            ///< Flag telling if we want to show barlines
     char        show_barline_locks;                        ///< Flag telling if we want to show the barline locks (appearing when barline width has been locked, fixed)
     char        draw_barlines_across_staves;            ///< Flag telling if we want to draw the barlines across all the staves, when possible
-    char        show_time_signatures;                    ///< Flag telline if we want to show the time signatures
+    double      barline_ushift_for_proportional_spacing;    ///< unscaled shift of barlines in proportional spacing display
+    char        show_time_signatures;                    ///< Flag telline if we want to show the time signatures (0 = hide, 1 = classically, 2 = above staff)
+    double      big_time_signatures_ratio;              ///< Expansion ratio for big time signatures
     long        measure_number_offset;                    ///< Offset for the measure numbering (by default: 0)
     e_show_accidentals_preferences   show_accidentals_preferences;            ///< Preferences for accidental handling. When do we want to show the accidentals.
     e_show_accidentals_tie_preferences        show_accidentals_tie_preferences;        ///< Flag telling when we want to show accidentals at the end of a tie.
@@ -4670,6 +4674,7 @@ typedef struct _notation_obj
     t_marker    *firstmarker;        ///< Pointer to the first marker in the score
     t_marker    *lastmarker;        ///< Pointer to the last marker in the score
     long        num_markers;        ///< Number of markers in the score
+    t_symbol      *markers_font;        ///< Font used to display marker text
     double        markers_font_size;    ///< Size in pt of the font for writing the marker names (for <zoom_y> = 1)
 
     
@@ -5018,6 +5023,8 @@ BEGIN_CHECK_LINKAGE
  */
 double onset_to_xposition_roll(t_notation_obj *r_ob, double onset, long *system); 
 
+// private
+double get_ux_left_start(t_notation_obj *r_ob);
 
 /**    Convert a x position in pixels into an onset in milliseconds (only usable by [bach.roll]) 
     @ingroup            conversions
@@ -5293,9 +5300,10 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode);
     @param r_ob                The notation object
     @param ux               The unscaled x position
     @param mode             If this is 1,  the position is computed only BEFORE the next barline.
+    @param accurate         If accurate is 1, then a slower but more accurate computation is used than the one based on the item fields
     @return                    The millisecond position
  */
-double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode);
+double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode, char accurate = false);
 
 
 /**    Convert an horizontal pixel position into a millisecond position.
@@ -5375,8 +5383,8 @@ t_timepoint ms_to_timepoint_autochoose_voice(t_notation_obj *r_ob, double ms, ch
 t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum);
 t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode);
 double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, char sample_all_voices, char zero_pim_is_first_chord);
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord);
-char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord);
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, char accurate = false);
+char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, char accurate = false);
 
 
 
@@ -7535,6 +7543,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
     @remark            This is used in calculate_chord_parameters().
 */ 
 void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note);
+double velocity_to_notesize_factor(long velocity);
 
 
 /**    Retrieve the y position of the ledger lines relative to a given scaleposition (see the <scaleposition> field in the #t_note structure). 
@@ -7875,6 +7884,10 @@ t_symbol *notation_item_get_role_for_lexpr(t_notation_obj *r_ob, t_notation_item
 
 // TBD
 t_notation_item *notation_item_cast(t_notation_obj *r_ob, t_notation_item *nitem, e_element_types new_type, char also_cast_downwards);
+t_chord *voice_get_first_chord(t_notation_obj *r_ob, t_voice *voice);
+t_chord *voice_get_last_chord(t_notation_obj *r_ob, t_voice *voice);
+t_tempo *voice_get_first_tempo(t_notation_obj *r_ob, t_voice *voice);
+t_marker *voice_get_first_marker(t_notation_obj *r_ob, t_voice *voice);
 
 
 /** Obtain a time signature in llll representation
@@ -8000,9 +8013,12 @@ t_timesignature build_3compound_timesignature(t_notation_obj *r_ob, long numerat
     @ingroup        notation
     @param    r_ob    The notation object
     @param    start_llllelem    The llllelem starting the path
+    @param    tiemode_all       Flag telling whether sequence of tied chords should be consider a single one
+    @param    skiprests       Flag telling whether rests should be skipped
+    @param    restseqmode_all       Flag telling whether sequence of rests should be considered a single one
     @return            The chord at the given path, or NULL if none
  */
-t_chord *chord_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem);
+t_chord *chord_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem, char tiemode_all, char skiprests, char restseqmode_all);
 
 
 /**    Get a note from its path in the score. The path is given as a starting llllelem, and is considered to be the following elements.
@@ -8014,9 +8030,12 @@ t_chord *chord_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem 
     @ingroup        notation
     @param    r_ob    The notation object
     @param    start_llllelem    The llllelem starting the path
+    @param    tiemode_all       Flag telling whether sequence of tied chords should be consider a single one
+    @param    skiprests       Flag telling whether rests should be skipped
+    @param    restseqmode_all       Flag telling whether sequence of rests should be considered a single one
     @return            The note at the given path, or NULL if none
  */
-t_note *note_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem);
+t_note *note_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem, char tiemode_all, char skiprests, char restseqmode_all);
 
 
 /**    Get a measure from its path in the score. The path is given as a starting llllelem, and is considered to be the following elements.
@@ -9417,6 +9436,16 @@ t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note);
 // TBD: pitch-or-cents
 void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h);
 
+
+/**    Set the velocity of a note, and also sync the velocity of the first breakpoint (that should always coincide
+        with the main velocity.
+ @ingroup                        notation_actions
+ @param    r_ob                    The notation object
+ @param    note                    The note
+ @param    velocity                    The velocity
+ */
+void note_set_velocity(t_notation_obj *r_ob, t_note *note, long velocity);
+
 /**    Revert the enharmony of a note to its default value (e.g. turns Eb to D#, and leaves D# to D#, differently from enharmonically_retranscribe_note())
     @ingroup        notation_actions
     @param    r_ob    The notation object
@@ -9920,6 +9949,11 @@ void notationobj_invalidate_notation_static_layer_and_redraw(t_notation_obj *r_o
 void notationobj_redraw(t_notation_obj *r_ob);
 
 
+// TBD
+void notationobj_scroll(t_notation_obj *r_ob, t_symbol *direction, double amount, t_symbol *mode, char delta);
+void notationobj_scroll_from_gimme(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+
+
 /**    Paint a tie (as a simple cubic bezier curve).
     @ingroup            notation_paint
     @param    r_ob        The notation object
@@ -10204,8 +10238,9 @@ void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice
     @param    clef            The clef or clef combination, as one of the #e_clefs
     @param    staff_top        The topmost y pixel in the staff or staff combination
     @param    curr_meas        The measure of which we need to paint the time signature
+    @param    big               Flag telling if the time signature is in "big" form (double size, e.g. above the staff)
  */ 
-void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont *jf_ts, long clef, double staff_top, t_measure *curr_meas);
+void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont *jf_ts, long clef, double staff_top, t_measure *curr_meas, char big);
 
 
 /**    Paint the semi-transparent selection rectangle. This is used also to paint the zooming rectangle (just by changing the color parameters).
@@ -10333,10 +10368,11 @@ void paint_small_note(t_notation_obj *r_ob,  t_jgraphics* g, t_jrgba color, t_ra
     @param    notehead_center_x        The center x pixel of the notehead
     @param    note_attachment            Note to which this notehead is attached, e.g. because it represents graphically a pitch breakpoint of this note
     @param    system_shift        The additional y shift due to the fact that the system is not the first one.
+    @param    small_note_ratio    Note size ratio (defaults to the grace note size)
     @remark    This is used for drawing breakpoints as notes.
 */
 void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_object *view, t_jgraphics *g, t_jrgba notecolor, double midicents, 
-                                                double notehead_center_x, t_note *note_attachment, double system_shift);
+                                                double notehead_center_x, t_note *note_attachment, double system_shift, double small_note_ratio = CONST_GRACE_CHORD_SIZE);
 
 
 // TBD
@@ -10631,7 +10667,9 @@ double get_slot_window_bottom_inset_uheight(t_notation_obj *r_ob, long slot_num)
     @param    y1                The y of the top-left corner of the text box, considering that (0, 0) is already indented for x and y insets
     @see                    write_text()
  */ 
-void write_text_simple_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+void write_text_standard_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+
+void write_text_standard_account_for_insets_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
 
 /**    Convenience wrapper for writing left-aligned single-lined non-ellipsed text, whereas the top-left corner (0, 0) also takes into account
@@ -10645,13 +10683,15 @@ void write_text_simple_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, 
     @param    y1                The y of the top-left corner of the text box, considering that (0, 0) is already indented for vertical inset
     @see                    write_text()
  */ 
-void write_text_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+
+void write_text_standard_account_for_vinset_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
 #endif
 
 #ifdef BACH_JUCE
-void write_text_simple_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
-void write_text_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+void write_text_standard_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
+void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 #endif
 
 
@@ -11543,6 +11583,7 @@ t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_da
 
 
 // Private
+t_llll *get_single_tempo_values_as_llll(t_notation_obj *r_ob, t_tempo *tempo, e_data_considering_types mode);
 t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types mode);
 
 
@@ -12100,6 +12141,8 @@ t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note
     @seealso            chord_get_path_in_notationobj()
  */
 t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord);
+
 
 
 /**    Same as get_tied_chords_sequence_path_in_notationobj() but for sequences of consecutive rests.
@@ -12110,6 +12153,7 @@ t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_cho
     @seealso            get_tied_chords_sequence_path_in_notationobj()
  */
 t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord);
 
 
 /**    Obtain the information about the groups defined in the notation object in llll form. The form is: [GROUP1 GROUP2 GROUP3...],
@@ -12219,6 +12263,10 @@ t_voice *voice_get_last_visible(t_notation_obj *r_ob);
     @return                An llll containing all voice names (and possibly a "voicenames" symbol at the beginning)
  */
 t_llll *get_voicenames_as_llll(t_notation_obj *r_ob, char prepend_router);
+
+// TBD
+t_llll *get_voicespacing_as_llll(t_notation_obj *r_ob, char prepend_router);
+t_llll *get_hidevoices_as_llll(t_notation_obj *r_ob, char prepend_router);
 
 
 /**    Obtain an llll containing all clefs as symbols 
@@ -13108,6 +13156,8 @@ double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature *ts);
 
 
 // TBD
+double ts_get_spacing_uwidth(t_notation_obj *r_ob, t_timesignature *ts);
+
 void ts_adapt_to_symduration(t_timesignature *ts, t_rational new_measure_duration);
 
 
@@ -13285,7 +13335,7 @@ char is_at_least_a_note_tied_in_llllelem(t_llllelem *tie_elem);
     @param  mark_created_info_upon_split    If non-zero, marks the llllelem in <new_info> created during split (the "tied" ones) with a WHITENULL l_thing field
     @return 0 if check_completeness is non-zero and some box aren't complete; 1 otherwise
  */
-char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *boxes, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, char check_completeness, char mark_created_info_upon_split);
+char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *boxes, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, char check_completeness, char mark_created_info_upon_split, char ties_have_ids);
 
 
 /**    Calls the note_compute_approximation() function on all the notes of a chord.
@@ -13717,8 +13767,9 @@ long get_tie_corresponding_to_mc(t_llll *ties, t_llll *mc, double this_mc, doubl
     @ingroup            notation
     @param    r_ob        The notation object
     @param    voice        The reference scorevoice (since voices may have different tempi) 
-    @param    tp            The timepoint in which the tempo has to be retrieven, relatively to the scorevoice #voice. 
-                        Notice that the t_timepoint::voice_num field is ignored, since the voice is explicitely given as the previous input parameter.
+    @param    tp            The timepoint in which the tempo has to be retrieven.
+                            If the timepoint voice is not equal to the scorevoice #voice, then the timepoint is computed with respect to
+                            another voice
     @param    figure_tempo_value        Pointer which will be filled with the tempo value with respect to the followingly retrieven tempo figure (e.g., in 3/8 = 72, this will be filled with 72)
     @param    tempo_figure            Pointer which will be filled with the tempo figure (the symbolic duration to which the tempo is referred, e.g. in 3/8 = 72 this will be filled with 3/8)
     @param    tempo_value                Pointer which will be filled with the tempo value with respect to 1/4 note (e.g. in 3/8 = 72 this will be filled with 108)
@@ -13726,6 +13777,9 @@ long get_tie_corresponding_to_mc(t_llll *ties, t_llll *mc, double this_mc, doubl
     @remark    See #t_tempo to know more about tempo fields.
  */
 void get_tempo_at_timepoint(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp, t_rational *figure_tempo_value, t_rational *tempo_figure, t_rational *tempo_value, char *interpolation);
+
+// TBD
+void get_timesig_at_timepoint(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp, t_timesignature *timesig);
 
 
 /**    Tell if a chord is a whole-measure-rest (which means: it is a rest, and it is the only rest in the measure).
@@ -13744,6 +13798,10 @@ char is_chord_a_whole_measure_rest(t_notation_obj *r_ob, t_chord *chord);
     @return            1 if the barline exists in the same position in all the voices of the score, 0 otherwise.
  */
 char is_barline_tuttipoint(t_notation_obj *r_ob, t_measure_end_barline *barline);
+
+//TBD
+char is_barline_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_measure_end_barline *barline);
+char is_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_tuttipoint *tpt);
 
 
 /**    Obtain all the barlines falling together with a given barline.
@@ -14285,6 +14343,8 @@ char change_chord_ioi_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t
     @return                    1 if something has been changed, 0 otherwise.
  */
 char change_breakpoint_onset_from_lexpr_or_llll(t_notation_obj *r_ob, t_bpt *bpt, t_lexpr *lexpr, t_llll *new_onset);
+
+char change_breakpoint_onset(t_notation_obj *r_ob, t_bpt *bpt, double new_onset);
 
 
 /**    Change the velocity of a note, based on a valid lexpr or (if such lexpr is NULL) on the content of an llll.
@@ -17437,6 +17497,7 @@ t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, l
 t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -17444,6 +17505,7 @@ t_max_err notation_obj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long a
 t_max_err notation_obj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -17588,8 +17650,9 @@ t_marker *markername2marker(t_notation_obj *r_ob, t_llll *names);
     @ingroup        selection
     @param    r_ob    The notation object
     @param mode      The selection mode (one of the #e_selection_modes)
+    @param only_this_marker_role    One of the e_marker_roles, or -1 if ALL markers should be selected
  */
-void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode);
+void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode, long only_this_marker_role);
 
 
 /** Select all the voices
@@ -19141,6 +19204,8 @@ void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double heig
 t_chord *chord_get_first(t_notation_obj *r_ob, t_voice *voice);
 t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice);
 t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms);
+t_llll *notationobj_get_interp_tempo(t_notation_obj *r_ob, t_timepoint tp);
+t_llll *notationobj_get_interp_timesig(t_notation_obj *r_ob, t_timepoint tp);
 t_llll *notationobj_get_sampling(t_notation_obj *r_ob, long num_points);
 t_llll *notationobj_get_sampling_ms(t_notation_obj *r_ob, double delta_ms);
 void notation_obj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);
@@ -19155,6 +19220,8 @@ void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboar
 void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked_elem_ptr, long *clicked_elem_type);
 void notationobj_toggle_realtime_mode(t_notation_obj *r_ob, char realtime);
 void notationobj_setnotationcolors(t_notation_obj *r_ob, t_llll *ll);
+void notationobj_set_voicespacing_from_llll(t_notation_obj *r_ob, t_llll* voicespacing);
+void notationobj_set_hidevoices_from_llll(t_notation_obj *r_ob, t_llll* hidevoices);
 void tempo_to_char_buf(t_tempo *tempo, char *buf, long buf_size, long max_decimals);
 void time_to_char_buf(t_notation_obj *r_ob, double time_ms, char *buf, long buf_size);
 void select_markers_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);

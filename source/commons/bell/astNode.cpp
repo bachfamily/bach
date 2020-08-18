@@ -1,7 +1,7 @@
 /*
  *  astNode.cpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -524,7 +524,7 @@ t_llll* astRepeatOp::eval(t_execEnv const &context) {
         t_llllelem *prevelem;
         for (t_llllelem *relem = repeatll->l_tail; relem; relem = prevelem) {
             long n = hatom_getlong(&relem->l_hatom);
-            if (n == 0) {
+            if (n <= 0) {
                 llll_free(res);
                 res = llll_get();
             } else {

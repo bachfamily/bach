@@ -1,7 +1,7 @@
 /*
  *  llll_commons.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -842,6 +842,9 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address);
 // calculate the sum of all the numbers in ll, and put it into sum
 t_max_err llll_sum(t_llll *ll, t_hatom *sum, t_int32 mindepth, t_int32 maxdepth);
 
+// calculate the product of all the numbers in ll, and put it into sum
+t_max_err llll_prod(t_llll *ll, t_hatom *prod, t_int32 mindepth, t_int32 maxdepth);
+
 
 // find the minimum, maximum, address of the minimum and address of the maximum number in a list
 void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t_llll *maxaddress, t_int32 mindepth, t_int32 maxdepth);
@@ -1321,8 +1324,10 @@ void llll_remove_lllls_from_lthing(t_llll *ll);
 void llll_destroy_everything_but_head(t_llll *ll);
 
 t_bool llll_istrue(const t_llll *ll);
-t_llll *get_num_ll(const t_atom_long n);
+t_llll *get_long_ll(const t_atom_long n);
+t_llll *get_double_ll(const double d);
 t_atom_long llll_getlong(t_llll *ll, t_atom_long def = 0);
+double llll_getdouble(t_llll *ll, double def = 0.);
 
 void dev_llll_send(t_llll *x, const char* receiver);
 

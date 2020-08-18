@@ -1,7 +1,7 @@
 /*
  *  llll_math.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -213,10 +213,9 @@ void hatom_fn_makepitch(t_hatom *a1, t_hatom *a2, t_hatom *a3, t_hatom *res)
     long degree = hatom_getlong(a1);
     long octave = hatom_getlong(a3);
     if (degree < 0) {
-        degree *= -1;
-        sign = -1;
-    }
-    if (degree > 6) {
+        octave += (degree - 6) / 7;
+        degree = (7 + (degree % 7)) % 7;
+    } else if (degree > 6) {
         octave += degree / 7;
         degree %= 7;
     }
@@ -498,11 +497,6 @@ void hatom_fn_enharm(t_hatom *a1, t_hatom *a2, t_hatom *res)
     hatom_setpitch(res, p.enharm(hatom_getlong(a2)));
 }
 
-
-
-
-
-
 void hatom_op_uminus(t_hatom *h1, t_hatom *res)
 {
     switch (hatom_gettype(h1)) {
@@ -525,6 +519,31 @@ void hatom_op_uminus(t_hatom *h1, t_hatom *res)
     }
 }
 
+void hatom_op_plus_numbersonly(t_hatom *h1, t_hatom *h2, t_hatom *res)
+{
+    t_uint32 h1_type = hatom_gettype(h1);
+    t_uint32 h2_type = hatom_gettype(h2);
+    
+    if (h1_type == H_PITCH && h2_type == H_PITCH) { // pp -> pitch
+        hatom_setpitch(res, h1->h_w.w_pitch + h2->h_w.w_pitch);
+        
+    } else if (h1_type == H_DOUBLE || h2_type == H_DOUBLE) { // dl dr dd dp ld rd pd -> double
+        hatom_setdouble(res, hatom_getdouble(h1) + hatom_getdouble(h2));
+        
+    } else if (h1_type == H_LONG && h2_type == H_LONG) { // ll -> long
+        hatom_setlong(res, h1->h_w.w_long + h2->h_w.w_long);
+        
+    } else if (h1_type == H_LONG && (h2_type == H_RAT || h2_type == H_PITCH)) { // lr lp -> rat
+        hatom_setrational(res, h1->h_w.w_long + hatom_getrational(h2));
+        
+    } else if (h1_type == H_RAT && h2_type == H_LONG) { // rl pl -> rat
+        hatom_setrational(res, hatom_getrational(h1) + h2->h_w.w_long);
+        
+    } else { // rl rr rp pr lr -> rational
+        hatom_setrational(res, hatom_getrational(h1) + hatom_getrational(h2));
+    }
+}
+
 void hatom_op_plus(t_hatom *h1, t_hatom *h2, t_hatom *res)
 {
     t_uint32 h1_type = hatom_gettype(h1);
@@ -535,23 +554,30 @@ void hatom_op_plus(t_hatom *h1, t_hatom *h2, t_hatom *res)
     else if (!(hatom_type_is_number(h2_type)))
         *res = *h2;
     
-    else if (h1_type == H_PITCH && h2_type == H_PITCH) { // pp -> pitch
-        hatom_setpitch(res, h1->h_w.w_pitch + h2->h_w.w_pitch);
-        
-    } else if (h1_type == H_DOUBLE || h2_type == H_DOUBLE) { // dl dr dd dp ld rd pd -> double
-        hatom_setdouble(res, hatom_getdouble(h1) + hatom_getdouble(h2));
-        
-    } else if (h1_type == H_LONG && h2_type == H_LONG) { // ll -> long
-        hatom_setlong(res, h1->h_w.w_long + h2->h_w.w_long);
+    else
+        hatom_op_plus_numbersonly(h1, h2, res);
+}
+
+void hatom_op_plus_with_symbols(t_hatom *h1, t_hatom *h2, t_hatom *res)
+{
+    t_uint32 h1_type = hatom_gettype(h1);
+    t_uint32 h2_type = hatom_gettype(h2);
     
-    } else if (h1_type == H_LONG && (h2_type == H_RAT || h2_type == H_PITCH)) { // lr lp -> rat
-            hatom_setrational(res, h1->h_w.w_long + hatom_getrational(h2));
-        
-    } else if (h1_type == H_RAT && h2_type == H_LONG) { // rl pl -> rat
-            hatom_setrational(res, hatom_getrational(h1) + h2->h_w.w_long);
-        
-    } else { // rl rr rp pr lr -> rational
-        hatom_setrational(res, hatom_getrational(h1) + hatom_getrational(h2));
+    if (hatom_type_is_number(h1_type) && hatom_type_is_number(h2_type)) {
+        hatom_op_plus_numbersonly(h1, h2, res);
+    } else if (h1_type == H_SYM) {
+        if (h2_type == H_SYM) {
+            const char *s1 = h1->h_w.w_sym->s_name;
+            const char *s2 = h2->h_w.w_sym->s_name;
+            char sres[MAX_SYM_LENGTH];
+            strncpy_zero(sres, s1, MAX_SYM_LENGTH);
+            strncat_zero(sres, s2, MAX_SYM_LENGTH);
+            hatom_setsym(res, gensym(sres));
+        } else {
+            *res = *h1;
+        }
+    } else {
+        *res = *h2;
     }
 }
 
@@ -585,19 +611,13 @@ void hatom_op_minus(t_hatom *h1, t_hatom *h2, t_hatom *res)
     }
 }
 
-void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res)
+void hatom_op_times_numbersonly(t_hatom *h1, t_hatom *h2, t_hatom *res)
 {
     t_uint32 h1_type = hatom_gettype(h1);
     t_uint32 h2_type = hatom_gettype(h2);
-    if (!(hatom_type_is_number(h1_type)))
-        *res = *h1;
-    
-    else if (!(hatom_type_is_number(h2_type)))
-        *res = *h2;
-    
-    else if (h1_type == H_DOUBLE || h2_type == H_DOUBLE) // dl dr dd dp ld rd pd -> double
+    if (h1_type == H_DOUBLE || h2_type == H_DOUBLE) // dl dr dd dp ld rd pd -> double
         hatom_setdouble(res, hatom_getdouble(h1) * hatom_getdouble(h2));
-
+    
     else if (h1_type == H_LONG && h2_type == H_LONG) // ll -> long
         hatom_setlong(res, h1->h_w.w_long * h2->h_w.w_long);
     
@@ -612,7 +632,7 @@ void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res)
     
     else if (h1_type == H_RAT && h2_type == H_PITCH) // rp -> pitch
         hatom_setpitch(res, h1->h_w.w_rat * h2->h_w.w_pitch);
-
+    
     else if (h1_type == H_LONG && h2_type == H_RAT) // lr -> rat
         hatom_setrational(res, h1->h_w.w_long * h2->h_w.w_rat);
     
@@ -621,7 +641,59 @@ void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res)
     
     else // rr pp -> rat
         hatom_setrational(res, hatom_getrational(h1) * hatom_getrational(h2));
+}
 
+void hatom_op_times_symbolsonly(const char *s, const long n, t_hatom *res) {
+    char sres[MAX_SYM_LENGTH];
+    long len = strlen(s);
+    long tot = 0;
+    sres[0] = 0;
+    for (int i = 0;
+         i < n && tot < MAX_SYM_LENGTH;
+         i++, tot += len) {
+        strncat_zero(sres, s, MAX_SYM_LENGTH);
+    }
+    hatom_setsym(res, gensym(sres));
+}
+
+void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res)
+{
+    t_uint32 h1_type = hatom_gettype(h1);
+    t_uint32 h2_type = hatom_gettype(h2);
+    if (!(hatom_type_is_number(h1_type)))
+        *res = *h1;
+    
+    else if (!(hatom_type_is_number(h2_type)))
+        *res = *h2;
+    
+    else
+        hatom_op_times_numbersonly(h1, h2, res);
+}
+
+
+
+void hatom_op_times_with_symbols(t_hatom *h1, t_hatom *h2, t_hatom *res)
+{
+    t_uint32 h1_type = hatom_gettype(h1);
+    t_uint32 h2_type = hatom_gettype(h2);
+    
+    if (hatom_type_is_number(h1_type) && hatom_type_is_number(h2_type)) {
+        hatom_op_times_numbersonly(h1, h2, res);
+    } else {
+        if (h1_type == H_SYM) {
+            if (hatom_type_is_number(h2_type)) {
+                hatom_op_times_symbolsonly(h1->h_w.w_sym->s_name, hatom_getlong(h2), res);
+            } else {
+                *res = *h1;
+            }
+        } else if (h2_type == H_SYM) {
+            if (hatom_type_is_number(h1_type)) {
+                hatom_op_times_symbolsonly(h2->h_w.w_sym->s_name, hatom_getlong(h1), res);
+            } else {
+                *res = *h2;
+            }
+        }
+    }
 }
 
 void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res)

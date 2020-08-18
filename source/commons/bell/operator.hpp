@@ -1,7 +1,7 @@
 /*
  *  operator.hpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -100,9 +100,9 @@ public:
 typedef astUnaryOperator<hatom_op_uminus> astOperatorUMinus;
 typedef astUnaryOperator<hatom_op_bitnot> astOperatorBitNot;
 
-typedef astBinaryOperator<hatom_op_plus> astOperatorPlus;
+typedef astBinaryOperator<hatom_op_plus_with_symbols> astOperatorPlus;
 typedef astBinaryOperator<hatom_op_minus> astOperatorMinus;
-typedef astBinaryOperator<hatom_op_times> astOperatorTimes;
+typedef astBinaryOperator<hatom_op_times_with_symbols> astOperatorTimes;
 typedef astBinaryOperator<hatom_op_div> astOperatorDiv;
 typedef astBinaryOperator<hatom_op_divdiv> astOperatorDivdiv;
 typedef astBinaryOperator<hatom_fn_remainder> astOperatorRemainder;

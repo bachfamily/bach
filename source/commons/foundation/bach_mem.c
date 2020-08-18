@@ -1,7 +1,7 @@
 /*
  *  bach_mem.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -809,8 +809,7 @@ void llll_fix_owner_for_check(t_llll *ll)
 
 void llll_free_nocheck(t_llll *ll)
 {
-    t_llll_stack *stack;
-    t_llllelem *elem, *nextelem;
+
     if (!ll)
         return;
 #ifdef BACH_CHECK_LLLLS
@@ -825,7 +824,15 @@ void llll_free_nocheck(t_llll *ll)
     
     if (ATOMIC_DECREMENT_32(&ll->l_count)) // release
         return;
+    
+    llll_destroy(ll);
+}
 
+void llll_destroy(t_llll *ll)
+{
+    t_llll_stack *stack;
+    t_llllelem *elem, *nextelem;
+    
     if (!(ll->l_flags & (OBJ_FLAG_DATA | OBJ_FLAG_REF))) {
         
         stack = llll_stack_new();
@@ -834,12 +841,12 @@ void llll_free_nocheck(t_llll *ll)
         while (1) {
             while (elem) {
                 nextelem = elem->l_next;
-                if (elem->l_hatom.h_type != H_LLLL || 
+                if (elem->l_hatom.h_type != H_LLLL ||
                     elem->l_flags & (OBJ_FLAG_DATA | OBJ_FLAG_REF)) {
                     llllelem_dispose(elem);
                     elem = nextelem;
                 } else {
-//                    elem->l_parent = ll; // just to be sure, or we'll lose ourselves!
+                    //                    elem->l_parent = ll; // just to be sure, or we'll lose ourselves!
                     llll_stack_push(stack, elem);
                     ll = elem->l_hatom.h_w.w_llll;
                     elem = ll->l_head;
@@ -908,7 +915,7 @@ void llll_release_unsafe(t_llll *ll)
     if (!ll)
         return;
     if (--(ll->l_count) == 0)
-        llll_dispose(ll);
+        llll_destroy(ll);
 }
 
 void llll_release(t_llll *ll)
@@ -1503,8 +1510,9 @@ t_max_err bach_bloat_ptr(void *ptr) {
 #ifdef BACH_BLOAT_FREED_MEMORY
     char *bloatme;
     t_memmap_item *mmi;
-    err = hashtab_lookup(memmap, (t_symbol *) ptr, (t_object **) &mmi);
-    if (!err && mmi->m_size > 0) {
+    if (memmap)
+        err = hashtab_lookup(memmap, (t_symbol *) ptr, (t_object **) &mmi);
+    if (!err && memmap && mmi->m_size > 0) {
         for (bloatme = (char *) ptr; bloatme + BACH_BLOAT_STEP <= (char *) ptr + mmi->m_size; bloatme += BACH_BLOAT_STEP) {
             sysmem_copyptr(BACH_MAGIC_BLOAT, bloatme, BACH_BLOAT_STEP);
         }
@@ -1525,10 +1533,10 @@ void *bach_newptr(size_t size)
         return NULL;
     }
     if (memmap) {
-    t_memmap_item *mmi = memmap_item_new(x, size, NULL);
-    t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
-        bach_error_break("bach_newptr: double allocation");
+        t_memmap_item *mmi = memmap_item_new(x, size, NULL);
+        t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+        if (memmap && err)
+            bach_error_break("bach_newptr: double allocation");
     }
     bach_bloat_ptr(x);
     return x;
@@ -1544,10 +1552,12 @@ void *bach_newptrclear(size_t size)
         bach_error_break("bach_newptrclear: NULL pointer allocation");
         return NULL;
     }
-    t_memmap_item *mmi = memmap_item_new(x, size, NULL);
-    t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
-        bach_error_break("bach_newptrclear: double allocation");
+    if (memmap) {
+        t_memmap_item *mmi = memmap_item_new(x, size, NULL);
+        t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+        if (err)
+            bach_error_break("bach_newptrclear: double allocation");
+    }
     return x;
 }
 
@@ -1561,10 +1571,12 @@ void *bach_newptr_named(size_t size, t_symbol *name)
         bach_error_break("bach_newptr_named: NULL pointer allocation");
         return NULL;
     }
-    t_memmap_item *mmi = memmap_item_new(x, size, name);
-    t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
-        bach_error_break("bach_newptr_named: double allocation");
+    if (memmap) {
+        t_memmap_item *mmi = memmap_item_new(x, size, name);
+        t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+        if (err)
+            bach_error_break("bach_newptr_named: double allocation");
+    }
     return x;
 }
 
@@ -1578,15 +1590,19 @@ void *bach_newptrclear_named(size_t size, t_symbol *name)
         bach_error_break("bach_newptrclear_named: NULL pointer allocation");
         return NULL;
     }
-    t_memmap_item *mmi = memmap_item_new(x, size, name);
-    t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
-        bach_error_break("bach_newptrclear_named: double allocation");
+    if (memmap) {
+        t_memmap_item *mmi = memmap_item_new(x, size, name);
+        t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+        if (err)
+            bach_error_break("bach_newptrclear_named: double allocation");
+    }
     return x;
 }
 
 void bach_store_in_memmap(void *x)
 {
+    if (!memmap)
+        return;
     size_t size = sysmem_ptrsize(x);
     t_memmap_item *mmi = memmap_item_new(x, size, NULL);
     t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
@@ -1597,6 +1613,8 @@ void bach_store_in_memmap(void *x)
 void bach_store_in_memmap_named(void *x, t_symbol *name)
 {
     size_t size;
+    if (!memmap)
+        return;
     if (name == _llllobj_sym__llll)
         size = sizeof(t_llll);
     else if (name == _llllobj_sym__llllelem)
@@ -1618,17 +1636,21 @@ void *bach_resizeptr(void *ptr, size_t newsize)
         void *x = sysmem_resizeptr(ptr, newsize);
         t_max_err err;
         t_memmap_item *mmi;
-        err = hashtab_lookup(memmap, (t_symbol *) ptr, (t_object **) &mmi);
-        mmi->m_size = newsize;
-        mmi->m_word.w_void = x;
-        hashtab_chuckkey(memmap, (t_symbol *) ptr);
+        if (memmap) {
+            err = hashtab_lookup(memmap, (t_symbol *) ptr, (t_object **) &mmi);
+            mmi->m_size = newsize;
+            mmi->m_word.w_void = x;
+            hashtab_chuckkey(memmap, (t_symbol *) ptr);
+        }
         if (!x) {
             bach_error_break("bach_resizeptr: NULL pointer allocation");
             return NULL;
         }
-        err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-        if (err)
-            bach_error_break("bach_resizeptr: double allocation");
+        if (memmap) {
+            err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+            if (err)
+                bach_error_break("bach_resizeptr: double allocation");
+        }
         return x;
     } else
         return bach_newptr(newsize);
@@ -1640,17 +1662,21 @@ void *bach_resizeptrclear(void *ptr, size_t newsize)
         void *x = sysmem_resizeptrclear(ptr, newsize);
         t_max_err err;
         t_memmap_item *mmi;
-        err = hashtab_lookup(memmap, (t_symbol *) ptr, (t_object **) &mmi);
-        mmi->m_size = newsize;
-        mmi->m_word.w_void = x;
-        hashtab_chuckkey(memmap, (t_symbol *) ptr);
+        if (memmap) {
+            err = hashtab_lookup(memmap, (t_symbol *) ptr, (t_object **) &mmi);
+            mmi->m_size = newsize;
+            mmi->m_word.w_void = x;
+            hashtab_chuckkey(memmap, (t_symbol *) ptr);
+        }
         if (!x) {
             bach_error_break("bach_resizeptrclear: NULL pointer allocation");
             return NULL;
         }
-        err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-        if (err)
-            bach_error_break("bach_resizeptr: double allocation");
+        if (memmap) {
+            err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+            if (err)
+                bach_error_break("bach_resizeptr: double allocation");
+        }
         return x;
     } else
         return bach_newptr(newsize);
@@ -1668,15 +1694,18 @@ void bach_freeptr(void *ptr)
     }
 #endif
     bach_bloat_ptr(ptr);
-    err = hashtab_delete(memmap, (t_symbol *) ptr);
-    if (err)
-        bach_error_break("bach_freeptr: double free");
-
+    if (memmap) {
+        err = hashtab_delete(memmap, (t_symbol *) ptr);
+        if (err)
+            bach_error_break("bach_freeptr: double free");
+    }
     sysmem_freeptr(ptr);
 }
 
 void bach_remove_from_memmap(void *ptr)
 {
+    if (!memmap)
+        return;
     if (!ptr)
         return;
     t_max_err err = hashtab_delete(memmap, (t_symbol *) ptr);
@@ -1691,10 +1720,12 @@ void *object_alloc_debug(t_class *c)
         bach_error_break("object_alloc_debug: NULL pointer allocation");
         return NULL;
     }
-    t_memmap_item *mmi = memmap_item_new(x, c->c_size, c->c_sym);
-    t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
-        bach_error_break("object_alloc_debug: double allocation");
+    if (memmap) {
+        t_memmap_item *mmi = memmap_item_new(x, c->c_size, c->c_sym);
+        t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+        if (err)
+            bach_error_break("object_alloc_debug: double allocation");
+    }
     return x;
 }
 
@@ -1705,10 +1736,12 @@ t_atomarray *atomarray_new_debug(long ac, t_atom *av)
         bach_error_break("atomarray_new_debug: NULL pointer allocation");
         return NULL;
     }
-    t_memmap_item *mmi = memmap_item_new(x, class_findbyname(CLASS_NOBOX, _sym_atomarray)->c_size, _sym_atomarray);
-    t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
-        bach_error_break("atomarray_new_debug: double allocation");
+    if (memmap) {
+        t_memmap_item *mmi = memmap_item_new(x, class_findbyname(CLASS_NOBOX, _sym_atomarray)->c_size, _sym_atomarray);
+        t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+        if (err)
+            bach_error_break("atomarray_new_debug: double allocation");
+    }
     return x;
 }
 
@@ -1719,10 +1752,12 @@ t_hashtab *hashtab_new_debug(long slotcount)
         bach_error_break("hashtab_new_debug: NULL pointer allocation");
         return NULL;
     }
-    t_memmap_item *mmi = memmap_item_new(x, class_findbyname(CLASS_NOBOX, gensym("hashtab"))->c_size, gensym("hashtab"));
-    t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
-        bach_error_break("hashtab_new_debug: double allocation");
+    if (memmap) {
+        t_memmap_item *mmi = memmap_item_new(x, class_findbyname(CLASS_NOBOX, gensym("hashtab"))->c_size, gensym("hashtab"));
+        t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+        if (err)
+            bach_error_break("hashtab_new_debug: double allocation");
+    }
     return x;
 }
 
@@ -1733,10 +1768,12 @@ t_linklist *linklist_new_debug(void)
         bach_error_break("linklist_new_debug: NULL pointer allocation");
         return NULL;
     }
-    t_memmap_item *mmi = memmap_item_new(x, class_findbyname(CLASS_NOBOX, gensym("linklist"))->c_size, gensym("linklist"));
-    t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
-        bach_error_break("linklist_new_debug: double allocation");
+    if (memmap) {
+        t_memmap_item *mmi = memmap_item_new(x, class_findbyname(CLASS_NOBOX, gensym("linklist"))->c_size, gensym("linklist"));
+        t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+        if (err)
+            bach_error_break("linklist_new_debug: double allocation");
+    }
     return x;
 }
 
@@ -1747,10 +1784,12 @@ t_dictionary *dictionary_new_debug(void)
         bach_error_break("dictionary_new_debug: NULL pointer allocation");
         return NULL;
     }
-    t_memmap_item *mmi = memmap_item_new(x, class_findbyname(CLASS_NOBOX, _sym_dictionary)->c_size, _sym_dictionary);
-    t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
-        bach_error_break("dictionary_new_debug: double allocation");
+    if (memmap) {
+        t_memmap_item *mmi = memmap_item_new(x, class_findbyname(CLASS_NOBOX, _sym_dictionary)->c_size, _sym_dictionary);
+        t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
+        if (err)
+            bach_error_break("dictionary_new_debug: double allocation");
+    }
     return x;
 }
 
@@ -1760,7 +1799,7 @@ void *proxy_new_debug(void *o, long id, long *stuffloc)
     if (!x) {
         bach_error_break("proxy_new_debug: NULL pointer allocation");
         return NULL;
-    }    
+    }
     t_memmap_item *mmi = memmap_item_new(x, (size_t) -1, gensym("proxy"));
     t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
     if (err)
@@ -1777,7 +1816,7 @@ void *object_new_typed_debug(t_symbol *objnamespace, t_symbol *classname, long a
     }
     t_memmap_item *mmi = memmap_item_new(x, class_findbyname(objnamespace, classname)->c_size, classname);
     t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
+    if (memmap && err)
         bach_error_break("object_new_typed_debug: double allocation");
     return x;
 }
@@ -1789,7 +1828,7 @@ long systhread_mutex_new_debug(t_systhread_mutex *pmutex, long flags)
         return err;
     t_memmap_item *mmi = memmap_item_new(*pmutex, (size_t) -1, gensym("systhread_mutex"));
     err = hashtab_store_safe(memmap, (t_symbol *) *pmutex, (t_object *) mmi);
-    if (err)
+    if (memmap && err)
         bach_error_break("systhread_mutex_new_debug: double allocation");
     return 0;
 }
@@ -1800,7 +1839,7 @@ long systhread_mutex_free_debug(t_systhread_mutex pmutex)
     if (err)
         return err;
     err = hashtab_delete(memmap, (t_symbol *) pmutex);
-    if (err)
+    if (memmap && err)
         bach_error_break("systhread_mutex_free: double free");
     return 0;
 }
@@ -1814,7 +1853,7 @@ void *clock_new_debug(void *obj, method fn)
     }
     t_memmap_item *mmi = memmap_item_new(x, class_findbyname(CLASS_NOBOX, _sym_clock)->c_size, _sym_clock);
     t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
+    if (memmap && err)
         bach_error_break("clock_new_debug: double allocation");
     return x;
 }
@@ -1828,7 +1867,7 @@ void *qelem_new_debug(void *obj, method fn)
     }
     t_memmap_item *mmi = memmap_item_new(x, (size_t) -1, gensym("qelem"));
     t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
+    if (memmap && err)
         bach_error_break("qelem_new_debug: double allocation");
     return x;
 }
@@ -1838,7 +1877,7 @@ void qelem_free_debug(void *obj)
     t_max_err err;
     qelem_free(obj);
     err = hashtab_delete(memmap, (t_symbol *) obj);
-    if (err)
+    if (memmap && err)
         bach_error_break("qelem_free_debug: double free");
 }
 
@@ -1852,7 +1891,7 @@ char *charset_unicodetoutf8_debug(unsigned short *s, long len, long *outlen)
     }
     mmi = memmap_item_new(x, *outlen + 1, gensym("utf8"));
     t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
+    if (memmap && err)
         bach_error_break("charset_unicodetoutf8_debug: double allocation");
     return x;
 }
@@ -1867,7 +1906,7 @@ unsigned short *charset_utf8tounicode_debug(char *s, long *outlen)
     }
     mmi = memmap_item_new(x, *outlen + 1, gensym("unicode"));
     t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
+    if (memmap && err)
         bach_error_break("charset_utf8tounicode_debug: double allocation");
     return x;
 }
@@ -1882,7 +1921,7 @@ t_jfont    *jfont_create_debug(const char *family, t_jgraphics_font_slant slant,
     }
     mmi = memmap_item_new(x, (size_t) -1, gensym("jfont"));
     t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
-    if (err)
+    if (memmap && err)
         bach_error_break("jfont_create_debug: double allocation");
     return x;
 }
@@ -1892,7 +1931,7 @@ void jfont_destroy_debug(t_jfont *font)
     t_max_err err;
     jfont_destroy(font);
     err = hashtab_delete(memmap, (t_symbol *) font);
-    if (err)
+    if (memmap && err)
         bach_error_break("jfont_destroy_debug: double free");
 }
 
@@ -1903,7 +1942,7 @@ t_max_err atom_setparse_debug(long *ac, t_atom **av, C74_CONST char *parsestr)
     if (rtn_err == MAX_ERR_NONE && newmem && *ac) {
         t_memmap_item *mmi = memmap_item_new(*av, *ac * sizeof(t_atom), gensym("atom"));
         t_max_err err = hashtab_store_safe(memmap, (t_symbol *) *av, (t_object *) mmi);
-        if (err)
+        if (memmap && err)
             bach_error_break("atom_setparse_debug: double allocation");
     }
     return rtn_err;
@@ -1915,7 +1954,7 @@ t_max_err atom_gettext_debug(long ac, t_atom *av, long *textsize, char **text, l
     if (rtn_err == MAX_ERR_NONE) {
         t_memmap_item *mmi = memmap_item_new(*text, *textsize, gensym("text"));
         t_max_err err = hashtab_store_safe(memmap, (t_symbol *) *text, (t_object *) mmi);
-        if (err)
+        if (memmap && err)
             bach_error_break("atom_gettext_debug: double allocation");
     }
     return rtn_err;
@@ -1926,6 +1965,8 @@ void object_retain_debug(t_object *x)
 {
     t_memmap_item *mmi;
     t_max_err err;
+    if (!memmap)
+        return;
     systhread_mutex_lock(memmap_lock);
     err = hashtab_lookup(memmap, (t_symbol *) x, (t_object **) &mmi);
     if (err)
@@ -1945,6 +1986,8 @@ void object_free_debug(void *x)
     if (NOGOOD(x)) {
         bach_error_break("object_free_debug: bad object");
     }
+    if (!memmap)
+        return;
     systhread_mutex_lock(memmap_lock);
     err = hashtab_lookup(memmap, (t_symbol *) x, (t_object **) &mmi);
     if (err) {
@@ -1981,12 +2024,13 @@ void bach_copyptr(const void *src, void *dst, long bytes)
     }
     if (bytes == 0)
         return;
-    
-    err = hashtab_lookup(memmap, (t_symbol *) dst, (t_object **) &mmi);
-    if (err)
-        bach_error_break("bach_copyptr: destination not allocated");
-    else if (mmi->m_size < bytes)
-        bach_error_break("bach_copyptr: insufficient destination size");
+    if (memmap) {
+        err = hashtab_lookup(memmap, (t_symbol *) dst, (t_object **) &mmi);
+        if (err)
+            bach_error_break("bach_copyptr: destination not allocated");
+        else if (mmi->m_size < bytes)
+            bach_error_break("bach_copyptr: insufficient destination size");
+    }
     sysmem_copyptr(src, dst, bytes);
 }
 

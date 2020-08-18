@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 1,
-			"revision" : 0,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -42,13 +42,53 @@
 					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
+					"hyperlinkcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
+					"id" : "obj-15",
+					"linkstart" : [ "–" ],
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 23.0, 279.0, 465.0, 21.0 ],
+					"showhand" : 0,
+					"text" : "– exportdivisions (default: 1): add a marker named \"bach division\" at each beat.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
+					"underline" : 0
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"hyperlinkcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
+					"id" : "obj-7",
+					"linkstart" : [ "–" ],
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 23.0, 258.0, 482.0, 21.0 ],
+					"showhand" : 0,
+					"text" : "– exportbarlines (default: 1): add a marker named \"bach barline\" at each measure.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
+					"underline" : 0
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
 					"id" : "obj-21",
 					"linecount" : 2,
 					"maxclass" : "bach.hypercomment",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 8.0, 436.0, 589.0, 36.0 ],
+					"patching_rect" : [ 6.0, 441.0, 589.0, 36.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "All these options are both available for bach.roll and bach.score. For bach.score, there's one more option, the tempo ramp sampling rate (see #temporampsamplingrate).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -67,7 +107,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 34.0, 255.0, 361.0, 21.0 ],
+					"patching_rect" : [ 23.0, 238.0, 361.0, 21.0 ],
 					"showhand" : 0,
 					"text" : "– resolution (default: 960): the number of MIDI ticks per beat.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
@@ -87,7 +127,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 34.0, 233.0, 453.0, 21.0 ],
+					"patching_rect" : [ 23.0, 217.0, 453.0, 21.0 ],
 					"showhand" : 0,
 					"text" : "– format (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
@@ -105,7 +145,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 385.0, 267.5, 225.0, 54.0 ],
+					"patching_rect" : [ 385.0, 296.5, 225.0, 54.0 ],
 					"text" : "This only exports voices 1 and 3, in a MIDI file of format 1, and with a resolution of 1920 ticks per beat"
 				}
 
@@ -119,7 +159,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 26.0, 285.0, 363.0, 23.0 ],
+					"patching_rect" : [ 26.0, 314.0, 363.0, 23.0 ],
 					"text" : "exportmidi foo.mid @voices 1 3 @format 1 @resolution 1920"
 				}
 
@@ -137,7 +177,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 34.0, 165.0, 582.0, 65.0 ],
+					"patching_rect" : [ 23.0, 152.0, 582.0, 65.0 ],
 					"showhand" : 0,
 					"text" : "– voices (default: null): if a list of voices is provided, then only the specified voices will be exported.\n    If no list is provided, then all the voices of the score will be exported. Ranges can also be\n    expressed, as sublists. For example, [voices [1 3 5]] will export the first, third and fifth voice,\n    while [voices [[1 5] 8]] will export all the voices from 1 to 5, and the 8th voice..",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
@@ -155,9 +195,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 23.0, 96.0, 578.0, 21.0 ],
+					"patching_rect" : [ 23.0, 89.0, 433.0, 21.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "In addition you can have the following options, set via message attributes",
+					"text" : "In addition you can have the following options, set via message attributes:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -174,7 +214,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 23.0, 119.0, 490.0, 21.0 ],
+					"patching_rect" : [ 23.0, 108.0, 490.0, 21.0 ],
 					"showhand" : 0,
 					"text" : "– exportmarkers (default: 1): if non-0, all the markers in the score will be exported.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
@@ -191,7 +231,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 252.0, 140.0, 349.0, 25.0 ],
+					"patching_rect" : [ 252.0, 131.0, 349.0, 25.0 ],
 					"text" : "Export the score as \"foo.mid\", but don't export markers"
 				}
 
@@ -205,7 +245,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 23.0, 142.0, 227.0, 23.0 ],
+					"patching_rect" : [ 23.0, 133.0, 227.0, 23.0 ],
 					"text" : "exportmidi foo.mid @exportmarkers 0"
 				}
 
@@ -265,12 +305,12 @@
 					"numvoices" : 3,
 					"out" : "nnnnnnnn",
 					"outlettype" : [ "", "", "", "", "", "", "", "", "bang" ],
-					"patching_rect" : [ 8.0, 322.0, 585.0, 108.333327999999995 ],
+					"patching_rect" : [ 8.0, 340.0, 583.0, 99.333327999999995 ],
 					"pitcheditrange" : [ "null" ],
 					"showmeasurenumbers" : [ 1, 1, 1 ],
 					"stafflines" : [ 5, 5, 5 ],
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
-					"versionnumber" : 80100,
+					"versionnumber" : 80101,
 					"voicenames" : [ "[", "]", "[", "]", "[", "]" ],
 					"voicespacing" : [ 0.0, 17.0, 17.0, 26.0 ],
 					"vzoom" : 70.0,
@@ -330,11 +370,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: data, midi, export, exportmidi, markers, exportmarkers, format, resolution, voices, file",
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
+					"text" : "Tags: data, midi, export, exportmidi, markers, exportmarkers, format, resolution, voices, file, exportbarlines, exportdivisions",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -368,6 +409,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
+					"midpoints" : [ 32.5, 158.5, 17.5, 158.5 ],
 					"source" : [ "obj-3", 0 ]
 				}
 

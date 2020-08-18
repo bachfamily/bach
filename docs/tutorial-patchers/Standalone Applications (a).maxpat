@@ -2,13 +2,14 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
-			"revision" : 0,
+			"major" : 8,
+			"minor" : 0,
+			"revision" : 5,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
+		"classnamespace" : "box",
 		"rect" : [ 288.0, 79.0, 769.0, 403.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -40,45 +41,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"id" : "obj-14",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 142.0, 728.0, 33.0 ],
-					"presentation_rect" : [ 5.0, 142.0, 0.0, 0.0 ],
-					"style" : "",
-					"text" : "Suppose you have already built your application containing bach. You open it, and all bach objects are missing. The fact is that 3rd party packages unfortunately aren't automatically copied during the standalone making mechanism. So we need to do that by hand."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-12",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 100.0, 728.0, 33.0 ],
-					"presentation_rect" : [ 5.0, 100.0, 0.0, 0.0 ],
-					"style" : "",
-					"text" : "As a preliminary note, remember that if you want to use bach commercially (e.g. inside a standalone application) you should contact us in order to obtain a licence (see the Overview)."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 20.590681,
 					"id" : "obj-11",
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 183.060974, 273.0, 30.0 ],
-					"style" : "",
-					"text" : "1. Find the \"packages\" folder"
+					"patching_rect" : [ 5.0, 43.0, 728.0, 47.0 ],
+					"text" : "Standalone applications are a handy way to package your patches for broader and simpler usage (but remember that bach is licensed as GPL!). This tutorial used to guide you on what you had to do to make bach objects and abstractions work properly in standalone applications."
 				}
 
 			}
@@ -87,13 +56,79 @@
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"id" : "obj-21",
-					"linecount" : 9,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 214.060974, 746.0, 127.0 ],
-					"style" : "",
-					"text" : "The very first step is to identify the \"packages\" folder. The mechanism differs if you're using Mac or Windows.\n\nOn Macintosh, the standalone is an application package, which is also a folder that looks like a file in the Finder. You can peek into the package by control-clicking on it and selecting Show Package Contents from the contextual menu. Inside the Contents/Resources/C74/ folder you will find a long list of subfolders, among which there should be a \"packages\" folder. That's the one you are looking for.\n\nA standalone application on Windows is actually a folder containing a Max Runtime executable plus a .mxf collective file containing your patches and files. In addition, the standalone folder contains a support folder with files necessary to run your application. \nThe \"packages\" folder should be somewhere there, look for it."
+					"patching_rect" : [ 398.0, 210.0, 169.0, 20.0 ],
+					"text" : "Yep! Welcome and bye bye ;-)"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontface" : 2,
+					"fontname" : "Arial",
+					"fontsize" : 15.0,
+					"id" : "obj-20",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 229.0, 185.0, 249.0, 23.0 ],
+					"text" : "This was the shortest tutorial ever!!! ",
+					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-18",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 5.0, 149.0, 728.0, 20.0 ],
+					"text" : "All appropriate files are copied for you in the application. (You're welcome!)"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 26.63253312841471,
+					"id" : "obj-16",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 223.0, 111.0, 261.0, 36.0 ],
+					"text" : "nothing special to do!"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-15",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 5.0, 89.0, 728.0, 20.0 ],
+					"text" : "Since Max 8.1.0, and since bach 0.8.1, you have "
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-14",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 5.0, 308.0, 728.0, 33.0 ],
+					"text" : "...although... if you still are on previous Max or bach versions, you can continue to read our OLD tutorial, which explained how to do things manually. To reiterate: this is only needed for OLDER versions of Max and bach."
 				}
 
 			}
@@ -107,8 +142,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 318.0, 422.0, 81.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 318.0, 407.0, 81.0, 22.0 ],
 					"text" : "clean, wclose",
 					"varname" : "wclose"
 				}
@@ -124,8 +158,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 318.0, 474.5, 243.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 318.0, 459.5, 243.0, 22.0 ],
 					"text" : "linksections 0 1 a \"Standalone Applications\""
 				}
 
@@ -140,9 +173,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 318.0, 447.0, 69.0, 22.0 ],
+					"patching_rect" : [ 318.0, 432.0, 69.0, 22.0 ],
 					"save" : [ "#N", "thispatcher", ";", "#Q", "end", ";" ],
-					"style" : "",
 					"text" : "thispatcher"
 				}
 
@@ -153,12 +185,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"id" : "obj-61",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 404.0, 371.0, 193.0, 20.0 ],
-					"style" : "",
-					"text" : "I've found it. I'm a pro. Now what?",
+					"patching_rect" : [ 382.0, 356.0, 226.0, 33.0 ],
+					"text" : "I'm on an older Max or bach version. How can I still build standalones?",
 					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
 				}
 
@@ -172,7 +204,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 5.0, 19.0, 444.0, 20.0 ],
-					"style" : "",
 					"text" : "_________________________________________________________________"
 				}
 
@@ -180,43 +211,26 @@
 , 			{
 				"box" : 				{
 					"fontname" : "Arial Italic",
-					"fontsize" : 16.787033,
+					"fontsize" : 16.787033000000001,
 					"id" : "obj-2",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 290.0, 7.74086, 307.0, 25.0 ],
-					"style" : "",
-					"text" : "- or how to make bach work inside them"
+					"text" : "- you have nothing special to do"
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"fontname" : "Arial",
-					"fontsize" : 22.256727,
+					"fontsize" : 22.256727000000001,
 					"id" : "obj-3",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 5.0, 2.924051, 281.0, 31.0 ],
-					"style" : "",
 					"text" : "Standalone Applications (a)"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-13",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 43.0, 728.0, 47.0 ],
-					"style" : "",
-					"text" : "Standalone applications are an handy way to package your patches for broader and simpler usage. \nIn this brief tutorial we will not cover all the details on how to build them (you can look at the Max documentation for this), but rather focus on the few steps needed in order to have all your bach modules working properly inside a standalone application."
 				}
 
 			}
@@ -228,8 +242,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 607.0, 496.0, 140.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 614.0, 503.0, 140.0, 22.0 ],
 					"text" : "pcontrol",
 					"varname" : "pcontrolB"
 				}
@@ -243,8 +256,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 607.0, 471.0, 140.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 614.0, 478.0, 140.0, 22.0 ],
 					"text" : "prepend load",
 					"varname" : "prependB"
 				}
@@ -258,8 +270,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 607.0, 446.0, 140.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 614.0, 453.0, 140.0, 22.0 ],
 					"text" : "tosymbol",
 					"varname" : "tosymbolB"
 				}
@@ -273,9 +284,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 607.0, 421.0, 156.0, 22.0 ],
-					"style" : "",
-					"text" : "Standalone Applications [b]",
+					"patching_rect" : [ 614.0, 428.0, 156.0, 22.0 ],
+					"text" : "Standalone Applications (b)",
 					"varname" : "messageB"
 				}
 
@@ -288,8 +298,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "bang" ],
-					"patching_rect" : [ 607.0, 396.0, 40.0, 22.0 ],
-					"style" : "",
+					"patching_rect" : [ 614.0, 403.0, 40.0, 22.0 ],
 					"text" : "t b b",
 					"varname" : "triggerB"
 				}
@@ -306,8 +315,7 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "int" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 607.0, 371.0, 151.0, 20.0 ],
-					"style" : "",
+					"patching_rect" : [ 614.0, 378.0, 151.0, 20.0 ],
 					"text" : "Continue to section (b)",
 					"varname" : "textbuttonB"
 				}
@@ -317,7 +325,6 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-8", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-10", 0 ]
 				}
@@ -326,7 +333,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-90", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-19", 0 ]
 				}
@@ -335,9 +341,8 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-90", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
-					"midpoints" : [ 327.5, 500.5, 309.5, 500.5, 309.5, 442.0, 327.5, 442.0 ],
+					"midpoints" : [ 327.5, 485.5, 309.5, 485.5, 309.5, 427.0, 327.5, 427.0 ],
 					"source" : [ "obj-198", 0 ]
 				}
 
@@ -345,7 +350,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-4", 0 ]
 				}
@@ -354,7 +358,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-5", 0 ]
 				}
@@ -363,7 +366,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-5", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-7", 0 ]
 				}
@@ -372,7 +374,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-19", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-8", 0 ]
 				}
@@ -381,7 +382,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-8", 1 ]
 				}
@@ -390,7 +390,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-198", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-90", 0 ]
 				}
@@ -400,6 +399,7 @@
 		"dependency_cache" : [ 			{
 				"name" : "linksections.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/docs/tutorial-patchers",
+				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}

@@ -1,7 +1,7 @@
 /*
  *  builtInFunction.cpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -18,6 +18,7 @@
  */
 
 #include "bell/builtInFunction.hpp"
+#include "math/bach_math_utilities.h"
 
 t_fnLength::t_fnLength() : t_builtInFunction("length") {
     setArgument("llll");
@@ -127,7 +128,7 @@ t_fnArgcount::t_fnArgcount() : t_builtInFunction() {
 }
 
 t_llll* t_fnArgcount::call(const t_execEnv &context) {
-    return get_num_ll(context.parent->argc);
+    return get_long_ll(context.parent->argc);
 }
 
 
@@ -160,7 +161,7 @@ t_llll* t_fnOutlet::call(const t_execEnv &context) {
 t_fnInlet::t_fnInlet() : t_builtInFunction("inlet", true) { }
 
 t_llll* t_fnInlet::call(const t_execEnv &context) {
-    t_llll *in = get_num_ll(context.mainFunc->getInlet());
+    t_llll *in = get_long_ll(context.mainFunc->getInlet());
     return llll_clone(in);
 }
 
@@ -225,7 +226,7 @@ t_llll* t_fnContains::call(const t_execEnv &context)
     t_atom_long mindepth, maxdepth;
     getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
     t_atom_long contains = llll_contains(ll, mindepth, maxdepth);
-    return get_num_ll(contains);
+    return get_long_ll(contains);
 }
 
 
@@ -417,8 +418,8 @@ t_llll* t_fnInsert::call(const t_execEnv &context)
 
 ///////////////
 
-
-t_fnKeysubs::t_fnKeysubs() : t_builtInFunction("insert")
+// UNUSED
+t_fnKeysubs::t_fnKeysubs() : t_builtInFunction("keysubs")
 {
     setArgument("llll");
     setArgument("keys");
@@ -492,6 +493,57 @@ t_llll *t_fnMinmax::call(const t_execEnv &context)
 
 ///////////////
 
+
+t_fnMinimum::t_fnMinimum() : t_builtInFunction("minimum")
+{
+    setArgument("llll");
+    setArgument("depth");
+    setArgument("mindepth", 1);
+    setArgument("maxdepth", 1);
+}
+
+t_llll *t_fnMinimum::call(const t_execEnv &context)
+{
+    t_llll *ll = context.argv[1];
+    t_atom_long mindepth, maxdepth;
+    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+    t_hatom *min;
+    llll_minmax(ll, &min, nullptr, nullptr, nullptr, mindepth, maxdepth);
+    t_llll *res = llll_get();
+    if (min->h_type != H_NOTHING) {
+        llll_appendhatom_clone(res, min);
+    }
+    return res;
+}
+
+
+///////////////
+
+
+t_fnMaximum::t_fnMaximum() : t_builtInFunction("minimum")
+{
+    setArgument("llll");
+    setArgument("depth");
+    setArgument("mindepth", 1);
+    setArgument("maxdepth", 1);
+}
+
+t_llll *t_fnMaximum::call(const t_execEnv &context)
+{
+    t_llll *ll = context.argv[1];
+    t_atom_long mindepth, maxdepth;
+    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+    t_hatom *max;
+    llll_minmax(ll, nullptr, &max, nullptr, nullptr, mindepth, maxdepth);
+    t_llll *res = llll_get();
+    if (max->h_type != H_NOTHING) {
+        llll_appendhatom_clone(res, max);
+    }
+    return res;
+}
+
+
+///////////////
 
 t_fnPerm::t_fnPerm() : t_builtInFunction("perm")
 {
@@ -638,7 +690,7 @@ t_llll* t_fnDelace::call(const t_execEnv &context) {
 
 t_fnGroup::t_fnGroup() : t_builtInFunction("group") {
     setArgument("llll");
-    setArgument("modulos", get_num_ll(1));
+    setArgument("modulos", get_long_ll(1));
     setArgument("overlap", 0l);
 }
 
@@ -655,14 +707,14 @@ t_llll* t_fnGroup::call(const t_execEnv &context) {
 
 
 t_fnPrimeser::t_fnPrimeser() : t_builtInFunction("primeser") {
-    setArgument("min");
-    setArgument("max");
+    setArgument("min", -1);
+    setArgument("max", -1);
     setArgument("maxcount", 0l);
 }
 
 t_llll* t_fnPrimeser::call(const t_execEnv &context) {
     long min = llll_getlong(context.argv[1]);
-    long max = llll_getlong(context.argv[2]);
+    long max = context.argv[2]->l_size && hatom_is_number(&context.argv[2]->l_head->l_hatom) ?  llll_getlong(context.argv[2]) : -1;
     long maxcount = llll_getlong(context.argv[3]);
     t_llll *ll = llll_primeser(min, max, maxcount);
     return ll;
@@ -719,3 +771,89 @@ t_llll* t_fnGeomser::call(const t_execEnv &context) {
 
 
 ///////////////
+
+t_fnSum::t_fnSum() : t_builtInFunction("sum")
+{
+    setArgument("llll");
+    setArgument("depth");
+    setArgument("mindepth", 1);
+    setArgument("maxdepth", 1);
+}
+
+t_llll* t_fnSum::call(const t_execEnv &context)
+{
+    t_llll *ll = llll_clone(context.argv[1]);
+    t_atom_long mindepth, maxdepth;
+    t_hatom sum_hatom;
+    t_llll *sum_ll = llll_get();
+    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+    llll_sum(ll, &sum_hatom, mindepth, maxdepth);
+    llll_appendhatom_clone(sum_ll, &sum_hatom);
+    return ll;
+}
+
+
+///////////////
+
+t_fnProd::t_fnProd() : t_builtInFunction("prod")
+{
+    setArgument("llll");
+    setArgument("depth");
+    setArgument("mindepth", 1);
+    setArgument("maxdepth", 1);
+}
+
+t_llll* t_fnProd::call(const t_execEnv &context)
+{
+    t_llll *ll = llll_clone(context.argv[1]);
+    t_atom_long mindepth, maxdepth;
+    t_hatom prod_hatom;
+    t_llll *prod_ll = llll_get();
+    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+    llll_prod(ll, &prod_hatom, mindepth, maxdepth);
+    llll_appendhatom_clone(prod_ll, &prod_hatom);
+    return ll;
+}
+
+
+///////////////
+
+
+
+t_fnMc2f::t_fnMc2f() : t_builtInFunction("mc2f") {
+    setArgument("mc", llll_get());
+    setArgument("basefreq", 440.);
+    setArgument("basepitch", 6900.);
+}
+
+t_llll* t_fnMc2f::call(const t_execEnv &context) {
+    
+    t_llll *mc = context.argv[1];
+    double basefreq = llll_getdouble(context.argv[2], 440.);
+    double basepitch = llll_getdouble(context.argv[3], 6900.);
+
+    t_llll *ll = llll_mc2f(mc, basefreq, basepitch);
+    //llll_free(mc);
+    return ll;
+}
+
+
+///////////////
+
+
+t_fnF2mc::t_fnF2mc() : t_builtInFunction("f2mc") {
+    setArgument("mc", llll_get());
+    setArgument("basefreq", 440.);
+    setArgument("basepitch", 6900.);
+}
+
+t_llll* t_fnF2mc::call(const t_execEnv &context) {
+    
+    t_llll *f = context.argv[1];
+    double basefreq = llll_getdouble(context.argv[2], 440.);
+    double basepitch = llll_getdouble(context.argv[3], 6900.);
+    
+    t_llll *ll = llll_f2mc(f, basefreq, basepitch);
+    //llll_free(f);
+    return ll;
+}

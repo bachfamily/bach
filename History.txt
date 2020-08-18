@@ -1,5 +1,84 @@
 VERSION NOTES:
 
+v0.8.2b
+
+*****************
+*** IMPORTANT ***
+*****************
+
+*** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
+
+- bell, bach.expr:
+    makepitch function now treats negative degrees as descending steps (e.g., makepitch(-1, 0, 5) returns B4)
+    evaluation precedence of ** operator is now between + and * (2 ** 3 * 4 now returns 4096, previously was 32)
+
+- bell: fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
+    :* operator returns null for non-positive repeat counts
+
+- bach.expr:
+    evaluation precedence of unary minus operator is now highest (-2 ** 2 now returns 4, previously -4)
+
+
+- bach.roll:
+    MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
+        New "importdivisions" message attribute, overriding "markdivisions"
+
+- bach.pitchpack now treats negative degrees as descending steps (see the bell / bach.expr makepitch function)
+
+
+***********************
+*** VERSION CHANGES ***
+***********************
+
+authorization: now the code for a given year can be entered until January of the next year
+
+- bell, bach.expr:
+    makepitch function now treats negative degrees as descending steps (e.g. makepitch(-1, 0, 5) returns B4)
+
+- bell: fixed various memory leaks
+    primeser: the second argument may be left unset
+    fixed parsing of pitch literals
+    new built-in functions: mc2f, f2mc, minimum, maximum
+    fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
+    dot operator can be preceded by whitespace
+    _= operator optimized
+    :* operator returns null for non-positive repeat counts
+    map function works correctly with mindepth
+    evaluation precedence of ** operator is now between + and *
+
+- all the bell-compliant objects:
+    fixed potential crash when reloading a file or re-opening the text editor
+    "expr" and "lambda" message processing is now deferred, not deferlow-ed unless at object instantiation
+
+- all the bell-compliant objects except bach.eval:
+    fixed very general issue preventing objects from working unless they had a bell lambda function
+
+- bach.expr:
+    evaluation precedence of unary minus operator is now highest (-2 ** 2 now returns 4, previously -4)
+
+- bach.reg, bach.value, bach.pv
+    Fixed memory leak related to the text editor window
+
+- bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
+        Pickup measures are correctly imported
+    XML import and export: three-quarters-sharp and -flat accidentals have correct name now (was "three-quarter")
+        complex time signatures are correctly handled
+
+- bach.roll:
+    MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
+        New "importdivisions" message attribute, overriding "markdivisions"
+        New "importsubdivisions" message attribute
+    exportmidi: new "exportbarlines" message attribute
+        new "exportdivisions" message attribute
+
+- bach.shelf: fixed crash with @embed 1 when reopening patch
+
+- bach.textin: now works correctly with lllls starting with a number
+
+
+
+
+
 v0.8.1b
 
 Scroll down for very important things you should now about v0.8b
@@ -136,6 +215,7 @@ Scroll down for very important things you should now about v0.8b
 		Works after entering an invalid or empty llll in the first inlet
 		Now weak and hungry engines also accept and deal with non-integer scores
 		Fixed bug causing crashes with provisionals in parallel mode
+		Position values from the middle outlet with strong engine are now correct
 
 - bach.delace	Fixed crash in mono mode without count argument
 

@@ -1,7 +1,7 @@
 /*
  *  notation_goto.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -1216,7 +1216,7 @@ t_llll *goto_time(t_notation_obj *r_ob, t_goto_params *par, long *error)
             llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
         }
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, true);
+        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, true, true); // accurate parsing
         llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
     }
     
@@ -1421,7 +1421,7 @@ e_goto_error notationobj_goto(t_notation_obj *r_ob, t_goto_params *par)
 //    if (err == k_GOTO_ERROR_NONE)
 //        err = goto_set_selection_from_llll(r_ob, par, toselect);
     
-    if (par->force_inscreen && r_ob->force_notation_item_inscreen) {
+    if (par->force_inscreen && r_ob->force_notation_item_inscreen && toselect) {
         for (t_llllelem *el = toselect->l_head; el; el = el->l_next)
             (r_ob->force_notation_item_inscreen)(r_ob, (t_notation_item *)hatom_getobj(&el->l_hatom), NULL);
     }

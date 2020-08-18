@@ -1,7 +1,7 @@
 /*
  *  bach.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -17,10 +17,11 @@
  *
  */
 
-#include "foundation/llllobj.h"
+#include "foundation/llll_files.h"
 #include "ext_globalsymbol.h"
 #include "ext_common.h"
 #include "graphics/bach_cursors.h"
+#include "patreon/patrons.h"
 #include <stdlib.h>
 #include <algorithm>
 #include <string>
@@ -32,20 +33,16 @@
 
 #include "graphics/bach_graphics.h"
 
-#ifdef WIN_VERSION
-
-    #include <windows.h>
-    #include <ShlObj.h>
-    HINSTANCE hinst;
-
-#endif
-
 #ifdef MAC_VERSION
 #include "pwd.h"
 #endif
 
 #ifdef WIN_VERSION
 //#define BACH_SLEEP_BEFORE_INIT
+#endif
+
+#ifdef WIN_VERSION_old
+HINSTANCE hinst;
 #endif
 
 #include "bell/ast.hpp"
@@ -87,8 +84,11 @@ void bach_sendversion(t_bach *x, t_symbol *s);
 void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s);
 void bach_sendplatform(t_bach *x, t_symbol *s);
 void bach_donors(t_bach *x);
+void bach_installatompackage(t_bach *x);
+void bach_clearatomcachefolder(t_bach *x);
 void bach_unlock(t_bach *x, t_atom_long l);
 void bach_nonative(t_bach *x, t_atom_long l);
+void *bach_llll_from_phonenumber_and_retain(t_bach *x, t_atom_long l);
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
 char bach_load_default_font(void);
 long bach_getbuildnumber(void);
@@ -158,8 +158,12 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method) bach_sendplatform, "sendplatform", A_SYM, 0);
     class_addmethod(c, (method) bach_sendbuildnumber, "sendbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_donors, "donors", 0);
+    class_addmethod(c, (method) bach_installatompackage, "installatompackage", 0);
+    class_addmethod(c, (method) bach_clearatomcachefolder, "clearatomcachefolder", 0);
+
     class_addmethod(c, (method) bach_unlock, "unlock", A_LONG, 0);
     class_addmethod(c, (method) bach_nonative, "nonative", A_LONG, 0);
+    class_addmethod(c, (method) bach_llll_from_phonenumber_and_retain, "llllfromphonenumberandretain", A_LONG, 0);
 
     
 #ifdef BACH_SAVE_STACK_WITH_MEMORY_LOGS
@@ -366,7 +370,7 @@ void bach_version(t_bach *x)
 {
     
     post("--- bach: automated composer's helper ---");
-    post("© 2010-2019 - Andrea Agostini and Daniele Ghisi");
+    post("© 2010-2020 - Andrea Agostini and Daniele Ghisi");
     if (x && x->b_no_ss) {
         post("♥ Thank you so much for supporting us on Patreon! ♥");
     } else {
@@ -534,26 +538,18 @@ void bach_donors(t_bach *x)
     post(" ");
     post("**************************************************************************");
     post("bach: automated composer's helper would like to thank our top supporters:");
-    //post(" - Micha Seidenberg"); // uncomment starting from december 2019
-    //post(" - Francisco Colasanto"); // uncomment starting from june 2020
-    //post(" - Yan Maresz"); // uncomment starting from june 2020
-    //post(" - Julien Vincenot"); // uncomment starting from june 2020
-    //post(" - Michele Zaccagnini") // uncomment starting from august 2020
-    //post(" - Jean-Baptiste Barrière") // uncomment starting from may 2020
-    post(" - Jean-Baptiste Barrière");
-    post(" - Cody Brookshire");
-    post(" - Francisco Colasanto");
-    post(" - Dimitri Fergadis (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research, proprietor of Halocyan Records)");
-    post(" - Pete Kellock");
-    post(" - Yan Maresz");
-    post(" - Micha Seidenberg");
-    post(" - Julien Vincenot");
-    post(" - Michele Zaccagnini");
-    //
+    
+    // Pre-Patreon Supporters:
+    post("- Cody Brookshire");
+    post("- Dimitri Fergadis (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research, proprietor of Halocyan Records)");
+    post("- Pete Kellock");
+    
+    // Patreon supporters:
+    post_top_supporters();
+
     post("...as well as all our patrons:");
-    post("Paolo Aralla, audiophil, Jean-Baptiste Barrière, Chris Chandler, Jean-Julien Filatriau, Louis Goldford, Matthew Goodheart,");
-    post("Nikola Kołodziejczyk, Hans Leeuw, MF Liau, linazero, Daniel Lujan, Tomislav Oliver, Alessandro Ratoci, Micha Seidenberg,");
-    post("TJ Shredder, Christopher Michael Trapani, Pierre Alexandre Tremblay, Hans Tutschku, Joost Van Kerkhoven, Viktor Velthuijs, Vens R.");
+    post_all_patrons();
+    
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
@@ -564,6 +560,12 @@ void bach_nonative(t_bach *x, t_atom_long l)
 {
     x->b_nonative = l != 0;
 }
+
+void *bach_llll_from_phonenumber_and_retain(t_bach *x, t_atom_long l)
+{
+    return llll_retrieve_from_phonenumber_and_retain(l);
+}
+
 
 
 long parse_version_string(char *str, long *major, long *minor, long *revision, long *maintenance)
@@ -1176,28 +1178,11 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
 char bach_load_default_font(void)
 {
     //Sleep(60000);
-    t_fourcc type = 0;
-    char *filepath;
-    size_t bachlen = 8;
-    filepath = bach_ezlocate_file("bach.mxo", &type);
-    if (!filepath) {
-        filepath = bach_ezlocate_file("bach.mxe", &type);
-        if (!filepath) {
-            filepath = bach_ezlocate_file("bach.mxe64", &type);
-            bachlen = 10;
-        }
-    }
-    if (!filepath) {
-        error("can't load font!");
-        return 0;
-    }
 
-    
-    char *pastehere = filepath + strlen(filepath) - (bachlen + 11);
-    strncpy_zero(pastehere, "fonts/November for bach.otf", 28);
+    std::string fontsPath = bach_get_package_path() + "/fonts/November for bach.otf";
     
 #ifdef WIN_VERSION
-    AddFontResourceExA(filepath, FR_PRIVATE, 0);
+    AddFontResourceExA(fontsPath.c_str(), FR_PRIVATE, 0);
 #endif
     
 #ifdef WIN_VERSION_old
@@ -1231,8 +1216,7 @@ char bach_load_default_font(void)
     CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
     //CFURLRef fontURL = mainBundle ? CFBundleCopyResourceURL(mainBundle, CFSTR("johannsebastian"), CFSTR("dat"), NULL) : NULL;
     
-    CFStringRef path = CFStringCreateWithCString(NULL, filepath, kCFStringEncodingMacRoman);
-    bach_freeptr(filepath);
+    CFStringRef path = CFStringCreateWithCString(NULL, fontsPath.c_str(), kCFStringEncodingMacRoman);
     CFURLRef fontURL = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
     
     if (!mainBundle || !fontURL) {
@@ -1271,9 +1255,9 @@ void bach_init_bifs(t_bach *x)
 {
     auto bifTable = x->b_bifTable = new std::unordered_map<std::string, t_function *>;
     x->b_gvt = new t_globalVariableTable;
-	
+    
     // CULPRIT
-	(*bifTable)["$args"] = new t_fnArgs;
+    (*bifTable)["$args"] = new t_fnArgs;
     (*bifTable)["$argcount"] = new t_fnArgcount;
     
     (*bifTable)["length"] = new t_fnLength;
@@ -1315,7 +1299,14 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["map"] = new t_fnMap;
     (*bifTable)["reduce"] = new t_fnReduce;
     (*bifTable)["apply"] = new t_fnApply;
+    //(*bifTable)["sum"] = new t_fnSum;
+    //(*bifTable)["prod"] = new t_fnProd;
 
+    (*bifTable)["minimum"] = new t_fnMinimum;
+    (*bifTable)["maximum"] = new t_fnMaximum;
+    (*bifTable)["mc2f"] = new t_fnMc2f;
+    (*bifTable)["f2mc"] = new t_fnF2mc;
+    
     (*bifTable)["outlet"] = new t_fnOutlet;
     (*bifTable)["inlet"] = new t_fnInlet;
 
@@ -1369,15 +1360,16 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["approx"] = new t_mathBinaryFunctionAAA<hatom_fn_approx>("pitch", "tonedivision", "approx");
     (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>("x", "y", "enharm");
     (*bifTable)["makepitchsc"] = new t_mathBinaryFunctionAAA<hatom_fn_makepitchsc>("steps", "cents", "makepitchsc");
-    (*bifTable)["makepitch"] = new t_mathTernaryFunctionAAAA<hatom_fn_makepitch>("pitch", "alter", "degree", "makepitch");
+
+    (*bifTable)["makepitch"] = new t_mathTernaryFunctionAAAA<hatom_fn_makepitch>("degree", "alter", "octave", "makepitch");
     
     (*bifTable)["#u-"] = new t_mathUnaryFunctionAA<hatom_op_uminus>("#u-");
     (*bifTable)["#!"] = new t_mathUnaryFunctionAA<hatom_op_lognot>("#!");
     (*bifTable)["#~"] = new t_mathUnaryFunctionAA<hatom_op_bitnot>("#~");
     
-    (*bifTable)["#+"] = new t_mathBinaryFunctionAAA<hatom_op_plus>("#+");
+    (*bifTable)["#+"] = new t_mathBinaryFunctionAAA<hatom_op_plus_with_symbols>("#+");
     (*bifTable)["#-"] = new t_mathBinaryFunctionAAA<hatom_op_minus>("#-");
-    (*bifTable)["#*"] = new t_mathBinaryFunctionAAA<hatom_op_times>("#*");
+    (*bifTable)["#*"] = new t_mathBinaryFunctionAAA<hatom_op_times_with_symbols>("#*");
     (*bifTable)["#/"] = new t_mathBinaryFunctionAAA<hatom_op_div>("#/");
     (*bifTable)["#//"] = new t_mathBinaryFunctionAAA<hatom_op_divdiv>("#//");
     (*bifTable)["#%"] = new t_mathBinaryFunctionAAA<hatom_fn_remainder>("#%");
@@ -1420,59 +1412,49 @@ void bach_unlock(t_bach *x, t_atom_long l)
 {
     t_datetime dt;
     systime_datetime(&dt);
-    unsigned long h = murmur3(dt.year);
+    t_uint32 year = dt.year;
+    unsigned long h = murmur3(year);
     
     if (l != h) {
-        object_error((t_object *) x, "Bad authorization code");
+        if (dt.month == 1) {
+            --year;
+            h = murmur3(year);
+        }
+        if (l != h)
+            object_error((t_object *) x, "Bad splashscreen removal code");
         return;
     }
     
-    post("bach authorized until January 31, %lu", dt.year + 1);
+    post("bach splashscreen removed until January 31, %lu", year + 1);
     bach->b_no_ss = true;
     
-    std::string dq = "\"";
+    static const std::string dq = "\"";
 
+    std::string folder = bach_get_cache_path();
+    
 #ifdef MAC_VERSION
-    passwd* pw = getpwuid(getuid());
-    std::string home = pw->pw_dir;
-    std::string folder = home + "/Library/Application Support/bach/cache";
     std::string name = folder + "/bachutil.mxo";
-    std::string mkdir = "mkdir -p " + dq + folder + dq;
 #endif
 
 #ifdef WIN_VERSION
-    std::string bs = "\\";
-    TCHAR appDataPath[MAX_PATH];
-    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
-        return;
-    std::string home = appDataPath;
-    std::string folder = home + bs + "bach";
+    static const std::string bs = "\\";
     std::string name = folder + bs + "bachutil.mxe64";
-    std::string mkdir = "md " + dq + folder + dq;
 #endif
 
     std::string echo = "echo " + std::to_string(l) + " > " + dq + name + dq;
-    system(mkdir.c_str());
     system(echo.c_str());
 }
 
 t_bool bach_checkauth()
 {
-    std::string dq = "\"";
-
+    static const std::string dq = "\"";
+    std::string folder = bach_get_cache_path();
+    
 #ifdef MAC_VERSION
-    passwd* pw = getpwuid(getuid());
-    std::string home = pw->pw_dir;
-    std::string name = home + "/Library/Application Support/bach/cache/bachutil.mxo";
+    std::string name = folder + "/bachutil.mxo";
 #endif
 #ifdef WIN_VERSION
-    std::string bs = "\\";
-    TCHAR appDataPath[MAX_PATH];
-    if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
-        return false;
-    std::string home = appDataPath;
-    std::string folder = home + bs + "bach";
-    std::string name = folder + bs + "bachutil.mxe64";
+    std::string name = folder + "\\bachutil.mxe64";
 #endif
 
     t_fourcc filetype = 0, outtype;
@@ -1509,4 +1491,61 @@ t_bool bach_checkauth()
 }
 
 
+void bach_installatompackage(t_bach *x)
+{
+    const static std::string dq = "\"";
+    std::string home = bach_get_user_folder_path();
+#ifdef MAC_VERSION
+    std::string atomFolder = home + "/.atom/packages";
+    char filename[MAX_PATH_CHARS];
+    strncpy_zero(filename, atomFolder.c_str(), MAX_PATH_CHARS);
+    short path = 0;
+    t_fourcc outtype = 0;
+    long err = locatefile_extended(filename, &path, &outtype, nullptr, 0);
+    if (err || outtype != 'fold') {
+        object_error((t_object *) x, "Can't find atom");
+        return;
+    }
+    std::string atomPackageFolder = bach_get_package_path() + "/language-bell";
+    std::string rmcmd = "rm -f " + dq + atomFolder + "/language-bell" + dq;
+    std::string cmd = "ln -s " + dq + atomPackageFolder + dq + " " + dq + atomFolder + dq;
+#endif
+#ifdef WIN_VERSION
+    std::string atomFolder = home + "\\.atom\\packages";
+    char filename[MAX_PATH_CHARS];
+    strncpy_zero(filename, atomFolder.c_str(), MAX_PATH_CHARS);
+    short path = 0;
+    t_fourcc outtype = 0;
+    long err = locatefile_extended(filename, &path, &outtype, nullptr, 0);
+    if (err || outtype != 'fold') {
+        object_error((t_object *) x, "Can't find atom");
+        return;
+    }
+    std::string link = atomFolder + "\\language-bell";
+    std::string atomPackageFolder = bach_get_package_path() + "\\language-bell";
+    std::string rmcmd = "del /f " + dq + link + dq;
+    std::string cmd = "mklink /J " + dq + link + dq + " " + dq + atomPackageFolder + dq;
+#endif
+    system(rmcmd.c_str());
+    system(cmd.c_str());
+}
 
+void bach_clearatomcachefolder(t_bach *x)
+{
+    short r = wind_advise_explain(nullptr, const_cast<char *>("Are you sure that you want to clear the atom editor cache?"),
+                                  const_cast<char *>("You will lose any unsaved changes"),
+                                  const_cast<char *>("Cancel"),
+                                  const_cast<char *>("Clear the cache"),
+                                  nullptr);
+    if (r == 1)
+        return;
+    const static std::string dq = "\"";
+    std::string cache = bach_get_cache_path();
+#ifdef WIN_VERSION
+    std::string cmd = "del /f " + dq + cache + dq + "\\scratchpad*.bell";
+#endif
+#ifdef MAC_VERSION
+    std::string cmd = "rm -f " + dq + cache + dq + "/scratchpad*.bell";
+#endif
+    system(cmd.c_str());
+}

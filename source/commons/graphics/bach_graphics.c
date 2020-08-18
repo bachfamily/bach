@@ -1,7 +1,7 @@
 /*
  *  bach_graphics.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -256,7 +256,7 @@ void paint_rectangle_rounded(t_jgraphics* g, t_jrgba border_color, t_jrgba fill_
     g->drawRoundedRectangle(x1, y1, width, height, cornerSize, border_width);
 } 
  
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, 
+void write_text_standard(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, 
                 const Justification& justificationFlags)
 {
     g->setFont(*jf);
@@ -662,9 +662,14 @@ void write_text_in_vertical(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, cons
     }
 }
 
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height)
+void write_text_standard(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height)
 {
     write_text(g, jf, textcolor, text, x1, y1, max_width, max_height, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
+}
+
+void write_text_standard_singleline(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height)
+{
+    write_text(g, jf, textcolor, text, x1, y1, max_width, max_height, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
 }
 
 void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double width, double height, int justification, char single_line, char use_ellipsis)
@@ -2323,7 +2328,7 @@ void paint_polygon_debug(t_jgraphics* g, t_jrgba *border_color, t_jrgba *inner_c
         if (paint_idx) {
             char text[10];
             sprintf(text, "%ld", i);
-            write_text_simple(g, jf, *border_color, text, this_pt.x, this_pt.y, 200, 200);
+            write_text_standard(g, jf, *border_color, text, this_pt.x, this_pt.y, 200, 200);
         }
         
         if (i == 0)
@@ -4007,7 +4012,7 @@ void paint_polygon_debug_new(t_polygon *p, t_jgraphics *g, long iteration, char 
             char text[200];
             sprintf(text, "%ld", i);
             paint_circle_filled(g, grey, q->vertices[i].x, q->vertices[i].y, 1);
-            write_text_simple(g, jf, grey, text, t.x, t.y, 200, 200);
+            write_text_standard(g, jf, grey, text, t.x, t.y, 200, 200);
         }
     }
 

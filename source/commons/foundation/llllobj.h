@@ -1,7 +1,7 @@
 /*
  *  llllobj.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -786,8 +786,6 @@ long bach_is_loadtime(void);
 t_max_err llllobj_dummy_setter(t_object *x, void *attr, long ac, t_atom *av);
 
 
-
-char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type);
 
 
 

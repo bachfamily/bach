@@ -3733,8 +3733,10 @@
 				<br />
 				Message attributes:<br />
 				<m>@exportmarkers</m> (int, default: 1): If non-zero, exports all the markers<br />
+				<m>@exportbarlines</m> (int, default: 1): If non-zero, a "bach barline" marker is added at each measure<br />
+				<m>@exportdivisions</m> (int, default: 1): If non-zero, a "bach division" marker is added at each beat<br />
 				<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
-				<m>@format</m> (int, default: 0): MIDI file format (0 = single track, 1 = multiple tracks)<br />
+				<m>@format</m> (int, default: 1): MIDI file format (0 = single track, 1 = multiple tracks)<br />
 				<m>@resolution</m> (int, default: 960): Number of MIDI ticks per beat<br />
 				<m>@temporampsamplingrate</m> (int, default: 240): Maximum duration, in MIDI ticks, for a single tempo step during tempo interpolations<br />
 				<br />
@@ -3744,6 +3746,8 @@
 				Furthermore, some exporting specifications are available, and each has to be given as llll after the (optional) file name.
 				Such lllls will be in the form <b>[<m>specification_name</m> <m>specification_value</m>]</b>). Available specifications are: <br />
 				- <b>exportmarkers</b> (default: 1): if non-0, all the markers in the score will be exported. <br />
+				- <b>exportbarlines</b> (default: 1): if non-0, a "bach barline" marker will be added at each measure. <br />
+				- <b>exportdivisions</b> (default: 1): if non-0, a "bach division" marker will be added at each beat. <br />
 				- <b>voices</b> [default: <b>[]</b>): if a list of voices is provided, then only the specified voices will be exported.
 				If no list is provided, then all the voices of the score will be exported. Ranges can also be
 				expressed, as sublists. For example, <b>[voices 1 3 5]</b> will export the first, third and fifth voice,
@@ -3851,7 +3855,7 @@
 				difficult. What might be handy to do, with Finale, is to export quartertone accidentals as if they were parenthesized versions
 				of the standard accidentals. You can easily map inside finale the parenthesized accidentals to the glyphs of
 				quartertone accidentals, via your favorite quartertone accidental font. A parenthesized natural will be displayed as
-				a quarter-sharp; a parenthesized sharp as a three-quarter-sharp, and so on. Everything, if parenthesized, will step up a
+				a quarter-sharp; a parenthesized sharp as a three-quarters-sharp, and so on. Everything, if parenthesized, will step up a
 				quarter tone. Once you have set up your new Finale document in this way, you can use the <b>[parenthesizedquartertones 1]</b>
 				specification in order to export quartertones in this way.
 				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportxml</m>,<m>exportom</m>,<m>exportpwgl</m>,<m>exportlilypond</m>,<m>exportlilypondpdf</m><br />
@@ -4420,7 +4424,7 @@
 				The two arguments are the starting and ending numbers of the measures to be displayed in the screen.
 				If a third argument is given, this is the voice number to which the measure range refers (by default: first voice).
 				For instance, <b>inscreenmeas 4 7 3</b> shows exactly in the screen measures 4 to 7 of voice 3.
-				<br />				See also:<m>domain</m>,<m>inscreen</m>,<m>inscreenpos</m>,<m>resetwidthfactors</m><br />
+				<br />				See also:<m>domain</m>,<m>inscreen</m>,<m>inscreenpos</m>,<m>resetwidthfactors</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="inscreenpos">
@@ -4469,7 +4473,7 @@
 				For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
 				<b>[3 any 27/4]</b> does the same for voice 3.
 				<br /> <br />
-				<br />				See also:<m>inscreen</m>,<m>inscreenmeas</m><br />
+				<br />				See also:<m>inscreen</m>,<m>inscreenmeas</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="insertmeasure">
@@ -5214,6 +5218,12 @@
 				• <b>interp [3.5]</b>   <i>→ get info on chords being played at half of measure 3</i><br />
 				• <b>interp [3 1/4]</b>   <i>→ get info on chords being played after 1/4 of measure 3</i><br />
 				• <b>interp [2 3 1/4]</b>   <i>→ get info on chords being played after 1/4 of measure 3 of voice 2 (but retrieve all voices!)</i><br />
+				• <b>interp tempo [3]</b>   <i>→ get tempo at beginning of measure 3</i><br />
+				• <b>interp tempo 1s</b>   <i>→ get tempo at 1s</i><br />
+				• <b>interp tempo [2 3 1/4]</b>   <i>→ get info on tempo after 1/4 of measure 3 of voice 2</i><br />
+				• <b>interp timesig [3]</b>   <i>→ get time signature at beginning of measure 3</i><br />
+				• <b>interp timesig 1s</b>   <i>→ get time signature at 1s</i><br />
+				• <b>interp timesig [2 3 0]</b>   <i>→ get info on time signatures at measure 3 of voice 2</i><br />
 				<br />
 				The <m>interp</m> message, followed by a time value (in milliseconds) retrieves
 				the instantaneous data of all the notes which are active at the given time instant.
@@ -5223,7 +5233,11 @@
 				being the chord notes active at
 				the given time instant, each in the standard note gathered syntax, with two important variations:
 				there is no tie element, and for each slot marked as temporal only the slot element at the given time instant
-				is output (e.g. the interpolated function point of a function slot). <br /> <br />
+				is output (e.g. the interpolated function point of a function slot). <br />
+				If the <m>interp</m> message is followed by the <m>tempo</m> symbol, before any other argument, then the tempo
+				is retrieved at the specified position in time, for every voice. <br />
+				If the <m>interp</m> message is followed by the <m>timesig</m> symbol, before any other argument, then the time signature
+				is retrieved at the specified position in time, for every voice. <br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, the <m>tie?</m> value is 1 only if the note starts a tie and 0 otherwise, and
@@ -6092,22 +6106,6 @@
 		<method name="name">
 			<arg name="names" optional="0" type="llll" />
 			<digest>
-				Append name(s) to selected items
-			</digest>
-			<description>
-				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
-				Examples:<br />
-				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
-				• <b>name [Ringo Starr] [[Low High Snare] [Sizzle Crash]]</b>   <i>→ append complex llll name</i><br />
-				<br />
-				Works like the <m>name</m> message, but appends the given names
-				to the already existing ones (see <m>name</m>).
-				<br />				See also:<m>name</m>,<m>clearnames</m><br />
-			</description>
-		</method>
-		<method name="name">
-			<arg name="names" optional="0" type="llll" />
-			<digest>
 				Assign name(s) to selected items
 			</digest>
 			<description>
@@ -6132,6 +6130,22 @@
 				If a <b>@progeny 1</b> attribute is added and chords are selected, not only the chord name is changed, but also the name of all its notes.
 				This is handy for instance, if one needs to send <b>name @progeny 1</b> to delete all names of selected chords and notes.
 				<br />				See also:<m>nameappend</m>,<m>clearnames</m>,<m>sel</m>,<m>unsel</m>,<m>select</m><br />
+			</description>
+		</method>
+		<method name="name">
+			<arg name="names" optional="0" type="llll" />
+			<digest>
+				Append name(s) to selected items
+			</digest>
+			<description>
+				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
+				Examples:<br />
+				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
+				• <b>name [Ringo Starr] [[Low High Snare] [Sizzle Crash]]</b>   <i>→ append complex llll name</i><br />
+				<br />
+				Works like the <m>name</m> message, but appends the given names
+				to the already existing ones (see <m>name</m>).
+				<br />				See also:<m>name</m>,<m>clearnames</m><br />
 			</description>
 		</method>
 		<method name="nametoslot">
@@ -7171,13 +7185,35 @@
 				otherwise markers are set for each measure of each voice.
 			</description>
 		</method>
+		<method name="scroll">
+			<arg name="amount" optional="0" type="float" />
+			<digest>
+				Scroll the object horizontally or vertically
+			</digest>
+			<description>
+				Syntax: <b>scroll <m>&lt;float: amount&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>scroll vertical 10</b>   <i>→ scroll 10 pixels vertically</i><br />
+				• <b>scroll vertical 0.5 @unit relative</b>   <i>→ scroll vertically in the center</i><br />
+				• <b>scroll horizontal 0.5 @unit relative</b>   <i>→ the same, horizontally</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@direction</m> (symbol, default: horizontal): Scrolling direction<br />
+				<m>@unit</m> (symbol, default: pixel): Amount unit ("pixel", "normalizedpixel" or "relative")<br />
+				<m>@delta</m> (int, default: 0): Scroll amount is relative<br />
+				<br />
+				The message <m>scroll</m> moves the portion of displayed object either horizontally or vertically,
+				in a similar way of moving horizontal or vertical scrollbars.
+				<br />				See also:<m>inscreenpos</m>,<m>inscreen</m><br />
+			</description>
+		</method>
 		<method name="sel">
 			<arg name="arguments" optional="0" type="llll" />
 			<digest>
 				Select items
 			</digest>
 			<description>
-				Syntax: <b>sel <m>&lt;llll: arguments&gt;</m> </b><br />
+				Syntax: <b>sel <m>&lt;llll: arguments&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>sel all</b>   <i>→ select everything</i><br />
 				• <b>sel notes</b>   <i>→ select all notes</i><br />
@@ -7189,6 +7225,9 @@
 				• <b>sel measures</b>   <i>→ select all measures</i><br />
 				• <b>sel chord 3 2</b>   <i>→ select 2rd chord of 3nd measure (of 1st voice)</i><br />
 				• <b>sel chord any 20</b>   <i>→ select 20th chord of 1st voice (in any measure)</i><br />
+				• <b>sel chord any 20 @tiemode all</b>   <i>→ the same, but consider tied chords as a single one</i><br />
+				• <b>sel chord any 20 @tiemode all @skiprests 1</b>   <i>→ the same, but ignore rests</i><br />
+				• <b>sel chord any 20 @restseqmode all</b>   <i>→ select 20th chord of 1st voice, consider rest sequences as one</i><br />
 				• <b>sel chord 2 5 4</b>   <i>→ select 4th chord of 5th measure 2nd voice</i><br />
 				• <b>sel chord 4 any 21</b>   <i>→ select 21th chord of 4st voice (in any measure)</i><br />
 				• <b>sel chord -1 -2 -1</b>   <i>→ select last chord of one-but-last measure of last voice</i><br />
@@ -7234,6 +7273,11 @@
 				• <b>sel marker if onset &gt; 5000</b>   <i>→ select all markers with onset &gt;5s</i><br />
 				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
 				• <b>sel tail if cents &gt; 6000</b>   <i>→ select all tails above middle C</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@tiemode</m> (symbol, default: each): If "all", tied sequences of chords are counted as one<br />
+				<m>@skiprests</m> (int, default: 0): If non-zero, rests are not counted at all<br />
+				<m>@restseqmode</m> (int, default: each): If "all", sequences of consecutive rests are counted as one<br />
 				<br />
 				The word <m>sel</m> add some notation items to the current selection. In the basic behavior,
 				the word must be followed by four elements, specifying: <br />
@@ -8978,6 +9022,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="bigtsratio" get="1" set="1" type="float" size="1">
+			<digest>
+				Big Time Signatures Ratio
+			</digest>
+			<description>
+				Sets the expansion ratio for big time signatures
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Big Time Signatures Ratio" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="bordercolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Border Color
@@ -9024,6 +9084,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="breakpointsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Pitch Breakpoint Size
+			</digest>
+			<description>
+				Sets the size of diamond shaped breakpoints (when displayed: see <m>breakpointshavenoteheads</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="3." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Pitch Breakpoint Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="breakrootlevelbeam" get="1" set="1" type="int" size="1">
@@ -9332,7 +9408,7 @@
 		</attribute>
 		<attribute name="durationlinewidth" get="1" set="1" type="float" size="1">
 			<digest>
-				Width of the duration line
+				Duration Line Width
 			</digest>
 			<description>
 				Sets the width of the duration lines (when displayed: see <m>showdurations</m>).
@@ -9343,7 +9419,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Width of the duration line" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Duration Line Width" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -10413,6 +10489,20 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="markersfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Markers Font
+			</digest>
+			<description>
+				Sets the font size of markers
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Markers Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="markersfontsize" get="1" set="1" type="float" size="1">
@@ -12134,7 +12224,7 @@
 				Show Barlines
 			</digest>
 			<description>
-				Toggles the display of barlines.
+				Sets a barline shift for proportional spacing display
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
@@ -12740,7 +12830,9 @@
 				Show Time Signatures
 			</digest>
 			<description>
-				Toggles the display of time signatures.
+				Toggles the display of time signatures: 0 = Hide, 1 = Classical display, 2 = Time signatures are
+				displayed above the staff (and with a single big time signature if they coincide across all voices, see also
+				the <m>bigtsratio</m> attribute.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
@@ -12748,7 +12840,7 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Time Signatures" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="showtupletspreferences" get="1" set="1" type="int" size="1">
@@ -13489,6 +13581,20 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="voicenamesfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Voice Names Font
+			</digest>
+			<description>
+				Sets the font size of voice names
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Names Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="voicenamesfontsize" get="1" set="1" type="float" size="1">
