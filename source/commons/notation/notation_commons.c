@@ -44996,6 +44996,10 @@ void note_stretch_portion_of_duration_line_and_temporal_slots(t_notation_obj *r_
                 // "shift"
                 bpt->rel_x_pos = (from_rel_pos + (to_rel_pos - from_rel_pos) * stretch_factor + (rel_pos - to_rel_pos)) * ratio;
                 bpt->rel_x_pos = CLAMP(bpt->rel_x_pos, 0., 1.);
+            } else if (rel_pos <= from_rel_pos) {
+                // "keep them"
+                bpt->rel_x_pos = rel_pos * ratio;
+                bpt->rel_x_pos = CLAMP(bpt->rel_x_pos, 0., 1.);
             }
         }
     }
@@ -45016,6 +45020,11 @@ void note_stretch_portion_of_duration_line_and_temporal_slots(t_notation_obj *r_
                 } else if (rel_pos >= to_rel_pos && direction == 0) {
                     // "shift"
                     new_pos = (from_rel_pos + (to_rel_pos - from_rel_pos) * stretch_factor + (rel_pos - to_rel_pos)) * ratio;
+                    new_pos = CLAMP(new_pos, 0., 1.);
+                    slot_item_set_temporal_x(r_ob, i, it, new_pos, true);
+                } else if (rel_pos <= from_rel_pos) {
+                    // "keep them"
+                    new_pos = rel_pos * ratio;
                     new_pos = CLAMP(new_pos, 0., 1.);
                     slot_item_set_temporal_x(r_ob, i, it, new_pos, true);
                 }
