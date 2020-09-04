@@ -1451,6 +1451,9 @@ void bach_unlock(t_bach *x, t_atom_long l)
 
 t_bool bach_checkauth()
 {
+#ifdef BACH_SAVE_STACK_WITH_MEMORY_LOG
+    return true;
+#endif
     std::string dq = "\"";
 
 #ifdef MAC_VERSION
@@ -1497,8 +1500,7 @@ t_bool bach_checkauth()
     h = murmur3(dt.year - 1);
     if (code == h)
         return true;
-    else
-        return false;
+    return false;
 }
 
 

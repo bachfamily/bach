@@ -406,6 +406,46 @@
 		913D57C9232B972E00BC6B45 /* ast.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 913D579D232B972D00BC6B45 /* ast.hpp */; };
 		913F87881C20B59000C9CAE0 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		913F87891C20B59000C9CAE0 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
+		914A85142502A59D007975FC /* patrons.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBB9D2C237D95F600818B5C /* patrons.h */; };
+		914A85162502A59D007975FC /* cursor_changevelocity.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */; };
+		914A85172502A59D007975FC /* icon_slotinfo.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487D19B58D8F00BBFE1A /* icon_slotinfo.png */; };
+		914A85182502A59D007975FC /* cursor_addpoint.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486219B58D8E00BBFE1A /* cursor_addpoint.png */; };
+		914A85192502A59D007975FC /* cursor_note.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486D19B58D8F00BBFE1A /* cursor_note.png */; };
+		914A851A2502A59D007975FC /* icon_measure.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487919B58D8F00BBFE1A /* icon_measure.png */; };
+		914A851B2502A59D007975FC /* cursor_marker_add.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486B19B58D8E00BBFE1A /* cursor_marker_add.png */; };
+		914A851C2502A59D007975FC /* cursor_curve.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486519B58D8E00BBFE1A /* cursor_curve.png */; };
+		914A851D2502A59D007975FC /* icon_marker.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487819B58D8F00BBFE1A /* icon_marker.png */; };
+		914A851E2502A59D007975FC /* cursor_note_fourway.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486E19B58D8F00BBFE1A /* cursor_note_fourway.png */; };
+		914A851F2502A59D007975FC /* icon_mixedselection.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487A19B58D8F00BBFE1A /* icon_mixedselection.png */; };
+		914A85202502A59D007975FC /* cursor_delete.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486619B58D8E00BBFE1A /* cursor_delete.png */; };
+		914A85212502A59D007975FC /* cursor_cut.png in Resources */ = {isa = PBXBuildFile; fileRef = 9161203F1DD3D536003CEE3A /* cursor_cut.png */; };
+		914A85222502A59D007975FC /* cursor_scale.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487419B58D8F00BBFE1A /* cursor_scale.png */; };
+		914A85232502A59D007975FC /* cursor_switch.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487519B58D8F00BBFE1A /* cursor_switch.png */; };
+		914A85242502A59D007975FC /* cursor_eraser.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486919B58D8E00BBFE1A /* cursor_eraser.png */; };
+		914A85252502A59D007975FC /* icon_pitchbreakpoint.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487C19B58D8F00BBFE1A /* icon_pitchbreakpoint.png */; };
+		914A85262502A59D007975FC /* icon_tempo.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487E19B58D8F00BBFE1A /* icon_tempo.png */; };
+		914A85272502A59D007975FC /* cursor_duplicatepoint.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486819B58D8E00BBFE1A /* cursor_duplicatepoint.png */; };
+		914A85282502A59D007975FC /* cursor_marker_delete.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486C19B58D8E00BBFE1A /* cursor_marker_delete.png */; };
+		914A85292502A59D007975FC /* icon_note.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487B19B58D8F00BBFE1A /* icon_note.png */; };
+		914A852A2502A59D007975FC /* cursor_glue.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486A19B58D8E00BBFE1A /* cursor_glue.png */; };
+		914A852B2502A59D007975FC /* icon_chord.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487719B58D8F00BBFE1A /* icon_chord.png */; };
+		914A852C2502A59D007975FC /* cursor_note_flat.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E7573051BE03A4E002A0986 /* cursor_note_flat.png */; };
+		914A852D2502A59D007975FC /* cursor_trim_start.png in Resources */ = {isa = PBXBuildFile; fileRef = 9161203D1DD3D52A003CEE3A /* cursor_trim_start.png */; };
+		914A852E2502A59D007975FC /* cursor_revert.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487219B58D8F00BBFE1A /* cursor_revert.png */; };
+		914A852F2502A59D007975FC /* cursor_note_updown.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487019B58D8F00BBFE1A /* cursor_note_updown.png */; };
+		914A85302502A59D007975FC /* cursor_note_sharp.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E7573061BE03A4E002A0986 /* cursor_note_sharp.png */; };
+		914A85312502A59D007975FC /* cursor_deletepoint.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486719B58D8E00BBFE1A /* cursor_deletepoint.png */; };
+		914A85322502A59D007975FC /* cursor_pencil.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487119B58D8F00BBFE1A /* cursor_pencil.png */; };
+		914A85332502A59D007975FC /* icon_voice.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487F19B58D8F00BBFE1A /* icon_voice.png */; };
+		914A85342502A59D007975FC /* cursor_trim_end.png in Resources */ = {isa = PBXBuildFile; fileRef = 9161203B1DD3D519003CEE3A /* cursor_trim_end.png */; };
+		914A85352502A59D007975FC /* cursor_changedynamics.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486419B58D8E00BBFE1A /* cursor_changedynamics.png */; };
+		914A85362502A59D007975FC /* cursor_changecolor.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486319B58D8E00BBFE1A /* cursor_changecolor.png */; };
+		914A85372502A59D007975FC /* cursor_rotate.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5487319B58D8F00BBFE1A /* cursor_rotate.png */; };
+		914A85382502A59D007975FC /* cursor_note_leftright.png in Resources */ = {isa = PBXBuildFile; fileRef = 91D5486F19B58D8F00BBFE1A /* cursor_note_leftright.png */; };
+		914A853A2502A59D007975FC /* bach.c in Sources */ = {isa = PBXBuildFile; fileRef = 912AB4A414FD3F100081E2B5 /* bach.c */; };
+		914A853C2502A59D007975FC /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91CEF82F1A27528C005DADB6 /* ApplicationServices.framework */; };
+		914A853D2502A59D007975FC /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
+		914A853E2502A59D007975FC /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		914EB2621250E4A000413C39 /* intersection.c in Sources */ = {isa = PBXBuildFile; fileRef = 914EB2611250E4A000413C39 /* intersection.c */; };
 		914EB2641250E4CC00413C39 /* symdiff.c in Sources */ = {isa = PBXBuildFile; fileRef = 914EB2631250E4CC00413C39 /* symdiff.c */; };
 		914EB2661250E53800413C39 /* diff.c in Sources */ = {isa = PBXBuildFile; fileRef = 914EB2651250E53800413C39 /* diff.c */; };
@@ -1074,6 +1114,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 913D57CA232B97AD00BC6B45;
 			remoteInfo = bell_strparser;
+		};
+		914A85122502A59D007975FC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 918129441611AEA700473F86;
+			remoteInfo = lib_bach;
 		};
 		9156DB591D2955D900002A01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3180,6 +3227,8 @@
 		9141D7C8123158FB000EE69C /* rational.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rational.c; sourceTree = "<group>"; };
 		9141D7C9123158FB000EE69C /* rational.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rational.h; sourceTree = "<group>"; };
 		91453FD912CA484000828342 /* bach.edit.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.edit.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		914A85432502A59D007975FC /* bach.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		914A85442502A59D007975FC /* bach copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach copy-Info.plist"; path = "/Users/andreaagostini/Documents/Max 8/Packages/bach/source/xcproj/bach copy-Info.plist"; sourceTree = "<absolute>"; };
 		914EB1D81250E08800413C39 /* bach.intersection.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.intersection.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		914EB1EF1250E0C500413C39 /* bach.symdiff.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.symdiff.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		914EB2061250E0E300413C39 /* bach.diff.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.diff.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3841,6 +3890,16 @@
 			files = (
 				918130B71611B7C500473F86 /* lib_bach.a in Frameworks */,
 				9136386016EA4D7900254F9F /* CoreServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		914A853B2502A59D007975FC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				914A853C2502A59D007975FC /* ApplicationServices.framework in Frameworks */,
+				914A853D2502A59D007975FC /* CoreServices.framework in Frameworks */,
+				914A853E2502A59D007975FC /* lib_bach.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4800,6 +4859,7 @@
 				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				91BA46AC1F71585E0002D515 /* package */,
+				914A85442502A59D007975FC /* bach copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -4960,6 +5020,7 @@
 				1ED42DBB1F8A9D17008EC1D9 /* bach.transcribe.mxo */,
 				91F58B2F1FC6E698008156B7 /* bach.textin.mxo */,
 				1E784F9D20274BC400F11D75 /* bach.recurser.mxo */,
+				914A85432502A59D007975FC /* bach.mxo */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6282,6 +6343,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		914A85132502A59D007975FC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				914A85142502A59D007975FC /* patrons.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7786,6 +7855,26 @@
 			name = bach.edit;
 			productName = iterator;
 			productReference = 91453FD912CA484000828342 /* bach.edit.mxo */;
+			productType = "com.apple.product-type.bundle";
+		};
+		914A85102502A59D007975FC /* bachB */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 914A85402502A59D007975FC /* Build configuration list for PBXNativeTarget "bachB" */;
+			buildPhases = (
+				914A85132502A59D007975FC /* Headers */,
+				914A85152502A59D007975FC /* Resources */,
+				914A85392502A59D007975FC /* Sources */,
+				914A853B2502A59D007975FC /* Frameworks */,
+				914A853F2502A59D007975FC /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				914A85112502A59D007975FC /* PBXTargetDependency */,
+			);
+			name = bachB;
+			productName = iterator;
+			productReference = 914A85432502A59D007975FC /* bach.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
 		914EB1C21250E08800413C39 /* bach.intersection */ = {
@@ -10073,6 +10162,7 @@
 				91A5EC441F7D89530052FBF6 /* bach_pitchparser */,
 				91A5EC511F7E3BAF0052FBF6 /* bach_alterparser */,
 				913D57CA232B97AD00BC6B45 /* bell_strparser */,
+				914A85102502A59D007975FC /* bachB */,
 			);
 		};
 /* End PBXProject section */
@@ -10306,6 +10396,48 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		914A85152502A59D007975FC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				914A85162502A59D007975FC /* cursor_changevelocity.png in Resources */,
+				914A85172502A59D007975FC /* icon_slotinfo.png in Resources */,
+				914A85182502A59D007975FC /* cursor_addpoint.png in Resources */,
+				914A85192502A59D007975FC /* cursor_note.png in Resources */,
+				914A851A2502A59D007975FC /* icon_measure.png in Resources */,
+				914A851B2502A59D007975FC /* cursor_marker_add.png in Resources */,
+				914A851C2502A59D007975FC /* cursor_curve.png in Resources */,
+				914A851D2502A59D007975FC /* icon_marker.png in Resources */,
+				914A851E2502A59D007975FC /* cursor_note_fourway.png in Resources */,
+				914A851F2502A59D007975FC /* icon_mixedselection.png in Resources */,
+				914A85202502A59D007975FC /* cursor_delete.png in Resources */,
+				914A85212502A59D007975FC /* cursor_cut.png in Resources */,
+				914A85222502A59D007975FC /* cursor_scale.png in Resources */,
+				914A85232502A59D007975FC /* cursor_switch.png in Resources */,
+				914A85242502A59D007975FC /* cursor_eraser.png in Resources */,
+				914A85252502A59D007975FC /* icon_pitchbreakpoint.png in Resources */,
+				914A85262502A59D007975FC /* icon_tempo.png in Resources */,
+				914A85272502A59D007975FC /* cursor_duplicatepoint.png in Resources */,
+				914A85282502A59D007975FC /* cursor_marker_delete.png in Resources */,
+				914A85292502A59D007975FC /* icon_note.png in Resources */,
+				914A852A2502A59D007975FC /* cursor_glue.png in Resources */,
+				914A852B2502A59D007975FC /* icon_chord.png in Resources */,
+				914A852C2502A59D007975FC /* cursor_note_flat.png in Resources */,
+				914A852D2502A59D007975FC /* cursor_trim_start.png in Resources */,
+				914A852E2502A59D007975FC /* cursor_revert.png in Resources */,
+				914A852F2502A59D007975FC /* cursor_note_updown.png in Resources */,
+				914A85302502A59D007975FC /* cursor_note_sharp.png in Resources */,
+				914A85312502A59D007975FC /* cursor_deletepoint.png in Resources */,
+				914A85322502A59D007975FC /* cursor_pencil.png in Resources */,
+				914A85332502A59D007975FC /* icon_voice.png in Resources */,
+				914A85342502A59D007975FC /* cursor_trim_end.png in Resources */,
+				914A85352502A59D007975FC /* cursor_changedynamics.png in Resources */,
+				914A85362502A59D007975FC /* cursor_changecolor.png in Resources */,
+				914A85372502A59D007975FC /* cursor_rotate.png in Resources */,
+				914A85382502A59D007975FC /* cursor_note_leftright.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11230,6 +11362,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		91453FD512CA484000828342 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		914A853F2502A59D007975FC /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -12185,6 +12324,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		914A85392502A59D007975FC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				914A853A2502A59D007975FC /* bach.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13295,6 +13442,11 @@
 			isa = PBXTargetDependency;
 			target = 913D57CA232B97AD00BC6B45 /* bell_strparser */;
 			targetProxy = 9142BDB623462017003C19DE /* PBXContainerItemProxy */;
+		};
+		914A85112502A59D007975FC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 918129441611AEA700473F86 /* lib_bach */;
+			targetProxy = 914A85122502A59D007975FC /* PBXContainerItemProxy */;
 		};
 		9156DB581D2955D900002A01 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -15134,6 +15286,13 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"\"CONFIGURATION_$(CONFIGURATION)\"",
+					"\"DENORM_WANT_FIX = 1\"",
+					"\"BACH_MAX\"",
+					"\"BACH_VERSION = \\\"$(PRODUCT_VERSION)\\\"\"",
+					"\"BACH_LLLL_VERSION = \\\"$(LLLL_VERSION)\\\"\"",
+				);
 				INSTALL_PATH = "$(EXT_INSTALL_PATH)";
 			};
 			name = Development;
@@ -15146,6 +15305,13 @@
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"\"CONFIGURATION_$(CONFIGURATION)\"",
+					"\"DENORM_WANT_FIX = 1\"",
+					"\"BACH_MAX\"",
+					"\"BACH_VERSION = \\\"$(PRODUCT_VERSION)\\\"\"",
+					"\"BACH_LLLL_VERSION = \\\"$(LLLL_VERSION)\\\"\"",
+				);
 				INSTALL_PATH = "$(EXT_INSTALL_PATH)";
 			};
 			name = Deployment;
@@ -15480,6 +15646,53 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INSTALL_PATH = "$(ZULU_INSTALL_PATH)";
+			};
+			name = Deployment;
+		};
+		914A85412502A59D007975FC /* Development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"\"CONFIGURATION_$(CONFIGURATION)\"",
+					"\"DENORM_WANT_FIX = 1\"",
+					"\"BACH_MAX\"",
+					"\"BACH_VERSION = \\\"$(PRODUCT_VERSION)\\\"\"",
+					"\"BACH_LLLL_VERSION = \\\"$(LLLL_VERSION)\\\"\"",
+					"\"BACH_SAVE_STACK_WITH_MEMORY_LOG\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(EXT_INSTALL_PATH)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bachproject.bach;
+				PRODUCT_NAME = bach;
+			};
+			name = Development;
+		};
+		914A85422502A59D007975FC /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"\"CONFIGURATION_$(CONFIGURATION)\"",
+					"\"DENORM_WANT_FIX = 1\"",
+					"\"BACH_MAX\"",
+					"\"BACH_VERSION = \\\"$(PRODUCT_VERSION)\\\"\"",
+					"\"BACH_LLLL_VERSION = \\\"$(LLLL_VERSION)\\\"\"",
+					"\"BACH_SAVE_STACK_WITH_MEMORY_LOG\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(EXT_INSTALL_PATH)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bachproject.bach;
+				PRODUCT_NAME = bach;
 			};
 			name = Deployment;
 		};
@@ -19787,6 +20000,15 @@
 			buildConfigurations = (
 				91453FD712CA484000828342 /* Development */,
 				91453FD812CA484000828342 /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		914A85402502A59D007975FC /* Build configuration list for PBXNativeTarget "bachB" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				914A85412502A59D007975FC /* Development */,
+				914A85422502A59D007975FC /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;
