@@ -1449,7 +1449,11 @@ t_bool bach_checkauth()
 {
     static const std::string dq = "\"";
     std::string folder = bach_get_cache_path();
-    
+
+#ifdef BACH_SAVE_STACK_WITH_MEMORY_LOG
+    return true;
+#endif
+
 #ifdef MAC_VERSION
     std::string name = folder + "/bachutil.mxo";
 #endif
@@ -1486,8 +1490,7 @@ t_bool bach_checkauth()
     h = murmur3(dt.year - 1);
     if (code == h)
         return true;
-    else
-        return false;
+    return false;
 }
 
 
