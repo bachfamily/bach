@@ -8,16 +8,15 @@ v0.8.2b
 
 *** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
 
-- bell, bach.expr:
+- bell:
     makepitch function now treats negative degrees as descending steps (e.g., makepitch(-1, 0, 5) returns B4)
-    evaluation precedence of ** operator is now between + and * (2 ** 3 * 4 now returns 4096, previously was 32)
-
-- bell: fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
+    evaluation precedence of the unary minus operator is now lower than exponentiation (-2 ** 2 now returns -4, previously 4)
+    fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
     :* operator returns null for non-positive repeat counts
 
 - bach.expr:
-    evaluation precedence of unary minus operator is now highest (-2 ** 2 now returns 4, previously -4)
-
+    evaluation precedence of the ** operator is now right-to-left, as per the documentation (2**3**2 now returns 512, previously 64)
+    evaluation precedence of the ! and ~ operators is now higher than exponentiation
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
@@ -41,10 +40,9 @@ authorization: now the code for a given year can be entered until January of the
     new built-in functions: mc2f, f2mc, minimum, maximum
     fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
     dot operator can be preceded by whitespace
-    _= operator optimized
     :* operator returns null for non-positive repeat counts
     map function works correctly with mindepth
-    evaluation precedence of ** operator is now between + and *
+    evaluation precedence of the unary minus operator is now lower than exponentiation (-2 ** 2 now returns -4, previously 4)
 
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor
@@ -54,13 +52,16 @@ authorization: now the code for a given year can be entered until January of the
     fixed very general issue preventing objects from working unless they had a bell lambda function
 
 - bach.expr:
-    evaluation precedence of unary minus operator is now highest (-2 ** 2 now returns 4, previously -4)
+    evaluation precedence of the ** operator is now right-to-left, as per the documentation (2**3**2 now returns 512, previously 64)
+    evaluation precedence of the ! and ~ operators is now higher than exponentiation
+    unary minus after exponentiation operator now works
 
 - bach.reg, bach.value, bach.pv
     Fixed memory leak related to the text editor window
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
+        Accidentals are correctly dealt with when importing multi-voice parts
     XML import and export: three-quarters-sharp and -flat accidentals have correct name now (was "three-quarter")
         complex time signatures are correctly handled
 

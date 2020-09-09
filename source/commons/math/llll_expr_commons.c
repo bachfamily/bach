@@ -294,7 +294,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                                (*lexstack_ptr)->l_type == L_TOKEN &&
                                (*lexstack_ptr)->l_token.t_type == TT_OP &&
                                ((this_lex->l_order == O_L2R && this_lex->l_precedence <= (*lexstack_ptr)->l_precedence) ||
-                                (this_lex->l_precedence < (*lexstack_ptr)->l_precedence))) {
+                                (this_lex->l_token.t_operands > 1 && this_lex->l_precedence < (*lexstack_ptr)->l_precedence))) {
                                    *tokqueue_ptr = (*lexstack_ptr--)->l_token;
                                    chk -= tokqueue_ptr++->t_operands - 1;
                                    if (chk < 1) {
@@ -718,9 +718,10 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
 
 /*
  OPERATOR PRECEDENCE AND ORDER OF EVALUATION:
- 14	! ~ + - (unary) sizeof right to left
- 13	* / % // left to right
- 12 ** right to left --- prior to version 0.8.1.3, 12 and 13 were swapped
+ 15	! ~ right to left
+ 14 ** right to left
+ 13 + - (unary) right to left
+ 12	* / % // left to right
  11	+ - left to right
  10	<< >> left to right
  9	< <= > >= left to right
@@ -950,7 +951,7 @@ long lexpr_append_lexeme_LOGXOR(t_lexpr_lexeme *lex)
 long lexpr_append_lexeme_BITNOT(t_lexpr_lexeme *lex)
 {
     lex->l_type = L_TOKEN;
-    lex->l_precedence = 14;
+    lex->l_precedence = 15;
     lex->l_order = O_R2L;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 1;
@@ -963,7 +964,7 @@ long lexpr_append_lexeme_LOGNOT(t_lexpr_lexeme *lex)
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 1;
-    lex->l_precedence = 14;
+    lex->l_precedence = 15;
     lex->l_order = O_R2L;
     lex->l_token.t_contents.c_op.o_op = O_LOGNOT;
     return E_OK;
@@ -1094,7 +1095,7 @@ long lexpr_append_lexeme_TIMES(t_lexpr_lexeme *lex)
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 2;
-    lex->l_precedence = 13;
+    lex->l_precedence = 12;
     lex->l_order = O_L2R;
     lex->l_token.t_contents.c_op.o_properties = OP_COMM | OP_ASSOC;
     lex->l_token.t_contents.c_op.o_op = O_TIMES;
@@ -1106,8 +1107,8 @@ long lexpr_append_lexeme_POW(t_lexpr_lexeme *lex)
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 2;
-    lex->l_precedence = 12;
-    lex->l_order = O_L2R;
+    lex->l_precedence = 14;
+    lex->l_order = O_R2L;
     lex->l_token.t_contents.c_op.o_properties = OP_NONE;
     lex->l_token.t_contents.c_op.o_op = O_POW;
     return E_OK;
@@ -1118,7 +1119,7 @@ long lexpr_append_lexeme_MOD(t_lexpr_lexeme *lex)
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 2;
-    lex->l_precedence = 13;
+    lex->l_precedence = 12;
     lex->l_order = O_L2R;
     lex->l_token.t_contents.c_op.o_properties = OP_NONE;
     lex->l_token.t_contents.c_op.o_op = O_MOD;
@@ -1130,7 +1131,7 @@ long lexpr_append_lexeme_DIV(t_lexpr_lexeme *lex)
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 2;
-    lex->l_precedence = 13;
+    lex->l_precedence = 12;
     lex->l_order = O_L2R;
     lex->l_token.t_contents.c_op.o_properties = OP_INVERT;
     lex->l_token.t_contents.c_op.o_op = O_DIV;
@@ -1143,7 +1144,7 @@ long lexpr_append_lexeme_DIVDIV(t_lexpr_lexeme *lex)
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 2;
-    lex->l_precedence = 13;
+    lex->l_precedence = 12;
     lex->l_order = O_L2R;
     lex->l_token.t_contents.c_op.o_properties = OP_NONE;
     lex->l_token.t_contents.c_op.o_op = O_DIVDIV;
@@ -1178,7 +1179,7 @@ long lexpr_append_lexeme_MINUS(t_lexpr_lexeme *lex)
 long lexpr_append_lexeme_UMINUS(t_lexpr_lexeme *lex)
 {
     lex->l_type = L_TOKEN;
-    lex->l_precedence = 14;
+    lex->l_precedence = 13;
     lex->l_order = O_R2L;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 1;

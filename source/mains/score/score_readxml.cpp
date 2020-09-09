@@ -1434,6 +1434,10 @@ public:
         return currentPart->updateCurrentVoice(itemXML);
     }
     
+    t_rational getPositionInMeasure() {
+        return currentPart->positionInMeasure;
+    }
+    
     t_llll *getllll() {
         t_llll *scorell = llll_get();
         llll_appendsym(scorell, _llllobj_sym_score);
@@ -2371,7 +2375,14 @@ t_llll *score_readxmlbuffer(t_score *x,
             //// long current_voice_in_part = 0;
             
             
-            t_pitch allpitches[10000];
+            class t_pitchWithOnset : public t_pitch {
+            public:
+                t_rational onset;
+                t_pitchWithOnset(t_pitch p, t_rational o) : t_pitch(p), onset(o) { };
+                t_pitchWithOnset() { };
+            } allpitches[10000];
+            
+            //t_pitchWithOnset allpitches[10000];
             long numpitches = 0;
             
             mxml_node_t *itemXML;
@@ -2445,6 +2456,8 @@ t_llll *score_readxmlbuffer(t_score *x,
                 //// }
                 
                 mxml_node_t *notationsXML = mxmlFindElement(itemXML, itemXML, "notations", NULL, NULL, MXML_DESCEND_FIRST);
+                
+                t_pitch pch;
                 
                 if (!chordXML) {
                     //// if (currentChord) { // if there was a previous chord, append its flags to it
@@ -2584,6 +2597,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                     t_shortRational alter;
                     
                     if (pitchXML) {
+                        t_rational currOnset = theScore.getPositionInMeasure();
                         mxml_node_t *stepXML = mxmlFindElement(pitchXML, pitchXML, "step", NULL, NULL, MXML_DESCEND_FIRST);
                         mxml_node_t *alterXML = mxmlFindElement(pitchXML, pitchXML, "alter", NULL, NULL, MXML_DESCEND_FIRST);
                         mxml_node_t *octaveXML = mxmlFindElement(pitchXML, pitchXML, "octave", NULL, NULL, MXML_DESCEND_FIRST);
@@ -2608,15 +2622,26 @@ t_llll *score_readxmlbuffer(t_score *x,
                                 if (new_tonedivision < 4)
                                     new_tonedivision = 4;
                             } else {
+                                // this could be a quarter-tone with an implicit accidental,
+                                // as in the sequence C+ C(+)
                                 for (long i = numpitches - 1; i >= 0; i--) {
                                     if (allpitches[i].degree() == degree &&
-                                        allpitches[i].degree() == octave &&
+                                        allpitches[i].octave() == octave &&
+                                        allpitches[i].onset < currOnset &&
                                         ((!accidentalXML && alter == 0) ||
-                                         allpitches[i].alter() == alter - t_pitch::qrtrsharp))
-                                        alter = allpitches[i].alter();
+                                         allpitches[i].alter() == alter - t_pitch::qrtrsharp)) {
+                                            alter = allpitches[i].alter();
+                                            break;
+                                        }
                                 }
                             }
-                        } else if (!accidentalXML && alter == 0) { // see if there is a previous note to get the alteration from
+                        }
+                        /*
+                         // If a note bears no alteration and no accidentals
+                         // and parenthesizedquartertones is off
+                         // consider it altered if there was a previously altered note anyway
+                         // (AA COMMENTED IT OUT ON SEP 3 2020 - NOW IT IS CONSIDERED NATURAL)
+                         else if (!accidentalXML && alter == 0) {
                             for (long i = numpitches - 1; i >= 0; i--) {
                                 if (allpitches[i].degree() == degree &&
                                     allpitches[i].octave() == octave) {
@@ -2624,9 +2649,10 @@ t_llll *score_readxmlbuffer(t_score *x,
                                     break;
                                 }
                             }
-                        }
+                        }*/
                         
-                        
+                        pch = t_pitch(degree, alter, octave);
+                        allpitches[numpitches++] = { pch, currOnset };
                         
                         
                     } else {
@@ -2646,11 +2672,12 @@ t_llll *score_readxmlbuffer(t_score *x,
                                 octave = 5;
                             }
                         }
+                        pch = t_pitch(degree, alter, octave);
+
                     }
                     
                     //// t_llll *notell = llll_get();
-                    t_pitch pch = t_pitch(degree, alter, octave);
-                    allpitches[numpitches++] = pch;
+
                     //// llll_appendpitch(notell, pch);
                 
                     //// llll_appendlong(notell, velocity, 0, WHITENULL_llll);
