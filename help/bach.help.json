@@ -4635,7 +4635,7 @@
 					"filename" : [ "bach.help.notation.save and load.20_MusicXML.24_xmlmore.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "import+xml", "export+xml", "linkdynamicstoslot", "linklyricstoslot", "linknoteheadstoslot", "linkarticulationstoslot" ],
-					"tags" : [ "data", "xml", "export", "exportxml", "lyrics", "dynamics", "noteheads", "articulations", "import", "importxml", "read", "glissandi" ],
+					"tags" : [ "data", "xml", "export", "exportxml", "lyrics", "dynamics", "noteheads", "articulations", "import", "importxml", "read", "glissandi", "glissando" ],
 					"title" : [ "More MusicXML specifications" ]
 				},
 				"Xmlquartertones" : {

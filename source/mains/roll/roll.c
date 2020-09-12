@@ -1500,6 +1500,8 @@ void roll_sel_delete(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     
     roll_delete_selection(x, false, transfer_slots, even_if_empty);
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTION);
+    if (transfer_slots)
+        llll_free(transfer_slots);
 }
 
 void roll_clearmarkers(t_roll *x)
