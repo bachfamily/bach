@@ -163,7 +163,18 @@ void dict2llll_fn(t_dictionary_entry *entry, void* my_arg)
 		for (i = 0; i < ac; i++) {
 			long type = atom_gettype(av+i);
 			if (type == A_LONG || type == A_FLOAT || type == A_SYM)	
-				llll_appendatom(subll, av + i, 0, WHITENULL_llll); 
+				llll_appendatom(subll, av + i, 0, WHITENULL_llll);
+			if (type == A_OBJ) {
+				void *o = atom_getobj(av + i);
+				if (object_classname_compare(o, gensym("dictionary"))) {
+					t_llll *subll_2 = llll_get();
+					void *new_args[2];
+					new_args[0] = (t_dictionary *)o;
+					new_args[1] = subll_2;
+					dictionary_funall((t_dictionary *)o, (method)dict2llll_fn, new_args);
+					llll_appendllll(subll, subll_2, 0, WHITENULL_llll);
+				}
+			}
 		}
 //		if (!dictionary_entryisatomarray(d, key))
 //			sysmem_freeptr(av); // Looks like we don't have to free this
