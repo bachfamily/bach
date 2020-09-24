@@ -3452,7 +3452,7 @@ t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char n
 }
 
 // use marker = NULL to send all markers
-void send_marker(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, t_llll *forced_routers)
+void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, t_llll *forced_routers)
 {
 	t_llll *llll;
 	lock_markers_mutex(r_ob);
@@ -3463,7 +3463,7 @@ void send_marker(t_notation_obj *r_ob, t_marker *marker, char namefirst, long ou
         hatom_setsym(&llll->l_head->l_hatom, hatom_getsym(&forced_routers->l_head->l_hatom));
         
 	unlock_markers_mutex(r_ob);
-	llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, outlet, llll);
+    setup_lambda_and_send_llll(r_ob, outlet, llll, (t_notation_item *)marker);
 	llll_free(llll);
 }
 
@@ -5426,7 +5426,7 @@ char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_num
 		else if (item->type == k_CHORD)
 			send_chord_as_llll((t_notation_obj *) r_ob, (t_chord *)item, outlet, k_CONSIDER_FOR_EVALUATION, command_number, forced_routers);
 		else if (item->type == k_MARKER && command_number < 0)
-			send_marker(r_ob, (t_marker *) item, true, outlet, forced_routers);
+			send_marker_as_llll(r_ob, (t_marker *) item, true, outlet, forced_routers);
 		else if (item->type == k_MEASURE) {
 			t_chord *ch;
 			for (ch = ((t_measure *)item)->firstchord; ch; ch = ch->next)

@@ -10462,7 +10462,7 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
     char changed = 0;
     
     lock_general_mutex(r_ob);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(r_ob->IDtable, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda(r_ob, lambda);
     while (curr_it) {
         if (curr_it->type == k_NOTE) {
             t_note *nt = (t_note *) curr_it;
@@ -10519,7 +10519,7 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
     t_notation_item *curr_it;
     char changed = 0;
     
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(r_ob->IDtable, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda(r_ob, lambda);
     while (curr_it) {
         if (curr_it->type == k_NOTE) {
             t_note *nt = (t_note *) curr_it;
@@ -10621,7 +10621,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
     if (args) {
         t_notation_item *curr_it;
 
-        curr_it = lambda ? (t_notation_item *) shashtable_retrieve(r_ob->IDtable, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
+        curr_it = notation_item_get_first_selected_account_for_lambda(r_ob, lambda);
         while (curr_it) {
             if (curr_it->type == k_NOTE) {
                 t_note *nt = (t_note *) curr_it;

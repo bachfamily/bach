@@ -402,7 +402,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             this_marker_voice = longest_voice;
             this_voice_start = longest_voice_start;
         } else {
-            t_measure *this_marker_measure = (t_measure *) shashtable_retrieve(x->r_ob.IDtable, this_marker->measure_attach_ID);
+            t_measure *this_marker_measure = (t_measure *) notation_item_retrieve_from_ID((t_notation_obj *)x, this_marker->measure_attach_ID);
             this_marker_voice = this_marker_measure->voiceparent;
             long this_marker_voicenum = this_marker_voice->v_ob.number;
             this_voice_start = build_timepoint_with_voice(0, long2rat(0), this_marker_voicenum);

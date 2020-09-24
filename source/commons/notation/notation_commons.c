@@ -26510,6 +26510,16 @@ char item_type_has_names(e_element_types item_type)
     }
 }
 
+t_notation_item *notation_item_retrieve_from_ID(t_notation_obj *r_ob, long ID)
+{
+    return (t_notation_item *) shashtable_retrieve(r_ob->IDtable, ID);
+}
+
+t_notation_item *notation_item_get_first_selected_account_for_lambda(t_notation_obj *r_ob, char lambda)
+{
+    return lambda ? notation_item_retrieve_from_ID(r_ob, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
+}
+
 void notation_item_init(t_notation_item *it, e_element_types item_type)
 { 
     it->ID = 0;
@@ -32540,7 +32550,7 @@ void set_scorenote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* 
                         if (l1 > 0)
                             note->tie_to = (t_note *) WHITENULL;
                         if (l2 > 0) {
-                            t_notation_item *tie_from_this = (t_notation_item *)shashtable_retrieve(r_ob->IDtable, l2);
+                            t_notation_item *tie_from_this = notation_item_retrieve_from_ID(r_ob, l2);
                             if (tie_from_this && tie_from_this->type == k_NOTE) {
                                 ((t_note *)tie_from_this)->tie_to = (t_note *) WHITENULL;
                                 ((t_note *)tie_from_this)->parent->parent->need_check_ties = true;
@@ -34649,7 +34659,7 @@ char check_markers_order(t_notation_obj *r_ob){
 t_timepoint measure_attached_marker_to_timepoint(t_notation_obj *r_ob, t_marker *marker){
     t_timepoint tp = build_timepoint(0, long2rat(0));
     if (marker->measure_attach_ID > 0) {
-        t_notation_item *it = (t_notation_item *)shashtable_retrieve(r_ob->IDtable, marker->measure_attach_ID);
+        t_notation_item *it = notation_item_retrieve_from_ID(r_ob, marker->measure_attach_ID);
         if (it && it->type == k_MEASURE) {
             t_measure *meas = (t_measure *)it;
             if (meas){
@@ -36872,7 +36882,7 @@ long notation_item_get_measurenumber(t_notation_obj *r_ob, t_notation_item *it)
         case k_VOICE: return -1;
         case k_MARKER: 
             if (((t_marker *)it)->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-                t_measure *meas = (t_measure *)shashtable_retrieve(r_ob->IDtable, ((t_marker *)it)->measure_attach_ID);
+                t_measure *meas = (t_measure *)notation_item_retrieve_from_ID(r_ob, ((t_marker *)it)->measure_attach_ID);
                 if (meas)
                     return notation_item_get_measurenumber(r_ob, (t_notation_item *)meas);
                 else
@@ -37019,7 +37029,7 @@ t_marker *voice_get_first_marker(t_notation_obj *r_ob, t_voice *voice)
 {
     for (t_marker *mk = r_ob->firstmarker; mk; mk = mk->next) {
         if (mk->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-            t_measure *meas = (t_measure *)shashtable_retrieve(r_ob->IDtable, mk->measure_attach_ID);
+            t_measure *meas = (t_measure *)notation_item_retrieve_from_ID(r_ob, mk->measure_attach_ID);
             if (meas && meas->voiceparent && (t_voice *)meas->voiceparent == voice)
                 return mk;
         }
@@ -37762,7 +37772,7 @@ void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob
                 notationobj_redraw(r_ob);
                 goto end; // no longer need to verify further elements, of course, we have already set the flag for all families
             } else {
-                t_notation_item *item = (t_notation_item *) shashtable_retrieve(r_ob->IDtable, info->n_it_ID);
+                t_notation_item *item = notation_item_retrieve_from_ID(r_ob, info->n_it_ID);
                 t_llllelem *elem; 
                 t_note *temp_nt;
                 if (item) {
@@ -41874,7 +41884,7 @@ char change_selection_name(t_notation_obj *r_ob, t_llll *newnames, t_llll *only_
     set_selected_markers_flags(r_ob, k_FLAG_TO_BE_MODIFIED);
     
     
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(r_ob->IDtable, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda(r_ob, lambda);
 
     
     while (curr_it) { // cycle on the selected items
@@ -42229,7 +42239,7 @@ char change_selection_role(t_notation_obj *r_ob, t_symbol *new_role, t_llll *new
     
     curr_it = r_ob->firstselecteditem;
     
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(r_ob->IDtable, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda(r_ob, lambda);
     
     e_marker_roles role_ok = sym_to_marker_role(new_role);
     

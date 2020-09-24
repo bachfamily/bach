@@ -27,7 +27,7 @@
 long goto_get_marker_voicenumber(t_notation_obj *r_ob, t_marker *mk)
 {
     if (mk->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_measure *meas = (t_measure *)shashtable_retrieve(r_ob->IDtable, mk->measure_attach_ID);
+        t_measure *meas = (t_measure *)notation_item_retrieve_from_ID(r_ob, mk->measure_attach_ID);
         if (meas)
             return meas->voiceparent->v_ob.number;
         else

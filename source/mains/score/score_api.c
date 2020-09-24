@@ -5268,7 +5268,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
 { 
     //delete chords/notes within the selected region: actually, it turns them into rests
     t_notation_item *curr_it, *next_item = NULL;
-    t_notation_item *lambda_it = x->r_ob.lambda_selected_item_ID > 0 ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : NULL;
+    t_notation_item *lambda_it = x->r_ob.lambda_selected_item_ID > 0 ? notation_item_retrieve_from_ID((t_notation_obj *)x, x->r_ob.lambda_selected_item_ID) : NULL;
     
     char changed = 0;
     lock_general_mutex((t_notation_obj *)x);    
@@ -7746,7 +7746,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
 void sync_marker_absolute_ms_onset(t_score *x, t_marker *marker)
 {
     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_measure *meas = (t_measure *) shashtable_retrieve(x->r_ob.IDtable, marker->measure_attach_ID);
+        t_measure *meas = (t_measure *) notation_item_retrieve_from_ID((t_notation_obj *)x, marker->measure_attach_ID);
         if (meas) {
             t_timepoint tp = build_timepoint(meas->measure_number, marker->r_sym_pim_attach);
             marker->position_ms = timepoint_to_ms((t_notation_obj *)x, tp, meas->voiceparent->v_ob.number);
@@ -11255,7 +11255,7 @@ void bach_set_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
                 if (marker->r_sym_pim_attach.r_num < 0)
                     marker->r_sym_pim_attach = long2rat(0);
                 if (marker->measure_attach_ID){
-                    t_measure *meas = (t_measure *) shashtable_retrieve(x->r_ob.IDtable, marker->measure_attach_ID);
+                    t_measure *meas = (t_measure *) notation_item_retrieve_from_ID((t_notation_obj *)x, marker->measure_attach_ID);
                     t_rational meas_dur = measure_get_sym_duration(meas);
                     if (rat_rat_cmp(marker->r_sym_pim_attach, meas_dur) > 0)
                         marker->r_sym_pim_attach = meas_dur;

@@ -7207,6 +7207,17 @@ void notation_item_init(t_notation_item *it, e_element_types item_type);
 void notation_item_clone(t_notation_obj *r_ob, t_notation_item *new_it, t_notation_item *old_it);
 
 
+/** Retrieve the pointer to a notation item from the notation item ID.
+    @ingroup           notation
+    @param r_ob        The notation object
+    @param ID          The ID
+    @return            The pointer to the notation item
+ */
+t_notation_item *notation_item_retrieve_from_ID(t_notation_obj *r_ob, long ID);
+
+// private
+t_notation_item *notation_item_get_first_selected_account_for_lambda(t_notation_obj *r_ob, char lambda);
+
 
 /**    Build a note (allocate the memory for #t_note and fills it), with given cents, duration and velocity.
     @ingroup            notation
@@ -11695,7 +11706,7 @@ void send_loop_region_on_off(t_notation_obj *r_ob, long outlet);
     @param  forced_router   If non-NULL, a router that will be forced to be put instead of the standard "marker" one
     @see                get_single_marker_as_llll()
  */
-void send_marker(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, t_llll *forced_router = NULL);
+void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, t_llll *forced_router = NULL);
 
 
 /**    Send a "done" message through the playout. 

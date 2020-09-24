@@ -1086,7 +1086,7 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
     llll_parseargs_and_attrs((t_object *) x, ll, "lii", gensym("transferslots"), &transfer_slots, gensym("empty"), &even_if_empty, gensym("torests"), &even_to_rests);
     llll_free(ll);
     
-    t_notation_item *lambda_it = x->r_ob.lambda_selected_item_ID > 0 ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : NULL;
+    t_notation_item *lambda_it = x->r_ob.lambda_selected_item_ID > 0 ? notation_item_retrieve_from_ID((t_notation_obj *)x, x->r_ob.lambda_selected_item_ID) : NULL;
     
     // this must be here at the beginning, because it changes the selected items!
     turn_selection_into_rests(x, true, true, true, transfer_slots, even_if_empty, even_to_rests, false);
@@ -1785,7 +1785,7 @@ void score_sel_change_cents(t_score *x, t_symbol *s, long argc, t_atom *argv){
         new_cents = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     changed = 0;
     while (curr_it) {
         switch (curr_it->type) {
@@ -1858,7 +1858,7 @@ void score_sel_change_pitch(t_score *x, t_symbol *s, long argc, t_atom *argv)
         new_pitch = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     changed = 0;
     while (curr_it) {
         switch (curr_it->type) {
@@ -1938,7 +1938,7 @@ void score_sel_change_poc(t_score *x, t_symbol *s, long argc, t_atom *argv){
         new_pitch = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     changed = 0;
     while (curr_it) {
         switch (curr_it->type) {
@@ -2074,7 +2074,7 @@ void score_sel_change_symduration(t_score *x, t_symbol *s, long argc, t_atom *ar
     t_llll *measures_to_rebeam = llll_get();
     
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     changed = 0;
     while (curr_it) {
         switch (curr_it->type) {
@@ -2181,7 +2181,7 @@ void score_sel_change_measureinfo(t_score *x, t_symbol *s, long argc, t_atom *ar
         new_measureinfo = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     changed = 0;
     while (curr_it) {
         if (curr_it->type == k_MEASURE) {
@@ -2234,7 +2234,7 @@ void score_sel_change_onset(t_score *x, t_symbol *s, long argc, t_atom *argv){
         new_onset = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     while (curr_it) {
         switch (curr_it->type) {
             case k_PITCH_BREAKPOINT:
@@ -2299,7 +2299,7 @@ void score_sel_change_velocity(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     changed = 0;
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     while (curr_it) {
         switch (curr_it->type) {
             case k_NOTE:
@@ -2373,7 +2373,7 @@ void score_sel_change_tie(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     changed = 0;
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     while (curr_it) {
         if (curr_it->type == k_NOTE) {
             changed |= change_note_tie_from_lexpr_or_llll((t_notation_obj *)x, (t_note *) curr_it, lexpr, new_tie);
@@ -2438,7 +2438,7 @@ void score_sel_erase_breakpoints(t_score *x, t_symbol *s, long argc, t_atom *arg
     char changed = 0;
     
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     while (curr_it) {
         if (curr_it->type == k_NOTE) {
             t_note *nt = (t_note *) curr_it;
@@ -2504,7 +2504,7 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
         auto_vel = true;
     
     lock_general_mutex((t_notation_obj *)x);
-    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
     while (curr_it) {
         if (curr_it->type == k_NOTE) {
             t_note *nt = (t_note *) curr_it;
@@ -2554,7 +2554,7 @@ void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
 
     if (slot_as_llll) {
         t_notation_item *curr_it;
-        curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+        curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
         while (curr_it) {
             if (curr_it->type == k_NOTE) {
                 t_note *nt = (t_note *) curr_it;
@@ -2946,7 +2946,7 @@ void score_getmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
             llll_free(marker_llll);
         }
     } else {
-        send_marker((t_notation_obj *) x, NULL, namefirst, 7);
+        send_marker_as_llll((t_notation_obj *) x, NULL, namefirst, 7);
     }
     llll_free(args);
 }
@@ -17624,7 +17624,7 @@ void score_new_undo_redo(t_score *x, char what)
         e_header_elems header_info = this_information->header_info;
         t_llll *content = this_information->n_it_content;
         t_llll *newcontent = NULL;
-        t_notation_item *item = (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, ID);
+        t_notation_item *item = notation_item_retrieve_from_ID((t_notation_obj *)x, ID);
         t_undo_redo_information *new_information = NULL;
 
         if (!item && modif_type != k_UNDO_MODIFICATION_ADD && type != k_WHOLE_NOTATION_OBJECT && type != k_HEADER_DATA) {
