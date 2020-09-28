@@ -28665,23 +28665,24 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
         }
         case k_SLOT_TYPE_INT: { 
             t_slotitem *temp_item = slot->firstitem;
-            long val = *((long *)temp_item->item);
-            
-            if (temp_item)
+            if (temp_item) {
+                long val = *((long *)temp_item->item);
                 llll_appendlong(inner4_llll, val);
+            }
             break; 
         }
         case k_SLOT_TYPE_FLOAT: { 
             t_slotitem *temp_item = slot->firstitem;
-            double val = *((double *)temp_item->item);
-            
-            if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) && !only_get_selected_items) { // adding partial tempitems
-                double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
-                val += hot_point - notation_item_get_onset_ms(r_ob, nitem);
+            if (temp_item) {
+                double val = *((double *)temp_item->item);
+                
+                if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) && !only_get_selected_items) { // adding partial tempitems
+                    double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
+                    val += hot_point - notation_item_get_onset_ms(r_ob, nitem);
+                }
+                
+                    llll_appenddouble(inner4_llll, val);
             }
-
-            if (temp_item)
-                llll_appenddouble(inner4_llll, val);
             break; 
         }
         case k_SLOT_TYPE_INTLIST: { 
