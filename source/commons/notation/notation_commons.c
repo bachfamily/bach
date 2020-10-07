@@ -29,8 +29,8 @@
 
 // GLOBAL VARIABLE
 
-const char *notation_obj_lexpr_subs[] = {"onset", "cents", "duration", "velocity", "symduration", "symonset", "tail", "symtail", "voice", "measure", "tie", "noteindex", "chordindex", "index", "grace", "pitch", "part", "voiceensemble", "poc"};
-const long notation_obj_lexpr_subs_count = 19;
+const char *notation_obj_lexpr_subs[] = {"onset", "cents", "duration", "velocity", "symduration", "symonset", "tail", "symtail", "voice", "measure", "tie", "noteindex", "chordindex", "index", "grace", "pitch", "part", "voiceensemble", "poc", "numnotes", "numchords", "nummeasures"};
+const long notation_obj_lexpr_subs_count = 22;
 
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, voicenames_as_llll, notation_obj_getattr_voicenames)
@@ -29666,17 +29666,87 @@ t_notation_item *get_rightmost_selected_notation_item(t_notation_obj *r_ob)
     return best;
 }
 
+void preselect_notation_item_with_lexpr(t_notation_obj *r_ob, t_notation_item *it)
+{
+    t_hatom *res = lexpr_eval_for_notation_item(r_ob, it, r_ob->n_lexpr);
+    if (hatom_gettype(res) == H_LONG && hatom_getlong(res) != 0)
+        notation_item_add_to_preselection(r_ob, it);
+    bach_freeptr(res);
+}
 
+
+void select_notes_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
+{
+    lock_general_mutex(r_ob);
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)){
+        for (t_chord *chord = voice_get_first_chord(r_ob, voice); chord; chord = chord_get_next(chord)){
+            for (t_note *note = chord->firstnote; note; note = note->next){
+                preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)note);
+            }
+        }
+    }
+    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    unlock_general_mutex(r_ob);
+}
+
+void select_chords_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
+{
+    lock_general_mutex(r_ob);
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)){
+        for (t_chord *chord = voice_get_first_chord(r_ob, voice); chord; chord = chord_get_next(chord)){
+            preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)chord);
+        }
+    }
+    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    unlock_general_mutex(r_ob);
+}
+
+void select_rests_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        lock_general_mutex(r_ob);
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)){
+            for (t_chord *chord = voice_get_first_chord(r_ob, voice); chord; chord = chord_get_next(chord)){
+                if (chord->firstnote)
+                    continue;
+                preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)chord);
+            }
+        }
+        move_preselecteditems_to_selection(r_ob, mode, false, false);
+        unlock_general_mutex(r_ob);
+    }
+}
+
+void select_measures_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        lock_general_mutex(r_ob);
+        for (t_scorevoice *voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = voice->next){
+            for (t_measure *measure = voice->firstmeasure; measure; measure = measure->next){
+                preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)measure);
+            }
+        }
+        move_preselecteditems_to_selection(r_ob, mode, false, false);
+        unlock_general_mutex(r_ob);
+    }
+}
+
+void select_voices_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
+{
+    lock_general_mutex(r_ob);
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)){
+        preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)voice);
+    }
+    move_preselecteditems_to_selection(r_ob, mode, false, false);
+    unlock_general_mutex(r_ob);
+}
 
 void select_markers_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode)
 {
     t_marker *marker;
     lock_general_mutex(r_ob);
     for (marker = r_ob->firstmarker; marker; marker = marker->next) {
-        t_hatom *res = lexpr_eval_for_notation_item(r_ob, (t_notation_item *)marker, r_ob->n_lexpr);
-        if (hatom_gettype(res) == H_LONG && hatom_getlong(res) != 0)
-            notation_item_add_to_preselection(r_ob, (t_notation_item *)marker);
-        bach_freeptr(res);
+        preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)marker);
     }
     move_preselecteditems_to_selection(r_ob, mode, false, false);
     unlock_general_mutex(r_ob);
@@ -29693,10 +29763,7 @@ void select_breakpoints_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode,
         for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord))
             for (note = chord->firstnote; note; note = note->next)
                 for (bpt = tails_only ? note->lastbreakpoint : (note->firstbreakpoint ? note->firstbreakpoint->next : NULL); bpt; bpt = bpt->next) {
-                    t_hatom *res = lexpr_eval_for_notation_item(r_ob, (t_notation_item *)bpt, r_ob->n_lexpr);
-                    if (hatom_gettype(res) == H_LONG && hatom_getlong(res) != 0)
-                        notation_item_add_to_preselection(r_ob, (t_notation_item *)bpt);
-                    bach_freeptr(res);
+                    preselect_notation_item_with_lexpr(r_ob, (t_notation_item *)bpt);
                 }
     move_preselecteditems_to_selection(r_ob, mode, false, false);
     unlock_general_mutex(r_ob);
@@ -30249,6 +30316,9 @@ t_hatom *lexpr_eval_for_notation_item(t_notation_obj *r_ob, t_notation_item *it,
     hatom_setlong(vars+16, notation_item_get_partnumber(r_ob, it) + 1);
     hatom_setlong(vars+17, notation_item_get_voiceensemble(r_ob, it) + 1);
     notation_item_get_poc(r_ob, it, vars+18);
+    hatom_setlong(vars+19, notation_item_get_numnotes(r_ob, it));
+    hatom_setlong(vars+20, notation_item_get_numchords(r_ob, it));
+    hatom_setlong(vars+21, notation_item_get_nummeasures(r_ob, it));
     return lexpr_eval(lexpr, vars);
 }
 
@@ -36862,6 +36932,65 @@ long notation_item_get_voiceensemble(t_notation_obj *r_ob, t_notation_item *it)
         return -1;
 }
 
+long notation_item_get_numnotes(t_notation_obj *r_ob, t_notation_item *it)
+{
+    switch (it->type) {
+        case k_NOTE: return 1;
+        case k_DURATION_LINE: return 1;
+        case k_CHORD: return ((t_chord *)it)->num_notes;
+        case k_MEASURE: {
+            t_measure *meas = (t_measure *)it;
+            long res = 0;
+            for (t_chord *ch = meas->firstchord; ch; ch = ch->next)
+                res += ch->num_notes;
+            return res;
+        }
+        case k_VOICE: {
+            t_voice *voice = (t_voice *)it;
+            long res = 0;
+            for (t_chord *ch = voice_get_first_chord(r_ob, voice); ch; ch = chord_get_next(ch))
+                res += ch->num_notes;
+            return res;
+        }
+        default: return 0;
+    }
+}
+
+long notation_item_get_numchords(t_notation_obj *r_ob, t_notation_item *it)
+{
+    switch (it->type) {
+        case k_CHORD: return 1;
+        case k_MEASURE: return ((t_measure *)it)->num_chords;
+        case k_VOICE: {
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+                return ((t_rollvoice *)it)->num_chords;
+            } else {
+                t_voice *voice = (t_voice *)it;
+                long res = 0;
+                for (t_chord *ch = voice_get_first_chord(r_ob, voice); ch; ch = chord_get_next(ch))
+                    res ++;
+                return res;
+            }
+        }
+        default: return 0;
+    }
+}
+
+
+long notation_item_get_nummeasures(t_notation_obj *r_ob, t_notation_item *it)
+{
+    switch (it->type) {
+        case k_VOICE: {
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+                return 0;
+            } else {
+                return ((t_scorevoice *)it)->num_measures;
+            }
+        }
+        default: return 0;
+    }
+}
+
 // 0-based!!!
 long notation_item_get_measurenumber(t_notation_obj *r_ob, t_notation_item *it)
 {
@@ -37040,27 +37169,37 @@ t_marker *voice_get_first_marker(t_notation_obj *r_ob, t_voice *voice)
 
 t_tempo *voice_get_first_tempo(t_notation_obj *r_ob, t_voice *voice)
 {
-    for (t_measure *meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next) {
-        if (meas->firsttempo)
-            return meas->firsttempo;
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        for (t_measure *meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next) {
+            if (meas->firsttempo)
+                return meas->firsttempo;
+        }
     }
     return NULL;
 }
 
 t_chord *voice_get_first_chord(t_notation_obj *r_ob, t_voice *voice)
 {
-    for (t_measure *meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next) {
-        if (meas->firstchord)
-            return meas->firstchord;
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        for (t_measure *meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next) {
+            if (meas->firstchord)
+                return meas->firstchord;
+        }
+    } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        return ((t_rollvoice *)voice)->firstchord;
     }
     return NULL;
 }
 
 t_chord *voice_get_last_chord(t_notation_obj *r_ob, t_voice *voice)
 {
-    for (t_measure *meas = ((t_scorevoice *)voice)->lastmeasure; meas; meas = meas->prev) {
-        if (meas->lastchord)
-            return meas->lastchord;
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        for (t_measure *meas = ((t_scorevoice *)voice)->lastmeasure; meas; meas = meas->prev) {
+            if (meas->lastchord)
+                return meas->lastchord;
+        }
+    } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        return ((t_rollvoice *)voice)->lastchord;
     }
     return NULL;
 }

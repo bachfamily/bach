@@ -7839,6 +7839,33 @@ long notation_item_get_voiceensemble(t_notation_obj *r_ob, t_notation_item *it);
 long notation_item_get_measurenumber(t_notation_obj *r_ob, t_notation_item *it);
 
 
+/** Obtain the number of chords inside a notation item (or 0 if not applicable).
+ @ingroup        notation
+ @param    r_ob    The notation object
+ @param    it        The notation item
+ @return            The number of chords in the notation item
+ */
+long notation_item_get_numchords(t_notation_obj *r_ob, t_notation_item *it);
+
+
+/** Obtain the number of notes inside a notation item (or 0 if not applicable).
+ @ingroup        notation
+ @param    r_ob    The notation object
+ @param    it        The notation item
+ @return            The number of notes in the notation item
+ */
+long notation_item_get_numnotes(t_notation_obj *r_ob, t_notation_item *it);
+
+
+/** Obtain the number of measures inside a notation item (or 0 if not applicable).
+    @ingroup        notation
+    @param    r_ob    The notation object
+    @param    it        The notation item
+    @return            The number of measures in the notation item
+ */
+long notation_item_get_nummeasures(t_notation_obj *r_ob, t_notation_item *it);
+
+
 /** Obtain a tie information about a notation item: 1 if a tie starts, 2 if a tie ends, 3 if both, 0 otherwise.
     @ingroup        notation
     @param    r_ob    The notation object
@@ -19235,8 +19262,20 @@ void notationobj_set_voicespacing_from_llll(t_notation_obj *r_ob, t_llll* voices
 void notationobj_set_hidevoices_from_llll(t_notation_obj *r_ob, t_llll* hidevoices);
 void tempo_to_char_buf(t_tempo *tempo, char *buf, long buf_size, long max_decimals);
 void time_to_char_buf(t_notation_obj *r_ob, double time_ms, char *buf, long buf_size);
+
+//// LEXPR-BASED SELECTION
+void select_voices_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);
+void select_measures_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);
+void select_chords_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);
+void select_rests_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);
+void select_notes_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);
 void select_markers_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);
 void select_breakpoints_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode, char tails_only);
+void preselect_notation_item_with_lexpr(t_notation_obj *r_ob, t_notation_item *it);
+
+
+
+/// UTILITIES
 t_chord *chord_get_first_before_ms(t_notation_obj *r_ob, t_voice *voice, double ms);
 t_chord *chord_get_first_after_ms(t_notation_obj *r_ob, t_voice *voice, double ms);
 t_chord *chord_get_first_before_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset);

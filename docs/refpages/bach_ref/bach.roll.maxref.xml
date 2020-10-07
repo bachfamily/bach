@@ -1376,12 +1376,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -2605,12 +2609,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -4576,12 +4584,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -4715,12 +4727,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -4996,12 +5012,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -5383,7 +5403,8 @@
 				• <b>sel marker -2</b>   <i>→ select one-but-last marker</i><br />
 				• <b>sel marker [1] [-2] [5]</b>   <i>→ select multiple markers</i><br />
 				• <b>sel voice 2</b>   <i>→ select 2nd voice</i><br />
-				• <b>sel note if voice == 2</b>   <i>→ select 2nd voice</i><br />
+				• <b>sel note if voice == 2</b>   <i>→ select notes in 2nd voice</i><br />
+				• <b>sel chord if "random(0,100)&lt;50"</b>   <i>→ randomly select half of the chords</i><br />
 				• <b>sel chords [1 3] [2 2] [-2 5]</b>   <i>→ select multiple chord</i><br />
 				• <b>sel notes [1 3 2] [1 3 3] [2 4 5]</b>   <i>→ select multiple notes</i><br />
 				• <b>sel John</b>   <i>→ select all items named 'John'</i><br />
@@ -5430,19 +5451,23 @@
 				For instance, <b>sel note 2 3</b> selects the third note of second chord [of first voice], while <b>sel note 4 2 3</b> does the same with the fourth voice.
 				Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
 				a sequence of wrapped lists of integers, for instance <b>sel note [5 2 4] [1 1 -1]</b>.<br />
-				- If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>rest if</b>, <b>marker if</b>, <b>breakpoint if</b>
-				or <b>tail if</b> followed by a
+				- If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>chord if</b>, <b>voice if</b>, <b>measure if</b>,
+				<b>marker if</b>, <b>breakpoint if</b> or <b>tail if</b> followed by a
 				condition to be verified, a conditional selection on notes,  markers or pitch breakpoints (respectively) is performed.
 				and notes/markers/pitch breakpoints matching such condition are selected.
 				The condition must be an expr-like expression returning 1 if notes have to be selected, 0 otherwise.
 				You can use symbolic variables inside such expressions. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -5856,12 +5881,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -6070,12 +6099,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -6115,12 +6148,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the

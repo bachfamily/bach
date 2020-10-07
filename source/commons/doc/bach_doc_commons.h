@@ -1127,12 +1127,16 @@
 
 #define BACH_DOC_SYMBOLIC_VARIABLES
 	// Symbolic variables are variables that can be used in the conditional selection or parameter modification processes. 
-	// These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-    // <m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+	// These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+    // <m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+    // <m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+    // <m>voiceensemble</m> (voiceensemble number).
     // For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 	// <m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 	// <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
     // grace chords, 0 otherwise). <br />
+    // You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+    // that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 	// In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 	// the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
     // (all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the

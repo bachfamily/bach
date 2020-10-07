@@ -1293,51 +1293,6 @@ void score_selectmeasures(t_score *x, t_symbol *s, long argc, t_atom *argv){
     llll_free(selectllll);
 }
 
-void select_notes_with_lexpr(t_score *x, e_selection_modes mode)
-{
-    t_scorevoice *voice;
-    lock_general_mutex((t_notation_obj *)x);
-    for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
-        t_measure *measure;
-        for (measure = voice->firstmeasure; measure; measure = measure->next){
-            t_chord *chord;
-            for (chord = measure->firstchord; chord; chord = chord->next){
-                t_note *note;
-                for (note = chord->firstnote; note; note = note->next){
-                    t_hatom *res = lexpr_eval_for_notation_item((t_notation_obj *)x, (t_notation_item *)note, x->r_ob.n_lexpr);
-                    if (hatom_gettype(res) == H_LONG && hatom_getlong(res) != 0) 
-                        notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)note);
-                    bach_freeptr(res);
-                }
-            }
-        }
-    }
-    move_preselecteditems_to_selection((t_notation_obj *)x, mode, false, false);
-    unlock_general_mutex((t_notation_obj *)x);
-}
-
-
-void select_rests_with_lexpr(t_score *x, e_selection_modes mode)
-{
-    t_scorevoice *voice;
-    lock_general_mutex((t_notation_obj *)x);
-    for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
-        t_measure *measure;
-        for (measure = voice->firstmeasure; measure; measure = measure->next){
-            t_chord *chord;
-            for (chord = measure->firstchord; chord; chord = chord->next) {
-                if (chord->firstnote)
-                    continue;
-                t_hatom *res = lexpr_eval_for_notation_item((t_notation_obj *)x, (t_notation_item *)chord, x->r_ob.n_lexpr);
-                if (hatom_gettype(res) == H_LONG && hatom_getlong(res) != 0)
-                    notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)chord);
-                bach_freeptr(res);
-            }
-        }
-    }
-    move_preselecteditems_to_selection((t_notation_obj *)x, mode, false, false);
-    unlock_general_mutex((t_notation_obj *)x);
-}
 
 t_llll *score_select_extend_chord_for_options(t_score *x, t_chord *ch, char tiemode_all, char restseqmode_all)
 {
@@ -1403,41 +1358,12 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 else
                     select_all(x);
                 
-                
-            /// sel note if
-            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_note 
-                        && selectllll->l_head->l_next && 
+            // (un)sel(ect) note/chord/rest/measure/voice/breakpoint/tail/marker if
+            } else if (head_type == H_SYM && selectllll->l_head->l_next &&
                        hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
                        hatom_getsym(&selectllll->l_head->l_next->l_hatom) == _llllobj_sym_if) {
                 
-                t_atom *new_av = NULL; 
-                long new_ac = 0;
-                
-                if (x->r_ob.n_lexpr) 
-                    lexpr_free(x->r_ob.n_lexpr);
-                
-                llll_behead(selectllll);
-                llll_behead(selectllll);
-                
-                new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
-                x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
-
-                if (new_av) 
-                    bach_freeptr(new_av);    
-                
-                if (x->r_ob.n_lexpr) {
-                    select_notes_with_lexpr(x, mode);
-                } else {
-                    object_error((t_object *) x, "Bad expression!");
-                }
-                
-
-            /// sel rest if
-            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_rest
-                       && selectllll->l_head->l_next &&
-                       hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
-                       hatom_getsym(&selectllll->l_head->l_next->l_hatom) == _llllobj_sym_if) {
-                
+                t_symbol *head_sym = hatom_getsym(&selectllll->l_head->l_hatom);
                 t_atom *new_av = NULL;
                 long new_ac = 0;
                 
@@ -1450,16 +1376,33 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
                 x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
                 
-                if (new_av) 
-                    bach_freeptr(new_av);    
+                if (new_av)
+                    bach_freeptr(new_av);
                 
                 if (x->r_ob.n_lexpr) {
-                    select_rests_with_lexpr(x, mode);
+                    if (head_sym == _llllobj_sym_note) {
+                        select_notes_with_lexpr((t_notation_obj *)x, mode);
+                    } else if (head_sym == _llllobj_sym_chord) {
+                        select_chords_with_lexpr((t_notation_obj *)x, mode);
+                    } else if (head_sym == _llllobj_sym_rest) {
+                        select_rests_with_lexpr((t_notation_obj *)x, mode);
+                    } else if (head_sym == _llllobj_sym_voice) {
+                        select_voices_with_lexpr((t_notation_obj *)x, mode);
+                    } else if (head_sym == _llllobj_sym_measure) {
+                        select_measures_with_lexpr((t_notation_obj *)x, mode);
+                    } else if (head_sym == _llllobj_sym_breakpoint) {
+                        select_breakpoints_with_lexpr((t_notation_obj *)x, mode, false);
+                    } else if (head_sym == _llllobj_sym_tail) {
+                        select_breakpoints_with_lexpr((t_notation_obj *)x, mode, true);
+                    } else if (head_sym == _llllobj_sym_marker) {
+                        select_markers_with_lexpr((t_notation_obj *)x, mode);
+                    } else {
+                        object_error((t_object *) x, "Unknown notation item!");
+                    }
                 } else {
                     object_error((t_object *) x, "Bad expression!");
                 }
-
-            
+                
             // (un)sel(ect) measure range
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_measure && selectllll->l_head->l_next
                        && hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM && hatom_getsym(&selectllll->l_head->l_next->l_hatom) == _llllobj_sym_range) {
@@ -1568,63 +1511,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 }
                 move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
                 unlock_general_mutex((t_notation_obj *)x);
-                
-            // (un)sel(ect) breakpoints/tail if
-            } else if (head_type == H_SYM && (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_breakpoint || hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_tail) && selectllll->l_head->l_next &&
-                       hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
-                       hatom_getsym(&selectllll->l_head->l_next->l_hatom) == _llllobj_sym_if) {
-                
-                char tail_only = (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_tail);
-                t_atom *new_av = NULL;
-                long new_ac = 0;
-                
-                if (x->r_ob.n_lexpr)
-                    lexpr_free(x->r_ob.n_lexpr);
-                
-                llll_behead(selectllll);
-                llll_behead(selectllll);
-                
-                new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
-                x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
-                
-                if (new_av)
-                    bach_freeptr(new_av);
-                
-                if (x->r_ob.n_lexpr) {
-                    select_breakpoints_with_lexpr((t_notation_obj *)x, mode, tail_only);
-                } else {
-                    object_error((t_object *) x, "Bad expression!");
-                }
-                
-                
-                
-            // (un)sel(ect) marker if
-            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next &&
-                       hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
-                       hatom_getsym(&selectllll->l_head->l_next->l_hatom) == _llllobj_sym_if) {
-                
-                t_atom *new_av = NULL;
-                long new_ac = 0;
-                
-                if (x->r_ob.n_lexpr)
-                    lexpr_free(x->r_ob.n_lexpr);
-                
-                llll_behead(selectllll);
-                llll_behead(selectllll);
-                
-                new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
-                x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
-                
-                if (new_av)
-                    bach_freeptr(new_av);
-                
-                if (x->r_ob.n_lexpr) {
-                    select_markers_with_lexpr((t_notation_obj *)x, mode);
-                } else {
-                    object_error((t_object *) x, "Bad expression!");
-                }
 
-                
             // (un)sel(ect) marker by index
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next) {
                 t_marker *to_select;
@@ -5698,9 +5585,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     // For instance, <b>sel note 4 2 3</b> selects the third note of second chord of fourth measure [of first voice], while <b>sel note 5 4 2 3</b> does the same with the fifth voice. 
     // Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
     // a sequence of wrapped lists of integers, for instance <b>sel note [5 2 4 3] [1 1 1 -1]</b>.<br />
-    // - If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>rest if</b>, <b>marker if</b>, <b>breakpoint if</b>
-    // or <b>tail if</b> followed by a
-    // condition to be verified, a conditional selection on notes, rests, markers or pitch breakpoints (respectively) is performed.
+    // - If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>chord if</b>, <b>voice if</b>, <b>measure if</b>,
+    // <b>rest if</b>, <b>marker if</b>, <b>breakpoint if</b> or <b>tail if</b> followed by a
+    // condition to be verified, a conditional selection on notes,  markers or pitch breakpoints (respectively) is performed.
     // and notes/markers/pitch breakpoints matching such condition are selected.
     // The condition must be an expr-like expression returning 1 if notes have to be selected, 0 otherwise.
     // You can use symbolic variables inside such expressions. <br />

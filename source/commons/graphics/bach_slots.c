@@ -8552,7 +8552,7 @@ void slot_handle_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *acti
         }
         
         double new_y_value = rescale_with_slope(r_ob->slot_window_y2 - CONST_SLOT_FUNCTION_UY_INSET_BOTTOM * zoom_y -  ypt, 0, r_ob->slot_window_active.height, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
-		if (r_ob->slotinfo[s].slot_ysnap && r_ob->slotinfo[s].slot_ysnap->l_head && modifiers & eAltKey && modifiers & eShiftKey) // checking if there's a y snap
+		if (r_ob->slotinfo[s].slot_ysnap && r_ob->slotinfo[s].slot_ysnap->l_head && (modifiers & eAltKey) && (modifiers & eShiftKey)) // checking if there's a y snap
 			ysnap_double(&new_y_value, r_ob->slotinfo[s].slot_ysnap, 0);
 		change_slot_pts_value(r_ob, r_ob->active_slot_notationitem, s, activeslotitem, new_x_value, new_y_value, curr_slope, 0, modifiers);
 	}

@@ -3104,12 +3104,26 @@
 					"tags" : [ "message", "selection", "name" ],
 					"title" : [ "Selecting by name" ]
 				},
-				"Conditionalselection" : {
-					"filename" : [ "bach.help.notation.messages.20_selection.40_conditionalselection.maxpat" ],
+				"A_conditionalselectionnotes" : {
+					"filename" : [ "bach.help.notation.messages.20_selection.40a_conditionalselectionnotes.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "select", "sel", "unsel", "symbolic+variable" ],
 					"tags" : [ "message", "selection", "conditional", "select", "sel", "unsel", "note", "if", "onset", "duration", "cents", "velocity", "tail", "symonset", "symduration", "symtail", "voice", "measure", "tie" ],
 					"title" : [ "Conditional selection for notes" ]
+				},
+				"B_conditionalselectionchords" : {
+					"filename" : [ "bach.help.notation.messages.20_selection.40b_conditionalselectionchords.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "select", "sel", "unsel", "symbolic+variable" ],
+					"tags" : [ "message", "selection", "conditional", "select", "sel", "unsel", "chord", "if", "onset", "duration", "grace", "numnotes", "measures" ],
+					"title" : [ "Conditional selection for chords" ]
+				},
+				"C_conditionalselectionmeasvoice" : {
+					"filename" : [ "bach.help.notation.messages.20_selection.40c_conditionalselectionmeasvoice.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "select", "sel", "unsel", "symbolic+variable" ],
+					"tags" : [ "message", "selection", "conditional", "select", "sel", "unsel", "measure", "voice", "if", "onset", "duration", "grace", "numnotes", "numchords" ],
+					"title" : [ "Conditional selection for measure and voices" ]
 				},
 				"Conditionalselectionrests" : {
 					"filename" : [ "bach.help.notation.messages.20_selection.41_conditionalselectionrests.maxpat" ],
@@ -3624,7 +3638,7 @@
 				"filename" : [ "bach.help.notation.messages.31_symbolvariables.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "conditional+selection" ],
-				"tags" : [ "message", "selection", "select", "conditional", "symbolic", "expression", "variable", "equation", "onset", "duration", "cents", "velocity", "tail", "voice", "index", "symonset", "symduration", "symtail", "measure", "tie", "noteindex", "chordindex", "grace", "part", "voiceensemble", "pitch", "ensemble", "poc", "pitchorcents" ],
+				"tags" : [ "message", "selection", "select", "conditional", "symbolic", "expression", "variable", "equation", "onset", "duration", "cents", "velocity", "tail", "voice", "index", "symonset", "symduration", "symtail", "measure", "tie", "noteindex", "chordindex", "grace", "part", "voiceensemble", "pitch", "ensemble", "poc", "pitchorcents", "numnotes" ],
 				"title" : [ "Symbolic variables for expressions" ]
 			},
 			"Respell pitches automatically" : {
