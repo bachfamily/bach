@@ -223,14 +223,6 @@ void reorder_triplet_of_doubles_and_other_doubles_accordingly(double *f1, double
 	}
 }
 
-long positive_mod(long num, long mod)
-{
-	if (num >= 0)
-		return num % mod;
-	
-	return ((num % mod) + mod) % mod;
-}
-
 
 double positive_fmod(double num, double mod)
 {

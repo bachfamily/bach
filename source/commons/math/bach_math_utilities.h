@@ -53,15 +53,6 @@ void swap_doubles(double *d1, double *d2);
 void reorder_triplet_of_doubles(double *f1, double *f2, double *f3);
 
 
-/**	Non-negative modulo for long numbers (yielding the solution >= 0 also for negative numbers).
-	@ingroup	math
-	@param		num	The number
-	@param		mod	The modulo
-	@return		The positive modulo
- */
-long positive_mod(long num, long mod);
-
-
 /**	Non-negative modulo for double numbers (yielding the solution >= 0 also for negative numbers).
 	@ingroup	math
 	@param		num	The number

@@ -27,6 +27,23 @@ char fsign(double number){
 }
 
 
+long integer_div_round_down(long num, long div)
+{
+    long res = num / div;
+    if (num < 0 && res * div != num)
+        res -= 1;
+    return res;
+}
+
+long positive_mod(long num, long mod)
+{
+    if (num >= 0)
+        return num % mod;
+    
+    return ((num % mod) + mod) % mod;
+}
+
+
 t_rational urrat2rat(t_urrational urrat)
 {
 	t_rational res;

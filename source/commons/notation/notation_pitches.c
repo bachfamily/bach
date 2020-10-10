@@ -176,7 +176,7 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
         if (!(is_natural_note(note_get_screen_midicents(nt)))) {
             object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
             long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
-            nt->pitch_displayed.set(steps % 7, auto_screen_acc, steps / 7);
+            nt->pitch_displayed.set(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
             note_set_auto_enharmonicity(nt);
         } else {
             nt->pitch_displayed = nt->pitch_original;
@@ -191,7 +191,7 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
     } else { // use default accidentals!
         mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
         long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
-        nt->pitch_displayed.set(steps % 7, auto_screen_acc, steps / 7);
+        nt->pitch_displayed.set(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
     }
 }
 

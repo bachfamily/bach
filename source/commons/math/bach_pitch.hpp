@@ -129,7 +129,8 @@ public:
         p_degree = sat.steps % 7;
         if (p_degree < 0)
             p_degree += 7;
-        p_octave = t_atom_short(floor(sat.steps / 7.));
+//        p_octave = t_atom_short(floor(sat.steps / 7.));
+        p_octave = t_atom_short(integer_div_round_down(sat.steps, 7));
         p_alter = (sat.mc - p_octave * 1200 - degree2MC[p_degree]) / 200;
     }
     

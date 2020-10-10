@@ -74,13 +74,13 @@ t_pitchMatrices::t_pitchMatrices()
             // sum
             rawdegree = a + b;
             correction = t_pitch::degree2PC[a] + t_pitch::degree2PC[b] - t_pitch::degree2PC[rawdegree];
-            sumMatrix[a * 7 + b].set(rawdegree % 7, t_shortRational(correction, 2), rawdegree / 7);
+            sumMatrix[a * 7 + b].set(rawdegree % 7, t_shortRational(correction, 2), rawdegree / 7); // it's ok because rawdegree >= 0
             
             // difference
             t_atom_short aa = a + 7;
             rawdegree = aa - b;
             correction = t_pitch::degree2PC[aa] - t_pitch::degree2PC[b] - t_pitch::degree2PC[rawdegree];
-            diffMatrix[a * 7 + b].set(rawdegree % 7, t_shortRational(correction, 2), rawdegree / 7 - 1);
+            diffMatrix[a * 7 + b].set(rawdegree % 7, t_shortRational(correction, 2), rawdegree / 7 - 1); // it's ok because rawdegree >= 0
         }
     }
 }
