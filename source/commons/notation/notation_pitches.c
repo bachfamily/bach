@@ -145,12 +145,15 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
         case k_CONSIDER_FOR_EVALUATION:
         case k_CONSIDER_FOR_PLAYING:
         case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE:
-        case k_CONSIDER_FOR_PLAYING_ONLY_IF_SELECTED:
         case k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES:
         case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE:
             pitchmode = r_ob->output_pitches_playout;
             break;
             
+        case k_CONSIDER_FOR_SELECTION_COPYING:
+            pitchmode = k_OUTPUT_PITCHES_WHEN_USER_DEFINED;
+            break;
+
         default:
             pitchmode = k_OUTPUT_PITCHES_NEVER;
             break;

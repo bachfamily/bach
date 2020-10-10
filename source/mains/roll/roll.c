@@ -17104,7 +17104,7 @@ t_llll *get_selection_gathered_syntax(t_roll *x){
                 }
             }
             if (there_is_something_selected)
-                llll_appendllll(voice_llll, get_rollchord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_PLAYING_ONLY_IF_SELECTED), 0, WHITENULL_llll);
+                llll_appendllll(voice_llll, get_rollchord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_SELECTION_COPYING), 0, WHITENULL_llll);
         }
         llll_appendllll(out, voice_llll, 0, WHITENULL_llll);
     }

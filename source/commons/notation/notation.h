@@ -1598,7 +1598,7 @@ typedef enum _data_considering_types
                                                                 ///< correctly trimmed, depending on the position of the playhead start line: if a note
                                                                 ///< has this line at the middle of its duration line, only the right part will be output 
                                                                 ///< (a partial note, indeed, used to handle partial note play) 
-    k_CONSIDER_FOR_PLAYING_ONLY_IF_SELECTED = 3,                ///< The retrieved llll wil contain only the non-muted notes, but only if they are selected.
+    k_CONSIDER_FOR_SELECTION_COPYING = 3,                ///< The retrieved llll wil contain only the non-muted notes, but only if they are selected.
                                                                 ///< (This is used by playselection() function)
     k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING = -4,            ///< The note has been collapsed (only for [bach.score]), and this is the note beginning part
     k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE = -5,                ///< The note has been collapsed (only for [bach.score]), and this is the note middle part
@@ -4110,7 +4110,7 @@ typedef struct _notation_obj
     t_rect        slot_window_active;            ///< Active slot window as a rectangle, in pixels
     t_rect        slot_window_active_nozoom;    ///< Active slot window as a rectangle, in pixels, but ignoring the scaling due to the possible horizontal zooming of the slot window
     double      slot_window_active_unscrolled_width;    ///< Horizontal width of the slot window content, not clipped to the actual window, for slot zoom = 1.
-    char        output_slot_names;            ///< If this is 1, the notation object always outputs slot names and NOT slot numbers from the playout (which means: for mode = #k_CONSIDER_FOR_EVALUATION or #k_CONSIDER_FOR_PLAYING or #k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE or #k_CONSIDER_FOR_PLAYING_ONLY_IF_SELECTED)
+    char        output_slot_names;            ///< If this is 1, the notation object always outputs slot names and NOT slot numbers from the playout (which means: for mode = #k_CONSIDER_FOR_EVALUATION or #k_CONSIDER_FOR_PLAYING or #k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE or #k_CONSIDER_FOR_SELECTION_COPYING)
     double        slot_window_zoom;            ///< Additional zoom (with respect to the #zoom_y field) for the slot windows, 100 being the default one. 
     double        bgslot_zoom;                ///< Additional zoom (with respect to the #zoom_y field) for the background displayed slots, 100 being the default one.
     char        combine_range_slope_during_playback;    ///< Combines the range slope with the existing slopes during playback
