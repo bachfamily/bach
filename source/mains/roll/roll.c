@@ -3525,14 +3525,43 @@ void roll_sel_copy_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 
 
 
+t_symbol *dumpselection_get_start_end_router(t_llll *forced_routers_ll)
+{
+    if (!forced_routers_ll || !forced_routers_ll->l_head)
+        return gensym("dumpselection");
+    
+    if (hatom_gettype(&forced_routers_ll->l_head->l_hatom) == H_SYM)
+        return hatom_getsym(&forced_routers_ll->l_head->l_hatom);
 
+    return gensym("dumpselection");
+}
 
 void roll_sel_dumpselection(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *router_ll = NULL;
+    t_symbol *start_sym = _llllobj_sym_none;
+    t_symbol *end_sym = _llllobj_sym_none;
     t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
-    llll_parseargs_and_attrs((t_object *)x, args, "l", gensym("router"), &router_ll);
+    llll_parseargs_and_attrs((t_object *)x, args, "lss", gensym("router"), &router_ll, gensym("start"), &start_sym, gensym("end"), &end_sym);
+
+    if (start_sym != _llllobj_sym_none) {
+        t_llll *start_ll = llll_get();
+        llll_appendsym(start_ll, dumpselection_get_start_end_router(router_ll));
+        llll_appendsym(start_ll, start_sym);
+        llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 6, start_ll);
+        llll_free(start_ll);
+    }
+    
     evaluate_selection(x, 0, true, router_ll);
+    
+    if (end_sym != _llllobj_sym_none) {
+        t_llll *end_ll = llll_get();
+        llll_appendsym(end_ll, dumpselection_get_start_end_router(router_ll));
+        llll_appendsym(end_ll, end_sym);
+        llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 6, end_ll);
+        llll_free(end_ll);
+    }
+
     llll_free(args);
     llll_free(router_ll);
 }
@@ -5228,8 +5257,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // You can safely rely on the fact that elements will be output ordered by onset. <br />
     // If a "router" message attribute is set, then the standard router ("note", "chord") is replaced by the specified one;
     // if the "router" attribute has length 2, the first symbol will be used for notes, the second one for chords. <br />
+    // Additional routers can be set to mark the beginning and the end of the dumping, via the message attributes <m>start</m>
+    // and <m>end</m>; these are both set to <b>none</b> by default, hence disabling the reporting of the beginning and end of
+    // the routing.
     // @copy BACH_DOC_PLAYOUT_SYNTAX_ROLL
-    // @mattr router @type llll @default null @digest Sets a forced router to be used instead of the default one
+    // @mattr router @type symbol/llll @default null @digest Sets a forced router to be used instead of the default one
+    // @mattr start @type symbol @default none @digest Sets a router used to mark the beginning of the dumping
+    // @mattr end @type symbol @default none @digest Sets a router used to mark the end of the dumping
     // @seealso sendcommand, play
     class_addmethod(c, (method) roll_sel_dumpselection, "dumpselection", A_GIMME, 0);
 

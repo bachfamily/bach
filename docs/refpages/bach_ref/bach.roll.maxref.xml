@@ -2397,13 +2397,18 @@
 			</digest>
 			<description>
 				Message attributes:<br />
-				<m>@router</m> (llll, default: null): Sets a forced router to be used instead of the default one<br />
+				<m>@router</m> (symbol/llll, default: null): Sets a forced router to be used instead of the default one<br />
+				<m>@start</m> (symbol, default: none): Sets a router used to mark the beginning of the dumping<br />
+				<m>@end</m> (symbol, default: none): Sets a router used to mark the end of the dumping<br />
 				<br />
 				The <m>dumpselection</m> message sends the content of each one of selected notation items from the
 				playout, in playout syntax (off-line play).
 				You can safely rely on the fact that elements will be output ordered by onset. <br />
 				If a "router" message attribute is set, then the standard router ("note", "chord") is replaced by the specified one;
 				if the "router" attribute has length 2, the first symbol will be used for notes, the second one for chords. <br />
+				Additional routers can be set to mark the beginning and the end of the dumping, via the message attributes <m>start</m>
+				and <m>end</m>; these are both set to <b>none</b> by default, hence disabling the reporting of the beginning and end of
+				the routing.
 				For <o>bach.roll</o>, the playout syntax is used whenever the information about a note or chord is sent through the playout (either at playtime
 				or at offline play, or selection dump).
 				The playout syntax is a slight variation of the standard chord gathered syntax. Two different cases apply, according to the <m>playmode</m>

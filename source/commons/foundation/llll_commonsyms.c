@@ -159,7 +159,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_symduration = gensym("symduration");
     x->s_symonset = gensym("symonset");
     x->s_symtail = gensym("symtail");
-    
+    x->s_dumpselection = gensym("dumpselection");
+
     x->s_FFGG = gensym("FFGG");
     x->s_FFG = gensym("FFG");
     x->s_FGG = gensym("FGG");

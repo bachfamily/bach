@@ -3304,6 +3304,13 @@
 					"tags" : [ "message", "operate", "on", "selection", "dump", "dumpselection", "send", "command", "sendcommand", "order", "onset", "router", "replace", "change" ],
 					"title" : [ "Changing routers for dump" ]
 				},
+				"C_moredumpstartend" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.01c_moredumpstartend.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "sel", "select+all", "clearselection", "dumpselection", "dump", "play", "playmode", "command" ],
+					"tags" : [ "message", "operate", "on", "selection", "dump", "dumpselection", "send", "command", "begin", "end", "done", "start", "notify", "notifying", "signal", "mark", "marking" ],
+					"title" : [ "Notifying start and end of dump" ]
+				},
 				"A_delete" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.02a_delete.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
