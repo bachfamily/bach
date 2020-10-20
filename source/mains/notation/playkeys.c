@@ -106,6 +106,7 @@ enum playkeys_properties
     k_PLAYKEYS_ROUTER,
     k_PLAYKEYS_PLAYOFFSET, // due to partial playing
     k_PLAYKEYS_ROLE,
+    k_PLAYKEYS_CUSTOMSTARTENDSYMBOL
 };
 
 enum playkeys_incoming // incoming notation items
@@ -128,6 +129,7 @@ enum playkeys_incoming // incoming notation items
     k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND   = (1 << 15),
     k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND  = (1 << 16),
     k_PLAYKEYS_INCOMING_SCOREREST_COMMAND   = (1 << 17),
+    k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND = (1 << 18),
 };
 
 
@@ -137,7 +139,7 @@ typedef struct _playkeys_key
     long        allowed_notationitems;     // a combination of playkeys_incoming
     t_symbol    *allowed_command_router;     // a command router allowed to enter
     t_hatom     specification;              // content: e.g. slot number/name
-    long        exists;                     // data actually exist for key
+    long        exists;                     // data actually exist for key; if this is 2 means it's a bang
 } t_playkeys_key;
 
 
@@ -146,6 +148,7 @@ typedef struct _playkeys
     struct llllobj_object    n_ob;
     
     t_playkeys_key          *n_keys;
+    long                    n_numkeys;
     
     long                    n_flattenfornotes;
     long                    n_nullmode;
@@ -267,6 +270,7 @@ long get_default_allowed_notationitems_for_property(long property)
 
         case k_PLAYKEYS_TYPE:
         case k_PLAYKEYS_ROUTER:
+        case k_PLAYKEYS_CUSTOMSTARTENDSYMBOL:
             return all;
         
         case k_PLAYKEYS_ROLE:
@@ -588,7 +592,9 @@ void playkeys_output(t_playkeys *x)
     
     } else {
         for (i = x->n_ob.l_numouts - 1; i >= 0; i--) {
-            if (x->n_keys[i].property != k_PLAYKEYS_NONE && (x->n_keys[i].exists || x->n_nullmode == 2))
+            if (x->n_keys[i].exists == 2)
+                llllobj_outlet_bang((t_object *) x, LLLL_OBJ_VANILLA, i);
+            else if (x->n_keys[i].property != k_PLAYKEYS_NONE && (x->n_keys[i].exists || x->n_nullmode == 2))
                 llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, i);
         }
     }
@@ -907,25 +913,40 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
             char found = 0;
             for (t_llllelem *elem = x->n_note_commands->l_head; elem; elem = elem->l_next) {
                 if (router == hatom_getsym(&elem->l_hatom)) {
-                    t_llllelem *test = getindex_2levels(in_ll, 4, 2);
-                    incoming = (test && hatom_gettype(&test->l_hatom) == H_LLLL) ? k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND : k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND;
-                    found = 1;
-                }
-            }
-            if (!found) {
-                for (t_llllelem *elem = x->n_chord_commands->l_head; elem; elem = elem->l_next) {
-                    if (router == hatom_getsym(&elem->l_hatom)) {
+                    if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                        incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                        found = 1;
+                    } else {
                         t_llllelem *test = getindex_2levels(in_ll, 4, 2);
-                        incoming = (test && hatom_gettype(&test->l_hatom) == H_LLLL) ? k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND : k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND;
+                        incoming = (test && hatom_gettype(&test->l_hatom) == H_LLLL) ? k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND : k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND;
                         found = 1;
                     }
                 }
             }
             if (!found) {
-                for (t_llllelem *elem = x->n_rest_commands->l_head; elem; elem = elem->l_next) {
+                for (t_llllelem *elem = x->n_chord_commands->l_head; elem; elem = elem->l_next) {
                     if (router == hatom_getsym(&elem->l_hatom)) {
-                        incoming = k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
+                        if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                            incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                            found = 1;
+                        } else {
+                            t_llllelem *test = getindex_2levels(in_ll, 4, 2);
+                            incoming = (test && hatom_gettype(&test->l_hatom) == H_LLLL) ? k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND : k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND;
+                            found = 1;
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                for (t_llllelem *elem = x->n_rest_commands->l_head; elem; elem = elem->l_next) {
+                    if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                        incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
                         found = 1;
+                    } else {
+                        if (router == hatom_getsym(&elem->l_hatom)) {
+                            incoming = k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
+                            found = 1;
+                        }
                     }
                 }
             }
@@ -937,26 +958,28 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
     if (incoming != k_PLAYKEYS_INCOMING_UNKNOWN) {
         must_process_incoming = ((x->n_notationitems_to_process & incoming) != 0);
         
-        switch (incoming) {
-            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
-            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
-                if (is_symbol_in_llll_first_level(x->n_note_commands, router))
-                    must_process_incoming = true;
-                break;
-
-            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
-            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
-                if (is_symbol_in_llll_first_level(x->n_chord_commands, router))
-                    must_process_incoming = true;
-                break;
-
-            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
-                if (is_symbol_in_llll_first_level(x->n_rest_commands, router))
-                    must_process_incoming = true;
-                break;
-
-            default:
-                break;
+        if (!must_process_incoming) {
+            switch (incoming) {
+                case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                    if (is_symbol_in_llll_first_level(x->n_note_commands, router))
+                        must_process_incoming = true;
+                    break;
+                    
+                case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                    if (is_symbol_in_llll_first_level(x->n_chord_commands, router))
+                        must_process_incoming = true;
+                    break;
+                    
+                case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                    if (is_symbol_in_llll_first_level(x->n_rest_commands, router))
+                        must_process_incoming = true;
+                    break;
+                    
+                default:
+                    break;
+            }
         }
     }
     
@@ -967,7 +990,9 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
         
         char outputslotnames = -1; // are slot output via their names? -1 = we still don't know
         
-        for (outlet = 0, this_key = x->n_keys; this_key && this_key->property != k_PLAYKEYS_NONE; this_key++, outlet++) {
+        long num_keys = x->n_numkeys;
+        for (outlet = num_keys-1; outlet >= 0; outlet--) {
+            this_key = x->n_keys + outlet;
             x->n_keys[outlet].exists = 0;
             
             if (incoming & x->n_keys[outlet].allowed_notationitems) { // must process key
@@ -1035,7 +1060,12 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_end);
                                 break;
-                                
+
+                            case k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND:
+                                found = llll_get();
+                                llll_appendsym(found, _llllobj_sym_command);
+                                break;
+
                             default:
                                 break;
                         }
@@ -2104,7 +2134,16 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                         if (incoming == k_PLAYKEYS_INCOMING_END)
                             found = WHITENULL_llll;
                         break;
-                        
+
+                    case k_PLAYKEYS_CUSTOMSTARTENDSYMBOL:
+                    {
+                        t_symbol *s = hatom_getsym(&this_key->specification);
+                        if (s && in_ll && in_ll->l_size == 2 && hatom_gettype(&in_ll->l_head->l_next->l_hatom) == H_SYM && hatom_getsym(&in_ll->l_head->l_next->l_hatom) == s) {
+                            found = WHITENULL_llll;
+                        }
+                    }
+                        break;
+
                     case k_PLAYKEYS_ROUTER:
                         found = llll_get();
                         if (router)
@@ -2118,7 +2157,8 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                 
                 if (found) {
                     if (found == WHITENULL_llll) {
-                        llllobj_outlet_bang((t_object *) x, LLLL_OBJ_VANILLA, outlet);
+                        x->n_keys[outlet].exists = 2;
+//                        llllobj_outlet_bang((t_object *) x, LLLL_OBJ_VANILLA, outlet);
                     } else {
                         x->n_keys[outlet].exists = 1;
                         llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, found, outlet);
@@ -2178,6 +2218,9 @@ void playkeys_assist(t_playkeys *x, void *b, long m, long a, char *s)
             case k_PLAYKEYS_PAUSE:
             case k_PLAYKEYS_END:
                 sprintf(s, "bang for key %s", property_to_symbol(x->n_keys[a].property)->s_name);
+                break;
+            case k_PLAYKEYS_CUSTOMSTARTENDSYMBOL:
+                sprintf(s, "bang for %s", hatom_getsym(&x->n_keys[a].specification) ? hatom_getsym(&x->n_keys[a].specification)->s_name : "");
                 break;
             default:
                 sprintf(s, "llll (%s): %s", type, property_to_symbol(x->n_keys[a].property)->s_name);
@@ -2289,13 +2332,20 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                         this_keys->property = symbol_to_property(sym);
                         this_keys->allowed_command_router = allowed_command_router;
                         if (this_keys->property == k_PLAYKEYS_NONE) {
-                            object_error((t_object *)x, "Unrecognized key '%s', can't create object.", sym ? sym->s_name : "");
-                            llll_free(args_ll);
-                            llll_free(args_ll_flat);
-                            return NULL;
+                            if (allowed_command_router) { // this is interpreted as a custom start/end dump marker
+                                this_keys->property = k_PLAYKEYS_CUSTOMSTARTENDSYMBOL;
+                                this_keys->allowed_notationitems = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                                hatom_setsym(&this_keys->specification, sym);
+                            } else {
+                                object_error((t_object *)x, "Unrecognized key '%s', can't create object.", sym ? sym->s_name : "");
+                                llll_free(args_ll);
+                                llll_free(args_ll_flat);
+                                return NULL;
+                            }
+                        } else {
+                            this_keys->specification.h_type = H_NULL;
+                            this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems : get_default_allowed_notationitems_for_property(this_keys->property);
                         }
-                        this_keys->specification.h_type = H_NULL;
-                        this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
                         *this_outlets++ = '4';
                         i++;
                         this_keys++;
@@ -2471,6 +2521,11 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         *this_outlets = 0;
         this_keys->property = k_PLAYKEYS_NONE;
         llll_free(args_ll);
+        
+        long count = 0;
+        for (t_playkeys_key* this_key = x->n_keys; this_key && this_key->property != k_PLAYKEYS_NONE; this_key++, count++) {
+        }
+        x->n_numkeys = count;
         
         llllobj_obj_setup((t_llllobj_object *) x, 1, outlets);
         

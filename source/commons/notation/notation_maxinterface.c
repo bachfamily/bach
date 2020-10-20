@@ -183,7 +183,7 @@ void send_note_as_llll(t_notation_obj *r_ob, t_note *note, long outlet, e_data_c
 	if (should_element_be_played(r_ob, (t_notation_item *)note)) {
 		t_llll* out_llll = llll_get();
 		lock_general_mutex(r_ob);
-		llll_appendsym(out_llll, (command_number < 0 || command_number >= CONST_MAX_COMMANDS) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->command_note[command_number], 0, WHITENULL_llll);
+		llll_appendsym(out_llll, (command_number < 0 || command_number >= CONST_MAX_COMMANDS) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note, 0, WHITENULL_llll);
 		append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
 			llll_appendlong(out_llll, note->parent->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
@@ -414,7 +414,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 
 		if (!chord->firstnote) { // rest
 			t_llll* out_llll = llll_get();
-            llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_rest, forced_routers) : r_ob->command_rest[command_number], 0, WHITENULL_llll);
+            llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_rest, forced_routers) : r_ob->commands[command_number].command_rest, 0, WHITENULL_llll);
 			append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
 			llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
 			llll_appendllll(out_llll, get_scorechord_values_as_llll(r_ob, chord, mode, true));
@@ -433,7 +433,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
                     } else {
                         t_llll* out_llll = llll_get();
                         
-                        llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->command_note[command_number], 0, WHITENULL_llll);
+                        llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note, 0, WHITENULL_llll);
                         append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
                         llll_appendlong(out_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
                         llll_appendllll(out_llll, get_single_scorenote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);
@@ -462,7 +462,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
                     continue;
                 
 				t_llll* out_llll = llll_get();
-				llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->command_note[command_number], 0, WHITENULL_llll);
+				llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_note, forced_routers) : r_ob->commands[command_number].command_note, 0, WHITENULL_llll);
 				append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)note, mode);
 				llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
 				llll_appendllll(out_llll, get_single_rollnote_values_as_llll(r_ob, note, mode), 0, WHITENULL_llll);
@@ -490,9 +490,9 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
             t_llll* out_llll = llll_get();
             
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && !chord->firstnote)
-                llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_rest, forced_routers) : r_ob->command_rest[command_number], 0, WHITENULL_llll);
+                llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_rest, forced_routers) : r_ob->commands[command_number].command_rest, 0, WHITENULL_llll);
             else
-                llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_chord, forced_routers) : r_ob->command_chord[command_number], 0, WHITENULL_llll);
+                llll_appendsym(out_llll, ((command_number < 0) || (command_number >= CONST_MAX_COMMANDS)) ? handle_router(_llllobj_sym_chord, forced_routers) : r_ob->commands[command_number].command_chord, 0, WHITENULL_llll);
             
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
@@ -3425,11 +3425,12 @@ t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, l
 
 
 // use marker = NULL to get all markers
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst){
+t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, long command_number, char namefirst){
 	t_llll *outlist;
 	if (marker) {
 		outlist = llll_get();
-		llll_appendsym(outlist, _llllobj_sym_marker, 0, WHITENULL_llll); // the "marker" symbol in first place
+        llll_appendsym(outlist, (command_number < 0 || command_number >= CONST_MAX_COMMANDS) ? _llllobj_sym_marker : r_ob->commands[command_number].command_marker);
+//		llll_appendsym(outlist, _llllobj_sym_marker, 0, WHITENULL_llll); // the "marker" symbol in first place
 		if (marker->r_it.names->l_size == 0)
 			llll_appendsym(outlist, _llllobj_sym_none, 0, WHITENULL_llll);
 		else if (marker->r_it.names->l_size == 1 && marker->r_it.names->l_depth == 1)
@@ -3452,15 +3453,15 @@ t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char n
 }
 
 // use marker = NULL to send all markers
-void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, t_llll *forced_routers)
+void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, long command_number, t_llll *forced_routers)
 {
 	t_llll *llll;
 	lock_markers_mutex(r_ob);
-	llll = get_single_marker_as_llll(r_ob, marker, namefirst);
-    
-    if (forced_routers && forced_routers->l_head && hatom_gettype(&forced_routers->l_head->l_hatom) == H_SYM &&
-        llll && llll->l_head && hatom_getsym(&llll->l_head->l_hatom) == _llllobj_sym_marker)
-        hatom_setsym(&llll->l_head->l_hatom, hatom_getsym(&forced_routers->l_head->l_hatom));
+	llll = get_single_marker_as_llll(r_ob, marker, command_number, namefirst);
+
+    if (forced_routers && forced_routers->l_tail && hatom_gettype(&forced_routers->l_tail->l_hatom) == H_SYM &&
+        llll && llll->l_tail && hatom_getsym(&llll->l_tail->l_hatom) == _llllobj_sym_marker)
+        hatom_setsym(&llll->l_head->l_hatom, hatom_getsym(&forced_routers->l_tail->l_hatom));
         
 	unlock_markers_mutex(r_ob);
     setup_lambda_and_send_llll(r_ob, outlet, llll, (t_notation_item *)marker);
@@ -5425,8 +5426,8 @@ char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_num
 			send_note_as_llll((t_notation_obj *) r_ob, (t_note *)item, outlet, k_CONSIDER_FOR_EVALUATION, command_number, forced_routers);
 		else if (item->type == k_CHORD)
 			send_chord_as_llll((t_notation_obj *) r_ob, (t_chord *)item, outlet, k_CONSIDER_FOR_EVALUATION, command_number, forced_routers);
-		else if (item->type == k_MARKER && command_number < 0)
-			send_marker_as_llll(r_ob, (t_marker *) item, true, outlet, forced_routers);
+		else if (item->type == k_MARKER)
+			send_marker_as_llll(r_ob, (t_marker *) item, true, outlet, command_number, forced_routers);
 		else if (item->type == k_MEASURE) {
 			t_chord *ch;
 			for (ch = ((t_measure *)item)->firstchord; ch; ch = ch->next)
