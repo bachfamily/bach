@@ -912,12 +912,11 @@ double approx_tempo(double tempo_value, long num_digits, double error)
 }
 
 
-// converts a list of markers (with special roles), and a list of durations (in milliseconds) into measure boxes (filled) and rationaldurations (returned).
+// converts a list of markers (with special roles), and a list of durations (in milliseconds)
+// into measure boxes and rationaldurations.
 // also returns a global delta onset (in milliseconds) which has been applied.
 // properly fills the measure_boxes, voice_ts and quant_boxes lllls
-char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_llll *voice_durations, t_llll *voice_infos, t_llll *voice_ties,
-                                              t_llll *measure_boxes, t_llll *voice_ts, t_llll *quant_boxes, double *global_delta_onset,
-                                              t_llll **unquantized_boxed_voice_durations, t_llll **unquantized_boxed_voice_infos, t_llll **unquantized_boxed_voice_ties)
+char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_llll *voice_durations, t_llll *voice_infos,  t_llll *voice_ties, t_llll *measure_boxes, t_llll *voice_ts, t_llll *quant_boxes, double *global_delta_onset, t_llll **unquantized_boxed_voice_durations, t_llll **unquantized_boxed_voice_infos, t_llll **unquantized_boxed_voice_ties)
 {
     char allow_more_than_one_measure_within_barline_markers = x->allow_multiple_measures_inside_barline_markers;
     e_tempi_handling_from_markers tempi_handling = x->tempi_handling;
@@ -940,7 +939,7 @@ char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_
     // we build a list containing:
     // (t1 t2 sym_dur) (t2 t3 sym_dur) (t3 t4 sym_dur) (t4 t5 sym_dur)...
     // each tempo might be slightly different, since markers may not be precise
-    t_llll *turnpike = llll_get();
+    t_llll *turnpike = llll_get(); //DG2020: what the hell is turnpike ? Not clear...
     t_llll *quant_boxes_ms = llll_get();
     t_llll *measure_boxes_ms = llll_get();
     t_llll *quant_boxes_quartertempo = llll_get();
@@ -1230,7 +1229,8 @@ char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_
                     if (measure_boxes->l_size == 1) {
                         // first measure: do we need a pickup measure?!?
                         double dur = next_onset - onset;
-                        if (onset >= CONST_THRESHOLD_MS_FOR_PICKUP_MEASURE * dur/quant_boxes->l_size) { // fixed threshold expressed as a ratio of the division
+                        if (onset >= CONST_THRESHOLD_MS_FOR_PICKUP_MEASURE * dur/quant_boxes->l_size) {
+                            // fixed threshold expressed as a ratio of the division
                             // need one or more pickup measures!
                             cur = onset;
                             while (cur > 0) {
@@ -1243,12 +1243,12 @@ char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_
                                     t_rational this_box_sym_dur = hatom_getrational(&meas_boxes_elem->l_hatom);
                                     double this_box_dur = dur * rat2double(rat_rat_div(this_box_sym_dur, ts_dur));
                                     t_llll *this_ll = llll_get();
-                                    llll_appenddouble(this_ll, box_cur - this_box_dur);
-                                    llll_appenddouble(this_ll, box_cur - this_box_dur);
+                                    llll_appenddouble(this_ll, box_cur - this_box_dur); // rest?
+                                    llll_appenddouble(this_ll, box_cur); // - this_box_dur);
                                     llll_appendrat(this_ll, this_box_sym_dur);
                                     llll_prependllll(turnpike, this_ll);
                                     
-                                    llll_prependdouble(divisions_absolute_position, box_cur);
+                                    llll_prependdouble(divisions_absolute_position, box_cur - this_box_dur);
                                     
                                     llll_prependdouble(quant_boxes_ms, this_box_dur);  // quant_boxes is in ms
                                     llll_prependrat(quant_boxes, this_box_sym_dur);
@@ -1290,7 +1290,30 @@ char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_
                             
                         } else { // onset is >= 0 but not enough to create a pickup measure.
                             
-                            // modifying first duration
+                            // modifying first durations
+                            double s = 0, to_add = 0;
+                            while (s < onset && voice_durations->l_head) {
+                                double this_dur = abs(hatom_getdouble(&voice_durations->l_head->l_hatom));
+                                if (s + this_dur <= onset || this_dur == 0) {
+                                    to_add += this_dur;
+                                    llll_behead(voice_durations);
+                                    llll_behead(voice_infos);
+                                    llll_behead(voice_ties);
+                                } else {
+                                    long sign_dur = hatom_getdouble(&voice_durations->l_head->l_hatom) < 0 ? -1 : 1;
+                                    hatom_setdouble(&voice_durations->l_head->l_hatom, sign_dur * (this_dur + onset - s));
+                                    break;
+                                }
+                                s += this_dur;
+                            }
+
+                            if (voice_durations->l_head) {
+                                double this_dur = abs(hatom_getdouble(&voice_durations->l_head->l_hatom));
+                                long sign_dur = hatom_getdouble(&voice_durations->l_head->l_hatom) < 0 ? -1 : 1;
+                                hatom_setdouble(&voice_durations->l_head->l_hatom, sign_dur * (this_dur + to_add));
+                            }
+
+                            // modifying first quantization box
                             if (quant_boxes_ms->l_head)
                                 hatom_setdouble(&quant_boxes_ms->l_head->l_hatom, hatom_getdouble(&quant_boxes_ms->l_head->l_hatom) + onset);
                             // modifying first tempo
@@ -2143,7 +2166,7 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                     elem = x->marker_info->l_head;
                     e_marker_roles prev_role = k_MARKER_ROLE_NONE;
                     while (elem){
-                        t_llllelem *next = elem->l_prev;
+                        t_llllelem *next = elem->l_next;
                         double onset = get_marker_onset_from_llllelem(elem);
                         e_marker_roles role = get_marker_role_from_llllelem(elem);
                         if (prev_onset > 0 && fabs(onset - prev_onset) < CONST_THRESHOLD_FOR_DELETING_BARLINE_OR_DIVISION_MARKERS_AT_SAME_POINT &&
