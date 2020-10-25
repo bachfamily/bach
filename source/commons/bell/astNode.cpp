@@ -29,7 +29,7 @@ t_execEnv::~t_execEnv()
         v->decrease();
     }
     if (parent && argv != parent->argv) {
-        for (t_llll **thisAv = argv; *thisAv; thisAv++)
+        for (t_llll **thisAv = argv + 1; *thisAv; thisAv++)
             bell_release_llll(*thisAv);
         for (t_llll **thisAv = argv - 1; *thisAv; thisAv--)
             bell_release_llll(*thisAv);

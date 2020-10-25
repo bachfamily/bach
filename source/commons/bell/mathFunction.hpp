@@ -46,7 +46,7 @@ private:
     }
     
 public:
-    t_mathUnaryFunctionDD(const char *pn1 = "x", const char *n = nullptr) :  t_mathFunction<1>((method) op, n) {
+    t_mathUnaryFunctionDD(const char *n = nullptr, const char *pn1 = "x") :  t_mathFunction<1>((method) op, n) {
         setArgument(pn1);
     }
 };
@@ -63,7 +63,7 @@ private:
     }
     
 public:
-    t_mathBinaryFunctionDDD(const char *pn1 = "x", const char *pn2 = "y", const char *n = nullptr) : t_mathFunction<2>((method) op, n) {
+    t_mathBinaryFunctionDDD(const char *n = nullptr, const char *pn1 = "x", const char *pn2 = "y") : t_mathFunction<2>((method) op, n) {
         setArgument(pn1);
         setArgument(pn2);
     }
@@ -74,7 +74,7 @@ template <void (*FN)(t_hatom*, t_hatom*)>
 class t_mathUnaryFunctionAA : public t_mathFunction<1>
 {
 public:
-    t_mathUnaryFunctionAA(const char *pn1 = "x", const char *n = nullptr) : t_mathFunction<1>((method) FN, n) {
+    t_mathUnaryFunctionAA(const char *n = nullptr, const char *pn1 = "x") : t_mathFunction<1>((method) FN, n) {
         setArgument(pn1);
     }
 };
@@ -83,7 +83,7 @@ template <void (*FN)(t_hatom*, t_hatom*, t_hatom*)>
 class t_mathBinaryFunctionAAA : public t_mathFunction<2>
 {
 public:
-    t_mathBinaryFunctionAAA(const char *pn1 = "x", const char *pn2 = "y", const char *n = nullptr) : t_mathFunction<2>((method) FN, n) {
+    t_mathBinaryFunctionAAA(const char *n = nullptr, const char *pn1 = "x", const char *pn2 = "y") : t_mathFunction<2>((method) FN, n) {
         setArgument(pn1);
         setArgument(pn2);
     }
@@ -93,7 +93,7 @@ template <void (*FN)(t_hatom*, t_hatom*, t_hatom*, t_hatom*)>
 class t_mathTernaryFunctionAAAA : public t_mathFunction<3>
 {
 public:
-    t_mathTernaryFunctionAAAA(const char *pn1 = "x", const char *pn2 = "y", const char *pn3 = "z", const char *n = nullptr) : t_mathFunction<3>((method) FN, n) {
+    t_mathTernaryFunctionAAAA(const char *n = nullptr, const char *pn1 = "x", const char *pn2 = "y", const char *pn3 = "z") : t_mathFunction<3>((method) FN, n) {
         setArgument(pn1);
         setArgument(pn2);
         setArgument(pn3);
