@@ -39,6 +39,7 @@ authorization: now the code for a given year can be entered until January of the
     fixed parsing of pitch literals
     new built-in functions: mc2f, f2mc, minimum, maximum
     fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
+    fixed argument names for all math functions
     dot operator can be preceded by whitespace
     :* operator returns null for non-positive repeat counts
     map function works correctly with mindepth
