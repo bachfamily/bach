@@ -142,7 +142,7 @@ t_llll* t_fnReduce::call(const t_execEnv &context)
     t_function *function = context.argv[2]->l_size ? (t_function *) hatom_getfunc(&context.argv[2]->l_head->l_hatom) : nullptr;
     
     if (!function)
-        return bell_retain_llll(context.argv[1]);
+        return llll_clone(context.argv[1]);
     
     t_fnData lambdaData(function, &context, this);
     
