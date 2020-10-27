@@ -333,7 +333,6 @@ void set_measure_articulations_values_from_llll(t_score *x, t_llll* articulation
 
 t_llll* get_timesignature_as_llll(t_timesignature *ts);
 t_llll* get_voice_measures_values_as_llll(t_scorevoice *voice);
-t_llll* measure_get_tempi_as_llll(t_measure *measure);
 
 // xml communication
 t_llll* get_score_values_for_xml_as_llll(t_score *x);

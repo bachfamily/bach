@@ -29907,31 +29907,38 @@ t_llll* get_timesignature_as_llll(t_timesignature *ts)
     return outllll;
 }
 
-t_llll* measure_get_tempi_as_llll(t_measure *measure) 
+t_llll *measure_get_single_tempo_as_llll(t_tempo *tempo)
+{
+    t_llll *this_tempo_llll = llll_get();
+    llll_appendrat(this_tempo_llll, tempo->tempo_figure, 0, WHITENULL_llll);
+    if (tempo->figure_tempo_value.r_den == 1)
+        llll_appendlong(this_tempo_llll, tempo->figure_tempo_value.r_num, 0, WHITENULL_llll);
+    else
+        llll_appenddouble(this_tempo_llll, rat2double(tempo->figure_tempo_value), 0, WHITENULL_llll);
+    
+    if (tempo->interpolation_type != 0) {
+        llll_appendrat(this_tempo_llll, tempo->changepoint, 0, WHITENULL_llll);
+        llll_appendlong(this_tempo_llll, tempo->interpolation_type, 0, WHITENULL_llll);
+    } else if (tempo->changepoint.r_num > 0){
+        llll_appendrat(this_tempo_llll, tempo->changepoint, 0, WHITENULL_llll);
+    }
+    return this_tempo_llll;
+}
+
+t_llll* measure_get_tempi_as_llll(t_measure *measure, t_tempo *prepend_this_tempo)
 {
     t_llll* outllll = llll_get();
+    if (prepend_this_tempo)
+        llll_appendllll(outllll, measure_get_single_tempo_as_llll(prepend_this_tempo));
     t_tempo *tempo = measure->firsttempo;
     while (tempo) {
-        t_llll *this_tempo_llll = llll_get();
-        llll_appendrat(this_tempo_llll, tempo->tempo_figure, 0, WHITENULL_llll);
-        if (tempo->figure_tempo_value.r_den == 1)
-            llll_appendlong(this_tempo_llll, tempo->figure_tempo_value.r_num, 0, WHITENULL_llll);
-        else
-            llll_appenddouble(this_tempo_llll, rat2double(tempo->figure_tempo_value), 0, WHITENULL_llll);
-        
-        if (tempo->interpolation_type != 0) {
-            llll_appendrat(this_tempo_llll, tempo->changepoint, 0, WHITENULL_llll);
-            llll_appendlong(this_tempo_llll, tempo->interpolation_type, 0, WHITENULL_llll);
-        } else if (tempo->changepoint.r_num > 0){
-            llll_appendrat(this_tempo_llll, tempo->changepoint, 0, WHITENULL_llll);
-        }
-        llll_appendllll(outllll, this_tempo_llll, 0, WHITENULL_llll);
+        llll_appendllll(outllll, measure_get_single_tempo_as_llll(tempo));
         tempo = tempo->next;
     }
     return outllll;
 }
 
-t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure) 
+t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure, t_tempo *prepend_this_tempo) 
 {
     t_llll* ts_tempo_llll = llll_get();
     
@@ -29939,7 +29946,7 @@ t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure
         return ts_tempo_llll;
     
     llll_appendllll(ts_tempo_llll, get_timesignature_as_llll(&measure->timesignature), 0, WHITENULL_llll);
-    llll_appendllll(ts_tempo_llll, measure_get_tempi_as_llll(measure), 0, WHITENULL_llll);
+    llll_appendllll(ts_tempo_llll, measure_get_tempi_as_llll(measure, prepend_this_tempo), 0, WHITENULL_llll);
     
     if (measure->end_barline->barline_type > 0 && measure->end_barline->barline_type != 'a') {
         char mystring[2];
@@ -30032,14 +30039,14 @@ long add_level_information_fn(void *data, t_hatom *a, const t_llll *address){
     return 0;
 }
 
-t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types for_what, char tree, char also_get_level_information)
+t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types for_what, char tree, char also_get_level_information, t_tempo *prepend_this_tempo)
 {
     t_llll* out_llll = llll_get();
     t_llll* body_llll = llll_get();
     t_chord *temp_chord = measure->firstchord;
     
     // measure info: ts and tempi
-    llll_appendllll(out_llll, measure_get_measureinfo_as_llll(r_ob, measure), 0, WHITENULL_llll);    
+    llll_appendllll(out_llll, measure_get_measureinfo_as_llll(r_ob, measure, prepend_this_tempo), 0, WHITENULL_llll);
     
     while (temp_chord) { // append chord lllls
         llll_appendllll(body_llll, get_scorechord_values_as_llll(r_ob, temp_chord, for_what, (tree == 0)), 0, WHITENULL_llll);    

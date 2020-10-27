@@ -12919,9 +12919,10 @@ t_llll *measure_get_ties_as_llll(t_notation_obj *r_ob, t_measure *measure);
                         is output in a chord-wise linear form (one llll for each chord..., and the grace notes are output as chords of duration 0).
     @param    also_get_level_information    If this is non-zero, the "leveltype" llll specifications are always added at the beginning of each level. This is of course accounted for only if
                                         the previous #tree is non-zero.
+    @param   prepend_this_tempo Optional tempo that will be prepended to the tempo lists (leave NULL if not needed)
     @return    The llll representation of the entire measure
 */
-t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types for_what, char tree, char also_get_level_information);
+t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_data_considering_types for_what, char tree, char also_get_level_information, t_tempo *prepend_this_tempo = NULL);
 
 
 /** Obtain the measureinfo (measure "header" information: time signature, tempi, barline types...) for a given measure in llll form. 
@@ -12930,18 +12931,23 @@ t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_d
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    measure        The measure
+    @param    prepend_this_tempo  Additional tempo to be included at the beginning if needed (leave NULL otherwise)
     @return    The llll containing all the measureinfo for the given measure.
 */
-t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure);
+t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure, t_tempo *prepend_this_tempo = NULL);
 
 
 /** Obtain the tempi information for a given measure in llll form. 
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    measure        The measure
+    @param    prepend_this_tempo   Additional tempo to be included at the beginning, if needed
     @return    The llll containing all the tempi information for the given measure.
 */
-t_llll* measure_get_tempi_as_llll(t_measure *measure);
+t_llll* measure_get_tempi_as_llll(t_measure *measure, t_tempo *prepend_this_tempo = NULL);
+
+// TBD
+t_llll *measure_get_single_tempo_as_llll(t_tempo *tempo);
 
 
 /** Obtain the number of staves that a given voice has (depending on the clef).

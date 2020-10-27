@@ -8405,11 +8405,33 @@ t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, 
 t_llll* get_subvoice_values_as_llll(t_score *x, t_scorevoice *voice, long start_meas, long end_meas, char tree, char also_get_level_information)
 {
     t_llll* out_llll = llll_get();
-    t_measure *temp_meas = voice->firstmeasure;
+    
+    // do we need to add a tempo at the beginning?
+    t_tempo *tempotoadd = NULL;
+    t_tempo tempocopy;
+    t_measure *startmeas = nth_measure_of_scorevoice(voice, start_meas);
+    t_measure *temp_meas = startmeas;
+    if (!startmeas->firsttempo || rat_long_cmp(startmeas->firsttempo->changepoint, 0) > 0) {
+        tempotoadd = voice_get_first_tempo((t_notation_obj *)x, (t_voice *)voice);
+        if (tempotoadd->owner->measure_number >= start_meas)
+            tempotoadd = NULL;
+        t_tempo *nexttempo = tempotoadd ? tempo_get_next(tempotoadd) : NULL;
+        while (nexttempo && nexttempo->owner->measure_number < start_meas) {
+            tempotoadd = nexttempo;
+            nexttempo = tempo_get_next(nexttempo);
+        }
+        if (tempotoadd)
+            tempocopy = *tempotoadd;
+        if (tempotoadd && tempotoadd->interpolation_type != 0) {
+            get_tempo_at_timepoint((t_notation_obj *)x, voice, build_timepoint(start_meas, long2rat(0)), &tempocopy.figure_tempo_value, &tempocopy.tempo_figure, &tempocopy.tempo_value, &tempocopy.interpolation_type);
+        }
+    }
+    
     while (temp_meas) { // append measure lllls
         if ((temp_meas->measure_number >= start_meas) && (temp_meas->measure_number <= end_meas)) {
-            t_llll* to_append = measure_get_values_as_llll((t_notation_obj *) x, temp_meas, k_CONSIDER_FOR_SUBDUMPING, tree, also_get_level_information);
-            llll_appendllll(out_llll, to_append, 0, WHITENULL_llll);    // we append the list
+            t_llll* to_append = measure_get_values_as_llll((t_notation_obj *) x, temp_meas, k_CONSIDER_FOR_SUBDUMPING, tree, also_get_level_information, tempotoadd && temp_meas->measure_number == start_meas ? &tempocopy : NULL);
+            
+            llll_appendllll(out_llll, to_append);    // we append the list
         } else if (temp_meas->measure_number > start_meas)
             break;
         
