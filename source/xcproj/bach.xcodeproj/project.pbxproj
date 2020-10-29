@@ -3194,7 +3194,6 @@
 		91BA46AD1F71599E0002D515 /* docs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = docs; sourceTree = "<group>"; };
 		91BA46AE1F71599E0002D515 /* extras */ = {isa = PBXFileReference; lastKnownFileType = folder; path = extras; sourceTree = "<group>"; };
 		91BA46AF1F71599E0002D515 /* help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = help; sourceTree = "<group>"; };
-		91BA46B01F71599F0002D515 /* History.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = History.txt; sourceTree = "<group>"; };
 		91BA46B11F71599F0002D515 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		91BA46B21F71599F0002D515 /* init */ = {isa = PBXFileReference; lastKnownFileType = folder; path = init; sourceTree = "<group>"; };
 		91BA46B31F71599F0002D515 /* interfaces */ = {isa = PBXFileReference; lastKnownFileType = folder; path = interfaces; sourceTree = "<group>"; };
@@ -3204,7 +3203,6 @@
 		91BA46B71F71599F0002D515 /* object-prototypes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "object-prototypes"; sourceTree = "<group>"; };
 		91BA46B81F71599F0002D515 /* package-info.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "package-info.json"; sourceTree = "<group>"; };
 		91BA46B91F71599F0002D515 /* patchers */ = {isa = PBXFileReference; lastKnownFileType = folder; path = patchers; sourceTree = "<group>"; };
-		91BA46BA1F71599F0002D515 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		91BA46BB1F715A990002D515 /* .gitattributes */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitattributes; sourceTree = "<group>"; };
 		91BA46BC1F715A990002D515 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		91BCCC181F56AC7B002D8BE2 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
@@ -5579,7 +5577,6 @@
 				91BA46AD1F71599E0002D515 /* docs */,
 				91BA46AE1F71599E0002D515 /* extras */,
 				91BA46AF1F71599E0002D515 /* help */,
-				91BA46B01F71599F0002D515 /* History.txt */,
 				91BA46B11F71599F0002D515 /* icon.png */,
 				91BA46B21F71599F0002D515 /* init */,
 				91BA46B31F71599F0002D515 /* interfaces */,
@@ -5589,7 +5586,6 @@
 				91BA46B71F71599F0002D515 /* object-prototypes */,
 				91BA46B81F71599F0002D515 /* package-info.json */,
 				91BA46B91F71599F0002D515 /* patchers */,
-				91BA46BA1F71599F0002D515 /* Readme.txt */,
 			);
 			name = package;
 			path = ../..;
