@@ -6357,14 +6357,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // Supported file types are: <br />
     // - Previously saved <o>bach.score</o> content, either in native or in text format (see <m>write</m> and <m>writetxt</m> messages). 
     // These might include also files exported in bach format from OpenMusic or PWGL. <br />
-    // - MusicXML files (see below for options). <br />
     // MIDI files are not imported directly into bach score. They should be imported into a <o>bach.roll</o>, possibly with a <b>read [markmeasures 1]</b> specification, 
     // and then quantized with <o>bach.quantize</o>. <br />
-    // MusicXML files can have some import attributes: <br />
-    // - <b>dynamics</b>: if non-zero, dynamics are imported into the currently linked slot (see <m>linkdynamicstoslot</m>). <br />
-    // - <b>noteheads</b>: if non-zero, dynamics are imported into the currently linked slot (see <m>linknoteheadstoslot</m>). <br />
-    // - <b>articulations</b>: if non-zero, articulations are imported into the currently linked slot (see <m>linkarticulationstoslot</m>). <br />
-    // - <b>lyrics</b>: if non-zero, lyrics are imported into the currently linked slot (see <m>linklyricstoslot</m>). <br />
     //
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr dynamics @type int @default 1 @digest For MusicXML files, if non-zero, imports dynamics into the dynamics slot, if any
@@ -6477,58 +6471,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso exportlilypond, write, writetxt, read, exportxml, exportom, exportpwgl
     class_addmethod(c, (method) score_exportlilypond_pdf, "exportlilypondpdf", A_GIMME, 0);
     
-    
-    // @method exportxml @digest Export as MusicXML file
-    // @description The <m>exportxml</m> message saves the content of the <o>bach.score</o> object in MusicXML format.
-    // Such format is read by most of the currently available music engraving softwares.
-    // The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
-    // allowing the choice of the location and file name for saving.
-    // Furthermore, some exporting specifications are available, and each has to be given as llll after the (optional) file name.
-    // Such lllls will be in the form <b>[<m>specification_name</m> <m>specification_value</m>]</b>). Available specifications are: <br />
-    // - <b>velocity</b> (default: 0): if non-0, the velocity for each note will be exported as a MusicXML direction.
-    // This is not always desirable, as the direction itself will appear as an empty expression when
-    // imported, for instance, into a software like Finale. <br />
-    // - <b>directionslots</b> [default: <b>null</b>): if one or more slots numbers are specified, their contents will be converted
-    // into text and exported as generic text directions. You can use range syntax to specify slot ranges, such as <b>[7 10]</b> meaning from 7th to 10th slot. <br />
-    // - <b>dynamics</b>: if non-zero, dynamics are exported from the currently linked slot (see <m>linkdynamicstoslot</m>). <br />
-    // - <b>noteheads</b>: if non-zero, dynamics are exported from the currently linked slot (see <m>linknoteheadstoslot</m>). <br />
-    // - <b>articulations</b>: if non-zero, articulations are exported from the currently linked slot (see <m>linkarticulationstoslot</m>). <br />
-    // - <b>lyrics</b>: if non-zero, lyrics are exported from the currently linked slot (see <m>linklyricstoslot</m>). <br />
-    // - <b>parenthesizedquartertones</b> [default: <b>0</b>): export quarter tones as parenthesized versions of semitonal accidentals
-    // which are a quartertone lower. For instance, if you set this specification to 1, a quarter sharp will be exported as a parenthesized
-    // natural, a quarter flat will be exported as a parenthesized flat, and so on.
-    // This specification should be considered as a workaround to ease quartertone export to Finale or similar pieces of software.
-    // Please notice that music notation software with a good native support for quartertones
-    // (e.g. Sibelius or MuseScore) will import them correctly from bach, without any workaround (no need to specify anything).
-    // Things are more complex with software such Finale, whose quartertone support is more cumbersome.
-    // With the default settings, what Finale will do is changing the character for single accidentals in order to show quartertones
-    // accidentals when needed. This is something you might want to avoid, since editing your score from that point on becomes very
-    // difficult. What might be handy to do, with Finale, is to export quartertone accidentals as if they were parenthesized versions
-    // of the standard accidentals. You can easily map inside finale the parenthesized accidentals to the glyphs of
-    // quartertone accidentals, via your favorite quartertone accidental font. A parenthesized natural will be displayed as
-    // a quarter-sharp; a parenthesized sharp as a three-quarter-sharp, and so on. Everything, if parenthesized, will step up a
-    // quarter tone. Once you have set up your new Finale document in this way, you can use the <b>[parenthesizedquartertones 1]</b>
-    // specification in order to export quartertones in this way.
-    // @marg 0 @name filename @optional 1 @type symbol
-    // @mattr velocity @type int @default 0 @digest If non-zero, notes velocity i s exported as MusicXML direction
-    // @mattr directionslots @type llll @default null @digest Export the content of these slots as generic text directions
-    // @mattr dynamics @type int @default 1 @digest If non-zero, dynamics are exported from the dynamics slot, if any
-    // @mattr noteheads @type int @default 1 @digest If non-zero, noteheads are exported from the noteheads slot, if any
-    // @mattr articulations @type int @default 1 @digest If non-zero, articulations are exported from the articulations slot, if any
-    // @mattr lyrics @type int @default 1 @digest If non-zero, lyrics are exported from the lyrics slot, if any
-    // @mattr parenthesizedquartertones @type int @default 0 @digest If non-zero, exports quarter tones as parenthesized version of semitonal accidentals
-    // @mattr glissandi @type int @default 1 @digest If non-zero, glissandi are exported as slides
-    // @example exportxml @caption export MusicXML file via dialog box
-    // @example exportxml myfile.xml @velocity 1 @caption also export velocity as MusicXML direction
-    // @example exportxml myfile.xml @directionslots 7 @caption also export content of slot 7 as MusicXML directions
-    // @example exportxml myfile.xml @directionslots 7 9 @caption also export content of slot 7 and 9 as MusicXML directions
-    // @example exportxml myfile.xml @directionslots [7 11] @caption also export content of slots 7 through 11 as MusicXML directions
-    // @example exportxml myfile.xml @dynamics 0 @caption don't export dynamics
-    // @example exportxml myfile.xml @lyrics 0 @articulations 0 @caption don't export lyrics, nor articulations
-    // @example exportxml myfile.xml @noteheads 0 @caption don't export noteheads
-    // @example exportxml myfile.xml @parenthesizedquartertones 1 @caption also export quartertones as parenthesized versions of the standard accidentals right below them (only useful with Finale)
-    // @seealso write, writetxt, read, exportxml, exportom, exportpwgl, exportlilypond, exportlilypondpdf
-    class_addmethod(c, (method) score_exportxml, "exportxml", A_GIMME, 0);
+
     
     
     // @method exportpwgl @digest Export to PWGL

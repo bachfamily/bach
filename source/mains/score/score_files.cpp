@@ -151,90 +151,13 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
         // let's try to guess if it's xml
         sysfile_read(fh, &size, buffer);
         buffer[size] = 0;
-        if (size > 4 && !memcmp(buffer, "PK\x03\x04", 4)) {
-
-#ifdef MAC_VERSION
-            sysfile_close(fh);
-            bach_freeptr(buffer);
-            //system("mkdir -p \"$HOME/Library/Application Support/bach/cache\"");
-            passwd* pw = getpwuid(getuid());
-            std::string home = pw->pw_dir;
-            std::string dq = "\"";
-            std::string cache = home + "/Library/Application Support/bach/cache";
-            std::string decompressed = cache + "/decompressed";
-            std::string tempmxl = cache + "/tempmxl.mxl";
-            
-            std::string rmDecompressed = "rm -rf " + dq + decompressed + dq;
-            system(rmDecompressed.c_str());
-            
-            std::string mkdir = "mkdir -p " + dq + decompressed + dq;
-            system(mkdir.c_str());
-            
-            std::string rmTempxml = "rm -f " + dq + tempmxl + dq;
-            system(rmTempxml.c_str());
-
-
-            char abspath[4096];
-            path_toabsolutesystempath(path, filename, abspath);
-            
-            std::string cp = "cp " + dq + abspath + dq + " " + dq + tempmxl + dq;
-            system(cp.c_str());
-            
-            std::string unzip = "unzip " + dq + tempmxl + dq + " -d " + dq + decompressed + dq;
-            system(unzip.c_str());
-
-            std::string container = decompressed + "/META-INF/container.xml";
-            
-            filename_sym = gensym(container.c_str());
-            
-            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
-                object_error((t_object *) x, "Can't open file");
-                goto score_doread_error_dontclose;
-            }
-            
-            if (*filename == 0)
-                goto score_doread_error_dontclose;
-            
-            if (bach_readfile((t_object *) x, filename, path, &fh) != MAX_ERR_NONE)
-                goto score_doread_error_dontclose;
-            sysfile_geteof(fh, &size);
-            buffer = (char *) bach_newptr(size + 2);
-            buffer[0] = 0;
-            sysfile_read(fh, &size, buffer);
-            sysfile_close(fh);
-            std::string rootfilepath = decompressed + "/" + xml_mxl_find_rootfile(buffer);
-            bach_freeptr(buffer);
-            
-            filename_sym = gensym(rootfilepath.c_str());
-            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
-                object_error((t_object *) x, "Can't open file");
-                goto score_doread_error_dontclose;
-            }
-            
-            if (*filename == 0)
-                goto score_doread_error_dontclose;
-            
-            if (bach_readfile((t_object *) x, filename, path, &fh) != MAX_ERR_NONE)
-                goto score_doread_error_dontclose;
-            
-            sysfile_geteof(fh, &size);
-            buffer = (char *) bach_newptr(size + 2);
-            buffer[0] = 0;
-            sysfile_read(fh, &size, buffer);
-            sysfile_close(fh);
-            system(rmDecompressed.c_str());
-            system(rmTempxml.c_str());
-
-#endif
-            
-        }
         
         if ((size > 5 && !memcmp(buffer, "<?xml", 5)) || // plain text
             (size > 8 && !memcmp(buffer, "\xef\xbb\xbf<?xml", 8)) || // utf-8
             (size > 10 && (!memcmp(buffer, "\xff\xfe\x3c\x00\x3f\x00\x78\x00\x6d\x00", 10) || // utf-16 little-endian
                             !memcmp(buffer, "\xfe\xff\x00\x3c\x00\x3f\x00\x78\x6d\x00", 10)))) { // utf-16 big-endian
-            score_ll = score_readxmlbuffer(x, buffer, parenthesizedquartertones, lyricsslot, noteheadslot, articulationsslot, dynamicsslot, directionsslot);
-            undo_op = k_UNDO_OP_IMPORT_XML_SCORE;
+            score_ll = NULL;
+            object_error((t_object *) x, "XML import not supported");
         } else {
             score_ll = llll_readbuffer((t_object *) x, 0, buffer, size);
         }

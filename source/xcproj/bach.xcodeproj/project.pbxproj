@@ -513,19 +513,6 @@
 		91812A741611B29E00473F86 /* kiss_fftndr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E3B57D715ACECA900B32D1F /* kiss_fftndr.h */; };
 		91812A751611B29E00473F86 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E3B57D815ACECA900B32D1F /* kiss_fftr.c */; };
 		91812A761611B29E00473F86 /* kiss_fftr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E3B57D915ACECA900B32D1F /* kiss_fftr.h */; };
-		91812A771611B29E00473F86 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB99F3F15164BE900B02E03 /* config.h */; };
-		91812A781611B29E00473F86 /* mxml-attr.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4015164BE900B02E03 /* mxml-attr.c */; };
-		91812A791611B29E00473F86 /* mxml-entity.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4115164BE900B02E03 /* mxml-entity.c */; };
-		91812A7A1611B29E00473F86 /* mxml-file.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4215164BE900B02E03 /* mxml-file.c */; };
-		91812A7B1611B29E00473F86 /* mxml-get.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4315164BE900B02E03 /* mxml-get.c */; };
-		91812A7C1611B29E00473F86 /* mxml-index.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4415164BE900B02E03 /* mxml-index.c */; };
-		91812A7D1611B29E00473F86 /* mxml-node.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4515164BE900B02E03 /* mxml-node.c */; };
-		91812A7E1611B29E00473F86 /* mxml-private.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4615164BE900B02E03 /* mxml-private.c */; };
-		91812A7F1611B29E00473F86 /* mxml-private.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB99F4715164BE900B02E03 /* mxml-private.h */; };
-		91812A801611B29E00473F86 /* mxml-search.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4815164BE900B02E03 /* mxml-search.c */; };
-		91812A811611B29E00473F86 /* mxml-set.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4915164BE900B02E03 /* mxml-set.c */; };
-		91812A821611B29E00473F86 /* mxml-string.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB99F4A15164BE900B02E03 /* mxml-string.c */; };
-		91812A831611B29E00473F86 /* mxml.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB99F4B15164BE900B02E03 /* mxml.h */; };
 		91812A841611B29E00473F86 /* bach_doc_groups.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E9026EE150FC5380005B502 /* bach_doc_groups.h */; };
 		91812A851611B29E00473F86 /* bach.h in Headers */ = {isa = PBXBuildFile; fileRef = 91EE71CB13A3C9EB00BBE47C /* bach.h */; };
 		91812A861611B29E00473F86 /* notation_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4831610CB930041ABFB /* notation_files.h */; };
@@ -843,8 +830,6 @@
 		91F6A60F1DDDDED700237E9F /* convertbase.c in Sources */ = {isa = PBXBuildFile; fileRef = 91F6A60E1DDDDED700237E9F /* convertbase.c */; };
 		91F6A6191DE6E33100237E9F /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		91F6A61A1DE6E33100237E9F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
-		91FCE0D42216C171003CD5B4 /* score_writexml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91FCE0D32216C171003CD5B4 /* score_writexml.cpp */; };
-		91FCE0D72216C222003CD5B4 /* score_readxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91FCE0D62216C222003CD5B4 /* score_readxml.cpp */; };
 		91FDDC1F1FBE249F0040D803 /* bach_strparser_lex.h in Headers */ = {isa = PBXBuildFile; fileRef = 91FDDC1B1FBE249F0040D803 /* bach_strparser_lex.h */; };
 		91FDDC201FBE249F0040D803 /* bach_strparser_tab.c in Sources */ = {isa = PBXBuildFile; fileRef = 91FDDC1C1FBE249F0040D803 /* bach_strparser_tab.c */; };
 		91FDDC211FBE249F0040D803 /* bach_strparser_tab.h in Headers */ = {isa = PBXBuildFile; fileRef = 91FDDC1D1FBE249F0040D803 /* bach_strparser_tab.h */; };
@@ -2786,19 +2771,6 @@
 		1EB4D4841610CB930041ABFB /* notation_files.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_files.c; sourceTree = "<group>"; };
 		1EB4D49F1610CCB20041ABFB /* score_files.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = score_files.h; sourceTree = "<group>"; };
 		1EB4D4A01610CCB20041ABFB /* score_files.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = score_files.cpp; sourceTree = "<group>"; };
-		1EB99F3F15164BE900B02E03 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		1EB99F4015164BE900B02E03 /* mxml-attr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-attr.c"; sourceTree = "<group>"; };
-		1EB99F4115164BE900B02E03 /* mxml-entity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-entity.c"; sourceTree = "<group>"; };
-		1EB99F4215164BE900B02E03 /* mxml-file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-file.c"; sourceTree = "<group>"; };
-		1EB99F4315164BE900B02E03 /* mxml-get.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-get.c"; sourceTree = "<group>"; };
-		1EB99F4415164BE900B02E03 /* mxml-index.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-index.c"; sourceTree = "<group>"; };
-		1EB99F4515164BE900B02E03 /* mxml-node.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-node.c"; sourceTree = "<group>"; };
-		1EB99F4615164BE900B02E03 /* mxml-private.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-private.c"; sourceTree = "<group>"; };
-		1EB99F4715164BE900B02E03 /* mxml-private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "mxml-private.h"; sourceTree = "<group>"; };
-		1EB99F4815164BE900B02E03 /* mxml-search.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-search.c"; sourceTree = "<group>"; };
-		1EB99F4915164BE900B02E03 /* mxml-set.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-set.c"; sourceTree = "<group>"; };
-		1EB99F4A15164BE900B02E03 /* mxml-string.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-string.c"; sourceTree = "<group>"; };
-		1EB99F4B15164BE900B02E03 /* mxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mxml.h; sourceTree = "<group>"; };
 		1EBB9D2C237D95F600818B5C /* patrons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patrons.h; sourceTree = "<group>"; };
 		1EC5F4711BDFC21600669257 /* bach_graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_graphics.h; sourceTree = "<group>"; };
 		1EC5F4721BDFC21600669257 /* bach_graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_graphics.c; sourceTree = "<group>"; };
@@ -3566,8 +3538,6 @@
 		91F6A6101DE6D8B200237E9F /* join.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = join.c; sourceTree = "<group>"; };
 		91F6A61F1DE6E33100237E9F /* bach.join.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.join.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91FC6EAD148BF84D009FD4E6 /* bach.shelf.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.shelf.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		91FCE0D32216C171003CD5B4 /* score_writexml.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = score_writexml.cpp; sourceTree = "<group>"; };
-		91FCE0D62216C222003CD5B4 /* score_readxml.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = score_readxml.cpp; sourceTree = "<group>"; };
 		91FDDC1B1FBE249F0040D803 /* bach_strparser_lex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_strparser_lex.h; sourceTree = "<group>"; };
 		91FDDC1C1FBE249F0040D803 /* bach_strparser_tab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = bach_strparser_tab.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		91FDDC1D1FBE249F0040D803 /* bach_strparser_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = bach_strparser_tab.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -4993,26 +4963,6 @@
 			path = tools;
 			sourceTree = "<group>";
 		};
-		1EB99F3E15164BE900B02E03 /* mxml */ = {
-			isa = PBXGroup;
-			children = (
-				1EB99F3F15164BE900B02E03 /* config.h */,
-				1EB99F4015164BE900B02E03 /* mxml-attr.c */,
-				1EB99F4115164BE900B02E03 /* mxml-entity.c */,
-				1EB99F4215164BE900B02E03 /* mxml-file.c */,
-				1EB99F4315164BE900B02E03 /* mxml-get.c */,
-				1EB99F4415164BE900B02E03 /* mxml-index.c */,
-				1EB99F4515164BE900B02E03 /* mxml-node.c */,
-				1EB99F4615164BE900B02E03 /* mxml-private.c */,
-				1EB99F4715164BE900B02E03 /* mxml-private.h */,
-				1EB99F4815164BE900B02E03 /* mxml-search.c */,
-				1EB99F4915164BE900B02E03 /* mxml-set.c */,
-				1EB99F4A15164BE900B02E03 /* mxml-string.c */,
-				1EB99F4B15164BE900B02E03 /* mxml.h */,
-			);
-			path = mxml;
-			sourceTree = "<group>";
-		};
 		1EBB9D2B237D8EA200818B5C /* patreon */ = {
 			isa = PBXGroup;
 			children = (
@@ -5498,8 +5448,6 @@
 				9134EB9413A1FC9300427397 /* score_api.c */,
 				1EB4D4A01610CCB20041ABFB /* score_files.cpp */,
 				1EB4D49F1610CCB20041ABFB /* score_files.h */,
-				91FCE0D62216C222003CD5B4 /* score_readxml.cpp */,
-				91FCE0D32216C171003CD5B4 /* score_writexml.cpp */,
 			);
 			path = score;
 			sourceTree = "<group>";
@@ -5684,7 +5632,6 @@
 			children = (
 				91C603FE18C0D9CD0027BB79 /* sdif */,
 				1E3B57CA15ACECA900B32D1F /* kiss_fft */,
-				1EB99F3E15164BE900B02E03 /* mxml */,
 			);
 			path = libraries;
 			sourceTree = "<group>";
@@ -6441,9 +6388,6 @@
 				91812A741611B29E00473F86 /* kiss_fftndr.h in Headers */,
 				91FDDC1F1FBE249F0040D803 /* bach_strparser_lex.h in Headers */,
 				91812A761611B29E00473F86 /* kiss_fftr.h in Headers */,
-				91812A771611B29E00473F86 /* config.h in Headers */,
-				91812A7F1611B29E00473F86 /* mxml-private.h in Headers */,
-				91812A831611B29E00473F86 /* mxml.h in Headers */,
 				91812A841611B29E00473F86 /* bach_doc_groups.h in Headers */,
 				91812A851611B29E00473F86 /* bach.h in Headers */,
 				91812A861611B29E00473F86 /* notation_files.h in Headers */,
@@ -12303,10 +12247,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				917BD551126F63C800A6DAFC /* score.c in Sources */,
-				91FCE0D42216C171003CD5B4 /* score_writexml.cpp in Sources */,
 				9134EB9613A1FC9300427397 /* score_api.c in Sources */,
 				1EB4D4A21610CCB20041ABFB /* score_files.cpp in Sources */,
-				91FCE0D72216C222003CD5B4 /* score_readxml.cpp in Sources */,
 				1E53253E20FB7296001C4EAF /* bach_jit.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12361,17 +12303,7 @@
 				913D57AF232B972E00BC6B45 /* astNode.cpp in Sources */,
 				919AF65E232CBBBD006F943C /* llll_sort.cpp in Sources */,
 				91812A751611B29E00473F86 /* kiss_fftr.c in Sources */,
-				91812A781611B29E00473F86 /* mxml-attr.c in Sources */,
-				91812A791611B29E00473F86 /* mxml-entity.c in Sources */,
-				91812A7A1611B29E00473F86 /* mxml-file.c in Sources */,
-				91812A7B1611B29E00473F86 /* mxml-get.c in Sources */,
-				91812A7C1611B29E00473F86 /* mxml-index.c in Sources */,
-				91812A7D1611B29E00473F86 /* mxml-node.c in Sources */,
 				913D57BB232B972E00BC6B45 /* stringparser_tab_nolines.c in Sources */,
-				91812A7E1611B29E00473F86 /* mxml-private.c in Sources */,
-				91812A801611B29E00473F86 /* mxml-search.c in Sources */,
-				91812A811611B29E00473F86 /* mxml-set.c in Sources */,
-				91812A821611B29E00473F86 /* mxml-string.c in Sources */,
 				91071DB12100DB5900452762 /* bach_codableobj.cpp in Sources */,
 				91812A871611B29E00473F86 /* notation_files.c in Sources */,
 				91812A891611B29E00473F86 /* collector_commons.c in Sources */,
