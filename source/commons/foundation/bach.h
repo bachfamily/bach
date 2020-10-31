@@ -184,5 +184,5 @@
 
 extern struct _bach *bach;
 
-
+#define BACH_SAVE_STACK_WITH_MEMORY_LOG
 #endif // _BACH_H_
