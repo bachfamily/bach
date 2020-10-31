@@ -205,10 +205,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.tonnetz", "vs_projects
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.float2rat", "vs_projects\bach.float2rat.vcxproj", "{2326BFC2-0EBE-43CE-A096-C58F7567CD0A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.readsdif", "vs_projects\bach.readsdif.vcxproj", "{499F52B5-8B86-441B-BEBB-9164C221C1F7}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.writesdif", "vs_projects\bach.writesdif.vcxproj", "{8835AE56-942E-45BE-B2E5-8CDCA19B00CE}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.reducefunction", "vs_projects\bach.reducefunction.vcxproj", "{4471A3AD-1F32-43CC-96C9-904F5F29A812}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.integrate", "vs_projects\bach.integrate.vcxproj", "{F24E10C1-D9C3-4372-920F-AAEB18475AB1}"
@@ -1086,22 +1082,6 @@ Global
 		{2326BFC2-0EBE-43CE-A096-C58F7567CD0A}.Release|Win32.Build.0 = Release|Win32
 		{2326BFC2-0EBE-43CE-A096-C58F7567CD0A}.Release|x64.ActiveCfg = Release|x64
 		{2326BFC2-0EBE-43CE-A096-C58F7567CD0A}.Release|x64.Build.0 = Release|x64
-		{499F52B5-8B86-441B-BEBB-9164C221C1F7}.Debug|Win32.ActiveCfg = Debug|Win32
-		{499F52B5-8B86-441B-BEBB-9164C221C1F7}.Debug|Win32.Build.0 = Debug|Win32
-		{499F52B5-8B86-441B-BEBB-9164C221C1F7}.Debug|x64.ActiveCfg = Debug|x64
-		{499F52B5-8B86-441B-BEBB-9164C221C1F7}.Debug|x64.Build.0 = Debug|x64
-		{499F52B5-8B86-441B-BEBB-9164C221C1F7}.Release|Win32.ActiveCfg = Release|Win32
-		{499F52B5-8B86-441B-BEBB-9164C221C1F7}.Release|Win32.Build.0 = Release|Win32
-		{499F52B5-8B86-441B-BEBB-9164C221C1F7}.Release|x64.ActiveCfg = Release|x64
-		{499F52B5-8B86-441B-BEBB-9164C221C1F7}.Release|x64.Build.0 = Release|x64
-		{8835AE56-942E-45BE-B2E5-8CDCA19B00CE}.Debug|Win32.ActiveCfg = Debug|Win32
-		{8835AE56-942E-45BE-B2E5-8CDCA19B00CE}.Debug|Win32.Build.0 = Debug|Win32
-		{8835AE56-942E-45BE-B2E5-8CDCA19B00CE}.Debug|x64.ActiveCfg = Debug|x64
-		{8835AE56-942E-45BE-B2E5-8CDCA19B00CE}.Debug|x64.Build.0 = Debug|x64
-		{8835AE56-942E-45BE-B2E5-8CDCA19B00CE}.Release|Win32.ActiveCfg = Release|Win32
-		{8835AE56-942E-45BE-B2E5-8CDCA19B00CE}.Release|Win32.Build.0 = Release|Win32
-		{8835AE56-942E-45BE-B2E5-8CDCA19B00CE}.Release|x64.ActiveCfg = Release|x64
-		{8835AE56-942E-45BE-B2E5-8CDCA19B00CE}.Release|x64.Build.0 = Release|x64
 		{4471A3AD-1F32-43CC-96C9-904F5F29A812}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4471A3AD-1F32-43CC-96C9-904F5F29A812}.Debug|Win32.Build.0 = Debug|Win32
 		{4471A3AD-1F32-43CC-96C9-904F5F29A812}.Debug|x64.ActiveCfg = Debug|x64
