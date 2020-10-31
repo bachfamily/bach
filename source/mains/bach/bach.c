@@ -354,13 +354,22 @@ void bach_pooldump(t_bach *x)
         for (row = 0; row < BACH_LLLL_PAGE_SIZE; row++) {
             t_uint32 phonenumber = x->b_llll_phonebook[page / BACH_LLLL_PAGE_SIZE][row];
             t_llll *ll = x->b_llll_book[phonenumber / BACH_LLLL_PAGE_SIZE] + phonenumber % BACH_LLLL_PAGE_SIZE;
+            object_post((t_object *) bach, "--------");
+            object_post((t_object *) bach, "phonenumber: %u", phonenumber);
+            object_post((t_object *) bach, "count: %d", ll->l_count);
             llll_print(ll, (t_object *) bach, 0, 6, NULL);
+            object_post((t_object *) bach, "--------");
+
         }
     }
     for (row = 0; row < x->b_llll_current_phonebook_idx % BACH_LLLL_PAGE_SIZE; row++) {
         t_uint32 phonenumber = x->b_llll_phonebook[page / BACH_LLLL_PAGE_SIZE][row];
         t_llll *ll = x->b_llll_book[phonenumber / BACH_LLLL_PAGE_SIZE] + phonenumber % BACH_LLLL_PAGE_SIZE;
+        object_post((t_object *) bach, "--------");
+        object_post((t_object *) bach, "phonenumber: %u", phonenumber);
+        object_post((t_object *) bach, "count: %d", ll->l_count);
         llll_print(ll, (t_object *) bach, 0, 6, NULL);
+        object_post((t_object *) bach, "--------");
     }
     object_post((t_object *) x, "----------------------------");
 }
