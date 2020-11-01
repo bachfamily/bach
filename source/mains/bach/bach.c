@@ -365,7 +365,7 @@ void bach_pooldump(t_bach *x)
 
 void bach_version(t_bach *x)
 {
-    
+#ifndef BACH_SAVE_STACK_WITH_MEMORY_LOG 
     post("--- bach: automated composer's helper ---");
     post("© 2010-2019 - Andrea Agostini and Daniele Ghisi");
     if (x && x->b_no_ss) {
@@ -464,6 +464,7 @@ void bach_version(t_bach *x)
     dev_post("--- size of t_llll: %ld", (long) sizeof(t_llll));
     dev_post("--- size of t_llllelem_numbered: %ld", (long) sizeof(t_llllelem_numbered));
     dev_post("--- size of t_hatom: %ld", (long) sizeof(t_hatom));
+#endif
 }
 
 void bach_ss(t_bach *x, t_object *obj)
