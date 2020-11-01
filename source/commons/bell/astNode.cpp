@@ -230,9 +230,11 @@ void t_execEnv::resetFnNamedArgs(t_function *fn, long lambdaParams)
         funArg *thisANAD = fn->getArgNameAndDefault(i);
         t_symbol *name = thisANAD->getSym();
         t_llll *def = argv[i + offset];
-        if (scope[name]->get() != def) { // which means it has changed
+        t_llll *old = scope[name]->get();
+        if (old != def) { // which means it has changed
             scope[name]->set(def);
         }
+        llll_release(old);
     }
 }
 
