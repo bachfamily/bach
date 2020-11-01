@@ -6382,7 +6382,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name filename @optional 1 @type symbol
     // @example write @caption save file in native format via dialog box
     // @example write myfile.llll @caption save bach file in native format
-    // @seealso writetxt, exportmidi, exportxml, read
+    // @seealso writetxt, exportmidi, read
     class_addmethod(c, (method) score_write, "write", A_GIMME, 0);
 
 
@@ -6402,7 +6402,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @mattr indent @type atom @default tab @digest Number of spaces for indentation or "tab" symbol
     // @mattr maxdepth @type int @default -1 @digest Maximum depth for new lines
     // @mattr wrap @type int @default 0 @digest Maximum number of characters per line (0 means: no wrapping)
-    // @seealso write, exportmidi, exportxml, read
+    // @seealso write, exportmidi, read
     class_addmethod(c, (method) score_writetxt, "writetxt", A_GIMME, 0);
 
 
@@ -6437,7 +6437,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example exportmidi mymidi.mid @exportmarkers 0 @caption the same, but don't export markers
     // @example exportmidi mymidi.mid @voices 1 3 @format 1 @caption exports voices 1 and 3 in format 1
     // @example exportmidi mymidi.mid @resolution 1920 @caption exports with a resolution of 1920 ticks per beat
-    // @seealso write, writetxt, read, exportxml, exportom, exportpwgl
+    // @seealso write, writetxt, read, exportom, exportpwgl
     class_addmethod(c, (method) score_exportmidi, "exportmidi", A_GIMME, 0);
     
     
@@ -6456,7 +6456,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example exportlilypond myfile.ly @voices 1 3 @caption exports voices 1 and 3
     // @example exportlilypond myfile.ly @voices [1 3] @caption exports voices 1 through 3
     // @example exportlilypond myfile.ly @voices [1 3] 5 7 @caption exports voices 1 through 3, 5 and 7
-    // @seealso write, writetxt, read, exportxml, exportom, exportpwgl, exportlilypondpdf
+    // @seealso write, writetxt, read, exportom, exportpwgl, exportlilypondpdf
     class_addmethod(c, (method) score_exportlilypond, "exportlilypond", A_GIMME, 0);
     
     
@@ -6468,7 +6468,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name filename @optional 1 @type symbol
     // @example exportlilypondpdf @caption export PDF file via LilyPond and a dialog box
     // @example exportlilypondpdf myfile.pdf @caption exports specific PDF file via LilyPond
-    // @seealso exportlilypond, write, writetxt, read, exportxml, exportom, exportpwgl
+    // @seealso exportlilypond, write, writetxt, read, exportom, exportpwgl
     class_addmethod(c, (method) score_exportlilypond_pdf, "exportlilypondpdf", A_GIMME, 0);
     
 
@@ -6482,7 +6482,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name filename @optional 1 @type symbol
     // @example exportpwgl @caption export file in PWGL format via dialog box
     // @example exportpwgl forPWGL.txt @caption export file in PWGL format
-    // @seealso write, writetxt, read, exportxml, exportom, exportxml, exportlilypond, exportlilypondpdf
+    // @seealso write, writetxt, read, exportom, exportlilypond, exportlilypondpdf
     class_addmethod(c, (method) score_exportpwgl, "exportpwgl", A_GIMME, 0);
     
     
@@ -6495,7 +6495,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name filename @optional 1 @type symbol
     // @example exportom @caption export file in OpenMusic format via dialog box
     // @example exportom forOM.txt @caption export file in OpenMusic format
-    // @seealso write, writetxt, read, exportxml, exportpwgl, exportxml, exportlilypond, exportlilypondpdf
+    // @seealso write, writetxt, read, exportpwgl, exportlilypond, exportlilypondpdf
     class_addmethod(c, (method) score_exportom, "exportom", A_GIMME, 0);
     
     

@@ -78,8 +78,6 @@
 <refpage name='bach.intersection.maxref.xml'/>
 <refpage name='bach.symdiff.maxref.xml'/>
 <refpage name='bach.read.maxref.xml'/>
-<refpage name='bach.readsdif.maxref.xml'/>
-<refpage name='bach.writesdif.maxref.xml'/>
 <refpage name='bach.write.maxref.xml'/>
 <refpage name='bach.omtree2bachtree.maxref.xml'/>
 <refpage name='bach.transcribe.maxref.xml'/>

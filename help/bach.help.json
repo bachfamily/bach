@@ -4518,36 +4518,6 @@
 					"title" : [ "MIDI tempo ramp sampling rate" ]
 				}
 			},
-			"MusicXML" : {
-				"Xmlimport" : {
-					"filename" : [ "bach.help.notation.save and load.20_MusicXML.20_xmlimport.maxpat" ],
-					"objects" : [ "bach.score" ],
-					"seealso" : [ "export+xml" ],
-					"tags" : [ "data", "xml", "import", "file", "mxl", "read", "message", "lyrics", "importlyrics", "importnoteheads", "importarticulations", "noteheads", "note", "head", "articulation", "compressed", "zip", "compress" ],
-					"title" : [ "MusicXML import" ]
-				},
-				"Xmlexport" : {
-					"filename" : [ "bach.help.notation.save and load.20_MusicXML.21_xmlexport.maxpat" ],
-					"objects" : [ "bach.score" ],
-					"seealso" : [ "import+xml" ],
-					"tags" : [ "data", "xml", "export", "exportxml", "velocity", "direction", "text", "slot", "directionslots", "file", "range" ],
-					"title" : [ "MusicXML export" ]
-				},
-				"Xmlmore" : {
-					"filename" : [ "bach.help.notation.save and load.20_MusicXML.24_xmlmore.maxpat" ],
-					"objects" : [ "bach.score" ],
-					"seealso" : [ "import+xml", "export+xml", "linkdynamicstoslot", "linklyricstoslot", "linknoteheadstoslot", "linkarticulationstoslot" ],
-					"tags" : [ "data", "xml", "export", "exportxml", "lyrics", "dynamics", "noteheads", "articulations", "import", "importxml", "read", "glissandi" ],
-					"title" : [ "More MusicXML specifications" ]
-				},
-				"Xmlquartertones" : {
-					"filename" : [ "bach.help.notation.save and load.20_MusicXML.25_xmlquartertones.maxpat" ],
-					"objects" : [ "bach.score" ],
-					"seealso" : [ "import+xml" ],
-					"tags" : [ "data", "xml", "export", "exportxml", "microtone", "quartertone", "parenthesis", "parenthesize", "parenthesized", "parenthesizedquartertones", "finale", "sibelius", "musescore" ],
-					"title" : [ "MusicXML and quartertones" ]
-				}
-			},
 			"OpenMusic" : {
 				"Omimport" : {
 					"filename" : [ "bach.help.notation.save and load.30_OpenMusic.30_omimport.maxpat" ],

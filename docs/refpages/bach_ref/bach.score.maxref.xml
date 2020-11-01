@@ -3696,7 +3696,7 @@
 				If no list is provided, then all the voices of the score will be exported. Ranges can also be
 				expressed, as sublists. For example, <b>[voices 1 3 5]</b> will export the first, third and fifth voice,
 				while <b>[voices [1 5] 8]</b> will export all the voices from 1 to 5, and the 8th voice. <br />
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportxml</m>,<m>exportom</m>,<m>exportpwgl</m>,<m>exportlilypondpdf</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportom</m>,<m>exportpwgl</m>,<m>exportlilypondpdf</m><br />
 			</description>
 		</method>
 		<method name="exportlilypondpdf">
@@ -3714,7 +3714,7 @@
 				via a LilyPond conversion. LilyPond has to be installed properly in order for this to work.
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>exportlilypond</m>,<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportxml</m>,<m>exportom</m>,<m>exportpwgl</m><br />
+				<br />				See also:<m>exportlilypond</m>,<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportom</m>,<m>exportpwgl</m><br />
 			</description>
 		</method>
 		<method name="exportmidi">
@@ -3756,7 +3756,7 @@
 				This can't be achieved within MIDI files: instead, an accelerando or a rallentando will be exported as a
 				sequence of discrete tempo changes, each representing a "step" of the accelerando or rallentando.
 				It is guaranteed that the overall duration of the tempo ramp will be consistent with the original.
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportxml</m>,<m>exportom</m>,<m>exportpwgl</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportom</m>,<m>exportpwgl</m><br />
 			</description>
 		</method>
 		<method name="exportom">
@@ -3775,7 +3775,7 @@
 				or "poly".
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportxml</m>,<m>exportpwgl</m>,<m>exportxml</m>,<m>exportlilypond</m>,<m>exportlilypondpdf</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportpwgl</m>,<m>exportlilypond</m>,<m>exportlilypondpdf</m><br />
 			</description>
 		</method>
 		<method name="exportpwgl">
@@ -3793,68 +3793,7 @@
 				(by connecting the "import-bach" box, in the "pwgl2bach" library).
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportxml</m>,<m>exportom</m>,<m>exportxml</m>,<m>exportlilypond</m>,<m>exportlilypondpdf</m><br />
-			</description>
-		</method>
-		<method name="exportxml">
-			<arg name="filename" optional="1" type="symbol" />
-			<digest>
-				Export as MusicXML file
-			</digest>
-			<description>
-				Syntax: <b>exportxml <m>[&lt;symbol: filename&gt;]</m> <i>[message attributes]</i> </b><br />
-				Examples:<br />
-				• <b>exportxml</b>   <i>→ export MusicXML file via dialog box</i><br />
-				• <b>exportxml myfile.xml @velocity 1</b>   <i>→ also export velocity as MusicXML direction</i><br />
-				• <b>exportxml myfile.xml @directionslots 7</b>   <i>→ also export content of slot 7 as MusicXML directions</i><br />
-				• <b>exportxml myfile.xml @directionslots 7 9</b>   <i>→ also export content of slot 7 and 9 as MusicXML directions</i><br />
-				• <b>exportxml myfile.xml @directionslots [7 11]</b>   <i>→ also export content of slots 7 through 11 as MusicXML directions</i><br />
-				• <b>exportxml myfile.xml @dynamics 0</b>   <i>→ don't export dynamics</i><br />
-				• <b>exportxml myfile.xml @lyrics 0 @articulations 0</b>   <i>→ don't export lyrics, nor articulations</i><br />
-				• <b>exportxml myfile.xml @noteheads 0</b>   <i>→ don't export noteheads</i><br />
-				• <b>exportxml myfile.xml @parenthesizedquartertones 1</b>   <i>→ also export quartertones as parenthesized versions of the standard accidentals right below them (only useful with Finale)</i><br />
-				<br />
-				Message attributes:<br />
-				<m>@velocity</m> (int, default: 0): If non-zero, notes velocity i s exported as MusicXML direction<br />
-				<m>@directionslots</m> (llll, default: null): Export the content of these slots as generic text directions<br />
-				<m>@dynamics</m> (int, default: 1): If non-zero, dynamics are exported from the dynamics slot, if any<br />
-				<m>@noteheads</m> (int, default: 1): If non-zero, noteheads are exported from the noteheads slot, if any<br />
-				<m>@articulations</m> (int, default: 1): If non-zero, articulations are exported from the articulations slot, if any<br />
-				<m>@lyrics</m> (int, default: 1): If non-zero, lyrics are exported from the lyrics slot, if any<br />
-				<m>@parenthesizedquartertones</m> (int, default: 0): If non-zero, exports quarter tones as parenthesized version of semitonal accidentals<br />
-				<m>@glissandi</m> (int, default: 1): If non-zero, glissandi are exported as slides<br />
-				<br />
-				The <m>exportxml</m> message saves the content of the <o>bach.score</o> object in MusicXML format.
-				Such format is read by most of the currently available music engraving softwares.
-				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
-				allowing the choice of the location and file name for saving.
-				Furthermore, some exporting specifications are available, and each has to be given as llll after the (optional) file name.
-				Such lllls will be in the form <b>[<m>specification_name</m> <m>specification_value</m>]</b>). Available specifications are: <br />
-				- <b>velocity</b> (default: 0): if non-0, the velocity for each note will be exported as a MusicXML direction.
-				This is not always desirable, as the direction itself will appear as an empty expression when
-				imported, for instance, into a software like Finale. <br />
-				- <b>directionslots</b> [default: <b>null</b>): if one or more slots numbers are specified, their contents will be converted
-				into text and exported as generic text directions. You can use range syntax to specify slot ranges, such as <b>[7 10]</b> meaning from 7th to 10th slot. <br />
-				- <b>dynamics</b>: if non-zero, dynamics are exported from the currently linked slot (see <m>linkdynamicstoslot</m>). <br />
-				- <b>noteheads</b>: if non-zero, dynamics are exported from the currently linked slot (see <m>linknoteheadstoslot</m>). <br />
-				- <b>articulations</b>: if non-zero, articulations are exported from the currently linked slot (see <m>linkarticulationstoslot</m>). <br />
-				- <b>lyrics</b>: if non-zero, lyrics are exported from the currently linked slot (see <m>linklyricstoslot</m>). <br />
-				- <b>parenthesizedquartertones</b> [default: <b>0</b>): export quarter tones as parenthesized versions of semitonal accidentals
-				which are a quartertone lower. For instance, if you set this specification to 1, a quarter sharp will be exported as a parenthesized
-				natural, a quarter flat will be exported as a parenthesized flat, and so on.
-				This specification should be considered as a workaround to ease quartertone export to Finale or similar pieces of software.
-				Please notice that music notation software with a good native support for quartertones
-				(e.g. Sibelius or MuseScore) will import them correctly from bach, without any workaround (no need to specify anything).
-				Things are more complex with software such Finale, whose quartertone support is more cumbersome.
-				With the default settings, what Finale will do is changing the character for single accidentals in order to show quartertones
-				accidentals when needed. This is something you might want to avoid, since editing your score from that point on becomes very
-				difficult. What might be handy to do, with Finale, is to export quartertone accidentals as if they were parenthesized versions
-				of the standard accidentals. You can easily map inside finale the parenthesized accidentals to the glyphs of
-				quartertone accidentals, via your favorite quartertone accidental font. A parenthesized natural will be displayed as
-				a quarter-sharp; a parenthesized sharp as a three-quarter-sharp, and so on. Everything, if parenthesized, will step up a
-				quarter tone. Once you have set up your new Finale document in this way, you can use the <b>[parenthesizedquartertones 1]</b>
-				specification in order to export quartertones in this way.
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportxml</m>,<m>exportom</m>,<m>exportpwgl</m>,<m>exportlilypond</m>,<m>exportlilypondpdf</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportom</m>,<m>exportlilypond</m>,<m>exportlilypondpdf</m><br />
 			</description>
 		</method>
 		<method name="filltiedsequenceswithslots">
@@ -6868,14 +6807,8 @@
 				Supported file types are: <br />
 				- Previously saved <o>bach.score</o> content, either in native or in text format (see <m>write</m> and <m>writetxt</m> messages).
 				These might include also files exported in bach format from OpenMusic or PWGL. <br />
-				- MusicXML files (see below for options). <br />
 				MIDI files are not imported directly into bach score. They should be imported into a <o>bach.roll</o>, possibly with a <b>read [markmeasures 1]</b> specification,
 				and then quantized with <o>bach.quantize</o>. <br />
-				MusicXML files can have some import attributes: <br />
-				- <b>dynamics</b>: if non-zero, dynamics are imported into the currently linked slot (see <m>linkdynamicstoslot</m>). <br />
-				- <b>noteheads</b>: if non-zero, dynamics are imported into the currently linked slot (see <m>linknoteheadstoslot</m>). <br />
-				- <b>articulations</b>: if non-zero, articulations are imported into the currently linked slot (see <m>linkarticulationstoslot</m>). <br />
-				- <b>lyrics</b>: if non-zero, lyrics are imported into the currently linked slot (see <m>linklyricstoslot</m>). <br />
 				<br />				See also:<m>write</m>,<m>writetxt</m><br />
 			</description>
 		</method>
@@ -6917,15 +6850,11 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the slotinfo to the default one
+				Reset the custom articulations definition to the default one
 			</digest>
 			<description>
-				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
-				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
-				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
-				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
-				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
-				<br />				See also:<m>eraseslot</m><br />
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -6941,11 +6870,15 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom articulations definition to the default one
+				Reset the slotinfo to the default one
 			</digest>
 			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="resetwidthfactors">
@@ -8145,19 +8078,6 @@
 		<method name="unsel">
 			<arg name="arguments" optional="0" type="llll" />
 			<digest>
-				Deselect items
-			</digest>
-			<description>
-				Syntax: <b>unsel <m>&lt;llll: arguments&gt;</m> </b><br />				<br />
-				The message <m>unsel</m> works in the opposite way of the message <m>sel</m>, i.e. deselect
-				notation items (removes them from the current selection). Refer to the message <m>sel</m> to know more about the
-				syntax, since it is exactly the same.
-				<br />				See also:<m>sel</m>,<m>select</m>,<m>subsel</m>,<m>clearselection</m><br />
-			</description>
-		</method>
-		<method name="unsel">
-			<arg name="arguments" optional="0" type="llll" />
-			<digest>
 				Involutively select items
 			</digest>
 			<description>
@@ -8168,6 +8088,19 @@
 				Refer to the message <m>sel</m> to know more about the syntax, since it is exactly the same.
 				The only exception is for the <m>select all</m> message, which does not work involutively and always select all the notation items.
 				<br />				See also:<m>sel</m>,<m>unsel</m>,<m>subsel</m>,<m>clearselection</m><br />
+			</description>
+		</method>
+		<method name="unsel">
+			<arg name="arguments" optional="0" type="llll" />
+			<digest>
+				Deselect items
+			</digest>
+			<description>
+				Syntax: <b>unsel <m>&lt;llll: arguments&gt;</m> </b><br />				<br />
+				The message <m>unsel</m> works in the opposite way of the message <m>sel</m>, i.e. deselect
+				notation items (removes them from the current selection). Refer to the message <m>sel</m> to know more about the
+				syntax, since it is exactly the same.
+				<br />				See also:<m>sel</m>,<m>select</m>,<m>subsel</m>,<m>clearselection</m><br />
 			</description>
 		</method>
 		<method name="unsolo">
@@ -8318,7 +8251,7 @@
 				The <m>write</m> message saves all the <o>bach.score</o> content in native format (with extension .llll).
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>writetxt</m>,<m>exportmidi</m>,<m>exportxml</m>,<m>read</m><br />
+				<br />				See also:<m>writetxt</m>,<m>exportmidi</m>,<m>read</m><br />
 			</description>
 		</method>
 		<method name="writetxt">
@@ -8358,7 +8291,7 @@
 				- <b>wrap</b> (default: 0, i.e. no wrapping): the maximum number of characters to be placed on each line.<br />
 				- <b>filename</b> (default: not set): the name of the file to be written.
 				If set, this specification overrides the file name set as the first message argument.
-				<br />				See also:<m>write</m>,<m>exportmidi</m>,<m>exportxml</m>,<m>read</m><br />
+				<br />				See also:<m>write</m>,<m>exportmidi</m>,<m>read</m><br />
 			</description>
 		</method>
 	</methodlist>

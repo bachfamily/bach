@@ -1867,49 +1867,6 @@
       "bach.reg"
     ]
   },
-  "bach.readsdif": {
-    "digest": "Read an SDIF file",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "SDIF",
-      "file",
-      "read",
-      "load",
-      "convert"
-    ],
-    "seealso": [
-      "bach.writesdif",
-      "bach.read",
-      "bach.roll"
-    ]
-  },
-  "bach.writesdif": {
-    "digest": "Write an SDIF file",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "SDIF",
-      "write",
-      "save",
-      "disk",
-      "file",
-      "convert"
-    ],
-    "seealso": [
-      "bach.readsdif",
-      "bach.write",
-      "bach.roll"
-    ]
-  },
   "bach.write": {
     "digest": "Write an llll to disk",
     "module": "bach",

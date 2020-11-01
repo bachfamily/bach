@@ -76,8 +76,6 @@ max oblist "bach objects" bach.union;
 max oblist "bach objects" bach.intersection;
 max oblist "bach objects" bach.symdiff;
 max oblist "bach objects" bach.read;
-max oblist "bach objects" bach.readsdif;
-max oblist "bach objects" bach.writesdif;
 max oblist "bach objects" bach.write;
 max oblist "bach objects" bach.omtree2bachtree;
 max oblist "bach objects" bach.transcribe;

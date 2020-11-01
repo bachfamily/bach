@@ -2,7 +2,7 @@
  *  patrons.h
  * (This file has been generated automatically by Doctor Max. You may not want to edit this file directly).
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -27,18 +27,23 @@
 
 void post_top_supporters()
 {
+	post("- Carmine Emanuele Cella");
 	post("- Francisco Colasanto");
 	post("- Jean-Baptiste Barrière");
 	post("- Julien Vincenot");
 	post("- Michele Zaccagnini");
 	post("- Seidenberg");
 	post("- Yan Maresz");
+	post("- Yoshiaki Onishi");
 }
 
 void post_all_patrons()
 {
-	post("Alessandro Ratoci, audiophil, Chris Chandler, Chris Poovey, Christopher Michael Trapani, Daniel Lujan, Francisco Colasanto, ");
-	post("Hans Leeuw, Hans Tutschku, Jean-Baptiste Barrière, Jean-Julien Filatriau, Joost Van kerkhoven, Julien Vincenot, linazero, ");
-	post("Louis Goldford, Matthew Goodheart, Michele Zaccagnini, Nikola Kołodziejczyk, Pierre Alexandre Tremblay, Seidenberg, Tj Shredder, ");
-	post("Tomislav Oliver, Vens R., Viktor Velthuijs, Yan Maresz.");
+	post("Alessandro Ratoci, Alvaro, Andrew Milne, Billy Newman, Carmine Emanuele Cella, Chris Chandler, Chris Poovey, Christopher Lane, ");
+	post("Christopher Michael Trapani, Daniel, Douglas Geers, Francisco Colasanto, Gabriel José Bolaños, Gratkowski, Gustavo Chritaro, ");
+	post("Hans Leeuw, Hans Tutschku, Jean-Baptiste Barrière, Jean-Julien Filatriau, Jeremy Hunt, Jim Poole, Johannes MacDonald, ");
+	post("Joost Van kerkhoven, Jose Miguel Fernandez, Joseph Norman, José Martínez, Julien Vincenot, Kenneth Stewart, Lotus Open Factory, ");
+	post("Louis Goldford, Mark Gorrie, Mathilde, Matthew Goodheart, Michele Zaccagnini, Monica Lim, Nikola Kołodziejczyk, Paolo Aralla, ");
+	post("Pierre Alexandre Tremblay, Robert Appleton, Rune Glerup, Sean Ferguson, Sebastián García Surianu, Seidenberg, Seth Shafer, ");
+	post("Tj Shredder, Tomislav Oliver, Vens R., Viktor Velthuijs, Yan Maresz, Yoshiaki Onishi, audiophil, linazero, micron.");
 }
