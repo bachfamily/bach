@@ -36,6 +36,7 @@ authorization: now the code for a given year can be entered until January of the
 
 - bell: fixed various memory leaks
     primeser: the second argument may be left unset
+    reduce: fixed memory leaks and memory corruptions (potentially causing crashes)
     fixed parsing of pitch literals
     new built-in functions: mc2f, f2mc, minimum, maximum
     fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
