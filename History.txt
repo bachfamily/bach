@@ -33,6 +33,7 @@ authorization: now the code for a given year can be entered until January of the
 
 - bell, bach.expr:
     makepitch function now treats negative degrees as descending steps (e.g. makepitch(-1, 0, 5) returns B4)
+    fixed crash when dividing with // an integer by 0
 
 - bell: fixed various memory leaks
     primeser: the second argument may be left unset
