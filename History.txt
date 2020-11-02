@@ -74,6 +74,7 @@ authorization: now the code for a given year can be entered until January of the
         New "importsubdivisions" message attribute
     exportmidi: new "exportbarlines" message attribute
         new "exportdivisions" message attribute
+        fixed bug causing data corruption if notes in channel 16 were present
 
 - bach.shelf: fixed crash with @embed 1 when reopening patch
 
