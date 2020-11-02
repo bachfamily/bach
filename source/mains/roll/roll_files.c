@@ -1046,7 +1046,7 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 	for (this_voicenum_elem = voices_to_write->l_head; this_voicenum_elem; this_voicenum_elem = this_voicenum_elem->l_next) {
 		this_rollvoice = (t_rollvoice *) nth_voice((t_notation_obj *) x, hatom_getlong(&this_voicenum_elem->l_hatom));
 		t_chord *this_chord;
-		long channel = this_rollvoice->v_ob.midichannel % 16 - 1;
+		long channel = (this_rollvoice->v_ob.midichannel - 1) % 16;
 		long this_tempochange = 0;
 		double next_tempochange_ms = tempochanges[1].t_ms;
 		this_tempo_onset_ms = 0;
