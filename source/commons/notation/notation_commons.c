@@ -1387,13 +1387,17 @@ double note_get_spanning_width(t_notation_obj *r_ob, t_note *nt)
     if (!nt) return 0;
     
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        if (nt->parent && nt->parent->parent && nt->parent->parent->tuttipoint_reference) {
-            double al_x = chord_get_alignment_x(r_ob, nt->parent);
-            double end_pos = unscaled_xposition_to_xposition(r_ob, nt->parent->parent->tuttipoint_reference->offset_ux + nt->parent->stem_offset_ux + nt->parent->duration_ux);
-            if (r_ob->dl_spans_ties) {
-                t_note *last_tie = note_get_last_in_tieseq(nt);
-                if (last_tie && last_tie != nt)
-                    end_pos = unscaled_xposition_to_xposition(r_ob, last_tie->parent->parent->tuttipoint_reference->offset_ux + last_tie->parent->stem_offset_ux + last_tie->parent->duration_ux);
+        t_chord *ch = nt->parent;
+        if (ch && ch->parent && ch->parent->tuttipoint_reference) {
+            double al_x = chord_get_alignment_x(r_ob, ch);
+            double end_pos = al_x;
+            t_note *nt_wk = r_ob->dl_spans_ties ? note_get_last_in_tieseq(nt) : nt;
+            t_chord *ch_wk = nt_wk->parent;
+
+            if (ch_wk && ch_wk->next) {
+                end_pos = unscaled_xposition_to_xposition(r_ob, ch_wk->next->parent->tuttipoint_reference->offset_ux + ch_wk->next->stem_offset_ux - ch_wk->next->left_uextension);
+            } else if (ch_wk){
+                end_pos = unscaled_xposition_to_xposition(r_ob, ch_wk->parent->tuttipoint_reference->offset_ux + ch_wk->stem_offset_ux + ch_wk->duration_ux);
             }
             return end_pos - al_x;
         }

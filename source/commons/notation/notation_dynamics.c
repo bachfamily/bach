@@ -199,7 +199,7 @@ double dynamics_get_spanning_width(t_notation_obj *r_ob, t_dynamics *dyn)
     
     t_notation_item *owner = dynamics_get_owner(r_ob, dyn);
     
-    if (owner->type == k_CHORD) { // gotta be bach.score
+    if (owner->type == k_CHORD) { // gotta be bach.score, and chord must be a rest
         return deltauxpixels_to_deltaxpixels(r_ob, ((t_chord *)owner)->duration_ux);
     } else if (owner->type == k_NOTE){
         t_note *nt = ((t_note *)owner);

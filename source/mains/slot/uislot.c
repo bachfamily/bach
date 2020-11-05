@@ -1377,7 +1377,16 @@ void set_uislot_from_llll(t_uislot *x, t_llll* inputlist, char also_lock_general
                             break;
                         } else if (pivotsym == _llllobj_sym_slotinfo) {
                             llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the set_slotinfo function
-                            set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
+                            if (firstllll && firstllll->l_head)
+                                set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
+                        } else if (pivotsym == _llllobj_sym_articulationinfo) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                set_articulationinfo_from_llll((t_notation_obj *)x, &x->r_ob.articulations_typo_preferences, firstllll, false);
+                        } else if (pivotsym == _llllobj_sym_noteheadinfo) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                set_noteheadinfo_from_llll((t_notation_obj *)x, firstllll, false);
                         }
                     } else 
                         break; // break and go to the body of the object!
