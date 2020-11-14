@@ -147,9 +147,10 @@ typedef struct _constraint {
     long        c_nvars;
     long        *c_vars;
     long        c_maxvar;
-    long        c_outputvars;
-    long        c_low;
-    long        c_required;
+    long        c_order;
+    char        c_outputvars;
+    char        c_low;
+    char        c_required;
 } t_constraint;
 
 
@@ -3042,6 +3043,7 @@ void constraints_fill_arrays(t_constraints *x, const t_llll *domains_ll, const t
     
     // we count everything from 1 in here!
     this_constraints = *constraints + 1;
+    long idx = 1;
     
     // fill the constraints array
     // the list of variables for each constraint is terminated by 0
@@ -3073,6 +3075,7 @@ void constraints_fill_arrays(t_constraints *x, const t_llll *domains_ll, const t
             this_constraints->c_outputvars = outputvars;
             this_constraints->c_low = low;
             this_constraints->c_required = required;
+            this_constraints->c_order = idx++;
         }
     }
     this_constraints->c_name = NULL;
@@ -3420,8 +3423,10 @@ int sort_domains_cb(t_domain *a, t_domain *b)
         return 1;
     else if (bsize == 0)
         return -1;
-    else
+    else if (a->d_currentvalues->d_size != b->d_currentvalues->d_size)
         return a->d_currentvalues->d_size - b->d_currentvalues->d_size;
+    else
+        return a->d_var - b->d_var;
 }
 
 int sort_constraints_cb(t_constraint *a, t_constraint *b)
@@ -3429,7 +3434,10 @@ int sort_constraints_cb(t_constraint *a, t_constraint *b)
     long required = b->c_required - a->c_required;
     if (required != 0)
         return required;
-    return a->c_nvars - b->c_nvars;
+    if (a->c_nvars != b->c_nvars)
+        return a->c_nvars - b->c_nvars;
+    else
+        return a->c_order - b->c_order;
 }
 
 int sort_constraint_ptrs_cb(t_constraint **a, t_constraint **b)
