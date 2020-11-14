@@ -81,7 +81,7 @@ authorization: now the code for a given year can be entered until January of the
 
 - bach.textin: now works correctly with lllls starting with a number
 
-- bach.constraints: evaluation order of domains of the same size is not changed
+- bach.constraints: evaluation order of same-size domains is not changed
 
 
 
