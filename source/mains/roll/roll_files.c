@@ -351,8 +351,8 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 									first_voice_elem = llll_insertllll_before(voice, first_voice_elem, 0, WHITENULL_llll);
 							} else if (this_elem == NULL) { // then it goes at the last place
 								llll_appendllll(roll_ll, voice, 0, WHITENULL_llll);
-							} else { // it goes right after this_elem
-								llll_insertllll_after(voice, this_elem, 0, WHITENULL_llll);
+							} else { // it goes right before this_elem
+								llll_insertllll_before(voice, this_elem, 0, WHITENULL_llll);
 							}
 							pitches_ll = llll_get();
 							llll_appendllll(voice, pitches_ll, 0, WHITENULL_llll); // this will be removed later on, when the clefs sublist is set

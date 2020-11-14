@@ -72,6 +72,7 @@ authorization: now the code for a given year can be entered until January of the
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
         New "importdivisions" message attribute, overriding "markdivisions"
         New "importsubdivisions" message attribute
+        Staves are now correctly ordered by MIDI channel in format 0
     exportmidi: new "exportbarlines" message attribute
         new "exportdivisions" message attribute
         fixed bug causing data corruption if notes in channel 16 were present
