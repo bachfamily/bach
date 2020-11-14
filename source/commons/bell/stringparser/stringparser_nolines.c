@@ -3117,7 +3117,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: ;");
     BEGIN lexparams->setState(UNARY_NOARGS);
-    return SEQ;
+    return NULLIFY;
 }
 	YY_BREAK
 case 92:

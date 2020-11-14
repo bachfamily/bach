@@ -84,7 +84,7 @@
 %token <d> DOUBLE_LITERAL
 %token <p> PITCH_LITERAL
 %token <sym> SYMBOL_LITERAL GLOBALVAR PATCHERVAR LOCALVAR NAMEDPARAM BIF OF
-%token SEQ
+%token NULLIFY
 %token IF_KW THEN_KW ELSE_KW
 %token WHILE_KW DO_KW FOR_KW IN_KW COLLECT_KW
 %token ASSIGN
@@ -129,6 +129,7 @@
 %nonassoc ELSE_KW
 %right LOGNOT BITNOT
 %nonassoc KEEP UNKEEP INIT
+%left NULLIFY
 
 
 %type <n> term list exp assignment assign sequence program fundef forloop whileloop simpleList lvalueStepParams ifThenElse listEnd
@@ -229,9 +230,13 @@ program: %empty {
  ;
 
 sequence: list
-| sequence SEQ list {
-    $$ = new astSequence($1, $3, params->owner);
-    code_dev_post("parse: seq\n");
+| sequence list %prec CONCAT {
+    $$ = new astConcat($1, $2, params->owner);
+    code_dev_post("parse: cat\n");
+}
+| sequence NULLIFY {
+    $$ = new astNullify($1, params->owner);
+    code_dev_post ("parse: sequence NULLIFY: sequence\n");
 }
 ;
 

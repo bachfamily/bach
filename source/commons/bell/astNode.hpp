@@ -463,6 +463,23 @@ public:
     }
 };
 
+class astNullify : public astNode
+{
+protected:
+    astNode *n;
+public:
+    astNullify(astNode *n, t_codableobj *owner) : astNode(owner), n(n) { }
+    
+    ~astNullify() {
+        delete n;
+    }
+    
+    t_llll *eval(t_execEnv const &context) {
+        bell_release_llll(n->eval(context));
+        return llll_get();
+    }
+};
+
 class astNthOp : public astNode
 {
 protected:

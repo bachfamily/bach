@@ -64,7 +64,7 @@ extern int stringparser_debug;
     NAMEDPARAM = 274,
     BIF = 275,
     OF = 276,
-    SEQ = 277,
+    NULLIFY = 277,
     IF_KW = 278,
     THEN_KW = 279,
     ELSE_KW = 280,

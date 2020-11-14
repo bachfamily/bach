@@ -682,7 +682,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 ";"|"\\;" {
     code_dev_post("lex: ;");
     BEGIN lexparams->setState(UNARY_NOARGS);
-    return SEQ;
+    return NULLIFY;
 }
 
 ","|"\\," {
