@@ -65,6 +65,7 @@ authorization: now the code for a given year can be entered until January of the
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
         Accidentals are correctly dealt with when importing multi-voice parts
+        Fixed crash when importing empty lyrics with empty "text" tag 
     XML import and export: three-quarters-sharp and -flat accidentals have correct name now (was "three-quarter")
         complex time signatures are correctly handled
 

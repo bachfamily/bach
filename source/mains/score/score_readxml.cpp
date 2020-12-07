@@ -2758,11 +2758,15 @@ t_llll *score_readxmlbuffer(t_score *x,
                             const char *syllabictxt = syllabicXML ? mxmlGetText(syllabicXML, NULL) : NULL;
                             t_symbol *txtsym = _llllobj_sym_empty_symbol;
                             if (syllabictxt && (!strcmp(syllabictxt, "begin") || !strcmp(syllabictxt, "middle"))) {
-                                long len = strlen(txt);
-                                char *temp_txt = (char *)bach_newptr((len + 2) * sizeof(char));
-                                snprintf_zero(temp_txt, len + 2, "%s-", txt);
-                                txtsym = gensym(temp_txt);
-                                bach_freeptr(temp_txt);
+                                if (txt) {
+                                    long len = strlen(txt);
+                                    char *temp_txt = (char *)bach_newptr((len + 2) * sizeof(char));
+                                    snprintf_zero(temp_txt, len + 2, "%s-", txt);
+                                    txtsym = gensym(temp_txt);
+                                    bach_freeptr(temp_txt);
+                                } else {
+                                    txtsym = gensym("-");
+                                }
                             } else if (txt) {
                                 txtsym = gensym(txt);
                             }
