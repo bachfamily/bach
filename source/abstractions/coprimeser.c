@@ -40,7 +40,7 @@
 	Coprime number series
 	
 	@description
-	Finds all the numbers M smaller than the absolute value of a given number N, 
+	Finds all the numbers M smaller than the absolute value of a given number N 
 	such that M and N are coprime.
 	
 	@discussion
