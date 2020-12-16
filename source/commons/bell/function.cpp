@@ -334,8 +334,8 @@ t_llll *astFunctionCall::callFunction(t_function *fn, t_llll **argsByPositionLl,
     childContext.adjustArgc(fn, argsByPositionCount);
     
     t_llll *res = fn->call(childContext);
-    for (int argByPosIdx = 0; argByPosIdx < childContext.argc; argByPosIdx++)
-        bell_release_llll(childContext.argv[argByPosIdx]);
+    //for (int argByPosIdx = 1; argByPosIdx <= childContext.argc; argByPosIdx++)
+    //    bell_release_llll(childContext.argv[argByPosIdx]);
     return res;
 }
 
@@ -350,8 +350,8 @@ t_llll *astFunctionCall::callFunction(t_function *fn, t_llll *argsByPositionLl, 
     childContext.adjustArgc(fn, argsByPositionLl->l_size);
     
     t_llll *res = fn->call(childContext);
-    for (int argByPosIdx = 0; argByPosIdx < childContext.argc; argByPosIdx++)
-        bell_release_llll(childContext.argv[argByPosIdx]);
+    //for (int argByPosIdx = 0; argByPosIdx < childContext.argc; argByPosIdx++)
+    //    bell_release_llll(childContext.argv[argByPosIdx]);
     return res;
 }
 
@@ -415,7 +415,16 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
         fnelem = (*--thisElempile)->l_next;
     }
     bell_release_llll(fnll);
+
+    for (int i = 0; i < argsByPositionCount; i++) {
+        llll_release(argsByPositionLl[i]);
+    }
     bach_freeptr(argsByPositionLl);
+
+    for (int i = 0; i < argsByNameCount; i++) {
+        llll_release(argsByNameLl[i]);
+    }
+
     bach_freeptr(argsByNameLl);
     bach_freeptr(elempile);
     return resultLl;

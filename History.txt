@@ -33,12 +33,15 @@ authorization: now the code for a given year can be entered until January of the
 
 - bell, bach.expr:
     makepitch function now treats negative degrees as descending steps (e.g. makepitch(-1, 0, 5) returns B4)
+    fixed crash when dividing with // an integer by 0
 
 - bell: fixed various memory leaks
     primeser: the second argument may be left unset
+    reduce: fixed memory leaks and memory corruptions (potentially causing crashes)
     fixed parsing of pitch literals
     new built-in functions: mc2f, f2mc, minimum, maximum
     fixed argument names for the makepitch function: new argument names are "degree", "alter" and "octave"
+    fixed argument names for all math functions
     dot operator can be preceded by whitespace
     :* operator returns null for non-positive repeat counts
     map function works correctly with mindepth
@@ -62,6 +65,8 @@ authorization: now the code for a given year can be entered until January of the
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
         Accidentals are correctly dealt with when importing multi-voice parts
+        Fixed crash when importing empty lyrics with empty "text" tag
+        Time signature can be inferred if not given
     XML import and export: three-quarters-sharp and -flat accidentals have correct name now (was "three-quarter")
         complex time signatures are correctly handled
 
@@ -69,14 +74,16 @@ authorization: now the code for a given year can be entered until January of the
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
         New "importdivisions" message attribute, overriding "markdivisions"
         New "importsubdivisions" message attribute
+        Staves are now correctly ordered by MIDI channel in format 0
     exportmidi: new "exportbarlines" message attribute
         new "exportdivisions" message attribute
+        fixed bug causing data corruption if notes in channel 16 were present
 
 - bach.shelf: fixed crash with @embed 1 when reopening patch
 
 - bach.textin: now works correctly with lllls starting with a number
 
-
+- bach.constraints: evaluation order of same-size domains is not changed
 
 
 

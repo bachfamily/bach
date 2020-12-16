@@ -905,6 +905,12 @@ t_llll *llll_retain_nocheck(t_llll *ll)
 
 t_llll *llll_retain_unsafe(t_llll *ll)
 {
+#ifdef BACH_CHECK_LLLLS
+    if (llll_check(ll)) {
+        bach_error_break("llll_retain_unsafe: bad llll");
+        llll_print(ll, NULL, 2, 6, NULL);
+    }
+#endif // BACH_CHECK_LLLLS
     if (ll)
         ++(ll->l_count);
     return ll;
@@ -912,6 +918,13 @@ t_llll *llll_retain_unsafe(t_llll *ll)
 
 void llll_release_unsafe(t_llll *ll)
 {
+#ifdef BACH_CHECK_LLLLS
+    if (llll_check(ll)) {
+        bach_error_break("llll_release_unsafe: bad llll");
+        llll_print(ll, NULL, 2, 6, NULL);
+    }
+#endif // BACH_CHECK_LLLLS
+    
     if (!ll)
         return;
     if (--(ll->l_count) == 0)
