@@ -351,8 +351,8 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 									first_voice_elem = llll_insertllll_before(voice, first_voice_elem, 0, WHITENULL_llll);
 							} else if (this_elem == NULL) { // then it goes at the last place
 								llll_appendllll(roll_ll, voice, 0, WHITENULL_llll);
-							} else { // it goes right after this_elem
-								llll_insertllll_after(voice, this_elem, 0, WHITENULL_llll);
+							} else { // it goes right before this_elem
+								llll_insertllll_before(voice, this_elem, 0, WHITENULL_llll);
 							}
 							pitches_ll = llll_get();
 							llll_appendllll(voice, pitches_ll, 0, WHITENULL_llll); // this will be removed later on, when the clefs sublist is set
@@ -1046,7 +1046,7 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 	for (this_voicenum_elem = voices_to_write->l_head; this_voicenum_elem; this_voicenum_elem = this_voicenum_elem->l_next) {
 		this_rollvoice = (t_rollvoice *) nth_voice((t_notation_obj *) x, hatom_getlong(&this_voicenum_elem->l_hatom));
 		t_chord *this_chord;
-		long channel = this_rollvoice->v_ob.midichannel % 16 - 1;
+		long channel = (this_rollvoice->v_ob.midichannel - 1) % 16;
 		long this_tempochange = 0;
 		double next_tempochange_ms = tempochanges[1].t_ms;
 		this_tempo_onset_ms = 0;

@@ -609,6 +609,28 @@ private:
             return ll;
         }
         
+        void adjust(t_rational dur) {
+            
+            if (valid)
+                return;
+            
+            num.clear();
+            long d = dur.den();
+            if (log2(double(d)) == perfect_log2(d)) {
+                if (d <= 4) {
+                    num.push_back(dur.num() * 4 / d);
+                    den = 4;
+                } else {
+                    num.push_back(dur.num());
+                    den = d;
+                }
+            } else {
+                long q = (long) ceil(double(dur) * 4);
+                num.push_back(q);
+                den = 4;
+            }
+        }
+        
         timeSignature(mxml_node_t* attributesXML, t_score *x) {
             
             valid = false;
@@ -703,12 +725,23 @@ private:
             if (newTimeSig.valid)
                 timeSig = newTimeSig;
             else if (!prev) {
-                timeSig = timeSignature(4, 4);
-                object_error((t_object *) x, "Missing time signature");
+                timeSig = timeSignature(0, 4);
+                timeSig.valid = false;
+                //object_error((t_object *) x, "Missing time signature");
             } else {
-                timeSig = prev->timeSig;
+                timeSignature prevTimeSig = prev->timeSig;
+                if (prevTimeSig.valid)
+                    timeSig = prevTimeSig;
+                else {
+                    timeSig = timeSignature(0, 4);
+                    timeSig.valid = false;
+                }
             }
             fullDuration = timeSig.getDuration();
+        }
+        
+        timeSignature *getTimeSignature() {
+            return &timeSig;
         }
         
         // the llll ownership is kept.
@@ -1040,6 +1073,14 @@ private:
         
         void setTimeSignature(mxml_node_t* attributesXML, t_score *x) {
             measureinfos.back()->setTimeSignature(attributesXML, x);
+        }
+        
+        void adjustTimeSignatureIfNeeded() {
+            measureinfo *minfo = measureinfos.back();
+            timeSignature *ts = minfo->getTimeSignature();
+            if (!ts->valid) {
+                ts->adjust(positionInMeasure);
+            }
         }
         
         void backup(t_rational r, t_score *x) {
@@ -1420,6 +1461,10 @@ public:
 
     bool finalizeChord() {
         return currentPart->finalizeChord();
+    }
+    
+    void adjustTimeSignatureIfNeeded() {
+        currentPart->adjustTimeSignatureIfNeeded();
     }
     
     void finalizePart() {
@@ -2758,11 +2803,15 @@ t_llll *score_readxmlbuffer(t_score *x,
                             const char *syllabictxt = syllabicXML ? mxmlGetText(syllabicXML, NULL) : NULL;
                             t_symbol *txtsym = _llllobj_sym_empty_symbol;
                             if (syllabictxt && (!strcmp(syllabictxt, "begin") || !strcmp(syllabictxt, "middle"))) {
-                                long len = strlen(txt);
-                                char *temp_txt = (char *)bach_newptr((len + 2) * sizeof(char));
-                                snprintf_zero(temp_txt, len + 2, "%s-", txt);
-                                txtsym = gensym(temp_txt);
-                                bach_freeptr(temp_txt);
+                                if (txt) {
+                                    long len = strlen(txt);
+                                    char *temp_txt = (char *)bach_newptr((len + 2) * sizeof(char));
+                                    snprintf_zero(temp_txt, len + 2, "%s-", txt);
+                                    txtsym = gensym(temp_txt);
+                                    bach_freeptr(temp_txt);
+                                } else {
+                                    txtsym = gensym("-");
+                                }
                             } else if (txt) {
                                 txtsym = gensym(txt);
                             }
@@ -2803,6 +2852,9 @@ t_llll *score_readxmlbuffer(t_score *x,
             //// currentChord = nullptr;
             
             theScore.finalizeChord();
+            
+            // if there was no valid time signature, make one
+            theScore.adjustTimeSignatureIfNeeded();
             
             if (t_llll *barline_ll = xml_get_barline(measureXML);
                 barline_ll) {
