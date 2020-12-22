@@ -17405,6 +17405,8 @@ char align_selection_onsets(t_roll *x){
     char changed = 0;
     long leftmost_onset = -32000; // local default for non-defined
     
+    // TO DO: deal with the fact that some notes may be locked, and in this case we're not aligning to them
+    
     lock_general_mutex((t_notation_obj *)x);
     while (curr_it) { // cycle on the selected items
         if (curr_it->type == k_NOTE) { // it is a note

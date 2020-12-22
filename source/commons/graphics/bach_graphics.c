@@ -4003,7 +4003,7 @@ void paint_polygon_debug_new(t_polygon *p, t_jgraphics *g, long iteration, char 
 {
     t_polygon *q = polygon_clone(p);
     t_jrgba grey = get_grey(0.5);
-    t_jfont *jf = jfont_create_debug("Times", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, 7);
+    t_jfont *jf = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, 7);
     for (long i = 0; i < q->num_vertices; i++) {
         q->vertices[i].x = 7 + (CONST_ROLL_UX_LEFT_START) + (p->vertices[i].x);
         
