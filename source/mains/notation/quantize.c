@@ -2007,6 +2007,16 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                     llll_appendhatom_clone(regularityboxes, &regularityboxes->l_tail->l_hatom);
             
             
+            // if the score is empty, collapsing is not needed, or it will cause crashes
+            double tot_dur = 0;
+            t_llllelem *voice_el;
+            for (voice_el = durations->l_head; voice_el; voice_el = voice_el->l_next) {
+                if (hatom_gettype(&voice_el->l_hatom) == H_LLLL)
+                    tot_dur = MAX(tot_dur, llll_sum_abs_of_double_llll(hatom_getllll(&voice_el->l_hatom)));
+            }
+            if (tot_dur == 0) {
+                collapse = false;
+            }
             
             // handling the collapse case
             if (collapse){
