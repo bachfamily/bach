@@ -9029,6 +9029,10 @@ t_tempo *build_tempo(t_rational changepoint, t_rational figure_tempo_value, t_ra
 
 
 void insert_tempo(t_notation_obj *r_ob, t_measure *measure, t_tempo *tempo_to_insert){
+    if (!tempo_to_insert) {
+        object_error((t_object *)r_ob, "Error: cannot create tempo.");
+        return;
+    }
 // insert in the measure *measure the tempo *tempo_to_insert after the tempo *after_this_tempo. Leave this NULL to insert at the beginning
     t_tempo *after_this_tempo = measure->lasttempo;
     if (measure->firsttempo) { // not at the beginning
