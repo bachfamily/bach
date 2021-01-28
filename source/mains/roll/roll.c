@@ -1286,7 +1286,7 @@ void roll_send_current_chord(t_roll *x){
                         llll_appenddouble(out_cents, note->midicents + note->lastbreakpoint->delta_mc, 0, WHITENULL_llll);
                         llll_appendlong(out_vels, x->r_ob.breakpoints_have_velocity ? note->lastbreakpoint->velocity : note->velocity, 0, WHITENULL_llll);
                     } else {
-                        double cents = rescale_with_slope(curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
+                        double cents = notationobj_rescale_with_slope((t_notation_obj *)x, curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
                         double velocity;
                         if (x->r_ob.breakpoints_have_velocity)
                             velocity = rescale(curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next),

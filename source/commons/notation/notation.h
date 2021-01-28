@@ -4113,6 +4113,9 @@ typedef struct _notation_obj
     char        output_slot_names;            ///< If this is 1, the notation object always outputs slot names and NOT slot numbers from the playout (which means: for mode = #k_CONSIDER_FOR_EVALUATION or #k_CONSIDER_FOR_PLAYING or #k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE or #k_CONSIDER_FOR_SELECTION_COPYING)
     double        slot_window_zoom;            ///< Additional zoom (with respect to the #zoom_y field) for the slot windows, 100 being the default one. 
     double        bgslot_zoom;                ///< Additional zoom (with respect to the #zoom_y field) for the background displayed slots, 100 being the default one.
+    
+    // slope stuff:
+    long        slope_mapping_type;                     ///< Slope mapping type, one of the #e_slope_mapping
     char        combine_range_slope_during_playback;    ///< Combines the range slope with the existing slopes during playback
     
     // only used by color slots
@@ -7554,7 +7557,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
     @remark            This is used in calculate_chord_parameters().
 */ 
 void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note);
-double velocity_to_notesize_factor(long velocity);
+double velocity_to_notesize_factor(t_notation_obj *r_ob, long velocity);
 
 
 /**    Retrieve the y position of the ledger lines relative to a given scaleposition (see the <scaleposition> field in the #t_note structure). 
@@ -10364,6 +10367,12 @@ void paint_venn_label_families(t_notation_obj *r_ob, t_object *view, t_jgraphics
     @param  jf_text_legend          The font
  */
 void notationobj_paint_legend(t_notation_obj *r_ob, t_jgraphics *g, t_rect rect, t_jfont *jf_text_legend);
+
+
+// Like paint_curve() inferring slope mapping type from the notation object
+void notationobj_paint_curve(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width);
+void notationobj_paint_doublewidth_curve(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width_start, double width_end);
+void notationobj_paint_colorgradient_curve(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color_start, t_jrgba color_end, double x1, double y1, double x2, double y2, double slope, double width, long num_steps, char are_color_from_spectrum, double vel1, double vel2, double max_velocity);
 
 
 
@@ -19227,6 +19236,12 @@ long change_pitch(t_notation_obj *r_ob, t_pitch *pitch, double *cents, t_lexpr *
 
 void change_poc(t_notation_obj *r_ob, t_hatom *poc, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
 
+
+/// SLOPE functions for notation objects (see corresponding abstract function in bach_math_utilitites.h
+/// The slope type is inferred from the notation object attributes
+double notationobj_rescale_with_slope(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope);
+double notationobj_rescale_with_slope_and_get_derivative(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope, double *derivative);
+double notationobj_rescale_with_slope_inv(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope);
 
 
 

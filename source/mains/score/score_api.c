@@ -9609,9 +9609,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                     if (x->r_ob.velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH && x->r_ob.breakpoints_have_velocity)  {
                                         double width1 = x->r_ob.durations_line_width * grace_ratio * x->r_ob.zoom_y * (((double) (temp->prev->prev ? temp->prev->velocity : curr_nt->velocity)) / CONST_MAX_VELOCITY + 0.1);
                                         double width2 = x->r_ob.durations_line_width * grace_ratio * x->r_ob.zoom_y * (((double) temp->velocity) / CONST_MAX_VELOCITY + 0.1);
-                                        paint_doublewidth_curve(g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
+                                        notationobj_paint_doublewidth_curve((t_notation_obj *)x, g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
                                     } else if (x->r_ob.velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH)
-                                        paint_curve(g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope,
+                                        notationobj_paint_curve((t_notation_obj *)x, g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope,
                                                     rescale((double)curr_nt->velocity, 0, CONST_MAX_VELOCITY, 0.5, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y));
                                     else if ((x->r_ob.velocity_handling == k_VELOCITY_HANDLING_COLORSCALE || x->r_ob.velocity_handling == k_VELOCITY_HANDLING_ALPHACHANNEL ||
                                               x->r_ob.velocity_handling == k_VELOCITY_HANDLING_COLORSPECTRUM) && x->r_ob.breakpoints_have_velocity) {
@@ -9621,11 +9621,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                         t_jrgba color_end = note_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected),
                                                                            is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, temp->velocity);
                                         long num_steps = MAX(labs(vel1 - temp->velocity) * 1, 1);
-                                        paint_colorgradient_curve(g, color_start, color_end, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y, num_steps,
+                                        notationobj_paint_colorgradient_curve((t_notation_obj *)x, g, color_start, color_end, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y, num_steps,
                                                                   x->r_ob.velocity_handling == k_VELOCITY_HANDLING_COLORSPECTRUM &&
                                                                   !(!note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected)), vel1, temp->velocity, CONST_MAX_VELOCITY);
                                     } else
-                                        paint_curve(g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y);
+                                        notationobj_paint_curve((t_notation_obj *)x, g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y);
                                     if (temp->rel_x_pos < 1.) prev_bpt_x = bpt_x; prev_bpt_y = bpt_y;
                                     
                                     temp = temp->next;
@@ -9647,13 +9647,13 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                             selected_breakpoint = temp;
                                         bptcolor = tail_get_color((t_notation_obj *) x, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
                                         if (x->r_ob.breakpoints_have_noteheads) {
-                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE);
+                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor((t_notation_obj *) x, temp->velocity) : CONST_GRACE_CHORD_SIZE);
                                         } else {
                                             paint_rhomboid(g, x->r_ob.j_background_rgba, bptcolor, bpt_x, bpt_y, x->r_ob.breakpoints_size * 0.6 * x->r_ob.zoom_y * grace_ratio, x->r_ob.breakpoints_size * x->r_ob.zoom_y * grace_ratio, 0.9);
                                         }
                                     } else { //tail
                                         if (x->r_ob.breakpoints_have_noteheads && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
-                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, note_end_pos, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE);
+                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, note_end_pos, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor((t_notation_obj *) x, temp->velocity) : CONST_GRACE_CHORD_SIZE);
                                         } else { 
                                             if (x->r_ob.show_tails) {
                                                 double bpt_y = mc_to_ypos((t_notation_obj *) x, note_get_screen_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);

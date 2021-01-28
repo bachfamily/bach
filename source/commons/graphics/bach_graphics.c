@@ -1035,32 +1035,45 @@ void paint_tuplet_slur(t_jgraphics* g, t_jrgba color, double x1, double y1, doub
     jgraphics_stroke(g);
 }
 
-void get_middle_refinement_point_for_curve(double x1, double y1, double x2, double y2, double *middle_x, double *middle_y, double *middle_derivative, double slope)
+void get_middle_refinement_point_for_curve(double x1, double y1, double x2, double y2, double *middle_x, double *middle_y, double *middle_derivative, double slope, e_slope_mapping slope_mapping_type)
 {
     double fabs_slope = fabs(slope);
     double chosen_x = (x1 + x2)/2. + slope * fabs_slope * (x2 - x1)/2.; 
 
     if (fabs_slope > 0.25 && fabs_slope < 1.) {
         // We compute the maximum point of the curvature for a x^a function.
-        // Such curvature is given by a*(a-1)*x^(a-2) / (1 + (a^2 x^(2a-2))^3/2,
+        // Such curvature is given by a*(a-1)*x^(a-2) / (1 + a^2 * x^(2a-2))^3/2,
         // and the non trivial maximum is reached for (\pm (a-2)/(2a^3-a^2))^(1/(2a-2))
-        double alpha = (1 + fabs_slope)/(1 - fabs_slope); // this is "a"
-        double alpha_squared = alpha*alpha;
-        double temp = (alpha - 2)/(2 * alpha_squared * alpha - alpha_squared);
-        double temp2 = pow(fabs(temp), 1/(2*alpha - 2));
-        if (slope < 0) { temp2 = 1 - temp2; } //temp2 = pow(temp2, alpha);
-        double chosen_x_2 = rescale(temp2, 0, 1, x1, x2);
+        double chosen_x_2 = chosen_x;
+        if (slope_mapping_type == k_SLOPE_MAPPING_BACH) {
+            double alpha = (1 + fabs_slope)/(1 - fabs_slope); // this is "a"
+            double alpha_squared = alpha*alpha;
+            double temp = (alpha - 2)/(2 * alpha_squared * alpha - alpha_squared);
+            double temp2 = pow(fabs(temp), 1/(2*alpha - 2));
+            if (slope < 0) { temp2 = 1 - temp2; } //temp2 = pow(temp2, alpha);
+            chosen_x_2 = rescale(temp2, 0, 1, x1, x2);
+        } else {
+            double RFACTOR = 1/0.23;
+            double PFACTOR = 5;
+            double DIV_RFACTOR = 1/(exp(RFACTOR)-1.);
+            double p = 1 * PFACTOR *(exp((1 - abs(slope))*RFACTOR)-1.)*DIV_RFACTOR;
+            
+            double temp = (exp(1/p) - 1);
+            double temp2 = 0.5 * p * log(0.5 * temp * temp * p * p);
+            if (slope < 0) { temp2 = 1 - temp2; } //temp2 = pow(temp2, alpha);
+            chosen_x_2 = rescale(temp2, 0, 1, x1, x2);
+        }
 //        chosen_x = chosen_x_2;
         chosen_x = fabs_slope > 0.5 ? chosen_x_2 : rescale(fabs_slope, 0.25, 0.5, chosen_x, chosen_x_2);
     }
     
     *middle_x = chosen_x;
-    *middle_y = rescale_with_slope_and_get_derivative(*middle_x, x1, x2, y1, y2, slope, middle_derivative);
+    *middle_y = rescale_with_slope_and_get_derivative(*middle_x, x1, x2, y1, y2, slope, middle_derivative, slope_mapping_type);
  }
 
-void paint_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width)
+void paint_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width, e_slope_mapping slope_mapping_type)
 {
-    paint_curve_and_get_bezier_control_points(g, color, build_pt(x1, y1), build_pt(x2, y2), slope, width, NULL, NULL, NULL, NULL, NULL);
+    paint_curve_and_get_bezier_control_points(g, color, build_pt(x1, y1), build_pt(x2, y2), slope, width, NULL, NULL, NULL, NULL, NULL, slope_mapping_type);
 }
 
 void paint_bezier_curve(t_jgraphics* g, t_jrgba color, double start_x, double start_y, double control_point1_x, double control_point1_y, double control_point2_x, double control_point2_y, double end_x, double end_y, double width)
@@ -1073,11 +1086,12 @@ void paint_bezier_curve(t_jgraphics* g, t_jrgba color, double start_x, double st
 }
 
 void paint_curve_and_get_bezier_control_points(t_jgraphics* g, t_jrgba color, t_pt start, t_pt end, double slope, double width, 
-                                                 t_pt *ctrl1, t_pt *ctrl2, t_pt *middle_pt, t_pt *ctrl3, t_pt *ctrl4)
+                                                 t_pt *ctrl1, t_pt *ctrl2, t_pt *middle_pt, t_pt *ctrl3, t_pt *ctrl4, e_slope_mapping slope_mapping_type)
 {
     double middle_x, middle_y, middle_derivative;
     double control_point1_x, control_point1_y, control_point2_x, control_point2_y, control_point3_x, control_point3_y, control_point4_x, control_point4_y;
     double x1 = start.x, y1 = start.y, x2 = end.x, y2 = end.y;
+    double orig_slope = slope;
     
     // we don't just paint a Bezier curve: first we split according to a middle point, depending on slope, in order to have a better slope-function approximation.
     if (slope == 0. || x1 == x2 || y1 == y2) { // easy case: it's a line
@@ -1109,9 +1123,10 @@ void paint_curve_and_get_bezier_control_points(t_jgraphics* g, t_jrgba color, t_
     }
 
     if (slope < 0) {
+        // manual mirroring
         t_pt tcp1, tcp2, tcp3, tcp4;
         slope *= -1;
-        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope);
+        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope, slope_mapping_type);
         get_bezier_control_points(x1, y1, middle_x, middle_y, slope, &tcp1.x, &tcp1.y, &tcp2.x, &tcp2.y, NULL, &middle_derivative);
         get_bezier_control_points(middle_x, middle_y, x2, y2, slope, &tcp3.x, &tcp3.y, &tcp4.x, &tcp4.y, &middle_derivative, NULL);
         control_point1_x = x1 + (x2 - tcp4.x);
@@ -1125,7 +1140,7 @@ void paint_curve_and_get_bezier_control_points(t_jgraphics* g, t_jrgba color, t_
         middle_x = x1 + (x2 - middle_x);
         middle_y = y1 + (y2 - middle_y);
     } else {
-        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope);
+        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope, slope_mapping_type);
         
         get_bezier_control_points(x1, y1, middle_x, middle_y, slope, &control_point1_x, &control_point1_y, &control_point2_x, &control_point2_y, NULL, &middle_derivative);
         get_bezier_control_points(middle_x, middle_y, x2, y2, slope, &control_point3_x, &control_point3_y, &control_point4_x, &control_point4_y, &middle_derivative, NULL);
@@ -1139,8 +1154,8 @@ void paint_curve_and_get_bezier_control_points(t_jgraphics* g, t_jrgba color, t_
     
 
 #ifdef CONFIGURATION_Development
-    if (g) {
-/*        paint_circle(g, get_grey(0), get_grey(0), control_point1_x, control_point1_y, 3, 2);
+/*    if (g) {
+        paint_circle(g, get_grey(0), get_grey(0), control_point1_x, control_point1_y, 3, 2);
         paint_circle(g, get_grey(0.8), get_grey(0.8), control_point2_x, control_point2_y, 3, 2);
         paint_circle(g, get_grey(0.6), get_grey(0.6), control_point3_x, control_point3_y, 3, 2);
         paint_circle(g, get_grey(0.4), get_grey(0.4), control_point4_x, control_point4_y, 3, 2);
@@ -1151,10 +1166,10 @@ void paint_curve_and_get_bezier_control_points(t_jgraphics* g, t_jrgba color, t_
         long i;
         for (i = 0; i < 200; i++) {
             double derivative, temp_x = rescale(i, 0, 200, x1, x2);
-            double temp_y = rescale_with_slope_and_get_derivative(temp_x, x1, x2, y1, y2, slope, &derivative);
+            double temp_y = rescale_with_slope_and_get_derivative(temp_x, x1, x2, y1, y2, orig_slope, &derivative, slope_mapping_type);
             paint_circle(g, color, color, temp_x, temp_y, 0.2, 1);
-        } */
-    }
+        } 
+    } */
 #endif
     
     if (ctrl1)
@@ -1202,7 +1217,8 @@ void paint_curve_and_get_bezier_control_points(t_jgraphics* g, t_jrgba color, t_
 }
 
 
-void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width_start, double width_end){
+void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width_start, double width_end, e_slope_mapping slope_mapping_type)
+{
     double middle_x, middle_y, middle_derivative;
     double hdyi, hdy1, hdy2, hdym, hdy3, hdy4, hdye; // half vertical corrections of bezier points (i = initial, 1 2 are control points, m is medium point, 3 4 are control points e is end point)
     double hdxi = 0, hdx1 = 0, hdx2 = 0, hdxm = 0, hdx3 = 0, hdx4 = 0, hdxe = 0; // half-horizontal corrections (initial, end)
@@ -1219,7 +1235,7 @@ void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1
     if (slope < 0) {
         t_pt tcp1, tcp2, tcp3, tcp4;
         slope *= -1;
-        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope);
+        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope, slope_mapping_type);
         get_bezier_control_points(x1, y1, middle_x, middle_y, slope, &tcp1.x, &tcp1.y, &tcp2.x, &tcp2.y, NULL, &middle_derivative);
         get_bezier_control_points(middle_x, middle_y, x2, y2, slope, &tcp3.x, &tcp3.y, &tcp4.x, &tcp4.y, &middle_derivative, NULL);
         control_point1_x = x1 + (x2 - tcp4.x);
@@ -1233,7 +1249,7 @@ void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1
         middle_x = x1 + (x2 - middle_x);
         middle_y = y1 + (y2 - middle_y);
     } else {
-        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope);
+        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope, slope_mapping_type);
         get_bezier_control_points(x1, y1, middle_x, middle_y, slope, &control_point1_x, &control_point1_y, &control_point2_x, &control_point2_y, NULL, &middle_derivative);
         get_bezier_control_points(middle_x, middle_y, x2, y2, slope, &control_point3_x, &control_point3_y, &control_point4_x, &control_point4_y, &middle_derivative, NULL);
         
@@ -1349,8 +1365,8 @@ void paint_colorgradient_line(t_jgraphics* g, t_jrgba color_start, t_jrgba color
     }
 }
 
-void paint_colorgradient_curve(t_jgraphics* g, t_jrgba color_start, t_jrgba color_end, double x1, double y1, double x2, double y2, double slope, double width, long num_steps,
-                                char colors_from_spectrum, double vel1, double vel2, double max_velocity){ // last 3 args only used in spectrum velocity handling
+void paint_colorgradient_curve(t_jgraphics* g, t_jrgba color_start, t_jrgba color_end, double x1, double y1, double x2, double y2, double slope, double width, long num_steps, char colors_from_spectrum, double vel1, double vel2, double max_velocity, e_slope_mapping slope_mapping_type)
+{ // last 3 args only used in spectrum velocity handling
     double middle_x, middle_y, middle_derivative;
     double control_point1_x, control_point1_y, control_point2_x, control_point2_y, control_point3_x, control_point3_y, control_point4_x, control_point4_y;
     // we don't just paint a Bezier curve: first we split according to a middle point, depending on slope, in order to have a better slope-function approximation.
@@ -1362,7 +1378,7 @@ void paint_colorgradient_curve(t_jgraphics* g, t_jrgba color_start, t_jrgba colo
     if (slope < 0) {
         t_pt tcp1, tcp2, tcp3, tcp4;
         slope *= -1;
-        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope);
+        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope, slope_mapping_type);
         get_bezier_control_points(x1, y1, middle_x, middle_y, slope, &tcp1.x, &tcp1.y, &tcp2.x, &tcp2.y, NULL, &middle_derivative);
         get_bezier_control_points(middle_x, middle_y, x2, y2, slope, &tcp3.x, &tcp3.y, &tcp4.x, &tcp4.y, &middle_derivative, NULL);
         control_point1_x = x1 + (x2 - tcp4.x);
@@ -1376,7 +1392,7 @@ void paint_colorgradient_curve(t_jgraphics* g, t_jrgba color_start, t_jrgba colo
         middle_x = x1 + (x2 - middle_x);
         middle_y = y1 + (y2 - middle_y);
     } else {
-        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope);
+        get_middle_refinement_point_for_curve(x1, y1, x2, y2, &middle_x, &middle_y, &middle_derivative, slope, slope_mapping_type);
         get_bezier_control_points(x1, y1, middle_x, middle_y, slope, &control_point1_x, &control_point1_y, &control_point2_x, &control_point2_y, NULL, &middle_derivative);
         get_bezier_control_points(middle_x, middle_y, x2, y2, slope, &control_point3_x, &control_point3_y, &control_point4_x, &control_point4_y, &middle_derivative, NULL);
     }
@@ -2094,7 +2110,8 @@ int is_pt_in_line_shape(double point_x, double point_y, double start_x, double s
 }
 
 
-int is_pt_in_curve_shape(double point_x, double point_y, double start_x, double start_y, double end_x, double end_y, double slope, double line_width){
+int is_pt_in_curve_shape(double point_x, double point_y, double start_x, double start_y, double end_x, double end_y, double slope, double line_width, e_slope_mapping slope_mapping_type)
+{
     double fabs_slope = fabs(slope);
     
     if (fabs_slope < 0.1)
@@ -2103,7 +2120,7 @@ int is_pt_in_curve_shape(double point_x, double point_y, double start_x, double 
     t_pt ctrl1, ctrl2, middle, ctrl3, ctrl4;
     t_pt start = build_pt(start_x, start_y);
     t_pt end = build_pt(end_x, end_y);
-    paint_curve_and_get_bezier_control_points(NULL, get_grey(0), start, end, slope, line_width, &ctrl1, &ctrl2, &middle, &ctrl3, &ctrl4);
+    paint_curve_and_get_bezier_control_points(NULL, get_grey(0), start, end, slope, line_width, &ctrl1, &ctrl2, &middle, &ctrl3, &ctrl4, slope_mapping_type);
 
     if (fabs_slope < 0.4) 
         return (is_pt_in_line_shape(point_x, point_y, start_x, start_y, middle.x, middle.y, line_width) ||

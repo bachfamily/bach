@@ -2342,7 +2342,8 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                                     if (right_dyn_temp) {
                                         if (!dynamics_mark_to_velocity(r_ob, prev_mark, &left_velocity, dyn_vel_associations, params, 1)) {
                                             if (!dynamics_mark_to_velocity(r_ob, right_dyn_temp->firstmark, &right_velocity, dyn_vel_associations, params, -1)) {
-                                                bpt->velocity = rescale_with_slope_inv(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nextchwithdyn), left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
+                                                // was: rescale_with_slope_inv
+                                                bpt->velocity = notationobj_rescale_with_slope(r_ob, notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nextchwithdyn), left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                             } else {
                                                 dynamics_mark_to_textbuf(right_dyn_temp->firstmark, marktext, 1024);
                                                 object_warn((t_object *)r_ob, "Could not find velocity assignment for dynamic marking '%s'. Skipping dynamic marking.", marktext);
@@ -2388,7 +2389,8 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                                 } else {
                                     if (!dynamics_mark_to_velocity(r_ob, left_corrected, &left_velocity, dyn_vel_associations, params, 1)) {
                                         if (!dynamics_mark_to_velocity(r_ob, right, &right_velocity, dyn_vel_associations, params, -1)) {
-                                            bpt->velocity = rescale_with_slope_inv(bpt->rel_x_pos, left->relative_position, right->relative_position, left_velocity, right_velocity, hairpin_is_crescordim(left->hairpin_to_next) == k_DYNAMICS_HAIRPIN_CRESCEXP ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (hairpin_is_crescordim(left->hairpin_to_next) == k_DYNAMICS_HAIRPIN_DIMEXP ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
+                                            // was: rescale_with_slope_inv
+                                            bpt->velocity = notationobj_rescale_with_slope(r_ob, bpt->rel_x_pos, left->relative_position, right->relative_position, left_velocity, right_velocity, left->hairpin_to_next == k_DYNAMICS_HAIRPIN_CRESCEXP ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (left->hairpin_to_next == k_DYNAMICS_HAIRPIN_DIMEXP ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                         } else {
                                             dynamics_mark_to_textbuf(right, marktext, 1024);
                                             object_warn((t_object *)r_ob, "Could not find velocity assignment for dynamic marking '%s'. Skipping dynamic marking.", marktext);
@@ -2414,7 +2416,7 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
             if (!dynamics_mark_to_velocity(r_ob, prev_mark, &left_velocity, dyn_vel_associations, params,  1)) {
                 if (!dynamics_mark_to_velocity(r_ob, right_dyn_mark, &right_velocity, dyn_vel_associations, params, -1)) {
                     if (last_hairpin * (right_velocity - left_velocity) > 0) {
-                        velocity = rescale_with_slope(CLAMP(ch_onset, left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
+                        velocity = notationobj_rescale_with_slope(r_ob, CLAMP(ch_onset, left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                         for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
                             note_set_velocity(r_ob, nt, velocity);
                             if (r_ob->breakpoints_have_velocity) {
@@ -2422,7 +2424,8 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                                     if (!bpt->prev)
                                         bpt->velocity = velocity;
                                     else {
-                                        bpt->velocity = rescale_with_slope_inv(CLAMP(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
+                                        // was: rescale_with_slope_inv
+                                        bpt->velocity = notationobj_rescale_with_slope(r_ob, CLAMP(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                     }
                                 }
                             }
@@ -2639,7 +2642,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
         t_llll *pivot_chords_ll = ll;
         char must_free_pivot_chords_ll = false;
         if (approx_thresh > 0) {
-            pivot_chords_ll = llll_approximate_breakpoint_function(ll, 0, approx_thresh, 2, 1, false, true, (t_object *)r_ob);
+            pivot_chords_ll = llll_approximate_breakpoint_function(ll, 0, approx_thresh, 2, 1, false, (e_slope_mapping)r_ob->slope_mapping_type, true, (t_object *)r_ob);
             must_free_pivot_chords_ll = true;
         }
         
