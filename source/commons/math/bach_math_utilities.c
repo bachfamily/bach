@@ -79,6 +79,19 @@ double combine_slopes(double slope1, double slope2)
 }
 
 
+double get_slope_p_Max(double slope)
+{
+    double RFACTOR = 1/0.23;
+    double PFACTOR = 5;
+    double DIV_RFACTOR = 1/(exp(RFACTOR)-1.);
+    
+    double p = (slope >= 0. ? 1 : -1) * PFACTOR *(exp((1 - abs(slope))*RFACTOR)-1.)*DIV_RFACTOR;
+    if (p>=0. && p<0.005) p = 0.005;
+    if (p<0. && p>-0.005) p = -0.005;
+    
+    return p;
+}
+
 double rescale_with_slope_and_get_derivative(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, e_slope_mapping slope_mapping)
 {
 	char mirrored = false;
@@ -129,12 +142,7 @@ double rescale_with_slope_and_get_derivative(double value, double min, double ma
         }
         
     } else { // MAX FUNCTION
-        
-        double RFACTOR = 1/0.23;
-        double PFACTOR = 5;
-        double DIV_RFACTOR = 1/(exp(RFACTOR)-1.);
-        
-        double p = (slope >= 0. ? 1 : -1) * PFACTOR *(exp((1 - abs(slope))*RFACTOR)-1.)*DIV_RFACTOR;
+        double p = get_slope_p_Max(slope);
         double div_erp = 1./(exp(1./p)-1.);
         double div_durp = 1./p;
         
@@ -186,12 +194,7 @@ double rescale_with_slope_inv(double value, double min, double max, double new_m
         }
         
     } else { // MAX FUNCTION
-        
-        double RFACTOR = 1/0.23;
-        double PFACTOR = 5;
-        double DIV_RFACTOR = 1/(exp(RFACTOR)-1.);
-        double p = (slope >= 0. ? 1 : -1) * PFACTOR *(exp((1 - abs(slope))*RFACTOR)-1.)*DIV_RFACTOR;
-        
+        double p = get_slope_p_Max(slope);
         res_norm = p * log(1.+(exp(1./p)-1)*value_norm);
     }
     

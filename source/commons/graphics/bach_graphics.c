@@ -1053,13 +1053,10 @@ void get_middle_refinement_point_for_curve(double x1, double y1, double x2, doub
             if (slope < 0) { temp2 = 1 - temp2; } //temp2 = pow(temp2, alpha);
             chosen_x_2 = rescale(temp2, 0, 1, x1, x2);
         } else {
-            double RFACTOR = 1/0.23;
-            double PFACTOR = 5;
-            double DIV_RFACTOR = 1/(exp(RFACTOR)-1.);
-            double p = 1 * PFACTOR *(exp((1 - abs(slope))*RFACTOR)-1.)*DIV_RFACTOR;
-            
+            double p = get_slope_p_Max(slope);
             double temp = (exp(1/p) - 1);
             double temp2 = 0.5 * p * log(0.5 * temp * temp * p * p);
+            
             if (slope < 0) { temp2 = 1 - temp2; } //temp2 = pow(temp2, alpha);
             chosen_x_2 = rescale(temp2, 0, 1, x1, x2);
         }

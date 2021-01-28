@@ -637,7 +637,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) uislot_writetxt, "writetxt", A_GIMME, 0);
 
 
-    // @method addslot @digest Set the conent of one or more slots
+    // @method addslot @digest Set the content of one or more slots
     // @description An <m>addslot</m> message will modify all the content of one or more slots.
     // The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
     // @copy BACH_DOC_NOTE_SLOT_CONTENT

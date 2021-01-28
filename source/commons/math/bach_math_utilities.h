@@ -135,6 +135,9 @@ double rescale_with_slope(double value, double min, double max, double new_min, 
  */
 double combine_slopes(double slope1, double slope2);
 
+// internal: get the p parameter for the slope computation with the Max formula
+double get_slope_p_Max(double slope);
+
 
 /**	Rescale a double (which ranged from a minimum and a maximum) to a new range. 
 	Also takes into account a slope factor, corresponding to a sort of "exponent" for the rescaling, and computes the derivative in the point.
