@@ -354,13 +354,22 @@ void bach_pooldump(t_bach *x)
         for (row = 0; row < BACH_LLLL_PAGE_SIZE; row++) {
             t_uint32 phonenumber = x->b_llll_phonebook[page / BACH_LLLL_PAGE_SIZE][row];
             t_llll *ll = x->b_llll_book[phonenumber / BACH_LLLL_PAGE_SIZE] + phonenumber % BACH_LLLL_PAGE_SIZE;
+            object_post((t_object *) bach, "--------");
+            object_post((t_object *) bach, "phonenumber: %u", phonenumber);
+            object_post((t_object *) bach, "count: %d", ll->l_count);
             llll_print(ll, (t_object *) bach, 0, 6, NULL);
+            object_post((t_object *) bach, "--------");
+
         }
     }
     for (row = 0; row < x->b_llll_current_phonebook_idx % BACH_LLLL_PAGE_SIZE; row++) {
         t_uint32 phonenumber = x->b_llll_phonebook[page / BACH_LLLL_PAGE_SIZE][row];
         t_llll *ll = x->b_llll_book[phonenumber / BACH_LLLL_PAGE_SIZE] + phonenumber % BACH_LLLL_PAGE_SIZE;
+        object_post((t_object *) bach, "--------");
+        object_post((t_object *) bach, "phonenumber: %u", phonenumber);
+        object_post((t_object *) bach, "count: %d", ll->l_count);
         llll_print(ll, (t_object *) bach, 0, 6, NULL);
+        object_post((t_object *) bach, "--------");
     }
     object_post((t_object *) x, "----------------------------");
 }
@@ -1351,17 +1360,17 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["alter"] = new t_mathUnaryFunctionAA<hatom_fn_alter>("alter");
     (*bifTable)["cents"] = new t_mathUnaryFunctionAA<hatom_fn_cents>("cents");
     
-    (*bifTable)["pow"] = new t_mathBinaryFunctionAAA<hatom_op_pow>("base", "exponent", "pow");
-    (*bifTable)["mod"] = new t_mathBinaryFunctionAAA<hatom_fn_mod>("x", "y", "mod");
-    (*bifTable)["min"] = new t_mathBinaryFunctionAAA<hatom_fn_min>("x", "y", "min");
-    (*bifTable)["max"] = new t_mathBinaryFunctionAAA<hatom_fn_max>("x", "y", "max");
-    (*bifTable)["random"] = new t_mathBinaryFunctionAAA<hatom_fn_random>("x", "y", "random");
-    (*bifTable)["bessel"] = new t_mathBinaryFunctionAAA<hatom_fn_jn>("x", "order", "bessel");
-    (*bifTable)["approx"] = new t_mathBinaryFunctionAAA<hatom_fn_approx>("pitch", "tonedivision", "approx");
-    (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>("x", "y", "enharm");
-    (*bifTable)["makepitchsc"] = new t_mathBinaryFunctionAAA<hatom_fn_makepitchsc>("steps", "cents", "makepitchsc");
+    (*bifTable)["pow"] = new t_mathBinaryFunctionAAA<hatom_op_pow>("pow", "base", "exponent");
+    (*bifTable)["mod"] = new t_mathBinaryFunctionAAA<hatom_fn_mod>("mod", "x", "y");
+    (*bifTable)["min"] = new t_mathBinaryFunctionAAA<hatom_fn_min>("min", "x", "y");
+    (*bifTable)["max"] = new t_mathBinaryFunctionAAA<hatom_fn_max>("max", "x", "y");
+    (*bifTable)["random"] = new t_mathBinaryFunctionAAA<hatom_fn_random>("random", "x", "y");
+    (*bifTable)["bessel"] = new t_mathBinaryFunctionAAA<hatom_fn_jn>("bessel", "x", "order");
+    (*bifTable)["approx"] = new t_mathBinaryFunctionAAA<hatom_fn_approx>("approx", "pitch", "tonedivision");
+    (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>("enharm", "x", "y");
+    (*bifTable)["makepitchsc"] = new t_mathBinaryFunctionAAA<hatom_fn_makepitchsc>("makepitchsc", "steps", "cents");
 
-    (*bifTable)["makepitch"] = new t_mathTernaryFunctionAAAA<hatom_fn_makepitch>("degree", "alter", "octave", "makepitch");
+    (*bifTable)["makepitch"] = new t_mathTernaryFunctionAAAA<hatom_fn_makepitch>("makepitch", "degree", "alter", "octave");
     
     (*bifTable)["#u-"] = new t_mathUnaryFunctionAA<hatom_op_uminus>("#u-");
     (*bifTable)["#!"] = new t_mathUnaryFunctionAA<hatom_op_lognot>("#!");

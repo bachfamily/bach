@@ -85,6 +85,8 @@ typedef struct _reducefunction
 	char	algorithm;
 	char	slopes;
 	
+    long                slope_mapping_type; // one of the e_slope_mapping
+
 	double	thresh;
 	char	relative;
 	long	max_num_points;
@@ -140,7 +142,11 @@ void C74_EXPORT ext_main(void *moduleRef)
 
 	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 
-	
+    CLASS_ATTR_LONG(c,"slopemapping",0, t_reducefunction, slope_mapping_type);
+    CLASS_ATTR_STYLE_LABEL(c,"slopemapping",0,"enumindex","Slope Mapping");
+    CLASS_ATTR_ENUMINDEX(c,"slopemapping", 0, "bach Max");
+    // @description Sets the function to be used for slope mapping: either bach (default) or Max.
+
 	CLASS_ATTR_CHAR(c,"algorithm",0, t_reducefunction, algorithm);
 	CLASS_ATTR_STYLE_LABEL(c,"algorithm",0,"enumindex","Algorithm");
 	CLASS_ATTR_ENUMINDEX(c,"algorithm", 0, "Clustering Greedy Clustering Integral Approximation"); 
@@ -254,7 +260,7 @@ void reducefunction_anything(t_reducefunction *x, t_symbol *msg, long ac, t_atom
 		llll_free(trans);
 	}
 	
-	t_llll *out_ll = llll_approximate_breakpoint_function(ll, x->max_num_points, thresh, is_atom_number(&x->p) ? atom_getlong(&x->p) : 0, x->algorithm, x->slopes, 0, (t_object *)x);
+	t_llll *out_ll = llll_approximate_breakpoint_function(ll, x->max_num_points, thresh, is_atom_number(&x->p) ? atom_getlong(&x->p) : 0, x->algorithm, x->slopes, (e_slope_mapping)x->slope_mapping_type, 0, (t_object *)x);
 	llll_release(ll);
 	llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, out_ll, 0);
 	reducefunction_bang(x);
