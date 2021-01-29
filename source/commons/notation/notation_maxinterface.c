@@ -6023,6 +6023,11 @@ void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard
 }
 
 
+void notation_obj_set_durationline(t_notation_obj *r_ob, t_llll *durationline_as_breakpoints) {
+    set_breakpoints_to_selection(r_ob, durationline_as_breakpoints);
+    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION);
+}
+
 void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard) {
     // gotta paste the (only) cached slot into the active slot (we don't check the type)
     t_llll *clonedbpts;

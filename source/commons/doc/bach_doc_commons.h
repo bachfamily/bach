@@ -1563,10 +1563,17 @@
 	// The <m>erasebreakpoints</m> message deletes all the pitch breakpoints of the selected notes.
 
 
-#define BACH_DOC_MESSAGE_ADDSLOT
-	// An <m>addslot</m> message will replace the content of one or more slots, for all the selected notes.
+#define BACH_DOC_MESSAGE_SETSLOT
+	// A <m>setslot</m> message (or <m>addslot</m> for backward compatibility)
+    // will replace the content of one or more slots, for all the selected notes.
 	// The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
+
+
+#define BACH_DOC_MESSAGE_SETDURATIONLINE
+    // A <m>setedurationline</m> message will replace the duration line of all the selected notes with the introduced breakpoints
+    // The syntax is
+    // <b>setdurationline [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>] [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>]...</b>. <br />
 
 
 #define BACH_DOC_MESSAGE_ERASESLOT

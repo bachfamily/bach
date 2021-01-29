@@ -30619,7 +30619,8 @@ void change_color_according_to_llll(t_jrgba *color, t_llll *llll){
 
 
 
-void set_breakpoints_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints){ // there's not really a TRUE checking about the validity of the breakpoints, so be careful!
+// there's not really a TRUE checking about the validity of the breakpoints, so be careful!
+void set_breakpoints_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints){
     if (breakpoints){
         t_llllelem *elem;
         if (breakpoints) 
@@ -41047,8 +41048,8 @@ char *undo_op_to_string(long undo_op)
         case k_UNDO_OP_ERASE_BREAKPOINTS_FOR_SELECTION:
             sprintf(buf, "Erase Pitch Breakpoints");
             break;
-        case k_UNDO_OP_ADD_SLOTS_TO_SELECTION:
-            sprintf(buf, "Add Slots");
+        case k_UNDO_OP_SET_SLOTS_TO_SELECTION:
+            sprintf(buf, "Set Slots");
             break;
         case k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION:
             sprintf(buf, "Erase Slots");
@@ -41130,6 +41131,9 @@ char *undo_op_to_string(long undo_op)
             break;
         case k_UNDO_OP_CHANGE_DYNAMICS:
             sprintf(buf, "Change Dynamics");
+            break;
+        case k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION:
+            sprintf(buf, "Change Duration Lines");
             break;
         case k_UNDO_OP_TRIM_END:
             sprintf(buf, "Trim End");

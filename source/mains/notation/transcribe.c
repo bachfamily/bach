@@ -682,7 +682,7 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                     llll_free(command);
                 } else {
                     t_llll *command = llll_get();
-                    llll_appendsym(command, _llllobj_sym_addslot);
+                    llll_appendsym(command, _llllobj_sym_setslot);
                     llll_chain(command, llll_subllll(args->l_head->l_next, args->l_tail));
                     llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, command);
                     llll_free(command);

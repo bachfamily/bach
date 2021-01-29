@@ -637,23 +637,25 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) uislot_writetxt, "writetxt", A_GIMME, 0);
 
 
-    // @method addslot @digest Set the conent of one or more slots
-    // @description An <m>addslot</m> message will modify all the content of one or more slots.
+    // @method setslot @digest Set the content of one or more slots
+    // @description A <m>setslot</m> message (or <m>addslot</m>, for backward compatibility)
+    // modifies all the content of one or more slots.
     // The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
     // @copy BACH_DOC_NOTE_SLOT_CONTENT
     // Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
-    // @example addslot [6 0.512] @caption fill (float) slot 6 with number 0.512
-    // @example addslot [5 42] @caption fill (int) slot 5 with number 42
-    // @example addslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
-    // @example addslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
-    // @example addslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
-    // @example addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
-    // @example addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
-    // @example addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
-    // @example addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
+    // @example setslot [6 0.512] @caption fill (float) slot 6 with number 0.512
+    // @example setslot [5 42] @caption fill (int) slot 5 with number 42
+    // @example setslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
+    // @example setslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
+    // @example setslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
+    // @example setslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
+    // @example setslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
+    // @example setslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
+    // @example setslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
     // @seealso changeslotitem, eraseslot
     class_addmethod(c, (method) uislot_add_slot, "addslot", A_GIMME, 0);
+    class_addmethod(c, (method) uislot_add_slot, "setslot", A_GIMME, 0);
 
 
     // @method eraseslot @digest Clear a specific slot
@@ -950,7 +952,7 @@ void uislot_add_slot_do(t_uislot *x, t_llll *slot_as_llll)
     lock_general_mutex((t_notation_obj *)x);
     set_slots_values_to_note_from_llll((t_notation_obj *) x, x->r_ob.dummynote, slot_as_llll);
     unlock_general_mutex((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_SLOTS_TO_SELECTION);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
 }
 
 
@@ -1286,7 +1288,7 @@ void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv){ //argv+
                         llll_free(sampled);
                     }
                 }
-            } else if (router == _llllobj_sym_addslot) {
+            } else if (router == _llllobj_sym_addslot || router == _llllobj_sym_setslot) {
                 llll_behead(inputlist);
                 uislot_add_slot_do(x, inputlist);
             } else if (!x->r_ob.itsme) {

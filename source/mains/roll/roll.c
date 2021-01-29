@@ -221,7 +221,7 @@ void roll_sel_change_tail(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_change_ioi(t_roll *x, t_symbol *s, long argc, t_atom *argv); // undocumented, troublesome
 void roll_sel_add_breakpoint(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_erase_breakpoints(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_sel_add_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_sel_set_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_erase_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_change_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_append_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv);
@@ -3330,6 +3330,9 @@ void roll_sel_erase_breakpoints(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_BREAKPOINTS_FOR_SELECTION);
 }
 
+
+
+
 void roll_sel_add_breakpoint(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     double rel_x_pos, y_pos, slope;
     long vel = 0; 
@@ -3385,7 +3388,53 @@ void roll_sel_add_breakpoint(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 }
 
 
-void roll_sel_add_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
+
+
+
+void roll_sel_set_durationline(t_roll *x, t_symbol *s, long argc, t_atom *argv){
+    t_llll *dl_as_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
+    char lambda = (s == _llllobj_sym_lambda);
+    char changed = 0;
+    
+    lock_general_mutex((t_notation_obj *)x);
+    if (dl_as_llll) {
+        t_notation_item *curr_it;
+        curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
+        while (curr_it) {
+            if (curr_it->type == k_NOTE) {
+                t_note *nt = (t_note *) curr_it;
+                if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
+                    create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                    set_breakpoints_values_to_note_from_llll((t_notation_obj *)x, nt, dl_as_llll);
+                    changed = 1;
+                }
+            } else if (curr_it->type == k_CHORD) {
+                t_chord *ch = (t_chord *) curr_it;
+                t_note *nt;
+                for (nt=ch->firstnote; nt; nt = nt->next) {
+                    if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
+                        create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                        set_breakpoints_values_to_note_from_llll((t_notation_obj *)x, nt, dl_as_llll);
+                        changed = 1;
+                    }
+                }
+            }
+            curr_it = lambda ? NULL : curr_it->next_selected;
+        }
+    }
+    
+    llll_free(dl_as_llll);
+    
+    if (x->r_ob.need_perform_analysis_and_change)
+        process_chord_parameters_calculation_NOW(x);
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
+}
+
+
+
+void roll_sel_set_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *slot_as_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
     char lambda = (s == _llllobj_sym_lambda);
     char changed = 0;
@@ -3429,7 +3478,7 @@ void roll_sel_add_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         process_chord_parameters_calculation_NOW(x);
     unlock_general_mutex((t_notation_obj *)x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_SLOTS_TO_SELECTION);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
 }
 
 void roll_sel_erase_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
@@ -5144,21 +5193,30 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @see addbreakpoint
     class_addmethod(c, (method) roll_sel_erase_breakpoints, "erasebreakpoints", A_GIMME, 0);
     
+
+    // @method setdurationline @digest Set the duration line for selected items
+    // @description @copy BACH_DOC_MESSAGE_SETDURATIONLINE
+    // @marg 0 @name breakpoints @optional 0 @type llll
+    // @example setdurationline [0 0 0] [0.5 200 0.2] [1 500 0] @caption sets duration line breakpoints to selection
+    // @seealso addbreakpoint, erasebreakpoints
+    class_addmethod(c, (method) roll_sel_set_durationline, "setdurationline", A_GIMME, 0);
+
     
-    // @method addslot @digest Set the content of one or more slots for selected items
-    // @description @copy BACH_DOC_MESSAGE_ADDSLOT
+    // @method setslot @digest Set the content of one or more slots for selected items
+    // @description @copy BACH_DOC_MESSAGE_SETSLOT
     // @marg 0 @name slots @optional 0 @type llll
-    // @example addslot [6 0.512] @caption fill (float) slot 6 with number 0.512
-    // @example addslot [5 42] @caption fill (int) slot 5 with number 42
-    // @example addslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
-    // @example addslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
-    // @example addslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
-    // @example addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
-    // @example addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
-    // @example addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
-    // @example addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
+    // @example setslot [6 0.512] @caption fill (float) slot 6 with number 0.512
+    // @example setslot [5 42] @caption fill (int) slot 5 with number 42
+    // @example setslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
+    // @example setslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
+    // @example setslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
+    // @example setslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
+    // @example setslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
+    // @example setslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
+    // @example setslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
     // @seealso changeslotitem, eraseslot
-    class_addmethod(c, (method) roll_sel_add_slot, "addslot", A_GIMME, 0);
+    class_addmethod(c, (method) roll_sel_set_slot, "addslot", A_GIMME, 0);
+    class_addmethod(c, (method) roll_sel_set_slot, "setslot", A_GIMME, 0);
 
 
     // @method eraseslot @digest Clear a specific slot for selected items
@@ -7733,8 +7791,10 @@ void roll_lambda(t_roll *x, t_symbol *s, long argc, t_atom *argv){
             roll_sel_delete_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_insertslotitem){
             roll_sel_insert_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
-        } else if (router == _llllobj_sym_addslot){
-            roll_sel_add_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_addslot || router == _llllobj_sym_setslot){
+            roll_sel_set_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_setdurationline){
+            roll_sel_set_durationline(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_addbreakpoint){
             roll_sel_add_breakpoint(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_erasebreakpoints){
