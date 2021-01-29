@@ -1254,7 +1254,10 @@ long notationobj_apply_undo_redo_information(t_notation_obj *r_ob, t_undo_redo_i
     } else if (type == k_CHORD) {
         if (modif_type == k_UNDO_MODIFICATION_CHANGE || modif_type == k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER) {
             if (reverse_information) {
-                newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO);
+                if (obj_is_score)
+                    newcontent = get_scorechord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
+                else
+                    newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO);
                 *reverse_information = build_undo_redo_information(ID, k_CHORD, modif_type, voice_num, 0, k_HEADER_NONE, newcontent);
             }
             if (obj_is_score) {
