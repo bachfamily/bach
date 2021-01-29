@@ -184,6 +184,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	CLASS_ATTR_STYLE_LABEL(c,"slope",0,"enumindex","Slope Handling");
 	CLASS_ATTR_ENUMINDEX(c,"slope", 0, "Ignore Approximate"); 
 	CLASS_ATTR_FILTER_CLIP(c, "slope", 0, 1);
+    // @description Toggles the ability to either ignore or approximate slopes.
 	
 	class_register(CLASS_BOX, c);
 	reducefunction_class = c;

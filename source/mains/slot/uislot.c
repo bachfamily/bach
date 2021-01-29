@@ -640,7 +640,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @method setslot @digest Set the content of one or more slots
     // @description A <m>setslot</m> message (or <m>addslot</m>, for backward compatibility)
     // modifies all the content of one or more slots.
-    // The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
+    // The syntax is <b>setslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
     // @copy BACH_DOC_NOTE_SLOT_CONTENT
     // Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
@@ -665,7 +665,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example eraseslot active @caption clear currently open slot
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
-    // @seealso addslot, changeslotitem, resetslotinfo
+    // @seealso setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_erase_slot, "eraseslot", A_GIMME, 0);
 
     
@@ -676,7 +676,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example moveslot 2 7 @caption move the content of slot 2 to slot 7 for selected items
     // @example moveslot 2 active @caption destination slot is the active slot
     // @example moveslot amplienv myfunction @caption move the 'amplienv' slot to the 'myfunction' slot
-    // @seealso copyslot, eraseslot, addslot, changeslotitem, resetslotinfo
+    // @seealso copyslot, eraseslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_move_slot, "moveslot", A_GIMME, 0);
     
     
@@ -687,7 +687,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example copyslot 2 7 @caption copy the content of slot 2 to slot 7 for selected items
     // @example copyslot 2 active @caption destination slot is the active slot
     // @example copyslot amplienv myfunction @caption copy the slot named amplienv to the slot named myfunction
-    // @seealso moveslot, eraseslot, addslot, changeslotitem, resetslotinfo
+    // @seealso moveslot, eraseslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_copy_slot, "copyslot", A_GIMME, 0);
     
 
@@ -714,7 +714,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example changeslotitem 9 1 highpass 400 0 2 @caption set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"
     // @example changeslotitem 8 0 Max.app 0 @caption append the Max.app file in the 8th (filelist) slot, and make it active
     // @example changeslotitem 8 0 0 2 @caption Make 2nd file active in 8th (filelist) slot
-    // @seealso addslot, eraseslot
+    // @seealso setslot, eraseslot
     class_addmethod(c, (method) uislot_change_slot_item, "changeslotvalue", A_GIMME, 0);
     class_addmethod(c, (method) uislot_change_slot_item, "changeslotitem", A_GIMME, 0);
 
@@ -727,7 +727,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) uislot_append_slot_item, "appendslotitem", A_GIMME, 0);
     
     // @method prependslotitem @digest Prepend a slot element at the beginning of a slot
@@ -736,7 +736,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) uislot_prepend_slot_item, "prependslotitem", A_GIMME, 0);
     
     // @method insertslotitem @digest Insert a slot element at a given position in a slot
@@ -746,7 +746,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 2 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) uislot_insert_slot_item, "insertslotitem", A_GIMME, 0);
     
     // @method deleteslotitem @digest Delete the slot element at a given position of a slot
@@ -757,7 +757,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example deleteslotitem 3 2 @caption delete 2nd item of 3rd slot
     // @example deleteslotitem 3 [0.7] @caption delete item 3rd slot matching X = 0.7
     // @example deleteslotitem 3 [0.7] @thresh 0.1 @caption the same, with a tolerance of 0.1
-    // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
+    // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, setslot, eraseslot
     class_addmethod(c, (method) uislot_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 
     
@@ -835,7 +835,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @example openslotwin 3 @caption open 3rd slot window
     // @example openslotwin amplienv @caption open slot window for slot named 'amplienv'
-    // @seealso addslot
+    // @seealso setslot
     class_addmethod(c, (method) uislot_anything, "openslotwin", A_GIMME, 0);
 
     

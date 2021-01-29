@@ -4643,7 +4643,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description Fills each note in a sequence of ties with the slots of the first tied note, provided that the <m>singleslotfortiednotes</m> specification
     // is set in the slotinfo (otherwise the slot is not copied). This might be useful for instance while reversing, scrambling or modifying sequences of tied notes
     // while preserving the correct slot information.
-    // @seealso addslot
+    // @seealso setslot
     class_addmethod(c, (method) score_copy_slots_to_tied_noted_sequences, "filltiesequenceswithslots", 0);
 
     
@@ -4990,7 +4990,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @example openslotwin 3 @caption open 3rd slot window for selected note
     // @example openslotwin amplienv @caption open slot window for slot named 'amplienv'
-    // @seealso addslot
+    // @seealso setslot
     class_addmethod(c, (method) score_openslotwin, "openslotwin", A_GIMME, 0);
 
 
@@ -6071,7 +6071,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example eraseslot active @caption clear currently open slot for selected notes
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
-    // @seealso addslot, changeslotitem
+    // @seealso setslot, changeslotitem
     class_addmethod(c, (method) score_sel_erase_slot, "eraseslot", A_GIMME, 0);
 
     
@@ -6082,7 +6082,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example moveslot 2 7 @caption move the content of slot 2 to slot 7 for selected items
     // @example moveslot 2 active @caption destination slot is the active slot
     // @example copyslot amplienv myfunction @caption copy the slot named amplienv to the slot named myfunction
-    // @seealso copyslot, eraseslot, addslot, changeslotitem, resetslotinfo
+    // @seealso copyslot, eraseslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) score_sel_move_slot, "moveslot", A_GIMME, 0);
     
     
@@ -6093,7 +6093,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example copyslot 2 7 @caption copy the content of slot 2 to slot 7 for selected items
     // @example copyslot 2 active @caption destination slot is the active slot
     // @example copyslot amplienv myfunction @caption copy the 'amplienv' slot to the 'myfunction' slot
-    // @seealso moveslot, eraseslot, addslot, changeslotitem, resetslotinfo
+    // @seealso moveslot, eraseslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) score_sel_copy_slot, "copyslot", A_GIMME, 0);
     
 
@@ -6110,7 +6110,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example changeslotitem 9 1 highpass 400 0 2 @caption set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"
     // @example changeslotitem 8 0 Max.app 0 @caption append the Max.app file in the 8th (filelist) slot, and make it active
     // @example changeslotitem 8 0 0 2 @caption Make 2nd file active in 8th (filelist) slot
-    // @seealso addslot, eraseslot
+    // @seealso setslot, eraseslot
     class_addmethod(c, (method) score_sel_change_slot_item, "changeslotvalue", A_GIMME, 0);
     class_addmethod(c, (method) score_sel_change_slot_item, "changeslotitem", A_GIMME, 0);
 
@@ -6122,7 +6122,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) score_sel_append_slot_item, "appendslotitem", A_GIMME, 0);
     
     // @method prependslotitem @digest Prepend a slot element at the beginning of a slot
@@ -6131,7 +6131,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) score_sel_prepend_slot_item, "prependslotitem", A_GIMME, 0);
     
     // @method insertslotitem @digest Insert a slot element at a given position in a slot
@@ -6141,7 +6141,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 2 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) score_sel_insert_slot_item, "insertslotitem", A_GIMME, 0);
     
     // @method deleteslotitem @digest Delete the slot element at a given position of a slot
@@ -6152,7 +6152,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example deleteslotitem 3 2 @caption delete 2nd item of 3rd slot
     // @example deleteslotitem 3 [0.7] @caption delete item 3rd slot matching X = 0.7
     // @example deleteslotitem 3 [0.7] @thresh 0.1 @caption the same, with a tolerance of 0.1
-    // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
+    // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, setslot, eraseslot
     class_addmethod(c, (method) score_sel_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 
     
@@ -6343,7 +6343,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name modification_message @optional 0 @type llll
     // @example lamdba cents $1 @caption assign the incoming value as note cents
     // @example lamdba changeslotitem $1 $2 $3 @caption the same, for some slot value
-    // @seealso cents, velocity, changeslotitem, addslot, eraseslot, name
+    // @seealso cents, velocity, changeslotitem, setslot, eraseslot, name
     class_addmethod(c, (method) score_lambda, "lambda", A_GIMME, 0);
 
 

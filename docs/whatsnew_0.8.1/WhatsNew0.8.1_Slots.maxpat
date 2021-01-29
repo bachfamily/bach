@@ -134,7 +134,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 399.213866999999993, 2909.0, 167.0, 22.0 ],
-					"text" : "addslot (3 ((a b c) (d e f) foo))"
+					"text" : "setslot (3 ((a b c) (d e f) foo))"
 				}
 
 			}
@@ -170,7 +170,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 225.213898, 2909.0, 155.0, 22.0 ],
-					"text" : "addslot [3 [a b c] [d e f] foo]"
+					"text" : "setslot [3 [a b c] [d e f] foo]"
 				}
 
 			}
@@ -524,7 +524,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 19.0, 1315.0, 350.0, 22.0 ],
-					"text" : "sel note if noteindex == 2, addslot [notehead diamond], unsel all"
+					"text" : "sel note if noteindex == 2, setslot [notehead diamond], unsel all"
 				}
 
 			}
@@ -586,7 +586,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 41.0, 1105.0, 395.0, 22.0 ],
-					"text" : "sel note if symduration >= 1/2, addslot [articulations acc tr# trb], unsel all"
+					"text" : "sel note if symduration >= 1/2, setslot [articulations acc tr# trb], unsel all"
 				}
 
 			}
@@ -598,7 +598,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 19.0, 1044.0, 344.0, 22.0 ],
-					"text" : "sel note if duration < 600, addslot [articulations stacc], unsel all"
+					"text" : "sel note if duration < 600, setslot [articulations stacc], unsel all"
 				}
 
 			}
@@ -703,7 +703,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 19.0, 795.0, 374.0, 22.0 ],
-					"text" : "sel note if duration > 600, addslot [dynamics 0<<ff>p_p>0 ], unsel all"
+					"text" : "sel note if duration > 600, setslot [dynamics 0<<ff>p_p>0 ], unsel all"
 				}
 
 			}
