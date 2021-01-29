@@ -141,6 +141,36 @@ void check_num_undo_steps(t_notation_obj *r_ob)
 }
 
 
+char* get_string_for_tick(t_hatom *h, long maxdecimals)
+{
+    if (hatom_gettype(h) == H_OBJ) {
+        char *out;
+        t_undo_redo_information *info = (t_undo_redo_information *)hatom_getobj(h);
+        long ID = info->n_it_ID;
+        long type = info->n_it_type;
+        long modif = info->modification_type;
+        out = (char *)bach_newptr(20 * sizeof(char));
+        snprintf_zero(out, 20, "(%s%ld%s)",
+                      type == k_WHOLE_NOTATION_OBJECT ? "w" : (type == k_HEADER_DATA ? "h" : (type == k_MEASURE ? "m" : (type == k_CHORD ? "c" : (type == k_VOICE ? "v" : (type == k_NOTE ? "n" : "?"))))),
+                      ID,
+                      modif == k_UNDO_MODIFICATION_ADD ? "+" : (modif == k_UNDO_MODIFICATION_DELETE ? "-" : (modif == k_UNDO_MODIFICATION_CHANGE ? "~" : (modif == k_UNDO_MODIFICATION_CHANGE_FLAG ? "^" : (modif == k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER ? "*" : (modif == k_UNDO_MODIFICATION_CHANGE_NAME ? "§" : "?"))))));
+        return out;
+    } else if (hatom_gettype(h) == H_LONG) {
+        char *out = (char *)bach_newptr(256 * sizeof(char));
+        undo_op_to_string(hatom_getlong(h), out);
+        return out;
+    }
+    return NULL;
+}
+
+
+
+
+void post_undo_redo_llll(t_notation_obj *r_ob, char what)
+{
+    llll_print_named(what == k_UNDO ? r_ob->undo_llll : r_ob->redo_llll, what == k_UNDO ? gensym("Current Undo") : gensym("Current Redo"), 0, 0, get_string_for_tick);
+}
+
 t_llllelem *create_undo_redo_step_marker(t_notation_obj *r_ob, char what, char from_what, long undo_op, char lock_undo_mutex)
 {
     t_llllelem *res = NULL;
@@ -234,34 +264,6 @@ void create_header_undo_tick(t_notation_obj *r_ob, e_header_elems what)
 }
 
 
-char* get_string_for_tick(t_hatom *h, long maxdecimals)
-{
-    if (hatom_gettype(h) == H_OBJ) {
-        char *out;
-        t_undo_redo_information *info = (t_undo_redo_information *)hatom_getobj(h);
-        long ID = info->n_it_ID;
-        long type = info->n_it_type;
-        long modif = info->modification_type;
-        out = (char *)bach_newptr(20 * sizeof(char));
-        snprintf_zero(out, 20, "(%s%ld%s)",
-                      type == k_WHOLE_NOTATION_OBJECT ? "w" : (type == k_HEADER_DATA ? "h" : (type == k_MEASURE ? "m" : (type == k_CHORD ? "c" : (type == k_VOICE ? "v" : (type == k_NOTE ? "n" : "?"))))),
-                      ID,
-                      modif == k_UNDO_MODIFICATION_ADD ? "+" : (modif == k_UNDO_MODIFICATION_DELETE ? "-" : (modif == k_UNDO_MODIFICATION_CHANGE ? "~" : (modif == k_UNDO_MODIFICATION_CHANGE_FLAG ? "^" : (modif == k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER ? "*" : (modif == k_UNDO_MODIFICATION_CHANGE_NAME ? "§" : "?"))))));
-        return out;
-    } else if (hatom_gettype(h) == H_LONG) {
-        char *out = (char *)bach_newptr(256 * sizeof(char));
-        undo_op_to_string(hatom_getlong(h), out);
-        return out;
-    }
-    return NULL;
-}
-
-
-
-void post_undo_redo_llll(t_notation_obj *r_ob, char what)
-{
-    llll_print_named(what == k_UNDO ? r_ob->undo_llll : r_ob->redo_llll, what == k_UNDO ? gensym("Current Undo") : gensym("Current Redo"), 0, 0, get_string_for_tick);
-}
 
 
 void post_undo_redo_tick(t_notation_obj *r_ob, long what, t_undo_redo_information *info)

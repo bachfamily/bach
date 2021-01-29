@@ -354,6 +354,7 @@ t_llllelem *notation_item_to_undo_tick(t_notation_obj *r_ob, t_notation_item *it
 long notationobj_undo_redo(t_notation_obj *r_ob, char what);
 
 
+void check_num_undo_steps(t_notation_obj *r_ob);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE
