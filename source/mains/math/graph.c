@@ -1139,7 +1139,7 @@ void graph_paint(t_graph *x, t_object *view){
 	double font_size = jbox_get_fontsize((t_object *) x);
 	t_symbol *font_name = jbox_get_fontname((t_object *) x);
 	t_jfont *jf_labels = jfont_create_debug(font_name->s_name, (t_jgraphics_font_slant) jbox_get_font_slant((t_object *) x), (t_jgraphics_font_weight) jbox_get_font_weight((t_object *) x), font_size);
-	t_jfont *jf_axisnames = jfont_create_debug("Times", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, font_size * 1.25);
+	t_jfont *jf_axisnames = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, font_size * 1.25);
 	
 	// getting rectangle dimensions
 	g = (t_jgraphics*) patcherview_get_jgraphics(view); 
@@ -1310,7 +1310,7 @@ void graph_paint(t_graph *x, t_object *view){
 				jfont_text_measure(jf_labels, text, &width, &height);
 				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, writing_direction < 0  ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);
 			}
-			for (p = -x->labels_x_step; p > x->min_x && center_x + p * scale_x > CONST_ARROW_SIZE + 4; p -= x->labels_y_step) {
+			for (p = -x->labels_y_step; p > x->min_y && center_y + p * scale_y > CONST_ARROW_SIZE + 4; p -= x->labels_y_step) {
 				number_to_label_text(x, p, text);
 				jfont_text_measure(jf_labels, text, &width, &height);
 				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, writing_direction < 0 ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);

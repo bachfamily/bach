@@ -220,7 +220,7 @@
 		<method name="addslot">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<digest>
-				Set the conent of one or more slots
+				Set the content of one or more slots
 			</digest>
 			<description>
 				Syntax: <b>addslot <m>&lt;int/symbol: slot_number_or_name&gt;</m> </b><br />

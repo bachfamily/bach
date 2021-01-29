@@ -1020,7 +1020,7 @@ void paint_numberlist_bars_in_noteslot(t_notation_obj *r_ob, t_jgraphics* g, t_r
 			curr_val = *((double *)temp->item); // double item
 		curr_val = CLAMP(curr_val, slot_min, slot_max);
 		
-		double this_height = rescale_with_slope_inv(curr_val, slot_min, slot_max, 0, bars_bounding_rectangle->height, r_ob->slotinfo[s].slot_range_par);
+		double this_height = notationobj_rescale_with_slope_inv(r_ob, curr_val, slot_min, slot_max, 0, bars_bounding_rectangle->height, r_ob->slotinfo[s].slot_range_par);
 		
 		paint_filledrectangle(bars_g, alternate && (count % 2) ? color_interp(slot_color, get_grey(0), 0.1) : slot_color, cur_x, bars_bounding_rectangle->height + bars_surface_top_pad - this_height, bar_width, this_height + bars_surface_bottom_pad);
 		
@@ -1828,7 +1828,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 			
 			if (is_defined) {
 				// draw the bar
-				slider_width = rescale_with_slope_inv(curr_val, slot_min, slot_max, 0, slot_window_active_width, r_ob->slotinfo[s].slot_range_par);
+				slider_width = notationobj_rescale_with_slope_inv(r_ob, curr_val, slot_min, slot_max, 0, slot_window_active_width, r_ob->slotinfo[s].slot_range_par);
 				paint_rectangle(g, slot_color, slot_color, r_ob->slot_window_x1, bar_y_top, slot_window_active_x1 + slider_width - r_ob->slot_window_x1, bar_y_height, 0);
 
 				// retrieve display unit (or enum)
@@ -1995,7 +1995,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 						
 						if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_INTMATRIX || r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_FLOATMATRIX) {
 							// draw the bar
-							bar_width = rescale_with_slope_inv(curr_val, slot_min, slot_max, 0, h_cell_size, r_ob->slotinfo[s].slot_range_par);
+							bar_width = notationobj_rescale_with_slope_inv(r_ob, curr_val, slot_min, slot_max, 0, h_cell_size, r_ob->slotinfo[s].slot_range_par);
 							paint_rectangle(g, bars_color, bars_color, slot_window_table_x1 + col * h_cell_size, slot_window_table_y1 + row * v_cell_size, bar_width, v_cell_size, 1.);
 							
 							// display the value
@@ -2952,7 +2952,7 @@ void paint_function_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect fun
 			
 			this_point_screen.y += lines_surface_vpad;
 			next_point_screen.y += lines_surface_vpad;
-			paint_curve_and_get_bezier_control_points(lines_g, line_color, this_point_screen, next_point_screen, next_point.slope, line_width, &ctrl1, &ctrl2, &middle, &ctrl3, &ctrl4);
+			paint_curve_and_get_bezier_control_points(lines_g, line_color, this_point_screen, next_point_screen, next_point.slope, line_width, &ctrl1, &ctrl2, &middle, &ctrl3, &ctrl4, (e_slope_mapping)r_ob->slope_mapping_type);
 			this_point_screen.x += function_bounding_rectangle.x;
 			this_point_screen.y += function_bounding_rectangle.y;
 			next_point_screen.x += function_bounding_rectangle.x;
@@ -2968,7 +2968,7 @@ void paint_function_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect fun
 			ctrl4.x += function_bounding_rectangle.x;
 			ctrl4.y += function_bounding_rectangle.y;
 		} else
-			paint_curve_and_get_bezier_control_points(g, line_color, this_point_screen, next_point_screen, next_point.slope, line_width, &ctrl1, &ctrl2, &middle, &ctrl3, &ctrl4);
+			paint_curve_and_get_bezier_control_points(g, line_color, this_point_screen, next_point_screen, next_point.slope, line_width, &ctrl1, &ctrl2, &middle, &ctrl3, &ctrl4, (e_slope_mapping)r_ob->slope_mapping_type);
 		
 		if (paint_point_labels) {
 			double abs_slope = fabs(next_point.slope);
@@ -3084,10 +3084,10 @@ void paint_function_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect fun
 						double slope_prev = (prev_pt_screen.y - point_screen.y)/(prev_pt_screen.x - point_screen.x);
 						if (fabs(slope_prev) <= fabs(slope_next)) {
 							direction = (prev_pt_screen.y <= point_screen.y ? 1 : -1);
-							push_x = CLAMP(rescale_with_slope(fabs(slope_prev), 0., 2., 0., 0.7, -0.4), 0, 0.7);
+							push_x = CLAMP(notationobj_rescale_with_slope(r_ob, fabs(slope_prev), 0., 2., 0., 0.7, -0.4), 0, 0.7);
 						} else {
 							direction = (next_pt_screen.y <= point_screen.y ? 1 : -1);
-							push_x = -CLAMP(rescale_with_slope(fabs(slope_next), 0., 2., 0., 0.7, -0.4), 0, 0.7);
+							push_x = -CLAMP(notationobj_rescale_with_slope(r_ob, fabs(slope_next), 0., 2., 0., 0.7, -0.4), 0, 0.7);
 						}
 					}
 				}
@@ -3247,15 +3247,15 @@ void paint_3dfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect f
 			line_color = change_luminosity(line_color, 0.3);
 		if (can_change_alpha) 
 			line_color = change_alpha(line_color, new_alpha);
-//		paint_curve(g, line_color, this_point_screen.x, this_point_screen.y, next_point_screen.x, next_point_screen.y, next_point.slope, CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y);
+//		notationobj_paint_curve(r_ob, g, line_color, this_point_screen.x, this_point_screen.y, next_point_screen.x, next_point_screen.y, next_point.slope, CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y);
 
-		double start_curve_width = CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y * rescale_with_slope(this_point.z, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0.5, 2., r_ob->slotinfo[slot_number].slot_zrange_par);
-		double end_curve_width = CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y * rescale_with_slope(next_point.z, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0.5, 2., r_ob->slotinfo[slot_number].slot_zrange_par);
+		double start_curve_width = CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y * notationobj_rescale_with_slope(r_ob, this_point.z, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0.5, 2., r_ob->slotinfo[slot_number].slot_zrange_par);
+		double end_curve_width = CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y * notationobj_rescale_with_slope(r_ob, next_point.z, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0.5, 2., r_ob->slotinfo[slot_number].slot_zrange_par);
 
 		if (paint_lines_separately)
-			paint_doublewidth_curve(lines_g, line_color, this_point_screen.x - function_bounding_rectangle.x + PAD_X, this_point_screen.y - function_bounding_rectangle.y + PAD_Y, next_point_screen.x - function_bounding_rectangle.x + PAD_X, next_point_screen.y - function_bounding_rectangle.y + PAD_Y, next_point.slope, start_curve_width, end_curve_width);
+			notationobj_paint_doublewidth_curve(r_ob, lines_g, line_color, this_point_screen.x - function_bounding_rectangle.x + PAD_X, this_point_screen.y - function_bounding_rectangle.y + PAD_Y, next_point_screen.x - function_bounding_rectangle.x + PAD_X, next_point_screen.y - function_bounding_rectangle.y + PAD_Y, next_point.slope, start_curve_width, end_curve_width);
 		else
-			paint_doublewidth_curve(g, line_color, this_point_screen.x, this_point_screen.y, next_point_screen.x, next_point_screen.y, next_point.slope, start_curve_width, end_curve_width);
+			notationobj_paint_doublewidth_curve(r_ob, g, line_color, this_point_screen.x, this_point_screen.y, next_point_screen.x, next_point_screen.y, next_point.slope, start_curve_width, end_curve_width);
 		
 		temp = temp->next;
 		this_point = next_point;
@@ -3276,7 +3276,7 @@ void paint_3dfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect f
 			t_pts3d point = *((t_pts3d *)temp->item);
 			t_pt point_screen, test_point_screen;
 			t_jrgba point_color = slot_color;
-			double radius = CONST_SLOT_FUNCTION_POINT_URADIUS * zoom_y * rescale_with_slope(point.z, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0.5, 2., r_ob->slotinfo[slot_number].slot_zrange_par);
+			double radius = CONST_SLOT_FUNCTION_POINT_URADIUS * zoom_y * notationobj_rescale_with_slope(r_ob, point.z, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0.5, 2., r_ob->slotinfo[slot_number].slot_zrange_par);
 
 			function_xyz_values_to_pt(r_ob, nitem, point.x, point.y, point.z, slot_number, function_bounding_rectangle, &point_screen, slot_zoom);
 			function_xy_values_to_pt(r_ob, nitem, point.x, point.y, slot_number, function_bounding_rectangle, &test_point_screen);
@@ -3351,12 +3351,6 @@ void paint_spatfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect
         function_xy_values_to_pt(r_ob, nitem, this_point.t, this_point.radius, slot_number, function_bounding_rectangle, &this_point_screen);
         function_xy_values_to_pt(r_ob, nitem, next_point.t, next_point.radius, slot_number, function_bounding_rectangle, &next_point_screen);
         
-/*		this_point_screen_x = function_bounding_rectangle.x + rescale_with_slope_inv(this_point.t, slot_domain_min, slot_domain_max, 0., 1., r_ob->slotinfo[slot_number].slot_domain_par) * function_bounding_rectangle.width;
-		this_point_screen_y = 2 * function_bounding_rectangle.y + function_bounding_rectangle.height - rescale_with_slope_inv(this_point.radius, slot_min, slot_max, function_bounding_rectangle.y, function_bounding_rectangle.y + function_bounding_rectangle.height, r_ob->slotinfo[slot_number].slot_range_par);
-		
-		next_point_screen_x = function_bounding_rectangle.x + rescale_with_slope_inv(next_point.t, slot_domain_min, slot_domain_max, 0., 1., r_ob->slotinfo[slot_number].slot_domain_par)* function_bounding_rectangle.width;
-		next_point_screen_y = 2 * function_bounding_rectangle.y + function_bounding_rectangle.height - rescale_with_slope_inv(next_point.radius, slot_min, slot_max, function_bounding_rectangle.y, function_bounding_rectangle.y + function_bounding_rectangle.height, r_ob->slotinfo[slot_number].slot_range_par);
-		 */
 		// how many turns do we have to draw?
 		
 		if (next_point.angle - this_point.angle > 0) 
@@ -3551,7 +3545,7 @@ void paint_filtergraph_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
 		t_jrgba secondary_lines_color;
 		t_jrgba fillcolor;
 		t_jpath *lines_only = NULL;
-		double cutoff_freq_rel_x = rescale_with_slope_inv(bqd->cutoff_freq, slot_domain_min, slot_domain_max, 0, slot_window_active_width, r_ob->slotinfo[slot_number].slot_domain_par);
+		double cutoff_freq_rel_x = notationobj_rescale_with_slope_inv(r_ob, bqd->cutoff_freq, slot_domain_min, slot_domain_max, 0, slot_window_active_width, r_ob->slotinfo[slot_number].slot_domain_par);
 		long num_steps_before_cutoff_freq = round(cutoff_freq_rel_x/CONST_SLOT_FILTER_NUM_PIXELS_PER_STEP);
 		double step_px = num_steps_before_cutoff_freq > 0 ? cutoff_freq_rel_x/num_steps_before_cutoff_freq : 0;
 		long num_steps = num_steps_before_cutoff_freq > 0 ? ceil(slot_window_active_width/step_px) : 0;
@@ -3575,13 +3569,13 @@ void paint_filtergraph_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
 		
 		// painting 0db line
 		if (paint_0db_line){
-			double central_y = 2 * slot_window_active_y1 + slot_window_active_height - rescale_with_slope_inv(0, slot_min, slot_max, slot_window_active_y1, slot_window_active_y1 + slot_window_active_height, r_ob->slotinfo[slot_number].slot_range_par);
+			double central_y = 2 * slot_window_active_y1 + slot_window_active_height - notationobj_rescale_with_slope_inv(r_ob, 0, slot_min, slot_max, slot_window_active_y1, slot_window_active_y1 + slot_window_active_height, r_ob->slotinfo[slot_number].slot_range_par);
 			paint_line(g, secondary_lines_color, slot_window_active_x1, central_y, slot_window_active_x1 + slot_window_active_width, central_y, 0.5);
 		}
 		
 		jgraphics_new_path(g);
 		for (i = 0, cur = 0; i <= num_steps; i++, cur += step_px) {
-			double this_freq = rescale_with_slope(cur, 0, slot_window_active_width, slot_domain_min, slot_domain_max, r_ob->slotinfo[slot_number].slot_domain_par);
+			double this_freq = notationobj_rescale_with_slope(r_ob, cur, 0, slot_window_active_width, slot_domain_min, slot_domain_max, r_ob->slotinfo[slot_number].slot_domain_par);
 			double this_response = gain_response_dB(this_freq, r_ob->sampling_freq, bqd->a1, bqd->a2, bqd->b0, bqd->b1, bqd->b2);
 			double this_y;
 			char pos_y_wr_to_screen = 0; // this is -1 if the point is under the window bottom line 
@@ -3599,7 +3593,7 @@ void paint_filtergraph_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
 			else if (this_response >= slot_max)
 				this_y = slot_window_active_y1;
 			else
-				this_y = 2 * slot_window_active_y1 + slot_window_active_height - rescale_with_slope_inv(this_response, slot_min, slot_max, slot_window_active_y1, slot_window_active_y1 + slot_window_active_height, r_ob->slotinfo[slot_number].slot_range_par);
+				this_y = 2 * slot_window_active_y1 + slot_window_active_height - notationobj_rescale_with_slope_inv(r_ob, this_response, slot_min, slot_max, slot_window_active_y1, slot_window_active_y1 + slot_window_active_height, r_ob->slotinfo[slot_number].slot_range_par);
 			this_y = CLAMP(this_y, slot_window_active_y1, slot_window_active_y1 + slot_window_active_height);
 			
 			if (prev_pos_y_wr_to_screen != 0 && pos_y_wr_to_screen == 0 && !already_painting) {
@@ -3607,7 +3601,7 @@ void paint_filtergraph_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
 				if (i == 0)
 					jgraphics_move_to(g, slot_window_active_x1 + cur, this_y);
 				else {
-					double prev_true_pty = 2 * slot_window_active_y1 + slot_window_active_height - rescale_with_slope_inv(prev_response, slot_min, slot_max, slot_window_active_y1, slot_window_active_y1 + slot_window_active_height, r_ob->slotinfo[slot_number].slot_range_par);
+					double prev_true_pty = 2 * slot_window_active_y1 + slot_window_active_height - notationobj_rescale_with_slope_inv(r_ob, prev_response, slot_min, slot_max, slot_window_active_y1, slot_window_active_y1 + slot_window_active_height, r_ob->slotinfo[slot_number].slot_range_par);
 					double ptx = cur - (cur - prev_cur)/(1 + prev_true_pty - (slot_window_active_y1 + slot_window_active_height));
 					jgraphics_move_to(g, slot_window_active_x1 + ptx, slot_window_active_y1 + slot_window_active_height);
 					jgraphics_line_to(g, slot_window_active_x1 + cur, this_y);
@@ -3621,7 +3615,7 @@ void paint_filtergraph_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
 					lines_only = jgraphics_copy_path(g);
 					jgraphics_line_to(g, slot_window_active_x1 + (pos_y_wr_to_screen == 0 ? cur : prev_cur), slot_window_active_y1 + slot_window_active_height);
 				} else {
-					double this_true_pty = 2 * slot_window_active_y1 + slot_window_active_height - rescale_with_slope_inv(this_response, slot_min, slot_max, slot_window_active_y1, slot_window_active_y1 + slot_window_active_height, r_ob->slotinfo[slot_number].slot_range_par);
+					double this_true_pty = 2 * slot_window_active_y1 + slot_window_active_height - notationobj_rescale_with_slope_inv(r_ob, this_response, slot_min, slot_max, slot_window_active_y1, slot_window_active_y1 + slot_window_active_height, r_ob->slotinfo[slot_number].slot_range_par);
 					double ptx = pos_y_wr_to_screen == 0 ? cur : prev_cur + (cur - prev_cur)/(1 + this_true_pty - (slot_window_active_y1 + slot_window_active_height));
 					jgraphics_line_to(g, slot_window_active_x1 + ptx, slot_window_active_y1 + slot_window_active_height);
 					lines_only = jgraphics_copy_path(g);
@@ -3661,8 +3655,8 @@ void paint_filtergraph_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
 			else
 				bandwidth = bqd->cutoff_freq /(2*bqd->Q);
 			
-			bqd->bandwidth_x2 = slot_window_active_x1 + rescale_with_slope_inv(bqd->cutoff_freq * pow(2, bandwidth), slot_domain_min, slot_domain_max, 0, slot_window_active_width, r_ob->slotinfo[slot_number].slot_domain_par);
-			bqd->bandwidth_x1 = slot_window_active_x1 + rescale_with_slope_inv(bqd->cutoff_freq * pow(2, -bandwidth), slot_domain_min, slot_domain_max, 0, slot_window_active_width, r_ob->slotinfo[slot_number].slot_domain_par);
+			bqd->bandwidth_x2 = slot_window_active_x1 + notationobj_rescale_with_slope_inv(r_ob, bqd->cutoff_freq * pow(2, bandwidth), slot_domain_min, slot_domain_max, 0, slot_window_active_width, r_ob->slotinfo[slot_number].slot_domain_par);
+			bqd->bandwidth_x1 = slot_window_active_x1 + notationobj_rescale_with_slope_inv(r_ob, bqd->cutoff_freq * pow(2, -bandwidth), slot_domain_min, slot_domain_max, 0, slot_window_active_width, r_ob->slotinfo[slot_number].slot_domain_par);
 			bqd->bandwidth_x1 = CLAMP(bqd->bandwidth_x1, slot_window_active_x1, slot_window_active_x1 + slot_window_active_width);
 			bqd->bandwidth_x2 = CLAMP(bqd->bandwidth_x2, slot_window_active_x1, slot_window_active_x1 + slot_window_active_width);
 			paint_rectangle(g, bandwidth_color, change_alpha(bandwidth_color, 0.1), bqd->bandwidth_x1, slot_window_active_y1, bqd->bandwidth_x2 - bqd->bandwidth_x1, slot_window_active_height, 0);
@@ -3708,14 +3702,14 @@ void paint_dynfiltergraph_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_re
 
 	double zoom_y = r_ob->zoom_y * (slot_zoom / 100.);
 
-	slot_domain_min_window = rescale_with_slope(displayed_bounding_rectangle.x, dynfilter_bounding_rectangle.x, dynfilter_bounding_rectangle.x + dynfilter_bounding_rectangle.width, slot_domain_min, slot_domain_max, r_ob->slotinfo[slot_number].slot_domain_par);
-	slot_domain_max_window = rescale_with_slope(displayed_bounding_rectangle.x + displayed_bounding_rectangle.width, dynfilter_bounding_rectangle.x, dynfilter_bounding_rectangle.x + dynfilter_bounding_rectangle.width, slot_domain_min, slot_domain_max, r_ob->slotinfo[slot_number].slot_domain_par);
+	slot_domain_min_window = notationobj_rescale_with_slope(r_ob, displayed_bounding_rectangle.x, dynfilter_bounding_rectangle.x, dynfilter_bounding_rectangle.x + dynfilter_bounding_rectangle.width, slot_domain_min, slot_domain_max, r_ob->slotinfo[slot_number].slot_domain_par);
+	slot_domain_max_window = notationobj_rescale_with_slope(r_ob, displayed_bounding_rectangle.x + displayed_bounding_rectangle.width, dynfilter_bounding_rectangle.x, dynfilter_bounding_rectangle.x + dynfilter_bounding_rectangle.width, slot_domain_min, slot_domain_max, r_ob->slotinfo[slot_number].slot_domain_par);
 	
 	if (!bqd)
 		return;
 	
 	for (t = 0, t_cur = 0; t < num_t_steps; t++, t_cur += step_t_px) {
-		double time = rescale_with_slope(t, 0, num_t_steps, slot_domain_min_window, slot_domain_max_window, r_ob->slotinfo[slot_number].slot_domain_par);
+		double time = notationobj_rescale_with_slope(r_ob, t, 0, num_t_steps, slot_domain_min_window, slot_domain_max_window, r_ob->slotinfo[slot_number].slot_domain_par);
 		long num_steps = round(displayed_bounding_rectangle.width/CONST_SLOT_DYNFILTER_NUM_V_PIXELS_PER_STEP);
 		double step_px = displayed_bounding_rectangle.width/num_steps;
 		long i;
@@ -3730,7 +3724,7 @@ void paint_dynfiltergraph_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_re
 		interp_bqd = (bqditem->next && bqd->t < time/domain ? interpolate_biquad(r_ob, *bqd, *((t_biquad *)bqditem->next->item), time/domain, r_ob->dynfilter_interp_mode) : *bqd);
 		
 		for (i = 0, cur = 0; i < num_steps; i++, cur += step_px) {
-			double this_freq = rescale_with_slope(cur, 0, displayed_bounding_rectangle.height, slot_min, slot_max, r_ob->slotinfo[slot_number].slot_range_par);
+			double this_freq = notationobj_rescale_with_slope(r_ob, cur, 0, displayed_bounding_rectangle.height, slot_min, slot_max, r_ob->slotinfo[slot_number].slot_range_par);
 			double this_response_dB = CLAMP(gain_response_dB(this_freq, r_ob->sampling_freq, interp_bqd.a1, interp_bqd.a2, interp_bqd.b0, interp_bqd.b1, interp_bqd.b2), CONST_DYNFILTER_SLOT_MIN_GAIN, CONST_DYNFILTER_SLOT_MAX_GAIN);
 			t_jrgba color = this_response_dB < 0 ? color_interp(slot_color, grey, this_response_dB/CONST_DYNFILTER_SLOT_MIN_GAIN) : color_interp(slot_color, black, this_response_dB/CONST_DYNFILTER_SLOT_MAX_GAIN);
 			double y2 = displayed_bounding_rectangle.y + displayed_bounding_rectangle.height - cur;
@@ -3748,9 +3742,9 @@ void paint_dynfiltergraph_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_re
 			t_biquad *bqd = (t_biquad *)bqditem->item;
 			t_jrgba fillcolor = build_jrgba(0.8, 0, 0, 0.1);
 			t_jrgba markcolor = build_jrgba(0.8, 0., 0., 1.);
-			double thisx = rescale_with_slope_inv(bqd->t, slot_domain_min, slot_domain_max, dynfilter_bounding_rectangle.x, dynfilter_bounding_rectangle.x + dynfilter_bounding_rectangle.width, r_ob->slotinfo[slot_number].slot_domain_par);
+			double thisx = notationobj_rescale_with_slope_inv(r_ob, bqd->t, slot_domain_min, slot_domain_max, dynfilter_bounding_rectangle.x, dynfilter_bounding_rectangle.x + dynfilter_bounding_rectangle.width, r_ob->slotinfo[slot_number].slot_domain_par);
 			if (thisx + 0.1 >= displayed_bounding_rectangle.x && thisx <= displayed_bounding_rectangle.x + displayed_bounding_rectangle.width + 0.1) {
-				double thisfreqy = rescale_with_slope_inv(bqd->cutoff_freq, slot_min, slot_max, displayed_bounding_rectangle.y + displayed_bounding_rectangle.height, displayed_bounding_rectangle.y, r_ob->slotinfo[slot_number].slot_range_par);
+				double thisfreqy = notationobj_rescale_with_slope_inv(r_ob, bqd->cutoff_freq, slot_min, slot_max, displayed_bounding_rectangle.y + displayed_bounding_rectangle.height, displayed_bounding_rectangle.y, r_ob->slotinfo[slot_number].slot_range_par);
 				paint_rectangle(g, markcolor, fillcolor, thisx - 1.5 * zoom_y, displayed_bounding_rectangle.y + 1, 3 * zoom_y, displayed_bounding_rectangle.height - 2, 0.8);
 				paint_rectangle(g, markcolor, markcolor, thisx - 1.5 * zoom_y, thisfreqy - 1.5 * zoom_y, 3 * zoom_y, 3 * zoom_y, 0);
 			}
@@ -6937,7 +6931,7 @@ char is_pt_in_slot_longfloat_strip(t_notation_obj *r_ob, long point_x, long poin
 	}
 	slot_window_height = r_ob->slot_window_active_nozoom.height;
 	bar_y_pos = r_ob->slot_window_active_nozoom.y + r_ob->slot_window_active_nozoom.height/ 2.;
-	bar_x_pos = rescale_with_slope_inv(curr_val, slot_min, slot_max, r_ob->slot_window_x1 + CONST_SLOT_WINDOW_INSET_X, r_ob->slot_window_x2 - CONST_SLOT_WINDOW_INSET_X, r_ob->slotinfo[s].slot_range_par);
+	bar_x_pos = notationobj_rescale_with_slope_inv(r_ob, curr_val, slot_min, slot_max, r_ob->slot_window_x1 + CONST_SLOT_WINDOW_INSET_X, r_ob->slot_window_x2 - CONST_SLOT_WINDOW_INSET_X, r_ob->slotinfo[s].slot_range_par);
 	if (fabs(point_y - bar_y_pos) < slot_window_height / 6.) 
 		if (fabs(point_x - bar_x_pos) < CONST_SLOT_LONG_FLOAT_BAR_UWIDTH * zoom_y * 1.)
 			return 1;
@@ -7529,8 +7523,8 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                 
                                 pt_to_function_xy_values(r_ob, r_ob->active_slot_notationitem, build_pt(this_x, this_y), s, r_ob->slot_window_active, &t_val, &r_val);
 /*
-                                t_val = rescale_with_slope(this_x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
-								r_val = rescale_with_slope((r_ob->slot_window_active.y + r_ob->slot_window_active.height) - this_y, 0, r_ob->slot_window_active.height, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
+                                t_val = notationobj_rescale_with_slope(r_ob, this_x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
+								r_val = notationobj_rescale_with_slope(r_ob, (r_ob->slot_window_active.y + r_ob->slot_window_active.height) - this_y, 0, r_ob->slot_window_active.height, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
  */
                                 slot_clip_domain_value(r_ob, r_ob->active_slot_notationitem, s, &t_val);
                                 
@@ -8379,7 +8373,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                         
                     case k_SLOT_TYPE_DYNFILTER:
                     {
-                        double this_t = rescale_with_slope(pt.x, r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
+                        double this_t = notationobj_rescale_with_slope(r_ob, pt.x, r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                         t_slotitem *temp = get_activeitem_slot_firstitem(r_ob, s);
                         t_slotitem *newitem = (t_slotitem *)bach_newptr(sizeof (t_slotitem));
                         t_biquad *interp = (t_biquad *)bach_newptr(sizeof (t_biquad));
@@ -8507,7 +8501,7 @@ void slot_handle_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *acti
                 break;
 
             default:
-                new_x_value = rescale_with_slope(xpt, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
+                new_x_value = notationobj_rescale_with_slope(r_ob, xpt, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                 break;
         }
         
@@ -8547,11 +8541,11 @@ void slot_handle_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *acti
                 break;
 
             default:
-                new_x_value = changing_segment ? thisbpt->x : rescale_with_slope(xpt, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
+                new_x_value = changing_segment ? thisbpt->x : notationobj_rescale_with_slope(r_ob, xpt, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                 break;
         }
         
-        double new_y_value = rescale_with_slope(r_ob->slot_window_y2 - CONST_SLOT_FUNCTION_UY_INSET_BOTTOM * zoom_y -  ypt, 0, r_ob->slot_window_active.height, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
+        double new_y_value = notationobj_rescale_with_slope(r_ob, r_ob->slot_window_y2 - CONST_SLOT_FUNCTION_UY_INSET_BOTTOM * zoom_y -  ypt, 0, r_ob->slot_window_active.height, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
 		if (r_ob->slotinfo[s].slot_ysnap && r_ob->slotinfo[s].slot_ysnap->l_head && (modifiers & eAltKey) && (modifiers & eShiftKey)) // checking if there's a y snap
 			ysnap_double(&new_y_value, r_ob->slotinfo[s].slot_ysnap, 0);
 		change_slot_pts_value(r_ob, r_ob->active_slot_notationitem, s, activeslotitem, new_x_value, new_y_value, curr_slope, 0, modifiers);
@@ -8807,7 +8801,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                     break;
 
                                 default:
-                                    new_t_value = rescale_with_slope(pt.x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
+                                    new_t_value = notationobj_rescale_with_slope(r_ob, pt.x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                                     break;
                             }
                             
@@ -8827,7 +8821,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							t_spatpt *thisspatpt = ((t_spatpt *) activeslotitem->item);
 							double curr_angle = thisspatpt->angle; // slope does not change
 							double slot_max = r_ob->slotinfo[s].slot_range[1]; double slot_min = r_ob->slotinfo[s].slot_range[0]; // max and min values allowed for the slots
-							//double new_t_value = rescale_with_slope(pt.x, slot_window_active_x1, slot_window_active_x2, 0., 1., 0., false);
+							//double new_t_value = notationobj_rescale_with_slope(r_ob, pt.x, slot_window_active_x1, slot_window_active_x2, 0., 1., 0., false);
                             double new_t_value;
                             
                             switch (r_ob->slotinfo[s].slot_temporalmode) {
@@ -8843,11 +8837,11 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                     break;
 
                                 default:
-                                    new_t_value = rescale_with_slope(pt.x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
+                                    new_t_value = notationobj_rescale_with_slope(r_ob, pt.x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                                     break;
                             }
 
-							double new_r_value = rescale_with_slope(r_ob->slot_window_y2 - CONST_SLOT_FUNCTION_UY_INSET_BOTTOM * zoom_y -  ypt, 0, r_ob->slot_window_active.height, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
+							double new_r_value = notationobj_rescale_with_slope(r_ob, r_ob->slot_window_y2 - CONST_SLOT_FUNCTION_UY_INSET_BOTTOM * zoom_y -  ypt, 0, r_ob->slot_window_active.height, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
 							change_slot_spatpts_value(r_ob, r_ob->active_slot_notationitem, s, activeslotitem, new_t_value, new_r_value, curr_angle, 0, modifiers);
 						}
 						r_ob->floatdragging_x = pt.x;	
@@ -8883,7 +8877,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							new_value = (xpt - r_ob->floatdragging_x) * (slot_max - slot_min)/((r_ob->slot_window_x2 - CONST_SLOT_WINDOW_INSET_X) - (r_ob->slot_window_x1 + CONST_SLOT_WINDOW_INSET_X));
 						} else {
 							xpt = CLAMP(xpt, r_ob->slot_window_x1 + CONST_SLOT_WINDOW_INSET_X, r_ob->slot_window_x2 - CONST_SLOT_WINDOW_INSET_X);
-							new_value = rescale_with_slope(xpt, r_ob->slot_window_x1 + CONST_SLOT_WINDOW_INSET_X, r_ob->slot_window_x2 - CONST_SLOT_WINDOW_INSET_X, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
+							new_value = notationobj_rescale_with_slope(r_ob, xpt, r_ob->slot_window_x1 + CONST_SLOT_WINDOW_INSET_X, r_ob->slot_window_x2 - CONST_SLOT_WINDOW_INSET_X, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
 						}
 						
 						if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_INT)
@@ -8932,7 +8926,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							new_value = (r_ob->floatdragging_y - ypt) * (slot_max - slot_min)/r_ob->slot_window_active_nozoom.height;
 						} else {
 							ypt = CLAMP(ypt, r_ob->slot_window_active_nozoom.y, r_ob->slot_window_active_nozoom.y + r_ob->slot_window_active_nozoom.height);
-							new_value = rescale_with_slope(ypt, r_ob->slot_window_active_nozoom.y + r_ob->slot_window_active_nozoom.height, r_ob->slot_window_active_nozoom.y, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
+							new_value = notationobj_rescale_with_slope(r_ob, ypt, r_ob->slot_window_active_nozoom.y + r_ob->slot_window_active_nozoom.height, r_ob->slot_window_active_nozoom.y, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
 						}
 						
 						if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_INTLIST)
@@ -8973,7 +8967,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							new_value = (xpt - r_ob->floatdragging_x) * CONST_FINER_FROM_KEYBOARD * (slot_max - slot_min)/(r_ob->slot_window_active_x2 - slot_window_table_x1);
 						} else {
 							xpt = CLAMP(xpt, slot_window_table_x1, r_ob->slot_window_active_x2);
-							new_value = rescale_with_slope(xpt, slot_window_table_x1 + (r_ob->slot_clicked_col - 1) * h_cell_size, slot_window_table_x1 + r_ob->slot_clicked_col * h_cell_size, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
+							new_value = notationobj_rescale_with_slope(r_ob, xpt, slot_window_table_x1 + (r_ob->slot_clicked_col - 1) * h_cell_size, slot_window_table_x1 + r_ob->slot_clicked_col * h_cell_size, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
 						}
 						
 						if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_INTMATRIX)
@@ -9030,8 +9024,8 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							} else {
 								// change cutoff frequency
 								double old_freq = bqd->cutoff_freq;
-								double old_freq_pixel = rescale_with_slope_inv(old_freq, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[s].slot_domain_par);
-								double new_freq = rescale_with_slope(old_freq_pixel + delta_x, r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
+								double old_freq_pixel = notationobj_rescale_with_slope_inv(r_ob, old_freq, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[s].slot_domain_par);
+								double new_freq = notationobj_rescale_with_slope(r_ob, old_freq_pixel + delta_x, r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
 								new_freq = CLAMP(new_freq, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1]);
 								bqd->cutoff_freq = new_freq;
 								synchronize_biquad_coeff_from_freq_gain_and_Q(bqd, r_ob->sampling_freq);
@@ -9093,8 +9087,8 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								if (bqd->filter_type != k_FILTER_NONE && bqd->filter_type != k_FILTER_DISPLAY) {
 									// change cutoff frequency
 									double old_freq = bqd->cutoff_freq;
-									double old_freq_pixel = rescale_with_slope_inv(old_freq, r_ob->slotinfo[s].slot_range[0], r_ob->slotinfo[s].slot_range[1], 0, r_ob->slot_window_active_y2 - r_ob->slot_window_active_y1, r_ob->slotinfo[s].slot_range_par);
-									double new_freq = rescale_with_slope(old_freq_pixel - delta_y, 0, r_ob->slot_window_active_y2 - r_ob->slot_window_active_y1, r_ob->slotinfo[s].slot_range[0], r_ob->slotinfo[s].slot_range[1], r_ob->slotinfo[s].slot_range_par);
+									double old_freq_pixel = notationobj_rescale_with_slope_inv(r_ob, old_freq, r_ob->slotinfo[s].slot_range[0], r_ob->slotinfo[s].slot_range[1], 0, r_ob->slot_window_active_y2 - r_ob->slot_window_active_y1, r_ob->slotinfo[s].slot_range_par);
+									double new_freq = notationobj_rescale_with_slope(r_ob, old_freq_pixel - delta_y, 0, r_ob->slot_window_active_y2 - r_ob->slot_window_active_y1, r_ob->slotinfo[s].slot_range[0], r_ob->slotinfo[s].slot_range[1], r_ob->slotinfo[s].slot_range_par);
 									new_freq = CLAMP(new_freq, r_ob->slotinfo[s].slot_range[0], r_ob->slotinfo[s].slot_range[1]);
 									bqd->cutoff_freq = new_freq;
 									synchronize_biquad_coeff_from_freq_gain_and_Q(bqd, r_ob->sampling_freq);
@@ -9119,7 +9113,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                         break;
 
                                     default:
-                                        new_pos = rescale_with_slope(pt.x, r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
+                                        new_pos = notationobj_rescale_with_slope(r_ob, pt.x, r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                                         break;
                                 }
                                 
@@ -9233,7 +9227,7 @@ t_slotitem *pt_to_dynfilter_biquad(t_notation_obj *r_ob, t_pt pt, long slot_numb
                     break;
 
                 default:
-                    thisx = rescale_with_slope_inv(((t_biquad *)temp->item)->t, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[slot_number].slot_domain_par);
+                    thisx = notationobj_rescale_with_slope_inv(r_ob, ((t_biquad *)temp->item)->t, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[slot_number].slot_domain_par);
                     break;
             }
 
@@ -9265,11 +9259,11 @@ t_slotitem *pt_to_function_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_n
                 break;
 
             default:
-                item_x_pixel = r_ob->slot_window_active.x + r_ob->slot_window_active.width * rescale_with_slope_inv(item_x_val, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], 0., 1., r_ob->slotinfo[slot_number].slot_domain_par);
+                item_x_pixel = r_ob->slot_window_active.x + r_ob->slot_window_active.width * notationobj_rescale_with_slope_inv(r_ob, item_x_val, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], 0., 1., r_ob->slotinfo[slot_number].slot_domain_par);
                 break;
         }
         
-		item_y_pixel = 2 * r_ob->slot_window_active.y + r_ob->slot_window_active.height - rescale_with_slope_inv(item_y_val, r_ob->slotinfo[slot_number].slot_range[0], r_ob->slotinfo[slot_number].slot_range[1], r_ob->slot_window_active.y, r_ob->slot_window_active.y + r_ob->slot_window_active.height, r_ob->slotinfo[slot_number].slot_range_par);
+		item_y_pixel = 2 * r_ob->slot_window_active.y + r_ob->slot_window_active.height - notationobj_rescale_with_slope_inv(r_ob, item_y_val, r_ob->slotinfo[slot_number].slot_range[0], r_ob->slotinfo[slot_number].slot_range[1], r_ob->slot_window_active.y, r_ob->slot_window_active.y + r_ob->slot_window_active.height, r_ob->slotinfo[slot_number].slot_range_par);
 		if (fabs(pt.x - item_x_pixel) < point_radius &&
 			((pt.x - item_x_pixel)*(pt.x - item_x_pixel) + (pt.y - item_y_pixel)*(pt.y - item_y_pixel) < point_radius * point_radius)) {
 			clicked = temp;
@@ -9278,7 +9272,7 @@ t_slotitem *pt_to_function_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_n
 			break;
 		} else if (temp->prev && pt.x >= prev_item_x_pixel && pt.x <= item_x_pixel &&
 				   is_pt_in_curve_shape(pt.x, pt.y, prev_item_x_pixel, prev_item_y_pixel, item_x_pixel, item_y_pixel, 
-										((t_pts *)temp->item)->slope, CONST_SLOT_FUNCTION_UY_LINE_SELECTION_WIDTH * r_ob->zoom_y * (r_ob->slot_window_zoom/100.))) {
+										((t_pts *)temp->item)->slope, CONST_SLOT_FUNCTION_UY_LINE_SELECTION_WIDTH * r_ob->zoom_y * (r_ob->slot_window_zoom/100.), (e_slope_mapping)r_ob->slope_mapping_type)) {
 			clicked = temp;
 			if (found_item)
 			   *found_item = k_SLOT_FUNCTION_SEGMENT;
@@ -9296,7 +9290,7 @@ t_slotitem *pt_to_3dfunction_slot_point(t_notation_obj *r_ob, t_pt pt, long slot
 	t_slotitem *temp, *clicked = NULL;
 	for (temp = get_activeitem_slot_firstitem(r_ob, slot_number); temp; temp = temp->next) {
 		t_pt this_pt;
-		double this_radius = CONST_SLOT_FUNCTION_POINT_URADIUS * zoom_y * rescale_with_slope(((t_pts3d *)temp->item)->z, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0.5, 2., r_ob->slotinfo[slot_number].slot_zrange_par);
+		double this_radius = CONST_SLOT_FUNCTION_POINT_URADIUS * zoom_y * notationobj_rescale_with_slope(r_ob, ((t_pts3d *)temp->item)->z, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0.5, 2., r_ob->slotinfo[slot_number].slot_zrange_par);
 		function_xyz_values_to_pt(r_ob, r_ob->active_slot_notationitem, ((t_pts3d *)temp->item)->x, ((t_pts3d *)temp->item)->y, ((t_pts3d *)temp->item)->z, slot_number, r_ob->slot_window_active, &this_pt, r_ob->slot_window_zoom);
 		if ((pt.x - this_pt.x)*(pt.x - this_pt.x) + (pt.y - this_pt.y)*(pt.y - this_pt.y) < (this_radius + CONST_SLOT_FUNCTION_POINT_ADD_RADIUS_FOR_SELECTION) * (this_radius + CONST_SLOT_FUNCTION_POINT_ADD_RADIUS_FOR_SELECTION)) {
 			clicked = temp;
@@ -9341,10 +9335,10 @@ void pt_to_function_xy_values(t_notation_obj *r_ob, t_notation_item *nitem, t_pt
             break;
 
         default:
-            *xval = rescale_with_slope(pt.x, active_slot_window.x, active_slot_window.x + active_slot_window.width, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], r_ob->slotinfo[slot_number].slot_domain_par);
+            *xval = notationobj_rescale_with_slope(r_ob, pt.x, active_slot_window.x, active_slot_window.x + active_slot_window.width, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], r_ob->slotinfo[slot_number].slot_domain_par);
             break;
     }
-	*yval = rescale_with_slope(active_slot_window.y + active_slot_window.height - pt.y, 0, active_slot_window.height, r_ob->slotinfo[slot_number].slot_range[0], r_ob->slotinfo[slot_number].slot_range[1], r_ob->slotinfo[slot_number].slot_range_par);
+	*yval = notationobj_rescale_with_slope(r_ob, active_slot_window.y + active_slot_window.height - pt.y, 0, active_slot_window.height, r_ob->slotinfo[slot_number].slot_range[0], r_ob->slotinfo[slot_number].slot_range[1], r_ob->slotinfo[slot_number].slot_range_par);
 }
 
 void function_xy_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, double xval, double yval, long slot_number, t_rect active_slot_window, t_pt *pt)
@@ -9359,10 +9353,10 @@ void function_xy_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, doub
             break;
             
         default:
-            pt->x = active_slot_window.x + rescale_with_slope_inv(xval, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], 0., 1., r_ob->slotinfo[slot_number].slot_domain_par) * active_slot_window.width;
+            pt->x = active_slot_window.x + notationobj_rescale_with_slope_inv(r_ob, xval, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], 0., 1., r_ob->slotinfo[slot_number].slot_domain_par) * active_slot_window.width;
             break;
     }
-	pt->y = 2 * active_slot_window.y + active_slot_window.height - rescale_with_slope_inv(yval, r_ob->slotinfo[slot_number].slot_range[0], r_ob->slotinfo[slot_number].slot_range[1], active_slot_window.y, active_slot_window.y + active_slot_window.height, r_ob->slotinfo[slot_number].slot_range_par);
+	pt->y = 2 * active_slot_window.y + active_slot_window.height - notationobj_rescale_with_slope_inv(r_ob, yval, r_ob->slotinfo[slot_number].slot_range[0], r_ob->slotinfo[slot_number].slot_range[1], active_slot_window.y, active_slot_window.y + active_slot_window.height, r_ob->slotinfo[slot_number].slot_range_par);
 }
 
 
@@ -9380,15 +9374,15 @@ void function_xyz_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, dou
             break;
 
         default:
-            pt->x = active_slot_window.x + rescale_with_slope_inv(xval, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], 0., 1., r_ob->slotinfo[slot_number].slot_domain_par) * active_slot_window.width;
+            pt->x = active_slot_window.x + notationobj_rescale_with_slope_inv(r_ob, xval, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], 0., 1., r_ob->slotinfo[slot_number].slot_domain_par) * active_slot_window.width;
             break;
     }
     
-	pt->y = 2 * active_slot_window.y + active_slot_window.height - rescale_with_slope_inv(yval, r_ob->slotinfo[slot_number].slot_range[0], r_ob->slotinfo[slot_number].slot_range[1], active_slot_window.y, active_slot_window.y + active_slot_window.height, r_ob->slotinfo[slot_number].slot_range_par);
+	pt->y = 2 * active_slot_window.y + active_slot_window.height - notationobj_rescale_with_slope_inv(r_ob, yval, r_ob->slotinfo[slot_number].slot_range[0], r_ob->slotinfo[slot_number].slot_range[1], active_slot_window.y, active_slot_window.y + active_slot_window.height, r_ob->slotinfo[slot_number].slot_range_par);
 	// accounting for z dimension
 	double L = CONST_SLOT_3DFUNCTION_ZDIM_USIZE * zoom_y;
 	double alpha = CONST_SLOT_3DFUNCTION_ZDIM_ANGLE;
-	double rescaled_z = rescale_with_slope_inv(zval, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0., 1., r_ob->slotinfo[slot_number].slot_zrange_par);
+	double rescaled_z = notationobj_rescale_with_slope_inv(r_ob, zval, r_ob->slotinfo[slot_number].slot_zrange[0], r_ob->slotinfo[slot_number].slot_zrange[1], 0., 1., r_ob->slotinfo[slot_number].slot_zrange_par);
 //	double z_ratio = (rescaled_z - r_ob->slotinfo[slot_number].slot_zrange[0])/(r_ob->slotinfo[slot_number].slot_zrange[1] - r_ob->slotinfo[slot_number].slot_zrange[0]);
 	pt->x = pt->x - L * rescaled_z * sin(alpha);
 	pt->y = pt->y + L * rescaled_z * cos(alpha);
@@ -10238,7 +10232,7 @@ double get_function_slot_interp(t_notation_obj *r_ob, t_note *note, long slot_nu
 			else {
 				t_pts *next = (t_pts *)it->item;
 				t_pts *prev = (t_pts *)it->prev->item;
-				return rescale_with_slope(x, prev->x, next->x, prev->y, next->y, next->slope);
+				return notationobj_rescale_with_slope(r_ob, x, prev->x, next->x, prev->y, next->y, next->slope);
 			}
 		}
 	}
@@ -10262,7 +10256,7 @@ t_llll* get_function_slot_sampling(t_notation_obj *r_ob, t_note *note, long slot
             out = llll_get();
             
             for (i = 0; i < num_pts; i++) {
-                double this_x = rescale_with_slope(i, 0, num_pts - 1, domain_min, domain_max, domain_slope);
+                double this_x = notationobj_rescale_with_slope(r_ob, i, 0, num_pts - 1, domain_min, domain_max, domain_slope);
                 double this_y = get_function_slot_interp(r_ob, note, slot_num, this_x);
                 llll_appenddouble(x_ll, this_x, 0, WHITENULL_llll);
                 llll_appenddouble(y_ll, this_y, 0, WHITENULL_llll);

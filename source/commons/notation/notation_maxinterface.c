@@ -2100,7 +2100,14 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
 	CLASS_ATTR_INVISIBLE(c, "versionnumber", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // invisible attribute
 	// @exclude all
      */
-     
+
+    CLASS_ATTR_LONG(c,"slopemapping",0, t_notation_obj, slope_mapping_type);
+    CLASS_ATTR_STYLE_LABEL(c,"slopemapping",0,"enumindex","Slope Mapping");
+    CLASS_ATTR_ENUMINDEX(c,"slopemapping", 0, "bach Max");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slopemapping", 0, "0");
+    // @description Sets the function to be used for slope mapping: either bach (default) or Max.
+
+    
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		
 		CLASS_ATTR_LONG(c, "numvoices", 0, t_notation_obj, num_voices);

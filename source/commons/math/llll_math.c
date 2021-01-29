@@ -715,8 +715,9 @@ void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res)
         hatom_setpitch(res, h1->h_w.w_pitch / h2->h_w.w_rat);
     
     } else if (h1_type == H_LONG && h2_type == H_LONG) { // ll -> l
-        hatom_setlong(res, h1->h_w.w_long / h2->h_w.w_long);
-        
+        t_atom_long l2 = h2->h_w.w_long;
+        hatom_setlong(res, l2 != 0 ? h1->h_w.w_long / l2 : h1->h_w.w_long);
+
     } else if (h1_type == H_LONG && (h2_type == H_RAT || h2_type == H_PITCH)) { // lr lp -> r
         hatom_setrational(res, h1->h_w.w_long / hatom_getrational(h2));
         
