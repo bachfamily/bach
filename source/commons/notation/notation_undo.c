@@ -1254,7 +1254,7 @@ long notationobj_apply_undo_redo_information(t_notation_obj *r_ob, t_undo_redo_i
     } else if (type == k_CHORD) {
         if (modif_type == k_UNDO_MODIFICATION_CHANGE || modif_type == k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER) {
             if (reverse_information) {
-                if (obj_is_score)
+                if (obj_is_score) 
                     newcontent = get_scorechord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
                 else
                     newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO);
