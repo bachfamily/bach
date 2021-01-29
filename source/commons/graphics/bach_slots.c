@@ -4054,7 +4054,7 @@ t_llll *set_slotinfo_from_llll(t_notation_obj *r_ob, t_llll* slotinfo)
                                         if (!this_llll->l_head->l_next || (this_llll->l_head->l_next && hatom_getlong(&this_llll->l_head->l_next->l_hatom))) {
                                             t_atom av;
                                             atom_setlong(&av, j+1);
-                                            notation_obj_setattr_rightclickdirectlypopsoutslot(r_ob, NULL, 1, &av);
+                                            notationobj_setattr_rightclickdirectlypopsoutslot(r_ob, NULL, 1, &av);
                                         }
                                         
                                     } else if (router == _llllobj_sym_linkto && this_llll->l_head->l_next){
@@ -5111,7 +5111,7 @@ void notation_item_check_force(t_notation_obj *r_ob, t_notation_item *nitem)
 }
 
 
-void notation_obj_check(t_notation_obj *r_ob)
+void notationobj_check(t_notation_obj *r_ob)
 {
 #ifdef BACH_CHECK_NOTATION_ITEMS
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
@@ -5134,7 +5134,7 @@ void notation_obj_check(t_notation_obj *r_ob)
 #endif
 }
 
-void notation_obj_check_force(t_notation_obj *r_ob, char also_lock_mutex)
+void notationobj_check_force(t_notation_obj *r_ob, char also_lock_mutex)
 {
 //    return;
 #ifdef CONFIGURATION_Development
@@ -5169,7 +5169,7 @@ void notation_obj_check_force(t_notation_obj *r_ob, char also_lock_mutex)
 
 
 
-void notation_obj_check_against_tuttipoints(t_notation_obj *r_ob)
+void notationobj_check_against_tuttipoints(t_notation_obj *r_ob)
 {
 #ifdef BACH_CHECK_NOTATION_ITEMS
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
@@ -6682,33 +6682,33 @@ void check_slot_linkage_recomputations_for_everything(t_notation_obj *r_ob, long
 		long type = r_ob->slotinfo[s].slot_type;
 		if (type == k_SLOT_TYPE_INT) {
 			if (r_ob->link_notesize_to_slot - 1 == s)
-				quick_notation_obj_recompute_all_chord_parameters(r_ob);
+				quick_notationobj_recompute_all_chord_parameters(r_ob);
 
 			if (r_ob->link_notehead_to_slot - 1 == s)
-				quick_notation_obj_recompute_all_chord_parameters(r_ob);
+				quick_notationobj_recompute_all_chord_parameters(r_ob);
 
 		} else if (type == k_SLOT_TYPE_FLOAT) {
 			if (r_ob->link_notesize_to_slot - 1 == s)
-				quick_notation_obj_recompute_all_chord_parameters(r_ob);
+				quick_notationobj_recompute_all_chord_parameters(r_ob);
 			
 		} else if (type == k_SLOT_TYPE_INTLIST) {
 			if (r_ob->link_notesize_to_slot - 1 == s)
-				quick_notation_obj_recompute_all_chord_parameters(r_ob);
+				quick_notationobj_recompute_all_chord_parameters(r_ob);
 			
 		} else if (type == k_SLOT_TYPE_FLOATLIST) {
 			if (r_ob->link_notesize_to_slot - 1 == s)
-				quick_notation_obj_recompute_all_chord_parameters(r_ob);
+				quick_notationobj_recompute_all_chord_parameters(r_ob);
 			
 			if (r_ob->link_notehead_adjust_to_slot - 1 == s)
-				quick_notation_obj_recompute_all_chord_parameters(r_ob);
+				quick_notationobj_recompute_all_chord_parameters(r_ob);
 			
 		} else if (type == k_SLOT_TYPE_TEXT) {
 			if (r_ob->link_lyrics_to_slot - 1 == s) 
-				quick_notation_obj_recompute_all_chord_parameters(r_ob);
+				quick_notationobj_recompute_all_chord_parameters(r_ob);
             
         } else if (type == k_SLOT_TYPE_DYNAMICS) {
             if (r_ob->link_dynamics_to_slot - 1 == s)
-                quick_notation_obj_recompute_all_chord_parameters(r_ob);
+                quick_notationobj_recompute_all_chord_parameters(r_ob);
 		}
 	}
 }
@@ -10022,7 +10022,7 @@ void change_popupmenu_slot_flag(t_notation_obj *r_ob, long slot_num_0_based, cha
 
 
 
-t_max_err notation_obj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
         long size = NULL;
@@ -10041,7 +10041,7 @@ t_max_err notation_obj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr,
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
         long size = NULL;
@@ -10061,17 +10061,17 @@ t_max_err notation_obj_setattr_annotations_font(t_notation_obj *r_ob, t_object *
 }
 
 
-t_max_err notation_obj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac) {
         r_ob->show_accidentals_preferences = (e_show_accidentals_preferences)CLAMP(atom_getlong(av), 0, 5);
-        quick_notation_obj_recompute_all_chord_parameters(r_ob);
+        quick_notationobj_recompute_all_chord_parameters(r_ob);
     }
 
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_backgroundslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_backgroundslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
 	long i;
 	for (i = 0; i < CONST_MAX_SLOTS; i++)
@@ -10091,7 +10091,7 @@ t_max_err notation_obj_setattr_backgroundslots(t_notation_obj *r_ob, t_object *a
 }
 
 
-t_max_err notation_obj_setattr_popupmenuslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_popupmenuslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
 	long i;
 	for (i = 0; i < CONST_MAX_SLOTS; i++)
@@ -10106,7 +10106,7 @@ t_max_err notation_obj_setattr_popupmenuslots(t_notation_obj *r_ob, t_object *at
 }
 
 
-t_max_err notation_obj_setattr_rightclickdirectlypopsoutslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_rightclickdirectlypopsoutslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
 	long i;
 	for (i = 0; i < CONST_MAX_SLOTS; i++)
@@ -10147,7 +10147,7 @@ long linkto_sym_to_linkto_elem(t_notation_obj *r_ob, t_symbol *sym){
 	return k_SLOT_LINKAGE_NONE;
 }
 
-void set_linkto_notation_obj_field_to_value(t_notation_obj *r_ob, char link_to_what, long value){
+void set_linkto_notationobj_field_to_value(t_notation_obj *r_ob, char link_to_what, long value){
 	switch (link_to_what) {
 		case k_SLOT_LINKAGE_LYRICS:
 			r_ob->link_lyrics_to_slot = value;
@@ -10184,11 +10184,11 @@ void set_linkto_notation_obj_field_to_value(t_notation_obj *r_ob, char link_to_w
 
 void change_linkto_slot_flag(t_notation_obj *r_ob, long slot_num_0_based, char link_to_what){
 	
-    set_linkto_notation_obj_field_to_value(r_ob, link_to_what, 0);
+    set_linkto_notationobj_field_to_value(r_ob, link_to_what, 0);
     if (slot_num_0_based >= 0 && slot_num_0_based < CONST_MAX_SLOTS) {
         // deleting previous value
         if (r_ob->slotinfo[slot_num_0_based].linked_to) {
-            set_linkto_notation_obj_field_to_value(r_ob, r_ob->slotinfo[slot_num_0_based].linked_to, 0);
+            set_linkto_notationobj_field_to_value(r_ob, r_ob->slotinfo[slot_num_0_based].linked_to, 0);
             r_ob->slotinfo[slot_num_0_based].linked_to = k_SLOT_LINKAGE_NONE;
         }
         
@@ -10199,7 +10199,7 @@ void change_linkto_slot_flag(t_notation_obj *r_ob, long slot_num_0_based, char l
                 if (r_ob->slotinfo[i].linked_to == link_to_what)
                     r_ob->slotinfo[i].linked_to = k_SLOT_LINKAGE_NONE;
             r_ob->slotinfo[slot_num_0_based].linked_to = link_to_what;
-            set_linkto_notation_obj_field_to_value(r_ob, link_to_what, slot_num_0_based + 1);
+            set_linkto_notationobj_field_to_value(r_ob, link_to_what, slot_num_0_based + 1);
         }
     }
     if (link_to_what == k_SLOT_LINKAGE_LYRICS || link_to_what == k_SLOT_LINKAGE_NOTEHEAD_ADJUST ||

@@ -2899,7 +2899,7 @@ void set_keys_from_llll(t_score *x, t_llll* keys)
 t_max_err score_setattr_clefs(t_score *x, t_object *attr, long ac, t_atom *av){
 
     x->r_ob.private_flag = 0;
-    t_max_err err = notation_obj_setattr_clefs((t_notation_obj *)x, attr, ac, av);
+    t_max_err err = notationobj_setattr_clefs((t_notation_obj *)x, attr, ac, av);
 
     char must_unlock = true;
     if (trylock_general_mutex((t_notation_obj *)x))
@@ -2928,7 +2928,7 @@ t_max_err score_setattr_keys(t_score *x, t_object *attr, long ac, t_atom *av)
     if (trylock_general_mutex((t_notation_obj *)x))
         must_unlock = false; // already locked
 
-    t_max_err err = notation_obj_setattr_keys((t_notation_obj *)x, attr, ac, av);
+    t_max_err err = notationobj_setattr_keys((t_notation_obj *)x, attr, ac, av);
     check_all_voices_fullaccpatterns((t_notation_obj *)x);
     compute_all_notes_approximations(x, true); 
     recalculate_all_chord_parameters(x);
@@ -3161,7 +3161,7 @@ void create_whole_score_undo_tick_nolock(t_score *x) {
     if (x->r_ob.inhibited_undo)
         return;
     if (!(atom_gettype(&x->r_ob.max_undo_steps) == A_LONG && atom_getlong(&x->r_ob.max_undo_steps) == 0)) {
-        //        notation_obj_check_force((t_notation_obj *)x, true);
+        //        notationobj_check_force((t_notation_obj *)x, true);
         t_llll *content = get_score_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, true, true, false, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
@@ -3175,7 +3175,7 @@ void create_whole_score_undo_tick(t_score *x) {
     if (x->r_ob.inhibited_undo)
         return;
     if (!(atom_gettype(&x->r_ob.max_undo_steps) == A_LONG && atom_getlong(&x->r_ob.max_undo_steps) == 0)) {
-//        notation_obj_check_force((t_notation_obj *)x, true);
+//        notationobj_check_force((t_notation_obj *)x, true);
         t_llll *content = get_score_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, true, true, true, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
@@ -3241,8 +3241,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
     // set the whole score, starting from a llll (it clones the llll) 
     
 #ifdef BACH_CHECK_NOTATION_ITEMS
-    notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
-    notation_obj_check((t_notation_obj *)x);
+    notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
+    notationobj_check((t_notation_obj *)x);
 #endif
 
     t_llll *wholescore = llll_get();
@@ -3258,8 +3258,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
         lock_general_mutex((t_notation_obj *)x);    
     
 #ifdef BACH_CHECK_NOTATION_ITEMS
-    notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
-    notation_obj_check((t_notation_obj *)x);
+    notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
+    notationobj_check((t_notation_obj *)x);
 #endif
 
     x->r_ob.nullify_incorrect_ties = false;
@@ -3291,8 +3291,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
     }
     
 #ifdef BACH_CHECK_NOTATION_ITEMS
-    notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
-    notation_obj_check((t_notation_obj *)x);
+    notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
+    notationobj_check((t_notation_obj *)x);
 #endif
 
     if (wholescore->l_size > 0) { 
@@ -3362,7 +3362,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
                         } else if (pivotsym == _llllobj_sym_numparts) {
                             llll_destroyelem(pivot);
                             if (firstllll && firstllll->l_head)
-                                notation_obj_set_numparts_from_llll((t_notation_obj *)x, firstllll);
+                                notationobj_set_numparts_from_llll((t_notation_obj *)x, firstllll);
                         } else if (pivotsym == _llllobj_sym_loop) {
                             loopregion_is_given = true;
                             llll_destroyelem(pivot);
@@ -3370,8 +3370,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
                         }
                         
 #ifdef BACH_CHECK_NOTATION_ITEMS
-                        notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
-                        notation_obj_check((t_notation_obj *)x);
+                        notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
+                        notationobj_check((t_notation_obj *)x);
 #endif
 
                     } else
@@ -3383,8 +3383,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
         }
         
 #ifdef BACH_CHECK_NOTATION_ITEMS
-        notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
-        notation_obj_check((t_notation_obj *)x);
+        notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
+        notationobj_check((t_notation_obj *)x);
 #endif
 
         // now we're ready to iterate on scorevoices
@@ -3472,8 +3472,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
     }
     
 #ifdef BACH_CHECK_NOTATION_ITEMS
-    notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
-    notation_obj_check((t_notation_obj *)x);
+    notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
+    notationobj_check((t_notation_obj *)x);
 #endif
 
     if (markers) // we need to set them later, since they might be attached to measures
@@ -3484,11 +3484,11 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
     verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
 
 #ifdef BACH_CHECK_NOTATION_ITEMS
-    notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
-    notation_obj_check((t_notation_obj *)x);
+    notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
+    notationobj_check((t_notation_obj *)x);
 #endif
     
-//    notation_obj_check_force((t_notation_obj *)x, false);
+//    notationobj_check_force((t_notation_obj *)x, false);
     
     perform_analysis_and_change(x, NULL, NULL, NULL, x->r_ob.take_rhythmic_tree_for_granted ? k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING : k_BEAMING_CALCULATION_DO);
 
@@ -3526,8 +3526,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
 #endif
     
 #ifdef BACH_CHECK_NOTATION_ITEMS
-    notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
-    notation_obj_check((t_notation_obj *)x);
+    notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
+    notationobj_check((t_notation_obj *)x);
 #endif
 }
 
@@ -3659,89 +3659,7 @@ void score_clear_all(t_score *x)
     clear_all_markers((t_notation_obj *)x);
 }
 
-// OBSOLETE FUNCTION!!!! NOW IT IS NEVER CALLED!!!!
-// change_type: 0 = calculateUNDOSTEP; 1 = BANG+calculateUNDOSTEPonly; 2 = BANGonly
-void changed_bang(t_score *x, int change_type)
-{   
-    if (change_type & k_CHANGED_REDRAW_STATIC_LAYER){
-        jbox_invalidate_layer((t_object *)x, NULL, gensym("static_layer1"));
-        jbox_invalidate_layer((t_object *)x, NULL, gensym("static_layer2"));
-    }
-    
-    if (change_type == k_CHANGED_REDRAW_STATIC_LAYER) {
-        notationobj_redraw((t_notation_obj *) x);
-        return; // nothing more to do!
-    }
 
-    
-    if (!USE_NEW_UNDO_SYSTEM) {
-        if (!x->r_ob.j_isdragging && (change_type & k_CHANGED_CREATE_UNDO_STEP)) { 
-            #ifdef BACH_MAX
-            if (x->r_ob.save_data_with_patcher && !x->r_ob.j_box.l_dictll) {
-                // set dirty flag
-                object_attr_setchar(x->r_ob.patcher_parent, gensym("dirty"), 1);
-            }
-            #endif        
-            if (x->r_ob.allow_undo) {
-                
-                // update undo and redo lists
-                t_llll *kill_me_redo[CONST_MAX_UNDO_STEPS];
-                t_llll *kill_me_undo;
-                int i;
-                
-                lock_general_mutex((t_notation_obj *)x);
-                for (i = 0; i< CONST_MAX_UNDO_STEPS; i++) { // deleting redolist
-                    kill_me_redo[i] = x->r_ob.old_redo_llll[i];
-                    x->r_ob.old_redo_llll[i] = NULL;
-                }
-                
-                //deleting last element of the undo list
-                kill_me_undo = x->r_ob.old_undo_llll[CONST_MAX_UNDO_STEPS - 1];
-                
-                for (i = CONST_MAX_UNDO_STEPS - 1; i > 0; i--) // reassign undo steps
-                    x->r_ob.old_undo_llll[i] = x->r_ob.old_undo_llll[i-1];
-                unlock_general_mutex((t_notation_obj *)x);    
-                
-                // killing elements
-                for (i = 0; i < CONST_MAX_UNDO_STEPS; i++) {
-                    if (kill_me_redo[i])
-                        llll_free(kill_me_redo[i]);
-                }
-                if (kill_me_undo) 
-                    llll_free(kill_me_undo);
-                
-                // setting first element of the list
-                x->r_ob.old_undo_llll[0] = get_score_values_as_llll(x, k_CONSIDER_FOR_SAVING, k_HEADER_BODY + k_HEADER_SLOTINFO + k_HEADER_VOICENAMES + k_HEADER_MARKERS + k_HEADER_ARTICULATIONINFO + k_HEADER_NOTEHEADINFO + k_HEADER_NUMPARTS, true, true, true, false); // we don't undo the clefs changes
-                
-                #ifdef BACH_UNDO_DEBUG
-                    llll_post_named(x->r_ob.old_undo_llll[0], 0, 1, 2, gensym("UNDO step"), NULL); 
-                #endif
-            }
-            
-        } 
-    }
-    
-    if (change_type & k_CHANGED_CHECK_CORRECT_SCHEDULING)
-        check_correct_scheduling((t_notation_obj *)x, true);
-
-    // in any case:
-    notationobj_redraw((t_notation_obj *) x);
-
-    
-#ifdef BACH_MAX    
-    if (change_type & k_CHANGED_SEND_BANG) 
-        llllobj_outlet_bang((t_object *) x, LLLL_OBJ_UI, 8);    // send a bang
-
-    if (x->r_ob.automessage_ac > 0 && !x->r_ob.itsme && (change_type & k_CHANGED_SEND_AUTOMESSAGE)){
-        t_atom result;
-        x->r_ob.itsme = true;
-        x->r_ob.is_sending_automessage = true;
-        object_method_typed(x, NULL, x->r_ob.automessage_ac, x->r_ob.automessage_av, &result);
-        x->r_ob.is_sending_automessage = false;
-        x->r_ob.itsme = false; 
-    }
-#endif
-}
 
 
 
@@ -5430,12 +5348,7 @@ void scoreapi_initscore_step01(t_score *x)
     x->r_ob.nullify_incorrect_ties = true;
     x->r_ob.accidentals_preferences = k_ACC_AUTO;
 
-    // initializing undo/redo lists
-    for (i = 0; i < CONST_MAX_UNDO_STEPS; i++) {
-        x->r_ob.old_undo_llll[i] = NULL;
-        x->r_ob.old_redo_llll[i] = NULL;
-    }
-    
+
     // initializing all scorevoices (we DON'T fill them, but we have them). 
     x->r_ob.voiceuspacing_as_floatlist[0] = 0.;
     for (v = 0; v < CONST_MAX_VOICES; v++) {
@@ -5813,14 +5726,14 @@ void calculate_tuttipoints(t_score *x)
     t_scorevoice *vc;
     
 #ifdef BACH_CHECK_NOTATION_ITEMS
-    notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
+    notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
 #endif
 
     // delete previous tuttipoints
     delete_all_tuttipoints(x, true);
     
 //#ifdef BACH_CHECK_NOTATION_ITEMS
-//    notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
+//    notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
 //#endif
 
     if (x->r_ob.num_voices <= 0)
@@ -6061,7 +5974,7 @@ void calculate_tuttipoints(t_score *x)
     bach_freeptr(totdur_ms);
     
 #ifdef BACH_CHECK_NOTATION_ITEMS
-    notation_obj_check_all_measure_tuttipoints((t_notation_obj *)x);
+    notationobj_check_all_measure_tuttipoints((t_notation_obj *)x);
 #endif
 
 }
@@ -8231,7 +8144,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
     if (need_free_jf_dynamics_roman_nozoom_ok)
         jfont_destroy_debug(jf_dynamics_roman_nozoom_ok);
 
-//    notation_obj_check_force((t_notation_obj *)x, false);
+//    notationobj_check_force((t_notation_obj *)x, false);
 
     // to do: here we'll need to recompute chord topmost_y and bottommost_y (and NOT inside the following loops)
     // to do: here we'll need to recompute beaming_graphics (and NOT inside the following loops)
@@ -8386,7 +8299,7 @@ t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, 
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
     
-    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, get_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what));
+    llll_chain(out_llll, get_notationobj_header_as_llll((t_notation_obj *)x, get_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what));
 
     if (get_what & k_HEADER_BODY) {
         voice = x->firstvoice;

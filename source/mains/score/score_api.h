@@ -212,7 +212,6 @@ void set_keys_from_llll(t_score *x, t_llll* keys);
 void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll, char also_set_tempi,
                            char when_no_ts_given_use_previous_measure_ts, char *need_update_solos);
 void create_whole_score_undo_tick(t_score *x);
-void changed_bang(t_score *x, int change_type);
 void retranscribe_voice(t_score *x, t_scorevoice *voice);
 void score_retranscribe(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void clear_score_body(t_score *x, long voicenum); // voicenum is 0-based; special values include: -1 meaning: all voices (up to the current voice number); -2 meaning: all voices up to the CONST_MAX_VOICES

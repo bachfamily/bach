@@ -364,7 +364,7 @@ void get_access_types_as_sym_list(t_notation_obj *r_ob, t_symbol **list){
 }
 
 
-void notation_obj_declare_bach_attributes(t_notation_obj *r_ob){
+void notationobj_declare_bach_attributes(t_notation_obj *r_ob){
 
 	// SLOTINFO ATTRIBUTES
 	t_symbol *slottypes[k_NUM_SLOT_TYPES];
@@ -1115,7 +1115,7 @@ void set_bach_attr_slotinfo_flags(t_bach_inspector_manager *man, void *obj, t_ba
 		else if (attr->name == _llllobj_sym_rightclick) {
 			t_atom newav;
 			atom_setlong(&newav, atom_getlong(av) ? ((t_slotinfo *)obj)->slot_num + 1 : 0);
-			notation_obj_setattr_rightclickdirectlypopsoutslot(r_ob, NULL, 1, &newav);
+			notationobj_setattr_rightclickdirectlypopsoutslot(r_ob, NULL, 1, &newav);
 		} else if (attr->name == _llllobj_sym_linkto) {
 			change_linkto_slot_flag(r_ob, ((t_slotinfo *)obj)->slot_num, atom_getlong(av));
 		}

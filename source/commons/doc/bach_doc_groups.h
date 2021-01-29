@@ -349,7 +349,7 @@
 			value", meaning that they represent some important properties (and not some graphic representation parameters, or some utility value stocked for computational purpose).
 			Those parameters are usually defined as attributes within the bach framework.
 			An attribute is, indeed, a field of a structure having a "public value". To declare this, the macro you need to use is DECLARE_BACH_ATTR().
-			Indeed, some common attributes to notation objects (and also some peculiar ones, for convenience purposes) are declared in the notation_obj_declare_bach_attributes()
+			Indeed, some common attributes to notation objects (and also some peculiar ones, for convenience purposes) are declared in the notationobj_declare_bach_attributes()
 			routine. Each declared attributes must be associated with a name (a symbol, a good rule is that it has to be the same symbol as the router in the gathered syntax
 			assigning the same field via message), with a label (displayed in the bach inspector), with a owner type (the structure to which the attribute is referred, e.g. k_SLOTINFO
 			or k_CHORD), the structure name directly owning the attribute field, the structure member corresponding to the attribute field,

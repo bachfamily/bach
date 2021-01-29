@@ -61,9 +61,8 @@
     #define rhythmic_tree_debug_post(...) ((void) 0)
     #define verbose_post_rhythmic_tree(...) ((void) 0)
     
-    #define USE_NEW_UNDO_SYSTEM                            true    ///< Use the new undo system? Should be always true, we kept it only to be sure that we can always revert to previous way
     #define PLAY_REDRAWS_AT_NOTES_END                    true    ///< Do the play method redraws the static layer at each note end?
-    #define    USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS    false    ///< Use bitmaps for standard noteheads – instead than glyphs
+    #define USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS    false    ///< Use bitmaps for standard noteheads – instead than glyphs
     #define BACH_NOTES_HAVE_ID                        ///< Do notes have IDs as well? Should always be defined, except for weird debug purposes
     #define BACH_MARKERS_HAVE_ID                    ///< Do markers have IDs as well? Should always be defined, except for weird debug purposes
 //    #define BACH_OUTPUT_SYMBOLIC_FLAGS              ///< Are notation item flags to be output as symbols, instead of integers?
@@ -567,7 +566,7 @@
  */
 typedef enum _element_types {
     k_ELEMENT_TYPES_UNDEFINED = -1,
-     k_NONE = 0,                                    ///< No element
+    k_NONE = 0,                                    ///< No element
     k_NOTE = 1,                                    ///< Note
     k_DURATION_LINE = 2,                        ///< (DEPRECATED) Duration line: black line representing the duration of the note
     k_DURATION_TAIL = 3,                        ///< (DEPRECATED) Duration tail: the end of the duration line
@@ -755,26 +754,26 @@ typedef long (*rebuild_fn)(void *notation_obj, t_llll *ll, char also_lock_genera
 /** Void function involving a notation object and a notation item.
     @ingroup notation
  */
-typedef void (*notation_obj_notation_item_fn)(void *notation_obj, void *item, void *data);
+typedef void (*notationobj_notation_item_fn)(void *notation_obj, void *item, void *data);
 
 
 /** Void function involving a notation object and a note.
     @ingroup notation
  */
-typedef void (*notation_obj_note_fn)(void *notation_obj, void *note, void *data);
+typedef void (*notationobj_note_fn)(void *notation_obj, void *note, void *data);
 
 
 /** Void function involving a notation object and a chord.
     @ingroup notation
  */
-typedef void (*notation_obj_chord_fn)(void *notation_obj, void *chord, void *data);
+typedef void (*notationobj_chord_fn)(void *notation_obj, void *chord, void *data);
 
 
 /** Void function involving a notation object only.
     Chiefly used for undo (whole object undo) and bach inspector.
     @ingroup notation
  */
-typedef void (*notation_obj_fn)(void *notation_obj);
+typedef void (*notationobj_fn)(void *notation_obj);
 
 
 /** Setter for a given bach attribute (works like Max setters). 
@@ -846,7 +845,7 @@ typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t
 
 
 //TBD
-typedef char (*notation_obj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to);
+typedef char (*notationobj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to);
 
 
 
@@ -2840,8 +2839,8 @@ typedef struct _timepoint
 
 
 // Private
-typedef double (*notation_obj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, char sample_all_voices, char zero_pim_is_measure_first_chord);
-typedef double (*notation_obj_undo_redo_fn)(void *notation_obj, char direction);
+typedef double (*notationobj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, char sample_all_voices, char zero_pim_is_measure_first_chord);
+typedef double (*notationobj_undo_redo_fn)(void *notation_obj, char direction);
 
 
 
@@ -3975,23 +3974,23 @@ typedef struct _notation_obj
     t_symbol        **clefs_as_symlist;                ///< List of clefs as symbols (one for each voice).
                                                     ///< Functions clef_symbol_to_clef_number() and clef_number_to_clef_symbol() operate conversions 
                                                     ///< between symbols (such as "G", "F"...) and numbers (such as #k_CLEF_G, #k_CLEF_F...)
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     
     
     
     t_llll            *voicenames_as_llll;            ///< Voicenames represented in llll form (one llllelem for each voice)
     char            *hidevoices_as_charlist;        ///< List of 0's and 1's (one for each voice), depending if the voice is hidden (1) or not (0)
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     double            *voiceuspacing_as_floatlist;    ///< List of unscaled distances (in pixel) between voices. First element is the space before 
                                                     ///< first voice, last element is the space after last voice (and thus these values are #num_voices + 1
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
-                                                    ///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in notationobj_init() and freed by notationobj_free()
     t_symbol        **keys_as_symlist;                ///< List of key signatures as symbols (one symbol for each voice). 'M' = major, 'm' = minor, so "C#M" is C# major, and so on. 
                                                     ///< Latin and anglosaxon syntax accepted. Functions parse_sym_to_key_and_mode() and notename2midicents()
                                                     ///< operate parsing and conversions
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     long            *midichannels_as_longlist;        ///< List of midichannels (one for each voice). 
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
 
     // tuttipoints, for bach.score
     t_tuttipoint    *firsttuttipoint;               ///< First tuttipoint
@@ -4007,7 +4006,7 @@ typedef struct _notation_obj
 
     // measure numbers
     char            *show_measure_numbers;            ///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     double            measure_numbers_font_size;        ///< Font size for the measure numbers (for zoom_y = 1, will be scaled according to the zoom)
     
     // private, utilities
@@ -4089,7 +4088,7 @@ typedef struct _notation_obj
     
     // slots fields 
     t_slotinfo    *slotinfo;                    ///< Information about the structure of each slot)
-                                            ///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                            ///< It is an array with #CONST_MAX_SLOTS elements allocated in notationobj_init() and freed by notationobj_free()
     double        slot_minimum_window_uwidth;    ///< Unscaled minimum width (in pixels) for a slot window (only for non-temporal slots)
     
     long        active_slot_num;            ///< Number (0-based) of the slot whose slot window is being shown (-1 = normal view: no slot windows are show  n)
@@ -4133,11 +4132,11 @@ typedef struct _notation_obj
 
     long        num_background_slots;                ///< Number of slots to be kept drawn in background (also when slot window is closed)
     long        *background_slots;                    ///< List of the slot numbers (1-based!) which have to be kept in background, only the first <num_background_slots> elements are meaningful.
-                                                    ///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_SLOTS elements allocated in notationobj_init() and freed by notationobj_free()
     
     long        num_popup_menu_slots;                ///< Number of slots appearing in the contextual menu (when clicking on a note)
     long        *popup_menu_slots;                    ///< List of the slot numbers (1-based!) which have to be in the contextual menu, only the first <num_popup_menu_slots> elements are meaningful.
-                                                    ///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_SLOTS elements allocated in notationobj_init() and freed by notationobj_free()
     
     char        mouse_hover;                ///< Flag telling if we allow mouse hovering on the points of the #k_SLOT_TYPE_FUNCTION slots
     t_slotitem    *hovered_slotitem;            ///< Pointer to the currently hovered slot item (typically a #t_slotitem of a function slot) 
@@ -4313,7 +4312,7 @@ typedef struct _notation_obj
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
     t_symbol    **full_acc_repr;                    ///< List of accidental representation symbols (one for each voice).
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
                                                     ///< Each symbol specifies the full accidental representation for a voice.
                                                     ///< For a semitonal representation a sequence like "n # n # n n b n b n # n" is expected (12 elems)
                                                     ///< For a quartertonal representation a sequence like "n + # - n + # - n + n + b - n db b - n + # #+ n +" is expected (24 elems).
@@ -4373,6 +4372,7 @@ typedef struct _notation_obj
     char        breakpoints_have_velocity;            ///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
     char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads
     
+    char        notify_with_undo;                   ///< Verbose undo notifications through last outlet
     char        notify_when_painted;                ///< Flag telling if we want notifications to be sent whenever the object is repainted
     char        notify_also_upon_messages;            ///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes 
     char        dblclick_sends_values;                ///< Flag telling if, when we double click, the selection is sent through the playout (as when we press V)
@@ -4395,7 +4395,7 @@ typedef struct _notation_obj
     char            need_snap_some_nonselected_items;   ///< Field which is set only when nonselected elements (flagged with #k_FLAG_TO_BE_SNAPPED) need to be snapped
     t_prevent_edit    prevent_edit;                        ///< Structure telling if a given element type can (0) or cannot (1) be edited via the interface
     t_atom            *prevent_editing_atom;                ///< Array with the symbols corresponding to the elements whose editing is denied (the number of such elements is #num_prevent_editing_elems
-                                                        ///< It is an array with #CONST_MAX_BACH_ELEMENT_TYPES + 10 elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                        ///< It is an array with #CONST_MAX_BACH_ELEMENT_TYPES + 10 elements allocated in notationobj_init() and freed by notationobj_free()
     long            num_prevent_editing_elems;            ///< Number of elements whose editing is to be prevented
     char            allow_linear_edit;                    ///< Allow usage of the linear editing system (for [bach.score] only)
     t_llll            *constraint_pitches_when_editing;    ///< llll containing possible information on how pitches must be constrained while editing them.
@@ -4552,11 +4552,6 @@ typedef struct _notation_obj
     char        save_data_with_patcher;                ///< Flag telling if the score content is saved with the patcher. The dirty bit is also set when the score is modified, 
                                                     ///< so that user is certainly asked to save when he closes the patch.
     char        allow_undo;                            ///< Flag telling if we allow undo. 
-    
-    t_llll        **old_undo_llll;                    ///< (OBSOLETE!) Array containing the #CONST_MAX_UNDO_STEPS undo steps (NULL if step is not defined)
-                                                    ///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in notation_obj_init() and freed by notation_obj_free()
-    t_llll        **old_redo_llll;                    ///< (OBSOLETE!) Array containing the #CONST_MAX_UNDO_STEPS redo steps (NULL if step is not defined) 
-                                                    ///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in notation_obj_init() and freed by notation_obj_free()
     
     double        last_undo_time;                        ///< (UNUSED) Operating system's time (in milliseconds) of the last time when un undo step has been performed 
 
@@ -4742,7 +4737,7 @@ typedef struct _notation_obj
                                                     ///< Synchoronous chords exceeding this number will be played 'as soon as possible' in the next scheduler tick (scheduled immediately)
 
     t_chord        **chord_play_cursor;        ///< Multicursor (one element for each voice) containing the last played chords, or generally (when possible) the chords happening _before_ the already scheduled events. 
-                                            ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                            ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
                                             ///< The idea is that, to play the next chord, we start to look ahead from the ones we have already played, and
                                             ///< we keep track of this 'looking ahead' with this multicursor.
     t_tempo     **tempo_play_cursor;         ///< Cursor containing the last played tempo for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor)
@@ -4862,12 +4857,12 @@ typedef struct _notation_obj
     
     // functions
     rebuild_fn                        rebuild_function;                ///< Pointer to the function setting the whole object from llll
-    notation_obj_fn                    whole_obj_undo_tick_function;    ///< Pointer to the function creating the undo tick for the whole object
-    notation_obj_notation_item_fn    force_notation_item_inscreen;    ///< Pointer to a function forcing a given notation item to be inside the screen
-    notation_obj_timepoint_to_ux_fn timepoint_to_unscaled_xposition;///< Pointer to a function (if any), converting a timepoint into an unscaled x position (makes sense for bach.score only)
-    notation_obj_undo_redo_fn       undo_redo_function;             ///< Function for undo/redo
+    notationobj_fn                    whole_obj_undo_tick_function;    ///< Pointer to the function creating the undo tick for the whole object
+    notationobj_notation_item_fn    force_notation_item_inscreen;    ///< Pointer to a function forcing a given notation item to be inside the screen
+    notationobj_timepoint_to_ux_fn timepoint_to_unscaled_xposition;///< Pointer to a function (if any), converting a timepoint into an unscaled x position (makes sense for bach.score only)
+    notationobj_undo_redo_fn       undo_redo_function;             ///< Function for undo/redo
     bach_paint_ext_fn               paint_ext_function;             ///< Pointer to the function painting the object (in extended bach mode)
-    notation_obj_inscreenmeas_fn    inscreenmeas_function;          ///< Pointer to the inscreenmeas function
+    notationobj_inscreenmeas_fn    inscreenmeas_function;          ///< Pointer to the inscreenmeas function
     
     // attributes
     t_bach_inspector_manager    m_inspector;                        ///< Inspector manager
@@ -6979,7 +6974,7 @@ void initialize_rollvoice(t_notation_obj *r_ob, t_rollvoice *voice, long voice_n
     @param    undo_redo_fn                       Pointer to the undo/redo function; leave NULL if unneeded.
     @param  bach_paint_ext_fn paint_extended    Pointer to the paint function (in extended bach mode, i.e. with a bach_paint_ext_fn signature)
 */
-void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, notation_obj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended);
+void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notationobj_fn whole_undo_tick, notationobj_notation_item_fn force_notation_item_inscreen, notationobj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended);
 
 
 /**    Initialize (or re-initialize) slot information with a default slotinfo 
@@ -7007,15 +7002,15 @@ void initialize_popup_menus(t_notation_obj *r_ob);
     @param        d        The dictionary
     @see        attr_dictionary_process()
  */
-void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_dictionary *d);
+void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_dictionary *d);
 
 
 
 // PRE-SCHEDULING
-void notation_obj_clear_prescheduled_events(t_notation_obj *r_ob);
-void notation_obj_preschedule_end(t_notation_obj *x, t_symbol *s, long argc, t_atom *argv);
-void notation_obj_preschedule_task(t_notation_obj *r_ob);
-void notation_obj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
+void notationobj_clear_prescheduled_events(t_notation_obj *r_ob);
+void notationobj_preschedule_end(t_notation_obj *x, t_symbol *s, long argc, t_atom *argv);
+void notationobj_preschedule_task(t_notation_obj *r_ob);
+void notationobj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
 
 
 
@@ -7029,7 +7024,7 @@ void notation_obj_append_prescheduled_event(t_notation_obj *r_ob, double time, t
     @ingroup        notation_free
     @param r_ob        The notation object
  */
-void notation_obj_free(t_notation_obj *r_ob);
+void notationobj_free(t_notation_obj *r_ob);
 
 
 /**    Free the memory of a notation item (created via build_notation_item())
@@ -7999,7 +7994,7 @@ void transfer_tie_to(t_chord *from, t_chord *to);
     @ingroup    notation
     @param        r_ob        The notation object
 */ 
-void quick_notation_obj_recompute_all_chord_parameters(t_notation_obj *r_ob);
+void quick_notationobj_recompute_all_chord_parameters(t_notation_obj *r_ob);
 
 
 /** Tell if a tempo is really necessary, or if it could be deleted and nothing at all changes in the score timings.
@@ -8522,7 +8517,7 @@ t_notation_item *notation_item_to_notation_item_for_slot_win_opening(t_notation_
     @ingroup            slots
     @param r_ob            The notation object
 */
-void notation_obj_reset_slotinfo(t_notation_obj *r_ob);
+void notationobj_reset_slotinfo(t_notation_obj *r_ob);
 
 
 /**    Set or update the slotinfo in the notation object structure, starting from a slotinfo-llll
@@ -8659,12 +8654,12 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 // Private
 void notation_item_check_slots(t_notation_obj *r_ob, t_notation_item *nitem);
 void notation_item_check(t_notation_obj *r_ob, t_notation_item *nitem);
-void notation_obj_check(t_notation_obj *r_ob);
+void notationobj_check(t_notation_obj *r_ob);
 void notation_item_check_against_tuttipoints(t_notation_obj *r_ob, t_notation_item *nitem);
-void notation_obj_check_against_tuttipoints(t_notation_obj *r_ob);
-void notation_obj_check_all_measure_tuttipoints(t_notation_obj *r_ob);
+void notationobj_check_against_tuttipoints(t_notation_obj *r_ob);
+void notationobj_check_all_measure_tuttipoints(t_notation_obj *r_ob);
 void clear_all_measure_tuttipoint_references(t_notation_obj *r_ob);
-void notation_obj_check_force(t_notation_obj *r_ob, char also_lock_mutext);
+void notationobj_check_force(t_notation_obj *r_ob, char also_lock_mutext);
 
 
 /**    Set a slot content (one of more slots) to all the selected notes in a notation object.
@@ -9258,7 +9253,7 @@ void open_slot_window(t_notation_obj *r_ob, long slot_num, t_notation_item *nite
     @param argc            The number of atoms in the A_GIMME signature
     @param argv            The atoms of the A_GIMME signature
  */
-void notation_obj_openslotwin(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_openslotwin(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 /**    End editing a slot window.
@@ -9636,10 +9631,10 @@ double get_next_step_depending_on_editing_ranges(t_notation_obj *r_ob, double mi
     @ingroup            voice_attributes
     @param    r_ob        The notation object
     @param    voicenames    The llll containing the voice names (each element, supposely an H_SYM, is a voice name)
-    @param    char also_update_notation_obj_voicenames_llll    If this is non-0 the t_notation_obj::voienames_as_llll field is also updated.
+    @param    char also_update_notationobj_voicenames_llll    If this is non-0 the t_notation_obj::voienames_as_llll field is also updated.
                                                             Set this to 0 if voicenames is exactly that llll, otherwise it'll hang!
  */ 
-void set_voicenames_from_llll(t_notation_obj *r_ob, t_llll* voicenames, char also_update_notation_obj_voicenames_llll);
+void set_voicenames_from_llll(t_notation_obj *r_ob, t_llll* voicenames, char also_update_notationobj_voicenames_llll);
 
 
 /**    Change the name of a specific voice.
@@ -10797,7 +10792,7 @@ void calculate_ms_on_a_line(t_notation_obj *r_ob);
     @param    size    The size of the new text
     @ingroup        editor
  */
-void notation_obj_edclose(t_notation_obj *r_ob, char **ht, long size);
+void notationobj_edclose(t_notation_obj *r_ob, char **ht, long size);
 
 
 
@@ -11177,7 +11172,7 @@ char handle_keys_for_articulations(t_notation_obj *r_ob, t_object *patcherview, 
 // TBD
 void set_articulationinfo_from_llll(t_notation_obj *r_ob, t_articulations_typo_preferences *atp, t_llll* art_ll, char add_mode);
 t_llll *get_articulationinfo_as_llll(t_notation_obj *r_ob);
-void notation_obj_reset_articulationinfo(t_notation_obj *r_ob);
+void notationobj_reset_articulationinfo(t_notation_obj *r_ob);
 
 
 
@@ -11196,7 +11191,7 @@ char *notehead_to_text_buf(t_notation_obj *r_ob, long artic_ID, t_rational rdur)
 // TBD
 void set_noteheadinfo_from_llll(t_notation_obj *r_ob, t_llll* nh_ll, char add_mode);
 t_llll *get_noteheadinfo_as_llll(t_notation_obj *r_ob);
-void notation_obj_reset_noteheadinfo(t_notation_obj *r_ob);
+void notationobj_reset_noteheadinfo(t_notation_obj *r_ob);
 
 
 
@@ -11457,7 +11452,7 @@ char only_tails_are_selected(t_notation_obj *r_ob);
     the expression is reduced to "$x1 > 100" and then plugged into a lexpr to find the corresponding matches
     among the existing notation data.
     @ingroup            selection
-    @remark                This function is obsolete, use notation_obj_lexpr_new() instead
+    @remark                This function is obsolete, use notationobj_lexpr_new() instead
     @remark                The substitutions are as follows:
                         "onset" > $x1 
                         "cents" > $x2 
@@ -11496,7 +11491,7 @@ long substitute_symbols_for_lexpr_fn(void *data, t_hatom *a, const t_llll *addre
     "measure" > $x10
     "tie" > $x11
  */
-t_lexpr *notation_obj_lexpr_new(short ac, t_atom *av);
+t_lexpr *notationobj_lexpr_new(short ac, t_atom *av);
 
 
 
@@ -12350,7 +12345,7 @@ t_llll *get_midichannels_as_llll(t_notation_obj *r_ob, char prepend_router);
     @param    for_what    One of the #e_data_considering_types, typically either #k_CONSIDER_FOR_DUMPING of #k_CONSIDER_FOR_UNDO.
     @return                An llll containing all notation object's header
  */
-t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, char add_router_symbol, 
+t_llll *get_notationobj_header_as_llll(t_notation_obj *r_ob, long dump_what, char add_router_symbol, 
                                         char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, e_data_considering_types for_what);
 
 
@@ -12395,10 +12390,10 @@ void set_stafflines_to_voice_from_llllelem(t_notation_obj *r_ob, t_voice *voice,
     @param    r_ob        The notation object
     @param    stafflines    A llll containing all the stafflines information, one element for each voice.
                         Each llllelem has the syntax explained in get_voice_stafflines_as_llllelem().
-    @param    char also_update_notation_obj_stafflines_llll    If this is non-0 the t_notation_obj::stafflines_as_llll field is also updated.
+    @param    char also_update_notationobj_stafflines_llll    If this is non-0 the t_notation_obj::stafflines_as_llll field is also updated.
                                                             Set this to 0 if stafflines is exactly that llll, otherwise it'll hang!
  */
-void set_stafflines_from_llll(t_notation_obj *r_ob, t_llll* stafflines, char also_update_notation_obj_stafflines_llll);
+void set_stafflines_from_llll(t_notation_obj *r_ob, t_llll* stafflines, char also_update_notationobj_stafflines_llll);
 
 
 /**    Change the number of voices of a notation object. 
@@ -14103,12 +14098,12 @@ t_rational get_tempo_trapece_sec(t_scorevoice *voice, t_rational tempo_L_value, 
 /** Get the header from a gathered-syntax representation of a roll or a score.
     @ingroup    notation_utilities
     @param    whole_content    The gathered syntax representation of the roll or score
-    @param    keep_notation_obj_router    Toggles the preservation of the "roll" or "score" symbol, or any other routing symbol
+    @param    keep_notationobj_router    Toggles the preservation of the "roll" or "score" symbol, or any other routing symbol
     @return        The header of the gathered syntax representation    
     @remark        This function clones the header, and hence does not destroy the header in the #ll, which remains untouched.
     @see    get_body()
 */
-t_llll *get_header(t_llll *whole_content, char keep_notation_obj_router);
+t_llll *get_header(t_llll *whole_content, char keep_notationobj_router);
 
 
 /** Get the body from a gathered-syntax representation of a roll or a score (all the representation, ignoring the header)
@@ -15483,14 +15478,30 @@ void remove_modif_undo_flag_to_last_undo_ticks(t_notation_obj *r_ob);
 void selection_to_undo_notation_item(t_notation_obj *r_ob, t_notation_item **undo_items);
 
 
-/** Convert an interface operation, represented as a long (one of the #e_undo_operations), into a string characterizing the operation.
+/** Convert an interface operation, represented as a long (one of the #e_undo_operations), into a string describing the operation.
     This string, for instance, is the one displayed in the Max window if the undo is verbose.
-    @ingroup    undo
+    @ingroup      undo
     @param        undo_op        One of the #e_undo_operations identifying the performed operation.
-    @return        A string containing the string describing the operation.
-    @remark        The returned pointer must then be properly freed.
+    @param        buf            Allocated buffer (size at least 256 to be on the safe side)
+    @seealso      undo_op_to_symbol()
  */
-char *undo_op_to_string(long undo_op); // convert an undo operation into the string for the max window, allocates memory
+void undo_op_to_string(long undo_op, char *buf);
+
+
+/** Convert an interface operation, represented as a long (one of the #e_undo_operations), into a symbol describing the operation.
+ This string, for instance, is the one displayed in the Max window if the undo is verbose.
+    @ingroup      undo
+    @param        undo_op        One of the #e_undo_operations identifying the performed operation.
+    @return       A symbol containing the string describing the operation.
+    @seealso      undo_op_to_string()
+ */
+t_symbol *undo_op_to_symbol(long undo_op);
+
+// TBD
+t_symbol *element_type_to_symbol(e_element_types el_type);
+t_symbol *undo_modification_type_to_symbol(e_undo_modification_types modif_type);
+t_llll *get_undo_op_for_notification(t_notation_obj *r_ob);
+
 
 
 /**    Set the flag fields to a notation item for some undo operation. If the item is of type chord, a list in the
@@ -17535,72 +17546,72 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type);
 /** \addtogroup attributes 
  *  @{
  */
-t_max_err notation_obj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknotecolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadfonttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadadjusttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadsizetoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkannotationtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showmeasurenumbers(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_backgroundslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_popupmenuslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_rightclickdirectlypopsoutslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long *must_recompute_all);
-t_max_err notation_obj_set_keys(t_notation_obj *r_ob, t_symbol **keys);
-t_max_err notation_obj_set_hidevoices(t_notation_obj *r_ob, char *hide);
-t_max_err notation_obj_set_voicespacing(t_notation_obj *r_ob, long ac, double *value);
-t_max_err notation_obj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
-t_max_err notation_obj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
-t_max_err notation_obj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
-t_max_err notation_obj_set_parts(t_notation_obj *r_ob, long *part);
+t_max_err notationobj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknotecolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadfonttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadadjusttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadsizetoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkannotationtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showmeasurenumbers(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_backgroundslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_popupmenuslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_rightclickdirectlypopsoutslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long *must_recompute_all);
+t_max_err notationobj_set_keys(t_notation_obj *r_ob, t_symbol **keys);
+t_max_err notationobj_set_hidevoices(t_notation_obj *r_ob, char *hide);
+t_max_err notationobj_set_voicespacing(t_notation_obj *r_ob, long ac, double *value);
+t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
+t_max_err notationobj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
+t_max_err notationobj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
+t_max_err notationobj_set_parts(t_notation_obj *r_ob, long *part);
 
 // GETTERS
 
-t_max_err notation_obj_getattr_voicenames(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
-t_max_err notation_obj_getattr_stafflines(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
+t_max_err notationobj_getattr_voicenames(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
+t_max_err notationobj_getattr_stafflines(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
 /** @}*/
 
 
@@ -18154,7 +18165,7 @@ void bach_attribute_add_enumindex(t_bach_attribute *attr, long num_items, t_symb
     @ingroup    attributes
     @param    r_ob                The    notation object
  */
-void notation_obj_declare_bach_attributes(t_notation_obj *r_ob);
+void notationobj_declare_bach_attributes(t_notation_obj *r_ob);
 
 
 
@@ -18751,7 +18762,7 @@ long notationobj_throw_issue(t_notation_obj *r_ob);
     @param        smallest_undoable_element    Smallest element whose content will be stored in the undo tick. This is only used if #create_undo_ticks is non-zero.
     @return        1 if something has changed, 0 otherwise
  */
-char iterate_changes_on_selection(t_notation_obj *r_ob, notation_obj_notation_item_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem);
+char iterate_changes_on_selection(t_notation_obj *r_ob, notationobj_notation_item_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem);
 
 
 /** Apply the #fn function on all selected notes.
@@ -18765,7 +18776,7 @@ char iterate_changes_on_selection(t_notation_obj *r_ob, notation_obj_notation_it
     @param        smallest_undoable_element    Smallest element whose content will be stored in the undo tick. This is only used if #create_undo_ticks is non-zero.
     @return        1 if something has changed, 0 otherwise
 */
-char iterate_notewise_changes_on_selection(t_notation_obj *r_ob, notation_obj_note_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem, char also_apply_on_notetails);
+char iterate_notewise_changes_on_selection(t_notation_obj *r_ob, notationobj_note_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem, char also_apply_on_notetails);
 
 
 /** Apply the #fn function on all selected chords. 
@@ -18783,7 +18794,7 @@ char iterate_notewise_changes_on_selection(t_notation_obj *r_ob, notation_obj_no
                                                     so you cannot trust the value of this flag before and after calling this function.)
     @return        1 if something has changed, 0 otherwise
  */
-char iterate_chordwise_changes_on_selection(t_notation_obj *r_ob, notation_obj_chord_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem, char also_apply_if_single_note_selected); 
+char iterate_chordwise_changes_on_selection(t_notation_obj *r_ob, notationobj_chord_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem, char also_apply_if_single_note_selected); 
 
 
 
@@ -19019,7 +19030,7 @@ t_llllelem *llll_append_notation_item_name(t_llll *ll, t_notation_item *it);
     @param    argc    The number of atoms of the A_GIMME signature
     @param    argv    The array of atoms of the A_GIMME signature
  */
-void notation_obj_name(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_name(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 /** General method to clear names of all selected items. GIMME signature is ignored.
@@ -19029,7 +19040,7 @@ void notation_obj_name(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *arg
     @param    argc    The number of atoms of the A_GIMME signature
     @param    argv    The array of atoms of the A_GIMME signature
  */
-void notation_obj_clearnames(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_clearnames(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 /** General method to append names to the selection of a notation object from a generic A_GIMME signature.
@@ -19040,12 +19051,12 @@ void notation_obj_clearnames(t_notation_obj *r_ob, t_symbol *s, long argc, t_ato
     @param    argc    The number of atoms of the A_GIMME signature
     @param    argv    The array of atoms of the A_GIMME signature
  */
-void notation_obj_nameappend(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_nameappend(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 // TBD
-void notation_obj_nametoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
-void notation_obj_slottoname(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_nametoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_slottoname(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 /** Clear the names of all notation items in the score
     @ingroup        names
@@ -19056,7 +19067,7 @@ void notation_obj_slottoname(t_notation_obj *r_ob, t_symbol *s, long argc, t_ato
     @param    notes    If non-zero, clears all note names
     @param    markers    If non-zero, clears all marker names
  */
-void notation_obj_clear_names(t_notation_obj *r_ob, long voices, long measures, long chords, long notes, long markers);
+void notationobj_clear_names(t_notation_obj *r_ob, long voices, long measures, long chords, long notes, long markers);
 
 
 /** General method to change roles to the selection of a notation object from a generic A_GIMME signature.
@@ -19067,7 +19078,7 @@ void notation_obj_clear_names(t_notation_obj *r_ob, long voices, long measures, 
     @param    argc    The number of atoms of the A_GIMME signature
     @param    argv    The array of atoms of the A_GIMME signature
  */
-void notation_obj_role(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_role(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 /** Parse and fill the t_notation_obj::m_label structure properly.
@@ -19253,13 +19264,13 @@ t_llll *notationobj_get_interp_tempo(t_notation_obj *r_ob, t_timepoint tp);
 t_llll *notationobj_get_interp_timesig(t_notation_obj *r_ob, t_timepoint tp);
 t_llll *notationobj_get_sampling(t_notation_obj *r_ob, long num_points);
 t_llll *notationobj_get_sampling_ms(t_notation_obj *r_ob, double delta_ms);
-void notation_obj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);
-void notation_obj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);
-void notation_obj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long paste_to_this_slot, char also_paste_to_rests = true);
-void notation_obj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, t_clipboard *clipboard, char delete_intermediate_points);
+void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);
+void notationobj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);
+void notationobj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long paste_to_this_slot, char also_paste_to_rests = true);
+void notationobj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, t_clipboard *clipboard, char delete_intermediate_points);
 
-void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut);
-void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard);
+void notationobj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut);
+void notationobj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard);
 
 
 void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked_elem_ptr, long *clicked_elem_type);
