@@ -1184,7 +1184,7 @@ void clear_voice(t_score *x, t_scorevoice *voice)
         while (temp) {
             temp2 = temp;
             temp = temp->prev;
-            if (delete_measure(x, temp2, NULL, NULL))
+            if (delete_measure((t_notation_obj *)x, temp2, NULL, NULL))
                 need_check_scheduling = true;
         }
     }
@@ -1194,37 +1194,6 @@ void clear_voice(t_score *x, t_scorevoice *voice)
 //    delete_voice_tempi(x, voice);
 }
 
-void clear_measure(t_score *x, t_measure *measure, char also_reset_all_attributes, char also_clear_ties_from, char also_clear_tempi) 
-{
-    if (measure->lastchord) {
-        t_chord *temp = measure->lastchord; 
-        t_chord *temp2;
-        while (temp) {
-            temp2 = temp;
-            temp = temp->prev;
-            chord_delete_from_measure((t_notation_obj *) x, temp2, also_clear_ties_from);
-        }
-        measure->r_total_content_duration = long2rat(0);
-    }
-    
-    if (also_clear_tempi)
-        delete_measure_tempi(x, measure);
-    
-    clear_measure_beams((t_notation_obj *)x, measure);
-    
-    free_rhythmic_tree((t_notation_obj *)x, measure);
-    measure->rhythmic_tree = llll_get();
-    
-    if (also_reset_all_attributes) {
-        measure->end_barline->barline_type = k_BARLINE_AUTOMATIC;
-        measure->local_spacing_width_multiplier = 1;
-        measure->is_spacing_fixed = 0;
-        measure->show_measure_number = 1;
-        measure->force_measure_number = 0;
-    }
-    
-    recompute_all_for_measure((t_notation_obj *)x, measure, true);
-}
 
 void set_all_tstempo_values_from_llll(t_score *x, t_llll* measureinfo, long num_introduced_voices)
 {
@@ -1257,7 +1226,7 @@ void set_all_tstempo_values_from_llll(t_score *x, t_llll* measureinfo, long num_
                         meas = nth_measure_of_scorevoice(tmp_voice, tmp_voice->num_measures);
                     if (!meas) { // if the measure does not exist, we create it
                         meas = build_measure((t_notation_obj *) x, NULL);
-                        insert_measure(x, tmp_voice, meas, tmp_voice->lastmeasure, 0);
+                        insert_measure((t_notation_obj *)x, tmp_voice, meas, tmp_voice->lastmeasure, 0);
                     }
                     while (meas) {
                         measure_set_ts_and_tempo_from_llll((t_notation_obj *) x, meas, ts, tempi, measure_barline, measureinfo, false);
@@ -1480,7 +1449,7 @@ void set_voice_tstempo_values_from_llll(t_score *x, t_llll* measureinfo, t_score
                 if (valid_for_n_measures < 0) { // to the end!
                     if (!measure) { // if the measure does not exist, we create it
                         measure = build_measure((t_notation_obj *) x, NULL);
-                        insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                        insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
                     }
                     while (measure) {
                         measure_set_ts_and_tempo_from_llll((t_notation_obj *) x, measure, ts, tempi, barline, thismeas, false);
@@ -1492,7 +1461,7 @@ void set_voice_tstempo_values_from_llll(t_score *x, t_llll* measureinfo, t_score
                 for (count = 0; count < valid_for_n_measures; count++) {
                     if (!measure) { // if the measure does not exist, we create it
                         measure = build_measure((t_notation_obj *) x, NULL);
-                        insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                        insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
                     }
                     measure_set_ts_and_tempo_from_llll((t_notation_obj *) x, measure, ts, tempi, barline, thismeas, false);
                     compute_utf_timesignature((t_notation_obj *) x, &measure->timesignature);
@@ -1698,7 +1667,7 @@ void set_voice_cents_values_from_llll(t_score *x, t_llll* midicents, t_scorevoic
                 measure = build_measure((t_notation_obj *) x, NULL);
                 if (voice->lastmeasure) 
                     measure_set_ts((t_notation_obj *) x, measure, &voice->lastmeasure->timesignature);
-                insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
             }
             set_measure_cents_values_from_llll(x, measure_midicents, measure, force_append_notes);
             measure = measure->next;
@@ -1719,7 +1688,7 @@ void set_voice_durations_values_from_llll(t_score *x, t_llll* durations, t_score
                 measure = build_measure((t_notation_obj *) x, NULL);
                 if (voice->lastmeasure) 
                     measure_set_ts((t_notation_obj *)x, measure, &voice->lastmeasure->timesignature);
-                insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
             }
             if (measure_durations->l_size > 0) // if this was NIL, it meant: skip the element!
                 set_measure_durations_values_from_llll(x, measure_durations, measure);
@@ -2004,7 +1973,7 @@ void set_voice_velocities_values_from_llll(t_score *x, t_llll* velocities, t_sco
                 measure = build_measure((t_notation_obj *) x, NULL);
                 if (voice->lastmeasure) 
                     measure_set_ts((t_notation_obj *)x, measure, &voice->lastmeasure->timesignature);
-                insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
             }
             set_measure_velocities_values_from_llll(x, measure_velocities, measure);
             measure = measure->next;
@@ -2127,7 +2096,7 @@ void set_voice_ties_values_from_llll(t_score *x, t_llll* ties, t_scorevoice *voi
             if (!measure) { // if the measure does not exist, we create it
                 measure = build_measure((t_notation_obj *) x, NULL);
                 if (voice->lastmeasure) measure_set_ts((t_notation_obj *)x, measure, &voice->lastmeasure->timesignature);
-                insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
             }
             set_measure_ties_values_from_llll(x, measure_ties, measure);
             measure = measure->next;
@@ -2292,7 +2261,7 @@ void set_voice_graphic_values_from_llll(t_score *x, t_llll* graphic, t_scorevoic
             if (!measure) { // if the measure does not exist, we create it
                 measure = build_measure((t_notation_obj *) x, NULL);
                 if (voice->lastmeasure) measure_set_ts((t_notation_obj *)x, measure, &voice->lastmeasure->timesignature);
-                insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
             }
             set_measure_graphic_values_from_llll(x, measure_graphic, measure);
             measure = measure->next;
@@ -2312,7 +2281,7 @@ void set_voice_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t_s
             if (!measure) { // if the measure does not exist, we create it
                 measure = build_measure((t_notation_obj *) x, NULL);
                 if (voice->lastmeasure) measure_set_ts((t_notation_obj *)x, measure, &voice->lastmeasure->timesignature);
-                insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
             }
             set_measure_breakpoints_values_from_llll(x, measure_breakpoints, measure);
             measure = measure->next;
@@ -2332,7 +2301,7 @@ void set_voice_articulation_values_from_llll(t_score *x, t_llll* articulations, 
             if (!measure) { // if the measure does not exist, we create it
                 measure = build_measure((t_notation_obj *) x, NULL);
                 if (voice->lastmeasure) measure_set_ts((t_notation_obj *)x, measure, &voice->lastmeasure->timesignature);
-                insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
             }
             set_measure_articulations_values_from_llll(x, measure_articulations, measure);
             measure = measure->next;
@@ -2353,7 +2322,7 @@ void set_voice_slots_values_from_llll(t_score *x, t_llll* slots, t_scorevoice *v
             if (!measure) { // if the measure does not exist, we create it
                 measure = build_measure((t_notation_obj *) x, NULL);
                 if (voice->lastmeasure) measure_set_ts((t_notation_obj *)x, measure, &voice->lastmeasure->timesignature);
-                insert_measure(x, voice, measure, voice->lastmeasure, 0);
+                insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, 0);
             }
             set_measure_slots_values_from_llll(x, measure_slots, measure);
             measure = measure->next;
@@ -3454,7 +3423,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
                     
                                 if (measelemllll->l_size > 0) {
                                     t_measure *measure = build_measure((t_notation_obj *) x, NULL);
-                                    insert_measure(x, voice, measure, voice->lastmeasure, forced_meas_ID);
+                                    insert_measure((t_notation_obj *)x, voice, measure, voice->lastmeasure, forced_meas_ID);
                                     
                                     set_measure_from_llll(x, measure, measelemllll, true, true, NULL);
                                  } 
@@ -3609,7 +3578,7 @@ void clear_score_body(t_score *x, long voicenum)
         t_measure *temp = measure; 
         while (measure) {
             temp = measure->next;
-            delete_measure(x, measure, NULL, NULL);
+            delete_measure((t_notation_obj *)x, measure, NULL, NULL);
             measure = temp;
         }
     } else { 
@@ -3619,7 +3588,7 @@ void clear_score_body(t_score *x, long voicenum)
             t_measure *measure = voice->firstmeasure;
             while (measure) {
                 t_measure *temp = measure->next;
-                delete_measure(x, measure, NULL, NULL);
+                delete_measure((t_notation_obj *)x, measure, NULL, NULL);
                 measure = temp;
             }
             voice = voice->next;
@@ -3699,7 +3668,7 @@ void score_clearnotes(t_score *x, t_symbol *s, long argc, t_atom *argv)
         t_scorevoice *voice = nth_scorevoice(x, voicenum);
         t_measure *measure = voice->firstmeasure;
         while (measure) {
-            clear_measure(x, measure, false, true, false);
+            clear_measure((t_notation_obj *)x, measure, false, true, false);
             measure = measure->next;
         }
     } else {
@@ -3707,7 +3676,7 @@ void score_clearnotes(t_score *x, t_symbol *s, long argc, t_atom *argv)
         while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
             t_measure *measure = voice->firstmeasure;
             while (measure) {
-                clear_measure(x, measure, false, true, false);
+                clear_measure((t_notation_obj *)x, measure, false, true, false);
                 measure = measure->next;
             }
             voice = voice->next;
@@ -3730,11 +3699,11 @@ void score_cleartempi(t_score *x, t_symbol *s, long argc, t_atom *argv)
     if (argc > 0) { // there's a voice argument
         long voicenum = atom_getlong(argv) - 1; // 0-based inside, 1-based for the user
         t_scorevoice *voice = nth_scorevoice(x, voicenum);
-        delete_voice_tempi(x, voice);
+        delete_voice_tempi((t_notation_obj *)x, voice);
     } else {
         t_scorevoice *voice = x->firstvoice;
         while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-            delete_voice_tempi(x, voice);
+            delete_voice_tempi((t_notation_obj *)x, voice);
             voice = voice->next;
         }
     }
@@ -3953,62 +3922,6 @@ long get_global_num_notes(t_score *x)
     return numnotes;
 }
 
-void insert_measure(t_score *x, t_scorevoice *voice, t_measure *measure_to_insert, t_measure *after_this_measure, unsigned long force_ID)
-{
-    // insert in the voice *voice the measure *measure_to_insert after the measure *after_this_measure. Leave this NULL to insert at the beginning
-    
-    if (after_this_measure) { // not at the beginning
-        measure_to_insert->measure_number = after_this_measure->measure_number + 1;
-        if (after_this_measure->next) { // insert between these
-            t_measure *temp;
-            after_this_measure->next->prev = measure_to_insert;
-            measure_to_insert->next = after_this_measure->next;
-            measure_to_insert->prev = after_this_measure;
-            after_this_measure->next = measure_to_insert;
-            // change all following measures' IDs
-            for (temp = measure_to_insert->next; temp; temp = temp->next)
-                temp->measure_number++;
-        } else { // insert at the end
-            measure_to_insert->next = NULL;
-            measure_to_insert->prev = after_this_measure;
-            after_this_measure->next = measure_to_insert;
-            voice->lastmeasure = measure_to_insert;
-        }
-    } else { // at the beginning
-        measure_to_insert->measure_number = 0;
-        if (voice->firstmeasure) { // there's already a measure
-            t_measure *temp;
-            measure_to_insert->next = voice->firstmeasure;
-            measure_to_insert->prev = NULL;
-            voice->firstmeasure->prev = measure_to_insert;
-            voice->firstmeasure = measure_to_insert;
-            // change all following measures' IDs
-            for (temp = measure_to_insert->next; temp; temp = temp->next)
-                temp->measure_number++;
-        } else { // no measures in the voices yet
-            measure_to_insert->next = NULL;
-            measure_to_insert->prev = NULL;
-            voice->firstmeasure = measure_to_insert;
-            voice->lastmeasure = measure_to_insert;
-        }    
-    }
-    
-    measure_to_insert->voiceparent = voice; // set the parent field
-
-    // add the key in the ID hashtable
-    if (force_ID > 0) {
-        shashtable_insert_with_key(x->r_ob.IDtable, measure_to_insert, force_ID, 1);
-        measure_to_insert->r_it.ID = force_ID;
-    } else
-        measure_to_insert->r_it.ID = shashtable_insert(x->r_ob.IDtable, measure_to_insert);
-    
-    // increase the # of measures in the voice
-    voice->num_measures++; 
-    
-    // recalculate parameters?
-    measure_to_insert->need_recompute_beamings = true;
-    set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-}
 
 
 // this function must be put within a mutex
@@ -4736,7 +4649,7 @@ char merge(t_score *x, t_rational threshold_sym, double threshold_cents, char ga
                         else if (lastchord->next) 
                             chord_to_merge_into = lastchord->next;
                         else {
-                            clear_measure(x, measure, false, true, false); // all small elements: clear measure!
+                            clear_measure((t_notation_obj *)x, measure, false, true, false); // all small elements: clear measure!
                             return 1;
                         }
                         
@@ -4866,16 +4779,6 @@ long get_max_num_measures(t_score *x, long *voice)
     return max_measure_number;
 }
 
-void refresh_measure_numbers(t_score *x, t_scorevoice *voice)
-{
-    long count = 0;
-    t_measure *meas = voice->firstmeasure;
-    while (meas) {
-        meas->measure_number = count;
-        count++;
-        meas = meas->next;
-    }
-}
 
 char has_measure_attached_markers(t_score *x, t_measure *measure)
 {
@@ -4887,96 +4790,6 @@ char has_measure_attached_markers(t_score *x, t_measure *measure)
     return false;
 }
 
-
-char delete_measure(t_score *x, t_measure *measure, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char *need_check_solos)
-{
-    t_scorevoice *parent = measure->voiceparent;
-    t_chord *ch = measure->firstchord;
-    t_tempo *tempo = measure->firsttempo, *firsttempo;
-    char need_check_scheduling = false;
-    if (need_check_solos) *need_check_solos = is_solo_with_progeny((t_notation_obj *)x, (t_notation_item *)measure);
-
-    need_check_scheduling |= measure_check_dependencies_before_deleting_it((t_notation_obj *)x, measure);
-    
-    // check if some marker are attached to the measure
-    t_marker *mk, *next_mk = NULL;
-    char undo_markers = false;
-    for (mk = x->r_ob.firstmarker; mk; mk = next_mk){
-        next_mk = mk->next;
-        if (mk->attach_to == k_MARKER_ATTACH_TO_MEASURE && mk->measure_attach_ID == measure->r_it.ID){
-            delete_marker((t_notation_obj *)x, mk);
-            undo_markers = true;
-        }
-    }
-    
-// WAS: – but we don't need to recalculate all the internal stuff each time... we're deleting the measure!!! 
-/*    while (ch) {
-        t_chord *next = ch->next;
-        chord_delete_from_measure((t_notation_obj *) x, ch, true);
-        ch = next;
-    }*/
-    
-    ch = measure->firstchord;
-    while (ch) {
-        t_chord *next_ch = ch->next;
-        
-        // we'll free the chord structure inside free_measure; now we just need to check all dependencies
-        if (chord_check_dependencies_before_deleting_it((t_notation_obj *)x, ch, true, update_chord_play_cursor_to_this_chord_if_needed))
-            need_check_scheduling = 1;
-        shashtable_chuck_thing(x->r_ob.IDtable, ch->r_it.ID);
-        
-        ch = next_ch;
-    }
-    
-    for (tempo = measure->firsttempo; tempo; tempo = tempo->next) {
-        // we'll free the tempo structure inside free_measure; now we just need to check all dependencies
-        need_check_scheduling |= tempo_check_dependencies_before_deleting_it((t_notation_obj *)x, tempo);
-    }
-    
-    // checking if we need to assign a first tempo to next measures
-    firsttempo = tempo_get_first(measure->voiceparent);
-    if (firsttempo && firsttempo->owner == measure && measure->lasttempo && measure->next &&
-        (!measure->next->firsttempo || rat_long_cmp(measure->next->firsttempo->changepoint, 0) < 0)) {
-        t_tempo *cloned = clone_tempo((t_notation_obj *)x, measure->lasttempo);
-        cloned->changepoint = long2rat(0); 
-        insert_tempo((t_notation_obj *)x, measure->next, cloned);
-        recompute_all_for_measure((t_notation_obj *)x, measure->next, false);
-    }
-    
-    if (measure){
-        parent->num_measures--;
-        if (measure->prev) {
-            // not the first meas
-            if (measure->next) {
-                // not the last meas
-                measure->prev->next = measure->next;
-                measure->next->prev = measure->prev;
-            } else {
-                // last meas
-                measure->prev->next = NULL;
-                parent->lastmeasure = measure->prev;
-            }
-        } else {
-            // first meas
-            if (measure->next) {
-                // some measures remain
-                measure->next->prev = NULL;
-                parent->firstmeasure = measure->next;
-            } else {
-                // there was just 1 meas
-                parent->firstmeasure = NULL;
-                parent->lastmeasure = NULL;
-                parent->num_measures = 0;
-            }
-        }
-        
-        free_measure((t_notation_obj *)x, measure);
-    }
-    
-    refresh_measure_numbers(x, parent);
-    
-    return need_check_scheduling;
-}
 
 char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char *need_check_solos, char add_undo_ticks)
 {
@@ -4999,7 +4812,7 @@ char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *updat
             
             create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)measure, k_UNDO_MODIFICATION_ADD);
         }
-        return delete_measure(x, measure, update_chord_play_cursor_to_this_chord_if_needed, need_check_solos);
+        return delete_measure((t_notation_obj *)x, measure, update_chord_play_cursor_to_this_chord_if_needed, need_check_solos);
     } else {
         char res = 0;
         t_voice *temp;
@@ -5015,7 +4828,7 @@ char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *updat
                         create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)m->prev, k_UNDO_MODIFICATION_CHANGE); // because of ties
                     create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)m, k_UNDO_MODIFICATION_ADD);
                 }
-                res |= delete_measure(x, m, update_chord_play_cursor_to_this_chord_if_needed, &this_need_check_solos);
+                res |= delete_measure((t_notation_obj *)x, m, update_chord_play_cursor_to_this_chord_if_needed, &this_need_check_solos);
                 *need_check_solos |= this_need_check_solos;
             }
             if (temp == last)
@@ -5076,7 +4889,7 @@ void turn_measure_into_single_rest(t_score *x, t_measure *measure)
 {
     t_chord *giver = measure && measure->firstchord ? clone_chord((t_notation_obj *)x, measure->firstchord, k_CLONE_FOR_ORIGINAL) : NULL;
     
-    clear_measure(x, measure, false, true, false);
+    clear_measure((t_notation_obj *)x, measure, false, true, false);
 
     t_rational r_sym_duration = rat_long_prod(measure_get_sym_duration(measure), -1);
     t_chord *newch = addchord_in_measure_from_notes(x, measure, NULL, r_sym_duration, -1, 0, NULL, NULL, 0);
@@ -5412,24 +5225,6 @@ void scoreapi_initscore_step02(t_score *x)
     notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
-void delete_measure_tempi(t_score *x, t_measure *measure)
-{
-    t_tempo *tempo = measure->firsttempo; t_tempo *temp;    
-    while (tempo) {
-        temp = tempo->next;
-        delete_tempo((t_notation_obj *)x, tempo);
-        tempo = temp;
-    }
-}
-
-void delete_voice_tempi(t_score *x, t_scorevoice *voice)
-{
-    t_measure *meas = voice->firstmeasure;    
-    while (meas) {
-        delete_measure_tempi(x, meas);
-        meas = meas->next;
-    }
-}
 
 void deletetuttipoint(t_score *x, t_tuttipoint *pt)
 {
@@ -5488,7 +5283,7 @@ void scoreapi_destroyscore(t_score *x)
     while (voice && (voice->v_ob.number < CONST_MAX_VOICES)) {
         temp = voice->next;
         // freeing all tempi
-        delete_voice_tempi(x, voice);
+        delete_voice_tempi((t_notation_obj *)x, voice);
         free_voice((t_notation_obj *)x, (t_voice *)voice);
         voice = temp;
     }
@@ -8254,8 +8049,14 @@ void check_tempi(t_score *x)
     }
 }
 
+
+t_llll *get_score_values_as_llll_for_undo(t_score *x, e_header_elems dump_what, char also_lock_general_mutex)
+{
+    return get_score_values_as_llll(x, k_CONSIDER_FOR_UNDO, dump_what, true, true, also_lock_general_mutex, true);
+}
+    
 // getwhat is one of the e_data_considering_types
-t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router) // char get_clefs, char get_keys, char get_markers, char get_slotinfo, char get_commands, char get_midichannels)
+t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, e_header_elems dump_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router) // char get_clefs, char get_keys, char get_markers, char get_slotinfo, char get_commands, char get_midichannels)
 {
     // get all the information concerning the score and put it in a llll
     
@@ -8299,9 +8100,9 @@ t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, 
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
     
-    llll_chain(out_llll, get_notationobj_header_as_llll((t_notation_obj *)x, get_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what));
+    llll_chain(out_llll, get_notationobj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what));
 
-    if (get_what & k_HEADER_BODY) {
+    if (dump_what & k_HEADER_BODY) {
         voice = x->firstvoice;
         while (voice && (voice->v_ob.number < x->r_ob.num_voices)) { // append chord lllls
             llll_appendllll(out_llll, get_scorevoice_values_as_llll(x, voice, for_what, tree, also_get_level_information), 0, WHITENULL_llll);    
@@ -11421,7 +11222,7 @@ t_measure *create_and_insert_new_measure(t_score *x, t_scorevoice *voice, t_meas
         }
     }
     newmeas->voiceparent = voice;
-    insert_measure(x, voice, newmeas, (direction < 0 && refmeasure) ? refmeasure->prev : refmeasure, force_ID);
+    insert_measure((t_notation_obj *)x, voice, newmeas, (direction < 0 && refmeasure) ? refmeasure->prev : refmeasure, force_ID);
     recompute_all_for_measure((t_notation_obj *) x, newmeas, true);
     recompute_all_except_for_beamings_and_autocompletion(x);
     return newmeas;

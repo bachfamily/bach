@@ -213,6 +213,8 @@
 
 /* Begin PBXBuildFile section */
 		1E1BD664223EA95F0000A1DF /* cursor_changevelocity.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */; };
+		1E21AC9925C4A00200CE6783 /* notation_undo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E21AC9825C4A00200CE6783 /* notation_undo.c */; };
+		1E21AC9B25C4A08100CE6783 /* notation_undo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E21AC9A25C4A08000CE6783 /* notation_undo.h */; };
 		1E53253D20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
 		1E53253E20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
 		1E53253F20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
@@ -2799,6 +2801,8 @@
 
 /* Begin PBXFileReference section */
 		1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_changevelocity.png; sourceTree = "<group>"; };
+		1E21AC9825C4A00200CE6783 /* notation_undo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_undo.c; sourceTree = "<group>"; };
+		1E21AC9A25C4A08000CE6783 /* notation_undo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_undo.h; sourceTree = "<group>"; };
 		1E3B57CB15ACECA900B32D1F /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		1E3B57CC15ACECA900B32D1F /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
 		1E3B57CD15ACECA900B32D1F /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
@@ -5646,6 +5650,8 @@
 				1EB4D4841610CB930041ABFB /* notation_files.c */,
 				911A5BB5183219CB00E8A26C /* notation_attrs.h */,
 				91EED59E1237C06B003C05FC /* notation.h */,
+				1E21AC9A25C4A08000CE6783 /* notation_undo.h */,
+				1E21AC9825C4A00200CE6783 /* notation_undo.c */,
 				91EED59D1237C06B003C05FC /* notation_commons.c */,
 				91CA0C5D1DF9374D0068B29D /* notation_dynamics.c */,
 				1E7A1D4420FCEB020051B9E8 /* notation_export.c */,
@@ -6566,6 +6572,7 @@
 				913D57C1232B972E00BC6B45 /* patcherVariable.hpp in Headers */,
 				91C6045218C0D9F50027BB79 /* SdifFRead.h in Headers */,
 				913D57C7232B972E00BC6B45 /* globalVariable.hpp in Headers */,
+				1E21AC9B25C4A08100CE6783 /* notation_undo.h in Headers */,
 				91C6045418C0D9F50027BB79 /* SdifFScan.h in Headers */,
 				91C6045618C0D9F50027BB79 /* SdifFWrite.h in Headers */,
 				913D57C2232B972E00BC6B45 /* comparator.hpp in Headers */,
@@ -12591,6 +12598,7 @@
 				913D57B0232B972E00BC6B45 /* fnMap.cpp in Sources */,
 				913D57C3232B972E00BC6B45 /* builtInFunctionWithSortFn.cpp in Sources */,
 				91C6046818C0D9F50027BB79 /* SdifRWLowLevel.c in Sources */,
+				1E21AC9925C4A00200CE6783 /* notation_undo.c in Sources */,
 				91FDDC221FBE249F0040D803 /* bach_strparser.c in Sources */,
 				917388B31F69609000FF3971 /* notation_pitches.c in Sources */,
 				91C6046A18C0D9F50027BB79 /* SdifSelect.c in Sources */,

@@ -54,6 +54,7 @@ void set_roll_from_llll_from_read(t_roll *x, t_llll* inputlist);
 void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex);
 t_llll* get_roll_values_as_llll_for_pwgl(t_roll *x);
 t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_header_elems dump_what, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router = NULL);
+t_llll *get_roll_values_as_llll_for_undo(t_roll *x, e_header_elems dump_what, char also_lock_general_mutex);
 
 char merge(t_roll *x, double threshold_ms, double threshold_cents, char gathering_policy_ms, char gathering_policy_cents, char only_selected, char markers_also);
 

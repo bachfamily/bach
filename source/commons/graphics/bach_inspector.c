@@ -18,6 +18,7 @@
  */
 
 #include "notation/notation.h"
+#include "notation/notation_undo.h"
 
 static t_class	*s_bach_inspector_ui_class;
 

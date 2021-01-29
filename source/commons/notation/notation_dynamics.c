@@ -23,6 +23,7 @@
 
 #include "foundation/bach.h"
 #include "notation/notation.h" // header with all the structures for the notation objects
+#include "notation/notation_undo.h" 
 
 
 long dynamics_get_ending_hairpin(t_dynamics *dyn)

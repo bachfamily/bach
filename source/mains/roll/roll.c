@@ -73,6 +73,7 @@
 #include "roll_files.h" //< roll.h is included in here
 #include "notation/notation_attrs.h"
 #include "notation/notation_goto.h"
+#include "notation/notation_undo.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"
@@ -8992,7 +8993,8 @@ void set_slots_values_from_llll(t_roll *x, t_llll* slots){
 } */
 
 // beware: destructuve
-t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice* voice, char also_lock_general_mutex, char also_recompute_total_length) {
+t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice* voice, char also_lock_general_mutex, char also_recompute_total_length)
+{
     t_chord *newchord = NULL;
     if (chord->l_size >= 2) { // AT LEAST onset + 1 note
         t_llllelem *secondelem = chord->l_head->l_next;
@@ -10799,7 +10801,9 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
 
     x->r_ob.obj_type = k_NOTATION_OBJECT_ROLL;
     
-    notationobj_init((t_notation_obj *) x, k_NOTATION_OBJECT_ROLL, (rebuild_fn) set_roll_from_llll, (notationobj_fn) create_whole_roll_undo_tick, (notationobj_notation_item_fn) force_notation_item_inscreen, (notationobj_undo_redo_fn)roll_undo_redo,  (bach_paint_ext_fn)roll_paint_ext);
+    notationobj_init((t_notation_obj *) x, k_NOTATION_OBJECT_ROLL, (rebuild_fn) set_roll_from_llll, (notationobj_fn) create_whole_roll_undo_tick, (notationobj_notation_item_fn) force_notation_item_inscreen, (notationobj_undo_redo_fn)roll_undo_redo,  (bach_paint_ext_fn)roll_paint_ext, (notationobj_fn)roll_clear_all, (getstate_for_undo_fn)get_roll_values_as_llll_for_undo);
+
+    x->r_ob.addchordfromllll = (addchordfromllll_fn)addchord_from_llll;
 
     roll_declare_bach_attributes(x);
     
@@ -14822,9 +14826,15 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
     return out_llll;
 }
 
+
+t_llll *get_roll_values_as_llll_for_undo(t_roll *x, e_header_elems dump_what, char also_lock_general_mutex)
+{
+    return get_roll_values_as_llll(x, k_CONSIDER_FOR_UNDO, dump_what, also_lock_general_mutex, true);
+}
+
 // dump_what is a combination of e_header_elems
 // for_what is typically either k_CONSIDER_ALL_NOTES, k_CONSIDER_FOR_SAVING (which should act exactly the same) or k_CONSIDER_FOR_UNDO (only for undo cases, which will also save the ID of elements)
-t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_header_elems dump_what, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router) { //char get_clefs, char get_keys, char get_markers, char get_slotinfo, char get_commands, char get_midichannels){
+t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_header_elems dump_what, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router) { 
 
 // get all the information concerning the roll and put it in a llll
 
@@ -17870,151 +17880,22 @@ char roll_sel_dilate_mc(t_roll *x, double mc_factor, double fixed_mc_y_pixel){
 
 
 // what = -1 -> undo, what = 1 -> redo
-void roll_undo_redo(t_roll *x, char what){
-    t_llll *llll = NULL;
-    long undo_op = k_UNDO_OP_UNKNOWN;
-    char need_check_order = 0;
+void roll_undo_redo(t_roll *x, char what)
+{
+    long flags = 0;
     
-    lock_general_mutex((t_notation_obj *)x);    
-    systhread_mutex_lock(x->r_ob.c_undo_mutex);    
+    lock_general_mutex((t_notation_obj *)x);
 
-    if (what == k_UNDO)
-        llll = x->r_ob.undo_llll;
-    else if (what == k_REDO)
-        llll = x->r_ob.redo_llll;
+    flags = notationobj_undo_redo((t_notation_obj *)x, what);
     
-    if (!llll) {
-        systhread_mutex_unlock(x->r_ob.c_undo_mutex);    
-        unlock_general_mutex((t_notation_obj *)x);    
-        return;
-    }
-    
-    while (llll->l_head && hatom_gettype(&llll->l_head->l_hatom) != H_LONG){
-        object_error((t_object *) x, what == k_UNDO ? "Wrongly placed undo tick!" : "Wrongly placed redo tick!");
-        llll_destroyelem(llll->l_head);
-    }
-
-    if (!llll->l_head) {
-        if (!(atom_gettype(&x->r_ob.max_undo_steps) == A_LONG && atom_getlong(&x->r_ob.max_undo_steps) == 0))
-            object_warn((t_object *) x, what == k_UNDO ? "Can't undo!" : "Can't redo!");
-        systhread_mutex_unlock(x->r_ob.c_undo_mutex);    
-        unlock_general_mutex((t_notation_obj *)x);    
-        return;
-    }
-    
-    undo_op = hatom_getlong(&llll->l_head->l_hatom);
-    if (x->r_ob.verbose_undo_redo) {
-        char buf[256];
-        undo_op_to_string(undo_op, buf);
-        object_post((t_object *) x, "%s %s", what == k_UNDO ? "Undo" : "Redo", buf);
-    }
-    
-    // Destroy the marker
-    if (llll->l_head == x->r_ob.last_undo_marker) 
-        x->r_ob.last_undo_marker = NULL;
-    llll_destroyelem(llll->l_head);
-    
-
-    if (what == k_UNDO)
-        x->r_ob.num_undo_steps--;
-    else
-        x->r_ob.num_redo_steps--;
-    
-    char need_recompute_total_length = false;
-    
-    while (llll->l_head && hatom_gettype(&llll->l_head->l_hatom) == H_OBJ){
-        t_undo_redo_information *this_information = (t_undo_redo_information *)hatom_getobj(&llll->l_head->l_hatom);
-        long ID = this_information->n_it_ID;
-        e_element_types type = this_information->n_it_type;
-        e_undo_modification_types modif_type = this_information->modification_type;
-        long voice_num = this_information->voice_num;
-        e_header_elems header_info = this_information->header_info;
-        t_llll *content = this_information->n_it_content;
-        t_llll *newcontent = NULL;
-        t_notation_item *item = notation_item_retrieve_from_ID((t_notation_obj *)x, ID);
-        t_undo_redo_information *new_information = NULL;
-        
-        if (!item && modif_type != k_UNDO_MODIFICATION_ADD && type != k_WHOLE_NOTATION_OBJECT && type != k_HEADER_DATA) {
-            object_error((t_object *) x, "Wrong undo/redo data");
-            llll_destroyelem(llll->l_head);
-            continue;
-        }
-        
-        if (modif_type == k_UNDO_MODIFICATION_CHANGE_FLAG) {
-            newcontent = get_multiple_flags_for_undo((t_notation_obj *)x, item);
-            new_information = build_undo_redo_information(ID, type, k_UNDO_MODIFICATION_CHANGE_FLAG, voice_num, 0, k_HEADER_NONE, newcontent);
-            set_multiple_flags_from_llll_for_undo((t_notation_obj *)x, content, item);
-            x->r_ob.are_there_solos = are_there_solos((t_notation_obj *)x);
-        
-        } else if (modif_type == k_UNDO_MODIFICATION_CHANGE_NAME) {
-            newcontent = get_names_as_llll(item, false);
-            new_information = build_undo_redo_information(ID, type, k_UNDO_MODIFICATION_CHANGE_NAME, voice_num, 0, k_HEADER_NONE, newcontent);
-            notation_item_set_names_from_llll((t_notation_obj *)x, item, content);
-
-        } else if (type == k_WHOLE_NOTATION_OBJECT){
-            // need to reconstruct the whole roll
-            newcontent = get_roll_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, false, true);
-            new_information = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
-            roll_clear_all(x);
-            set_roll_from_llll(x, content, false);
-            
-        } else if (type == k_CHORD) {
-            if (modif_type == k_UNDO_MODIFICATION_CHANGE || modif_type == k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER) {
-                newcontent = get_rollchord_values_as_llll((t_notation_obj *) x, (t_chord *) item, k_CONSIDER_FOR_UNDO);
-                new_information = build_undo_redo_information(ID, k_CHORD, modif_type, voice_num, 0, k_HEADER_NONE, newcontent);
-                set_rollchord_values_from_llll((t_notation_obj *) x, (t_chord *)item, content, 0, true, false, false);
-                
-                need_recompute_total_length = true;
-                // recompute_total_length((t_notation_obj *) x);
-                
-                if (modif_type == k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER)
-                    need_check_order = true;
-                
-            } else if (modif_type == k_UNDO_MODIFICATION_DELETE) {
-                newcontent = get_rollchord_values_as_llll((t_notation_obj *)x, (t_chord *) item, k_CONSIDER_FOR_UNDO);
-                new_information = build_undo_redo_information(ID, k_CHORD, k_UNDO_MODIFICATION_ADD, voice_num, 0, k_HEADER_NONE, newcontent);
-                need_recompute_total_length = true;
-                if (chord_delete((t_notation_obj *)x, (t_chord *)item, ((t_chord *)item)->prev, false))
-                    check_correct_scheduling((t_notation_obj *)x, false);
-                
-            } else if (modif_type == k_UNDO_MODIFICATION_ADD) { 
-                new_information = build_undo_redo_information(ID, k_CHORD, k_UNDO_MODIFICATION_DELETE, voice_num, 0, k_HEADER_NONE, newcontent);
-                t_chord *newch = addchord_from_llll(x, content, nth_rollvoice(x, voice_num), false, true);
-                if (newch)
-                    newch->need_recompute_parameters = true;
-            }
-            
-        } else if (type == k_HEADER_DATA) {
-            if (modif_type == k_UNDO_MODIFICATION_CHANGE) { 
-                newcontent = get_roll_values_as_llll(x, k_CONSIDER_FOR_UNDO, header_info, false, true);
-                new_information = build_undo_redo_information(0, k_HEADER_DATA, k_UNDO_MODIFICATION_CHANGE, 0, 0, header_info, newcontent);
-                set_roll_from_llll(x, content, false);
-            }
-        } 
-        
-        if (new_information)
-            create_undo_redo_tick((t_notation_obj *) x, -what, 1, new_information, false);
-        
-        llll_free(content);
-        bach_freeptr(this_information);
-        llll_destroyelem(llll->l_head);
-    }    
-    
-    if (need_recompute_total_length)
-        recompute_total_length((t_notation_obj *)x);
-
-    create_undo_redo_step_marker((t_notation_obj *) x, -what, 1, undo_op, false);
-
-    systhread_mutex_unlock(x->r_ob.c_undo_mutex);    
-
-    if (need_check_order)
+    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER)
         check_all_chords_order(x);
     
     if (x->r_ob.notation_cursor.voice)
         roll_linear_edit_snap_to_chord(x); // just to resnap to chord
-
-    unlock_general_mutex((t_notation_obj *)x);    
-        
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
     handle_change((t_notation_obj *)x, x->r_ob.send_undo_redo_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_STANDARD, k_UNDO_OP_UNKNOWN);
 }
 

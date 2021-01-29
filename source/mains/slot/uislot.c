@@ -67,6 +67,7 @@
 */
 
 #include "notation/notation.h" // header with all the structures for the notation objects
+#include "notation/notation_undo.h"
 #include "graphics/llll_modifiers.h"
 #include "ext.h"
 #include "ext_obex.h"
@@ -1398,7 +1399,7 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.obj_type = k_NOTATION_OBJECT_SLOT;
     x->r_ob.slot_window_zoom = x->r_ob.bgslot_zoom = 100;
 
-    notationobj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notationobj_fn) create_whole_uislot_undo_tick, NULL, (notationobj_undo_redo_fn)uislot_undo_redo, (bach_paint_ext_fn)uislot_paint_ext);
+    notationobj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notationobj_fn) create_whole_uislot_undo_tick, NULL, (notationobj_undo_redo_fn)uislot_undo_redo, (bach_paint_ext_fn)uislot_paint_ext, NULL, NULL);
 
     x->r_ob.active_slot_num = 0;
     x->r_ob.active_slot_num_1based = 1;

@@ -20,6 +20,7 @@
 
 #include "notation/notation.h"
 #include "notation/notation_attrs.h"
+#include "notation/notation_undo.h"
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_getattr_pitcheditrange);
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_setattr_pitcheditrange);
@@ -2467,10 +2468,11 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
     // @description Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
     // whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
     
-    CLASS_ATTR_CHAR(c,"notifymore",0, t_notation_obj, notify_with_undo);
-    CLASS_ATTR_STYLE_LABEL(c,"notifymore",0,"onoff","Verbose Undo Notification Through Last Outlet");
-    CLASS_ATTR_FILTER_CLIP(c, "notifymore", 0, 1);
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifymore", 0, "0");
+    CLASS_ATTR_CHAR(c,"notifywith",0, t_notation_obj, notify_with);
+    CLASS_ATTR_STYLE_LABEL(c,"notifywith",0,"enumindex","Notify Interface Changes Via");
+    CLASS_ATTR_ENUMINDEX(c,"notifywith", 0, "bang Redo Data Undo Data Redo Message Undo Message");
+    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 1);
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifywith", 0, "0");
 
     
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
