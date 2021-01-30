@@ -72,8 +72,8 @@ public:
 class t_named : public t_countable // something with a name: named things are always subject to reference counting
 {
 private:
-    t_symbol *name;
 protected:
+    t_symbol *name;
     t_named(t_symbol *n) : /*t_countable(),*/ name(n) {}
 public:
     t_symbol *getName() const { return name; }

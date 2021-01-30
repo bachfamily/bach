@@ -142,4 +142,54 @@ public:
 };
 
 
+class t_objectVariable : public t_sharedVariable // a global variable, with a thread locking mechanism
+{
+private:
+
+public:
+    t_objectVariable(t_symbol *n, t_llll *ll = nullptr) : t_sharedVariable(n, ll) { }
+
+    void set(t_llll *ll, t_object *x) {
+        if (t_object *pvar = (t_object *) object_findregistered(CLASS_BOX, getName()); pvar) {
+            llll_retain(ll);
+            t_atom *av = nullptr;
+            long ac = llll_deparse(ll, &av);
+            object_setvalueof(pvar, ac, av);
+            llll_release(ll);
+        }
+
+        //lock();
+        //triggerClientsAndUnlock(x);
+    }
+    
+    t_llll *get(const t_llllobj_object *x) {
+        t_llll *ll;
+        
+        long nc = 0;
+        t_symbol **n = nullptr;
+    
+        
+        t_object *pvar = (t_object *) object_subscribe(CLASS_BOX, getName(), NULL, (t_object *) x);
+        
+        object_register_getnames(CLASS_BOX, &nc, &n);
+        for (int i = 0; i < nc; i++)
+            post("%s", n[i]->s_name);
+        
+        if (pvar) {
+            long ac = 0;
+            t_atom *av = nullptr;
+            object_getvalueof(pvar, &ac, &av);
+            if (ac && av)
+                ll = llll_parse(ac, av);
+            else
+                ll = llll_get();
+        } else {
+            ll = llll_get();
+        }
+        return ll;
+    }
+};
+
+
+
 #endif /* sharedVariable_hpp */

@@ -906,6 +906,13 @@ $[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?/{SEPARATOR} {
     return PATCHERVAR;
 }
 
+\?[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?/{SEPARATOR} {
+    code_dev_post("lex: OBJECT VARIABLE %s\n", yytext + 1);
+    yylval->sym = gensym(yytext + 1);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
+    return OBJECTVAR;
+}
+
 [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?/{SEPARATOR} {
     code_dev_post("lex: GLOBAL VARIABLE %s\n", yytext);
     yylval->sym = gensym(yytext);

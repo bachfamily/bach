@@ -347,6 +347,26 @@ public:
     t_llll *eval() { return pv->get(); }
 };
 
+class astObjectVar : public astVar
+{
+protected:
+    t_objectVariable *ov;
+public:
+    astObjectVar(t_symbol *name, t_codableobj *owner);
+    ~astObjectVar() { delete ov; }
+    
+    t_objectVariable* getVar(t_execEnv const &context) { return getVar(); }
+    
+    t_objectVariable* getVar() { return ov; }
+    
+    void assign(t_llll *ll, t_execEnv const &context) { assign(ll); }
+    
+    void assign(t_llll *ll) { ov->set(ll, (t_object *) owner); }
+    
+    t_llll *eval(t_execEnv const &context) { return ov->get(context.obj); }
+    
+    //t_llll *eval() { return ov->get(); }
+};
 
 
 

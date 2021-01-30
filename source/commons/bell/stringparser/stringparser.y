@@ -61,6 +61,7 @@
     astLocalVar *lv;
     astPatcherVar *pv;
     astGlobalVar *gv;
+    astObjectVar *ov;
     astVar *var;
     
     countedList<astNode *> *nl;
@@ -83,7 +84,7 @@
 %token <r> RAT_LITERAL
 %token <d> DOUBLE_LITERAL
 %token <p> PITCH_LITERAL
-%token <sym> SYMBOL_LITERAL GLOBALVAR PATCHERVAR LOCALVAR NAMEDPARAM BIF OF
+%token <sym> SYMBOL_LITERAL GLOBALVAR PATCHERVAR LOCALVAR OBJECTVAR NAMEDPARAM BIF OF
 %token SEQ
 %token IF_KW THEN_KW ELSE_KW
 %token WHILE_KW DO_KW FOR_KW IN_KW COLLECT_KW
@@ -142,6 +143,7 @@
 %type <var> var
 %type <lv> localVar
 %type <pv> patcherVar
+%type <ov> objectVar
 %type <gv> globalVar
 %type <snp> argByName
 %type <forarg> forarg
@@ -1285,6 +1287,7 @@ term: LONG_LITERAL {
 var: globalVar
 | localVar
 | patcherVar
+| objectVar
 ;
 
 globalVar: GLOBALVAR {
@@ -1300,6 +1303,11 @@ patcherVar: PATCHERVAR {
     (*params->name2patcherVars)[$1].insert(v);
     $$ = v;
     code_dev_post ("parse: Patcher variable %s", $1->s_name);
+}
+;
+
+objectVar: OBJECTVAR {
+    $$ = new astObjectVar($1, params->owner);
 }
 ;
 

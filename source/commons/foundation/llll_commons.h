@@ -509,7 +509,7 @@ void llll_printobject_free(t_object *printobj, t_symbol *name, long ac, t_atom *
 // otherwise, it will be considered initialized - but it could be relocated by llll_deparse.
 // offset is referred to *out (leaves some atoms at the beginning, useful for preset)
 // flags are LLLL_D_QUOTE, LLLL_D_MAX and LLLL_D_FLOAT64
-t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flags);
+t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset = 0, long flags = LLLL_D_NONE);
 
 
 // same as before, but directly deparses to an atomarray

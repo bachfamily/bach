@@ -352,6 +352,9 @@ void astConst::set(t_llll *ll) {
 
 /////////
 
+astObjectVar::astObjectVar(t_symbol *name, t_codableobj *owner) : astVar(owner), ov (new t_objectVariable(name)) { }
+
+
 
 astGlobalVar::astGlobalVar(t_globalVariableTable *gvt, t_symbol *name, t_codableobj *owner) : astVar(owner) {
     gvt->lock();
