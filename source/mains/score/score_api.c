@@ -3134,7 +3134,7 @@ void create_whole_score_undo_tick_nolock(t_score *x) {
         t_llll *content = get_score_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, true, true, false, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
-        t_undo_redo_information *operation = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
+        t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
         llll_free(content);
         create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
@@ -3148,7 +3148,7 @@ void create_whole_score_undo_tick(t_score *x) {
         t_llll *content = get_score_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, true, true, true, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
-        t_undo_redo_information *operation = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
+        t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
         llll_free(content);
         create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
@@ -11005,7 +11005,7 @@ void bach_set_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
                 if (ac && av){
                     long voice_num = atom_getlong(voiceav) - 1;
                     long meas_num = atom_getlong(av) - 1;
-                    t_scorevoice *voice = (t_scorevoice *)nth_voice((t_notation_obj *)x, voice_num);
+                    t_scorevoice *voice = (t_scorevoice *)nth_voice_safe((t_notation_obj *)x, voice_num);
                     if (voice) {
                         t_measure *meas = nth_measure_of_scorevoice(voice, meas_num);
                         if (meas)
@@ -11022,7 +11022,7 @@ void bach_set_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
                 if (ac && av){
                     long voice_num = atom_getlong(av) - 1;
                     long meas_num = atom_getlong(measav) - 1;
-                    t_scorevoice *voice = (t_scorevoice *)nth_voice((t_notation_obj *)x, voice_num);
+                    t_scorevoice *voice = (t_scorevoice *)nth_voice_safe((t_notation_obj *)x, voice_num);
                     if (voice) {
                         t_measure *meas = nth_measure_of_scorevoice(voice, meas_num);
                         if (meas)

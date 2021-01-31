@@ -1079,7 +1079,7 @@ void create_whole_uislot_undo_tick(t_uislot *x){
         t_llll *content = get_uislot_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, NULL, true, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
-        t_undo_redo_information *operation = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
+        t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
         llll_free(content);
         create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
@@ -2240,14 +2240,14 @@ void uislot_undo_redo(t_uislot *x, char what){
         if (type == k_WHOLE_NOTATION_OBJECT){
             // need to reconstruct the whole uislot
             newcontent = get_uislot_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, NULL, false, true);
-            new_information = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
+            new_information = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
             set_uislot_from_llll(x, content, false);
             
         } else if (type == k_NOTE) {
             if (modif_type == k_UNDO_MODIFICATION_CHANGE) {
                 long i;
                 newcontent = get_uislotnote_values_as_llll((t_notation_obj *) x, x->r_ob.dummynote, k_CONSIDER_FOR_UNDO);
-                new_information = build_undo_redo_information(0, k_NOTE, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
+                new_information = undo_redo_information_create(0, k_NOTE, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
                 llll_flatten(content, 1, 0);
                 if (content->l_head)
                     llll_destroyelem(content->l_head);
@@ -2259,7 +2259,7 @@ void uislot_undo_redo(t_uislot *x, char what){
         } else if (type == k_HEADER_DATA) {
             if (modif_type == k_UNDO_MODIFICATION_CHANGE) { 
                 newcontent = get_uislot_values_as_llll(x, k_CONSIDER_FOR_UNDO, header_info, NULL, false, true);
-                new_information = build_undo_redo_information(0, k_HEADER_DATA, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
+                new_information = undo_redo_information_create(0, k_HEADER_DATA, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
                 set_uislot_from_llll(x, content, false);
             }
         } 

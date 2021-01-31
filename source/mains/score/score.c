@@ -1499,7 +1499,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                         voicenum = x->r_ob.num_voices + voicenum + 1;
                     voicenum -= 1;
                     if (voicenum >= 0 && voicenum < x->r_ob.num_voices) {
-                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)nth_voice((t_notation_obj *)x, voicenum));
+                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)nth_voice_safe((t_notation_obj *)x, voicenum));
                     }
                 }
                 move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
@@ -16976,8 +16976,8 @@ void preselect_elements_in_region_for_mouse_selection(t_score *x, double ux1, do
 
         // correcting voicenum for voiceensembles
         if (correct_for_voiceensembles) {
-            t_voice *v1v = nth_voice((t_notation_obj *)x, v1);
-            t_voice *v2v = nth_voice((t_notation_obj *)x, v2);
+            t_voice *v1v = nth_voice_safe((t_notation_obj *)x, v1);
+            t_voice *v2v = nth_voice_safe((t_notation_obj *)x, v2);
             if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v1v))
                 voicenum = v1;
             else if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v2v))

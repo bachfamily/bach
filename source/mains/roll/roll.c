@@ -133,6 +133,7 @@ void roll_float(t_roll *x, double num);
 void roll_bang(t_roll *x);
 void roll_clock(t_roll *x, t_symbol *s);
 void roll_undo_redo(t_roll *x, char what);
+void roll_generic_change(t_roll *x, t_symbol *msg, long ac, t_atom *av);
 
 
 // mute/lock/solo
@@ -368,8 +369,8 @@ t_note* ID_to_note(t_roll *x, long ID); //almost unused
 t_chord* ID_to_chord(t_roll *x, long ID); //almost unused
 void verbose_print(t_roll *x);
 t_rollvoice* nth_rollvoice(t_roll *x, long n);    // 0-based!!!!!
-t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n);    /// 1-based!!!!
-t_chord* nth_marker(t_rollvoice *voice, long n);    /// 1-based!!!!
+t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n);    /// 0-based!!!!
+t_chord* nth_marker(t_rollvoice *voice, long n);    /// 0-based!!!!
 
 // llll communication functions
 t_llll* get_rollvoice_values_as_llll(t_roll *x, t_rollvoice *voice, e_data_considering_types for_what);
@@ -1833,7 +1834,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     voicenum = x->r_ob.num_voices + voicenum + 1;
                 voicenum -= 1;
                 if (voicenum >= 0 && voicenum < x->r_ob.num_voices) {
-                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)nth_voice((t_notation_obj *)x, voicenum));
+                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)nth_voice_safe((t_notation_obj *)x, voicenum));
                 }
             }
             move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
@@ -6528,7 +6529,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example velocities2dynamics @thresh 0. @unnecessary 0 @caption assign a dynamic marking to each chord, no hairpins
     class_addmethod(c, (method) roll_anything, "velocities2dynamics", A_GIMME, 0);
 
-    
+
+    class_addmethod(c, (method) roll_generic_change, "add", A_GIMME, 0);
+    class_addmethod(c, (method) roll_generic_change, "delete", A_GIMME, 0);
+    class_addmethod(c, (method) roll_generic_change, "change", A_GIMME, 0);
+    class_addmethod(c, (method) roll_generic_change, "changeflag", A_GIMME, 0);
+    class_addmethod(c, (method) roll_generic_change, "changename", A_GIMME, 0);
+
     
     class_addmethod(c, (method) roll_getmaxID, "getmaxid", 0); // undocumented
     class_addmethod(c, (method) roll_notify, "bachnotify", A_CANT, 0);
@@ -9309,7 +9316,7 @@ void set_groups_from_llll(t_roll *x, t_llll *groups_as_llll){
                                 if (num_voice >= 1 && num_voice <= x->r_ob.num_voices){
                                     t_rollvoice *voice = nth_rollvoice(x, num_voice - 1);
                                     if (voice && num_chord >= 1 && num_chord <= voice->num_chords) {
-                                        t_chord *chord = nth_chord_of_rollvoice(voice, num_chord);
+                                        t_chord *chord = nth_chord_of_rollvoice(voice, num_chord-1);
                                         if (chord && newgroup)
                                             append_element_in_group((t_notation_obj *) x, newgroup, (t_notation_item *)chord);
                                     }
@@ -9335,7 +9342,7 @@ void create_whole_roll_undo_tick(t_roll *x)
         t_llll *content = get_roll_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, true, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
-        t_undo_redo_information *operation = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
+        t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, NULL, NULL, k_HEADER_NONE, content_cloned);
         llll_free(content);
         create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
@@ -17603,8 +17610,8 @@ void preselect_elements_in_region_for_mouse_selection(t_roll *x, double ms1, dou
 
         // correcting voicenum for voiceensembles
         if (correct_for_voiceensembles) {
-            t_voice *v1v = nth_voice((t_notation_obj *)x, v1);
-            t_voice *v2v = nth_voice((t_notation_obj *)x, v2);
+            t_voice *v1v = nth_voice_safe((t_notation_obj *)x, v1);
+            t_voice *v2v = nth_voice_safe((t_notation_obj *)x, v2);
             if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v1v))
                 voicenum = v1;
             else if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v2v))
@@ -17888,6 +17895,7 @@ void roll_undo_redo(t_roll *x, char what)
 
     flags = notationobj_undo_redo((t_notation_obj *)x, what);
     
+    // why don't we need this?
     if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER)
         check_all_chords_order(x);
     
@@ -17897,6 +17905,27 @@ void roll_undo_redo(t_roll *x, char what)
     unlock_general_mutex((t_notation_obj *)x);
     
     handle_change((t_notation_obj *)x, x->r_ob.send_undo_redo_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_STANDARD, k_UNDO_OP_UNKNOWN);
+}
+
+void roll_generic_change(t_roll *x, t_symbol *msg, long ac, t_atom *av)
+{
+    long flags = 0;
+    
+    lock_general_mutex((t_notation_obj *)x);
+    
+    flags = notationobj_generic_change((t_notation_obj *)x, msg, ac, av);
+
+    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER)
+        check_all_chords_order(x);
+    
+    if (x->r_ob.notation_cursor.voice)
+        roll_linear_edit_snap_to_chord(x); // just to resnap to chord
+    
+    unlock_general_mutex((t_notation_obj *)x);
+
+    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
+
+    handle_change((t_notation_obj *)x, k_CHANGED_STANDARD, k_UNDO_OP_UNKNOWN);
 }
 
 void roll_prune_last_undo_step(t_roll *x)

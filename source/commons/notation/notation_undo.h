@@ -51,7 +51,9 @@ void undo_op_to_string(long undo_op, char *buf);
 t_symbol *undo_op_to_symbol(long undo_op);
 
 t_symbol *element_type_to_symbol(e_element_types el_type);
+e_element_types element_type_from_symbol(t_symbol *sym);
 t_symbol *undo_modification_type_to_symbol(e_undo_modification_types modif_type);
+e_undo_modification_types undo_modification_type_from_symbol(t_symbol *sym);
 t_llll *undo_get_information_as_llll(t_notation_obj *r_ob, t_undo_redo_information *info);
 t_llll *get_undo_op_for_notification(t_notation_obj *r_ob);
 
@@ -141,13 +143,13 @@ t_llll *get_multiple_flags_for_undo(t_notation_obj *r_ob, t_notation_item *fathe
     @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
                         We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
                         adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_DELETE.
-    @param    voice_num    The voice number of the notation item (or 0 if irrelevant)
-    @param    meas_num    The measure number of the notation item (or 0 if irrelevant)
+    @param    nitem_path_before    The path of the notation item *before* the change
+    @param    nitem_path_after    The path of the notation item *after* the change
     @param    header_info    The header information (as a combination of the #e_header_elems) that need to be saved, if type = #k_HEADER_DATA. 0 otherwise.
     @param    content        An llll specifying the content of the notation item before the user-performed operation. Could be nil if irrelevant (e.g. when a chord was added, and
                         thus modif_type = #k_UNDO_MODIFICATION_DELETE).
  */
-t_undo_redo_information *build_undo_redo_information(long ID, e_element_types type, e_undo_modification_types modif_type, long voice_num, long meas_num, e_header_elems header_info, t_llll *content);
+t_undo_redo_information *undo_redo_information_create(long ID, e_element_types type, e_undo_modification_types modif_type, t_notation_item_path *nitem_path_before, t_notation_item_path *nitem_path_after, e_header_elems header_info, t_llll *content);
 
 
 /**    Free the memory for a #t_undo_redo_information structure, correctly freeing also the llll possibily contained in the
@@ -210,11 +212,12 @@ void clear_undo_redo_llll(t_notation_obj *r_ob, char what);
     @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
                         We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
                         adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_DELETE.
+    @return             The undo/redo information for the tick. Such information has already been appended to the undo/redo lists and must NOT be freed
     @remark                This function has to be called BEFORE the item is modified (so that it can retrieve the correct content for undo), except if the
                         notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_DELETE.
     @see                create_undo_redo_tick()
  */
-void create_simple_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type);
+t_undo_redo_information *create_simple_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type);
 
 
 /**    Create undo ticks for a sequence of notation items.
@@ -298,7 +301,7 @@ long header_types_to_undo_op(long header_types);
     @return                    The inverse undo operation
     @remark                    This only works with adding/deleting operations on chords, measures, voices, markers.
  */
-long reverse_undo_op(long undo_operation);
+long undo_op_reverse(long undo_operation);
 
 
 /**    Make an undo operation plural (e.g. from #k_UNDO_OP_CHANGE_MEASURE to #k_UNDO_OP_CHANGE_MEASURES)
@@ -306,7 +309,7 @@ long reverse_undo_op(long undo_operation);
     @param    undo_operation    The given undo operation
     @return                    The plural undo operation
  */
-long make_undo_op_plural_for_undo(long undo_operation);
+long undo_op_make_plural(long undo_operation);
 
 
 /**    Post on the max window (verbosely) a given undo/redo tick.
@@ -353,6 +356,16 @@ t_llllelem *notation_item_to_undo_tick(t_notation_obj *r_ob, t_notation_item *it
  */
 long notationobj_undo_redo(t_notation_obj *r_ob, char what);
 
+
+long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *this_information, t_llll *measure_whose_flag_needs_to_be_cleared, long *flags);
+
+t_undo_redo_information *undo_redo_information_reverse(t_notation_obj *r_ob, t_undo_redo_information *this_information);
+
+void notation_item_path_from_llll(t_notation_obj *r_ob, e_element_types type, t_llll *ll, t_notation_item_path *path);
+t_llll *notation_item_path_to_llll(t_notation_item_path *path);
+
+// core stuff:
+long notationobj_generic_change(t_notation_obj *r_ob, t_symbol *msg, long ac, t_atom *av);
 
 void check_num_undo_steps(t_notation_obj *r_ob);
 

@@ -370,7 +370,7 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
             
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 if (r_ob->full_path_from_playout_syntax) { // append the full path...
-                    t_llll *temp = get_tempo_path_in_notationobj(r_ob, tempo);
+                    t_llll *temp = tempo_get_path_in_notationobj(r_ob, tempo);
                     llll_wrap_once(&temp);
                     llll_appendllll(playout_llll, temp, 0, WHITENULL_llll);
                 } else // just append 1-based voice number
@@ -2471,7 +2471,7 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
     CLASS_ATTR_CHAR(c,"notifywith",0, t_notation_obj, notify_with);
     CLASS_ATTR_STYLE_LABEL(c,"notifywith",0,"enumindex","Notify Interface Changes Via");
     CLASS_ATTR_ENUMINDEX(c,"notifywith", 0, "bang Redo Data Undo Data Redo Message Undo Message");
-    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 1);
+    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 4);
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifywith", 0, "0");
 
     
@@ -5067,6 +5067,7 @@ void notationobj_free(t_notation_obj *r_ob)
 	llll_free(r_ob->undo_llll);
 	llll_free(r_ob->redo_llll);
 	llll_free(r_ob->undo_notation_items_under_tick);
+    llll_free(r_ob->undo_information_whose_path_need_to_be_checked);
 
     notationobj_clear_prescheduled_events(r_ob);
     llll_free(r_ob->to_preschedule);
@@ -5233,7 +5234,7 @@ t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note)
 }
 
 
-t_llll *get_tempo_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo)
+t_llll *tempo_get_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo)
 {
     t_llll *out = llll_get();
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
@@ -5905,7 +5906,7 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                     double ux = xposition_to_unscaled_xposition(r_ob, pt.x);
                     if (ux >= 0) {
                         long voicenum = yposition_to_voicenumber(r_ob, pt.y, NULL, k_VOICEENSEMBLE_INTERFACE_FIRST);
-                        t_voice *voice = nth_voice(r_ob, voicenum);
+                        t_voice *voice = nth_voice_safe(r_ob, voicenum);
                         if (voice) {
                             double mc = yposition_to_mc(r_ob, pt.y, NULL, NULL);
                             long screen_mc;

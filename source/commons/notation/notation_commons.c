@@ -4484,7 +4484,7 @@ double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode, char
 
 double timepoint_to_ms(t_notation_obj *r_ob, t_timepoint tp, long voicenum)
 {
-    t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voicenum);
+    t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, voicenum);
     t_measure *this_meas;
     t_timepoint tp0;
     
@@ -4529,7 +4529,7 @@ t_timepoint ms_to_timepoint_autochoose_voice(t_notation_obj *r_ob, double ms, ch
 // mode is one of the e_ms_to_tp_modes
 t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode)
 {
-    t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voicenum);
+    t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, voicenum);
     t_measure *this_meas = NULL, *tmp_meas;
     
     if (voice && voice->firstmeasure) {
@@ -4601,7 +4601,7 @@ t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char
 
 t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum)
 {
-    t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voicenum);
+    t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, voicenum);
     t_measure *this_meas = NULL, *tmp_meas = voice->firstmeasure;
     if (rat_sec.r_num <= 0)
         return build_timepoint(0, long2rat(0));
@@ -4672,9 +4672,9 @@ double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, cha
     
     if (sample_all_voices) {
         voice_min = (t_scorevoice *)r_ob->firstvoice;
-        voice_max = (t_scorevoice *)nth_voice(r_ob, r_ob->num_voices - 1);
+        voice_max = (t_scorevoice *)nth_voice_safe(r_ob, r_ob->num_voices - 1);
     } else {
-        voice_min = (t_scorevoice *)nth_voice(r_ob, voicenum);
+        voice_min = (t_scorevoice *)nth_voice_safe(r_ob, voicenum);
         voice_max = voice_min;
     }
     for (voice = voice_min; voice && voice->prev != voice_max; voice = voice->next) {
@@ -4982,7 +4982,7 @@ double yposition_to_mc(t_notation_obj *r_ob, double yposition, t_voice *voice, l
     
     if (!voice) {
         long voicenumber = yposition_to_voicenumber(r_ob, yposition, thissystem, k_VOICEENSEMBLE_INTERFACE_FIRST);
-        voice = nth_voice(r_ob, voicenumber);
+        voice = nth_voice_safe(r_ob, voicenumber);
         if (!voice) {
             object_error((t_object *) r_ob, "An error has occurred. Couldn't find any voice.");
             return 6000.; // default
@@ -8538,8 +8538,12 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 }
 
 
-// notational
-t_chord* nth_chord(t_measure *meas, long n){ // returns the nth (0-based) chord of a measure
+// returns the nth (0-based) chord of a measure
+t_chord* nth_chord(t_measure *meas, long n)
+{
+    if (!meas)
+        return NULL;
+    
     t_chord *curr = meas->firstchord; 
     long i;
     
@@ -8556,8 +8560,12 @@ t_chord* nth_chord(t_measure *meas, long n){ // returns the nth (0-based) chord 
     // to be improved: if the chord# is > n/2, pass the list the other way round!
 }
 
-// 0-BASED!!!!
-t_note* nth_note(t_chord *ch, long n){ // returns the nth (0-based) note of a chord
+// returns the nth (0-based) note of a chord
+t_note* nth_note(t_chord *ch, long n)
+{
+    if (!ch)
+        return NULL;
+    
     t_note *curr = ch->firstnote; long i;
 
     if (n < 0) 
@@ -8572,8 +8580,12 @@ t_note* nth_note(t_chord *ch, long n){ // returns the nth (0-based) note of a ch
     // to be improved: if the note# is > n/2, pass the list the other way round!
 }
 
-// 0-BASED!!!!
-t_bpt* nth_breakpoint(t_note *nt, long n){ // returns the nth (0-based) note of a chord
+// returns the nth (0-based) note of a chord
+t_bpt* nth_breakpoint(t_note *nt, long n)
+{
+    if (!nt)
+        return NULL;
+    
     t_bpt *curr = nt->firstbreakpoint; 
     long i;
 
@@ -9653,7 +9665,12 @@ double get_staff_bottom_y(t_notation_obj *r_ob, t_voice *voice, char ignore_nons
     return staff_bottom;
 }
 
-t_measure* nth_measure_of_scorevoice(t_scorevoice *voice, long n){ // computes the nth (0-based) measure of a score voice
+// computes the nth (0-based) measure of a score voice
+t_measure* nth_measure_of_scorevoice(t_scorevoice *voice, long n)
+{
+    if (!voice)
+        return NULL;
+    
     t_measure *curr = voice->firstmeasure; 
     long i;
     
@@ -20797,7 +20814,7 @@ t_marker *nth_marker(t_notation_obj *r_ob, long n)
 {
     t_marker *curr = r_ob->firstmarker;
     long i;
-    long zero_based_index = n-1;
+    long zero_based_index = n;
     
     if (zero_based_index < 0)
         return NULL;
@@ -20811,12 +20828,15 @@ t_marker *nth_marker(t_notation_obj *r_ob, long n)
     // to be improved: if the marker# is > n/2, pass the list the other way round!
 }
 
-// computes the nth (1-based) chord of the whole nroll
+// computes the nth (0-based) chord of the whole nroll
 t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n)
 {
+    if (!voice)
+        return NULL;
+    
     t_chord *curr = voice->firstchord; 
     long i; 
-    long zero_based_index = n-1; 
+    long zero_based_index = n;
 
     if (zero_based_index < 0) 
         return NULL;
@@ -20881,7 +20901,7 @@ void global_chord_number_to_measure_and_chord_index(t_notation_obj *r_ob, long v
                                                     long *local_chord_num, long *meas_num,
                                                     char tiemode_all, char skiprests, char restseqmode_all)
 {
-    t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
+    t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, voice_num - 1);
     if (voice) {
         if (global_chord_num == 0) {
             *meas_num = 0;
@@ -20988,7 +21008,7 @@ void handle_params_for_chord_number_in_measure(t_notation_obj *r_ob, long voice_
     if ((!tiemode_all) && (!skiprests) && (!restseqmode_all))
         return;
     
-    t_voice *voice = nth_voice(r_ob, voice_num-1);
+    t_voice *voice = nth_voice_safe(r_ob, voice_num-1);
     if (!voice)
         return;
     
@@ -21207,7 +21227,7 @@ t_marker *get_marker_from_path(t_notation_obj *r_ob, long marker_num)
     if (marker_num <= 0 || marker_num > r_ob->num_markers)
         return NULL;
     
-    return nth_marker(r_ob, marker_num);
+    return nth_marker(r_ob, marker_num-1);
 }
 
 t_measure *measure_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num)
@@ -21218,7 +21238,7 @@ t_measure *measure_get_from_path(t_notation_obj *r_ob, long voice_num, long meas
     if (voice_num <= 0 || voice_num > r_ob->num_voices)
         return NULL;
     
-    t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
+    t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, voice_num - 1);
         
     if (meas_num < 0)
         meas_num = voice->num_measures + meas_num + 1;
@@ -21235,7 +21255,7 @@ t_chord *chord_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num
         return NULL;
     
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-        t_rollvoice *voice = (t_rollvoice *)nth_voice(r_ob, voice_num - 1);
+        t_rollvoice *voice = (t_rollvoice *)nth_voice_safe(r_ob, voice_num - 1);
         
         if (chord_num < 0)
             chord_num = voice->num_chords + chord_num + 1;
@@ -21244,7 +21264,7 @@ t_chord *chord_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num
             return nth_chord_of_rollvoice(voice, chord_num);
         
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
+        t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, voice_num - 1);
         
         if (meas_num < 0)
             meas_num = voice->num_measures + meas_num + 1;
@@ -21271,7 +21291,7 @@ t_note *note_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num, 
         return NULL;
 
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-        t_rollvoice *voice = (t_rollvoice *)nth_voice(r_ob, voice_num - 1);
+        t_rollvoice *voice = (t_rollvoice *)nth_voice_safe(r_ob, voice_num - 1);
 
         if (chord_num < 0)
             chord_num = voice->num_chords + chord_num + 1;
@@ -21285,7 +21305,7 @@ t_note *note_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num, 
             }
         }
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
+        t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, voice_num - 1);
         
         if (meas_num < 0)
             meas_num = voice->num_measures + meas_num + 1;
@@ -27184,7 +27204,7 @@ char delete_all_breakpoints(t_notation_obj *r_ob, long voice_number)
     t_note *note;
     lock_general_mutex(r_ob);
     if (voice_number >= 0) {
-        voice = nth_voice(r_ob, voice_number);
+        voice = nth_voice_safe(r_ob, voice_number);
         for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord))
             for (note = chord->firstnote; note; note = note->next) {
                 note_delete_breakpoints(r_ob, note);
@@ -34545,7 +34565,7 @@ t_marker *build_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoi
     marker->r_sym_pim_attach = long2rat(0);
 
     if (attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_voice *voice = nth_voice(r_ob, tp.voice_num);
+        t_voice *voice = nth_voice_safe(r_ob, tp.voice_num);
         if (voice) {
             t_measure *meas = nth_measure_of_scorevoice((t_scorevoice *)voice, tp.measure_num);
             if (meas) {
@@ -35273,7 +35293,10 @@ void change_marker_from_llll(t_notation_obj *r_ob, t_marker *marker, t_llll* lll
 
 // returns the nth (0-based) voice of a notation object
 t_voice* nth_voice(t_notation_obj *r_ob, long n)
-{ 
+{
+    if (n < 0 || n >= r_ob->num_voices)
+        return NULL;
+    
     t_voice *curr = r_ob->firstvoice; 
     
     long i;
@@ -35290,6 +35313,24 @@ t_voice* nth_voice(t_notation_obj *r_ob, long n)
     // to be improved: if the note# is > n/2, pass the list the other way round!
 }
 
+
+// returns the nth (0-based) voice of a notation object, cannot return NULL
+t_voice* nth_voice_safe(t_notation_obj *r_ob, long n)
+{
+    t_voice *curr = r_ob->firstvoice;
+    long i;
+    
+    if (n < 0)
+        return curr;
+    
+    if (n >= r_ob->num_voices)
+        n = r_ob->num_voices;
+    
+    for (i = 0; i < n; i++)
+        curr = voice_get_next(r_ob, curr);
+    return curr;
+    // to be improved: if the note# is > n/2, pass the list the other way round!
+}
 
 void timepoint_handle_voice_numbers(t_notation_obj *r_ob, t_timepoint *arguments_tp, char also_clip)
 {
@@ -35310,7 +35351,7 @@ void timepoint_handle_voice_numbers(t_notation_obj *r_ob, t_timepoint *arguments
 
 void timepoint_handle_measure_numbers(t_notation_obj *r_ob, t_timepoint *arguments_tp, char also_clip)
 {
-    t_scorevoice *sv = (arguments_tp->voice_num >= 0 && arguments_tp->voice_num < r_ob->num_voices) ? (t_scorevoice *)nth_voice(r_ob, arguments_tp->voice_num) : NULL;
+    t_scorevoice *sv = (arguments_tp->voice_num >= 0 && arguments_tp->voice_num < r_ob->num_voices) ? (t_scorevoice *)nth_voice_safe(r_ob, arguments_tp->voice_num) : NULL;
     
     // handling negative measure numbers
     if (sv && arguments_tp->measure_num < -1)
@@ -35328,7 +35369,7 @@ void timepoint_handle_measure_numbers(t_notation_obj *r_ob, t_timepoint *argumen
 
 void timepoint_handle_pim(t_notation_obj *r_ob, t_timepoint *arguments_tp, char also_clip)
 {
-    t_scorevoice *sv = (arguments_tp->voice_num >= 0 && arguments_tp->voice_num < r_ob->num_voices) ? (t_scorevoice *)nth_voice(r_ob, arguments_tp->voice_num) : NULL;
+    t_scorevoice *sv = (arguments_tp->voice_num >= 0 && arguments_tp->voice_num < r_ob->num_voices) ? (t_scorevoice *)nth_voice_safe(r_ob, arguments_tp->voice_num) : NULL;
     t_measure *meas = (sv && arguments_tp->measure_num >= 0 && arguments_tp->measure_num < sv->num_measures) ? nth_measure_of_scorevoice(sv, arguments_tp->measure_num) : NULL;
     
     // handling negative pim
@@ -35404,7 +35445,7 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
             timepoint_handle_measure_numbers(r_ob, &arguments_tp, also_clip);
             voice_defined = true;
             
-            t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, arguments_tp.voice_num);
+            t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, arguments_tp.voice_num);
             if (voice && hatom_gettype(&innerllll->l_head->l_next->l_hatom) == H_DOUBLE && (meas = nth_measure_of_scorevoice(voice, arguments_tp.measure_num))) {
                 double val = hatom_getdouble(&innerllll->l_head->l_next->l_hatom);
                 arguments_tp.pt_in_measure = rat_rat_prod(approx_double_with_rat_fixed_den(val, 100, 0, NULL), measure_get_sym_duration(meas));
@@ -35421,7 +35462,7 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
             timepoint_handle_measure_numbers(r_ob, &arguments_tp, also_clip);
             voice_defined = true;
             
-            t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, arguments_tp.voice_num);
+            t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, arguments_tp.voice_num);
             if (voice && hatom_gettype(&innerllll->l_head->l_next->l_next->l_hatom) == H_DOUBLE && (meas = nth_measure_of_scorevoice(voice, arguments_tp.measure_num))) {
                 double val = hatom_getdouble(&innerllll->l_head->l_next->l_next->l_hatom);
                 arguments_tp.pt_in_measure = rat_rat_prod(approx_double_with_rat_fixed_den(val, 100, 0, NULL), measure_get_sym_duration(meas));
@@ -35447,7 +35488,7 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
         timepoint_handle_voice_numbers(r_ob, &arguments_tp, also_clip);
         
         // detecting measure
-        t_voice *voice = nth_voice(r_ob, arguments_tp.voice_num);
+        t_voice *voice = nth_voice_safe(r_ob, arguments_tp.voice_num);
         if (voice) {
             long i = 0;
             char found = false;
@@ -35497,7 +35538,7 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
         }
         
         clip_long(&tp.voice_num, 0, r_ob->num_voices - 1);
-        clip_long(&tp.measure_num, 0, ((t_scorevoice *)nth_voice(r_ob, tp.voice_num))->num_measures - 1);
+        clip_long(&tp.measure_num, 0, ((t_scorevoice *)nth_voice_safe(r_ob, tp.voice_num))->num_measures - 1);
     }
     return tp;
 } */
@@ -35515,7 +35556,7 @@ void change_marker_onset_from_lexpr_or_llllelem(t_notation_obj *r_ob, t_marker *
             t_llll *this_llll = hatom_getllll(&elem->l_hatom);
             t_timepoint tp = llll_to_timepoint(r_ob, this_llll, NULL, false);
             marker->attach_to = k_MARKER_ATTACH_TO_MEASURE;
-            t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, tp.voice_num);
+            t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, tp.voice_num);
             t_measure *meas = nth_measure_of_scorevoice(voice, tp.measure_num);
             if (meas) {
                 marker->measure_attach_ID = meas->r_it.ID;
@@ -36204,6 +36245,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->redo_llll = llll_get();
     r_ob->num_undo_steps = r_ob->num_redo_steps = 0;
     r_ob->undo_notation_items_under_tick = llll_get();
+    r_ob->undo_information_whose_path_need_to_be_checked = llll_get();
     r_ob->header_undo_flags = 0;
     
     r_ob->notation_cursor.measure = NULL;    // This means: NO cursor
@@ -36905,7 +36947,7 @@ t_rational notation_item_get_symduration(t_notation_obj *r_ob, t_notation_item *
             case k_LOOP_START: return zero;
             case k_LOOP_END: return zero;
             case k_LOOP_REGION: {
-                t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, r_ob->loop_region.start.timepoint.voice_num);
+                t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, r_ob->loop_region.start.timepoint.voice_num);
                 if (voice)
                     return get_sym_durations_between_timepoints(voice, r_ob->loop_region.start.timepoint, r_ob->loop_region.end.timepoint);
                 else
@@ -36936,7 +36978,7 @@ t_voice *notation_item_get_voice(t_notation_obj *r_ob, t_notation_item *it)
         case k_MARKER:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && ((t_marker *)it)->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
                 t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, (t_marker *)it);
-                return nth_voice(r_ob, tp.voice_num);
+                return nth_voice_safe(r_ob, tp.voice_num);
             } else
                 return NULL;
         case k_LOOP_START: return NULL;
@@ -37083,7 +37125,7 @@ long notation_item_get_measurenumber(t_notation_obj *r_ob, t_notation_item *it)
                 return -1;
         case k_LOOP_REGION:
         case k_LOOP_START: {
-            t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, r_ob->loop_region.start.timepoint.voice_num);
+            t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, r_ob->loop_region.start.timepoint.voice_num);
             if (voice) {
                 t_measure *meas = (t_measure *)nth_measure_of_scorevoice(voice, r_ob->loop_region.start.timepoint.measure_num);
                 if (meas) 
@@ -37092,7 +37134,7 @@ long notation_item_get_measurenumber(t_notation_obj *r_ob, t_notation_item *it)
             return -1;
         }
         case k_LOOP_END: {
-            t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, r_ob->loop_region.end.timepoint.voice_num);
+            t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, r_ob->loop_region.end.timepoint.voice_num);
             if (voice) {
                 t_measure *meas = (t_measure *)nth_measure_of_scorevoice(voice, r_ob->loop_region.end.timepoint.measure_num);
                 if (meas) 
@@ -38635,7 +38677,7 @@ t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long a
                 if (s == _llllobj_sym_Auto) {
                     if (i == 0 && args->l_size == 1)
                         auto_clefs = true;
-                    s = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD));
+                    s = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice_safe(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD));
                 }
             } else if (hatom_gettype(&el->l_hatom) == H_LLLL) {
                 t_llll *ll = hatom_getllll(&el->l_hatom);
@@ -38652,7 +38694,7 @@ t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long a
                     auto_clefs = true;
                     sticky_allowed_clefs = llll_clone(allowed_clefs);
                 }
-                s = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD, allowed_clefs));
+                s = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice_safe(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD, allowed_clefs));
                 llll_free(allowed_clefs);
             } else {
                 s = _llllobj_sym_none;
@@ -38664,7 +38706,7 @@ t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long a
         
         while (i < CONST_MAX_VOICES + 1) {
             if (auto_clefs && i < r_ob->num_voices)
-                clefs[i] = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD, sticky_allowed_clefs));
+                clefs[i] = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice_safe(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD, sticky_allowed_clefs));
             else
                 clefs[i] = NULL;
             i++;
@@ -39858,445 +39900,7 @@ char notation_item_is_ancestor_of(t_notation_obj *r_ob, t_notation_item *dad, t_
     
 
 
-// depending on the selection, returns the notation items that must 
-// ingroup undo!!!
-// smallest_type is the element ID of the smallest element to track. This can only be k_CHORD, k_MEASURE or k_VOICE. 
-// and if this is k_MEASURE it means that chords will not be put into *undo_items, but rather their measures
-long selection_to_undo_notation_items(t_notation_obj *r_ob, t_notation_item ***undo_items, long smallest_type){
-    t_notation_item *item;
-    long num_flagged = 0, count = 0;
-    
-    if (!r_ob->firstselecteditem)
-        return 0;
 
-    for (item = r_ob->firstselecteditem; item; item = item->next_selected){
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_COUNT);
-        count++;
-    }
-        
-    num_flagged = count;
-    *undo_items = (t_notation_item **)bach_newptr(num_flagged * sizeof(t_notation_item *)); // can't be more than this (*undo_items)[0]
-
-    for (count = 0, item = r_ob->firstselecteditem; item; item = item->next_selected){
-        t_notation_item *item_to_save = notation_item_get_ancestor_of_at_least_a_certain_type(r_ob, item, smallest_type);
-        
-        if (item_to_save->flags & k_FLAG_COUNT || notation_item_is_globally_locked(r_ob, item_to_save))
-            continue;    // already added
-        
-        // check if we have already saved a parent or a son
-        long i;
-        char genealogy = 0;
-        for (i = 0; i < count; i++){
-            if (notation_item_is_ancestor_of(r_ob, (*undo_items)[i], item_to_save)){
-                genealogy = 1; // item_to_save is son of an already saved item
-                break;
-            } else if (notation_item_is_ancestor_of(r_ob, item_to_save, (*undo_items)[i])){
-                if (i < count - 1)
-                    sysmem_copyptr(&(*undo_items)[i+1], &(*undo_items)[i], (count - i - 1) * sizeof(t_notation_item *));
-                genealogy = -1; // item_to_save is dad of an already existing item, we remove this item
-                count--;
-            }
-        }
-        
-        if (genealogy != 1) {
-            if (count < num_flagged)
-                (*undo_items)[count++] = item_to_save;
-            item_to_save->flags = (e_bach_internal_notation_flags) (item_to_save->flags | k_FLAG_COUNT);
-        }
-    }
-    
-    for (item = r_ob->firstselecteditem; item; item = item->next_selected)
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_COUNT);
-
-    return count;
-}
-
-
-t_undo_redo_information *build_undo_redo_information(long ID, e_element_types type, e_undo_modification_types modif_type, long voice_num, long meas_num, e_header_elems header_info, t_llll *content)
-{
-    t_undo_redo_information *out = (t_undo_redo_information *)bach_newptr(sizeof(t_undo_redo_information));
-    out->n_it_ID = ID;
-    out->n_it_type = type;
-    out->modification_type = modif_type;
-    out->n_it_content = content;
-    out->voice_num = voice_num;
-    out->meas_num = meas_num;
-    out->header_info = header_info;
-    return out;
-}
-
-long reverse_undo_op(long undo_operation){
-    if (undo_operation == k_UNDO_OP_ADD_MEASURE)
-        return k_UNDO_OP_DELETE_MEASURE;
-    else if (undo_operation == k_UNDO_OP_ADD_CHORD)
-        return k_UNDO_OP_DELETE_CHORD;
-    else if (undo_operation == k_UNDO_OP_ADD_VOICE)
-        return k_UNDO_OP_DELETE_VOICE;
-    else if (undo_operation == k_UNDO_OP_ADD_MEASURES)
-        return k_UNDO_OP_DELETE_MEASURES;
-    else if (undo_operation == k_UNDO_OP_ADD_CHORDS)
-        return k_UNDO_OP_DELETE_CHORDS;
-    else if (undo_operation == k_UNDO_OP_ADD_VOICES)
-        return k_UNDO_OP_DELETE_VOICES;
-    else if (undo_operation == k_UNDO_OP_ADD_MARKER)
-        return k_UNDO_OP_DELETE_MARKER;
-    return undo_operation;
-}
-
-
-long make_undo_op_plural_for_undo(long undo_operation){
-    if (undo_operation == k_UNDO_OP_ADD_MEASURE)
-        return k_UNDO_OP_ADD_MEASURES;
-    else if (undo_operation == k_UNDO_OP_CHANGE_MEASURE)
-        return k_UNDO_OP_CHANGE_MEASURES;
-    else if (undo_operation == k_UNDO_OP_DELETE_MEASURE)
-        return k_UNDO_OP_DELETE_MEASURES;
-    else if (undo_operation == k_UNDO_OP_ADD_CHORD)
-        return k_UNDO_OP_ADD_CHORDS;
-    else if (undo_operation == k_UNDO_OP_CHANGE_CHORD)
-        return k_UNDO_OP_CHANGE_CHORDS;
-    else if (undo_operation == k_UNDO_OP_DELETE_CHORD)
-        return k_UNDO_OP_DELETE_CHORDS;
-    else if (undo_operation == k_UNDO_OP_ADD_VOICE)
-        return k_UNDO_OP_ADD_VOICES;
-    else if (undo_operation == k_UNDO_OP_CHANGE_VOICE)
-        return k_UNDO_OP_CHANGE_VOICES;
-    else if (undo_operation == k_UNDO_OP_DELETE_VOICE)
-        return k_UNDO_OP_DELETE_VOICES;
-    return undo_operation;
-}
-
-
-
-
-// only works with chords, notes and measures
-t_llll *notation_item_get_values_as_llll_for_undo(t_notation_obj *r_ob, t_notation_item *item){
-    if (item->type == k_MEASURE)
-        return measure_get_values_as_llll(r_ob, (t_measure *)item, k_CONSIDER_FOR_UNDO, true, true);
-    else if (item->type == k_CHORD) {
-        if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-            return get_rollchord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO);
-        else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-            return get_scorechord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false);
-    } else if (item->type == k_NOTE) {
-        if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-            return get_rollnote_values_as_llll(r_ob, (t_note *) item, k_CONSIDER_FOR_UNDO);
-        else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-            return get_scorenote_values_as_llll(r_ob, (t_note *)item, k_CONSIDER_FOR_UNDO);
-        else if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
-            return get_uislotnote_values_as_llll(r_ob, (t_note *)item, k_CONSIDER_FOR_UNDO);
-    }
-    return NULL;
-}
-
-
-// only works with chords, voices and measures
-long notation_item_get_undo_op(t_notation_obj *r_ob, t_notation_item *item, char modif_type){
-    if (item->type == k_MEASURE) {
-        switch (modif_type) {
-            case k_UNDO_MODIFICATION_ADD:
-                return k_UNDO_OP_DELETE_MEASURE;
-            case k_UNDO_MODIFICATION_DELETE:
-                return k_UNDO_OP_ADD_MEASURE;
-            default:
-                return k_UNDO_OP_CHANGE_MEASURE;
-        } 
-    } else if (item->type == k_CHORD) {
-        switch (modif_type) {
-            case k_UNDO_MODIFICATION_ADD:
-                return k_UNDO_OP_DELETE_CHORD;
-            case k_UNDO_MODIFICATION_DELETE:
-                return k_UNDO_OP_ADD_CHORD;
-            default:
-                return k_UNDO_OP_CHANGE_CHORD;
-        } 
-    } else if (item->type == k_VOICE) {
-        switch (modif_type) {
-            case k_UNDO_MODIFICATION_ADD:
-                return k_UNDO_OP_DELETE_VOICE;
-            case k_UNDO_MODIFICATION_DELETE:
-                return k_UNDO_OP_ADD_VOICE;
-            default:
-                return k_UNDO_OP_CHANGE_VOICE;
-        } 
-    }
-    return k_UNDO_OP_UNKNOWN;
-}
-
-void notation_item_to_measure_and_voice_numbers(t_notation_obj *r_ob, t_notation_item *item, long *measure_num, long *voice_num){
-        
-    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
-        switch (item->type) {
-            case k_CHORD:
-                *measure_num = ((t_chord *)item)->parent->measure_number;
-                *voice_num = ((t_chord *)item)->parent->voiceparent->v_ob.number;
-                return;
-            case k_MEASURE:
-                *measure_num = ((t_measure *)item)->measure_number;
-                *voice_num = ((t_measure *)item)->voiceparent->v_ob.number;
-                return;
-            case k_NOTE:
-                *measure_num = ((t_note *)item)->parent->parent->measure_number;
-                *voice_num = ((t_note *)item)->parent->parent->voiceparent->v_ob.number;
-                return;
-            case k_VOICE:
-                *measure_num = 0;
-                *voice_num = ((t_voice *)item)->number;
-                return;
-            default:
-                break;
-        }
-    } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
-        switch (item->type) {
-            case k_CHORD:
-                *measure_num = 0;
-                *voice_num = ((t_chord *)item)->voiceparent->v_ob.number;
-                return;
-            case k_NOTE:
-                *measure_num = 0;
-                *voice_num = ((t_note *)item)->parent->voiceparent->v_ob.number;
-                return;
-            case k_VOICE:
-                *measure_num = 0;
-                *voice_num = ((t_voice *)item)->number;
-                return;
-            case k_MARKER:
-                *measure_num = 0;
-                *voice_num = 0;
-                return;
-            default:
-                break;
-        }
-    }
-}
-
-
-void create_simple_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type){
-    t_undo_redo_information *operation;
-    t_llll *content = NULL;
-    long meas_number = 0, voice_number = 0;
-    t_llllelem *tick_el = NULL;
-    
-    if (r_ob->inhibited_undo)
-        return;
-
-    if (!item)
-        return;
-        
-    if (atom_gettype(&r_ob->max_undo_steps) == A_LONG && atom_getlong(&r_ob->max_undo_steps) == 0)
-        return;
-    
-    if ((tick_el = notation_item_to_undo_tick(r_ob, item)) && (tick_el->l_thing.w_long == modif_type))
-        return;
-    
-
-    if (item->type != k_MEASURE && item->type != k_CHORD && !(item->type == k_NOTE && (r_ob->obj_type == k_NOTATION_OBJECT_SLOT || modif_type == k_UNDO_MODIFICATION_CHANGE_NAME))
-        && !(item->type == k_VOICE && (modif_type == k_UNDO_MODIFICATION_CHANGE_FLAG || modif_type == k_UNDO_MODIFICATION_CHANGE_NAME))){
-#ifdef BACH_UNDO_DEBUG
-        object_post((t_object *) r_ob, "Warning! WEIRD UNDO ELEMENT!!!");
-#endif
-        return;
-    }
-    
-    // We need to get the information on score structures, we need to lock the general mutex (if it wasn't locked already!)
-    char must_unlock = true;
-    if (trylock_general_mutex(r_ob))
-        must_unlock = false; // already locked
-
-    if (modif_type == k_UNDO_MODIFICATION_CHANGE_FLAG)
-        content = get_multiple_flags_for_undo(r_ob, item);
-    else if (modif_type == k_UNDO_MODIFICATION_CHANGE_NAME)
-        content = get_names_as_llll(item, false);
-    else if (modif_type == k_UNDO_MODIFICATION_CHANGE || modif_type == k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER || modif_type == k_UNDO_MODIFICATION_ADD)
-        content = notation_item_get_values_as_llll_for_undo(r_ob, item);
-    else 
-        content = llll_get();
-    
-    if (must_unlock)
-        unlock_general_mutex(r_ob);
-
-    notation_item_to_measure_and_voice_numbers(r_ob, item, &meas_number, &voice_number);
-        
-    operation = build_undo_redo_information(item->ID, item->type, modif_type, voice_number, meas_number, k_HEADER_NONE, content);
-
-    tick_el = llll_prependobj(r_ob->undo_notation_items_under_tick, item, 0, WHITENULL_llll);
-    tick_el->l_thing.w_long = modif_type;
-    create_undo_redo_tick(r_ob, k_UNDO, 0, operation, true);
-}
-
-void create_simple_selected_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type){
-    t_notation_item *undo_item;
-    
-    if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
-        smallest_undoable_element = k_NOTE;
-        
-     undo_item = notation_item_get_ancestor_of_at_least_a_certain_type(r_ob, item, smallest_undoable_element);
-
-    if (!undo_item) {
-        dev_post("Warning: wrong undo item; smallest_undoable_elem = %ld, modif_type %ld, itemtype %ld", smallest_undoable_element, modif_type, item->type); 
-        return;
-    }
-        
-    if (modif_type == k_UNDO_MODIFICATION_CHANGE_NAME && !(undo_item->flags & k_FLAG_MODIF_NAME_UNDO)){
-        create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE_NAME);
-        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_NAME_UNDO);
-    
-    } else if (modif_type == k_UNDO_MODIFICATION_CHANGE_FLAG && !(undo_item->flags & k_FLAG_MODIF_FLAG_UNDO)){
-        create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE_FLAG);
-        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_FLAG_UNDO);
-
-    } else if (modif_type == k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER && !(undo_item->flags & k_FLAG_MODIF_CHECK_ORDER_UNDO)){
-        create_simple_notation_item_undo_tick(r_ob, undo_item, modif_type);
-        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_CHECK_ORDER_UNDO);
-
-    } else if (modif_type != k_UNDO_MODIFICATION_CHANGE_FLAG && modif_type != k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER && 
-                (modif_type == k_UNDO_MODIFICATION_ADD || modif_type == k_UNDO_MODIFICATION_DELETE || !(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))){
-        create_simple_notation_item_undo_tick(r_ob, undo_item, modif_type);
-        undo_item->flags = (e_bach_internal_notation_flags) (undo_item->flags | k_FLAG_MODIF_UNDO);
-    }
-}
-
-void create_multiple_notation_items_undo_ticks(t_notation_obj *r_ob, long num_items, t_notation_item **item, e_undo_modification_types modif_type, long *undo_op){
-    long i;
-
-    if (r_ob->inhibited_undo)
-        return;
-
-    if (atom_gettype(&r_ob->max_undo_steps) == A_LONG && atom_getlong(&r_ob->max_undo_steps) == 0)
-        return;
-
-    if (undo_op)
-        *undo_op = k_UNDO_OP_UNKNOWN;
-    
-    for (i = 0; i < num_items; i++){
-        t_llll *content = NULL;
-        long this_undo_op = notation_item_get_undo_op(r_ob, item[i], modif_type);
-        long meas_number = 0, voice_number = 0;
-        t_undo_redo_information *operation;
-        
-        if (undo_op) {
-            if (*undo_op == k_UNDO_OP_UNKNOWN)
-                *undo_op = this_undo_op;
-            else if (*undo_op != this_undo_op)
-                *undo_op = k_UNDO_OP_MULTIPLE_CHANGES;
-        }
-        
-        if (item[i]->type != k_MEASURE && item[i]->type != k_CHORD){
-#ifdef BACH_UNDO_DEBUG
-            object_post((t_object *) r_ob, "Warning! WEIRD UNDO ELEMENT!!!");
-#endif
-            return;
-        }
-        
-        if (modif_type == k_UNDO_MODIFICATION_CHANGE_FLAG)
-            content = get_multiple_flags_for_undo(r_ob, item[i]);
-        else if (modif_type == k_UNDO_MODIFICATION_CHANGE || modif_type == k_UNDO_MODIFICATION_ADD)
-            content = notation_item_get_values_as_llll_for_undo(r_ob, item[i]);
-        else 
-            content = llll_get();
-        
-        notation_item_to_measure_and_voice_numbers(r_ob, item[i], &meas_number, &voice_number);
-        
-        operation = build_undo_redo_information(item[i]->ID, item[i]->type, modif_type, voice_number, meas_number, k_HEADER_NONE, content);
-
-        t_llllelem *tick_el = llll_prependobj(r_ob->undo_notation_items_under_tick, item[i], 0, WHITENULL_llll);
-        tick_el->l_thing.w_long = modif_type;
-        create_undo_redo_tick(r_ob, k_UNDO, 0, operation, true);
-    }
-    
-    if (undo_op && num_items > 1)
-        *undo_op = make_undo_op_plural_for_undo(*undo_op);
-}
-
-void remove_modif_undo_flag_to_last_undo_ticks(t_notation_obj *r_ob){
-    t_llllelem *elem;
-    for (elem = r_ob->undo_notation_items_under_tick->l_head; elem; elem = elem->l_next) {
-        t_notation_item *item = (t_notation_item *)hatom_getobj(&elem->l_hatom);
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_UNDO);
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_FLAG_UNDO);
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_CHECK_ORDER_UNDO);
-        item->flags = (e_bach_internal_notation_flags) (item->flags & ~k_FLAG_MODIF_NAME_UNDO);
-    }
-    r_ob->header_undo_flags = 0;
-}
-
-char are_there_free_undo_ticks(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty){
-    char res = false;
-    
-    systhread_mutex_lock(r_ob->c_undo_mutex);    
-    if ((r_ob->undo_llll && r_ob->undo_llll->l_head && hatom_gettype(&r_ob->undo_llll->l_head->l_hatom) != H_LONG) ||
-        (also_return_true_if_undo_is_empty && (!r_ob->undo_llll->l_head || !r_ob->undo_llll)))    // we also set true if there are NO undos!
-        res = true;
-    systhread_mutex_unlock(r_ob->c_undo_mutex);    
-        
-    return res;
-}
-
-
-void remove_all_free_undo_ticks(t_notation_obj *r_ob, char also_clear_ticks_flags){
-    systhread_mutex_lock(r_ob->c_undo_mutex);    
-    if (also_clear_ticks_flags)
-        remove_modif_undo_flag_to_last_undo_ticks(r_ob);
-    while (r_ob->undo_llll->l_head && hatom_gettype(&r_ob->undo_llll->l_head->l_hatom) != H_LONG) {
-        if (hatom_gettype(&r_ob->undo_llll->l_head->l_hatom) == H_OBJ) {
-            t_undo_redo_information *thisinfo = (t_undo_redo_information *)hatom_getobj(&r_ob->undo_llll->l_head->l_hatom);
-            free_undo_redo_information(thisinfo);
-        }
-        llll_destroyelem(r_ob->undo_llll->l_head);
-    }
-    systhread_mutex_unlock(r_ob->c_undo_mutex);    
-}
-
-
-long create_selection_notation_item_undo_tick(t_notation_obj *r_ob, e_element_types smallest_undoable_element, e_undo_modification_types modif_type){
-    t_notation_item **undo_items = NULL;
-    long num_items, i;
-    
-    if (atom_gettype(&r_ob->max_undo_steps) == A_LONG && atom_getlong(&r_ob->max_undo_steps) == 0)
-        return 0;
-
-    num_items = selection_to_undo_notation_items(r_ob, &undo_items, smallest_undoable_element);
-    for (i = 0; i < num_items; i++)
-        create_simple_notation_item_undo_tick(r_ob, undo_items[i], modif_type);
-    bach_freeptr(undo_items);
-    return num_items;
-}
-
-
-long header_types_to_undo_op(long header_types){
-    switch (header_types) {
-        case 0:
-            return k_UNDO_OP_UNKNOWN;
-        case k_HEADER_CLEFS:
-            return k_UNDO_OP_CHANGE_CLEFS;
-        case k_HEADER_COMMANDS:
-            return k_UNDO_OP_CHANGE_COMMANDS;
-        case k_HEADER_GROUPS:
-            return k_UNDO_OP_CHANGE_GROUPS;
-        case k_HEADER_KEYS:
-            return k_UNDO_OP_CHANGE_KEYS;
-        case k_HEADER_MARKERS:
-            return k_UNDO_OP_CHANGE_MARKERS;
-        case k_HEADER_MIDICHANNELS:
-            return k_UNDO_OP_CHANGE_MIDICHANNELS;
-        case k_HEADER_SLOTINFO:
-            return k_UNDO_OP_CHANGE_SLOTINFO;
-        case k_HEADER_VOICENAMES:
-            return k_UNDO_OP_CHANGE_VOICENAMES;
-        case k_HEADER_STAFFLINES:
-            return k_UNDO_OP_CHANGE_STAFFLINES;
-        case k_HEADER_ARTICULATIONINFO:
-            return k_UNDO_OP_CHANGE_CUSTOM_ARTICULATIONS_DEFINITION;
-        case k_HEADER_NOTEHEADINFO:
-            return k_UNDO_OP_CHANGE_CUSTOM_NOTEHEADS_DEFINITION;
-        case k_HEADER_NUMPARTS:
-            return k_UNDO_OP_CHANGE_PARTS;
-        case k_HEADER_LOOP:
-            return k_UNDO_OP_CHANGE_LOOP;
-        default:
-            return k_UNDO_OP_CHANGE_HEADER;
-    }
-}
 
 
 void handle_change_if_there_are_free_undo_ticks(t_notation_obj *r_ob, int change_type, e_undo_operations undo_op) {
@@ -40537,6 +40141,114 @@ t_atom notation_item_get_name_from_llll(t_llll *llll) {
     } 
     return sym;
 }*/
+
+
+t_notation_item *notation_item_from_path(t_notation_obj *r_ob, e_element_types type, t_notation_item_path *path)
+{
+    switch (type) {
+        case k_NOTE:
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                return (t_notation_item *)nth_note(nth_chord(nth_measure_of_scorevoice((t_scorevoice *)nth_voice(r_ob, path->voice_num), path->meas_num), path->chord_num), path->note_num);
+            else
+                return (t_notation_item *)nth_note(nth_chord_of_rollvoice((t_rollvoice *)nth_voice(r_ob, path->voice_num), path->chord_num), path->note_num);
+            break;
+            
+        case k_CHORD:
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                return (t_notation_item *)nth_chord(nth_measure_of_scorevoice((t_scorevoice *)nth_voice(r_ob, path->voice_num), path->meas_num), path->chord_num);
+            else
+                return (t_notation_item *)nth_chord_of_rollvoice((t_rollvoice *)nth_voice(r_ob, path->voice_num), path->chord_num);
+            break;
+
+        case k_MEASURE:
+            return (t_notation_item *)nth_measure_of_scorevoice((t_scorevoice *)nth_voice(r_ob, path->voice_num), path->meas_num);
+            break;
+
+        case k_VOICE:
+            return (t_notation_item *)nth_voice(r_ob, path->voice_num);
+            break;
+
+        case k_PITCH_BREAKPOINT:
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                return (t_notation_item *)nth_breakpoint(nth_note(nth_chord(nth_measure_of_scorevoice((t_scorevoice *)nth_voice(r_ob, path->voice_num), path->meas_num), path->chord_num), path->note_num), path->item_num);
+            else
+                return (t_notation_item *)nth_breakpoint(nth_note(nth_chord_of_rollvoice((t_rollvoice *)nth_voice(r_ob, path->voice_num), path->chord_num), path->note_num), path->item_num);
+            break;
+            
+        case k_MARKER:
+            return (t_notation_item *)nth_marker(r_ob, path->item_num);
+            break;
+
+        default:
+            return NULL;
+            break;
+    }
+}
+
+void notation_item_get_path(t_notation_obj *r_ob, t_notation_item *it, t_notation_item_path *path)
+{
+    path->voice_num = path->meas_num = path->chord_num = path->note_num = path->slot_num = path->item_num = -1;
+    
+    if (!it || !r_ob)
+        return;
+    
+    switch (it->type) {
+        case k_NOTE:
+        {
+            path->voice_num = notation_item_get_voicenumber(r_ob, it);
+            path->meas_num = notation_item_get_measurenumber(r_ob, it);
+            path->chord_num = notation_item_get_chordindex_for_lexpr(r_ob, it)-1;
+            path->note_num = notation_item_get_noteindex_for_lexpr(r_ob, it)-1;
+            return;
+        }
+        case k_CHORD:
+        {
+            path->voice_num = notation_item_get_voicenumber(r_ob, it);
+            path->meas_num = notation_item_get_measurenumber(r_ob, it);
+            path->chord_num = notation_item_get_chordindex_for_lexpr(r_ob, it)-1;
+            return;
+        }
+        case k_PITCH_BREAKPOINT:
+        {
+            notation_item_get_path(r_ob, (t_notation_item *)(((t_duration_line *)it)->owner), path);
+            path->item_num = get_breakpoint_position(r_ob, (t_bpt *)it) - 1;
+            return;
+        }
+        case k_DURATION_LINE:
+            return notation_item_get_path(r_ob, (t_notation_item *)(((t_duration_line *)it)->owner), path);
+        case k_LYRICS:
+                        return notation_item_get_path(r_ob, (t_notation_item *)(((t_lyrics *)it)->owner->parent), path);
+        case k_DYNAMICS:
+            return notation_item_get_path(r_ob, ((t_dynamics *)it)->owner_item, path);
+        case k_MEASURE:
+        {
+            path->voice_num = notation_item_get_voicenumber(r_ob, it);
+            path->meas_num = notation_item_get_measurenumber(r_ob, it);
+            return;
+        }
+        case k_TEMPO:
+            return notation_item_get_path(r_ob, (t_notation_item *)(((t_tempo *)it)->owner), path);
+        case k_VOICE:
+        {
+            path->voice_num = notation_item_get_voicenumber(r_ob, it);
+            return;
+        }
+        case k_MARKER:
+        {
+            path->item_num = get_marker_position(r_ob, (t_marker *)it)-1;
+            return;
+/*          if (((t_marker *)it)->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
+                t_measure *meas = (t_measure *)notation_item_retrieve_from_ID(r_ob, ((t_marker *)it)->measure_attach_ID);
+                if (meas) {
+                    path->voice_num = notation_item_get_voicenumber(r_ob, (t_notation_item *)meas);
+                    path->meas_num = notation_item_get_measurenumber(r_ob, (t_notation_item *)meas);
+                }
+            } */
+        }
+        default:
+            return;
+    }
+}
 
 
 unsigned long notation_item_get_ID_from_llll(t_llll *llll) {
@@ -43419,7 +43131,7 @@ t_voice *voice_get_first_visible(t_notation_obj *r_ob)
 t_voice *voice_get_last_visible(t_notation_obj *r_ob)
 {
     t_voice *voice;
-    for (voice = nth_voice(r_ob, r_ob->num_voices - 1); voice && voice->number >= 0; voice = voice_get_prev(r_ob, voice))
+    for (voice = nth_voice_safe(r_ob, r_ob->num_voices - 1); voice && voice->number >= 0; voice = voice_get_prev(r_ob, voice))
         if (!voice->hidden && voice->part_index == 0)
             return voice;
     return NULL;
@@ -43937,7 +43649,7 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
     // measures
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         long voicenum = yposition_to_voicenumber(r_ob, this_y, -1, k_VOICEENSEMBLE_INTERFACE_FIRST);
-        t_voice *voice = nth_voice(r_ob, voicenum);
+        t_voice *voice = nth_voice_safe(r_ob, voicenum);
         char instaff = false, between_staff_and_next = false;
         
         

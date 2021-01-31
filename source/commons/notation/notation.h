@@ -94,7 +94,7 @@
         //#define BACH_QUANTIZE_DEBUG                    ///< Debug the quantize task
         //#define BACH_SPACING_DEBUG                    ///< Debug the spacing task (and display alignment points)
         //#define BACH_PAINT_IDS                        ///< Paint the IDs for all elements having one
-        #define BACH_UNDO_DEBUG                        ///< Debug the undo task
+        //#define BACH_UNDO_DEBUG                        ///< Debug the undo task
         //#define BACH_ARTICULATION_POSITION_DEBUG      ///< Debug for articulation position
         //#define BACH_CHECK_NOTATION_ITEMS               ///< Debug for notation items
 
@@ -4398,6 +4398,7 @@ typedef struct _notation_obj
     char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads
     
     char        notify_with;                           ///< Notification type through last outlet
+    char        last_operation_is;         ///< -1 = undo, 1 = redo, 0 = anything else
     char        notify_when_painted;                ///< Flag telling if we want notifications to be sent whenever the object is repainted
     char        notify_also_upon_messages;            ///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes 
     char        dblclick_sends_values;                ///< Flag telling if, when we double click, the selection is sent through the playout (as when we press V)
@@ -4590,6 +4591,7 @@ typedef struct _notation_obj
     long        num_redo_steps;                        ///< Current number of redo steps stored in the redo llll (it corresponds to the number of redo markers inside it)
     char        verbose_undo_redo;                    ///< If this is 1, bach posts each undo/redo step in the Max window.
     t_llll        *undo_notation_items_under_tick;    ///< A llll containing as #H_OBJ the notation items whose undo information is currently being prepended to the undo list.
+    t_llll        *undo_information_whose_path_need_to_be_checked;    ///< A llll containing as #H_OBJ the undo/redo information whose afterpath needs to be checked at when the undo marker is put.
     long        undo_header_elements_under_tick;    ///< A #e_header_elems combination specifying which header elements are under tick
                                                     ///< Each undo tick on a notation item adds an element to this list. When the undo step marker is created (and thus the undo step is finalized), this list is emptied.
     long        whole_obj_under_tick;               ///< Tells if the whole notation object is under tick
@@ -4961,6 +4963,15 @@ typedef struct _bach_inspector_ui {
 } t_bach_inspector_ui;
 
 
+typedef struct _notation_item_path
+{
+    long    voice_num;
+    long    meas_num;
+    long    chord_num;
+    long    note_num;
+    long    slot_num;
+    long    item_num;
+} t_notation_item_path;
 
 /** Information about some operation that can be undone.
     With the new undo system (since bach 0.7), an undo step is computed BEFORE any interface modification is performed.
@@ -4980,8 +4991,11 @@ typedef struct _undo_information
                                                     ///< If the information concerns the whole object, then this should be #k_WHOLE_NOTATION_OBJECT, if it concerns the header, this should be #k_HEADER_DATA.
     e_undo_modification_types    modification_type;    ///< Type of possible modification of the object (one of the #e_undo_modification_types)
     
-    long    voice_num;            ///< Voice number of the element (if it is a #k_VOICE), or where the modified element is (this is only used if the modification is erasing the element) 
-    long    meas_num;            ///< Measure number of the element (if it is a #k_MEASURE), or where the modified element is (this is only used if the modification is erasing the element).
+    t_notation_item_path        n_it_path_before;      ///< Path of the modified item before the operation
+    t_notation_item_path        n_it_path_after;        ///< Path of the modified item after the operation
+    
+//    long    voice_num;            ///< Voice number of the element (if it is a #k_VOICE), or where the modified element is (this is only used if the modification is erasing the element)
+//    long    meas_num;            ///< Measure number of the element (if it is a #k_MEASURE), or where the modified element is (this is only used if the modification is erasing the element).
                                 ///< Of course, this is meaningless if the element is a #k_VOICE.
     e_header_elems    header_info;        ///< Header information to be undone (a combination of the #e_header_elems)
     
@@ -7484,6 +7498,7 @@ t_measure* nth_measure_of_scorevoice(t_scorevoice *voice, long n);
     @param    n        The 0-based index of the voice to retrieve
  */
 t_voice* nth_voice(t_notation_obj *r_ob, long n);
+t_voice* nth_voice_safe(t_notation_obj *r_ob, long n);
 
 
 /**    Checks if the order of notes in a chord is "correct", and if incorrect, the function corrects the order.
@@ -7867,6 +7882,23 @@ long notation_item_get_voiceensemble(t_notation_obj *r_ob, t_notation_item *it);
     @return            The 0-based measure number of the notation item.
  */ 
 long notation_item_get_measurenumber(t_notation_obj *r_ob, t_notation_item *it);
+
+
+/** Obtain the 0-based path information for a given notation item (with -1 meaning: unapplicable).
+ @ingroup        notation
+ @param    r_ob    The notation object
+ @param    path        Pointer filled with the 0-based path information of the notation item
+ */
+void notation_item_get_path(t_notation_obj *r_ob, t_notation_item *it, t_notation_item_path *path);
+
+
+/** Obtain a notation item from its path
+ @ingroup        notation
+ @param    r_ob    The notation object
+ @param    path        Notation item path
+ @return    Pointer to the notation item if any, or NULL otherwise
+ */
+t_notation_item *notation_item_from_path(t_notation_obj *r_ob, e_element_types type, t_notation_item_path *path);
 
 
 /** Obtain the number of chords inside a notation item (or 0 if not applicable).
@@ -12186,7 +12218,7 @@ t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note);
     @param    tempo        The tempo
     @return                The path in the notation object to get to the tempo (in the form explained above).
  */
-t_llll *get_tempo_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo);
+t_llll *tempo_get_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo);
 
 
 /**    Returns the path of a measure inside the notation object. This will be in the form (<voice_number> <measure_number>).
