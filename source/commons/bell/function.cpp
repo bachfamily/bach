@@ -387,7 +387,7 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
             t_hatom *fnhatom = &fnelem->l_hatom;
             switch (hatom_gettype(fnhatom)) {
                 case H_FUNCTION: {
-                    t_function *fn = static_cast<t_function *>(fnhatom->h_w.w_obj);
+                    t_function *fn = fnhatom->h_w.w_func;
                     t_llll *res = callFunction(fn, argsByPositionLl, argsByNameLl, context);
                     llll_chain(resultLl, res);
                     fnelem = fnelem->l_next;

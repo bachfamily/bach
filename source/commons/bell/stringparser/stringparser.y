@@ -27,7 +27,7 @@
 
 %{
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
+    #define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
     #endif
     
     #ifndef code_dev_post
@@ -360,7 +360,7 @@ fundef : funargList FUNDEF {
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
     --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    code_dev_post ("parse: user defined function funargList FUNDEF");
 }
 | FUNDEF {
     ++(params->localVariablesStack);
@@ -378,7 +378,7 @@ fundef : funargList FUNDEF {
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
     --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    code_dev_post ("parse: user defined function FUNDEF");
 }
 | funargList liftedargList FUNDEF {
     params->fnDepth++;
@@ -399,21 +399,19 @@ fundef : funargList FUNDEF {
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
     --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    code_dev_post ("parse: user defined function funargList liftedargList");
 }
 | liftedargList FUNDEF {
     params->fnDepth++;
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->implicitArgumentsStack);
+    *++(params->implicitArgumentsStack) = nullptr;
     for (countedList<t_symbol *> *v = $1->getHead();
          v;
          v = v->getNext()) {
         (*(params->liftedVariablesStack))->insert(v->getItem());
     }
-    *++(params->implicitArgumentsStack) = nullptr;
-
 } list {
     t_function *fn = new t_userFunction(*++(params->implicitArgumentsStack), *(params->localVariablesStack), $4, params->owner);
     $$ = new astConst(fn, params->owner);
@@ -424,7 +422,7 @@ fundef : funargList FUNDEF {
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
     --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    code_dev_post ("parse: user defined function liftedargList FUNDEF");
 }
 ;
 
@@ -444,7 +442,7 @@ funargList : LOCALVAR {
 | LOCALVAR ASSIGN {
     // two levels are pushed:
     // one for the function, whose definition is beginning here,
-    // and one for the parameter default, which is in an outer scope
+    // and one for the parameter default, which is in an inner scope
     params->localVariablesStack += 2;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     (**(params->localVariablesAuxMapStack))[$1] = 1;

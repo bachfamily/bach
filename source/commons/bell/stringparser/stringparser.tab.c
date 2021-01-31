@@ -78,7 +78,7 @@
 
 
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
+    #define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
     #endif
     
     #ifndef code_dev_post
@@ -353,28 +353,28 @@ static const unsigned short int yyrline[] =
        0,   206,   206,   211,   217,   223,   231,   232,   238,   242,
      264,   268,   274,   279,   284,   289,   294,   299,   304,   309,
      314,   319,   326,   330,   336,   341,   349,   349,   365,   365,
-     383,   383,   404,   404,   431,   438,   444,   444,   461,   466,
-     470,   470,   483,   487,   493,   494,   501,   506,   511,   517,
-     523,   529,   533,   539,   543,   547,   553,   558,   559,   560,
-     566,   567,   568,   569,   570,   573,   574,   580,   581,   593,
-     604,   608,   613,   617,   621,   625,   629,   633,   637,   641,
-     645,   649,   653,   657,   661,   665,   669,   673,   677,   681,
-     685,   689,   693,   697,   701,   705,   709,   713,   717,   721,
-     725,   729,   733,   737,   741,   745,   749,   753,   757,   761,
-     765,   769,   773,   777,   782,   789,   794,   802,   806,   810,
-     814,   821,   822,   828,   829,   830,   834,   838,   842,   846,
-     850,   854,   858,   862,   866,   870,   874,   878,   882,   886,
-     890,   894,   898,   902,   906,   910,   914,   918,   922,   926,
-     930,   934,   938,   942,   946,   950,   954,   959,   960,   964,
-     968,   972,   976,   980,   984,   988,   992,   996,  1000,  1004,
-    1008,  1012,  1016,  1020,  1024,  1028,  1032,  1036,  1040,  1044,
-    1048,  1052,  1056,  1060,  1064,  1068,  1072,  1076,  1080,  1084,
-    1089,  1093,  1097,  1101,  1105,  1109,  1113,  1117,  1121,  1125,
-    1129,  1133,  1137,  1141,  1145,  1149,  1153,  1157,  1161,  1165,
-    1169,  1173,  1180,  1184,  1188,  1192,  1196,  1200,  1204,  1209,
-    1215,  1221,  1227,  1233,  1239,  1245,  1254,  1258,  1261,  1265,
-    1271,  1276,  1281,  1282,  1285,  1286,  1287,  1290,  1298,  1306,
-    1311,  1316
+     383,   383,   404,   404,   429,   436,   442,   442,   459,   464,
+     468,   468,   481,   485,   491,   492,   499,   504,   509,   515,
+     521,   527,   531,   537,   541,   545,   551,   556,   557,   558,
+     564,   565,   566,   567,   568,   571,   572,   578,   579,   591,
+     602,   606,   611,   615,   619,   623,   627,   631,   635,   639,
+     643,   647,   651,   655,   659,   663,   667,   671,   675,   679,
+     683,   687,   691,   695,   699,   703,   707,   711,   715,   719,
+     723,   727,   731,   735,   739,   743,   747,   751,   755,   759,
+     763,   767,   771,   775,   780,   787,   792,   800,   804,   808,
+     812,   819,   820,   826,   827,   828,   832,   836,   840,   844,
+     848,   852,   856,   860,   864,   868,   872,   876,   880,   884,
+     888,   892,   896,   900,   904,   908,   912,   916,   920,   924,
+     928,   932,   936,   940,   944,   948,   952,   957,   958,   962,
+     966,   970,   974,   978,   982,   986,   990,   994,   998,  1002,
+    1006,  1010,  1014,  1018,  1022,  1026,  1030,  1034,  1038,  1042,
+    1046,  1050,  1054,  1058,  1062,  1066,  1070,  1074,  1078,  1082,
+    1087,  1091,  1095,  1099,  1103,  1107,  1111,  1115,  1119,  1123,
+    1127,  1131,  1135,  1139,  1143,  1147,  1151,  1155,  1159,  1163,
+    1167,  1171,  1178,  1182,  1186,  1190,  1194,  1198,  1202,  1207,
+    1213,  1219,  1225,  1231,  1237,  1243,  1252,  1256,  1259,  1263,
+    1269,  1274,  1279,  1280,  1283,  1284,  1285,  1288,  1296,  1304,
+    1309,  1314
 };
 #endif
 
@@ -2033,7 +2033,7 @@ yyuserAction (yyRuleNum yyn, size_t yyrhslen, yyGLRStackItem* yyvsp,
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
     --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    code_dev_post ("parse: user defined function funargList FUNDEF");
 }
 
     break;
@@ -2062,7 +2062,7 @@ yyuserAction (yyRuleNum yyn, size_t yyrhslen, yyGLRStackItem* yyvsp,
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
     --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    code_dev_post ("parse: user defined function FUNDEF");
 }
 
     break;
@@ -2094,7 +2094,7 @@ yyuserAction (yyRuleNum yyn, size_t yyrhslen, yyGLRStackItem* yyvsp,
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
     --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    code_dev_post ("parse: user defined function funargList liftedargList");
 }
 
     break;
@@ -2106,14 +2106,12 @@ yyuserAction (yyRuleNum yyn, size_t yyrhslen, yyGLRStackItem* yyvsp,
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->implicitArgumentsStack);
+    *++(params->implicitArgumentsStack) = nullptr;
     for (countedList<t_symbol *> *v = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.liftedarglist)->getHead();
          v;
          v = v->getNext()) {
         (*(params->liftedVariablesStack))->insert(v->getItem());
     }
-    *++(params->implicitArgumentsStack) = nullptr;
-
 }
 
     break;
@@ -2130,7 +2128,7 @@ yyuserAction (yyRuleNum yyn, size_t yyrhslen, yyGLRStackItem* yyvsp,
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
     --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    code_dev_post ("parse: user defined function liftedargList FUNDEF");
 }
 
     break;
@@ -2163,7 +2161,7 @@ yyuserAction (yyRuleNum yyn, size_t yyrhslen, yyGLRStackItem* yyvsp,
     {
     // two levels are pushed:
     // one for the function, whose definition is beginning here,
-    // and one for the parameter default, which is in an outer scope
+    // and one for the parameter default, which is in an inner scope
     params->localVariablesStack += 2;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     (**(params->localVariablesAuxMapStack))[(((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.sym)] = 1;
