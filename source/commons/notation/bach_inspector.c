@@ -956,28 +956,28 @@ void bach_default_preprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute *
 		if (attr->name == _llllobj_sym_representation || attr->name == _llllobj_sym_range || attr->name == _llllobj_sym_domain || attr->name == _llllobj_sym_type || attr->name == _llllobj_sym_extend || attr->name == _llllobj_sym_temporalmode)
 			(*r_ob->whole_obj_undo_tick_function)(r_ob);
 		else
-			create_header_undo_tick(r_ob, k_HEADER_SLOTINFO);
+			undo_tick_create_for_header(r_ob, k_HEADER_SLOTINFO);
 	} else if (attr->name == _llllobj_sym_name && (attr->owner_type == k_NOTE || attr->owner_type == k_CHORD || attr->owner_type == k_MEASURE)) {
-		create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)obj, (e_element_types) attr->owner_type, k_UNDO_MODIFICATION_CHANGE_NAME);
+		undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)obj, (e_element_types) attr->owner_type, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_name);
     } else if (attr->name == _llllobj_sym_name && attr->owner_type == k_MARKER) {
-        create_header_undo_tick(r_ob, k_HEADER_MARKERS);
+        undo_tick_create_for_header(r_ob, k_HEADER_MARKERS);
 	} else if (attr->owner_type == k_PITCH_BREAKPOINT) {
-		create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)((t_bpt *)obj)->owner->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+		undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)((t_bpt *)obj)->owner->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 	} else if (attr->owner_type == k_NOTE) {
 		if (attr->name == _llllobj_sym_lock || attr->name == _llllobj_sym_mute || attr->name == _llllobj_sym_solo)
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)((t_note *)obj)->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE_FLAG);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)((t_note *)obj)->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
 		else
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)((t_note *)obj)->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)((t_note *)obj)->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 	} else if (attr->owner_type == k_CHORD) {
 		if (attr->name == _llllobj_sym_grace || attr->name == _llllobj_sym_duration)
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)((t_chord *)obj)->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)((t_chord *)obj)->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		else if (attr->name == _llllobj_sym_lock || attr->name == _llllobj_sym_mute || attr->name == _llllobj_sym_solo)
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)obj, k_CHORD, k_UNDO_MODIFICATION_CHANGE_FLAG);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)obj, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
 		else
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)obj, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)obj, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 	} else if (attr->owner_type == k_MEASURE) {
 		if (attr->name == _llllobj_sym_lock || attr->name == _llllobj_sym_mute || attr->name == _llllobj_sym_solo)
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)obj, k_MEASURE, k_UNDO_MODIFICATION_CHANGE_FLAG);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)obj, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
 		else if (attr->name == _llllobj_sym_lockwidth || attr->name == _llllobj_sym_width || attr->name == _llllobj_sym_widthfactor) {
 			// creating undo tick for all measures in the tuttipoint
 			long i;
@@ -985,35 +985,35 @@ void bach_default_preprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute *
 			t_tuttipoint *tpt = ((t_measure *)obj)->tuttipoint_reference;
 			for (i = 0; i < r_ob->num_voices; i++) 
 				for (this_meas = tpt->measure[i]; ((tpt->next && this_meas != tpt->next->measure[i]) || (!tpt->next && this_meas)); this_meas = this_meas->next)
-					create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)this_meas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+					undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)this_meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		} else
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)obj, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)obj, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 	} else if (attr->owner_type == k_TEMPO) {
 		t_tempo *sync_tempi[CONST_MAX_VOICES];
 		long i, num_sync_tempi = get_synchronous_tempi(r_ob, (t_tempo *)obj, sync_tempi);
 		if (num_sync_tempi > 1 && sync_tempi[0] == (t_tempo *)obj) {
 			r_ob->also_changing_in_inspector_all_sync_tempi = true;
 			for (i = 0; i < num_sync_tempi; i++) 
-				create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)sync_tempi[i]->owner, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+				undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)sync_tempi[i]->owner, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		} else {
 			r_ob->also_changing_in_inspector_all_sync_tempi = false;
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)(((t_tempo *)obj)->owner), k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)(((t_tempo *)obj)->owner), k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		}
 	} else if (attr->owner_type == k_VOICE) {
 		if (attr->name == _llllobj_sym_lock || attr->name == _llllobj_sym_mute || attr->name == _llllobj_sym_solo)
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)obj, k_VOICE, k_UNDO_MODIFICATION_CHANGE_FLAG);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)obj, k_VOICE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_flag);
 		else if (attr->name == _llllobj_sym_clef)
-			create_header_undo_tick(r_ob, k_HEADER_CLEFS);
+			undo_tick_create_for_header(r_ob, k_HEADER_CLEFS);
 		else if (attr->name == _llllobj_sym_key || attr->name == _llllobj_sym_mode || attr->name == _llllobj_sym_accpattern)
-			create_header_undo_tick(r_ob, k_HEADER_KEYS);
+			undo_tick_create_for_header(r_ob, k_HEADER_KEYS);
 		else if (attr->name == _llllobj_sym_midichannel)
-			create_header_undo_tick(r_ob, k_HEADER_MIDICHANNELS);
+			undo_tick_create_for_header(r_ob, k_HEADER_MIDICHANNELS);
 		else if (attr->name == _llllobj_sym_stafflines)
-			create_header_undo_tick(r_ob, k_HEADER_STAFFLINES);
+			undo_tick_create_for_header(r_ob, k_HEADER_STAFFLINES);
 		else
 			(*r_ob->whole_obj_undo_tick_function)(r_ob);
 	} else if (attr->owner_type == k_MARKER) {
-		create_header_undo_tick(r_ob, k_HEADER_MARKERS);
+		undo_tick_create_for_header(r_ob, k_HEADER_MARKERS);
 	}
 }
 
@@ -1765,7 +1765,7 @@ void set_bach_attr_and_process_from_ac_av(t_bach_inspector_manager *man, void *o
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_BACH_ATTRIBUTE);
 	bach_set_attr(man, obj, attr, ac, av);
     if (r_ob)
-        remove_all_free_undo_ticks(r_ob, true); // because while setting the attribute we might have also created some ticks... which we don't want! :-)
+        undo_ticks_remove_dangling(r_ob, true); // because while setting the attribute we might have also created some ticks... which we don't want! :-)
             // daniele 2016/12/13: this seems to work fine, but I don't really remember why any longer
 	bach_postprocess_attr(man, obj, attr);
 }
@@ -2481,7 +2481,7 @@ void bach_set_name_fn(t_bach_inspector_manager *man, void *obj, t_bach_attribute
 	t_llll *ll = llll_parse(ac, av);
     change_notation_item_names(r_ob, it, ll, false);
 /*    if (it->type == k_MARKER)
-        create_header_undo_tick(r_ob, k_HEADER_MARKERS);
+        undo_tick_create_for_header(r_ob, k_HEADER_MARKERS);
     change_notation_item_names(r_ob, it, ll, it->type == k_MARKER ? false : true); */
 	llll_free(ll);
 }

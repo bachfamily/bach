@@ -45,10 +45,11 @@ void undo_op_to_string(long undo_op, char *buf);
  This string, for instance, is the one displayed in the Max window if the undo is verbose.
  @ingroup      undo
  @param        undo_op        One of the #e_undo_operations identifying the performed operation.
+ @param        prepend_undo_label      If non-zero, prepends the "Undo" label to the symbol
  @return       A symbol containing the string describing the operation.
  @seealso      undo_op_to_string()
  */
-t_symbol *undo_op_to_symbol(long undo_op);
+t_symbol *undo_op_to_symbol(long undo_op, char prepend_undo_label);
 
 t_symbol *element_type_to_symbol(e_element_types el_type);
 e_element_types element_type_from_symbol(t_symbol *sym);
@@ -78,7 +79,7 @@ void send_changed_bang_and_automessage_if_needed(t_notation_obj *r_ob);
     @param    also_return_true_if_undo_is_empty    If this is non-zero, function returns 1 also if undo llll is empty
     @return            1 if there are free undo ticks, 0 otherwise.
  */
-char are_there_free_undo_ticks(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty);
+char undo_ticks_are_dangling(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty);
 
 
 /** Delete and properly free all the free undo ticks (see handle_change_if_there_are_free_undo_ticks() for more information)
@@ -86,16 +87,16 @@ char are_there_free_undo_ticks(t_notation_obj *r_ob, char also_return_true_if_un
     @param    r_ob    The notation object
     @param    also_clear_ticks_flags    Also clear the flag for the free ticks – this is strongly advised to be 1.
  */
-void remove_all_free_undo_ticks(t_notation_obj *r_ob, char also_clear_ticks_flags);
+void undo_ticks_remove_dangling(t_notation_obj *r_ob, char also_clear_ticks_flags);
 
 
 /** Unset the #k_FLAG_MODIF_UNDO, #k_FLAG_MODIF_FLAG_UNDO, #k_FLAG_MODIF_CHECK_ORDER_UNDO and #k_FLAG_MODIF_NAME_UNDO flags from any element in the r_ob->undo_notation_items_under_tick
     llll. This is automatically called by handle_change() when a new undo marker is added. Those flags are usually set by
-    create_simple_selected_notation_item_undo_tick(), and are useful when dealing with selection to avoid saving the content of the same item multiple times.
+    undo_tick_create_create_for_selected_notation_item(), and are useful when dealing with selection to avoid saving the content of the same item multiple times.
     @ingroup        undo
     @param    r_ob    The notation object
  */
-void remove_modif_undo_flag_to_last_undo_ticks(t_notation_obj *r_ob);
+void undo_ticks_remove_modif_undo_flag_to_last(t_notation_obj *r_ob);
 
 
 /** Convert the current selection into the set of notation items that describe it. This is thought for then adding undo ticks and steps to each item, and
@@ -142,14 +143,15 @@ t_llll *get_multiple_flags_for_undo(t_notation_obj *r_ob, t_notation_item *fathe
     @param    type        The type of the item whose information need to be saved (one of the #e_element_types)
     @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
                         We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
-                        adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_DELETE.
+                        adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_TYPE_DELETE.
+    @param    param             Parameter subject to change (currently supported: "state", "flag", "name", "onset")
     @param    nitem_path_before    The path of the notation item *before* the change
     @param    nitem_path_after    The path of the notation item *after* the change
     @param    header_info    The header information (as a combination of the #e_header_elems) that need to be saved, if type = #k_HEADER_DATA. 0 otherwise.
     @param    content        An llll specifying the content of the notation item before the user-performed operation. Could be nil if irrelevant (e.g. when a chord was added, and
-                        thus modif_type = #k_UNDO_MODIFICATION_DELETE).
+                        thus modif_type = #k_UNDO_MODIFICATION_TYPE_DELETE).
  */
-t_undo_redo_information *undo_redo_information_create(long ID, e_element_types type, e_undo_modification_types modif_type, t_notation_item_path *nitem_path_before, t_notation_item_path *nitem_path_after, e_header_elems header_info, t_llll *content);
+t_undo_redo_information *undo_redo_information_create(long ID, e_element_types type, e_undo_modification_types modif_type, t_symbol *param, t_notation_item_path *nitem_path_before, t_notation_item_path *nitem_path_after, e_header_elems header_info, t_llll *content);
 
 
 /**    Free the memory for a #t_undo_redo_information structure, correctly freeing also the llll possibily contained in the
@@ -185,7 +187,7 @@ long create_undo_redo_tick(t_notation_obj *r_ob, char what, char from_what, t_un
     @param    lock_undo_mutex    If this is non-zero, the function also locks the undo mutex
     @return                Return the llllelem corresponding to the positioned step marker (or NULL if none)
  */
-t_llllelem *create_undo_redo_step_marker(t_notation_obj *r_ob, char what, char from_what, long undo_op, char lock_undo_mutex);
+t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char from_what, long undo_op, char lock_undo_mutex);
 
 
 /**    Create a undo tick associated with some header change.
@@ -193,7 +195,7 @@ t_llllelem *create_undo_redo_step_marker(t_notation_obj *r_ob, char what, char f
     @param    r_ob        The notation object
     @param    what        A combination of #e_header_elems, representing the header elements which have been changed
 */
-void create_header_undo_tick(t_notation_obj *r_ob, e_header_elems what);
+void undo_tick_create_for_header(t_notation_obj *r_ob, e_header_elems what);
 
 
 /**    Clear the undo llll or the redo llll. This means that all the ticks (#H_OBJ elements) are properly freed, and their <content> llll field is properly freed as well.
@@ -211,13 +213,14 @@ void clear_undo_redo_llll(t_notation_obj *r_ob, char what);
     @param    item        The notation item being modified
     @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
                         We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
-                        adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_DELETE.
+                        adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_TYPE_DELETE.
+    @param    param     The parameter subject to change
     @return             The undo/redo information for the tick. Such information has already been appended to the undo/redo lists and must NOT be freed
     @remark                This function has to be called BEFORE the item is modified (so that it can retrieve the correct content for undo), except if the
-                        notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_DELETE.
+                        notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_DELETE.
     @see                create_undo_redo_tick()
  */
-t_undo_redo_information *create_simple_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type);
+t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type, t_symbol *param);
 
 
 /**    Create undo ticks for a sequence of notation items.
@@ -226,16 +229,18 @@ t_undo_redo_information *create_simple_notation_item_undo_tick(t_notation_obj *r
     @param    num_items    The number of notation items for which ticks need to be created
     @param    item        Pointer to the first element of the array of notation items (the algorithm expects #num_items items).
     @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
-                        This must be common to all notation items in the array, otherwise single create_simple_notation_item_undo_tick() functions must be called for.
+                        This must be common to all notation items in the array, otherwise single undo_tick_create_for_notation_item() functions must be called for.
+    @param    param        Parameter subject to change
+    @param    undo_op      Pointer filled with undo operation
     @remark                This function has to be called BEFORE the items are modified (so that it can retrieve the correct content for undo), except if the
-                        notation items have just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_DELETE.
-    @see                create_simple_notation_item_undo_tick()
+                        notation items have just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_DELETE.
+    @see                undo_tick_create_for_notation_item()
     @see                create_undo_redo_tick()
  */
-void create_multiple_notation_items_undo_ticks(t_notation_obj *r_ob, long num_items, t_notation_item **item, e_undo_modification_types modif_type, long *undo_op);
+void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long num_items, t_notation_item **item, e_undo_modification_types modif_type, t_symbol *param, long *undo_op);
 
 
-/**    Works just like create_simple_notation_item_undo_tick(), but when the item is selected. This also accepts a #smallest_undoable_element specification,
+/**    Works just like undo_tick_create_for_notation_item(), but when the item is selected. This also accepts a #smallest_undoable_element specification,
     specifying the minimum structure for which the undo information has to be store. For instance, if #item is a note, and #smallest_undoable_element is #k_MEASURE,
     the undo tick will actually involve the whole measure containing the note. Also, this function has the advantage to automatically set
     the flags #k_FLAG_MODIF_FLAG_UNDO, #k_FLAG_MODIF_UNDO, #k_FLAG_MODIF_CHECK_ORDER_UNDO and #k_FLAG_MODIF_NAME_UNDO if needed. Those flags are assigned, respectively, when the flag information
@@ -250,12 +255,13 @@ void create_multiple_notation_items_undo_ticks(t_notation_obj *r_ob, long num_it
                                         usually in bach we don't save undo information for notes, so #smallest_undoable_element is usually #k_CHORD or #k_MEASURE.
     @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
                         We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
-                        adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_DELETE.
+                        adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_TYPE_DELETE.
+    @param   param          The parameter subject to change
     @remark                This function has to be called BEFORE the item is modified (so that it can retrieve the correct content for undo), except if the
-                        notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_DELETE.
-    @see                create_simple_notation_item_undo_tick()
+                        notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_DELETE.
+    @see                undo_tick_create_for_notation_item()
  */
-void create_simple_selected_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type);
+void undo_tick_create_create_for_selected_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param);
 
 /**    (DEPRECATED) Create undo ticks for all selected items.
     @ingroup            undo
@@ -263,16 +269,17 @@ void create_simple_selected_notation_item_undo_tick(t_notation_obj *r_ob, t_nota
     @param    num_items    The number of notation items for which ticks need to be created
     @param    item        Pointer to the first element of the array of notation items (the algorithm expects #num_items items).
     @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
-                        This must be common to all notation items in the array, otherwise single create_simple_notation_item_undo_tick() functions must be called for.
+                        This must be common to all notation items in the array, otherwise single undo_tick_create_for_notation_item() functions must be called for.
+    @param    param     The parameter subject to change
     @remark                This function has to be called BEFORE the items are modified (so that it can retrieve the correct content for undo), except if the
-                        notation items have just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_DELETE.
+                        notation items have just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_DELETE.
     @remark                This function is DEPRECATED. The standard way to handle undo in bach is to add ticks individually to each it when it is modified. For instance
                         if we're changing the velocity to the selection, instead of using this function, we should add single ticks at the points of the code where
-                        we actually change the velocity for each given chord (via create_simple_selected_notation_item_undo_tick()) and then add a marker directly with the
+                        we actually change the velocity for each given chord (via undo_tick_create_create_for_selected_notation_item()) and then add a marker directly with the
                         handle_change() function when the operation is performed.
-    @see                create_simple_selected_notation_item_undo_tick()
+    @see                undo_tick_create_create_for_selected_notation_item()
  */
-long create_selection_notation_item_undo_tick(t_notation_obj *r_ob, e_element_types smallest_undoable_element, e_undo_modification_types modif_type);
+long undo_tick_create_for_multiple_selected_notation_items(t_notation_obj *r_ob, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param);
 
 
 /**    Obtain, starting from a modification performed on a single notation item, the operation performed by the user as one of the #e_undo_operations.
@@ -281,7 +288,7 @@ long create_selection_notation_item_undo_tick(t_notation_obj *r_ob, e_element_ty
     @param    item        The notation item
     @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
     @return                The operation performed by the user, as one of the #e_undo_operations.
-    @remark                For instance, if #item is a measure and #modif_type is #k_UNDO_MODIFICATION_DELETE, then the operation returned will be #k_UNDO_OP_ADD_MEASURE.
+    @remark                For instance, if #item is a measure and #modif_type is #k_UNDO_MODIFICATION_TYPE_DELETE, then the operation returned will be #k_UNDO_OP_ADD_MEASURE.
  */
 long notation_item_get_undo_op(t_notation_obj *r_ob, t_notation_item *item, char modif_type);
 
@@ -318,7 +325,7 @@ long undo_op_make_plural(long undo_operation);
     @param    what            One of the #e_undo_redo specifying if it is a #k_UNDO or a #k_REDO tick.
     @param    info            The tick as a pointer to a #t_undo_redo_information structure.
  */
-void post_undo_redo_tick(t_notation_obj *r_ob, long what, t_undo_redo_information *info);
+void undo_redo_tick_post(t_notation_obj *r_ob, long what, t_undo_redo_information *info);
 
 
 /**    Prune the last undo step, by merging its undo ticks (undo information) into the previous undo step.

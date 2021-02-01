@@ -575,7 +575,7 @@ void notationobj_edclose(t_notation_obj *r_ob, char **ht, long size)
 {
 	// the editor is closed. Let's replug the slot content!
 	if (!r_ob->freeing && ht && r_ob->active_slot_notationitem && r_ob->active_slot_num >= 0) {
-		create_simple_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_CHANGE);
+		undo_tick_create_for_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		t_llll *ll;
 		if (r_ob->slotinfo[r_ob->active_slot_num].slot_type == k_SLOT_TYPE_TEXT) {
 			ll = llll_get();
@@ -2470,8 +2470,8 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
     
     CLASS_ATTR_CHAR(c,"notifywith",0, t_notation_obj, notify_with);
     CLASS_ATTR_STYLE_LABEL(c,"notifywith",0,"enumindex","Notify Interface Changes Via");
-    CLASS_ATTR_ENUMINDEX(c,"notifywith", 0, "bang Redo Data Undo Data Redo Message Undo Message");
-    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 4);
+    CLASS_ATTR_ENUMINDEX(c,"notifywith", 0, "bang Redo Data Undo Data");
+    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 2);
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifywith", 0, "0");
 
     
@@ -3954,7 +3954,7 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
 	// enharmonicity
 	if (chosenelem > 400 && chosenelem <= 400 + CONST_MAX_ENHARMONICITY_OPTIONS){
 		long chosen_idx = chosenelem - 401;
-		create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_CHANGE);
+		undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		enharmonically_retranscribe_note(r_ob, note, false, r_ob->current_enharmonic_list_screenmc[chosen_idx], r_ob->current_enharmonic_list_screenacc[chosen_idx]);
 		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE);
@@ -4064,7 +4064,7 @@ long handle_filters_popup(t_notation_obj *r_ob, long modifiers, t_slotitem *clic
 		chosenelem = jpopupmenu_popup(r_ob->popup_filters, screen, 0);
 		
 		if (chosenelem >= 2000 && chosenelem <= 2009 && !(active_filter && chosenelem - 2000 == active_filter->filter_type)) {
-            create_simple_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_for_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 			if (!active_filter) {
 				t_slotitem *thisitem = build_slotitem(r_ob, get_activeitem_activeslot(r_ob));
 				active_filter = (t_biquad *)bach_newptr(sizeof(t_biquad));
@@ -4198,12 +4198,12 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
 			long i;
 			get_all_tuttipoint_barlines(r_ob, measure->end_barline, barline_across);
 			for (i = 0; i < r_ob->num_voices; i++) {
-				create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)barline_across[i]->owner, k_UNDO_MODIFICATION_CHANGE);
+				undo_tick_create_for_notation_item(r_ob, (t_notation_item *)barline_across[i]->owner, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 				barline_across[i]->barline_type = new_barline;
 				recompute_all_for_measure(r_ob, barline_across[i]->owner, false);
 			}
 		} else {
-			create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)measure, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_for_notation_item(r_ob, (t_notation_item *)measure, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 			measure->end_barline->barline_type = new_barline;
 			recompute_all_for_measure(r_ob, measure, false);
 		}
@@ -4249,7 +4249,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                 t_voice *last = voiceensemble_get_lastvoice(r_ob, voice);
                 
                 if (first == last) {
-                    create_simple_selected_notation_item_undo_tick(r_ob, item, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                    undo_tick_create_create_for_selected_notation_item(r_ob, item, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                     measure_set_ts(r_ob, (t_measure *)item, &chosen_ts);
                     recompute_all_for_measure(r_ob, (t_measure *)item, false);
                 } else {
@@ -4258,7 +4258,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                     for (temp = first; temp && temp->number < r_ob->num_voices; temp = voice_get_next(r_ob, temp)) {
                         t_measure *m = nth_measure_of_scorevoice((t_scorevoice *)temp, measure_num);
                         if (m) {
-                            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                            undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             measure_set_ts(r_ob, m, &chosen_ts);
                             recompute_all_for_measure(r_ob, m, false);
                         }
@@ -4455,7 +4455,7 @@ long handle_articulations_popup(t_notation_obj *r_ob, t_articulation *art, long 
         t_chord *ch = NULL;
         if (art->owner)
             ch = art->owner->type == k_CHORD ? (t_chord *)art->owner : ((t_note *)art->owner)->parent;
-        create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+        undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 
         art->articulation_ID = chosenelem;
         art->need_recompute_position = true;
@@ -5951,7 +5951,7 @@ void notationobj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboar
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
 			r_ob->whole_obj_undo_tick_function(r_ob);
 		else
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		delete_all_selected_function_points(r_ob, slot_num);
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
 	}
@@ -5977,7 +5977,7 @@ void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notat
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
 			r_ob->whole_obj_undo_tick_function(r_ob);
 		else
-			create_simple_selected_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		notation_item_clear_slot(r_ob, nitem, slot_num);
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
 	}
@@ -6023,7 +6023,7 @@ void notationobj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard,
             if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
                 r_ob->whole_obj_undo_tick_function(r_ob);
             else
-                create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             note_delete_breakpoints(r_ob, note);
             handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_DURATION_LINE);
         }
@@ -6076,7 +6076,7 @@ void notationobj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, 
 			offset -= pt.x - activeslotwin.x;
 		}
 		
-		create_simple_selected_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+		undo_tick_create_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		paste_slotitems(r_ob, r_ob->active_slot_notationitem, r_ob->active_slot_num, clipboard->gathered_syntax, activeslotwin, offset, delete_intermediate_points);
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
 	}

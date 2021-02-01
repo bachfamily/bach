@@ -6816,11 +6816,11 @@ char set_slots_to_selection(t_notation_obj *r_ob, t_llll *slots, char also_set_s
 	while (curr_it) { // cycle on the selected items
 		if (curr_it->type == k_NOTE) {
 			changed = 1;
-			create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 			set_slots_values_to_note_from_llll(r_ob, (t_note *)curr_it, clonedslots);
 		} else if (curr_it->type == k_CHORD) {
 			t_note *temp;
-			create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+			undo_tick_create_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             if (((t_chord *)curr_it)->firstnote) {
                 for (temp = ((t_chord *)curr_it)->firstnote; temp; temp = temp->next) {
                     changed = 1;
@@ -6833,7 +6833,7 @@ char set_slots_to_selection(t_notation_obj *r_ob, t_llll *slots, char also_set_s
 		} else if (curr_it->type == k_MEASURE) {
 			t_chord *temp; t_note *temp2;
 			for (temp = ((t_measure *)curr_it)->firstchord; temp; temp = temp->next) {
-				create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)temp, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+				undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)temp, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 if (temp->firstnote) {
                     for (temp2 = temp->firstnote; temp2; temp2 = temp2->next) {
                         changed = 1;
@@ -6869,11 +6869,11 @@ char set_breakpoints_to_selection(t_notation_obj *r_ob, t_llll *breakpoints)
     while (curr_it) { // cycle on the selected items
         if (curr_it->type == k_NOTE) {
             changed = 1;
-            create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             set_breakpoints_values_to_note_from_llll(r_ob, (t_note *)curr_it, clonedbpts);
         } else if (curr_it->type == k_CHORD) {
             t_note *temp;
-            create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             for (temp = ((t_chord *)curr_it)->firstnote; temp; temp = temp->next) {
                 changed = 1;
                 set_breakpoints_values_to_note_from_llll(r_ob, temp, clonedbpts);
@@ -6881,7 +6881,7 @@ char set_breakpoints_to_selection(t_notation_obj *r_ob, t_llll *breakpoints)
         } else if (curr_it->type == k_MEASURE) {
             t_chord *temp; t_note *temp2;
             for (temp = ((t_measure *)curr_it)->firstchord; temp; temp = temp->next) {
-                create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)temp, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)temp, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 for (temp2 = temp->firstnote; temp2; temp2 = temp2->next) {
                     changed = 1;
                     set_breakpoints_values_to_note_from_llll(r_ob, temp2, clonedbpts);
@@ -7273,7 +7273,7 @@ t_slotitem *append_new_numberlist_elem(t_notation_obj *r_ob, t_notation_item *ni
 	t_slotitem *thisitem = build_slotitem(r_ob, notation_item_get_slot(r_ob, nitem, s));
 	
 	if (undo_item)
-		create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+		undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 	
 	if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_INTLIST) {
 		long *val = (long *)bach_newptr(sizeof(long));
@@ -7334,7 +7334,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, modifiers == eControlKey ? BACH_CURSOR_CURVE : BACH_CURSOR_RESIZE_UPDOWN);
 							} else {
 								if (modifiers == eCommandKey) { // delete point
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									if (clicked->selected)
 										delete_all_selected_function_points(r_ob, s);
 									else {
@@ -7370,7 +7370,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									
 									clear_slot_window_selection(r_ob);
 									pt_to_function_xy_values(r_ob, r_ob->active_slot_notationitem, pt, s, r_ob->slot_window_active, &x_val, &y_val);
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     slot_clip_domain_value(r_ob, r_ob->active_slot_notationitem, s, &x_val);
 									newitem = insert_new_slot_function_point(r_ob, s, x_val, y_val, 0., true, NULL);
 									
@@ -7406,7 +7406,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						
 						if (clicked) { // something has been clicked
 							if (modifiers == eCommandKey) { // delete point
-								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 								slotitem_delete(r_ob, s, clicked);
 								r_ob->changed_while_dragging = true;
 								*changed = 1;
@@ -7429,7 +7429,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									double x_val, y_val, z_val;
 									t_slotitem *temp;
 									
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									
 									pt_to_function_xy_values(r_ob, r_ob->active_slot_notationitem, pt, s, r_ob->slot_window_active, &x_val, &y_val);
                                     slot_clip_domain_value(r_ob, r_ob->active_slot_notationitem, s, &x_val);
@@ -7494,14 +7494,14 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                         t_slotitem *clicked = pt_to_spat_slot_point(r_ob, pt, s);
 						if (clicked) { // something has been clicked
 							if (modifiers == eCommandKey) { // delete point
-								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 								slotitem_delete(r_ob, s, clicked);
 								r_ob->changed_while_dragging = true;
 								*changed = 1;
 								notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 							} else if (modifiers & eAltKey) { // change interpolation type
 								t_spatpt *this_spatpt = (t_spatpt *) clicked->item;
-								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 								this_spatpt->interp = (this_spatpt->interp == k_SPAT_INTERPOLATION_ARC) ? k_SPAT_INTERPOLATION_SEGMENT : k_SPAT_INTERPOLATION_ARC;
 								*changed = 1;
 								r_ob->changed_while_dragging = true;
@@ -7520,7 +7520,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								t_spatpt *thispts = (t_spatpt *)bach_newptr(sizeof(t_spatpt));
 								double t_val, r_val;
 								
-								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                 
                                 pt_to_function_xy_values(r_ob, r_ob->active_slot_notationitem, build_pt(this_x, this_y), s, r_ob->slot_window_active, &t_val, &r_val);
 /*
@@ -7577,7 +7577,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							char redraw;
 							if (modifiers == eCommandKey) {
 								if (get_activeitem_slot_firstitem(r_ob, s)) {
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									slotitem_delete(r_ob, s, get_activeitem_slot_firstitem(r_ob, s));
 									r_ob->changed_while_dragging = true;
 									*changed = 1;
@@ -7585,7 +7585,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								}
 							} else {
 								if (!get_activeitem_slot_firstitem(r_ob, s)) { // there's no data yet. we set the default value
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     t_slot *slot = activeslot;
                                     slot->firstitem = build_slotitem(r_ob, slot);
 									slot->firstitem->next = NULL;
@@ -7612,7 +7612,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								set_mousedown(r_ob, *clicked_ptr, (e_element_types) *clicked_obj);
 								
 								if (modifiers == eCommandKey+eAltKey) { // if we clicked for the default value, we keep the default value
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_INT) 
 										change_slot_long_value(r_ob, r_ob->active_slot_notationitem, s, round(CLAMP(r_ob->slotinfo[s].slot_default, r_ob->slotinfo[s].slot_range[0], r_ob->slotinfo[s].slot_range[1])), false);
 									else if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_FLOAT)
@@ -7651,13 +7651,13 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									}
 									if (temp2) { // there is number data in the item
 										if (modifiers == eCommandKey) { // delete data
-											create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+											undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 											slotitem_delete(r_ob, s, temp2);
 											*changed = 1;
 											r_ob->changed_while_dragging = true;
 										} else { 
 											if (modifiers == eCommandKey+eAltKey){
-												create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+												undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 												if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_INTLIST) 
 													change_slot_longlist_value(r_ob, r_ob->active_slot_notationitem, s, temp2, round(CLAMP(r_ob->slotinfo[s].slot_default, r_ob->slotinfo[s].slot_range[0], r_ob->slotinfo[s].slot_range[1])), false);
 												else if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_FLOATLIST)
@@ -7672,7 +7672,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 												
 												if (!(modifiers & eShiftKey)) {
 													char redraw = false;
-													create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+													undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 													slot_handle_mousedrag(r_ob, patcherview, pt, modifiers, changed, &redraw);
 													
 													r_ob->changed_while_dragging = true;
@@ -7715,7 +7715,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							if (!temp2) {
 								t_slotitem *thisitem = build_slotitem(r_ob, activeslot);
 								
-								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 								
 								thisitem->item = llll_get();
 								slotitem_append(thisitem);
@@ -7727,7 +7727,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								r_ob->slot_clicked_row = CLAMP(clicked_row, 1, r_ob->slotinfo[s].slot_num_rows);
 								r_ob->slot_clicked_col = CLAMP(clicked_col, 1, r_ob->slotinfo[s].slot_num_cols);
 								
-								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 								
 								if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_TOGGLEMATRIX) {
 									if (modifiers == eCommandKey+eAltKey)
@@ -7765,7 +7765,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 					case k_SLOT_TYPE_LLLL:
 					{
 						if (modifiers == eCommandKey) {
-							create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+							undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 							
                             notation_item_clear_slot(r_ob, r_ob->active_slot_notationitem, s);
                             
@@ -7804,7 +7804,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							while ((i<file_clicked) && (temp2)) { i++; temp2 = temp2->next; }
 							if (temp2) { // there is file data in the clicked file
 								if (modifiers == eCommandKey) { // delete data
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									slotitem_delete(r_ob, s, temp2);
 								} else if (modifiers & eShiftKey) {
 									// re-select file
@@ -7812,7 +7812,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									char filename[512];
 									short path;							
 									
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									
 									unlock_general_mutex(r_ob);	
 									if (!(open_dialog(filename, &path, &outtype, NULL, 0))) {
@@ -7837,7 +7837,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									lock_general_mutex(r_ob);	
 									notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 								} else { // just make file active
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									r_ob->changed_while_dragging = true;
                                     slot_set_active_item(activeslot, temp2);
 									notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
@@ -7849,7 +7849,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									char filename[512];
 									short path;	
 									
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									
 									unlock_general_mutex(r_ob);	
 									if (!(open_dialog(filename, &path, &outtype, NULL, 0))) {
@@ -7889,7 +7889,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							t_biquad *bqd = (get_activeitem_slot_firstitem(r_ob, s) ? (t_biquad *) get_activeitem_slot_firstitem(r_ob, s)->item : NULL);
 							
 							if (bqd && bqd->gain_dB != 0) {
-								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 								bqd->gain_dB = 0;
 								synchronize_biquad_coeff_from_freq_gain_and_Q(bqd, r_ob->sampling_freq);
 								*changed = 1;
@@ -7914,7 +7914,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								}
 								lock_general_mutex(r_ob);
 							} else if (modifiers == eCommandKey) { // delete point
-								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 								slotitem_delete(r_ob, s, clicked);
 								r_ob->changed_while_dragging = true;
 								*changed = 1;
@@ -7923,7 +7923,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								t_biquad *bqd = (t_biquad *) clicked->item;
 								
 								if (bqd && bqd->gain_dB != 0) {
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									bqd->gain_dB = 0;
 									synchronize_biquad_coeff_from_freq_gain_and_Q(bqd, r_ob->sampling_freq);
 									*changed = 1;
@@ -7950,7 +7950,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								*clicked_ptr = WHITENULL;
 								set_mousedown(r_ob, *clicked_ptr, (e_element_types) *clicked_obj);
 								if (!(modifiers & eControlKey)) { 
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									slot_handle_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
 								}
 							} else if (pt.x >= r_ob->slot_window_spectrum_x && pt.x <= r_ob->slot_window_spectrum_x + r_ob->slot_window_spectrum_width) {
@@ -7958,7 +7958,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								*clicked_ptr = WHITENULL;
 								set_mousedown(r_ob, *clicked_ptr, (e_element_types) *clicked_obj);
 								if (!(modifiers & eControlKey)) { 
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 									slot_handle_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
 								}
 							}
@@ -7975,14 +7975,14 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                         t_slotitem *item = pt_to_articulation_slotitem(r_ob, pt, s, r_ob->slot_window_active, &id);
                         t_chord *ch = notation_item_get_parent_chord(r_ob, r_ob->active_slot_notationitem);
                         if (item && modifiers & eCommandKey) {
-                            create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                            undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             slotitem_delete(r_ob, s, item);
                             if (ch)
                                 reset_articulation_position_for_chord(r_ob, ch);
                             *changed = 1;
                             r_ob->changed_while_dragging = true;
                         } else if (!item && id > 0 && !(modifiers & eCommandKey)) {
-                            create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                            undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             t_slotitem *thisitem = build_slotitem(r_ob, activeslot);
                             t_articulation *art = build_articulation(r_ob, id, r_ob->active_slot_notationitem, thisitem, notationobj_articulation_id2symbol(r_ob, id));
                             thisitem->item = art;
@@ -8001,7 +8001,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                         t_chord *ch = notation_item_get_parent_chord(r_ob, r_ob->active_slot_notationitem);
                         if (modifiers & eCommandKey) {
                             if (get_activeitem_slot_firstitem(r_ob, s)) {
-                                create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                 slotitem_delete(r_ob, s, get_activeitem_slot_firstitem(r_ob, s));
                                 if (ch) {
                                     ch->need_recompute_parameters = true;
@@ -8015,7 +8015,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                             t_slotitem *item = pt_to_notehead_slotitem(r_ob, pt, s, r_ob->slot_window_active, &id);
                             if (!item && id >= 0 && !(modifiers & eCommandKey)) {
                                 if (!get_activeitem_slot_firstitem(r_ob, s)) {
-                                    create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                    undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     t_slotitem *thisitem = build_slotitem(r_ob, activeslot);
                                     thisitem->item = notationobj_notehead_id2symbol(r_ob, id);
                                     slotitem_append(thisitem);
@@ -8090,7 +8090,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 				if (!is_pt_in_inner_slot_subwindow(r_ob, pt)) {
 					if (modifiers == eCommandKey + eLeftButton) {
 						// erase note slot
-						create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+						undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 						
 						notation_item_clear_slot(r_ob, r_ob->active_slot_notationitem, s);
 						
@@ -8160,7 +8160,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                                 if ((modifiers == eLeftButton + eShiftKey && item->prev) || (modifiers == eLeftButton && item->prev && !item->next)) {
                                     // assign to the point the y value of the previous one
                                     
-                                    create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                    undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     
                                     pts->y = ((t_pts *)item->prev->item)->y;
                                     r_ob->changed_while_dragging = true;
@@ -8168,7 +8168,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                                 } else if ((modifiers & eLeftButton && modifiers & eControlKey && item->next) || (modifiers == eLeftButton && item->next && !item->prev)) {
                                     // assign to the point the y value of the next one
                                     
-                                    create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                    undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     
                                     pts->y = ((t_pts *)item->next->item)->y;
                                     r_ob->changed_while_dragging = true;
@@ -8177,7 +8177,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                                     // assign to the point the linear interpolation of the y of the following and previous point, with respect to the slope
                                     t_pt pt_next, pt_prev, pt_interp;
                                     
-                                    create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                    undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     
                                     function_xy_values_to_pt(r_ob, r_ob->active_slot_notationitem, ((t_pts *)item->prev->item)->x, ((t_pts *)item->prev->item)->y, r_ob->active_slot_num, r_ob->slot_window_active, &pt_prev);
                                     function_xy_values_to_pt(r_ob, r_ob->active_slot_notationitem, ((t_pts *)item->next->item)->x, ((t_pts *)item->next->item)->y, r_ob->active_slot_num, r_ob->slot_window_active, &pt_next);
@@ -8201,7 +8201,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                                 if ((modifiers == eLeftButton + eShiftKey && item->prev) || (modifiers == eLeftButton && item->prev && !item->next)) {
                                     // assign to the point the y and value of the previous one
                                     
-                                    create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                    undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     
                                     pts->y = ((t_pts3d *)item->prev->item)->y;
                                     pts->z = ((t_pts3d *)item->prev->item)->z;
@@ -8210,7 +8210,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                                 } else if ((modifiers & eLeftButton && modifiers & eControlKey && item->next) || (modifiers == eLeftButton && item->next && !item->prev)) {
                                     // assign to the point the y value of the next one
                                     
-                                    create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                    undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     
                                     pts->y = ((t_pts3d *)item->next->item)->y;
                                     pts->z = ((t_pts3d *)item->next->item)->z;
@@ -8221,7 +8221,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                                     //								t_pt pt_next, pt_prev, pt_interp;
                                     //								t_rect activeslotwin = build_rect(r_ob->slot_window_active_x1, r_ob->slot_window_active_y1, r_ob->slot_window_active_x2 - r_ob->slot_window_active_x1, r_ob->slot_window_active_y2 - r_ob->slot_window_active_y1);
                                     
-                                    create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                    undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     
                                     //								TO DO, make it better by taking all slopes correctly into account, as we did for the simple FUNCTION case?
                                     /*
@@ -8381,7 +8381,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                         newitem->parent = activeslot;
                         newitem->item = interp;
                         
-                        create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                        undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         
                         if (!temp) {
                             initialize_biquad(interp);
@@ -8422,7 +8422,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                         if (!get_activeitem_slot_firstitem(r_ob, s)) {
                             t_slotitem *thisitem = build_slotitem(r_ob, activeslot);
                             
-                            create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                            undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             
                             t_jrgba *col = (t_jrgba *)bach_newptr(sizeof(t_jrgba));
                             r_ob->slot_top_right_color = *col = build_jrgba(1, 0, 0, 1);
@@ -8483,7 +8483,7 @@ void slot_handle_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *acti
         xpt = CLAMP(pt.x, r_ob->slot_window_active_nozoom.x, r_ob->slot_window_active_nozoom.x + r_ob->slot_window_active_nozoom.width);
 	
 	if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-		create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+		undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 	
 	if (!changing_segment && modifiers & eControlKey && modifiers & eShiftKey) { // shift all following points horizontally
 		double old_x_value = ((t_pts *) activeslotitem->item)->x;
@@ -8646,7 +8646,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								double x_val, y_val;
 								t_slotitem *newitem;
 								pt_to_function_xy_values(r_ob, r_ob->active_slot_notationitem, pt, s, r_ob->slot_window_active, &x_val, &y_val);
-								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 								newitem = insert_new_slot_function_point(r_ob, s, x_val, y_val, 0., true, r_ob->hovered_slotitem);
 								r_ob->hovered_slotitem = newitem;
 								set_mousedown(r_ob, newitem, k_SLOT_FUNCTION_POINT);
@@ -8697,7 +8697,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						activeslotitem = (t_slotitem *) r_ob->j_mousedown_ptr;
 						
 						if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-							create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+							undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 						
 						if (modifiers & eControlKey && modifiers & eShiftKey && !(modifiers & eAltKey)) { // shift all following points horizontally
                             double delta_x_value;
@@ -8783,7 +8783,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						activeslotitem = (t_slotitem *) r_ob->j_mousedown_ptr;
 						
 						if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-							create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+							undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 						
 						if (modifiers & eControlKey && modifiers & eShiftKey) { // shift all following points horizontally
 							double old_t_value = ((t_spatpt *) activeslotitem->item)->t;
@@ -8866,7 +8866,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						s = r_ob->active_slot_num;
 																			   
 						if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-							create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+							undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 						
 						slot_max = r_ob->slotinfo[s].slot_range[1]; slot_min = r_ob->slotinfo[s].slot_range[0]; // max and min values allowed for the slots
 						
@@ -8915,7 +8915,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 
 																			   
 						if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-							create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+							undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 						
 						slot_max = r_ob->slotinfo[s].slot_range[1]; slot_min = r_ob->slotinfo[s].slot_range[0]; // max and min values allowed for the slots
 						
@@ -8961,7 +8961,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						slot_max = r_ob->slotinfo[s].slot_range[1]; slot_min = r_ob->slotinfo[s].slot_range[0]; // max and min values allowed for the slots
 						
 						if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-							create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+							undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 						
 						if (modifiers & eShiftKey && modifiers & eCommandKey) {
 							as_delta = true;
@@ -9002,7 +9002,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						if (bqd->filter_type != k_FILTER_NONE && bqd->filter_type != k_FILTER_DISPLAY) {
 							
 							if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-								create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 							
 							if (modifiers == eControlKey){
 								// change Q
@@ -9060,7 +9060,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						}
 						
 						if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-							create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+							undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 						
 						if (modifiers & eShiftKey && modifiers & eControlKey){
 							// change gain
@@ -9154,7 +9154,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									delta_y *= CONST_FINER_FROM_KEYBOARD;
 								
 								if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-									create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+									undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 								
 								color->alpha -= delta_y/(CONST_ALPHA_DRAG_UCHANGE * zoom_y);				
 								clip_double(&color->alpha, 0, 1);
@@ -9174,7 +9174,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							double xx, yy;
 							
 							if (!(undo_item->flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-								create_simple_selected_notation_item_undo_tick(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+								undo_tick_create_create_for_selected_notation_item(r_ob, undo_item, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 							
 							get_color_xy_coordinates(*color, &xx, &yy);
 							r_ob->slot_top_right_color = double_to_color(CLAMP(okpt.y, r_ob->slot_window_active_y1, r_ob->slot_window_active_y2 - CONST_EPSILON3), r_ob->slot_window_active_y1, r_ob->slot_window_active_y2, true);
@@ -10462,7 +10462,7 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
         if (curr_it->type == k_NOTE) {
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
-                create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 note_clear_slot(r_ob, nt, slotnum);
                 changed = 1;
             }
@@ -10472,7 +10472,7 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
             if (!ch->firstnote && r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
 #ifdef BACH_CHORDS_HAVE_SLOTS
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)ch)) {
-                    create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                    undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                     notation_item_clear_slot(r_ob, (t_notation_item *)ch, slotnum);
                     changed = 1;
                 }
@@ -10480,7 +10480,7 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
             } else {
                 for (nt=ch->firstnote; nt; nt = nt->next) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
-                        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                        undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         note_clear_slot(r_ob, nt, slotnum);
                         changed = 1;
                     }
@@ -10493,7 +10493,7 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
                 t_note *nt;
                 for (nt=ch->firstnote; nt; nt = nt->next) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
-                        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                        undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         note_clear_slot(r_ob, nt, slotnum);
                         changed = 1;
                     }
@@ -10519,7 +10519,7 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
         if (curr_it->type == k_NOTE) {
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
-                create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 move_note_slot(r_ob, nt, slotfrom, slotto, keeporiginal, true);
                 changed = 1;
             }
@@ -10529,7 +10529,7 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
             if (!ch->firstnote && r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
 #ifdef BACH_CHORDS_HAVE_SLOTS
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)ch)) {
-                    create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                    undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                     move_notationitem_slot(r_ob, (t_notation_item *)ch, slotfrom, slotto, keeporiginal, true);
                     changed = 1;
                 }
@@ -10537,7 +10537,7 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
             } else {
                 for (nt=ch->firstnote; nt; nt = nt->next) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
-                        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                        undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         move_note_slot(r_ob, nt, slotfrom, slotto, keeporiginal, true);
                         changed = 1;
                     }
@@ -10550,7 +10550,7 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
                 t_note *nt;
                 for (nt=ch->firstnote; nt; nt = nt->next) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
-                        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                        undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         move_note_slot(r_ob, nt, slotfrom, slotto, keeporiginal, true);
                         changed = 1;
                     }
@@ -10622,7 +10622,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
                 t_note *nt = (t_note *) curr_it;
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                     if (voice < 0 || voice == notation_item_get_voicenumber(r_ob, (t_notation_item *)nt)) {
-                        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                        undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         note_change_slot_item(r_ob, nt, slotnum, position, args, mode, modify, thresh);
                         changed = 1;
                     }
@@ -10632,7 +10632,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
                 if (voice < 0 || voice == notation_item_get_voicenumber(r_ob, (t_notation_item *)ch)) {
                     if (!ch->firstnote) {
 #ifdef BACH_CHORDS_HAVE_SLOTS
-                        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                        undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         notation_item_change_slotitem(r_ob, (t_notation_item *)ch, slotnum, position, args, mode, modify, thresh);
                         changed = 1;
 #endif
@@ -10640,7 +10640,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
                         t_note *nt;
                         for (nt=ch->firstnote; nt; nt = nt->next) {
                             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
-                                create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                                undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                 note_change_slot_item(r_ob, nt, slotnum, position, args, mode, modify, thresh);
                                 changed = 1;
                             }
@@ -10655,7 +10655,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
                         t_note *nt;
                         for (nt=ch->firstnote; nt; nt = nt->next) {
                             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
-                                create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                                undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                 note_change_slot_item(r_ob, nt, slotnum, position, args, mode, modify, thresh);
                                 changed = 1;
                             }

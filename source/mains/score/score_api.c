@@ -3134,7 +3134,7 @@ void create_whole_score_undo_tick_nolock(t_score *x) {
         t_llll *content = get_score_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, true, true, false, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
-        t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
+        t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, k_HEADER_NONE, content_cloned);
         llll_free(content);
         create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
@@ -3148,7 +3148,7 @@ void create_whole_score_undo_tick(t_score *x) {
         t_llll *content = get_score_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, true, true, true, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
-        t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
+        t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, k_HEADER_NONE, content_cloned);
         llll_free(content);
         create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
@@ -4799,18 +4799,18 @@ char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *updat
     if (first == last) {
         if (add_undo_ticks) {
             if (has_measure_attached_markers(x, measure))
-                create_header_undo_tick((t_notation_obj *) x, k_HEADER_MARKERS);
+                undo_tick_create_for_header((t_notation_obj *) x, k_HEADER_MARKERS);
             
             // because of possible ties, we set an undo tick on previous measure
             if (measure->prev)
-                create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)measure->prev, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)measure->prev, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             
             // because of tempi, we set an undo tick on next measure: if the current measure has a tempo, and it is the first one, we MIGHT need to
             // assign it to next measure
             if (measure->firsttempo && measure->next)
-                create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)measure->next, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)measure->next, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             
-            create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)measure, k_UNDO_MODIFICATION_ADD);
+            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)measure, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
         }
         return delete_measure((t_notation_obj *)x, measure, update_chord_play_cursor_to_this_chord_if_needed, need_check_solos);
     } else {
@@ -4823,10 +4823,10 @@ char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *updat
                 char this_need_check_solos = false;
                 if (add_undo_ticks) {
                     if (has_measure_attached_markers(x, m))
-                        create_header_undo_tick((t_notation_obj *) x, k_HEADER_MARKERS);
+                        undo_tick_create_for_header((t_notation_obj *) x, k_HEADER_MARKERS);
                     if (measure->prev)
-                        create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)m->prev, k_UNDO_MODIFICATION_CHANGE); // because of ties
-                    create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)m, k_UNDO_MODIFICATION_ADD);
+                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)m->prev, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state); // because of ties
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)m, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
                 }
                 res |= delete_measure((t_notation_obj *)x, m, update_chord_play_cursor_to_this_chord_if_needed, &this_need_check_solos);
                 *need_check_solos |= this_need_check_solos;
@@ -5018,7 +5018,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
             t_note *nt = (t_note *) curr_it;
             t_chord *ch = nt->parent;
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
-                create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)nt->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)nt->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
                 note_delete((t_notation_obj *)x, (t_note *) curr_it, false);
                 check_if_need_to_splatter_level_when_turning_note_to_rest(x, ch);
@@ -5027,7 +5027,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
         } else if (curr_it->type == k_CHORD && delete_notes) {
             t_chord *ch = ((t_chord *)curr_it);
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch)) {
-                create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)ch->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)ch->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 if (ch->is_grace_chord) {
                     t_measure *meas = ch->parent;
                     chord_delete_from_measure((t_notation_obj *) x, ch, false);
@@ -5068,7 +5068,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
             t_measure *meas = ((t_measure *)curr_it);
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)meas)){ 
                 t_chord *ch = meas->firstchord;
-                create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 while (ch){
                     if (!ch->locked){
                         t_note *nt = ch->firstnote; t_note *nt2;
@@ -5088,7 +5088,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
         
         } else if (curr_it->type == k_LYRICS && delete_lyrics) {
             t_lyrics *ly = (t_lyrics *)curr_it;
-            create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)ly->owner, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)ly->owner, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             changed |= delete_chord_lyrics((t_notation_obj *) x, (t_chord *) ly->owner);
             
         } else if (curr_it->type == k_DYNAMICS && delete_dynamics) {
@@ -11275,7 +11275,7 @@ void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, lo
                 changed = true;
                 if (ref_measure) {
                     t_measure *newmeas = create_and_insert_new_measure(x, voice, voice->lastmeasure, 1, 0, ref_measure, ref_for_measureinfo_is_not_this_voice);
-                    create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)newmeas, k_UNDO_MODIFICATION_DELETE);
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmeas, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
                 }
             }
             if (voice == to)

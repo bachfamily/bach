@@ -140,6 +140,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_symonset;
 	t_symbol	*s_symtail;
     t_symbol    *s_dumpselection;
+    t_symbol    *s_state;
 
 	t_symbol	*s_FFGG;
 	t_symbol	*s_FFG;
@@ -357,6 +358,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_role;
 	t_symbol	*s_loop;
     t_symbol	*s_flags;
+    t_symbol    *s_flag;
     t_symbol	*s_path;
     t_symbol    *s_painted;
 
@@ -535,6 +537,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_symonset		(_llllobj_common_symbols->s_symonset)
 #define _llllobj_sym_symtail		(_llllobj_common_symbols->s_symtail)
 #define _llllobj_sym_dumpselection  (_llllobj_common_symbols->s_dumpselection)
+#define _llllobj_sym_state          (_llllobj_common_symbols->s_state)
 
 #define _llllobj_sym_FFGG			(_llllobj_common_symbols->s_FFGG)
 #define _llllobj_sym_FGG			(_llllobj_common_symbols->s_FGG)
@@ -754,6 +757,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_timesig		(_llllobj_common_symbols->s_timesig)
 #define _llllobj_sym_role			(_llllobj_common_symbols->s_role)
 #define _llllobj_sym_loop			(_llllobj_common_symbols->s_loop)
+#define _llllobj_sym_flag           (_llllobj_common_symbols->s_flag)
 #define _llllobj_sym_flags			(_llllobj_common_symbols->s_flags)
 #define _llllobj_sym_path			(_llllobj_common_symbols->s_path)
 #define _llllobj_sym_painted            (_llllobj_common_symbols->s_painted)

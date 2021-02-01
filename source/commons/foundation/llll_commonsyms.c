@@ -160,6 +160,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_symonset = gensym("symonset");
     x->s_symtail = gensym("symtail");
     x->s_dumpselection = gensym("dumpselection");
+    x->s_state = gensym("state");
 
     x->s_FFGG = gensym("FFGG");
     x->s_FFG = gensym("FFG");
@@ -378,6 +379,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_role = gensym("role");
     x->s_loop = gensym("loop");
     x->s_flags = gensym("flags");
+    x->s_flag = gensym("flag");
     x->s_path = gensym("path");
     x->s_painted = gensym("painted");
 

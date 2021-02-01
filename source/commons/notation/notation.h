@@ -1077,6 +1077,8 @@ typedef enum _bach_internal_notation_flags {
 
 #define k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER (k_FLAG_MODIF_UNDO | k_FLAG_MODIF_CHECK_ORDER_UNDO)    ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll (with or without the need to check chords' order) @ingroup notation
 
+#define k_FLAG_MODIF_UNDO_ANY (k_FLAG_MODIF_UNDO | k_FLAG_MODIF_FLAG_UNDO | k_FLAG_MODIF_CHECK_ORDER_UNDO | k_FLAG_MODIF_NAME_UNDO)
+
 // internal
 typedef enum _bach_undo_perform_flags {
     k_UNDO_PERFORM_FLAG_NONE = 0,
@@ -1915,13 +1917,11 @@ typedef enum _undo_redo
  */
 typedef enum _undo_modification_types
 {
-    k_UNDO_MODIFICATION_NONE = 0,                    ///< No modification (thus nothing to undo)
-    k_UNDO_MODIFICATION_CHANGE = 1,                    ///< Change the parameters of the notation item
-    k_UNDO_MODIFICATION_DELETE = 2,                    ///< Erase the notation item
-    k_UNDO_MODIFICATION_ADD = 3,                    ///< Add the notation item
-    k_UNDO_MODIFICATION_CHANGE_FLAG = 4,            ///< Only change the notation item's solo/lock/mute flags
-    k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER = 5,        ///< Change the parameters of the notation item, and also check the order of the notation item within its parent
-    k_UNDO_MODIFICATION_CHANGE_NAME = 6,            ///< Only change the element's name
+    k_UNDO_MODIFICATION_TYPE_NONE = 0,                   ///< No modification (thus nothing to undo)
+    k_UNDO_MODIFICATION_TYPE_ADD = 1,                    ///< Add the notation item
+    k_UNDO_MODIFICATION_TYPE_DELETE = 2,                 ///< Erase the notation item
+    k_UNDO_MODIFICATION_TYPE_CHANGE = 3,                 ///< Change the parameters of the notation item
+    k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER = 4,     ///< Change the parameters of the notation item, and also check the order of the notation item within its parent
 } e_undo_modification_types;
 
 
@@ -4990,6 +4990,9 @@ typedef struct _undo_information
     e_element_types                n_it_type;            ///< Type of the notation item whose information need to be stored (one of the #e_element_types).
                                                     ///< If the information concerns the whole object, then this should be #k_WHOLE_NOTATION_OBJECT, if it concerns the header, this should be #k_HEADER_DATA.
     e_undo_modification_types    modification_type;    ///< Type of possible modification of the object (one of the #e_undo_modification_types)
+                                                       ///< Essentially: "add", "delete", "change"
+    t_symbol                     *param;               ///< Parameter subject to change Options are, currently:
+                                                       ///< "state" (whole llll syntax), "flag" (flag only), "name" (name only), "onset" (onset only)
     
     t_notation_item_path        n_it_path_before;      ///< Path of the modified item before the operation
     t_notation_item_path        n_it_path_after;        ///< Path of the modified item after the operation
@@ -14638,9 +14641,10 @@ char trim_selection_end(t_notation_obj *r_ob, double delta_ms);
     @ingroup selection_changes
     @param    r_ob            The notation object
     @param    delta_ms        The time to be added to existing onsets, in milliseconds.
+    @param    check_chords_order_for_voice  Array (must be sized at least CONST_MAX_VOICES) that will contain 1's if a voice has to be checked for chord order
     @return                    1 if something has been changed, 0 otherwise.
  */
-char trim_selection_start(t_notation_obj *r_ob, double delta_ms);
+char trim_selection_start(t_notation_obj *r_ob, double delta_ms, char *check_chords_order_for_voice);
 
 
 /**    Change the key for a single given voice
@@ -15469,7 +15473,7 @@ void handle_rebuild_done(t_notation_obj *r_ob);
     @param    undo_op            One of the #e_undo_operations, if the change has to imply the creation of an undo marker (also see the Undo module), or 0 if no undo marker is required.
     @remark                    For instance, after some change in the slot has been performed (and all its undo ticks have been added), one should call:
     @code
-    handle_change(r_ob, k_UNDO_MODIFICATION_CHANGE, k_UNDO_OP_CHANGE_SLOT);
+    handle_change(r_ob, k_UNDO_MODIFICATION_TYPE_CHANGE, k_UNDO_OP_CHANGE_SLOT);
     @endcode
  */
 void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations undo_op);
@@ -15505,7 +15509,7 @@ void handle_change_selection(t_notation_obj *r_ob);
     @see    handle_change()
     @remark    This is completely equivalent to
     @code
-    if (are_there_free_undo_ticks(r_ob, true))
+    if (undo_ticks_are_dangling(r_ob, true))
         handle_change(r_ob, change_type, undo_op);
     @endcode
  */
@@ -15741,7 +15745,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                     if (chosenclef != k_CLEF_WRONG) {
                         t_atom av[CONST_MAX_VOICES];
                         long i; t_scorevoice *tmpvoice;
-                        create_header_undo_tick((t_notation_obj *)x, k_HEADER_CLEFS);
+                        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_CLEFS);
                         for (i = 0, tmpvoice = x->firstvoice; i < x->r_ob.num_voices && tmpvoice; i++, tmpvoice = tmpvoice->next) {
                             if (tmpvoice == voice)
                                 atom_setsym(av+i, clef_number_to_clef_symbol((t_notation_obj *) x, chosenclef));
@@ -15757,7 +15761,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                     if (chosenkeysym) {
                         t_atom av[CONST_MAX_VOICES];
                         long i; t_scorevoice *tmpvoice;
-                        create_header_undo_tick((t_notation_obj *)x, k_HEADER_KEYS);
+                        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_KEYS);
                         for (i = 0, tmpvoice = x->firstvoice; i < x->r_ob.num_voices && tmpvoice; i++, tmpvoice = tmpvoice->next) {
                             if (tmpvoice == voice)
                                 atom_setsym(av+i, chosenkeysym);
@@ -15770,7 +15774,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                     
                     // midichannels?
                     if (chosenelem > 150 && chosenelem <= 166){
-                        create_header_undo_tick((t_notation_obj *)x, k_HEADER_MIDICHANNELS);
+                        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MIDICHANNELS);
                         change_single_midichannel((t_notation_obj *) x, (t_voice *)voice, chosenelem - 150);
                         handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Midichannels"));
                     } 
@@ -18530,7 +18534,7 @@ long notationobj_throw_issue(t_notation_obj *r_ob);
     @param        fn                    The function to be applied to each notation item (it might want to treat differently different types of notation items). 
                                     This function can change the notation items' parameters, but is NOT allowed to delete notation items.
     @param        data                Additional data to be passed to the function
-    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_CHANGE ticks.
+    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_TYPE_CHANGE ticks.
                                     So one is not allowed to delete structures.
     @param        smallest_undoable_element    Smallest element whose content will be stored in the undo tick. This is only used if #create_undo_ticks is non-zero.
     @return        1 if something has changed, 0 otherwise
@@ -18544,7 +18548,7 @@ char iterate_changes_on_selection(t_notation_obj *r_ob, notationobj_notation_ite
     @param        fn                    The function to be applied to each note. 
                                     This function can change the note's parameters, but is NOT allowed to delete the note.
     @param        data                Additional data to be passed to the function
-    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_CHANGE ticks.
+    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_TYPE_CHANGE ticks.
                                     So one is not allowed to delete structures.
     @param        smallest_undoable_element    Smallest element whose content will be stored in the undo tick. This is only used if #create_undo_ticks is non-zero.
     @return        1 if something has changed, 0 otherwise
@@ -18559,7 +18563,7 @@ char iterate_notewise_changes_on_selection(t_notation_obj *r_ob, notationobj_not
     @param        fn                    The function to be applied to each note. 
                                     This function can change the chord's parameters, but is NOT allowed to delete the note.
     @param        data                Additional data to be passed to the function
-    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_CHANGE ticks.
+    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_TYPE_CHANGE ticks.
                                     So one is not allowed to delete structures.
     @param        smallest_undoable_element    Smallest element whose content will be stored in the undo tick. This is only used if #create_undo_ticks is non-zero.
     @param        also_apply_if_single_note_selected    If this is non-zero, the function will be applied also if only a note of the chord is selected, and not the chord itself.

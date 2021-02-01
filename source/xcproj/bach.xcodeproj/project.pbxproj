@@ -5646,6 +5646,8 @@
 		9157F5A7232F6D2D00A4ADAB /* notation */ = {
 			isa = PBXGroup;
 			children = (
+				1EE928E3153B13FF00341C71 /* bach_inspector.c */,
+				91B0EA8A150BD29B0069A206 /* bach_slots.c */,
 				1EB4D4831610CB930041ABFB /* notation_files.h */,
 				1EB4D4841610CB930041ABFB /* notation_files.c */,
 				911A5BB5183219CB00E8A26C /* notation_attrs.h */,
@@ -5731,10 +5733,8 @@
 		9157F5AA232F6E2B00A4ADAB /* graphics */ = {
 			isa = PBXGroup;
 			children = (
-				1EE928E3153B13FF00341C71 /* bach_inspector.c */,
 				910AFCF4129C651B00F29D84 /* llll_modifiers.h */,
 				910AFCFB129C652D00F29D84 /* llll_modifiers.c */,
-				91B0EA8A150BD29B0069A206 /* bach_slots.c */,
 				1E53253C20FB7296001C4EAF /* bach_jit.h */,
 				1E53253A20FB7295001C4EAF /* bach_jit.c */,
 				1EC5F4711BDFC21600669257 /* bach_graphics.h */,
