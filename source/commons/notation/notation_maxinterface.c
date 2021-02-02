@@ -1303,9 +1303,9 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
 	long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
 	t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
 	t_atom_long *av_long = NULL;
-	long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0;
+	long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_continuousbang = 0;
 	double slotbgalpha = 0, backgroundslotfontsize = 0;
-    t_atom_long velocityhandling = -1, notificationsformessages = -1;
+    t_atom_long velocityhandling = -1, notificationsformessages = -1, continuousbang = -1;
     char brand_new_creation = 0;
 
     
@@ -1368,6 +1368,11 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     if ((has_notificationsformessages = dictionary_hasentry(d, gensym("notificationsformessages"))))
         dictionary_getlong(d, gensym("notificationsformessages"), &notificationsformessages);
 
+    if ((has_continuousbang = dictionary_hasentry(d, gensym("continuousbang"))))
+        dictionary_getlong(d, gensym("continuousbang"), &continuousbang);
+    else if ((has_continuousbang = dictionary_hasentry(d, gensym("continuouslyoutputbangifchanged"))))
+        dictionary_getlong(d, gensym("continuouslyoutputbangifchanged"), &continuousbang);
+
     if (num_voices_from_argument > 0) {
         t_atom av;
         atom_setlong(&av, num_voices_from_argument);
@@ -1419,6 +1424,9 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     
     if (has_notificationsformessages)
         object_attr_setchar(x, gensym("notifymessages"), notificationsformessages);
+    
+    if (has_continuousbang)
+        object_attr_setchar(x, gensym("notifycontinuously"), continuousbang);
 
     // Setting object size depending on numvoices
     if (brand_new_creation && r_ob->link_vzoom_to_height && r_ob->num_voices > 1) {
@@ -1442,6 +1450,7 @@ void notation_class_add_notation_attributes(t_class *c, char obj_type){
 //	CLASS_ATTR_INVISIBLE(c, "fontname", 0);
 	
 	notation_class_add_behavior_attributes(c, obj_type);
+    notation_class_add_notification_attributes(c, obj_type);
 	notation_class_add_edit_attributes(c, obj_type);
 	notation_class_add_showhide_attributes(c, obj_type);
 	notation_class_add_font_attributes(c, obj_type);
@@ -2385,6 +2394,63 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 }
 
 
+void notation_class_add_notification_attributes(t_class *c, char obj_type)
+{
+    CLASS_STICKY_ATTR(c,"category",0,"Notification");
+    
+    CLASS_ATTR_CHAR(c,"notifycontinuously",0, t_notation_obj, continuously_output_changed_bang);
+    CLASS_ATTR_STYLE_LABEL(c,"notifycontinuously",0,"onoff","Notify Continuously");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifycontinuously",0,"0");
+    // @description Toggles the ability to notify continuously via the last outlet
+    // while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously.
+    // This defaults to 0.
+    
+    CLASS_ATTR_CHAR(c,"notifymessages",0, t_notation_obj, notify_also_upon_messages);
+    CLASS_ATTR_STYLE_LABEL(c,"notifymessages",0,"onoff","Notifications When Changed Via Messages");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifymessages", 0, "0");
+    // @description Toggles the ability to send notifications caused by actions coming from messages, and not only from the interface.
+    // For instance, a <m>inscreenpos</m> message will toggle a <m>domain</m> notification, and so on.
+    // By default this is inactive.
+    
+    CLASS_ATTR_CHAR(c,"notifypaint",0, t_notation_obj, notify_when_painted);
+    CLASS_ATTR_STYLE_LABEL(c,"notifypaint",0,"onoff","Notifications When Display Is Refreshed");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifypaint", 0, "0");
+    // @description Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
+    // whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
+    
+    CLASS_ATTR_CHAR(c,"notifywith",0, t_notation_obj, notify_with);
+    CLASS_ATTR_STYLE_LABEL(c,"notifywith",0,"enumindex","Notify Interface Changes Via");
+    CLASS_ATTR_ENUMINDEX(c,"notifywith", 0, "bang Operation Redo Data Undo Data");
+    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 3);
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifywith", 0, "0");
+    // @description Chooses the notification type for interface changes: <br />
+    // - 0 (bang, default): the simplest and less CPU-consuming alternative, only notifies with a bang when anything changes; <br />
+    // - 1 (Operation): notify with an operation label; <br />
+    // - 2 (Redo Data): notify verbosely with the operation label plus a sequence of redo data, sufficient to recreate the operation; <br />
+    // - 3 (Undo Data): the same as 2, but providing undo data instead.
+
+    
+    CLASS_ATTR_CHAR(c,"senddoneatstartup",0, t_notation_obj, send_rebuild_done_at_startup);
+    CLASS_ATTR_STYLE_LABEL(c,"senddoneatstartup",0,"onoff","Send 'Done' At Startup (If Data Was Saved)");
+    CLASS_ATTR_FILTER_CLIP(c, "senddoneatstartup", 0, 1);
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"senddoneatstartup", 0, "1");
+    // @description Toggles the ability to send a <m>done</m> notification through the playout (or the notification outlet
+    // for <o>bach.slot</o>) at the object instantiation, if content saved with the object is loaded.
+    
+    CLASS_ATTR_CHAR(c,"senddoneafterpaint",0, t_notation_obj, send_rebuild_done_only_after_paint_method);
+    CLASS_ATTR_STYLE_LABEL(c,"senddoneafterpaint",0,"onoff","Send 'Done' Only After Paint");
+    CLASS_ATTR_FILTER_CLIP(c, "senddoneafterpaint", 0, 1);
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"senddoneafterpaint", 0, "1");
+    // @description If this is 1, the <m>done</m> notification is not sent when the content has been loaded or built,
+    // but after the content has been painted (which, in general, is later: paint is done at low priority). This is handy
+    // if you need to retrieve appearance data (such as pixel position) which is computed inside the paint method, and not
+    // when the object is loaded. If this is 0, on the other hand, the notification is sent right after the content has been loaded
+    // or built, and you have no guarantee that the display data will be correct when the notification is sent.
+    // By default this is 1.
+
+    CLASS_STICKY_ATTR_CLEAR(c, "category");
+}
+
 void notation_class_add_behavior_attributes(t_class *c, char obj_type){
 	
 	CLASS_STICKY_ATTR(c,"category",0,"Behavior");
@@ -2411,13 +2477,6 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"mousehover",0,"1");
     // @description Toggles mouse hovering capabilities.
 
-    CLASS_ATTR_CHAR(c,"continuousbang",0, t_notation_obj, continuously_output_changed_bang);
-	CLASS_ATTR_STYLE_LABEL(c,"continuousbang",0,"onoff","Continuously Output Bang If Changed");
-	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"continuousbang",0,"0");
-    CLASS_ATTR_ALIAS(c, "continuousbang", "continuouslyoutputbangifchanged");
-	// @description Toggles the ability to output continuously the bang through the last outlet
-	// while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously. 
-	// This defaults to 0.
 	
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		CLASS_ATTR_CHAR(c,"allowglissandi",0, t_notation_obj, allow_glissandi);
@@ -2454,26 +2513,6 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
     // version of bach. Versions x.y.z.w are to be inserted as the number xyzw0. For instance, 0.7.2 is
     // 7200, while 0.7.8.1 is 7810.
     
-
-	CLASS_ATTR_CHAR(c,"notifymessages",0, t_notation_obj, notify_also_upon_messages);
-	CLASS_ATTR_STYLE_LABEL(c,"notifymessages",0,"onoff","Notifications When Changed Via Messages");
-	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifymessages", 0, "0");
-	// @description Toggles the ability to send notifications caused by actions coming from messages, and not only from the interface.
-	// For instance, a <m>inscreenpos</m> message will toggle a <m>domain</m> notification, and so on.
-	// By default this is inactive.
-	
-    CLASS_ATTR_CHAR(c,"notifypaint",0, t_notation_obj, notify_when_painted);
-    CLASS_ATTR_STYLE_LABEL(c,"notifypaint",0,"onoff","Notifications When Display Is Refreshed");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifypaint", 0, "0");
-    // @description Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
-    // whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
-    
-    CLASS_ATTR_CHAR(c,"notifywith",0, t_notation_obj, notify_with);
-    CLASS_ATTR_STYLE_LABEL(c,"notifywith",0,"enumindex","Notify Interface Changes Via");
-    CLASS_ATTR_ENUMINDEX(c,"notifywith", 0, "bang Redo Data Undo Data");
-    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 2);
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifywith", 0, "0");
-
     
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		CLASS_ATTR_CHAR(c,"keepselectioniflostfocus",0, t_notation_obj, keep_selection_if_lost_focus);
@@ -2484,23 +2523,6 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
 		// This defaults to 1.
 	}
 	
-	CLASS_ATTR_CHAR(c,"senddoneatstartup",0, t_notation_obj, send_rebuild_done_at_startup);
-	CLASS_ATTR_STYLE_LABEL(c,"senddoneatstartup",0,"onoff","Send 'Done' At Startup (If Data Was Saved)");
-	CLASS_ATTR_FILTER_CLIP(c, "senddoneatstartup", 0, 1);
-	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"senddoneatstartup", 0, "1");
-	// @description Toggles the ability to send a <m>done</m> notification through the playout (or the notification outlet
-	// for <o>bach.slot</o>) at the object instantiation, if content saved with the object is loaded.
-
-	CLASS_ATTR_CHAR(c,"senddoneafterpaint",0, t_notation_obj, send_rebuild_done_only_after_paint_method);
-	CLASS_ATTR_STYLE_LABEL(c,"senddoneafterpaint",0,"onoff","Send 'Done' Only After Paint");
-	CLASS_ATTR_FILTER_CLIP(c, "senddoneafterpaint", 0, 1);
-	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"senddoneafterpaint", 0, "1");
-	// @description If this is 1, the <m>done</m> notification is not sent when the content has been loaded or built,
-	// but after the content has been painted (which, in general, is later: paint is done at low priority). This is handy
-	// if you need to retrieve appearance data (such as pixel position) which is computed inside the paint method, and not
-	// when the object is loaded. If this is 0, on the other hand, the notification is sent right after the content has been loaded
-	// or built, and you have no guarantee that the display data will be correct when the notification is sent.
-	// By default this is 1.
 		
 	if (obj_type == k_NOTATION_OBJECT_ROLL) {
 		CLASS_ATTR_CHAR(c,"rulermode",0, t_notation_obj, ruler_mode);
@@ -3957,49 +3979,49 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
 		undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		enharmonically_retranscribe_note(r_ob, note, false, r_ob->current_enharmonic_list_screenmc[chosen_idx], r_ob->current_enharmonic_list_screenacc[chosen_idx]);
 		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE);
 		return k_CHANGED_SEND_BANG;
 	}
 	
 	if (chosenelem == 451) {
 		res = lock_selection(r_ob, false);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 452) {
 		res = unlock_selection(r_ob, false);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 453) {
 		res = mute_selection(r_ob, false);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 454) {
 		res = unmute_selection(r_ob, false);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 455) {
 		res = solo_selection(r_ob, false);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 456) {
 		res = unsolo_selection(r_ob, false);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 461) {
 		res = no_solo(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 462) {
 		res = no_muted(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 471) {
 		res = snap_pitch_to_grid_for_selection(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 472) {
 		res = reset_selection_enharmonicity(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 473 && r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
 		return chosenelem; // we pass it through, to perform changes in roll.c
@@ -4208,7 +4230,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
 			recompute_all_for_measure(r_ob, measure, false);
 		}
 		
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_BARLINE_TYPE);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_BARLINE_TYPE);
 		return k_CHANGED_SEND_BANG;
 	}
 	
@@ -4269,39 +4291,39 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
 			}
 		}
 		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_TIME_SIGNATURE_FOR_SELECTED_MEASURES);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_TIME_SIGNATURE_FOR_SELECTED_MEASURES);
 		return k_CHANGED_SEND_BANG + k_CHANGED_PERFORM_ANALYSIS_AND_CHANGE;
 	} else if (chosenelem == 551){ //lock
 		res = lock_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 552){ //unlock
 		res = unlock_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 553){ // mute
 		res = mute_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 554){ // unmute
 		res = unmute_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 555){ // solo
 		res = solo_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 556){ // unsolo
 		res = unsolo_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 570){ // no solo
 		res = no_solo(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 571){ // no mute
 		res = no_muted(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem >= 600 && chosenelem <= 605) {
 		return chosenelem; // we pass it through 
@@ -4315,11 +4337,11 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
         return chosenelem; // we pass it through
 	} else if (chosenelem == 610) {
 		res = lock_rhythmic_trees_in_selection(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_RHYTHMIC_TREE_FOR_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_RHYTHMIC_TREE_FOR_SELECTION);
 		return k_CHANGED_STANDARD_SEND_BANG;
 	} else if (chosenelem == 611) {
 		res = unlock_rhythmic_trees_in_selection(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_RHYTHMIC_TREE_FOR_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_RHYTHMIC_TREE_FOR_SELECTION);
 		return k_CHANGED_STANDARD_SEND_BANG;
 	}
 	
@@ -4353,43 +4375,43 @@ long handle_voice_popup(t_notation_obj *r_ob, t_voice *voice, long modifiers, in
 		return k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 181){ //lock
 		res = lock_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 182){ //unlock
 		res = unlock_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 183){ // mute
 		res = mute_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 184){ // unmute
 		res = unmute_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 185){
 		res = solo_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 186){
 		res = unsolo_selection(r_ob, true);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 191){ // no solo
 		res = no_solo(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 192){ // no mute
 		res = no_muted(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 4001){ // break voice ensemble
         voiceensemble_break(r_ob, voice, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_BREAK_VOICE_ENSEMBLE);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_BREAK_VOICE_ENSEMBLE);
         return k_CHANGED_SEND_BANG;
     } else if (chosenelem == 4000){ // create voice ensemble
         voiceensemble_create_from_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CREATE_VOICE_ENSEMBLE);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CREATE_VOICE_ENSEMBLE);
         return k_CHANGED_SEND_BANG;
 	}
 	
@@ -4413,11 +4435,11 @@ long handle_background_popup(t_notation_obj *r_ob, long modifiers, e_element_typ
 	
 	if (chosenelem == 1001 && r_ob->allow_solo){ // no solo
 		res = no_solo(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 1002 && r_ob->allow_mute){ // no mute
 		res = no_muted(r_ob);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 1010) {
 		t_atom arv;
@@ -4462,7 +4484,7 @@ long handle_articulations_popup(t_notation_obj *r_ob, t_articulation *art, long 
         if (ch)
             reset_articulation_position_for_chord(r_ob, ch);
         
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ARTICULATION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ARTICULATION);
         return k_CHANGED_SEND_BANG;
     }
     
@@ -5466,7 +5488,7 @@ char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_num
 		}
 		unlock_general_mutex(r_ob);
 		
-		if (changed) handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTION);
+		if (changed) handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTION);
 	}
 	return changed;
 }
@@ -5953,7 +5975,7 @@ void notationobj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboar
 		else
 			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		delete_all_selected_function_points(r_ob, slot_num);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
 	}
 }
 
@@ -5979,7 +6001,7 @@ void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notat
 		else
 			undo_tick_create_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		notation_item_clear_slot(r_ob, nitem, slot_num);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
 	}
 }
 
@@ -5987,7 +6009,7 @@ void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notat
 void notationobj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long paste_to_this_slot, char also_paste_to_rests) {
 	if (paste_to_this_slot < 0) {
 		set_slots_to_selection(r_ob, clipboard->gathered_syntax, also_paste_to_rests);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
 	} else {
 		// gotta paste the (only) cached slot into the active slot (we don't check the type)
 		t_llll *clonedslot;
@@ -6003,7 +6025,7 @@ void notationobj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long p
         } else
 			set_slots_to_selection(r_ob, clonedslot, also_paste_to_rests);
 		llll_free(clonedslot);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
 	}
 }
 
@@ -6025,7 +6047,7 @@ void notationobj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard,
             else
                 undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             note_delete_breakpoints(r_ob, note);
-            handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_DURATION_LINE);
+            handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_DURATION_LINE);
         }
     }
 }
@@ -6033,7 +6055,7 @@ void notationobj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard,
 
 void notationobj_set_durationline(t_notation_obj *r_ob, t_llll *durationline_as_breakpoints) {
     set_breakpoints_to_selection(r_ob, durationline_as_breakpoints);
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION);
 }
 
 void notationobj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard) {
@@ -6044,7 +6066,7 @@ void notationobj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard
     unlock_general_mutex(r_ob);
     set_breakpoints_to_selection(r_ob, clonedbpts);
     llll_free(clonedbpts);
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_DURATION_LINE);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_DURATION_LINE);
 }
 
 
@@ -6078,7 +6100,7 @@ void notationobj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, 
 		
 		undo_tick_create_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		paste_slotitems(r_ob, r_ob->active_slot_notationitem, r_ob->active_slot_num, clipboard->gathered_syntax, activeslotwin, offset, delete_intermediate_points);
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
 	}
 }
 

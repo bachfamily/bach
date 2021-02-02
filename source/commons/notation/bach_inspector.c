@@ -1090,7 +1090,7 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
         recompute_total_length(r_ob);
         update_hscrollbar(r_ob, 0);
 	}
-	handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_BACH_ATTRIBUTE);
+	handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_BACH_ATTRIBUTE);
 }
 
 
@@ -1762,7 +1762,7 @@ void set_bach_attr_and_process_from_ac_av(t_bach_inspector_manager *man, void *o
         r_ob->also_changing_in_inspector_all_sync_tempi = false;
 	bach_preprocess_attr(man, obj, attr);
 	if (force_undo_step && r_ob)
-		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_BACH_ATTRIBUTE);
+		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_BACH_ATTRIBUTE);
 	bach_set_attr(man, obj, attr, ac, av);
     if (r_ob)
         undo_ticks_remove_dangling(r_ob, true); // because while setting the attribute we might have also created some ticks... which we don't want! :-)
@@ -2232,7 +2232,7 @@ void slotinfo_paste(t_notation_obj *r_ob, long slotnum)
             llll_free(temp);
         }
         unlock_general_mutex(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
     }
 }
 

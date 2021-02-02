@@ -1679,5 +1679,5 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
     if (par.stdev_thresh)
         lexpr_free(par.stdev_thresh);
 
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESPELL);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESPELL);
 }

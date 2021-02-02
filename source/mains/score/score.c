@@ -1063,7 +1063,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
 void score_sel_deletemeasures(t_score *x)
 {
     delete_selected_measures(x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTED_MEASURES);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTED_MEASURES);
 }
 
 void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
@@ -1113,7 +1113,7 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
     close_slot_window((t_notation_obj *)x); // if we were in slot view...
     unlock_general_mutex((t_notation_obj *)x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTION);
     
 }
 
@@ -1130,13 +1130,13 @@ void score_sel_snap_pitch_to_grid(t_score *x){
 
     llll_free(garbage);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
 }
 
 void score_sel_resetarticulations(t_score *x)
 {
     delete_articulations_in_selection((t_notation_obj *) x); 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_ARTICULATIONS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_ARTICULATIONS_FOR_SELECTION);
 }
 
 void score_resetgraphic(t_score *x)
@@ -1159,7 +1159,7 @@ void score_resetgraphic(t_score *x)
     }
     unlock_general_mutex((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ALL_ENHARMONICITIES);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ALL_ENHARMONICITIES);
 }
 
 
@@ -1191,7 +1191,7 @@ void score_clearmarkers(t_score *x){
     unlock_markers_mutex((t_notation_obj *)x);;
     unlock_general_mutex((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CLEAR_MARKERS);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CLEAR_MARKERS);
 }
 
 
@@ -1718,7 +1718,7 @@ void score_sel_change_cents(t_score *x, t_symbol *s, long argc, t_atom *argv){
     if (lexpr)
         lexpr_free(lexpr);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CENTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CENTS_FOR_SELECTION);
 }
 
 void score_sel_change_pitch(t_score *x, t_symbol *s, long argc, t_atom *argv)
@@ -1798,7 +1798,7 @@ void score_sel_change_pitch(t_score *x, t_symbol *s, long argc, t_atom *argv)
     if (lexpr)
         lexpr_free(lexpr);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION);
 }
 
 
@@ -1878,7 +1878,7 @@ void score_sel_change_poc(t_score *x, t_symbol *s, long argc, t_atom *argv){
     if (lexpr)
         lexpr_free(lexpr);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION);
 }
 
 
@@ -2017,7 +2017,7 @@ void score_sel_change_symduration(t_score *x, t_symbol *s, long argc, t_atom *ar
     if (lexpr)
         lexpr_free(lexpr);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_DURATION_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_DURATION_FOR_SELECTION);
 }
 
 
@@ -2094,7 +2094,7 @@ void score_sel_change_measureinfo(t_score *x, t_symbol *s, long argc, t_atom *ar
     if (lexpr)
         lexpr_free(lexpr);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_MEASUREINFO_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_MEASUREINFO_FOR_SELECTION);
 }
 
 
@@ -2155,7 +2155,7 @@ void score_sel_change_onset(t_score *x, t_symbol *s, long argc, t_atom *argv){
         check_markers_order((t_notation_obj *) x);
         unlock_general_mutex((t_notation_obj *)x);
         notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ONSET_FOR_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ONSET_FOR_SELECTION);
     }
 }
 
@@ -2230,7 +2230,7 @@ void score_sel_change_velocity(t_score *x, t_symbol *s, long argc, t_atom *argv)
     if (lexpr)
         lexpr_free(lexpr);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_VELOCITY_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_VELOCITY_FOR_SELECTION);
 }
 
 
@@ -2307,7 +2307,7 @@ void score_sel_change_tie(t_score *x, t_symbol *s, long argc, t_atom *argv)
     if (changed)
         set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_TIE_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_TIE_FOR_SELECTION);
 }
 
 
@@ -2356,7 +2356,7 @@ void score_sel_erase_breakpoints(t_score *x, t_symbol *s, long argc, t_atom *arg
     }
     unlock_general_mutex((t_notation_obj *)x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_BREAKPOINTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_BREAKPOINTS_FOR_SELECTION);
 }
 
 
@@ -2422,7 +2422,7 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
     }
     unlock_general_mutex((t_notation_obj *)x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_BREAKPOINTS_TO_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_BREAKPOINTS_TO_SELECTION);
 }
 
 
@@ -2485,7 +2485,7 @@ void score_sel_set_durationline(t_score *x, t_symbol *s, long argc, t_atom *argv
     
     unlock_general_mutex((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION);
 }
 
 
@@ -2568,7 +2568,7 @@ void score_sel_set_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
     unlock_general_mutex((t_notation_obj *)x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
 }
 
 
@@ -2640,7 +2640,7 @@ void score_sel_erase_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
         perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
     unlock_general_mutex((t_notation_obj *)x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
 }
 
 
@@ -2671,7 +2671,7 @@ void score_sel_move_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     unlock_general_mutex((t_notation_obj *)x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MOVE_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MOVE_SLOTS_FOR_SELECTION);
 }
 
 
@@ -2702,7 +2702,7 @@ void score_sel_copy_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
     unlock_general_mutex((t_notation_obj *)x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_COPY_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_COPY_SLOTS_FOR_SELECTION);
 }
 
 
@@ -2722,7 +2722,7 @@ void score_sel_change_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv
         perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 
     unlock_general_mutex((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 
@@ -2741,7 +2741,7 @@ void score_sel_append_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv
         perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
     
     unlock_general_mutex((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 
@@ -2760,7 +2760,7 @@ void score_sel_prepend_slot_item(t_score *x, t_symbol *s, long argc, t_atom *arg
         perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 
     unlock_general_mutex((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 void score_sel_insert_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv)
@@ -2776,7 +2776,7 @@ void score_sel_insert_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv
         perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
     
     unlock_general_mutex((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 
@@ -2793,7 +2793,7 @@ void score_sel_delete_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv
         perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 
     unlock_general_mutex((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }
 
 
@@ -2823,7 +2823,7 @@ void score_addtempo(t_score *x, long meas_num, t_llll *tempo_ll, t_llll *voices_
 
     unlock_general_mutex((t_notation_obj *)x);
     redraw_hscrollbar((t_notation_obj *)x, 0);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_TEMPO);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_TEMPO);
 }
 
 
@@ -3412,13 +3412,13 @@ void score_split(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     if (argc && argv && is_atom_number(argv)) 
         split_selection(x, atom_getlong(argv), argc > 1 ? false : true);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SPLIT_SELECTION); 
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SPLIT_SELECTION); 
 }
 
 void score_join(t_score *x)
 {
     quick_merge_selection(x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_JOIN_SELECTION); 
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_JOIN_SELECTION); 
 }
 
 /*
@@ -3476,7 +3476,7 @@ void score_tailstograces(t_score *x)
     
     if (changed) {
         notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TAILS_TO_GRACES);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TAILS_TO_GRACES);
     }
 }
 */
@@ -3520,7 +3520,7 @@ void score_mergegrace(t_score *x)
     
     if (changed) {
         notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MERGE_GRACE);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MERGE_GRACE);
     }
 }
 
@@ -3564,7 +3564,7 @@ void score_deletegrace(t_score *x)
     
     if (changed) {
         notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_GRACE);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_GRACE);
     }
 }
 
@@ -3632,7 +3632,7 @@ void score_resetlocalwidthmultiplformeas(t_score *x, t_symbol *s, long argc, t_a
     llll_free(garbage);
     llll_free(arguments);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_LOCAL_SPACING);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_LOCAL_SPACING);
 }
 
 void score_setmeasureparameters(t_score *x, t_symbol *s, long argc, t_atom *argv){
@@ -3692,7 +3692,7 @@ void score_setmeasureparameters(t_score *x, t_symbol *s, long argc, t_atom *argv
         
         llll_free(garbage);
 
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_MEASURE_PARAMETERS);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_MEASURE_PARAMETERS);
     }
     
     llll_free(arguments);
@@ -9217,7 +9217,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                     set_score_from_llll(x, inputlist, true);
                     if (!append_via_gathered_syntax)
                         handle_rebuild_done((t_notation_obj *) x);
-                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SCORE);
+                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SCORE);
                     
                 } else if (is_firstelem_symbol) {
                     
@@ -9231,7 +9231,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         else
                             score_clear_all(x);
                         unlock_general_mutex((t_notation_obj *)x);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CLEAR_SCORE);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CLEAR_SCORE);
                         
                     } else if (router == _llllobj_sym_clearall) {
                         long i;
@@ -9263,7 +9263,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         create_whole_score_undo_tick_nolock(x);
                         insert_measures_from_message(x, voice_start, voice_end, -1, meas, router == _llllobj_sym_appendmeasures);
                         unlock_general_mutex((t_notation_obj *) x);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, router == _llllobj_sym_appendmeasures ? k_UNDO_OP_APPEND_MEASURES : k_UNDO_OP_APPEND_MEASURE);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, router == _llllobj_sym_appendmeasures ? k_UNDO_OP_APPEND_MEASURES : k_UNDO_OP_APPEND_MEASURE);
                         
                     } else if (router == _llllobj_sym_addtempo) {
                         long meas_num = 0;
@@ -9332,7 +9332,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
 
                         unlock_general_mutex((t_notation_obj *) x);
 
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, router == _llllobj_sym_insertmeasures ? k_UNDO_OP_INSERT_MEASURES : k_UNDO_OP_INSERT_MEASURE);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, router == _llllobj_sym_insertmeasures ? k_UNDO_OP_INSERT_MEASURES : k_UNDO_OP_INSERT_MEASURE);
                         
                         
                     } else if (router == gensym("refresh")) {
@@ -9488,7 +9488,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                                 overtype(x, &from_here, to_here_def ? &to_here : NULL, content);
                             }
                             
-                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_OVERTYPE);
+                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_OVERTYPE);
                         }
                         
                     } else if (firstelem->l_next && router == _llllobj_sym_sample) {
@@ -9664,7 +9664,7 @@ void score_merge(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
             llll_free(inputlist);
 
-            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MERGE);
+            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MERGE);
         }
     }
 
@@ -11045,7 +11045,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
         if (changed && x->r_ob.j_mouse_is_down) {
             x->r_ob.changed_while_dragging = true;
-            handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
+            handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? (x->r_ob.notify_with > 0 ? (k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG | k_CHANGED_FORCE_CREATE_UNDO_STEP_MARKER) : k_CHANGED_STANDARD_SEND_BANG) : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_MOUSEDRAG_CHANGE);
         }
     }
     
@@ -12326,7 +12326,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     
     if (clicked_slot && is_editable((t_notation_obj *)x, k_SLOT, k_ELEMENT_ACTIONS_NONE)) {
         unlock_general_mutex((t_notation_obj *)x);    
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_SEND_BANG, k_UNDO_OP_CHANGE_SLOT);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_SEND_BANG, k_UNDO_OP_CHANGE_SLOT);
         return;
     }
     
@@ -12537,7 +12537,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                             clicked_obj = k_MARKER;
                                             x->r_ob.item_changed_at_mousedown = 1;
                                             //            x->r_ob.changed_while_dragging = true;
-                                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_MARKER);
+                                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_MARKER);
                                             llll_free(names);
                                         }
                                         unlock_markers_mutex((t_notation_obj *)x);;
@@ -12548,22 +12548,22 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                         res = k_CHANGED_DO_NOTHING; // undo ticks, undo markers and bang already done in roll_legato
                                     } else if (res == 600 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                         rebeam_levels_of_selected_tree_nodes(x, false, true, k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-                                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS);
+                                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS);
                                     } else if (res == 601 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                         fix_levels_of_selected_tree_nodes_as_original(x);
-                                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE);
+                                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE);
                                     } else if (res == 602 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                         destroy_selected_tree_nodes(x, true, true, true);
-                                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE);
+                                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE);
                                     } else if (res == 603 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                         create_level_for_selected_tree_nodes(x);
-                                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_RHYTHMIC_TREE_LEVEL);
+                                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_RHYTHMIC_TREE_LEVEL);
                                     } else if (res == 604 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                         splatter_selected_tree_nodes(x, true, true, true);
-                                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_LEVEL);
+                                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_LEVEL);
                                     } else if (res == 605 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                         rebeam_levels_of_selected_tree_nodes(x, true, true, k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-                                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS);
+                                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS);
                                     } else if (res == 971) { // copy duration line
                                         notationobj_copy_durationline((t_notation_obj *)x, &clipboard, curr_nt, false);
                                     } else if (res >= 9000 && res <= 9000 + CONST_MAX_SLOTS + 1) { // copy slot
@@ -12603,7 +12603,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                         recompute_all_for_measure((t_notation_obj *)x, meas, need_recompute_beamings);
                                     }
                                     unlock_general_mutex((t_notation_obj *)x);    
-                                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_NOTE);
+                                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_NOTE);
                                     verbose_post_rhythmic_tree((t_notation_obj *)x, x->firstvoice->firstmeasure, gensym("after"), 1);
                                     return;
                                 } else if ((t_note *)clicked_ptr != curr_nt) {
@@ -12652,7 +12652,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     //                                x->r_ob.changed_while_dragging = true;
                                 }
                                 unlock_general_mutex((t_notation_obj *)x);    
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TURN_REST_INTO_NOTE);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TURN_REST_INTO_NOTE);
                                 return;
                             } else {
                                 clicked_ptr = curr_ch;
@@ -12701,7 +12701,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     if (is_editable((t_notation_obj *)x, k_ARTICULATION, k_DELETION)) {
                                         undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                         delete_articulation_from_notation_item((t_notation_obj *) x, (t_notation_item *)curr_ch, a);
-                                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
+                                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
                                         x->r_ob.item_changed_at_mousedown = 1;
                                     }
                                     unlock_general_mutex((t_notation_obj *)x);
@@ -12720,7 +12720,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                             if (is_editable((t_notation_obj *)x, k_ARTICULATION, k_DELETION)) {
                                                 undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                                 delete_articulation_from_notation_item((t_notation_obj *) x, (t_notation_item *)curr_nt, a);
-                                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
+                                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
                                                 x->r_ob.item_changed_at_mousedown = 1;
                                             }
                                             unlock_general_mutex((t_notation_obj *)x);
@@ -12760,7 +12760,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                             if (is_editable((t_notation_obj *)x, k_ARTICULATION, k_DELETION)) {
                                                 undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                                 slotitem_delete((t_notation_obj *)x, s, item);
-                                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
+                                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
                                                 x->r_ob.item_changed_at_mousedown = 1;
                                             }
                                             unlock_general_mutex((t_notation_obj *)x);
@@ -12788,7 +12788,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                                 if (is_editable((t_notation_obj *)x, k_ARTICULATION, k_DELETION)) {
                                                     undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                                     slotitem_delete((t_notation_obj *)x, s, item);
-                                                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
+                                                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
                                                     x->r_ob.item_changed_at_mousedown = 1;
                                                 }
                                                 unlock_general_mutex((t_notation_obj *)x);
@@ -12843,7 +12843,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                             recompute_all_for_measure((t_notation_obj *) x, curr_meas, false); // it's a bit overkilling!! TODO make it better
                                         }
                                         unlock_general_mutex((t_notation_obj *)x);    
-                                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_PITCH_BREAKPOINT);
+                                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_PITCH_BREAKPOINT);
                                         return;
                                     } else {
                                         clicked_ptr = curr_bpt;
@@ -12898,7 +12898,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     clicked_ptr = this_bpt;
                                     clicked_obj = k_PITCH_BREAKPOINT;
                                     recompute_all_for_measure((t_notation_obj *) x, curr_meas, false); // it's a bit overkilling!! TODO make it better
-//                                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_PITCH_BREAKPOINT);
+//                                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_PITCH_BREAKPOINT);
                                     x->r_ob.item_changed_at_mousedown = 1;
                                 }
                                 break;
@@ -12938,7 +12938,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                 recompute_all(x);
                             }
                             unlock_general_mutex((t_notation_obj *)x);    
-                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_TEMPO);
+                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_TEMPO);
                             x->r_ob.item_changed_at_mousedown = 1;
                             return;
                         } else {
@@ -13080,16 +13080,16 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                 score_paste_replace_measures(x, false);
                             } else if (res == 600 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                 rebeam_levels_of_selected_tree_nodes(x, false, true, k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS);
                             } else if (res == 601 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                 fix_levels_of_selected_tree_nodes_as_original(x);
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE);
                             } else if (res == 602 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                 destroy_selected_tree_nodes(x, true, true, true);
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE);
                             } else if (res == 605 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
                                 rebeam_levels_of_selected_tree_nodes(x, true, true, k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS);
                             } else if ((res == 589 || res == 590) && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_GENERIC)) {
                                 lock_general_mutex((t_notation_obj *)x);    
                                 if (meas->firstchord && measure_barlines_coincide_for_all_voices(x, meas->measure_number)) {
@@ -13112,13 +13112,13 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     pop_tempo_over_chord(x, meas->firstchord, false);
                                 }
                                 unlock_general_mutex((t_notation_obj *)x);    
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_POP_OUT_TEMPO); 
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_POP_OUT_TEMPO); 
                             } else if (res == 591 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_GENERIC)) {
                                 clear_selected_measures(x);
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CLEAR_MEASURES_IN_SELECTION);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CLEAR_MEASURES_IN_SELECTION);
                             } else if (res == 592 && is_editable((t_notation_obj *)x, k_MEASURE, k_DELETION)) {
                                 delete_selected_measures(x);
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_MEASURES_IN_SELECTION);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_MEASURES_IN_SELECTION);
                             } else if (res != k_CHANGED_DO_NOTHING) {
                                 if (is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_GENERIC)) {
                                     if (res & k_CHANGED_PERFORM_ANALYSIS_AND_CHANGE) {    // changed time signature
@@ -13151,7 +13151,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             }
                         }
                         unlock_general_mutex((t_notation_obj *)x);    
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_POP_OUT_TEMPO); 
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_POP_OUT_TEMPO); 
                         x->r_ob.item_changed_at_mousedown = 1;
                         return;
                     } else if (modifiers == eCommandKey + eControlKey || modifiers == eCommandKey + eControlKey + eShiftKey){
@@ -13165,7 +13165,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             t_measure *newmeasure = create_and_insert_new_measure(x, voice, meas ? meas : voice->lastmeasure, direction, 0, meas ? meas : voice->lastmeasure, false);
                             undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmeasure, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
                             unlock_general_mutex((t_notation_obj *)x);
-                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_MEASURE); 
+                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_MEASURE); 
                             x->r_ob.item_changed_at_mousedown = 1;
                         } else {
                             unlock_general_mutex((t_notation_obj *)x);    
@@ -13182,7 +13182,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             insert_new_measure_in_all_voices(x, voice, clicked_meas_id, direction, added_meas, &num_added_meas, true, &undo_op);
                             //                        undo_ticks_create_for_multiple_notation_items((t_notation_obj *)x, num_added_meas, (t_notation_item **)added_meas, k_UNDO_MODIFICATION_TYPE_DELETE, &undo_op);
                             unlock_general_mutex((t_notation_obj *)x);
-                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, undo_op); 
+                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, undo_op); 
                             x->r_ob.item_changed_at_mousedown = 1;
                         } else {
                             unlock_general_mutex((t_notation_obj *)x);    
@@ -13230,7 +13230,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 //                    x->r_ob.changed_while_dragging = true;
                     unlock_markers_mutex((t_notation_obj *)x);;    
                     unlock_general_mutex((t_notation_obj *)x);    
-                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_MARKER);
+                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_MARKER);
                     return;
                 } else if (modifiers == eControlKey) {
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_GENERIC)) {
@@ -13242,7 +13242,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     }
                     unlock_markers_mutex((t_notation_obj *)x);;    
                     unlock_general_mutex((t_notation_obj *)x);    
-                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_MARKER_ATTACHMENT);
+                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_MARKER_ATTACHMENT);
                     return;
                 } else {
                     x->r_ob.ux_click_marker_diff = xposition_to_unscaled_xposition((t_notation_obj *)x, this_x) - ms_to_unscaled_xposition((t_notation_obj *)x, marker->position_ms, 1);
@@ -13303,7 +13303,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 //            x->r_ob.changed_while_dragging = true;
             unlock_markers_mutex((t_notation_obj *)x);;    
             unlock_general_mutex((t_notation_obj *)x);    
-            handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_MARKER);
+            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_MARKER);
             llll_free(names);
             return;
         }
@@ -13367,7 +13367,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 clicked_obj = k_MARKER;
                 x->r_ob.item_changed_at_mousedown = 1;
                 //            x->r_ob.changed_while_dragging = true;
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_MARKER);
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_MARKER);
                 llll_free(names);
             }
             unlock_markers_mutex((t_notation_obj *)x);;
@@ -14262,7 +14262,7 @@ t_llll* get_score_values_as_llll_for_pwgl(t_score *x){
 
 void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 {
-    char there_are_free_undo_ticks = undo_ticks_are_dangling((t_notation_obj *)x, false);
+    char there_are_dangling_undo_ticks = undo_ticks_are_dangling((t_notation_obj *)x, false);
     x->r_ob.j_mouse_is_down = false;
     x->r_ob.j_isdragging = false;
     
@@ -14279,7 +14279,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     }
 
     
-    if (there_are_free_undo_ticks)
+    if (there_are_dangling_undo_ticks)
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MOUSEDRAG_CHANGE);
         
     bach_set_cursor((t_object *)x, &x->r_ob.j_mouse_cursor, patcherview, BACH_CURSOR_DEFAULT);
@@ -14385,7 +14385,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         slur->need_recompute_position = true;
     }
 
-    if (!there_are_free_undo_ticks && !x->r_ob.item_changed_at_mousedown && x->r_ob.j_mousedown_obj_type == k_ZOOMING_REGION && x->r_ob.j_mousedown_point.x != pt.x) { 
+    if (!there_are_dangling_undo_ticks && !x->r_ob.item_changed_at_mousedown && x->r_ob.j_mousedown_obj_type == k_ZOOMING_REGION && x->r_ob.j_mousedown_point.x != pt.x) { 
         // new zoom
         double start_x, end_x;
         double start_ux, end_ux;
@@ -14417,7 +14417,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         }
     }
     
-    if (!there_are_free_undo_ticks && !x->r_ob.item_changed_at_mousedown && (x->r_ob.j_mousedown_obj_type == k_LOOP_REGION) && !(modifiers & eShiftKey)) { 
+    if (!there_are_dangling_undo_ticks && !x->r_ob.item_changed_at_mousedown && (x->r_ob.j_mousedown_obj_type == k_LOOP_REGION) && !(modifiers & eShiftKey)) { 
         double start_ms = x->r_ob.loop_region.start.position_ms;
         double end_ms = x->r_ob.loop_region.end.position_ms;
         t_timepoint start_tp = ms_to_timepoint_autochoose_voice((t_notation_obj *)x, start_ms, k_MS_TO_TP_RETURN_NEAREST, NULL);
@@ -14428,7 +14428,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
     }
     
-    if (!there_are_free_undo_ticks && !x->r_ob.item_changed_at_mousedown && x->r_ob.j_mousedown_obj_type == k_REGION && (x->r_ob.j_mousedown_point.x != pt.x || x->r_ob.j_mousedown_point.y != pt.y)) { 
+    if (!there_are_dangling_undo_ticks && !x->r_ob.item_changed_at_mousedown && x->r_ob.j_mousedown_obj_type == k_REGION && (x->r_ob.j_mousedown_point.x != pt.x || x->r_ob.j_mousedown_point.y != pt.y)) { 
         if (modifiers & eCommandKey){
             // set dilation rectangle
             x->r_ob.dilation_rectangle.left_ux = xposition_to_unscaled_xposition((t_notation_obj *) x, x->r_ob.j_mousedown_point.x);
@@ -14633,7 +14633,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
 
     if (clicked_slot) {
         unlock_general_mutex((t_notation_obj *)x);    
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
         return;
 
     }
@@ -15188,7 +15188,7 @@ void linear_edit_jump_to_next_chord(t_score *x)
             unlock_general_mutex((t_notation_obj *)x);
 
             notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
-            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LINEAR_EDIT_ADD_CHORD);
+            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LINEAR_EDIT_ADD_CHORD);
         }
     }
 }
@@ -15391,7 +15391,7 @@ void score_copy_selected_measures(t_score *x, char cut)
     unlock_general_mutex((t_notation_obj *)x);
     
     if (cut)
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_MEASURES);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_MEASURES);
 }
 
 
@@ -15446,7 +15446,7 @@ void score_paste_replace_single_measures(t_score *x, char also_paste_tempi)
     }
     unlock_general_mutex((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_MEASURES);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_MEASURES);
 }
 
 
@@ -15520,7 +15520,7 @@ void score_paste_replace_measures(t_score *x, char also_paste_tempi)
     }
     unlock_general_mutex((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_MEASURES);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_MEASURES);
 }
 
 
@@ -15552,7 +15552,7 @@ void score_paste_measures(t_score *x, long at_this_measure_1based, long from_thi
     perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
     unlock_general_mutex((t_notation_obj *) x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_MEASURES);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_MEASURES);
     llll_free(ll);
 }
 
@@ -15672,7 +15672,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             if (ch) 
                 ch->need_recompute_parameters = true;
             
-            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_SHARP);
+            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_SHARP);
             
             if (x->r_ob.playback_during_linear_editing && ch)
                 send_chord_as_llll((t_notation_obj *) x, ch, 7, k_CONSIDER_FOR_DUMPING, -1);
@@ -15681,7 +15681,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             if (ch)
                 ch->need_recompute_parameters = true;
 
-            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_FLAT);
+            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_FLAT);
             
             if (x->r_ob.playback_during_linear_editing && ch)
                 send_chord_as_llll((t_notation_obj *) x, ch, 7, k_CONSIDER_FOR_DUMPING, -1);
@@ -15829,7 +15829,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                         x->r_ob.notation_cursor.chord = NULL;
                         unlock_general_mutex((t_notation_obj *)x);
 
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_CLEAR_MEASURE);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_CLEAR_MEASURE);
                     } else
                         unlock_general_mutex((t_notation_obj *)x);
 
@@ -15856,7 +15856,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                 x->r_ob.notation_cursor.chord = NULL;
                                 unlock_general_mutex((t_notation_obj *)x);
 
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_CLEAR_MEASURE);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_CLEAR_MEASURE);
                             } else {
                                 unlock_general_mutex((t_notation_obj *)x);
                             }
@@ -15889,7 +15889,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                 x->r_ob.notation_cursor.chord = NULL;
                                 unlock_general_mutex((t_notation_obj *)x);
 
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_CLEAR_MEASURE);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_CLEAR_MEASURE);
                             } else {
                                 unlock_general_mutex((t_notation_obj *)x);
                             }
@@ -15960,7 +15960,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                     if (ch)
                         ch->need_recompute_parameters = true;
                     unlock_general_mutex((t_notation_obj *) x);
-                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_TOGGLE_TIES);
+                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_TOGGLE_TIES);
                     break;
                 }
                 case 'x': // make chord grace
@@ -15974,7 +15974,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                         set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
                     }
                     unlock_general_mutex((t_notation_obj *) x);
-                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_TOGGLE_GRACE);
+                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_TOGGLE_GRACE);
                     break;
                 }
                 case 'n': // add new note to chord
@@ -15986,7 +15986,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                         if (x->r_ob.auto_jump_to_next_chord)
                             linear_edit_jump_to_next_chord(x);
                         force_inscreen_ux_rolling_while_editing(x);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_NOTE);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_NOTE);
                         if (x->r_ob.playback_during_linear_editing && x->r_ob.notation_cursor.chord)
                             send_chord_as_llll((t_notation_obj *) x, x->r_ob.notation_cursor.chord, 7, k_CONSIDER_FOR_DUMPING, -1);
                     }
@@ -16033,7 +16033,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                 if (x->r_ob.playback_during_linear_editing && ch)
                                     send_chord_as_llll((t_notation_obj *) x, ch, 7, k_CONSIDER_FOR_DUMPING, -1);
 
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_DELETE_NOTE);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_DELETE_NOTE);
                             }
 
                         } else {
@@ -16053,7 +16053,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                             set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
                             unlock_general_mutex((t_notation_obj *) x);
 
-                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_DELETE_CHORD);
+                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_DELETE_CHORD);
                         }
                     } else {
                         unlock_general_mutex((t_notation_obj *) x);
@@ -16090,7 +16090,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                             x->r_ob.need_recompute_chords_double_onset = true;
                             set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
                             unlock_general_mutex((t_notation_obj *)x);
-                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_SPLIT_CHORD);
+                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_SPLIT_CHORD);
                         }
                     } else if (modifiers & eAltKey && keycode > 50 && keycode != 56 && keycode != 52) {    // no 4, no 8
                         if (x->r_ob.defining_numerator && x->r_ob.num_speedy_tuplets >= 0) {
@@ -16218,7 +16218,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                             }
                             
                             if (op != k_UNDO_OP_UNKNOWN)
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, op);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, op);
 
                             force_inscreen_ux_rolling_while_editing(x);
                             
@@ -16346,14 +16346,14 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                     // return to normal position!
                     if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_PITCH)) return 0;
                     reset_selection_tail_gliss((t_notation_obj *) x);
-                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESET_TAIL_SLOPE); 
+                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESET_TAIL_SLOPE); 
                     return 1;
                 }
             case JKEY_UPARROW:
             case JKEY_DOWNARROW:
                 if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_PITCH)) return 0;
                 change_selection_breakpoint_pitch((t_notation_obj *)x, (keycode == JKEY_UPARROW ? 1 : -1) * (modifiers & eShiftKey ? 1200 : 200 / x->r_ob.tone_division));
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, keycode == JKEY_UPARROW ? k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION : k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, keycode == JKEY_UPARROW ? k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION : k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION); 
                 return 1;
         }
     } else */
@@ -16361,7 +16361,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
     if (x->r_ob.selection_type == k_DYNAMICS) {
         if (keycode == JKEY_UPARROW || keycode == JKEY_DOWNARROW) {
             dynamics_change_sel_energy_delta((t_notation_obj *)x, keycode == JKEY_UPARROW ? 1 : -1, true);
-            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DYNAMICS);
+            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DYNAMICS);
             return 1;
         }
     }
@@ -16376,19 +16376,19 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                     return 0;
                 reset_selection_tail_gliss((t_notation_obj *) x);
                 delete_breakpoints_in_selection((t_notation_obj *) x);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_PITCH_BREAKPOINTS_IN_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_PITCH_BREAKPOINTS_IN_SELECTION); 
                 return 1;
             case JKEY_ESC:
                 // put the slope at 0.
                 if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_GENERIC)) return 0;
                 reset_selection_breakpoint_slope((t_notation_obj *) x);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESET_PITCH_BREAKPOINTS_SLOPE_FOR_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESET_PITCH_BREAKPOINTS_SLOPE_FOR_SELECTION); 
                 return 1;
             case JKEY_UPARROW:
             case JKEY_DOWNARROW:
                 if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_PITCH)) return 0;
                 change_selection_breakpoint_pitch((t_notation_obj *)x, (keycode == JKEY_UPARROW ? 1 : -1) * (modifiers & eShiftKey ? 1200 : 200 / x->r_ob.tone_division));
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, keycode == JKEY_UPARROW ? k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION : k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, keycode == JKEY_UPARROW ? k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION : k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION); 
                 return 1;
         }
     } else if (x->r_ob.selection_type == k_MEASURE) { // only measures selected + BACKSPACE 
@@ -16396,18 +16396,18 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             if (modifiers & eShiftKey) {
                 if (!is_editable((t_notation_obj *)x, k_MEASURE, k_DELETION)) return 0;
                 delete_selected_measures(x);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_MEASURES_IN_SELECTION);
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_MEASURES_IN_SELECTION);
                 return 1;
             } else {
                 if (!is_editable((t_notation_obj *)x, k_CHORD, k_DELETION)) return 0;
                 clear_selected_measures(x);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CLEAR_MEASURES_IN_SELECTION);
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CLEAR_MEASURES_IN_SELECTION);
                 return 1;
             }
         } else if ((modifiers & eCommandKey) && (keycode == 100)) { // only measures selected + Cmd+D
             if (!is_editable((t_notation_obj *)x, k_MEASURE, k_CREATION)) return 0;
             duplicate_selected_measures(x);
-            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DUPLICATE_SELECTED_MEASURES); 
+            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DUPLICATE_SELECTED_MEASURES); 
             return 1;
         } else if ((keycode == JKEY_LEFTARROW || keycode == JKEY_RIGHTARROW || keycode == JKEY_UPARROW || keycode == JKEY_DOWNARROW) && x->r_ob.j_last_mousedown_obj_type == k_MEASURE){
             t_measure *meas = (t_measure *) x->r_ob.j_last_mousedown_ptr;
@@ -16447,39 +16447,39 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
     } else if (x->r_ob.selection_type == k_MEASURE_END_BARLINE && (keycode == JKEY_BACKSPACE || keycode == JKEY_DELETE) && modifiers == eShiftKey) {
         if (!is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_GENERIC)) return 0;
         reset_selected_measures_local_spacing_width_multiplier((t_notation_obj *)x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESET_LOCAL_SPACING_FOR_SELECTION); 
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESET_LOCAL_SPACING_FOR_SELECTION); 
         return 1;
     } else if ((x->r_ob.selection_type == k_TEMPO) && (keycode == JKEY_BACKSPACE || keycode == JKEY_DELETE)) { // only tempi selected + BACKSPACE
         if (!is_editable((t_notation_obj *)x, k_TEMPO, k_DELETION)) return 0;
         delete_selected_tempi(x, true);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SELECTED_TEMPI); 
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SELECTED_TEMPI); 
         return 1;
     } else if ((x->r_ob.selection_type == k_TEMPO) && (modifiers & eCommandKey && modifiers & eAltKey && modifiers & eShiftKey) && (keycode == 105)) { // only tempi selected + Cmd+Alt+Shift+I 
         if (!is_editable((t_notation_obj *)x, k_TEMPO, k_MODIFICATION_GENERIC)) return 0;
         switch_interpolation_to_selected_tempi(x, true);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TOGGLE_INTERPOLATION_FOR_SELECTED_TEMPI); 
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TOGGLE_INTERPOLATION_FOR_SELECTED_TEMPI); 
         return 1;
     } else if (x->r_ob.selection_type == k_ARTICULATION && (keycode == JKEY_BACKSPACE || keycode == JKEY_DELETE)) { // only measures selected + BACKSPACE
         if (!is_editable((t_notation_obj *)x, k_ARTICULATION, k_DELETION)) return 0;
         delete_articulations_in_selection((t_notation_obj *) x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULATIONS_FOR_SELECTION); 
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULATIONS_FOR_SELECTION); 
         return 1;
 #ifdef BACH_SUPPORT_SLURS
     } else if ((x->r_ob.selection_type == k_SLUR_START_POINT || x->r_ob.selection_type == k_SLUR_END_POINT || x->r_ob.selection_type == k_SLUR) && (keycode == JKEY_BACKSPACE || keycode == JKEY_DELETE)) {
         if (!is_editable((t_notation_obj *)x, k_SLUR, k_DELETION)) return 0;
         delete_slurs_in_selection(x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLURS_FOR_SELECTION); 
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLURS_FOR_SELECTION); 
         return 1;
 #endif
     }
     if (handle_keys_for_articulations((t_notation_obj *) x, patcherview, keycode, modifiers, textcharacter) && is_editable((t_notation_obj *)x, k_ARTICULATION, k_CREATION)) {
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_ARTICULATION_TO_SELECTION); 
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_ARTICULATION_TO_SELECTION); 
         return 1;
     }
     
     if (modifiers & eControlKey && keycode >= 'a' && keycode <= 'g' && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_PITCH)) {
         change_pitch_to_selection_from_diatonic_step((t_notation_obj *) x, keycode == 'a' ? 5 : (keycode == 'b' ? 6 : keycode - 'c'));
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_PITCH); 
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_PITCH); 
         return 1;
     }
 
@@ -16494,7 +16494,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 } else {
                     change_pitch_for_selection(x, dir, 0, ((modifiers & eControlKey) && (modifiers & eShiftKey)), true);
                 }
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, dir  > 0 ? k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION : k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION);
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, dir  > 0 ? k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION : k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION);
                 return 1;
             }
             return 0;
@@ -16508,7 +16508,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                     if (x->r_ob.selected_slot_items->l_size > 0) {
                         undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, get_activeitem_undo_item((t_notation_obj *)x), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         delete_all_selected_function_points((t_notation_obj *)x, x->r_ob.active_slot_num);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLOT_CONTENT);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLOT_CONTENT);
                     }
                 }
             } else { 
@@ -16519,7 +16519,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 turn_selection_into_rests(x, is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_DELETION), is_editable((t_notation_obj *)x, k_LYRICS, k_ELEMENT_ACTIONS_NONE), is_editable((t_notation_obj *)x, k_DYNAMICS, k_ELEMENT_ACTIONS_NONE), slots_to_transfer, false, false);
                 llll_free(slots_to_transfer);
                 notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TURN_SELECTION_INTO_RESTS); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TURN_SELECTION_INTO_RESTS); 
             }
             return 1;
             break;
@@ -16534,7 +16534,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         case JKEY_TAB:
             if (is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)) {
                 rebeam_levels_of_selected_tree_nodes(x, modifiers & eAltKey, !(modifiers & eControlKey), k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, modifiers & eAltKey ? k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS_FOR_SELECTION : k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS_FOR_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, modifiers & eAltKey ? k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS_FOR_SELECTION : k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS_FOR_SELECTION); 
                 return 1;
             }
             return 0;
@@ -16543,10 +16543,10 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             if (modifiers & eCommandKey && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_CREATION) && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE) ) {
                 if (modifiers & eShiftKey){
 //                    rebeam_levels_of_selected_tree_nodes(x, modifiers & eAltKey);
-//                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, modifiers & eAltKey ? k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS_FOR_SELECTION : k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS_FOR_SELECTION); 
+//                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, modifiers & eAltKey ? k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS_FOR_SELECTION : k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS_FOR_SELECTION); 
 //                } else {
                     quick_merge_selection(x);
-                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_JOIN_SELECTION); 
+                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_JOIN_SELECTION); 
                     return 1;
                 }
             }
@@ -16579,7 +16579,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         case 'f': // Cmd+Shift+F: Fix tree
             if (modifiers & eCommandKey && modifiers & eShiftKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)) {
                 fix_levels_of_selected_tree_nodes_as_original(x); 
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE_FOR_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE_FOR_SELECTION); 
                 return 1;
             }
             return 0;
@@ -16587,7 +16587,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         case 'h': // Cmd+Shift+H: Splatter tree
             if (modifiers & eCommandKey && modifiers & eShiftKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)) {
                 splatter_selected_tree_nodes(x, true, true, true);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_FOR_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_FOR_SELECTION); 
                 return 1;
             }
             return 0;
@@ -16595,7 +16595,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         case 'g': // Cmd+Shift+G: Group tree
             if (modifiers & eCommandKey && modifiers & eShiftKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)) {
                 create_level_for_selected_tree_nodes(x);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_RHYTHMIC_TREE_LEVELS_FROM_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_RHYTHMIC_TREE_LEVELS_FROM_SELECTION); 
                 return 1;
             }
             return 0;
@@ -16604,12 +16604,12 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             if (modifiers & eCommandKey && modifiers & eShiftKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE) && x->r_ob.allow_lock) { 
                 if (x->r_ob.selection_type == k_MEASURE) {
                     lock_unlock_rhythmic_trees_in_selection((t_notation_obj *) x);
-                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LOCK_UNLOCK_RHYTHMIC_TREES_FOR_SELECTION); 
+                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LOCK_UNLOCK_RHYTHMIC_TREES_FOR_SELECTION); 
                 }
                 return 1;
             } else if (modifiers & eCommandKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_GENERIC)) {// tie 
                 tie_untie_selection(x);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TIE_UNTIE_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TIE_UNTIE_SELECTION); 
                 return 1;
             }
             return 0;
@@ -16621,7 +16621,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 split_selection(x, keycode - 48, !(modifiers & eAltKey));  // split selection - ALSO WORKS WITH TREES
                 if (!(modifiers & eShiftKey))
                     rebeam_levels_of_selected_tree_nodes(x, false, false, k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SPLIT_SELECTION); 
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SPLIT_SELECTION); 
                 return 1;
             } else if (!(modifiers & eCommandKey) && !(modifiers & eAltKey) && !(modifiers & eControlKey)) {
                  select_only_first_item_if_tieseq_is_selected(x);
@@ -16692,7 +16692,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                         if (x->r_ob.selection_type == k_MEASURE) {
                             if (is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_GENERIC) && x->r_ob.allow_barline_lock) {
                                 fix_unfix_barlines_in_selection((t_notation_obj *) x);
-                                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_FIX_UNFIX_MEASURE_WIDTH_FOR_SELECTION);
+                                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_FIX_UNFIX_MEASURE_WIDTH_FOR_SELECTION);
                                 remove_all_tuttipoints_flag_modified(x);
                             }
                         } else {
@@ -16711,7 +16711,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                     } else {
                         if (x->r_ob.allow_lock) {
                             lock_unlock_selection((t_notation_obj *) x, true);
-                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LOCK_UNLOCK_SELECTION);
+                            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LOCK_UNLOCK_SELECTION);
                             remove_all_tuttipoints_flag_modified(x);
                         }
                     }
@@ -16724,7 +16724,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         case 'u': // Cmd+U
             if (modifiers & eCommandKey && x->r_ob.allow_mute) {
                 mute_unmute_selection((t_notation_obj *) x, true);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MUTE_UNMUTE_SELECTION);
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MUTE_UNMUTE_SELECTION);
                 return 1;
             }
             return 0;
@@ -16733,11 +16733,11 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         case 'j': // Cmd+J or Cmd+Shift+J
             if (modifiers & eCommandKey && modifiers & eShiftKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)) {
                 destroy_selected_tree_nodes(x, true, true, true);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_LEVEL_FOR_SELECTION);
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_LEVEL_FOR_SELECTION);
                 return 1;
             } else if (modifiers & eCommandKey && x->r_ob.allow_solo) {
                 solo_unsolo_selection((t_notation_obj *) x, true);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SOLO_UNSOLO_SELECTION);
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SOLO_UNSOLO_SELECTION);
                 return 1;
             }
             return 0;
@@ -16748,11 +16748,11 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 if (is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_PITCH)){
                     if (modifiers & eShiftKey) {
                         snap_pitch_to_grid_for_selection((t_notation_obj *) x);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
                         return 1;
                     } else {
                         enharmonically_respell_selection((t_notation_obj *) x);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
                         return 1;
                     }
                 }
@@ -17508,15 +17508,19 @@ void score_undo_redo(t_score *x, char what)
     lock_general_mutex((t_notation_obj *)x);
     long flags = notationobj_undo_redo((t_notation_obj *)x, what);
 
-    if (flags & k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION)
-        recompute_all_except_for_beamings_and_autocompletion(x);
-
-    if (flags & k_UNDO_PERFORM_FLAG_PERFORM_ANALYSIS_AND_CHANGE)
-        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
+    if (flags & k_UNDO_PERFORM_FLAG_NOTHING_DONE) {
+        unlock_general_mutex((t_notation_obj *)x);
+    } else {
+        if (flags & k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION)
+            recompute_all_except_for_beamings_and_autocompletion(x);
         
-    unlock_general_mutex((t_notation_obj *)x);
-
-    handle_change((t_notation_obj *)x, x->r_ob.send_undo_redo_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_STANDARD, k_UNDO_OP_UNKNOWN);
+        if (flags & k_UNDO_PERFORM_FLAG_PERFORM_ANALYSIS_AND_CHANGE)
+            perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
+        
+        unlock_general_mutex((t_notation_obj *)x);
+        
+        handle_change((t_notation_obj *)x, x->r_ob.send_undo_redo_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_STANDARD, k_UNDO_OP_UNKNOWN);
+    }
 }
 
 void score_getmaxID(t_score *x){
@@ -17527,7 +17531,7 @@ void score_resetslotinfo(t_score *x)
 {
     create_whole_score_undo_tick(x);
     notationobj_reset_slotinfo((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
 }
 
 
@@ -17535,14 +17539,14 @@ void score_resetarticulationinfo(t_score *x)
 {
     create_whole_score_undo_tick(x);
     notationobj_reset_articulationinfo((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CUSTOM_ARTICULATIONS_DEFINITION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CUSTOM_ARTICULATIONS_DEFINITION);
 }
 
 void score_resetnoteheadinfo(t_score *x)
 {
     create_whole_score_undo_tick(x);
     notationobj_reset_noteheadinfo((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CUSTOM_NOTEHEADS_DEFINITION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CUSTOM_NOTEHEADS_DEFINITION);
 }
 
 
@@ -17599,14 +17603,14 @@ void score_unsolo(t_score *x)
 void score_sel_rebeam(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     rebeam_levels_of_selected_tree_nodes(x, false, false, k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS + k_BEAMING_CALCULATION_DONT_CHANGE_TIES + k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_BEAM);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_BEAM);
 }
 
 void score_sel_reparse(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     char type = argc && argv && atom_gettype(argv) == A_LONG && atom_getlong(argv) != 0 ? 1 : 0;
     rebeam_levels_of_selected_tree_nodes(x, type, true, k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, type == 1 ? k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS_FOR_SELECTION : k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, type == 1 ? k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS_FOR_SELECTION : k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS_FOR_SELECTION);
 }
 
 void score_copyslot_fn(t_notation_obj *r_ob, t_note *nt, void *dummy){
@@ -17806,7 +17810,7 @@ void score_slice(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     llll_free(arguments);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SLICE);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SLICE);
 }
 
 
@@ -17926,5 +17930,5 @@ void score_tail_to_grace(t_score *x, t_llll *args)
     perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
     unlock_general_mutex((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SLICE);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SLICE);
 }

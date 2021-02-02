@@ -11287,7 +11287,7 @@ void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, lo
             unlock_general_mutex((t_notation_obj *)x);
     }
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CEIL_MEASURES);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CEIL_MEASURES);
 }
 
 

@@ -1086,6 +1086,7 @@ typedef enum _bach_undo_perform_flags {
     k_UNDO_PERFORM_FLAG_PERFORM_ANALYSIS_AND_CHANGE = 2,
     k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION = 4,
     k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH = 8,
+    k_UNDO_PERFORM_FLAG_NOTHING_DONE = 16,
 } e_bach_undo_perform_flags;
 
 
@@ -1652,7 +1653,7 @@ typedef enum _clone_for_types
 
 
 
-/** Actions to perform when something has changed, given as argument for handle_change() or handle_change_if_there_are_free_undo_ticks().
+/** Actions to perform when something has changed, given as argument for handle_change() or handle_change_if_there_are_dangling_undo_ticks().
     See also the convenience combinations #k_CHANGED_DO_NOTHING, #k_CHANGED_STANDARD_SEND_BANG, #k_CHANGED_STANDARD_UNDO_MARKER and #k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG.
     @ingroup    interface
  */
@@ -1668,6 +1669,7 @@ typedef enum _actions_upon_change
     k_CHANGED_CREATE_UNDO_STEP_MARKER = 32,            ///< Create a new marker for an undo step, with the label which is passed as argument.
                                                     ///< An undo step markers ends a sequence of undo ticks, which have been placed previously by all the interface actions.
     k_CHANGED_PERFORM_ANALYSIS_AND_CHANGE = 64,        ///< Only used by score: means that score also have to call the #perform_analysis_and_change() routine explicitely
+    k_CHANGED_FORCE_CREATE_UNDO_STEP_MARKER = 128,   ///< As k_CHANGED_CREATE_UNDO_STEP_MARKER, but also forces the creation when the mouse is being dragged
 
     // convenience combinations
     k_CHANGED_STANDARD = k_CHANGED_REDRAW_STATIC_LAYER + k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_SEND_AUTOMESSAGE, // Redraw static layer, check correct play scheduling and send the automessage
@@ -4397,7 +4399,7 @@ typedef struct _notation_obj
     char        breakpoints_have_velocity;            ///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
     char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads
     
-    char        notify_with;                           ///< Notification type through last outlet
+    char        notify_with;                           ///< Notification type through last outlet (0 = bang, 1 = operation label, 2 = operation details, 3 = undo operation details)
     char        last_operation_is;         ///< -1 = undo, 1 = redo, 0 = anything else
     char        notify_when_painted;                ///< Flag telling if we want notifications to be sent whenever the object is repainted
     char        notify_also_upon_messages;            ///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes 
@@ -5690,6 +5692,14 @@ long elementtypesym2elementtypeid(t_symbol *sym);
     @return        The action as one of the #e_element_actions
  */
 long actiontypesym2actiontypeid(t_symbol *sym);
+
+
+/** Convert a symbol into one of the #e_header_elems.
+ @ingroup    conversions
+ @param        this_sym        The symbol of header object ("body", "header", "clefs", "markers", "groups", "midichannel", "commands", "keys", "slotinfo", "voicenames", "stafflines"...)
+ @return        The header object as one of the #e_header_elems).
+ */
+e_header_elems header_symbol_to_long(t_symbol *this_sym);
 
 
 /** Convert an llll containing the symbols of header objects into a combination of #e_header_elems.
@@ -11235,7 +11245,7 @@ char add_articulation_to_selected_elements(t_notation_obj *r_ob, long articulati
     @remark                        The standard usage is within the _key() method, with something like this (<x> could be a t_score or a t_roll): 
                                 @code
                                 if (handle_keys_for_articulations((t_notation_obj *) x, patcherview, keycode, modifiers, textcharacter)) {
-                                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Add Articulation To Selection")); 
+                                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Add Articulation To Selection")); 
                                     return 1;
                                 }
                                 @endcode
@@ -15513,7 +15523,7 @@ void handle_change_selection(t_notation_obj *r_ob);
         handle_change(r_ob, change_type, undo_op);
     @endcode
  */
-void handle_change_if_there_are_free_undo_ticks(t_notation_obj *r_ob, int change_type, e_undo_operations undo_op);
+void handle_change_if_there_are_dangling_undo_ticks(t_notation_obj *r_ob, int change_type, e_undo_operations undo_op);
 
 
 
@@ -15628,7 +15638,7 @@ t_timesignature popup_menu_result_to_timesignature(t_notation_obj *r_ob, long re
     @param        note        The clicked note
     @param        modifiers    The key modifiers
     @param      clipboard_type  The current clipboard element type
-    @return                    One of the #e_actions_upon_change, determining the action to be passed to handle_change() or handle_change_if_there_are_free_undo_ticks(), or
+    @return                    One of the #e_actions_upon_change, determining the action to be passed to handle_change() or handle_change_if_there_are_dangling_undo_ticks(), or
                             the chosen item ID (only in case this is 473, 474, 475, and from 600 to 605), which are values linked
                             with object-specific actions, and thus need to be passed to the specific objects.
                             Specifically, these values correspond to:
@@ -15652,27 +15662,27 @@ t_timesignature popup_menu_result_to_timesignature(t_notation_obj *r_ob, long re
         res = k_CHANGED_DO_NOTHING; // undo ticks, undo markers and bang already done in roll_legato
      } else if (res == 600){
         rebeam_levels_of_selected_tree_nodes(x, false);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS);
      } else if (res == 601){
         fix_levels_of_selected_tree_nodes_as_original(x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE);
      } else if (res == 602){
         destroy_selected_tree_nodes(x, true, true, true);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE);
      } else if (res == 603){
         create_level_for_selected_tree_nodes(x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_RHYTHMIC_TREE_LEVEL);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_RHYTHMIC_TREE_LEVEL);
      } else if (res == 604){
         splatter_selected_tree_nodes(x, true, true, true);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_LEVEL);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_LEVEL);
      } else if (res == 605){
         rebeam_levels_of_selected_tree_nodes(x, true);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS);
      } else if (res != k_CHANGED_DO_NOTHING)
         handle_change((t_notation_obj *)x, res, 0);
  @endcode
  @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_element_types clipboard_type = k_NONE);
 
@@ -15688,7 +15698,7 @@ long handle_durationline_popup(t_notation_obj *r_ob, t_duration_line *dl, long m
     @param        r_ob        The notation object
     @param        measure        The clicked measure
     @param        modifiers    The key modifiers
-    @return                    One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or to handle_change_if_there_are_free_undo_ticks(), or 
+    @return                    One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or to handle_change_if_there_are_dangling_undo_ticks(), or 
                             the chosen item ID (only in case this from 600 to 605), which are values linked
                             with object-specific actions, and thus need to be passed to the specific objects.
                             Specifically, these values correspond to:
@@ -15700,7 +15710,7 @@ long handle_durationline_popup(t_notation_obj *r_ob, t_duration_line *dl, long m
                             - 604: Destroy Level (in Rhythmic Tree, [bach.score] only)
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifiers);
 
@@ -15712,10 +15722,10 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
     @param        r_ob        The notation object
     @param        measure        The measure whose right barline has been clicked
     @param        modifiers    The key modifiers
-    @return                    One of the #e_actions_upon_change, determining the action to be passed to handle_change() or to handle_change_if_there_are_free_undo_ticks().
+    @return                    One of the #e_actions_upon_change, determining the action to be passed to handle_change() or to handle_change_if_there_are_dangling_undo_ticks().
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifiers);
 
@@ -15730,7 +15740,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
     @param        modifiers        The key modifiers
     @param        chosenelement    Pointer to an integer to be filled with the chosen element ID, actually meaningful only when
                                 k_CHANGED_DO_NOTHING is returned, in order to perform object-specific operations
-    @return                        One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_free_undo_ticks().
+    @return                        One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_dangling_undo_ticks().
     @see        handle_note_popup()
     @remark        Sample code should be like this:
                 @code
@@ -15753,7 +15763,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                                 atom_setsym(av+i, x->r_ob.clefs_as_symlist[i]);
                         }
                         score_setattr_clefs(x, NULL, x->r_ob.num_voices, av);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Clefs"));
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Clefs"));
                     } 
                     
                     // keys?
@@ -15769,19 +15779,19 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                                 atom_setsym(av+i, x->r_ob.keys_as_symlist[i]);
                         }
                         score_setattr_keys(x, NULL, x->r_ob.num_voices, av);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Keys"));
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Keys"));
                     }
                     
                     // midichannels?
                     if (chosenelem > 150 && chosenelem <= 166){
                         undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MIDICHANNELS);
                         change_single_midichannel((t_notation_obj *) x, (t_voice *)voice, chosenelem - 150);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Midichannels"));
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Midichannels"));
                     } 
                 }
                 @endcode
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_voice_popup(t_notation_obj *r_ob, t_voice *voice, long modifiers, int *chosenelement);
 
@@ -15793,10 +15803,10 @@ long handle_voice_popup(t_notation_obj *r_ob, t_voice *voice, long modifiers, in
     @param        r_ob        The notation object
     @param        modifiers    The key modifiers
     @param      clipboard_type  The current clipboard element type
-    @return                    One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_free_undo_ticks().
+    @return                    One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_dangling_undo_ticks().
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_background_popup(t_notation_obj *r_ob, long modifiers, e_element_types clipboard_type = k_NONE);
 
@@ -15809,10 +15819,10 @@ long handle_background_popup(t_notation_obj *r_ob, long modifiers, e_element_typ
     @param        modifiers        The key modifiers
     @param        clicked_item    The slotitem in the window which was clicked (for slots of type #k_SLOT_TYPE_DYNFILTER)
                                 Leave it NULL for trivial (for #k_SLOT_TYPE_FILTER).
-    @return                        One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_free_undo_ticks().
+    @return                        One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_dangling_undo_ticks().
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_filters_popup(t_notation_obj *r_ob, long modifiers, t_slotitem *clicked_item);
 
@@ -15827,7 +15837,7 @@ long handle_filters_popup(t_notation_obj *r_ob, long modifiers, t_slotitem *clic
     @param        modifiers        The key modifiers
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_articulations_popup(t_notation_obj *r_ob, t_articulation *art, long modifiers);
 
@@ -17259,6 +17269,14 @@ void notation_class_add_notation_attributes(t_class *c, char obj_type);
 void notation_class_add_behavior_attributes(t_class *c, char obj_type);
 
 
+/** Add to a class all the common attributes concerning notifications.
+ @ingroup    attributes
+ @param        c            The class
+ @param        obj_type    The object type (one of the #e_notation_objects)
+ */
+void notation_class_add_notification_attributes(t_class *c, char obj_type);
+
+
 /** Add to a class all the common attributes concerning object editing.
     @ingroup    attributes
     @param        c            The class
@@ -18063,7 +18081,7 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
     @param    attr    The bach attribute
     @param    ac        The number of atoms in the A_GIMME signature
     @param    av        The atoms of the A_GIMME signature
-    @param    force_undo_step    If this is non-zero, the function handle_change_if_there_are_free_undo_ticks() is called in order to set the undo marker.
+    @param    force_undo_step    If this is non-zero, the function handle_change_if_there_are_dangling_undo_ticks() is called in order to set the undo marker.
                             This is usually set to 1 (we put the undo marker).
  */
 void set_bach_attr_and_process_from_ac_av(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr, long ac, t_atom *av, char force_undo_step);

@@ -22578,6 +22578,44 @@ long get_tie_corresponding_to_mc(t_llll *ties, t_llll *mc, double this_mc, doubl
 }
 
 
+e_header_elems header_symbol_to_long(t_symbol *this_sym)
+{
+    if (this_sym == _llllobj_sym_body)
+        return k_HEADER_BODY;
+    else if (this_sym == _llllobj_sym_clefs)
+        return k_HEADER_CLEFS;
+    else if (this_sym == _llllobj_sym_markers)
+        return k_HEADER_MARKERS;
+    else if (this_sym == _llllobj_sym_groups)
+        return k_HEADER_GROUPS;
+    else if (this_sym == _llllobj_sym_midichannels)
+        return k_HEADER_MIDICHANNELS;
+    else if (this_sym == _llllobj_sym_commands)
+        return k_HEADER_COMMANDS;
+    else if (this_sym == _llllobj_sym_keys)
+        return k_HEADER_KEYS;
+    else if (this_sym == _llllobj_sym_slotinfo)
+        return k_HEADER_SLOTINFO;
+    else if (this_sym == _llllobj_sym_voicenames)
+        return k_HEADER_VOICENAMES;
+    else if (this_sym == _llllobj_sym_voicespacing)
+        return k_HEADER_VOICESPACING;
+    else if (this_sym == _llllobj_sym_hidevoices)
+        return k_HEADER_HIDEVOICES;
+    else if (this_sym == _llllobj_sym_stafflines)
+        return k_HEADER_STAFFLINES;
+    else if (this_sym == _llllobj_sym_articulationinfo)
+        return k_HEADER_ARTICULATIONINFO;
+    else if (this_sym == _llllobj_sym_noteheadinfo)
+        return k_HEADER_NOTEHEADINFO;
+    else if (this_sym == _llllobj_sym_numparts)
+        return k_HEADER_NUMPARTS;
+    else if (this_sym == _llllobj_sym_loop)
+        return k_HEADER_LOOP;
+    else if (this_sym == _llllobj_sym_header)
+        return (e_header_elems)(k_HEADER_ALL & (~(k_HEADER_BODY)));
+    return k_HEADER_NONE;
+}
 
 e_header_elems header_objects_to_long(t_llll *inllll){
     t_llllelem *elem;
@@ -22589,40 +22627,7 @@ e_header_elems header_objects_to_long(t_llll *inllll){
     for (elem = inllll->l_head; elem; elem = elem->l_next) {
         if (hatom_gettype(&elem->l_hatom) == H_SYM) {
             t_symbol *this_sym = hatom_getsym(&elem->l_hatom);
-            if (this_sym == _llllobj_sym_body)
-                res = (e_header_elems) (res | k_HEADER_BODY);
-            else if (this_sym == _llllobj_sym_clefs)
-                res = (e_header_elems) (res | k_HEADER_CLEFS);
-            else if (this_sym == _llllobj_sym_markers)
-                res = (e_header_elems) (res | k_HEADER_MARKERS);
-            else if (this_sym == _llllobj_sym_groups)
-                res = (e_header_elems) (res | k_HEADER_GROUPS);
-            else if (this_sym == _llllobj_sym_midichannels)
-                res = (e_header_elems) (res | k_HEADER_MIDICHANNELS);
-            else if (this_sym == _llllobj_sym_commands)
-                res = (e_header_elems) (res | k_HEADER_COMMANDS);
-            else if (this_sym == _llllobj_sym_keys)
-                res = (e_header_elems) (res | k_HEADER_KEYS);
-            else if (this_sym == _llllobj_sym_slotinfo)
-                res = (e_header_elems) (res | k_HEADER_SLOTINFO);
-            else if (this_sym == _llllobj_sym_voicenames)
-                res = (e_header_elems) (res | k_HEADER_VOICENAMES);
-            else if (this_sym == _llllobj_sym_voicespacing)
-                res = (e_header_elems) (res | k_HEADER_VOICESPACING);
-            else if (this_sym == _llllobj_sym_hidevoices)
-                res = (e_header_elems) (res | k_HEADER_HIDEVOICES);
-            else if (this_sym == _llllobj_sym_stafflines)
-                res = (e_header_elems) (res | k_HEADER_STAFFLINES);
-            else if (this_sym == _llllobj_sym_articulationinfo)
-                res = (e_header_elems) (res | k_HEADER_ARTICULATIONINFO);
-            else if (this_sym == _llllobj_sym_noteheadinfo)
-                res = (e_header_elems) (res | k_HEADER_NOTEHEADINFO);
-            else if (this_sym == _llllobj_sym_numparts)
-                res = (e_header_elems) (res | k_HEADER_NUMPARTS);
-            else if (this_sym == _llllobj_sym_loop)
-                res = (e_header_elems) (res | k_HEADER_LOOP);
-            else if (this_sym == _llllobj_sym_header)
-                res = (e_header_elems) (res | (k_HEADER_ALL & (~(k_HEADER_BODY))));
+            res = (e_header_elems) (res | header_symbol_to_long(this_sym));
         }
     }
 
@@ -39903,7 +39908,7 @@ char notation_item_is_ancestor_of(t_notation_obj *r_ob, t_notation_item *dad, t_
 
 
 
-void handle_change_if_there_are_free_undo_ticks(t_notation_obj *r_ob, int change_type, e_undo_operations undo_op) {
+void handle_change_if_there_are_dangling_undo_ticks(t_notation_obj *r_ob, int change_type, e_undo_operations undo_op) {
     if (undo_ticks_are_dangling(r_ob, true))
         handle_change(r_ob, change_type, undo_op);
 }
@@ -40001,6 +40006,7 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
             jbox_redraw((t_jbox *)r_ob->m_inspector.inspector_ui);
     }
 
+//    char there_are_dangling_undo_ticks = undo_ticks_are_dangling(r_ob, false);
     
     // need to check for families update?
     if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX) 
@@ -40009,7 +40015,7 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
         set_all_label_families_update_contour(r_ob);
     
     
-    if (!r_ob->j_isdragging && (change_actions & k_CHANGED_CREATE_UNDO_STEP_MARKER)) { 
+    if ((change_actions & k_CHANGED_FORCE_CREATE_UNDO_STEP_MARKER) || (!r_ob->j_isdragging && (change_actions & k_CHANGED_CREATE_UNDO_STEP_MARKER))) {
         if (r_ob->save_data_with_patcher && !r_ob->j_box.l_dictll)    // set dirty flag
             object_attr_setchar(r_ob->patcher_parent, gensym("dirty"), 1);
         
@@ -40077,7 +40083,7 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
         check_correct_scheduling(r_ob, true);
 
     // bang and automessage will be sent after repainting at the end of the paint method
-    if (change_actions & k_CHANGED_SEND_BANG) 
+    if (change_actions & k_CHANGED_SEND_BANG) //&& there_are_dangling_undo_ticks)
         r_ob->need_send_changed_bang = true;
         
     if (r_ob->automessage_ac > 0 && !r_ob->itsme && (change_actions & k_CHANGED_SEND_AUTOMESSAGE))
@@ -40932,7 +40938,7 @@ void notationobj_clearnames(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom
 {
     t_llll *names = llll_get();
     change_selection_name(r_ob, names, NULL, false, false, false);
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CLEAR_NAMES);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CLEAR_NAMES);
     llll_free(names);
 }
 */
@@ -40966,7 +40972,7 @@ void notationobj_name(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv
         }
     }
     change_selection_name(r_ob, names, NULL, incremental, append, progeny, s == _llllobj_sym_lambda);
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_NAMES);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_NAMES);
     llll_free(selectllll);
     llll_free(names);
 }
@@ -40976,7 +40982,7 @@ void notationobj_nameappend(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom
     t_llll *selectllll = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     t_llll *names = get_names_from_llll(r_ob, selectllll);
     change_selection_name(r_ob, names, NULL, false, true, false, s == _llllobj_sym_lambda);
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_NAMES);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_NAMES);
     llll_free(selectllll);
     llll_free(names);
 }
@@ -41085,7 +41091,7 @@ void notationobj_nametoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom
         if (selectllll->l_head->l_next && hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM)
             policy = symbol_to_nametoslot_chordname_policy(hatom_getsym(&selectllll->l_head->l_next->l_hatom));
         notationobj_nametoslot_do(r_ob, slotnum, policy);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NAMES_TO_SLOT);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NAMES_TO_SLOT);
     }
     llll_free(selectllll);
 }
@@ -41154,7 +41160,7 @@ void notationobj_slottoname(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom
     if (selectllll && selectllll->l_head) {
         long slotnum = llllelem_to_slotnum(r_ob, selectllll->l_head, true);
         notationobj_slottoname_do(r_ob, slotnum);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NAMES_FROM_SLOT);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NAMES_FROM_SLOT);
     }
     llll_free(selectllll);
 }
@@ -41216,7 +41222,7 @@ void notationobj_clear_names(t_notation_obj *r_ob, long voices, long measures, l
     
     llll_free(empty_ll);
     
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_NAMES);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_NAMES);
 }
 
 
@@ -41258,7 +41264,7 @@ void notationobj_role(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv
             rolevalue = hatom_getllll(&args->l_head->l_next->l_hatom);
         undo_tick_create_for_header(r_ob, k_HEADER_MARKERS);
         change_selection_role(r_ob, hatom_getsym(&args->l_head->l_hatom), rolevalue, s == _llllobj_sym_lambda);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ROLES);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ROLES);
     }
     llll_free(args);
 }

@@ -73,7 +73,7 @@ void send_changed_bang_and_automessage_if_needed(t_notation_obj *r_ob);
 
 
 
-/** Tell if there are free undo ticks (see handle_change_if_there_are_free_undo_ticks() for more information)
+/** Tell if there are free undo ticks (see handle_change_if_there_are_dangling_undo_ticks() for more information)
     @ingroup        undo
     @param    r_ob    The notation object
     @param    also_return_true_if_undo_is_empty    If this is non-zero, function returns 1 also if undo llll is empty
@@ -82,7 +82,7 @@ void send_changed_bang_and_automessage_if_needed(t_notation_obj *r_ob);
 char undo_ticks_are_dangling(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty);
 
 
-/** Delete and properly free all the free undo ticks (see handle_change_if_there_are_free_undo_ticks() for more information)
+/** Delete and properly free all the free undo ticks (see handle_change_if_there_are_dangling_undo_ticks() for more information)
     @ingroup        undo
     @param    r_ob    The notation object
     @param    also_clear_ticks_flags    Also clear the flag for the free ticks – this is strongly advised to be 1.
