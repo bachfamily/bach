@@ -1082,11 +1082,12 @@ typedef enum _bach_internal_notation_flags {
 // internal
 typedef enum _bach_undo_perform_flags {
     k_UNDO_PERFORM_FLAG_NONE = 0,
-    k_UNDO_PERFORM_FLAG_CHECK_ORDER = 1,
+    k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS = 1,
     k_UNDO_PERFORM_FLAG_PERFORM_ANALYSIS_AND_CHANGE = 2,
     k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION = 4,
     k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH = 8,
     k_UNDO_PERFORM_FLAG_NOTHING_DONE = 16,
+    k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_MARKERS = 32,
 } e_bach_undo_perform_flags;
 
 
@@ -1686,6 +1687,7 @@ typedef enum _actions_upon_change
 typedef enum _undo_operations
 {
     k_UNDO_OP_UNKNOWN = 0,        
+    k_UNDO_OP_GENERIC_CHANGE,
     k_UNDO_OP_CHANGE_SCORE,
     k_UNDO_OP_CHANGE_ROLL,
     k_UNDO_OP_CHANGE_CHORD,
@@ -1707,6 +1709,11 @@ typedef enum _undo_operations
     k_UNDO_OP_CHANGE_CLEFS,
     k_UNDO_OP_CHANGE_KEYS,
     k_UNDO_OP_CHANGE_MARKERS,
+    k_UNDO_OP_CHANGE_MARKERS_ONSET,
+    k_UNDO_OP_MOVE_MARKER_REGION,
+    k_UNDO_OP_STRETCH_MARKER_REGION,
+    k_UNDO_OP_DUPLICATE_MARKERS,
+    k_UNDO_OP_DUPLICATE_ITEMS,
     k_UNDO_OP_CHANGE_SLOTINFO,
     k_UNDO_OP_CHANGE_COMMANDS,
     k_UNDO_OP_CHANGE_MIDICHANNELS,
@@ -1789,7 +1796,9 @@ typedef enum _undo_operations
     k_UNDO_OP_CHANGE_NOTE,
     k_UNDO_OP_DELETE_PITCH_BREAKPOINT,
     k_UNDO_OP_ADD_PITCH_BREAKPOINT,
-    k_UNDO_OP_CHANGE_PITCH_BREAKPOINT,
+    k_UNDO_OP_CHANGE_PITCH_BREAKPOINTS,
+    k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_SLOPE,
+    k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_VELOCITY,
     k_UNDO_OP_CHANGE_PITCH,
     k_UNDO_OP_MOUSEDRAG_CHANGE,
     k_UNDO_OP_CHANGE_VOICE_NAME,
@@ -4059,6 +4068,7 @@ typedef struct _notation_obj
                                                 ///< This will coincide with <j_mousedrag_point>, unless the faster from keyboard combination 
                                                 ///< is pressed or Shift is pressed.
     char        j_isdragging;                    ///< Flag telling if the mouse is being dragged over the object
+    e_undo_operations   j_dragging_operation;   ///< Current operation being performed while dragging
     short        j_mouse_hasbeendragged;            ///< Flag telling (mostly at mouseup) if the mouse has been dragged (or just clicked)
     short        j_selection_hasbeendragged;        ///< Flag telling (mostly at mouse up) if the selection content has been dragged
     void        *j_mousedrag_copy_ptr;            ///< Pointer to the object which is being copied (when Alt+Click&dragging on it)
@@ -17459,6 +17469,10 @@ void insert_marker(t_notation_obj *r_ob, t_marker *marker, unsigned long force_I
  */
 t_marker *add_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoint tp, char attach_to, e_marker_roles role, t_llll *content, unsigned long force_ID);
 
+// TBD
+t_marker *add_marker_from_llll(t_notation_obj *r_ob, t_llll *this_llll);
+void set_marker_from_llll(t_notation_obj *r_ob, t_marker *marker, t_llll *this_llll);
+
 
 /** Verify if the ordering of the markers is correct, with respect to the ascending <position_ms> fields.
     If not, corrects the ordering.
@@ -17481,10 +17495,11 @@ void delete_marker(t_notation_obj *r_ob, t_marker *marker);
     @ingroup        markers
     @param    r_ob    The notation object
     @param    names    The llll of names to be matched for the marker to delete
+    @param    add_undo_ticks    Also add undo ticks
     @remark            Only the first occurrence of the name is searched and deleted!
     @return            1 if something has been deleted, 0 otherwise.
  */
-char delete_marker_by_name(t_notation_obj *r_ob, t_llll *names);
+char delete_marker_by_name(t_notation_obj *r_ob, t_llll *names, char add_undo_ticks);
 
 
 /** Find the first marker having a set of given names (among its possible names)
@@ -17720,12 +17735,13 @@ t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, do
     @param    marker        The marker whose information has to be got, or NULL if you need the information about all markers
     @param    namefirst    If this is 1, the usual (<position_ms> <name>) coupling is reversed for each marker, and becomes (<name> <position_ms>).
                         If this is 0, the syntax is the usual (<position_ms> <name>).
+    @param   prepend_marker_symbol  Also prepend a "marker" symbol to the output
     @return                A list containing the information about a single marker or all markers.
     @remark                Differntly from get_markers_as_llll(), the information we get can have names first and can concern a single marker
                         (but cannot concern a temporal window).
     @see                get_markers_as_llll()
  */
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst);
+t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol);
 
 
 /** Set all markers of a given notation objet from a list of markers in the usual syntax (<position_ms> <name>) (<position_ms> <name>) ...

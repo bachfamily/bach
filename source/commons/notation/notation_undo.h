@@ -174,7 +174,7 @@ void free_undo_redo_information(t_undo_redo_information *operation);
     @remark                VERY IMPORTANT: If for any reason the undo tick could not be created (and then 1 is returned), the #operation information is properly freed
                         (along with its possible llll content field)
  */
-long create_undo_redo_tick(t_notation_obj *r_ob, char what, char from_what, t_undo_redo_information *operation, char lock_undo_mutex);
+long undo_redo_tick_create(t_notation_obj *r_ob, char what, char from_what, t_undo_redo_information *operation, char lock_undo_mutex);
 
 
 /**    Create a undo/redo step marker ("closing" a sequence of undo ticks) and properly prepend it to the undo or redo llll.
@@ -218,7 +218,7 @@ void clear_undo_redo_llll(t_notation_obj *r_ob, char what);
     @return             The undo/redo information for the tick. Such information has already been appended to the undo/redo lists and must NOT be freed
     @remark                This function has to be called BEFORE the item is modified (so that it can retrieve the correct content for undo), except if the
                         notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_DELETE.
-    @see                create_undo_redo_tick()
+    @see                undo_redo_tick_create()
  */
 t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type, t_symbol *param);
 
@@ -235,7 +235,7 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
     @remark                This function has to be called BEFORE the items are modified (so that it can retrieve the correct content for undo), except if the
                         notation items have just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_DELETE.
     @see                undo_tick_create_for_notation_item()
-    @see                create_undo_redo_tick()
+    @see                undo_redo_tick_create()
  */
 void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long num_items, t_notation_item **item, e_undo_modification_types modif_type, t_symbol *param, long *undo_op);
 

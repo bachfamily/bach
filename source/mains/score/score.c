@@ -2848,8 +2848,6 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
             pos_ms = hatom_getdouble(&params->l_head->l_hatom);
         }
 
-        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-        
         if (attach_to == k_MARKER_ATTACH_TO_MEASURE)
             pos_ms = unscaled_xposition_to_ms((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS), 1);
         
@@ -2865,6 +2863,7 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
         lock_markers_mutex((t_notation_obj *)x);;
         newmarker = add_marker((t_notation_obj *) x, names, pos_ms, tp, attach_to, markerrole, content, 0);
         sync_marker_absolute_ms_onset(x, newmarker);
+        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
         unlock_markers_mutex((t_notation_obj *)x);;
 
         recompute_total_length((t_notation_obj *)x);
@@ -2882,9 +2881,8 @@ void score_deletemarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     if (argc >= 1 && atom_gettype(argv) == A_SYM) { // position, name
         char res;
-        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-        lock_markers_mutex((t_notation_obj *)x);;
-        res = delete_marker_by_name((t_notation_obj *) x, args);
+        lock_markers_mutex((t_notation_obj *)x);
+        res = delete_marker_by_name((t_notation_obj *) x, args, true);
         unlock_markers_mutex((t_notation_obj *)x);;
         if (res) 
             handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_MARKER);
@@ -2918,7 +2916,7 @@ void score_getmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst);
+            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst, true);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 7, marker_llll);
@@ -4392,7 +4390,7 @@ void score_task(t_score *x)
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
                     llll_appendobj(references, items_to_send[i], 0, WHITENULL_llll);
                 } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true);
+                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true);
                     this_llll = llll_get();
                     references = llll_get();
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
@@ -10300,7 +10298,8 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     t_rect rect;
     t_pt prev_mousedrag_point = x->r_ob.j_mousedrag_point;
     //    post("mousedrag. x->r_ob.j_mousedown_NN: %d, x->r_ob.j_selected_NN: %d", x->r_ob.j_mousedown_NN, x->r_ob.j_selected_NN);
-    
+    e_undo_operations op = k_UNDO_OP_MOUSEDRAG_CHANGE;
+
     llll_format_modifiers(&modifiers, NULL);
     x->r_ob.j_isdragging = true;
     
@@ -10462,7 +10461,10 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         double delta_ux = mousedown_ux - xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.floatdragging_x);
 
 //        double marker_mousedown_ux = get_marker_ux_position(x, marker);
+        
+        op = k_UNDO_OP_CHANGE_MARKERS_ONSET;
 
+        
         if (modifiers & eAltKey && !(modifiers & eCommandKey) && !x->r_ob.j_mousedrag_copy_ptr && is_editable((t_notation_obj *)x, k_MARKER, k_CREATION)) { // copy it
             t_notation_item *temp;
             lock_markers_mutex((t_notation_obj *)x);;
@@ -10471,7 +10473,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 if (temp->type == k_MARKER) {
                     t_marker *temp_mk = ((t_marker *) temp);
                     t_marker *newmarker;
-                    undo_tick_create_for_header((t_notation_obj *) x, k_HEADER_MARKERS);
+
                     t_llll *content = NULL;
                     if (temp_mk->content) 
                         content = llll_clone(temp_mk->content);
@@ -10496,6 +10498,9 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         sync_marker_absolute_ms_onset(x, newmarker);
                         llll_free(chosen);
                     }
+
+                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+
                     notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)newmarker);
                     if (temp == x->r_ob.j_mousedown_ptr) {
                         set_mousedown((t_notation_obj *) x, newmarker, k_MARKER);
@@ -10510,11 +10515,6 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         }
     
         if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_ONSET)) {
-            if (!(x->r_ob.header_undo_flags & k_HEADER_MARKERS)) {
-                undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-                x->r_ob.header_undo_flags |= k_HEADER_MARKERS;
-            }
-            
             if (modifiers & eShiftKey && modifiers & eCommandKey) {
                 delta_ux *= CONST_FINER_FROM_KEYBOARD;
                 delta_ms *= CONST_FINER_FROM_KEYBOARD;
@@ -10755,6 +10755,8 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             if (changed)
                 x->r_ob.changed_while_dragging = true;
             
+            op = k_UNDO_OP_CHANGE_DYNAMICS;
+
         } else if (x->r_ob.j_mousedown_obj_type == k_DURATION_LINE && modifiers == eControlKey) { // slope change
             double delta_slope = (x->r_ob.floatdragging_y - pt.y)/(CONST_SLOPE_DRAG_UCHANGE * x->r_ob.zoom_y);
             if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_GENERIC)) return;
@@ -10776,6 +10778,8 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 changed = 1;
                 redraw = 1;
             }
+            op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_SLOPE;
+
             x->r_ob.floatdragging_y = pt.y;
             if (changed)
                 x->r_ob.changed_while_dragging = true;
@@ -10790,6 +10794,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     x->r_ob.changed_while_dragging = true;
                 x->r_ob.floatdragging_y = pt.y;
                 redraw = 1;
+                op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_VELOCITY;
             } else if (modifiers == eControlKey + eShiftKey) { // slope change
                 double delta_slope = (x->r_ob.floatdragging_y - pt.y)/(CONST_SLOPE_DRAG_UCHANGE * x->r_ob.zoom_y);
                 if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_GENERIC)) return;
@@ -10801,6 +10806,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 if (changed) 
                     x->r_ob.changed_while_dragging = true;
                 redraw = 1;
+                op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_SLOPE;
             } else {
                 // new duration tail
                 if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_PITCH)) return;
@@ -10820,6 +10826,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 x->r_ob.floatdragging_x = pt.x;
                 x->r_ob.floatdragging_y = pt.y;
                 redraw = 1;
+                op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINTS;
             }
         
         } else if ((x->r_ob.selection_type == k_PITCH_BREAKPOINT) || (x->r_ob.selection_type == k_PITCH_BREAKPOINT_OR_DURATION_TAIL)) { // only breakpoints are selected
@@ -10835,6 +10842,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     x->r_ob.floatdragging_y = pt.y;
                     redraw = 1;
                 }
+                op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_VELOCITY;
             } else if (modifiers == eControlKey + eShiftKey) { // slope change
                 double delta_slope = (x->r_ob.floatdragging_y - pt.y)/(CONST_SLOPE_DRAG_UCHANGE * x->r_ob.zoom_y);
                 if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_GENERIC)) return;
@@ -10846,6 +10854,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 x->r_ob.floatdragging_y = pt.y;
                 redraw = 1;
                 changed = 1;
+                op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_SLOPE;
             } else {    // new breakpoint position
                 double delta_x = pt.x - x->r_ob.floatdragging_x;
                 double delta_y = yposition_to_mc((t_notation_obj *)x, pt.y, (t_voice *)x->firstvoice, NULL) - yposition_to_mc((t_notation_obj *)x, x->r_ob.floatdragging_y, (t_voice *)x->firstvoice, NULL);
@@ -10883,6 +10892,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 if (changed) 
                     x->r_ob.changed_while_dragging = true;
                 redraw = 1;
+                op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINTS;
             }
             
         } else { // mixed selection, or just notes, or
@@ -10901,10 +10911,14 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 else if (x->r_ob.j_dragging_direction == -1)
                     can_change_onset = 0;
             }
+
+            op = k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION;
+
             if (modifiers == eControlKey){ // eControlKey it is used to change the velocities!
                 can_change_mc = 0;
                 can_change_onset = 0;
                 can_change_vel = 1;
+                op = k_UNDO_OP_CHANGE_VELOCITY_FOR_SELECTION;
             }
 
             can_change_onset &= is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_ONSET);
@@ -10918,6 +10932,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 can_change_onset = 0;
                 can_change_vel = 0;
                 
+                op = k_UNDO_OP_DUPLICATE_ITEMS;
                 // what are we supposed to do? each copied item is
                 // but why does Daniele talk like Yoda????
 
@@ -11042,10 +11057,18 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     x->r_ob.j_mouse_hasbeendragged = 1; // mouse has been dragged
     
     if (redraw) {
+        if (op == k_UNDO_OP_UNKNOWN)
+            op = k_UNDO_OP_MOUSEDRAG_CHANGE;
+        if (x->r_ob.j_dragging_operation != op) {
+            if (x->r_ob.j_dragging_operation == k_UNDO_OP_UNKNOWN)
+                x->r_ob.j_dragging_operation = op;
+            else
+                x->r_ob.j_dragging_operation = k_UNDO_OP_MOUSEDRAG_CHANGE;
+        }
         notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
         if (changed && x->r_ob.j_mouse_is_down) {
             x->r_ob.changed_while_dragging = true;
-            handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? (x->r_ob.notify_with > 0 ? (k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG | k_CHANGED_FORCE_CREATE_UNDO_STEP_MARKER) : k_CHANGED_STANDARD_SEND_BANG) : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_MOUSEDRAG_CHANGE);
+            handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? (x->r_ob.notify_with > 0 ? (k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG | k_CHANGED_FORCE_CREATE_UNDO_STEP_MARKER) : k_CHANGED_STANDARD_SEND_BANG) : k_CHANGED_REDRAW_STATIC_LAYER, op);
         }
     }
     
@@ -12172,6 +12195,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     char need_popup = modifiers & eRightButton;
     char need_send_changed_bang = false;
     
+    x->r_ob.j_dragging_operation = k_UNDO_OP_UNKNOWN;
+
     evnum_incr();
 
     x->r_ob.j_isdragging = false;
@@ -12526,7 +12551,6 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                         lock_general_mutex((t_notation_obj *)x);
                                         double onset = notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                         if (onset >= 0) {
-                                            undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
                                             t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
                                             if (res == 502) {
                                                 t_timepoint tp = build_timepoint_with_voice(curr_nt->parent->parent->measure_number, curr_nt->parent->r_sym_onset, curr_nt->parent->parent->voiceparent->v_ob.number);
@@ -12534,6 +12558,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                             } else
                                                 clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
                                             sync_marker_absolute_ms_onset(x, (t_marker *)clicked_ptr);
+                                            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
                                             clicked_obj = k_MARKER;
                                             x->r_ob.item_changed_at_mousedown = 1;
                                             //            x->r_ob.changed_while_dragging = true;
@@ -13220,8 +13245,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             if (is_in_marker_shape((t_notation_obj *)x, marker, this_x, this_y) || is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y)){
                 if (modifiers == eCommandKey) {
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_DELETION)) {
-                        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-                        delete_marker((t_notation_obj *) x, marker); 
+                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                        delete_marker((t_notation_obj *) x, marker);
                         x->r_ob.item_changed_at_mousedown = 1;
                         changed = true;
                         recompute_total_length((t_notation_obj *)x);
@@ -13287,7 +13312,6 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     if (!clicked_ptr && x->r_ob.show_markers && is_editable((t_notation_obj *)x, k_MARKER, k_CREATION) && (modifiers == eAltKey + eShiftKey || modifiers == eAltKey + eShiftKey + eControlKey)) {
         double onset = unscaled_xposition_to_ms((t_notation_obj *)x, xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.j_mousedown_point.x), 1);
         if (onset >= 0) { 
-            undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
             t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
             if (!(modifiers & eControlKey)) {
                 long voicenum = yposition_to_voicenumber((t_notation_obj *)x, x->r_ob.j_mousedown_point.y, -1, k_VOICEENSEMBLE_INTERFACE_ACTIVE);
@@ -13298,6 +13322,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             } else 
                 clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
             sync_marker_absolute_ms_onset(x, (t_marker *)clicked_ptr);
+            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
             clicked_obj = k_MARKER;
             x->r_ob.item_changed_at_mousedown = 1;
 //            x->r_ob.changed_while_dragging = true;
@@ -13353,7 +13378,6 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             lock_general_mutex((t_notation_obj *)x);
             double onset = unscaled_xposition_to_ms((t_notation_obj *)x, xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.j_mousedown_point.x), 1);
             if (onset >= 0) {
-                undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
                 t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
                 if (res == 502) {
                     long voicenum = yposition_to_voicenumber((t_notation_obj *)x, x->r_ob.j_mousedown_point.y, -1, k_VOICEENSEMBLE_INTERFACE_ACTIVE);
@@ -13364,6 +13388,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 } else
                     clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
                 sync_marker_absolute_ms_onset(x, (t_marker *)clicked_ptr);
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
                 clicked_obj = k_MARKER;
                 x->r_ob.item_changed_at_mousedown = 1;
                 //            x->r_ob.changed_while_dragging = true;
@@ -14278,9 +14303,11 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             snap_pitch_to_grid_for_selection((t_notation_obj *)x);
     }
 
-    
+    if (x->r_ob.j_dragging_operation == k_UNDO_OP_UNKNOWN)
+        x->r_ob.j_dragging_operation = k_UNDO_OP_MOUSEDRAG_CHANGE;
+
     if (there_are_dangling_undo_ticks)
-        handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MOUSEDRAG_CHANGE);
+        handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, x->r_ob.j_dragging_operation);
         
     bach_set_cursor((t_object *)x, &x->r_ob.j_mouse_cursor, patcherview, BACH_CURSOR_DEFAULT);
     
@@ -15270,7 +15297,7 @@ char delete_selected_markers(t_score *x){
         t_notation_item *nextitem = curr_it->next_selected; 
         
         if (curr_it->type == k_MARKER) {
-            undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
+            undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
             delete_marker((t_notation_obj *) x, (t_marker *) curr_it);
             changed = true;
         }

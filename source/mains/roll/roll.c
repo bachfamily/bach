@@ -1334,8 +1334,8 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
             changed = 1;
         }
     } else if (curr_it->type == k_MARKER) {
-        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
         notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
+        undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
         delete_marker((t_notation_obj *) x, (t_marker *)curr_it);
         changed = 1;
     }    
@@ -3651,8 +3651,6 @@ void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         else
             pos_ms = hatom_getdouble(&args->l_head->l_hatom);
 
-        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-        
         if (args->l_head->l_next->l_next && hatom_gettype(&args->l_head->l_next->l_next->l_hatom) == H_SYM)
             role = hatom_getsym(&args->l_head->l_next->l_next->l_hatom);
 
@@ -3663,7 +3661,8 @@ void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         t_llll *names = get_names_from_llllelem((t_notation_obj *)x, args->l_head->l_next);
         
         lock_markers_mutex((t_notation_obj *)x);
-        add_marker((t_notation_obj *) x, names, pos_ms, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, sym_to_marker_role(role), content, 0);
+        t_marker *mk = add_marker((t_notation_obj *) x, names, pos_ms, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, sym_to_marker_role(role), content, 0);
+        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
         unlock_markers_mutex((t_notation_obj *)x);
 
         llll_free(names);
@@ -3679,9 +3678,8 @@ void roll_deletemarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     if (args->l_size >= 1) {
         char res;
-        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-        lock_markers_mutex((t_notation_obj *)x);;
-        res = delete_marker_by_name((t_notation_obj *) x, args);
+        lock_markers_mutex((t_notation_obj *)x);
+        res = delete_marker_by_name((t_notation_obj *) x, args, true);
         unlock_markers_mutex((t_notation_obj *)x);;
         if (res) {
             recompute_total_length((t_notation_obj *)x);
@@ -3716,7 +3714,7 @@ void roll_getmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst);
+            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst, true);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, marker_llll);
@@ -4377,7 +4375,7 @@ void roll_task(t_roll *x){
                     }
                     this_llll = chord_get_as_llll_for_sending((t_notation_obj *) x, (t_chord *)items_to_send[i], k_CONSIDER_FOR_PLAYING, -1, NULL, &references, &is_notewise);
                 } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true);
+                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true);
                     this_llll = llll_get();
                     references = llll_get();
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
@@ -9345,7 +9343,7 @@ void create_whole_roll_undo_tick(t_roll *x)
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
         t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, NULL, NULL, k_HEADER_NONE, content_cloned);
         llll_free(content);
-        create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
+        undo_redo_tick_create((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
 }
 
@@ -12588,6 +12586,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     char changed = 0;
     t_rect rect;
     t_pt prev_mousedrag_point = x->r_ob.j_mousedrag_point;
+    e_undo_operations op = k_UNDO_OP_MOUSEDRAG_CHANGE;
 
     llll_format_modifiers(&modifiers, NULL);
 
@@ -12923,30 +12922,35 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (changed)
                 x->r_ob.changed_while_dragging = true;
 
+            op = k_UNDO_OP_CHANGE_DYNAMICS;
+            
         } else if (x->r_ob.j_mousedown_obj_type == k_DURATION_LINE && modifiers == eControlKey) { // slope change
-                double delta_slope = (x->r_ob.floatdragging_y - pt.y)/(CONST_SLOPE_DRAG_UCHANGE * x->r_ob.zoom_y);
-                if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_GENERIC)) return;
-                if (modifiers & eShiftKey && modifiers & eCommandKey)
-                    delta_slope *= CONST_FINER_FROM_KEYBOARD;
-                if (x->r_ob.allow_glissandi) {
-                    // retrieve correct bpt
-                    t_note *temp_note = ((t_duration_line *)x->r_ob.j_mousedown_ptr)->owner;
-                    t_bpt *temp_bpt, *bpt = NULL;
-                    double click_onset = xposition_to_onset((t_notation_obj *)x, x->r_ob.j_mousedown_point.x, 0);
-                    for (temp_bpt = temp_note->firstbreakpoint ? temp_note->firstbreakpoint->next : NULL; temp_bpt; temp_bpt = temp_bpt->next) {
-                        if (notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)temp_bpt) > click_onset) {
-                            bpt = temp_bpt;
-                            break;
-                        }
+            double delta_slope = (x->r_ob.floatdragging_y - pt.y)/(CONST_SLOPE_DRAG_UCHANGE * x->r_ob.zoom_y);
+            if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_GENERIC)) return;
+            if (modifiers & eShiftKey && modifiers & eCommandKey)
+                delta_slope *= CONST_FINER_FROM_KEYBOARD;
+            if (x->r_ob.allow_glissandi) {
+                // retrieve correct bpt
+                t_note *temp_note = ((t_duration_line *)x->r_ob.j_mousedown_ptr)->owner;
+                t_bpt *temp_bpt, *bpt = NULL;
+                double click_onset = xposition_to_onset((t_notation_obj *)x, x->r_ob.j_mousedown_point.x, 0);
+                for (temp_bpt = temp_note->firstbreakpoint ? temp_note->firstbreakpoint->next : NULL; temp_bpt; temp_bpt = temp_bpt->next) {
+                    if (notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)temp_bpt) > click_onset) {
+                        bpt = temp_bpt;
+                        break;
                     }
-                    if (bpt)
-                        change_breakpoint_slope((t_notation_obj *)x, bpt, fabs(delta_slope), fsign(delta_slope));
-                    changed = 1;
-                    redraw = 1;
                 }
-                x->r_ob.floatdragging_y = pt.y;
-                if (changed)
-                    x->r_ob.changed_while_dragging = true;
+                if (bpt)
+                    change_breakpoint_slope((t_notation_obj *)x, bpt, fabs(delta_slope), fsign(delta_slope));
+                changed = 1;
+                redraw = 1;
+            }
+            x->r_ob.floatdragging_y = pt.y;
+            
+            op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_SLOPE;
+            
+            if (changed)
+                x->r_ob.changed_while_dragging = true;
             
         } else if (x->r_ob.selection_type == k_PITCH_BREAKPOINT) {
         
@@ -12960,6 +12964,8 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     x->r_ob.changed_while_dragging = true;
                 x->r_ob.floatdragging_y = pt.y;
                 redraw = 1;
+
+                op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_VELOCITY;
 
             } else {
                 long system = 1; // used for yposition_to_mc
@@ -13017,6 +13023,8 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                         snap_pitch_to_grid_for_selection((t_notation_obj *)x);
                 }
                 changed = 1;
+                
+                op = k_UNDO_OP_CHANGE_PITCH_BREAKPOINTS;
             }
             
             if (changed) 
@@ -13030,16 +13038,14 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 
             if (!is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_ONSET)) return;
 
-            if (!(x->r_ob.header_undo_flags & k_HEADER_MARKERS)) {
-                undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-                x->r_ob.header_undo_flags |= k_HEADER_MARKERS;
-            }
-
-            if (modifiers & eShiftKey && modifiers & eCommandKey) 
+            if (modifiers & eShiftKey && modifiers & eCommandKey)
                 delta_onset *= CONST_FINER_FROM_KEYBOARD;
+
+            op = k_UNDO_OP_CHANGE_MARKERS_ONSET;
 
             if (modifiers & eAltKey && !(modifiers & eCommandKey) && !x->r_ob.j_mousedrag_copy_ptr && is_editable((t_notation_obj *)x, k_MARKER, k_CREATION)) { // copy it
                 t_notation_item *temp;
+                op = k_UNDO_OP_DUPLICATE_ITEMS;
                 lock_markers_mutex((t_notation_obj *)x);
                 lock_general_mutex((t_notation_obj *)x);
                 for (temp = x->r_ob.firstselecteditem; temp; temp = temp->next_selected) {
@@ -13048,12 +13054,14 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                         t_llll *content = NULL;
                         t_marker *newmarker;
                         
-                        undo_tick_create_for_header((t_notation_obj *) x, k_HEADER_MARKERS);
                         if (((t_marker *)temp)->content) {
                             content = llll_clone(((t_marker *)temp)->content);
                         }
                         t_llll *chosen = make_marker_name_unique((t_notation_obj *) x, ((t_marker *) temp)->r_it.names);
                         newmarker = add_marker((t_notation_obj *) x, chosen, marker_ms + delta_onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, ((t_marker *) temp)->role, content, 0);
+                        
+                        undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+
                         notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)newmarker);
                         if (temp == x->r_ob.j_mousedown_ptr) {
                             set_mousedown((t_notation_obj *) x, newmarker, k_MARKER);
@@ -13108,6 +13116,8 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     prev_marker_ms = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)prev_marker);
                 double stretch_factor = (stretch && mousedown_marker_ms > prev_marker_ms) ? (mousedown_marker_ms - prev_marker_ms + delta_ms)/(mousedown_marker_ms - prev_marker_ms) : 1;
 
+                op = (stretch_factor == 1 ? k_UNDO_OP_MOVE_MARKER_REGION : k_UNDO_OP_STRETCH_MARKER_REGION);
+                
                 // shifting all following items
                 for (voice = (t_rollvoice *)x->r_ob.firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
                     for (chord = voice->firstchord; chord; chord = chord->next) {
@@ -13189,16 +13199,23 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                 else if (x->r_ob.j_dragging_direction == 0)
                     decide_dragging_direction((t_notation_obj *) x, pt);
                     
-                if (x->r_ob.j_dragging_direction == 1)
+                if (x->r_ob.j_dragging_direction == 1) {
                     can_change_mc = 0;
-                else if (x->r_ob.j_dragging_direction == -1)
+                    op = k_UNDO_OP_CHANGE_ONSET_FOR_SELECTION;
+                } else if (x->r_ob.j_dragging_direction == -1) {
                     can_change_onset = 0;
+                    op = k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION;
+                }
+                
+                if (trim_start)
+                    op = k_UNDO_OP_TRIM_START;
             }
 
             if (modifiers == eControlKey){ // eControlKey it is used to change the velocities!
                 can_change_mc = 0;
                 can_change_onset = 0;
                 can_change_vel = 1;
+                op = k_UNDO_OP_CHANGE_VELOCITY_FOR_SELECTION;
             }
             
             can_change_onset &= is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_ONSET);
@@ -13212,6 +13229,8 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                 can_change_onset = 0;
                 can_change_vel = 0;
                 
+                op = k_UNDO_OP_DUPLICATE_ITEMS;
+
                 // what are we supposed to do? each copied item is
                 if (modifiers & eShiftKey && x->r_ob.j_dragging_direction == -1) 
                     copy_mode = 1; // if we press Shift and drag vertically, we copy the NOTES in the same chords!!
@@ -13414,10 +13433,18 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     x->r_ob.j_mouse_hasbeendragged = 1; // mouse has been dragged
     
     if (redraw) {
+        if (op == k_UNDO_OP_UNKNOWN)
+            op = k_UNDO_OP_MOUSEDRAG_CHANGE;
+        if (x->r_ob.j_dragging_operation != op) {
+            if (x->r_ob.j_dragging_operation == k_UNDO_OP_UNKNOWN)
+                x->r_ob.j_dragging_operation = op;
+            else
+                x->r_ob.j_dragging_operation = k_UNDO_OP_MOUSEDRAG_CHANGE;
+        }
         notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
         if (changed && x->r_ob.j_mouse_is_down) {
             x->r_ob.changed_while_dragging = true;
-            handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? (x->r_ob.notify_with > 0 ? (k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG | k_CHANGED_FORCE_CREATE_UNDO_STEP_MARKER) : k_CHANGED_STANDARD_SEND_BANG) : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_MOUSEDRAG_CHANGE);
+            handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? (x->r_ob.notify_with > 0 ? (k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG | k_CHANGED_FORCE_CREATE_UNDO_STEP_MARKER) : k_CHANGED_STANDARD_SEND_BANG) : k_CHANGED_REDRAW_STATIC_LAYER, op);
         }
     }
     
@@ -13756,6 +13783,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     char need_set_selection_dragging_velocity = false; 
     char need_popup = modifiers & eRightButton;
     char need_send_changed_bang = false;
+    
+    x->r_ob.j_dragging_operation = k_UNDO_OP_UNKNOWN;
         
     evnum_incr();
 
@@ -14073,9 +14102,9 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                 if (is_editable((t_notation_obj *)x, k_MARKER, k_CREATION)) {
                                     t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
                                     double onset = curr_nt->parent->onset;
-                                    undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
                                     clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
                                     clicked_obj = k_MARKER;
+                                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
                                     if (x->r_ob.snap_markers_to_grid_when_editing)
                                         snap_onset_to_grid_for_marker((t_notation_obj *) x, (t_marker *)clicked_ptr, NULL);
                                     recompute_total_length((t_notation_obj *)x);
@@ -14353,8 +14382,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (is_in_marker_shape((t_notation_obj *)x, marker, this_x, this_y) || is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y)){
                 if (modifiers == eCommandKey) {
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_DELETION)) {
-                        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-                        delete_marker((t_notation_obj *) x, marker); 
+                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                        delete_marker((t_notation_obj *) x, marker);
                         x->r_ob.item_changed_at_mousedown = 1;
                         changed = true;
                         recompute_total_length((t_notation_obj *)x);
@@ -14405,9 +14434,9 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         if (onset >= 0) { 
             if (is_editable((t_notation_obj *)x, k_MARKER, k_CREATION)) {
                 t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
-                undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
                 clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
                 clicked_obj = k_MARKER;
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
                 if (x->r_ob.snap_markers_to_grid_when_editing)
                     snap_onset_to_grid_for_marker((t_notation_obj *) x, (t_marker *)clicked_ptr, NULL);
                 recompute_total_length((t_notation_obj *)x);
@@ -14481,9 +14510,9 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (is_editable((t_notation_obj *)x, k_MARKER, k_CREATION)) {
                 t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
                 double onset = xposition_to_onset((t_notation_obj *) x,pt.x, yposition_to_systemnumber((t_notation_obj *) x, pt.y));
-                undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
                 clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
                 clicked_obj = k_MARKER;
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
                 if (x->r_ob.snap_markers_to_grid_when_editing)
                     snap_onset_to_grid_for_marker((t_notation_obj *) x, (t_marker *)clicked_ptr, NULL);
                 recompute_total_length((t_notation_obj *)x);
@@ -15248,9 +15277,11 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
         x->r_ob.need_snap_some_nonselected_items = false;
     }
     
-
+    if (x->r_ob.j_dragging_operation == k_UNDO_OP_UNKNOWN)
+        x->r_ob.j_dragging_operation = k_UNDO_OP_MOUSEDRAG_CHANGE;
+    
     if (there_are_dangling_undo_ticks)
-        handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MOUSEDRAG_CHANGE);
+        handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, x->r_ob.j_dragging_operation);
 
     bach_set_cursor((t_object *)x, &x->r_ob.j_mouse_cursor, patcherview, BACH_CURSOR_DEFAULT);
     
@@ -17911,7 +17942,7 @@ void roll_undo_redo(t_roll *x, char what)
     } else {
         
         // why don't we need this?
-        if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER)
+        if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS)
             check_all_chords_order(x);
         
         if (x->r_ob.notation_cursor.voice)
@@ -17931,7 +17962,7 @@ void roll_generic_change(t_roll *x, t_symbol *msg, long ac, t_atom *av)
     
     flags = notationobj_generic_change((t_notation_obj *)x, msg, ac, av);
 
-    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER)
+    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS)
         check_all_chords_order(x);
     
     if (x->r_ob.notation_cursor.voice)

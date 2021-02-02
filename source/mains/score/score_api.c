@@ -3136,7 +3136,7 @@ void create_whole_score_undo_tick_nolock(t_score *x) {
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
         t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, k_HEADER_NONE, content_cloned);
         llll_free(content);
-        create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
+        undo_redo_tick_create((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
 }
 
@@ -3150,7 +3150,7 @@ void create_whole_score_undo_tick(t_score *x) {
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
         t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, k_HEADER_NONE, content_cloned);
         llll_free(content);
-        create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
+        undo_redo_tick_create((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
 }
 
@@ -11189,6 +11189,7 @@ char move_selected_measure_attached_markers(t_score *x, double marker_withmoused
                 
                 new_meas = nth_measure_of_scorevoice(nth_scorevoice(x, tp.voice_num), new_tp.measure_num);
                 
+                undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER, _llllobj_sym_state);
                 if (new_meas) {
                     marker->measure_attach_ID = new_meas->r_it.ID;
                     marker->r_sym_pim_attach = new_tp.pt_in_measure;

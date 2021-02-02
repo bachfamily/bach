@@ -3461,23 +3461,38 @@ t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, lo
 
 
 // use marker = NULL to get all markers
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst){
+t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol){
 	t_llll *outlist;
 	if (marker) {
 		outlist = llll_get();
-		llll_appendsym(outlist, _llllobj_sym_marker, 0, WHITENULL_llll); // the "marker" symbol in first place
-		if (marker->r_it.names->l_size == 0)
-			llll_appendsym(outlist, _llllobj_sym_none, 0, WHITENULL_llll);
-		else if (marker->r_it.names->l_size == 1 && marker->r_it.names->l_depth == 1)
-			llll_appendhatom(outlist, &marker->r_it.names->l_head->l_hatom, 0, WHITENULL_llll);
-		else 
-			llll_appendllll(outlist, get_names_as_llll((t_notation_item *)marker, false), 0, WHITENULL_llll);
+        if (prepend_marker_symbol)
+            llll_appendsym(outlist, _llllobj_sym_marker, 0, WHITENULL_llll); // the "marker" symbol in first place
+        
+        if (namefirst) {
+            if (marker->r_it.names->l_size == 0)
+                llll_appendsym(outlist, _llllobj_sym_none, 0, WHITENULL_llll);
+            else if (marker->r_it.names->l_size == 1 && marker->r_it.names->l_depth == 1)
+                llll_appendhatom(outlist, &marker->r_it.names->l_head->l_hatom, 0, WHITENULL_llll);
+            else
+                llll_appendllll(outlist, get_names_as_llll((t_notation_item *)marker, false), 0, WHITENULL_llll);
+        }
+        
 		if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
 			t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
 			t_llll *timepointll = get_timepoint_as_llll(r_ob, tp);
 			llll_appendllll(outlist, timepointll, 0, WHITENULL_llll);
 		} else 
 			llll_appenddouble(outlist, marker->position_ms, 0, WHITENULL_llll);
+        
+        if (!namefirst) {
+            if (marker->r_it.names->l_size == 0)
+                llll_appendsym(outlist, _llllobj_sym_none, 0, WHITENULL_llll);
+            else if (marker->r_it.names->l_size == 1 && marker->r_it.names->l_depth == 1)
+                llll_appendhatom(outlist, &marker->r_it.names->l_head->l_hatom, 0, WHITENULL_llll);
+            else
+                llll_appendllll(outlist, get_names_as_llll((t_notation_item *)marker, false), 0, WHITENULL_llll);
+        }
+        
 		llll_appendsym(outlist, marker_role_to_sym(marker->role), 0, WHITENULL_llll);
 		if (marker->role != k_MARKER_ROLE_NONE && marker->content)
 			llll_appendllll_clone(outlist, marker->content, 0, WHITENULL_llll, NULL);
@@ -3492,7 +3507,7 @@ void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst,
 {
 	t_llll *llll;
 	lock_markers_mutex(r_ob);
-	llll = get_single_marker_as_llll(r_ob, marker, namefirst);
+	llll = get_single_marker_as_llll(r_ob, marker, namefirst, true);
     
     if (forced_routers && forced_routers->l_head && hatom_gettype(&forced_routers->l_head->l_hatom) == H_SYM &&
         llll && llll->l_head && hatom_getsym(&llll->l_head->l_hatom) == _llllobj_sym_marker)
@@ -5390,7 +5405,6 @@ double get_marker_ms_position(t_notation_obj *r_ob, t_marker *marker)
         return marker->position_ms;
     }
 }
-
 
 
 // if mode == 1 it's clipped between start_ms and end_ms

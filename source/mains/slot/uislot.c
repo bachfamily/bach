@@ -1081,7 +1081,7 @@ void create_whole_uislot_undo_tick(t_uislot *x){
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
         t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, k_HEADER_NONE, content_cloned);
         llll_free(content);
-        create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
+        undo_redo_tick_create((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
 }
 
@@ -2265,7 +2265,7 @@ void uislot_undo_redo(t_uislot *x, char what){
         } 
         
         if (new_information)
-            create_undo_redo_tick((t_notation_obj *) x, -what, 1, new_information, false);
+            undo_redo_tick_create((t_notation_obj *) x, -what, 1, new_information, false);
         
         llll_free(content);
         bach_freeptr(this_information);

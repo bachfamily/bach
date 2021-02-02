@@ -60,7 +60,7 @@ void clear_undo_redo_llll(t_notation_obj *r_ob, char what){
 // what = -1 undo, what = 1 redo
 // fromwhat = 0 : interface, fromwhat = 1 : we're creating this event because we have just undone/redone
 
-long create_undo_redo_tick(t_notation_obj *r_ob, char what, char from_what, t_undo_redo_information *operation, char lock_undo_mutex)
+long undo_redo_tick_create(t_notation_obj *r_ob, char what, char from_what, t_undo_redo_information *operation, char lock_undo_mutex)
 {
     
     char must_unlock = lock_undo_mutex;
@@ -350,7 +350,7 @@ void undo_tick_create_for_header(t_notation_obj *r_ob, e_header_elems what)
     r_ob->undo_header_elements_under_tick |= what;
     t_llll *content = get_notationobj_header_as_llll(r_ob, what, true, true, true, k_CONSIDER_FOR_UNDO);
     t_undo_redo_information *operation = undo_redo_information_create(0, k_HEADER_DATA, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, what, content);
-    create_undo_redo_tick(r_ob, k_UNDO, 0, operation, true);
+    undo_redo_tick_create(r_ob, k_UNDO, 0, operation, true);
 }
 
 
@@ -383,6 +383,9 @@ void undo_op_to_string(long undo_op, char *buf)
     switch (undo_op) {
         case k_UNDO_OP_UNKNOWN:
             sprintf(buf, "Unknown Operation");
+            break;
+        case k_UNDO_OP_GENERIC_CHANGE:
+            sprintf(buf, "Generic Change");
             break;
         case k_UNDO_OP_CHANGE_SCORE:
             sprintf(buf, "Change Score");
@@ -446,6 +449,21 @@ void undo_op_to_string(long undo_op, char *buf)
             break;
         case k_UNDO_OP_CHANGE_MARKERS:
             sprintf(buf, "Change Markers");
+            break;
+        case k_UNDO_OP_CHANGE_MARKERS_ONSET:
+            sprintf(buf, "Change Markers Onset");
+            break;
+        case k_UNDO_OP_DUPLICATE_MARKERS:
+            sprintf(buf, "Duplicate Markers");
+            break;
+        case k_UNDO_OP_DUPLICATE_ITEMS:
+            sprintf(buf, "Duplicate Items");
+            break;
+        case k_UNDO_OP_STRETCH_MARKER_REGION:
+            sprintf(buf, "Stretch Marker Region");
+            break;
+        case k_UNDO_OP_MOVE_MARKER_REGION:
+            sprintf(buf, "Move Marker Region");
             break;
         case k_UNDO_OP_CHANGE_SLOTINFO:
             sprintf(buf, "Change Slotinfo");
@@ -693,8 +711,14 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_ADD_PITCH_BREAKPOINT:
             sprintf(buf, "Add Pitch Breakpoint");
             break;
-        case k_UNDO_OP_CHANGE_PITCH_BREAKPOINT:
-            sprintf(buf, "Change Pitch Breakpoint");
+        case k_UNDO_OP_CHANGE_PITCH_BREAKPOINTS:
+            sprintf(buf, "Change Pitch Breakpoints");
+            break;
+        case k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_SLOPE:
+            sprintf(buf, "Change Pitch Breakpoint Slope");
+            break;
+        case k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_VELOCITY:
+            sprintf(buf, "Change Pitch Breakpoint Velocity");
             break;
         case k_UNDO_OP_CHANGE_PITCH:
             sprintf(buf, "Change Pitch");
@@ -1124,7 +1148,7 @@ t_symbol *element_type_to_symbol(e_element_types el_type)
     }
 }
 
-
+// TODO: remove gensym()
 e_element_types element_type_from_symbol(t_symbol *sym)
 {
     if (sym == _llllobj_sym_note)
@@ -1168,6 +1192,9 @@ e_element_types element_type_from_symbol(t_symbol *sym)
 
     if (sym == _llllobj_sym_slotinfo)
         return k_SLOTINFO;
+
+    if (sym == _llllobj_sym_marker)
+        return k_MARKER;
 
 
     // TO DO: ALL THE OTHER CASES, it's just a beginning...
@@ -1552,6 +1579,17 @@ t_undo_redo_information *undo_redo_information_reverse(t_notation_obj *r_ob, t_u
 //            newcontent = llll_clone(this_information->n_it_content);
             reverse_information = undo_redo_information_create(ID, k_CHORD, k_UNDO_MODIFICATION_TYPE_DELETE, param, path_after, path_before, k_HEADER_NONE, newcontent);
         }
+    } else if (type == k_MARKER) {
+        if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE || modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER) {
+            newcontent = get_single_marker_as_llll(r_ob, (t_marker *)item, false, false);
+            reverse_information = undo_redo_information_create(ID, k_MARKER, modif_type, param, path_after, path_before, k_HEADER_NONE, newcontent);
+        } else if (modif_type == k_UNDO_MODIFICATION_TYPE_DELETE) { // surely roll
+            newcontent = get_single_marker_as_llll(r_ob, (t_marker *)item, false, false);
+            reverse_information = undo_redo_information_create(ID, k_MARKER, k_UNDO_MODIFICATION_TYPE_ADD, param, path_after, path_before, k_HEADER_NONE, newcontent);
+        } else if (modif_type == k_UNDO_MODIFICATION_TYPE_ADD) { // surely roll
+            newcontent = llll_get();
+            reverse_information = undo_redo_information_create(ID, k_MARKER, k_UNDO_MODIFICATION_TYPE_DELETE, param, path_after, path_before, k_HEADER_NONE, newcontent);
+        }
         
     } else if (type == k_HEADER_DATA) {
         if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE) {
@@ -1651,7 +1689,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                     set_rollchord_values_from_llll(r_ob, (t_chord *)item, content, 0, true, false, false);
                     (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH;
                     if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER)
-                        (*flags) |= k_UNDO_PERFORM_FLAG_CHECK_ORDER;
+                        (*flags) |= k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS;
                 }
                 
             } else if (modif_type == k_UNDO_MODIFICATION_TYPE_DELETE) { // surely roll
@@ -1665,6 +1703,24 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                     (r_ob->addchordfromllll)((t_object *)r_ob, content, (t_rollvoice *)nth_voice_safe(r_ob, voice_num), false, true);
                 if (newch)
                     newch->need_recompute_parameters = true;
+            }
+
+        } else if (type == k_MARKER) {
+            if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE || modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER) {
+                set_marker_from_llll(r_ob, (t_marker *)item, content);
+                if (is_solo_with_progeny(r_ob, item)) update_solos(r_ob);
+                (*flags) |= k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_MARKERS;
+                if (!obj_is_score)
+                    (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH;
+                
+            } else if (modif_type == k_UNDO_MODIFICATION_TYPE_DELETE) {
+                if (!obj_is_score)
+                    (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH;
+                delete_marker(r_ob, (t_marker *)item);
+                check_correct_scheduling(r_ob, false);
+                
+            } else if (modif_type == k_UNDO_MODIFICATION_TYPE_ADD) {
+                add_marker_from_llll(r_ob, content);
             }
             
         } else if (type == k_HEADER_DATA) {
@@ -1774,7 +1830,7 @@ long notationobj_undo_redo(t_notation_obj *r_ob, char what)
         }
 
         if (reverse_information)
-            create_undo_redo_tick(r_ob, -what, 1, reverse_information, false);
+            undo_redo_tick_create(r_ob, -what, 1, reverse_information, false);
         
         undo_redo_information_free(this_information);
         llll_destroyelem(llll->l_head);
@@ -1990,6 +2046,8 @@ t_llll *notation_item_get_values_as_llll_for_undo(t_notation_obj *r_ob, t_notati
             return get_scorenote_values_as_llll(r_ob, (t_note *)item, k_CONSIDER_FOR_UNDO);
         else if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
             return get_uislotnote_values_as_llll(r_ob, (t_note *)item, k_CONSIDER_FOR_UNDO);
+    } else if (item->type == k_MARKER) {
+        return get_single_marker_as_llll(r_ob, (t_marker *)item, false, false);
     }
     return NULL;
 }
@@ -2060,9 +2118,9 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
         return NULL;
     
     
-    if (item->type != k_MEASURE && item->type != k_CHORD &&
-        !(item->type == k_NOTE && (r_ob->obj_type == k_NOTATION_OBJECT_SLOT || (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_name)))
-        && !(item->type == k_VOICE && modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE  && (param == _llllobj_sym_flag || param == _llllobj_sym_name))){
+    if (item->type != k_MEASURE && item->type != k_CHORD && item->type != k_MARKER &&
+        !(item->type == k_NOTE && (r_ob->obj_type == k_NOTATION_OBJECT_SLOT || (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE && param == _llllobj_sym_name))) &&
+        !(item->type == k_VOICE && modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE  && (param == _llllobj_sym_flag || param == _llllobj_sym_name))){
 #ifdef BACH_UNDO_DEBUG
         object_post((t_object *) r_ob, "Warning! WEIRD UNDO ELEMENT!!!");
 #endif
@@ -2094,11 +2152,12 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
         llll_appendobj(r_ob->undo_information_whose_path_need_to_be_checked, operation);
 
     
-    // THIS PART IS ONLY NEEDED IF notify_with != bang. TODO: optimize, put an if ()
-    // Delicate part: when there's CHANGE * * * DELETE, we turn it into DELETE * * *
-    // This is needed for the notification system, which otherwise should have information on both previous and next state.
+    // THIS PART IS ONLY NEEDED IF notify_with != bang.
 //    if (item->flags & k_FLAG_MODIF_UNDO_ANY) { // is already being undone for something
     if (r_ob->notify_with > 1) {
+        // Delicate part: when there's CHANGE * * * DELETE, we turn it into DELETE * * *
+        // This is needed for the notification system, which otherwise should have information on both previous and next state.
+
         // TO DO: only do this if there's a flag on the notation item that it already had a tick in the undo list (including DELETE, though)
         for (t_llllelem *el = r_ob->undo_llll->l_head; el && hatom_gettype(&el->l_hatom) != H_LONG; ) {
             t_undo_redo_information *existinginfo = (t_undo_redo_information *)hatom_getobj(&el->l_hatom);
@@ -2142,7 +2201,7 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
     
     tick_el = llll_prependobj(r_ob->undo_notation_items_under_tick, item);
     tick_el->l_thing.w_long = modif_type;
-    create_undo_redo_tick(r_ob, k_UNDO, 0, operation, true);
+    undo_redo_tick_create(r_ob, k_UNDO, 0, operation, true);
     
     return operation;
 }
@@ -2228,7 +2287,7 @@ void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long nu
         
         t_llllelem *tick_el = llll_prependobj(r_ob->undo_notation_items_under_tick, item[i], 0, WHITENULL_llll);
         tick_el->l_thing.w_long = modif_type;
-        create_undo_redo_tick(r_ob, k_UNDO, 0, operation, true);
+        undo_redo_tick_create(r_ob, k_UNDO, 0, operation, true);
     }
     
     if (undo_op && num_items > 1)
@@ -2386,8 +2445,11 @@ long notationobj_generic_change(t_notation_obj *r_ob, t_symbol *msg, long ac, t_
     long flags = 0;
     char obj_is_score = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE);
     t_llll *measure_whose_flag_needs_to_be_cleared = obj_is_score ? llll_get() : NULL;
+    long add_undo_step = 1;
     
     t_llll *ll = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, msg, ac, av, LLLL_PARSE_RETAIN);
+    llll_parseattrs((t_object *)r_ob, ll, true, "i", gensym("undo"), &add_undo_step);
+    
     if (!ll) {
         object_error((t_object *)r_ob, "Syntax error.");
         llll_free(measure_whose_flag_needs_to_be_cleared);
@@ -2399,15 +2461,33 @@ long notationobj_generic_change(t_notation_obj *r_ob, t_symbol *msg, long ac, t_
     if (!info) {
         object_error((t_object *)r_ob, "Can't find notation items.");
         llll_free(measure_whose_flag_needs_to_be_cleared);
+        unlock_general_mutex(r_ob);
         return flags;
     }
     
-    undo_redo_information_apply(r_ob, info, measure_whose_flag_needs_to_be_cleared, &flags);
+    if (add_undo_step) {
+        // reversing information for redo/undo
+        t_undo_redo_information *reverse_information = undo_redo_information_reverse(r_ob, info);
+        
+        // applying undo/redo information
+        undo_redo_information_apply(r_ob, info, measure_whose_flag_needs_to_be_cleared, &flags);
+        
+        if (reverse_information) {
+            undo_redo_tick_create(r_ob, k_UNDO, 1, reverse_information, true);
+            undo_redo_step_marker_create(r_ob, k_UNDO, 0, k_UNDO_OP_GENERIC_CHANGE, true);
+        }
+        
+    }
     llll_free(ll);
     
     if (flags & k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH) {
         recompute_total_length(r_ob);
         flags = flags & (~k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH);
+    }
+    
+    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_MARKERS) {
+        check_markers_order(r_ob);
+        flags = flags & (~k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_MARKERS);
     }
     
     if (obj_is_score) {
@@ -2416,6 +2496,7 @@ long notationobj_generic_change(t_notation_obj *r_ob, t_symbol *msg, long ac, t_
         llll_free(measure_whose_flag_needs_to_be_cleared);
     }
     
+    undo_redo_information_free(info);
     llll_free(measure_whose_flag_needs_to_be_cleared);
     
     return flags;

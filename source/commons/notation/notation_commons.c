@@ -34648,6 +34648,7 @@ t_marker *add_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoint
     return marker;
 }
 
+
 char delete_marker_by_llllelem(t_notation_obj *r_ob, t_llllelem *marker){
     if (marker) {
         if (!NOGOOD(marker)) {
@@ -34710,12 +34711,13 @@ void delete_marker(t_notation_obj *r_ob, t_marker *marker){
     }
 }
 
-char delete_marker_by_name(t_notation_obj *r_ob, t_llll *names){
+char delete_marker_by_name(t_notation_obj *r_ob, t_llll *names, char add_undo_ticks){
     char changed = false;
     t_marker *marker;
     for (marker = r_ob->firstmarker; marker; marker = marker->next) {
         if (are_all_names_contained(names, marker->r_it.names)) {
             changed = true;
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
             delete_marker(r_ob, marker);
             break;
         }
@@ -35035,6 +35037,7 @@ char move_selected_ms_attached_markers(t_notation_obj *r_ob, double marker_withm
             double new_position_ms = MAX(0, unscaled_xposition_to_ms(r_ob, ux, 1));
             if (delta_ms && ((t_marker *)curr_it)->ux_difference_with_mousedown_marker == 0)
                 *delta_ms = new_position_ms - ((t_marker *)curr_it)->position_ms;
+            undo_tick_create_for_notation_item(r_ob, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER, _llllobj_sym_state);
             ((t_marker *)curr_it)->position_ms = new_position_ms;
         }
     }
@@ -35066,6 +35069,7 @@ char move_selected_ms_attached_markers_delta(t_notation_obj *r_ob, double delta_
         if (curr_it->type == k_MARKER && ((t_marker *)curr_it)->attach_to == k_MARKER_ATTACH_TO_MS) { // it is a marker : let's move it
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && ((t_marker *)curr_it)->position_ms + delta_ms > r_ob->length_ms)
                 delta_ms = r_ob->length_ms - ((t_marker *)curr_it)->position_ms;
+            undo_tick_create_for_notation_item(r_ob, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER, _llllobj_sym_state);
             change_marker_ms(r_ob, (t_marker *) curr_it, delta_ms, true, false);
             changed = 1;
         }
@@ -35571,6 +35575,105 @@ void change_marker_onset_from_lexpr_or_llllelem(t_notation_obj *r_ob, t_marker *
     }
 }
 
+void set_marker_from_llll(t_notation_obj *r_ob, t_marker *marker, t_llll *this_llll)
+{
+    double ms = 0;
+    char attach_to = k_MARKER_ATTACH_TO_MS;
+    e_marker_roles mkrole = k_MARKER_ROLE_NONE;
+    t_timepoint tp = build_timepoint(0, long2rat(0));
+    t_llll *mknames = NULL;
+    t_llll *content = NULL;
+    char has_explicit_name = false;
+    
+    unsigned long forced_marker_ID = notation_item_get_ID_from_llll(this_llll);
+    
+    if (this_llll && this_llll->l_head && is_hatom_number(&this_llll->l_head->l_hatom)) {
+        ms = hatom_getdouble(&this_llll->l_head->l_hatom);
+    } else if (this_llll && this_llll->l_head && hatom_gettype(&this_llll->l_head->l_hatom) == H_LLLL) {
+        tp = llll_to_timepoint(r_ob, hatom_getllll(&this_llll->l_head->l_hatom), NULL, false);
+        attach_to = k_MARKER_ATTACH_TO_MEASURE;
+    }
+    
+    if (this_llll->l_head && this_llll->l_head->l_next) {
+        has_explicit_name = true;
+        mknames = get_names_from_llllelem(r_ob, this_llll->l_head->l_next);
+    }
+    
+    if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_hatom) == H_SYM)
+        mkrole = sym_to_marker_role(hatom_getsym(&this_llll->l_head->l_next->l_next->l_hatom));
+    if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && this_llll->l_head->l_next->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_next->l_hatom) == H_LLLL) {
+        content = llll_clone(hatom_getllll(&this_llll->l_head->l_next->l_next->l_next->l_hatom));
+    }
+    
+    marker->position_ms = ms;
+    marker->attach_to = attach_to;
+
+    marker->r_sym_pim_attach = long2rat(0);
+    if (attach_to == k_MARKER_ATTACH_TO_MEASURE) {
+        t_voice *voice = nth_voice_safe(r_ob, tp.voice_num);
+        if (voice) {
+            t_measure *meas = nth_measure_of_scorevoice((t_scorevoice *)voice, tp.measure_num);
+            if (meas) {
+                marker->measure_attach_ID = meas->r_it.ID;
+                marker->r_sym_pim_attach = tp.pt_in_measure;
+            }
+        }
+    }
+    
+    marker->role = mkrole;
+    marker->content = content;
+
+    if (has_explicit_name)
+        notation_item_set_names_from_llll(r_ob, (t_notation_item *)marker, mknames);
+
+    if (forced_marker_ID && forced_marker_ID != marker->r_it.ID){
+        shashtable_chuck_thing(r_ob->IDtable, marker->r_it.ID);
+        shashtable_insert_with_key(r_ob->IDtable, marker, forced_marker_ID, 1);
+        marker->r_it.ID = forced_marker_ID;
+    }
+
+    llll_free(mknames);
+}
+
+t_marker *add_marker_from_llll(t_notation_obj *r_ob, t_llll *this_llll)
+{
+    t_marker *res = NULL;
+    double ms = 0;
+    char attach_to = k_MARKER_ATTACH_TO_MS;
+    e_marker_roles mkrole = k_MARKER_ROLE_NONE;
+    t_timepoint tp = build_timepoint(0, long2rat(0));
+    t_llll *mknames = NULL;
+    t_llll *content = NULL;
+    char has_explicit_name = false;
+    
+    unsigned long forced_marker_ID = notation_item_get_ID_from_llll(this_llll);
+    
+    if (this_llll && this_llll->l_head && is_hatom_number(&this_llll->l_head->l_hatom)) {
+        ms = hatom_getdouble(&this_llll->l_head->l_hatom);
+    } else if (this_llll && this_llll->l_head && hatom_gettype(&this_llll->l_head->l_hatom) == H_LLLL) {
+        tp = llll_to_timepoint(r_ob, hatom_getllll(&this_llll->l_head->l_hatom), NULL, false);
+        attach_to = k_MARKER_ATTACH_TO_MEASURE;
+    }
+    
+    if (this_llll->l_head && this_llll->l_head->l_next) {
+        has_explicit_name = true;
+        mknames = get_names_from_llllelem(r_ob, this_llll->l_head->l_next);
+    }
+    
+    if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_hatom) == H_SYM)
+        mkrole = sym_to_marker_role(hatom_getsym(&this_llll->l_head->l_next->l_next->l_hatom));
+    if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && this_llll->l_head->l_next->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_next->l_hatom) == H_LLLL) {
+        content = llll_clone(hatom_getllll(&this_llll->l_head->l_next->l_next->l_next->l_hatom));
+    }
+    
+    if (!has_explicit_name)
+        mknames = find_unused_marker_names(r_ob, NULL, NULL);
+    
+    res = add_marker(r_ob, mknames, ms, tp, attach_to, mkrole, content, forced_marker_ID);
+    llll_free(mknames);
+    return res;
+}
+
 t_marker *add_marker_from_llllelem(t_notation_obj *r_ob, t_llllelem *elem)
 {
     t_marker *res = NULL;
@@ -35579,40 +35682,7 @@ t_marker *add_marker_from_llllelem(t_notation_obj *r_ob, t_llllelem *elem)
         res = add_marker(r_ob, names, hatom_getdouble(&elem->l_hatom), build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
         llll_free(names);
     } else if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
-        t_llll *this_llll = hatom_getllll(&elem->l_hatom);
-        double ms = 0; 
-        char attach_to = k_MARKER_ATTACH_TO_MS;
-        e_marker_roles mkrole = k_MARKER_ROLE_NONE;
-        t_timepoint tp = build_timepoint(0, long2rat(0));
-        t_llll *mknames = NULL;
-        t_llll *content = NULL;
-        char has_explicit_name = false;
-        
-        unsigned long forced_marker_ID = notation_item_get_ID_from_llll(this_llll);
-
-        if (this_llll && this_llll->l_head && is_hatom_number(&this_llll->l_head->l_hatom)) {
-            ms = hatom_getdouble(&this_llll->l_head->l_hatom);
-        } else if (this_llll && this_llll->l_head && hatom_gettype(&this_llll->l_head->l_hatom) == H_LLLL) {
-            tp = llll_to_timepoint(r_ob, hatom_getllll(&this_llll->l_head->l_hatom), NULL, false);
-            attach_to = k_MARKER_ATTACH_TO_MEASURE;
-        }
-        
-        if (this_llll->l_head && this_llll->l_head->l_next) {
-            has_explicit_name = true;
-            mknames = get_names_from_llllelem(r_ob, this_llll->l_head->l_next);
-        }
-
-        if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_hatom) == H_SYM)
-            mkrole = sym_to_marker_role(hatom_getsym(&this_llll->l_head->l_next->l_next->l_hatom));
-        if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && this_llll->l_head->l_next->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_next->l_hatom) == H_LLLL) {
-            content = llll_clone(hatom_getllll(&this_llll->l_head->l_next->l_next->l_next->l_hatom));
-        }
-        
-        if (!has_explicit_name) 
-            mknames = find_unused_marker_names(r_ob, NULL, NULL);
-
-        res = add_marker(r_ob, mknames, ms, tp, attach_to, mkrole, content, forced_marker_ID);
-        llll_free(mknames);
+        add_marker_from_llll(r_ob, hatom_getllll(&elem->l_hatom));
     }
     return res;
 }
