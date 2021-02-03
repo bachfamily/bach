@@ -133,7 +133,10 @@ void roll_float(t_roll *x, double num);
 void roll_bang(t_roll *x);
 void roll_clock(t_roll *x, t_symbol *s);
 void roll_undo_redo(t_roll *x, char what);
+
+// change/transaction
 void roll_generic_change(t_roll *x, t_symbol *msg, long ac, t_atom *av);
+void roll_generic_transaction(t_roll *x, t_symbol *msg, long ac, t_atom *av);
 
 
 // mute/lock/solo
@@ -3714,7 +3717,7 @@ void roll_getmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst, true);
+            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, marker_llll);
@@ -4375,7 +4378,7 @@ void roll_task(t_roll *x){
                     }
                     this_llll = chord_get_as_llll_for_sending((t_notation_obj *) x, (t_chord *)items_to_send[i], k_CONSIDER_FOR_PLAYING, -1, NULL, &references, &is_notewise);
                 } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true);
+                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true, k_CONSIDER_FOR_PLAYING);
                     this_llll = llll_get();
                     references = llll_get();
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
@@ -6532,8 +6535,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) roll_generic_change, "add", A_GIMME, 0);
     class_addmethod(c, (method) roll_generic_change, "delete", A_GIMME, 0);
     class_addmethod(c, (method) roll_generic_change, "change", A_GIMME, 0);
-    class_addmethod(c, (method) roll_generic_change, "changeflag", A_GIMME, 0);
-    class_addmethod(c, (method) roll_generic_change, "changename", A_GIMME, 0);
+    class_addmethod(c, (method) roll_generic_transaction, "transaction", A_GIMME, 0);
 
     
     class_addmethod(c, (method) roll_getmaxID, "getmaxid", 0); // undocumented
@@ -9453,7 +9455,7 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
                         } else if (pivotsym == _llllobj_sym_markers) {
                             markers_are_given = true;
                             llll_destroyelem(pivot); 
-                            set_markers_from_llll((t_notation_obj *)x, firstllll, false, false);
+                            set_markers_from_llll((t_notation_obj *)x, firstllll, false, false, false);
                         } else if (pivotsym == _llllobj_sym_groups) {
                             llll_destroyelem(pivot); 
                             groups = llll_clone(firstllll);
@@ -15829,8 +15831,8 @@ void roll_paste_clipboard(t_roll *x, char keep_original_onsets, double force_ons
                 hatom_setdouble(&ll->l_head->l_hatom, hatom_getdouble(&ll->l_head->l_hatom) + x->must_apply_delta_onset);
         }
     }
-    undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MARKERS);
-    set_markers_from_llll((t_notation_obj *)x, markers_to_paste, true, true);
+
+    set_markers_from_llll((t_notation_obj *)x, markers_to_paste, true, true, true);
     
     set_roll_from_llll(x, roll_to_paste, true);    // <<< with must_append_chords = true the undo ticks are automatically added inside here
     x->pasting_chords = false;
@@ -17972,7 +17974,29 @@ void roll_generic_change(t_roll *x, t_symbol *msg, long ac, t_atom *av)
 
     notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 
-    handle_change((t_notation_obj *)x, k_CHANGED_STANDARD, k_UNDO_OP_UNKNOWN);
+    handle_change((t_notation_obj *)x, k_CHANGED_STANDARD, k_UNDO_OP_GENERIC_CHANGE);
+}
+
+
+void roll_generic_transaction(t_roll *x, t_symbol *msg, long ac, t_atom *av)
+{
+    long flags = 0;
+    
+    lock_general_mutex((t_notation_obj *)x);
+    
+    flags = notationobj_generic_transaction((t_notation_obj *)x, msg, ac, av);
+    
+    if (flags & k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS)
+        check_all_chords_order(x);
+    
+    if (x->r_ob.notation_cursor.voice)
+        roll_linear_edit_snap_to_chord(x); // just to resnap to chord
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
+    
+    handle_change((t_notation_obj *)x, k_CHANGED_STANDARD, k_UNDO_OP_GENERIC_TRANSACTION);
 }
 
 void roll_prune_last_undo_step(t_roll *x)

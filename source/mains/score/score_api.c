@@ -3446,7 +3446,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
 #endif
 
     if (markers) // we need to set them later, since they might be attached to measures
-        set_markers_from_llll((t_notation_obj *)x, markers, false, false);
+        set_markers_from_llll((t_notation_obj *)x, markers, false, false, false);
     
     recompute_all(x);
 

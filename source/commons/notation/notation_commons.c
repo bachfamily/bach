@@ -25799,7 +25799,7 @@ void free_group(t_notation_obj *r_ob, t_group *group) {
     group = NULL;
 }
 
-void free_marker(t_notation_obj *r_ob, t_marker *marker) {
+void marker_free(t_notation_obj *r_ob, t_marker *marker) {
 // free the memory related to the tempo *tempo
     if (marker->content)
         llll_free(marker->content);
@@ -34576,6 +34576,7 @@ t_marker *build_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoi
             if (meas) {
                 marker->measure_attach_ID = meas->r_it.ID;
                 marker->r_sym_pim_attach = tp.pt_in_measure;
+                marker->position_ms = timepoint_to_ms(r_ob, tp, tp.voice_num);
             }
         }
     }
@@ -34707,7 +34708,7 @@ void delete_marker(t_notation_obj *r_ob, t_marker *marker){
                 r_ob->num_markers = 0;
             }
         }
-        free_marker(r_ob, marker);
+        marker_free(r_ob, marker);
     }
 }
 
@@ -35616,6 +35617,7 @@ void set_marker_from_llll(t_notation_obj *r_ob, t_marker *marker, t_llll *this_l
             if (meas) {
                 marker->measure_attach_ID = meas->r_it.ID;
                 marker->r_sym_pim_attach = tp.pt_in_measure;
+                marker->position_ms = timepoint_to_ms(r_ob, tp, tp.voice_num);
             }
         }
     }
@@ -35682,13 +35684,13 @@ t_marker *add_marker_from_llllelem(t_notation_obj *r_ob, t_llllelem *elem)
         res = add_marker(r_ob, names, hatom_getdouble(&elem->l_hatom), build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
         llll_free(names);
     } else if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
-        add_marker_from_llll(r_ob, hatom_getllll(&elem->l_hatom));
+        res = add_marker_from_llll(r_ob, hatom_getllll(&elem->l_hatom));
     }
     return res;
 }
 
 // beware: destructive!!
-void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode, char select)
+void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode, char select, char add_undo_ticks)
 {
     if (markers) {
         t_llllelem *elem;
@@ -35696,11 +35698,16 @@ void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode,
             lock_general_mutex(r_ob);
         lock_markers_mutex(r_ob);
 
+        if (!add_mode && add_undo_ticks)
+            undo_tick_create_for_header(r_ob, k_HEADER_MARKERS);
+
         if (!add_mode && r_ob->firstmarker)
             clear_all_markers(r_ob);
 
         for (elem = markers->l_head; elem; elem = elem->l_next)  {
             t_marker *mk = add_marker_from_llllelem(r_ob, elem);
+            if (add_mode && mk)
+                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
             if (select)
                 notation_item_add_to_preselection(r_ob, (t_notation_item *)mk);
         }

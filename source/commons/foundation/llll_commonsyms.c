@@ -439,6 +439,13 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_header = gensym("header");
     x->s_height = gensym("height");
     x->s_root = gensym("root");
+
+    
+    x->s_mixed = gensym("mixed");
+    x->s_whole = gensym("whole");
+    x->s_durationline = gensym("durationline");
+    x->s_transaction = gensym("transaction");
+
     x->s_bachcursors = gensym("bachcursors");
     x->s_getdomains = gensym("getdomains");
     x->s_setdomains = gensym("setdomains");

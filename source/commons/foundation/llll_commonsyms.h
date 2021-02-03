@@ -416,7 +416,13 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_header;
 	t_symbol	*s_height;
 	t_symbol	*s_root;
-	
+    
+    t_symbol    *s_mixed;
+    t_symbol    *s_whole;
+    t_symbol    *s_breakpointortail;
+    t_symbol    *s_durationline;
+    t_symbol    *s_transaction;
+
 	t_symbol	*s_bachcursors;
     
     t_symbol    *s_getdomains;
@@ -817,6 +823,12 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_header	(_llllobj_common_symbols->s_header)
 #define _llllobj_sym_height	(_llllobj_common_symbols->s_height)
 #define _llllobj_sym_root	(_llllobj_common_symbols->s_root)
+
+#define _llllobj_sym_mixed    (_llllobj_common_symbols->s_mixed)
+#define _llllobj_sym_whole    (_llllobj_common_symbols->s_whole)
+#define _llllobj_sym_breakpointortail    (_llllobj_common_symbols->s_breakpointortail)
+#define _llllobj_sym_durationline    (_llllobj_common_symbols->s_durationline)
+#define _llllobj_sym_transaction    (_llllobj_common_symbols->s_transaction)
 
 #define _llllobj_sym_bachcursors	(_llllobj_common_symbols->s_bachcursors)
 

@@ -97,6 +97,10 @@ void score_paint_to_jitter_matrix(t_score *x, t_symbol *matrix_name);
 t_max_err score_notify(t_score *x, t_symbol *s, t_symbol *msg, void *sender, void *data);
 void score_undo_redo(t_score *x, char what);
 
+// change/transaction
+void score_generic_change(t_score *x, t_symbol *msg, long ac, t_atom *av);
+void score_generic_transaction(t_score *x, t_symbol *msg, long ac, t_atom *av);
+
 void score_getmaxID(t_score *x);
 
 void score_undo(t_score *x);
@@ -2916,7 +2920,7 @@ void score_getmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst, true);
+            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 7, marker_llll);
@@ -4390,7 +4394,7 @@ void score_task(t_score *x)
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
                     llll_appendobj(references, items_to_send[i], 0, WHITENULL_llll);
                 } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true);
+                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true, k_CONSIDER_FOR_PLAYING);
                     this_llll = llll_get();
                     references = llll_get();
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
@@ -6882,7 +6886,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example slice [4 3 1/2] @caption ...only in voice 4
     class_addmethod(c, (method) score_slice, "slice", A_GIMME, 0);
     
-    
+    class_addmethod(c, (method) score_generic_change, "add", A_GIMME, 0);
+    class_addmethod(c, (method) score_generic_change, "delete", A_GIMME, 0);
+    class_addmethod(c, (method) score_generic_change, "change", A_GIMME, 0);
+    class_addmethod(c, (method) score_generic_transaction, "transaction", A_GIMME, 0);
+
     class_addmethod(c, (method) score_getmaxID, "getmaxid", 0); // undocumented
 
     llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_UI);
@@ -17574,6 +17582,60 @@ void score_resetnoteheadinfo(t_score *x)
     create_whole_score_undo_tick(x);
     notationobj_reset_noteheadinfo((t_notation_obj *)x);
     handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CUSTOM_NOTEHEADS_DEFINITION);
+}
+
+
+
+void score_generic_change(t_score *x, t_symbol *msg, long ac, t_atom *av)
+{
+    long flags = 0;
+    
+    lock_general_mutex((t_notation_obj *)x);
+    
+    flags = notationobj_generic_change((t_notation_obj *)x, msg, ac, av);
+    
+    if (flags & k_UNDO_PERFORM_FLAG_NOTHING_DONE) {
+        unlock_general_mutex((t_notation_obj *)x);
+    } else {
+        if (flags & k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION)
+            recompute_all_except_for_beamings_and_autocompletion(x);
+        
+        if (flags & k_UNDO_PERFORM_FLAG_PERFORM_ANALYSIS_AND_CHANGE)
+            perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
+        
+        unlock_general_mutex((t_notation_obj *)x);
+        
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
+        
+        handle_change((t_notation_obj *)x, k_CHANGED_STANDARD, k_UNDO_OP_GENERIC_CHANGE);
+    }
+}
+
+
+void score_generic_transaction(t_score *x, t_symbol *msg, long ac, t_atom *av)
+{
+    long flags = 0;
+    
+    lock_general_mutex((t_notation_obj *)x);
+    
+    flags = notationobj_generic_transaction((t_notation_obj *)x, msg, ac, av);
+    
+    if (flags & k_UNDO_PERFORM_FLAG_NOTHING_DONE) {
+        unlock_general_mutex((t_notation_obj *)x);
+    } else {
+        if (flags & k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION)
+            recompute_all_except_for_beamings_and_autocompletion(x);
+        
+        if (flags & k_UNDO_PERFORM_FLAG_PERFORM_ANALYSIS_AND_CHANGE)
+            perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
+        
+        unlock_general_mutex((t_notation_obj *)x);
+        
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
+        
+        handle_change((t_notation_obj *)x, k_CHANGED_STANDARD, k_UNDO_OP_GENERIC_TRANSACTION);
+    }
+    
 }
 
 

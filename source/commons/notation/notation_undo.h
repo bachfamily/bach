@@ -374,6 +374,10 @@ t_llll *notation_item_path_to_llll(t_notation_item_path *path);
 // core stuff:
 long notationobj_generic_change(t_notation_obj *r_ob, t_symbol *msg, long ac, t_atom *av);
 
+// a transaction packets together a lot of changes
+long notationobj_generic_transaction(t_notation_obj *r_ob, t_symbol *msg, long ac, t_atom *av);
+
+
 void check_num_undo_steps(t_notation_obj *r_ob);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -65,6 +65,7 @@
     #define USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS    false    ///< Use bitmaps for standard noteheads – instead than glyphs
     #define BACH_NOTES_HAVE_ID                        ///< Do notes have IDs as well? Should always be defined, except for weird debug purposes
     #define BACH_MARKERS_HAVE_ID                    ///< Do markers have IDs as well? Should always be defined, except for weird debug purposes
+                                                    ///  Don't disable this or markers undo may potentially crash
 //    #define BACH_OUTPUT_SYMBOLIC_FLAGS              ///< Are notation item flags to be output as symbols, instead of integers?
 //    #define BACH_OUTPUT_SYMBOLIC_LEVELTYPES         ///< Are leveltypes to be output as symbols, instead of integers?
 
@@ -1688,6 +1689,7 @@ typedef enum _undo_operations
 {
     k_UNDO_OP_UNKNOWN = 0,        
     k_UNDO_OP_GENERIC_CHANGE,
+    k_UNDO_OP_GENERIC_TRANSACTION,
     k_UNDO_OP_CHANGE_SCORE,
     k_UNDO_OP_CHANGE_ROLL,
     k_UNDO_OP_CHANGE_CHORD,
@@ -1934,6 +1936,21 @@ typedef enum _undo_modification_types
     k_UNDO_MODIFICATION_TYPE_CHANGE = 3,                 ///< Change the parameters of the notation item
     k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER = 4,     ///< Change the parameters of the notation item, and also check the order of the notation item within its parent
 } e_undo_modification_types;
+
+
+
+/** Types of notification for changes through last outlet
+ @ingroup    behavior
+ */
+typedef enum _notify_with
+{
+    k_NOTIFY_WITH_BANG = 0,         ///< Notify changes via a bang
+    k_NOTIFY_WITH_LABEL = 1,        ///< Notify changes via the operation label
+    k_NOTIFY_WITH_REDO_TRANSACTION = 2,   ///< Notify changes via a full redo transaction (order of chords/notes/markers is not updated between ticks)
+    k_NOTIFY_WITH_UNDO_TRANSACTION = 3,   ///< Notify changes via a full undo transaction (order of chords/notes/markers is not updated between ticks)
+    k_NOTIFY_WITH_REDO_TICKS = 4,   ///< Notify changes via operation label and a sequence of redo ticks
+    k_NOTIFY_WITH_UNDO_TICKS = 5,   ///< Notify changes via operation label and a sequence of undo ticks
+} e_notify_with;
 
 
 /** Types of slot access type.
@@ -4409,7 +4426,7 @@ typedef struct _notation_obj
     char        breakpoints_have_velocity;            ///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
     char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads
     
-    char        notify_with;                           ///< Notification type through last outlet (0 = bang, 1 = operation label, 2 = operation details, 3 = undo operation details)
+    char        notify_with;                           ///< Notification type through last outlet (0 = bang, 1 = operation label, 2 = redo transaction, 3 = undo transaction, 4 = individual redo ticks, 5 = individual undo ticks)
     char        last_operation_is;         ///< -1 = undo, 1 = redo, 0 = anything else
     char        notify_when_painted;                ///< Flag telling if we want notifications to be sent whenever the object is repainted
     char        notify_also_upon_messages;            ///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes 
@@ -7202,7 +7219,7 @@ void free_tuttipoint(t_notation_obj *r_ob, t_tuttipoint *tuttipoint);
     @param r_ob        The notation object
     @param marker        The marker
  */
-void free_marker(t_notation_obj *r_ob, t_marker *marker);
+void marker_free(t_notation_obj *r_ob, t_marker *marker);
 
 
 /**    Free memory of the notation object associated with slotinfo content.
@@ -17736,12 +17753,13 @@ t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, do
     @param    namefirst    If this is 1, the usual (<position_ms> <name>) coupling is reversed for each marker, and becomes (<name> <position_ms>).
                         If this is 0, the syntax is the usual (<position_ms> <name>).
     @param   prepend_marker_symbol  Also prepend a "marker" symbol to the output
+    @param   mode       One of the #e_data_considering_types
     @return                A list containing the information about a single marker or all markers.
     @remark                Differntly from get_markers_as_llll(), the information we get can have names first and can concern a single marker
                         (but cannot concern a temporal window).
     @see                get_markers_as_llll()
  */
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol);
+t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol, e_data_considering_types mode);
 
 
 /** Set all markers of a given notation objet from a list of markers in the usual syntax (<position_ms> <name>) (<position_ms> <name>) ...
@@ -17751,9 +17769,10 @@ t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char n
     @param    markers        The llll determining the markers, in the above explained syntax
     @param    add_mode    If this is 1, the markers will be added to the existing ones, otherwise the existing ones will be removed
     @param    select      If this is 1, the markers will be added to the current selection
+    @param    add_undo_ticks    If non-zero, also adds the undo ticks
     @see                get_single_marker_as_llll()
  */
-void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode, char select);
+void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode, char select, char add_undo_ticks);
 
 
 /** Retrieve the timepoint of a measure-attached-marker (for [bach.score]).

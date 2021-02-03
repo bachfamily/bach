@@ -2420,15 +2420,21 @@ void notation_class_add_notification_attributes(t_class *c, char obj_type)
     
     CLASS_ATTR_CHAR(c,"notifywith",0, t_notation_obj, notify_with);
     CLASS_ATTR_STYLE_LABEL(c,"notifywith",0,"enumindex","Notify Interface Changes Via");
-    CLASS_ATTR_ENUMINDEX(c,"notifywith", 0, "bang Operation Redo Data Undo Data");
-    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 3);
+    CLASS_ATTR_ENUMINDEX(c,"notifywith", 0, "bang Operation Redo Transaction Undo Transaction Redo Data Undo Data");
+    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 5);
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifywith", 0, "0");
     // @description Chooses the notification type for interface changes: <br />
     // - 0 (bang, default): the simplest and less CPU-consuming alternative, only notifies with a bang when anything changes; <br />
     // - 1 (Operation): notify with an operation label; <br />
-    // - 2 (Redo Data): notify verbosely with the operation label plus a sequence of redo data, sufficient to recreate the operation; <br />
-    // - 3 (Undo Data): the same as 2, but providing undo data instead.
-
+    // - 2 (Redo Transaction): notify verbosely with the operation label plus a sequence of change messages ('ticks') encapsulated
+    // in a transaction (set of instructions across which orders are not refreshed).
+    // This is the message you can directly provide to another notation object in order to reproduce the same effect; <br />
+    // - 3 (Undo Data): same as the previous, but providing undo information instead.
+    // - 4 (Redo Data): same as "Redo Transaction" but without the encapsulation, so the notification is a sequence of individual ticks (with a
+    // starting operation label).
+    // The practical difference between "Redo Transaction" and "Redo Data" is not just the leading "transaction" symbol, but more crucially
+    // the path of the items, which in this last case does indeed account for any update of chords/markers/notes order between the change ticks; <br />
+    // - 5 (Undo Data): same as the previous, but providing undo information instead. <br />
     
     CLASS_ATTR_CHAR(c,"senddoneatstartup",0, t_notation_obj, send_rebuild_done_at_startup);
     CLASS_ATTR_STYLE_LABEL(c,"senddoneatstartup",0,"onoff","Send 'Done' At Startup (If Data Was Saved)");
@@ -3461,8 +3467,9 @@ t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, lo
 
 
 // use marker = NULL to get all markers
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol){
+t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol, e_data_considering_types mode){
 	t_llll *outlist;
+    
 	if (marker) {
 		outlist = llll_get();
         if (prepend_marker_symbol)
@@ -3496,6 +3503,11 @@ t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char n
 		llll_appendsym(outlist, marker_role_to_sym(marker->role), 0, WHITENULL_llll);
 		if (marker->role != k_MARKER_ROLE_NONE && marker->content)
 			llll_appendllll_clone(outlist, marker->content, 0, WHITENULL_llll, NULL);
+        
+#ifdef BACH_NOTES_HAVE_ID
+        if (mode == k_CONSIDER_FOR_UNDO)
+            llll_appendllll(outlist, get_ID_as_llll((t_notation_item *)marker));
+#endif
 	} else {
 		outlist = get_markers_as_llll(r_ob, 0, 0, 0, namefirst, k_CONSIDER_FOR_DUMPING, 0);
 	}
@@ -3507,7 +3519,7 @@ void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst,
 {
 	t_llll *llll;
 	lock_markers_mutex(r_ob);
-	llll = get_single_marker_as_llll(r_ob, marker, namefirst, true);
+	llll = get_single_marker_as_llll(r_ob, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
     
     if (forced_routers && forced_routers->l_head && hatom_gettype(&forced_routers->l_head->l_hatom) == H_SYM &&
         llll && llll->l_head && hatom_getsym(&llll->l_head->l_hatom) == _llllobj_sym_marker)
