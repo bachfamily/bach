@@ -1898,20 +1898,20 @@ void notation_class_add_color_attributes(t_class *c, char obj_type){
 		
 		CLASS_ATTR_RGBA(c,"mutecolor", 0, t_notation_obj, j_muted_rgba);
 		CLASS_ATTR_STYLE_LABEL(c, "mutecolor",0,"rgba","Mute Color");
-		CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"mutecolor",0,"0.29 0.29 0.72 1.");
+		CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"mutecolor",0,"0.039 0.247 0.831 1.");
 		// @exclude bach.slot
 		// @description Sets the color of muted items in RGBA format. 
 		
 		CLASS_ATTR_RGBA(c,"solocolor", 0, t_notation_obj, j_solo_rgba);
 		CLASS_ATTR_STYLE_LABEL(c, "solocolor",0,"rgba","Solo Color");
-		CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"solocolor",0,"0.61 0.61 0.21 1.");
+		CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"solocolor",0,"0.740 0.716 0.036 1.");
 		// @exclude bach.slot
 		// @description Sets the color of items set as "solo" in RGBA format. 
 		
 		if (obj_type == k_NOTATION_OBJECT_ROLL) {
 			CLASS_ATTR_RGBA(c,"markercolor", 0, t_notation_obj, j_marker_rgba);
 			CLASS_ATTR_STYLE_LABEL(c, "markercolor",0,"rgba", "Marker Color");
-			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markercolor",0,"0.196 0.580 0.153 0.902");
+			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markercolor",0,"0.196 0.580 0.153 0.9");
 			// @exclude bach.slot, bach.score
 			// @description Sets the color of markers in RGBA format. 
 		}
@@ -1919,13 +1919,13 @@ void notation_class_add_color_attributes(t_class *c, char obj_type){
 		if (obj_type == k_NOTATION_OBJECT_SCORE) {
 			CLASS_ATTR_RGBA(c,"markercolor", 0, t_notation_obj, j_marker_rgba);
 			CLASS_ATTR_STYLE_LABEL(c, "markercolor",0,"rgba", "Milliseconds-Attached Marker Color");
-			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markercolor",0,"0.196 0.580 0.153 0.902");
+			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markercolor",0,"0.196 0.580 0.153 0.9");
 			// @exclude bach.slot, bach.roll
 			// @description Sets the color of markers attached to absolute milliseconds position in RGBA format. 
 
 			CLASS_ATTR_RGBA(c,"measmarkercolor", 0, t_notation_obj, j_marker_attached_to_tp_rgba);
 			CLASS_ATTR_STYLE_LABEL(c, "measmarkercolor",0,"rgba","Measure-Attached Marker Color");
-			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measmarkercolor",0,"0.137 0.208 0.729 0.902");
+			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measmarkercolor",0,"0.313 0.137 0.729 0.9");
 			// @exclude bach.slot, bach.roll
 			// @description Sets the color of markers attached to measure position in RGBA format. 
 		}
