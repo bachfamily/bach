@@ -5149,7 +5149,7 @@ void scoreapi_initscore_step01(t_score *x)
     long i, v;
     t_scorevoice *voiceprec = NULL;
     
-    score_declare_bach_attributes(x);
+    score_bach_attribute_declares(x);
     
     x->r_ob.num_systems = 1;
     x->must_append_measures = false;
@@ -7458,8 +7458,16 @@ void sync_marker_absolute_ms_onset(t_score *x, t_marker *marker)
         if (meas) {
             t_timepoint tp = build_timepoint(meas->measure_number, marker->r_sym_pim_attach);
             marker->position_ms = timepoint_to_ms((t_notation_obj *)x, tp, meas->voiceparent->v_ob.number);
-        } else 
+            if (marker->r_sym_duration.r_num >= 0) {
+                double end_position = timepoint_to_ms((t_notation_obj *)x, timepoint_shift(x, tp, build_timepoint(0, marker->r_sym_duration)), meas->voiceparent->v_ob.number);
+                marker->duration_ms = end_position - marker->position_ms;
+            } else {
+                marker->duration_ms = 0;
+            }
+        } else {
             marker->position_ms = 0;
+            marker->duration_ms = 0;
+        }
     }
 }
 
@@ -10231,7 +10239,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 
         
         // cycle on the SCOREVOICES!
-        get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
+        get_playhead_ypos((t_notation_obj *)x, &playhead_y1, &playhead_y2);
         
         lock_general_mutex((t_notation_obj *)x);
         
@@ -10306,9 +10314,20 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 get_names_as_text(marker->r_it.names, buf, 1000);
 
                 if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE)
-                    marker_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, measure_attached_marker_to_timepoint((t_notation_obj *)x, marker), false, false);
+                    marker_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, false, false);
                 else
                     marker_ux = ms_to_unscaled_xposition((t_notation_obj *)x, marker_onset, 1);
+                
+                double marker_end_ux = marker_ux;
+                char is_region = marker_is_region(marker);
+                if (is_region) {
+                    if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE)
+                        marker_end_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, timepoint_shift(x, tp, build_timepoint(0, marker->r_sym_duration)), false, false);
+                    else
+                        marker_end_ux = ms_to_unscaled_xposition((t_notation_obj *)x, marker_onset + marker->duration_ms, 1);
+                }
+                double marker_duration_ux = marker_end_ux - marker_ux;
+
                 
                 is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
                 is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
@@ -10317,7 +10336,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     
                     marker->name_painted_direction = (marker_ux + marker->name_uwidth > x->r_ob.screen_ux_end ? -1 : 1);
                     
-                    if (x->r_ob.smart_markername_placement && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
+                    if (x->r_ob.smart_markername_placement && (!is_region) && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
                         marker->name_line = marker->prev->name_line + 1;
                         if (marker->prev->name_line > 0) {
                             for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
@@ -10330,8 +10349,16 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     } else
                         marker->name_line = 0;
                     
-                    paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : marker_color,
-                                 jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, CONST_MARKER_LINE_WIDTH, x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
+                    double regionwidth = 0;
+                    if (is_region) {
+                        regionwidth = 100; // TODO: change //onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL) - marker_onset;
+                        t_rect markerstrip = build_rect(this_marker_x, playhead_y1, regionwidth, 2 * x->r_ob.markers_font_size * x->r_ob.zoom_y);
+                        paint_rect(g, &markerstrip, &marker_color, &marker_color, 0, 2);
+                    }
+                    
+                    t_jrgba *markerlinecolor = (is_marker_selected ^ is_marker_preselected) ? &x->r_ob.j_selection_rgba : &marker_color;
+                    t_jrgba *markertextcolor = (!is_region) ? markerlinecolor : &x->r_ob.j_background_rgba;
+                    paint_marker((t_notation_obj *) x, g, markerlinecolor, markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
                     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
                         double voice_staff_top_y = get_staff_top_y((t_notation_obj *)x, (t_voice *)nth_scorevoice(x, tp.voice_num), false);
                         paint_circle(g, change_alpha(marker_color, 1), marker_color, this_marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);
@@ -10705,7 +10732,7 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
         double x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.end.timepoint, false, false));
 //        double x1 = ms_to_xposition(x, x->r_ob.loop_region.start.position_ms, 1);
 //        double x2 = ms_to_xposition(x, x->r_ob.loop_region.end.position_ms, 1);
-        get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
+        get_playhead_ypos((t_notation_obj *)x, &playhead_y1, &playhead_y2);
         paint_loop_region((t_notation_obj *)x, g, rect, x->r_ob.j_loop_rgba, x1, x2, playhead_y1, playhead_y2, 1.);
     }
 
@@ -10898,25 +10925,25 @@ void recompute_all_and_redraw_fn(t_bach_inspector_manager *man, void *obj, t_bac
 }
 
 
-void score_declare_bach_attributes(t_score *x){
+void score_bach_attribute_declares(t_score *x){
     t_bach_attr_manager *man = x->r_ob.m_inspector.attr_manager;
 
     // CHORD ATTRIBUTES
     DECLARE_BACH_ATTR(man, 1, _llllobj_sym_duration, (char *)"Rational Duration", k_CHORD, t_chord, r_sym_duration, k_BACH_ATTR_RAT, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
     DECLARE_BACH_ATTR(man, 2, _llllobj_sym_grace, (char *)"Grace", k_CHORD, t_chord, is_grace_chord, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_CHORD, _llllobj_sym_grace), NULL, (bach_setter_fn)bach_set_grace, NULL, NULL, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_grace), NULL, (bach_setter_fn)bach_set_grace, NULL, NULL, NULL);
     
     // MEASURE ATTRIBUTES
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, (char *)"Name", k_MEASURE, t_notation_item, names, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_timesig, (char *)"Time Signature", k_MEASURE, t_measure, timesignature_dummy, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_timesig), NULL, NULL, NULL,(bach_attr_process_fn)recompute_all_and_redraw_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_timesig), NULL, NULL, NULL,(bach_attr_process_fn)recompute_all_and_redraw_fn, NULL);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, (char *)"Lock", k_MEASURE, t_measure, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, (char *)"Mute", k_MEASURE, t_measure, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_solo, (char *)"Solo", k_MEASURE, t_measure, solo, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_lockrhythmictree, (char *)"Lock Rhythmic Tree", k_MEASURE, t_measure, lock_rhythmic_tree, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     x->r_ob.m_inspector.attr_manager->miniature[k_MEASURE] = (bach_inspector_miniature_fn)bach_measure_miniature_fn;
 
@@ -10932,7 +10959,7 @@ void score_declare_bach_attributes(t_score *x){
     barlinetype[8] = gensym("Tick");
     barlinetype[9] = gensym("Intervoices");
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_barline, (char *)"Ending Barline Type", k_MEASURE, t_measure, end_barline_dummy, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
-    bach_attribute_add_enumindex(get_bach_attribute(man, k_MEASURE, _llllobj_sym_barline), 8, barlinetype);
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_MEASURE, _llllobj_sym_barline), 8, barlinetype);
 
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_shownumber, (char *)"Show Measure Number", k_MEASURE, t_measure, show_measure_number, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_usecustomnumber, (char *)"Use Custom Numbering", k_MEASURE, t_measure, force_measure_number, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
@@ -10952,27 +10979,30 @@ void score_declare_bach_attributes(t_score *x){
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_tempo, (char *)"Tempo Value", k_TEMPO, t_tempo, figure_tempo_value, k_BACH_ATTR_RAT, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_onset, (char *)"Rational Onset", k_TEMPO, t_tempo, changepoint, k_BACH_ATTR_RAT, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_interp, (char *)"Rall./Acc. To Next", k_TEMPO, t_tempo, interpolation_type, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_TEMPO, _llllobj_sym_figure), NULL, NULL, NULL, (bach_attr_process_fn)sync_quartertempo_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_TEMPO, _llllobj_sym_tempo), NULL, NULL, NULL, (bach_attr_process_fn)sync_quartertempo_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_TEMPO, _llllobj_sym_onset), NULL, NULL, NULL, (bach_attr_process_fn)recompute_all_except_for_beamings_and_autocompletion_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_TEMPO, _llllobj_sym_interp), NULL, NULL, NULL, (bach_attr_process_fn)recompute_all_except_for_beamings_and_autocompletion_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_TEMPO, _llllobj_sym_figure), NULL, NULL, NULL, (bach_attr_process_fn)sync_quartertempo_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_TEMPO, _llllobj_sym_tempo), NULL, NULL, NULL, (bach_attr_process_fn)sync_quartertempo_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_TEMPO, _llllobj_sym_onset), NULL, NULL, NULL, (bach_attr_process_fn)recompute_all_except_for_beamings_and_autocompletion_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_TEMPO, _llllobj_sym_interp), NULL, NULL, NULL, (bach_attr_process_fn)recompute_all_except_for_beamings_and_autocompletion_fn, NULL);
     x->r_ob.m_inspector.attr_manager->miniature[k_TEMPO] = (bach_inspector_miniature_fn)bach_tempo_miniature_fn;
     
     // MARKER ATTRIBUTES
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_onset), (bach_getter_fn)bach_get_marker_measure_attach, NULL, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_onset), (bach_getter_fn)bach_get_marker_measure_attach, NULL, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_duration), (bach_getter_fn)bach_get_marker_measure_attach, NULL, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
     t_symbol *attachto[2];
     attachto[0] = gensym("Milliseconds Position");
     attachto[1] = gensym("Measure Position");
     DECLARE_BACH_ATTR(man, 1, _llllobj_sym_attach, (char *)"Attached To", k_MARKER, t_marker, attach_to, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
-    bach_attribute_add_enumindex(get_bach_attribute(man, k_MARKER, _llllobj_sym_attach), 2, attachto);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_attach), NULL, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, NULL);
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_MARKER, _llllobj_sym_attach), 2, attachto);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_attach), NULL, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, NULL);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_measure, (char *)"Measure Number", k_MARKER, t_marker, meas_for_attr, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_measure), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_measure), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_pim, (char *)"Point In Measure", k_MARKER, t_marker, r_sym_pim_attach, k_BACH_ATTR_RAT, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_pim), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_pim), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_voice, (char *)"Voice Number", k_MARKER, t_marker, voice_for_attr, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_voice), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
-    
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_voice), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_symduration, (char *)"Rational Duration", k_MARKER, t_marker, r_sym_duration, k_BACH_ATTR_RAT, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_duration), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+
 }
 
 void bach_set_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr, long ac, t_atom *av)
@@ -10998,10 +11028,16 @@ void bach_set_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
                 }
                 sync_marker_absolute_ms_onset(x, marker);
                 llll_free(parsed);
+            } else if (attr->name == _llllobj_sym_duration) {
+                t_llll *parsed = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
+                if (parsed && parsed->l_head && is_hatom_number(&parsed->l_head->l_hatom))
+                    marker->r_sym_duration = hatom_getrational(&parsed->l_head->l_hatom);
+                sync_marker_absolute_ms_onset(x, marker);
+                llll_free(parsed);
             } else if (attr->name == _llllobj_sym_measure) {
                 long voiceac = 0;
                 t_atom *voiceav = NULL;
-                bach_get_attr(&x->r_ob.m_inspector, obj, get_bach_attribute(x->r_ob.m_inspector.attr_manager, k_MARKER, _llllobj_sym_voice), &voiceac, &voiceav);
+                bach_get_attr(&x->r_ob.m_inspector, obj, bach_attribute_get(x->r_ob.m_inspector.attr_manager, k_MARKER, _llllobj_sym_voice), &voiceac, &voiceav);
                 if (ac && av){
                     long voice_num = atom_getlong(voiceav) - 1;
                     long meas_num = atom_getlong(av) - 1;
@@ -11018,7 +11054,7 @@ void bach_set_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
             } else if (attr->name == _llllobj_sym_voice) {
                 long measac = 0;
                 t_atom *measav = NULL;
-                bach_get_attr(&x->r_ob.m_inspector, obj, get_bach_attribute(x->r_ob.m_inspector.attr_manager, k_MARKER, _llllobj_sym_measure), &measac, &measav);
+                bach_get_attr(&x->r_ob.m_inspector, obj, bach_attribute_get(x->r_ob.m_inspector.attr_manager, k_MARKER, _llllobj_sym_measure), &measac, &measav);
                 if (ac && av){
                     long voice_num = atom_getlong(av) - 1;
                     long meas_num = atom_getlong(measav) - 1;
@@ -11058,6 +11094,15 @@ void bach_get_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
                     *ac = 0;
                     *av = NULL;
                     bach_default_get_bach_attr((t_notation_obj *)x, obj, attr, ac, av);
+                } else if (attr->name == _llllobj_sym_duration){
+                    if (marker->r_sym_duration.r_num >= 0) {
+                        bach_freeptr(*av);
+                        *ac = 0;
+                        *av = NULL;
+                        bach_default_get_bach_attr((t_notation_obj *)x, obj, attr, ac, av);
+                    } else {
+                        atom_setsym(*av, _llllobj_sym_tillnext);
+                    }
                 } else if (attr->name == _llllobj_sym_onset){
                     t_timepoint tp = measure_attached_marker_to_timepoint((t_notation_obj *)x, marker);
                     double onset = unscaled_xposition_to_ms((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, false, false), 1);
@@ -11066,6 +11111,12 @@ void bach_get_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
             } else if (marker) {
                 if (attr->name == _llllobj_sym_onset)
                     atom_setfloat(*av, marker->position_ms);
+                else if (attr->name == _llllobj_sym_duration) {
+                    if (marker->duration_ms >= 0)
+                        atom_setfloat(*av, marker->duration_ms);
+                    else
+                        atom_setsym(*av, _llllobj_sym_tillnext);
+                }
             }
         }
     }
@@ -11083,10 +11134,10 @@ long bach_marker_measure_attach_inactive(t_bach_inspector_manager *man, void *el
                 return 1;
             
             if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-                if (attr->name == _llllobj_sym_onset)
+                if (attr->name == _llllobj_sym_onset || attr->name == _llllobj_sym_duration)
                     return 1;
             } else {
-                if (attr->name == _llllobj_sym_voice || attr->name == _llllobj_sym_measure || attr->name == _llllobj_sym_pim)
+                if (attr->name == _llllobj_sym_voice || attr->name == _llllobj_sym_measure || attr->name == _llllobj_sym_pim || attr->name == _llllobj_sym_duration)
                     return 1;
             } 
         }

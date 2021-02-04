@@ -290,7 +290,7 @@ char force_inscreenpos_ms(t_roll *x, double position, double inscreen_ms, char s
 char force_inscreen_ms_to_boundary(t_roll *x, double inscreen_ms, char clip_to_length, char send_domain_if_changed, char also_check_scheduling, char also_move_mousedown_pt);
 char force_inscreen_ms_rolling(t_roll *x, double inscreen_ms, char clip_to_length, char send_domain_if_changed, char also_check_scheduling, char also_move_mousedown_pt);
 
-void roll_declare_bach_attributes(t_roll *x);
+void roll_bach_attribute_declares(t_roll *x);
 
 void roll_delete_voice(t_roll *x, t_rollvoice *voice);
 void roll_delete_voiceensemble(t_roll *x, t_voice *any_voice_in_voice_ensemble);
@@ -10813,7 +10813,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
 
     x->r_ob.addchordfromllll = (addchordfromllll_fn)addchord_from_llll;
 
-    roll_declare_bach_attributes(x);
+    roll_bach_attribute_declares(x);
     
     x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
 
@@ -11145,6 +11145,16 @@ char is_notehead_inscreen_for_painting(t_roll *x, t_note *curr_nt){
     return false;
 }
 
+double marker_get_region_width(t_roll *x, t_marker *marker)
+{
+    if (marker_is_region(marker)) {
+        double marker_onset = marker->position_ms;
+        double marker_end = (marker->duration_ms > 0 ? marker_onset + marker->duration_ms : (marker->duration_ms < 0 && marker->next ? marker->next->position_ms : marker_onset));
+        return deltaonset_to_deltaxpixels((t_notation_obj *)x, marker_end - marker_onset);
+    } else
+        return 0;
+}
+
 void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
 {
     // markers, if any
@@ -11153,41 +11163,84 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
         t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
 
         double playhead_y1, playhead_y2;
-        get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
+        get_playhead_ypos((t_notation_obj *)x, &playhead_y1, &playhead_y2);
 
         lock_markers_mutex((t_notation_obj *)x);
         markers_check_update_name_uwidth((t_notation_obj *)x);
-        double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0;
+        double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0, prev_region_marker_x = -30000, prev_region_marker_width = 0;
+        t_marker *prev_region_marker = NULL;
         for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
             if (marker->need_update_name_uwidth)
                 recalculate_marker_name_uwidth((t_notation_obj *)x, marker);
             double marker_onset = marker->position_ms;
+            t_jrgba marker_color = x->r_ob.j_marker_rgba;
             char buf[1000];
             char is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
             char is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
+            bool is_region = marker_is_region(marker);
+            double marker_end = (marker->duration_ms > 0 ? marker_onset + marker->duration_ms : (marker->duration_ms < 0 && marker->next ? marker->next->position_ms : marker_onset));
+//            double marker_duration = marker_end - marker_onset;
+
             get_names_as_text(marker->r_it.names, buf, 1000);
-            if (marker_onset >= x->r_ob.screen_ms_start - 200 / x->r_ob.zoom_x && marker_onset < x->r_ob.screen_ms_end) {
+            
+            if ((marker_onset >= x->r_ob.screen_ms_start - 200 / x->r_ob.zoom_x && marker_onset < x->r_ob.screen_ms_end) ||
+                (is_region &&
+                 ((marker_end >= x->r_ob.screen_ms_start - 200 / x->r_ob.zoom_x && marker_end < x->r_ob.screen_ms_end) ||
+                  (marker_onset <= x->r_ob.screen_ms_start && marker_end >= x->r_ob.screen_ms_end))))
+            {
+                // marker is in screen
                 this_marker_x = onset_to_xposition_roll((t_notation_obj *)x, marker_onset, NULL);
-                marker->name_painted_direction = (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end ? -1 : 1);
+                marker->name_painted_direction = (!is_region && (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end) ? -1 : 1);
                 
-                if (x->r_ob.smart_markername_placement && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
-                    marker->name_line = marker->prev->name_line + 1;
-                    if (marker->prev->name_line > 0) {
-                        for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
-                            if (tempmk->name_line == 0) {
-                                if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
-                                    marker->name_line = 0;
-                                break;
-                            }
-                    }
+                if (x->r_ob.smart_markername_placement) {
+                    t_marker *refmarker = NULL;
+                    if (!is_region && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
+                        refmarker = marker->prev;
+                        marker->name_line = refmarker->name_line + 1;
+                        if (refmarker->name_line > 0) {
+                            for (t_marker *tempmk = refmarker->prev; tempmk; tempmk = tempmk->prev)
+                                if (tempmk->name_line == 0) {
+                                    double tempmkwidth = MAX(marker_get_region_width(x, tempmk), tempmk->name_uwidth * x->r_ob.zoom_y + 2);
+                                    if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmkwidth + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                        marker->name_line = 0;
+                                    break;
+                                }
+                        }
+                    } else if (is_region && prev_region_marker && !marker_is_region_till_next(prev_region_marker) && prev_region_marker_x + prev_region_marker_width > this_marker_x) {
+                        refmarker = prev_region_marker;
+                        marker->name_line = refmarker->name_line + 1;
+                        if (refmarker->name_line > 0) {
+                            for (t_marker *tempmk = refmarker->prev; tempmk; tempmk = tempmk->prev)
+                                if (tempmk->name_line == 0) {
+                                    if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + deltaonset_to_deltaxpixels((t_notation_obj *)x, marker->duration_ms) + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                        marker->name_line = 0;
+                                    break;
+                                }
+                        }
+                    } else
+                        marker->name_line = 0;
                 } else
                     marker->name_line = 0;
                 
-                paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : x->r_ob.j_marker_rgba,
-                             jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, CONST_MARKER_LINE_WIDTH, x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
+                t_jrgba *markerlinecolor = (is_marker_selected ^ is_marker_preselected) ? &x->r_ob.j_selection_rgba : &marker_color;
+                t_jrgba white = get_grey(1.);
+                t_jrgba markertextcolor = (!is_region) ? *markerlinecolor : jgraphics_jrgba_interpolate(markerlinecolor, &white, CONST_MARKER_REGION_TEXT_WHITENING);
+
+                double this_marker_end_x = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL);
+                char marker_is_being_edited = (x->r_ob.is_editing_type == k_MARKERNAME && x->r_ob.is_editing_marker == marker);
+                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, !marker_is_being_edited, &prev_marker_width);
+                if (is_region) {
+                    prev_marker_width = this_marker_end_x - this_marker_x;
+                    prev_region_marker_x = this_marker_x;
+                    prev_region_marker_width = prev_marker_width;
+                }
                 prev_marker_x = this_marker_x;
-            } else if (marker_onset >= x->r_ob.screen_ms_end)
+            } else if (marker_onset >= x->r_ob.screen_ms_end) {
                 break;
+            }
+            
+            if (is_region)
+                prev_region_marker = marker;
         }
         unlock_markers_mutex((t_notation_obj *)x);;
 
@@ -11203,19 +11256,26 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
         t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
         
         double playhead_y1, playhead_y2;
-        get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
+        get_playhead_ypos((t_notation_obj *)x, &playhead_y1, &playhead_y2);
         
         lock_markers_mutex((t_notation_obj *)x);
         markers_check_update_name_uwidth((t_notation_obj *)x);
-        double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0;
+        double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0, prev_region_marker_x = -30000, prev_region_marker_width = 0;
+        t_marker *prev_region_marker = NULL;
         for (marker = from_this_marker; marker; marker = marker->next) {
             if (marker->need_update_name_uwidth)
                 recalculate_marker_name_uwidth((t_notation_obj *)x, marker);
             double marker_onset = marker->position_ms;
+            t_jrgba marker_color = x->r_ob.j_marker_rgba;
             char buf[1000];
             char is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
             char is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
+            bool is_region = marker_is_region(marker);
+            double marker_end = (marker->duration_ms > 0 ? marker_onset + marker->duration_ms : (marker->duration_ms < 0 && marker->next ? marker->next->position_ms : marker_onset));
+//            double marker_duration = marker_end - marker_onset;
+
             get_names_as_text(marker->r_it.names, buf, 1000);
+            
             if (marker_onset >= x->r_ob.screen_ms_start - 200 / x->r_ob.zoom_x && marker_onset < x->r_ob.screen_ms_end) {
                 if (pass_num == 1 && marker_onset >= x->r_ob.screen_ms_start) {
                     if (restart_from_this_marker)
@@ -11223,27 +11283,70 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
                     break;
                 }
                 this_marker_x = onset_to_xposition_roll((t_notation_obj *)x, marker_onset, NULL);
-                marker->name_painted_direction = (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end ? -1 : 1);
+                marker->name_painted_direction = (!is_region && (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end) ? -1 : 1);
                 
-                if (x->r_ob.smart_markername_placement && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
-                    marker->name_line = marker->prev->name_line + 1;
-                    if (marker->prev->name_line > 0) {
-                        for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
-                            if (tempmk->name_line == 0) {
-                                if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
-                                    marker->name_line = 0;
-                                break;
-                            }
+                if (x->r_ob.smart_markername_placement) {
+                    t_marker *refmarker = NULL;
+                    if (!is_region && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
+                        refmarker = marker->prev;
+                    } else if (is_region && prev_region_marker && !marker_is_region_till_next(prev_region_marker) && prev_region_marker_x + prev_region_marker_width > this_marker_x) {
+                        refmarker = prev_region_marker;
                     }
+                    if (refmarker) {
+                        marker->name_line = refmarker->name_line + 1;
+                        if (refmarker->name_line > 0) {
+                            for (t_marker *tempmk = refmarker->prev; tempmk; tempmk = tempmk->prev)
+                                if (tempmk->name_line == 0) {
+                                    if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                        marker->name_line = 0;
+                                    break;
+                                }
+                        }
+                    } else
+                        marker->name_line = 0;
                 } else
                     marker->name_line = 0;
                 
                 char must_paint_name = (x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker);
                 if (!x->r_ob.fade_predomain && marker_onset < x->r_ob.screen_ms_start)
                     must_paint_name = false;
-                    
-                paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : x->r_ob.j_marker_rgba,
-                             jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, CONST_MARKER_LINE_WIDTH, must_paint_name, &prev_marker_width);
+                
+                t_jrgba *markerlinecolor = (is_marker_selected ^ is_marker_preselected) ? &x->r_ob.j_selection_rgba : &marker_color;
+                t_jrgba white = get_grey(1.);
+                t_jrgba markertextcolor = (!is_region) ? *markerlinecolor : jgraphics_jrgba_interpolate(markerlinecolor, &white, CONST_MARKER_REGION_TEXT_WHITENING);
+                
+                double regionwidth = 0;
+                if (is_region) {
+                    regionwidth = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL) - this_marker_x;
+                    t_rect markerstrip = build_rect(this_marker_x, playhead_y1 + notationobj_get_marker_voffset((t_notation_obj *)x, marker) - x->r_ob.zoom_y, regionwidth, (x->r_ob.markers_font_size + 4) * x->r_ob.zoom_y - 1);
+                    paint_rect(g, &markerstrip, markerlinecolor, markerlinecolor, 0, 2);
+                }
+                
+                double regiontextwidth = 0;
+                if (is_region) {
+                    regiontextwidth = regionwidth;
+                    if (!marker_is_region_till_next(marker)) { // see if we can increase this
+                        // find next region
+                        char found = false;
+                        for (t_marker *temp = marker->next; temp; temp = temp->next) {
+                            if (marker_is_region(temp)) {
+                                regiontextwidth = MAX(regiontextwidth, onset_to_xposition_roll((t_notation_obj *)x, temp->position_ms, NULL) - this_marker_x);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            regiontextwidth = 0;
+                        }
+                    }
+                }
+                double this_marker_end_x = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL);
+                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, must_paint_name, &prev_marker_width);
+                if (is_region) {
+                    prev_marker_width = regionwidth;
+                    prev_region_marker_x = this_marker_x;
+                    prev_region_marker_width = regionwidth;
+                }
                 prev_marker_x = this_marker_x;
             } else if (marker_onset >= x->r_ob.screen_ms_end)
                 break;
@@ -12405,7 +12508,7 @@ void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
         double playhead_y1, playhead_y2;
         double x1 = onset_to_xposition_roll((t_notation_obj *)x, x->r_ob.loop_region.start.position_ms, NULL);
         double x2 = onset_to_xposition_roll((t_notation_obj *)x, x->r_ob.loop_region.end.position_ms, NULL);
-        get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
+        get_playhead_ypos((t_notation_obj *)x, &playhead_y1, &playhead_y2);
         paint_loop_region((t_notation_obj *) x, g, rect, x->r_ob.j_loop_rgba, x1, x2, playhead_y1, playhead_y2, 1.);
     }
     
@@ -13746,25 +13849,6 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
 }
 
 
-
-// returns 1 if the point (point_x, point_y) is on the markername
-int is_in_markername_shape(t_roll *x, long point_x, long point_y, t_marker *marker){
-    double marker_x = onset_to_xposition_roll((t_notation_obj *) x, marker->position_ms, NULL);
-    double marker_namewidth = marker->name_uwidth * x->r_ob.zoom_y;
-    double marker_name_y_start = x->r_ob.j_inset_y + 10 * x->r_ob.zoom_y + notationobj_get_marker_voffset((t_notation_obj *)x, marker);
-    double marker_nameheight = x->r_ob.markers_font_size * x->r_ob.zoom_y;
-    if (marker->name_painted_direction > 0) {
-        if (point_x > marker_x && point_x < marker_x + marker_namewidth + 2 * x->r_ob.zoom_y && 
-            point_y > marker_name_y_start && point_y < marker_name_y_start + marker_nameheight)
-            return 1;
-    } else {
-        if (point_x > marker_x - marker_namewidth - 2 * x->r_ob.zoom_y && point_x < marker_x && 
-            point_y > marker_name_y_start && point_y < marker_name_y_start + marker_nameheight)
-            return 1;
-    }
-
-    return 0;
-}
 
 void roll_okclose(t_roll *x, char *s, short *result)
 {
@@ -15553,7 +15637,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
         if (x->r_ob.firstmarker) {
             t_marker *marker;
             for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
-                if (is_in_markername_shape(x, pt.x, pt.y, marker)){
+                if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y)){
                     unlock_general_mutex((t_notation_obj *)x);    
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))
                         start_editing_markername((t_notation_obj *) x, patcherview, marker, onset_to_xposition_roll((t_notation_obj *)x, marker->position_ms, NULL) + 3 * x->r_ob.zoom_y);
@@ -18021,11 +18105,11 @@ void roll_redo(t_roll *x)
     roll_undo_redo(x, k_REDO);
 }
 
-void roll_declare_bach_attributes(t_roll *x){
+void roll_bach_attribute_declares(t_roll *x){
     // CHORD ATTRIBUTES
     t_bach_attr_manager *man = x->r_ob.m_inspector.attr_manager;
     DECLARE_BACH_ATTR(man, 1, _llllobj_sym_onset, (char *)"Onset (ms)", k_CHORD, t_chord, onset, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_CHORD, _llllobj_sym_onset), NULL, NULL, NULL, (bach_attr_process_fn)check_all_chords_order_and_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_onset), NULL, NULL, NULL, (bach_attr_process_fn)check_all_chords_order_and_correct_scheduling_fn, NULL);
 
     // MARKER ATTRIBUTES
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_role, (char *)"Role", k_MARKER, t_marker, role, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
@@ -18036,10 +18120,10 @@ void roll_declare_bach_attributes(t_roll *x){
     markerroles[3] = gensym("Measure Barline");
     markerroles[4] = gensym("Measure Division");
     markerroles[5] = gensym("Measure Subdivision");
-    bach_attribute_add_enumindex(get_bach_attribute(man, k_MARKER, _llllobj_sym_role), 6, markerroles);
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_MARKER, _llllobj_sym_role), 6, markerroles);
 
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_value, (char *)"Value", k_MARKER, t_marker, content, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_value), NULL, NULL, NULL, (bach_attr_process_fn)check_all_chords_order_and_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_value), NULL, NULL, NULL, (bach_attr_process_fn)check_all_chords_order_and_correct_scheduling_fn, NULL);
 }
 
 

@@ -170,6 +170,8 @@ void remove_all_tuttipoints_flag_modified(t_score *x);
 char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas);
 
 
+t_timepoint timepoint_shift(t_score *x, t_timepoint tp, t_timepoint delta);
+
 t_scorevoice* nth_scorevoice(t_score *x, long n);
 t_llll *getdomain_from_uxstart(t_score *x, double ux_start, t_symbol *message_selector, t_symbol *label);
 t_llll *scoreapi_testdomain(t_score *x, t_llll *dom, t_symbol *label);
@@ -361,7 +363,7 @@ void set_score_from_llll_from_read(t_score *x, t_llll* inputlist);
 t_llll* get_score_values_as_llll_for_pwgl(t_score *x);
 
 // bach inspector stuff
-void score_declare_bach_attributes(t_score *x);
+void score_bach_attribute_declares(t_score *x);
 t_rect bach_measure_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line);
 t_rect bach_tempo_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line);
 

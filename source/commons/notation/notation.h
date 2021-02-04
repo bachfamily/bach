@@ -208,7 +208,8 @@
  */
 // common graphic constants
 #define CONST_MARKER_LINE_WIDTH 1.5                             ///< Width of a marker
-#define CONST_MIDDLEC_UY 112                                    ///< Unscaled pixel y position of the middle C for a single voice having staff #k_CLEF_FFGG, 
+#define CONST_MARKER_REGION_TEXT_WHITENING 0.8                  ///< Proportion for whitening out the marker color to be painted on a region strip
+#define CONST_MIDDLEC_UY 112                                    ///< Unscaled pixel y position of the middle C for a single voice having staff #k_CLEF_FFGG,
 #define CONST_STEP_UY 3                                            ///< Unscaled height of a step (see #e_clefs to know more about steps), i.e. HALF of the unscaled distance between two staff lines
 #define CONST_X_SCALING 0.1                                        ///< Multiplicative factor to fix a default x-axis time-pixel relationship (relationship which will be affected by <zoom_x> and <zoom_y> also)  
                                                                 ///< At <zoom_x> = <zoom_y> = 1, Δpixels = CONST_X_SCALING * Δtime. Only used by [bach.roll]
@@ -3420,6 +3421,9 @@ typedef struct _marker
     e_marker_roles        role;                ///< One of the #e_marker_roles, defining the special role the marker might have in [bach.roll] (specifying, for instance, a tempo value when a midifile is imported, or a time signature value...) 
     t_llll                *content;            ///< If the role is #k_MARKER_ROLE_TEMPO or #k_MARKER_ROLE_TIME_SIGNATURE, here we'll have the content specifying the tempo, as (tempo_value) or (tempo_figure tempo_value), or the time signature, as (num den) or ((num1 num2...) den) 
     
+    double              duration_ms;        ///< Marker duration (> 0 if marker represents a region)
+    t_rational          r_sym_duration;     ///< Symbolic duration of the marker
+    
     // utility
     char                name_painted_direction;                    ///< Field filled at painttime telling if a marker's name has been painted at the LEFT of the marker line (value -1) or at the right of the marker line (value 1). Value 0 means "still unset".
     long                name_line;                  ///< Filled at painttime telling on which "line" a markername is
@@ -6271,11 +6275,10 @@ void auto_set_rectangle_size_do(t_notation_obj *r_ob);
 /** Obtain the top and bottom positions of the playhead line, in pixels.
     @ingroup notation_graphics
     @param    r_ob        The notation object
-    @param    rect        The drawing rectangle corresponding to the patcherview
     @param    y1            Pointer which will be filled with the y position of the top of the playhead line
     @param    y2            Pointer which will be filled with the y position of the bottom of the playhead line
 */
-void get_playhead_ypos(t_notation_obj *r_ob, t_rect rect, double *y1, double *y2);
+void get_playhead_ypos(t_notation_obj *r_ob, double *y1, double *y2);
 
 
 
@@ -9996,6 +9999,8 @@ int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x,
 
 
 // TBD
+char marker_is_region(t_marker *mk);
+char marker_is_region_till_next(t_marker *mk);
 double notationobj_get_marker_voffset(t_notation_obj *r_ob, t_marker *mk);
 
 /**    Tell if a point is on the loop region (or on the loop region extremes).
@@ -10198,18 +10203,20 @@ void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double
     @remark                        The marker name will be painted (if requested) on the direction choosen by the t_marker::name_painted_direction field.
     @param    r_ob                The notation object
      @param    g                    The graphic context
-    @param    color                The color of the marker line and name
+    @param    linecolor                The color of the marker line
+    @param    textcolor                The color of the marker name
     @param    jf                    The font for the markername
     @param    marker                The marker to be painted
     @param    marker_x            The x position (pixel) for the marker line
+    @param    marker_end_x        The ending of the marker region (if any, otherwise just put marker_x again)
     @param    marker_y1            The starting y (pixel) of the marker line
     @param    marker_y2            The ending y (pixel) of the marker line
+    @param    is_region           1 if the marker is a region marker
     @param    width                The width of the marker line
     @param    also_paint_name        This has to be 1 if we also need to paint the name of the marker, 0 otherwise 
     @param  namewidth           Pointer that will be filled with the width of the marker name (can be NULL)
  */ 
-void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* jf, t_marker *marker, 
-                    double marker_x, double marker_y1, double marker_y2, double linewidth, char also_paint_name, double *namewidth);
+void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *linecolor, t_jrgba *textcolor, t_jfont* jf, t_marker *marker, double marker_x, double marker_end_x, double marker_y1, double marker_y2, char is_region, double linewidth, char also_paint_name, double *namewidth);
 
 /**    Paint the loop region.
     @ingroup                    notation_paint
@@ -17911,7 +17918,7 @@ void initialize_attr_manager(t_bach_attr_manager *man);
     @param    postprocess_flags    Unused (maybe supported in the future), leave to 0
  */
 #define DECLARE_BACH_ATTR(man, forced_position, name, displayed_label, owner_type, struct_name, struct_member, attr_type, attr_size, display_type, preprocess_flags, postprocess_flags)  \
-    declare_bach_attribute(man, forced_position, name, displayed_label, owner_type, calcoffset(struct_name, struct_member), attr_type, attr_size, display_type, preprocess_flags, postprocess_flags) 
+    bach_attribute_declare(man, forced_position, name, displayed_label, owner_type, calcoffset(struct_name, struct_member), attr_type, attr_size, display_type, preprocess_flags, postprocess_flags) 
 
 
 /** Function called underlying the #DECLARE_BACH_ATTR macro. You should NEVER call this function directly, but use the #DECLARE_BACH_ATTR macro instead!!!
@@ -17928,7 +17935,7 @@ void initialize_attr_manager(t_bach_attr_manager *man);
     @param    preprocess_flags    Unused (maybe supported in the future), leave to 0
     @param    postprocess_flags    Unused (maybe supported in the future), leave to 0
 */
-void declare_bach_attribute(t_bach_attr_manager *man, char forced_position, t_symbol *name, const char *displayed_label, long owner_type, long field_position, long attr_type, long attr_size, char display_type, long preprocess_flags, long postprocess_flags);
+void bach_attribute_declare(t_bach_attr_manager *man, char forced_position, t_symbol *name, const char *displayed_label, long owner_type, long field_position, long attr_type, long attr_size, char display_type, long preprocess_flags, long postprocess_flags);
 
 
 /** Retrieve a bach attribute from its name and the owner type.
@@ -17938,7 +17945,7 @@ void declare_bach_attribute(t_bach_attr_manager *man, char forced_position, t_sy
     @param    name        The name of the attribute
     @return                The corresponding #t_bach_attribute structure representing the bach attribute
  */
-t_bach_attribute *get_bach_attribute(t_bach_attr_manager *man, long owner_type, t_symbol *name);
+t_bach_attribute *bach_attribute_get(t_bach_attr_manager *man, long owner_type, t_symbol *name);
 
 
 /** Add some 'lambda' function to deal with attributes. All attributes might have setters, getters, preprocess functions (function performed BEFORE the attribute is set) or postprocess functions (function performed AFTER the attribute has been set).
@@ -17947,7 +17954,7 @@ t_bach_attribute *get_bach_attribute(t_bach_attr_manager *man, long owner_type, 
     Also you can add an "inactive" function, telling if the attribute must be inactive in the inspector (returning 1 if this is the case, 0 otherwise).
     @ingroup    attributes
     @param    r_ob            The    notation object
-    @param    attr            The bach-attribute to which the functions must be added (you can retrieve it via get_bach_attribute() if you don't have it directly)
+    @param    attr            The bach-attribute to which the functions must be added (you can retrieve it via bach_attribute_get() if you don't have it directly)
     @param    getter            The getter function for the bach-attribute
     @param    setter            The setter function for the bach-attribute
     @param    preprocess        The preprocess function for the bach-attribute
@@ -17970,7 +17977,7 @@ void bach_attribute_add_functions(t_bach_attribute *attr, bach_getter_fn getter,
  */
 
 #define ADD_BACH_ATTR_VARSIZE_FIELD(attr_manager, name, owner_type, struct_name, struct_member)  \
-    bach_attribute_add_var_size_offset(get_bach_attribute(attr_manager, owner_type, name), calcoffset(struct_name, struct_member));
+    bach_attribute_add_var_size_offset(bach_attribute_get(attr_manager, owner_type, name), calcoffset(struct_name, struct_member));
     
 
 /** Sets the t_bach_attribute::field_position_for_var_attr_size field for a given attribute. This field contains the information about the offset of the
@@ -17996,7 +18003,7 @@ void bach_attribute_add_enumindex(t_bach_attribute *attr, long num_items, t_symb
     @ingroup    attributes
     @param    r_ob                The    notation object
  */
-void notationobj_declare_bach_attributes(t_notation_obj *r_ob);
+void notationobj_bach_attribute_declares(t_notation_obj *r_ob);
 
 
 
@@ -18137,7 +18144,7 @@ void bach_default_inspector_header_fn(t_notation_obj *r_ob, t_bach_inspector_man
 t_jsurface *bach_get_icon_surface_fn(t_notation_obj *r_ob, t_bach_inspector_manager *inspector_manager, void *obj, long elem_type);
 
 
-/** Obtain the content of a bach attribute as a string containing a single character (for compatibility with get_bach_attribute_as_string()).
+/** Obtain the content of a bach attribute as a string containing a single character (for compatibility with bach_attribute_get_as_string()).
     Notice that a char array is thus allocated, and you need to free it when it is no longer needed. This is usually used for #k_BACH_ATTR_DISPLAY_CHAR
     attributes.
     @ingroup    attributes
@@ -18146,7 +18153,7 @@ t_jsurface *bach_get_icon_surface_fn(t_notation_obj *r_ob, t_bach_inspector_mana
     @param    attr    The bach attribute
     @return            The string containing a single character representing the attribute.
  */
-char *get_bach_attribute_as_character(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
+char *bach_attribute_get_as_character(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
 
 
 /** Obtain the content of a bach attribute as a string. A char array is allocated and returned, and you need to free it when it is no longer needed.
@@ -18155,7 +18162,7 @@ char *get_bach_attribute_as_character(t_bach_inspector_manager *man, void *obj, 
     @param    obj        Pointer to the object being inspected
     @param    attr    The bach attribute
  */
-char *get_bach_attribute_as_string(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
+char *bach_attribute_get_as_string(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
 
 
 /** Obtain the content of a bach attribute as a #t_jrgba color structure. This makes only sense for #k_BACH_ATTR_COLOR.
@@ -18164,7 +18171,7 @@ char *get_bach_attribute_as_string(t_bach_inspector_manager *man, void *obj, t_b
     @param    obj        Pointer to the object being inspected
     @param    attr    The bach attribute
  */
-t_jrgba get_bach_attribute_as_color(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
+t_jrgba bach_attribute_get_as_color(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
 
 
 /** Set the voicename for the inspected voice from an A_GIMME signature.
@@ -18199,7 +18206,7 @@ void bach_attr_get_single_voicename(t_notation_obj *r_ob, void *obj, t_bach_attr
     @param        av        The atoms in the A_GIMME signature
     @remark        For instance, while declaring the "locked" attribute for the note element, we do
     @code
-    bach_attribute_add_functions(get_bach_attribute(r_ob, k_NOTE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(r_ob, k_NOTE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
     @endcode
  */
 void bach_set_flags_fn(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr, long ac, t_atom *av);

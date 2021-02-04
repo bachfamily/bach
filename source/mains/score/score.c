@@ -12155,35 +12155,6 @@ int is_in_tempo_shape(t_score *x, t_tempo *tempo, long point_x, long point_y){
 
 
 
-// returns 1 if the point (point_x, point_y) is on the markername
-int is_in_markername_shape(t_score *x, long point_x, long point_y, t_marker *marker){
-    double marker_x;
-    double marker_namewidth, marker_name_y_start, marker_nameheight;
-    
-    if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-//        t_timepoint tp = measure_attached_marker_to_timepoint((t_notation_obj *)x, marker);
-        marker_x = unscaled_xposition_to_xposition((t_notation_obj *)x, ms_to_unscaled_xposition((t_notation_obj *)x, marker->position_ms, 1));
-    } else
-        marker_x = ms_to_xposition((t_notation_obj *)x, marker->position_ms, 1);
-    
-    marker_namewidth = marker->name_uwidth * x->r_ob.zoom_y;
-    marker_name_y_start = x->r_ob.j_inset_y + 10 * x->r_ob.zoom_y + 3 * x->r_ob.zoom_y;
-    marker_nameheight = x->r_ob.markers_font_size * x->r_ob.zoom_y;
-    if (marker->name_painted_direction > 0) {
-        if (point_x > marker_x && point_x < marker_x + marker_namewidth + 2 * x->r_ob.zoom_y && 
-            point_y > marker_name_y_start && point_y < marker_name_y_start + marker_nameheight)
-            return 1;
-    } else {
-        if (point_x > marker_x - marker_namewidth - 2 * x->r_ob.zoom_y && point_x < marker_x && 
-            point_y > marker_name_y_start && point_y < marker_name_y_start + marker_nameheight)
-            return 1;
-    }
-    
-    return 0;
-}
-
-
-
 void score_okclose(t_score *x, char *s, short *result)
 {
     *result = 3;
@@ -14705,7 +14676,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
         if (x->r_ob.firstmarker) {
             t_marker *marker;
             for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
-                if (is_in_markername_shape(x, pt.x, pt.y, marker) || is_in_marker_shape((t_notation_obj *)x, marker, pt.x, pt.y)){
+                if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) || is_in_marker_shape((t_notation_obj *)x, marker, pt.x, pt.y)){
                     unlock_general_mutex((t_notation_obj *)x);    
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))
                         start_editing_markername((t_notation_obj *) x, patcherview, marker, ms_to_xposition((t_notation_obj *)x, marker->position_ms, 1) + 3 * x->r_ob.zoom_y);

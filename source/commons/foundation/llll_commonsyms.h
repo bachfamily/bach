@@ -141,6 +141,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_symtail;
     t_symbol    *s_dumpselection;
     t_symbol    *s_state;
+    t_symbol    *s_tillnext;
 
 	t_symbol	*s_FFGG;
 	t_symbol	*s_FFG;
@@ -544,6 +545,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_symtail		(_llllobj_common_symbols->s_symtail)
 #define _llllobj_sym_dumpselection  (_llllobj_common_symbols->s_dumpselection)
 #define _llllobj_sym_state          (_llllobj_common_symbols->s_state)
+#define _llllobj_sym_tillnext       (_llllobj_common_symbols->s_tillnext)
 
 #define _llllobj_sym_FFGG			(_llllobj_common_symbols->s_FFGG)
 #define _llllobj_sym_FGG			(_llllobj_common_symbols->s_FGG)

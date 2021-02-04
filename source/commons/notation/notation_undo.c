@@ -1766,7 +1766,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
         }
     } else {
         // changing specific parameters of notation object
-        t_bach_attribute *attr = get_bach_attribute(r_ob->m_inspector.attr_manager, type, param);
+        t_bach_attribute *attr = bach_attribute_get(r_ob->m_inspector.attr_manager, type, param);
         
         if (attr && item) {
             t_atom *av = NULL;

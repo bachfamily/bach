@@ -344,7 +344,7 @@ void update_playhead_cant_trespass_loop_end(t_notation_obj *r_ob)
 e_element_types is_in_loop_region(t_notation_obj *r_ob, t_rect rect, long point_x, long point_y){
     double start_x = r_ob->loop_region_pixel_start, end_x = r_ob->loop_region_pixel_end;
     double playhead_y1, playhead_y2;
-    get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
+    get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
     if (fabs(point_x - start_x) < 2 + 2 * r_ob->zoom_y && point_y < r_ob->height - (CONST_XSCROLLBAR_UHEIGHT + 2) * r_ob->zoom_y) 
         return k_LOOP_START;
     if (fabs(point_x - end_x) < 2 + 2 * r_ob->zoom_y && point_y < r_ob->height - (CONST_XSCROLLBAR_UHEIGHT + 2) * r_ob->zoom_y) 
@@ -431,13 +431,41 @@ void get_voicenames_as_text(t_notation_obj *r_ob, t_voice *voice, char *buf, lon
         
 }
 
-void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* jf, t_marker *marker, double marker_x, double marker_y1, double marker_y2, double linewidth, char also_paint_name, double *namewidth)
+void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *linecolor, t_jrgba *textcolor, t_jfont* jf, t_marker *marker, double marker_x, double marker_end_x, double marker_y1, double marker_y2, char is_region, double linewidth, char also_paint_name, double *namewidth)
 {
+    
+    double regionwidth = 0;
+    char marker_is_being_edited = (r_ob->is_editing_type == k_MARKERNAME && r_ob->is_editing_marker == marker);
+    if (is_region) {
+        regionwidth = marker_end_x - marker_x;
+        t_rect markerstrip = build_rect(marker_x, marker_y1 + notationobj_get_marker_voffset(r_ob, marker) - r_ob->zoom_y, regionwidth, (r_ob->markers_font_size + 4) * r_ob->zoom_y - 1);
+        paint_rect(g, &markerstrip, linecolor, marker_is_being_edited ? textcolor : linecolor, 0, 2);
+    }
+    
+    double regiontextwidth = 0;
+    if (is_region) {
+        regiontextwidth = regionwidth;
+        if (!marker_is_region_till_next(marker)) { // see if we can increase this
+            // find next region
+            char found = false;
+            for (t_marker *temp = marker->next; temp; temp = temp->next) {
+                if (marker_is_region(temp)) {
+                    regiontextwidth = MAX(regiontextwidth, onset_to_xposition_roll(r_ob, temp->position_ms, NULL) - marker_x);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                regiontextwidth = 0;
+            }
+        }
+    }
+    
     
     char name_direction = marker->name_painted_direction;
     double height = 0;
     
-    paint_line(g, color, marker_x, marker_y1, marker_x, marker_y2, linewidth);
+    paint_line(g, *linecolor, marker_x, marker_y1 + (is_region ? notationobj_get_marker_voffset(r_ob, marker) - r_ob->zoom_y : 0), marker_x, marker_y2, linewidth);
     
     if (marker->role != k_MARKER_ROLE_NONE) {
         t_jfont *jf_special_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(6 * r_ob->zoom_y));  // text font for markers
@@ -456,14 +484,25 @@ void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* 
                 get_names_as_text(marker->r_it.names, buf, 1000);
                 if (namewidth)
                     jfont_text_measure(jf, buf, namewidth, &height);
-                write_text_standard_account_for_vinset(r_ob, g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y: marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker));
+                double text_x = name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y;
+                double text_y = marker_y1 + notationobj_get_marker_voffset(r_ob, marker);
+                if (is_region && text_x < get_predomain_width_pixels(r_ob)) {
+                    double predomain_pix = get_predomain_width_pixels(r_ob);
+                    double diff = predomain_pix - text_x;
+                    text_x = predomain_pix;
+                    if (regiontextwidth > 0)
+                        regiontextwidth = MAX(0.01, regiontextwidth - diff); // cannot be 0, we use it as special value...
+                }
+                if (!is_region || text_x < marker_end_x)
+                    write_text(g, jf, *textcolor, buf, text_x, text_y, regiontextwidth == 0 ? r_ob->width - text_x : regiontextwidth, r_ob->height - text_y, JGRAPHICS_TEXT_JUSTIFICATION_LEFT, true, false);
+//                write_text_standard_account_for_vinset(r_ob, g, jf, *textcolor, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker));
             }
         } else if ((marker->role == k_MARKER_ROLE_TEMPO || marker->role == k_MARKER_ROLE_TIME_SIGNATURE) && marker->content) {
             char *buf = NULL;
             llll_to_text_buf(marker->content, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
             if (namewidth)
                 jfont_text_measure(jf, buf, namewidth, &height);
-            write_text(g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker), 200 * r_ob->zoom_y, marker_y2 - marker_y1 - 6 * r_ob->zoom_y,
+            write_text(g, jf, *textcolor, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker), 200 * r_ob->zoom_y, marker_y2 - marker_y1 - 6 * r_ob->zoom_y,
                                 (marker->role == k_MARKER_ROLE_TEMPO ? JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM : JGRAPHICS_TEXT_JUSTIFICATION_TOP) + JGRAPHICS_TEXT_JUSTIFICATION_LEFT, true, true);
             bach_freeptr(buf);
         }
@@ -1291,7 +1330,7 @@ void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
 {
     double playhead_y1, playhead_y2, play_head_pos;
     if (r_ob->playing) {
-        get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
+        get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
             play_head_pos = unscaled_xposition_to_xposition(r_ob, r_ob->play_head_ux);
         else
@@ -1304,7 +1343,7 @@ void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
         else
             play_head_pos = onset_to_xposition_roll(r_ob, r_ob->play_head_start_ms, NULL);
 
-        get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
+        get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
         paint_playhead_line(g, r_ob->j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * r_ob->zoom_y);
     }
     
@@ -26128,20 +26167,35 @@ int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, lon
 }
 
 
+char marker_is_region_till_next(t_marker *mk)
+{
+    if (mk->attach_to == k_MARKER_ATTACH_TO_MEASURE)
+        return (mk->r_sym_duration.r_num < 0);
+    else
+        return (mk->duration_ms < 0);
+}
+
+char marker_is_region(t_marker *mk)
+{
+    if (mk->attach_to == k_MARKER_ATTACH_TO_MEASURE)
+        return (mk->r_sym_duration.r_num != 0);
+    else
+        return (mk->duration_ms != 0);
+}
 
 double notationobj_get_marker_voffset(t_notation_obj *r_ob, t_marker *mk)
 {
     double ypos = 0;
     if (r_ob->ruler % 2) {
         if (r_ob->show_ruler_labels)
-            ypos = 9 * r_ob->zoom_y;
+            ypos = 7 * r_ob->zoom_y;
         else
-            ypos = 6 * r_ob->zoom_y;
+            ypos = 4 * r_ob->zoom_y;
     } else
-        ypos = 3 * r_ob->zoom_y;
+        ypos = 1 * r_ob->zoom_y;
     
     if (r_ob->smart_markername_placement)
-        ypos += r_ob->markers_font_size * r_ob->zoom_y * mk->name_line;
+        ypos += (r_ob->markers_font_size + 4) * r_ob->zoom_y * mk->name_line;
     
     return ypos;
 }
@@ -26152,7 +26206,9 @@ int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x,
 {
     double marker_x;
     double marker_namewidth, marker_name_y_start, marker_nameheight;
-    
+    double playhead_y1, playhead_y2;
+    get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
+
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
             t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
@@ -26167,12 +26223,12 @@ int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x,
             marker_x = ms_to_xposition(r_ob, marker->position_ms, 1); */
         
         marker_namewidth = marker->name_uwidth * r_ob->zoom_y;
-        marker_name_y_start = r_ob->j_inset_y + 10 * r_ob->zoom_y + notationobj_get_marker_voffset(r_ob, marker);
+        marker_name_y_start = playhead_y1 + notationobj_get_marker_voffset(r_ob, marker);
         marker_nameheight = r_ob->markers_font_size * r_ob->zoom_y;
     } else {
         marker_x = onset_to_xposition_roll(r_ob, marker->position_ms, NULL);
         marker_namewidth = marker->name_uwidth * r_ob->zoom_y;
-        marker_name_y_start = r_ob->j_inset_y + 10 * r_ob->zoom_y + notationobj_get_marker_voffset(r_ob, marker);
+        marker_name_y_start = playhead_y1 + notationobj_get_marker_voffset(r_ob, marker);
         marker_nameheight = r_ob->markers_font_size * r_ob->zoom_y;
     }
     
@@ -34568,6 +34624,8 @@ t_marker *build_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoi
     marker->measure_attach_ID = 0;
     marker->name_line = 0;
     marker->r_sym_pim_attach = long2rat(0);
+    marker->duration_ms = 0;
+    marker->r_sym_duration = long2rat(0);
 
     if (attach_to == k_MARKER_ATTACH_TO_MEASURE) {
         t_voice *voice = nth_voice_safe(r_ob, tp.voice_num);
@@ -34835,6 +34893,7 @@ t_timepoint measure_attached_marker_to_timepoint(t_notation_obj *r_ob, t_marker 
     }
     return tp;
 }
+
 
 t_symbol *marker_role_to_sym(e_marker_roles marker_role){
     switch (marker_role) {
@@ -36347,7 +36406,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->m_inspector.active_bach_inspector_item = NULL;
     r_ob->m_inspector.active_bach_inspector_obj_type = k_NONE;
     r_ob->m_inspector.active_bach_inspector_item = NULL;
-    notationobj_declare_bach_attributes(r_ob);
+    notationobj_bach_attribute_declares(r_ob);
     r_ob->m_inspector.bach_inspector_scrollbar_pos = 0;
     r_ob->m_inspector.bach_inspector_scrollbar_delta_y = 0;
     r_ob->m_inspector.active_inspector_enumindex = NULL;
@@ -39445,9 +39504,9 @@ void notationobj_scroll_from_gimme(t_notation_obj *r_ob, t_symbol *s, long argc,
 }
 
 
-void get_playhead_ypos(t_notation_obj *r_ob, t_rect rect, double *y1, double *y2){
-    *y1 = r_ob->j_inset_y + 10 * r_ob->zoom_y;
-    *y2 = rect.height - (CONST_XSCROLLBAR_UHEIGHT + 10) * r_ob->zoom_y;
+void get_playhead_ypos(t_notation_obj *r_ob, double *y1, double *y2){
+    *y1 = r_ob->j_inset_y + 14 * r_ob->zoom_y;
+    *y2 = r_ob->height - (CONST_XSCROLLBAR_UHEIGHT + 10) * r_ob->zoom_y;
 }
 
 t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms){

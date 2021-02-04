@@ -161,6 +161,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_symtail = gensym("symtail");
     x->s_dumpselection = gensym("dumpselection");
     x->s_state = gensym("state");
+    x->s_tillnext = gensym("tillnext");
 
     x->s_FFGG = gensym("FFGG");
     x->s_FFG = gensym("FFG");
