@@ -1911,7 +1911,7 @@ void notation_class_add_color_attributes(t_class *c, char obj_type){
 		if (obj_type == k_NOTATION_OBJECT_ROLL) {
 			CLASS_ATTR_RGBA(c,"markercolor", 0, t_notation_obj, j_marker_rgba);
 			CLASS_ATTR_STYLE_LABEL(c, "markercolor",0,"rgba", "Marker Color");
-			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markercolor",0,"0.24 0.70 0.19 0.9");
+			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markercolor",0,"0.196 0.580 0.153 0.902");
 			// @exclude bach.slot, bach.score
 			// @description Sets the color of markers in RGBA format. 
 		}
@@ -1919,13 +1919,13 @@ void notation_class_add_color_attributes(t_class *c, char obj_type){
 		if (obj_type == k_NOTATION_OBJECT_SCORE) {
 			CLASS_ATTR_RGBA(c,"markercolor", 0, t_notation_obj, j_marker_rgba);
 			CLASS_ATTR_STYLE_LABEL(c, "markercolor",0,"rgba", "Milliseconds-Attached Marker Color");
-			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markercolor",0,"0.24 0.70 0.19 0.9");
+			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markercolor",0,"0.196 0.580 0.153 0.902");
 			// @exclude bach.slot, bach.roll
 			// @description Sets the color of markers attached to absolute milliseconds position in RGBA format. 
 
 			CLASS_ATTR_RGBA(c,"measmarkercolor", 0, t_notation_obj, j_marker_attached_to_tp_rgba);
 			CLASS_ATTR_STYLE_LABEL(c, "measmarkercolor",0,"rgba","Measure-Attached Marker Color");
-			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measmarkercolor",0,"0.17 0.25 0.88 0.9");
+			CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measmarkercolor",0,"0.137 0.208 0.729 0.902");
 			// @exclude bach.slot, bach.roll
 			// @description Sets the color of markers attached to measure position in RGBA format. 
 		}

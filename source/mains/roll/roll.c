@@ -11184,7 +11184,7 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
                     marker->name_line = 0;
                 
                 paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : x->r_ob.j_marker_rgba,
-                             jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, 2., x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
+                             jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, CONST_MARKER_LINE_WIDTH, x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
                 prev_marker_x = this_marker_x;
             } else if (marker_onset >= x->r_ob.screen_ms_end)
                 break;
@@ -11243,7 +11243,7 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
                     must_paint_name = false;
                     
                 paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : x->r_ob.j_marker_rgba,
-                             jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, 2., must_paint_name, &prev_marker_width);
+                             jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, CONST_MARKER_LINE_WIDTH, must_paint_name, &prev_marker_width);
                 prev_marker_x = this_marker_x;
             } else if (marker_onset >= x->r_ob.screen_ms_end)
                 break;

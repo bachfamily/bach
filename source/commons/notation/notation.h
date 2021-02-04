@@ -206,7 +206,8 @@
 /** \addtogroup notation_graphics
  *  @{
  */
-// common graphic constants    
+// common graphic constants
+#define CONST_MARKER_LINE_WIDTH 1.5                             ///< Width of a marker
 #define CONST_MIDDLEC_UY 112                                    ///< Unscaled pixel y position of the middle C for a single voice having staff #k_CLEF_FFGG, 
 #define CONST_STEP_UY 3                                            ///< Unscaled height of a step (see #e_clefs to know more about steps), i.e. HALF of the unscaled distance between two staff lines
 #define CONST_X_SCALING 0.1                                        ///< Multiplicative factor to fix a default x-axis time-pixel relationship (relationship which will be affected by <zoom_x> and <zoom_y> also)  

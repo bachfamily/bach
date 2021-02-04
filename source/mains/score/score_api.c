@@ -10331,7 +10331,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         marker->name_line = 0;
                     
                     paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : marker_color,
-                                 jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, 2., x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
+                                 jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, CONST_MARKER_LINE_WIDTH, x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
                     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
                         double voice_staff_top_y = get_staff_top_y((t_notation_obj *)x, (t_voice *)nth_scorevoice(x, tp.voice_num), false);
                         paint_circle(g, change_alpha(marker_color, 1), marker_color, this_marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);

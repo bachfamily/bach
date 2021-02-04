@@ -1,7 +1,15 @@
 VERSION NOTES:
 
 
-TO BE CATEGORIZED:
+0.9.0
+
+*********************
+*** MAJOR CHANGES ***
+*********************
+
+- The bach notation objects now feature a new system of notification of interface actions that provides details on the elements being modified. 
+	See the new "notifywith" message. 
+
 
 *****************
 *** IMPORTANT ***
