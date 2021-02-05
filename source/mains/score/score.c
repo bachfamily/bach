@@ -1044,7 +1044,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
                 undo_tick_create_for_header((t_notation_obj *) x, k_HEADER_MARKERS);
             if (meas->prev)
                 undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state); // 'coz of ties
-            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
             if (delete_measure((t_notation_obj *)x, meas, meas->firstchord ? chord_get_prev(meas->firstchord) : NULL, &need_update_solos)) {
                 if (need_check_scheduling) *need_check_scheduling = true;
             }
@@ -1567,6 +1567,25 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 object_warn((t_object *)x, "Unknown selection mode '%s'", hatom_getsym(&selectllll->l_head->l_hatom)->s_name);
                 object_warn((t_object *)x, "    Maybe you meant to use it as command for the 'goto' message?");
 
+            // (un)sel(ect) region by name
+            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_region) {
+                lock_general_mutex((t_notation_obj *)x);
+                lock_markers_mutex((t_notation_obj *)x);
+                t_llll *namesll = llll_clone(selectllll);
+                llll_behead(namesll);
+                t_llll *items = notationobj_names_to_notation_items((t_notation_obj *)x, namesll);
+                for (t_llllelem *el = items->l_head; el; el = el->l_next) {
+                    t_notation_item *it = (t_notation_item *)hatom_getobj(&el->l_hatom);
+                    if (it->type == k_MARKER) {
+                        marker_region_preselect_all_items((t_notation_obj *)x, (t_marker *)it);
+                    }
+                }
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                llll_free(items);
+                llll_free(namesll);
+                unlock_markers_mutex((t_notation_obj *)x);
+                unlock_general_mutex((t_notation_obj *)x);
+            
             // (un)sel(ect) by name
             } else if (head_type == H_SYM || selectllll->l_size == 1){
                 
@@ -2836,7 +2855,8 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *params = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     if (params->l_size >= 2) { // position, name
-        double pos_ms = 0;
+        double pos_ms = 0, dur_ms = 0;
+        t_rational sym_dur;
         e_marker_roles markerrole = k_MARKER_ROLE_NONE;
         t_timepoint tp = build_timepoint_with_voice(0, long2rat(0), 0);
         char attach_to = k_MARKER_ATTACH_TO_MS;
@@ -2845,11 +2865,8 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
         if (hatom_gettype(&params->l_head->l_hatom) == H_SYM && hatom_getsym(&params->l_head->l_hatom) == _llllobj_sym_cursor) 
             pos_ms = (!x->r_ob.playing ? x->r_ob.play_head_start_ms : x->r_ob.play_head_ms);
-        else if (hatom_gettype(&params->l_head->l_hatom) == H_LLLL) {
-            tp = llll_to_timepoint((t_notation_obj *) x, hatom_getllll(&params->l_head->l_hatom), NULL, true);
-            attach_to = k_MARKER_ATTACH_TO_MEASURE;
-        } else if (is_hatom_number(&params->l_head->l_hatom)){
-            pos_ms = hatom_getdouble(&params->l_head->l_hatom);
+        else if (params->l_head) {
+            marker_llllelem_to_onset_and_region_properties((t_notation_obj *)x, params->l_head, &pos_ms, &dur_ms, &tp, &sym_dur, &attach_to);
         }
 
         if (attach_to == k_MARKER_ATTACH_TO_MEASURE)
@@ -2865,9 +2882,9 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
         }
         
         lock_markers_mutex((t_notation_obj *)x);;
-        newmarker = add_marker((t_notation_obj *) x, names, pos_ms, tp, attach_to, markerrole, content, 0);
+        newmarker = add_marker((t_notation_obj *) x, names, pos_ms, tp, attach_to, markerrole, content, dur_ms, sym_dur, 0);
         sync_marker_absolute_ms_onset(x, newmarker);
-        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
         unlock_markers_mutex((t_notation_obj *)x);;
 
         recompute_total_length((t_notation_obj *)x);
@@ -2886,7 +2903,7 @@ void score_deletemarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
     if (argc >= 1 && atom_gettype(argv) == A_SYM) { // position, name
         char res;
         lock_markers_mutex((t_notation_obj *)x);
-        res = delete_marker_by_name((t_notation_obj *) x, args, true);
+        res = marker_delete_by_name((t_notation_obj *) x, args, true);
         unlock_markers_mutex((t_notation_obj *)x);;
         if (res) 
             handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_MARKER);
@@ -2920,7 +2937,7 @@ void score_getmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
+            marker_llll = marker_get_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 7, marker_llll);
@@ -4394,7 +4411,7 @@ void score_task(t_score *x)
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
                     llll_appendobj(references, items_to_send[i], 0, WHITENULL_llll);
                 } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true, k_CONSIDER_FOR_PLAYING);
+                    t_llll *temp = marker_get_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true, k_CONSIDER_FOR_PLAYING);
                     this_llll = llll_get();
                     references = llll_get();
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
@@ -5679,6 +5696,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // For instance, <b>sel note 4 2 3</b> selects the third note of second chord of fourth measure [of first voice], while <b>sel note 5 4 2 3</b> does the same with the fifth voice. 
     // Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
     // a sequence of wrapped lists of integers, for instance <b>sel note [5 2 4 3] [1 1 1 -1]</b>.<br />
+    // - If the word <m>sel</m> is followed by the symbol <b>region</b> and then a name or list of names, the marker corresponding to the
+    // input names is expected to be a region marker, and all the elements inside the region are selected.<br />
     // - If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>chord if</b>, <b>voice if</b>, <b>measure if</b>,
     // <b>rest if</b>, <b>marker if</b>, <b>breakpoint if</b> or <b>tail if</b> followed by a
     // condition to be verified, a conditional selection on notes,  markers or pitch breakpoints (respectively) is performed.
@@ -6872,6 +6891,22 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example velocities2dynamics @thresh 0. @unnecessary 0 @caption assign a dynamic marking to each chord, no hairpins
     class_addmethod(c, (method) score_anything, "velocities2dynamics", A_GIMME, 0);
 
+    // @method insert @digest Insert element
+    // @description @copy BACH_DOC_GENERIC_CHANGE_MESSAGES
+    class_addmethod(c, (method) score_generic_change, "insert", A_GIMME, 0);
+    
+    // @method remove @digest Remove element
+    // @description @copy BACH_DOC_GENERIC_CHANGE_MESSAGES
+    class_addmethod(c, (method) score_generic_change, "remove", A_GIMME, 0);
+    
+    // @method change @digest Change properties of an element
+    // @description @copy BACH_DOC_GENERIC_CHANGE_MESSAGES
+    class_addmethod(c, (method) score_generic_change, "change", A_GIMME, 0);
+    
+    // @method transaction @digest Process multiple insert/remove/change messages
+    // @description @copy BACH_DOC_GENERIC_TRANSACTION
+    class_addmethod(c, (method) score_generic_transaction, "transaction", A_GIMME, 0);
+    
     
     class_addmethod(c, (method) score_anything, "tail2grace", A_GIMME, 0);
 
@@ -6886,11 +6921,6 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example slice [4 3 1/2] @caption ...only in voice 4
     class_addmethod(c, (method) score_slice, "slice", A_GIMME, 0);
     
-    class_addmethod(c, (method) score_generic_change, "add", A_GIMME, 0);
-    class_addmethod(c, (method) score_generic_change, "delete", A_GIMME, 0);
-    class_addmethod(c, (method) score_generic_change, "change", A_GIMME, 0);
-    class_addmethod(c, (method) score_generic_transaction, "transaction", A_GIMME, 0);
-
     class_addmethod(c, (method) score_getmaxID, "getmaxid", 0); // undocumented
 
     llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_UI);
@@ -8983,7 +9013,7 @@ void score2roll(t_score *x, char markmeasures, char marktimesig, char marktempi,
     
     // markers
     {
-        t_llll *markers = get_markers_as_llll((t_notation_obj *) x, 0, 0, 0, 0, k_CONSIDER_FOR_SCORE2ROLL, 0);
+        t_llll *markers = get_markers_as_llll((t_notation_obj *) x, 0, 0, 0, 0, k_CONSIDER_FOR_SCORE2ROLL, 0, 0);
         if (markmeasures || marktempi || marktimesig || markdivisions) {
             // adding measure markers
             char all_together = are_all_measureinfo_synchronous(x);
@@ -10379,7 +10409,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             changed |= change_pitch_for_selection(x, delta_mc, 1, !((modifiers & eCommandKey) && (modifiers & eShiftKey)), false);
             redraw = 1;
         }
-    } else if (x->r_ob.j_mousedown_obj_type == k_SCROLLBAR) { // the scrollbar is being drawn!
+    } else if (x->r_ob.j_mousedown_obj_type == k_SCROLLBAR) { // the scrollbar is being dragged!
         // new scrollbar position
         t_rect rect;
         if (!is_editable((t_notation_obj *)x, k_SCROLLBAR, k_ELEMENT_ACTIONS_NONE)) return;
@@ -10395,7 +10425,43 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             changed = 0;
         }
         
-    } else if (x->r_ob.j_mousedown_obj_type == k_VSCROLLBAR) { // the vertical scrollbar is being drawn!
+    } else if (x->r_ob.j_mousedown_obj_type == k_MARKER_REGION_TAIL) { // the ending point of a marker region is being dragged
+        t_marker *mk = (t_marker *)x->r_ob.j_mousedown_ptr;
+        if (mk && mk->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
+            bool magnetic = !(modifiers & eShiftKey); // && !(modifiers & eCommandKey));
+            t_timepoint start_tp = marker_region_get_start_timepoint((t_notation_obj *) x, mk);
+            t_timepoint end_tp = marker_region_get_end_timepoint((t_notation_obj *) x, mk);
+            double ms = xposition_to_ms((t_notation_obj *) x, pt.x, 1);
+            t_timepoint new_end_tp = ms_to_timepoint((t_notation_obj *)x, ms, end_tp.voice_num, magnetic ? k_MS_TO_TP_RETURN_NEAREST : k_MS_TO_TP_RETURN_INTERPOLATION);
+            
+//            dev_post("ms: %.2f, Timepoint - voice: %ld, meas: %ld, pim: %ld/%ld", ms, new_tp.voice_num, new_tp.measure_num, new_tp.pt_in_measure.r_num, new_tp.pt_in_measure.r_den);
+            
+            op = k_UNDO_OP_CHANGE_REGION_DURATION;
+            undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            if (timepoint_compare(start_tp, new_end_tp) > 0) {
+                // turn off region
+                mk->r_sym_duration = long2rat(0);
+                redraw = 1;
+                changed = 1;
+            } else {
+                t_measure *new_meas = nth_measure_of_scorevoice(nth_scorevoice(x, end_tp.voice_num), new_end_tp.measure_num);
+                if (new_meas) {
+                    mk->r_sym_duration = get_sym_durations_between_timepoints(new_meas->voiceparent, start_tp, new_end_tp);
+                    redraw = 1;
+                    changed = 1;
+                }
+            }
+            
+        } else if (mk && mk->attach_to == k_MARKER_ATTACH_TO_MS) {
+            double this_ms = xposition_to_ms((t_notation_obj *) x, pt.x, 1);
+            
+            undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            mk->duration_ms = MAX(0, this_ms - mk->position_ms);
+            redraw = 1;
+            changed = 1;
+        }
+        
+    } else if (x->r_ob.j_mousedown_obj_type == k_VSCROLLBAR) { // the vertical scrollbar is being dragged!
         // new vscrollbar position
         t_rect rect;
         if (!is_editable((t_notation_obj *)x, k_SCROLLBAR, k_ELEMENT_ACTIONS_NONE)) return;
@@ -10468,7 +10534,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         double mousedown_ux = xposition_to_unscaled_xposition((t_notation_obj *)x, (modifiers & eShiftKey && modifiers & eCommandKey) ? x->r_ob.j_mousedrag_point_shift_ffk.x : pt.x);
         double delta_ux = mousedown_ux - xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.floatdragging_x);
 
-//        double marker_mousedown_ux = get_marker_ux_position(x, marker);
+//        double marker_mousedown_ux = marker_get_onset_ux(x, marker);
         
         op = k_UNDO_OP_CHANGE_MARKERS_ONSET;
 
@@ -10494,20 +10560,20 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             voicenumber = yposition_to_voicenumber((t_notation_obj *)x, x->r_ob.j_mousedown_point.y, NULL, k_VOICEENSEMBLE_INTERFACE_ANY);
                         t_timepoint tp = ms_to_timepoint((t_notation_obj *)x, marker_ms, voicenumber, k_MS_TO_TP_RETURN_INTERPOLATION);
                         t_llll *chosen = make_marker_name_unique((t_notation_obj *) x, temp_mk->r_it.names);
-                        newmarker = add_marker((t_notation_obj *) x, chosen, marker_ms, tp, k_MARKER_ATTACH_TO_MEASURE, temp_mk->role, content, 0);
-                        newmarker->ux_difference_with_mousedown_marker = (marker_ux + delta_ux - get_marker_ux_position((t_notation_obj *)x, (t_marker *)x->r_ob.j_mousedown_ptr));
+                        newmarker = add_marker((t_notation_obj *) x, chosen, marker_ms, tp, k_MARKER_ATTACH_TO_MEASURE, temp_mk->role, content, temp_mk->duration_ms, temp_mk->r_sym_duration, 0);
+                        newmarker->ux_difference_with_mousedown_marker = (marker_ux + delta_ux - marker_get_onset_ux((t_notation_obj *)x, (t_marker *)x->r_ob.j_mousedown_ptr));
                         sync_marker_absolute_ms_onset(x, newmarker);
                         llll_free(chosen);
                     } else {
                         double marker_ms = temp_mk->position_ms;
                         t_llll *chosen = make_marker_name_unique((t_notation_obj *) x, temp_mk->r_it.names);
-                        newmarker = add_marker((t_notation_obj *) x, chosen, marker_ms + delta_ms, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, temp_mk->role, content, 0);
-                        newmarker->ux_difference_with_mousedown_marker = (ms_to_unscaled_xposition((t_notation_obj *)x, marker_ms + delta_ms, 1) - get_marker_ux_position((t_notation_obj *)x, (t_marker *)x->r_ob.j_mousedown_ptr));
+                        newmarker = add_marker((t_notation_obj *) x, chosen, marker_ms + delta_ms, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, temp_mk->role, content, temp_mk->duration_ms, temp_mk->r_sym_duration, 0);
+                        newmarker->ux_difference_with_mousedown_marker = (ms_to_unscaled_xposition((t_notation_obj *)x, marker_ms + delta_ms, 1) - marker_get_onset_ux((t_notation_obj *)x, (t_marker *)x->r_ob.j_mousedown_ptr));
                         sync_marker_absolute_ms_onset(x, newmarker);
                         llll_free(chosen);
                     }
 
-                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
 
                     notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)newmarker);
                     if (temp == x->r_ob.j_mousedown_ptr) {
@@ -10579,7 +10645,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         else if (x->r_ob.j_mousedown_obj_type == k_LOOP_END)
             end_tp = this_tp;
             
-        if (timepoints_compare(start_tp, end_tp) > 0) {
+        if (timepoint_compare(start_tp, end_tp) > 0) {
             t_timepoint temp = start_tp;
             start_tp = end_tp;
             end_tp = temp;
@@ -10695,7 +10761,6 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             tpt->flag &= ~k_FLAG_MODIFIED;
 
     } else if (x->r_ob.j_mousedown_obj_type == k_REGION) { // a region has been selected
-    // TO DO : xposition_to_onset must be changed
         if (!is_editable((t_notation_obj *)x, k_SELECTION, k_SINGLE_SELECTION) && !is_editable((t_notation_obj *)x, k_SELECTION, k_MULTIPLE_SELECTION)) return;
         x->r_ob.j_selected_region_ux1 = xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.j_mousedown_point.x);
         x->r_ob.j_selected_region_mc1 = yposition_to_mc((t_notation_obj *)x, x->r_ob.j_mousedown_point.y, NULL, NULL);
@@ -10906,7 +10971,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         } else { // mixed selection, or just notes, or
         
             char can_change_onset = 0; // was: 1; but in [score] we DON'T allow onset change!!! 
-            char can_change_mc = 1;
+            char can_change_mc = (x->r_ob.j_mousedown_obj_type == k_MARKER ? 0 : 1);
             char can_change_vel = 0;
             
             // modifiers: what can I change by dragging the note?
@@ -12533,11 +12598,11 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                             t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
                                             if (res == 502) {
                                                 t_timepoint tp = build_timepoint_with_voice(curr_nt->parent->parent->measure_number, curr_nt->parent->r_sym_onset, curr_nt->parent->parent->voiceparent->v_ob.number);
-                                                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, tp, k_MARKER_ATTACH_TO_MEASURE, k_MARKER_ROLE_NONE, NULL, 0);
+                                                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, tp, k_MARKER_ATTACH_TO_MEASURE, k_MARKER_ROLE_NONE, NULL, 0, long2rat(0), 0);
                                             } else
-                                                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
+                                                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0, long2rat(0), 0);
                                             sync_marker_absolute_ms_onset(x, (t_marker *)clicked_ptr);
-                                            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                                            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                                             clicked_obj = k_MARKER;
                                             x->r_ob.item_changed_at_mousedown = 1;
                                             //            x->r_ob.changed_while_dragging = true;
@@ -13167,7 +13232,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             else if (meas && meas->prev && direction > 0)
                                 undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state); // because of ties
                             t_measure *newmeasure = create_and_insert_new_measure(x, voice, meas ? meas : voice->lastmeasure, direction, 0, meas ? meas : voice->lastmeasure, false);
-                            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmeasure, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmeasure, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                             unlock_general_mutex((t_notation_obj *)x);
                             handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_MEASURE); 
                             x->r_ob.item_changed_at_mousedown = 1;
@@ -13184,7 +13249,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             char direction = (modifiers & eShiftKey) ? -1 : 1;
                             e_undo_operations undo_op = k_UNDO_OP_ADD_MEASURES;
                             insert_new_measure_in_all_voices(x, voice, clicked_meas_id, direction, added_meas, &num_added_meas, true, &undo_op);
-                            //                        undo_ticks_create_for_multiple_notation_items((t_notation_obj *)x, num_added_meas, (t_notation_item **)added_meas, k_UNDO_MODIFICATION_TYPE_DELETE, &undo_op);
+                            //                        undo_ticks_create_for_multiple_notation_items((t_notation_obj *)x, num_added_meas, (t_notation_item **)added_meas, k_UNDO_MODIFICATION_TYPE_REMOVE, &undo_op);
                             unlock_general_mutex((t_notation_obj *)x);
                             handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, undo_op); 
                             x->r_ob.item_changed_at_mousedown = 1;
@@ -13221,10 +13286,14 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     if (!clicked_ptr && x->r_ob.show_markers && x->r_ob.firstmarker) {
         t_marker *marker;
         for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
-            if (is_in_marker_shape((t_notation_obj *)x, marker, this_x, this_y) || is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y)){
+            if (is_in_marker_region_tail_shape((t_notation_obj *)x, marker, this_x, this_y, false)) {
+                clicked_ptr = marker;
+                clicked_obj = k_MARKER_REGION_TAIL;
+                break;
+            } else if (is_in_marker_shape((t_notation_obj *)x, marker, this_x, this_y) || is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y)){
                 if (modifiers == eCommandKey) {
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_DELETION)) {
-                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
                         delete_marker((t_notation_obj *) x, marker);
                         x->r_ob.item_changed_at_mousedown = 1;
                         changed = true;
@@ -13252,9 +13321,9 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     x->r_ob.ux_click_marker_diff = xposition_to_unscaled_xposition((t_notation_obj *)x, this_x) - ms_to_unscaled_xposition((t_notation_obj *)x, marker->position_ms, 1);
 
                     t_marker *temp;
-                    double marker_mousedown_ux = get_marker_ux_position((t_notation_obj *)x, marker);
+                    double marker_mousedown_ux = marker_get_onset_ux((t_notation_obj *)x, marker);
                     for (temp = x->r_ob.firstmarker; temp; temp = temp->next){
-                        double this_ux = get_marker_ux_position((t_notation_obj *)x, temp);
+                        double this_ux = marker_get_onset_ux((t_notation_obj *)x, temp);
                         temp->ux_difference_with_mousedown_marker = this_ux - marker_mousedown_ux;
                     }
                     
@@ -13262,6 +13331,10 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     clicked_obj = k_MARKER;
                     break;
                 }
+            } else if (is_in_marker_region_stripe_shape((t_notation_obj *)x, marker, this_x, this_y)) {
+                clicked_ptr = marker;
+                clicked_obj = k_MARKER;
+                break;
             }
         } 
     }
@@ -13297,11 +13370,11 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 if (voicenum < 0)
                     voicenum = yposition_to_voicenumber((t_notation_obj *)x, x->r_ob.j_mousedown_point.y, -1, k_VOICEENSEMBLE_INTERFACE_ANY);
                 t_timepoint tp = ms_to_timepoint((t_notation_obj *)x, onset, voicenum, k_MS_TO_TP_RETURN_INTERPOLATION);
-                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, tp, k_MARKER_ATTACH_TO_MEASURE, k_MARKER_ROLE_NONE, NULL, 0);
+                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, tp, k_MARKER_ATTACH_TO_MEASURE, k_MARKER_ROLE_NONE, NULL, 0, long2rat(0), 0);
             } else 
-                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
+                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0, long2rat(0), 0);
             sync_marker_absolute_ms_onset(x, (t_marker *)clicked_ptr);
-            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
             clicked_obj = k_MARKER;
             x->r_ob.item_changed_at_mousedown = 1;
 //            x->r_ob.changed_while_dragging = true;
@@ -13363,11 +13436,11 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     if (voicenum < 0)
                         voicenum = yposition_to_voicenumber((t_notation_obj *)x, x->r_ob.j_mousedown_point.y, -1, k_VOICEENSEMBLE_INTERFACE_ANY);
                     t_timepoint tp = ms_to_timepoint((t_notation_obj *)x, onset, voicenum, k_MS_TO_TP_RETURN_INTERPOLATION);
-                    clicked_ptr = add_marker((t_notation_obj *) x, names, onset, tp, k_MARKER_ATTACH_TO_MEASURE, k_MARKER_ROLE_NONE, NULL, 0);
+                    clicked_ptr = add_marker((t_notation_obj *) x, names, onset, tp, k_MARKER_ATTACH_TO_MEASURE, k_MARKER_ROLE_NONE, NULL, 0, long2rat(0), 0);
                 } else
-                    clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
+                    clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0, long2rat(0), 0);
                 sync_marker_absolute_ms_onset(x, (t_marker *)clicked_ptr);
-                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                 clicked_obj = k_MARKER;
                 x->r_ob.item_changed_at_mousedown = 1;
                 //            x->r_ob.changed_while_dragging = true;
@@ -13755,7 +13828,7 @@ void insert_new_measure_in_all_voices(t_score *x, t_scorevoice *reference_voice,
                 if (number_of_added_meas > 1 && undo_op && *undo_op != k_UNDO_OP_ADD_MEASURES)
                     *undo_op = k_UNDO_OP_ADD_MEASURES;
                 if (also_add_undo_ticks)
-                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)added_meas, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)added_meas, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
             }
         }
     }
@@ -14017,7 +14090,7 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
             if (m1 && m2) {
                 double start_ms = (m1->firstchord) ? chord_get_onset_ms(m1->firstchord) : unscaled_xposition_to_ms((t_notation_obj *)x, m1->tuttipoint_reference->offset_ux + m1->start_barline_offset_ux, 1);
                 double end_ms = (m2->next && m2->next->firstchord) ? chord_get_onset_ms(m2->next->firstchord) : unscaled_xposition_to_ms((t_notation_obj *)x, m2->tuttipoint_reference->offset_ux + m2->start_barline_offset_ux + m2->width_ux, 1);
-                llll_appendllll(out_llll, get_markers_as_llll((t_notation_obj *) x, 1, start_ms, end_ms, false, k_CONSIDER_FOR_SUBDUMPING, start_meas), 0, WHITENULL_llll);
+                llll_appendllll(out_llll, get_markers_as_llll((t_notation_obj *) x, 1, start_ms, end_ms, false, k_CONSIDER_FOR_SUBDUMPING, start_meas, false), 0, WHITENULL_llll);
             }
         }
     }
@@ -14479,9 +14552,9 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             x->r_ob.show_dilation_rectangle = true;
         } else {
             // accomplish a region selection
-            x->r_ob.j_selected_region_ms1 = xposition_to_onset((t_notation_obj *) x, x->r_ob.j_mousedown_point.x, -1);
+            x->r_ob.j_selected_region_ms1 =  xposition_to_ms((t_notation_obj *) x, x->r_ob.j_mousedown_point.x, 1);
             x->r_ob.j_selected_region_mc1 = yposition_to_mc((t_notation_obj *)x, x->r_ob.j_mousedown_point.y, NULL, NULL);
-            x->r_ob.j_selected_region_ms2 = xposition_to_onset((t_notation_obj *) x, pt.x, -1);
+            x->r_ob.j_selected_region_ms2 = xposition_to_ms((t_notation_obj *) x, pt.x, 1);
             x->r_ob.j_selected_region_mc2 = yposition_to_mc((t_notation_obj *)x, pt.y, NULL, NULL);
             if (x->r_ob.j_selected_region_ms1 > x->r_ob.j_selected_region_ms2) {
                 long temp = x->r_ob.j_selected_region_ms1;
@@ -14676,11 +14749,20 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
         if (x->r_ob.firstmarker) {
             t_marker *marker;
             for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
-                if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) || is_in_marker_shape((t_notation_obj *)x, marker, pt.x, pt.y)){
+                if (is_in_marker_region_tail_shape((t_notation_obj *)x, marker, pt.x, pt.y, false)) {
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                    if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE)
+                        marker->r_sym_duration = long2rat(-1);
+                    else
+                        marker->duration_ms = -1;
+                } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) || is_in_marker_shape((t_notation_obj *)x, marker, pt.x, pt.y)){
                     unlock_general_mutex((t_notation_obj *)x);    
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))
                         start_editing_markername((t_notation_obj *) x, patcherview, marker, ms_to_xposition((t_notation_obj *)x, marker->position_ms, 1) + 3 * x->r_ob.zoom_y);
                     return;
+                } else if (is_in_marker_region_stripe_shape((t_notation_obj *)x, marker, pt.x, pt.y)) {
+                    marker_region_preselect_all_items((t_notation_obj *)x, marker);
+                    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
                 }
             }
         }
@@ -15179,7 +15261,7 @@ void linear_edit_jump_to_next_chord(t_score *x)
                 new_measure = build_measure((t_notation_obj *)x, NULL);
                 measure_set_ts((t_notation_obj *)x, new_measure, &x->r_ob.notation_cursor.measure->timesignature);
                 insert_measure((t_notation_obj *)x, x->r_ob.notation_cursor.measure->voiceparent, new_measure, x->r_ob.notation_cursor.measure, 0);
-                undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)new_measure, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)new_measure, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
             }
             
             x->r_ob.notation_cursor.measure = new_measure;
@@ -15276,7 +15358,7 @@ char delete_selected_markers(t_score *x){
         t_notation_item *nextitem = curr_it->next_selected; 
         
         if (curr_it->type == k_MARKER) {
-            undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+            undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
             delete_marker((t_notation_obj *) x, (t_marker *) curr_it);
             changed = true;
         }
@@ -15788,7 +15870,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                     new_measure = build_measure((t_notation_obj *)x, NULL);
                                     measure_set_ts((t_notation_obj *)x, new_measure, &x->r_ob.notation_cursor.measure->timesignature);
                                     insert_measure((t_notation_obj *)x, x->r_ob.notation_cursor.measure->voiceparent, new_measure, x->r_ob.notation_cursor.measure, 0);
-                                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)new_measure, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)new_measure, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                                 }
                                 x->r_ob.notation_cursor.measure = new_measure;
                                 if (x->r_ob.notation_cursor.touched_measures)
@@ -17309,7 +17391,7 @@ char duplicate_selected_measures(t_score *x)
             newmeas->voiceparent = oldmeas->voiceparent;
             insert_measure((t_notation_obj *)x, oldmeas->voiceparent, newmeas, oldmeas, 0);
             
-            undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)newmeas, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+            undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)newmeas, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
             if (newmeas->prev)
                 undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)newmeas->prev, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             if (newmeas->next)

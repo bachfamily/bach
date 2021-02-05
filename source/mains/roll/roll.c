@@ -74,6 +74,7 @@
 #include "notation/notation_attrs.h"
 #include "notation/notation_goto.h"
 #include "notation/notation_undo.h"
+#include "notation/notation_markers.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"
@@ -374,7 +375,6 @@ t_chord* ID_to_chord(t_roll *x, long ID); //almost unused
 void verbose_print(t_roll *x);
 t_rollvoice* nth_rollvoice(t_roll *x, long n);    // 0-based!!!!!
 t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n);    /// 0-based!!!!
-t_chord* nth_marker(t_rollvoice *voice, long n);    /// 0-based!!!!
 
 // llll communication functions
 t_llll* get_rollvoice_values_as_llll(t_roll *x, t_rollvoice *voice, e_data_considering_types for_what);
@@ -393,8 +393,8 @@ t_llll *get_selection_gathered_syntax(t_roll *x);
 
 //t_llll* get_voice_extras_values_as_llll(t_roll *x, t_rollvoice *voice);
 void send_all_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *gatheredsyntax_router);
-void send_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type);
-t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type);
+void send_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type, char keep_ending_markers);
+t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type, char keep_ending_markers);
 t_llll* get_subvoice_values_as_llll(t_roll *x, t_rollvoice *voice, double start_ms, double end_ms, char subroll_type);
 void send_roll_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *router);
 void send_onsets_values_as_llll(t_roll *x);
@@ -1320,7 +1320,7 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
                 update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
                 changed = 1;
             } else {
-                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
                 if (chord_delete((t_notation_obj *)x, ch, ch->prev, false)) {
                     if (need_check_scheduling) *need_check_scheduling = true;
                     update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
@@ -1338,7 +1338,7 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
         }
     } else if (curr_it->type == k_MARKER) {
         notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
-        undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+        undo_tick_create_for_notation_item((t_notation_obj *)x, curr_it, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
         delete_marker((t_notation_obj *) x, (t_marker *)curr_it);
         changed = 1;
     }    
@@ -1849,6 +1849,25 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             object_warn((t_object *)x, "Unknown selection mode '%s'", hatom_getsym(&selectllll->l_head->l_hatom)->s_name);
             object_warn((t_object *)x, "    Maybe you meant to use it as command for the 'goto' message?");
             
+        // (un)sel(ect) region by name
+        } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_region) {
+            lock_general_mutex((t_notation_obj *)x);
+            lock_markers_mutex((t_notation_obj *)x);
+            t_llll *namesll = llll_clone(selectllll);
+            llll_behead(namesll);
+            t_llll *items = notationobj_names_to_notation_items((t_notation_obj *)x, namesll);
+            for (t_llllelem *el = items->l_head; el; el = el->l_next) {
+                t_notation_item *it = (t_notation_item *)hatom_getobj(&el->l_hatom);
+                if (it->type == k_MARKER) {
+                    marker_region_preselect_all_items((t_notation_obj *)x, (t_marker *)it);
+                }
+            }
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            llll_free(items);
+            llll_free(namesll);
+            unlock_markers_mutex((t_notation_obj *)x);
+            unlock_general_mutex((t_notation_obj *)x);
+
         // (un)sel(ect) by name
         } else if (head_type == H_SYM || selectllll->l_size == 1) {
             lock_markers_mutex((t_notation_obj *)x);
@@ -3090,7 +3109,7 @@ t_note *roll_slice_note(t_roll *x, t_note *note, double ms_pos)
         
         t_chord *right_ch = addchord_from_notes(x, note->parent->voiceparent->v_ob.number, ms_pos, 0, 0, NULL, NULL, false, 0);
         if (right_ch)
-            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *) right_ch, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *) right_ch, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
         
         t_note *right_nt = slice_note((t_notation_obj *)x, note, ms_pos - note->parent->onset);
         note_insert((t_notation_obj *)x, right_ch, right_nt, 0);
@@ -3118,7 +3137,7 @@ void slice_voice_at_position(t_roll *x, t_rollvoice *voice, double position)
 
             t_chord *right_ch = addchord_from_notes(x, voice->v_ob.number, position, 0, 0, NULL, NULL, false, 0);
             if (right_ch) 
-                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *) right_ch, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *) right_ch, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
 
             t_llllelem *note_el;
             for (note_el = notes_to_slice->l_head; note_el; note_el = note_el->l_next) {
@@ -3643,16 +3662,20 @@ void roll_sel_delete_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     if (args->l_size >= 2) { // position, name, role, content
-        double pos_ms;
+        double pos_ms = 0, dur_ms = 0;
         t_symbol *role = _llllobj_sym_none;
+        t_timepoint dummy_timepoint;
+        t_rational dummy_rational;
+        char dummy_attach_to;
         t_llll *content = NULL;
         
         if (hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_cursor) 
             pos_ms = (!x->r_ob.playing ? x->r_ob.play_head_start_ms : x->r_ob.play_head_ms);
         else if (hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_end)
             pos_ms = x->r_ob.length_ms_till_last_note;
-        else
-            pos_ms = hatom_getdouble(&args->l_head->l_hatom);
+        else if (args->l_head) {
+            marker_llllelem_to_onset_and_region_properties((t_notation_obj *)x, args->l_head, &pos_ms, &dur_ms, &dummy_timepoint, &dummy_rational, &dummy_attach_to);
+        }
 
         if (args->l_head->l_next->l_next && hatom_gettype(&args->l_head->l_next->l_next->l_hatom) == H_SYM)
             role = hatom_getsym(&args->l_head->l_next->l_next->l_hatom);
@@ -3664,8 +3687,8 @@ void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         t_llll *names = get_names_from_llllelem((t_notation_obj *)x, args->l_head->l_next);
         
         lock_markers_mutex((t_notation_obj *)x);
-        t_marker *mk = add_marker((t_notation_obj *) x, names, pos_ms, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, sym_to_marker_role(role), content, 0);
-        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+        t_marker *mk = add_marker((t_notation_obj *) x, names, pos_ms, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, sym_to_marker_role(role), content, dur_ms, long2rat(0), 0);
+        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
         unlock_markers_mutex((t_notation_obj *)x);
 
         llll_free(names);
@@ -3682,7 +3705,7 @@ void roll_deletemarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     if (args->l_size >= 1) {
         char res;
         lock_markers_mutex((t_notation_obj *)x);
-        res = delete_marker_by_name((t_notation_obj *) x, args, true);
+        res = marker_delete_by_name((t_notation_obj *) x, args, true);
         unlock_markers_mutex((t_notation_obj *)x);;
         if (res) {
             recompute_total_length((t_notation_obj *)x);
@@ -3717,7 +3740,7 @@ void roll_getmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
+            marker_llll = marker_get_as_llll((t_notation_obj *) x, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, marker_llll);
@@ -4378,7 +4401,7 @@ void roll_task(t_roll *x){
                     }
                     this_llll = chord_get_as_llll_for_sending((t_notation_obj *) x, (t_chord *)items_to_send[i], k_CONSIDER_FOR_PLAYING, -1, NULL, &references, &is_notewise);
                 } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true, k_CONSIDER_FOR_PLAYING);
+                    t_llll *temp = marker_get_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true, true, k_CONSIDER_FOR_PLAYING);
                     this_llll = llll_get();
                     references = llll_get();
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
@@ -4615,7 +4638,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     // has to be output. Leave such list as <b>nil</b> or <b>[]</b> if you want this lapse to be all the length of the <o>bach.roll</o>.
     // Otherwise <m>start_ms</m> is the beginning of the portion of <o>bach.roll</o> to be output (in milliseconds), and 
     // <m>end_ms</m> is the end of the portion of <o>bach.roll</o> to be output (in milliseconds); leave any negative value
-    // for <m>end_ms</m> if you want the portion of <o>bach.roll</o> to be output to go till the end of the notation object. <br />
+    // for <m>end_ms</m> if you want the portion of <o>bach.roll</o> to be output to go till the end of the notation object.
+    // To infer the starting and ending point from a region marker, set <m>TIME_LAPSE</m> either as a single symbol
+    // or as a wrapped list of symbols (names). <br />
     // The third llll, <m>optional:SELECTIVE_OPTIONS</m>, is optional, and if given might contain a symbol or list of symbols
     // which handle what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
     // the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>subroll [4 5] [1000 3000] [clefs markers body]</b>
@@ -4627,6 +4652,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 2 @name selective_options @optional 1 @type llll
     // @example subroll [1 2 4] [1000 3000] @caption extract voices 1, 2 and 4 from 1s to 3s
     // @example subroll [] [1000 3000] @caption extract all voices from 1s to 3s
+    // @example subroll [] MyRegion @caption crop the region marker MyRegion
     // @example subroll [1 2] [] @caption extract voices 1 and 2 for the whole duration
     // @example subroll [1 3] [2000 -1] @caption extract voices 1 and 3 from 2s to the end
     // @example subroll onset [1 3] [2000 -1] @caption only extract notes whose onset is after 2s (no partial notes)
@@ -4782,6 +4808,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // For instance, <b>sel note 2 3</b> selects the third note of second chord [of first voice], while <b>sel note 4 2 3</b> does the same with the fourth voice. 
     // Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
     // a sequence of wrapped lists of integers, for instance <b>sel note [5 2 4] [1 1 -1]</b>.<br />
+    // - If the word <m>sel</m> is followed by the symbol <b>region</b> and then a name or list of names, the marker corresponding to the
+    // input names is expected to be a region marker, and all the elements inside the region are selected.<br />
     // - If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>chord if</b>, <b>voice if</b>, <b>measure if</b>,
     // <b>marker if</b>, <b>breakpoint if</b> or <b>tail if</b> followed by a
     // condition to be verified, a conditional selection on notes,  markers or pitch breakpoints (respectively) is performed.
@@ -6532,9 +6560,20 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) roll_anything, "velocities2dynamics", A_GIMME, 0);
 
 
-    class_addmethod(c, (method) roll_generic_change, "add", A_GIMME, 0);
-    class_addmethod(c, (method) roll_generic_change, "delete", A_GIMME, 0);
+    // @method insert @digest Insert element
+    // @description @copy BACH_DOC_GENERIC_CHANGE_MESSAGES
+    class_addmethod(c, (method) roll_generic_change, "insert", A_GIMME, 0);
+
+    // @method remove @digest Remove element
+    // @description @copy BACH_DOC_GENERIC_CHANGE_MESSAGES
+    class_addmethod(c, (method) roll_generic_change, "remove", A_GIMME, 0);
+
+    // @method change @digest Change properties of an element
+    // @description @copy BACH_DOC_GENERIC_CHANGE_MESSAGES
     class_addmethod(c, (method) roll_generic_change, "change", A_GIMME, 0);
+
+    // @method transaction @digest Process multiple insert/remove/change messages
+    // @description @copy BACH_DOC_GENERIC_TRANSACTION
     class_addmethod(c, (method) roll_generic_transaction, "transaction", A_GIMME, 0);
 
     
@@ -8012,7 +8051,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                                 if (newch) {
                                     if (also_select)
                                         notation_item_add_to_selection((t_notation_obj *)x, (t_notation_item *)newch);
-                                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *) newch, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *) newch, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                                     handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_CHORD);
                                 }
                             } else {
@@ -9270,7 +9309,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                     compute_note_approximations_for_chord((t_notation_obj *)x, ch, false);
                     if (also_select && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)ch))
                         notation_item_add_to_selection((t_notation_obj *)x, (t_notation_item *)ch);
-                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                 }
             }
         }
@@ -9570,7 +9609,7 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
                                             set_rollchord_values_from_llll((t_notation_obj *) x, newchord, elemllll, x->must_apply_delta_onset, true, false, false); // MUST NOT CHECK NOTES ORDER!!! Only at the end, otherwise it's a mess
                                             newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
                                             if (x->must_append_chords){
-                                                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newchord, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                                                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newchord, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                                                 if (x->must_preselect_appended_chords)
                                                     notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)newchord);
                                             }
@@ -10494,39 +10533,95 @@ void roll_subroll(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
     if (proxy_getinlet((t_object *) x) == 0) {
         t_llll *inputlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
+        long subroll_type = 0; //0 = standard, 1 = keep only notes whose onset is inside the time lapse
+        long keep_ending_markers = 0;
+        
+        llll_parseargs_and_attrs_destructive((t_object *) x, inputlist, "ii", gensym("onset"), &subroll_type, gensym("keependmarkers"), &keep_ending_markers);
         if (inputlist && inputlist->l_head) {
-            double from_ms, to_ms;
+            double from_ms = 0, to_ms = x->r_ob.length_ms;
             t_llll *which_voices;
             t_llll *what_to_dump = NULL;
-            char subroll_type = 0; //0 = standard, 1 = keep only notes whose onset is inside the time lapse 
-            
-            if (inputlist->l_head && hatom_gettype(&inputlist->l_head->l_hatom) == H_SYM && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_onset) {
-                subroll_type = 1;
-                llll_destroyelem(inputlist->l_head);
+
+            if (hatom_gettype(&inputlist->l_head->l_hatom) == H_SYM) {
+                if (hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_onset) {
+                    subroll_type = 1;
+                    llll_destroyelem(inputlist->l_head);
+                } else {
+                    // region
+                    t_symbol *sym = hatom_getsym(&inputlist->l_head->l_hatom);
+                    t_llll *temp = symbol2llll(sym);
+                    t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, temp);
+                    if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                        object_error((t_object *)x, "Item does not exist or is not a marker region.");
+                    } else {
+                        from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
+                        to_ms = marker_region_get_end_ms((t_notation_obj *)x, (t_marker *)it, false);
+                    }
+                    llll_free(temp);
+                }
             }
             
-            if (hatom_gettype(&inputlist->l_head->l_hatom) == H_LLLL)
-                which_voices = hatom_getllll(&inputlist->l_head->l_hatom);
-            else
+            if (hatom_gettype(&inputlist->l_head->l_hatom) == H_LLLL) {
+                bool all_numbers = true;
+                t_llll *firstll = hatom_getllll(&inputlist->l_head->l_hatom);
+                for (t_llllelem *el = firstll ? firstll->l_head : NULL; el; el = el->l_next)
+                    if (!is_hatom_number(&el->l_hatom)) {
+                        all_numbers = false;
+                        break;
+                    }
+                if (all_numbers) {
+                    which_voices = hatom_getllll(&inputlist->l_head->l_hatom);
+                } else {
+                    // region name?
+                    which_voices = llll_get(); // all voices
+                    t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, firstll);
+                    if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                        object_error((t_object *)x, "Item does not exist or is not a marker region.");
+                    } else {
+                        from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
+                        to_ms = marker_region_get_end_ms((t_notation_obj *)x, (t_marker *)it, false);
+                    }
+                }
+            } else
                 which_voices = llll_get(); // all voices
 
-            from_ms = 0; to_ms = x->r_ob.length_ms;
             if (inputlist->l_head->l_next) { // there is a ms specification
                 t_llllelem *secondelem = inputlist->l_head->l_next;
-                if (hatom_gettype(&secondelem->l_hatom) == H_LLLL) {
+                if (hatom_gettype(&secondelem->l_hatom) == H_SYM) {
+                    // region name
+                    t_symbol *sym = hatom_getsym(&secondelem->l_hatom);
+                    t_llll *temp = symbol2llll(sym);
+                    t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, temp);
+                    if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                        object_error((t_object *)x, "Item does not exist or is not a marker region.");
+                    } else {
+                        from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
+                        to_ms = marker_region_get_end_ms((t_notation_obj *)x, (t_marker *)it, false);
+                    }
+                    llll_free(temp);
+                } else if (hatom_gettype(&secondelem->l_hatom) == H_LLLL) {
                     t_llll *boundaries_ms = hatom_getllll(&secondelem->l_hatom);
-                    if (boundaries_ms->l_size >=2) {
+                    if (boundaries_ms->l_size == 2 && is_hatom_number(&boundaries_ms->l_head->l_hatom) && is_hatom_number(&boundaries_ms->l_head->l_next->l_hatom)) {
                         from_ms = hatom_getdouble(&boundaries_ms->l_head->l_hatom);
                         to_ms = hatom_getdouble(&boundaries_ms->l_head->l_next->l_hatom);
                         if (from_ms < 0) from_ms = 0.;
                         if (to_ms < 0) to_ms = x->r_ob.length_ms;
+                    } else {
+                        // it's a region name?
+                        t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, boundaries_ms);
+                        if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                            object_error((t_object *)x, "Item does not exist or is not a marker region.");
+                        } else {
+                            from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
+                            to_ms = marker_region_get_end_ms((t_notation_obj *)x, (t_marker *)it, false);
+                        }
                     }
                 }
                 if (secondelem && secondelem->l_next && hatom_gettype(&secondelem->l_next->l_hatom) == H_LLLL)
                     what_to_dump = hatom_getllll(&secondelem->l_next->l_hatom);
             }
         
-            send_subroll_values_as_llll(x, which_voices, from_ms, to_ms, what_to_dump, subroll_type);
+            send_subroll_values_as_llll(x, which_voices, from_ms, to_ms, what_to_dump, subroll_type, keep_ending_markers);
 
             llll_free(inputlist);
         }
@@ -10556,7 +10651,7 @@ char delete_selection(t_roll *x, char only_editable_items){ // the longs are the
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)){
                 t_rollvoice *voice = nt->parent->voiceparent;
-                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, nt->parent->num_notes == 1 ? k_UNDO_MODIFICATION_TYPE_ADD : k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, nt->parent->num_notes == 1 ? k_UNDO_MODIFICATION_TYPE_INSERT : k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 note_delete((t_notation_obj *)x, (t_note *)curr_it, false);
                 update_all_accidentals_for_voice_if_needed(x, voice);
                 changed = 1;
@@ -10566,7 +10661,7 @@ char delete_selection(t_roll *x, char only_editable_items){ // the longs are the
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch)) {
                 t_note *nt = ch->firstnote, *nt2;
                 t_rollvoice *voice = ch->voiceparent;
-                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
                 while (nt) {
                     nt2 = nt->next;
                     if (!nt->locked){
@@ -10662,7 +10757,7 @@ char change_note_voice_from_lexpr_or_llll(t_roll *x, t_note *note, t_lexpr *lexp
                 if (also_select)
                     notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)new_chord);
                 
-                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)new_chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)new_chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                 
                 new_chord->need_recompute_parameters = true;
                 set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
@@ -10690,7 +10785,7 @@ char change_chord_voice_from_lexpr_or_llll(t_roll *x, t_chord *chord, t_lexpr *l
         if (new_voice_num != old_voice_num) {
             t_rollvoice *new_voice = nth_rollvoice(x, new_voice_num - 1);
             if (new_voice) {
-                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
                 
                 t_chord *cloned = clone_chord((t_notation_obj *)x, chord, k_CLONE_FOR_ORIGINAL);
                 chord_delete((t_notation_obj *)x, chord, NULL, false);
@@ -10702,7 +10797,7 @@ char change_chord_voice_from_lexpr_or_llll(t_roll *x, t_chord *chord, t_lexpr *l
                 if (also_select)
                     notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)cloned);
                 
-                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)cloned, k_CHORD, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)cloned, k_CHORD, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                 
                 cloned->need_recompute_parameters = true;
                 set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
@@ -11145,15 +11240,6 @@ char is_notehead_inscreen_for_painting(t_roll *x, t_note *curr_nt){
     return false;
 }
 
-double marker_get_region_width(t_roll *x, t_marker *marker)
-{
-    if (marker_is_region(marker)) {
-        double marker_onset = marker->position_ms;
-        double marker_end = (marker->duration_ms > 0 ? marker_onset + marker->duration_ms : (marker->duration_ms < 0 && marker->next ? marker->next->position_ms : marker_onset));
-        return deltaonset_to_deltaxpixels((t_notation_obj *)x, marker_end - marker_onset);
-    } else
-        return 0;
-}
 
 void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
 {
@@ -11169,72 +11255,36 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
         markers_check_update_name_uwidth((t_notation_obj *)x);
         double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0, prev_region_marker_x = -30000, prev_region_marker_width = 0;
         t_marker *prev_region_marker = NULL;
+        char buf[1000];
         for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
             if (marker->need_update_name_uwidth)
                 recalculate_marker_name_uwidth((t_notation_obj *)x, marker);
-            double marker_onset = marker->position_ms;
+            double marker_onset = marker_get_onset_ms((t_notation_obj *)x, marker);
+            double marker_end = marker_region_get_end_ms((t_notation_obj *)x, marker, true);
             t_jrgba marker_color = x->r_ob.j_marker_rgba;
-            char buf[1000];
-            char is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
-            char is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
             bool is_region = marker_is_region(marker);
-            double marker_end = (marker->duration_ms > 0 ? marker_onset + marker->duration_ms : (marker->duration_ms < 0 && marker->next ? marker->next->position_ms : marker_onset));
-//            double marker_duration = marker_end - marker_onset;
 
             get_names_as_text(marker->r_it.names, buf, 1000);
             
             if ((marker_onset >= x->r_ob.screen_ms_start - 200 / x->r_ob.zoom_x && marker_onset < x->r_ob.screen_ms_end) ||
                 (is_region &&
                  ((marker_end >= x->r_ob.screen_ms_start - 200 / x->r_ob.zoom_x && marker_end < x->r_ob.screen_ms_end) ||
-                  (marker_onset <= x->r_ob.screen_ms_start && marker_end >= x->r_ob.screen_ms_end))))
-            {
-                // marker is in screen
-                this_marker_x = onset_to_xposition_roll((t_notation_obj *)x, marker_onset, NULL);
-                marker->name_painted_direction = (!is_region && (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end) ? -1 : 1);
-                
-                if (x->r_ob.smart_markername_placement) {
-                    t_marker *refmarker = NULL;
-                    if (!is_region && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
-                        refmarker = marker->prev;
-                        marker->name_line = refmarker->name_line + 1;
-                        if (refmarker->name_line > 0) {
-                            for (t_marker *tempmk = refmarker->prev; tempmk; tempmk = tempmk->prev)
-                                if (tempmk->name_line == 0) {
-                                    double tempmkwidth = MAX(marker_get_region_width(x, tempmk), tempmk->name_uwidth * x->r_ob.zoom_y + 2);
-                                    if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmkwidth + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
-                                        marker->name_line = 0;
-                                    break;
-                                }
-                        }
-                    } else if (is_region && prev_region_marker && !marker_is_region_till_next(prev_region_marker) && prev_region_marker_x + prev_region_marker_width > this_marker_x) {
-                        refmarker = prev_region_marker;
-                        marker->name_line = refmarker->name_line + 1;
-                        if (refmarker->name_line > 0) {
-                            for (t_marker *tempmk = refmarker->prev; tempmk; tempmk = tempmk->prev)
-                                if (tempmk->name_line == 0) {
-                                    if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + deltaonset_to_deltaxpixels((t_notation_obj *)x, marker->duration_ms) + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
-                                        marker->name_line = 0;
-                                    break;
-                                }
-                        }
-                    } else
-                        marker->name_line = 0;
-                } else
-                    marker->name_line = 0;
-                
+                  (marker_onset <= x->r_ob.screen_ms_start && marker_end >= x->r_ob.screen_ms_end)))) {
+                     
+                char is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
+                char is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
                 t_jrgba *markerlinecolor = (is_marker_selected ^ is_marker_preselected) ? &x->r_ob.j_selection_rgba : &marker_color;
                 t_jrgba white = get_grey(1.);
                 t_jrgba markertextcolor = (!is_region) ? *markerlinecolor : jgraphics_jrgba_interpolate(markerlinecolor, &white, CONST_MARKER_REGION_TEXT_WHITENING);
 
+                // marker is in screen
+                this_marker_x = onset_to_xposition_roll((t_notation_obj *)x, marker_onset, NULL);
+                marker->name_painted_direction = (!is_region && !(marker->prev && marker_is_region_till_next(marker->prev)) && (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end) ? -1 : 1);
+                
+
                 double this_marker_end_x = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL);
                 char marker_is_being_edited = (x->r_ob.is_editing_type == k_MARKERNAME && x->r_ob.is_editing_marker == marker);
-                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, !marker_is_being_edited, &prev_marker_width);
-                if (is_region) {
-                    prev_marker_width = this_marker_end_x - this_marker_x;
-                    prev_region_marker_x = this_marker_x;
-                    prev_region_marker_width = prev_marker_width;
-                }
-                prev_marker_x = this_marker_x;
+                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, !marker_is_being_edited, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
             } else if (marker_onset >= x->r_ob.screen_ms_end) {
                 break;
             }
@@ -11283,29 +11333,7 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
                     break;
                 }
                 this_marker_x = onset_to_xposition_roll((t_notation_obj *)x, marker_onset, NULL);
-                marker->name_painted_direction = (!is_region && (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end) ? -1 : 1);
-                
-                if (x->r_ob.smart_markername_placement) {
-                    t_marker *refmarker = NULL;
-                    if (!is_region && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
-                        refmarker = marker->prev;
-                    } else if (is_region && prev_region_marker && !marker_is_region_till_next(prev_region_marker) && prev_region_marker_x + prev_region_marker_width > this_marker_x) {
-                        refmarker = prev_region_marker;
-                    }
-                    if (refmarker) {
-                        marker->name_line = refmarker->name_line + 1;
-                        if (refmarker->name_line > 0) {
-                            for (t_marker *tempmk = refmarker->prev; tempmk; tempmk = tempmk->prev)
-                                if (tempmk->name_line == 0) {
-                                    if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
-                                        marker->name_line = 0;
-                                    break;
-                                }
-                        }
-                    } else
-                        marker->name_line = 0;
-                } else
-                    marker->name_line = 0;
+                marker->name_painted_direction = (!is_region && !(marker->prev && marker_is_region_till_next(marker->prev)) && (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end) ? -1 : 1);
                 
                 char must_paint_name = (x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker);
                 if (!x->r_ob.fade_predomain && marker_onset < x->r_ob.screen_ms_start)
@@ -11315,39 +11343,9 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
                 t_jrgba white = get_grey(1.);
                 t_jrgba markertextcolor = (!is_region) ? *markerlinecolor : jgraphics_jrgba_interpolate(markerlinecolor, &white, CONST_MARKER_REGION_TEXT_WHITENING);
                 
-                double regionwidth = 0;
-                if (is_region) {
-                    regionwidth = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL) - this_marker_x;
-                    t_rect markerstrip = build_rect(this_marker_x, playhead_y1 + notationobj_get_marker_voffset((t_notation_obj *)x, marker) - x->r_ob.zoom_y, regionwidth, (x->r_ob.markers_font_size + 4) * x->r_ob.zoom_y - 1);
-                    paint_rect(g, &markerstrip, markerlinecolor, markerlinecolor, 0, 2);
-                }
-                
-                double regiontextwidth = 0;
-                if (is_region) {
-                    regiontextwidth = regionwidth;
-                    if (!marker_is_region_till_next(marker)) { // see if we can increase this
-                        // find next region
-                        char found = false;
-                        for (t_marker *temp = marker->next; temp; temp = temp->next) {
-                            if (marker_is_region(temp)) {
-                                regiontextwidth = MAX(regiontextwidth, onset_to_xposition_roll((t_notation_obj *)x, temp->position_ms, NULL) - this_marker_x);
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            regiontextwidth = 0;
-                        }
-                    }
-                }
                 double this_marker_end_x = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL);
-                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, must_paint_name, &prev_marker_width);
-                if (is_region) {
-                    prev_marker_width = regionwidth;
-                    prev_region_marker_x = this_marker_x;
-                    prev_region_marker_width = regionwidth;
-                }
-                prev_marker_x = this_marker_x;
+
+                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, must_paint_name, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
             } else if (marker_onset >= x->r_ob.screen_ms_end)
                 break;
         }
@@ -12810,7 +12808,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             }
         }
         redraw = 1;
-    } else if (x->r_ob.j_mousedown_obj_type == k_SCROLLBAR) { // the scrollbar is being drawn!
+    } else if (x->r_ob.j_mousedown_obj_type == k_SCROLLBAR) { // the scrollbar is being dragged!
         // new scrollbar position
         t_rect rect;
         jbox_get_rect_for_view(&x->r_ob.j_box.l_box.b_ob, patcherview, &rect);
@@ -12825,8 +12823,19 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             redraw = 0; // already redrawn in redraw_hscrollbar
             changed = 0;
         }
+    } else if (x->r_ob.j_mousedown_obj_type == k_MARKER_REGION_TAIL) { // the ending point of a marker region is being dragged
+        t_marker *mk = (t_marker *)x->r_ob.j_mousedown_ptr;
+        if (true) {
+            double this_ms = xposition_to_onset((t_notation_obj *) x, pt.x, yposition_to_systemnumber((t_notation_obj *) x, x->r_ob.j_mousedrag_point.y));
 
-    } else if (x->r_ob.j_mousedown_obj_type == k_VSCROLLBAR) { // the vertical scrollbar is being drawn!
+            op = k_UNDO_OP_CHANGE_REGION_DURATION;
+            undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            mk->duration_ms = MAX(0, this_ms - mk->position_ms);
+            redraw = 1;
+            changed = 1;
+        }
+        
+    } else if (x->r_ob.j_mousedown_obj_type == k_VSCROLLBAR) { // the vertical scrollbar is being dragged!
         // new vscrollbar position
         t_rect rect;
         if (!is_editable((t_notation_obj *)x, k_SCROLLBAR, k_ELEMENT_ACTIONS_NONE)) return;
@@ -13163,9 +13172,9 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                             content = llll_clone(((t_marker *)temp)->content);
                         }
                         t_llll *chosen = make_marker_name_unique((t_notation_obj *) x, ((t_marker *) temp)->r_it.names);
-                        newmarker = add_marker((t_notation_obj *) x, chosen, marker_ms + delta_onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, ((t_marker *) temp)->role, content, 0);
+                        newmarker = add_marker((t_notation_obj *) x, chosen, marker_ms + delta_onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, ((t_marker *) temp)->role, content, ((t_marker *) temp)->duration_ms, ((t_marker *) temp)->r_sym_duration, 0);
                         
-                        undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                        undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)newmarker, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
 
                         notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)newmarker);
                         if (temp == x->r_ob.j_mousedown_ptr) {
@@ -13181,7 +13190,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                 double marker_mousedown_ux = ms_to_unscaled_xposition((t_notation_obj *)x, mousedown_marker_ms, 0);
                 for (temp = x->r_ob.firstpreselecteditem; temp; temp = temp->next_preselected) {
                     if (temp->type == k_MARKER) {
-                        double this_ux = get_marker_ux_position((t_notation_obj *)x, (t_marker *)temp);
+                        double this_ux = marker_get_onset_ux((t_notation_obj *)x, (t_marker *)temp);
                         ((t_marker *)temp)->ux_difference_with_mousedown_marker = this_ux - marker_mousedown_ux;
                     }
                 }
@@ -13292,7 +13301,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         } else { // mixed selection, or just notes, or
         
             char can_change_onset = 1;
-            char can_change_mc = 1;
+            char can_change_mc = (x->r_ob.j_mousedown_obj_type == k_MARKER ? 0 : 1);
             char can_change_vel = 0;
             
             char trim_start = (modifiers & eShiftKey && modifiers & eControlKey && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_ONSET) && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_DURATION));
@@ -13377,7 +13386,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                 t_chord *new_chord = clone_selected_notes_into_chord((t_notation_obj *) x, ((t_note *)temp)->parent, k_CLONE_FOR_NEW); // we clone the selected notes into a new chord
                                 insert_chord(x, ((t_note *)temp)->parent->voiceparent, new_chord, 0);
                                 
-                                undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)new_chord, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                                undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)new_chord, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                                 
                                 x->r_ob.j_mousedrag_copy_ptr = new_chord;
                                 // checking if we have to transfer the mousedown pointer
@@ -13430,7 +13439,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                     t_chord *oldchord = ((t_chord *)temp);
                                     insert_chord(x, oldchord->voiceparent, new_chord, 0);
                                     
-                                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)new_chord, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                                    undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)new_chord, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                                     
                                     x->r_ob.j_mousedrag_copy_ptr = new_chord;
                                     if ((oldchord->num_notes == 1 && x->r_ob.j_mousedown_ptr == oldchord) || x->r_ob.j_mousedown_ptr == oldchord->firstnote) {
@@ -13656,7 +13665,7 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
             note_in_new_voice->r_it.ID = shashtable_insert(x->r_ob.IDtable, note_in_new_voice);
             newchord = addchord_from_notes(x, note_new_voice, note->parent->onset, -1, 1, note_in_new_voice, note_in_new_voice, false, 0);
 
-            undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)newchord, k_CHORD, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+            undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)newchord, k_CHORD, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
 
             newch = newchord;
             notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)newchord);
@@ -13679,7 +13688,7 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         // gotta delete the original note!!!
         t_chord *parent = note->parent;
         if (note->parent->num_notes == 1) {
-            undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+            undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
             parent = NULL;
             if (old_chord_deleted)
                 *old_chord_deleted = true;
@@ -14188,9 +14197,9 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                 if (is_editable((t_notation_obj *)x, k_MARKER, k_CREATION)) {
                                     t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
                                     double onset = curr_nt->parent->onset;
-                                    clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
+                                    clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0, long2rat(0), 0);
                                     clicked_obj = k_MARKER;
-                                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                                     if (x->r_ob.snap_markers_to_grid_when_editing)
                                         snap_onset_to_grid_for_marker((t_notation_obj *) x, (t_marker *)clicked_ptr, NULL);
                                     recompute_total_length((t_notation_obj *)x);
@@ -14244,7 +14253,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                 t_rollvoice *voice = curr_nt->parent->voiceparent;
                                 clicked_ptr = NULL;
                                 
-                                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_nt->parent, curr_nt->parent->num_notes == 1 ? k_UNDO_MODIFICATION_TYPE_ADD : k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_nt->parent, curr_nt->parent->num_notes == 1 ? k_UNDO_MODIFICATION_TYPE_INSERT : k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                 note_delete((t_notation_obj *)x, curr_nt, true);
                                 update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
                                 x->r_ob.item_changed_at_mousedown = 1;
@@ -14465,10 +14474,14 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     if (!clicked_ptr && x->r_ob.show_markers && x->r_ob.firstmarker) {
         t_marker *marker;
         for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
-            if (is_in_marker_shape((t_notation_obj *)x, marker, this_x, this_y) || is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y)){
+            if (is_in_marker_region_tail_shape((t_notation_obj *)x, marker, this_x, this_y, false)) {
+                clicked_ptr = marker;
+                clicked_obj = k_MARKER_REGION_TAIL;
+                break;
+            } else if (is_in_marker_shape((t_notation_obj *)x, marker, this_x, this_y) || is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y)){
                 if (modifiers == eCommandKey) {
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_DELETION)) {
-                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
                         delete_marker((t_notation_obj *) x, marker);
                         x->r_ob.item_changed_at_mousedown = 1;
                         changed = true;
@@ -14484,9 +14497,9 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     x->r_ob.ux_click_marker_diff = xposition_to_unscaled_xposition((t_notation_obj *)x, this_x) - onset_to_unscaled_xposition((t_notation_obj *)x, marker->position_ms);
                     
                     t_marker *temp;
-                    double marker_mousedown_ux = get_marker_ux_position((t_notation_obj *)x, marker);
+                    double marker_mousedown_ux = marker_get_onset_ux((t_notation_obj *)x, marker);
                     for (temp = x->r_ob.firstmarker; temp; temp = temp->next){
-                        double this_ux = get_marker_ux_position((t_notation_obj *)x, temp);
+                        double this_ux = marker_get_onset_ux((t_notation_obj *)x, temp);
                         temp->ux_difference_with_mousedown_marker = this_ux - marker_mousedown_ux;
                     }
 
@@ -14494,6 +14507,19 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     clicked_obj = k_MARKER;
                     break;
                 }
+            } else if (is_in_marker_region_stripe_shape((t_notation_obj *)x, marker, this_x, this_y)) {
+                x->r_ob.ux_click_marker_diff = xposition_to_unscaled_xposition((t_notation_obj *)x, this_x) - onset_to_unscaled_xposition((t_notation_obj *)x, marker->position_ms);
+                
+                t_marker *temp;
+                double marker_mousedown_ux = marker_get_onset_ux((t_notation_obj *)x, marker);
+                for (temp = x->r_ob.firstmarker; temp; temp = temp->next){
+                    double this_ux = marker_get_onset_ux((t_notation_obj *)x, temp);
+                    temp->ux_difference_with_mousedown_marker = this_ux - marker_mousedown_ux;
+                }
+
+                clicked_ptr = marker;
+                clicked_obj = k_MARKER;
+                break;
             }
         } 
     }
@@ -14520,9 +14546,9 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         if (onset >= 0) { 
             if (is_editable((t_notation_obj *)x, k_MARKER, k_CREATION)) {
                 t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
-                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
+                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL,  0, long2rat(0), 0);
                 clicked_obj = k_MARKER;
-                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                 if (x->r_ob.snap_markers_to_grid_when_editing)
                     snap_onset_to_grid_for_marker((t_notation_obj *) x, (t_marker *)clicked_ptr, NULL);
                 recompute_total_length((t_notation_obj *)x);
@@ -14596,9 +14622,9 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (is_editable((t_notation_obj *)x, k_MARKER, k_CREATION)) {
                 t_llll *names = find_unused_marker_names((t_notation_obj *) x, NULL, NULL);
                 double onset = xposition_to_onset((t_notation_obj *) x,pt.x, yposition_to_systemnumber((t_notation_obj *) x, pt.y));
-                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
+                clicked_ptr = add_marker((t_notation_obj *) x, names, onset, build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL,  0, long2rat(0), 0);
                 clicked_obj = k_MARKER;
-                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)clicked_ptr, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                 if (x->r_ob.snap_markers_to_grid_when_editing)
                     snap_onset_to_grid_for_marker((t_notation_obj *) x, (t_marker *)clicked_ptr, NULL);
                 recompute_total_length((t_notation_obj *)x);
@@ -14754,7 +14780,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (temp && temp->firstnote)
                 set_slots_values_to_note_from_llll((t_notation_obj *)x, temp->firstnote, x->r_ob.default_noteslots);
 
-            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)temp, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)temp, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
             
             if (temp){
                 if (is_editable((t_notation_obj *)x, k_SELECTION, x->r_ob.num_selecteditems > 0 ? k_MULTIPLE_SELECTION : k_SINGLE_SELECTION))
@@ -14800,8 +14826,8 @@ t_rollvoice* nth_rollvoice(t_roll *x, long n){
     // to be improved: if the note# is > n/2, pass the list the other way round!
 }
 
-void send_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type){
-    t_llll* out_llll = get_subroll_values_as_llll(x, whichvoices, start_ms, end_ms, what_to_dump, subroll_type);
+void send_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type, char keep_ending_markers){
+    t_llll* out_llll = get_subroll_values_as_llll(x, whichvoices, start_ms, end_ms, what_to_dump, subroll_type, keep_ending_markers);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, out_llll);
     llll_free(out_llll);
 }
@@ -14845,7 +14871,7 @@ void send_extras_values_as_llll(t_roll *x){
 }
 
 
-t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type){
+t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type, char keep_ending_markers){
     t_llll* out_llll = llll_get();
     t_llll *midichannels = llll_get(); 
     t_llll *clefs = llll_get();
@@ -14918,7 +14944,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
     
     if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_markers)) {
         if (x->r_ob.firstmarker) // markers
-            llll_appendllll(out_llll, get_markers_as_llll((t_notation_obj *) x, 1, start_ms, end_ms, false, k_CONSIDER_FOR_SUBDUMPING, 0), 0, WHITENULL_llll); 
+            llll_appendllll(out_llll, get_markers_as_llll((t_notation_obj *) x, 1, start_ms, end_ms, false, k_CONSIDER_FOR_SUBDUMPING, 0, keep_ending_markers), 0, WHITENULL_llll);
     }
     
     if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_midichannels)) 
@@ -15633,15 +15659,22 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
                 return;
             }
         }
+        
         // markers?
         if (x->r_ob.firstmarker) {
             t_marker *marker;
             for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
-                if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y)){
+                if (is_in_marker_region_tail_shape((t_notation_obj *)x, marker, pt.x, pt.y, false)) {
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                    marker->duration_ms = -1;
+                } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y)){
                     unlock_general_mutex((t_notation_obj *)x);    
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))
                         start_editing_markername((t_notation_obj *) x, patcherview, marker, onset_to_xposition_roll((t_notation_obj *)x, marker->position_ms, NULL) + 3 * x->r_ob.zoom_y);
                     return;
+                } else if (is_in_marker_region_stripe_shape((t_notation_obj *)x, marker, pt.x, pt.y)) {
+                    marker_region_preselect_all_items((t_notation_obj *)x, marker);
+                    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
                 }
             }
         }
@@ -15853,7 +15886,7 @@ void roll_copy_selection(t_roll *x, char cut)
         llll_free(clipboard.markers);
     
     clipboard.gathered_syntax = get_selection_gathered_syntax(x);
-    clipboard.markers = get_markers_as_llll((t_notation_obj *)x, 2, 0, 0, false, k_CONSIDER_FOR_SAVING, 0);
+    clipboard.markers = get_markers_as_llll((t_notation_obj *)x, 2, 0, 0, false, k_CONSIDER_FOR_SAVING, 0, 0);
     clipboard.onset = get_selection_leftmost_onset(x);
     
     clipboard.type = k_SELECTION_CONTENT;
@@ -16443,7 +16476,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                             if (note_get_screen_midicents(nt) == x->r_ob.notation_cursor.midicents) {
                                 char num_notes = ch->num_notes;
                                 if (num_notes == 1) { // delete chord
-                                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
                                     chord_delete((t_notation_obj *) x, ch, ch->prev, false);
                                     x->r_ob.notation_cursor.chord = NULL;
                                 } else  {
@@ -16467,7 +16500,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
 
                     } else {
                         lock_general_mutex((t_notation_obj *)x);
-                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
                         chord_delete((t_notation_obj *) x, ch, ch->prev, false);
                         x->r_ob.notation_cursor.chord = NULL;
                         unlock_general_mutex((t_notation_obj *)x);
@@ -16532,7 +16565,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                             edited_chord = roll_add_new_chord_from_linear_edit(x, keycode - 48, x->r_ob.force_diatonic_step);
                             x->r_ob.force_diatonic_step = -1;
 
-                            undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)edited_chord, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                            undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)edited_chord, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                             
                         }
                         unlock_general_mutex((t_notation_obj *)x);

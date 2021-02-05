@@ -24,6 +24,7 @@
 #include "foundation/bach.h"
 #include "notation/notation.h" // header with all the structures for the notation objects
 #include "notation/notation_undo.h"
+#include "notation/notation_markers.h"
 
 //#include "graphics/llll_modifiers.h" 
 //#include "math/llll_math.h"
@@ -203,7 +204,7 @@ void write_text_standard_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g
 
 
 
-char timepoints_compare(t_timepoint tp1, t_timepoint tp2){ 
+char timepoint_compare(t_timepoint tp1, t_timepoint tp2){ 
 // compares two timepoints. Returns 1 if tp1 is greater, -1 if tp2 is greater, 0 if they coincide.
     if (tp1.measure_num > tp2.measure_num) 
         return 1;
@@ -431,92 +432,6 @@ void get_voicenames_as_text(t_notation_obj *r_ob, t_voice *voice, char *buf, lon
         
 }
 
-void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *linecolor, t_jrgba *textcolor, t_jfont* jf, t_marker *marker, double marker_x, double marker_end_x, double marker_y1, double marker_y2, char is_region, double linewidth, char also_paint_name, double *namewidth)
-{
-    
-    double regionwidth = 0;
-    char marker_is_being_edited = (r_ob->is_editing_type == k_MARKERNAME && r_ob->is_editing_marker == marker);
-    if (is_region) {
-        regionwidth = marker_end_x - marker_x;
-        t_rect markerstrip = build_rect(marker_x, marker_y1 + notationobj_get_marker_voffset(r_ob, marker) - r_ob->zoom_y, regionwidth, (r_ob->markers_font_size + 4) * r_ob->zoom_y - 1);
-        paint_rect(g, &markerstrip, linecolor, marker_is_being_edited ? textcolor : linecolor, 0, 2);
-    }
-    
-    double regiontextwidth = 0;
-    if (is_region) {
-        regiontextwidth = regionwidth;
-        if (!marker_is_region_till_next(marker)) { // see if we can increase this
-            // find next region
-            char found = false;
-            for (t_marker *temp = marker->next; temp; temp = temp->next) {
-                if (marker_is_region(temp)) {
-                    regiontextwidth = MAX(regiontextwidth, onset_to_xposition_roll(r_ob, temp->position_ms, NULL) - marker_x);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                regiontextwidth = 0;
-            }
-        }
-    }
-    
-    
-    char name_direction = marker->name_painted_direction;
-    double height = 0;
-    
-    paint_line(g, *linecolor, marker_x, marker_y1 + (is_region ? notationobj_get_marker_voffset(r_ob, marker) - r_ob->zoom_y : 0), marker_x, marker_y2, linewidth);
-    
-    if (marker->role != k_MARKER_ROLE_NONE) {
-        t_jfont *jf_special_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(6 * r_ob->zoom_y));  // text font for markers
-        t_jrgba specialcolor = marker->role == k_MARKER_ROLE_TEMPO ? build_jrgba(0.6, 0.2, 0.2, 1) : (marker->role == k_MARKER_ROLE_TIME_SIGNATURE ? build_jrgba(0.2, 0.2, 0.6, 1) : (marker->role == k_MARKER_ROLE_MEASURE_BARLINE ? build_jrgba(0.2, 0.6, 0.6, 1) : (marker->role == k_MARKER_ROLE_MEASURE_DIVISION ? build_jrgba(0.6, 0.6, 0.2, 1) : build_jrgba(0.6, 0.2, 0.6, 1))));
-        paint_dashed_y_line(g, specialcolor, marker_x, marker_y1, marker_y2, linewidth, 3 * r_ob->zoom_y);
-        if (namewidth)
-            *namewidth = 0;
-        write_text_in_vertical(g, jf_special_text_markers, specialcolor, marker->role == k_MARKER_ROLE_TEMPO ? "TEMPO" : (marker->role == k_MARKER_ROLE_TIME_SIGNATURE ? "TIME SIG" : (marker->role == k_MARKER_ROLE_MEASURE_BARLINE ? "BARLINE" : (marker->role == k_MARKER_ROLE_MEASURE_DIVISION ? "DIVISION" : "SUBDIVISION"))), name_direction < 0 ? marker_x : marker_x - 10 * r_ob->zoom_y, marker_y1 + 3 * r_ob->zoom_y, 10 * r_ob->zoom_y, marker_y2 - marker_y1 - 6 * r_ob->zoom_y, (marker->role == k_MARKER_ROLE_TEMPO ? JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM : JGRAPHICS_TEXT_JUSTIFICATION_TOP) + JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED, 0.8);
-        jfont_destroy_debug(jf_special_text_markers);
-    }
-    
-    if (also_paint_name) {
-        if (marker->role == k_MARKER_ROLE_NONE) {
-            if (marker && marker->r_it.names && marker->r_it.names->l_size > 0) {
-                char buf[1000];
-                get_names_as_text(marker->r_it.names, buf, 1000);
-                if (namewidth)
-                    jfont_text_measure(jf, buf, namewidth, &height);
-                double text_x = name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y;
-                double text_y = marker_y1 + notationobj_get_marker_voffset(r_ob, marker);
-                if (is_region && text_x < get_predomain_width_pixels(r_ob)) {
-                    double predomain_pix = get_predomain_width_pixels(r_ob);
-                    double diff = predomain_pix - text_x;
-                    text_x = predomain_pix;
-                    if (regiontextwidth > 0)
-                        regiontextwidth = MAX(0.01, regiontextwidth - diff); // cannot be 0, we use it as special value...
-                }
-                if (!is_region || text_x < marker_end_x)
-                    write_text(g, jf, *textcolor, buf, text_x, text_y, regiontextwidth == 0 ? r_ob->width - text_x : regiontextwidth, r_ob->height - text_y, JGRAPHICS_TEXT_JUSTIFICATION_LEFT, true, false);
-//                write_text_standard_account_for_vinset(r_ob, g, jf, *textcolor, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker));
-            }
-        } else if ((marker->role == k_MARKER_ROLE_TEMPO || marker->role == k_MARKER_ROLE_TIME_SIGNATURE) && marker->content) {
-            char *buf = NULL;
-            llll_to_text_buf(marker->content, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
-            if (namewidth)
-                jfont_text_measure(jf, buf, namewidth, &height);
-            write_text(g, jf, *textcolor, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker), 200 * r_ob->zoom_y, marker_y2 - marker_y1 - 6 * r_ob->zoom_y,
-                                (marker->role == k_MARKER_ROLE_TEMPO ? JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM : JGRAPHICS_TEXT_JUSTIFICATION_TOP) + JGRAPHICS_TEXT_JUSTIFICATION_LEFT, true, true);
-            bach_freeptr(buf);
-        }
-    }
-
-#ifdef BACH_PAINT_IDS
-#ifdef BACH_MARKERS_HAVE_ID
-    char text[20];
-    snprintf_zero(text, 40, "%ld", marker->r_it.ID);
-    write_text(g, jf, build_jrgba(0.5, 0.2, 0.5, 1), text, marker_x + 3 * r_ob->zoom_y, marker_y1 + 10 * r_ob->zoom_y, 50 * r_ob->zoom_y, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
-#endif
-#endif
-    
-}
 
 void paint_tie(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, char direction){
     double control_point1_x, control_point2_x, control_point1_y, control_point2_y;
@@ -3291,15 +3206,31 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
     if (num_sel == 1 && firstsel && firstsel->type == k_MARKER) {
         t_marker *mk = (t_marker *)firstsel;
         char onset_text[256];
+        char dur_text[256];
         char buf[1000];
-        double marker_onset = mk->position_ms;
+        char is_region = marker_is_region(mk);
         get_names_as_text(mk->r_it.names, buf, 1000);
         
-        time_to_char_buf(r_ob, marker_onset, onset_text, 256);
-        if (buf[0])
-            snprintf_zero(legend_text, 256, "Onset %s   Name %s", onset_text, buf);
-        else
-            snprintf_zero(legend_text, 256, "Onset %s", onset_text);
+        time_to_char_buf(r_ob, mk->position_ms, onset_text, 256);
+        if (buf[0]) {
+            if (is_region) {
+                if (mk->duration_ms >= 0)
+                    time_to_char_buf(r_ob, mk->duration_ms, dur_text, 256);
+                else
+                    snprintf_zero(dur_text, 256, "till next");
+                snprintf_zero(legend_text, 256, "Onset %s   Duration %s   Name %s", onset_text, dur_text, buf);
+            } else
+                snprintf_zero(legend_text, 256, "Onset %s   Name %s", onset_text, buf);
+        } else {
+            if (is_region) {
+                if (mk->duration_ms >= 0)
+                    time_to_char_buf(r_ob, mk->duration_ms, dur_text, 256);
+                else
+                    snprintf_zero(dur_text, 256, "till next");
+                snprintf_zero(legend_text, 256, "Onset %s   Duration %s", onset_text, dur_text);
+            } else
+                snprintf_zero(legend_text, 256, "Onset %s", onset_text);
+        }
         
     } else if (num_sel == 1 && firstsel && firstsel->type == k_VOICE) {
         t_voice *voice = (t_voice *)firstsel;
@@ -9741,7 +9672,7 @@ t_rational get_ts_sym_duration(t_timesignature ts) { // calcualte the symbolic (
 }
 
 t_rational get_sym_durations_between_timepoints(t_scorevoice *voice, t_timepoint tp1, t_timepoint tp2) { // calcualte the symbolic (rational) duration between two timepoints
-    if (timepoints_compare(tp1, tp2) >= 0)
+    if (timepoint_compare(tp1, tp2) >= 0)
         return long2rat(0);
     else {
         long start_meas = tp1.measure_num;
@@ -9850,6 +9781,20 @@ t_timepoint build_timepoint_with_voice(long measure_num, t_rational point_in_mea
     return tp;
 }
 
+t_timepoint timepoint_shift(t_notation_obj *r_ob, t_timepoint tp, t_timepoint delta)
+{
+    t_timepoint res = build_timepoint_with_voice(tp.measure_num + delta.measure_num, rat_rat_sum(tp.pt_in_measure, delta.pt_in_measure), tp.voice_num);
+    t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, res.voice_num);
+    if (voice) {
+        t_measure *meas = nth_measure_of_scorevoice(voice, res.measure_num);
+        while (meas && rat_rat_cmp(res.pt_in_measure, measure_get_sym_duration(meas)) >= 0) {
+            res.pt_in_measure = rat_rat_diff(res.pt_in_measure, measure_get_sym_duration(meas));
+            res.measure_num++;
+        }
+    }
+    return res;
+}
+
 t_llll *get_timepoint_as_llll(t_notation_obj *r_ob, t_timepoint tp)
 {
     t_llll *out = llll_get();
@@ -9890,8 +9835,8 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     }
     
     out_duration = long2rat(0);
-    while (tempo && (timepoints_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp2) <= 0)) {
-        long cmp1 = timepoints_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp1);
+    while (tempo && (timepoint_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp2) <= 0)) {
+        long cmp1 = timepoint_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp1);
         if (cmp1 <= 0) { // tempo->changepoint BEFORE tp1
             if (!tempo_L_has_changed)
                 free_tempo(r_ob, tempo_L);
@@ -9901,7 +9846,7 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
             // gotta add a trapece
             t_rational newtempo, trapece;
             tempo_R = tempo;
-            if (timepoints_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) {
+            if (timepoint_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) {
                 intermediate_point = tp1;
                 intermediate_tempo = (tempo_L->interpolation_type == 1) ? get_intermediate_tempo(voice, tp1, tempo_L, tempo_R) : tempo_L->tempo_value;
             } else {
@@ -9929,10 +9874,10 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     }
     
     // last trapece
-    if (timepoints_compare(tp2, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint)) < 0) {  ///    tp1 --- tp2 --- L
+    if (timepoint_compare(tp2, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint)) < 0) {  ///    tp1 --- tp2 --- L
         intermediate_point = tp1;
         intermediate_tempo = tempo_L->tempo_value;
-    } else if (timepoints_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) { /// L --- tp1 --- tp2
+    } else if (timepoint_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) { /// L --- tp1 --- tp2
         intermediate_point = tp1;
         if (tempo_R) 
             intermediate_tempo = (tempo_L->interpolation_type == 1) ? get_intermediate_tempo(voice, tp1, tempo_L, tempo_R) : tempo_L->tempo_value;
@@ -9945,7 +9890,7 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     
     if (!tempo_R) // tempo_L was the last tempo! 
         tp2_tempo = tempo_L->tempo_value;
-    else if (timepoints_compare(build_timepoint(tempo_R->owner->measure_number, tempo_R->changepoint), tp2) == 0) // tempo change precisely on the end
+    else if (timepoint_compare(build_timepoint(tempo_R->owner->measure_number, tempo_R->changepoint), tp2) == 0) // tempo change precisely on the end
         tp2_tempo = (tempo_L->interpolation_type == 1) ? tempo_R->tempo_value : tempo_L->tempo_value;
     else // there's another tempo, but later
         tp2_tempo = (tempo_L->interpolation_type == 1) ? get_intermediate_tempo(voice, tp2, tempo_L, tempo_R) : tempo_L->tempo_value;
@@ -20849,24 +20794,6 @@ t_rational ts_to_division_for_PWGL(t_notation_obj *r_ob, t_timesignature *ts)
     return div;
 }
 
-t_marker *nth_marker(t_notation_obj *r_ob, long n)
-{
-    t_marker *curr = r_ob->firstmarker;
-    long i;
-    long zero_based_index = n;
-    
-    if (zero_based_index < 0)
-        return NULL;
-    
-    if (zero_based_index > r_ob->num_markers)
-        return NULL;
-    
-    for (i=0; i<zero_based_index && curr; i++)
-        curr = curr->next;
-    return curr;
-    // to be improved: if the marker# is > n/2, pass the list the other way round!
-}
-
 // computes the nth (0-based) chord of the whole nroll
 t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n)
 {
@@ -20889,24 +20816,6 @@ t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n)
     // to be improved: if the chord# is > n/2, pass the list the other way round!
 }
 
-
-void fill_marker_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first_llllelem, long *marker_num)
-{
-    // initializing stuff
-    if (marker_num)
-        *marker_num = 1;
-    
-    long tot_size = 0;
-    t_llllelem *temp = first_llllelem;
-    while (temp) {
-        tot_size++;
-        temp = temp->l_next;
-    }
-    
-    if (tot_size >= 1 && is_hatom_number(&first_llllelem->l_hatom)) {
-        *marker_num = hatom_getlong(&first_llllelem->l_hatom);
-    }
-}
 
 void fill_measure_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first_llllelem, 
                                          long *voice_num, long *meas_num)
@@ -21258,17 +21167,6 @@ void fill_note_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first_
 }
 
 
-t_marker *get_marker_from_path(t_notation_obj *r_ob, long marker_num)
-{
-    if (marker_num < 0)
-        marker_num = r_ob->num_markers + marker_num + 1;
-    
-    if (marker_num <= 0 || marker_num > r_ob->num_markers)
-        return NULL;
-    
-    return nth_marker(r_ob, marker_num-1);
-}
-
 t_measure *measure_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num)
 {
     if (voice_num < 0)
@@ -21367,12 +21265,6 @@ t_note *note_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num, 
     return NULL;
 }
 
-t_marker *get_marker_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem)
-{
-    long marker_num = 1;
-    fill_marker_path_from_llllelem_range(r_ob, start_llllelem, &marker_num);
-    return get_marker_from_path(r_ob, marker_num);
-}
 
 t_chord *chord_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem, char tiemode_all, char skiprests, char restseqmode_all)
 {
@@ -26145,105 +26037,6 @@ int is_in_breakpoint_shape(t_notation_obj *r_ob, t_bpt *breakpoint, long point_x
     return 0;
 }
 
-
-// returns 1 if the point (point_x, point_y) is on the marker
-int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, long point_y)
-{
-    double marker_x = -10000;
-
-    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE && r_ob->timepoint_to_unscaled_xposition) {
-            t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-            marker_x = unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS));
-        } else
-            marker_x = ms_to_xposition(r_ob, marker->position_ms, 1);
-    } else {
-        marker_x = onset_to_xposition_roll(r_ob, marker->position_ms, NULL);
-    }
-    
-    if (fabs(point_x - marker_x) < 2 + 2 * r_ob->zoom_y && point_y < r_ob->height - (CONST_XSCROLLBAR_UHEIGHT + 2) * r_ob->zoom_y)
-        return 1;
-    return 0;
-}
-
-
-char marker_is_region_till_next(t_marker *mk)
-{
-    if (mk->attach_to == k_MARKER_ATTACH_TO_MEASURE)
-        return (mk->r_sym_duration.r_num < 0);
-    else
-        return (mk->duration_ms < 0);
-}
-
-char marker_is_region(t_marker *mk)
-{
-    if (mk->attach_to == k_MARKER_ATTACH_TO_MEASURE)
-        return (mk->r_sym_duration.r_num != 0);
-    else
-        return (mk->duration_ms != 0);
-}
-
-double notationobj_get_marker_voffset(t_notation_obj *r_ob, t_marker *mk)
-{
-    double ypos = 0;
-    if (r_ob->ruler % 2) {
-        if (r_ob->show_ruler_labels)
-            ypos = 7 * r_ob->zoom_y;
-        else
-            ypos = 4 * r_ob->zoom_y;
-    } else
-        ypos = 1 * r_ob->zoom_y;
-    
-    if (r_ob->smart_markername_placement)
-        ypos += (r_ob->markers_font_size + 4) * r_ob->zoom_y * mk->name_line;
-    
-    return ypos;
-}
-
-
-// returns 1 if the point (point_x, point_y) is on the markername
-int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, long point_y)
-{
-    double marker_x;
-    double marker_namewidth, marker_name_y_start, marker_nameheight;
-    double playhead_y1, playhead_y2;
-    get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
-
-    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-            t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-            marker_x = unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS));
-        } else
-            marker_x = ms_to_xposition(r_ob, marker->position_ms, 1);
-
-/*        if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-            //        t_timepoint tp = measure_attached_marker_to_timepoint((t_notation_obj *)x, marker);
-            marker_x = unscaled_xposition_to_xposition(r_ob, ms_to_unscaled_xposition(r_ob, marker->position_ms, 1));
-        } else
-            marker_x = ms_to_xposition(r_ob, marker->position_ms, 1); */
-        
-        marker_namewidth = marker->name_uwidth * r_ob->zoom_y;
-        marker_name_y_start = playhead_y1 + notationobj_get_marker_voffset(r_ob, marker);
-        marker_nameheight = r_ob->markers_font_size * r_ob->zoom_y;
-    } else {
-        marker_x = onset_to_xposition_roll(r_ob, marker->position_ms, NULL);
-        marker_namewidth = marker->name_uwidth * r_ob->zoom_y;
-        marker_name_y_start = playhead_y1 + notationobj_get_marker_voffset(r_ob, marker);
-        marker_nameheight = r_ob->markers_font_size * r_ob->zoom_y;
-    }
-    
-    if (marker->name_painted_direction > 0) {
-        if (point_x > marker_x && point_x < marker_x + marker_namewidth + 2 * r_ob->zoom_y &&
-            point_y > marker_name_y_start && point_y < marker_name_y_start + marker_nameheight)
-                return 1;
-    } else {
-        if (point_x > marker_x - marker_namewidth - 2 * r_ob->zoom_y && point_x < marker_x &&
-            point_y > marker_name_y_start && point_y < marker_name_y_start + marker_nameheight)
-            return 1;
-    }
-    
-    return 0;
-}
 
 
 // returns 1 if the point (point_x, point_y) is within the scrollbar handle
@@ -33483,7 +33276,7 @@ void approximate_for_too_high_rationals_fixed_den(t_llll *box_durations, t_ratio
 
 // a small function just like get_sym_durations_between_timepoints but with no need of *voice
 t_rational get_sym_durations_between_timepoints_from_measure_symdurations(t_llll *measure_symdurations, t_timepoint tp1, t_timepoint tp2) {
-    if (timepoints_compare(tp1, tp2) >= 0)
+    if (timepoint_compare(tp1, tp2) >= 0)
         return long2rat(0);
     else {
         long start_meas = tp1.measure_num;
@@ -34542,256 +34335,6 @@ char change_chord_tie_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t
 
 
 
-// *************
-// MARKERS
-// *************
-
-long compare_markers(void *data, t_llllelem *a, t_llllelem *b){
-    if (hatom_gettype(&a->l_hatom) == H_LLLL && hatom_gettype(&b->l_hatom) == H_LLLL) {
-        t_llll *a_llll = hatom_getllll(&a->l_hatom);
-        t_llll *b_llll = hatom_getllll(&b->l_hatom);
-        if (hatom_gettype(&a_llll->l_head->l_hatom) == H_LLLL && hatom_gettype(&b_llll->l_head->l_hatom) == H_LLLL) {
-            t_llll *pos_a_llll = hatom_getllll(&a_llll->l_head->l_hatom);
-            t_llll *pos_b_llll = hatom_getllll(&b_llll->l_head->l_hatom);
-            if (pos_a_llll->l_head && pos_b_llll->l_head && hatom_getdouble(&pos_a_llll->l_head->l_hatom) <= hatom_getdouble(&pos_b_llll->l_head->l_hatom))
-                return 1;
-            else
-                return 0;
-        }
-    }
-    return 0;
-}
-
-t_llllelem *get_marker_ms_llllelem(t_llllelem *marker){
-    if (hatom_gettype(&marker->l_hatom) == H_LLLL) {
-        t_llll *marker_llll = hatom_getllll(&marker->l_hatom);
-        if (marker_llll && marker_llll->l_head && hatom_gettype(&marker_llll->l_head->l_hatom) == H_LLLL) {
-            t_llll *pos_marker_llll = hatom_getllll(&marker_llll->l_head->l_hatom);
-            if (pos_marker_llll && pos_marker_llll->l_head)
-                return pos_marker_llll->l_head; 
-        }
-    }
-    return NULL;
-}
-
-char *atom_to_buffer(t_atom *atom)
-{
-    long size;
-    char *buf = NULL;
-    atom_gettext_debug(1, atom, &size, &buf, 0);
-    return buf;
-}
-
-void recalculate_marker_name_uwidth(t_notation_obj *r_ob, t_marker *marker)
-{
-    if (marker) {
-        double width = 0, height = 0;
-        t_jfont *jf_text_markers = jfont_create_debug(r_ob->markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, r_ob->markers_font_size);
-        if (marker->role == k_MARKER_ROLE_NONE) {
-            if (marker->r_it.names->l_size > 0) {
-                char buf[1000];
-                get_names_as_text(marker->r_it.names, buf, 1000);
-                jfont_text_measure(jf_text_markers, buf, &width, &height);
-            }
-        } else {
-            if (marker->content) {
-                char *buf = NULL;
-                llll_to_text_buf(marker->content, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
-                jfont_text_measure(jf_text_markers, buf, &width, &height);
-                bach_freeptr(buf);
-            }
-        }
-        marker->name_uwidth = width;
-        jfont_destroy_debug(jf_text_markers);
-    }
-}
-
-t_marker *build_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoint tp, char attach_to, e_marker_roles role, t_llll *content){
-    t_marker *marker = (t_marker *) bach_newptrclear(sizeof(t_marker));
-    notation_item_init(&marker->r_it, k_MARKER);
-    
-    change_notation_item_names(r_ob, &marker->r_it, names, false);
-//    llll_free(marker->r_it.names);
-//    marker->r_it.names = llll_clone(names);
-    
-    marker->position_ms = ms;
-    marker->name_uwidth = 0;
-    marker->need_update_name_uwidth = 0;
-    marker->attach_to = attach_to;
-    marker->role = role;
-    marker->content = content;
-    marker->name_painted_direction = 0;
-    marker->measure_attach_ID = 0;
-    marker->name_line = 0;
-    marker->r_sym_pim_attach = long2rat(0);
-    marker->duration_ms = 0;
-    marker->r_sym_duration = long2rat(0);
-
-    if (attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_voice *voice = nth_voice_safe(r_ob, tp.voice_num);
-        if (voice) {
-            t_measure *meas = nth_measure_of_scorevoice((t_scorevoice *)voice, tp.measure_num);
-            if (meas) {
-                marker->measure_attach_ID = meas->r_it.ID;
-                marker->r_sym_pim_attach = tp.pt_in_measure;
-                marker->position_ms = timepoint_to_ms(r_ob, tp, tp.voice_num);
-            }
-        }
-    }
-    
-    marker->ux_difference_with_mousedown_marker = 0;
-    return marker;
-}
-
-void insert_marker(t_notation_obj *r_ob, t_marker *marker, unsigned long force_ID){
-    t_marker *after_this_marker = r_ob->lastmarker;
-    if (r_ob->firstmarker) { // not at the beginning
-        // gotta find where to put it
-        t_marker *temp = r_ob->firstmarker;
-        while (temp) {
-            if (temp->position_ms > marker->position_ms) {
-                after_this_marker = temp->prev;
-                break;
-            }
-            temp = temp->next;
-        }
-    }
-        
-    if (r_ob->firstmarker) { // not at the beginning
-        if (after_this_marker) {
-            if (after_this_marker->next) { // insert between these
-                after_this_marker->next->prev = marker;
-                marker->next = after_this_marker->next;
-                marker->prev = after_this_marker;
-                after_this_marker->next = marker;
-            } else { // insert at the end
-                marker->next = NULL;
-                marker->prev = after_this_marker;
-                after_this_marker->next = marker;
-                r_ob->lastmarker = marker;
-            }
-        } else { // at the beginning
-            marker->prev = NULL;
-            marker->next = r_ob->firstmarker;
-            r_ob->firstmarker->prev = marker;
-            r_ob->firstmarker = marker;
-        }
-    } else { // no markers in the voices yet
-        marker->next = NULL;
-        marker->prev = NULL;
-        r_ob->firstmarker = marker;
-        r_ob->lastmarker = marker;
-    }
-
-#ifdef BACH_MARKERS_HAVE_ID
-    if (force_ID > 0) {
-        shashtable_insert_with_key(r_ob->IDtable, marker, force_ID, 1);
-        marker->r_it.ID = force_ID;
-    } else
-        marker->r_it.ID = shashtable_insert(r_ob->IDtable, marker);
-#endif
-
-    // increase the # of markers
-    r_ob->num_markers++; 
-}
-
-// build and insert
-t_marker *add_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoint tp, char attach_to, e_marker_roles role, t_llll *content, unsigned long force_ID)
-{
-    t_marker *marker = build_marker(r_ob, names, ms, tp, attach_to, role, content);
-    if (marker) {
-        insert_marker(r_ob, marker, force_ID);
-        marker->need_update_name_uwidth = r_ob->need_update_markers_uwidth = true;
-//        recalculate_marker_name_uwidth(r_ob, marker);
-    }
-    return marker;
-}
-
-
-char delete_marker_by_llllelem(t_notation_obj *r_ob, t_llllelem *marker){
-    if (marker) {
-        if (!NOGOOD(marker)) {
-            llll_destroyelem(marker);
-        } else 
-            object_error((t_object *) r_ob, "Marker is a wrong object!");
-        return 1;
-    }
-    return 0;
-}
-
-void marker_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_marker *marker){
-    
-    if (notation_item_is_selected(r_ob, (t_notation_item *)marker))
-        notation_item_delete_from_selection(r_ob, (t_notation_item *)marker);
-
-    if (notation_item_is_preselected(r_ob, (t_notation_item *)marker))
-        notation_item_delete_from_preselection(r_ob, (t_notation_item *)marker);
-
-    if (r_ob->m_inspector.active_bach_inspector_obj_type == k_MARKER && r_ob->m_inspector.active_bach_inspector_item == marker)
-        close_bach_inspector(r_ob, &r_ob->m_inspector);
-
-    if (r_ob->playing){
-        if (r_ob->scheduled_item == (t_notation_item *)marker) {
-            r_ob->scheduled_item = NULL;
-            check_correct_scheduling(r_ob, false);
-        }
-
-        if (r_ob->marker_play_cursor == marker)
-            r_ob->marker_play_cursor = marker->prev;
-    }
-}
-
-
-void delete_marker(t_notation_obj *r_ob, t_marker *marker){
-    if (marker){
-        
-        marker_check_dependencies_before_deleting_it(r_ob, marker);
-        
-        r_ob->num_markers --;
-        if (marker->prev) { // not the first marker
-            if (marker->next) { // not the last marker
-                marker->prev->next = marker->next;
-                marker->next->prev = marker->prev;
-            } else { // last marker
-                marker->prev->next = NULL;
-                r_ob->lastmarker = marker->prev;
-            }
-        } else { // first marker
-            if (marker->next) { // some tempi remain
-                marker->next->prev = NULL;
-                r_ob->firstmarker = marker->next;
-            } else { // there was just 1 marker
-                r_ob->firstmarker = NULL;
-                r_ob->lastmarker = NULL;
-                r_ob->num_markers = 0;
-            }
-        }
-        marker_free(r_ob, marker);
-    }
-}
-
-char delete_marker_by_name(t_notation_obj *r_ob, t_llll *names, char add_undo_ticks){
-    char changed = false;
-    t_marker *marker;
-    for (marker = r_ob->firstmarker; marker; marker = marker->next) {
-        if (are_all_names_contained(names, marker->r_it.names)) {
-            changed = true;
-            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
-            delete_marker(r_ob, marker);
-            break;
-        }
-    }
-    return changed;
-}
-
-// get the FIRST marker having as name a given name (or a set of given names)
-t_marker *markername2marker(t_notation_obj *r_ob, t_llll *names){
-    t_marker *marker;
-    for (marker = r_ob->firstmarker; marker; marker = marker->next)
-        if (are_all_names_contained(names, marker->r_it.names))
-            return marker;
-    return NULL;
-}
 
 // get the FIRST notation item having as name a given name (or a set of given names)
 t_notation_item *names_to_single_notation_item(t_notation_obj *r_ob, t_llll *names){
@@ -34804,162 +34347,6 @@ t_notation_item *names_to_single_notation_item(t_notation_obj *r_ob, t_llll *nam
     llll_free(items);
     return res;
 }
-
-long change_marker_names(t_notation_obj *r_ob, t_marker *marker, t_llll *new_names)
-{
-    if (marker) {
-        if (are_names_equal(marker->r_it.names, new_names))
-            return 0;
-        change_notation_item_names(r_ob, (t_notation_item *)marker, new_names, false);
-        marker->need_update_name_uwidth = r_ob->need_update_markers_uwidth = true;
-//        recalculate_marker_name_uwidth(r_ob, marker);
-        return 1;
-    }
-    return 0;
-}
-
-
-char check_markers_order(t_notation_obj *r_ob){
-    char changed = false;
-    t_marker *curr_mk = r_ob->firstmarker;
-    while(curr_mk && curr_mk->next) {
-        if (curr_mk->next->position_ms < curr_mk->position_ms){ // we have to swap them
-            if (curr_mk->prev){
-                if (curr_mk->next->next) { // swap between two inner markers
-                    t_marker *temp1, *temp2, *temp3, *temp4;
-                    temp1 = curr_mk->prev; 
-                    temp2 = curr_mk; 
-                    temp3 = curr_mk->next; 
-                    temp4 = curr_mk->next->next;
-                    curr_mk->next->next->prev = temp2;
-                    curr_mk->prev->next = temp3;
-                    curr_mk->next->next = temp2;
-                    curr_mk->next->prev = temp1;
-                    curr_mk->next = temp4;
-                    curr_mk->prev = temp3;
-                    changed = true;
-                } else { // swap between the last two curr_mk
-                    t_marker *temp1, *temp2, *temp3, *temp4;
-                    temp1 = curr_mk->prev; 
-                    temp2 = curr_mk; 
-                    temp3 = curr_mk->next;
-                    temp4 = NULL;
-                    curr_mk->prev->next = temp3;
-                    curr_mk->next->next = temp2;
-                    curr_mk->next->prev = temp1;
-                    curr_mk->next = NULL;
-                    curr_mk->prev = temp3;
-                    r_ob->lastmarker = temp2;
-                    changed = true;
-                }
-            } else { // swap between 1st and 2nd note
-                t_marker *temp1, *temp2, *temp3, *temp4;
-                temp1 = NULL; 
-                temp2 = curr_mk; 
-                temp3 = curr_mk->next; 
-                temp4 = curr_mk->next->next;
-                if (!temp4) // we have just 2 notes:
-                    r_ob->lastmarker = temp2;
-                else
-                    curr_mk->next->next->prev = temp2;
-                curr_mk->next->next = temp2;
-                curr_mk->next->prev = NULL;
-                curr_mk->next = temp4;
-                curr_mk->prev = temp3;
-                r_ob->firstmarker = temp3;
-                changed = true;
-            }
-            //... and to restart to check from the beginning
-            curr_mk = r_ob->firstmarker;
-        } else 
-            curr_mk = curr_mk->next;
-    }
-    
-    return changed;
-}
-
-t_timepoint measure_attached_marker_to_timepoint(t_notation_obj *r_ob, t_marker *marker){
-    t_timepoint tp = build_timepoint(0, long2rat(0));
-    if (marker->measure_attach_ID > 0) {
-        t_notation_item *it = notation_item_retrieve_from_ID(r_ob, marker->measure_attach_ID);
-        if (it && it->type == k_MEASURE) {
-            t_measure *meas = (t_measure *)it;
-            if (meas){
-                tp.measure_num = meas->measure_number;
-                tp.voice_num = meas->voiceparent->v_ob.number;
-                tp.pt_in_measure = marker->r_sym_pim_attach;
-            }
-        }
-    }
-    return tp;
-}
-
-
-t_symbol *marker_role_to_sym(e_marker_roles marker_role){
-    switch (marker_role) {
-        case k_MARKER_ROLE_NONE:
-            return _llllobj_sym_none;
-            break;
-        case k_MARKER_ROLE_TEMPO:
-            return _llllobj_sym_tempo;
-            break;
-        case k_MARKER_ROLE_MEASURE_BARLINE:
-            return _llllobj_sym_barline;
-            break;
-        case k_MARKER_ROLE_MEASURE_DIVISION:
-            return _llllobj_sym_division;
-            break;
-        case k_MARKER_ROLE_MEASURE_SUBDIVISION:
-            return _llllobj_sym_subdivision;
-            break;
-        case k_MARKER_ROLE_TIME_SIGNATURE:
-            return _llllobj_sym_timesig;
-            break;
-    }
-    return _llllobj_sym_none;
-}
-
-e_marker_roles sym_to_marker_role(t_symbol *s){
-    if (s == _llllobj_sym_none)
-        return k_MARKER_ROLE_NONE;
-    else if (s == _llllobj_sym_tempo)
-        return k_MARKER_ROLE_TEMPO;
-    else if (s == _llllobj_sym_timesig)
-        return k_MARKER_ROLE_TIME_SIGNATURE;
-    else if (s == _llllobj_sym_measure || s == _llllobj_sym_barline)
-        return k_MARKER_ROLE_MEASURE_BARLINE;
-    else if (s == _llllobj_sym_division)
-        return k_MARKER_ROLE_MEASURE_DIVISION;
-    else if (s == _llllobj_sym_subdivision)
-        return k_MARKER_ROLE_MEASURE_SUBDIVISION;
-    return k_MARKER_ROLE_NONE;
-}
-
-void change_marker_role(t_notation_obj *r_ob, t_marker *marker, e_marker_roles new_role, t_llll *new_value)
-{
-    lock_markers_mutex(r_ob);
-    marker->role = new_role;
-    if (marker->content)
-        llll_free(marker->content);
-    if (new_value)
-        marker->content = llll_clone(new_value);
-    else
-        marker->content = NULL;
-    unlock_markers_mutex(r_ob);
-    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)r_ob);
-}
-
-void change_marker_ms(t_notation_obj *r_ob, t_marker *marker, double new_ms, char delta_mode, char also_check_sorting){
-    lock_markers_mutex(r_ob);
-    if (marker) {
-        double old_ms = marker->position_ms;
-        marker->position_ms = MAX(delta_mode ? old_ms + new_ms : new_ms, 0);
-        if (also_check_sorting) 
-            check_markers_order(r_ob);
-    }
-    unlock_markers_mutex(r_ob);
-}
-
 
 
 
@@ -35612,172 +34999,7 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
     return tp;
 } */
 
-void change_marker_onset_from_lexpr_or_llllelem(t_notation_obj *r_ob, t_marker *marker, t_lexpr *lexpr, t_llllelem *elem){
-    if (lexpr) {
-        marker->attach_to = k_MARKER_ATTACH_TO_MS;
-        change_double(r_ob, &marker->position_ms, lexpr, NULL, false, (t_notation_item *)marker);
-    } else if (elem) {
-        if (is_hatom_number(&elem->l_hatom)) {
-            marker->attach_to = k_MARKER_ATTACH_TO_MS;
-            change_double(r_ob, &marker->position_ms, lexpr, elem, false, (t_notation_item *)marker);
-//            marker->position_ms = hatom_getdouble(&elem->l_hatom);
-        } else if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
-            t_llll *this_llll = hatom_getllll(&elem->l_hatom);
-            t_timepoint tp = llll_to_timepoint(r_ob, this_llll, NULL, false);
-            marker->attach_to = k_MARKER_ATTACH_TO_MEASURE;
-            t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, tp.voice_num);
-            t_measure *meas = nth_measure_of_scorevoice(voice, tp.measure_num);
-            if (meas) {
-                marker->measure_attach_ID = meas->r_it.ID;
-                marker->r_sym_pim_attach = tp.pt_in_measure;
-            }
-        }
-    }
-}
 
-void set_marker_from_llll(t_notation_obj *r_ob, t_marker *marker, t_llll *this_llll)
-{
-    double ms = 0;
-    char attach_to = k_MARKER_ATTACH_TO_MS;
-    e_marker_roles mkrole = k_MARKER_ROLE_NONE;
-    t_timepoint tp = build_timepoint(0, long2rat(0));
-    t_llll *mknames = NULL;
-    t_llll *content = NULL;
-    char has_explicit_name = false;
-    
-    unsigned long forced_marker_ID = notation_item_get_ID_from_llll(this_llll);
-    
-    if (this_llll && this_llll->l_head && is_hatom_number(&this_llll->l_head->l_hatom)) {
-        ms = hatom_getdouble(&this_llll->l_head->l_hatom);
-    } else if (this_llll && this_llll->l_head && hatom_gettype(&this_llll->l_head->l_hatom) == H_LLLL) {
-        tp = llll_to_timepoint(r_ob, hatom_getllll(&this_llll->l_head->l_hatom), NULL, false);
-        attach_to = k_MARKER_ATTACH_TO_MEASURE;
-    }
-    
-    if (this_llll->l_head && this_llll->l_head->l_next) {
-        has_explicit_name = true;
-        mknames = get_names_from_llllelem(r_ob, this_llll->l_head->l_next);
-    }
-    
-    if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_hatom) == H_SYM)
-        mkrole = sym_to_marker_role(hatom_getsym(&this_llll->l_head->l_next->l_next->l_hatom));
-    if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && this_llll->l_head->l_next->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_next->l_hatom) == H_LLLL) {
-        content = llll_clone(hatom_getllll(&this_llll->l_head->l_next->l_next->l_next->l_hatom));
-    }
-    
-    marker->position_ms = ms;
-    marker->attach_to = attach_to;
-
-    marker->r_sym_pim_attach = long2rat(0);
-    if (attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_voice *voice = nth_voice_safe(r_ob, tp.voice_num);
-        if (voice) {
-            t_measure *meas = nth_measure_of_scorevoice((t_scorevoice *)voice, tp.measure_num);
-            if (meas) {
-                marker->measure_attach_ID = meas->r_it.ID;
-                marker->r_sym_pim_attach = tp.pt_in_measure;
-                marker->position_ms = timepoint_to_ms(r_ob, tp, tp.voice_num);
-            }
-        }
-    }
-    
-    marker->role = mkrole;
-    marker->content = content;
-
-    if (has_explicit_name)
-        notation_item_set_names_from_llll(r_ob, (t_notation_item *)marker, mknames);
-
-    if (forced_marker_ID && forced_marker_ID != marker->r_it.ID){
-        shashtable_chuck_thing(r_ob->IDtable, marker->r_it.ID);
-        shashtable_insert_with_key(r_ob->IDtable, marker, forced_marker_ID, 1);
-        marker->r_it.ID = forced_marker_ID;
-    }
-
-    llll_free(mknames);
-}
-
-t_marker *add_marker_from_llll(t_notation_obj *r_ob, t_llll *this_llll)
-{
-    t_marker *res = NULL;
-    double ms = 0;
-    char attach_to = k_MARKER_ATTACH_TO_MS;
-    e_marker_roles mkrole = k_MARKER_ROLE_NONE;
-    t_timepoint tp = build_timepoint(0, long2rat(0));
-    t_llll *mknames = NULL;
-    t_llll *content = NULL;
-    char has_explicit_name = false;
-    
-    unsigned long forced_marker_ID = notation_item_get_ID_from_llll(this_llll);
-    
-    if (this_llll && this_llll->l_head && is_hatom_number(&this_llll->l_head->l_hatom)) {
-        ms = hatom_getdouble(&this_llll->l_head->l_hatom);
-    } else if (this_llll && this_llll->l_head && hatom_gettype(&this_llll->l_head->l_hatom) == H_LLLL) {
-        tp = llll_to_timepoint(r_ob, hatom_getllll(&this_llll->l_head->l_hatom), NULL, false);
-        attach_to = k_MARKER_ATTACH_TO_MEASURE;
-    }
-    
-    if (this_llll->l_head && this_llll->l_head->l_next) {
-        has_explicit_name = true;
-        mknames = get_names_from_llllelem(r_ob, this_llll->l_head->l_next);
-    }
-    
-    if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_hatom) == H_SYM)
-        mkrole = sym_to_marker_role(hatom_getsym(&this_llll->l_head->l_next->l_next->l_hatom));
-    if (this_llll->l_head && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next && this_llll->l_head->l_next->l_next->l_next && hatom_gettype(&this_llll->l_head->l_next->l_next->l_next->l_hatom) == H_LLLL) {
-        content = llll_clone(hatom_getllll(&this_llll->l_head->l_next->l_next->l_next->l_hatom));
-    }
-    
-    if (!has_explicit_name)
-        mknames = find_unused_marker_names(r_ob, NULL, NULL);
-    
-    res = add_marker(r_ob, mknames, ms, tp, attach_to, mkrole, content, forced_marker_ID);
-    llll_free(mknames);
-    return res;
-}
-
-t_marker *add_marker_from_llllelem(t_notation_obj *r_ob, t_llllelem *elem)
-{
-    t_marker *res = NULL;
-    if (hatom_gettype(&elem->l_hatom) == H_DOUBLE || hatom_gettype(&elem->l_hatom) == H_LONG) {
-        t_llll *names = find_unused_marker_names(r_ob, NULL, NULL);
-        res = add_marker(r_ob, names, hatom_getdouble(&elem->l_hatom), build_timepoint(0, long2rat(0)), k_MARKER_ATTACH_TO_MS, k_MARKER_ROLE_NONE, NULL, 0);
-        llll_free(names);
-    } else if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
-        res = add_marker_from_llll(r_ob, hatom_getllll(&elem->l_hatom));
-    }
-    return res;
-}
-
-// beware: destructive!!
-void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode, char select, char add_undo_ticks)
-{
-    if (markers) {
-        t_llllelem *elem;
-        if (select)
-            lock_general_mutex(r_ob);
-        lock_markers_mutex(r_ob);
-
-        if (!add_mode && add_undo_ticks)
-            undo_tick_create_for_header(r_ob, k_HEADER_MARKERS);
-
-        if (!add_mode && r_ob->firstmarker)
-            clear_all_markers(r_ob);
-
-        for (elem = markers->l_head; elem; elem = elem->l_next)  {
-            t_marker *mk = add_marker_from_llllelem(r_ob, elem);
-            if (add_mode && mk)
-                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
-            if (select)
-                notation_item_add_to_preselection(r_ob, (t_notation_item *)mk);
-        }
-        
-        unlock_markers_mutex(r_ob);
-        if (select) {
-            unlock_general_mutex(r_ob);
-            move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
-        }
-    }
-}
 
 void erase_articulation_preferences(t_articulation_preferences *artpr)
 {
@@ -36639,7 +35861,7 @@ double notation_item_get_tail_ms(t_notation_obj *r_ob, t_notation_item *it)
             } else
                 return 0;
         }
-        case k_MARKER: return notation_item_get_onset_ms(r_ob, it);
+        case k_MARKER: return marker_region_get_end_ms(r_ob, (t_marker *)it, false);
         case k_LOOP_START: return notation_item_get_onset_ms(r_ob, it);
         case k_LOOP_END: return notation_item_get_onset_ms(r_ob, it);
         case k_LOOP_REGION: return r_ob->loop_region.end.position_ms;
@@ -36726,10 +35948,10 @@ double notation_item_get_duration_ms_accurate(t_notation_obj *r_ob, t_notation_i
             } else
                 return notation_item_get_tail_ms(r_ob, it);
         }
-        case k_MARKER: return 0;
+        case k_MARKER: return marker_region_get_duration_ms(r_ob, (t_marker *)it, false);
         case k_LOOP_START: return 0;
         case k_LOOP_END: return 0;
-        case k_LOOP_REGION: return 0;
+        case k_LOOP_REGION: return r_ob->loop_region.end.position_ms - r_ob->loop_region.start.position_ms;
         default: return 0;
     }
 }
@@ -36773,7 +35995,7 @@ double notation_item_get_duration_ms_for_slots_account_for_ties(t_notation_obj *
         case k_MEASURE: return ((t_measure *)it)->total_duration_ms;
         case k_TEMPO: return 0;
         case k_VOICE: return 0;
-        case k_MARKER: return 0;
+        case k_MARKER: return marker_region_get_duration_ms(r_ob, (t_marker *)it, false);
         case k_LOOP_START: return 0;
         case k_LOOP_END: return 0;
         case k_LOOP_REGION: return r_ob->loop_region.end.position_ms - r_ob->loop_region.start.position_ms;
@@ -39505,8 +38727,8 @@ void notationobj_scroll_from_gimme(t_notation_obj *r_ob, t_symbol *s, long argc,
 
 
 void get_playhead_ypos(t_notation_obj *r_ob, double *y1, double *y2){
-    *y1 = r_ob->j_inset_y + 14 * r_ob->zoom_y;
-    *y2 = r_ob->height - (CONST_XSCROLLBAR_UHEIGHT + 10) * r_ob->zoom_y;
+    if (y1) *y1 = r_ob->j_inset_y + 14 * r_ob->zoom_y;
+    if (y2) *y2 = r_ob->height - (CONST_XSCROLLBAR_UHEIGHT + 10) * r_ob->zoom_y;
 }
 
 t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms){
@@ -40773,7 +39995,7 @@ t_llll *get_notationobj_header_as_llll(t_notation_obj *r_ob, long dump_what, cha
         }
 
         if (dump_what & k_HEADER_MARKERS)
-            llll_appendllll(out_llll, get_markers_as_llll(r_ob, 0, 0, 0, false, for_what, 0), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_markers_as_llll(r_ob, 0, 0, 0, false, for_what, 0, 0), 0, WHITENULL_llll);
 
         if (dump_what & k_HEADER_STAFFLINES)
             llll_appendllll(out_llll, get_stafflines_as_llll(r_ob, true), 0, WHITENULL_llll);
@@ -41363,47 +40585,6 @@ void notationobj_clear_names(t_notation_obj *r_ob, long voices, long measures, l
 
 
 
-
-
-char change_selection_role(t_notation_obj *r_ob, t_symbol *new_role, t_llll *new_value, char lambda)
-{
-    char res = 0;
-    t_notation_item *curr_it;
-    
-    curr_it = r_ob->firstselecteditem;
-    
-    curr_it = notation_item_get_first_selected_account_for_lambda(r_ob, lambda);
-    
-    e_marker_roles role_ok = sym_to_marker_role(new_role);
-    
-    while (curr_it) { // cycle on the selected items
-        if (curr_it->type == k_MARKER) {
-            if (!is_editable(r_ob, k_MARKER, k_MODIFICATION_GENERIC)) continue;
-            change_marker_role(r_ob, ((t_marker *)curr_it), role_ok, new_value);
-        }
-        
-        curr_it = lambda ? NULL : curr_it->next_selected;
-    }
-    
-    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-    return res;
-}
-
-
-
-void notationobj_role(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
-{
-    t_llll *args = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    if (args && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
-        t_llll *rolevalue = NULL;
-        if (args->l_head->l_next && hatom_gettype(&args->l_head->l_next->l_hatom) == H_LLLL)
-            rolevalue = hatom_getllll(&args->l_head->l_next->l_hatom);
-        undo_tick_create_for_header(r_ob, k_HEADER_MARKERS);
-        change_selection_role(r_ob, hatom_getsym(&args->l_head->l_hatom), rolevalue, s == _llllobj_sym_lambda);
-        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ROLES);
-    }
-    llll_free(args);
-}
 
 
 
@@ -43784,7 +42965,11 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
     if (r_ob->show_markers) {
         t_marker *marker;
         for (marker = r_ob->firstmarker; marker; marker = marker->next) {
-            if (is_in_marker_shape(r_ob, marker, this_x, this_y) ||
+            if (is_in_marker_region_tail_shape(r_ob, marker, this_x, this_y, false)) {
+                *clicked_elem_ptr = marker;
+                *clicked_elem_type = k_MARKER_REGION_TAIL;
+                return;
+            } else if (is_in_marker_shape(r_ob, marker, this_x, this_y) ||
                 is_in_markername_shape(r_ob, marker, this_x, this_y)) {
                 *clicked_elem_ptr = marker;
                 *clicked_elem_type = k_MARKER;

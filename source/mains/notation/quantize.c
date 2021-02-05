@@ -69,6 +69,7 @@
  */
 
 #include "notation/notation.h" // header with all the structures for the notation objects
+#include "notation/notation_markers.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_common.h"
@@ -835,7 +836,12 @@ double get_marker_onset_from_llllelem(t_llllelem *elem)
     if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
         t_llll *mk = hatom_getllll(&elem->l_hatom);
         if (mk && mk->l_size >= 1) {
-            double onset = hatom_getdouble(&mk->l_head->l_hatom);
+            double onset, dur;
+            t_timepoint onset_timepoint;
+            t_rational symdur;
+            char attach_to;
+            marker_llllelem_to_onset_and_region_properties(NULL, mk->l_head, &onset, &dur, &onset_timepoint, &symdur, &attach_to);
+//            double onset = hatom_getdouble(&mk->l_head->l_hatom);
             return onset;
         }
     }

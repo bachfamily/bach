@@ -278,6 +278,11 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_zrange;
 	t_symbol	*s_zslope;
 
+    t_symbol    *s_add;
+    t_symbol    *s_insert;
+    t_symbol    *s_remove;
+    t_symbol    *s_change;
+
 	t_symbol	*s_display;
 	t_symbol	*s_lowpass;
 	t_symbol	*s_highpass;
@@ -682,6 +687,11 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_quantize		(_llllobj_common_symbols->s_quantize)
 #define _llllobj_sym_zrange			(_llllobj_common_symbols->s_zrange)
 #define _llllobj_sym_zslope			(_llllobj_common_symbols->s_zslope)
+
+#define _llllobj_sym_add            (_llllobj_common_symbols->s_add)
+#define _llllobj_sym_insert            (_llllobj_common_symbols->s_insert)
+#define _llllobj_sym_remove         (_llllobj_common_symbols->s_remove)
+#define _llllobj_sym_change         (_llllobj_common_symbols->s_change)
 
 #define _llllobj_sym_display		(_llllobj_common_symbols->s_display)
 #define _llllobj_sym_lowpass		(_llllobj_common_symbols->s_lowpass)

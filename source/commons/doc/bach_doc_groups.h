@@ -323,8 +323,8 @@
 			
 			Each elementary operation involves a notation item having an ID (which is indeed an "undo"-ID, since it is only used for undo). This ID comes
 			from storing the element into an hashtable. Currently, the smallest element being handled by undo is the chord; this means that if you change a note,
-			the elementary undo information will still be the information involving the whole chord, and so on. Four types of elementary modification can be asked for: #k_UNDO_MODIFICATION_TYPE_CHANGE (which will store the whole information about the item, and will change it), #k_UNDO_MODIFICATION_TYPE_ADD (which, be careful, is usually
-			stored when a notation item is DELETED, and which contain the ID and the information to rebuild it), #k_UNDO_MODIFICATION_TYPE_DELETE (which, in turns, is used when
+			the elementary undo information will still be the information involving the whole chord, and so on. Four types of elementary modification can be asked for: #k_UNDO_MODIFICATION_TYPE_CHANGE (which will store the whole information about the item, and will change it), #k_UNDO_MODIFICATION_TYPE_INSERT (which, be careful, is usually
+			stored when a notation item is DELETED, and which contain the ID and the information to rebuild it), #k_UNDO_MODIFICATION_TYPE_REMOVE (which, in turns, is used when
 			a notation item is ADDED, and will need no content, just the ID of the object to delete), #k_UNDO_MODIFICATION_TYPE_CHANGE_FLAG (which only stores the flag of the 
 			notation elements - and of its sons - and then will ask only to change the flag; this is used for instance when something is locked or muted), and
 			#k_UNDO_MODIFICATION_TYPE_CHANGE_NAME (which only stores the names of notation elements, in a llll).

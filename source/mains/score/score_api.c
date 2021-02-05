@@ -4810,7 +4810,7 @@ char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *updat
             if (measure->firsttempo && measure->next)
                 undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)measure->next, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             
-            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)measure, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+            undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)measure, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
         }
         return delete_measure((t_notation_obj *)x, measure, update_chord_play_cursor_to_this_chord_if_needed, need_check_solos);
     } else {
@@ -4826,7 +4826,7 @@ char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *updat
                         undo_tick_create_for_header((t_notation_obj *) x, k_HEADER_MARKERS);
                     if (measure->prev)
                         undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)m->prev, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state); // because of ties
-                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)m, k_UNDO_MODIFICATION_TYPE_ADD, _llllobj_sym_state);
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)m, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
                 }
                 res |= delete_measure((t_notation_obj *)x, m, update_chord_play_cursor_to_this_chord_if_needed, &this_need_check_solos);
                 *need_check_solos |= this_need_check_solos;
@@ -7459,7 +7459,7 @@ void sync_marker_absolute_ms_onset(t_score *x, t_marker *marker)
             t_timepoint tp = build_timepoint(meas->measure_number, marker->r_sym_pim_attach);
             marker->position_ms = timepoint_to_ms((t_notation_obj *)x, tp, meas->voiceparent->v_ob.number);
             if (marker->r_sym_duration.r_num >= 0) {
-                double end_position = timepoint_to_ms((t_notation_obj *)x, timepoint_shift(x, tp, build_timepoint(0, marker->r_sym_duration)), meas->voiceparent->v_ob.number);
+                double end_position = timepoint_to_ms((t_notation_obj *)x, timepoint_shift((t_notation_obj *)x, tp, build_timepoint(0, marker->r_sym_duration)), meas->voiceparent->v_ob.number);
                 marker->duration_ms = end_position - marker->position_ms;
             } else {
                 marker->duration_ms = 0;
@@ -10293,14 +10293,14 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 
             lock_markers_mutex((t_notation_obj *)x);
             markers_check_update_name_uwidth((t_notation_obj *)x);
-            double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0;
+            double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0, prev_region_marker_x = -30000, prev_region_marker_width = 0;
+            t_marker *prev_region_marker = NULL;
+            char buf[1000];
             for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
                 double marker_onset = 0;
                 t_timepoint tp = build_timepoint(0, long2rat(0));
                 t_jrgba marker_color;
-                char buf[1000];
-                double marker_ux;
-                char is_marker_selected, is_marker_preselected;
+                
 
                 if (marker->attach_to == k_MARKER_ATTACH_TO_MS) {
                     marker_onset = marker->position_ms;
@@ -10313,58 +10313,38 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 
                 get_names_as_text(marker->r_it.names, buf, 1000);
 
-                if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE)
-                    marker_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, false, false);
-                else
-                    marker_ux = ms_to_unscaled_xposition((t_notation_obj *)x, marker_onset, 1);
-                
-                double marker_end_ux = marker_ux;
-                char is_region = marker_is_region(marker);
-                if (is_region) {
-                    if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE)
-                        marker_end_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, timepoint_shift(x, tp, build_timepoint(0, marker->r_sym_duration)), false, false);
-                    else
-                        marker_end_ux = ms_to_unscaled_xposition((t_notation_obj *)x, marker_onset + marker->duration_ms, 1);
-                }
-                double marker_duration_ux = marker_end_ux - marker_ux;
+                double marker_ux = marker_get_onset_ux((t_notation_obj *)x, marker);
+                double marker_end_ux = marker_region_get_end_ux((t_notation_obj *)x, marker, true);
+                bool is_region = marker_is_region(marker);
 
                 
-                is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
-                is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
-                if (marker_ux >= x->r_ob.screen_ux_start - 200 / x->r_ob.zoom_x && marker_ux < x->r_ob.screen_ux_end) {
-                    this_marker_x = unscaled_xposition_to_xposition((t_notation_obj *)x, marker_ux);
+                if ((marker_ux >= x->r_ob.screen_ux_start - 200 / x->r_ob.zoom_x && marker_ux < x->r_ob.screen_ux_end) ||
+                    (is_region &&
+                     ((marker_end_ux >= x->r_ob.screen_ux_start - 200 / x->r_ob.zoom_x && marker_end_ux < x->r_ob.screen_ux_end) ||
+                      (marker_ux <= x->r_ob.screen_ux_start && marker_end_ux >= x->r_ob.screen_ux_end)))){
                     
-                    marker->name_painted_direction = (marker_ux + marker->name_uwidth > x->r_ob.screen_ux_end ? -1 : 1);
-                    
-                    if (x->r_ob.smart_markername_placement && (!is_region) && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
-                        marker->name_line = marker->prev->name_line + 1;
-                        if (marker->prev->name_line > 0) {
-                            for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
-                                if (tempmk->name_line == 0) {
-                                    if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
-                                        marker->name_line = 0;
-                                    break;
-                                }
-                        }
-                    } else
-                        marker->name_line = 0;
-                    
-                    double regionwidth = 0;
-                    if (is_region) {
-                        regionwidth = 100; // TODO: change //onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL) - marker_onset;
-                        t_rect markerstrip = build_rect(this_marker_x, playhead_y1, regionwidth, 2 * x->r_ob.markers_font_size * x->r_ob.zoom_y);
-                        paint_rect(g, &markerstrip, &marker_color, &marker_color, 0, 2);
-                    }
+                    char is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
+                    char is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
                     
                     t_jrgba *markerlinecolor = (is_marker_selected ^ is_marker_preselected) ? &x->r_ob.j_selection_rgba : &marker_color;
-                    t_jrgba *markertextcolor = (!is_region) ? markerlinecolor : &x->r_ob.j_background_rgba;
-                    paint_marker((t_notation_obj *) x, g, markerlinecolor, markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
+                    t_jrgba white = get_grey(1.);
+                    t_jrgba markertextcolor = (!is_region) ? *markerlinecolor : jgraphics_jrgba_interpolate(markerlinecolor, &white, CONST_MARKER_REGION_TEXT_WHITENING);
+                     
+                    this_marker_x = unscaled_xposition_to_xposition((t_notation_obj *)x, marker_ux);
+                    
+                    marker->name_painted_direction = (!is_region && !(marker->prev && marker_is_region_till_next(marker->prev)) && (marker_ux + marker->name_uwidth > x->r_ob.screen_ux_end) ? -1 : 1);
+                    
+                    double this_marker_end_x = unscaled_xposition_to_xposition((t_notation_obj *)x, marker_end_ux);
+                    char marker_is_being_edited = (x->r_ob.is_editing_type == k_MARKERNAME && x->r_ob.is_editing_marker == marker);
+
+                    paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, !marker_is_being_edited, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
                     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
                         double voice_staff_top_y = get_staff_top_y((t_notation_obj *)x, (t_voice *)nth_scorevoice(x, tp.voice_num), false);
                         paint_circle(g, change_alpha(marker_color, 1), marker_color, this_marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);
                     }
                     
-                    prev_marker_x = this_marker_x;
+                    if (is_region)
+                         prev_region_marker = marker;
                 } else if (marker_ux >= x->r_ob.screen_ux_end)
                     break;
             }
@@ -11327,7 +11307,7 @@ void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, lo
                 changed = true;
                 if (ref_measure) {
                     t_measure *newmeas = create_and_insert_new_measure(x, voice, voice->lastmeasure, 1, 0, ref_measure, ref_for_measureinfo_is_not_this_voice);
-                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmeas, k_UNDO_MODIFICATION_TYPE_DELETE, _llllobj_sym_state);
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)newmeas, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
                 }
             }
             if (voice == to)
@@ -11718,20 +11698,6 @@ t_llll *score_get_interp_at_timepoint(t_score *x, t_timepoint tp)
     return out;
 }
 
-t_timepoint timepoint_shift(t_score *x, t_timepoint tp, t_timepoint delta)
-{
-    t_timepoint res = build_timepoint_with_voice(tp.measure_num + delta.measure_num, rat_rat_sum(tp.pt_in_measure, delta.pt_in_measure), tp.voice_num);
-    t_scorevoice *voice = nth_scorevoice(x, res.voice_num);
-    if (voice) {
-        t_measure *meas = nth_measure_of_scorevoice(voice, res.measure_num);
-        while (meas && rat_rat_cmp(res.pt_in_measure, measure_get_sym_duration(meas)) >= 0) {
-            res.pt_in_measure = rat_rat_diff(res.pt_in_measure, measure_get_sym_duration(meas));
-            res.measure_num++;
-        }
-    }
-    return res;
-}
-
 t_llll *score_get_sampling_timepoint(t_score *x, t_timepoint delta_tp)
 {
     t_llll *out = llll_get();
@@ -11743,7 +11709,7 @@ t_llll *score_get_sampling_timepoint(t_score *x, t_timepoint delta_tp)
     if (master_voice) {
         if (delta_tp.measure_num > 0 || rat_long_cmp(delta_tp.pt_in_measure, 0) > 0) {
             t_timepoint tp = build_timepoint_with_voice(0, long2rat(0), master_voice_num);
-            for (; tp.measure_num < master_voice->num_measures; tp = timepoint_shift(x, tp, delta_tp)) {
+            for (; tp.measure_num < master_voice->num_measures; tp = timepoint_shift((t_notation_obj *)x, tp, delta_tp)) {
                 t_llll *this_point = llll_get();
                 llll_appenddouble(this_point, timepoint_to_ms((t_notation_obj *)x, tp, master_voice_num));
                 llll_appendllll(this_point, get_timepoint_as_llll((t_notation_obj *)x, tp));

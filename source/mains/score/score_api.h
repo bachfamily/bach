@@ -44,6 +44,7 @@
 #include <time.h> 
 #include "notation/notation.h" // header with all the structures for the notation objects
 #include "notation/notation_undo.h"
+#include "notation/notation_markers.h"
 
 typedef struct _score // [bach.score] structure
 {
@@ -170,7 +171,6 @@ void remove_all_tuttipoints_flag_modified(t_score *x);
 char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas);
 
 
-t_timepoint timepoint_shift(t_score *x, t_timepoint tp, t_timepoint delta);
 
 t_scorevoice* nth_scorevoice(t_score *x, long n);
 t_llll *getdomain_from_uxstart(t_score *x, double ux_start, t_symbol *message_selector, t_symbol *label);

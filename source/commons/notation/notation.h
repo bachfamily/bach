@@ -645,6 +645,7 @@ typedef enum _element_types {
     k_DYNAMICS_IN_SLOT = 78,                    ///< Some text shown inside a slot window for a dynamics slot
     k_DYNAMICS = 79,                            ///< Dynamics, shown below a given chord
     k_GATHERED_SYNTAX = 80,                     ///< Gathered syntax
+    k_MARKER_REGION_TAIL = 81,                         ///< End of a marker region
     k_NUM_ELEMENT_TYPES,
 } e_element_types;
 
@@ -1786,6 +1787,7 @@ typedef enum _undo_operations
     k_UNDO_OP_ADD_MARKER,
     k_UNDO_OP_DELETE_MARKER,
     k_UNDO_OP_CHANGE_MARKER_NAME,
+    k_UNDO_OP_CHANGE_REGION_DURATION,
     k_UNDO_OP_CHANGE_MARKER_ATTACHMENT,
     k_UNDO_OP_GLUE_CHORD,
     k_UNDO_OP_MERGE,
@@ -1933,8 +1935,8 @@ typedef enum _undo_redo
 typedef enum _undo_modification_types
 {
     k_UNDO_MODIFICATION_TYPE_NONE = 0,                   ///< No modification (thus nothing to undo)
-    k_UNDO_MODIFICATION_TYPE_ADD = 1,                    ///< Add the notation item
-    k_UNDO_MODIFICATION_TYPE_DELETE = 2,                 ///< Erase the notation item
+    k_UNDO_MODIFICATION_TYPE_INSERT = 1,                    ///< Add the notation item
+    k_UNDO_MODIFICATION_TYPE_REMOVE = 2,                 ///< Erase the notation item
     k_UNDO_MODIFICATION_TYPE_CHANGE = 3,                 ///< Change the parameters of the notation item
     k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER = 4,     ///< Change the parameters of the notation item, and also check the order of the notation item within its parent
 } e_undo_modification_types;
@@ -5875,7 +5877,7 @@ t_symbol *full_repr_to_symbol(t_notation_obj *r_ob, t_voice *voice);
     @param    tp2        Second timepoint
     @return            0 if the timepoints happen in the same moment, -1 if #tp1 happens first, 1 if #tp2 happens first.
 */ 
-char timepoints_compare(t_timepoint tp1, t_timepoint tp2);
+char timepoint_compare(t_timepoint tp1, t_timepoint tp2);
 
 
 /**    Interpolate two timepoints lying in the same measure of the same voice.
@@ -7508,6 +7510,15 @@ t_chord* nth_chord(t_measure *meas, long n);
  */
 t_note* nth_note(t_chord *ch, long n);
 
+
+/**    Get the n-th marker in the score
+ @ingroup    notation
+ @param r_ob    The notation object
+ @param n    The 0-based note index
+ @return        The n-th marker
+ */
+t_marker *nth_marker(t_notation_obj *r_ob, long n);
+
 /**    Get the n-th breakpoint of a given note
     @ingroup    notation
     @param nt    The note
@@ -8201,6 +8212,7 @@ t_measure *measure_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_lllle
     @return            The marker at the given path, or NULL if none
  */
 t_marker *get_marker_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem);
+
 
 
 
@@ -9976,33 +9988,6 @@ int is_in_breakpoint_shape(t_notation_obj *r_ob, t_bpt *breakpoint, long point_x
 int is_in_articulation_shape(t_notation_obj *r_ob, t_articulation *art, long point_x, long point_y);
 
 
-/**    Tell if a point is on a given marker.
-    @ingroup            notation_graphic
-    @param     r_ob        The notation object
-    @param    marker      The marker
-    @param    point_x        The x coordinate of the point (pixel)
-    @param    point_y        The y coordinate of the point (pixel)
-    @return                1 if the point is over the marker, 0 otherwise.
- */
-int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, long point_y);
-
-
-/**    Tell if a point is on a given marker name.
-    @ingroup            notation_graphic
-    @param     r_ob        The notation object
-    @param    marker      The marker
-    @param    point_x        The x coordinate of the point (pixel)
-    @param    point_y        The y coordinate of the point (pixel)
-    @return                1 if the point is over the marker name, 0 otherwise.
-*/
-int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, long point_y);
-
-
-// TBD
-char marker_is_region(t_marker *mk);
-char marker_is_region_till_next(t_marker *mk);
-double notationobj_get_marker_voffset(t_notation_obj *r_ob, t_marker *mk);
-
 /**    Tell if a point is on the loop region (or on the loop region extremes).
     @ingroup            notation_graphic
     @param     r_ob        The notation object
@@ -10198,6 +10183,7 @@ void paint_keysigaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_a
 void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, double direction);
 
 
+
 /**    Paint a marker line and write the marker name
     @ingroup                    notation_paint
     @remark                        The marker name will be painted (if requested) on the direction choosen by the t_marker::name_painted_direction field.
@@ -10216,7 +10202,8 @@ void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double
     @param    also_paint_name        This has to be 1 if we also need to paint the name of the marker, 0 otherwise 
     @param  namewidth           Pointer that will be filled with the width of the marker name (can be NULL)
  */ 
-void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *linecolor, t_jrgba *textcolor, t_jfont* jf, t_marker *marker, double marker_x, double marker_end_x, double marker_y1, double marker_y2, char is_region, double linewidth, char also_paint_name, double *namewidth);
+void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *linecolor, t_jrgba *textcolor, t_jfont* jf, t_marker *marker, double marker_x, double marker_end_x, double marker_y1, double marker_y2, char is_region, double linewidth, char also_paint_name, double *namewidth,
+                  double *prev_marker_x, double *prev_marker_width, t_marker *prev_region_marker, double *prev_region_marker_x, double *prev_region_marker_width);
 
 /**    Paint the loop region.
     @ingroup                    notation_paint
@@ -11847,7 +11834,7 @@ void send_loop_region_on_off(t_notation_obj *r_ob, long outlet);
                         If this is 0, the syntax is the usual (<position_ms> <name>).
     @param    outlet        The outlet through which the llll containing the information will be sent (usually the play outlet)
     @param  forced_router   If non-NULL, a router that will be forced to be put instead of the standard "marker" one
-    @see                get_single_marker_as_llll()
+    @see                marker_get_as_llll()
  */
 void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, t_llll *forced_router = NULL);
 
@@ -13226,6 +13213,16 @@ t_timepoint build_timepoint_with_voice(long measure_num, t_rational point_in_mea
     @return                        The filled-in #t_timepoint structure (with dummy voice field).
  */
 t_timepoint build_timepoint(long measure_num, t_rational point_in_measure);
+
+
+/**    Shift a timepoint by another timepoint
+    @ingroup                score_operations
+    @param    r_ob          The notation object
+    @param    tp            Original timepoint
+    @param    delta         Timepoint difference
+    @return                 The shifted timepoint.
+ */
+t_timepoint timepoint_shift(t_notation_obj *r_ob, t_timepoint tp, t_timepoint delta);
 
 
 /**    Build a tempo (allocate and fill the memory).
@@ -17445,106 +17442,6 @@ t_max_err notationobj_getattr_stafflines(t_notation_obj *x, t_object *attrname, 
 /** @}*/
 
 
-// -----------------------------------
-// MARKERS
-// -----------------------------------
-
-/** Build a new marker. This function allocate the memory and set fields to the correct values (depending from the arguments)
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The name(s) of the marker (as llll)
-    @param    ms        The position in milliseconds of the marker
-    @param    tp        The timepoint of the marker (only makes sense with [bach.score])
-    @param    attach_to    One of the #e_marker_attach, deciding to what the marker should be attached. By default, it should be #k_MARKER_ATTACH_TO_MS.
-    @param    role        One of the #e_marker_roles, possibly specifying the special role of the marker
-    @param    content        If the role is NOT #k_MARKER_ROLE_NONE, this is the content associated with the marker role (e.g. tempo or time signature). See the <content> field of the #t_marker structure.
-    @return            The newly built marker
- */
-t_marker *build_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoint tp, char attach_to, e_marker_roles role, t_llll *content);
-
-
-/** Clear all the markers in the score
-    @ingroup        markers
-    @param    r_ob    The notation object
- */
-void clear_all_markers(t_notation_obj *r_ob);
-
-
-/** Properly insert an already built marker in the score.
-    Markers are always kept ordered by the <position_ms> field. If you need to check ordering, use check_markers_order()
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    marker    The marker to insert
-    @param    force_ID    If this is > 0, it'll be the ID that the marker will be forced to have.
- */
-void insert_marker(t_notation_obj *r_ob, t_marker *marker, unsigned long force_ID);
-
-
-/** Convenience wrapper for build_marker and insert_marker. Builds and insert a marker inside the score.
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The name(s) of the marker (as llll)
-    @param    ms        The position in milliseconds of the marker
-    @param    tp        The timepoint of the marker (only makes sense with [bach.score])
-    @param    attach_to    One of the #e_marker_attach, deciding to what the marker should be attached. By default, it should be #k_MARKER_ATTACH_TO_MS.
-    @param    role        One of the #e_marker_roles, possibly specifying the special role of the marker
-    @param    content        If the role is NOT #k_MARKER_ROLE_NONE, this is the content associated with the marker role (e.g. tempo or time signature). See the <content> field of the #t_marker structure.
-    @param    force_ID    If this is > 0, it'll be the ID that the marker will be forced to have.
-    @return            The newly built marker
- */
-t_marker *add_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoint tp, char attach_to, e_marker_roles role, t_llll *content, unsigned long force_ID);
-
-// TBD
-t_marker *add_marker_from_llll(t_notation_obj *r_ob, t_llll *this_llll);
-void set_marker_from_llll(t_notation_obj *r_ob, t_marker *marker, t_llll *this_llll);
-
-
-/** Verify if the ordering of the markers is correct, with respect to the ascending <position_ms> fields.
-    If not, corrects the ordering.
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @return            1 if something has changed, 0 otherwise
- */
-char check_markers_order(t_notation_obj *r_ob);
-
-
-/** Delete a marker from the score (and properly free its memory).
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    marker    The marker to delete
- */
-void delete_marker(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Search for a marker having a given name (among its possible multiple names), and delete it from the score (and properly free its memory).
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The llll of names to be matched for the marker to delete
-    @param    add_undo_ticks    Also add undo ticks
-    @remark            Only the first occurrence of the name is searched and deleted!
-    @return            1 if something has been deleted, 0 otherwise.
- */
-char delete_marker_by_name(t_notation_obj *r_ob, t_llll *names, char add_undo_ticks);
-
-
-/** Find the first marker having a set of given names (among its possible names)
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The llll of names to be matched for the marker
-    @return            The first marker having <name> as name; NULL if none.
- */
-t_marker *markername2marker(t_notation_obj *r_ob, t_llll *names);
-
-
-/** Select all the markers
-    @ingroup        markers
-    @ingroup        selection
-    @param    r_ob    The notation object
-    @param mode      The selection mode (one of the #e_selection_modes)
-    @param only_this_marker_role    One of the e_marker_roles, or -1 if ALL markers should be selected
- */
-void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode, long only_this_marker_role);
-
 
 /** Select all the voices
     @ingroup        voices
@@ -17602,209 +17499,6 @@ void select_all_measures(t_notation_obj *r_ob, e_selection_modes mode);
  */
 char delete_all_breakpoints(t_notation_obj *r_ob, long voice_number);
 
-
-/** Change a marker name (and recompute also the <name_uwidth> flag accordingly).
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
-    @param    new_names    The new marker's name as an llll
-    @see                recalculate_marker_name_uwidth()
-    @return                1 if the new name is different from the old one, 0 otherwise
- */
-long change_marker_names(t_notation_obj *r_ob, t_marker *marker, t_llll *new_names);
-
-
-/** Properly fill the <name_uwidth> field of a marker, contaning the unscaled width of the marker name label
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
- */
-void recalculate_marker_name_uwidth(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Change a marker position in milliseconds.
-    @ingroup                    markers
-    @param    r_ob                The notation object
-    @param    marker                The marker
-    @param    new_ms                The new marker's position in ms
-    @param    delta_mode            If this is 1, the <new_ms> value will be added to the marker's milliseconds. Otherwise they'll be replaced.
-    @param    also_check_sorting    If this is 1, also the algorithm checks the correct ordering of all markers, increasing with respect to the <position_ms> field.
- */
-void change_marker_ms(t_notation_obj *r_ob, t_marker *marker, double new_ms, char delta_mode, char also_check_sorting);
-
-
-/** Change a marker role.
-    @ingroup                    markers
-    @param    r_ob                The notation object
-    @param    marker                The marker
-    @param    new_role            The new marker's role, as one of the #e_marker_roles
- */
-void change_marker_role(t_notation_obj *r_ob, t_marker *marker, e_marker_roles new_role);
-
-/** Interpret a symbol as a marker role (one of the #e_marker_roles).
-    For gensym("timesig") is interpreted as #k_MARKER_ROLE_TIME_SIGNATURE.
-    @ingroup            markers
-    @param    s            The symbol
-    @return                The element of #e_marker_roles corresponding to the symbol
- */
-e_marker_roles sym_to_marker_role(t_symbol *s);
-
-
-/** Convert a marker role into a symbol. 
-    For instance #k_MARKER_ROLE_TIME_SIGNATURE is translated into _llllobj_sym_tempo = gensym("timesig").
-    @ingroup            markers
-    @param    marker_role    One of the #e_marker_roles
-    @return                The symbol corresponding to the marker role.
- */
-t_symbol *marker_role_to_sym(e_marker_roles marker_role);
-
-
-/** (Internal) Shifts the selected markers depending on the current mousedown marker
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker_with_mousedown_ux    The ux position of the marker currently having the mousedown
-    @param    magnetic    If non-zero, snaps to the nearest chord
-    @param    delta_ms    If non-NULL, will be filled with the actual movement in milliseconds 
-    @return                1 if something has changed, 0 otherwise
- */
-char move_selected_ms_attached_markers(t_notation_obj *r_ob, double marker_with_mousedown_ux, char magnetic, double *delta_ms);
-
-
-/** Shift the selected markers by an amount (in milliseconds)
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    delta_ms    The amount of the shift (in milliseconds)
-    @param    magnetic    If non-zero, snaps to the nearest chord
-    @return                1 if something has changed, 0 otherwise
- */
-char move_selected_ms_attached_markers_delta(t_notation_obj *r_ob, double delta_ms);
-
-
-/** Find the first incremental numbered unused marker name similar to a given name.
-    For instance, if the given name is "foo", he'll try to search for "foo 1", "foo 2"... up to "foo 100000",
-    and if any of these is NOT used, it returns the corresponding atom array (usually with length 2, unless the introduced 
-    marker name was a long atom, in this case the output length will be 1, since the number will be tried to be incremented).
-    If no incremental free names could be found, the original name be copied. 
-    @ingroup                    markers
-    @param    r_ob                The notation object
-    @param    default_name        The base atom for building the incremental numbered sequence
-    @param    ignore_this_marker    A marker which can be ignored while searching for an unused name.
-                                For instance, when trying to make a given marker's name unique, one can ignore the marker itself. 
-                                Leave it to NULL for standard behavior.
-    @return                        The llll of unused incrementally numbered name found.
-    @remark                        To avoid confusions, you might want to be sure that the <default_name> has no numbers at the end.
-                                If you want to make a name unique, use make_marker_name_unique().
- */
-t_llll *find_unused_marker_names(t_notation_obj *r_ob, t_hatom *default_name, t_marker *ignore_this_marker);
-
-
-/** Make a marker name unique, by changing its numerical suffix.
-    For instance, it might change "foo2" to "foo5", if all "foo2", "foo3" and "foo4" are already taken
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The original names
-    @return            The first unused incrementally numered name found as llll.
-    @param    num_found_names        Pointer filled with the number of names found (length of #found_names)
- */
-t_llll *make_marker_name_unique(t_notation_obj *r_ob, t_llll *names);
-
-
-/** Change the name of the selected markers to a new name.
-    @ingroup            selection_changes
-    @param    r_ob        The notation object
-    @param    new_names    The new marker names as llll
-    @param    incremental    If this is 1, every name will be made unique by incrementing its numerical suffix
-    @return                1 if something has changed, 0 otherwise.
- */
-char change_selected_markers_name(t_notation_obj *r_ob, t_llll *new_names, char incremental);
-
-
-/** Get the unscaled x position of the marker.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker      The marker
-    @return                The unscaled x position of the marker
- */
-double get_marker_ux_position(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Get the marker onset in milliseconds.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker      The marker
-    @return                The marker onset in milliseconds
- */
-double get_marker_ms_position(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Obtain all the markers as an llll containing (<position_ms> <name>) for each marker.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    mode        If this is 1, the algorithm only returns the markers within a given "temporal window" (specified by the following paramters)
-                        If this is 0, all the markers are given.
-    @param    start_ms    If <mode> = 1, this is the starting position of the window in milliseconds (otherwise ignored)
-    @param    end_ms        If <mode> = 1, this is the ending position of the window in milliseconds (otherwise ignored)
-    @param    namefirst    If this is non-zero, the llll for each marker will be (<name> <position_ms>) 
-    @param    for_what    This should be usually one of #k_CONSIDER_FOR_DUMPING, #k_CONSIDER_FOR_SUBDUMPING, #k_CONSIDER_FOR_UNDO or #k_CONSIDER_FOR_SCORE2ROLL.
-    @param    start_meas_num    If <for_what> is #k_CONSIDER_FOR_SUBDUMPING and <r_ob> is a bach.score, this is the starting measure number for clipping (so that the dumped
-                            information will be with respect to this measure as the starting one).
-    @return                The markers' positions and names as llll.
-    @see                get_single_marker_as_llll()
- */
-t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms, char namefirst, char for_what, long start_meas_num);
-
-
-/** Get an llll containing the information about a specific marker (or about all the markers)
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker whose information has to be got, or NULL if you need the information about all markers
-    @param    namefirst    If this is 1, the usual (<position_ms> <name>) coupling is reversed for each marker, and becomes (<name> <position_ms>).
-                        If this is 0, the syntax is the usual (<position_ms> <name>).
-    @param   prepend_marker_symbol  Also prepend a "marker" symbol to the output
-    @param   mode       One of the #e_data_considering_types
-    @return                A list containing the information about a single marker or all markers.
-    @remark                Differntly from get_markers_as_llll(), the information we get can have names first and can concern a single marker
-                        (but cannot concern a temporal window).
-    @see                get_markers_as_llll()
- */
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol, e_data_considering_types mode);
-
-
-/** Set all markers of a given notation objet from a list of markers in the usual syntax (<position_ms> <name>) (<position_ms> <name>) ...
-    @ingroup            markers
-    @remark                Beware: this function does NOT free the markers llll, but might DELETE some parts of it!!!
-    @param    r_ob        The notation object
-    @param    markers        The llll determining the markers, in the above explained syntax
-    @param    add_mode    If this is 1, the markers will be added to the existing ones, otherwise the existing ones will be removed
-    @param    select      If this is 1, the markers will be added to the current selection
-    @param    add_undo_ticks    If non-zero, also adds the undo ticks
-    @see                get_single_marker_as_llll()
- */
-void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode, char select, char add_undo_ticks);
-
-
-/** Retrieve the timepoint of a measure-attached-marker (for [bach.score]).
-    @remark                Indeed the marker structure only contains the ID of the measure to which it is attached, and the symbolic offset inside the measure,
-                        but it does not contain the precise timepoint.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
-    @return                The timepoint of the marker
- */
-t_timepoint measure_attached_marker_to_timepoint(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Change the onset of a marker (and possibly its attachment type) either from a lexpr
-    containing the new milliseconds position or (if this latter is NULL), from a llllelem containing either the milliseconds position, or the new
-    timepoint (measure_number point_in_measure) or (measure_number point_in_measure voice_number) 
-    @remark                Does NOT check the correct markers order, need to do it later via check_markers_order()
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
-    @param    lexpr        The lexpr
-    @param    elem        The llllelem
- */
-void change_marker_onset_from_lexpr_or_llllelem(t_notation_obj *r_ob, t_marker *marker, t_lexpr *lexpr, t_llllelem *elem);
 
 
 
@@ -18906,17 +18600,6 @@ void notationobj_slottoname(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom
     @param    markers    If non-zero, clears all marker names
  */
 void notationobj_clear_names(t_notation_obj *r_ob, long voices, long measures, long chords, long notes, long markers);
-
-
-/** General method to change roles to the selection of a notation object from a generic A_GIMME signature.
-    This method parses the input A_GIMME signature and then properly calls change_selection_role().
-    @ingroup        names
-    @param    r_ob    The notation object
-    @param    s        The router symbol in the A_GIMME signature
-    @param    argc    The number of atoms of the A_GIMME signature
-    @param    argv    The array of atoms of the A_GIMME signature
- */
-void notationobj_role(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 /** Parse and fill the t_notation_obj::m_label structure properly.

@@ -298,6 +298,11 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_zrange = gensym("zrange");
     x->s_zslope = gensym("zslope");
 
+    x->s_add = gensym("add");
+    x->s_insert = gensym("insert");
+    x->s_remove = gensym("remove");
+    x->s_change = gensym("change");
+
     x->s_display = gensym("display");
     x->s_lowpass = gensym("lowpass");
     x->s_highpass = gensym("highpass");

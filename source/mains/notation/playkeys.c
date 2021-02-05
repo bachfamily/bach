@@ -1250,6 +1250,25 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
                                 break;
                                 
+                            case k_PLAYKEYS_INCOMING_MARKER:
+                            {
+                                target_el = llll_getindex(in_ll, 3, I_STANDARD);
+                                char is_region = false;
+                                if (hatom_gettype(&target_el->l_hatom) == H_LLLL) {
+                                    t_llll *mkll = hatom_getllll(&target_el->l_hatom);
+                                    if (mkll && mkll->l_head && hatom_getsym(&mkll->l_head->l_hatom) == _llllobj_sym_region) {
+                                        is_region = true;
+                                    }
+                                }
+                                if (is_region) {
+                                    if ((target_el = getindex_2levels(in_ll, 3, 3)))
+                                        if (hatom_gettype(&target_el->l_hatom) == H_DOUBLE) {
+                                            found = llll_get();
+                                            llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
+                                        }
+                                }
+                            }
+                                break;
                                 
                             default:
                                 break;
@@ -1276,6 +1295,26 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 found = llll_get();
                                 if ((target_el = getindex_2levels(in_ll, 5, 1)))
                                     llll_appendrat(found, hatom_getrational(&target_el->l_hatom));
+                                break;
+                                
+                            case k_PLAYKEYS_INCOMING_MARKER:
+                            {
+                                target_el = llll_getindex(in_ll, 3, I_STANDARD);
+                                char is_region = false;
+                                if (hatom_gettype(&target_el->l_hatom) == H_LLLL) {
+                                    t_llll *mkll = hatom_getllll(&target_el->l_hatom);
+                                    if (mkll && mkll->l_head && hatom_getsym(&mkll->l_head->l_hatom) == _llllobj_sym_region) {
+                                        is_region = true;
+                                    }
+                                }
+                                if (is_region) {
+                                    if ((target_el = getindex_2levels(in_ll, 3, 3)))
+                                        if (hatom_gettype(&target_el->l_hatom) != H_DOUBLE) {
+                                            found = llll_get();
+                                            llll_appendrat(found, hatom_getrational(&target_el->l_hatom));
+                                        }
+                                }
+                            }
                                 break;
                                 
                             default:
@@ -1316,9 +1355,23 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 break;
                                 
                             case k_PLAYKEYS_INCOMING_MARKER:
+                            {
                                 found = llll_get();
-                                if ((target_el = llll_getindex(in_ll, 3, I_STANDARD)))
+                                target_el = llll_getindex(in_ll, 3, I_STANDARD);
+                                char is_region = false;
+                                if (hatom_gettype(&target_el->l_hatom) == H_LLLL) {
+                                    t_llll *mkll = hatom_getllll(&target_el->l_hatom);
+                                    if (mkll && mkll->l_head && hatom_getsym(&mkll->l_head->l_hatom) == _llllobj_sym_region) {
+                                        is_region = true;
+                                    }
+                                }
+                                if (!is_region) {
                                     llll_appendhatom_clone(found, &target_el->l_hatom);
+                                } else {
+                                    if ((target_el = getindex_2levels(in_ll, 3, 2)))
+                                        llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
+                                }
+                            }
                                 break;
                                 
                             default:

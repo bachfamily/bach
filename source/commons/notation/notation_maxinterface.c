@@ -21,6 +21,7 @@
 #include "notation/notation.h"
 #include "notation/notation_attrs.h"
 #include "notation/notation_undo.h"
+#include "notation/notation_markers.h"
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_getattr_pitcheditrange);
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_setattr_pitcheditrange);
@@ -3466,60 +3467,14 @@ t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, lo
 }
 
 
-// use marker = NULL to get all markers
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, char prepend_marker_symbol, e_data_considering_types mode){
-	t_llll *outlist;
-    
-	if (marker) {
-		outlist = llll_get();
-        if (prepend_marker_symbol)
-            llll_appendsym(outlist, _llllobj_sym_marker, 0, WHITENULL_llll); // the "marker" symbol in first place
-        
-        if (namefirst) {
-            if (marker->r_it.names->l_size == 0)
-                llll_appendsym(outlist, _llllobj_sym_none, 0, WHITENULL_llll);
-            else if (marker->r_it.names->l_size == 1 && marker->r_it.names->l_depth == 1)
-                llll_appendhatom(outlist, &marker->r_it.names->l_head->l_hatom, 0, WHITENULL_llll);
-            else
-                llll_appendllll(outlist, get_names_as_llll((t_notation_item *)marker, false), 0, WHITENULL_llll);
-        }
-        
-		if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
-			t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-			t_llll *timepointll = get_timepoint_as_llll(r_ob, tp);
-			llll_appendllll(outlist, timepointll, 0, WHITENULL_llll);
-		} else 
-			llll_appenddouble(outlist, marker->position_ms, 0, WHITENULL_llll);
-        
-        if (!namefirst) {
-            if (marker->r_it.names->l_size == 0)
-                llll_appendsym(outlist, _llllobj_sym_none, 0, WHITENULL_llll);
-            else if (marker->r_it.names->l_size == 1 && marker->r_it.names->l_depth == 1)
-                llll_appendhatom(outlist, &marker->r_it.names->l_head->l_hatom, 0, WHITENULL_llll);
-            else
-                llll_appendllll(outlist, get_names_as_llll((t_notation_item *)marker, false), 0, WHITENULL_llll);
-        }
-        
-		llll_appendsym(outlist, marker_role_to_sym(marker->role), 0, WHITENULL_llll);
-		if (marker->role != k_MARKER_ROLE_NONE && marker->content)
-			llll_appendllll_clone(outlist, marker->content, 0, WHITENULL_llll, NULL);
-        
-#ifdef BACH_NOTES_HAVE_ID
-        if (mode == k_CONSIDER_FOR_UNDO)
-            llll_appendllll(outlist, get_ID_as_llll((t_notation_item *)marker));
-#endif
-	} else {
-		outlist = get_markers_as_llll(r_ob, 0, 0, 0, namefirst, k_CONSIDER_FOR_DUMPING, 0);
-	}
-	return outlist;
-}
+
 
 // use marker = NULL to send all markers
 void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, t_llll *forced_routers)
 {
 	t_llll *llll;
 	lock_markers_mutex(r_ob);
-	llll = get_single_marker_as_llll(r_ob, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
+	llll = marker_get_as_llll(r_ob, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
     
     if (forced_routers && forced_routers->l_head && hatom_gettype(&forced_routers->l_head->l_hatom) == H_SYM &&
         llll && llll->l_head && hatom_getsym(&llll->l_head->l_hatom) == _llllobj_sym_marker)
@@ -4684,7 +4639,7 @@ void start_editing_markername(t_notation_obj *r_ob, t_object *patcherview, t_mar
     double playhead_y1, playhead_y2;
     get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
 	
-    top = playhead_y1 + notationobj_get_marker_voffset(r_ob, marker);
+    top = playhead_y1 + marker_get_voffset(r_ob, marker);
 	left = textfield_left_position; 
 	
 	textfield_set_wordwrap(textfield, 0);
@@ -5402,72 +5357,6 @@ t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double star
 
 
 
-double get_marker_ux_position(t_notation_obj *r_ob, t_marker *marker)
-{
-    if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-        return (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS);
-    } else {
-        return ms_to_unscaled_xposition(r_ob, marker->position_ms, 1);
-    }
-}
-
-
-double get_marker_ms_position(t_notation_obj *r_ob, t_marker *marker)
-{
-    if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        return unscaled_xposition_to_ms(r_ob, get_marker_ux_position(r_ob, marker), 1);
-    } else {
-        return marker->position_ms;
-    }
-}
-
-
-// if mode == 1 it's clipped between start_ms and end_ms
-// if mode == 2 only selected markers are output
-// if mode == 3 both things are done
-// start_meas_num is used only if for_what = k_CONSIDER_FOR_SUBDUMPING, and bach.score is involved
-t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms, char namefirst, char for_what, long start_meas_num){
-	t_llll *outlist = llll_get();
-	t_marker *marker = r_ob->firstmarker;
-	llll_appendsym(outlist, _llllobj_sym_markers, 0, WHITENULL_llll);
-	for (marker = r_ob->firstmarker; marker; marker = marker->next) {
-        if (mode >= 2 && !notation_item_is_selected(r_ob, (t_notation_item *)marker))
-            continue;
-
-        double ms = marker->position_ms;
-		if ((mode % 2 == 0) || (ms >= start_ms && ms <= end_ms)) {
-            
-			t_llll *thisel = llll_get();
-			
-			if (namefirst) 
-				llll_append_notation_item_name(thisel, (t_notation_item *)marker);
-			
-			if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE && for_what != k_CONSIDER_FOR_SCORE2ROLL){
-				t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-				if (for_what == k_CONSIDER_FOR_SUBDUMPING)
-					tp.measure_num -= start_meas_num;
-				t_llll *tp_as_llll = get_timepoint_as_llll(r_ob, tp);
-				llll_appendllll(thisel, tp_as_llll, 0, WHITENULL_llll);
-			} else {
-				llll_appenddouble(thisel, for_what == k_CONSIDER_FOR_SUBDUMPING ? ms - start_ms : ms, 0, WHITENULL_llll);
-			}
-			
-			if (!namefirst) 
-				llll_append_notation_item_name(thisel, (t_notation_item *)marker);
-			
-			llll_appendsym(thisel, marker_role_to_sym(marker->role), 0, WHITENULL_llll);
-			if (marker->role != k_MARKER_ROLE_NONE && marker->content)
-				llll_appendllll_clone(thisel, marker->content, 0, WHITENULL_llll, NULL);
-
-			if (for_what == k_CONSIDER_FOR_UNDO)
-				llll_appendllll(thisel, get_ID_as_llll((t_notation_item *)marker), 0, WHITENULL_llll);
-			
-			llll_appendllll(outlist, thisel, 0, WHITENULL_llll);
-		}
-	}
-	return outlist;
-}
 
 // use command_number = -1 for standard dump
 char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_number, delete_item_fn delete_item_method, t_llll *forced_routers)
@@ -5834,6 +5723,10 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
         
         switch (hovered_elem_type) {
                 
+            case k_MARKER_REGION_TAIL:
+                bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_TRIM_END);
+                break;
+
             case k_MARKER:
                 if (modifiers == eCommandKey && is_editable(r_ob, k_MARKER, k_DELETION))
                     bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_DELETE);

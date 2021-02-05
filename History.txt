@@ -10,6 +10,8 @@ VERSION NOTES:
 - The bach notation objects now feature a new system of notification of interface actions that provides details on the elements being modified. 
 	See the new "notifywith" message. 
 
+- Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
+
 
 *****************
 *** IMPORTANT ***
