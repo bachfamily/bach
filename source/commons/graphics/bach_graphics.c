@@ -4397,7 +4397,6 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
     bach_freeptr(done);
     bach_freeptr(new_pts);
     bach_freeptr(pts);
-	bach_freeptr(done);
     polygon_free(p);
     polygon_free(q);
 
