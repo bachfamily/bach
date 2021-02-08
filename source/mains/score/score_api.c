@@ -3356,11 +3356,13 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
         notationobj_check((t_notation_obj *)x);
 #endif
 
+        long num_llll_in_llll_first_level = CLAMP(get_num_llll_in_llll_first_level(wholescore), 0, CONST_MAX_VOICES);
+        
         // now we're ready to iterate on scorevoices
         voiceelem = wholescore->l_head;
         if (voiceelem && !x->must_append_measures) {
             // if there is some score stuff (and we're not appending), we clear the score, as a very first thing.
-            clear_score_body(x, -1);
+            clear_score_body(x, -1, num_llll_in_llll_first_level);
             if (x->r_ob.firstmarker && !markers_are_given) 
                 clear_all_markers((t_notation_obj *) x);
             clear_preselection((t_notation_obj *) x);
@@ -3372,7 +3374,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
         
         // autosizing the number of voices – NEW CODE: bach 0.7.4
         if (x->r_ob.autosize) {
-            long num_voices = CLAMP(get_num_llll_in_llll_first_level(wholescore), 0, CONST_MAX_VOICES);
+            long num_voices = num_llll_in_llll_first_level;
 
             // we change the number of voices if there was no "addmeasures" message and the number of voice inserted is different from the existing one,
             // or if there was "addmeasures" message, and the number of voices inserted is greater than the existing ones.
@@ -3563,7 +3565,7 @@ void score_snap_pitch_to_grid(t_score *x, t_symbol *s, long argc, t_atom *argv)
 // voicenum = -1: all voices, up to current num_voices
 // voicenum = -2: all voices, up to CONST_MAX_VOICES
 // this function must be put within a mutex
-void clear_score_body(t_score *x, long voicenum)
+void clear_score_body(t_score *x, long voicenum, long min_num_voices_to_be_cleared)
 {
     // clears all the score (or just a specific voice)
     
@@ -3584,6 +3586,8 @@ void clear_score_body(t_score *x, long voicenum)
     } else { 
         t_scorevoice *voice = x->firstvoice;
         long max_num_voices = (voicenum == -2 ? CONST_MAX_VOICES : x->r_ob.num_voices);
+        if (max_num_voices < min_num_voices_to_be_cleared)
+            max_num_voices = min_num_voices_to_be_cleared;
         while (voice && (voice->v_ob.number < max_num_voices)) {
             t_measure *measure = voice->firstmeasure;
             while (measure) {
