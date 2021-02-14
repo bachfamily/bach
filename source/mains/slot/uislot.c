@@ -174,7 +174,9 @@ void create_whole_uislot_undo_tick(t_uislot *x);
 void uislot_copy(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_paste(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_cut(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
-            
+
+void uislot_reducefunction(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
+
 
 
 // clipboard
@@ -212,7 +214,7 @@ void uislot_write(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
 }
 
 void uislot_writetxt(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
-    t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
+    t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     t_llll *uislot_as_llll = get_uislot_values_as_llll(x, k_CONSIDER_FOR_SAVING, -1, NULL, true, false); // we save everything
     llll_writetxt((t_object *) x, uislot_as_llll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART);
 }
@@ -763,7 +765,10 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     
     
+    class_addmethod(c, (method) uislot_reducefunction, "reducefunction", A_GIMME, 0);
 
+    
+    
     // @method resetslotinfo @digest Reset the slotinfo to the default one
     // @description @copy BACH_DOC_RESET_SLOTINFO
     // @seealso eraseslot
@@ -950,7 +955,7 @@ void uislot_add_slot_do(t_uislot *x, t_llll *slot_as_llll)
 {
     create_whole_uislot_undo_tick(x);
     lock_general_mutex((t_notation_obj *)x);
-    set_slots_values_to_note_from_llll((t_notation_obj *) x, x->r_ob.dummynote, slot_as_llll);
+    note_set_slots_from_llll((t_notation_obj *) x, x->r_ob.dummynote, slot_as_llll);
     unlock_general_mutex((t_notation_obj *)x);
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
 }
@@ -1404,7 +1409,7 @@ void set_uislot_from_llll(t_uislot *x, t_llll* inputlist, char also_lock_general
                 note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, i);
             
             llll_flatten(wholeuislot, 1, 0);
-            set_slots_values_to_note_from_llll((t_notation_obj *) x, x->r_ob.dummynote, wholeuislot);
+            note_set_slots_from_llll((t_notation_obj *) x, x->r_ob.dummynote, wholeuislot);
         }
     }
     
@@ -2079,7 +2084,7 @@ void uislot_paste_slot(t_uislot *x)
     unlock_general_mutex((t_notation_obj *)x);
     if (clonedslot->l_head && hatom_gettype(&clonedslot->l_head->l_hatom) == H_LLLL && hatom_gettype(&clonedslot->l_head->l_hatom.h_w.w_llll->l_head->l_hatom) == H_LONG)
         hatom_setlong(&clonedslot->l_head->l_hatom.h_w.w_llll->l_head->l_hatom, x->r_ob.active_slot_num_1based);
-    set_slots_values_to_note_from_llll((t_notation_obj *) x, x->r_ob.dummynote, clonedslot);
+    note_set_slots_from_llll((t_notation_obj *) x, x->r_ob.dummynote, clonedslot);
     llll_free(clonedslot);
     handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
 }
@@ -2361,7 +2366,7 @@ void uislot_new_undo_redo(t_uislot *x, char what){
                     llll_destroyelem(content->l_head);
                 for (i = 0; i < CONST_MAX_SLOTS; i++)
                     note_clear_slot((t_notation_obj *)x, x->r_ob.dummynote, i);
-                set_slots_values_to_note_from_llll((t_notation_obj *) x, x->r_ob.dummynote, content);
+                note_set_slots_from_llll((t_notation_obj *) x, x->r_ob.dummynote, content);
             }
             
         } else if (type == k_HEADER_DATA) {
@@ -2430,4 +2435,21 @@ void uislot_paste(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
     
     llll_free(ll);
 }
+
+
+
+void uislot_reducefunction(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+
+    lock_general_mutex((t_notation_obj *)x);
+    
+    notationobj_sel_reducefunction((t_notation_obj *)x, args, true);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_REDUCE_FUNCTION);
+    llll_free(args);
+}
+
 

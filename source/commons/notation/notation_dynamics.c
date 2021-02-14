@@ -2587,7 +2587,7 @@ t_symbol *chord_assign_dynamics_from_velocities(t_notation_obj *r_ob, t_chord *c
         
         t_notation_item *nitem = notation_item_get_to_which_dynamics_should_be_assigned(r_ob, (t_notation_item *)ch);
         t_llll *slot_ll = dynamic_mark_to_slots_ll(slot_num, dyn);
-        set_slots_values_to_notationitem_from_llll(r_ob, nitem, slot_ll);
+        notation_item_set_slots_from_llll(r_ob, nitem, slot_ll);
         llll_free(slot_ll);
     } else {
         object_warn((t_object *)r_ob, "Could not convert mean chord velocity '%.2f' to dynamic marking.", mean_vel);

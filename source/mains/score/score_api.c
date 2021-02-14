@@ -2538,14 +2538,14 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                                 t_llll *bpt = hatom_getllll(&subelem->l_hatom);
 //                                if ((bpt->l_size >= 1) && (bpt->l_depth == 2)) {
                                     if (note){ // there's already a note: we change its graphic values
-                                        set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, note, bpt);
+                                        note_set_breakpoints_from_llll((t_notation_obj *) x, note, bpt);
                                     } else { // we create a note within the same chord!
                                         t_note *this_nt;
                                         double argv[2]; argv[0] = CONST_DEFAULT_NEW_NOTE_DURATION; 
                                         argv[1] = CONST_DEFAULT_NEW_NOTE_CENTS;
                                         this_nt = build_note_from_ac_av((t_notation_obj *) x, 2, argv);
                                         note_insert((t_notation_obj *) x, chord, this_nt, 0);
-                                        set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, this_nt, bpt);
+                                        note_set_breakpoints_from_llll((t_notation_obj *) x, this_nt, bpt);
                                     }
 //                                }
                             }
@@ -2557,7 +2557,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                         if (notes_bpt->l_size >= 1) {
                             t_note *note = chord->firstnote;
                             while (note) {
-                                set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, note, notes_bpt);
+                                note_set_breakpoints_from_llll((t_notation_obj *) x, note, notes_bpt);
                                 note = note->next;
                             }
                         }
@@ -2607,7 +2607,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                                 newnote = newchord->firstnote;
                                 for (subelem = notes_bpt->l_head; subelem; subelem = subelem->l_next) { // subelem cycles on the notes, e.g. subelem = ((0 0 0) (1 1 1))
                                     t_llll *bpts = hatom_getllll(&subelem->l_hatom);
-                                    set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, newnote, bpts);
+                                    note_set_breakpoints_from_llll((t_notation_obj *) x, newnote, bpts);
                                     newnote = newnote->next;
                                 } 
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
@@ -2623,7 +2623,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                                 argv[1] = CONST_DEFAULT_NEW_NOTE_CENTS;
                                 newchord = addchord_in_measure_from_values(x, measure, measure->lastchord, r_sym_duration, -1, 1, 2, argv, NULL, NULL, 0, NULL, 0, NULL);
                                 newchord->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newchord, 0, WHITENULL_llll);
-                                set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, newchord->firstnote, notes_bpt);
+                                note_set_breakpoints_from_llll((t_notation_obj *) x, newchord->firstnote, notes_bpt);
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
                                 newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
                             }
@@ -2758,11 +2758,11 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                 t_llll *slots = hatom_getllll(&subelem->l_hatom);
 //                                if (slots->l_size >= 1) {
                                     if (note){ // there's already a note: we change its graphic values
-                                        set_slots_values_to_note_from_llll((t_notation_obj *) x, note, slots);
+                                        note_set_slots_from_llll((t_notation_obj *) x, note, slots);
                                     } else { // we create a note within the same chord!
                                         t_note *this_nt = build_default_note((t_notation_obj *) x);
                                         note_insert((t_notation_obj *) x, chord, this_nt, 0);
-                                        set_slots_values_to_note_from_llll((t_notation_obj *) x, this_nt, slots);
+                                        note_set_slots_from_llll((t_notation_obj *) x, this_nt, slots);
                                     }
 //                                }
                             }
@@ -2777,16 +2777,16 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
 #ifdef BACH_CHORDS_HAVE_SLOTS
                             if (!note) {
                                 // set slots to rest
-                                set_slots_values_to_notationitem_from_llll((t_notation_obj *) x, (t_notation_item *)chord, notes_slots);
+                                notation_item_set_slots_from_llll((t_notation_obj *) x, (t_notation_item *)chord, notes_slots);
                             } else {
                                 while (note) {
-                                    set_slots_values_to_note_from_llll((t_notation_obj *) x, note, notes_slots);
+                                    note_set_slots_from_llll((t_notation_obj *) x, note, notes_slots);
                                     note = note->next;
                                 }
                             }
 #else
                             while (note) {
-                                set_slots_values_to_note_from_llll((t_notation_obj *) x, note, notes_slots);
+                                note_set_slots_from_llll((t_notation_obj *) x, note, notes_slots);
                                 note = note->next;
 #endif
                         }
@@ -2836,7 +2836,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                     onset = rat_rat_sum(onset, r_sym_duration);
                                     newnote = newchord->firstnote;
                                     for (subelem = notes_slots->l_head; subelem; subelem = subelem->l_next) { // subelem cycles on the notes, e.g. subelem = ((0 0 0) (1 1 1))
-                                        set_slots_values_to_note_from_llll((t_notation_obj *) x, newnote, hatom_getllll(&subelem->l_hatom));
+                                        note_set_slots_from_llll((t_notation_obj *) x, newnote, hatom_getllll(&subelem->l_hatom));
                                         newnote = newnote->next;
                                     } 
                                     newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
@@ -2849,7 +2849,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                 t_llll *slots = llll_get();
 #ifdef BACH_CHORDS_HAVE_SLOTS
                                 // ==> we create a REST: if one wanted to have notes,
-                                set_slots_values_to_notationitem_from_llll((t_notation_obj *) x, (t_notation_item *)chord, notes_slots);
+                                notation_item_set_slots_from_llll((t_notation_obj *) x, (t_notation_item *)chord, notes_slots);
                                 t_chord *newchord = addchord_in_measure_from_notes(x, measure, measure->lastchord, r_sym_duration, -1, 0, NULL, NULL, 0);
 #else
                                 double argv[2];
@@ -2861,7 +2861,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                 newchord->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newchord, 0, WHITENULL_llll);
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
                                 llll_appendllll_clone(slots, notes_slots, 0, WHITENULL_llll);
-                                set_slots_values_to_note_from_llll((t_notation_obj *) x, newchord->firstnote, slots);
+                                note_set_slots_from_llll((t_notation_obj *) x, newchord->firstnote, slots);
                                 newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
                                 llll_free(slots);
                             }
@@ -4347,7 +4347,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             }
             
             // handle slots
-            // ALL THIS PART IS DEPRECATED: BETTER USE set_slots_values_to_note_from_llll()
+            // ALL THIS PART IS DEPRECATED: BETTER USE note_set_slots_from_llll()
             temp = this_ch->firstnote;
             s = 0; // lecture head... 
             while (temp) { 
@@ -5332,7 +5332,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
                     
                     check_if_need_to_splatter_level_when_turning_note_to_rest(x, ch);
                     if (temp) {
-                        set_slots_values_to_notationitem_from_llll((t_notation_obj *)x, (t_notation_item *)ch, temp);
+                        notation_item_set_slots_from_llll((t_notation_obj *)x, (t_notation_item *)ch, temp);
                         llll_free(temp);
                     }
                 }

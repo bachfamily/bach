@@ -1754,6 +1754,7 @@ typedef enum _undo_operations
     k_UNDO_OP_MOVE_SLOTS_FOR_SELECTION,
     k_UNDO_OP_COPY_SLOTS_FOR_SELECTION,
     k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION,
+    k_UNDO_OP_REDUCE_FUNCTION,
     k_UNDO_OP_ADD_MARKER,
     k_UNDO_OP_DELETE_MARKER,
     k_UNDO_OP_CHANGE_MARKER_NAME,
@@ -8463,6 +8464,10 @@ void move_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int sl
 void move_note_slot(t_notation_obj *r_ob, t_note *note, int slot_from, int slot_to, char keep_original, char also_check_slot_recomputations = 1);
 void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *args, char lambda, e_slot_changeslotitem_modes mode);
 
+// reducefunction
+long notation_item_reducefunction(t_notation_obj *r_ob, t_notation_item *nitem, long slot_number, long maxnumpoints, double thresh, long p, long relative, long slope, long algorithm, e_slope_mapping slopemapping);
+void notationobj_sel_reducefunction(t_notation_obj *r_ob, t_llll *args_orig, char lambda);
+
 
 /**    Check if all the slot data in a notation object correctly lie within the slot domain. If not, it forces data to lie within the slot domain.
     This function is useful if called after a slot domain change.
@@ -8654,10 +8659,10 @@ t_llll* notation_item_get_slots_values_no_header_as_llll(t_notation_obj *r_ob, t
     @param    note        The note to which the slot information must be set
     @param    slots        An llll containing the slot information
  */
-void set_slots_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* slots);
+void note_set_slots_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* slots);
 
 //TBD
-void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation_item *nitem, t_llll* slots);
+void notation_item_set_slots_from_llll(t_notation_obj *r_ob, t_notation_item *nitem, t_llll* slots);
 
 // Private
 void notation_item_check_slots(t_notation_obj *r_ob, t_notation_item *nitem);
@@ -11997,7 +12002,7 @@ void llll_append_notationitem_global_flag(t_notation_obj *r_ob, t_llll *ll, t_no
     @param    note        The note
     @param    breakpoints    An llll containing a (relative_x_position delta_mc slope) llll for each breakpoint to add.
  */
-void set_breakpoints_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints);
+void note_set_breakpoints_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints);
 
 
 /**    Assign one or more articulations to a notation item. Deletes the already existing articulations.

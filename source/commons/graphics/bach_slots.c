@@ -4476,7 +4476,7 @@ void slot_remove_extensions(t_notation_obj *r_ob, t_notation_item *nitem, long s
 {
     t_llll *ll = notation_item_get_partial_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, slot_num, 0., 1.);
     llll_wrap_once(&ll);
-    set_slots_values_to_notationitem_from_llll(r_ob, nitem, ll);
+    notation_item_set_slots_from_llll(r_ob, nitem, ll);
     llll_free(ll);
 }
 
@@ -5188,7 +5188,7 @@ void notation_obj_check_against_tuttipoints(t_notation_obj *r_ob)
 
 
 
-void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation_item *nitem, t_llll* slots)
+void notation_item_set_slots_from_llll(t_notation_obj *r_ob, t_notation_item *nitem, t_llll* slots)
 {
 	if (!nitem)
 		return;
@@ -5597,9 +5597,9 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 
 }
 
-void set_slots_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* slots)
+void note_set_slots_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* slots)
 {
-    set_slots_values_to_notationitem_from_llll(r_ob, (t_notation_item *)note, slots);
+    notation_item_set_slots_from_llll(r_ob, (t_notation_item *)note, slots);
 }
 
 
@@ -6649,7 +6649,7 @@ void move_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int sl
     llll_behead(ll);
     llll_prependlong(ll, slot_to + 1);
     llll_wrap(&ll);
-    set_slots_values_to_notationitem_from_llll(r_ob, nitem, ll);
+    notation_item_set_slots_from_llll(r_ob, nitem, ll);
     llll_free(ll);
     
     if (!keep_original)
@@ -6816,18 +6816,25 @@ char set_slots_to_selection(t_notation_obj *r_ob, t_llll *slots, char also_set_s
 		if (curr_it->type == k_NOTE) {
 			changed = 1;
 			create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-			set_slots_values_to_note_from_llll(r_ob, (t_note *)curr_it, clonedslots);
+			note_set_slots_from_llll(r_ob, (t_note *)curr_it, clonedslots);
+            
+        } else if (curr_it->type == k_DYNAMICS) {
+            t_notation_item *it = ((t_dynamics *)curr_it)->owner_item;
+            changed = 1;
+            create_simple_selected_notation_item_undo_tick(r_ob, it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            notation_item_set_slots_from_llll(r_ob, it, clonedslots);
+
 		} else if (curr_it->type == k_CHORD) {
 			t_note *temp;
 			create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
             if (((t_chord *)curr_it)->firstnote) {
                 for (temp = ((t_chord *)curr_it)->firstnote; temp; temp = temp->next) {
                     changed = 1;
-                    set_slots_values_to_note_from_llll(r_ob, temp, clonedslots);
+                    note_set_slots_from_llll(r_ob, temp, clonedslots);
                 }
             } else {
                 if (also_set_slots_to_rests)
-                    set_slots_values_to_notationitem_from_llll(r_ob, curr_it, clonedslots);
+                    notation_item_set_slots_from_llll(r_ob, curr_it, clonedslots);
             }
 		} else if (curr_it->type == k_MEASURE) {
 			t_chord *temp; t_note *temp2;
@@ -6836,11 +6843,11 @@ char set_slots_to_selection(t_notation_obj *r_ob, t_llll *slots, char also_set_s
                 if (temp->firstnote) {
                     for (temp2 = temp->firstnote; temp2; temp2 = temp2->next) {
                         changed = 1;
-                        set_slots_values_to_note_from_llll(r_ob, temp2, clonedslots);
+                        note_set_slots_from_llll(r_ob, temp2, clonedslots);
                     }
                 } else {
                     if (also_set_slots_to_rests)
-                        set_slots_values_to_notationitem_from_llll(r_ob, (t_notation_item *)temp, clonedslots);
+                        notation_item_set_slots_from_llll(r_ob, (t_notation_item *)temp, clonedslots);
                 }
 			}
 		}
@@ -6869,13 +6876,13 @@ char set_breakpoints_to_selection(t_notation_obj *r_ob, t_llll *breakpoints)
         if (curr_it->type == k_NOTE) {
             changed = 1;
             create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-            set_breakpoints_values_to_note_from_llll(r_ob, (t_note *)curr_it, clonedbpts);
+            note_set_breakpoints_from_llll(r_ob, (t_note *)curr_it, clonedbpts);
         } else if (curr_it->type == k_CHORD) {
             t_note *temp;
             create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
             for (temp = ((t_chord *)curr_it)->firstnote; temp; temp = temp->next) {
                 changed = 1;
-                set_breakpoints_values_to_note_from_llll(r_ob, temp, clonedbpts);
+                note_set_breakpoints_from_llll(r_ob, temp, clonedbpts);
             }
         } else if (curr_it->type == k_MEASURE) {
             t_chord *temp; t_note *temp2;
@@ -6883,7 +6890,7 @@ char set_breakpoints_to_selection(t_notation_obj *r_ob, t_llll *breakpoints)
                 create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)temp, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                 for (temp2 = temp->firstnote; temp2; temp2 = temp2->next) {
                     changed = 1;
-                    set_breakpoints_values_to_note_from_llll(r_ob, temp2, clonedbpts);
+                    note_set_breakpoints_from_llll(r_ob, temp2, clonedbpts);
                 }
             }
         }
@@ -10590,8 +10597,10 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
         return;
     
     slotnum = llllelem_to_slotnum(r_ob, args->l_head, true);
-    if (slotnum < 0)
+    if (slotnum < 0) {
+        llll_free(args);
         return;
+    }
     
     llll_behead(args);
     
@@ -10671,6 +10680,134 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
 }
 
 
+
+
+
+
+
+
+// slot_number < 0 reduces the duration line
+long notation_item_reducefunction(t_notation_obj *r_ob, t_notation_item *nitem, long slot_number, long maxnumpoints, double thresh, long p, long relative, long slope, long algorithm, e_slope_mapping slopemapping)
+{
+    long changed = 0;
+    t_llll *ll = NULL;
+    if (slot_number >= 0)
+        ll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_SLOT_VALUES_ONLY, slot_number, false);
+    else if (nitem->type == k_NOTE)
+        ll = note_get_breakpoints_values_no_router_as_llll(r_ob, (t_note *)nitem);
+    else // nothing to reduce
+        return changed;
+    
+    if (relative && slot_number >= 0)
+        thresh *= (r_ob->slotinfo[slot_number].slot_range[1] - r_ob->slotinfo[slot_number].slot_range[0]);
+
+    if (!ll) // nothing to reduce
+        return changed;
+    
+    t_llll *reduced = llll_approximate_breakpoint_function(ll, maxnumpoints, thresh, p, algorithm, slope, slopemapping);
+    
+    if (slot_number >= 0) {
+        t_llll *set_ll = llll_get();
+        t_llll *subset_ll = llll_get();
+        llll_appendlong(subset_ll, slot_number + 1);
+        llll_chain(subset_ll, reduced);
+        llll_appendllll(set_ll, subset_ll);
+        notation_item_set_slots_from_llll(r_ob, nitem, set_ll);
+        changed = 1;
+        llll_free(set_ll);
+    } else if (nitem->type == k_NOTE) {
+        note_set_breakpoints_from_llll(r_ob, (t_note *)nitem, reduced);
+        changed = 1;
+        llll_free(reduced);
+    }
+    
+    
+    return changed;
+}
+
+// arguments are: slot#, position, new value (as llll).
+// this function must be mutexed
+void notationobj_sel_reducefunction(t_notation_obj *r_ob, t_llll *args_orig, char lambda)
+{
+    
+    t_llll *args = llll_clone(args_orig);
+    char changed = 0;
+    
+    if (!args || !args->l_head)
+        return;
+    
+    long maxnumpoints = 0, p = 1, relative = 1, slope = 1, algorithm = 1;
+    t_symbol *slopemapping_sym = gensym("bach");
+    double thresh = 0.;
+    llll_parseattrs((t_object *)r_ob, args, true, "idiisi", gensym("maxnumpoints"), &maxnumpoints, _llllobj_sym_thresh, &thresh, _llllobj_sym_p, &p, _llllobj_sym_slope, &slope, gensym("slopemapping"), &slopemapping_sym, gensym("algorithm"), &algorithm);
+    e_slope_mapping slopemapping = ((slopemapping_sym == gensym("Max") || slopemapping_sym == gensym("max")) ? k_SLOPE_MAPPING_MAX : k_SLOPE_MAPPING_BACH);
+    
+    if (!args->l_head || !args->l_head)
+        return;
+    
+    long slotnum;
+    if (args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == gensym("durationline"))
+        slotnum = -1;
+    else {
+        slotnum = llllelem_to_slotnum(r_ob, args->l_head, true);
+        if (slotnum < 0) {
+            llll_free(args);
+            return;
+        }
+    }
+    
+    t_notation_item *curr_it;
+    
+    curr_it = notation_item_get_first_selected_account_for_lambda(r_ob, lambda);
+    while (curr_it) {
+        if (curr_it->type == k_NOTE) {
+            t_note *nt = (t_note *) curr_it;
+            if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                changed = notation_item_reducefunction(r_ob, curr_it, slotnum, maxnumpoints, thresh, p, relative, slope, algorithm, slopemapping);
+            }
+        } else if (curr_it->type == k_CHORD) {
+            t_chord *ch = (t_chord *) curr_it;
+            if (!ch->firstnote) {
+#ifdef BACH_CHORDS_HAVE_SLOTS
+                create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                changed = notation_item_reducefunction(r_ob, curr_it, slotnum, maxnumpoints, thresh, p, relative, slope, algorithm, slopemapping);
+#endif
+            } else {
+                t_note *nt;
+                for (nt=ch->firstnote; nt; nt = nt->next) {
+                    if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                        changed = notation_item_reducefunction(r_ob, (t_notation_item *)nt, slotnum, maxnumpoints, thresh, p, relative, slope, algorithm, slopemapping);
+                    }
+                }
+            }
+        } else if (curr_it->type == k_MEASURE) {
+            t_measure *meas = (t_measure *) curr_it;
+            t_chord *ch = meas->firstchord;
+            while (ch) {
+                t_note *nt;
+                if (!ch->firstnote) {
+#ifdef BACH_CHORDS_HAVE_SLOTS
+                    create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                    changed = notation_item_reducefunction(r_ob, (t_notation_item *)ch, slotnum, maxnumpoints, thresh, p, relative, slope, algorithm, slopemapping);
+#endif
+                } else {
+                    for (nt=ch->firstnote; nt; nt = nt->next) {
+                        if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                            changed = notation_item_reducefunction(r_ob, (t_notation_item *)nt, slotnum, maxnumpoints, thresh, p, relative, slope, algorithm, slopemapping);
+                        }
+                    }
+                }
+                ch = ch->next;
+            }
+        }
+        curr_it = lambda ? NULL : curr_it->next_selected;
+    }
+    
+    llll_free(args);
+}
 
 
 
