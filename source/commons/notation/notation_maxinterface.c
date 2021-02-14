@@ -587,7 +587,7 @@ void notationobj_edclose(t_notation_obj *r_ob, char **ht, long size)
         if (ll) {
             llll_prependlong(ll, r_ob->active_slot_num + 1, 0, WHITENULL_llll);
             llll_wrap_once(&ll);
-            set_slots_values_to_notationitem_from_llll(r_ob, r_ob->active_slot_notationitem, ll);
+            notation_item_set_slots_from_llll(r_ob, r_ob->active_slot_notationitem, ll);
             notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
             handle_change(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
         }
@@ -5943,7 +5943,7 @@ void notationobj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long p
 			hatom_setlong(&clonedslot->l_head->l_hatom.h_w.w_llll->l_head->l_hatom, paste_to_this_slot + 1);
         if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT) {
             lock_general_mutex(r_ob);
-			set_slots_values_to_note_from_llll(r_ob, r_ob->dummynote, clonedslot);
+			note_set_slots_from_llll(r_ob, r_ob->dummynote, clonedslot);
             unlock_general_mutex(r_ob);
         } else
 			set_slots_to_selection(r_ob, clonedslot, also_paste_to_rests);

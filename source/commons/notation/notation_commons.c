@@ -10691,8 +10691,8 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
         double new_midicents = note->midicents;
         t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll(r_ob, note, 0., cut_rel_pos, NULL);
         t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll(r_ob, note, cut_rel_pos, 1., &new_midicents);
-        set_breakpoints_values_to_note_from_llll(r_ob, note, left_bpt);
-        set_breakpoints_values_to_note_from_llll(r_ob, right_note, right_bpt);
+        note_set_breakpoints_from_llll(r_ob, note, left_bpt);
+        note_set_breakpoints_from_llll(r_ob, right_note, right_bpt);
         right_note->midicents = new_midicents;
         llll_free(left_bpt);
         llll_free(right_bpt);
@@ -10705,8 +10705,8 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
             t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll(r_ob, (t_notation_item *)note, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, -1.); // -1 means: till the end (it's different from 1. for slot allowing extension beyond note tails)
             llll_wrap_once(&left_slot);
             llll_wrap_once(&right_slot);
-            set_slots_values_to_note_from_llll(r_ob, note, left_slot);
-            set_slots_values_to_note_from_llll(r_ob, right_note, right_slot);
+            note_set_slots_from_llll(r_ob, note, left_slot);
+            note_set_slots_from_llll(r_ob, right_note, right_slot);
         }
     }
 
@@ -26434,7 +26434,7 @@ t_notation_item *notation_item_retrieve_from_ID(t_notation_obj *r_ob, long ID)
 
 t_notation_item *notation_item_get_first_selected_account_for_lambda(t_notation_obj *r_ob, char lambda)
 {
-    return lambda ? notation_item_retrieve_from_ID(r_ob, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
+    return lambda ? (r_ob->obj_type == k_NOTATION_OBJECT_SLOT ? (t_notation_item *)r_ob->dummynote : notation_item_retrieve_from_ID(r_ob, r_ob->lambda_selected_item_ID)) : r_ob->firstselecteditem;
 }
 
 void notation_item_init(t_notation_item *it, e_element_types item_type)
@@ -27647,7 +27647,7 @@ void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver
     dummy->duration = giver_duration;
     t_llll *temp = llll_get();
     llll_appendllll_clone(temp, slot_llll, 0, WHITENULL_llll, NULL);
-    set_slots_values_to_note_from_llll(r_ob, dummy, temp);
+    note_set_slots_from_llll(r_ob, dummy, temp);
     t_llll *extracted_portion = notation_item_get_partial_single_slot_values_as_llll(r_ob, (t_notation_item *)dummy, k_CONSIDER_FOR_SAVING, slotnum, start_glued_note_portion_rel_x, end_glued_note_portion_rel_x);
     free_note(r_ob, dummy);
     llll_free(temp);
@@ -27709,7 +27709,7 @@ void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver
     // So we set it and then we undo it, just to avoid cropping
     double old_receiver_duration = receiver->duration;
     receiver->duration = total_new_duration;
-    set_slots_values_to_note_from_llll(r_ob, receiver, final_slot_wrapped_ll);
+    note_set_slots_from_llll(r_ob, receiver, final_slot_wrapped_ll);
     receiver->duration = old_receiver_duration;
     
     // easing transition slotitem
@@ -27922,7 +27922,7 @@ void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll 
             }
         }
         
-        set_breakpoints_values_to_note_from_llll(r_ob, receiver, final_breakpoints);
+        note_set_breakpoints_from_llll(r_ob, receiver, final_breakpoints);
         
         // easing transition breakpoint
         if (idx_of_bpt_to_be_smoothed >= 0) {
@@ -30533,7 +30533,7 @@ void change_color_according_to_llll(t_jrgba *color, t_llll *llll){
 
 
 // there's not really a TRUE checking about the validity of the breakpoints, so be careful!
-void set_breakpoints_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints){
+void note_set_breakpoints_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints){
     if (breakpoints){
         t_llllelem *elem;
         if (breakpoints) 
@@ -31128,10 +31128,10 @@ void set_rollnote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* n
                             notation_item_set_flags_from_llllelem(r_ob, extras->l_head, (t_notation_item *)note, false);
                         } else if (pivotsym == _llllobj_sym_breakpoints) {
                             llll_destroyelem(pivot);
-                            set_breakpoints_values_to_note_from_llll(r_ob, note, extras);
+                            note_set_breakpoints_from_llll(r_ob, note, extras);
                         } else if (pivotsym == _llllobj_sym_slots) {
                             llll_destroyelem(pivot);
-                            set_slots_values_to_note_from_llll(r_ob, note, extras);
+                            note_set_slots_from_llll(r_ob, note, extras);
                         } else if (pivotsym == _llllobj_sym_articulations) {
                             llll_destroyelem(pivot);
                             set_articulations_to_element_from_llll(r_ob, (t_notation_item *)note, extras);
@@ -32416,7 +32416,7 @@ void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_not
         return;
     
     t_llll *temp = notation_item_get_slots_to_be_copied(r_ob, from, which_slots_1based, even_if_empty);
-    set_slots_values_to_notationitem_from_llll(r_ob, to, temp);
+    notation_item_set_slots_from_llll(r_ob, to, temp);
     llll_free(temp);
 }
 
@@ -32608,10 +32608,10 @@ void set_scorenote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* 
                                 notation_item_set_flags_from_llllelem(r_ob, extras->l_head, (t_notation_item *)note, false);
                             } else if (pivotsym == _llllobj_sym_breakpoints) {
                                 llll_destroyelem(pivot);
-                                set_breakpoints_values_to_note_from_llll(r_ob, note, extras);
+                                note_set_breakpoints_from_llll(r_ob, note, extras);
                             } else if (pivotsym == _llllobj_sym_slots) {
                                 llll_destroyelem(pivot);
-                                set_slots_values_to_note_from_llll(r_ob, note, extras);
+                                note_set_slots_from_llll(r_ob, note, extras);
                             } else if (pivotsym == _llllobj_sym_articulations) {
                                 llll_destroyelem(pivot);
                                 set_articulations_to_element_from_llll(r_ob, (t_notation_item *)note, extras);
@@ -32696,7 +32696,7 @@ void set_scorechord_values_from_llll(t_notation_obj *r_ob, t_chord *chord, t_lll
 #ifdef BACH_CHORDS_HAVE_SLOTS
                 } else if (hatom_gettype(&elemllll->l_head->l_hatom) == H_SYM && hatom_getsym(&elemllll->l_head->l_hatom) == _llllobj_sym_slots) {
                     // chord-attached slots (should be for rests only!!!!)
-                    set_slots_values_to_notationitem_from_llll(r_ob, (t_notation_item *)chord, elemllll);
+                    notation_item_set_slots_from_llll(r_ob, (t_notation_item *)chord, elemllll);
 #endif
                 } else if (chord->r_sym_duration.r_num >= 0){
                     if (note) { // there's already a note
@@ -40394,7 +40394,7 @@ void note_nametoslot_do(t_notation_obj *r_ob, t_note *nt, long slotnum, e_nameto
     llll_wrap_once(&slotll);
     
     if (slotll)
-        set_slots_values_to_notationitem_from_llll(r_ob, nt_it, slotll);
+        notation_item_set_slots_from_llll(r_ob, nt_it, slotll);
     else
         note_clear_slot(r_ob, nt, slotnum);
     llll_free(slotll);
@@ -40425,7 +40425,7 @@ long notationobj_nametoslot_do(t_notation_obj *r_ob, long slotnum, e_nametoslot_
                     t_llll *slotll = llll_clone(curr_it->names);
                     llll_prependlong(slotll, slotnum + 1);
                     llll_wrap_once(&slotll);
-                    set_slots_values_to_notationitem_from_llll(r_ob, curr_it, slotll);
+                    notation_item_set_slots_from_llll(r_ob, curr_it, slotll);
                     llll_free(slotll);
                 }
             }
@@ -42964,7 +42964,7 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
     // marker?
     if (r_ob->show_markers) {
         t_marker *marker;
-        for (marker = r_ob->firstmarker; marker; marker = marker->next) {
+        for (marker = r_ob->lastmarker; marker; marker = marker->prev) {
             if (is_in_marker_region_tail_shape(r_ob, marker, this_x, this_y, false)) {
                 *clicked_elem_ptr = marker;
                 *clicked_elem_type = k_MARKER_REGION_TAIL;

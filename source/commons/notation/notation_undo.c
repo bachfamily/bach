@@ -690,6 +690,9 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION:
             sprintf(buf, "Change Slots");
             break;
+        case k_UNDO_OP_REDUCE_FUNCTION:
+            sprintf(buf, "Reduce Function");
+            break;
         case k_UNDO_OP_ADD_MARKER:
             sprintf(buf, "Add Marker");
             break;

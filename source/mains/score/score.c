@@ -2468,7 +2468,7 @@ void score_sel_set_durationline(t_score *x, t_symbol *s, long argc, t_atom *argv
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                     t_llll *llllcopy;
                     undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                    set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, nt, dl_as_llll);
+                    note_set_breakpoints_from_llll((t_notation_obj *) x, nt, dl_as_llll);
                     changed = 1;
                 }
             } else if (curr_it->type == k_CHORD) {
@@ -2478,7 +2478,7 @@ void score_sel_set_durationline(t_score *x, t_symbol *s, long argc, t_atom *argv
                     if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                         t_llll *llllcopy;
                         undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                        set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, nt, dl_as_llll);
+                        note_set_breakpoints_from_llll((t_notation_obj *) x, nt, dl_as_llll);
                         changed = 1;
                     }
                 }
@@ -2490,7 +2490,7 @@ void score_sel_set_durationline(t_score *x, t_symbol *s, long argc, t_atom *argv
                     for (nt=ch->firstnote; nt; nt = nt->next) {
                         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                             undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                            set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, nt, dl_as_llll);
+                            note_set_breakpoints_from_llll((t_notation_obj *) x, nt, dl_as_llll);
                             changed = 1;
                         }
                     }
@@ -2532,7 +2532,7 @@ void score_sel_set_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
                     t_llll *llllcopy;    
                     undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                     llllcopy = llll_clone(slot_as_llll);
-                    set_slots_values_to_note_from_llll((t_notation_obj *) x, nt, slot_as_llll);
+                    note_set_slots_from_llll((t_notation_obj *) x, nt, slot_as_llll);
                     llll_free(llllcopy);
                     changed = 1;
                 }
@@ -2544,7 +2544,7 @@ void score_sel_set_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
                         t_llll *llllcopy;
                         undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         llllcopy = llll_clone(slot_as_llll);
-                        set_slots_values_to_notationitem_from_llll((t_notation_obj *) x, (t_notation_item *)ch, slot_as_llll);
+                        notation_item_set_slots_from_llll((t_notation_obj *) x, (t_notation_item *)ch, slot_as_llll);
                         llll_free(llllcopy);
                         changed = 1;
                     }
@@ -2556,7 +2556,7 @@ void score_sel_set_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
                             t_llll *llllcopy;
                             undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             llllcopy = llll_clone(slot_as_llll);
-                            set_slots_values_to_note_from_llll((t_notation_obj *) x, nt, slot_as_llll);
+                            note_set_slots_from_llll((t_notation_obj *) x, nt, slot_as_llll);
                             llll_free(llllcopy);
                             changed = 1;
                         }
@@ -2572,7 +2572,7 @@ void score_sel_set_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
                             t_llll *llllcopy;    
                             undo_tick_create_create_for_selected_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             llllcopy = llll_clone(slot_as_llll);
-                            set_slots_values_to_note_from_llll((t_notation_obj *) x, nt, slot_as_llll);
+                            note_set_slots_from_llll((t_notation_obj *) x, nt, slot_as_llll);
                             llll_free(llllcopy);
                             changed = 1;
                         }
@@ -2726,6 +2726,32 @@ void score_sel_copy_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
     unlock_general_mutex((t_notation_obj *)x);
 
     handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_COPY_SLOTS_FOR_SELECTION);
+}
+
+
+void score_sel_reducefunction(t_score *x, t_symbol *s, long argc, t_atom *argv){
+    long slotnum;
+    char lambda = (s == _llllobj_sym_lambda);
+    
+    if (argc < 1) {
+        object_error((t_object *)x, "Not enough arguments!");
+        return;
+    }
+    
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+
+    lock_general_mutex((t_notation_obj *)x);
+    
+    notationobj_sel_reducefunction((t_notation_obj *)x, args, lambda);
+    
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_REDUCE_FUNCTION);
+    
+    llll_free(args);
 }
 
 
@@ -6172,6 +6198,9 @@ void C74_EXPORT ext_main(void *moduleRef){
 
     
     
+    class_addmethod(c, (method) score_sel_reducefunction, "reducefunction", A_GIMME, 0);
+
+    
     // @method dumpselection @digest Play selected items off-line
     // @description The <m>dumpselection</m> message sends the content of each one of selected notation items from the 
     // playout, in playout syntax (off-line play).
@@ -9202,7 +9231,7 @@ void score_copy_slots_to_tied_noted_sequences(t_score *x)
                         t_note *tmp = note->tie_to;
                         t_llll *slots = note_get_slots_values_as_llll((t_notation_obj *)x, note, k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING, true);
                         while (tmp && tmp != WHITENULL) {
-                            set_slots_values_to_note_from_llll((t_notation_obj *)x, tmp, slots);
+                            note_set_slots_from_llll((t_notation_obj *)x, tmp, slots);
                             tmp = tmp->tie_to;
                         }
                     }
@@ -12700,10 +12729,10 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                             clone_slots_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, (t_notation_item *)newnote, k_CLONE_FOR_ORIGINAL);
                                             erase_all_notationitem_slots((t_notation_obj *)x, (t_notation_item *)curr_ch);
                                         } else {
-                                            set_slots_values_to_note_from_llll((t_notation_obj *)x, newnote, x->r_ob.default_noteslots);
+                                            note_set_slots_from_llll((t_notation_obj *)x, newnote, x->r_ob.default_noteslots);
                                         }
 #else 
-                                        set_slots_values_to_note_from_llll((t_notation_obj *)x, newnote, x->r_ob.default_noteslots);
+                                        note_set_slots_from_llll((t_notation_obj *)x, newnote, x->r_ob.default_noteslots);
 #endif
                                     }
                                     
@@ -13290,7 +13319,9 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 clicked_ptr = marker;
                 clicked_obj = k_MARKER_REGION_TAIL;
                 break;
-            } else if (is_in_marker_shape((t_notation_obj *)x, marker, this_x, this_y) || is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y)){
+            } else if (is_in_marker_shape((t_notation_obj *)x, marker, this_x, this_y) ||
+                       (is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y) &&
+                        (!marker->next || !is_in_markername_shape((t_notation_obj *)x, marker->next, this_x, this_y)))){
                 if (modifiers == eCommandKey) {
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_DELETION)) {
                         undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);
@@ -14755,7 +14786,9 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
                         marker->r_sym_duration = long2rat(-1);
                     else
                         marker->duration_ms = -1;
-                } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) || is_in_marker_shape((t_notation_obj *)x, marker, pt.x, pt.y)){
+                } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) ||
+                           (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) &&
+                            (!marker->next || !is_in_markername_shape((t_notation_obj *)x, marker->next, pt.x, pt.y)))){
                     unlock_general_mutex((t_notation_obj *)x);    
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))
                         start_editing_markername((t_notation_obj *) x, patcherview, marker, ms_to_xposition((t_notation_obj *)x, marker->position_ms, 1) + 3 * x->r_ob.zoom_y);
@@ -15123,7 +15156,7 @@ void add_note_to_chord_from_linear_edit(t_score *x, long force_diatonic_step){
         
         this_nt = build_note_from_ac_av((t_notation_obj *) x, 2, argv);
         if (this_nt)
-            set_slots_values_to_note_from_llll((t_notation_obj *)x, this_nt, x->r_ob.default_noteslots);
+            note_set_slots_from_llll((t_notation_obj *)x, this_nt, x->r_ob.default_noteslots);
         
         undo_tick_create_for_notation_item((t_notation_obj *) x, x->r_ob.notation_cursor.chord->r_sym_duration.r_num < 0 ? (t_notation_item *)x->r_ob.notation_cursor.chord->parent : (t_notation_item *)x->r_ob.notation_cursor.chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         
@@ -16680,6 +16713,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             }
             return 0;
             break;
+            
         case 'g': // Cmd+Shift+G: Group tree
             if (modifiers & eCommandKey && modifiers & eShiftKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)) {
                 create_level_for_selected_tree_nodes(x);
@@ -16688,6 +16722,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             }
             return 0;
             break;
+            
         case 't': // letter t: 
             if (modifiers & eCommandKey && modifiers & eShiftKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE) && x->r_ob.allow_lock) { 
                 if (x->r_ob.selection_type == k_MEASURE) {
@@ -16702,6 +16737,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             }
             return 0;
             break;
+            
         case 48: case 49: case 50: case 51: case 52: case 53: case 54: case 55: case 56: case 57: 
             // change slot view
             // detect the selection type
@@ -16719,11 +16755,15 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 }
             }
             return 0;
-            break; 
+            break;
+            
         case 'c': // Cmd+C
+        case 'x': // Cmd+X
             if (modifiers & eCommandKey && x->r_ob.allow_copy_paste) {
                 // copy!
-                if (x->r_ob.active_slot_num >= 0 && x->r_ob.active_slot_notationitem) { // we copy the slot
+                if (x->r_ob.num_selecteditems == 1 && x->r_ob.firstselecteditem->type == k_DYNAMICS) { // copy dynamics
+                    notationobj_copy_slot((t_notation_obj *)x, &clipboard, ((t_dynamics *)x->r_ob.firstselecteditem)->owner_item, x->r_ob.link_dynamics_to_slot-1, keycode == 'x');
+                } else if (x->r_ob.active_slot_num >= 0 && x->r_ob.active_slot_notationitem) { // we copy the slot
                     if (x->r_ob.selected_slot_items->l_size > 0)
                         notationobj_copy_slot_selection((t_notation_obj *)x, &clipboard, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, keycode == 'x');
                     else
@@ -17887,8 +17927,8 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                     double new_midicents = nt->midicents;
                     t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, 0., cut_rel_pos, NULL);
                     t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, cut_rel_pos, 1., &new_midicents);
-                    set_breakpoints_values_to_note_from_llll((t_notation_obj *)x, nt, left_bpt);
-                    set_breakpoints_values_to_note_from_llll((t_notation_obj *)x, new_nt, right_bpt);
+                    note_set_breakpoints_from_llll((t_notation_obj *)x, nt, left_bpt);
+                    note_set_breakpoints_from_llll((t_notation_obj *)x, new_nt, right_bpt);
                     new_nt->midicents = new_midicents;
                     llll_free(left_bpt);
                     llll_free(right_bpt);
@@ -17901,8 +17941,8 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                         t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, -1);
                         llll_wrap_once(&left_slot);
                         llll_wrap_once(&right_slot);
-                        set_slots_values_to_note_from_llll((t_notation_obj *)x, nt, left_slot);
-                        set_slots_values_to_note_from_llll((t_notation_obj *)x, new_nt, right_slot);
+                        note_set_slots_from_llll((t_notation_obj *)x, nt, left_slot);
+                        note_set_slots_from_llll((t_notation_obj *)x, new_nt, right_slot);
                     }
                 }
             }
