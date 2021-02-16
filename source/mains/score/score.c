@@ -10606,7 +10606,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         else if (x->r_ob.j_mousedown_obj_type == k_LOOP_END)
             end_tp = this_tp;
             
-        if (timepoints_compare(start_tp, end_tp) > 0) {
+        if (timepoint_compare(start_tp, end_tp) > 0) {
             t_timepoint temp = start_tp;
             start_tp = end_tp;
             end_tp = temp;

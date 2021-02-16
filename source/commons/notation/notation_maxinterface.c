@@ -4768,7 +4768,7 @@ t_bach_attribute *pt_to_attribute_to_edit(t_bach_inspector_manager *man, t_objec
 }
 
 
-t_jrgba get_bach_attribute_as_color(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
+t_jrgba bach_attribute_get_as_color(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
 {
     t_notation_obj *r_ob = (man->bach_managing ? (t_notation_obj *)man->owner : NULL);
 	long ac = 0;
@@ -4790,7 +4790,7 @@ t_jrgba get_bach_attribute_as_color(t_bach_inspector_manager *man, void *elem, t
 }
 
 
-char *get_bach_attribute_as_character(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
+char *bach_attribute_get_as_character(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
 {
     t_notation_obj *r_ob = (man->bach_managing ? (t_notation_obj *)man->owner : NULL);
 	long ac = 0;
@@ -4811,7 +4811,7 @@ char *get_bach_attribute_as_character(t_bach_inspector_manager *man, void *elem,
 }
 
 
-char *get_bach_attribute_as_string(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
+char *bach_attribute_get_as_string(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
 {
     if (!elem) {
         char *res = (char *)bach_newptr(2*sizeof(char));
@@ -4880,7 +4880,7 @@ void start_editing_bach_attribute(t_notation_obj *r_ob, t_bach_inspector_manager
 	jbox_set_fontname(object_owning_textfield, gensym("Arial"));
 	jbox_set_fontsize(object_owning_textfield, CONST_BACH_INSPECTOR_TEXT_FONT_SIZE * zoom);
 	
-	char *text = attr->display_type == k_BACH_ATTR_DISPLAY_CHAR ? get_bach_attribute_as_character(man, elem, attr) : get_bach_attribute_as_string(man, elem, attr);
+	char *text = attr->display_type == k_BACH_ATTR_DISPLAY_CHAR ? bach_attribute_get_as_character(man, elem, attr) : bach_attribute_get_as_string(man, elem, attr);
 
 	object_method(patcherview, gensym("insertboxtext"), object_owning_textfield, text);
 	bach_freeptr(text);

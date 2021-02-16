@@ -202,7 +202,7 @@ void write_text_standard_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g
 
 
 
-char timepoints_compare(t_timepoint tp1, t_timepoint tp2){ 
+char timepoint_compare(t_timepoint tp1, t_timepoint tp2){
 // compares two timepoints. Returns 1 if tp1 is greater, -1 if tp2 is greater, 0 if they coincide.
     if (tp1.measure_num > tp2.measure_num) 
         return 1;
@@ -9684,7 +9684,7 @@ t_rational get_ts_sym_duration(t_timesignature ts) { // calcualte the symbolic (
 }
 
 t_rational get_sym_durations_between_timepoints(t_scorevoice *voice, t_timepoint tp1, t_timepoint tp2) { // calcualte the symbolic (rational) duration between two timepoints
-    if (timepoints_compare(tp1, tp2) >= 0)
+    if (timepoint_compare(tp1, tp2) >= 0)
         return long2rat(0);
     else {
         long start_meas = tp1.measure_num;
@@ -9833,8 +9833,8 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     }
     
     out_duration = long2rat(0);
-    while (tempo && (timepoints_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp2) <= 0)) {
-        long cmp1 = timepoints_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp1);
+    while (tempo && (timepoint_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp2) <= 0)) {
+        long cmp1 = timepoint_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp1);
         if (cmp1 <= 0) { // tempo->changepoint BEFORE tp1
             if (!tempo_L_has_changed)
                 free_tempo(r_ob, tempo_L);
@@ -9844,7 +9844,7 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
             // gotta add a trapece
             t_rational newtempo, trapece;
             tempo_R = tempo;
-            if (timepoints_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) {
+            if (timepoint_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) {
                 intermediate_point = tp1;
                 intermediate_tempo = (tempo_L->interpolation_type == 1) ? get_intermediate_tempo(voice, tp1, tempo_L, tempo_R) : tempo_L->tempo_value;
             } else {
@@ -9872,10 +9872,10 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     }
     
     // last trapece
-    if (timepoints_compare(tp2, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint)) < 0) {  ///    tp1 --- tp2 --- L
+    if (timepoint_compare(tp2, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint)) < 0) {  ///    tp1 --- tp2 --- L
         intermediate_point = tp1;
         intermediate_tempo = tempo_L->tempo_value;
-    } else if (timepoints_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) { /// L --- tp1 --- tp2
+    } else if (timepoint_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) { /// L --- tp1 --- tp2
         intermediate_point = tp1;
         if (tempo_R) 
             intermediate_tempo = (tempo_L->interpolation_type == 1) ? get_intermediate_tempo(voice, tp1, tempo_L, tempo_R) : tempo_L->tempo_value;
@@ -9888,7 +9888,7 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     
     if (!tempo_R) // tempo_L was the last tempo! 
         tp2_tempo = tempo_L->tempo_value;
-    else if (timepoints_compare(build_timepoint(tempo_R->owner->measure_number, tempo_R->changepoint), tp2) == 0) // tempo change precisely on the end
+    else if (timepoint_compare(build_timepoint(tempo_R->owner->measure_number, tempo_R->changepoint), tp2) == 0) // tempo change precisely on the end
         tp2_tempo = (tempo_L->interpolation_type == 1) ? tempo_R->tempo_value : tempo_L->tempo_value;
     else // there's another tempo, but later
         tp2_tempo = (tempo_L->interpolation_type == 1) ? get_intermediate_tempo(voice, tp2, tempo_L, tempo_R) : tempo_L->tempo_value;
@@ -33401,7 +33401,7 @@ void approximate_for_too_high_rationals_fixed_den(t_llll *box_durations, t_ratio
 
 // a small function just like get_sym_durations_between_timepoints but with no need of *voice
 t_rational get_sym_durations_between_timepoints_from_measure_symdurations(t_llll *measure_symdurations, t_timepoint tp1, t_timepoint tp2) {
-    if (timepoints_compare(tp1, tp2) >= 0)
+    if (timepoint_compare(tp1, tp2) >= 0)
         return long2rat(0);
     else {
         long start_meas = tp1.measure_num;
@@ -36225,7 +36225,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->m_inspector.active_bach_inspector_item = NULL;
     r_ob->m_inspector.active_bach_inspector_obj_type = k_NONE;
     r_ob->m_inspector.active_bach_inspector_item = NULL;
-    notation_obj_declare_bach_attributes(r_ob);
+    notation_obj_bach_attribute_declares(r_ob);
     r_ob->m_inspector.bach_inspector_scrollbar_pos = 0;
     r_ob->m_inspector.bach_inspector_scrollbar_delta_y = 0;
     r_ob->m_inspector.active_inspector_enumindex = NULL;

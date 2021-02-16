@@ -159,7 +159,7 @@ void initialize_attr_manager(t_bach_attr_manager *man){
 	}
 }
 
-void declare_bach_attribute(t_bach_attr_manager *man, char forced_position, t_symbol *name, const char *displayed_label, long owner_type, long field_position, long attr_type, long attr_size, char display_type, long preprocess_flags, long postprocess_flags)
+void bach_attribute_declare(t_bach_attr_manager *man, char forced_position, t_symbol *name, const char *displayed_label, long owner_type, long field_position, long attr_type, long attr_size, char display_type, long preprocess_flags, long postprocess_flags)
 {
 	long current_num_attr = man->num_attr[owner_type];
 	long n = (forced_position < 0 || current_num_attr >= CONST_MAX_BACH_ATTR - 1) ? current_num_attr : MIN(forced_position, current_num_attr);
@@ -194,7 +194,7 @@ void declare_bach_attribute(t_bach_attr_manager *man, char forced_position, t_sy
 	
 }
 
-t_bach_attribute *get_bach_attribute(t_bach_attr_manager *man, long owner_type, t_symbol *name)
+t_bach_attribute *bach_attribute_get(t_bach_attr_manager *man, long owner_type, t_symbol *name)
 {
 	long i;
 	for (i = 0; i < man->num_attr[owner_type]; i++) {
@@ -364,7 +364,7 @@ void get_access_types_as_sym_list(t_notation_obj *r_ob, t_symbol **list){
 }
 
 
-void notation_obj_declare_bach_attributes(t_notation_obj *r_ob){
+void notation_obj_bach_attribute_declares(t_notation_obj *r_ob){
 
 	// SLOTINFO ATTRIBUTES
 	t_symbol *slottypes[k_NUM_SLOT_TYPES];
@@ -376,17 +376,17 @@ void notation_obj_declare_bach_attributes(t_notation_obj *r_ob){
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, "Name", k_SLOTINFO, t_slotinfo, slot_name, k_BACH_ATTR_SYM, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_type, "Type", k_SLOTINFO, t_slotinfo, slot_type, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
 	get_slottypes_as_sym_list(r_ob, slottypes);
-	bach_attribute_add_enumindex(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_type), k_NUM_SLOT_TYPES, slottypes);
+	bach_attribute_add_enumindex(bach_attribute_get(man, k_SLOTINFO, _llllobj_sym_type), k_NUM_SLOT_TYPES, slottypes);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_key, "Hot Key", k_SLOTINFO, t_slotinfo, slot_key, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_CHAR, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_color, "Color", k_SLOTINFO, t_slotinfo, slot_color, k_BACH_ATTR_COLOR, 1, k_BACH_ATTR_DISPLAY_COLOR, 0, 0);
 
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_access, "Access", k_SLOTINFO, t_slotinfo, access_type, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
     get_access_types_as_sym_list(r_ob, accesstypes);
-    bach_attribute_add_enumindex(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_access), 3, accesstypes);
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_SLOTINFO, _llllobj_sym_access), 3, accesstypes);
 
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_temporalmode, "Temporal Mode", k_SLOTINFO, t_slotinfo, slot_temporalmode, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
     get_slottemporalmodes_as_sym_list(r_ob, slottemporalmodes);
-    bach_attribute_add_enumindex(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_temporalmode), 3, slottemporalmodes);
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_SLOTINFO, _llllobj_sym_temporalmode), 3, slottemporalmodes);
 
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_extend, "Extend Beyond Tails", k_SLOTINFO, t_slotinfo, extend_beyond_tails, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 
@@ -414,17 +414,17 @@ void notation_obj_declare_bach_attributes(t_notation_obj *r_ob){
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_popup, "Is In Popup Menu", k_SLOTINFO, t_slotinfo, appear_in_popup_menu, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_linkto, "Linked To", k_SLOTINFO, t_slotinfo, linked_to, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
 	get_slotlinkages_as_sym_list(r_ob, slotlinkages);
-	bach_attribute_add_enumindex(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_linkto), k_NUM_SLOT_LINKAGES, slotlinkages);
+	bach_attribute_add_enumindex(bach_attribute_get(man, k_SLOTINFO, _llllobj_sym_linkto), k_NUM_SLOT_LINKAGES, slotlinkages);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_rightclick, "Right-Click Pop Up", k_SLOTINFO, t_slotinfo, pops_up_by_right_click, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	bach_attribute_add_functions(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_background), NULL, (bach_setter_fn)set_bach_attr_slotinfo_flags, NULL, NULL, NULL);
-	bach_attribute_add_functions(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_popup), NULL, (bach_setter_fn)set_bach_attr_slotinfo_flags, NULL, NULL, NULL);
-	bach_attribute_add_functions(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_rightclick), NULL, (bach_setter_fn)set_bach_attr_slotinfo_flags, NULL, NULL, NULL);
-	bach_attribute_add_functions(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_linkto), NULL, (bach_setter_fn)set_bach_attr_slotinfo_flags, NULL, NULL, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_SLOTINFO, _llllobj_sym_background), NULL, (bach_setter_fn)set_bach_attr_slotinfo_flags, NULL, NULL, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_SLOTINFO, _llllobj_sym_popup), NULL, (bach_setter_fn)set_bach_attr_slotinfo_flags, NULL, NULL, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_SLOTINFO, _llllobj_sym_rightclick), NULL, (bach_setter_fn)set_bach_attr_slotinfo_flags, NULL, NULL, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_SLOTINFO, _llllobj_sym_linkto), NULL, (bach_setter_fn)set_bach_attr_slotinfo_flags, NULL, NULL, NULL);
 
 
 	// NOTE ATTRIBUTES
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, "Name", k_NOTE, t_notation_item, names, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-	bach_attribute_add_functions(get_bach_attribute(man, k_NOTE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_NOTE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_cents, "Cents", k_NOTE, t_note, midicents, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_pitch, "Pitch", k_NOTE, t_note, midicents, k_BACH_ATTR_SYM, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
@@ -435,45 +435,45 @@ void notation_obj_declare_bach_attributes(t_notation_obj *r_ob){
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_NOTE, t_note, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_NOTE, t_note, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_solo, "Solo", k_NOTE, t_note, solo, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	bach_attribute_add_functions(get_bach_attribute(man, k_NOTE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-	bach_attribute_add_functions(get_bach_attribute(man, k_NOTE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-	bach_attribute_add_functions(get_bach_attribute(man, k_NOTE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_NOTE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_NOTE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_NOTE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
 	r_ob->m_inspector.attr_manager->miniature[k_NOTE] = (bach_inspector_miniature_fn)bach_note_miniature_fn;
 
 	// CHORD ATTRIBUTES
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, "Name", k_CHORD, t_notation_item, names, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-	bach_attribute_add_functions(get_bach_attribute(man, k_CHORD, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_CHORD, t_chord, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_CHORD, t_chord, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_solo, "Solo", k_CHORD, t_chord, solo, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	bach_attribute_add_functions(get_bach_attribute(man, k_CHORD, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-	bach_attribute_add_functions(get_bach_attribute(man, k_CHORD, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-	bach_attribute_add_functions(get_bach_attribute(man, k_CHORD, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
 	r_ob->m_inspector.attr_manager->miniature[k_CHORD] = (bach_inspector_miniature_fn)bach_chord_miniature_fn;
 
 	// VOICE ATTRIBUTES
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, "Name", k_VOICE, t_notation_item, names, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-	bach_attribute_add_functions(get_bach_attribute(man, k_VOICE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_VOICE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_midichannel, "Midichannel", k_VOICE, t_voice, midichannel, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_clef, "Clef", k_VOICE, t_voice, clef, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_key, "Key", k_VOICE, t_voice, key, k_BACH_ATTR_SYM, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	get_clefs_as_sym_list(r_ob, clefs);
-	bach_attribute_add_enumindex(get_bach_attribute(man, k_VOICE, _llllobj_sym_clef), 23, clefs);
+	bach_attribute_add_enumindex(bach_attribute_get(man, k_VOICE, _llllobj_sym_clef), 23, clefs);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_stafflines, "Staff Lines", k_VOICE, t_voice, staff_lines_dummy, k_BACH_ATTR_SYM, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_VOICE, t_voice, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_VOICE, t_voice, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man,-1,  _llllobj_sym_solo, "Solo", k_VOICE, t_voice, solo, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-	bach_attribute_add_functions(get_bach_attribute(man, k_VOICE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-	bach_attribute_add_functions(get_bach_attribute(man, k_VOICE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-	bach_attribute_add_functions(get_bach_attribute(man, k_VOICE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_VOICE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_VOICE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_VOICE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
 	
 	r_ob->m_inspector.attr_manager->miniature[k_VOICE] = (bach_inspector_miniature_fn)bach_voice_miniature_fn;
 
 
 	// MARKERS
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, "Name", k_MARKER, t_notation_item, names, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-	bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
+	bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_onset, "Onset (ms)", k_MARKER, t_marker, position_ms, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 
 	// PITCH BREAKPOINTS
@@ -611,7 +611,7 @@ void paint_bach_inspector_items(t_notation_obj *r_ob, t_bach_inspector_manager *
 				continue;
 			
 			if (attr->display_type == k_BACH_ATTR_DISPLAY_TEXT) {
-				content_txt = get_bach_attribute_as_string(man, obj, attr);
+				content_txt = bach_attribute_get_as_string(man, obj, attr);
 				write_text(g, jf_text, inactive ? inactive_color : text_color, content_txt, column2_x, ypos, rect.width - column2_x, ystep, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_VCENTERED, true, true);
 
 			} else if (attr->display_type == k_BACH_ATTR_DISPLAY_ENUMINDEX) {
@@ -649,7 +649,7 @@ void paint_bach_inspector_items(t_notation_obj *r_ob, t_bach_inspector_manager *
 				jgraphics_fill(g);
 				
 			} else if (attr->display_type == k_BACH_ATTR_DISPLAY_CHAR) {
-				content_txt = get_bach_attribute_as_character(man, obj, &man->attr_manager->attr[obj_type][i]);
+				content_txt = bach_attribute_get_as_character(man, obj, &man->attr_manager->attr[obj_type][i]);
 				write_text(g, jf_text, inactive ? inactive_color : text_color, content_txt, column2_x, ypos + step_vpad_before_text, rect.width - column2_x, row_vheight, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_VCENTERED, true, true);
 			
 			} else if (attr->display_type == k_BACH_ATTR_DISPLAY_ONOFF) {
@@ -660,7 +660,7 @@ void paint_bach_inspector_items(t_notation_obj *r_ob, t_bach_inspector_manager *
 				}
 
 			} else if (attr->display_type == k_BACH_ATTR_DISPLAY_COLOR) {
-				t_jrgba color = get_bach_attribute_as_color(man, obj, &man->attr_manager->attr[obj_type][i]);
+				t_jrgba color = bach_attribute_get_as_color(man, obj, &man->attr_manager->attr[obj_type][i]);
 				paint_rectangle_rounded(g, inactive ? inactive_color : get_grey(0.1), color, column2_x - 2, ypos - 2 + step_vpad_before_text, (column2b_x + 15 * zoom) - column2_x + 2, row_vheight + 2, 1.5, 2 * zoom, 2 * zoom);
 			}
 			
@@ -708,7 +708,7 @@ void paint_bach_inspector_items(t_notation_obj *r_ob, t_bach_inspector_manager *
 			} else if (attr->display_type == k_BACH_ATTR_DISPLAY_COLOR && man->active_inspector_color == attr) {
 				double ypos = CONST_BACH_INSPECTOR_ITEM_UY_STEP * zoom * attr->idx + (CONST_BACH_INSPECTOR_ITEM_UY_STEP - CONST_BACH_INSPECTOR_ITEM_LINE_UHEIGHT) * zoom;
 				t_rect palette_rect = build_rect(column2_x - 2, ypos + ystep + 4, 140 * zoom, 70 * zoom);
-				t_jrgba color = get_bach_attribute_as_color(man, obj, attr);
+				t_jrgba color = bach_attribute_get_as_color(man, obj, attr);
 				t_jfont *jf_coeff = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(10 * zoom));
 				man->active_inspector_color_palette_rect = build_rect(palette_rect.x, palette_rect.y + layer_y_pos, palette_rect.width, palette_rect.height);
 				man->active_inspector_color_spectrum_rect = build_rect(column2_x - 2 + 140 * zoom, man->active_inspector_color_palette_rect.y, 20 * zoom, man->active_inspector_color_palette_rect.height);
@@ -1038,7 +1038,7 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
             slot_check_access(r_ob, ((t_slotinfo *)obj)->slot_num);
 		else if (attr->name == _llllobj_sym_color) {
 			t_atom av[4];
-			t_jrgba color = get_bach_attribute_as_color(&r_ob->m_inspector, obj, attr);
+			t_jrgba color = bach_attribute_get_as_color(&r_ob->m_inspector, obj, attr);
 			assure_color_goodness(&color);
 			atom_setfloat(av, color.red);
 			atom_setfloat(av+1, color.green);
@@ -1968,7 +1968,7 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
                         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 					
 				} else if (attr->display_type == k_BACH_ATTR_DISPLAY_COLOR) {
-					t_jrgba color = get_bach_attribute_as_color(man, elem, attr);
+					t_jrgba color = bach_attribute_get_as_color(man, elem, attr);
 					man->active_inspector_color = attr;
 					man->active_inspector_top_right_color = get_01normalized_color(color);
                     if (r_ob)
@@ -2074,7 +2074,7 @@ long handle_mousedrag_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 				if (modifiers & eShiftKey && modifiers & eCommandKey)
 					delta_y *= CONST_FINER_FROM_KEYBOARD;
 				
-				newcolor = get_bach_attribute_as_color(man, man->active_bach_inspector_item, man->active_inspector_color);
+				newcolor = bach_attribute_get_as_color(man, man->active_bach_inspector_item, man->active_inspector_color);
 				newcolor.alpha -= delta_y/(CONST_ALPHA_DRAG_UCHANGE * zoom);				
 				clip_double(&newcolor.alpha, 0, 1);
 			} else {
@@ -2091,7 +2091,7 @@ long handle_mousedrag_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 		} else if (mousedown_obj_type == k_BACH_INSPECTOR_COLOR_SPECTRUM && man->active_inspector_color) {
 			t_atom av[4];
 			double xx, yy;
-			t_jrgba color = get_bach_attribute_as_color(man, man->active_bach_inspector_item, man->active_inspector_color);
+			t_jrgba color = bach_attribute_get_as_color(man, man->active_bach_inspector_item, man->active_inspector_color);
 
 			if (man->active_inspector_color->still_not_dragged) {
 				bach_preprocess_attr(man, elem, man->active_inspector_color);

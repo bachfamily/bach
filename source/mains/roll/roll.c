@@ -284,7 +284,7 @@ char force_inscreenpos_ms(t_roll *x, double position, double inscreen_ms, char s
 char force_inscreen_ms_to_boundary(t_roll *x, double inscreen_ms, char clip_to_length, char send_domain_if_changed, char also_check_scheduling, char also_move_mousedown_pt);
 char force_inscreen_ms_rolling(t_roll *x, double inscreen_ms, char clip_to_length, char send_domain_if_changed, char also_check_scheduling, char also_move_mousedown_pt);
 
-void roll_declare_bach_attributes(t_roll *x);
+void roll_bach_attribute_declares(t_roll *x);
 
 void roll_delete_voice(t_roll *x, t_rollvoice *voice);
 void roll_delete_voiceensemble(t_roll *x, t_voice *any_voice_in_voice_ensemble);
@@ -10913,7 +10913,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_ROLL, (rebuild_fn) set_roll_from_llll, (notation_obj_fn) create_whole_roll_undo_tick, 
                             (notation_obj_notation_item_fn) force_notation_item_inscreen, (notation_obj_undo_redo_fn)roll_new_undo_redo,  (bach_paint_ext_fn)roll_paint_ext);
 
-    roll_declare_bach_attributes(x);
+    roll_bach_attribute_declares(x);
     
     x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
 
@@ -18212,11 +18212,11 @@ void roll_redo(t_roll *x)
         roll_old_redo(x);
 }
 
-void roll_declare_bach_attributes(t_roll *x){
+void roll_bach_attribute_declares(t_roll *x){
     // CHORD ATTRIBUTES
     t_bach_attr_manager *man = x->r_ob.m_inspector.attr_manager;
     DECLARE_BACH_ATTR(man, 1, _llllobj_sym_onset, (char *)"Onset (ms)", k_CHORD, t_chord, onset, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_CHORD, _llllobj_sym_onset), NULL, NULL, NULL, (bach_attr_process_fn)check_all_chords_order_and_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_onset), NULL, NULL, NULL, (bach_attr_process_fn)check_all_chords_order_and_correct_scheduling_fn, NULL);
 
     // MARKER ATTRIBUTES
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_role, (char *)"Role", k_MARKER, t_marker, role, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
@@ -18227,10 +18227,10 @@ void roll_declare_bach_attributes(t_roll *x){
     markerroles[3] = gensym("Measure Barline");
     markerroles[4] = gensym("Measure Division");
     markerroles[5] = gensym("Measure Subdivision");
-    bach_attribute_add_enumindex(get_bach_attribute(man, k_MARKER, _llllobj_sym_role), 6, markerroles);
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_MARKER, _llllobj_sym_role), 6, markerroles);
 
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_value, (char *)"Value", k_MARKER, t_marker, content, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_value), NULL, NULL, NULL, (bach_attr_process_fn)check_all_chords_order_and_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_value), NULL, NULL, NULL, (bach_attr_process_fn)check_all_chords_order_and_correct_scheduling_fn, NULL);
 }
 
 
