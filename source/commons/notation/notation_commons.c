@@ -24238,7 +24238,7 @@ void assign_chord_lyrics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_lyric
         
         if (slot && slot->firstitem) {
             char *text = (char *)slot->firstitem->item;
-            char len = strlen(text);
+            long len = strlen(text);
             double width, height;
             char *text_ok = (char *)bach_newptr((len + 1) * sizeof(char));
             
