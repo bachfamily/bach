@@ -8415,7 +8415,7 @@ t_llll* get_subvoice_values_as_llll(t_score *x, t_scorevoice *voice, long start_
     t_tempo tempocopy;
     t_measure *startmeas = nth_measure_of_scorevoice(voice, start_meas);
     t_measure *temp_meas = startmeas;
-    if (!startmeas->firsttempo || rat_long_cmp(startmeas->firsttempo->changepoint, 0) > 0) {
+    if (startmeas && (!startmeas->firsttempo || rat_long_cmp(startmeas->firsttempo->changepoint, 0) > 0)) {
         tempotoadd = voice_get_first_tempo((t_notation_obj *)x, (t_voice *)voice);
         if (tempotoadd && tempotoadd->owner && tempotoadd->owner->measure_number >= start_meas)
             tempotoadd = NULL;

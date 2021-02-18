@@ -2508,6 +2508,9 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
             if (selection_only && !notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
                 continue;
             
+            if (!ch->firstnote)
+                continue;
+            
             chord_assign_velocities_from_dynamics(r_ob, ch, dyn_vel_associations, &params, curr_dyn_chord,
                                                   prev_dyn_mark, curr_dyn, next_dyn_chord && next_dyn && next_dyn->num_marks > 0 ? next_dyn->firstmark : NULL,
                                                   curr_dyn_onset, next_dyn_onset, true, bptmode, slot_num);
