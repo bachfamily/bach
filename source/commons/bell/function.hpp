@@ -28,41 +28,39 @@ class funArg {
 protected:
     t_symbol *sym;
     astNode *node;
-    countedList<t_symbol *> *varNamesList;
-    t_symbol **varNames;
+    countedList<t_localVar> *varsList;
+    t_localVar *vars;
     
 public:
-    funArg(t_symbol *sym, astNode *node = nullptr) : sym(sym), node(node), varNamesList(nullptr), varNames(nullptr) { };
+    funArg(t_symbol *sym, astNode *node = nullptr) : sym(sym), node(node), varsList(nullptr), vars(nullptr) { };
     
-    funArg(t_symbol *sym, astNode *node, countedList<t_symbol *> *names) : funArg(sym, node) {
-        if (names) {
-            varNamesList = new countedList<t_symbol *>(names);
-            //delete names;
+    funArg(t_symbol *sym, astNode *node, countedList<t_localVar> *v) : funArg(sym, node) {
+        if (v) {
+            varsList = new countedList<t_localVar>(v);
         } else
-            names = nullptr;
+            varsList = nullptr;
     };
     
     virtual ~funArg() {
-        if (varNamesList)
-            delete varNamesList;
-        if (varNames)
-            delete[] varNames;
+        if (varsList)
+            delete varsList;
+        if (vars)
+            delete[] vars;
     }
     
     void conform() {
-        if (varNamesList) {
-            varNamesList->copyIntoNullTerminatedArray(&varNames);
-            delete varNamesList;
-            varNamesList = nullptr;
+        if (varsList) {
+            varsList->copyIntoNullTerminatedArray(&vars);
+            delete varsList;
+            varsList = nullptr;
         }
     };
     
     t_symbol* getSym() { return sym; };
     astNode* getNode() { return node; };
-    countedList<t_symbol *> *getVarNamesList() { return varNamesList; };
-    t_symbol **getVarNames() { return varNames; };
+    countedList<t_localVar> *getVarsList() { return varsList; };
+    t_localVar *getVars() { return vars; };
 };
-
 
 class t_function : public t_countable
 {
@@ -75,8 +73,10 @@ protected:
 
     funArg **idx2argNameAndDefault; // 1-based (thus [0] is left empty)
 
+public:
     std::unordered_map<t_symbol*, long> argName2idx;
 
+protected:
     t_bool variadic;
     
     t_function() :  namedArgumentsCount(0),
@@ -108,9 +108,9 @@ public:
     long getArgIdx(t_symbol *s);
     
     virtual void setOutletData(long outlet, t_llll *ll) { };
-    t_symbol *getName() { return name; };
+    t_symbol* getName() { return name; };
     
-    virtual t_symbol **getLocalVariableNames() { return nullptr; };
+    virtual t_localVar* getLocalVariables() { return nullptr; };
     
     virtual void keep(t_symbol* name, t_llll* ll) { }
     virtual void unkeep(t_symbol *name) { }
@@ -165,7 +165,7 @@ protected:
         
     };
     
-    t_symbol **localVariableNames;
+    t_localVar *localVariables;
     keptTable kept;
 
     astNode *ast;
@@ -174,10 +174,10 @@ protected:
     virtual ~t_userFunction();
 
 public:
-    t_userFunction(countedList<funArg *> *argumentsList, countedList<t_symbol *> *localVariableNamesList, astNode *ast, t_codableobj *culprit);
+    t_userFunction(countedList<funArg *> *argumentsList, countedList<t_localVar> *localVariablesList, astNode *ast, t_codableobj *culprit);
     
     virtual t_llll* call(const t_execEnv &context);
-    virtual t_symbol **getLocalVariableNames() { return localVariableNames; };
+    virtual t_localVar* getLocalVariables() { return localVariables; };
     
     void keep(t_symbol* name, t_llll* ll) { return kept.insert(name, ll); }
     void unkeep(t_symbol *name) { kept.remove(name); }
@@ -204,7 +204,7 @@ protected:
     
 public:
     t_mainFunction(astNode *mainAst,
-                   countedList<t_symbol *> *localVariableNamesList,
+                   countedList<t_localVar> *localVariablesList,
                    std::unordered_set<t_globalVariable*> *globalVariables,
                    pvMap *name2astVars,
                    t_codableobj *caller);
