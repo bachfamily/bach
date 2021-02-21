@@ -2001,7 +2001,7 @@ void uislot_mousewheel(t_uislot *x, t_object *view, t_pt pt, long modifiers, dou
     unlock_general_mutex((t_notation_obj *)x);
     
     if (res) {
-        jbox_redraw((t_jbox *)x);
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
         send_domain(x, 1, NULL);
     }
 }
