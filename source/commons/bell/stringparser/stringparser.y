@@ -176,7 +176,7 @@
             if (params->liftedVariablesStack == params->liftedVariablesStackBase) {
                 *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, true), *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
             } else {
-                t_bool lifted = (*(params->liftedVariablesStack))->find(name) == (*(params->liftedVariablesStack))->end();
+                t_bool lifted = (*(params->liftedVariablesStack))->find(name) != (*(params->liftedVariablesStack))->end();
                 
                 *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, lifted), *(params->localVariablesStack));
 
