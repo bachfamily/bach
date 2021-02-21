@@ -167,7 +167,7 @@ union YYSTYPE
     countedList<astNode *> *nl;
     countedList<symNodePair *> *snpl;
     countedList<funArg *> *funarglist;
-    countedList<t_symbol *> *liftedarglist;
+    countedList<t_localVar> *liftedarglist;
     countedList<forArg *> *fal;
     lvalueStepList *lvsl;
     symNodePair *snp;

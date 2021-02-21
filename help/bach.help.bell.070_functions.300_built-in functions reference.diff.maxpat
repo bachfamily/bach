@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 2,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"id" : "obj-9",
@@ -82,6 +83,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 296.0, 410.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -134,6 +136,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 117.0, 192.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -166,7 +169,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 39.0, 325.0, 36.0 ],
-					"text" : "The diff() function returns the set difference of two lllls, like the bach.intersection object",
+					"text" : "The diff() function returns the set difference of two lllls, like the bach.diff object",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

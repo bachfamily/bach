@@ -165,14 +165,19 @@ static YYSTYPE yyval_default;
             (**(params->localVariablesAuxMapStack))[name] = 1;
             
             if (params->liftedVariablesStack == params->liftedVariablesStackBase) {
-                *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
+                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, true), *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
             } else {
-                auto lifted = (*(params->liftedVariablesStack))->find(name);
+                t_bool lifted = (*(params->liftedVariablesStack))->find(name) != (*(params->liftedVariablesStack))->end();
+                
+                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, lifted), *(params->localVariablesStack));
+
+                /*
                 if (lifted == (*(params->liftedVariablesStack))->end()) { // not lifted
-                    *(params->implicitArgumentsStack) = new countedList<funArg *>(new funArg(name), *(params->implicitArgumentsStack));
+                    *(params->argumentsStack) = new countedList<funArg *>(new funArg(name), *(params->argumentsStack));
                 } else { // old behavior: lifted
                     *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack));
                 }
+                 */
             }
         }
     }
@@ -375,31 +380,31 @@ static const unsigned char yytranslate[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned short yyrline[] =
 {
-       0,   206,   206,   211,   217,   223,   231,   232,   238,   242,
-     264,   268,   274,   279,   284,   289,   294,   299,   304,   309,
-     314,   319,   326,   330,   336,   341,   349,   349,   365,   365,
-     383,   383,   404,   404,   431,   438,   444,   444,   461,   466,
-     470,   470,   483,   487,   493,   494,   501,   506,   511,   517,
-     523,   529,   533,   539,   543,   547,   553,   558,   559,   560,
-     566,   567,   568,   569,   570,   573,   574,   580,   581,   593,
-     604,   608,   613,   617,   621,   625,   629,   633,   637,   641,
-     645,   649,   653,   657,   661,   665,   669,   673,   677,   681,
-     685,   689,   693,   697,   701,   705,   709,   713,   717,   721,
-     725,   729,   733,   737,   741,   745,   749,   753,   757,   761,
-     765,   769,   773,   777,   782,   789,   794,   802,   806,   810,
-     814,   821,   822,   828,   829,   830,   834,   838,   842,   846,
-     850,   854,   858,   862,   866,   870,   874,   878,   882,   886,
-     890,   894,   898,   902,   906,   910,   914,   918,   922,   926,
-     930,   934,   938,   942,   946,   950,   954,   959,   960,   964,
-     968,   972,   976,   980,   984,   988,   992,   996,  1000,  1004,
-    1008,  1012,  1016,  1020,  1024,  1028,  1032,  1036,  1040,  1044,
-    1048,  1052,  1056,  1060,  1064,  1068,  1072,  1076,  1080,  1084,
-    1089,  1093,  1097,  1101,  1105,  1109,  1113,  1117,  1121,  1125,
-    1129,  1133,  1137,  1141,  1145,  1149,  1153,  1157,  1161,  1165,
-    1169,  1173,  1180,  1184,  1188,  1192,  1196,  1200,  1204,  1209,
-    1215,  1221,  1227,  1233,  1239,  1245,  1254,  1258,  1261,  1265,
-    1271,  1276,  1281,  1282,  1285,  1286,  1287,  1290,  1298,  1306,
-    1311,  1316
+       0,   211,   211,   216,   222,   228,   236,   237,   243,   247,
+     269,   273,   279,   284,   289,   294,   299,   304,   309,   314,
+     319,   324,   331,   335,   341,   346,   354,   354,   370,   370,
+     388,   388,   409,   409,   434,   441,   447,   447,   464,   469,
+     473,   473,   486,   490,   496,   497,   504,   509,   514,   520,
+     526,   532,   536,   542,   546,   550,   556,   561,   562,   563,
+     569,   570,   571,   572,   573,   576,   577,   583,   584,   596,
+     607,   611,   616,   620,   624,   628,   632,   636,   640,   644,
+     648,   652,   656,   660,   664,   668,   672,   676,   680,   684,
+     688,   692,   696,   700,   704,   708,   712,   716,   720,   724,
+     728,   732,   736,   740,   744,   748,   752,   756,   760,   764,
+     768,   772,   776,   780,   785,   792,   797,   805,   809,   813,
+     817,   824,   825,   831,   832,   833,   837,   841,   845,   849,
+     853,   857,   861,   865,   869,   873,   877,   881,   885,   889,
+     893,   897,   901,   905,   909,   913,   917,   921,   925,   929,
+     933,   937,   941,   945,   949,   953,   957,   962,   963,   967,
+     971,   975,   979,   983,   987,   991,   995,   999,  1003,  1007,
+    1011,  1015,  1019,  1023,  1027,  1031,  1035,  1039,  1043,  1047,
+    1051,  1055,  1059,  1063,  1067,  1071,  1075,  1079,  1083,  1087,
+    1092,  1096,  1100,  1104,  1108,  1112,  1116,  1120,  1124,  1128,
+    1132,  1136,  1140,  1144,  1148,  1152,  1156,  1160,  1164,  1168,
+    1172,  1176,  1183,  1187,  1191,  1195,  1199,  1203,  1207,  1212,
+    1218,  1224,  1230,  1236,  1242,  1248,  1257,  1261,  1264,  1268,
+    1274,  1279,  1284,  1285,  1288,  1289,  1290,  1293,  1301,  1309,
+    1314,  1319
 };
 #endif
 
@@ -2025,13 +2030,13 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->implicitArgumentsStack) = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.funarglist);
+    *++(params->argumentsStack) = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.funarglist);
 }
     break;
 
   case 27:
     {
-    t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     ((*yyvalp).n) = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;
     --(params->fnDepth);
@@ -2039,8 +2044,8 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function funargList FUNDEF");
 }
     break;
 
@@ -2050,13 +2055,13 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     params->fnDepth++;
-    *++(params->implicitArgumentsStack) = nullptr;
+    *++(params->argumentsStack) = nullptr;
 }
     break;
 
   case 29:
     {
-    t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     ((*yyvalp).n) = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;;
     --(params->fnDepth);
@@ -2064,8 +2069,8 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function FUNDEF");
 }
     break;
 
@@ -2073,18 +2078,18 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    for (countedList<t_symbol *> *v = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.liftedarglist)->getHead();
+    for (countedList<t_localVar> *v = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.liftedarglist)->getHead();
          v;
          v = v->getNext()) {
-             (*(params->liftedVariablesStack))->insert(v->getItem());
+             (*(params->liftedVariablesStack))->insert(v->getItem().getName());
     }
-    *++(params->implicitArgumentsStack) = (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.funarglist);
+    *++(params->argumentsStack) = (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.funarglist);
 }
     break;
 
   case 31:
     {
-    t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     ((*yyvalp).n) = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;
     --(params->fnDepth);
@@ -2092,8 +2097,8 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function funargList liftedargList");
 }
     break;
 
@@ -2103,20 +2108,18 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->implicitArgumentsStack);
-    for (countedList<t_symbol *> *v = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.liftedarglist)->getHead();
+    *++(params->argumentsStack) = nullptr;
+    for (countedList<t_localVar> *v = (((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.liftedarglist)->getHead();
          v;
          v = v->getNext()) {
-        (*(params->liftedVariablesStack))->insert(v->getItem());
+        (*(params->liftedVariablesStack))->insert(v->getItem().getName());
     }
-    *++(params->implicitArgumentsStack) = nullptr;
-
 }
     break;
 
   case 33:
     {
-    t_function *fn = new t_userFunction(*++(params->implicitArgumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
+    t_function *fn = new t_userFunction(*++(params->argumentsStack), *(params->localVariablesStack), (((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     ((*yyvalp).n) = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;;
     --(params->fnDepth);
@@ -2124,8 +2127,8 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function liftedargList FUNDEF");
 }
     break;
 
@@ -2152,7 +2155,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     {
     // two levels are pushed:
     // one for the function, whose definition is beginning here,
-    // and one for the parameter default, which is in an outer scope
+    // and one for the parameter default, which is in an inner scope
     params->localVariablesStack += 2;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     (**(params->localVariablesAuxMapStack))[(((yyGLRStackItem const *)yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.sym)] = 1;
@@ -2207,14 +2210,14 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 42:
     {
-    ((*yyvalp).liftedarglist) = new countedList<t_symbol *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
+    ((*yyvalp).liftedarglist) = new countedList<t_localVar>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: liftedargList (first term)\n");
 }
     break;
 
   case 43:
     {
-    ((*yyvalp).liftedarglist) = new countedList<t_symbol *>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.liftedarglist));
+    ((*yyvalp).liftedarglist) = new countedList<t_localVar>((((yyGLRStackItem const *)yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), (((yyGLRStackItem const *)yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.liftedarglist));
     code_dev_post ("parse: liftedargList (subsequent term)\n");
 }
     break;
@@ -5209,7 +5212,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
     params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
     params.liftedVariablesStack = params.liftedVariablesStackBase;
-    params.implicitArgumentsStack = params.implicitArgumentsStackBase;
+    params.argumentsStack = params.argumentsStackBase;
     params.gvt = bach->b_gvt;
     params.bifs = bach->b_bifTable;
     params.codeac = codeac;

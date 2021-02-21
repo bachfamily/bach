@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 2,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -47,8 +48,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 195.0, 406.0, 346.0, 54.0 ],
-					"text" : "A notable difference with respect to bach.expr is that a single-element llll is always iterated against a longer llll, as if bach.expr's scalarmode attribute was always on."
+					"patching_rect" : [ 195.0, 406.0, 347.0, 54.0 ],
+					"text" : "A notable difference with respect to bach.expr is that a single-element llll is always iterated against a longer llll, as if bach.expr's scalarmode attribute were always on."
 				}
 
 			}
@@ -105,6 +106,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 421.5, 171.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -195,6 +197,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 305.5, 288.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -270,6 +273,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 212.5, 224.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -331,6 +335,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 112.5, 196.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -348,7 +353,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 244.0, 75.0, 351.0, 98.0 ],
+					"patching_rect" : [ 244.0, 75.0, 352.0, 98.0 ],
 					"text" : "$x1, $x2 etc. are called input pseudovariables, and refer to the data the object receives from its inlets. (Spoiler: they can do more, but we'll talk about this later). \nbell also supports bach.expr-style input pseudovariables like $i1, $r1, $f1 and $p1, but they are generally not recommended."
 				}
 
@@ -406,7 +411,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
+					"patching_rect" : [ 6.0, 476.0, 688.0, 19.0 ],
 					"text" : "Tags: evaluation, language, script, scripting, code, bell, expression, operator, return, value, simple, function, sqrt, pow, input, pseudovariable",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
