@@ -948,6 +948,9 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_TOGGLE_INTERPOLATION_FOR_SELECTED_TEMPI:
             sprintf(buf, "Toggle Tempi Interpolation");
             break;
+        case k_UNDO_OP_ADD_SLUR:
+            sprintf(buf, "Add Slur");
+            break;
         case k_UNDO_OP_DELETE_SLURS_FOR_SELECTION:
             sprintf(buf, "Delete Slurs");
             break;
@@ -1580,7 +1583,11 @@ t_undo_redo_information *undo_redo_information_reverse(t_notation_obj *r_ob, t_u
     } else if (param == _llllobj_sym_name) {
         newcontent = get_names_as_llll(item, false);
         reverse_information = undo_redo_information_create(ID, type, k_UNDO_MODIFICATION_TYPE_CHANGE, param, path_after, path_before, k_HEADER_NONE, newcontent);
-        
+
+    } else if (param == _llllobj_sym_slur) {
+        newcontent = chord_get_slurs_as_llll(item->type == k_CHORD ? (t_chord *) item : NULL, false);
+        reverse_information = undo_redo_information_create(ID, type, k_UNDO_MODIFICATION_TYPE_CHANGE, param, path_after, path_before, k_HEADER_NONE, newcontent);
+
     } else if (type == k_WHOLE_NOTATION_OBJECT){
         // need to reconstruct the whole score
         if (r_ob->getstateforundo_function)
@@ -1685,6 +1692,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                     (r_ob->setmeasurefromllll)((t_object *)r_ob, meas, content, true, false, &need_update_solos);
                 meas->beaming_calculation_flags = (is_measure_single_whole_rest(r_ob, meas) && r_ob->tree_handling != k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED) ? k_BEAMING_CALCULATION_DO : k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING;
                 meas->need_recompute_beamings = true;
+                notationobj_make_temporary_slurs_permanent(r_ob);
                 compute_note_approximations_for_measure(r_ob, meas, true);
                 (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION;
                 if (need_update_solos) update_solos(r_ob);
@@ -1706,6 +1714,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                 measure->beaming_calculation_flags = k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING;
                 if (r_ob->setmeasurefromllll)
                     (r_ob->setmeasurefromllll)((t_object *)r_ob, measure, content, true, false, &need_update_solos);
+                notationobj_make_temporary_slurs_permanent(r_ob);
                 compute_note_approximations_for_measure(r_ob, measure, true);
                 (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION;
                 if (need_update_solos) update_solos(r_ob);
@@ -1726,7 +1735,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                     if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER)
                         (*flags) |= k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS;
                 }
-                
+                notationobj_make_temporary_slurs_permanent(r_ob);
             } else if (modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE) { // surely roll
                 (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH;
                 if (chord_delete(r_ob, (t_chord *)item, ((t_chord *)item)->prev, false))
@@ -1737,7 +1746,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                 if (r_ob->addchordfromllll)
                     (r_ob->addchordfromllll)((t_object *)r_ob, content, (t_rollvoice *)nth_voice_safe(r_ob, this_information->n_it_path_after.voice_num), false, true);
                 if (newch)
-                    newch->need_recompute_parameters = true;
+                    chord_set_recompute_parameters_flag(newch);
             }
 
         } else if (type == k_MARKER) {
@@ -2177,6 +2186,8 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
         content = get_multiple_flags_for_undo(r_ob, item);
     else if (param == _llllobj_sym_name)
         content = get_names_as_llll(item, false);
+    else if (param == _llllobj_sym_slur)
+        content = chord_get_slurs_as_llll(item->type == k_CHORD ? (t_chord *)item : NULL, false);
     else if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE || modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER || modif_type == k_UNDO_MODIFICATION_TYPE_INSERT)
         content = notation_item_get_values_as_llll_for_undo(r_ob, item);
 //    else if (modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE) // TO DO: check!!! Indeed NO we don't want this
@@ -2247,7 +2258,7 @@ t_undo_redo_information *undo_tick_create_for_notation_item(t_notation_obj *r_ob
     return operation;
 }
 
-void undo_tick_create_create_for_selected_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param){
+void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param){
     t_notation_item *undo_item;
     
     if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)

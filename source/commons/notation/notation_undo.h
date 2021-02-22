@@ -26,6 +26,7 @@
 
 #include "notation/notation.h"
 #include "notation/notation_markers.h"
+#include "notation/notation_slurs.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE
@@ -93,7 +94,7 @@ void undo_ticks_remove_dangling(t_notation_obj *r_ob, char also_clear_ticks_flag
 
 /** Unset the #k_FLAG_MODIF_UNDO, #k_FLAG_MODIF_FLAG_UNDO, #k_FLAG_MODIF_CHECK_ORDER_UNDO and #k_FLAG_MODIF_NAME_UNDO flags from any element in the r_ob->undo_notation_items_under_tick
     llll. This is automatically called by handle_change() when a new undo marker is added. Those flags are usually set by
-    undo_tick_create_create_for_selected_notation_item(), and are useful when dealing with selection to avoid saving the content of the same item multiple times.
+    undo_tick_create_for_selected_notation_item(), and are useful when dealing with selection to avoid saving the content of the same item multiple times.
     @ingroup        undo
     @param    r_ob    The notation object
  */
@@ -262,7 +263,7 @@ void undo_ticks_create_for_multiple_notation_items(t_notation_obj *r_ob, long nu
                         notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_REMOVE.
     @see                undo_tick_create_for_notation_item()
  */
-void undo_tick_create_create_for_selected_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param);
+void undo_tick_create_for_selected_notation_item(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param);
 
 /**    (DEPRECATED) Create undo ticks for all selected items.
     @ingroup            undo
@@ -276,9 +277,9 @@ void undo_tick_create_create_for_selected_notation_item(t_notation_obj *r_ob, t_
                         notation items have just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_TYPE_REMOVE.
     @remark                This function is DEPRECATED. The standard way to handle undo in bach is to add ticks individually to each it when it is modified. For instance
                         if we're changing the velocity to the selection, instead of using this function, we should add single ticks at the points of the code where
-                        we actually change the velocity for each given chord (via undo_tick_create_create_for_selected_notation_item()) and then add a marker directly with the
+                        we actually change the velocity for each given chord (via undo_tick_create_for_selected_notation_item()) and then add a marker directly with the
                         handle_change() function when the operation is performed.
-    @see                undo_tick_create_create_for_selected_notation_item()
+    @see                undo_tick_create_for_selected_notation_item()
  */
 long undo_tick_create_for_multiple_selected_notation_items(t_notation_obj *r_ob, e_element_types smallest_undoable_element, e_undo_modification_types modif_type, t_symbol *param);
 

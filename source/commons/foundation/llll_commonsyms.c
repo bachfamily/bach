@@ -428,6 +428,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_value =  gensym("value");
     x->s_thresh =  gensym("thresh");
     
+    x->s_slur = gensym("slur");
+    x->s_slurs = gensym("slurs");
 
     x->s_names = gensym("names");
     x->s_usecustomnumber = gensym("usecustomnumber");

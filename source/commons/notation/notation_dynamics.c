@@ -2794,7 +2794,7 @@ double dynamics_change_sel_energy_delta(t_notation_obj *r_ob, long delta_energy,
                             // nothing to do, we only want to change the standard range
                         } else {
                             if (ch && !(ch->r_it.flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-                                undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                                undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             
                             changed = 1;
                             
@@ -2816,7 +2816,7 @@ double dynamics_change_sel_energy_delta(t_notation_obj *r_ob, long delta_energy,
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                     recompute_all_for_measure(r_ob, ch->parent, false);
                 else
-                    ch->need_recompute_parameters = true;
+                    chord_set_recompute_parameters_flag(ch);
             }
             
         }

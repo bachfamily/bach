@@ -915,7 +915,7 @@ void recalculate_all_chord_parameters(t_score *x)
         while (temp_meas) {
             temp_ch = temp_meas->firstchord;
             while (temp_ch) {
-                temp_ch->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                chord_set_recompute_parameters_flag(temp_ch);
                 temp_ch = temp_ch->next;
             }
             temp_meas = temp_meas->next;
@@ -1552,7 +1552,7 @@ void set_measure_cents_values_from_llll(t_score *x, t_llll* measure_midicents, t
                     // turn_chord_into_rest(x, chord); // or we turn it into a pause??
                 }
                 chord_num++; onset = rat_rat_sum(onset, rat_abs(chord->r_sym_duration));
-                chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                chord_set_recompute_parameters_flag(chord);
                 chord = chord->next;
                 
             } else { // there was NO chord: but we can create one
@@ -1635,7 +1635,7 @@ void set_measure_cents_values_from_llll(t_score *x, t_llll* measure_midicents, t
                         }
                     }
                     chord_num++; onset = rat_rat_sum(onset, rat_abs(chord->r_sym_duration));
-                    chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                    chord_set_recompute_parameters_flag(chord);
                     chord = chord->next;
                 } else { // there was NO chord: we create one, with just one note
                     t_rational remaining_duration = rat_rat_diff(measure_dur, onset);
@@ -2023,7 +2023,7 @@ void set_measure_velocities_values_from_llll(t_score *x, t_llll* measure_velocit
                         }
                     }
                     chord_num++; onset = rat_rat_sum(onset, rat_abs(chord->r_sym_duration));
-                    chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                    chord_set_recompute_parameters_flag(chord);
                 }
                 chord = chord->next;
             } else { // there was NO chord: but we can create one
@@ -2067,7 +2067,7 @@ void set_measure_velocities_values_from_llll(t_score *x, t_llll* measure_velocit
                     }
                 }
                 chord_num++; onset = rat_rat_sum(onset, rat_abs(chord->r_sym_duration));
-                chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                chord_set_recompute_parameters_flag(chord);
                 chord = chord->next;
             } else { // there was NO chord: we create one, with just one note
                 t_rational remaining_duration = rat_rat_diff(measure_dur, onset);
@@ -2139,7 +2139,7 @@ void set_measure_ties_values_from_llll(t_score *x, t_llll* measure_ties, t_measu
                         }
                     }
                     chord_num++; onset = rat_rat_sum(onset, rat_abs(chord->r_sym_duration));
-                    chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                    chord_set_recompute_parameters_flag(chord);
                 }
                 chord = chord->next;
             } else { // there was NO chord: but we can create one
@@ -2181,7 +2181,7 @@ void set_measure_ties_values_from_llll(t_score *x, t_llll* measure_ties, t_measu
                     }
                 }
                 chord_num++; onset = rat_rat_sum(onset, rat_abs(chord->r_sym_duration));
-                chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                chord_set_recompute_parameters_flag(chord);
                 chord = chord->next;
             } else { // there was NO chord: we create one, with just one note
                 t_rational remaining_duration = rat_rat_diff(measure_dur, onset);
@@ -2395,13 +2395,13 @@ void set_measure_graphic_values_from_llll(t_score *x, t_llll* graphic, t_measure
                         }
                     }
                     
-                    chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                    chord_set_recompute_parameters_flag(chord);
                 }
             }
             
             chord_num++; onset = rat_rat_sum(onset, rat_abs(chord->r_sym_duration));
-            chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
-            
+            chord_set_recompute_parameters_flag(chord);
+
             chord = chord->next;
             
         } else { // there's no chord: we create one
@@ -2447,7 +2447,7 @@ void set_measure_graphic_values_from_llll(t_score *x, t_llll* graphic, t_measure
                                         set_graphic_values_to_note_from_llll((t_notation_obj *) x, newnote, graphic);
                                         newnote = newnote->next;
                                     } 
-                                    newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                                    chord_set_recompute_parameters_flag(newchord);
                                 }
                                 bach_freeptr(argv);
                             }
@@ -2467,7 +2467,7 @@ void set_measure_graphic_values_from_llll(t_score *x, t_llll* graphic, t_measure
                                 newchord = addchord_in_measure_from_values(x, measure, measure->lastchord, r_sym_duration, -1, 1, 2, argv, NULL, NULL, 0, NULL, 0, NULL);
                                 newchord->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newchord, 0, WHITENULL_llll);
                                 set_graphic_values_to_note_from_llll((t_notation_obj *) x, newchord->firstnote, notes_graphic);
-                                newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                                chord_set_recompute_parameters_flag(newchord);
                             }
                         }
                         
@@ -2533,13 +2533,13 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                         
                     }
                     
-                    chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                    chord_set_recompute_parameters_flag(chord);
                 }
             }
             
             chord_num++; onset = rat_rat_sum(onset, rat_abs(chord->r_sym_duration));
-            chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
-            
+            chord_set_recompute_parameters_flag(chord);
+
             chord = chord->next;
             
         } else { // there's no chord: we create one
@@ -2580,7 +2580,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                                     newnote = newnote->next;
                                 } 
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
-                                newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                                chord_set_recompute_parameters_flag(newchord);
                                 bach_freeptr(argv);
                             }
                         } else if (notes_bpt->l_depth == 2) { // there's only one specification for the whole chord, e.g. notes_bpt = ((0 0 0) (1 1 1))
@@ -2594,7 +2594,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                                 newchord->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newchord, 0, WHITENULL_llll);
                                 note_set_breakpoints_from_llll((t_notation_obj *) x, newchord->firstnote, notes_bpt);
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
-                                newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                                chord_set_recompute_parameters_flag(newchord);
                             }
                         }
                     }    
@@ -2636,11 +2636,10 @@ void set_measure_articulations_values_from_llll(t_score *x, t_llll* articulation
             } else { // info for the chord
                 set_articulations_to_element_from_hatom((t_notation_obj *) x, (t_notation_item *)chord, &elem->l_hatom);
             }
-            chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
             
             chord_num++; onset = rat_rat_sum(onset, rat_abs(chord->r_sym_duration));
-            chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
-            
+            chord_set_recompute_parameters_flag(chord);
+
             chord = chord->next;
             
         } else { // there's no chord: we create one
@@ -2672,7 +2671,7 @@ void set_measure_articulations_values_from_llll(t_score *x, t_llll* articulation
                             newnote = newnote->next;
                         } 
                         chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
-                        newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                        chord_set_recompute_parameters_flag(newchord);
                         bach_freeptr(argv);
                     }
                 } else { // there's only one specification for the whole chord, e.g. notes_bpt = ((0 0 0) (1 1 1))
@@ -2685,7 +2684,7 @@ void set_measure_articulations_values_from_llll(t_score *x, t_llll* articulation
                     newchord->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newchord, 0, WHITENULL_llll);
                     set_articulations_to_element_from_hatom((t_notation_obj *) x, (t_notation_item *)newchord, &elem->l_hatom);
                     chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
-                    newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                    chord_set_recompute_parameters_flag(newchord);
                 }
             }    
         }
@@ -2762,7 +2761,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                         
                     }
                     
-                    chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                    chord_set_recompute_parameters_flag(chord);
                 }
             }
             
@@ -2808,7 +2807,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                         note_set_slots_from_llll((t_notation_obj *) x, newnote, hatom_getllll(&subelem->l_hatom));
                                         newnote = newnote->next;
                                     } 
-                                    newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                                    chord_set_recompute_parameters_flag(newchord);
                                 }
                                 bach_freeptr(argv);
                             }
@@ -2831,7 +2830,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
                                 llll_appendllll_clone(slots, notes_slots, 0, WHITENULL_llll);
                                 note_set_slots_from_llll((t_notation_obj *) x, newchord->firstnote, slots);
-                                newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                                chord_set_recompute_parameters_flag(newchord);
                                 llll_free(slots);
                             }
                         }
@@ -3447,6 +3446,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
     notationobj_check((t_notation_obj *)x);
 #endif
 
+    notationobj_make_temporary_slurs_permanent((t_notation_obj *)x);
+
     if (markers) // we need to set them later, since they might be attached to measures
         set_markers_from_llll((t_notation_obj *)x, markers, false, false, false);
     
@@ -3532,7 +3533,7 @@ void snap_pitch_to_grid_voice(t_score *x, t_scorevoice *voice)
                 snap_pitch_to_grid_for_note((t_notation_obj *) x, curr_nt);
                 curr_nt = curr_nt->next;
             }
-            curr_ch->need_recompute_parameters = true; // we have to recalculate chord parameters 
+            chord_set_recompute_parameters_flag(curr_ch);
             curr_ch = curr_ch->next;
         }
         curr_meas = curr_meas->next;
@@ -4045,6 +4046,11 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
     this_ch->num_articulations = 0;
     this_ch->articulation = NULL;
     
+#ifdef BACH_SUPPORT_SLURS
+    this_ch->num_slurs_to = 0;
+    this_ch->num_slurs_from = 0;
+#endif
+
     chord_insert_in_measure((t_notation_obj *) x, measure, this_ch, after_this_chord, force_ID);
     
     // compute the approximation
@@ -4121,6 +4127,11 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             this_ch->num_articulations = 0;
             this_ch->articulation = NULL;
             
+#ifdef BACH_SUPPORT_SLURS
+            this_ch->num_slurs_to = 0;
+            this_ch->num_slurs_from = 0;
+#endif
+
             chord_insert_in_measure((t_notation_obj *) x, measure, this_ch, after_this_chord, force_ID);
             
             // create the chain of notes
@@ -4317,7 +4328,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             update_hscrollbar((t_notation_obj *)x, 0); 
             verbose_print(x);
             
-            this_ch->need_recompute_parameters = true; // we have to recalculate chord parameters 
+            chord_set_recompute_parameters_flag(this_ch);
             set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
             return this_ch; 
         }
@@ -4738,7 +4749,7 @@ char chord_merge_mc(t_score *x, t_chord *chord, double threshold_cents, char gat
             gathering_average_pitch /= count_note;
             if (count_note > 1) {
                 changed = 1;
-                chord->need_recompute_parameters = true;
+                chord_set_recompute_parameters_flag(chord);
                 set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
                 //  we change the pitch of the first note
                 if (gathering_policy_cents > 0) // align to last pitch
@@ -5022,7 +5033,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
             t_note *nt = (t_note *) curr_it;
             t_chord *ch = nt->parent;
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
-                undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)nt->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                undo_tick_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)nt->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
                 note_delete((t_notation_obj *)x, (t_note *) curr_it, false);
                 check_if_need_to_splatter_level_when_turning_note_to_rest(x, ch);
@@ -5031,7 +5042,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
         } else if (curr_it->type == k_CHORD && delete_notes) {
             t_chord *ch = ((t_chord *)curr_it);
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch)) {
-                undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)ch->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                undo_tick_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)ch->parent, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 if (ch->is_grace_chord) {
                     t_measure *meas = ch->parent;
                     chord_delete_from_measure((t_notation_obj *) x, ch, false);
@@ -5072,7 +5083,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
             t_measure *meas = ((t_measure *)curr_it);
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)meas)){ 
                 t_chord *ch = meas->firstchord;
-                undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                undo_tick_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 while (ch){
                     if (!ch->locked){
                         t_note *nt = ch->firstnote; t_note *nt2;
@@ -5092,7 +5103,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
         
         } else if (curr_it->type == k_LYRICS && delete_lyrics) {
             t_lyrics *ly = (t_lyrics *)curr_it;
-            undo_tick_create_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)ly->owner, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            undo_tick_create_for_selected_notation_item((t_notation_obj *) x, (t_notation_item *)ly->owner, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             changed |= delete_chord_lyrics((t_notation_obj *) x, (t_chord *) ly->owner);
             
         } else if (curr_it->type == k_DYNAMICS && delete_dynamics) {
@@ -5112,21 +5123,6 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
 }
 
 
-
-#ifdef BACH_SUPPORT_SLURS
-void reset_all_slurs_position(t_score *x)
-{
-    t_scorevoice *voice; t_measure *measure; t_chord *chord; t_note *note; long i;
-    for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
-        for (measure = voice->firstmeasure; measure; measure = measure->next)
-            for (chord = measure->firstchord; chord; chord = chord->next)
-                for (note = chord->firstnote; note; note = note->next)
-                    for (i = 0; i < note->num_slurs_to; i++)
-                        note->slur_to[i]->need_recompute_position = true;
-}
-#endif
-
-
 long score_oksize(t_score *x, t_rect *newrect)
 {
     if (!x->r_ob.itsme) {
@@ -5139,7 +5135,7 @@ long score_oksize(t_score *x, t_rect *newrect)
 
         reset_all_articulations_positions((t_notation_obj *)x);
 #ifdef BACH_SUPPORT_SLURS
-        reset_all_slurs_position(x);
+        notationobj_reset_all_slurs_position((t_notation_obj *)x);
 #endif
         x->r_ob.firsttime = true;
         notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
@@ -5150,7 +5146,7 @@ long score_oksize(t_score *x, t_rect *newrect)
 
 void scoreapi_initscore_step01(t_score *x)
 {
-    long i, v;
+    long v;
     t_scorevoice *voiceprec = NULL;
     
     score_bach_attribute_declares(x);
@@ -7385,15 +7381,8 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 else
                     chord->duration_ux = this_meas->start_barline_offset_ux + this_meas->width_ux - chord->stem_offset_ux - CONST_SAFETY_USEPARATION_TAIL_NEXT_OBJ * x->r_ob.zoom_x * x->r_ob.zoom_y;
                 
-#ifdef BACH_SUPPORT_SLURS
-                long j; t_note *nt;
-                for (nt = chord->firstnote; nt; nt = nt->next) { // and setting flag to recompute slur position
-                    for (j = 0; j < nt->num_slurs_to; j++)
-                        nt->slur_to[j]->need_recompute_position = true;
-                    for (j = 0; j < nt->num_slurs_from; j++)
-                        nt->slur_from[j]->need_recompute_position = true;
-                }
-#endif
+                chord_reset_slur_positions(chord);
+                
             }
 
     ct = 0;
@@ -8922,6 +8911,13 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 start_dottedline_x = unscaled_xposition_to_xposition((t_notation_obj *)x, x->r_ob.screen_ux_start);
                 tempo_interp = get_actual_tempo_interp(x, curr_meas->lasttempo);
             }
+            
+/*            if (x->r_ob.show_slurs) {
+                for (t_chord *curr_ch = curr_meas->firstchord; curr_ch; curr_ch = curr_ch->next) {
+                    chord_paint_slurs((t_notation_obj *)x, g, curr_ch);
+                }
+            } */
+
             continue;
         }
         
@@ -9269,8 +9265,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 						tailcolor = tail_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected || is_tail_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? curr_nt->lastbreakpoint->velocity : curr_nt->velocity);
 						
 						// particular case: note is end of a slur that is being drawn
-						if (x->r_ob.j_mouse_is_down &&	((x->r_ob.j_mousedown_obj_type == k_SLUR_START_POINT && ((t_slur *) x->r_ob.j_mousedown_ptr)->start_note == curr_nt) || 
-														 (x->r_ob.j_mousedown_obj_type == k_SLUR_END_POINT && ((t_slur *) x->r_ob.j_mousedown_ptr)->end_note == curr_nt)))
+						if (x->r_ob.j_mouse_is_down &&
+                            ((x->r_ob.j_mousedown_obj_type == k_SLUR_START_POINT && ((t_slur *) x->r_ob.j_mousedown_ptr)->start_chord == curr_ch) ||
+                             (x->r_ob.j_mousedown_obj_type == k_SLUR_END_POINT && ((t_slur *) x->r_ob.j_mousedown_ptr)->end_chord == curr_ch)))
 							notecolor = color_interp(notecolor, build_jrgba(1., 0.7, 0.7, 1.), 0.5); 
 						
 						notehead_uwidth = curr_nt->notehead_uwidth;
@@ -10147,6 +10144,13 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 curr_tempo = curr_tempo->next;
             }
         }
+        
+        
+        if (x->r_ob.show_slurs) {
+            for (t_chord *curr_ch = curr_meas->firstchord; curr_ch; curr_ch = curr_ch->next) {
+                chord_paint_slurs_to((t_notation_obj *)x, g, curr_ch);
+            }
+        }
     }
     
     // if tempo_interp != 0: paint the ........... line!
@@ -10276,22 +10280,6 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
             
         unlock_general_mutex((t_notation_obj *)x);
 
-#ifdef BACH_SUPPORT_SLURS
-        // painting slurs
-        for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
-            if (voice->v_ob.hidden)
-                continue;
-            for (curr_meas = voice->firstmeasure; curr_meas; curr_meas = curr_meas->next)
-                for (curr_ch = curr_meas->firstchord; curr_ch; curr_ch = curr_ch->next)
-                    for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next)
-                        for (i = 0; i < curr_nt->num_slurs_to; i++) {
-                            if (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_nt->slur_to[i]))
-                                paint_slur((t_notation_obj *) x, g, x->r_ob.j_selection_rgba, curr_nt->slur_to[i], true, build_jrgba(1,0,0,1), build_jrgba(1,0,0,1), 2., 0.5, 2);
-                            else 
-                                paint_slur((t_notation_obj *) x, g, x->r_ob.j_note_rgba, curr_nt->slur_to[i], false, build_jrgba(0,0,1,1), build_jrgba(1,0,1,1), 2, 0.5, 1);
-                        }
-        }
-#endif
         if (x->r_ob.show_markers && x->r_ob.firstmarker) {
             t_marker *marker;
 

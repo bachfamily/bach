@@ -85,6 +85,7 @@
 
     #define BACH_NEW_LLLLSLOT_SYNTAX            ///< This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax 
 
+    #define BACH_SUPPORT_SLURS
 
     #ifdef CONFIGURATION_Development
 
@@ -151,7 +152,6 @@
 #define CONST_MAX_COMMANDS 5                                ///< Maximum number of used definable commands (should be upgraded to 30 at some point in the future)
 #define CONST_MAX_COMMAND_CHAR 30                            ///< Maximum number of characters for a command label
 #define CONST_MAX_ARTICULATIONS_PER_NOTE 4                  ///< (OBSOLETE, UNUSED) Maximum number of articulations per note and per chord (used to be 10 up to bach 0.7.1)
-#define CONST_MAX_SLURS_PER_NOTE 1                            ///< Maximum number of slurs starting or ending on a note (still not supported: used to be 20 up to bach 0.7.1)
 #define CONST_MAX_STAFF_LINES 50                            ///< Maximum number of staff lines per staff
 #define    CONST_MAX_TRANCHES 1000                                ///< (UNUSED) Maximum number of tuttipoint tranches per tuttipoint region (this is unused, and actually one can have any number of tranches per tuttipoint region.
 #define CONST_MAX_ENHARMONICITY_OPTIONS 3                    ///< Maximum number of enharmonicity options appearing in the contextual menu when right-clicking on a note
@@ -172,6 +172,9 @@
 
 #define    CONST_MAX_XML_NESTED_TUPLETS 10                        ///< Maximum nested tuplet insertion while speedy editing @ingroup import_export
 #define CONST_MAX_NOTATION_ITEM_NAMES 10                    ///< Maximum number of names a notation item may have (was 10 until bach 0.7.1) @ingroup names
+
+#define CONST_MAX_SLURS_PER_CHORD 1    ///< Maximum number of slurs starting or ending on a chord
+
 
 /** \addtogroup attributes 
  *  @{
@@ -1870,6 +1873,7 @@ typedef enum _undo_operations
     k_UNDO_OP_DUPLICATE_SELECTED_MEASURES,
     k_UNDO_OP_DELETE_SELECTED_TEMPI,
     k_UNDO_OP_TOGGLE_INTERPOLATION_FOR_SELECTED_TEMPI,
+    k_UNDO_OP_ADD_SLUR,
     k_UNDO_OP_DELETE_SLURS_FOR_SELECTION,
     k_UNDO_OP_ADD_ARTICULATION_TO_SELECTION,
     k_UNDO_OP_CHANGE_ARTICULATION,
@@ -2414,23 +2418,27 @@ typedef struct _slur
 {
     t_notation_item    r_it;                        ///< Notation item
 
-    struct _note    *start_note;                ///< Pointer to the note where the starting of the slur is attached
-    struct _note    *end_note;                    ///< Pointer to the note where the ending of the slur is attached
+    struct _chord    *start_chord;                ///< Pointer to the chord where the starting of the slur is attached
+    struct _chord    *end_chord;                  ///< Pointer to the chord where the ending of the slur is attached
 
     char            direction;                    ///< Direction of the slur (1 = up, -1 = down)
-    char            end_is_before_start;        ///< Internal flag, telling if is the horizontal direction reversed (because the end note is before the start one)
+    char            end_is_before_start;          ///< Internal flag, telling if is the horizontal direction reversed
+                                                  /// (because the end note is before the start one)
 
     // painting parameters
-    double            start_x;                    ///< x of the pixel of the slur starting point 
+    double            start_ux;                    ///< x of the pixel of the slur starting point
     double            start_y;                    ///< y of the pixel of the slur starting point
     double            cp1_rel_x;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp1_y;                        ///< y of the pixel of the slur first control point
     double            cp2_rel_x;                    ///< relative x of the pixel of the slur second control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp2_y;                        ///< y of the pixel of the slur second control point
-    double            end_x;                        ///< x of the pixel of the slur end point    
+    double            end_ux;                        ///< x of the pixel of the slur end point    
     double            end_y;                        ///< y of the pixel of the slur end point
     
-    char            need_recompute_position;    ///< Flag telling if the painting parameters need to be recomputed. If this is 0 the painting parameters are up-to-date, otherwise they are recomputed in the paint cycle.
+    // internal
+    long              temporary_extension;        ///< Extension, stored temporarily
+    char              is_temporary;               ///< Is the slur temporarily put?
+    char              need_recompute_position;    ///< Flag telling if the painting parameters need to be recomputed. If this is 0 the painting parameters are up-to-date, otherwise they are recomputed in the paint cycle.
 } t_slur;
 
 
@@ -2489,16 +2497,9 @@ typedef struct _note
     char        solo;                    ///< Flag telling if the note is soloed
 
     // articulations, ***only for backward compatibility***
-    long                num_articulations;        ///< Number of articulations really attached to the note
+    long                  num_articulations;        ///< Number of articulations really attached to the note
     t_articulation        *articulation;            ///< The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
 
-#ifdef BACH_SUPPORT_SLURS
-    // slurs, only ***for future compatibility***
-    long            num_slurs_to;                            ///< Number of slurs starting on the note
-    long            num_slurs_from;                            ///< Number of slurs ending on the note 
-    t_slur            *slur_to[CONST_MAX_SLURS_PER_NOTE];        ///< The array containing the pointer to the slurs starting on the note (only num_slurs_to elements are meaningful)
-    t_slur            *slur_from[CONST_MAX_SLURS_PER_NOTE];    ///< The array containing the pointer to the slurs ending on the note (only num_slurs_from elements are meaningful)
-#endif
     
     // Fixed painting parameters (calculated at some point, and not recalculated if not needed)
 //    long            scaleposition;                                ///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
@@ -2510,7 +2511,9 @@ typedef struct _note
 
     
     // nonstandard noteheads
-    long            notehead_ID;                                ///< Notehead type, one of the #e_noteheads
+    long              notehead_ID;                                ///< Notehead type, one of the #e_noteheads
+
+    //TODO: can we remove this field and calculate it whenever needed?
     double            notehead_uwidth;                            ///< Unscaled width of the notehead
     
     double            accidental_stem_delta_ux;                    ///< Unscaled horizontal deplacement of the RIGHT boundary of the accidental text field, with respect to the stem position. Should be always negative.
@@ -2523,9 +2526,7 @@ typedef struct _note
                                                                 ///< See #accidental_top_uextension for more information.
 
     // Windowed painting parameters (in real pixels, and only calculated when the note is inside the window and painted)
-    t_pt            center;                                        ///< Center of the note (it is in real pixels, and not an unscaled ones)
-    double            center_stafftop_uy;                            ///< Unscaled distance of the y of the notehead center from the topmost staff point
-//    t_pt            notehead_textbox_left_corner;                ///< Left corner of the notehead textbox
+    t_pt              center;                                        ///< Center of the note (it is in real pixels, and not an unscaled ones)
     
     // double linked list
     struct _note    *next;                ///< Pointer to the next note
@@ -2841,6 +2842,14 @@ typedef struct _chord
 #ifdef BACH_CHORDS_HAVE_SLOTS
     t_slot        slot[CONST_MAX_SLOTS];          ///< The array containing the slot content for the chord (for each slot)
                                                 ///< This is ONLY meaningful (and only used) when the chord is a REST, otherwise notes have their own slots, use them!
+#endif
+    
+#ifdef BACH_SUPPORT_SLURS
+    // slurs, only ***for future compatibility***
+    long            num_slurs_to;                            ///< Number of slurs starting on the note
+    long            num_slurs_from;                            ///< Number of slurs ending on the note
+    t_slur          *slur_to[CONST_MAX_SLURS_PER_CHORD];        ///< The array containing the pointer to the slurs starting on the chord (only num_slurs_to elements are meaningful)
+    t_slur          *slur_from[CONST_MAX_SLURS_PER_CHORD];    ///< The array containing the pointer to the slurs ending on the chord (only num_slurs_from elements are meaningful)
 #endif
     
     // double linked list
@@ -4722,9 +4731,9 @@ typedef struct _notation_obj
     e_show_rests_preferences    show_rests;     ///< Flag telling if we want to show the rests
     
     
-    // slurs (THESE ARE YET UNSUPPORTED)
-    char        show_slurs;                    ///< (UNSUPPORTED) Flag telling if we want to show the slurs
-    char        slurs_shown_chordwise;        ///< (UNSUPPORTED) Flag telling if slurs "act" as they were shown chord-wisely: in this case they may also get to the stem of a chord, and not to the note. 
+    // slurs (SOME OF THESE ARE YET UNSUPPORTED)
+    char        show_slurs;                 ///< Flag telling if we want to show the slurs
+    t_llll      *slurs_to_be_processed;     ///< Temporary repository for slurs to be actually put inside the score later
     char        slurs_avoid_accidentals;    ///< (UNSUPPORTED) Flag telling if slurs avoid the accidentals
     char        slurs_always_symmetrical;    ///< (UNSUPPORTED) Flag telling if slurs are always symmetrical, i.e. the bezier bounding box is a perfecty symmetric trapece. 
 
@@ -6177,6 +6186,14 @@ double get_vscrollbar_width(t_notation_obj *r_ob);
     @param r_ob            The notation object
  */
 double get_max_vscrollbar_width_or_inset_x(t_notation_obj *r_ob);
+
+
+
+/**    Set the flag telling that graphical properties of the chords must be updated
+    @ingroup            notation_graphics
+    @param ch        The chord
+ */
+void chord_set_recompute_parameters_flag(t_chord *ch);
 
 
 /**    Detect if a chord is inside the screen, or in the hidden left or right part (only used by [bach.score]).
@@ -10479,8 +10496,8 @@ void notationobj_paint_colorgradient_curve(t_notation_obj *r_ob, t_jgraphics *g,
 // EXPERIMENTAL, UNDOCUMENTED, DON'T USE IT YET
 void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slur, 
                 char paint_control_points, t_jrgba linecolor, t_jrgba pointcolor, double point_radius, double line_width, double dash_length);
-
-void delete_slur(t_notation_obj *x, t_slur *slur);
+void chord_paint_slurs_to(t_notation_obj *r_ob, t_jgraphics *g, t_chord *curr_ch);
+void chord_paint_slurs_from(t_notation_obj *r_ob, t_jgraphics *g, t_chord *curr_ch);
 
 #endif
 
@@ -12779,7 +12796,6 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     @return                The selected notation item with smallest onset (or NULL if none) 
  */
 t_notation_item *get_leftmost_selected_notation_item(t_notation_obj *r_ob);
-t_note *get_leftmost_selected_note(t_notation_obj *r_ob);
 
 
 /** Obtain the selected notation item with greatest onset.
@@ -12788,6 +12804,10 @@ t_note *get_leftmost_selected_note(t_notation_obj *r_ob);
     @return                The selected notation item with greatest onset (or NULL if none) 
  */
 t_notation_item *get_rightmost_selected_notation_item(t_notation_obj *r_ob);
+
+// SAME FOR NOTES
+t_note *get_leftmost_selected_note(t_notation_obj *r_ob);
+t_note *get_rightmost_selected_note(t_notation_obj *r_ob);
 
 
 /** Obtain the unscaled horizontal pixel corresponding to the chord's alignment point (the point which is geometrically aligned
@@ -18438,6 +18458,7 @@ void notation_item_find_and_set_names(t_notation_obj *r_ob, t_notation_item *it,
 
 // TBD
 void notation_item_find_and_set_flags(t_notation_obj *r_ob, t_notation_item *it, t_llll *llll);
+void chord_find_and_set_temporary_slurs(t_notation_obj *r_ob, t_chord *ch, t_llll *llll);
 
 
 /** Find the name specification from an llll (if any), which might (or might not) contain a sub-llll in the (name <name1> <name2>...) or 

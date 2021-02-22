@@ -2801,6 +2801,11 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Toggles the display of voice names.
 		
+        CLASS_ATTR_CHAR(c,"showslurs",0, t_notation_obj, show_slurs);
+        CLASS_ATTR_STYLE_LABEL(c,"showslurs",0,"onoff","Show Slurs");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showslurs",0,"1");
+        // @description Toggles the display of slurs.
+        
         CLASS_ATTR_CHAR(c,"showclefs",0, t_notation_obj, show_clefs);
         CLASS_ATTR_STYLE_LABEL(c,"showclefs",0,"onoff","Show Clefs");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showclefs",0,"1");
@@ -3639,7 +3644,7 @@ void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beami
 		t_chord *chord;
 		for (voice = (t_rollvoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_rollvoice *) voice_get_next(r_ob, (t_voice *)voice)){
 			for (chord = voice->firstchord; chord; chord = chord->next){
-				chord->need_recompute_parameters = true;
+                chord_set_recompute_parameters_flag(chord);
 			}
 		}
 	}
@@ -4253,7 +4258,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                 t_voice *last = voiceensemble_get_lastvoice(r_ob, voice);
                 
                 if (first == last) {
-                    undo_tick_create_create_for_selected_notation_item(r_ob, item, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                    undo_tick_create_for_selected_notation_item(r_ob, item, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                     measure_set_ts(r_ob, (t_measure *)item, &chosen_ts);
                     recompute_all_for_measure(r_ob, (t_measure *)item, false);
                 } else {
@@ -4262,7 +4267,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                     for (temp = first; temp && temp->number < r_ob->num_voices; temp = voice_get_next(r_ob, temp)) {
                         t_measure *m = nth_measure_of_scorevoice((t_scorevoice *)temp, measure_num);
                         if (m) {
-                            undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                            undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             measure_set_ts(r_ob, m, &chosen_ts);
                             recompute_all_for_measure(r_ob, m, false);
                         }
@@ -5076,6 +5081,7 @@ void notationobj_free(t_notation_obj *r_ob)
 	llll_free(r_ob->redo_llll);
 	llll_free(r_ob->undo_notation_items_under_tick);
     llll_free(r_ob->undo_information_whose_path_need_to_be_checked);
+    llll_free(r_ob->slurs_to_be_processed);
 
     notationobj_clear_prescheduled_events(r_ob);
     llll_free(r_ob->to_preschedule);
@@ -5896,7 +5902,7 @@ void notationobj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboar
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
 			r_ob->whole_obj_undo_tick_function(r_ob);
 		else
-			undo_tick_create_create_for_selected_notation_item(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+			undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		delete_all_selected_function_points(r_ob, slot_num);
 		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
 	}
@@ -5922,7 +5928,7 @@ void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notat
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
 			r_ob->whole_obj_undo_tick_function(r_ob);
 		else
-			undo_tick_create_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+			undo_tick_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		notation_item_clear_slot(r_ob, nitem, slot_num);
 		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
 	}
@@ -6021,7 +6027,7 @@ void notationobj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, 
 			offset -= pt.x - activeslotwin.x;
 		}
 		
-		undo_tick_create_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+		undo_tick_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 		paste_slotitems(r_ob, r_ob->active_slot_notationitem, r_ob->active_slot_num, clipboard->gathered_syntax, activeslotwin, offset, delete_intermediate_points);
 		handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
 	}

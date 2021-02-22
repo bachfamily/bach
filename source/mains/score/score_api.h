@@ -45,6 +45,7 @@
 #include "notation/notation.h" // header with all the structures for the notation objects
 #include "notation/notation_undo.h"
 #include "notation/notation_markers.h"
+#include "notation/notation_slurs.h"
 
 typedef struct _score // [bach.score] structure
 {
@@ -277,10 +278,6 @@ void tuttipoint_refine_spacing(t_score *x, t_tuttipoint *tpt);
 long get_num_chords(t_score *x);
 t_chord* ID_to_chord(t_score *x, long ID_to_find);
 void reset_all_articulations_position(t_score *x);
-
-#ifdef BACH_SUPPORT_SLURS
-void reset_all_slurs_position(t_score *x);
-#endif
 
 
 char are_all_tempi_synchronous(t_score *x);
