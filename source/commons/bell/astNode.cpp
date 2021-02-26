@@ -96,20 +96,33 @@ void t_execEnv::setFnArgsByName(t_function *fn, long ac, t_symbol **names, t_lll
             }
             if (*arg)
                 bell_release_llll(*arg);
+            
             *arg = bell_retain_llll(values[i]);
-            t_variable *v;
-            auto found = scope.find(name);
-            if (found != scope.end()) {
-                v = found->second;
-            } else {
-                v = new t_variable(name);
-                scope[name] = v;
-            }
-            v->set(*arg);
+            createVariable(name, *arg);
         } else {
-            object_error((t_object *) parent->obj, "Undeclared function parameter %s", name->s_name);
+            createVariable(name, bell_retain_llll(values[i]));
         }
     }
+}
+
+t_variable* t_execEnv::createVariable(t_symbol *name)
+{
+    t_variable *v;
+    auto found = scope.find(name);
+    if (found != scope.end()) {
+        v = found->second;
+    } else {
+        v = new t_variable(name);
+        scope[name] = v;
+    }
+    return v;
+}
+
+t_variable* t_execEnv::createVariable(t_symbol *name, t_llll *ll)
+{
+    t_variable *v = createVariable(name);
+    v->set(ll);
+    return v;
 }
 
 void t_execEnv::setFnArgsByName(t_function *fn, t_llll *args, long firstNamedArgumentOffset)
@@ -196,7 +209,7 @@ void t_execEnv::setFnDefaults(t_function *fn, long firstNamedArgumentOffset, lon
                 astNode *n = thisANAD->getNode();
                 if (n) {
                     t_execEnv defContext(parent);
-                    defContext.setLocalVariables(thisANAD->getVarNames());
+                    defContext.setLocalVariables(thisANAD->getVars());
                     def = bell_retain_llll(n->eval(defContext));
                 } else {
                     def = llll_get();
@@ -238,42 +251,44 @@ void t_execEnv::resetFnNamedArgs(t_function *fn, long lambdaParams)
     }
 }
 
-void t_execEnv::setLocalVariables(t_symbol **varNames, t_function *fn)
+void t_execEnv::setLocalVariables(t_localVar *vars, t_function *fn)
 {
-    if (!varNames)
+    if (!vars)
         return;
-    for (t_symbol **thisVar = varNames;
-         *thisVar;
+    for (t_localVar *thisVar = vars;
+         thisVar->getName();
          thisVar++) {
         t_variable *v = nullptr;
-        
+        t_symbol *name = thisVar->getName();
         t_scope const *thisScope = &scope;
-        if (thisScope->find(*thisVar) == thisScope->end()) {
-            for (t_execEnv const *thisContext = parent;
-                 thisContext && !v;
-                 thisContext = thisContext->parent) {
-                thisScope = &thisContext->scope;
-                auto found = thisScope->find(*thisVar);
-                if (found != thisScope->end()) {
-                    v = found->second;
-                    v->increase();
+        if (thisScope->find(name) == thisScope->end()) {
+            if (thisVar->isLifted()) {
+                for (t_execEnv const *thisContext = parent;
+                     thisContext && !v;
+                     thisContext = thisContext->parent) {
+                    thisScope = &thisContext->scope;
+                    auto found = thisScope->find(name);
+                    if (found != thisScope->end()) {
+                        v = found->second;
+                        v->increase();
+                    }
                 }
             }
             if (!v) {
-                if (t_llll *def = fn->retrieve(*thisVar); def)
-                    v = new t_variable(*thisVar, def);
+                if (t_llll *def = fn->retrieve(name); def)
+                    v = new t_variable(name, def);
                 else
-                    v = new t_variable(*thisVar);
+                    v = new t_variable(name);
                 localVariables.insert(v);
             }
-            scope[*thisVar] = v;
+            scope[name] = v;
         }
     }
 }
 
 void t_execEnv::setFnLocalVariables(t_function *fn)
 {
-    setLocalVariables(fn->getLocalVariableNames(), fn);
+    setLocalVariables(fn->getLocalVariables(), fn);
 }
 
 void t_execEnv::resetLocalVariables()
@@ -292,18 +307,6 @@ void t_execEnv::adjustArgc(t_function *fn, long abpc)
         argc = fn->getNamedArgumentsCount();
     else
         argc = abpc;
-}
-
-void t_execEnv::setUniquePseudovariables(t_symbol **names)
-{
-    for (t_symbol **thisName = names; *thisName; thisName++) {
-        if (scope.find(*thisName) != scope.end()) {
-            object_warn((t_object *) obj, "Duplicate parameter %s", (*thisName)->s_name);
-        } else {
-            t_variable *v = new t_variable(*thisName);
-            scope[*thisName] = v;
-        }
-    }
 }
 
 /////////

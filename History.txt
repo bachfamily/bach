@@ -71,6 +71,7 @@ authorization: now the code for a given year can be entered until January of the
     :* operator returns null for non-positive repeat counts
     map function works correctly with mindepth
     evaluation precedence of the unary minus operator is now lower than exponentiation (-2 ** 2 now returns -4, previously 4)
+    fixed bug in local variable scoping causing random crashes and data corruption
 
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor

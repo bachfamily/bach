@@ -85,19 +85,19 @@ void t_function::setArgument(const char *name, t_symbol *def, t_codableobj *obj)
 
 t_userFunction::~t_userFunction()
 {
-    delete[] localVariableNames;
+    delete[] localVariables;
     delete ast;
 }
 
-t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList<t_symbol *> *localVariableNamesList, astNode *ast, t_codableobj *culprit) : ast(ast)
+t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList<t_localVar> *localVariablesList, astNode *ast, t_codableobj *culprit) : ast(ast)
 {
     
     // put all the local variables in the array of local variable names (for faster access at function call)
-    if (localVariableNamesList) {
-        localVariableNamesList->copyIntoNullTerminatedArray(&localVariableNames);
-        delete localVariableNamesList->getHead();
+    if (localVariablesList) {
+        localVariablesList->copyIntoNullTerminatedArray(&localVariables);
+        delete localVariablesList->getHead();
     } else {
-        localVariableNames = new t_symbol* [1] { };
+        localVariables = new t_localVar [1] { (nullptr) };
     }
     
     variadic = false;
@@ -145,7 +145,7 @@ t_llll* t_userFunction::call(const t_execEnv &context) {
 ///////////////////////
 
 t_mainFunction::t_mainFunction(astNode *mainAst,
-                               countedList<t_symbol *> *localVariableNamesList,
+                               countedList<t_localVar> *localVariablesList,
                                std::unordered_set<t_globalVariable*> *globalVariables,
                                pvMap *name2astVars,
                                t_codableobj *caller) :
@@ -154,18 +154,17 @@ inlet(0), name2astVars(name2astVars), globalVars(globalVariables), owner(caller)
     ast = mainAst;
     if (!ast)
         return;
-    if (localVariableNamesList) {
-        localVariableNames = new t_symbol* [localVariableNamesList->getCount() + 1];
+    if (localVariablesList) {
+        localVariables = new t_localVar[localVariablesList->getCount() + 1];
         int i = 0;
-        for (countedList<t_symbol *> *thisLvnl = localVariableNamesList->getHead(); thisLvnl; thisLvnl = thisLvnl->getNext()) {
-            localVariableNames[i] = thisLvnl->getItem();
+        for (countedList<t_localVar> *thisLvnl = localVariablesList->getHead(); thisLvnl; thisLvnl = thisLvnl->getNext()) {
+            localVariables[i] = thisLvnl->getItem();
             i++;
         }
-        localVariableNames[i] = nullptr;
-        delete localVariableNamesList->getHead();
+        localVariables[i] = t_localVar();
+        delete localVariablesList->getHead();
     } else {
-        localVariableNames = new t_symbol* [1];
-        localVariableNames[0] = nullptr;
+        localVariables = new t_localVar[1] { };
     }
     
     variadic = true;
@@ -185,7 +184,7 @@ t_llll* t_mainFunction::call(t_execEnv const &context)
     
     t_execEnv childContext(&context, this);
     
-    childContext.setLocalVariables(localVariableNames, this);
+    childContext.setLocalVariables(localVariables, this);
     
     childContext.argc = context.argc;
     childContext.argv = context.argv;
@@ -387,7 +386,7 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
             t_hatom *fnhatom = &fnelem->l_hatom;
             switch (hatom_gettype(fnhatom)) {
                 case H_FUNCTION: {
-                    t_function *fn = static_cast<t_function *>(fnhatom->h_w.w_obj);
+                    t_function *fn = fnhatom->h_w.w_func;
                     t_llll *res = callFunction(fn, argsByPositionLl, argsByNameLl, context);
                     llll_chain(resultLl, res);
                     fnelem = fnelem->l_next;
