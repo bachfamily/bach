@@ -66,7 +66,7 @@
     countedList<astNode *> *nl;
     countedList<symNodePair *> *snpl;
     countedList<funArg *> *funarglist;
-    countedList<t_symbol *> *liftedarglist;
+    countedList<t_localVar> *liftedarglist;
     countedList<forArg *> *fal;
     lvalueStepList *lvsl;
     symNodePair *snp;
@@ -174,14 +174,19 @@
             (**(params->localVariablesAuxMapStack))[name] = 1;
             
             if (params->liftedVariablesStack == params->liftedVariablesStackBase) {
-                *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
+                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, true), *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
             } else {
-                auto lifted = (*(params->liftedVariablesStack))->find(name);
+                t_bool lifted = (*(params->liftedVariablesStack))->find(name) != (*(params->liftedVariablesStack))->end();
+                
+                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, lifted), *(params->localVariablesStack));
+
+                /*
                 if (lifted == (*(params->liftedVariablesStack))->end()) { // not lifted
-                    *(params->implicitArgumentsStack) = new countedList<funArg *>(new funArg(name), *(params->implicitArgumentsStack));
+                    *(params->argumentsStack) = new countedList<funArg *>(new funArg(name), *(params->argumentsStack));
                 } else { // old behavior: lifted
                     *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack));
                 }
+                 */
             }
         }
     }
@@ -349,9 +354,9 @@ forarg : LOCALVAR IN_KW sequence {
 fundef : funargList FUNDEF {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->implicitArgumentsStack) = $1;
+    *++(params->argumentsStack) = $1;
 } list {
-    t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), $4, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $4, params->owner);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;
     --(params->fnDepth);
@@ -359,17 +364,17 @@ fundef : funargList FUNDEF {
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function funargList FUNDEF");
 }
 | FUNDEF {
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     params->fnDepth++;
-    *++(params->implicitArgumentsStack) = nullptr;
+    *++(params->argumentsStack) = nullptr;
 } list {
-    t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), $3, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $3, params->owner);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;;
     --(params->fnDepth);
@@ -377,20 +382,20 @@ fundef : funargList FUNDEF {
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function FUNDEF");
 }
 | funargList liftedargList FUNDEF {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    for (countedList<t_symbol *> *v = $2->getHead();
+    for (countedList<t_localVar> *v = $2->getHead();
          v;
          v = v->getNext()) {
-             (*(params->liftedVariablesStack))->insert(v->getItem());
+             (*(params->liftedVariablesStack))->insert(v->getItem().getName());
     }
-    *++(params->implicitArgumentsStack) = $1;
+    *++(params->argumentsStack) = $1;
 } list {
-    t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), $5, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $5, params->owner);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;
     --(params->fnDepth);
@@ -398,24 +403,22 @@ fundef : funargList FUNDEF {
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function funargList liftedargList");
 }
 | liftedargList FUNDEF {
     params->fnDepth++;
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->implicitArgumentsStack);
-    for (countedList<t_symbol *> *v = $1->getHead();
+    *++(params->argumentsStack) = nullptr;
+    for (countedList<t_localVar> *v = $1->getHead();
          v;
          v = v->getNext()) {
-        (*(params->liftedVariablesStack))->insert(v->getItem());
+        (*(params->liftedVariablesStack))->insert(v->getItem().getName());
     }
-    *++(params->implicitArgumentsStack) = nullptr;
-
 } list {
-    t_function *fn = new t_userFunction(*++(params->implicitArgumentsStack), *(params->localVariablesStack), $4, params->owner);
+    t_function *fn = new t_userFunction(*++(params->argumentsStack), *(params->localVariablesStack), $4, params->owner);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;;
     --(params->fnDepth);
@@ -423,8 +426,8 @@ fundef : funargList FUNDEF {
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function liftedargList FUNDEF");
 }
 ;
 
@@ -444,7 +447,7 @@ funargList : LOCALVAR {
 | LOCALVAR ASSIGN {
     // two levels are pushed:
     // one for the function, whose definition is beginning here,
-    // and one for the parameter default, which is in an outer scope
+    // and one for the parameter default, which is in an inner scope
     params->localVariablesStack += 2;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     (**(params->localVariablesAuxMapStack))[$1] = 1;
@@ -481,11 +484,11 @@ funargList : LOCALVAR {
 ;
 
 liftedargList : LIFT LOCALVAR {
-    $$ = new countedList<t_symbol *>($2);
+    $$ = new countedList<t_localVar>($2);
     code_dev_post ("parse: liftedargList (first term)\n");
 }
 | liftedargList COMMA LOCALVAR {
-    $$ = new countedList<t_symbol *>($3, $1);
+    $$ = new countedList<t_localVar>($3, $1);
     code_dev_post ("parse: liftedargList (subsequent term)\n");
 }
 ;
@@ -1340,7 +1343,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
     params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
     params.liftedVariablesStack = params.liftedVariablesStackBase;
-    params.implicitArgumentsStack = params.implicitArgumentsStackBase;
+    params.argumentsStack = params.argumentsStackBase;
     params.gvt = bach->b_gvt;
     params.bifs = bach->b_bifTable;
     params.codeac = codeac;

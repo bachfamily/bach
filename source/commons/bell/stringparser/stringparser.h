@@ -16,14 +16,14 @@
 typedef struct _parseParams {
     astNode *ast;
     t_globalVariableTable *gvt;
-    countedList<t_symbol *> *localVariablesStackBase[256] { };
-    countedList<t_symbol *> **localVariablesStack;
+    countedList<t_localVar> *localVariablesStackBase[256] { };
+    countedList<t_localVar> **localVariablesStack;
     std::unordered_map<t_symbol *, int> *localVariablesAuxMapStackBase[256] { };
     std::unordered_map<t_symbol *, int> **localVariablesAuxMapStack;
     std::unordered_set<t_symbol *> *liftedVariablesStackBase[256] { };
     std::unordered_set<t_symbol *> **liftedVariablesStack;
-    countedList<class funArg *> *implicitArgumentsStackBase[256] { };
-    countedList<class funArg *> **implicitArgumentsStack;
+    countedList<class funArg *> *argumentsStackBase[256] { };
+    countedList<class funArg *> **argumentsStack;
     
     std::unordered_map<t_symbol*, std::unordered_set<astPatcherVar*>>* name2patcherVars;
     std::unordered_set<t_globalVariable*> *globalVariables;
