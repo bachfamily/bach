@@ -163,6 +163,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     class_addmethod(c, (method) bach_unlock, "unlock", A_LONG, 0);
     class_addmethod(c, (method) bach_nonative, "nonative", A_LONG, 0);
+    class_addmethod(c, (method) bach_init_bifs, "initbifs", 0);
     class_addmethod(c, (method) bach_llll_from_phonenumber_and_retain, "llllfromphonenumberandretain", A_LONG, 0);
 
     
@@ -738,9 +739,6 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 
     gensym("bach")->s_thing = (t_object *) x;
     
-    bach_init_bifs(x);
-    x->b_thePvManager = new pvManager(); //// CULPRIT
-    
     defer_low(x, (method) bach_init_print, NULL, 0, NULL);
     return x;
 }
@@ -1265,7 +1263,6 @@ void bach_init_bifs(t_bach *x)
     auto bifTable = x->b_bifTable = new std::unordered_map<std::string, t_function *>;
     x->b_gvt = new t_globalVariableTable;
     
-    // CULPRIT
     (*bifTable)["$args"] = new t_fnArgs;
     (*bifTable)["$argcount"] = new t_fnArgcount;
     
@@ -1398,6 +1395,8 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["#|||"] = new t_mathBinaryFunctionAAA<hatom_op_logor>("#|||"); // TODO
     (*bifTable)["#<<"] = new t_mathBinaryFunctionAAA<hatom_op_lshift>("#<<");
     (*bifTable)["#>>"] = new t_mathBinaryFunctionAAA<hatom_op_rshift>("#>>");
+    
+    x->b_thePvManager = new pvManager();
 }
 
 t_uint32 murmur3(const t_uint32 key)

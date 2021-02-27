@@ -1139,6 +1139,8 @@ t_max_err llllobj_test(void)
     }
     llll_free(empty);
     llllelem_free(nothing);
+	object_method_typed(bach, gensym("initbifs"), 0, NULL, NULL);
+//// CULPRIT
     return MAX_ERR_NONE;
 }
 

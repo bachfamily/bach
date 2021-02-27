@@ -31,6 +31,8 @@ v0.8.2b
 
 authorization: now the code for a given year can be entered until January of the next year
 
+bach ecosystem: no extra memory is claimed by bach before the first bach object is created
+
 - bell, bach.expr:
     makepitch function now treats negative degrees as descending steps (e.g. makepitch(-1, 0, 5) returns B4)
     fixed crash when dividing with // an integer by 0
