@@ -988,16 +988,18 @@ void recalculate_all_utf_measure_timesignatures(t_score *x)
 
 void check_all_measures_autocompletion(t_score *x) 
 {
-    t_scorevoice *voice = x->firstvoice;
-    while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-        t_measure *meas = voice->firstmeasure;
-        while (meas) {
-            meas->need_check_autocompletion = true;
-            meas = meas->next;
+    if (x->r_ob.auto_complete_measures) {
+        t_scorevoice *voice = x->firstvoice;
+        while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
+            t_measure *meas = voice->firstmeasure;
+            while (meas) {
+                meas->need_check_autocompletion = true;
+                meas = meas->next;
+            }
+            voice = voice->next;
         }
-        voice = voice->next;
+        set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
     }
-    set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
 }
 
 void check_all_measures_ties(t_score *x) 
@@ -4455,7 +4457,8 @@ void overflow_chords_to_next_measure(t_score *x, t_measure *measure, t_chord *fr
     llll_check(nextmeasure->rhythmic_tree);
   */
     
-    nextmeasure->need_check_autocompletion = true;
+    if (x->r_ob.auto_complete_measures)
+        nextmeasure->need_check_autocompletion = true;
     recompute_all_for_measure((t_notation_obj *)x, measure, true);
     recompute_all_for_measure((t_notation_obj *)x, nextmeasure, true);
 }
