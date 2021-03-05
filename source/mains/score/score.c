@@ -1916,7 +1916,7 @@ void score_sel_change_symduration(t_score *x, t_symbol *s, long argc, t_atom *ar
     t_lexpr *lexpr = NULL;
     t_llll *new_durations = NULL;
     char changed = 0;
-    long autocomplete = 1, autoadapt = 0, autoadapt_scope = 1, autoadapt_simplify = 1, autobeam = 1, autorhythm = 1, global = 0;
+    long autocomplete = x->r_ob.auto_complete_measures, autoadapt = 0, autoadapt_scope = 1, autoadapt_simplify = 1, autobeam = 1, autorhythm = 1, global = 0;
     long flags = k_BEAMING_CALCULATION_DO;
     char lambda = (s == _llllobj_sym_lambda);
     t_notation_item *curr_it;
@@ -7284,9 +7284,15 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_STYLE_LABEL(c,"allowbeaming",0,"onoff","Allow Beaming");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"allowbeaming", 0, "1");
     CLASS_ATTR_ACCESSORS(c, "allowbeaming", (method)NULL, (method)score_setattr_allowbeaming);
-    // @description Toggles the possibility to beam chords. By default, of course, this is active.
+    // @description Toggles the possibility to beam chords. By default this is active.
     
 
+    CLASS_ATTR_CHAR(c,"autocomplete",0, t_notation_obj, auto_complete_measures);
+    CLASS_ATTR_STYLE_LABEL(c,"autocomplete",0,"onoff","Autocomplete Measures");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"autocomplete", 0, "1");
+    CLASS_ATTR_ACCESSORS(c, "autocomplete", (method)NULL, (method)score_setattr_autocompletemeasures);
+    // @description Toggles the ability to complete measures automatically with rests. By default this is active.
+    
     // OBSOLETE, no more supported, kept for legacy
     CLASS_ATTR_DOUBLE(c,"maxbeamslope", 0, t_notation_obj, max_beam_slope);
     CLASS_ATTR_STYLE_LABEL(c,"maxbeamslope", 0, "text", "Max Beam Slope");
