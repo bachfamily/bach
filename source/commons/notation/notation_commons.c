@@ -8735,7 +8735,8 @@ void measure_set_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature *t
     measure->timesignature = *ts;
     compute_utf_timesignature(r_ob, &measure->timesignature);
     synchronize_boxes_for_measure(r_ob, measure);
-    measure->need_check_autocompletion = true;
+    if (r_ob->auto_complete_measures)
+        measure->need_check_autocompletion = true;
     measure->need_recompute_beamings = true;
 } 
 
@@ -11148,7 +11149,7 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
     newmeasure->need_recompute_beamings = true;
     newmeasure->need_recompute_beams_positions = false;
     newmeasure->need_check_ties = true;
-    newmeasure->need_check_autocompletion = true;
+    newmeasure->need_check_autocompletion = false;
     
     newmeasure->custom_boxing = measure->custom_boxing;
     newmeasure->boxes = llll_get();
@@ -32556,7 +32557,8 @@ void note_delete(t_notation_obj *r_ob, t_note *note, char need_recompute_total_l
             recompute_all_measure_chord_parameters(r_ob, chord->parent); // we have to recalculate chord parameters
             chord->parent->need_recompute_beams_positions = true;
             chord->parent->need_check_ties = true;
-            chord->parent->need_check_autocompletion = true; 
+            if (r_ob->auto_complete_measures)
+                chord->parent->need_check_autocompletion = true;
             if (chord->parent->tuttipoint_reference) 
                 chord->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
             set_need_perform_analysis_and_change_flag(r_ob);
