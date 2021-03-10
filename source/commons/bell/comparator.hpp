@@ -40,8 +40,8 @@ class astComparatorLt : public astComparator
 public:
     using astComparator::astComparator;
     t_llll *eval(t_execEnv const &context) {
-        t_llll *ll1 = n1->eval(context);
-        t_llll *ll2 = n2->eval(context);
+        t_llll *ll1 = n1->TCOEval(context);
+        t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
         llll_appendlong(res, llll_lt(ll1, ll2));
         bell_release_llll(ll1);
@@ -55,8 +55,8 @@ class astComparatorGt : public astComparator
 public:
     using astComparator::astComparator;
     t_llll *eval(t_execEnv const &context) {
-        t_llll *ll1 = n1->eval(context);
-        t_llll *ll2 = n2->eval(context);
+        t_llll *ll1 = n1->TCOEval(context);
+        t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
         llll_appendlong(res, llll_gt(ll1, ll2));
         bell_release_llll(ll1);
@@ -70,8 +70,8 @@ class astComparatorLeq : public astComparator
 public:
     using astComparator::astComparator;
     t_llll *eval(t_execEnv const &context) {
-        t_llll *ll1 = n1->eval(context);
-        t_llll *ll2 = n2->eval(context);
+        t_llll *ll1 = n1->TCOEval(context);
+        t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
         llll_appendlong(res, llll_leq(ll1, ll2));
         bell_release_llll(ll1);
@@ -85,8 +85,8 @@ class astComparatorGeq : public astComparator
 public:
     using astComparator::astComparator;
     t_llll *eval(t_execEnv const &context) {
-        t_llll *ll1 = n1->eval(context);
-        t_llll *ll2 = n2->eval(context);
+        t_llll *ll1 = n1->TCOEval(context);
+        t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
         llll_appendlong(res, llll_geq(ll1, ll2));
         bell_release_llll(ll1);
@@ -100,8 +100,8 @@ class astComparatorEq : public astComparator
 public:
     using astComparator::astComparator;
     t_llll *eval(t_execEnv const &context) {
-        t_llll *ll1 = n1->eval(context);
-        t_llll *ll2 = n2->eval(context);
+        t_llll *ll1 = n1->TCOEval(context);
+        t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
         llll_appendlong(res, llll_eq_ignoretype(ll1, ll2));
         bell_release_llll(ll1);
@@ -115,8 +115,8 @@ class astComparatorNeq : public astComparator
 public:
     using astComparator::astComparator;
     t_llll *eval(t_execEnv const &context) {
-        t_llll *ll1 = n1->eval(context);
-        t_llll *ll2 = n2->eval(context);
+        t_llll *ll1 = n1->TCOEval(context);
+        t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
         llll_appendlong(res, llll_neq_ignoretype(ll1, ll2));
         bell_release_llll(ll1);

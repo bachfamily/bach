@@ -273,6 +273,7 @@ protected:
 public:
     virtual ~astNode() { }
     virtual t_llll *eval(t_execEnv const &context) = 0;
+    t_llll *TCOEval(t_execEnv const &context);
 };
 
 class astConst : public astNode
@@ -466,11 +467,12 @@ public:
     }
     
     t_llll *eval(t_execEnv const &context) {
-        bell_release_llll(n1->eval(context));
-        if (!context.stopTimeReached())
-            return n2->eval(context);
-        else
-            return llll_get();
+        bell_release_llll(n1->TCOEval(context));
+        t_llll *res = llll_get();
+        if (!context.stopTimeReached()) {
+            llll_appendobj(res, n2);
+        }
+        return res;
     }
 };
 
@@ -584,8 +586,8 @@ public:
     
     t_llll *eval(t_execEnv const &context) {
         
-        t_llll *datall = dataNode->eval(context);
-        t_llll *keysll = keyNode->eval(context);
+        t_llll *datall = dataNode->TCOEval(context);
+        t_llll *keysll = keyNode->TCOEval(context);
         t_llll *resll = llll_get();
 
         
@@ -711,7 +713,7 @@ protected:
     typedef typename std::conditional<std::is_same<BASE, astAssign>::value, astVar, astNode>::type firstType;
     
     void lastKey(lvalueStep** step, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_execEnv const &context) {
-        t_llll *key = (*step)->value->eval(context);
+        t_llll *key = (*step)->value->TCOEval(context);
         switch (key->l_size) {
             case 0:
                 object_warn((t_object *) context.obj, "rich variable assignment with null key");
@@ -747,7 +749,7 @@ protected:
     
     static t_bool nonLastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_bool previousWasKey, t_execEnv const &context) {
         t_bool created = false;
-        t_llll *address = (*step)->value->eval(context);
+        t_llll *address = (*step)->value->TCOEval(context);
         if (address->l_depth > 1) {
             object_error((t_object *) context.obj, "rich variable assignment doesn't support multiple nth syntax");
             current = nullptr;
@@ -817,7 +819,7 @@ protected:
     
 private:
     static void nonLastKey(lvalueStep** step, t_llllelem* &lookHere, t_llll* &current, t_execEnv const &context) {
-        t_llll *key = (*step)->value->eval(context);
+        t_llll *key = (*step)->value->TCOEval(context);
         switch (key->l_size) {
             case 0:
                 object_warn((t_object *) context.obj, "rich variable assignment with null key has no effect");
@@ -897,14 +899,14 @@ public:
     
     t_llll *eval(t_execEnv const &context) {
         
-        t_llll *orig = BASE::lNode->eval(context);
+        t_llll *orig = BASE::lNode->TCOEval(context);
         t_llll *base = llll_clone(orig);
         llll_free(orig);
         
         t_llll *origV;
         t_bool previousWasKey = false;
         if constexpr (TYPE == E_RA_STANDARD) {
-            origV = BASE::rNode->eval(context);
+            origV = BASE::rNode->TCOEval(context);
         } else {
             origV = nullptr;
         }
@@ -941,7 +943,7 @@ public:
             }
         } else {
             for ( ; i < nLvSteps; i++) {
-                llll_free(lvStep[i]->value->eval(context));
+                llll_free(lvStep[i]->value->TCOEval(context));
             }
         }
         

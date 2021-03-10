@@ -22,7 +22,7 @@
 
 #include "bell/astNode.hpp"
 #include <unordered_set>
-#define BELL_MAX_RECURSION_DEPTH 1000
+#define BELL_MAX_RECURSION_DEPTH 1000000000
 
 class funArg {
 protected:
@@ -290,7 +290,7 @@ public:
         t_llll *hereV = llll_get();
         llll_appendhatom_clone(hereV, &lookHere->l_hatom);
         functionCall->setOopStyleArgValue(hereV);
-        t_llll *res = functionCall->eval(context);
+        t_llll *res = functionCall->TCOEval(context);
         llll_replacewith<false>(current, lookHere, res);
     }
     
@@ -298,7 +298,7 @@ public:
         t_llll *v = llll_clone(subll);
         llll_destroyelem(v->l_head);
         functionCall->setOopStyleArgValue(v);
-        t_llll *res = functionCall->eval(context);
+        t_llll *res = functionCall->TCOEval(context);
         llll_destroy_everything_but_head(subll);
         llll_chain(subll, res);
     }
@@ -360,7 +360,7 @@ public:
         if (context.owner->retrieve(name)) {
             return astLocalVar::eval(context);
         } else {
-            t_llll *v = value->eval(context);
+            t_llll *v = value->TCOEval(context);
             assign(v, context);
             return v;
         }

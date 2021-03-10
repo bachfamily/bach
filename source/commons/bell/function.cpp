@@ -138,7 +138,7 @@ t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList
 }
 
 t_llll* t_userFunction::call(const t_execEnv &context) {
-    t_llll *result = ast->eval(context);
+    t_llll *result = ast->TCOEval(context);
     return llll_clone(result);
 }
 
@@ -189,7 +189,7 @@ t_llll* t_mainFunction::call(t_execEnv const &context)
     childContext.argc = context.argc;
     childContext.argv = context.argv;
     
-    t_llll *result = ast->eval(childContext);
+    t_llll *result = ast->TCOEval(childContext);
     return result;
     
 }
@@ -361,17 +361,17 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
         return llll_get();
     }
     
-    t_llll *fnll = functionNode->eval(context);
+    t_llll *fnll = functionNode->TCOEval(context);
     t_llll **argsByPositionLl = (t_llll **) bach_newptr(argsByPositionCount * sizeof(t_llll *));
     t_llll **argsByNameLl = (t_llll **) bach_newptr(argsByNameCount * sizeof(t_llll *));
     t_llll *resultLl = llll_get();
     
     for (int i = 0; i < argsByPositionCount; i++) {
-        argsByPositionLl[i] = argsByPosition[i]->eval(context);
+        argsByPositionLl[i] = argsByPosition[i]->TCOEval(context);
     }
     
     for (int i = 0; i < argsByNameCount; i++) {
-        argsByNameLl[i] = argsByName[i]->eval(context);
+        argsByNameLl[i] = argsByName[i]->TCOEval(context);
     }
     
     t_llllelem **elempile = (t_llllelem **) bach_newptr((fnll->l_depth - 1) * sizeof(t_llllelem *));

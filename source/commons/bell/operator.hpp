@@ -37,7 +37,7 @@ public:
     }
     
     t_llll *eval(t_execEnv const &context) {
-        t_llll *ll = n1->eval(context);
+        t_llll *ll = n1->TCOEval(context);
         t_llll *res = run(&ll);
         bell_release_llll(ll);
         return res;
@@ -60,8 +60,8 @@ public:
     
     t_llll *eval(t_execEnv const &context) {
         t_llll *lists[2];
-        lists[0] = n1->eval(context);
-        lists[1] = n2->eval(context);
+        lists[0] = n1->TCOEval(context);
+        lists[1] = n2->TCOEval(context);
         t_llll *res = run(lists);
         bell_release_llll(lists[0]);
         bell_release_llll(lists[1]);
@@ -87,8 +87,8 @@ public:
     t_llll *eval(t_execEnv const &context) {
         t_llll *lists[2];
         //t_variable *v = varNode->getVar(context);
-        lists[0] = varNode->eval(context);
-        lists[1] = valueNode->eval(context);
+        lists[0] = varNode->TCOEval(context);
+        lists[1] = valueNode->TCOEval(context);
         t_llll *res = run(lists);
         varNode->assign(res, context);
         bell_release_llll(lists[0]);

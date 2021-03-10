@@ -81,7 +81,7 @@ public:
     
     t_llll *eval(t_execEnv const &context)
     {
-        return (FN)(n1->eval(context), n2, context);
+        return (FN)(n1->TCOEval(context), n2, context);
     }
 
 };
@@ -183,7 +183,7 @@ public:
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
         if (created || !hatom_istrue(&lookHere->l_hatom)) {
-            t_llll *v = BASE::rNode->eval(context);
+            t_llll *v = BASE::rNode->TCOEval(context);
             llll_replacewith(current, lookHere, v);
             llll_release(v);
         }
@@ -193,7 +193,7 @@ private:
         switch(subll->l_size) {
                 
             case 1: { // there's only the key
-                t_llll *valuell = BASE::rNode->eval(context);
+                t_llll *valuell = BASE::rNode->TCOEval(context);
                 llll_chain(subll, llll_clone(valuell));
                 llll_release(valuell);
                 break;
@@ -205,7 +205,7 @@ private:
                 t_bool v = hatom_istrue(head_hatom);
                 if (!v) {
                     llll_destroy_everything_but_head(subll);
-                    t_llll *valuell = BASE::rNode->eval(context);
+                    t_llll *valuell = BASE::rNode->TCOEval(context);
                     llll_chain(subll, llll_clone(valuell));
                     llll_release(valuell);
                 }
@@ -231,7 +231,7 @@ public:
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
         if (hatom_istrue(&lookHere->l_hatom)) {
-            t_llll *v = BASE::rNode->eval(context);
+            t_llll *v = BASE::rNode->TCOEval(context);
             llll_replacewith(current, lookHere, v);
             llll_release(v);
         }
@@ -249,7 +249,7 @@ private:
                 t_bool v = hatom_istrue(head_hatom);
                 if (v) {
                     llll_destroy_everything_but_head(subll);
-                    t_llll *valuell = BASE::rNode->eval(context);
+                    t_llll *valuell = BASE::rNode->TCOEval(context);
                     llll_chain(subll, llll_clone(valuell));
                     llll_release(valuell);
                 }
@@ -258,7 +258,7 @@ private:
                 
             default: {
                 llll_destroy_everything_but_head(subll);
-                t_llll *valuell = BASE::rNode->eval(context);
+                t_llll *valuell = BASE::rNode->TCOEval(context);
                 llll_chain(subll, llll_clone(valuell));
                 llll_release(valuell);
                 break;
@@ -306,19 +306,19 @@ public:
     
     t_llll *eval(t_execEnv const &context) {
         
-        t_llll *cond = condNode->eval(context);
+        t_llll *cond = condNode->TCOEval(context);
         t_llll *v = llll_get();
         while (llll_istrue(cond) && !context.stopTimeReached()) {
             bell_release_llll(cond);
             if constexpr (KIND == E_LOOP_DO) {
                 bell_release_llll(v);
-                v = bodyNode->eval(context);
+                v = bodyNode->TCOEval(context);
             } else {
-                t_llll *append = bodyNode->eval(context);
+                t_llll *append = bodyNode->TCOEval(context);
                 llll_chain(v, llll_clone(append));
                 bell_release_llll(append);
             }
-            cond = condNode->eval(context);
+            cond = condNode->TCOEval(context);
         }
         bell_release_llll(cond);
         
@@ -345,12 +345,12 @@ private:
     
     static t_bool llll_getAttributeValue(countedList<symNodePair *> *attribute, t_execEnv const &context, t_symbol *sym, t_atom_long *v) {
         if (attribute->getItem()->getSym() == sym) {
-            t_llll *attr_ll = attribute->getItem()->getNode()->eval(context);
+            t_llll *attr_ll = attribute->getItem()->getNode()->TCOEval(context);
             *v = hatom_getlong(&attr_ll->l_head->l_hatom);
             bell_release_llll(attr_ll);
             return true;
         } else
-        return false;
+            return false;
     }
     
     
@@ -391,7 +391,7 @@ private:
         if (data->evaluate) {
             astForLoop *me = data->me;
             if (me->whileClause) {
-                t_llll *res = me->whileClause->eval(*context);
+                t_llll *res = me->whileClause->TCOEval(*context);
                 t_bool r = llll_istrue(res);
                 bell_release_llll(res);
                 if (!r) {
@@ -401,9 +401,9 @@ private:
             }
             if constexpr (KIND == E_LOOP_DO) {
                 bell_release_llll(data->rv);
-                data->rv = me->body->eval(*context);
+                data->rv = me->body->TCOEval(*context);
             } else { // KIND == E_LOOP_COLLECT
-                t_llll *append = me->body->eval(*context);
+                t_llll *append = me->body->TCOEval(*context);
                 llll_chain(data->rv, llll_clone(append));
                 bell_release_llll(append);
             }
@@ -498,7 +498,7 @@ public:
         funcData.evaluate = false;
         
         for (long i = 0; i < count; i++) {
-            lists[i] = inClauses[i]->eval(context);
+            lists[i] = inClauses[i]->TCOEval(context);
         }
         
         llll_iter(count, lists, maxdepth, scalarmode, recursionmode, iterationmode, spikemode, unwrap, nullptr,
