@@ -22,7 +22,7 @@
 
 #include "bell/astNode.hpp"
 #include <unordered_set>
-#define BELL_MAX_RECURSION_DEPTH 1000000000
+#define BELL_MAX_RECURSION_DEPTH 1000
 
 class funArg {
 protected:
@@ -72,7 +72,7 @@ protected:
     int namedArgumentsCountAfterEllipsis; // which can't be passed by position
 
     funArg **idx2argNameAndDefault; // 1-based (thus [0] is left empty)
-
+    t_bool lifts;
 public:
     std::unordered_map<t_symbol*, long> argName2idx;
 
@@ -81,7 +81,8 @@ protected:
     
     t_function() :  namedArgumentsCount(0),
                     namedArgumentsCountAfterEllipsis(0),
-                    idx2argNameAndDefault(idx2argNameAndDefaultPool + 256) { }
+                    idx2argNameAndDefault(idx2argNameAndDefaultPool + 256),
+                    lifts(false) { }
     
     virtual ~t_function() {
         for (funArg** thisANAD = idx2argNameAndDefault + 1; *thisANAD; thisANAD++) delete *thisANAD;
@@ -96,7 +97,7 @@ protected:
     void setArgument(const char *name) { setArgument(name, (astConst *) 0); };
     
 public:
-    virtual t_llll* call(const t_execEnv &context) = 0;
+    virtual t_llll* call(t_execEnv &context) = 0;
 
     long getNamedArgumentsCount() { return namedArgumentsCount; };
     long getNamedArgumentsCountAfterEllipsis() { return namedArgumentsCountAfterEllipsis; };
@@ -115,6 +116,8 @@ public:
     virtual void keep(t_symbol* name, t_llll* ll) { }
     virtual void unkeep(t_symbol *name) { }
     virtual t_llll *retrieve(t_symbol* name) { return nullptr; }
+    
+    t_bool doesItLift() { return lifts; }
     
 
 };
@@ -176,12 +179,13 @@ protected:
 public:
     t_userFunction(countedList<funArg *> *argumentsList, countedList<t_localVar> *localVariablesList, astNode *ast, t_codableobj *culprit);
     
-    virtual t_llll* call(const t_execEnv &context);
+    virtual t_llll* call(t_execEnv &context);
     virtual t_localVar* getLocalVariables() { return localVariables; };
     
     void keep(t_symbol* name, t_llll* ll) { return kept.insert(name, ll); }
     void unkeep(t_symbol *name) { kept.remove(name); }
     virtual t_llll *retrieve(t_symbol* name) { return kept.lookup(name); }
+    astNode* getAst() { return ast; }
 };
 
 using pvMap = std::unordered_map<t_symbol*, std::unordered_set<astPatcherVar*>>;
@@ -209,7 +213,7 @@ public:
                    pvMap *name2astVars,
                    t_codableobj *caller);
     
-    virtual t_llll* call(t_execEnv const &context);
+    virtual t_llll* call(t_execEnv &context);
 
     void setOutletData(long outlet, t_llll *ll);
     
@@ -248,12 +252,16 @@ private:
     astNode **argsByName;
     t_symbol **argsNames;
     
+    void prepareTailCall(t_function *fn, t_llll **argsByPositionLl, t_llll **argsByNameLl, t_execEnv &context);
+
+    void setupChildContext(t_function *fn, t_llll **argsByPositionLl, t_llll **argsByNameLl, t_execEnv &childContext);
+
     // to be called by eval()
-    t_llll *callFunction(t_function *fn, t_llll **argsByPositionLl, t_llll **argsByNameLl, t_execEnv const &context);
+    t_llll *callFunction(t_function *fn, t_llll **argsByPositionLl, t_llll **argsByNameLl, t_execEnv &context);
     
 public:
     // to be called by apply
-    static t_llll *callFunction(t_function *fn, t_llll *argsByPositionLl, t_llll *argsByNameLl, t_execEnv const &context);
+    static t_llll *callFunction(t_function *fn, t_llll *argsByPositionLl, t_llll *argsByNameLl, t_execEnv &context);
 
     astFunctionCall(astNode *functionNode, countedList<astNode *> *argsByPositionList, countedList<symNodePair *> *argsByNameList, t_codableobj *owner);
     
@@ -265,7 +273,7 @@ public:
     
     ~astFunctionCall();
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
 
@@ -286,7 +294,7 @@ public:
         delete functionCall;
     }
     
-    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
+    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv &context) {
         t_llll *hereV = llll_get();
         llll_appendhatom_clone(hereV, &lookHere->l_hatom);
         functionCall->setOopStyleArgValue(hereV);
@@ -294,7 +302,7 @@ public:
         llll_replacewith<false>(current, lookHere, res);
     }
     
-    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv &context) {
         t_llll *v = llll_clone(subll);
         llll_destroyelem(v->l_head);
         functionCall->setOopStyleArgValue(v);
@@ -312,13 +320,13 @@ public:
     
     virtual ~astKeep() { }
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *ll = astLocalVar::eval(context);
         context.owner->keep(name, ll);
         return ll;
     }
     
-    void assign(t_llll *ll, t_execEnv const &context) {
+    void assign(t_llll *ll, t_execEnv &context) {
         astLocalVar::assign(ll, context);
         context.owner->keep(name, ll);
     }
@@ -332,13 +340,13 @@ public:
     
     virtual ~astUnkeep() { }
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *ll = astLocalVar::eval(context);
         context.owner->unkeep(name);
         return ll;
     }
     
-    void assign(t_llll *ll, t_execEnv const &context) {
+    void assign(t_llll *ll, t_execEnv &context) {
         astLocalVar::assign(ll, context);
         context.owner->unkeep(name);
     }
@@ -356,7 +364,7 @@ public:
         delete value;
     }
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         if (context.owner->retrieve(name)) {
             return astLocalVar::eval(context);
         } else {
@@ -366,7 +374,7 @@ public:
         }
     }
     
-    void assign(t_llll *ll, t_execEnv const &context) {
+    void assign(t_llll *ll, t_execEnv &context) {
         astLocalVar::assign(ll, context);
         context.owner->unkeep(name);
     }

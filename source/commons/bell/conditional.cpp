@@ -20,7 +20,7 @@
 #include "bell/conditional.hpp"
 
 
-t_llll *astLogNot::eval(t_execEnv const &context) {
+t_llll *astLogNot::eval(t_execEnv &context, t_bool tail) {
     long res;
     t_llll *v = n1->TCOEval(context);
     res = !llll_istrue(v);
@@ -31,7 +31,7 @@ t_llll *astLogNot::eval(t_execEnv const &context) {
 
 //////////////////
 
-t_bool astLogXor_core(t_llll *first, astNode *second, t_execEnv const &context)
+t_bool astLogXor_core(t_llll *first, astNode *second, t_execEnv &context)
 {
     t_llll *v2 = second->TCOEval(context);
     long t1 = llll_istrue(first);
@@ -41,12 +41,12 @@ t_bool astLogXor_core(t_llll *first, astNode *second, t_execEnv const &context)
     return t1 ^ t2;
 }
 
-t_llll *astLogXor_run(t_llll *first, astNode *second, t_execEnv const &context)
+t_llll *astLogXor_run(t_llll *first, astNode *second, t_execEnv &context)
 {
     return get_long_ll(astLogXor_core(first, second, context));
 }
 
-t_bool astLogXor_hatom(const t_hatom *first, astNode *second, t_execEnv const &context)
+t_bool astLogXor_hatom(const t_hatom *first, astNode *second, t_execEnv &context)
 {
     t_llll *v2 = second->TCOEval(context);
     long t1 = hatom_istrue(first);
@@ -57,7 +57,7 @@ t_bool astLogXor_hatom(const t_hatom *first, astNode *second, t_execEnv const &c
 
 //////////////////
 
-t_bool astSCOr_core(t_llll *first, astNode *second, t_execEnv const &context)
+t_bool astSCOr_core(t_llll *first, astNode *second, t_execEnv &context)
 {
     if (llll_istrue(first)) {
         llll_release(first);
@@ -75,12 +75,12 @@ t_bool astSCOr_core(t_llll *first, astNode *second, t_execEnv const &context)
     }
 }
 
-t_llll* astSCOr_run(t_llll *first, astNode *second, t_execEnv const &context)
+t_llll* astSCOr_run(t_llll *first, astNode *second, t_execEnv &context)
 {
     return get_long_ll(astSCOr_core(first, second, context));
 }
 
-t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv const &context)
+t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv &context)
 {
     if (hatom_istrue(first)) {
         return true;
@@ -98,7 +98,7 @@ t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv const &con
 
 //////////////////
 
-t_bool astSCAnd_core(t_llll *first, astNode *second, t_execEnv const &context)
+t_bool astSCAnd_core(t_llll *first, astNode *second, t_execEnv &context)
 {
     if (!llll_istrue(first)) {
         bell_release_llll(first);
@@ -116,12 +116,12 @@ t_bool astSCAnd_core(t_llll *first, astNode *second, t_execEnv const &context)
     }
 }
 
-t_llll *astSCAnd_run(t_llll *first, astNode *second, t_execEnv const &context)
+t_llll *astSCAnd_run(t_llll *first, astNode *second, t_execEnv &context)
 {
     return get_long_ll(astSCAnd_core(first, second, context));
 }
 
-t_bool astSCAnd_hatom(const t_hatom *first, astNode *second, t_execEnv const &context)
+t_bool astSCAnd_hatom(const t_hatom *first, astNode *second, t_execEnv &context)
 {
     if (!hatom_istrue(first)) {
         return false;
@@ -139,7 +139,7 @@ t_bool astSCAnd_hatom(const t_hatom *first, astNode *second, t_execEnv const &co
 
 //////////////////
 
-t_llll *astSCOrExt_run(t_llll *first, astNode *second, t_execEnv const &context)
+t_llll *astSCOrExt_run(t_llll *first, astNode *second, t_execEnv &context)
 {
     if (first->l_size) {
         return first;
@@ -150,7 +150,7 @@ t_llll *astSCOrExt_run(t_llll *first, astNode *second, t_execEnv const &context)
 
 //////////////////
 
-t_llll* astSCAndExt_run(t_llll *first, astNode *second, t_execEnv const &context)
+t_llll* astSCAndExt_run(t_llll *first, astNode *second, t_execEnv &context)
 {
     if (first->l_size == 0) {
         return first;
@@ -168,18 +168,18 @@ astIfThenElse::~astIfThenElse() {
     delete elseNode;
 }
 
-t_llll *astIfThenElse::eval(t_execEnv const &context) {
+t_llll *astIfThenElse::eval(t_execEnv &context, t_bool tail) {
     t_llll *cond = ifNode->TCOEval(context);
     if (llll_istrue(cond)) {
         bell_release_llll(cond);
         t_llll *v = llll_get();
-        llll_appendobj(v, thenNode);
+        llll_appendnode(v, thenNode);
         return v;
     } else {
         bell_release_llll(cond);
         t_llll *v = llll_get();
         if (elseNode)
-            llll_appendobj(v, elseNode);
+            llll_appendnode(v, elseNode);
         return v;
     }
 }

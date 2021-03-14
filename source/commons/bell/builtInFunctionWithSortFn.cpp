@@ -46,7 +46,7 @@ t_fnSort::t_fnSort() : t_builtInFunctionWithSortFn("sort") {
     setArgument("function", llll_get());
 }
 
-t_llll* t_fnSort::call(const t_execEnv &context) {
+t_llll* t_fnSort::call(t_execEnv &context) {
     t_llll *res = NULL;
     t_llll *ll = llll_clone(context.argv[1]);
     t_function *fn = context.argv[2]->l_size ? (t_function *) hatom_getfunc(&context.argv[2]->l_head->l_hatom) : nullptr;
@@ -70,7 +70,7 @@ t_fnThin::t_fnThin() : t_builtInFunctionWithSortFn("thin")
     setArgument("function", llll_get());
 }
 
-t_llll* t_fnThin::call(const t_execEnv &context)
+t_llll* t_fnThin::call(t_execEnv &context)
 {
     t_function *fn = context.argv[2]->l_size ? (t_function *) hatom_getfunc(&context.argv[2]->l_head->l_hatom) : nullptr;
     if (!fn) {
@@ -97,7 +97,7 @@ t_fnClassify::t_fnClassify() : t_builtInFunctionWithSortFn("classify")
     setArgument("function", llll_get());
 }
 
-t_llll* t_fnClassify::call(const t_execEnv &context)
+t_llll* t_fnClassify::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_function *fn = context.argv[2]->l_size ? (t_function *) hatom_getfunc(&context.argv[2]->l_head->l_hatom) : nullptr;
@@ -124,7 +124,7 @@ t_fnUnion::t_fnUnion() : t_builtInFunctionWithSortFn("union")
     setArgument("function", llll_get());
 }
 
-t_llll* t_fnUnion::call(const t_execEnv &context)
+t_llll* t_fnUnion::call(t_execEnv &context)
 {
     t_llll *ll1 = llll_clone(context.argv[1]);
     t_llll *ll2 = llll_clone(context.argv[2]);
@@ -151,7 +151,7 @@ t_fnIntersection::t_fnIntersection() : t_builtInFunctionWithSortFn("intersection
     setArgument("function", llll_get());
 }
 
-t_llll* t_fnIntersection::call(const t_execEnv &context)
+t_llll* t_fnIntersection::call(t_execEnv &context)
 {
     t_llll *ll1 = llll_clone(context.argv[1]);
     t_llll *ll2 = llll_clone(context.argv[2]);
@@ -178,7 +178,7 @@ t_fnSymdiff::t_fnSymdiff() : t_builtInFunctionWithSortFn("symdiff")
     setArgument("function", llll_get());
 }
 
-t_llll* t_fnSymdiff::call(const t_execEnv &context)
+t_llll* t_fnSymdiff::call(t_execEnv &context)
 {
     t_llll *ll1 = llll_clone(context.argv[1]);
     t_llll *ll2 = llll_clone(context.argv[2]);
@@ -204,7 +204,7 @@ t_fnDiff::t_fnDiff() : t_builtInFunctionWithSortFn("diff") {
     setArgument("function", llll_get());
 }
 
-t_llll* t_fnDiff::call(const t_execEnv &context)
+t_llll* t_fnDiff::call(t_execEnv &context)
 {
     t_llll *ll1 = llll_clone(context.argv[1]);
     t_llll *ll2 = llll_clone(context.argv[2]);

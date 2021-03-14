@@ -55,7 +55,7 @@ t_fnFind::t_fnFind() : t_builtInFunctionWithFindFn("find")
     setArgument("maxdepth", -1);
 }
 
-t_llll* t_fnFind::call(const t_execEnv &context)
+t_llll* t_fnFind::call(t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
     t_llll *items = llll_clone(context.argv[2]); // may be nullptr as well
@@ -121,7 +121,7 @@ t_fnFinditems::t_fnFinditems() : t_builtInFunctionWithFindFn("finditems")
     setArgument("maxdepth", -1);
 }
 
-t_llll* t_fnFinditems::call(const t_execEnv &context)
+t_llll* t_fnFinditems::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_llll *items = llll_clone(context.argv[2]); // may be nullptr as well
@@ -179,7 +179,7 @@ t_fnFindaddrs::t_fnFindaddrs() : t_builtInFunctionWithFindFn("findaddrs")
     setArgument("maxdepth", -1);
 }
 
-t_llll* t_fnFindaddrs::call(const t_execEnv &context)
+t_llll* t_fnFindaddrs::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_llll *items = llll_clone(context.argv[2]); // may be nullptr as well

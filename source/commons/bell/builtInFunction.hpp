@@ -56,252 +56,252 @@ class t_fnLength : public t_builtInFunction
 {
 public:
     t_fnLength();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnDepth : public t_builtInFunction
 {
 public:
     t_fnDepth();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnIs : public t_builtInFunction
 {
 public:
     t_fnIs();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnNth : public t_builtInFunction
 {
 public:
     t_fnNth();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnArgs : public t_builtInFunction
 {
 public:
     t_fnArgs();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnArgcount : public t_builtInFunction
 {
 public:
     t_fnArgcount();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnOutlet : public t_builtInFunction
 {
 public:
     t_fnOutlet();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnInlet : public t_builtInFunction
 {
 public:
     t_fnInlet();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnRev : public t_builtInFunction
 {
 public:
     t_fnRev();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnRot : public t_builtInFunction
 {
 public:
     t_fnRot();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnContains : public t_builtInFunction
 {
 public:
     t_fnContains();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnTrans : public t_builtInFunction
 {
 public:
     t_fnTrans();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnFlat : public t_builtInFunction
 {
 public:
     t_fnFlat();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnSlice : public t_builtInFunction
 {
 public:
     t_fnSlice();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnLeft : public t_builtInFunction
 {
 public:
     t_fnLeft();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnRight : public t_builtInFunction
 {
 public:
     t_fnRight();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnSubs : public t_builtInFunction
 {
 public:
     t_fnSubs();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnInsert : public t_builtInFunction
 {
 public:
     t_fnInsert();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnKeysubs : public t_builtInFunction
 {
 public:
     t_fnKeysubs();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnScramble : public t_builtInFunction
 {
 public:
     t_fnScramble();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnMinmax : public t_builtInFunction
 {
 public:
     t_fnMinmax();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnMinimum : public t_builtInFunction
 {
 public:
     t_fnMinimum();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnMaximum : public t_builtInFunction
 {
 public:
     t_fnMaximum();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnPerm : public t_builtInFunction
 {
 public:
     t_fnPerm();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnComb : public t_builtInFunction
 {
 public:
     t_fnComb();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnCartesianprod : public t_builtInFunction
 {
 public:
     t_fnCartesianprod();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnWrap : public t_builtInFunction
 {
 public:
     t_fnWrap();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnDelace : public t_builtInFunction
 {
 public:
     t_fnDelace();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnGroup : public t_builtInFunction
 {
 public:
     t_fnGroup();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnPrimeser : public t_builtInFunction
 {
 public:
     t_fnPrimeser();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnArithmser : public t_builtInFunction
 {
 public:
     t_fnArithmser();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnGeomser : public t_builtInFunction
 {
 public:
     t_fnGeomser();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnSum : public t_builtInFunction
 {
 public:
     t_fnSum();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnProd : public t_builtInFunction
 {
 public:
     t_fnProd();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnMc2f : public t_builtInFunction
 {
 public:
     t_fnMc2f();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnF2mc : public t_builtInFunction
 {
 public:
     t_fnF2mc();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 #endif /* builtInFunction_hpp */

@@ -29,7 +29,7 @@ class t_mathFunction : public t_builtInFunction, public llllIterator<ARITY>
 {
 public:
     t_mathFunction(method fn, const char *n = nullptr) : t_builtInFunction(n), llllIterator<ARITY>(fn) { };
-    t_llll* call(const t_execEnv &context) {
+    t_llll* call(t_execEnv &context) {
         return llllIterator<ARITY>::run(context.argv + 1);
     }
 };
@@ -107,7 +107,7 @@ class astConvInlet : public astInlet, public llllIterator<1>
 public:
     astConvInlet(int idx, t_codableobj *owner) : astInlet(idx, owner), llllIterator<1>((method) FN) { };
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         if (idx > 0 && idx <= context.argc)
             return run(context.argv + idx);
         else

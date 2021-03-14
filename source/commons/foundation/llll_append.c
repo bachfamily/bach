@@ -268,6 +268,34 @@ t_llllelem *llll_appendfunc(t_llll *where, t_function *what, long flags, t_llll 
     return outelem;
 }
 
+// a new llllelem is created
+t_llllelem *llll_appendnode(t_llll *where, class astNode *what, long flags, t_llll *adopter)
+{
+    t_llllelem *outelem;
+    if (!where)
+        return NULL;
+    outelem = llllelem_get();
+    hatom_setnode(&outelem->l_hatom, what);
+    outelem->l_flags = flags;
+    llll_append(where, outelem, adopter);
+    pedantic_llll_check(where);
+    return outelem;
+}
+
+// a new llllelem is created
+t_llllelem *llll_appendfuncall(t_llll *where, t_function *what, long flags, t_llll *adopter)
+{
+    t_llllelem *outelem;
+    if (!where)
+        return NULL;
+    outelem = llllelem_get();
+    hatom_setfuncall(&outelem->l_hatom, what);
+    outelem->l_flags = flags;
+    llll_append(where, outelem, adopter);
+    pedantic_llll_check(where);
+    return outelem;
+}
+
 // a new llllelem is created. the llll is not cloned
 t_llllelem *llll_appendllll(t_llll *where, t_llll *what, long flags, t_llll *adopter)
 {

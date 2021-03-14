@@ -53,7 +53,7 @@ protected:
 
 public:
     t_fnMap();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnReduce : public t_builtInFunction
@@ -77,14 +77,14 @@ protected:
 
 public:
     t_fnReduce();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnApply : public t_builtInFunction
 {
 public:
     t_fnApply();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 

@@ -69,7 +69,7 @@ t_fnMap::t_fnMap() : t_builtInFunction("map")
     setArgument("maxdepth", 1);
 }
 
-t_llll* t_fnMap::call(const t_execEnv &context)
+t_llll* t_fnMap::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_function *modFunction = context.argv[2]->l_size ? (t_function *) hatom_getfunc(&context.argv[2]->l_head->l_hatom) : nullptr;
@@ -144,7 +144,7 @@ t_fnReduce::t_fnReduce() : t_builtInFunction("reduce")
     setArgument("function");
 }
 
-t_llll* t_fnReduce::call(const t_execEnv &context)
+t_llll* t_fnReduce::call(t_execEnv &context)
 {
     t_function *function = context.argv[2]->l_size ? (t_function *) hatom_getfunc(&context.argv[2]->l_head->l_hatom) : nullptr;
     
@@ -179,7 +179,7 @@ t_fnApply::t_fnApply() : t_builtInFunction("apply")
     setArgument("argsbyname");
 }
 
-t_llll* t_fnApply::call(const t_execEnv &context)
+t_llll* t_fnApply::call(t_execEnv &context)
 {
     t_function *function = context.argv[1]->l_size ? (t_function *) hatom_getfunc(&context.argv[1]->l_head->l_hatom) : nullptr;
     if (!function)

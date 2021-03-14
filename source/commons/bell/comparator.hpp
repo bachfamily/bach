@@ -39,7 +39,7 @@ class astComparatorLt : public astComparator
 {
 public:
     using astComparator::astComparator;
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *ll1 = n1->TCOEval(context);
         t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
@@ -54,7 +54,7 @@ class astComparatorGt : public astComparator
 {
 public:
     using astComparator::astComparator;
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *ll1 = n1->TCOEval(context);
         t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
@@ -69,7 +69,7 @@ class astComparatorLeq : public astComparator
 {
 public:
     using astComparator::astComparator;
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *ll1 = n1->TCOEval(context);
         t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
@@ -84,7 +84,7 @@ class astComparatorGeq : public astComparator
 {
 public:
     using astComparator::astComparator;
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *ll1 = n1->TCOEval(context);
         t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
@@ -99,7 +99,7 @@ class astComparatorEq : public astComparator
 {
 public:
     using astComparator::astComparator;
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *ll1 = n1->TCOEval(context);
         t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();
@@ -114,7 +114,7 @@ class astComparatorNeq : public astComparator
 {
 public:
     using astComparator::astComparator;
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *ll1 = n1->TCOEval(context);
         t_llll *ll2 = n2->TCOEval(context);
         t_llll *res = llll_get();

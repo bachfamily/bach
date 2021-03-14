@@ -22,19 +22,19 @@
 
 #include "bell/astNode.hpp"
 
-t_bool astLogXor_core(t_llll *first, astNode *second, t_execEnv const &context);
-t_bool astSCOr_core(t_llll *first, astNode *second, t_execEnv const &context);
-t_bool astSCAnd_core(t_llll *first, astNode *second, t_execEnv const &context);
+t_bool astLogXor_core(t_llll *first, astNode *second, t_execEnv &context);
+t_bool astSCOr_core(t_llll *first, astNode *second, t_execEnv &context);
+t_bool astSCAnd_core(t_llll *first, astNode *second, t_execEnv &context);
 
-t_bool astLogXor_hatom(const t_hatom *first, astNode *second, t_execEnv const &context);
-t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv const &context);
-t_bool astSCAnd_hatom(const t_hatom *first, astNode *second, t_execEnv const &context);
+t_bool astLogXor_hatom(const t_hatom *first, astNode *second, t_execEnv &context);
+t_bool astSCOr_hatom(const t_hatom *first, astNode *second, t_execEnv &context);
+t_bool astSCAnd_hatom(const t_hatom *first, astNode *second, t_execEnv &context);
 
-t_llll* astLogXor_run(t_llll *first, astNode *second, t_execEnv const &context);
-t_llll* astSCOr_run(t_llll *first, astNode *second, t_execEnv const &context);
-t_llll* astSCAnd_run(t_llll *first, astNode *second, t_execEnv const &context);
-t_llll* astSCOrExt_run(t_llll *first, astNode *second, t_execEnv const &context);
-t_llll* astSCAndExt_run(t_llll *first, astNode *second, t_execEnv const &context);
+t_llll* astLogXor_run(t_llll *first, astNode *second, t_execEnv &context);
+t_llll* astSCOr_run(t_llll *first, astNode *second, t_execEnv &context);
+t_llll* astSCAnd_run(t_llll *first, astNode *second, t_execEnv &context);
+t_llll* astSCOrExt_run(t_llll *first, astNode *second, t_execEnv &context);
+t_llll* astSCAndExt_run(t_llll *first, astNode *second, t_execEnv &context);
 
 
 
@@ -61,10 +61,10 @@ public:
     
     ~astLogNot() { delete n1; }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
-template <t_llll* (*FN)(t_llll*, astNode*, t_execEnv const &)>
+template <t_llll* (*FN)(t_llll*, astNode*, t_execEnv &)>
 class astSCLogOp : public astNode
 {
 protected:
@@ -79,7 +79,7 @@ public:
     
     astSCLogOp(astNode *n1, astNode *n2, t_codableobj *owner) : astNode(owner), n1(n1), n2(n2) { }
     
-    t_llll *eval(t_execEnv const &context)
+    t_llll *eval(t_execEnv &context, t_bool tail = false)
     {
         return (FN)(n1->TCOEval(context), n2, context);
     }
@@ -94,7 +94,7 @@ typedef astSCLogOp<astSCAndExt_run> astSCAndExt;
 
 
 
-template <t_llll* (*FN)(t_llll*, astNode*, t_execEnv const &)>
+template <t_llll* (*FN)(t_llll*, astNode*, t_execEnv &)>
 class astSCLogAssignOp : public astNode
 {
 protected:
@@ -109,7 +109,7 @@ public:
     
     astSCLogAssignOp(astVar *varNode, astNode *valueNode, t_codableobj *owner) : astNode(owner), varNode(varNode), valueNode(valueNode) { }
     
-    t_llll *eval(t_execEnv const &context)
+    t_llll *eval(t_execEnv &context, t_bool tail = false)
     {
         t_variable *v = varNode->getVar(context);
         t_llll *first = v->get();
@@ -128,8 +128,8 @@ typedef astSCLogAssignOp<astSCAndExt_run> astSCAAndExt;
 
 template <
         typename BASE,
-        t_bool (*FN_llll)(t_llll*, astNode*, t_execEnv const &),
-        t_bool (*FN_hatom)(const t_hatom*, astNode*, t_execEnv const &)
+        t_bool (*FN_llll)(t_llll*, astNode*, t_execEnv &),
+        t_bool (*FN_hatom)(const t_hatom*, astNode*, t_execEnv &)
 >
 class astSCLogRichAccessOp : public BASE
 {
@@ -142,7 +142,7 @@ public:
     ~astSCLogRichAccessOp() { }
     
 private:
-    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
+    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv &context) {
         static constexpr t_hatom zero = {{0}, H_LONG};
         t_bool v;
         if (created)
@@ -152,7 +152,7 @@ private:
         hatom_change_to_long(&lookHere->l_hatom, v);
     }
 
-    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv &context) {
         t_llll *currValues = llll_clone(subll);
         llll_destroyelem(currValues->l_head);
         t_bool v = (FN_llll)(currValues, BASE::rNode, context);
@@ -181,7 +181,7 @@ public:
 
     ~astSCRichAccessOrExt() { };
 private:
-    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
+    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv &context) {
         if (created || !hatom_istrue(&lookHere->l_hatom)) {
             t_llll *v = BASE::rNode->TCOEval(context);
             llll_replacewith(current, lookHere, v);
@@ -189,7 +189,7 @@ private:
         }
     }
     
-    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv &context) {
         switch(subll->l_size) {
                 
             case 1: { // there's only the key
@@ -229,7 +229,7 @@ public:
     
     ~astSCRichAccessAndExt() { };
 private:
-    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
+    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv &context) {
         if (hatom_istrue(&lookHere->l_hatom)) {
             t_llll *v = BASE::rNode->TCOEval(context);
             llll_replacewith(current, lookHere, v);
@@ -237,7 +237,7 @@ private:
         }
     }
     
-    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv &context) {
         switch(subll->l_size) {
                 
             case 1:  // there's only the key
@@ -285,7 +285,7 @@ public:
     
     ~astIfThenElse();
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
 
@@ -304,7 +304,7 @@ public:
         delete bodyNode;
     }
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         
         t_llll *cond = condNode->TCOEval(context);
         t_llll *v = llll_get();
@@ -343,7 +343,7 @@ private:
     astNode *whileClause;
     astNode *body;
     
-    static t_bool llll_getAttributeValue(countedList<symNodePair *> *attribute, t_execEnv const &context, t_symbol *sym, t_atom_long *v) {
+    static t_bool llll_getAttributeValue(countedList<symNodePair *> *attribute, t_execEnv &context, t_symbol *sym, t_atom_long *v) {
         if (attribute->getItem()->getSym() == sym) {
             t_llll *attr_ll = attribute->getItem()->getNode()->TCOEval(context);
             *v = hatom_getlong(&attr_ll->l_head->l_hatom);
@@ -357,7 +357,7 @@ private:
     
     typedef struct {
         astForLoop *me;
-        const t_execEnv *context;
+        t_execEnv *context;
         t_llll *rv;
         t_bool evaluate;
     } t_auxiliaryData;
@@ -383,7 +383,7 @@ private:
     
     
     static long cmdFunc(t_auxiliaryData *data, long cmd) {
-        const t_execEnv *context = data->context;
+        t_execEnv *context = data->context;
         if (context->stopTimeReached()) {
             data->evaluate = false;
             return 1;
@@ -468,7 +468,7 @@ public:
     
     
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll **lists = (t_llll**) bach_newptr(count * sizeof(t_llll*));
         
         // t_int32 maxdepth, long scalarmode, long recursionmode, long iterationmode, long spikemode, long unwrap

@@ -24,7 +24,7 @@ t_fnLength::t_fnLength() : t_builtInFunction("length") {
     setArgument("llll");
 }
 
-t_llll* t_fnLength::call(const t_execEnv &context) {
+t_llll* t_fnLength::call(t_execEnv &context) {
     t_llll *res = llll_get();
     llll_appendlong(res, context.argv[1]->l_size);
     return res;
@@ -38,7 +38,7 @@ t_fnIs::t_fnIs() : t_builtInFunction("is") {
     setArgument("llll");
 }
 
-t_llll* t_fnIs::call(const t_execEnv &context) {
+t_llll* t_fnIs::call(t_execEnv &context) {
     t_llll *res = llll_get();
     t_symbol *s;
     switch(context.argv[1]->l_size) {
@@ -70,7 +70,7 @@ t_fnArgs::t_fnArgs() : t_builtInFunction("$args") {
     setArgument("indices");
 }
 
-t_llll* t_fnArgs::call(const t_execEnv &context) {
+t_llll* t_fnArgs::call(t_execEnv &context) {
     t_llll *res = llll_get();
     t_llll *indices = context.argv[1];
     t_llllelem **elempile = new t_llllelem* [indices->l_depth - 1];
@@ -127,7 +127,7 @@ t_llll* t_fnArgs::call(const t_execEnv &context) {
 t_fnArgcount::t_fnArgcount() : t_builtInFunction() {
 }
 
-t_llll* t_fnArgcount::call(const t_execEnv &context) {
+t_llll* t_fnArgcount::call(t_execEnv &context) {
     return get_long_ll(context.parent->argc);
 }
 
@@ -138,7 +138,7 @@ t_fnOutlet::t_fnOutlet() : t_builtInFunction("outlet", true) {
     setArgument("outlets");
 }
 
-t_llll* t_fnOutlet::call(const t_execEnv &context) {
+t_llll* t_fnOutlet::call(t_execEnv &context) {
     t_function *caller = context.parent->owner;
     long argc = context.argc;
     t_llll **argv = context.argv;
@@ -160,7 +160,7 @@ t_llll* t_fnOutlet::call(const t_execEnv &context) {
 
 t_fnInlet::t_fnInlet() : t_builtInFunction("inlet", true) { }
 
-t_llll* t_fnInlet::call(const t_execEnv &context) {
+t_llll* t_fnInlet::call(t_execEnv &context) {
     t_llll *in = get_long_ll(context.mainFunc->getInlet());
     return llll_clone(in);
 }
@@ -176,7 +176,7 @@ t_fnRev::t_fnRev() : t_builtInFunction("rev")
     setArgument("maxdepth", 1);
 }
 
-t_llll* t_fnRev::call(const t_execEnv &context)
+t_llll* t_fnRev::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_atom_long mindepth, maxdepth;
@@ -198,7 +198,7 @@ t_fnRot::t_fnRot() : t_builtInFunction("rot")
     setArgument("maxdepth", 1);
 }
 
-t_llll* t_fnRot::call(const t_execEnv &context)
+t_llll* t_fnRot::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_atom_long shift = llll_getlong(context.argv[2]);
@@ -220,7 +220,7 @@ t_fnContains::t_fnContains() : t_builtInFunction("contains")
     setArgument("maxdepth", 1);
 }
 
-t_llll* t_fnContains::call(const t_execEnv &context)
+t_llll* t_fnContains::call(t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
     t_atom_long mindepth, maxdepth;
@@ -240,7 +240,7 @@ t_fnTrans::t_fnTrans() : t_builtInFunction("trans")
     setArgument("iterationmode", 1);
 }
 
-t_llll* t_fnTrans::call(const t_execEnv &context)
+t_llll* t_fnTrans::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     long iterationmode = llll_getlong(context.argv[2]);
@@ -264,7 +264,7 @@ t_fnFlat::t_fnFlat() : t_builtInFunction("flat")
     setArgument("spikemode", 0l);
 }
 
-t_llll* t_fnFlat::call(const t_execEnv &context)
+t_llll* t_fnFlat::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_atom_long minlevel, maxlevel;
@@ -284,7 +284,7 @@ t_fnSlice::t_fnSlice() : t_builtInFunction("slice")
     setArgument("index", 1);
 }
 
-t_llll* t_fnSlice::call(const t_execEnv &context)
+t_llll* t_fnSlice::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     long index = llll_getlong(context.argv[2]);
@@ -308,13 +308,13 @@ t_fnLeft::t_fnLeft() : t_builtInFunction("left")
     setArgument("index", 1);
 }
 
-t_llll* t_fnLeft::call(const t_execEnv &context)
+t_llll* t_fnLeft::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     long index = llll_getlong(context.argv[2]);
     t_llll *right = llll_slice(ll, index);
     bell_release_llll(right);
-    return ll;
+    return ll ? ll : llll_get();
 }
 
 
@@ -327,13 +327,13 @@ t_fnRight::t_fnRight() : t_builtInFunction("right")
     setArgument("index", -1);
 }
 
-t_llll* t_fnRight::call(const t_execEnv &context)
+t_llll* t_fnRight::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     long index = llll_getlong(context.argv[2]);
     t_llll *right = llll_slice(ll, index);
     bell_release_llll(ll);
-    return right;
+    return right ? right : llll_get();
 }
 
 
@@ -349,7 +349,7 @@ t_fnSubs::t_fnSubs() : t_builtInFunction("subs")
     setArgument("sizes", 0L);
 }
 
-t_llll* t_fnSubs::call(const t_execEnv &context)
+t_llll* t_fnSubs::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_llll *address;
@@ -388,7 +388,7 @@ t_fnInsert::t_fnInsert() : t_builtInFunction("insert")
     setArgument("multi", 0l);
 }
 
-t_llll* t_fnInsert::call(const t_execEnv &context)
+t_llll* t_fnInsert::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_llll *address;
@@ -427,7 +427,7 @@ t_fnKeysubs::t_fnKeysubs() : t_builtInFunction("keysubs")
     //setArgument("multi", 0L);
 }
 
-t_llll* t_fnKeysubs::call(const t_execEnv &context)
+t_llll* t_fnKeysubs::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_llll *keys;
@@ -450,7 +450,7 @@ t_fnScramble::t_fnScramble() : t_builtInFunction("scramble")
     setArgument("maxdepth", 1);
 }
 
-t_llll* t_fnScramble::call(const t_execEnv &context)
+t_llll* t_fnScramble::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_atom_long mindepth, maxdepth;
@@ -471,7 +471,7 @@ t_fnMinmax::t_fnMinmax() : t_builtInFunction("minmax")
     setArgument("maxdepth", 1);
 }
 
-t_llll *t_fnMinmax::call(const t_execEnv &context)
+t_llll *t_fnMinmax::call(t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
     t_atom_long mindepth, maxdepth;
@@ -502,7 +502,7 @@ t_fnMinimum::t_fnMinimum() : t_builtInFunction("minimum")
     setArgument("maxdepth", 1);
 }
 
-t_llll *t_fnMinimum::call(const t_execEnv &context)
+t_llll *t_fnMinimum::call(t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
     t_atom_long mindepth, maxdepth;
@@ -528,7 +528,7 @@ t_fnMaximum::t_fnMaximum() : t_builtInFunction("minimum")
     setArgument("maxdepth", 1);
 }
 
-t_llll *t_fnMaximum::call(const t_execEnv &context)
+t_llll *t_fnMaximum::call(t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
     t_atom_long mindepth, maxdepth;
@@ -551,7 +551,7 @@ t_fnPerm::t_fnPerm() : t_builtInFunction("perm")
     setArgument("maxcount", 0l);
 }
 
-t_llll *t_fnPerm::call(const t_execEnv &context)
+t_llll *t_fnPerm::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_atom_long maxcount = llll_getlong(context.argv[2]);
@@ -571,7 +571,7 @@ t_fnComb::t_fnComb() : t_builtInFunction("comb")
     setArgument("maxcount", 0l);
 }
 
-t_llll *t_fnComb::call(const t_execEnv &context)
+t_llll *t_fnComb::call(t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
     t_atom_long kstart = llll_getlong(context.argv[2]);
@@ -594,7 +594,7 @@ t_fnCartesianprod::t_fnCartesianprod() : t_builtInFunction("cartesianprod")
     setArgument("llll");
 }
 
-t_llll *t_fnCartesianprod::call(const t_execEnv &context)
+t_llll *t_fnCartesianprod::call(t_execEnv &context)
 {
     t_atom_long count = context.argv[1]->l_size;
     t_llll **lists = (t_llll **) bach_newptr(count * sizeof(t_llll *));
@@ -628,7 +628,7 @@ t_fnDepth::t_fnDepth() : t_builtInFunction("depth") {
     setArgument("llll");
 }
 
-t_llll* t_fnDepth::call(const t_execEnv &context) {
+t_llll* t_fnDepth::call(t_execEnv &context) {
     t_llll *res = llll_get();
     llll_appendlong(res, context.argv[1]->l_depth);
     return res;
@@ -644,7 +644,7 @@ t_fnNth::t_fnNth() : t_builtInFunction("nth") {
     setArgument("placeholder");
 }
 
-t_llll* t_fnNth::call(const t_execEnv &context) {
+t_llll* t_fnNth::call(t_execEnv &context) {
     t_llll *res = llll_nth(context.argv[1], context.argv[2], context.argv[3]);
     return res;
 }
@@ -658,7 +658,7 @@ t_fnWrap::t_fnWrap() : t_builtInFunction("wrap") {
     setArgument("levels", 1);
 }
 
-t_llll* t_fnWrap::call(const t_execEnv &context) {
+t_llll* t_fnWrap::call(t_execEnv &context) {
     t_llll *ll = llll_clone(context.argv[1]);
     t_atom_long levels = llll_getlong(context.argv[2]);
     llll_wrap(&ll, levels);
@@ -674,7 +674,7 @@ t_fnDelace::t_fnDelace() : t_builtInFunction("delace") {
     setArgument("count", 2);
 }
 
-t_llll* t_fnDelace::call(const t_execEnv &context) {
+t_llll* t_fnDelace::call(t_execEnv &context) {
     t_llll *ll = llll_clone(context.argv[1]);
     t_atom_long count = llll_getlong(context.argv[2]);
     if (count < 1) {
@@ -694,7 +694,7 @@ t_fnGroup::t_fnGroup() : t_builtInFunction("group") {
     setArgument("overlap", 0l);
 }
 
-t_llll* t_fnGroup::call(const t_execEnv &context) {
+t_llll* t_fnGroup::call(t_execEnv &context) {
     t_llll *ll = llll_clone(context.argv[1]);
     t_llll *modulos = context.argv[2];
     t_atom_long overlap = llll_getlong(context.argv[3]);
@@ -712,7 +712,7 @@ t_fnPrimeser::t_fnPrimeser() : t_builtInFunction("primeser") {
     setArgument("maxcount", 0l);
 }
 
-t_llll* t_fnPrimeser::call(const t_execEnv &context) {
+t_llll* t_fnPrimeser::call(t_execEnv &context) {
     long min = llll_getlong(context.argv[1]);
     long max = context.argv[2]->l_size && hatom_is_number(&context.argv[2]->l_head->l_hatom) ?  llll_getlong(context.argv[2]) : -1;
     long maxcount = llll_getlong(context.argv[3]);
@@ -731,7 +731,7 @@ t_fnArithmser::t_fnArithmser() : t_builtInFunction("arithmser") {
     setArgument("maxcount", 0L);
 }
 
-t_llll* t_fnArithmser::call(const t_execEnv &context) {
+t_llll* t_fnArithmser::call(t_execEnv &context) {
     const static t_hatom nothing = {{A_NOTHING}};
     //nothing.h_type = A_NOTHING;
     t_hatom start = context.argv[1]->l_size ? context.argv[1]->l_head->l_hatom : nothing;
@@ -755,7 +755,7 @@ t_fnGeomser::t_fnGeomser() : t_builtInFunction("geomser") {
     setArgument("maxcount", 0L);
 }
 
-t_llll* t_fnGeomser::call(const t_execEnv &context) {
+t_llll* t_fnGeomser::call(t_execEnv &context) {
     t_hatom nothing;
     nothing.h_type = A_NOTHING;
     t_hatom start = context.argv[1]->l_size ? context.argv[1]->l_head->l_hatom : nothing;
@@ -780,7 +780,7 @@ t_fnSum::t_fnSum() : t_builtInFunction("sum")
     setArgument("maxdepth", 1);
 }
 
-t_llll* t_fnSum::call(const t_execEnv &context)
+t_llll* t_fnSum::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_atom_long mindepth, maxdepth;
@@ -803,7 +803,7 @@ t_fnProd::t_fnProd() : t_builtInFunction("prod")
     setArgument("maxdepth", 1);
 }
 
-t_llll* t_fnProd::call(const t_execEnv &context)
+t_llll* t_fnProd::call(t_execEnv &context)
 {
     t_llll *ll = llll_clone(context.argv[1]);
     t_atom_long mindepth, maxdepth;
@@ -826,7 +826,7 @@ t_fnMc2f::t_fnMc2f() : t_builtInFunction("mc2f") {
     setArgument("basepitch", 6900.);
 }
 
-t_llll* t_fnMc2f::call(const t_execEnv &context) {
+t_llll* t_fnMc2f::call(t_execEnv &context) {
     
     t_llll *mc = context.argv[1];
     double basefreq = llll_getdouble(context.argv[2], 440.);
@@ -847,7 +847,7 @@ t_fnF2mc::t_fnF2mc() : t_builtInFunction("f2mc") {
     setArgument("basepitch", 6900.);
 }
 
-t_llll* t_fnF2mc::call(const t_execEnv &context) {
+t_llll* t_fnF2mc::call(t_execEnv &context) {
     
     t_llll *f = context.argv[1];
     double basefreq = llll_getdouble(context.argv[2], 440.);

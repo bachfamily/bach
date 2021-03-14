@@ -74,7 +74,7 @@ typedef union _mword {
     t_object                            **w_object_arr;
     struct _llllelem                    **w_llllelem_arr;
     struct _llll                        **w_llll_arr;
-    struct _rhythm_level_properties        *w_rhythm_level_properties;
+    struct _rhythm_level_properties     *w_rhythm_level_properties;
     void                                *w_void;
 } t_mword;
 
@@ -114,6 +114,9 @@ typedef enum _hatom_types {
     H_STRING        = 0x00000200,
     H_FUNCTION      = 0x00000400,   // a function
     
+    H_NODE          = 0x00000800,   // special value, only for bell
+    H_FUNCALL       = 0x00001000,   // idem
+    
     H_PAREN         = 0x00010000,   // modifier, indicating that a symbol contains parens
     H_SEPARATOR     = 0x00020000,   // modifier, indicating that a symbol contains separators (whitespace, comma, semicolon)
     H_SPECIAL       = 0x00040000,   // modifier, indicating that a symbol contains backslashes and/or double quotes
@@ -141,6 +144,8 @@ typedef union _hword
     struct _llll *w_llll;            // an llll
     void *w_obj;                    // pointer to a #t_object or other generic pointer
     t_function *w_func;             // pointer to a function (private and only partially supported)
+    class astNode *w_node;
+    
     t_atom_ulong w_ulong;            // long unsigned integer (32-bit or 64-bit according to the platform)
     struct _llllelem *w_llllelem;    // an llllelem
 #ifdef C74_X64
@@ -310,6 +315,9 @@ t_symbol *hatom_getsym(const t_hatom *h);
 t_llll *hatom_getllll(const t_hatom *h); // no check is performed, and the reference count of the llll is left untouched
 void *hatom_getobj(const t_hatom *h);
 t_function *hatom_getfunc(const t_hatom *h);
+class astNode *hatom_getnode(const t_hatom *h);
+t_function *hatom_getfuncall(const t_hatom *h);
+
 void hatom_setlong(t_hatom *h, const t_atom_long l);
 void hatom_setrational(t_hatom *h, const t_rational &r); // first, the given rational is reduced. Then, if the denominator appears to be 1 or -1 a long is stored instead
 void hatom_setpitch(t_hatom *h, const t_pitch &p);
@@ -320,6 +328,8 @@ void hatom_setsym(t_hatom *h, const t_symbol *s);
 void hatom_setllll(t_hatom *h, const t_llll *llll); // no check is performed, and the reference count of the llll is left untouched
 void hatom_setobj(t_hatom *h, const void *o);
 void hatom_setfunc(t_hatom *h, t_function *fn);
+void hatom_setnode(t_hatom *h, class astNode *fn);
+void hatom_setfuncall(t_hatom *h, t_function *fn);
 void hatom_setatom(t_hatom *h, const t_atom *a); // atom to hatom conversion. If the atom is A_OBJ and points to a llll, the hatom is correctly set to A_LLLL
 long hatom_eq(const t_hatom *a, const t_hatom *b); // comparison between two atoms
 

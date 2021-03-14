@@ -46,49 +46,49 @@ class t_fnSort : public t_builtInFunctionWithSortFn
 {
 public:
     t_fnSort();
-    t_llll* call(t_execEnv const &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnThin : public t_builtInFunctionWithSortFn
 {
 public:
     t_fnThin();
-    t_llll* call(t_execEnv const &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnClassify : public t_builtInFunctionWithSortFn
 {
 public:
     t_fnClassify();
-    t_llll* call(t_execEnv const &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnUnion : public t_builtInFunctionWithSortFn
 {
 public:
     t_fnUnion();
-    t_llll* call(t_execEnv const &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnIntersection : public t_builtInFunctionWithSortFn
 {
 public:
     t_fnIntersection();
-    t_llll* call(t_execEnv const &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnSymdiff : public t_builtInFunctionWithSortFn
 {
 public:
     t_fnSymdiff();
-    t_llll* call(t_execEnv const &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnDiff : public t_builtInFunctionWithSortFn
 {
 public:
     t_fnDiff();
-    t_llll* call(t_execEnv const &context);
+    t_llll* call(t_execEnv &context);
 };
 
 

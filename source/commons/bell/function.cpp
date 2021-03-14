@@ -95,6 +95,9 @@ t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList
     // put all the local variables in the array of local variable names (for faster access at function call)
     if (localVariablesList) {
         localVariablesList->copyIntoNullTerminatedArray(&localVariables);
+        for (auto lv = localVariables; !lifts && lv->getName(); lv++) {
+            lifts = lv->isLifted();
+        }
         delete localVariablesList->getHead();
     } else {
         localVariables = new t_localVar [1] { (nullptr) };
@@ -137,7 +140,7 @@ t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList
     delete argumentsList;
 }
 
-t_llll* t_userFunction::call(const t_execEnv &context) {
+t_llll* t_userFunction::call(t_execEnv &context) {
     t_llll *result = ast->TCOEval(context);
     return llll_clone(result);
 }
@@ -174,7 +177,7 @@ inlet(0), name2astVars(name2astVars), globalVars(globalVariables), owner(caller)
     outlets = 0;
 }
 
-t_llll* t_mainFunction::call(t_execEnv const &context)
+t_llll* t_mainFunction::call(t_execEnv &context)
 {
     
     if (!ast) {
@@ -189,7 +192,7 @@ t_llll* t_mainFunction::call(t_execEnv const &context)
     childContext.argc = context.argc;
     childContext.argv = context.argv;
     
-    t_llll *result = ast->TCOEval(childContext);
+    t_llll *result = ast->TCOEval(childContext, true);
     return result;
     
 }
@@ -322,23 +325,33 @@ void astFunctionCall::addOopStyleArg(astNode *arg) {
     }
 }
 
-t_llll *astFunctionCall::callFunction(t_function *fn, t_llll **argsByPositionLl, t_llll **argsByNameLl, t_execEnv const &context)
+inline void astFunctionCall::setupChildContext(t_function *fn, t_llll **argsByPositionLl, t_llll **argsByNameLl, t_execEnv &childContext)
 {
-    t_execEnv childContext(&context, fn);
-    
     const long offset = childContext.setFnArgsByPosition(fn, argsByPositionCount, argsByPositionLl);
     childContext.setFnArgsByName(fn, argsByNameCount, argsNames, argsByNameLl, offset);
     childContext.setFnDefaults(fn, offset, 0);
     childContext.setFnLocalVariables(fn);
     childContext.adjustArgc(fn, argsByPositionCount);
-    
+}
+
+void astFunctionCall::prepareTailCall(t_function *fn, t_llll **argsByPositionLl, t_llll **argsByNameLl, t_execEnv &context)
+{
+    t_execEnv childContext(&context, fn);
+    setupChildContext(fn, argsByPositionLl, argsByNameLl, childContext);
+    context.replaceWith(childContext);
+}
+
+t_llll *astFunctionCall::callFunction(t_function *fn, t_llll **argsByPositionLl, t_llll **argsByNameLl, t_execEnv &context)
+{
+    t_execEnv childContext(&context, fn);
+    setupChildContext(fn, argsByPositionLl, argsByNameLl, childContext);
     t_llll *res = fn->call(childContext);
     //for (int argByPosIdx = 1; argByPosIdx <= childContext.argc; argByPosIdx++)
     //    bell_release_llll(childContext.argv[argByPosIdx]);
     return res;
 }
 
-t_llll *astFunctionCall::callFunction(t_function *fn, t_llll *argsByPositionLl, t_llll *argsByNameLl, t_execEnv const &context)
+t_llll *astFunctionCall::callFunction(t_function *fn, t_llll *argsByPositionLl, t_llll *argsByNameLl, t_execEnv &context)
 {
     t_execEnv childContext(&context, fn);
     
@@ -354,7 +367,7 @@ t_llll *astFunctionCall::callFunction(t_function *fn, t_llll *argsByPositionLl, 
     return res;
 }
 
-t_llll* astFunctionCall::eval(t_execEnv const &context)
+t_llll* astFunctionCall::eval(t_execEnv &context, t_bool tail)
 {
     if (context.functionStackDepth > BELL_MAX_RECURSION_DEPTH) {
         object_error((t_object *) context.obj, "Stack overflow");
@@ -362,9 +375,10 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
     }
     
     t_llll *fnll = functionNode->TCOEval(context);
-    t_llll **argsByPositionLl = (t_llll **) bach_newptr(argsByPositionCount * sizeof(t_llll *));
-    t_llll **argsByNameLl = (t_llll **) bach_newptr(argsByNameCount * sizeof(t_llll *));
-    t_llll *resultLl = llll_get();
+    //t_llll **argsByPositionLl = (t_llll **) bach_newptr(argsByPositionCount * sizeof(t_llll *));
+    //t_llll **argsByNameLl = (t_llll **) bach_newptr(argsByNameCount * sizeof(t_llll *));
+    t_llll *argsByPositionLl[256];
+    t_llll *argsByNameLl[256];
     
     for (int i = 0; i < argsByPositionCount; i++) {
         argsByPositionLl[i] = argsByPosition[i]->TCOEval(context);
@@ -374,58 +388,80 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
         argsByNameLl[i] = argsByName[i]->TCOEval(context);
     }
     
-    t_llllelem **elempile = (t_llllelem **) bach_newptr((fnll->l_depth - 1) * sizeof(t_llllelem *));
-    t_llllelem **thisElempile = elempile;
-    t_llllelem *fnelem = fnll->l_head;
-    t_llll *newll = resultLl;
-    
-    while (1) {
-        while (fnelem) {
-            if (context.stopTimeReached())
-                break;
-            t_hatom *fnhatom = &fnelem->l_hatom;
-            switch (hatom_gettype(fnhatom)) {
-                case H_FUNCTION: {
-                    t_function *fn = fnhatom->h_w.w_func;
-                    t_llll *res = callFunction(fn, argsByPositionLl, argsByNameLl, context);
-                    llll_chain(resultLl, res);
-                    fnelem = fnelem->l_next;
+    t_llll *resultLl;
+    if (fnll->l_size == 1 &&
+        fnll->l_depth == 1 &&
+        hatom_gettype(&fnll->l_head->l_hatom) == H_FUNCTION) {
+        t_function *fn = hatom_getfunc(&fnll->l_head->l_hatom);
+        if (t_userFunction *ufn;
+            !context.stopTimeReached() && tail &&
+            (ufn = dynamic_cast<t_userFunction*>(fn))
+            //&& (tail || !fn->doesItLift())
+            ) { // can perform TCO
+            prepareTailCall(fn, argsByPositionLl, argsByNameLl, context);
+            resultLl = llll_get();
+            llll_appendnode(resultLl, ufn->getAst());
+        } else {
+            resultLl = callFunction(fn, argsByPositionLl, argsByNameLl, context);
+        }
+
+    } else {
+        
+        t_llll *resultLl = llll_get();
+        t_llllelem *elempile[256];
+        //t_llllelem **elempile = (t_llllelem **) bach_newptr((fnll->l_depth - 1) * sizeof(t_llllelem *));
+        t_llllelem **thisElempile = elempile;
+        t_llllelem *fnelem = fnll->l_head;
+        t_llll *newll = resultLl;
+        
+        while (1) {
+            while (fnelem) {
+                if (context.stopTimeReached())
                     break;
-                }
-                case H_LLLL: {
-                    newll = llll_get();
-                    llll_appendllll(resultLl, newll);
-                    *thisElempile = fnelem;
-                    thisElempile++;
-                    fnelem = fnelem->l_hatom.h_w.w_llll->l_head;
-                    resultLl = newll;
-                    break;
-                }
-                default: {
-                    llll_appendhatom(newll, fnhatom);
-                    fnelem = fnelem->l_next;
-                    break;
+                t_hatom *fnhatom = &fnelem->l_hatom;
+                switch (hatom_gettype(fnhatom)) {
+                    case H_FUNCTION: {
+                        t_function *fn = fnhatom->h_w.w_func;
+                        t_llll *res = callFunction(fn, argsByPositionLl, argsByNameLl, context);
+                        llll_chain(resultLl, res);
+                        fnelem = fnelem->l_next;
+                        break;
+                    }
+                    case H_LLLL: {
+                        newll = llll_get();
+                        llll_appendllll(resultLl, newll);
+                        *thisElempile = fnelem;
+                        thisElempile++;
+                        fnelem = fnelem->l_hatom.h_w.w_llll->l_head;
+                        resultLl = newll;
+                        break;
+                    }
+                    default: {
+                        llll_appendhatom(newll, fnhatom);
+                        fnelem = fnelem->l_next;
+                        break;
+                    }
                 }
             }
+            if (thisElempile == elempile)
+                break;
+            resultLl = resultLl->l_owner->l_parent;
+            fnelem = (*--thisElempile)->l_next;
         }
-        if (thisElempile == elempile)
-            break;
-        resultLl = resultLl->l_owner->l_parent;
-        fnelem = (*--thisElempile)->l_next;
+        //bach_freeptr(elempile);
     }
     bell_release_llll(fnll);
-
+    
     for (int i = 0; i < argsByPositionCount; i++) {
         llll_release(argsByPositionLl[i]);
     }
-    bach_freeptr(argsByPositionLl);
-
+    //bach_freeptr(argsByPositionLl);
+    
     for (int i = 0; i < argsByNameCount; i++) {
         llll_release(argsByNameLl[i]);
     }
-
-    bach_freeptr(argsByNameLl);
-    bach_freeptr(elempile);
+    
+    //bach_freeptr(argsByNameLl);
     return resultLl;
 }
 

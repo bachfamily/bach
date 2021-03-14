@@ -26,7 +26,7 @@ t_fnDirectout::t_fnDirectout(t_eval *owner) : t_ownedFunction("directout", true,
     setArgument("outlets");
 }
 
-t_llll* t_fnDirectout::call(const t_execEnv &context)
+t_llll* t_fnDirectout::call(t_execEnv &context)
 {
     long argc = context.argc;
     t_llll **argv = context.argv;
@@ -60,7 +60,7 @@ t_fnDirectout_dummy::t_fnDirectout_dummy(t_object *owner) : t_fnDirectout(reinte
     
 }
 
-t_llll* t_fnDirectout_dummy::call(const t_execEnv &context)
+t_llll* t_fnDirectout_dummy::call(t_execEnv &context)
 {
     object_warn((t_object *) context.obj, "Can't call the directout function");
     return llll_clone(context.argv[context.argc]);
@@ -75,7 +75,7 @@ t_fnDirectin::t_fnDirectin(t_eval *owner) : t_ownedFunction("directin", false, r
     setArgument("inlet");
 }
 
-t_llll* t_fnDirectin::call(const t_execEnv &context)
+t_llll* t_fnDirectin::call(t_execEnv &context)
 {
     t_llll **argv = context.argv;
     t_llllelem *inletElem = argv[1]->l_head;
@@ -107,7 +107,7 @@ t_fnDirectin_dummy::t_fnDirectin_dummy(t_object *owner) : t_fnDirectin(reinterpr
     
 }
 
-t_llll* t_fnDirectin_dummy::call(const t_execEnv &context)
+t_llll* t_fnDirectin_dummy::call(t_execEnv &context)
 {
     object_warn((t_object *) context.obj, "Can't call the directin function");
     return llll_get();
@@ -124,7 +124,7 @@ t_fnPrint::t_fnPrint(t_object *owner) : t_ownedFunction("print", false, owner)
     setArgument("error", new astConst(0l, (t_codableobj *) owner));
 }
 
-t_llll* t_fnPrint::call(const t_execEnv &context)
+t_llll* t_fnPrint::call(t_execEnv &context)
 {
     t_llll **argv = context.argv;
     t_llll *ll = argv[1];

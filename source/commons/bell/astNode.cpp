@@ -24,6 +24,38 @@
 
 t_execEnv::~t_execEnv()
 {
+    release();
+}
+
+void t_execEnv::clear()
+{
+    release();
+    scope.clear();
+    if (parent && argv != parent->argv) { // should always be true
+        // (it's false for defaults)
+        argc = 0;
+        memset(argvPool, 0, 512 * sizeof(t_llll*));
+    }
+}
+
+void t_execEnv::replaceWith(t_execEnv &other)
+{
+    release();
+    localVariables = other.localVariables;
+    other.localVariables.clear();
+    argc = other.argc;
+    other.argc = 0;
+    sysmem_copyptr(other.argvPool, argvPool, 512 * sizeof(t_llll*));
+    argv = argvPool + 256;
+    memset(other.argvPool, 0, 512 * sizeof(t_llll*));
+    owner = other.owner;
+    scope = other.scope;
+    other.scope.clear();
+    // no need to set any of the others
+}
+
+void t_execEnv::release()
+{
     for (auto i = scope.begin(); i != scope.end(); i++) {
         t_variable *v = i->second;
         v->decrease();
@@ -35,6 +67,7 @@ t_execEnv::~t_execEnv()
             bell_release_llll(*thisAv);
     }
 }
+
 
 void t_execEnv::setVariableFromArgByPosition(t_function *fn, long i)
 {
@@ -314,27 +347,39 @@ void t_execEnv::adjustArgc(t_function *fn, long abpc)
 
 // Eval with tail call optimization
 
-inline t_llll* astNode::TCOEval(const t_execEnv &context)
+inline t_llll *astNode::TCOEval(t_execEnv &context, t_bool tail)
 {
     t_llll *all = llll_get();
     astNode *n = this;
+    t_bool go = true;
     do {
-        t_llll* res = n->eval(context);
+        t_llll* res;
+        res = n->eval(context, tail);
         t_llllelem *t = res->l_tail;
-        if (t && hatom_gettype(&t->l_hatom) == H_OBJ) {
-            n = reinterpret_cast<astNode *>(hatom_getobj(&t->l_hatom));
-            llll_destroyelem(t);
-            llll_chain(all, res);
-            // if we're here, then it means that res has been constructed especially for us
-            // so we can as well alter it and let llll_chain destroy it
+        if (t) {
+            switch(hatom_gettype(&t->l_hatom)) {
+                case H_NODE: {
+                    n = hatom_getnode(&t->l_hatom);
+                    llll_destroyelem(t);
+                    llll_chain(all, res);
+                    break;
+                    // if we're here, then it means that res has been constructed especially for us
+                    // so we can as well alter it and let llll_chain destroy it
+                }
+                default:
+                    t_llll *g = llll_clone(res);
+                    llll_release(res);
+                    llll_chain(all, g);
+                    go = false;
+                    break;
+            }
         } else {
-            t_llll *g = llll_clone(res);
-            llll_release(res);
-            llll_chain(all, g);
-            break;
+            llll_free(res);
+            go = false;
         }
-    } while(1);
+    } while(go);
     return all;
+
 }
 
 
@@ -398,14 +443,14 @@ astGlobalVar::astGlobalVar(t_globalVariableTable *gvt, t_symbol *name, t_codable
 
 //////////
 
-t_variable* astLocalVar::getVar(t_execEnv const &context) {
+t_variable* astLocalVar::getVar(t_execEnv &context) {
     t_variable *v = context.scope.find(name)->second;
     return v;
 }
 
 //////////
 
-t_llll* astInlet::eval(t_execEnv const &context) {
+t_llll* astInlet::eval(t_execEnv &context, t_bool tail) {
     if (idx > 0 && idx <= context.argc)
         return bell_retain_llll(context.argv[idx]);
     else
@@ -415,7 +460,7 @@ t_llll* astInlet::eval(t_execEnv const &context) {
 
 //////////
 
-t_llll* astWrap::eval(t_execEnv const &context) {
+t_llll* astWrap::eval(t_execEnv &context, t_bool tail) {
     t_llll *orig = n1->TCOEval(context);
     t_llll *wrapped = llll_clone(orig);
     bell_release_llll(orig);
@@ -425,17 +470,17 @@ t_llll* astWrap::eval(t_execEnv const &context) {
 
 ////////////
 
-t_llll* astConcat::eval(t_execEnv const &context) {
+t_llll* astConcat::eval(t_execEnv &context, t_bool tail) {
     t_llll *v1 = n1->TCOEval(context);
     t_llll *x = llll_clone(v1);
-    llll_appendobj(x, n2);
+    llll_appendnode(x, n2);
     bell_release_llll(v1);
     return x;
 }
 
 ////////////
 
-t_llll* astConcatAssignOp::eval(t_execEnv const &context) {
+t_llll* astConcatAssignOp::eval(t_execEnv &context, t_bool tail) {
     t_variable *v = varNode->getVar(context);
     t_llll *v1 = v->get();
     t_llll *v2 = dataNode->TCOEval(context);
@@ -450,7 +495,7 @@ t_llll* astConcatAssignOp::eval(t_execEnv const &context) {
 
 ////////////
 
-t_llll* astRevConcatAssignOp::eval(t_execEnv const &context) {
+t_llll* astRevConcatAssignOp::eval(t_execEnv &context, t_bool tail) {
     t_variable *v = varNode->getVar(context);
     t_llll *v1 = dataNode->TCOEval(context);
     t_llll *v2 = v->get();
@@ -465,7 +510,7 @@ t_llll* astRevConcatAssignOp::eval(t_execEnv const &context) {
 
 ////////////
 
-t_llll* astNthOp::eval(t_execEnv const &context) {
+t_llll* astNthOp::eval(t_execEnv &context, t_bool tail) {
     t_llll *data = dataNode->TCOEval(context);
     t_llll *address = addressNode->TCOEval(context);
     if (llllobj_check_llll_address((t_object *) context.obj, address, true, true) != MAX_ERR_NONE) {
@@ -481,7 +526,7 @@ t_llll* astNthOp::eval(t_execEnv const &context) {
 
 ////////////
 
-t_llll* astNthAssignOp::eval(t_execEnv const &context) {
+t_llll* astNthAssignOp::eval(t_execEnv &context, t_bool tail) {
     t_variable *v = varNode->getVar(context);
     t_llll *data = v->get();
     t_llll *address = addressNode->TCOEval(context);
@@ -499,7 +544,7 @@ t_llll* astNthAssignOp::eval(t_execEnv const &context) {
 
 ////////////
 
-t_llll* astPickOp::eval(t_execEnv const &context) {
+t_llll* astPickOp::eval(t_execEnv &context, t_bool tail) {
     t_llll *data = dataNode->TCOEval(context);
     t_llll *address = addressNode->TCOEval(context);
     if (llllobj_check_llll_address((t_object *) context.obj, address, false, false) != MAX_ERR_NONE) {
@@ -528,7 +573,7 @@ t_llll* astPickOp::eval(t_execEnv const &context) {
 
 ////////////
 
-t_llll* astRangeOp::eval(t_execEnv const &context) {
+t_llll* astRangeOp::eval(t_execEnv &context, t_bool tail) {
     const static t_hatom nothing = {{0}, H_NOTHING};
     const static t_hatom one = {{1}, H_LONG};
 
@@ -546,7 +591,7 @@ t_llll* astRangeOp::eval(t_execEnv const &context) {
 
 ////////////
 
-t_llll* astRepeatOp::eval(t_execEnv const &context) {
+t_llll* astRepeatOp::eval(t_execEnv &context, t_bool tail) {
     t_llll *datall = dataNode->TCOEval(context);
     t_llll *repeatll = repeatNode->TCOEval(context);
     t_llll *res = llll_clone(datall);
@@ -582,7 +627,7 @@ t_llll* astRepeatOp::eval(t_execEnv const &context) {
 
 //////////
 
-t_llll* astAssign::eval(t_execEnv const &context) {
+t_llll* astAssign::eval(t_execEnv &context, t_bool tail) {
     t_llll *v = rNode->TCOEval(context);
     lNode->assign(v, context);
     return v;

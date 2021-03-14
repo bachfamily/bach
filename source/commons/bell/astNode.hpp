@@ -198,7 +198,8 @@ private:
     void setVariableFromArgByPosition(t_function *fn, long i);
     t_variable* createVariable(t_symbol *name);
     t_variable* createVariable(t_symbol *name, t_llll *ll);
-    
+    void release();
+
 public:
     // this constructor is only called for the root environment,
     // i.e., the parent of the actual context of main.
@@ -213,8 +214,11 @@ public:
     t_execEnv(t_execEnv const * const parent) : obj(parent->obj), argc(parent->argc), argv(argvPool + 256), functionStackDepth(parent->functionStackDepth + 1), mainFunc(parent->mainFunc), owner(parent->owner), parent(parent), root(parent->root), stopTime(parent->stopTime), timeOver(false) { };
     
     ~t_execEnv();
-
     
+    void replaceWith(t_execEnv &other);
+
+    void clear();
+
     // returns the position of the first named argument in argv
     // (non-0 only if the function is left-variadic)
     long setFnArgsByPosition(t_function *fn, long argc, t_llll **argv);
@@ -272,8 +276,9 @@ protected:
     astNode(t_codableobj *owner) : owner(owner) { }
 public:
     virtual ~astNode() { }
-    virtual t_llll *eval(t_execEnv const &context) = 0;
-    t_llll *TCOEval(t_execEnv const &context);
+    virtual t_llll *eval(t_execEnv &context, t_bool tail = false) = 0;
+    
+    t_llll *TCOEval(t_execEnv &context, t_bool tail = false);
 };
 
 class astConst : public astNode
@@ -297,7 +302,7 @@ public:
     
     void set(t_llll *ll);
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         return bell_retain_llll(v);
     }
 };
@@ -307,8 +312,8 @@ class astVar : public astNode
 protected:
     astVar(t_codableobj *owner) : astNode(owner) { }
 public:
-    virtual t_variable *getVar(t_execEnv const &context) = 0;
-    virtual void assign(t_llll *ll, t_execEnv const &context) = 0;
+    virtual t_variable *getVar(t_execEnv &context) = 0;
+    virtual void assign(t_llll *ll, t_execEnv &context) = 0;
 };
 
 class astGlobalVar : public astVar
@@ -319,15 +324,15 @@ public:
     astGlobalVar(t_globalVariableTable *gvt, t_symbol *name, t_codableobj *owner);
     astGlobalVar(astGlobalVar *v) : astVar(v->owner), sv(v->sv) { };
     
-    t_globalVariable *getVar(t_execEnv const &context) { return getVar(); }
+    t_globalVariable *getVar(t_execEnv &context) { return getVar(); }
     
     t_globalVariable *getVar() { return sv; }
     
-    void assign(t_llll *ll, t_execEnv const &context) { assign(ll); }
+    void assign(t_llll *ll, t_execEnv &context) { assign(ll); }
     
     void assign(t_llll *ll) { sv->set(ll, (t_object *) owner); }
     
-    t_llll *eval(t_execEnv const &context) { return eval(); }
+    t_llll *eval(t_execEnv &context, t_bool tail = false) { return eval(); }
     
     t_llll *eval() { return sv->get(); }
 };
@@ -344,17 +349,17 @@ public:
     
     void setVar(t_patcherVariable *var) { pv = var; }
     
-    t_patcherVariable* getVar(t_execEnv const &context) { return getVar(); }
+    t_patcherVariable* getVar(t_execEnv &context) { return getVar(); }
     
     t_patcherVariable* getVar() { return pv; }
     
     t_symbol* getName() { return name; }
     
-    void assign(t_llll *ll, t_execEnv const &context) { assign(ll); }
+    void assign(t_llll *ll, t_execEnv &context) { assign(ll); }
     
     void assign(t_llll *ll) { pv->set(ll, (t_object *) owner); }
     
-    t_llll *eval(t_execEnv const &context) { return eval(); }
+    t_llll *eval(t_execEnv &context, t_bool tail = false) { return eval(); }
     
     t_llll *eval() { return pv->get(); }
 };
@@ -371,13 +376,13 @@ public:
     astLocalVar(t_symbol *name, t_codableobj *owner) : astVar(owner), name(name) { }
     
     astLocalVar(astLocalVar *v) : astVar(v->owner), name(v->name) { };
-    t_variable *getVar(t_execEnv const &context);
+    t_variable *getVar(t_execEnv &context);
     
-    void assign(t_llll *ll, t_execEnv const &context) { getVar(context)->set(ll); }
+    void assign(t_llll *ll, t_execEnv &context) { getVar(context)->set(ll); }
     
     t_symbol *getName() { return name; }
 
-    t_llll *eval(t_execEnv const &context) { return getVar(context)->get(); }
+    t_llll *eval(t_execEnv &context, t_bool tail = false) { return getVar(context)->get(); }
 };
 
 class astInlet : public astNode
@@ -387,7 +392,7 @@ protected:
 public:
     astInlet(int idx, t_codableobj *owner) : astNode(owner), idx(idx) { }
 
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
 
@@ -402,7 +407,7 @@ public:
         delete n1;
     }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
 class astConcat : public astNode
@@ -418,7 +423,7 @@ public:
         delete n2;
     }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
 class astConcatAssignOp : public astNode
@@ -434,7 +439,7 @@ public:
         delete dataNode;
     }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
 class astRevConcatAssignOp : public astNode
@@ -450,7 +455,7 @@ public:
         delete dataNode;
     }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
 class astSequence : public astNode
@@ -466,12 +471,11 @@ public:
         delete n2;
     }
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         bell_release_llll(n1->TCOEval(context));
         t_llll *res = llll_get();
-        if (!context.stopTimeReached()) {
-            llll_appendobj(res, n2);
-        }
+        if (!context.stopTimeReached())
+            llll_appendnode(res, n2);
         return res;
     }
 };
@@ -489,7 +493,7 @@ public:
         delete addressNode;
     }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
     
 };
 
@@ -506,7 +510,7 @@ public:
         delete addressNode;
     }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
     
 };
 
@@ -524,7 +528,7 @@ public:
         delete addressNode;
     }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
     
 };
 
@@ -542,7 +546,7 @@ public:
         delete endNode;
     }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
     
 };
 
@@ -559,7 +563,7 @@ public:
         delete repeatNode;
     }
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
 
@@ -584,7 +588,7 @@ public:
         delete keyNode;
     }
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         
         t_llll *datall = dataNode->TCOEval(context);
         t_llll *keysll = keyNode->TCOEval(context);
@@ -677,7 +681,7 @@ public:
         delete rNode;
     };
     
-    t_llll *eval(t_execEnv const &context);
+    t_llll *eval(t_execEnv &context, t_bool tail = false);
 };
 
 class astNonAssign : public astTwoSided<astNode>
@@ -712,7 +716,7 @@ private:
 protected:
     typedef typename std::conditional<std::is_same<BASE, astAssign>::value, astVar, astNode>::type firstType;
     
-    void lastKey(lvalueStep** step, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_execEnv const &context) {
+    void lastKey(lvalueStep** step, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_execEnv &context) {
         t_llll *key = (*step)->value->TCOEval(context);
         switch (key->l_size) {
             case 0:
@@ -741,13 +745,13 @@ protected:
     
     
     
-    void lastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_bool previousWasKey, t_execEnv const &context) {
+    void lastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_bool previousWasKey, t_execEnv &context) {
         t_bool created = nonLastNth(step, nStep, lookHere, current, previousWasKey, context);
         if (current)
             lastNthDo(current, lookHere, origV, created, context);
     }
     
-    static t_bool nonLastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_bool previousWasKey, t_execEnv const &context) {
+    static t_bool nonLastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_bool previousWasKey, t_execEnv &context) {
         t_bool created = false;
         t_llll *address = (*step)->value->TCOEval(context);
         if (address->l_depth > 1) {
@@ -807,18 +811,18 @@ protected:
         return created;
     }
     
-    virtual void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+    virtual void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv &context) {
         llll_destroy_everything_but_head(subll);
         llll_chain(subll, llll_clone(origV));
         return;
     }
     
-    virtual void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
+    virtual void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv &context) {
         llll_replacewith(current, lookHere, origV);
     }
     
 private:
-    static void nonLastKey(lvalueStep** step, t_llllelem* &lookHere, t_llll* &current, t_execEnv const &context) {
+    static void nonLastKey(lvalueStep** step, t_llllelem* &lookHere, t_llll* &current, t_execEnv &context) {
         t_llll *key = (*step)->value->TCOEval(context);
         switch (key->l_size) {
             case 0:
@@ -897,7 +901,7 @@ public:
     }
     
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         
         t_llll *orig = BASE::lNode->TCOEval(context);
         t_llll *base = llll_clone(orig);
@@ -979,7 +983,7 @@ public:
     
     ~astRichAccessNthOp() { };
 private:
-    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* address, t_bool created, t_execEnv const &context) {
+    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* address, t_bool created, t_execEnv &context) {
         if (llllobj_check_llll_address((t_object *) context.obj, address, true, true) != MAX_ERR_NONE)
             return;
         
@@ -989,7 +993,7 @@ private:
         llll_replacewith<false>(current, lookHere, replacement);
     }
     
-    void lastKeyDo(t_llll *subll, t_llll *address, t_execEnv const &context) {
+    void lastKeyDo(t_llll *subll, t_llll *address, t_execEnv &context) {
         if (llllobj_check_llll_address((t_object *) context.obj, address, true, true) != MAX_ERR_NONE)
             return;
         
@@ -1013,11 +1017,11 @@ public:
     ~astRichAccessConcatOp() { }
 
 private:
-    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
+    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv &context) {
         llll_insert_one(lookHere, llll_clone(origV), -1);
     }
     
-    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv &context) {
         llll_chain(subll, llll_clone(origV));
     }
 };
@@ -1033,11 +1037,11 @@ public:
     
     ~astRichAccessRConcatOp() { };
 private:
-    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
+    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv &context) {
         llll_insert_one(lookHere, llll_clone(origV), 1);
     }
     
-    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv &context) {
         llll_insert_one(subll->l_head, llll_clone(origV), -1);
     }
 };

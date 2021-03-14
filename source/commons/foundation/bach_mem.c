@@ -770,6 +770,7 @@ void llll_dispose(t_llll *x)
     x->l_size = 0;
     x->l_depth = 1;
     x->l_flags = 0;
+    x->l_count = 0;
 #ifdef BACH_USE_MAGIC_NUMBER
     x->l_magic = BACH_MAGIC_BAD;
 #endif

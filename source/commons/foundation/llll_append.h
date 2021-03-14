@@ -83,6 +83,8 @@ t_llllelem *llll_appenddouble(t_llll *where, double what, long flags = 0, t_llll
 t_llllelem *llll_appendsym(t_llll *where, t_symbol *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appendobj(t_llll *where, void *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appendfunc(t_llll *where, t_function *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_appendnode(t_llll *where, class astNode *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_appendfuncall(t_llll *where, t_function *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 
 // a new llllelem is created. the llll is not cloned
 t_llllelem *llll_appendllll(t_llll *where, t_llll *what, long flags = 0, t_llll *adopter = WHITENULL_llll);

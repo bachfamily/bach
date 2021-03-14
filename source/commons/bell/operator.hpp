@@ -36,7 +36,7 @@ public:
         delete n1;
     }
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *ll = n1->TCOEval(context);
         t_llll *res = run(&ll);
         bell_release_llll(ll);
@@ -58,7 +58,7 @@ public:
         delete n2;
     }
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *lists[2];
         lists[0] = n1->TCOEval(context);
         lists[1] = n2->TCOEval(context);
@@ -84,7 +84,7 @@ public:
         delete valueNode;
     }
     
-    t_llll *eval(t_execEnv const &context) {
+    t_llll *eval(t_execEnv &context, t_bool tail = false) {
         t_llll *lists[2];
         //t_variable *v = varNode->getVar(context);
         lists[0] = varNode->TCOEval(context);
@@ -155,14 +155,14 @@ private:
         return res;
     }
     
-    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
+    void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv &context) {
         t_llll *hereLlll = llll_get();
         llll_appendhatom_clone(hereLlll, &lookHere->l_hatom);
         t_llll *res = perform(hereLlll, origV);
         llll_replacewith<false>(current, lookHere, res);
     }
 
-    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
+    void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv &context) {
         t_llll *currValues = llll_clone(subll);
         llll_destroyelem(currValues->l_head);
         t_llll *res = perform(currValues, origV);

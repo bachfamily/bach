@@ -51,21 +51,21 @@ class t_fnFind : public t_builtInFunctionWithFindFn
 {
 public:
     t_fnFind();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnFinditems : public t_builtInFunctionWithFindFn
 {
 public:
     t_fnFinditems();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 class t_fnFindaddrs : public t_builtInFunctionWithFindFn
 {
 public:
     t_fnFindaddrs();
-    t_llll* call(const t_execEnv &context);
+    t_llll* call(t_execEnv &context);
 };
 
 

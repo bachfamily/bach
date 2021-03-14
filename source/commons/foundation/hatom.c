@@ -169,6 +169,22 @@ t_function *hatom_getfunc(const t_hatom *h)
         return NULL;
 }
 
+class astNode *hatom_getnode(const t_hatom *h)
+{
+    if (hatom_gettype(h) == H_NODE)
+        return h->h_w.w_node;
+    else
+        return NULL;
+}
+
+t_function *hatom_getfuncall(const t_hatom *h)
+{
+    if (hatom_gettype(h) == H_FUNCALL)
+        return h->h_w.w_func;
+    else
+        return NULL;
+}
+
 void hatom_setlong(t_hatom *h, const t_atom_long l)
 {
     h->h_type = H_LONG;
@@ -263,6 +279,18 @@ void hatom_setfunc(t_hatom *h, t_function *fn)
 {
     h->h_type = H_FUNCTION;
     fn->increase();
+    h->h_w.w_func = fn;
+}
+
+void hatom_setnode(t_hatom *h, class astNode *fn)
+{
+    h->h_type = H_NODE;
+    h->h_w.w_node = fn;
+}
+
+void hatom_setfuncall(t_hatom *h, t_function *fn)
+{
+    h->h_type = H_FUNCALL;
     h->h_w.w_func = fn;
 }
 
