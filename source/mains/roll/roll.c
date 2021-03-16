@@ -1784,7 +1784,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         // (un)sel(ect) all markers
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
             t_symbol *role_sym = NULL;
-            llll_parseattrs((t_object *)x, selectllll, false, "s", _llllobj_sym_role, &role_sym);
+            llll_parseattrs((t_object *)x, selectllll, 0, "s", _llllobj_sym_role, &role_sym);
             select_all_markers((t_notation_obj *) x, mode, role_sym && role_sym != _llllobj_sym_all ? sym_to_marker_role(role_sym) : -1);
 
         // (un)sel(ect) all notes
@@ -8068,7 +8068,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         long voicenumber = 0, also_select = 0;
                         llll_destroyelem(firstelem);
                         
-                        llll_parseattrs((t_object *)x, inputlist, true, "i", _llllobj_sym_sel, &also_select);
+                        llll_parseattrs((t_object *)x, inputlist, LLLL_PA_DESTRUCTIVE, "i", _llllobj_sym_sel, &also_select);
                         
                         secondelem = inputlist->l_head;
                         if (secondelem && hatom_gettype(&secondelem->l_hatom) == H_LONG){

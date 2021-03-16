@@ -44,21 +44,26 @@
 extern int strparser_debug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    BACH_LONG = 258,
-    BACH_DOUBLE = 259,
-    BACH_RAT = 260,
-    BACH_PITCH = 261,
-    BACH_SYMBOL = 262,
-    BACH_PUSH = 263,
-    BACH_POP = 264,
-    BACH_NULL = 265,
-    BACH_NIL = 266
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    BACH_LONG = 258,               /* BACH_LONG  */
+    BACH_DOUBLE = 259,             /* BACH_DOUBLE  */
+    BACH_RAT = 260,                /* BACH_RAT  */
+    BACH_PITCH = 261,              /* BACH_PITCH  */
+    BACH_SYMBOL = 262,             /* BACH_SYMBOL  */
+    BACH_PUSH = 263,               /* BACH_PUSH  */
+    BACH_POP = 264,                /* BACH_POP  */
+    BACH_NULL = 265,               /* BACH_NULL  */
+    BACH_NIL = 266                 /* BACH_NIL  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */

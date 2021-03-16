@@ -601,7 +601,7 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                 // Inserting a temporal slot item
                 t_symbol *temporalmode = _llllobj_sym_milliseconds;
                 long voice = 0, interp = 0, prepad = 0;
-                llll_parseattrs((t_object *)x, args, true, "iiii", _llllobj_sym_temporalmode, &temporalmode, _llllobj_sym_voice, &voice, _llllobj_sym_interp, &interp, _llllobj_sym_prepad, &prepad);
+                llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE, "iiii", _llllobj_sym_temporalmode, &temporalmode, _llllobj_sym_voice, &voice, _llllobj_sym_interp, &interp, _llllobj_sym_prepad, &prepad);
                 
                 if (temporalmode == _llllobj_sym_milliseconds) {
                     
