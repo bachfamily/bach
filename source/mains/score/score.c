@@ -1533,7 +1533,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
             // (un)sel(ect) all markers
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
                 t_symbol *role_sym = NULL;
-                llll_parseattrs((t_object *)x, selectllll, false, "s", _llllobj_sym_role, &role_sym);
+                llll_parseattrs((t_object *)x, selectllll, 0, "s", _llllobj_sym_role, &role_sym);
                 select_all_markers((t_notation_obj *) x, mode, role_sym && role_sym != _llllobj_sym_all ? sym_to_marker_role(role_sym) : -1);
 
             // (un)sel(ect) all voices
@@ -1916,7 +1916,7 @@ void score_sel_change_symduration(t_score *x, t_symbol *s, long argc, t_atom *ar
     
     new_durations = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     
-    llll_parseattrs((t_object *) x, new_durations, true, "iiiiiii",
+    llll_parseattrs((t_object *) x, new_durations, LLLL_PA_DESTRUCTIVE, "iiiiiii",
                     gensym("autocomplete"), &autocomplete,
                     gensym("adaptts"), &autoadapt,
                     gensym("adaptscope"), &autoadapt_scope,

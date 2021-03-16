@@ -201,6 +201,16 @@ typedef enum _llll_modes_spike {
     LLLL_M_SPIKE_SHOOT_STEP
 } e_llll_modes_spike;
 
+// flags for llll_parseattr
+typedef enum _llll_parseattr_flags {
+    LLLL_PA_NONE                    = 0x0000,
+    LLLL_PA_DESTRUCTIVE             = 0x0001,   // destroy found keys
+    LLLL_PA_DONTWARNFORWRONGKEYS  = 0x0002,   // don't warn for missing keys
+    LLLL_PA_DONTWARNFORWRONGITEMS   = 0x0004,   // don't warn for wrong items
+    LLLL_PA_DONTWARNFORDUPLICATES   = 0x0008,   // don't warn for duplicates
+} e_llll_parseattr_flags;
+
+
 // flags for llll_funall
 typedef enum _llll_funall_flags {
     FUNALL_ONLY_PROCESS_ATOMS = 0,
@@ -1311,10 +1321,10 @@ t_llll *llll_scan(t_llll *in_llll, long sublists);
 void llll_posthatom(t_hatom *hatom);
 
 long llll_parseargs(t_object *x, t_llll *ll, const char *types, ...);
-long llll_parseattrs(t_object *x, t_llll *ll, char destructive, const char *types, ...);
+long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...);
 
-#define llll_parseargs_and_attrs(x,ll,types,...) { llll_parseargs(NULL,ll,types,__VA_ARGS__); llll_parseattrs(x,ll,false,types,__VA_ARGS__); }
-#define llll_parseargs_and_attrs_destructive(x,ll,types,...) { llll_parseargs(NULL,ll,types,__VA_ARGS__); llll_parseattrs(x,ll,true,types,__VA_ARGS__); }
+#define llll_parseargs_and_attrs(x,ll,types,...) { llll_parseargs(NULL,ll,types,__VA_ARGS__); llll_parseattrs(x,ll,0,types,__VA_ARGS__); }
+#define llll_parseargs_and_attrs_destructive(x,ll,types,...) { llll_parseargs(NULL,ll,types,__VA_ARGS__); llll_parseattrs(x,ll,LLLL_PA_DESTRUCTIVE,types,__VA_ARGS__); }
 
 
 t_llll *llll_develop_ranges(t_llll *ll);
