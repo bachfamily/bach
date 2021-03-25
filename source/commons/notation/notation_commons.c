@@ -36902,7 +36902,7 @@ t_rational notation_item_get_symduration(t_notation_obj *r_ob, t_notation_item *
             case k_DURATION_LINE: return zero;
             case k_LYRICS: return zero;
             case k_DYNAMICS: return zero;
-            case k_MEASURE: return zero;
+            case k_MEASURE: return measure_get_sym_duration((t_measure *)it);
             case k_TEMPO: return zero;
             case k_VOICE: return zero;
             case k_MARKER: return zero;
