@@ -659,11 +659,17 @@
 				   ↪ Add the <m>Shift+Ctrl</m> key to trim the tail, i.e. to keep the existing absolute pitch breakpoint positions. <br />
 				• <m>Ctrl+click+drag</m> on a notehead or on dynamic mark: change velocity or dynamic mark <br />
 				• <m>doubleclick</m> on voice names, marker names or lyrics: Edit names directly <br />
+				• <m>doubleclick</m> on clefs: Select all items in voice <br />
 				• <m>doubleclick</m> on selected items: Selection off-line play (as the <m>V</m> key), but only if <m>dblclicksendsvalues</m> is set to 1 <br />
 				• <m>Shift+click+drag</m> on a clef (at the beginning of the staff): Move voice vertically (along with all the next ones), i.e.: modify vertical space before clicked voice <br />
 				• <m>Shift+Alt+click+drag</m> on a clef (at the beginning of the staff): Move all following voices vertically (but not the clicked one), i.e.: modify vertical space after clicked voice <br />
 				• <m>right click</m> or <m>two-fingers-tap</m>: Open contextual popup menu. This can be opened by clicking on noteheads (note or selection popup menu), clefs
 				(voice popup menu) or on the background (backgroun popup menu). <br />
+				<br />
+				Marker regions
+				• <m>doubleclick</m> on marker region strips: Select items in region <br />
+				• <m>click+drag</m> on the end portion of a marker region strip: Extend the marker region <br />
+				• <m>doubleclick</m> on the end portion of a marker region strip: Extend the marker region till the next marker <br />
 				<br />
 				Selection, zooming, scrollbar and dilation rectangle: <br />
 				• <m>click</m> on any item: Select item <br />
@@ -1208,85 +1214,6 @@
 				<br />				See also:<m>deletemarker</m>,<m>clearmarkers</m><br />
 			</description>
 		</method>
-		<method name="addslot">
-			<arg name="slots" optional="0" type="llll" />
-			<digest>
-				Set the content of one or more slots for selected items
-			</digest>
-			<description>
-				Syntax: <b>addslot <m>&lt;llll: slots&gt;</m> </b><br />
-				Examples:<br />
-				• <b>addslot [6 0.512]</b>   <i>→ fill (float) slot 6 with number 0.512</i><br />
-				• <b>addslot [5 42]</b>   <i>→ fill (int) slot 5 with number 42</i><br />
-				• <b>addslot [7 "Lorem Ipsum" ]</b>   <i>→ fill (text) slot 7 with some text</i><br />
-				• <b>addslot [10 [John George [Ringo] [Brian]] ]</b>   <i>→ fill (llll) slot 10 with an llll</i><br />
-				• <b>addslot [3 10 20 30]</b>   <i>→ fill (intlist) slot 3 of selected notes with list of values 10, 20, 30</i><br />
-				• <b>addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2]</b>   <i>→ fill (function) slot 2 with a breakpoint function in (x y slope) form</i><br />
-				• <b>addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for slot named 'amplienv'</i><br />
-				• <b>addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for currently open slot</i><br />
-				• <b>addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ set more slots at once</i><br />
-				<br />
-				An <m>addslot</m> message will replace the content of one or more slots, for all the selected notes.
-				The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
-				The slot content syntax depends on the slot type. <br />
-				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
-				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
-				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
-				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
-				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
-				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
-				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
-				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
-				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
-				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
-				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
-				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
-				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
-				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
-				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
-				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
-				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
-				<m>lowpass</m>, <m>highpass</m>, <m>bandpass</m>, <m>bandstop</m>, <m>peaknotch</m>, <m>lowshelf</m>, <m>highshelf</m>, <m>allpass</m>.
-				You can equivalently use for input the syntax
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
-				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
-				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
-				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
-				articulations introduced as symbols.
-				The list of the are standard available articulations as symbols is: "staccato" or "stacc", "staccatissimo" or "staccmo",
-				"fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
-				"portatostaccato" or "portstacc", "martellato" or "mart", "martellatostaccato" or "martstacc", "lefthandpizzicato" or "lhpiz",
-				"trill" or "tr", "gruppetto" or "grupp", "upmordent" or "umord", "downmordent" or "dmord", "doublemordent" or "mmord",
-				"upbowing" or "ubow", "downbowing" or "dbow", "tremolo3" or "trem3" (for the tremolo with three slashes), "tremolo2" or "trem2"
-				(for the tremolo with two slashes), "tremolo1" or "trem1" (for the tremolo with a single slash).
-				Notice that the default bach font has all the articulations glyphs; however, not all the other supported fonts do,
-				in particular Boulez doesn't have a certain number of the previous articulations among its glyphs.
-				If you don't see an articulation as you wish
-				(e.g. tremoli with Boulez), it might be because the font doesn't have the proper character, so try to use another font.
-				Articulation symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
-				- For slot of type <m>notehead</m> the content must a single notehead symbol.
-				The list of the standard available noteheads as symbols is: "default", "doublewhole", "whole", "white", "black", "diamond", "cross", "plus",
-				"none", "accent", "blacksquare", "whitesquare", "square" "blacktriangle", "whitetriangle", "triangle", "blackrhombus", "whiterhombus", "rhombus".
-				In <o>bach.score</o>, the "square", "triangle" and "rhombus" notehead are black or white depending on the note duration; in <o>bach.roll</o> only
-				the black flavour is used.
-				As for articulations, not all fonts support all symbols.
-				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
-				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
-				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
-				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
-				as the number of rows.
-				<br /> <br />
-				<br />				See also:<m>changeslotitem</m>,<m>eraseslot</m><br />
-			</description>
-		</method>
 		<method name="adjustadditionalstartpad">
 			<arglist />
 			<digest>
@@ -1312,7 +1239,7 @@
 				<br />
 				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
-				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="bang">
@@ -1395,6 +1322,19 @@
 				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
 				one cannot apply different equations to different notes inside the chord.
 				<br /> <br />
+			</description>
+		</method>
+		<method name="change">
+			<arglist />
+			<digest>
+				Change properties of an element
+			</digest>
+			<description>
+				Generic changes in a score can be obtained via the syntax <br />
+				<b>insert/remove/change <m>element_type</m> <m>element_path</m> <m>property_name</m> <m>content_as_llll</m></b> <br />
+				If the initial symbol is "remove", the last two fields are irrelevant; if the initial symbol is "
+				Properties are the ones displayed in the bach inspector for the specific element, plus the symbol "state", which
+				sets the whole state of the element from a gathered syntax llll. <br />
 			</description>
 		</method>
 		<method name="changeslotitem">
@@ -1482,7 +1422,7 @@
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
-				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="checkdynamics">
@@ -1662,7 +1602,7 @@
 				A <m>copyslot</m> message will copy the content of a given slot to another slot for any selected note.
 				The slot number of the source slot and of the target slot are given as arguments.
 				Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>moveslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>moveslot</m>,<m>eraseslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="cut">
@@ -1748,7 +1688,7 @@
 				Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
 				wrapped X coordinate of the element to delete (use the <m>thresh</m> message argument to set a tolerance
 				threshold for the X coordinate matching).
-				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="deletevoice">
@@ -2726,7 +2666,7 @@
 				An <m>eraseslot</m> message will clear the content of a specific slot for any selected note.
 				The slot number of the slot to clear is given as argument.
 				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>copyslot</m>,<m>moveslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>copyslot</m>,<m>moveslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="explodechords">
@@ -3551,6 +3491,19 @@
 				<br />				See also:<m>inscreen</m>,<m>scroll</m><br />
 			</description>
 		</method>
+		<method name="insert">
+			<arglist />
+			<digest>
+				Insert element
+			</digest>
+			<description>
+				Generic changes in a score can be obtained via the syntax <br />
+				<b>insert/remove/change <m>element_type</m> <m>element_path</m> <m>property_name</m> <m>content_as_llll</m></b> <br />
+				If the initial symbol is "remove", the last two fields are irrelevant; if the initial symbol is "
+				Properties are the ones displayed in the bach inspector for the specific element, plus the symbol "state", which
+				sets the whole state of the element from a gathered syntax llll. <br />
+			</description>
+		</method>
 		<method name="insertslotitem">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<arg name="element_position" optional="0" type="int" />
@@ -3568,7 +3521,7 @@
 				The position may be specified explicitly (for slots that do not bear X-axis information) or
 				dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
-				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="insertvoice">
@@ -3861,7 +3814,7 @@
 				<br />
 				The <m>lambda</m> message is a general router which can be prepended to all the following operations:
 				<m>cents</m>, <m>velocity</m>, <m>onset</m>, <m>tail</m>, <m>duration</m>, <m>voice</m>, <m>addbreakpoint</m>, <m>erasebreakpoint</m>,
-				<m>addslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
+				<m>setslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
 				If such router is prepended, the corresponding operation will apply on the currently output selected item.
 				The idea is that when a selection dump is asked or a command is sent (also see <m>dumpselection</m> or <m>sendcommand</m>), the notation
 				elements are output one by one from the playout (notewise or chordwise depending on the <m>playmode</m>): if you put a feedback loop from the playout
@@ -3870,7 +3823,7 @@
 				chords one by one, depending on their parameters, even by performing a collective selection dump.
 				Such feedback cycle must not have any <o>delay</o> nor <o>pipe</o> nor <o>defer</o> nor <o>deferlow</o>, nor anything which may change the thread
 				or defer the modification operation. See #lambda+operation in the help center to have some examples of usage.
-				<br />				See also:<m>cents</m>,<m>velocity</m>,<m>duration</m>,<m>onset</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m>,<m>name</m>,<m>voice</m><br />
+				<br />				See also:<m>cents</m>,<m>velocity</m>,<m>duration</m>,<m>onset</m>,<m>changeslotitem</m>,<m>setslot</m>,<m>eraseslot</m>,<m>name</m>,<m>voice</m><br />
 			</description>
 		</method>
 		<method name="legato">
@@ -4480,7 +4433,7 @@
 				A <m>moveslot</m> message will move the content of a given slot to another slot for any selected note.
 				The slot number of the source slot and of the target slot are given as arguments.
 				Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>copyslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>copyslot</m>,<m>eraseslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="mute">
@@ -4626,7 +4579,7 @@
 				opens the corresponding slot window. If more notes are selected, nothing happens.
 				Instead of the slot number, you can use slot names, so you can set a symbol as argument containing the name of the slot whose window should
 				be open.
-				<br />				See also:<m>addslot</m><br />
+				<br />				See also:<m>setslot</m><br />
 			</description>
 		</method>
 		<method name="paintjit">
@@ -5099,7 +5052,7 @@
 				<br />
 				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
-				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="quantize">
@@ -5203,14 +5156,31 @@
 				The <m>refresh</m> message forces the recomputation of all the features and forces the object box to be redrawn.
 			</description>
 		</method>
+		<method name="remove">
+			<arglist />
+			<digest>
+				Remove element
+			</digest>
+			<description>
+				Generic changes in a score can be obtained via the syntax <br />
+				<b>insert/remove/change <m>element_type</m> <m>element_path</m> <m>property_name</m> <m>content_as_llll</m></b> <br />
+				If the initial symbol is "remove", the last two fields are irrelevant; if the initial symbol is "
+				Properties are the ones displayed in the bach inspector for the specific element, plus the symbol "state", which
+				sets the whole state of the element from a gathered syntax llll. <br />
+			</description>
+		</method>
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom articulations definition to the default one
+				Reset the slotinfo to the default one
 			</digest>
 			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -5226,15 +5196,11 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the slotinfo to the default one
+				Reset the custom articulations definition to the default one
 			</digest>
 			<description>
-				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
-				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
-				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
-				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
-				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
-				<br />				See also:<m>eraseslot</m><br />
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="respell">
@@ -5456,6 +5422,8 @@
 				For instance, <b>sel note 2 3</b> selects the third note of second chord [of first voice], while <b>sel note 4 2 3</b> does the same with the fourth voice.
 				Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
 				a sequence of wrapped lists of integers, for instance <b>sel note [5 2 4] [1 1 -1]</b>.<br />
+				- If the word <m>sel</m> is followed by the symbol <b>region</b> and then a name or list of names, the marker corresponding to the
+				input names is expected to be a region marker, and all the elements inside the region are selected.<br />
 				- If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>chord if</b>, <b>voice if</b>, <b>measure if</b>,
 				<b>marker if</b>, <b>breakpoint if</b> or <b>tail if</b> followed by a
 				condition to be verified, a conditional selection on notes,  markers or pitch breakpoints (respectively) is performed.
@@ -5688,6 +5656,21 @@
 				<br />				See also:<m>getcursor</m>,<m>showcursor</m>,<m>hidecursor</m><br />
 			</description>
 		</method>
+		<method name="setdurationline">
+			<arg name="breakpoints" optional="0" type="llll" />
+			<digest>
+				Set the duration line for selected items
+			</digest>
+			<description>
+				Syntax: <b>setdurationline <m>&lt;llll: breakpoints&gt;</m> </b><br />
+				Example: <b>setdurationline [0 0 0] [0.5 200 0.2] [1 500 0]</b>   <i>→ sets duration line breakpoints to selection</i><br />
+				<br />
+				A <m>setedurationline</m> message will replace the duration line of all the selected notes with the introduced breakpoints
+				The syntax is
+				<b>setdurationline [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>] [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>]...</b>. <br />
+				<br />				See also:<m>addbreakpoint</m>,<m>erasebreakpoints</m><br />
+			</description>
+		</method>
 		<method name="setnotationcolors">
 			<arg name="red" optional="0" type="float" />
 			<arg name="green" optional="0" type="float" />
@@ -5702,6 +5685,86 @@
 				<br />
 				Set all the notation colors at once (accidentals, annotations, articulations, clefs, key signatures, lyrics,
 				main and auxiliary staff, notes, stems, rests, tempi), in RGBA format.
+			</description>
+		</method>
+		<method name="setslot">
+			<arg name="slots" optional="0" type="llll" />
+			<digest>
+				Set the content of one or more slots for selected items
+			</digest>
+			<description>
+				Syntax: <b>setslot <m>&lt;llll: slots&gt;</m> </b><br />
+				Examples:<br />
+				• <b>setslot [6 0.512]</b>   <i>→ fill (float) slot 6 with number 0.512</i><br />
+				• <b>setslot [5 42]</b>   <i>→ fill (int) slot 5 with number 42</i><br />
+				• <b>setslot [7 "Lorem Ipsum" ]</b>   <i>→ fill (text) slot 7 with some text</i><br />
+				• <b>setslot [10 [John George [Ringo] [Brian]] ]</b>   <i>→ fill (llll) slot 10 with an llll</i><br />
+				• <b>setslot [3 10 20 30]</b>   <i>→ fill (intlist) slot 3 of selected notes with list of values 10, 20, 30</i><br />
+				• <b>setslot [2 [0 0 0] [0.5 0 1] [1 1 0.2]</b>   <i>→ fill (function) slot 2 with a breakpoint function in (x y slope) form</i><br />
+				• <b>setslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for slot named 'amplienv'</i><br />
+				• <b>setslot [active [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for currently open slot</i><br />
+				• <b>setslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ set more slots at once</i><br />
+				<br />
+				A <m>setslot</m> message (or <m>addslot</m> for backward compatibility)
+				will replace the content of one or more slots, for all the selected notes.
+				The syntax is <b>setslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
+				The slot content syntax depends on the slot type. <br />
+				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
+				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
+				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
+				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
+				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
+				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
+				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
+				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
+				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
+				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
+				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
+				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
+				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
+				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
+				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
+				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
+				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
+				<m>lowpass</m>, <m>highpass</m>, <m>bandpass</m>, <m>bandstop</m>, <m>peaknotch</m>, <m>lowshelf</m>, <m>highshelf</m>, <m>allpass</m>.
+				You can equivalently use for input the syntax
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
+				Finally, when data is output, the syntax is always a combination of the two:
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
+				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
+				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
+				articulations introduced as symbols.
+				The list of the are standard available articulations as symbols is: "staccato" or "stacc", "staccatissimo" or "staccmo",
+				"fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
+				"portatostaccato" or "portstacc", "martellato" or "mart", "martellatostaccato" or "martstacc", "lefthandpizzicato" or "lhpiz",
+				"trill" or "tr", "gruppetto" or "grupp", "upmordent" or "umord", "downmordent" or "dmord", "doublemordent" or "mmord",
+				"upbowing" or "ubow", "downbowing" or "dbow", "tremolo3" or "trem3" (for the tremolo with three slashes), "tremolo2" or "trem2"
+				(for the tremolo with two slashes), "tremolo1" or "trem1" (for the tremolo with a single slash).
+				Notice that the default bach font has all the articulations glyphs; however, not all the other supported fonts do,
+				in particular Boulez doesn't have a certain number of the previous articulations among its glyphs.
+				If you don't see an articulation as you wish
+				(e.g. tremoli with Boulez), it might be because the font doesn't have the proper character, so try to use another font.
+				Articulation symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
+				- For slot of type <m>notehead</m> the content must a single notehead symbol.
+				The list of the standard available noteheads as symbols is: "default", "doublewhole", "whole", "white", "black", "diamond", "cross", "plus",
+				"none", "accent", "blacksquare", "whitesquare", "square" "blacktriangle", "whitetriangle", "triangle", "blackrhombus", "whiterhombus", "rhombus".
+				In <o>bach.score</o>, the "square", "triangle" and "rhombus" notehead are black or white depending on the note duration; in <o>bach.roll</o> only
+				the black flavour is used.
+				As for articulations, not all fonts support all symbols.
+				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
+				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
+				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
+				as the number of rows.
+				<br /> <br />
+				<br />				See also:<m>changeslotitem</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="showcursor">
@@ -5814,6 +5877,7 @@
 				Examples:<br />
 				• <b>subroll [1 2 4] [1000 3000]</b>   <i>→ extract voices 1, 2 and 4 from 1s to 3s</i><br />
 				• <b>subroll [] [1000 3000]</b>   <i>→ extract all voices from 1s to 3s</i><br />
+				• <b>subroll [] MyRegion</b>   <i>→ crop the region marker MyRegion</i><br />
 				• <b>subroll [1 2] []</b>   <i>→ extract voices 1 and 2 for the whole duration</i><br />
 				• <b>subroll [1 3] [2000 -1]</b>   <i>→ extract voices 1 and 3 from 2s to the end</i><br />
 				• <b>subroll onset [1 3] [2000 -1]</b>   <i>→ only extract notes whose onset is after 2s (no partial notes)</i><br />
@@ -5830,7 +5894,9 @@
 				has to be output. Leave such list as <b>nil</b> or <b>[]</b> if you want this lapse to be all the length of the <o>bach.roll</o>.
 				Otherwise <m>start_ms</m> is the beginning of the portion of <o>bach.roll</o> to be output (in milliseconds), and
 				<m>end_ms</m> is the end of the portion of <o>bach.roll</o> to be output (in milliseconds); leave any negative value
-				for <m>end_ms</m> if you want the portion of <o>bach.roll</o> to be output to go till the end of the notation object. <br />
+				for <m>end_ms</m> if you want the portion of <o>bach.roll</o> to be output to go till the end of the notation object.
+				To infer the starting and ending point from a region marker, set <m>TIME_LAPSE</m> either as a single symbol
+				or as a wrapped list of symbols (names). <br />
 				The third llll, <m>optional:SELECTIVE_OPTIONS</m>, is optional, and if given might contain a symbol or list of symbols
 				which handle what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
 				the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>subroll [4 5] [1000 3000] [clefs markers body]</b>
@@ -5932,6 +5998,25 @@
 				It works accordingly for any other query.
 				<br /> <br />
 				<br />				See also:<m>pixeltotime</m><br />
+			</description>
+		</method>
+		<method name="transaction">
+			<arglist />
+			<digest>
+				Process multiple insert/remove/change messages
+			</digest>
+			<description>
+				A generic transaction is a sequence of generic messages executed seamlessly, without refreshing the order of chords, notes
+				and markers, and without refreshing the display in the middle. <br />
+				Transactions are obtained via the syntax
+				<b>transaction <m>transaction_name</m> [<m>change_message1</m> <m>change_message2</m> ...]</b> <br />
+				where <m>transaction_name</m> is a symbol associated with the transaction and each one of the <m>change_message</m>s has
+				the syntax of a generic change, described in the following paragraph. <br />
+				Generic changes in a score can be obtained via the syntax <br />
+				<b>insert/remove/change <m>element_type</m> <m>element_path</m> <m>property_name</m> <m>content_as_llll</m></b> <br />
+				If the initial symbol is "remove", the last two fields are irrelevant; if the initial symbol is "
+				Properties are the ones displayed in the bach inspector for the specific element, plus the symbol "state", which
+				sets the whole state of the element from a gathered syntax llll. <br />
 			</description>
 		</method>
 		<method name="undo">
@@ -6246,6 +6331,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6285,6 +6371,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidentals Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6593,6 +6680,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulations Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6689,6 +6777,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.4 0.4 0.4 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Auxiliary Staff Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6703,6 +6792,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="1. 1. 1. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Background Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6782,6 +6872,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.6 0.6 0.6 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6893,24 +6984,6 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="continuousbang" get="1" set="1" type="int" size="1">
-			<digest>
-				Continuously Output Bang If Changed
-			</digest>
-			<description>
-				Toggles the ability to output continuously the bang through the last outlet
-				while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously.
-				This defaults to 0.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Continuously Output Bang If Changed" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="customspacing" get="1" set="1" type="int" size="1">
@@ -7225,6 +7298,7 @@
 			<description>
 			</description>
 			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7235,6 +7309,7 @@
 			<description>
 			</description>
 			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7245,6 +7320,7 @@
 			<description>
 			</description>
 			<attributelist>
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7441,6 +7517,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Key Signature Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7502,6 +7579,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.5 0.5 0.5 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mouseover Legend Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7792,6 +7870,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Region" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -7853,6 +7932,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -7996,7 +8076,7 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
-				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.29 0.29 0.72 1." />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.039 0.247 0.831 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mute Color" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
@@ -8038,6 +8118,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -8052,7 +8133,26 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Note Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="notifycontinuously" get="1" set="1" type="int" size="1">
+			<digest>
+				Notify Continuously
+			</digest>
+			<description>
+				Toggles the ability to notify continuously via the last outlet
+				while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously.
+				This defaults to 0.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify Continuously" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="notifymessages" get="1" set="1" type="int" size="1">
@@ -8065,7 +8165,7 @@
 				By default this is inactive.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Changed Via Messages" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -8082,12 +8182,39 @@
 				whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Display Is Refreshed" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="notifywith" get="1" set="1" type="int" size="1">
+			<digest>
+				Notify Interface Changes Via
+			</digest>
+			<description>
+				Chooses the notification type for interface changes: <br />
+				- 0 (bang, default): the simplest and less CPU-consuming alternative, only notifies with a bang when anything changes; <br />
+				- 1 (Operation): notify with an operation label; <br />
+				- 2 (Redo Transaction): notify verbosely with the operation label plus a sequence of change messages ('ticks') encapsulated
+				in a transaction (set of instructions across which orders are not refreshed).
+				This is the message you can directly provide to another notation object in order to reproduce the same effect; <br />
+				- 3 (Undo Data): same as the previous, but providing undo information instead.
+				- 4 (Redo Data): same as "Redo Transaction" but without the encapsulation, so the notification is a sequence of individual ticks (with a
+				starting operation label).
+				The practical difference between "Redo Transaction" and "Redo Data" is not just the leading "transaction" symbol, but more crucially
+				the path of the items, which in this last case does indeed account for any update of chords/markers/notes order between the change ticks; <br />
+				- 5 (Undo Data): same as the previous, but providing undo information instead. <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify Interface Changes Via" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="numgridsubdivisions" get="1" set="1" type="int" size="1">
@@ -8170,6 +8297,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -8951,6 +9079,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.2 0.2 0.2 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Selection Legend Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8965,6 +9094,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.8 0. 0.8 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Selection Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8981,7 +9111,7 @@
 				By default this is 1.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Send 'Done' Only After Paint" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -8998,7 +9128,7 @@
 				for <o>bach.slot</o>) at the object instantiation, if content saved with the object is loaded.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Send 'Done' At Startup (If Data Was Saved)" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -9551,6 +9681,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="slopemapping" get="1" set="1" type="int" size="1">
+			<digest>
+				Slope Mapping
+			</digest>
+			<description>
+				Sets the function to be used for slope mapping: either bach (default) or Max.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slope Mapping" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="slotfunctionptradius" get="1" set="1" type="float" size="1">
 			<digest>
 				Function Slot Point Radius
@@ -9733,7 +9879,7 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
-				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.61 0.61 0.21 1." />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.740 0.716 0.036 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Solo Color" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
@@ -9765,6 +9911,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Main Staff Color" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9788,6 +9935,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Staff Lines" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -9949,6 +10097,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Names" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -10014,6 +10163,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Spacing" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
