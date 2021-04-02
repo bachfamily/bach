@@ -10637,14 +10637,16 @@ void roll_subroll(t_roll *x, t_symbol *s, long argc, t_atom *argv){
                         to_ms = hatom_getdouble(&boundaries_ms->l_head->l_next->l_hatom);
                         if (from_ms < 0) from_ms = 0.;
                         if (to_ms < 0) to_ms = x->r_ob.length_ms;
-                    } else {
+                    } else if (boundaries_ms->l_head) {
                         // it's a region name?
                         t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, boundaries_ms);
-                        if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
-                            object_error((t_object *)x, "Item does not exist or is not a marker region.");
-                        } else {
-                            from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
-                            to_ms = marker_region_get_end_ms((t_notation_obj *)x, (t_marker *)it, false);
+                        if (it) {
+                            if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                                object_error((t_object *)x, "Item does not exist or is not a marker region.");
+                            } else {
+                                from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
+                                to_ms = marker_region_get_end_ms((t_notation_obj *)x, (t_marker *)it, false);
+                            }
                         }
                     }
                 }
