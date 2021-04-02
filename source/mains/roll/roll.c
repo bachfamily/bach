@@ -10623,7 +10623,7 @@ void roll_subroll(t_roll *x, t_symbol *s, long argc, t_atom *argv){
                     t_symbol *sym = hatom_getsym(&secondelem->l_hatom);
                     t_llll *temp = symbol2llll(sym);
                     t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, temp);
-                    if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                    if (!it || it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
                         object_error((t_object *)x, "Item does not exist or is not a marker region.");
                     } else {
                         from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
@@ -10640,13 +10640,11 @@ void roll_subroll(t_roll *x, t_symbol *s, long argc, t_atom *argv){
                     } else if (boundaries_ms->l_head) {
                         // it's a region name?
                         t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, boundaries_ms);
-                        if (it) {
-                            if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
-                                object_error((t_object *)x, "Item does not exist or is not a marker region.");
-                            } else {
-                                from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
-                                to_ms = marker_region_get_end_ms((t_notation_obj *)x, (t_marker *)it, false);
-                            }
+                        if (!it || it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                            object_error((t_object *)x, "Item does not exist or is not a marker region.");
+                        } else {
+                            from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
+                            to_ms = marker_region_get_end_ms((t_notation_obj *)x, (t_marker *)it, false);
                         }
                     }
                 }
