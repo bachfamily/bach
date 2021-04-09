@@ -28562,7 +28562,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); //
                         llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
                     }
-                } else if (mode == k_CONSIDER_FOR_SAMPLING && ((t_pts *)temp_item->item)->x == hot_point) {
+                } else if (mode == k_CONSIDER_FOR_SAMPLING && temp_item && ((t_pts *)temp_item->item)->x == hot_point) {
                     llll_appenddouble(inner4_llll, ((t_pts *)temp_item->item)->y, 0, WHITENULL_llll); // y position only
                 }
             }
