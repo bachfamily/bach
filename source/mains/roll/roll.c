@@ -4051,7 +4051,7 @@ void roll_play_preschedule(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         x->r_ob.preschedule_cursor = x->r_ob.to_preschedule->l_head;
         for (t_llllelem *el = x->r_ob.to_preschedule->l_head; el; el = el->l_next) {
             t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&el->l_hatom);
-            clock_fdelay(ev->clock, ev->time - start_ms);
+            setclock_fdelay(x->r_ob.setclock->s_thing, ev->clock, ev->time - start_ms);
         }
     }
 }

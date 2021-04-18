@@ -38,6 +38,8 @@
 #define CLASS_ATTR_BASIC(c, name, flags) CLASS_ATTR_ATTR_PARSE(c,name,"basic",_sym_long,flags,"1")
 #endif
 
+const char EARS_PROCESS_SPECIALSYM[] = "_x_x_ears.map~_x_x_";
+
 
 ///////////////////////////////
 // DATA STRUCTURES FOR LLLL OBJECTS
@@ -786,6 +788,9 @@ long bach_is_loadtime(void);
 t_max_err llllobj_dummy_setter(t_object *x, void *attr, long ac, t_atom *av);
 
 
+// returns NULL if the object is loaded inside ears.process~,
+// the ears.process~ object if it is.
+t_object *getParentEarsProcess(t_object *x);
 
 
 

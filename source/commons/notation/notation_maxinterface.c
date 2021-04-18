@@ -211,8 +211,9 @@ void send_llll_through_playout(t_notation_obj *r_ob, t_llll *llll, long outlet, 
 	atom_setobj(outatoms + 2, related_object);
 	atom_setlong(outatoms + 3, related_type);
 	
-	if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE)
-		do_send_llll_through_playout(r_ob, NULL, 4, outatoms);
+    if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE ||
+        r_ob->playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
+        do_send_llll_through_playout(r_ob, NULL, 4, outatoms);
 	else
 		schedule_delay(r_ob, (method) do_send_llll_through_playout, 0, NULL, 4, outatoms);
 }
@@ -229,8 +230,9 @@ void send_llll_through_playout_and_free(t_notation_obj *r_ob, t_llll *llll, long
 	atom_setobj(outatoms + 2, related_object);
 	atom_setlong(outatoms + 3, related_type);
 	
-    if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE)
-		do_send_llll_through_playout_and_free(r_ob, NULL, 4, outatoms);
+    if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE ||
+        r_ob->playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
+        do_send_llll_through_playout_and_free(r_ob, NULL, 4, outatoms);
 	else
 		schedule_delay(r_ob, (method) do_send_llll_through_playout_and_free, 0, NULL, 4, outatoms);
 }
