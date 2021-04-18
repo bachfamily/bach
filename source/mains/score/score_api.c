@@ -988,16 +988,18 @@ void recalculate_all_utf_measure_timesignatures(t_score *x)
 
 void check_all_measures_autocompletion(t_score *x) 
 {
-    t_scorevoice *voice = x->firstvoice;
-    while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-        t_measure *meas = voice->firstmeasure;
-        while (meas) {
-            meas->need_check_autocompletion = true;
-            meas = meas->next;
+    if (x->r_ob.auto_complete_measures) {
+        t_scorevoice *voice = x->firstvoice;
+        while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
+            t_measure *meas = voice->firstmeasure;
+            while (meas) {
+                meas->need_check_autocompletion = true;
+                meas = meas->next;
+            }
+            voice = voice->next;
         }
-        voice = voice->next;
+        set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
     }
-    set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
 }
 
 void check_all_measures_ties(t_score *x) 
@@ -2538,14 +2540,14 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                                 t_llll *bpt = hatom_getllll(&subelem->l_hatom);
 //                                if ((bpt->l_size >= 1) && (bpt->l_depth == 2)) {
                                     if (note){ // there's already a note: we change its graphic values
-                                        set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, note, bpt);
+                                        note_set_breakpoints_from_llll((t_notation_obj *) x, note, bpt);
                                     } else { // we create a note within the same chord!
                                         t_note *this_nt;
                                         double argv[2]; argv[0] = CONST_DEFAULT_NEW_NOTE_DURATION; 
                                         argv[1] = CONST_DEFAULT_NEW_NOTE_CENTS;
                                         this_nt = build_note_from_ac_av((t_notation_obj *) x, 2, argv);
                                         note_insert((t_notation_obj *) x, chord, this_nt, 0);
-                                        set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, this_nt, bpt);
+                                        note_set_breakpoints_from_llll((t_notation_obj *) x, this_nt, bpt);
                                     }
 //                                }
                             }
@@ -2557,7 +2559,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                         if (notes_bpt->l_size >= 1) {
                             t_note *note = chord->firstnote;
                             while (note) {
-                                set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, note, notes_bpt);
+                                note_set_breakpoints_from_llll((t_notation_obj *) x, note, notes_bpt);
                                 note = note->next;
                             }
                         }
@@ -2607,7 +2609,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                                 newnote = newchord->firstnote;
                                 for (subelem = notes_bpt->l_head; subelem; subelem = subelem->l_next) { // subelem cycles on the notes, e.g. subelem = ((0 0 0) (1 1 1))
                                     t_llll *bpts = hatom_getllll(&subelem->l_hatom);
-                                    set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, newnote, bpts);
+                                    note_set_breakpoints_from_llll((t_notation_obj *) x, newnote, bpts);
                                     newnote = newnote->next;
                                 } 
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
@@ -2623,7 +2625,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                                 argv[1] = CONST_DEFAULT_NEW_NOTE_CENTS;
                                 newchord = addchord_in_measure_from_values(x, measure, measure->lastchord, r_sym_duration, -1, 1, 2, argv, NULL, NULL, 0, NULL, 0, NULL);
                                 newchord->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newchord, 0, WHITENULL_llll);
-                                set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, newchord->firstnote, notes_bpt);
+                                note_set_breakpoints_from_llll((t_notation_obj *) x, newchord->firstnote, notes_bpt);
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
                                 newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
                             }
@@ -2758,11 +2760,11 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                 t_llll *slots = hatom_getllll(&subelem->l_hatom);
 //                                if (slots->l_size >= 1) {
                                     if (note){ // there's already a note: we change its graphic values
-                                        set_slots_values_to_note_from_llll((t_notation_obj *) x, note, slots);
+                                        note_set_slots_from_llll((t_notation_obj *) x, note, slots);
                                     } else { // we create a note within the same chord!
                                         t_note *this_nt = build_default_note((t_notation_obj *) x);
                                         note_insert((t_notation_obj *) x, chord, this_nt, 0);
-                                        set_slots_values_to_note_from_llll((t_notation_obj *) x, this_nt, slots);
+                                        note_set_slots_from_llll((t_notation_obj *) x, this_nt, slots);
                                     }
 //                                }
                             }
@@ -2777,16 +2779,16 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
 #ifdef BACH_CHORDS_HAVE_SLOTS
                             if (!note) {
                                 // set slots to rest
-                                set_slots_values_to_notationitem_from_llll((t_notation_obj *) x, (t_notation_item *)chord, notes_slots);
+                                notation_item_set_slots_from_llll((t_notation_obj *) x, (t_notation_item *)chord, notes_slots);
                             } else {
                                 while (note) {
-                                    set_slots_values_to_note_from_llll((t_notation_obj *) x, note, notes_slots);
+                                    note_set_slots_from_llll((t_notation_obj *) x, note, notes_slots);
                                     note = note->next;
                                 }
                             }
 #else
                             while (note) {
-                                set_slots_values_to_note_from_llll((t_notation_obj *) x, note, notes_slots);
+                                note_set_slots_from_llll((t_notation_obj *) x, note, notes_slots);
                                 note = note->next;
 #endif
                         }
@@ -2836,7 +2838,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                     onset = rat_rat_sum(onset, r_sym_duration);
                                     newnote = newchord->firstnote;
                                     for (subelem = notes_slots->l_head; subelem; subelem = subelem->l_next) { // subelem cycles on the notes, e.g. subelem = ((0 0 0) (1 1 1))
-                                        set_slots_values_to_note_from_llll((t_notation_obj *) x, newnote, hatom_getllll(&subelem->l_hatom));
+                                        note_set_slots_from_llll((t_notation_obj *) x, newnote, hatom_getllll(&subelem->l_hatom));
                                         newnote = newnote->next;
                                     } 
                                     newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
@@ -2849,7 +2851,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                 t_llll *slots = llll_get();
 #ifdef BACH_CHORDS_HAVE_SLOTS
                                 // ==> we create a REST: if one wanted to have notes,
-                                set_slots_values_to_notationitem_from_llll((t_notation_obj *) x, (t_notation_item *)chord, notes_slots);
+                                notation_item_set_slots_from_llll((t_notation_obj *) x, (t_notation_item *)chord, notes_slots);
                                 t_chord *newchord = addchord_in_measure_from_notes(x, measure, measure->lastchord, r_sym_duration, -1, 0, NULL, NULL, 0);
 #else
                                 double argv[2];
@@ -2861,7 +2863,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                 newchord->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newchord, 0, WHITENULL_llll);
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
                                 llll_appendllll_clone(slots, notes_slots, 0, WHITENULL_llll);
-                                set_slots_values_to_note_from_llll((t_notation_obj *) x, newchord->firstnote, slots);
+                                note_set_slots_from_llll((t_notation_obj *) x, newchord->firstnote, slots);
                                 newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
                                 llll_free(slots);
                             }
@@ -4347,7 +4349,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             }
             
             // handle slots
-            // ALL THIS PART IS DEPRECATED: BETTER USE set_slots_values_to_note_from_llll()
+            // ALL THIS PART IS DEPRECATED: BETTER USE note_set_slots_from_llll()
             temp = this_ch->firstnote;
             s = 0; // lecture head... 
             while (temp) { 
@@ -4624,7 +4626,8 @@ void overflow_chords_to_next_measure(t_score *x, t_measure *measure, t_chord *fr
     llll_check(nextmeasure->rhythmic_tree);
   */
     
-    nextmeasure->need_check_autocompletion = true;
+    if (x->r_ob.auto_complete_measures)
+        nextmeasure->need_check_autocompletion = true;
     recompute_all_for_measure((t_notation_obj *)x, measure, true);
     recompute_all_for_measure((t_notation_obj *)x, nextmeasure, true);
 }
@@ -5332,7 +5335,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
                     
                     check_if_need_to_splatter_level_when_turning_note_to_rest(x, ch);
                     if (temp) {
-                        set_slots_values_to_notationitem_from_llll((t_notation_obj *)x, (t_notation_item *)ch, temp);
+                        notation_item_set_slots_from_llll((t_notation_obj *)x, (t_notation_item *)ch, temp);
                         llll_free(temp);
                     }
                 }
@@ -5422,7 +5425,7 @@ void scoreapi_initscore_step01(t_score *x)
     long i, v;
     t_scorevoice *voiceprec = NULL;
     
-    score_declare_bach_attributes(x);
+    score_bach_attribute_declares(x);
     
     x->r_ob.num_systems = 1;
     x->must_append_measures = false;
@@ -8415,7 +8418,7 @@ t_llll* get_subvoice_values_as_llll(t_score *x, t_scorevoice *voice, long start_
     t_tempo tempocopy;
     t_measure *startmeas = nth_measure_of_scorevoice(voice, start_meas);
     t_measure *temp_meas = startmeas;
-    if (!startmeas->firsttempo || rat_long_cmp(startmeas->firsttempo->changepoint, 0) > 0) {
+    if (startmeas && (!startmeas->firsttempo || rat_long_cmp(startmeas->firsttempo->changepoint, 0) > 0)) {
         tempotoadd = voice_get_first_tempo((t_notation_obj *)x, (t_voice *)voice);
         if (tempotoadd && tempotoadd->owner && tempotoadd->owner->measure_number >= start_meas)
             tempotoadd = NULL;
@@ -9613,9 +9616,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                     if (x->r_ob.velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH && x->r_ob.breakpoints_have_velocity)  {
                                         double width1 = x->r_ob.durations_line_width * grace_ratio * x->r_ob.zoom_y * (((double) (temp->prev->prev ? temp->prev->velocity : curr_nt->velocity)) / CONST_MAX_VELOCITY + 0.1);
                                         double width2 = x->r_ob.durations_line_width * grace_ratio * x->r_ob.zoom_y * (((double) temp->velocity) / CONST_MAX_VELOCITY + 0.1);
-                                        paint_doublewidth_curve(g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
+                                        notationobj_paint_doublewidth_curve((t_notation_obj *)x, g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
                                     } else if (x->r_ob.velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH)
-                                        paint_curve(g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope,
+                                        notationobj_paint_curve((t_notation_obj *)x, g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope,
                                                     rescale((double)curr_nt->velocity, 0, CONST_MAX_VELOCITY, 0.5, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y));
                                     else if ((x->r_ob.velocity_handling == k_VELOCITY_HANDLING_COLORSCALE || x->r_ob.velocity_handling == k_VELOCITY_HANDLING_ALPHACHANNEL ||
                                               x->r_ob.velocity_handling == k_VELOCITY_HANDLING_COLORSPECTRUM) && x->r_ob.breakpoints_have_velocity) {
@@ -9625,11 +9628,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                         t_jrgba color_end = note_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected),
                                                                            is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, temp->velocity);
                                         long num_steps = MAX(labs(vel1 - temp->velocity) * 1, 1);
-                                        paint_colorgradient_curve(g, color_start, color_end, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y, num_steps,
+                                        notationobj_paint_colorgradient_curve((t_notation_obj *)x, g, color_start, color_end, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y, num_steps,
                                                                   x->r_ob.velocity_handling == k_VELOCITY_HANDLING_COLORSPECTRUM &&
                                                                   !(!note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected)), vel1, temp->velocity, CONST_MAX_VELOCITY);
                                     } else
-                                        paint_curve(g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y);
+                                        notationobj_paint_curve((t_notation_obj *)x, g, durationlinecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, x->r_ob.durations_line_width *  grace_ratio * x->r_ob.zoom_y);
                                     if (temp->rel_x_pos < 1.) prev_bpt_x = bpt_x; prev_bpt_y = bpt_y;
                                     
                                     temp = temp->next;
@@ -9651,13 +9654,13 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                             selected_breakpoint = temp;
                                         bptcolor = tail_get_color((t_notation_obj *) x, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
                                         if (x->r_ob.breakpoints_have_noteheads) {
-                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE);
+                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor((t_notation_obj *) x, temp->velocity) : CONST_GRACE_CHORD_SIZE);
                                         } else {
                                             paint_rhomboid(g, x->r_ob.j_background_rgba, bptcolor, bpt_x, bpt_y, x->r_ob.breakpoints_size * 0.6 * x->r_ob.zoom_y * grace_ratio, x->r_ob.breakpoints_size * x->r_ob.zoom_y * grace_ratio, 0.9);
                                         }
                                     } else { //tail
                                         if (x->r_ob.breakpoints_have_noteheads && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
-                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, note_end_pos, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE);
+                                            paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, note_end_pos, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor((t_notation_obj *) x, temp->velocity) : CONST_GRACE_CHORD_SIZE);
                                         } else { 
                                             if (x->r_ob.show_tails) {
                                                 double bpt_y = mc_to_ypos((t_notation_obj *) x, note_get_screen_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
@@ -11188,25 +11191,25 @@ void recompute_all_and_redraw_fn(t_bach_inspector_manager *man, void *obj, t_bac
 }
 
 
-void score_declare_bach_attributes(t_score *x){
+void score_bach_attribute_declares(t_score *x){
     t_bach_attr_manager *man = x->r_ob.m_inspector.attr_manager;
 
     // CHORD ATTRIBUTES
     DECLARE_BACH_ATTR(man, 1, _llllobj_sym_duration, (char *)"Rational Duration", k_CHORD, t_chord, r_sym_duration, k_BACH_ATTR_RAT, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
     DECLARE_BACH_ATTR(man, 2, _llllobj_sym_grace, (char *)"Grace", k_CHORD, t_chord, is_grace_chord, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_CHORD, _llllobj_sym_grace), NULL, (bach_setter_fn)bach_set_grace, NULL, NULL, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_CHORD, _llllobj_sym_grace), NULL, (bach_setter_fn)bach_set_grace, NULL, NULL, NULL);
     
     // MEASURE ATTRIBUTES
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, (char *)"Name", k_MEASURE, t_notation_item, names, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_timesig, (char *)"Time Signature", k_MEASURE, t_measure, timesignature_dummy, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_timesig), NULL, NULL, NULL,(bach_attr_process_fn)recompute_all_and_redraw_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_timesig), NULL, NULL, NULL,(bach_attr_process_fn)recompute_all_and_redraw_fn, NULL);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, (char *)"Lock", k_MEASURE, t_measure, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, (char *)"Mute", k_MEASURE, t_measure, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_solo, (char *)"Solo", k_MEASURE, t_measure, solo, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MEASURE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MEASURE, _llllobj_sym_solo), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_lockrhythmictree, (char *)"Lock Rhythmic Tree", k_MEASURE, t_measure, lock_rhythmic_tree, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     x->r_ob.m_inspector.attr_manager->miniature[k_MEASURE] = (bach_inspector_miniature_fn)bach_measure_miniature_fn;
 
@@ -11222,7 +11225,7 @@ void score_declare_bach_attributes(t_score *x){
     barlinetype[8] = gensym("Tick");
     barlinetype[9] = gensym("Intervoices");
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_barline, (char *)"Ending Barline Type", k_MEASURE, t_measure, end_barline_dummy, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
-    bach_attribute_add_enumindex(get_bach_attribute(man, k_MEASURE, _llllobj_sym_barline), 8, barlinetype);
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_MEASURE, _llllobj_sym_barline), 8, barlinetype);
 
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_shownumber, (char *)"Show Measure Number", k_MEASURE, t_measure, show_measure_number, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_usecustomnumber, (char *)"Use Custom Numbering", k_MEASURE, t_measure, force_measure_number, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
@@ -11242,26 +11245,26 @@ void score_declare_bach_attributes(t_score *x){
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_tempo, (char *)"Tempo Value", k_TEMPO, t_tempo, figure_tempo_value, k_BACH_ATTR_RAT, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_onset, (char *)"Rational Onset", k_TEMPO, t_tempo, changepoint, k_BACH_ATTR_RAT, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_interp, (char *)"Rall./Acc. To Next", k_TEMPO, t_tempo, interpolation_type, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_TEMPO, _llllobj_sym_figure), NULL, NULL, NULL, (bach_attr_process_fn)sync_quartertempo_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_TEMPO, _llllobj_sym_tempo), NULL, NULL, NULL, (bach_attr_process_fn)sync_quartertempo_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_TEMPO, _llllobj_sym_onset), NULL, NULL, NULL, (bach_attr_process_fn)recompute_all_except_for_beamings_and_autocompletion_fn, NULL);
-    bach_attribute_add_functions(get_bach_attribute(man, k_TEMPO, _llllobj_sym_interp), NULL, NULL, NULL, (bach_attr_process_fn)recompute_all_except_for_beamings_and_autocompletion_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_TEMPO, _llllobj_sym_figure), NULL, NULL, NULL, (bach_attr_process_fn)sync_quartertempo_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_TEMPO, _llllobj_sym_tempo), NULL, NULL, NULL, (bach_attr_process_fn)sync_quartertempo_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_TEMPO, _llllobj_sym_onset), NULL, NULL, NULL, (bach_attr_process_fn)recompute_all_except_for_beamings_and_autocompletion_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(man, k_TEMPO, _llllobj_sym_interp), NULL, NULL, NULL, (bach_attr_process_fn)recompute_all_except_for_beamings_and_autocompletion_fn, NULL);
     x->r_ob.m_inspector.attr_manager->miniature[k_TEMPO] = (bach_inspector_miniature_fn)bach_tempo_miniature_fn;
     
     // MARKER ATTRIBUTES
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_onset), (bach_getter_fn)bach_get_marker_measure_attach, NULL, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_onset), (bach_getter_fn)bach_get_marker_measure_attach, NULL, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
     t_symbol *attachto[2];
     attachto[0] = gensym("Milliseconds Position");
     attachto[1] = gensym("Measure Position");
     DECLARE_BACH_ATTR(man, 1, _llllobj_sym_attach, (char *)"Attached To", k_MARKER, t_marker, attach_to, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
-    bach_attribute_add_enumindex(get_bach_attribute(man, k_MARKER, _llllobj_sym_attach), 2, attachto);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_attach), NULL, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, NULL);
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_MARKER, _llllobj_sym_attach), 2, attachto);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_attach), NULL, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, NULL);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_measure, (char *)"Measure Number", k_MARKER, t_marker, meas_for_attr, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_measure), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_measure), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_pim, (char *)"Point In Measure", k_MARKER, t_marker, r_sym_pim_attach, k_BACH_ATTR_RAT, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_pim), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_pim), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_voice, (char *)"Voice Number", k_MARKER, t_marker, voice_for_attr, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    bach_attribute_add_functions(get_bach_attribute(man, k_MARKER, _llllobj_sym_voice), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
+    bach_attribute_add_functions(bach_attribute_get(man, k_MARKER, _llllobj_sym_voice), (bach_getter_fn)bach_get_marker_measure_attach, (bach_setter_fn)bach_set_marker_measure_attach, NULL, NULL, (bach_inactive_fn)bach_marker_measure_attach_inactive);
     
 }
 
@@ -11291,7 +11294,7 @@ void bach_set_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
             } else if (attr->name == _llllobj_sym_measure) {
                 long voiceac = 0;
                 t_atom *voiceav = NULL;
-                bach_get_attr(&x->r_ob.m_inspector, obj, get_bach_attribute(x->r_ob.m_inspector.attr_manager, k_MARKER, _llllobj_sym_voice), &voiceac, &voiceav);
+                bach_get_attr(&x->r_ob.m_inspector, obj, bach_attribute_get(x->r_ob.m_inspector.attr_manager, k_MARKER, _llllobj_sym_voice), &voiceac, &voiceav);
                 if (ac && av){
                     long voice_num = atom_getlong(voiceav) - 1;
                     long meas_num = atom_getlong(av) - 1;
@@ -11308,7 +11311,7 @@ void bach_set_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
             } else if (attr->name == _llllobj_sym_voice) {
                 long measac = 0;
                 t_atom *measav = NULL;
-                bach_get_attr(&x->r_ob.m_inspector, obj, get_bach_attribute(x->r_ob.m_inspector.attr_manager, k_MARKER, _llllobj_sym_measure), &measac, &measav);
+                bach_get_attr(&x->r_ob.m_inspector, obj, bach_attribute_get(x->r_ob.m_inspector.attr_manager, k_MARKER, _llllobj_sym_measure), &measac, &measav);
                 if (ac && av){
                     long voice_num = atom_getlong(av) - 1;
                     long meas_num = atom_getlong(measav) - 1;

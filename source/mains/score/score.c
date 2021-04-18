@@ -359,7 +359,7 @@ void score_sel_change_measureinfo(t_score *x, t_symbol *s, long argc, t_atom *ar
 void score_sel_change_tie(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_erase_breakpoints(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv);
+void score_sel_set_slot(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_erase_slot(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_change_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_dumpselection(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -949,7 +949,7 @@ void score_send_current_chord(t_score *x){
                             llll_appenddouble(out_cents, note->midicents + note->lastbreakpoint->delta_mc, 0, WHITENULL_llll);
                             llll_appendlong(out_vels, x->r_ob.breakpoints_have_velocity ? note->lastbreakpoint->velocity : note->velocity, 0, WHITENULL_llll);
                         } else {
-                            double cents = rescale_with_slope(curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
+                            double cents = notationobj_rescale_with_slope((t_notation_obj *)x, curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
                             double velocity;
                             if (x->r_ob.breakpoints_have_velocity)
                                 velocity = rescale(curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next), prev_bpt->velocity, prev_bpt->next->velocity);
@@ -1533,7 +1533,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
             // (un)sel(ect) all markers
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
                 t_symbol *role_sym = NULL;
-                llll_parseattrs((t_object *)x, selectllll, false, "s", _llllobj_sym_role, &role_sym);
+                llll_parseattrs((t_object *)x, selectllll, 0, "s", _llllobj_sym_role, &role_sym);
                 select_all_markers((t_notation_obj *) x, mode, role_sym && role_sym != _llllobj_sym_all ? sym_to_marker_role(role_sym) : -1);
 
             // (un)sel(ect) all voices
@@ -1906,7 +1906,7 @@ void score_sel_change_symduration(t_score *x, t_symbol *s, long argc, t_atom *ar
     t_lexpr *lexpr = NULL;
     t_llll *new_durations = NULL;
     char changed = 0;
-    long autocomplete = 1, autoadapt = 0, autoadapt_scope = 1, autoadapt_simplify = 1, autobeam = 1, autorhythm = 1, global = 0;
+    long autocomplete = x->r_ob.auto_complete_measures, autoadapt = 0, autoadapt_scope = 1, autoadapt_simplify = 1, autobeam = 1, autorhythm = 1, global = 0;
     long flags = k_BEAMING_CALCULATION_DO;
     char lambda = (s == _llllobj_sym_lambda);
     t_notation_item *curr_it;
@@ -1916,7 +1916,7 @@ void score_sel_change_symduration(t_score *x, t_symbol *s, long argc, t_atom *ar
     
     new_durations = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     
-    llll_parseattrs((t_object *) x, new_durations, true, "iiiiiii",
+    llll_parseattrs((t_object *) x, new_durations, LLLL_PA_DESTRUCTIVE, "iiiiiii",
                     gensym("autocomplete"), &autocomplete,
                     gensym("adaptts"), &autoadapt,
                     gensym("adaptscope"), &autoadapt_scope,
@@ -2431,7 +2431,74 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_BREAKPOINTS_TO_SELECTION);
 }
 
-void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
+
+
+
+
+void score_sel_set_durationline(t_score *x, t_symbol *s, long argc, t_atom *argv){
+    t_llll *dl_as_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
+    char lambda = (s == _llllobj_sym_lambda);
+    char changed = 0;
+    
+    lock_general_mutex((t_notation_obj *)x);
+
+    if (dl_as_llll) {
+        t_notation_item *curr_it;
+        curr_it = notation_item_get_first_selected_account_for_lambda((t_notation_obj *)x, lambda);
+        while (curr_it) {
+            if (curr_it->type == k_NOTE) {
+                t_note *nt = (t_note *) curr_it;
+                if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
+                    t_llll *llllcopy;
+                    create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                    note_set_breakpoints_from_llll((t_notation_obj *) x, nt, dl_as_llll);
+                    changed = 1;
+                }
+            } else if (curr_it->type == k_CHORD) {
+                t_chord *ch = (t_chord *) curr_it;
+                t_note *nt;
+                for (nt=ch->firstnote; nt; nt = nt->next) {
+                    if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
+                        t_llll *llllcopy;
+                        create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                        note_set_breakpoints_from_llll((t_notation_obj *) x, nt, dl_as_llll);
+                        changed = 1;
+                    }
+                }
+            } else if (curr_it->type == k_MEASURE) {
+                t_measure *meas = (t_measure *) curr_it;
+                t_chord *ch = meas->firstchord;
+                while (ch) {
+                    t_note *nt;
+                    for (nt=ch->firstnote; nt; nt = nt->next) {
+                        if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
+                            create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                            note_set_breakpoints_from_llll((t_notation_obj *) x, nt, dl_as_llll);
+                            changed = 1;
+                        }
+                    }
+                    ch = ch->next;
+                }
+            }
+            curr_it = lambda ? NULL : curr_it->next_selected;
+        }
+    }
+    
+    llll_free(dl_as_llll);
+    
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION);
+}
+
+
+
+
+void score_sel_set_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
     t_llll *slot_as_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
     char lambda = (s == _llllobj_sym_lambda);
     char changed = 0;
@@ -2448,7 +2515,7 @@ void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
                     t_llll *llllcopy;    
                     create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                     llllcopy = llll_clone(slot_as_llll);
-                    set_slots_values_to_note_from_llll((t_notation_obj *) x, nt, slot_as_llll);
+                    note_set_slots_from_llll((t_notation_obj *) x, nt, slot_as_llll);
                     llll_free(llllcopy);
                     changed = 1;
                 }
@@ -2460,7 +2527,7 @@ void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         t_llll *llllcopy;
                         create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                         llllcopy = llll_clone(slot_as_llll);
-                        set_slots_values_to_notationitem_from_llll((t_notation_obj *) x, (t_notation_item *)ch, slot_as_llll);
+                        notation_item_set_slots_from_llll((t_notation_obj *) x, (t_notation_item *)ch, slot_as_llll);
                         llll_free(llllcopy);
                         changed = 1;
                     }
@@ -2472,7 +2539,7 @@ void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             t_llll *llllcopy;
                             create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                             llllcopy = llll_clone(slot_as_llll);
-                            set_slots_values_to_note_from_llll((t_notation_obj *) x, nt, slot_as_llll);
+                            note_set_slots_from_llll((t_notation_obj *) x, nt, slot_as_llll);
                             llll_free(llllcopy);
                             changed = 1;
                         }
@@ -2488,7 +2555,7 @@ void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             t_llll *llllcopy;    
                             create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                             llllcopy = llll_clone(slot_as_llll);
-                            set_slots_values_to_note_from_llll((t_notation_obj *) x, nt, slot_as_llll);
+                            note_set_slots_from_llll((t_notation_obj *) x, nt, slot_as_llll);
                             llll_free(llllcopy);
                             changed = 1;
                         }
@@ -2507,7 +2574,7 @@ void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
 
     unlock_general_mutex((t_notation_obj *)x);
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_SLOTS_TO_SELECTION);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
 }
 
 
@@ -2642,6 +2709,32 @@ void score_sel_copy_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
     unlock_general_mutex((t_notation_obj *)x);
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_COPY_SLOTS_FOR_SELECTION);
+}
+
+
+void score_sel_reducefunction(t_score *x, t_symbol *s, long argc, t_atom *argv){
+    long slotnum;
+    char lambda = (s == _llllobj_sym_lambda);
+    
+    if (argc < 1) {
+        object_error((t_object *)x, "Not enough arguments!");
+        return;
+    }
+    
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+
+    lock_general_mutex((t_notation_obj *)x);
+    
+    notationobj_sel_reducefunction((t_notation_obj *)x, args, lambda);
+    
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_REDUCE_FUNCTION);
+    
+    llll_free(args);
 }
 
 
@@ -4576,7 +4669,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description Fills each note in a sequence of ties with the slots of the first tied note, provided that the <m>singleslotfortiednotes</m> specification
     // is set in the slotinfo (otherwise the slot is not copied). This might be useful for instance while reversing, scrambling or modifying sequences of tied notes
     // while preserving the correct slot information.
-    // @seealso addslot
+    // @seealso setslot
     class_addmethod(c, (method) score_copy_slots_to_tied_noted_sequences, "filltiesequenceswithslots", 0);
 
     
@@ -4923,7 +5016,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @example openslotwin 3 @caption open 3rd slot window for selected note
     // @example openslotwin amplienv @caption open slot window for slot named 'amplienv'
-    // @seealso addslot
+    // @seealso setslot
     class_addmethod(c, (method) score_openslotwin, "openslotwin", A_GIMME, 0);
 
 
@@ -5973,20 +6066,29 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) score_sel_erase_breakpoints, "erasebreakpoints", A_GIMME, 0);
 
 
-    // @method addslot @digest Set the content of one or more slots for selected notes
-    // @description @copy BACH_DOC_MESSAGE_ADDSLOT
+    // @method setdurationline @digest Set the duration line for selected items
+    // @description @copy BACH_DOC_MESSAGE_SETDURATIONLINE
+    // @marg 0 @name breakpoints @optional 0 @type llll
+    // @example setdurationline [0 0 0] [0.5 200 0.2] [1 500 0] @caption sets duration line breakpoints to selection
+    // @seealso addbreakpoint, erasebreakpoints
+    class_addmethod(c, (method) score_sel_set_durationline, "setdurationline", A_GIMME, 0);
+
+    
+    // @method setslot @digest Set the content of one or more slots for selected notes
+    // @description @copy BACH_DOC_MESSAGE_SETSLOT
     // @marg 0 @name slots @optional 0 @type llll
-    // @example addslot [6 0.512] @caption fill (float) slot 6 with number 0.512
-    // @example addslot [5 42] @caption fill (int) slot 5 with number 42
-    // @example addslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
-    // @example addslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
-    // @example addslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
-    // @example addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
-    // @example addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
-    // @example addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
-    // @example addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
+    // @example setslot [6 0.512] @caption fill (float) slot 6 with number 0.512
+    // @example setslot [5 42] @caption fill (int) slot 5 with number 42
+    // @example setslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
+    // @example setslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
+    // @example setslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
+    // @example setslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
+    // @example setslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
+    // @example setslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
+    // @example setslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
     // @seealso changeslotitem, eraseslot, filltiesequenceswithslots
-    class_addmethod(c, (method) score_sel_add_slot, "addslot", A_GIMME, 0);
+    class_addmethod(c, (method) score_sel_set_slot, "addslot", A_GIMME, 0);
+    class_addmethod(c, (method) score_sel_set_slot, "setslot", A_GIMME, 0);
 
 
     // @method eraseslot @digest Clear a specific slot for selected notes
@@ -5995,7 +6097,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example eraseslot active @caption clear currently open slot for selected notes
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
-    // @seealso addslot, changeslotitem
+    // @seealso setslot, changeslotitem
     class_addmethod(c, (method) score_sel_erase_slot, "eraseslot", A_GIMME, 0);
 
     
@@ -6006,7 +6108,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example moveslot 2 7 @caption move the content of slot 2 to slot 7 for selected items
     // @example moveslot 2 active @caption destination slot is the active slot
     // @example copyslot amplienv myfunction @caption copy the slot named amplienv to the slot named myfunction
-    // @seealso copyslot, eraseslot, addslot, changeslotitem, resetslotinfo
+    // @seealso copyslot, eraseslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) score_sel_move_slot, "moveslot", A_GIMME, 0);
     
     
@@ -6017,7 +6119,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example copyslot 2 7 @caption copy the content of slot 2 to slot 7 for selected items
     // @example copyslot 2 active @caption destination slot is the active slot
     // @example copyslot amplienv myfunction @caption copy the 'amplienv' slot to the 'myfunction' slot
-    // @seealso moveslot, eraseslot, addslot, changeslotitem, resetslotinfo
+    // @seealso moveslot, eraseslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) score_sel_copy_slot, "copyslot", A_GIMME, 0);
     
 
@@ -6034,7 +6136,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example changeslotitem 9 1 highpass 400 0 2 @caption set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"
     // @example changeslotitem 8 0 Max.app 0 @caption append the Max.app file in the 8th (filelist) slot, and make it active
     // @example changeslotitem 8 0 0 2 @caption Make 2nd file active in 8th (filelist) slot
-    // @seealso addslot, eraseslot
+    // @seealso setslot, eraseslot
     class_addmethod(c, (method) score_sel_change_slot_item, "changeslotvalue", A_GIMME, 0);
     class_addmethod(c, (method) score_sel_change_slot_item, "changeslotitem", A_GIMME, 0);
 
@@ -6046,7 +6148,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) score_sel_append_slot_item, "appendslotitem", A_GIMME, 0);
     
     // @method prependslotitem @digest Prepend a slot element at the beginning of a slot
@@ -6055,7 +6157,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) score_sel_prepend_slot_item, "prependslotitem", A_GIMME, 0);
     
     // @method insertslotitem @digest Insert a slot element at a given position in a slot
@@ -6065,7 +6167,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 2 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) score_sel_insert_slot_item, "insertslotitem", A_GIMME, 0);
     
     // @method deleteslotitem @digest Delete the slot element at a given position of a slot
@@ -6076,10 +6178,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example deleteslotitem 3 2 @caption delete 2nd item of 3rd slot
     // @example deleteslotitem 3 [0.7] @caption delete item 3rd slot matching X = 0.7
     // @example deleteslotitem 3 [0.7] @thresh 0.1 @caption the same, with a tolerance of 0.1
-    // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
+    // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, setslot, eraseslot
     class_addmethod(c, (method) score_sel_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 
     
+    
+    class_addmethod(c, (method) score_sel_reducefunction, "reducefunction", A_GIMME, 0);
+
     
     // @method dumpselection @digest Play selected items off-line
     // @description The <m>dumpselection</m> message sends the content of each one of selected notation items from the 
@@ -6267,7 +6372,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name modification_message @optional 0 @type llll
     // @example lamdba cents $1 @caption assign the incoming value as note cents
     // @example lamdba changeslotitem $1 $2 $3 @caption the same, for some slot value
-    // @seealso cents, velocity, changeslotitem, addslot, eraseslot, name
+    // @seealso cents, velocity, changeslotitem, setslot, eraseslot, name
     class_addmethod(c, (method) score_lambda, "lambda", A_GIMME, 0);
 
 
@@ -7161,9 +7266,15 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_STYLE_LABEL(c,"allowbeaming",0,"onoff","Allow Beaming");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"allowbeaming", 0, "1");
     CLASS_ATTR_ACCESSORS(c, "allowbeaming", (method)NULL, (method)score_setattr_allowbeaming);
-    // @description Toggles the possibility to beam chords. By default, of course, this is active.
+    // @description Toggles the possibility to beam chords. By default this is active.
     
 
+    CLASS_ATTR_CHAR(c,"autocomplete",0, t_notation_obj, auto_complete_measures);
+    CLASS_ATTR_STYLE_LABEL(c,"autocomplete",0,"onoff","Autocomplete Measures");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"autocomplete", 0, "1");
+    CLASS_ATTR_ACCESSORS(c, "autocomplete", (method)NULL, (method)score_setattr_autocompletemeasures);
+    // @description Toggles the ability to complete measures automatically with rests. By default this is active.
+    
     // OBSOLETE, no more supported, kept for legacy
     CLASS_ATTR_DOUBLE(c,"maxbeamslope", 0, t_notation_obj, max_beam_slope);
     CLASS_ATTR_STYLE_LABEL(c,"maxbeamslope", 0, "text", "Max Beam Slope");
@@ -9065,8 +9176,10 @@ void score_lambda(t_score *x, t_symbol *s, long argc, t_atom *argv){
             score_sel_insert_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_deleteslotitem){
             score_sel_delete_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
-        } else if (router == _llllobj_sym_addslot){
-            score_sel_add_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_addslot || router == _llllobj_sym_setslot){
+            score_sel_set_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_setdurationline){
+            score_sel_set_durationline(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_addbreakpoint){
             score_sel_add_breakpoint(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_erasebreakpoints){
@@ -9094,7 +9207,7 @@ void score_copy_slots_to_tied_noted_sequences(t_score *x)
                         t_note *tmp = note->tie_to;
                         t_llll *slots = note_get_slots_values_as_llll((t_notation_obj *)x, note, k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING, true);
                         while (tmp && tmp != WHITENULL) {
-                            set_slots_values_to_note_from_llll((t_notation_obj *)x, tmp, slots);
+                            note_set_slots_from_llll((t_notation_obj *)x, tmp, slots);
                             tmp = tmp->tie_to;
                         }
                     }
@@ -10499,7 +10612,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         else if (x->r_ob.j_mousedown_obj_type == k_LOOP_END)
             end_tp = this_tp;
             
-        if (timepoints_compare(start_tp, end_tp) > 0) {
+        if (timepoint_compare(start_tp, end_tp) > 0) {
             t_timepoint temp = start_tp;
             start_tp = end_tp;
             end_tp = temp;
@@ -12559,10 +12672,10 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                             clone_slots_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, (t_notation_item *)newnote, k_CLONE_FOR_ORIGINAL);
                                             erase_all_notationitem_slots((t_notation_obj *)x, (t_notation_item *)curr_ch);
                                         } else {
-                                            set_slots_values_to_note_from_llll((t_notation_obj *)x, newnote, x->r_ob.default_noteslots);
+                                            note_set_slots_from_llll((t_notation_obj *)x, newnote, x->r_ob.default_noteslots);
                                         }
 #else 
-                                        set_slots_values_to_note_from_llll((t_notation_obj *)x, newnote, x->r_ob.default_noteslots);
+                                        note_set_slots_from_llll((t_notation_obj *)x, newnote, x->r_ob.default_noteslots);
 #endif
                                     }
                                     
@@ -14599,7 +14712,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
             t_marker *marker;
             for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
                 if (is_in_markername_shape(x, pt.x, pt.y, marker) || is_in_marker_shape((t_notation_obj *)x, marker, pt.x, pt.y)){
-                    unlock_general_mutex((t_notation_obj *)x);    
+                    unlock_general_mutex((t_notation_obj *)x);
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))
                         start_editing_markername((t_notation_obj *) x, patcherview, marker, ms_to_xposition((t_notation_obj *)x, marker->position_ms, 1) + 3 * x->r_ob.zoom_y);
                     return;
@@ -14963,7 +15076,7 @@ void add_note_to_chord_from_linear_edit(t_score *x, long force_diatonic_step){
         
         this_nt = build_note_from_ac_av((t_notation_obj *) x, 2, argv);
         if (this_nt)
-            set_slots_values_to_note_from_llll((t_notation_obj *)x, this_nt, x->r_ob.default_noteslots);
+            note_set_slots_from_llll((t_notation_obj *)x, this_nt, x->r_ob.default_noteslots);
         
         create_simple_notation_item_undo_tick((t_notation_obj *) x, x->r_ob.notation_cursor.chord->r_sym_duration.r_num < 0 ? (t_notation_item *)x->r_ob.notation_cursor.chord->parent : (t_notation_item *)x->r_ob.notation_cursor.chord, k_UNDO_MODIFICATION_CHANGE);
         
@@ -16520,6 +16633,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             }
             return 0;
             break;
+            
         case 'g': // Cmd+Shift+G: Group tree
             if (modifiers & eCommandKey && modifiers & eShiftKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)) {
                 create_level_for_selected_tree_nodes(x);
@@ -16528,6 +16642,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             }
             return 0;
             break;
+            
         case 't': // letter t: 
             if (modifiers & eCommandKey && modifiers & eShiftKey && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE) && x->r_ob.allow_lock) { 
                 if (x->r_ob.selection_type == k_MEASURE) {
@@ -16542,6 +16657,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             }
             return 0;
             break;
+            
         case 48: case 49: case 50: case 51: case 52: case 53: case 54: case 55: case 56: case 57: 
             // change slot view
             // detect the selection type
@@ -16559,11 +16675,15 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 }
             }
             return 0;
-            break; 
+            break;
+            
         case 'c': // Cmd+C
+        case 'x': // Cmd+X
             if (modifiers & eCommandKey && x->r_ob.allow_copy_paste) {
                 // copy!
-                if (x->r_ob.active_slot_num >= 0 && x->r_ob.active_slot_notationitem) { // we copy the slot
+                if (x->r_ob.num_selecteditems == 1 && x->r_ob.firstselecteditem->type == k_DYNAMICS) { // copy dynamics
+                    notation_obj_copy_slot((t_notation_obj *)x, &clipboard, ((t_dynamics *)x->r_ob.firstselecteditem)->owner_item, x->r_ob.link_dynamics_to_slot-1, keycode == 'x');
+                } else if (x->r_ob.active_slot_num >= 0 && x->r_ob.active_slot_notationitem) { // we copy the slot
                     if (x->r_ob.selected_slot_items->l_size > 0)
                         notation_obj_copy_slot_selection((t_notation_obj *)x, &clipboard, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, keycode == 'x');
                     else
@@ -17897,8 +18017,8 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                     double new_midicents = nt->midicents;
                     t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, 0., cut_rel_pos, NULL);
                     t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, cut_rel_pos, 1., &new_midicents);
-                    set_breakpoints_values_to_note_from_llll((t_notation_obj *)x, nt, left_bpt);
-                    set_breakpoints_values_to_note_from_llll((t_notation_obj *)x, new_nt, right_bpt);
+                    note_set_breakpoints_from_llll((t_notation_obj *)x, nt, left_bpt);
+                    note_set_breakpoints_from_llll((t_notation_obj *)x, new_nt, right_bpt);
                     new_nt->midicents = new_midicents;
                     llll_free(left_bpt);
                     llll_free(right_bpt);
@@ -17911,8 +18031,8 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                         t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, -1);
                         llll_wrap_once(&left_slot);
                         llll_wrap_once(&right_slot);
-                        set_slots_values_to_note_from_llll((t_notation_obj *)x, nt, left_slot);
-                        set_slots_values_to_note_from_llll((t_notation_obj *)x, new_nt, right_slot);
+                        note_set_slots_from_llll((t_notation_obj *)x, nt, left_slot);
+                        note_set_slots_from_llll((t_notation_obj *)x, new_nt, right_slot);
                     }
                 }
             }

@@ -69,7 +69,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "comment",
-					"text" : "Use \"nil\" to avoid changing stuff: this keep the filter type, it only sets the gain to 10dB (You could NOT achieve this with an \"addslot\" message)",
+					"text" : "Use \"nil\" to avoid changing stuff: this keep the filter type, it only sets the gain to 10dB (You could NOT achieve this with a \"setslot\" message)",
 					"linecount" : 2,
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -97,7 +97,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "addslot [1 lowpass 2000 -2 1.5]",
+					"text" : "setslot [1 lowpass 2000 -2 1.5]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 379.0, 294.0, 178.0, 18.0 ],
@@ -301,7 +301,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "addslot [1 bandpass 5550 0 4.5]",
+					"text" : "setslot [1 bandpass 5550 0 4.5]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 4.0, 224.0, 183.0, 18.0 ],
@@ -438,7 +438,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "comment",
-					"text" : "The slot content can be also set via message, with the usual \"addslot\" and \"changeslotvalue\" messages, which operate on the current selection. They accept (in addition to the slot number and - if needed - the slot element specification) an information that can be in one of these three formats:",
+					"text" : "The slot content can be also set via message, with the usual \"setslot\" and \"changeslotvalue\" messages, which operate on the current selection. They accept (in addition to the slot number and - if needed - the slot element specification) an information that can be in one of these three formats:",
 					"linecount" : 2,
 					"numinlets" : 1,
 					"numoutlets" : 0,

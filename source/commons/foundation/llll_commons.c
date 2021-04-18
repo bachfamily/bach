@@ -8682,9 +8682,14 @@ llll_parseargs_error:
 
 
 /// Same as llll_parseargs, but using the attribute-like syntax: @attrname attrvalue
+// Flags are a combination of e_llll_parseattr_flags
 // IMPORTANT: if destructive is non-zero the incoming ll will have all @stuff removed.
-long llll_parseattrs(t_object *x, t_llll *ll, char destructive, const char *types, ...)
+long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...)
 {
+    char destructive = (flags & LLLL_PA_DESTRUCTIVE ? 1 : 0);
+    char dontwarnforkeys = (flags & LLLL_PA_DONTWARNFORWRONGKEYS ? 1 : 0);
+    char dontwarnforitems = (flags & LLLL_PA_DONTWARNFORWRONGITEMS ? 1 : 0);
+    char dontwarnforduplicates = (flags & LLLL_PA_DONTWARNFORDUPLICATES ? 1 : 0);
     va_list ap;
     
     // key is the name, value is a hatom
@@ -8750,10 +8755,12 @@ long llll_parseattrs(t_object *x, t_llll *ll, char destructive, const char *type
             ht_err = hashtab_lookup(vars_ht, key, (t_object **) &item);
             
             if (ht_err) {
-                object_error(x, "Bad message attribute key %s", key->s_name);
+                if (!dontwarnforkeys)
+                    object_error(x, "Bad message attribute key %s", key->s_name);
                 continue;
             } else if (!item) {
-                object_error(x, "Something is wrong with message attribute %s", key->s_name);
+                if (!dontwarnforitems)
+                    object_error(x, "Something is wrong with message attribute %s", key->s_name);
                 continue;
             }
 
@@ -8767,11 +8774,11 @@ long llll_parseattrs(t_object *x, t_llll *ll, char destructive, const char *type
             
             if (item->p_type != P_LLLL) {
                 if (!endelem) {
-                    if (x)
+                    if (x && !dontwarnforitems)
                         object_error(x, "Bad value for message attribute %s", key->s_name);
                     continue;
                 } else if (endelem != elem->l_next) {
-                    if (x)
+                    if (x && !dontwarnforduplicates)
                         object_warn(x, "Multiple values for message attribute %s: only first one kept", key->s_name);
                 }
             }

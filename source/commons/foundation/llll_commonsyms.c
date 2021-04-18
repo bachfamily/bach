@@ -272,6 +272,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_insertslotitem = gensym("insertslotitem");
     x->s_deleteslotitem = gensym("deleteslotitem");
     x->s_addslot = gensym("addslot");
+    x->s_setslot = gensym("setslot");
+    x->s_setdurationline = gensym("setdurationline");
     x->s_addbreakpoint = gensym("addbreakpoint");
     x->s_erasebreakpoints = gensym("erasebreakpoints");
     x->s_widthfactor = gensym("widthfactor");

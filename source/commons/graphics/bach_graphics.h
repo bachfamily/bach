@@ -26,6 +26,7 @@
 #define _BACH_GRAPHICS_H_
 
 #include "foundation/bach.h"
+#include "math/bach_math_utilities.h"
 
 //#ifdef USE_GPC_LIBRARY
 //#include "gpc.h"
@@ -215,7 +216,7 @@ void compute_bezier_point(double x0, double y0, double x1, double y1, double x2,
 // (PRIVATE) get a bach-standard choice for the two internal bezier control points for the cubic bezier curve in the convex hull given by x_start y_start x_end y_end, with the slope given by slope (0 = linear). BEWARE: ONLY WORKS FOR POSITIVE SLOPES
 void get_bezier_control_points(double x_start, double y_start, double x_end, double y_end, double slope, double *ctrl_1_x, double *ctrl_1_y, double *ctrl_2_x, double *ctrl_2_y, double *left_derivative, double *right_derivative);
 // (PRIVATE) get the middle refinement point to split a curve display into 2 bezier curves
-void get_middle_refinement_point_for_curve(double x1, double y1, double x2, double y2, double *middle_x, double *middle_y, double *middle_derivative, double slope);
+void get_middle_refinement_point_for_curve(double x1, double y1, double x2, double y2, double *middle_x, double *middle_y, double *middle_derivative, double slope, e_slope_mapping slope_mapping_type);
 
 
 /** Fill an array of #t_unicodeChar with some data.
@@ -403,9 +404,10 @@ double pt_pt_dot(t_pt p, t_pt q);
     @param    end_x            The y of the ending point of the curve
     @param    slope            The slope of the curve (-1 to 1, 0 being linear)
     @param    line_width        The line width of the curve (you might want to increase it to account for toleration factors)
+    @param    slope_mapping_type  The slope mapping function (either bach or Max)
     @return                    1 if the point lies on the curve, 0 otherwise.
  */
-int is_pt_in_curve_shape(double point_x, double point_y, double start_x, double start_y, double end_x, double end_y, double slope, double line_width);
+int is_pt_in_curve_shape(double point_x, double point_y, double start_x, double start_y, double end_x, double end_y, double slope, double line_width, e_slope_mapping slope_mapping_type);
 
 
 /**    Tell if a line and a rectangle intersect (i.e. if there is a collision).
@@ -793,8 +795,9 @@ void paint_simple_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, dou
     @param    y2            The y of the ending point  
     @param    slope        The slope of the curve (Max-like parameter: 0 = linear, -1 = "extremely logarithmic", 1 = "extremely exponential", as in the [curve~] object) 
     @param    width        The width of the line
+ @param    slope_mapping_type  The slope mapping type (either bach or Max)
  */
-void paint_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width);
+void paint_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width, e_slope_mapping slope_mapping_type);
 
 
 /**    Paint a curve, as for paint_curve() function, but also returns the full control points of the two bezier polygons determining the two parts of the curve.
@@ -812,9 +815,10 @@ void paint_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2,
     @param    middle_pt    Pointer which will be filled with the middle point (the intersection point between the two parts of the curve)
     @param    ctrl3        Pointer which will be filled with the first control point of the second bezier curve
     @param    ctrl4        Pointer which will be filled with the second control point of the second bezier curve
+    @param    slope_mapping_type  The slope mapping type (either bach or Max)
  */
 void paint_curve_and_get_bezier_control_points(t_jgraphics* g, t_jrgba color, t_pt start, t_pt end, double slope, double width, 
-                                               t_pt *ctrl1, t_pt *ctrl2, t_pt *middle_pt, t_pt *ctrl3, t_pt *ctrl4);
+                                               t_pt *ctrl1, t_pt *ctrl2, t_pt *middle_pt, t_pt *ctrl3, t_pt *ctrl4, e_slope_mapping slope_mapping_type);
 
 
 /**    Subdivide a (cubic) bezier curve with De Casteljau's algorithm
@@ -908,9 +912,10 @@ void paint_doublewidth_line(t_jgraphics* g, t_jrgba color, double x1, double y1,
     @param    y2            The y of the ending point  
     @param    slope        The slope of the curve (see paint_curve()) 
     @param    width        The width of the line
+    @param   slope_mapping_type The slope mapping function (either bach or Max)
     @see                paint_curve()
  */
-void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width_start, double width_end);
+void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width_start, double width_end, e_slope_mapping slope_mapping_type);
 
 
 /**    Paint a line (like paint_line()), whose color changes as a gradient from a starting color to an ending color.
@@ -961,10 +966,11 @@ void paint_colorgradient_line(t_jgraphics* g, t_jrgba color_start, t_jrgba color
     @param    vel1                    The starting velocity (used only if <colors_from_spectrum> = 1)
     @param    vel2                    The ending velocity (used only if <colors_from_spectrum> = 1)
     @param    max_velocity            The maximum admitted velocity (used only if <colors_from_spectrum> = 1), usually #CONST_MAX_VELOCITY
+    @param   slope_mapping_type The slope mapping function (either bach or Max)
     @see                            paint_colorgradient_line()
     @see                            paint_curve()
  */
-void paint_colorgradient_curve(t_jgraphics* g, t_jrgba color_start, t_jrgba color_end, double x1, double y1, double x2, double y2, double slope, double width, long num_steps, char are_color_from_spectrum, double vel1, double vel2, double max_velocity);
+void paint_colorgradient_curve(t_jgraphics* g, t_jrgba color_start, t_jrgba color_end, double x1, double y1, double x2, double y2, double slope, double width, long num_steps, char are_color_from_spectrum, double vel1, double vel2, double max_velocity, e_slope_mapping slope_mapping_type);
 
 
 /**    Paint a line with an arrow at the end.

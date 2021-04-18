@@ -861,7 +861,7 @@ char do_rebuild_tags(t_wordcloud *x, t_object *view, t_rect rect, t_symbol *font
 		if (this_weights >= min_drawable_weights) { 
 			t_symbol *tag = hatom_gettype(&tags_elem->l_hatom) == H_SYM ? hatom_getsym(&tags_elem->l_hatom) : _llllobj_sym_empty_symbol;
 			double font_size = x->min_weights == x->max_weights ? (x->min_font_size + x->max_font_size) / 2. : 
-			rescale_with_slope(this_weights, x->autofit ? min_drawable_weights : x->min_weights, x->max_weights, x->min_font_size, x->max_font_size, x->slope);
+			rescale_with_slope(this_weights, x->autofit ? min_drawable_weights : x->min_weights, x->max_weights, x->min_font_size, x->max_font_size, x->slope, k_SLOPE_MAPPING_BACH);
 			t_jfont *jf = jfont_create_debug(font_name->s_name, (t_jgraphics_font_slant) font_slant, (t_jgraphics_font_weight) font_weight, font_size);
 			jfont_text_measure(jf, tag->s_name, &w, &h);
 			

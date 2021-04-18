@@ -1749,11 +1749,12 @@ typedef enum _undo_operations
     k_UNDO_OP_CHANGE_IOI_FOR_SELECTION,
     k_UNDO_OP_ADD_BREAKPOINTS_TO_SELECTION,
     k_UNDO_OP_ERASE_BREAKPOINTS_FOR_SELECTION,
-    k_UNDO_OP_ADD_SLOTS_TO_SELECTION,
+    k_UNDO_OP_SET_SLOTS_TO_SELECTION,
     k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION,
     k_UNDO_OP_MOVE_SLOTS_FOR_SELECTION,
     k_UNDO_OP_COPY_SLOTS_FOR_SELECTION,
     k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION,
+    k_UNDO_OP_REDUCE_FUNCTION,
     k_UNDO_OP_ADD_MARKER,
     k_UNDO_OP_DELETE_MARKER,
     k_UNDO_OP_CHANGE_MARKER_NAME,
@@ -1787,6 +1788,7 @@ typedef enum _undo_operations
     k_UNDO_OP_RESET_TAIL_SLOPE,
     k_UNDO_OP_DELETE_PITCH_BREAKPOINTS_IN_SELECTION,
     k_UNDO_OP_RESET_PITCH_BREAKPOINTS_SLOPE_FOR_SELECTION,
+    k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION,
     k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION,
     k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION,
     k_UNDO_OP_LOCK_UNLOCK_SELECTION,
@@ -4113,6 +4115,9 @@ typedef struct _notation_obj
     char        output_slot_names;            ///< If this is 1, the notation object always outputs slot names and NOT slot numbers from the playout (which means: for mode = #k_CONSIDER_FOR_EVALUATION or #k_CONSIDER_FOR_PLAYING or #k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE or #k_CONSIDER_FOR_SELECTION_COPYING)
     double        slot_window_zoom;            ///< Additional zoom (with respect to the #zoom_y field) for the slot windows, 100 being the default one. 
     double        bgslot_zoom;                ///< Additional zoom (with respect to the #zoom_y field) for the background displayed slots, 100 being the default one.
+    
+    // slope stuff:
+    long        slope_mapping_type;                     ///< Slope mapping type, one of the #e_slope_mapping
     char        combine_range_slope_during_playback;    ///< Combines the range slope with the existing slopes during playback
     
     // only used by color slots
@@ -5788,7 +5793,7 @@ t_symbol *full_repr_to_symbol(t_notation_obj *r_ob, t_voice *voice);
     @param    tp2        Second timepoint
     @return            0 if the timepoints happen in the same moment, -1 if #tp1 happens first, 1 if #tp2 happens first.
 */ 
-char timepoints_compare(t_timepoint tp1, t_timepoint tp2);
+char timepoint_compare(t_timepoint tp1, t_timepoint tp2);
 
 
 /**    Interpolate two timepoints lying in the same measure of the same voice.
@@ -7554,7 +7559,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
     @remark            This is used in calculate_chord_parameters().
 */ 
 void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note);
-double velocity_to_notesize_factor(long velocity);
+double velocity_to_notesize_factor(t_notation_obj *r_ob, long velocity);
 
 
 /**    Retrieve the y position of the ledger lines relative to a given scaleposition (see the <scaleposition> field in the #t_note structure). 
@@ -8459,6 +8464,10 @@ void move_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int sl
 void move_note_slot(t_notation_obj *r_ob, t_note *note, int slot_from, int slot_to, char keep_original, char also_check_slot_recomputations = 1);
 void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *args, char lambda, e_slot_changeslotitem_modes mode);
 
+// reducefunction
+long notation_item_reducefunction(t_notation_obj *r_ob, t_notation_item *nitem, long slot_number, long maxnumpoints, double thresh, long p, long relative, long slope, long algorithm, e_slope_mapping slopemapping);
+void notationobj_sel_reducefunction(t_notation_obj *r_ob, t_llll *args_orig, char lambda);
+
 
 /**    Check if all the slot data in a notation object correctly lie within the slot domain. If not, it forces data to lie within the slot domain.
     This function is useful if called after a slot domain change.
@@ -8650,10 +8659,10 @@ t_llll* notation_item_get_slots_values_no_header_as_llll(t_notation_obj *r_ob, t
     @param    note        The note to which the slot information must be set
     @param    slots        An llll containing the slot information
  */
-void set_slots_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* slots);
+void note_set_slots_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* slots);
 
 //TBD
-void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation_item *nitem, t_llll* slots);
+void notation_item_set_slots_from_llll(t_notation_obj *r_ob, t_notation_item *nitem, t_llll* slots);
 
 // Private
 void notation_item_check_slots(t_notation_obj *r_ob, t_notation_item *nitem);
@@ -10366,6 +10375,12 @@ void paint_venn_label_families(t_notation_obj *r_ob, t_object *view, t_jgraphics
 void notationobj_paint_legend(t_notation_obj *r_ob, t_jgraphics *g, t_rect rect, t_jfont *jf_text_legend);
 
 
+// Like paint_curve() inferring slope mapping type from the notation object
+void notationobj_paint_curve(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width);
+void notationobj_paint_doublewidth_curve(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width_start, double width_end);
+void notationobj_paint_colorgradient_curve(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color_start, t_jrgba color_end, double x1, double y1, double x2, double y2, double slope, double width, long num_steps, char are_color_from_spectrum, double vel1, double vel2, double max_velocity);
+
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // EXPERIMENTAL, UNDOCUMENTED, DON'T USE IT YET
@@ -11987,7 +12002,7 @@ void llll_append_notationitem_global_flag(t_notation_obj *r_ob, t_llll *ll, t_no
     @param    note        The note
     @param    breakpoints    An llll containing a (relative_x_position delta_mc slope) llll for each breakpoint to add.
  */
-void set_breakpoints_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints);
+void note_set_breakpoints_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints);
 
 
 /**    Assign one or more articulations to a notation item. Deletes the already existing articulations.
@@ -18068,7 +18083,7 @@ void initialize_attr_manager(t_bach_attr_manager *man);
     @param    postprocess_flags    Unused (maybe supported in the future), leave to 0
  */
 #define DECLARE_BACH_ATTR(man, forced_position, name, displayed_label, owner_type, struct_name, struct_member, attr_type, attr_size, display_type, preprocess_flags, postprocess_flags)  \
-    declare_bach_attribute(man, forced_position, name, displayed_label, owner_type, calcoffset(struct_name, struct_member), attr_type, attr_size, display_type, preprocess_flags, postprocess_flags) 
+    bach_attribute_declare(man, forced_position, name, displayed_label, owner_type, calcoffset(struct_name, struct_member), attr_type, attr_size, display_type, preprocess_flags, postprocess_flags) 
 
 
 /** Function called underlying the #DECLARE_BACH_ATTR macro. You should NEVER call this function directly, but use the #DECLARE_BACH_ATTR macro instead!!!
@@ -18085,7 +18100,7 @@ void initialize_attr_manager(t_bach_attr_manager *man);
     @param    preprocess_flags    Unused (maybe supported in the future), leave to 0
     @param    postprocess_flags    Unused (maybe supported in the future), leave to 0
 */
-void declare_bach_attribute(t_bach_attr_manager *man, char forced_position, t_symbol *name, const char *displayed_label, long owner_type, long field_position, long attr_type, long attr_size, char display_type, long preprocess_flags, long postprocess_flags);
+void bach_attribute_declare(t_bach_attr_manager *man, char forced_position, t_symbol *name, const char *displayed_label, long owner_type, long field_position, long attr_type, long attr_size, char display_type, long preprocess_flags, long postprocess_flags);
 
 
 /** Retrieve a bach attribute from its name and the owner type.
@@ -18095,7 +18110,7 @@ void declare_bach_attribute(t_bach_attr_manager *man, char forced_position, t_sy
     @param    name        The name of the attribute
     @return                The corresponding #t_bach_attribute structure representing the bach attribute
  */
-t_bach_attribute *get_bach_attribute(t_bach_attr_manager *man, long owner_type, t_symbol *name);
+t_bach_attribute *bach_attribute_get(t_bach_attr_manager *man, long owner_type, t_symbol *name);
 
 
 /** Add some 'lambda' function to deal with attributes. All attributes might have setters, getters, preprocess functions (function performed BEFORE the attribute is set) or postprocess functions (function performed AFTER the attribute has been set).
@@ -18104,7 +18119,7 @@ t_bach_attribute *get_bach_attribute(t_bach_attr_manager *man, long owner_type, 
     Also you can add an "inactive" function, telling if the attribute must be inactive in the inspector (returning 1 if this is the case, 0 otherwise).
     @ingroup    attributes
     @param    r_ob            The    notation object
-    @param    attr            The bach-attribute to which the functions must be added (you can retrieve it via get_bach_attribute() if you don't have it directly)
+    @param    attr            The bach-attribute to which the functions must be added (you can retrieve it via bach_attribute_get() if you don't have it directly)
     @param    getter            The getter function for the bach-attribute
     @param    setter            The setter function for the bach-attribute
     @param    preprocess        The preprocess function for the bach-attribute
@@ -18127,7 +18142,7 @@ void bach_attribute_add_functions(t_bach_attribute *attr, bach_getter_fn getter,
  */
 
 #define ADD_BACH_ATTR_VARSIZE_FIELD(attr_manager, name, owner_type, struct_name, struct_member)  \
-    bach_attribute_add_var_size_offset(get_bach_attribute(attr_manager, owner_type, name), calcoffset(struct_name, struct_member));
+    bach_attribute_add_var_size_offset(bach_attribute_get(attr_manager, owner_type, name), calcoffset(struct_name, struct_member));
     
 
 /** Sets the t_bach_attribute::field_position_for_var_attr_size field for a given attribute. This field contains the information about the offset of the
@@ -18153,7 +18168,7 @@ void bach_attribute_add_enumindex(t_bach_attribute *attr, long num_items, t_symb
     @ingroup    attributes
     @param    r_ob                The    notation object
  */
-void notation_obj_declare_bach_attributes(t_notation_obj *r_ob);
+void notation_obj_bach_attribute_declares(t_notation_obj *r_ob);
 
 
 
@@ -18294,7 +18309,7 @@ void bach_default_inspector_header_fn(t_notation_obj *r_ob, t_bach_inspector_man
 t_jsurface *bach_get_icon_surface_fn(t_notation_obj *r_ob, t_bach_inspector_manager *inspector_manager, void *obj, long elem_type);
 
 
-/** Obtain the content of a bach attribute as a string containing a single character (for compatibility with get_bach_attribute_as_string()).
+/** Obtain the content of a bach attribute as a string containing a single character (for compatibility with bach_attribute_get_as_string()).
     Notice that a char array is thus allocated, and you need to free it when it is no longer needed. This is usually used for #k_BACH_ATTR_DISPLAY_CHAR
     attributes.
     @ingroup    attributes
@@ -18303,7 +18318,7 @@ t_jsurface *bach_get_icon_surface_fn(t_notation_obj *r_ob, t_bach_inspector_mana
     @param    attr    The bach attribute
     @return            The string containing a single character representing the attribute.
  */
-char *get_bach_attribute_as_character(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
+char *bach_attribute_get_as_character(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
 
 
 /** Obtain the content of a bach attribute as a string. A char array is allocated and returned, and you need to free it when it is no longer needed.
@@ -18312,7 +18327,7 @@ char *get_bach_attribute_as_character(t_bach_inspector_manager *man, void *obj, 
     @param    obj        Pointer to the object being inspected
     @param    attr    The bach attribute
  */
-char *get_bach_attribute_as_string(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
+char *bach_attribute_get_as_string(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
 
 
 /** Obtain the content of a bach attribute as a #t_jrgba color structure. This makes only sense for #k_BACH_ATTR_COLOR.
@@ -18321,7 +18336,7 @@ char *get_bach_attribute_as_string(t_bach_inspector_manager *man, void *obj, t_b
     @param    obj        Pointer to the object being inspected
     @param    attr    The bach attribute
  */
-t_jrgba get_bach_attribute_as_color(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
+t_jrgba bach_attribute_get_as_color(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
 
 
 /** Set the voicename for the inspected voice from an A_GIMME signature.
@@ -18356,7 +18371,7 @@ void bach_attr_get_single_voicename(t_notation_obj *r_ob, void *obj, t_bach_attr
     @param        av        The atoms in the A_GIMME signature
     @remark        For instance, while declaring the "locked" attribute for the note element, we do
     @code
-    bach_attribute_add_functions(get_bach_attribute(r_ob, k_NOTE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
+    bach_attribute_add_functions(bach_attribute_get(r_ob, k_NOTE, _llllobj_sym_lock), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn, NULL);
     @endcode
  */
 void bach_set_flags_fn(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr, long ac, t_atom *av);
@@ -19227,6 +19242,12 @@ long change_pitch(t_notation_obj *r_ob, t_pitch *pitch, double *cents, t_lexpr *
 
 void change_poc(t_notation_obj *r_ob, t_hatom *poc, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
 
+
+/// SLOPE functions for notation objects (see corresponding abstract function in bach_math_utilitites.h
+/// The slope type is inferred from the notation object attributes
+double notationobj_rescale_with_slope(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope);
+double notationobj_rescale_with_slope_and_get_derivative(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope, double *derivative);
+double notationobj_rescale_with_slope_inv(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope);
 
 
 

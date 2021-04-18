@@ -89,6 +89,8 @@ typedef struct _derive
 	long				num_samples;
 	
 	long				order; // number of derivations to be performed
+    
+    long                slope_mapping_type; // one of the e_slope_mapping
 	
 	void				*n_proxy;
 	long				n_in;
@@ -180,7 +182,11 @@ void C74_EXPORT ext_main(void *moduleRef)
 	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
 	
 	
-	
+    CLASS_ATTR_LONG(c,"slopemapping",0, t_derive, slope_mapping_type);
+    CLASS_ATTR_STYLE_LABEL(c,"slopemapping",0,"enumindex","Slope Mapping");
+    CLASS_ATTR_ENUMINDEX(c,"slopemapping", 0, "bach Max");
+    // @description Sets the function to be used for slope mapping: either bach (default) or Max.
+
 	CLASS_ATTR_LONG(c, "numsamples", 0, t_derive, num_samples); 
 	CLASS_ATTR_STYLE_LABEL(c,"numsamples",0,"text","Number of Sampling Points");
 	CLASS_ATTR_BASIC(c,"numsamples",0);
@@ -328,7 +334,7 @@ void derive_anything(t_derive *x, t_symbol *msg, long ac, t_atom *av)
 			if (x->mode == 0) { // automatic mode
 				long i;
 				for (i = 0; i < x->order; i++) {
-					t_llll *res = derive_bpf(ll, 0, 0, num_samples, true, true, discrete_derivative, discrete_derivative_pad);
+					t_llll *res = derive_bpf(ll, 0, 0, num_samples, true, true, discrete_derivative, discrete_derivative_pad, (e_slope_mapping)x->slope_mapping_type);
 					llll_free(ll);
 					ll = res;
 				}
@@ -363,7 +369,7 @@ void derive_anything(t_derive *x, t_symbol *msg, long ac, t_atom *av)
 				ll = first_int;
 				
 				for (this_order = 1; this_order < order; this_order ++) {
-					t_llll *res = derive_bpf_with_explicit_sampling(ll, sampling_x, discrete_derivative, discrete_derivative_pad);
+					t_llll *res = derive_bpf_with_explicit_sampling(ll, sampling_x, discrete_derivative, discrete_derivative_pad, (e_slope_mapping)x->slope_mapping_type);
 					llll_free(ll);
 					ll = res;
 				}

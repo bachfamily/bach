@@ -587,7 +587,7 @@ void notation_obj_edclose(t_notation_obj *r_ob, char **ht, long size)
         if (ll) {
             llll_prependlong(ll, r_ob->active_slot_num + 1, 0, WHITENULL_llll);
             llll_wrap_once(&ll);
-            set_slots_values_to_notationitem_from_llll(r_ob, r_ob->active_slot_notationitem, ll);
+            notation_item_set_slots_from_llll(r_ob, r_ob->active_slot_notationitem, ll);
             notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
             handle_change(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
         }
@@ -2102,7 +2102,14 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
 	CLASS_ATTR_INVISIBLE(c, "versionnumber", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // invisible attribute
 	// @exclude all
      */
-     
+
+    CLASS_ATTR_LONG(c,"slopemapping",0, t_notation_obj, slope_mapping_type);
+    CLASS_ATTR_STYLE_LABEL(c,"slopemapping",0,"enumindex","Slope Mapping");
+    CLASS_ATTR_ENUMINDEX(c,"slopemapping", 0, "bach Max");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slopemapping", 0, "0");
+    // @description Sets the function to be used for slope mapping: either bach (default) or Max.
+
+    
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		
 		CLASS_ATTR_LONG(c, "numvoices", 0, t_notation_obj, num_voices);
@@ -4763,7 +4770,7 @@ t_bach_attribute *pt_to_attribute_to_edit(t_bach_inspector_manager *man, t_objec
 }
 
 
-t_jrgba get_bach_attribute_as_color(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
+t_jrgba bach_attribute_get_as_color(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
 {
     t_notation_obj *r_ob = (man->bach_managing ? (t_notation_obj *)man->owner : NULL);
 	long ac = 0;
@@ -4785,7 +4792,7 @@ t_jrgba get_bach_attribute_as_color(t_bach_inspector_manager *man, void *elem, t
 }
 
 
-char *get_bach_attribute_as_character(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
+char *bach_attribute_get_as_character(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
 {
     t_notation_obj *r_ob = (man->bach_managing ? (t_notation_obj *)man->owner : NULL);
 	long ac = 0;
@@ -4806,7 +4813,7 @@ char *get_bach_attribute_as_character(t_bach_inspector_manager *man, void *elem,
 }
 
 
-char *get_bach_attribute_as_string(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
+char *bach_attribute_get_as_string(t_bach_inspector_manager *man, void *elem, t_bach_attribute *attr)
 {
     if (!elem) {
         char *res = (char *)bach_newptr(2*sizeof(char));
@@ -4875,7 +4882,7 @@ void start_editing_bach_attribute(t_notation_obj *r_ob, t_bach_inspector_manager
 	jbox_set_fontname(object_owning_textfield, gensym("Arial"));
 	jbox_set_fontsize(object_owning_textfield, CONST_BACH_INSPECTOR_TEXT_FONT_SIZE * zoom);
 	
-	char *text = attr->display_type == k_BACH_ATTR_DISPLAY_CHAR ? get_bach_attribute_as_character(man, elem, attr) : get_bach_attribute_as_string(man, elem, attr);
+	char *text = attr->display_type == k_BACH_ATTR_DISPLAY_CHAR ? bach_attribute_get_as_character(man, elem, attr) : bach_attribute_get_as_string(man, elem, attr);
 
 	object_method(patcherview, gensym("insertboxtext"), object_owning_textfield, text);
 	bach_freeptr(text);
@@ -5992,7 +5999,7 @@ void notation_obj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long 
 			hatom_setlong(&clonedslot->l_head->l_hatom.h_w.w_llll->l_head->l_hatom, paste_to_this_slot + 1);
         if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT) {
             lock_general_mutex(r_ob);
-			set_slots_values_to_note_from_llll(r_ob, r_ob->dummynote, clonedslot);
+			note_set_slots_from_llll(r_ob, r_ob->dummynote, clonedslot);
             unlock_general_mutex(r_ob);
         } else
 			set_slots_to_selection(r_ob, clonedslot, also_paste_to_rests);
@@ -6024,6 +6031,11 @@ void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard
     }
 }
 
+
+void notation_obj_set_durationline(t_notation_obj *r_ob, t_llll *durationline_as_breakpoints) {
+    set_breakpoints_to_selection(r_ob, durationline_as_breakpoints);
+    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION);
+}
 
 void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard) {
     // gotta paste the (only) cached slot into the active slot (we don't check the type)
