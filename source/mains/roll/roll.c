@@ -367,7 +367,7 @@ t_note* ID_to_note(t_roll *x, long ID); //almost unused
 t_chord* ID_to_chord(t_roll *x, long ID); //almost unused
 void verbose_print(t_roll *x);
 t_rollvoice* nth_rollvoice(t_roll *x, long n);    // 0-based!!!!!
-t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n);    /// 1-based!!!!
+t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n);    /// 0-based!!!!
 t_chord* nth_marker(t_rollvoice *voice, long n);    /// 1-based!!!!
 
 // llll communication functions

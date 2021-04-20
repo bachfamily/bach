@@ -20811,12 +20811,12 @@ t_marker *nth_marker(t_notation_obj *r_ob, long n)
     // to be improved: if the marker# is > n/2, pass the list the other way round!
 }
 
-// computes the nth (1-based) chord of the whole nroll
+// computes the nth (0-based) chord of the whole nroll
 t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n)
 {
     t_chord *curr = voice->firstchord; 
     long i; 
-    long zero_based_index = n-1; 
+    long zero_based_index = n;
 
     if (zero_based_index < 0) 
         return NULL;
