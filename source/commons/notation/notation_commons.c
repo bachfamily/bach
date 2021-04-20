@@ -21241,7 +21241,7 @@ t_chord *chord_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num
             chord_num = voice->num_chords + chord_num + 1;
 
         if (chord_num > 0 && chord_num <= voice->num_chords)
-            return nth_chord_of_rollvoice(voice, chord_num);
+            return nth_chord_of_rollvoice(voice, chord_num - 1);
         
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
@@ -21277,7 +21277,7 @@ t_note *note_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num, 
             chord_num = voice->num_chords + chord_num + 1;
         
         if (chord_num > 0 && chord_num <= voice->num_chords) {
-            t_chord *temp = nth_chord_of_rollvoice(voice, chord_num);
+            t_chord *temp = nth_chord_of_rollvoice(voice, chord_num - 1);
             if (temp) {
                 if (note_num < 0)
                     note_num = temp->num_notes + note_num + 1;
