@@ -9418,7 +9418,7 @@ void set_groups_from_llll(t_roll *x, t_llll *groups_as_llll){
                                 if (num_voice >= 1 && num_voice <= x->r_ob.num_voices){
                                     t_rollvoice *voice = nth_rollvoice(x, num_voice - 1);
                                     if (voice && num_chord >= 1 && num_chord <= voice->num_chords) {
-                                        t_chord *chord = nth_chord_of_rollvoice(voice, num_chord);
+                                        t_chord *chord = nth_chord_of_rollvoice(voice, num_chord - 1);
                                         if (chord && newgroup)
                                             append_element_in_group((t_notation_obj *) x, newgroup, (t_notation_item *)chord);
                                     }
