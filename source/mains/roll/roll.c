@@ -1784,7 +1784,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         // (un)sel(ect) all markers
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
             t_symbol *role_sym = NULL;
-            llll_parseattrs((t_object *)x, selectllll, false, "s", _llllobj_sym_role, &role_sym);
+            llll_parseattrs((t_object *)x, selectllll, 0, "s", _llllobj_sym_role, &role_sym);
             select_all_markers((t_notation_obj *) x, mode, role_sym && role_sym != _llllobj_sym_all ? sym_to_marker_role(role_sym) : -1);
 
         // (un)sel(ect) all notes
@@ -4073,7 +4073,7 @@ void roll_play_preschedule(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         x->r_ob.preschedule_cursor = x->r_ob.to_preschedule->l_head;
         for (t_llllelem *el = x->r_ob.to_preschedule->l_head; el; el = el->l_next) {
             t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&el->l_hatom);
-            clock_fdelay(ev->clock, ev->time - start_ms);
+            setclock_fdelay(x->r_ob.setclock->s_thing, ev->clock, ev->time - start_ms);
         }
     }
 }
@@ -8069,7 +8069,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         long voicenumber = 0, also_select = 0;
                         llll_destroyelem(firstelem);
                         
-                        llll_parseattrs((t_object *)x, inputlist, true, "i", _llllobj_sym_sel, &also_select);
+                        llll_parseattrs((t_object *)x, inputlist, LLLL_PA_DESTRUCTIVE, "i", _llllobj_sym_sel, &also_select);
                         
                         secondelem = inputlist->l_head;
                         if (secondelem && hatom_gettype(&secondelem->l_hatom) == H_LONG){
@@ -10634,7 +10634,7 @@ void roll_subroll(t_roll *x, t_symbol *s, long argc, t_atom *argv){
                     t_symbol *sym = hatom_getsym(&secondelem->l_hatom);
                     t_llll *temp = symbol2llll(sym);
                     t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, temp);
-                    if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                    if (!it || it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
                         object_error((t_object *)x, "Item does not exist or is not a marker region.");
                     } else {
                         from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
@@ -10648,10 +10648,10 @@ void roll_subroll(t_roll *x, t_symbol *s, long argc, t_atom *argv){
                         to_ms = hatom_getdouble(&boundaries_ms->l_head->l_next->l_hatom);
                         if (from_ms < 0) from_ms = 0.;
                         if (to_ms < 0) to_ms = x->r_ob.length_ms;
-                    } else {
+                    } else if (boundaries_ms->l_head) {
                         // it's a region name?
                         t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, boundaries_ms);
-                        if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                        if (!it || it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
                             object_error((t_object *)x, "Item does not exist or is not a marker region.");
                         } else {
                             from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);

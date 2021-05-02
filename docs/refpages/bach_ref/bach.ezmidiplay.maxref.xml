@@ -984,6 +984,19 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="port" get="1" set="1" type="symbol" size="1">
+			<digest>
+				MIDI Port
+			</digest>
+			<description>
+				Sets the MIDI Port (also settable via the right inlet).
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="MIDI Port" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="repeatmode" get="1" set="1" type="int" size="1">
 			<digest>
 				Repeat Mode

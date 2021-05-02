@@ -2606,7 +2606,7 @@
 #define BACH_DOC_GENERIC_TRANSACTION
 // A generic transaction is a sequence of generic messages executed seamlessly, without refreshing the order of chords, notes
 // and markers, and without refreshing the display in the middle. <br />
-// Transactions are obtained via the syntax <m>
+// Transactions are obtained via the syntax
 // <b>transaction <m>transaction_name</m> [<m>change_message1</m> <m>change_message2</m> ...]</b> <br />
 // where <m>transaction_name</m> is a symbol associated with the transaction and each one of the <m>change_message</m>s has
 // the syntax of a generic change, described in the following paragraph. <br />
