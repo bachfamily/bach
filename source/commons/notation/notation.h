@@ -173,7 +173,7 @@
 #define    CONST_MAX_XML_NESTED_TUPLETS 10                        ///< Maximum nested tuplet insertion while speedy editing @ingroup import_export
 #define CONST_MAX_NOTATION_ITEM_NAMES 10                    ///< Maximum number of names a notation item may have (was 10 until bach 0.7.1) @ingroup names
 
-#define CONST_MAX_SLURS_PER_CHORD 1    ///< Maximum number of slurs starting or ending on a chord
+#define CONST_MAX_SLURS_PER_CHORD 3    ///< Maximum number of slurs starting or ending on a chord
 
 
 /** \addtogroup attributes 
@@ -1763,6 +1763,7 @@ typedef enum _undo_operations
     k_UNDO_OP_ASSIGN_DYNAMICS,
     k_UNDO_OP_ASSIGN_VELOCITIES,
     k_UNDO_OP_CLEAR_MARKERS,
+    k_UNDO_OP_CLEAR_SLURS,
     k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION,
     k_UNDO_OP_SNAP_ONSET_TO_GRID_FOR_SELECTION,
     k_UNDO_OP_SNAP_TAIL_TO_GRID_FOR_SELECTION,
@@ -2425,12 +2426,14 @@ typedef struct _slur
     char            end_is_before_start;          ///< Internal flag, telling if is the horizontal direction reversed
                                                   /// (because the end note is before the start one)
 
+    t_llllelem      *elem;  ///< Corresponding element in the notation object "slurs" llll
+    
     // painting parameters
     double            start_ux;                    ///< x of the pixel of the slur starting point
     double            start_y;                    ///< y of the pixel of the slur starting point
-    double            cp1_rel_x;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
+    double            cp1_ux;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp1_y;                        ///< y of the pixel of the slur first control point
-    double            cp2_rel_x;                    ///< relative x of the pixel of the slur second control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
+    double            cp2_ux;                    ///< relative x of the pixel of the slur second control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp2_y;                        ///< y of the pixel of the slur second control point
     double            end_ux;                        ///< x of the pixel of the slur end point    
     double            end_y;                        ///< y of the pixel of the slur end point
@@ -2770,15 +2773,12 @@ typedef struct _chord
     double            dynamics_portion_of_left_uextension;    ///< Part of the left unscaled extension merely due to the fact that there are some dynamics displayed below the chord.
     double            dynamics_portion_of_right_uextension;    ///< Part of the right unscaled extension merely due to the fact that there are some dynamics displayed below the chord.
     
-    double            stem_x;                                ///< x pixel of the chord stem
-    double            stem_top_y;                            ///< y pixel of the topmost stem point (used for handling beamings)
-    double            firstnote_y_real;                    ///< y pixel of the notehead center of the bottommost note
-    double            lastnote_y_real;                    ///< y pixel of the notehead center of the topmost note
-    double            topmost_y;                            ///< y pixel of the topmost point in the chord similarly
-    double            bottommost_y;                        ///< y pixel of the bottommost point in the chord
-    double            topmost_y_noacc;                    ///< y pixel of the topmost point in the chord, if we ignore the accidentals
-    double            bottommost_y_noacc;                    ///< y pixel of the bottommost point in the chord, if we ignore the accidentals
-    long            system_index;                        ///< 0-based index of the system where the chord is.
+    double            stem_x;                  ///< x pixel of the chord stem
+    double            topmost_y;               ///< y pixel of the topmost point in the chord similarly
+    double            bottommost_y;            ///< y pixel of the bottommost point in the chord
+    double            topmost_y_noacc;         ///< y pixel of the topmost point in the chord, if we ignore the accidentals
+    double            bottommost_y_noacc;      ///< y pixel of the bottommost point in the chord, if we ignore the accidentals
+    long              system_index;            ///< 0-based index of the system where the chord is.
     
     // used by tree beaming handling and for groups linking
     double            stemtip_stafftop_uy;                ///< Unscaled vertical shift (in pixels) of the topmost stem point, with respect to the staff top
@@ -2825,7 +2825,7 @@ typedef struct _chord
     long            beams_depth;                ///< Number of beaming lines over the chord
     
     // articulations (for the moment, only implemented in [bach.score])
-    // These are deprecated: use the articulation-typed slots instead
+    // These are deprecated and will be removed at some point: use the articulation-typed slots instead
     long            num_articulations;        ///< (DEPRECATED) Number of articulations really attached to the note
     t_articulation    *articulation;            ///< (DEPRECATED) The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
     
@@ -2845,7 +2845,7 @@ typedef struct _chord
 #endif
     
 #ifdef BACH_SUPPORT_SLURS
-    // slurs, only ***for future compatibility***
+    // slurs
     long            num_slurs_to;                            ///< Number of slurs starting on the note
     long            num_slurs_from;                            ///< Number of slurs ending on the note
     t_slur          *slur_to[CONST_MAX_SLURS_PER_CHORD];        ///< The array containing the pointer to the slurs starting on the chord (only num_slurs_to elements are meaningful)
@@ -4733,9 +4733,10 @@ typedef struct _notation_obj
     
     // slurs (SOME OF THESE ARE YET UNSUPPORTED)
     char        show_slurs;                 ///< Flag telling if we want to show the slurs
+    char        slurs_avoid_chords;         ///<  Flag telling if slurs avoid the accidentals
+    char        slurs_avoid_accidentals;    ///< Flag telling if slurs avoid the accidentals
+    t_llll      *slurs;     ///< List of slurs as H_OBJs
     t_llll      *slurs_to_be_processed;     ///< Temporary repository for slurs to be actually put inside the score later
-    char        slurs_avoid_accidentals;    ///< (UNSUPPORTED) Flag telling if slurs avoid the accidentals
-    char        slurs_always_symmetrical;    ///< (UNSUPPORTED) Flag telling if slurs are always symmetrical, i.e. the bezier bounding box is a perfecty symmetric trapece. 
 
     
     // markers
@@ -6191,9 +6192,10 @@ double get_max_vscrollbar_width_or_inset_x(t_notation_obj *r_ob);
 
 /**    Set the flag telling that graphical properties of the chords must be updated
     @ingroup            notation_graphics
+ @param r_ob            The notation object
     @param ch        The chord
  */
-void chord_set_recompute_parameters_flag(t_chord *ch);
+void chord_set_recompute_parameters_flag(t_notation_obj *r_ob, t_chord *ch);
 
 
 /**    Detect if a chord is inside the screen, or in the hidden left or right part (only used by [bach.score]).
@@ -7517,7 +7519,7 @@ t_tempo* clone_tempo(t_notation_obj *r_ob, t_tempo *tempo);
     @param n    The 0-based chord index
     @return        The n-th chord of measure <meas>
  */
-t_chord* nth_chord(t_measure *meas, long n);
+t_chord* chord_get_nth_in_measure(t_measure *meas, long n);
 
 
 /**    Get the n-th note of a given chord
@@ -7526,7 +7528,7 @@ t_chord* nth_chord(t_measure *meas, long n);
     @param n    The 0-based note index
     @return        The n-th note of chord <ch>
  */
-t_note* nth_note(t_chord *ch, long n);
+t_note* note_get_nth(t_chord *ch, long n);
 
 
 /**    Get the n-th marker in the score
@@ -7535,7 +7537,7 @@ t_note* nth_note(t_chord *ch, long n);
  @param n    The 0-based note index
  @return        The n-th marker
  */
-t_marker *nth_marker(t_notation_obj *r_ob, long n);
+t_marker *marker_get_nth(t_notation_obj *r_ob, long n);
 
 /**    Get the n-th breakpoint of a given note
     @ingroup    notation
@@ -7543,7 +7545,7 @@ t_marker *nth_marker(t_notation_obj *r_ob, long n);
     @param n    The 0-based breakpoint index
     @return        The n-th breakpoint of note #nt
  */
-t_bpt* nth_breakpoint(t_note *nt, long n);
+t_bpt* breakpoint_get_nth(t_note *nt, long n);
 
 
 /**    Get the n-th slotitem of a given notation item slot
@@ -7554,7 +7556,7 @@ t_bpt* nth_breakpoint(t_note *nt, long n);
     @param n    The 0-based slotitem index
     @return        The n-th slotitem of slot #slotnum of note #nt
  */
-t_slotitem *nth_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long n);
+t_slotitem *slotitem_get_nth(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long n);
     
 
 /**    Get the nth measure of a given scorevoice
@@ -7562,7 +7564,7 @@ t_slotitem *nth_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slot
     @param    voice    The scorevoice
     @param    n        The 0-based index of the measure to retrieve
  */
-t_measure* nth_measure_of_scorevoice(t_scorevoice *voice, long n);
+t_measure* measure_get_nth(t_scorevoice *voice, long n);
 
 
 /**    Get the nth voice of a notation object
@@ -7570,8 +7572,8 @@ t_measure* nth_measure_of_scorevoice(t_scorevoice *voice, long n);
     @param    r_ob    The notation object
     @param    n        The 0-based index of the voice to retrieve
  */
-t_voice* nth_voice(t_notation_obj *r_ob, long n);
-t_voice* nth_voice_safe(t_notation_obj *r_ob, long n);
+t_voice* voice_get_nth(t_notation_obj *r_ob, long n);
+t_voice* voice_get_nth_safe(t_notation_obj *r_ob, long n);
 
 
 /**    Checks if the order of notes in a chord is "correct", and if incorrect, the function corrects the order.
@@ -10492,14 +10494,10 @@ void notationobj_paint_colorgradient_curve(t_notation_obj *r_ob, t_jgraphics *g,
 
 
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-// EXPERIMENTAL, UNDOCUMENTED, DON'T USE IT YET
-void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slur, 
+void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slur,
                 char paint_control_points, t_jrgba linecolor, t_jrgba pointcolor, double point_radius, double line_width, double dash_length);
 void chord_paint_slurs_to(t_notation_obj *r_ob, t_jgraphics *g, t_chord *curr_ch);
 void chord_paint_slurs_from(t_notation_obj *r_ob, t_jgraphics *g, t_chord *curr_ch);
-
-#endif
 
 /**    Paint a small note (or sequence of notes, if the duration is not drawable singularly)
     @ingroup                        notation_paint
@@ -18812,6 +18810,9 @@ void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double heig
 // to be documented
 t_chord *chord_get_first(t_notation_obj *r_ob, t_voice *voice);
 t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice);
+t_note *note_get_nearest(t_notation_obj *r_ob, double xpos, double ypos, long num_voice); // leave num_voice < 0 for auto find
+t_measure *measure_from_ux(t_notation_obj *r_ob, long num_voice, double ux, char always_return_something);
+
 t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms);
 t_llll *notationobj_get_interp_tempo(t_notation_obj *r_ob, t_timepoint tp);
 t_llll *notationobj_get_interp_timesig(t_notation_obj *r_ob, t_timepoint tp);

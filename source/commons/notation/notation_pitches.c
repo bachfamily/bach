@@ -611,7 +611,7 @@ void notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(t_notati
     
     note_set_user_enharmonicity(note, new_pitch, false);
     
-    chord_set_recompute_parameters_flag(note->parent);
+    chord_set_recompute_parameters_flag(r_ob, note->parent);
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         note->parent->parent->need_check_ties = true;
         validate_accidentals_for_measure(r_ob, note->parent->parent);

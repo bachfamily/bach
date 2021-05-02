@@ -1969,7 +1969,17 @@ void notation_class_add_color_attributes(t_class *c, char obj_type){
 
 void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 	CLASS_STICKY_ATTR(c,"category",0,"Appearance");
-	
+
+    CLASS_ATTR_CHAR(c,"slursavoidchords",0, t_notation_obj, slurs_avoid_chords);
+    CLASS_ATTR_STYLE_LABEL(c,"slursavoidchords",0,"onoff","Slurs Avoid Chords");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidchords",0,"1");
+    // @exclude bach.slot
+
+    CLASS_ATTR_CHAR(c,"slursavoidaccidentals",0, t_notation_obj, slurs_avoid_accidentals);
+    CLASS_ATTR_STYLE_LABEL(c,"slursavoidaccidentals",0,"onoff","Slurs Avoid Accidentals");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidaccidentals",0,"1");
+    // @exclude bach.slot
+    
 	CLASS_ATTR_DOUBLE(c, "rounded", 0, t_notation_obj, corner_roundness); 
 	CLASS_ATTR_STYLE_LABEL(c,"rounded",0,"text","Roundness of Box Corners");
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rounded",0,"0."); // default SHOULD BE: "6.", but only when corner clipping will perfectly work!
@@ -3644,7 +3654,7 @@ void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beami
 		t_chord *chord;
 		for (voice = (t_rollvoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_rollvoice *) voice_get_next(r_ob, (t_voice *)voice)){
 			for (chord = voice->firstchord; chord; chord = chord->next){
-                chord_set_recompute_parameters_flag(chord);
+                chord_set_recompute_parameters_flag(r_ob, chord);
 			}
 		}
 	}
@@ -4116,7 +4126,7 @@ t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *me
     if (!meas->prev) {
         // get all first measures
         for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
-            llll_appendobj(out, nth_measure_of_scorevoice((t_scorevoice *)voice, 0));
+            llll_appendobj(out, measure_get_nth((t_scorevoice *)voice, 0));
         }
     } else {
         t_measure_end_barline *barline[CONST_MAX_VOICES];
@@ -4265,7 +4275,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                     t_voice *temp;
                     long measure_num = ((t_measure *)item)->measure_number;
                     for (temp = first; temp && temp->number < r_ob->num_voices; temp = voice_get_next(r_ob, temp)) {
-                        t_measure *m = nth_measure_of_scorevoice((t_scorevoice *)temp, measure_num);
+                        t_measure *m = measure_get_nth((t_scorevoice *)temp, measure_num);
                         if (m) {
                             undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             measure_set_ts(r_ob, m, &chosen_ts);
@@ -4736,7 +4746,7 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
     
     if (r_ob->is_editing_slot_number >= 0 && r_ob->is_editing_slot_number < CONST_MAX_SLOTS) {
         t_notation_item *it = notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, r_ob->is_editing_slot_number);
-        t_slotitem *slit = it ? nth_slotitem(r_ob, it, r_ob->is_editing_slot_number, 0) : NULL;
+        t_slotitem *slit = it ? slotitem_get_nth(r_ob, it, r_ob->is_editing_slot_number, 0) : NULL;
         if (slit && r_ob->slotinfo[r_ob->is_editing_slot_number].slot_type == k_SLOT_TYPE_DYNAMICS) {
             t_dynamics *dyn = (t_dynamics *)slit->item;
             object_method(patcherview, gensym("insertboxtext"), r_ob, dyn->text_deparsed ? dyn->text_deparsed->s_name : "");
@@ -5074,6 +5084,8 @@ void notationobj_free(t_notation_obj *r_ob)
     llll_free(r_ob->default_noteslots);
     
 	llll_free(r_ob->selected_slot_items);
+
+    llll_free(r_ob->slurs);
 
 	clear_undo_redo_llll(r_ob, k_UNDO);
 	clear_undo_redo_llll(r_ob, k_REDO);
@@ -5857,7 +5869,7 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                     double ux = xposition_to_unscaled_xposition(r_ob, pt.x);
                     if (ux >= 0) {
                         long voicenum = yposition_to_voicenumber(r_ob, pt.y, NULL, k_VOICEENSEMBLE_INTERFACE_FIRST);
-                        t_voice *voice = nth_voice_safe(r_ob, voicenum);
+                        t_voice *voice = voice_get_nth_safe(r_ob, voicenum);
                         if (voice) {
                             double mc = yposition_to_mc(r_ob, pt.y, NULL, NULL);
                             long screen_mc;

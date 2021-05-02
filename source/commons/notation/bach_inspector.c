@@ -365,8 +365,8 @@ void get_access_types_as_sym_list(t_notation_obj *r_ob, t_symbol **list){
 }
 
 
-void notationobj_bach_attribute_declares(t_notation_obj *r_ob){
-
+void notationobj_bach_attribute_declares(t_notation_obj *r_ob)
+{
 	// SLOTINFO ATTRIBUTES
 	t_symbol *slottypes[k_NUM_SLOT_TYPES];
     t_symbol *slottemporalmodes[k_NUM_SLOT_TEMPORALMODES];
@@ -487,6 +487,9 @@ void notationobj_bach_attribute_declares(t_notation_obj *r_ob){
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_velocity, "Velocity", k_PITCH_BREAKPOINT, t_bpt, velocity, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_slope, "Slope", k_PITCH_BREAKPOINT, t_bpt, slope, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 
+    // SLURS
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, "Name", k_SLUR, t_notation_item, names, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
+    bach_attribute_add_functions(bach_attribute_get(man, k_SLUR, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
 }
 
 
@@ -547,6 +550,8 @@ void get_bach_inspector_lastline_string(t_notation_obj *r_ob, t_bach_inspector_m
 		snprintf_zero(lastline, 1000, "→ jump to next marker, ← jump to previous marker");
 	} else if (man->active_bach_inspector_obj_type == k_SLOTINFO) {
 		snprintf_zero(lastline, 1000, "→ next slotinfo, ← previous slotinfo, or use numbers/hotkeys, Cmd+C (mac) or Ctrl+C (win) to copy slotinfo, Cmd+V (mac) or Ctrl+V (win) to paste slotinfo");
+    } else if (man->active_bach_inspector_obj_type == k_SLUR) {
+        snprintf_zero(lastline, 1000, "");
 	}
 }
 
@@ -760,6 +765,8 @@ void bach_default_inspector_header_fn(t_notation_obj *r_ob, t_bach_inspector_man
 			else
 				snprintf_zero(txt, CONST_BACH_INSPECTOR_MAX_HEADER_NUM_CHARS, "Pitch Breakpoint %ld Of Note %ld Of Chord %ld Of Voice %ld", get_breakpoint_position(r_ob, ((t_bpt *)elem)) - 1, note_get_position(r_ob, ((t_bpt *)elem)->owner), chord_get_position(r_ob, (((t_bpt *)elem)->owner)->parent), (((t_bpt *)elem)->owner)->parent->voiceparent->v_ob.number + 1);
 		}
+    } else if (elem_type == k_SLUR) {
+        snprintf_zero(txt, CONST_BACH_INSPECTOR_MAX_HEADER_NUM_CHARS, "Slur");
 	} else if (elem_type == k_NONE) {
 		snprintf_zero(txt, CONST_BACH_INSPECTOR_MAX_HEADER_NUM_CHARS, "Nothing To Inspect");
 	} else if (elem_type == k_MIXED) {
@@ -784,7 +791,9 @@ t_jrgba bach_default_inspector_color_fn(void *notation_obj, void *elem, long ele
 		bg_color = build_jrgba(.76, .59, .75, 1);
 	else if (elem_type == k_MARKER) 
 		bg_color = build_jrgba(.71, .69, .53, 1);
-	else if (elem_type == k_PITCH_BREAKPOINT) 
+    else if (elem_type == k_SLUR)
+        bg_color = build_jrgba(.71, .69, .53, 1);
+	else if (elem_type == k_PITCH_BREAKPOINT)
 		bg_color = build_jrgba(.61, .52, .69, 1);
 	else if (elem_type == k_NONE) 
 		bg_color = build_jrgba(.77, .77, .77, 1);
@@ -804,6 +813,7 @@ t_jsurface *bach_get_icon_surface_fn(t_notation_obj *r_ob, t_bach_inspector_mana
 			case k_VOICE: return resources->s_icon_voice;
 			case k_TEMPO: return resources->s_icon_tempo;
 			case k_MARKER: return resources->s_icon_marker;
+            case k_SLUR: return resources->s_icon_slur;
 			case k_PITCH_BREAKPOINT: return resources->s_icon_pitchbreakpoint;
 			case k_MIXED: return resources->s_icon_mixedselection;
 			case k_SLOTINFO: return resources->s_icon_slotinfo;
@@ -962,6 +972,8 @@ void bach_default_preprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute *
 		undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)obj, (e_element_types) attr->owner_type, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_name);
     } else if (attr->name == _llllobj_sym_name && attr->owner_type == k_MARKER) {
         undo_tick_create_for_header(r_ob, k_HEADER_MARKERS);
+    } else if (attr->owner_type == k_SLUR) {
+        undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)((t_slur *)obj)->start_chord, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 	} else if (attr->owner_type == k_PITCH_BREAKPOINT) {
 		undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)((t_bpt *)obj)->owner->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 	} else if (attr->owner_type == k_NOTE) {
@@ -1056,7 +1068,7 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
 				recompute_all_for_measure(r_ob, ((t_chord *)obj)->parent, false);
 			}
         } else {
-            chord_set_recompute_parameters_flag(((t_chord *)obj));
+            chord_set_recompute_parameters_flag(r_ob,((t_chord *)obj));
             recompute_total_length(r_ob);
             update_hscrollbar(r_ob, 1);
         }
@@ -1068,7 +1080,7 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 			recompute_all_for_measure(r_ob, ((t_note *)obj)->parent->parent, false);
         else {
-            chord_set_recompute_parameters_flag(((t_note *)obj)->parent);
+            chord_set_recompute_parameters_flag(r_ob,((t_note *)obj)->parent);
             recompute_total_length(r_ob);
             update_hscrollbar(r_ob, 1);
         }
@@ -2328,7 +2340,7 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)prev);
                 } else if (man->active_bach_inspector_obj_type == k_NOTE) {
                     t_chord *prevch = chord_get_prev(((t_note *)item)->parent);
-                    t_note *prev = !prevch ? NULL : nth_note(prevch, CLAMP(note_get_position(r_ob, (t_note *)item) - 1, 0, prevch->num_notes - 1));
+                    t_note *prev = !prevch ? NULL : note_get_nth(prevch, CLAMP(note_get_position(r_ob, (t_note *)item) - 1, 0, prevch->num_notes - 1));
                     if (prev)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)prev);
                 } else if (man->active_bach_inspector_obj_type == k_CHORD) {
@@ -2362,7 +2374,7 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)next);
                 } else if (man->active_bach_inspector_obj_type == k_NOTE) {
                     t_chord *nextch = chord_get_next(((t_note *)item)->parent);
-                    t_note *next = !nextch ? NULL : nth_note(nextch, CLAMP(note_get_position(r_ob, (t_note *)item) - 1, 0, nextch->num_notes - 1));
+                    t_note *next = !nextch ? NULL : note_get_nth(nextch, CLAMP(note_get_position(r_ob, (t_note *)item) - 1, 0, nextch->num_notes - 1));
                     if (next)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)next);
                 } else if (man->active_bach_inspector_obj_type == k_CHORD) {
@@ -2396,7 +2408,7 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)prev);
                 } else if (man->active_bach_inspector_obj_type == k_MEASURE) {
                     t_scorevoice *nextvoice = ((t_measure *)item)->voiceparent->next;
-                    t_measure *meas = !nextvoice ? NULL : nth_measure_of_scorevoice(nextvoice, ((t_measure *)item)->measure_number);
+                    t_measure *meas = !nextvoice ? NULL : measure_get_nth(nextvoice, ((t_measure *)item)->measure_number);
                     if (meas)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)meas);
                 } else if (man->active_bach_inspector_obj_type == k_CHORD) {
@@ -2420,7 +2432,7 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)next);
                 } else if (man->active_bach_inspector_obj_type == k_MEASURE) {
                     t_scorevoice *prevvoice = ((t_measure *)item)->voiceparent->prev;
-                    t_measure *meas = !prevvoice ? NULL : nth_measure_of_scorevoice(prevvoice, ((t_measure *)item)->measure_number);
+                    t_measure *meas = !prevvoice ? NULL : measure_get_nth(prevvoice, ((t_measure *)item)->measure_number);
                     if (meas)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)meas);
                 } else if (man->active_bach_inspector_obj_type == k_CHORD) {

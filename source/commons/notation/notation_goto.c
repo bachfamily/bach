@@ -999,7 +999,7 @@ e_goto_error set_selection_to_notation_item_with_index(t_notation_obj *r_ob, t_g
     switch (par->nitem_type) {
         case k_CHORD:
             for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
-                t_chord *ch = nth_chord_of_rollvoice(voice, n)
+                t_chord *ch = chord_get_nth_in_rollvoice(voice, n)
                 llll_append
             }
             break;

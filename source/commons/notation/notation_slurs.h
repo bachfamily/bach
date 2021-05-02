@@ -36,15 +36,28 @@ BEGIN_CHECK_LINKAGE
 // slurs
 t_slur *slur_add(t_notation_obj *r_ob, t_chord *start_chord, t_chord *end_chord);
 t_slur *slur_add_temporary(t_notation_obj *r_ob, t_chord *start_ch, long extension);
-t_slur *slur_add_for_selection(t_notation_obj *r_ob, char add_undo_ticks);
+t_slur *slur_add_for_selection(t_notation_obj *r_ob, t_llll *names, char add_undo_ticks);
+void slur_region_preselect_chords(t_notation_obj *r_ob, t_slur *slur);
+void notationobj_addslur(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+
+void slur_set_recompute_position_flag(t_slur *slur);
+void chord_recompute_slur_positions(t_notation_obj *r_ob, t_chord *ch);
+void slur_check_extremes(t_notation_obj *r_ob, t_slur *slur);
 
 // move temporary slurs to permanent ones
 void notationobj_make_temporary_slurs_permanent(t_notation_obj *r_ob);
 
-void slur_delete(t_notation_obj *x, t_slur *slur);
+void slur_delete(t_notation_obj *x, t_slur *slur, bool also_delete_llllelem = true);
 char slur_delete_selected(t_notation_obj *r_ob);
-void slur_change_starting_chord(t_notation_obj *r_ob, t_slur *slur, t_chord *newchord);
-void slur_change_ending_chord(t_notation_obj *r_ob, t_slur *slur, t_chord *newchord);
+char slur_delete_all(t_notation_obj *r_ob, bool add_undo_tick);
+char slur_delete_starting_on_chord(t_notation_obj *r_ob, t_chord *ch);
+void slur_change_starting_chord(t_notation_obj *r_ob, t_slur *slur, t_chord *newchord, bool add_undo_ticks);
+void slur_change_ending_chord(t_notation_obj *r_ob, t_slur *slur, t_chord *newchord, bool add_undo_ticks);
+void slur_nudge_starting_chord(t_notation_obj *r_ob, t_slur *slur, long delta_chords, bool add_undo_ticks);
+void slur_nudge_ending_chord(t_notation_obj *r_ob, t_slur *slur, long delta_chords, bool add_undo_ticks);
+void slur_nudge_starting_chord_for_selection(t_notation_obj *r_ob, long delta_chords);
+void slur_nudge_ending_chord_for_selection(t_notation_obj *r_ob, long delta_chords);
+
 void notationobj_reset_all_slurs_position(t_notation_obj *r_ob);
 void chord_reset_slur_positions(t_chord *ch);
 long slur_get_length_in_chords(t_slur *slur);

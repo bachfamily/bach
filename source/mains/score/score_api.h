@@ -173,7 +173,7 @@ char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_
 
 
 
-t_scorevoice* nth_scorevoice(t_score *x, long n);
+t_scorevoice* scorevoice_get_nth(t_score *x, long n);
 t_llll *getdomain_from_uxstart(t_score *x, double ux_start, t_symbol *message_selector, t_symbol *label);
 t_llll *scoreapi_testdomain(t_score *x, t_llll *dom, t_symbol *label);
 t_llll *scoreapi_getdomain(t_score *x, t_symbol *label);

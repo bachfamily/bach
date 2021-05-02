@@ -5572,14 +5572,14 @@ void notation_item_set_slots_from_llll(t_notation_obj *r_ob, t_notation_item *ni
 						if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 							recompute_all_for_measure(r_ob, ch->parent, false);
 						else
-                            chord_set_recompute_parameters_flag(ch);
+                            chord_set_recompute_parameters_flag(r_ob,  ch);
                         set_need_perform_analysis_and_change_flag(r_ob);
 					}
                     if (r_ob->link_dynamics_to_slot > 0 && r_ob->link_dynamics_to_slot - 1 == j && ch) { //i.e.: note is not dummy, since it has a parent!
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                             recompute_all_for_measure(r_ob, ch->parent, false);
                         else
-                            chord_set_recompute_parameters_flag(ch);
+                            chord_set_recompute_parameters_flag(r_ob,  ch);
                         set_need_perform_analysis_and_change_flag(r_ob);
                     }
 
@@ -6496,7 +6496,7 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 			recompute_all_for_measure(r_ob, ch->parent, false);
 		else
-            chord_set_recompute_parameters_flag(ch);
+            chord_set_recompute_parameters_flag(r_ob,  ch);
 	}
     
     if (r_ob->link_dynamics_to_slot > 0 && r_ob->link_dynamics_to_slot - 1 == slotnum && nitem) {
@@ -6507,7 +6507,7 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
         } else {
             t_chord *ch = notation_item_get_parent_chord(r_ob, nitem);
             if (ch)
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
         }
     }
 	
@@ -6734,60 +6734,60 @@ void check_slot_linkage_recomputations_for_notationitem(t_notation_obj *r_ob, t_
 		long type = r_ob->slotinfo[s].slot_type;
 		if (type == k_SLOT_TYPE_INT) {
 			if (r_ob->link_notesize_to_slot - 1 == s)
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
 
             if (r_ob->link_notehead_to_slot - 1 == s) {
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 					recompute_all_for_measure(r_ob, ch->parent, false);
 				else
-                    chord_set_recompute_parameters_flag(ch);
+                    chord_set_recompute_parameters_flag(r_ob,  ch);
             }
 			
 		} else if (type == k_SLOT_TYPE_FLOAT) {
 			if (r_ob->link_notesize_to_slot - 1 == s)
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
 
 		} else if (type == k_SLOT_TYPE_INTLIST) {
 			if (r_ob->link_notesize_to_slot - 1 == s)
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
 			if (r_ob->link_notesize_to_slot - 1 == s)
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
 
 		} else if (type == k_SLOT_TYPE_FLOATLIST) {
 			if (r_ob->link_notesize_to_slot - 1 == s)
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
 
             if (r_ob->link_notehead_adjust_to_slot - 1 == s) {
 				if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)	
 					recompute_all_for_measure(r_ob, ch->parent, false);
 				else
-                    chord_set_recompute_parameters_flag(ch);
+                    chord_set_recompute_parameters_flag(r_ob,  ch);
             }
 			
 		} else if (type == k_SLOT_TYPE_TEXT) {
 			if (r_ob->link_lyrics_to_slot - 1 == s) {
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
 				if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 					recompute_all_for_measure(r_ob, ch->parent, false);
 			}
 
         } else if (type == k_SLOT_TYPE_NOTEHEAD) {
             if (r_ob->link_notehead_to_slot - 1 == s) {
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                     recompute_all_for_measure(r_ob, ch->parent, false);
             }
 
         } else if (type == k_SLOT_TYPE_ARTICULATIONS) {
             if (r_ob->link_articulations_to_slot - 1 == s) {
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                     recompute_all_for_measure(r_ob, ch->parent, false);
             }
 
         } else if (type == k_SLOT_TYPE_DYNAMICS) {
             if (r_ob->link_dynamics_to_slot - 1 == s) {
-                chord_set_recompute_parameters_flag(ch);
+                chord_set_recompute_parameters_flag(r_ob,  ch);
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                     recompute_all_for_measure(r_ob, ch->parent, false);
             }
@@ -7783,7 +7783,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                                         recompute_all_for_measure(r_ob, ch->parent, false);
                                     else
-                                        chord_set_recompute_parameters_flag(ch);
+                                        chord_set_recompute_parameters_flag(r_ob,  ch);
                                 }
                             }
                             
@@ -8011,7 +8011,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                 undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                 slotitem_delete(r_ob, s, get_activeitem_slot_firstitem(r_ob, s));
                                 if (ch) {
-                                    chord_set_recompute_parameters_flag(ch);
+                                    chord_set_recompute_parameters_flag(r_ob,  ch);
                                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                                         recompute_all_for_measure(r_ob, ch->parent, false);
                                 }
@@ -8030,7 +8030,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                     get_activeitem_slot_firstitem(r_ob, s)->item = notationobj_notehead_id2symbol(r_ob, id);
                                 }
                                 if (ch) { // if it's not the bach.slot dummy note
-                                    chord_set_recompute_parameters_flag(ch);
+                                    chord_set_recompute_parameters_flag(r_ob,  ch);
                                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                                         recompute_all_for_measure(r_ob, ch->parent, false);
                                 }
@@ -8108,7 +8108,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                                     recompute_all_for_measure(r_ob, ch->parent, false);
                                 else
-                                    chord_set_recompute_parameters_flag(ch);
+                                    chord_set_recompute_parameters_flag(r_ob,  ch);
                             }
 						}
 						
@@ -8917,7 +8917,7 @@ char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						long strip = pt_to_slot_longfloatlistbar_strip(r_ob, pt.x, pt.y);
 						if (strip >= 0) {
 							if (strip < get_activeitem_slot_length(r_ob, s))
-								r_ob->j_mousedown_ptr = nth_slotitem(r_ob, r_ob->active_slot_notationitem, s, strip);
+								r_ob->j_mousedown_ptr = slotitem_get_nth(r_ob, r_ob->active_slot_notationitem, s, strip);
 						}
 
 																			   

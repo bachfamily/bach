@@ -26,7 +26,7 @@
 
 
 
-t_marker *nth_marker(t_notation_obj *r_ob, long n)
+t_marker *marker_get_nth(t_notation_obj *r_ob, long n)
 {
     t_marker *curr = r_ob->firstmarker;
     long i;
@@ -119,7 +119,7 @@ t_marker *get_marker_from_path(t_notation_obj *r_ob, long marker_num)
     if (marker_num <= 0 || marker_num > r_ob->num_markers)
         return NULL;
     
-    return nth_marker(r_ob, marker_num-1);
+    return marker_get_nth(r_ob, marker_num-1);
 }
 
 
@@ -705,8 +705,8 @@ void change_marker_onset_from_lexpr_or_llllelem(t_notation_obj *r_ob, t_marker *
             t_llll *this_llll = hatom_getllll(&elem->l_hatom);
             t_timepoint tp = llll_to_timepoint(r_ob, this_llll, NULL, false);
             marker->attach_to = k_MARKER_ATTACH_TO_MEASURE;
-            t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, tp.voice_num);
-            t_measure *meas = nth_measure_of_scorevoice(voice, tp.measure_num);
+            t_scorevoice *voice = (t_scorevoice *)voice_get_nth_safe(r_ob, tp.voice_num);
+            t_measure *meas = measure_get_nth(voice, tp.measure_num);
             if (meas) {
                 marker->measure_attach_ID = meas->r_it.ID;
                 marker->r_sym_pim_attach = tp.pt_in_measure;
@@ -780,9 +780,9 @@ void set_marker_from_llll(t_notation_obj *r_ob, t_marker *marker, t_llll *this_l
     
     marker->r_sym_pim_attach = long2rat(0);
     if (attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_voice *voice = nth_voice_safe(r_ob, tp.voice_num);
+        t_voice *voice = voice_get_nth_safe(r_ob, tp.voice_num);
         if (voice) {
-            t_measure *meas = nth_measure_of_scorevoice((t_scorevoice *)voice, tp.measure_num);
+            t_measure *meas = measure_get_nth((t_scorevoice *)voice, tp.measure_num);
             if (meas) {
                 marker->measure_attach_ID = meas->r_it.ID;
                 marker->r_sym_pim_attach = tp.pt_in_measure;
@@ -978,9 +978,9 @@ t_marker *build_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoi
     marker->r_sym_duration = symdur;
 
     if (attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_voice *voice = nth_voice_safe(r_ob, tp.voice_num);
+        t_voice *voice = voice_get_nth_safe(r_ob, tp.voice_num);
         if (voice) {
-            t_measure *meas = nth_measure_of_scorevoice((t_scorevoice *)voice, tp.measure_num);
+            t_measure *meas = measure_get_nth((t_scorevoice *)voice, tp.measure_num);
             if (meas) {
                 marker->measure_attach_ID = meas->r_it.ID;
                 marker->r_sym_pim_attach = tp.pt_in_measure;

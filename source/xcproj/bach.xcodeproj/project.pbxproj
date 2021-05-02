@@ -221,6 +221,7 @@
 		1E53254020FB7296001C4EAF /* bach_jit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E53253C20FB7296001C4EAF /* bach_jit.h */; };
 		1E53254120FB7296001C4EAF /* bach_jit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E53253C20FB7296001C4EAF /* bach_jit.h */; };
 		1E53254220FB7296001C4EAF /* bach_jit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E53253C20FB7296001C4EAF /* bach_jit.h */; };
+		1E5BBEB1263F23C700F66E7C /* icon_slur.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E5BBEB0263F23C600F66E7C /* icon_slur.png */; };
 		1E5F437F152610C70085FA87 /* omtree2bachtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F437E152610C70085FA87 /* omtree2bachtree.c */; };
 		1E5F440F1526153C0085FA87 /* bachtree2omtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F440E1526153C0085FA87 /* bachtree2omtree.c */; };
 		1E7573071BE03A64002A0986 /* cursor_note_flat.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E7573051BE03A4E002A0986 /* cursor_note_flat.png */; };
@@ -2823,6 +2824,7 @@
 		1E3B57D915ACECA900B32D1F /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
 		1E53253A20FB7295001C4EAF /* bach_jit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_jit.c; sourceTree = "<group>"; };
 		1E53253C20FB7296001C4EAF /* bach_jit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_jit.h; sourceTree = "<group>"; };
+		1E5BBEB0263F23C600F66E7C /* icon_slur.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_slur.png; sourceTree = "<group>"; };
 		1E5F43651526109A0085FA87 /* bach.omtree2bachtree.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.omtree2bachtree.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E5F437E152610C70085FA87 /* omtree2bachtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = omtree2bachtree.c; sourceTree = "<group>"; };
 		1E5F43FE1526150E0085FA87 /* bach.bachtree2omtree.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.bachtree2omtree.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6144,6 +6146,7 @@
 			children = (
 				91D5487719B58D8F00BBFE1A /* icon_chord.png */,
 				91D5487819B58D8F00BBFE1A /* icon_marker.png */,
+				1E5BBEB0263F23C600F66E7C /* icon_slur.png */,
 				91D5487919B58D8F00BBFE1A /* icon_measure.png */,
 				91D5487A19B58D8F00BBFE1A /* icon_mixedselection.png */,
 				91D5487B19B58D8F00BBFE1A /* icon_note.png */,
@@ -10332,6 +10335,7 @@
 				91D5488B19B58D8F00BBFE1A /* cursor_note.png in Resources */,
 				91D5489619B58D8F00BBFE1A /* icon_measure.png in Resources */,
 				91D5488919B58D8F00BBFE1A /* cursor_marker_add.png in Resources */,
+				1E5BBEB1263F23C700F66E7C /* icon_slur.png in Resources */,
 				91D5488319B58D8F00BBFE1A /* cursor_curve.png in Resources */,
 				91D5489519B58D8F00BBFE1A /* icon_marker.png in Resources */,
 				91D5488C19B58D8F00BBFE1A /* cursor_note_fourway.png in Resources */,

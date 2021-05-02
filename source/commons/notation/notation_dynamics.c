@@ -391,9 +391,9 @@ t_bpt *dynamics_mark_get_breakpoint(t_dynamics *dyn, t_dynamics_mark *mark)
     if (dyn->owner_item->type == k_NOTE) {
         t_note *nt = dyn->owner_item->type == k_NOTE ? (t_note *)dyn->owner_item : (dyn->owner_item->type == k_CHORD ? ((t_chord *)dyn->owner_item)->firstnote : NULL);
         if (mark->snap_to_breakpoint >= 0)
-            bpt = nth_breakpoint(nt, mark->snap_to_breakpoint);
+            bpt = breakpoint_get_nth(nt, mark->snap_to_breakpoint);
         else
-            bpt = nth_breakpoint(nt, nt->num_breakpoints + mark->snap_to_breakpoint);
+            bpt = breakpoint_get_nth(nt, nt->num_breakpoints + mark->snap_to_breakpoint);
     }
     return bpt;
 }
@@ -2816,7 +2816,7 @@ double dynamics_change_sel_energy_delta(t_notation_obj *r_ob, long delta_energy,
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                     recompute_all_for_measure(r_ob, ch->parent, false);
                 else
-                    chord_set_recompute_parameters_flag(ch);
+                    chord_set_recompute_parameters_flag(r_ob, ch);
             }
             
         }

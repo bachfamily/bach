@@ -618,6 +618,9 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_CLEAR_MARKERS:
             sprintf(buf, "Clear Markers");
             break;
+        case k_UNDO_OP_CLEAR_SLURS:
+            sprintf(buf, "Clear Slurs");
+            break;
         case k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION:
             sprintf(buf, "Snap Pitch To Grid");
             break;
@@ -1705,12 +1708,12 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
                 if (need_update_solos) update_solos(r_ob);
                 (*flags) |= k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION;
             } else if (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT) { // measure need to be added
-                t_scorevoice *voice = (t_scorevoice *)nth_voice_safe(r_ob, this_information->n_it_path_after.voice_num);
+                t_scorevoice *voice = (t_scorevoice *)voice_get_nth_safe(r_ob, this_information->n_it_path_after.voice_num);
                 t_measure *measure;
                 char need_update_solos = false;
                 measure = build_measure(r_ob, NULL);
                 notation_item_get_ID_from_llll(content); // if there's an ID in the measure, we ignore it.
-                insert_measure(r_ob, voice, measure, nth_measure_of_scorevoice(voice, this_information->n_it_path_after.meas_num - 1), ID);
+                insert_measure(r_ob, voice, measure, measure_get_nth(voice, this_information->n_it_path_after.meas_num - 1), ID);
                 measure->beaming_calculation_flags = k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING;
                 if (r_ob->setmeasurefromllll)
                     (r_ob->setmeasurefromllll)((t_object *)r_ob, measure, content, true, false, &need_update_solos);
@@ -1744,9 +1747,9 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
             } else if (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT) { // surely roll
                 t_chord *newch = NULL;
                 if (r_ob->addchordfromllll)
-                    (r_ob->addchordfromllll)((t_object *)r_ob, content, (t_rollvoice *)nth_voice_safe(r_ob, this_information->n_it_path_after.voice_num), false, true);
+                    (r_ob->addchordfromllll)((t_object *)r_ob, content, (t_rollvoice *)voice_get_nth_safe(r_ob, this_information->n_it_path_after.voice_num), false, true);
                 if (newch)
-                    chord_set_recompute_parameters_flag(newch);
+                    chord_set_recompute_parameters_flag(r_ob, newch);
             }
 
         } else if (type == k_MARKER) {

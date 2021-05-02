@@ -927,7 +927,7 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 	
 	num_voices = voices_to_write->l_size;
 	bach_assert_objerror_goto(x, ok = (num_voices > 0), "No valid voices for export", roll_dowritemidi_error);
-	firstvoice = (t_rollvoice *) nth_voice_safe((t_notation_obj *) x, hatom_getlong(&voices_to_write->l_head->l_hatom));
+	firstvoice = (t_rollvoice *) voice_get_nth_safe((t_notation_obj *) x, hatom_getlong(&voices_to_write->l_head->l_hatom));
 	
 	num_tracks = format == 0 ? 1 : num_voices + 1;
 
@@ -1044,7 +1044,7 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 	
 	// now, one voice after another, insert all the notes
 	for (this_voicenum_elem = voices_to_write->l_head; this_voicenum_elem; this_voicenum_elem = this_voicenum_elem->l_next) {
-		this_rollvoice = (t_rollvoice *) nth_voice_safe((t_notation_obj *) x, hatom_getlong(&this_voicenum_elem->l_hatom));
+		this_rollvoice = (t_rollvoice *) voice_get_nth_safe((t_notation_obj *) x, hatom_getlong(&this_voicenum_elem->l_hatom));
 		t_chord *this_chord;
 		long channel = (this_rollvoice->v_ob.midichannel - 1) % 16;
 		long this_tempochange = 0;

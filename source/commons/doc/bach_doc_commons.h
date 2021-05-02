@@ -1402,7 +1402,16 @@
 
 
 #define BACH_DOC_MESSAGE_CLEARMARKERS
-	// The <m>clearmarkers</m> simply delets all the markers in the notation object.
+	// The <m>clearmarkers</m> message deletes all the markers in the notation object.
+
+
+#define BACH_DOC_MESSAGE_CLEARSLURS
+    // The <m>clearslurs</m> message delets all the slurs in the notation object.
+
+#define BACH_DOC_MESSAGE_ADDSLUR
+    // The <m>addslur</m> message adds a new slur.
+    // If "selection" is given as argument, then the selected items will be gathered under a slur
+    // An optional message attribute "name" also sets the name(s) of the slur.
 
 	
 #define BACH_DOC_MESSAGE_OPENSLOTWINS
