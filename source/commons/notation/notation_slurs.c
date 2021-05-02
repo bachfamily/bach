@@ -483,6 +483,7 @@ void notationobj_addslur(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
             t_chord *start_ch = (t_chord *)notation_item_from_path(r_ob, k_CHORD, &start_path);
             t_chord *end_ch = (t_chord *)notation_item_from_path(r_ob, k_CHORD, &end_path);
             if (start_ch && end_ch) {
+                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)start_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 slur_add(r_ob, start_ch, end_ch, names);
             } else {
                 object_error((t_object *)r_ob, "Wrong syntax");

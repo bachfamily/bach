@@ -1410,7 +1410,8 @@
 
 #define BACH_DOC_MESSAGE_ADDSLUR
     // The <m>addslur</m> message adds a new slur.
-    // If "selection" is given as argument, then the selected items will be gathered under a slur
+    // If "selection" is given as argument, then the selected items will be gathered under a slur.
+    // Otherwise, two argument are expected, containing the paths of the starting and ending chord of the slur as wrapped lllls.
     // An optional message attribute "name" also sets the name(s) of the slur.
 
 	

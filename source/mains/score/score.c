@@ -4734,9 +4734,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @method addslur @digest Add a slur
     // @description @copy BACH_DOC_MESSAGE_ADDSLUR
     // @marg 0 @name selection @optional 1 @type symbol
+    // @marg 1 @name start_path @optional 1 @type llll
+    // @marg 2 @name end_path @optional 1 @type llll
     // @mattr name @type llll @default null @digest Name(s) of the slur
     // @example addslur selection @caption add a slur over the selected chords
     // @example addslur selection @name john @caption the same, with a name
+    // @example addslur [1 1 1] [1 3 2] @caption add a slur from the first chord to the second chord of the 3rd measure
+    // @example addslur [1 1 1] [1 3 2] @name john @caption the same, with a name
     // @seealso clearslur
     class_addmethod(c, (method) score_addslur, "addslur", A_GIMME, 0);
 
