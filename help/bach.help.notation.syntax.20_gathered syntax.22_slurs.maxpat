@@ -40,6 +40,23 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-1",
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 78.0, 607.0, 21.0 ],
+					"sendto" : "bach.help.filtertags",
+					"text" : "Up to 3 slurs can start and end from a given chord; in which case the information is given in the form",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"bubble" : 1,
 					"bubblepoint" : 0.34,
 					"bubbleside" : 0,
@@ -65,7 +82,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 88.0, 204.0, 242.0, 40.0 ],
+					"patching_rect" : [ 130.0, 219.0, 242.0, 40.0 ],
 					"text" : "Add a slur lasting 4 chords, named \"foo\""
 				}
 
@@ -80,7 +97,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 10.5, 241.0, 598.0, 81.0 ],
-					"presentation_linecount" : 8,
 					"text" : "score [ [ [ [ 4 4 ] [ ] ] [ leveltype 1 ] [ -1/2 0 ] [ [ leveltype 8 ] [ 1/4 [ 7300. 100 0 0 ] 0 ] ] [ [ leveltype 8 ] [ 1/4 [ 7300. 100 0 0 ] [ slur [ 4 [ name foo ] ] ] 0 ] ] 0 ] [ [ [ 4 4 ] [ ] ] [ leveltype 1 ] [ [ leveltype 8 ] [ 1/4 [ 7300. 100 0 0 ] [ slur 5 ] 0 ] ] [ [ leveltype 8 ] [ 1/4 [ 7300. 100 0 0 ] 0 ] ] [ [ leveltype 8 ] [ 1/4 [ 7300. 100 0 0 ] 0 ] ] [ [ leveltype 8 ] [ 1/4 [ 7300. 100 0 0 ] 0 ] ] 0 ] [ [ [ 4 4 ] [ ] ] [ leveltype 1 ] [ -1/2 0 ] [ 1/2 [ 7300. 100 0 0 ] 0 ] 0 ] 0 ]"
 				}
 
@@ -114,23 +130,6 @@
 			}
 , 			{
 				"box" : 				{
-					"fontface" : 0,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-8",
-					"maxclass" : "bach.hypercomment",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 172.0, 607.0, 21.0 ],
-					"sendto" : "bach.help.filtertags",
-					"text" : "(up to 3 slurs can start or end from a given chord).",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"fontface" : 1,
 					"fontname" : "Courier New",
 					"fontsize" : 13.0,
@@ -138,8 +137,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 101.899994000000007, 145.0, 313.0, 21.0 ],
-					"text" : "[ slur <n1> <n2> [<n3> [name <name3>]]]"
+					"patching_rect" : [ 145.899993999999992, 101.0, 313.0, 21.0 ],
+					"text" : "[ slur <n1> <opt:n2> <opt:n3> ]"
 				}
 
 			}
@@ -152,26 +151,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 32.0, 91.0, 555.0, 21.0 ],
-					"presentation_linecount" : 2,
-					"text" : "[ slur [ <number_of_spanned_chords> [ name <name_or_llll_of_names> ] ]"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontface" : 0,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-5",
-					"maxclass" : "bach.hypercomment",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 68.0, 607.0, 21.0 ],
-					"sendto" : "bach.help.filtertags",
-					"text" : "or a named slur in the form",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 32.0, 162.0, 555.0, 21.0 ],
+					"text" : "[ slur [ <n> [ name <name_or_llll_of_names> ] [ direction <dir> ] ] ]"
 				}
 
 			}
@@ -184,7 +165,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 119.899994000000007, 53.0, 330.0, 21.0 ],
+					"patching_rect" : [ 142.0, 55.0, 330.0, 21.0 ],
 					"text" : "[ slur <number_of_spanned_chords> ]"
 				}
 
@@ -195,13 +176,14 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-2",
+					"linecount" : 2,
 					"maxclass" : "bach.hypercomment",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 122.0, 607.0, 21.0 ],
+					"patching_rect" : [ 6.0, 124.0, 607.0, 36.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "If more than one slur are presents, multiple elements can be defined, e.g.",
+					"text" : "Slurs can bear a \"direction\" (0 = default, 1 = up, -1 = down) and a \"name\" parameter; if they do, the must be enclosed in a level of parentheses, for instance:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -260,7 +242,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 602.0, 19.0 ],
-					"text" : "Tags: gathered, syntax, slur, span, name, chord",
+					"text" : "Tags: gathered, syntax, slur, span, name, chord, direction, up, down, flip",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

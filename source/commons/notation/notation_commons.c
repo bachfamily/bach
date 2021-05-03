@@ -36749,12 +36749,13 @@ void chord_set_temporary_slurs_from_llll(t_notation_obj *r_ob, t_chord *ch, t_ll
 {
     for (t_llllelem *el = ll->l_head; el; el = el->l_next) {
         if (hatom_gettype(&el->l_hatom) == H_LONG) {
-            slur_add_temporary(r_ob, ch, hatom_getlong(&el->l_hatom));
+            slur_add_temporary(r_ob, ch, 0, hatom_getlong(&el->l_hatom));
         } else if (hatom_gettype(&el->l_hatom) == H_LLLL) {
             t_llll *el_ll = hatom_getllll(&el->l_hatom);
             t_slur *tempslur = NULL;
             if (el_ll && el_ll->l_head && hatom_gettype(&el_ll->l_head->l_hatom) == H_LONG)
-                tempslur = slur_add_temporary(r_ob, ch, hatom_getlong(&el_ll->l_head->l_hatom));
+                tempslur = slur_add_temporary(r_ob, ch, 0, hatom_getlong(&el_ll->l_head->l_hatom));
+            slur_find_and_set_direction(r_ob, tempslur, el_ll);
             if (tempslur)
                 notation_item_find_and_set_names(r_ob, (t_notation_item *)tempslur, el_ll);
         }

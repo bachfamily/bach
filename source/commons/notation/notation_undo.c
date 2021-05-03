@@ -957,6 +957,9 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_DELETE_SLURS_FOR_SELECTION:
             sprintf(buf, "Delete Slurs");
             break;
+        case k_UNDO_OP_FLIP_SLURS_FOR_SELECTION:
+            sprintf(buf, "Flip Slurs");
+            break;
         case k_UNDO_OP_ADD_ARTICULATION_TO_SELECTION:
             sprintf(buf, "Add Articulation");
             break;

@@ -42,6 +42,25 @@
 				"box" : 				{
 					"bgcolor" : [ 0.690217, 0.690217, 0.690217, 1.0 ],
 					"bubble" : 1,
+					"bubbleside" : 3,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-5",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 42.0, 411.0, 183.0, 54.0 ],
+					"presentation_linecount" : 2,
+					"text" : "Use Cmd+F (mac) or Ctrl+F (win) to flip a slur once it is selected",
+					"textcolor" : [ 0.50196099281311, 0.0, 0.0, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bgcolor" : [ 0.690217, 0.690217, 0.690217, 1.0 ],
+					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-15",
@@ -50,7 +69,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 323.0, 411.0, 239.0, 40.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Select a slur by clicking on it, then press BACKSPACE to delete it",
 					"textcolor" : [ 0.50196099281311, 0.0, 0.0, 1.0 ]
 				}
@@ -95,7 +113,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 47.0, 234.0, 277.0, 69.0 ],
+					"patching_rect" : [ 47.0, 234.0, 279.0, 69.0 ],
 					"text" : "Click on a slur to select it\nOnce it's selected, you can drag its end points to reassign them...",
 					"textcolor" : [ 0.50196099281311, 0.0, 0.0, 1.0 ]
 				}
@@ -114,7 +132,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 47.0, 285.0, 277.0, 69.0 ],
-					"presentation_linecount" : 3,
 					"text" : "...or you can use Shift+arrows, Alt+arrows, or simply the left-right arrows to move its beginning, its end or the whole slur",
 					"textcolor" : [ 0.50196099281311, 0.0, 0.0, 1.0 ]
 				}
@@ -235,7 +252,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 31.0, 600.0, 21.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "Slurs can be created, modified and deleted from interface",
+					"text" : "Slurs can be created, modified and deleted via mouse and keyboard.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -294,7 +311,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: editing, edit, interface, slur",
+					"text" : "Tags: editing, edit, interface, slur, flip, reverse, up, down",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

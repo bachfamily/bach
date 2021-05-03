@@ -34,15 +34,20 @@ BEGIN_CHECK_LINKAGE
 #endif
 
 // slurs
-t_slur *slur_add(t_notation_obj *r_ob, t_chord *start_chord, t_chord *end_chord);
-t_slur *slur_add_temporary(t_notation_obj *r_ob, t_chord *start_ch, long extension);
-t_slur *slur_add_for_selection(t_notation_obj *r_ob, t_llll *names, char add_undo_ticks);
+t_slur *slur_add(t_notation_obj *r_ob, t_chord *start_chord, char direction, t_chord *end_chord);
+t_slur *slur_add_temporary(t_notation_obj *r_ob, t_chord *start_ch, char direction, long extension);
+t_slur *slur_add_for_selection(t_notation_obj *r_ob, t_llll *names, char direction, char add_undo_ticks); // direction: 0 = auto; 1 = above, -1 = below
 void slur_region_preselect_chords(t_notation_obj *r_ob, t_slur *slur);
 void notationobj_addslur(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 void slur_set_recompute_position_flag(t_slur *slur);
 void chord_recompute_slur_positions(t_notation_obj *r_ob, t_chord *ch);
 void slur_check_extremes(t_notation_obj *r_ob, t_slur *slur);
+
+void slur_find_and_set_direction(t_notation_obj *r_ob, t_slur *slur, t_llll *ll);
+
+void slur_flip(t_slur *slur);
+char slur_flip_selected(t_notation_obj *r_ob);
 
 // move temporary slurs to permanent ones
 void notationobj_make_temporary_slurs_permanent(t_notation_obj *r_ob);

@@ -83,7 +83,7 @@ void slur_check_extremes(t_notation_obj *r_ob, t_slur *slur)
 }
 
 
-t_slur *slur_add(t_notation_obj *r_ob, t_chord *start_ch, t_chord *end_ch, t_llll *names)
+t_slur *slur_add(t_notation_obj *r_ob, t_chord *start_ch, t_chord *end_ch, t_llll *names, char direction)
 {
     if (start_ch->num_slurs_to < CONST_MAX_SLURS_PER_CHORD && end_ch->num_slurs_from < CONST_MAX_SLURS_PER_CHORD) {
         t_slur *this_slur = (t_slur *)bach_newptr(sizeof(t_slur));
@@ -93,7 +93,7 @@ t_slur *slur_add(t_notation_obj *r_ob, t_chord *start_ch, t_chord *end_ch, t_lll
         this_slur->is_temporary = false;
         this_slur->temporary_extension = 0;
         this_slur->start_chord = start_ch;
-        this_slur->direction = 0; // undefined: use standard
+        this_slur->direction = direction;
         this_slur->end_chord = end_ch;
         start_ch->slur_to[start_ch->num_slurs_to++] = this_slur;
         end_ch->slur_from[end_ch->num_slurs_from++] = this_slur;
@@ -112,7 +112,7 @@ t_slur *slur_add(t_notation_obj *r_ob, t_chord *start_ch, t_chord *end_ch, t_lll
     return NULL;
 }
 
-t_slur *slur_add_temporary(t_notation_obj *r_ob, t_chord *start_ch, long extension)
+t_slur *slur_add_temporary(t_notation_obj *r_ob, t_chord *start_ch, char direction, long extension)
 {
     t_slur *this_slur = (t_slur *)bach_newptr(sizeof(t_slur));
     
@@ -121,7 +121,7 @@ t_slur *slur_add_temporary(t_notation_obj *r_ob, t_chord *start_ch, long extensi
     this_slur->is_temporary = true;
     this_slur->temporary_extension = extension;
     this_slur->start_chord = start_ch;
-    this_slur->direction = 0; // undefined: use standard
+    this_slur->direction = direction;
     this_slur->end_chord = NULL;
     slur_set_recompute_position_flag(this_slur);
 
@@ -139,7 +139,7 @@ void notationobj_make_temporary_slurs_permanent(t_notation_obj *r_ob)
             for (long i = 0; endchord && i < tempslur->temporary_extension; i++)
                 endchord = chord_get_next(endchord);
             t_llll *names = get_names_as_llll((t_notation_item *)tempslur, false);
-            slur_add(r_ob, tempslur->start_chord, endchord, names);
+            slur_add(r_ob, tempslur->start_chord, endchord, names, tempslur->direction);
             llll_free(names);
         }
         notation_item_free((t_notation_item *)tempslur);
@@ -148,14 +148,14 @@ void notationobj_make_temporary_slurs_permanent(t_notation_obj *r_ob)
     llll_clear(r_ob->slurs_to_be_processed);
 }
 
-t_slur *slur_add_for_selection(t_notation_obj *r_ob, t_llll *names, char add_undo_ticks)
+t_slur *slur_add_for_selection(t_notation_obj *r_ob, t_llll *names, char direction, char add_undo_ticks)
 {
     t_note *left = get_leftmost_selected_note(r_ob);
     t_note *right = get_rightmost_selected_note(r_ob);
     if (left && right && left->parent != right->parent) {
         if (add_undo_ticks)
             undo_tick_create_for_notation_item(r_ob, (t_notation_item *)left->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-        t_slur *slur = slur_add(r_ob, left->parent, right->parent, names);
+        t_slur *slur = slur_add(r_ob, left->parent, right->parent, names, direction);
         return slur;
     }
     return NULL;
@@ -397,6 +397,33 @@ char slur_delete_starting_on_chord(t_notation_obj *r_ob, t_chord *ch)
 }
 
 
+void slur_flip(t_slur *slur)
+{
+    if (!slur->start_chord)
+        return;
+    
+    char direction = (slur->direction) ? slur->direction : -slur->start_chord->direction;
+    slur->direction = -direction;
+    slur_set_recompute_position_flag(slur);
+}
+
+char slur_flip_selected(t_notation_obj *r_ob)
+{
+    char changed = 0;
+    lock_general_mutex(r_ob);
+    for (t_notation_item *curr_it = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected) {
+        if (curr_it->type == k_SLUR || curr_it->type == k_SLUR_START_POINT || curr_it->type == k_SLUR_END_POINT) {
+            t_slur *slur = ((t_slur *)curr_it);
+            changed = 1;
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)slur->start_chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            slur_flip(slur);
+        }
+    }
+    unlock_general_mutex(r_ob);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return changed;
+}
+
 void notationobj_reset_all_slurs_position(t_notation_obj *r_ob)
 {
     for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
@@ -436,10 +463,15 @@ t_llll *chord_get_slurs_as_llll(t_chord *ch, char prepend_slur_symbol)
         llll_appendsym(out, _llllobj_sym_slur);
     if (ch) {
         for (long i = 0; i < ch->num_slurs_to; i++) {
-            if (ch->slur_to[i]->r_it.names && ch->slur_to[i]->r_it.names->l_size > 0) {
+            bool need_llll = ((ch->slur_to[i]->r_it.names && ch->slur_to[i]->r_it.names->l_size > 0) ||
+                              ch->slur_to[i]->direction != 0);
+            if (need_llll) {
                 t_llll *subll = llll_get();
                 llll_appendlong(subll, slur_get_length_in_chords(ch->slur_to[i]));
-                llll_appendllll(subll, get_names_as_llll((t_notation_item *)ch->slur_to[i], true));
+                if (ch->slur_to[i]->r_it.names && ch->slur_to[i]->r_it.names->l_size > 0)
+                    llll_appendllll(subll, get_names_as_llll((t_notation_item *)ch->slur_to[i], true));
+                if (ch->slur_to[i]->direction != 0)
+                    llll_appendllll(subll, symbol_and_long_to_llll(_llllobj_sym_direction, ch->slur_to[i]->direction));
                 llll_appendllll(out, subll);
             } else {
                 llll_appendlong(out, slur_get_length_in_chords(ch->slur_to[i]));
@@ -469,12 +501,13 @@ void slur_region_preselect_chords(t_notation_obj *r_ob, t_slur *slur)
 void notationobj_addslur(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *names = NULL;
+    long direction = 0;
     t_llll *ll = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    llll_parseargs_and_attrs_destructive((t_object *)r_ob, ll, "l", gensym("name"), &names);
+    llll_parseargs_and_attrs_destructive((t_object *)r_ob, ll, "li", _llllobj_sym_name, &names, _llllobj_sym_direction, &direction);
 
     if (ll && ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_selection) {
         // add a slur for the selection
-        slur_add_for_selection(r_ob, names, true);
+        slur_add_for_selection(r_ob, names, direction, true);
     } else if (ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_hatom) == H_LLLL &&  hatom_gettype(&ll->l_head->l_next->l_hatom) == H_LLLL){
         t_notation_item_path start_path, end_path;
         notation_item_path_from_llll(r_ob, k_CHORD, hatom_getllll(&ll->l_head->l_hatom), &start_path);
@@ -484,7 +517,7 @@ void notationobj_addslur(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *a
             t_chord *end_ch = (t_chord *)notation_item_from_path(r_ob, k_CHORD, &end_path);
             if (start_ch && end_ch) {
                 undo_tick_create_for_notation_item(r_ob, (t_notation_item *)start_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                slur_add(r_ob, start_ch, end_ch, names);
+                slur_add(r_ob, start_ch, end_ch, names, direction);
             } else {
                 object_error((t_object *)r_ob, "Wrong syntax");
             }
@@ -530,5 +563,28 @@ void chord_recompute_slur_positions(t_notation_obj *r_ob, t_chord *ch)
         t_slur *slur = (t_slur *)hatom_getobj(&el->l_hatom);
         if (slur_is_over_chord)
             slur_set_recompute_position_flag(slur);
+    }
+}
+
+
+void slur_find_and_set_direction(t_notation_obj *r_ob, t_slur *slur, t_llll *ll)
+{
+    for (t_llllelem *el = ll->l_head; el; el = el->l_next) {
+        if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+            t_llll *subll = hatom_getllll(&el->l_hatom);
+            if (subll && subll->l_size >= 2 && hatom_gettype(&subll->l_head->l_hatom) == H_SYM && hatom_getsym(&subll->l_head->l_hatom) == _llllobj_sym_direction) {
+                if (hatom_gettype(&subll->l_head->l_next->l_hatom) == H_LONG) {
+                    slur->direction = hatom_getlong(&subll->l_head->l_next->l_hatom);
+                } else if (hatom_gettype(&subll->l_head->l_next->l_hatom) == H_SYM) {
+                    t_symbol *s = hatom_getsym(&subll->l_head->l_next->l_hatom);
+                    if (s == _sym_up)
+                        slur->direction = 1;
+                    else if (s == _sym_down)
+                        slur->direction = -1;
+                    else
+                        slur->direction = 0;
+                }
+            }
+        }
     }
 }

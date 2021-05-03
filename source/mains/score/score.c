@@ -16578,14 +16578,24 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         delete_articulations_in_selection((t_notation_obj *) x);
         handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULATIONS_FOR_SELECTION); 
         return 1;
-#ifdef BACH_SUPPORT_SLURS
-    } else if ((x->r_ob.selection_type == k_SLUR_START_POINT || x->r_ob.selection_type == k_SLUR_END_POINT || x->r_ob.selection_type == k_SLUR) && (keycode == JKEY_BACKSPACE || keycode == JKEY_DELETE)) {
-        if (!is_editable((t_notation_obj *)x, k_SLUR, k_DELETION)) return 0;
-        slur_delete_selected((t_notation_obj *)x);
-        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLURS_FOR_SELECTION); 
-        return 1;
-#endif
     }
+    
+#ifdef BACH_SUPPORT_SLURS
+    if ((x->r_ob.selection_type == k_SLUR_START_POINT || x->r_ob.selection_type == k_SLUR_END_POINT || x->r_ob.selection_type == k_SLUR)) {
+        if (keycode == JKEY_BACKSPACE || keycode == JKEY_DELETE) {
+            if (!is_editable((t_notation_obj *)x, k_SLUR, k_DELETION)) return 0;
+            slur_delete_selected((t_notation_obj *)x);
+            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLURS_FOR_SELECTION);
+            return 1;
+        } else if (keycode == 'f' && (modifiers & eCommandKey)) {
+            if (!is_editable((t_notation_obj *)x, k_SLUR, k_MODIFICATION_GENERIC)) return 0;
+            slur_flip_selected((t_notation_obj *)x);
+            handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLURS_FOR_SELECTION);
+            return 1;
+        }
+    }
+#endif
+    
     if (handle_keys_for_articulations((t_notation_obj *) x, patcherview, keycode, modifiers, textcharacter) && is_editable((t_notation_obj *)x, k_ARTICULATION, k_CREATION)) {
         handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_ARTICULATION_TO_SELECTION); 
         return 1;
@@ -16752,7 +16762,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             
         case '^': // Cmd + ^
             if (x->r_ob.num_selecteditems > 1) {
-                slur_add_for_selection((t_notation_obj *)x, NULL, true);
+                slur_add_for_selection((t_notation_obj *)x, NULL, 0, true);
                 handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_SLUR);
                 return 1;
             }
