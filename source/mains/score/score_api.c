@@ -5196,7 +5196,7 @@ void scoreapi_initscore_step02(t_score *x)
     x->r_ob.add_staff = 0;
     x->r_ob.itsme = 0;
     x->r_ob.add_voice = 0;
-    x->r_ob.step_y = CONST_STEP_UY;    
+    x->r_ob.step_y = CONST_STEP_UY * x->r_ob.zoom_y;
     // x->r_ob.horizontal_zoom = 100.;
     x->r_ob.zoom_x = x->r_ob.horizontal_zoom / 100.;
     x->r_ob.j_inset_y = 0.5;

@@ -490,6 +490,7 @@ void notationobj_bach_attribute_declares(t_notation_obj *r_ob)
     // SLURS
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_name, "Name", k_SLUR, t_notation_item, names, k_BACH_ATTR_LLLL, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
     bach_attribute_add_functions(bach_attribute_get(man, k_SLUR, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_direction, "Direction", k_SLUR, t_slur, direction, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 }
 
 
@@ -1102,6 +1103,8 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
 		recalculate_marker_name_uwidth(r_ob, (t_marker *)obj);
         recompute_total_length(r_ob);
         update_hscrollbar(r_ob, 0);
+    } else if (attr->owner_type == k_SLUR) {
+        slur_set_recompute_position_flag((t_slur *)obj);
 	}
 	handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_BACH_ATTRIBUTE);
 }

@@ -2141,214 +2141,6 @@ void reset_all_articulations_positions(t_notation_obj *r_ob)
 
 
 
-/* OLD FUNCTION
-// use stem_direction == 0 for rests
-void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, void *articulation_owner, char owner_type,
-                        long number, char stem_direction, double stem_x, double note_x_real, double note_y_real, double note_width,
-                        double extension_end_x)
-{
-    
-    char obj_type = r_ob->obj_type;
-    if (number >= 0 && number < CONST_MAX_ARTICULATIONS_PER_NOTE) {
-        
-        t_articulation *this_art = (owner_type == k_CHORD) ?    &(((t_chord *) articulation_owner)->articulation[number]) :
-        &(((t_note *) articulation_owner)->articulation[number]);
-        double grace_ratio = (owner_type == k_CHORD ? ( ((t_chord *) articulation_owner)->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1 ) :
-                              ( ((t_note *) articulation_owner)->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1 ));
-        t_jfont *jf_art = jfont_create_debug(r_ob->articulations_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->articulations_typo_preferences.base_pt[this_art->articulation_ID] * r_ob->zoom_y * grace_ratio);
-        
-        long articulation_utf_len;
-        char *articulation_utf;
-        char articulation_txt[5];
-        if (this_art->need_recompute_position) {
-#ifdef BACH_ARTICULATION_POSITION_DEBUG
-            char debug = true; // paint debug lines for articulations
-#else
-            char debug = false;
-#endif
-            
-            t_chord *chord = (owner_type == k_CHORD) ? (t_chord *)articulation_owner : ((t_note *) articulation_owner)->parent;
-            t_voice *voice = (obj_type == k_NOTATION_OBJECT_SCORE) ? (t_voice *)chord->parent->voiceparent :  (t_voice *)chord->voiceparent;
-            double top_y_with_articulation, bottom_y_with_articulation;
-            double articulation_width, articulation_height;
-            long ID = this_art->articulation_ID;
-            if (debug)
-                paint_circle_filled(g, build_jrgba(1,0,0,1), note_x_real, note_y_real, 4);
-            if (ID >= 0 && ID <= CONST_MAX_ARTICULATION_ID){
-                double left_x, left_y;
-                char flipped = !((stem_direction < 0 || r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_ABOVE_NOTE) && !(r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_BELOW_NOTE));
-                
-                if (stem_direction == 0)
-                    flipped = false; // it's a rest
-                
-                this_art->character = flipped ?    r_ob->articulations_typo_preferences.flipped_char[ID] :
-                r_ob->articulations_typo_preferences.main_char[ID];
-                left_x = note_x_real - note_width / 2. * grace_ratio;
-                left_y = note_y_real - r_ob->step_y * grace_ratio; // it is for the moment the y-CENTER of the articulation
-                articulation_utf = charset_unicodetoutf8_debug(&this_art->character, 1, &articulation_utf_len);
-                strncpy(articulation_txt, articulation_utf, 4);
-                bach_freeptr(articulation_utf);
-                
-                jfont_text_measure(jf_art, articulation_txt, &articulation_width, &articulation_height);
-                
-                articulation_height = (flipped ? r_ob->articulations_typo_preferences.flipped_uheight[ID] : r_ob->articulations_typo_preferences.main_uheight[ID]) * r_ob->zoom_y;
-                
-                if (debug)
-                    paint_circle_filled(g, build_jrgba(1,0,0,1), left_x, left_y, 1);
-                
-                if (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_NOTE_SIDE) {
-                    if (flipped)
-                        left_y = chord->bottommost_y_noacc + articulation_height / 2.;
-                    else
-                        left_y = chord->topmost_y_noacc - articulation_height / 2.;
-                } else if (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_ABOVE_NOTE) {
-                    left_y = chord->topmost_y_noacc - articulation_height / 2.;
-                } else if (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_BELOW_NOTE) {
-                    left_y = chord->bottommost_y_noacc + articulation_height / 2.;
-                } else if (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_NOTEHEAD) {
-                    if (chord->direction > 0)
-                        left_y = chord->lastnote->center.y - r_ob->step_y - articulation_height / 2.;
-                    else if (chord->direction < 0)
-                        left_y = chord->firstnote->center.y + r_ob->step_y + articulation_height / 2.;
-                } else if (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_FLAG) {
-                    if (chord->direction > 0)
-                        left_y = chord->beam_y + articulation_height / 2.;
-                    else if (chord->direction < 0)
-                        left_y = chord->beam_y - articulation_height / 2.;
-                }
-                
-                if (r_ob->articulations_typo_preferences.options[ID] & k_ARTICULATION_OPTION_CENTER_OVER_NOTE)
-                    left_x = note_x_real - articulation_width / 2.;
-                else if (r_ob->articulations_typo_preferences.options[ID] & k_ARTICULATION_OPTION_CENTER_OVER_STEM)
-                    left_x = stem_x - articulation_width / 2.;
-                
-                if (debug)
-                    paint_line(g, build_jrgba(0,1,0,1), left_x, left_y, left_x + 20, left_y, 1);
-                
-                if (r_ob->articulations_typo_preferences.options[ID] & k_ARTICULATION_OPTION_OUTSIDE_STAFF) {
-                    double top_y = get_staff_top_y(r_ob, voice, false);
-                    double bottom_y = get_staff_bottom_y(r_ob, voice, false);
-                    double top_art = left_y - articulation_height / 2.;
-                    double bottom_art = left_y + articulation_height / 2.;
-                    double nudge = r_ob->articulations_typo_preferences.outside_staff_uy_nudge[ID] * r_ob->zoom_y;
-                    if ((bottom_art > top_y && bottom_art < bottom_y) ||
-                        (top_art > top_y && top_art < bottom_y) ||
-                        (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_ABOVE_NOTE && bottom_art > top_y) ||
-                        (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_BELOW_NOTE && top_art < bottom_y)){
-                        if (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_NOTE_SIDE)
-                            left_y = flipped ? bottom_y + articulation_height / 2. + nudge : top_y - articulation_height / 2. - nudge;
-                        else if (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_NOTEHEAD || r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_FLAG)
-                            left_y = flipped ? top_y - nudge : bottom_y + nudge;
-                        else if (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_ABOVE_NOTE)
-                            left_y = top_y - articulation_height / 2. - nudge;
-                        else if (r_ob->articulations_typo_preferences.positioning[ID] == k_ARTICULATION_POSITIONING_BELOW_NOTE)
-                            left_y = bottom_y + articulation_height / 2. + nudge;
-                        else if (bottom_y - left_y > left_y - top_y)
-                            left_y = top_y - articulation_height / 2. - nudge;
-                        else
-                            left_y = bottom_y + articulation_height / 2. + nudge;
-                    }
-                }
-                
-                // predefined shifts
-                if (!flipped) {
-                    left_x += r_ob->articulations_typo_preferences.main_char_ux_shift[ID] * r_ob->zoom_y;
-                    left_y -= r_ob->articulations_typo_preferences.main_char_uy_shift[ID] * r_ob->zoom_y;
-                } else {
-                    left_x += r_ob->articulations_typo_preferences.flipped_char_ux_shift[ID] * r_ob->zoom_y;
-                    left_y -= r_ob->articulations_typo_preferences.flipped_char_uy_shift[ID] * r_ob->zoom_y;
-                }
-                
-                if (r_ob->articulations_typo_preferences.options[ID] & k_ARTICULATION_OPTION_AVOID_STAFF_LINES) {
-                    double top_y = get_staff_top_y(r_ob, voice, false);
-                    double bottom_y = get_staff_bottom_y(r_ob, voice, false);
-                    double this_y;
-                    for (this_y = top_y - 2 * r_ob->step_y; this_y < bottom_y + 2 * r_ob->step_y; this_y += 2 * r_ob->step_y) {
-                        if (left_y >= this_y && left_y <= this_y + 2 * r_ob->step_y) {
-                            left_y = this_y + r_ob->step_y;
-                            if (flipped && chord->bottommost_y_noacc > left_y - articulation_height/2.)
-                                left_y += 2* r_ob->step_y;
-                            if (!flipped && chord->topmost_y_noacc < left_y + articulation_height/2.)
-                                left_y -= 2* r_ob->step_y;
-                            
-                            break;
-                        }
-                    }
-                }
-                
-                if (debug)
-                    paint_line(g, build_jrgba(0,0,0,1), left_x, left_y, left_x + 20, left_y, 1);
-                
-                if (debug)
-                    paint_rectangle(g, build_jrgba(0,1, 0.5, 1), build_jrgba(1,0, 0.5, 0.2), left_x,
-                                    left_y - articulation_height / 2., articulation_width, articulation_height, 1);
-                
-                // last shift: the y is brought to the writing position
-                if (!flipped) { // articulation over note
-                    left_y -= r_ob->articulations_typo_preferences.main_uy_center[ID] * r_ob->zoom_y;
-                    top_y_with_articulation = left_y + (r_ob->articulations_typo_preferences.main_uy_center[ID] - r_ob->articulations_typo_preferences.main_uheight[ID]/2.) * r_ob->zoom_y;
-                    if (top_y_with_articulation < chord->topmost_y) chord->topmost_y = top_y_with_articulation;
-                    if (top_y_with_articulation < chord->topmost_y_noacc) chord->topmost_y_noacc = top_y_with_articulation;
-                } else { // articulation under note
-                    left_y -= r_ob->articulations_typo_preferences.flipped_uy_center[ID] * r_ob->zoom_y;
-                    bottom_y_with_articulation = left_y + (r_ob->articulations_typo_preferences.flipped_uy_center[ID] + r_ob->articulations_typo_preferences.flipped_uheight[ID]/2.) * r_ob->zoom_y;
-                    if (bottom_y_with_articulation > chord->bottommost_y) chord->bottommost_y = bottom_y_with_articulation;
-                    if (bottom_y_with_articulation > chord->bottommost_y_noacc) chord->bottommost_y_noacc = bottom_y_with_articulation;
-                }
-                
-                if (debug)
-                    paint_circle_filled(g, build_jrgba(0,0,1,1), left_x, left_y, 1);
-                
-                this_art->x_pos = left_x - stem_x;
-                this_art->y_pos = left_y;
-                this_art->width = articulation_width;
-                this_art->height = (flipped ? r_ob->articulations_typo_preferences.flipped_uheight[ID] : r_ob->articulations_typo_preferences.main_uheight[ID]) * r_ob->zoom_y;
-                this_art->middle_x_pos = left_x + articulation_width / 2.;
-                this_art->middle_y_pos = left_y + (flipped ? r_ob->articulations_typo_preferences.flipped_uy_center[ID] : r_ob->articulations_typo_preferences.main_uy_center[ID]) * r_ob->zoom_y;
-            }
-            this_art->need_recompute_position = false;
-        }
-        
-        articulation_utf = charset_unicodetoutf8_debug(&this_art->character, 1, &articulation_utf_len);
-        strncpy(articulation_txt, articulation_utf, 4);
-        bach_freeptr(articulation_utf);
-        write_text_standard_account_for_vinset(r_ob, g, jf_art, *color, articulation_txt, stem_x + this_art->x_pos, this_art->y_pos);
-        
-        if (r_ob->articulations_typo_preferences.extension_line_char[this_art->articulation_ID] > 0 && r_ob->show_articulations_extensions) { // extension line
-            double total_width = extension_end_x - (stem_x + this_art->x_pos + this_art->width/2.) - CONST_ARTICULATION_EXTENSION_END_UTRIM * r_ob->zoom_y;
-            double one_char_width, one_char_height;
-            unicodeChar *all_chars_txt;
-            long num_chars, i;
-            
-            
-            char *utf;
-            long utflen;
-            utf = charset_unicodetoutf8_debug(&r_ob->articulations_typo_preferences.extension_line_char[this_art->articulation_ID], 1, &utflen);
-            //                    strncpy(articulation_txt, articulation_utf, 4);
-            jfont_text_measure(jf_art, utf, &one_char_width, &one_char_height);
-            bach_freeptr(utf);
-            num_chars = floor(total_width / one_char_width);
-            if (num_chars > 0) {
-                all_chars_txt = (unicodeChar *) bach_newptr((num_chars + 1) * sizeof(unicodeChar));
-                for (i = 0; i < num_chars; i++)
-                    all_chars_txt[i] = r_ob->articulations_typo_preferences.extension_line_char[this_art->articulation_ID];
-                all_chars_txt[i] = 0;
-                utf = charset_unicodetoutf8_debug(all_chars_txt, num_chars, &utflen);
-                write_text_standard_account_for_vinset(r_ob, g, jf_art, *color, utf, stem_x + this_art->x_pos + this_art->width,
-                                              this_art->y_pos - r_ob->articulations_typo_preferences.extension_line_uy_offset[this_art->articulation_ID] * r_ob->zoom_y);
-                bach_freeptr(utf);
-                bach_freeptr(all_chars_txt);
-                
-            }
-        }
-        
-        jfont_destroy_debug(jf_art); 
-    }
-}
-*/
-
-
-
 // use stem_direction == 0 for rests
 // part direction == 0 for no-parting 1 for above 2 for below
 void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_articulation *art, t_notation_item *articulation_owner,
@@ -2759,7 +2551,7 @@ char is_barline_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_measure_end_barl
     return 0;
 }
 
-void fill_topmost_bottom_fields(t_notation_obj *r_ob, t_chord *chord, double staff_top)
+void fill_topmost_bottommost_fields(t_notation_obj *r_ob, t_chord *chord, double staff_top)
 {
     if (chord->topmost_y == DBL_SMALLEST)
         chord->topmost_y = staff_top + chord->topmost_stafftop_uy * r_ob->zoom_y;
@@ -2787,7 +2579,7 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
         t_chord *chord;
         double raise1_y = 0, raise2_y = 0, raisestart_y = 0, raiseend_y = 0;
         
-        // gotta switch start and end notes? (if chords are reversed!)
+/*        // gotta switch start and end notes? (if chords are reversed!)
         if (is_chord_before_chord(r_ob, end, start)){
             t_chord *temp;
             temp = start;
@@ -2795,7 +2587,7 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
             end = temp;
             reversed = true;
         } 
-        
+   */
         t_note *start_nt = start->lastnote;
         t_note *end_nt = end->lastnote;
         if (direction < 0) {
@@ -2822,7 +2614,13 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 slur->end_ux = end->parent->tuttipoint_reference->offset_ux + end->stem_offset_ux - CONST_SLUR_USEPARATION_FROM_STEM;
             } else {
-                slur->end_ux = chord_get_alignment_ux(r_ob, end) - CONST_SLUR_USEPARATION_FROM_STEM;
+                slur->end_ux = chord_get_stem_ux(r_ob, end) - CONST_SLUR_USEPARATION_FROM_STEM;
+            }
+        } else if (direction == 1 && start->direction == 1) {
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+                slur->start_ux = start->parent->tuttipoint_reference->offset_ux + start->stem_offset_ux + CONST_SLUR_USEPARATION_FROM_STEM;
+            } else {
+                slur->start_ux = chord_get_stem_ux(r_ob, start) + CONST_SLUR_USEPARATION_FROM_STEM;
             }
         }
 
@@ -2848,7 +2646,7 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
         
         // nudging end point if the chord has an accidental
         bool end_pt_is_on_an_accidental = false;
-        fill_topmost_bottom_fields(r_ob, end, staff_top_y);
+        fill_topmost_bottommost_fields(r_ob, end, staff_top_y);
         if (direction > 0) {
             if (end->topmost_y_noacc - CONST_EPSILON5 > end->topmost_y)
                 end_pt_is_on_an_accidental = true;
@@ -2900,7 +2698,7 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
                 
                 double pt_y;
                 
-                fill_topmost_bottom_fields(r_ob, chord, staff_top_y);
+                fill_topmost_bottommost_fields(r_ob, chord, staff_top_y);
 
                 double chord_topmost_y = chord->topmost_y;
                 double chord_bottommost_y = chord->bottommost_y;
@@ -2910,7 +2708,7 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
                 if (direction > 0) {
                     pt_y = (r_ob->slurs_avoid_accidentals ? chord_topmost_y : chord_topmost_y_noacc) - CONST_SLUR_AVOID_OBJECTS_PAD * r_ob->zoom_y;
                 } else {
-                    pt_y = (r_ob->slurs_avoid_accidentals ? chord_bottommost_y : chord_bottommost_y_noacc) - CONST_SLUR_AVOID_OBJECTS_PAD * r_ob->zoom_y;
+                    pt_y = (r_ob->slurs_avoid_accidentals ? chord_bottommost_y : chord_bottommost_y_noacc) + CONST_SLUR_AVOID_OBJECTS_PAD * r_ob->zoom_y;
                 }
                 
                 // last chord
@@ -20831,11 +20629,11 @@ double chord_get_alignment_ux(t_notation_obj *r_ob, t_chord *chord)
 
 
 
-double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note)
+double tail_get_alignment_x(t_notation_obj *r_ob, t_note *note)
 {
     switch (r_ob->obj_type) {
         case k_NOTATION_OBJECT_SCORE:
-            return unscaled_xposition_to_xposition(r_ob, get_tail_alignment_ux(r_ob, note));
+            return unscaled_xposition_to_xposition(r_ob, tail_get_alignment_ux(r_ob, note));
             break;
             
         case k_NOTATION_OBJECT_ROLL:
@@ -20857,7 +20655,7 @@ double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note)
 }
 
 
-double get_tail_alignment_ux(t_notation_obj *r_ob, t_note *note)
+double tail_get_alignment_ux(t_notation_obj *r_ob, t_note *note)
 {
     switch (r_ob->obj_type) {
         case k_NOTATION_OBJECT_SCORE:
@@ -20883,7 +20681,7 @@ double get_tail_alignment_ux(t_notation_obj *r_ob, t_note *note)
             break;
             
         case k_NOTATION_OBJECT_ROLL:
-            return xposition_to_unscaled_xposition(r_ob, get_tail_alignment_x(r_ob, note));
+            return xposition_to_unscaled_xposition(r_ob, tail_get_alignment_x(r_ob, note));
             break;
             
         default:
@@ -25945,6 +25743,13 @@ double get_stem_x_from_alignment_point_x(t_notation_obj *r_ob, t_chord *chord, d
     }
     
     return stem_x;
+}
+
+double chord_get_stem_ux(t_notation_obj *r_ob, t_chord *chord)
+{
+    double al_ux = chord_get_alignment_ux(r_ob, chord);
+    double stem_ux = xposition_to_unscaled_xposition(r_ob, get_stem_x_from_alignment_point_x(r_ob, chord, unscaled_xposition_to_xposition(r_ob, al_ux)));
+    return stem_ux;
 }
 
 
@@ -43100,7 +42905,7 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
         for (curr_ch = chord_get_first(r_ob, voice); curr_ch; curr_ch = chord_get_next(curr_ch)){
             double align_x = chord_get_alignment_x(r_ob, curr_ch);
             t_note *longestnote = chord_get_longest_note(r_ob, curr_ch);
-            double tail_x = longestnote ? get_tail_alignment_x(r_ob, longestnote) : align_x;
+            double tail_x = longestnote ? tail_get_alignment_x(r_ob, longestnote) : align_x;
             
             if (align_x > this_x + 200) // safe threshold to break
                 break;

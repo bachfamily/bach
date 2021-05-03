@@ -9748,6 +9748,7 @@ void process_chord_parameters_calculation_NOW(t_roll *x){
             if (curr_ch->need_recompute_parameters) {
                 assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
                 chord_assign_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom, jf_dynamics_roman_nozoom);
+                compute_middleC_position_for_all_voices((t_notation_obj *) x);
                 calculate_chord_parameters((t_notation_obj *) x, curr_ch, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), true);
                 curr_ch->need_recompute_parameters = false;
             }
@@ -11075,7 +11076,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.add_staff = 0;
     x->r_ob.itsme = 0;
     x->r_ob.add_voice = 0;
-    x->r_ob.step_y = CONST_STEP_UY;    
+    x->r_ob.step_y = CONST_STEP_UY * x->r_ob.zoom_y;
     x->r_ob.zoom_x = x->r_ob.horizontal_zoom / 100.;
     x->r_ob.j_inset_y = 0.5;
     set_mousedown((t_notation_obj *)x, NULL, k_NONE);
@@ -11658,8 +11659,9 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     }
     
     // setting bottommost and topmost y values
-    curr_ch->bottommost_y_noacc = curr_ch->firstnote->center.y + (curr_ch->direction < 0 ? octave_stem_length : x->r_ob.step_y);
-    curr_ch->topmost_y_noacc = curr_ch->lastnote->center.y - (curr_ch->direction > 0 ? octave_stem_length : x->r_ob.step_y);
+//    curr_ch->bottommost_y_noacc = curr_ch->firstnote->center.y + (curr_ch->direction < 0 ? octave_stem_length : x->r_ob.step_y);
+//    curr_ch->topmost_y_noacc = curr_ch->lastnote->center.y - (curr_ch->direction > 0 ? octave_stem_length : x->r_ob.step_y);
+    fill_topmost_bottommost_fields((t_notation_obj *)x, curr_ch, staff_top_y);
     
     // painting articulations
     // need to put articulations?

@@ -2774,10 +2774,13 @@ typedef struct _chord
     double            dynamics_portion_of_right_uextension;    ///< Part of the right unscaled extension merely due to the fact that there are some dynamics displayed below the chord.
     
     double            stem_x;                  ///< x pixel of the chord stem
+    
+    // these four are relatively volatile fields used by paint functions
     double            topmost_y;               ///< y pixel of the topmost point in the chord similarly
     double            bottommost_y;            ///< y pixel of the bottommost point in the chord
     double            topmost_y_noacc;         ///< y pixel of the topmost point in the chord, if we ignore the accidentals
     double            bottommost_y_noacc;      ///< y pixel of the bottommost point in the chord, if we ignore the accidentals
+    
     long              system_index;            ///< 0-based index of the system where the chord is.
     
     // used by tree beaming handling and for groups linking
@@ -12831,8 +12834,9 @@ double chord_get_alignment_ux(t_notation_obj *r_ob, t_chord *chord);
 double chord_get_alignment_x(t_notation_obj *r_ob, t_chord *chord);
 
 // TBD
-double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note);
-double get_tail_alignment_ux(t_notation_obj *r_ob, t_note *note);
+double tail_get_alignment_x(t_notation_obj *r_ob, t_note *note);
+double tail_get_alignment_ux(t_notation_obj *r_ob, t_note *note);
+double chord_get_stem_ux(t_notation_obj *r_ob, t_chord *chord);
 
 
 /** Obtain the longest note of a chord
@@ -13992,6 +13996,7 @@ char is_barline_tuttipoint(t_notation_obj *r_ob, t_measure_end_barline *barline)
 //TBD
 char is_barline_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_measure_end_barline *barline);
 char is_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_tuttipoint *tpt);
+void fill_topmost_bottommost_fields(t_notation_obj *r_ob, t_chord *chord, double staff_top);
 
 
 /**    Obtain all the barlines falling together with a given barline.
