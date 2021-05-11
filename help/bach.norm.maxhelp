@@ -2,13 +2,14 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
-			"revision" : 4,
+			"major" : 8,
+			"minor" : 2,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
+		"classnamespace" : "box",
 		"rect" : [ 100.0, 100.0, 504.0, 468.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -38,6 +39,7 @@
 		"subpatcher_template" : "",
 		"showrootpatcherontab" : 0,
 		"showontab" : 0,
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -49,13 +51,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 2,
+							"revision" : 0,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 504.0, 442.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -84,6 +87,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"hidden" : 1,
@@ -93,7 +97,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 169.0, 379.0, 87.0, 23.0 ],
-									"style" : "",
 									"text" : "loadmess set"
 								}
 
@@ -107,7 +110,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 342.0, 163.0, 77.0, 23.0 ],
-									"style" : "",
 									"text" : "loadmess 1"
 								}
 
@@ -120,8 +122,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 267.0, 170.0, 24.0, 24.0 ],
-									"style" : ""
+									"patching_rect" : [ 267.0, 170.0, 24.0, 24.0 ]
 								}
 
 							}
@@ -133,7 +134,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 267.0, 198.0, 89.0, 23.0 ],
-									"style" : "",
 									"text" : "floatoutput $1"
 								}
 
@@ -145,8 +145,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 185.0, 346.0, 100.0, 23.0 ],
-									"style" : ""
+									"patching_rect" : [ 185.0, 346.0, 100.0, 23.0 ]
 								}
 
 							}
@@ -160,7 +159,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 267.0, 304.0, 131.0, 23.0 ],
-									"style" : "",
 									"text" : "bach.norm inf @out t"
 								}
 
@@ -172,8 +170,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 28.0, 346.0, 100.0, 23.0 ],
-									"style" : ""
+									"patching_rect" : [ 28.0, 346.0, 100.0, 23.0 ]
 								}
 
 							}
@@ -187,7 +184,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 68.625, 446.0, 79.0 ],
-									"style" : "",
 									"text" : "By default, bach.norm forces data output in floating point values. This is handy to deal with several direct usages (such as using [bach.normalize] in combination with [nodes]). However, for 1-norms and inf-norms, sometimes it is useful to keep the incoming data type (whenever possible); you can do that by deactivating the \"floatoutput\" attribute.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -202,8 +198,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 123.869919, 247.0, 40.0, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 123.869918999999996, 247.0, 40.0, 23.0 ],
 									"text" : "0 1 2"
 								}
 
@@ -217,8 +212,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 67.869919, 247.0, 51.0, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 67.869918999999996, 247.0, 51.0, 23.0 ],
 									"text" : "1 2 3 4"
 								}
 
@@ -233,7 +227,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 109.0, 304.0, 125.0, 23.0 ],
-									"style" : "",
 									"text" : "bach.norm 1 @out t"
 								}
 
@@ -250,7 +243,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 227.739822, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 227.739822000000004, 57.567627000000002 ]
 								}
 
 							}
@@ -359,11 +352,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p floatoutput",
 					"varname" : "basic_tab[2]"
 				}
@@ -380,13 +371,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 2,
+							"revision" : 0,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 504.0, 442.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -415,6 +407,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"alpha" : 0.7,
@@ -440,7 +433,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 12.0, 381.0, 468.0, 50.0 ],
-									"style" : "",
 									"text" : "The p-norm of a vector x is defined as\n\nThe inf-norm is the absolute value of the maximum element in the llll.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -458,8 +450,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 155.0, 321.5, 134.579132, 39.0 ],
-									"presentation_rect" : [ 115.0, 323.0, 134.579132, 39.0 ]
+									"patching_rect" : [ 155.0, 321.0, 134.57000732421875, 39.0 ]
 								}
 
 							}
@@ -473,8 +464,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 125.0, 119.0, 50.0, 23.0 ],
-									"style" : ""
+									"patching_rect" : [ 125.0, 119.0, 50.0, 23.0 ]
 								}
 
 							}
@@ -488,7 +478,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 125.0, 150.0, 36.0, 23.0 ],
-									"style" : "",
 									"text" : "p $1"
 								}
 
@@ -503,7 +492,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 85.78125, 150.0, 35.0, 23.0 ],
-									"style" : "",
 									"text" : "p inf"
 								}
 
@@ -518,7 +506,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 50.0, 150.0, 32.5, 23.0 ],
-									"style" : "",
 									"text" : "p 2"
 								}
 
@@ -533,7 +520,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 12.0, 150.0, 32.5, 23.0 ],
-									"style" : "",
 									"text" : "p 1"
 								}
 
@@ -548,7 +534,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 68.625, 468.0, 36.0 ],
-									"style" : "",
 									"text" : "By adding an argument, or by using the \"p\" attribute, you can vary compute the generic p-norm, for any integer p > 1, or p = inf",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -566,7 +551,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 213.0, 150.0, 150.0, 40.0 ],
-									"style" : "",
 									"text" : "Click on the arrow tip and drag it"
 								}
 
@@ -585,7 +569,6 @@
 										"versionnumber" : 80001
 									}
 ,
-									"style" : "",
 									"text" : "bach.slice 2"
 								}
 
@@ -600,7 +583,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 317.0, 119.0, 43.0, 23.0 ],
-									"style" : "",
 									"text" : "dump"
 								}
 
@@ -619,7 +601,7 @@
 									"outlettype" : [ "", "", "bang" ],
 									"patching_rect" : [ 317.0, 142.0, 173.0, 135.0 ],
 									"showmode" : 3,
-									"versionnumber" : 80001,
+									"versionnumber" : 80104,
 									"whole_graph_data_0000000000" : [ "_x_x_x_x_bach_float64_x_x_x_x_", 3202605671, 1074072155, "_x_x_x_x_bach_float64_x_x_x_x_", 2863311531, 1073916586 ],
 									"whole_graph_data_count" : [ 1 ]
 								}
@@ -635,7 +617,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 162.0, 243.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "0 1 2"
 								}
 
@@ -651,8 +632,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 24.0, 351.0, 73.0, 23.0 ],
-									"style" : ""
+									"patching_rect" : [ 24.0, 351.0, 73.0, 23.0 ]
 								}
 
 							}
@@ -666,7 +646,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 106.0, 243.0, 51.0, 23.0 ],
-									"style" : "",
 									"text" : "1 2 3 4"
 								}
 
@@ -681,7 +660,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 213.0, 243.0, 85.0, 23.0 ],
-									"style" : "",
 									"text" : "0.707 -0.707"
 								}
 
@@ -696,7 +674,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 24.0, 321.0, 125.0, 23.0 ],
-									"style" : "",
 									"text" : "bach.norm 1 @out t"
 								}
 
@@ -713,7 +690,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 227.739822, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 227.720016479492188, 57.599853515625 ]
 								}
 
 							}
@@ -818,11 +795,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p p-norms",
 					"varname" : "basic_tab[1]"
 				}
@@ -843,7 +818,6 @@
 						"parameter_enable" : 0
 					}
 ,
-					"style" : "",
 					"text" : "js helpstarter.js bach.norm"
 				}
 
@@ -859,13 +833,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 2,
+							"revision" : 0,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 100.0, 126.0, 504.0, 442.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -894,6 +869,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -903,8 +879,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 147.0, 350.5, 206.0, 50.0 ],
-									"style" : "",
+									"patching_rect" : [ 182.0, 351.5, 206.0, 50.0 ],
 									"text" : "By default bach.norm computes the 2-norm of the incoming vector (euclidean norm)",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -922,7 +897,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 131.0, 152.0, 150.0, 40.0 ],
-									"style" : "",
 									"text" : "Click on the arrow tip and drag it"
 								}
 
@@ -941,7 +915,6 @@
 										"versionnumber" : 80001
 									}
 ,
-									"style" : "",
 									"text" : "bach.slice 2"
 								}
 
@@ -956,7 +929,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 272.0, 129.0, 43.0, 23.0 ],
-									"style" : "",
 									"text" : "dump"
 								}
 
@@ -975,8 +947,8 @@
 									"outlettype" : [ "", "", "bang" ],
 									"patching_rect" : [ 272.0, 152.0, 173.0, 135.0 ],
 									"showmode" : 3,
-									"versionnumber" : 80001,
-									"whole_graph_data_0000000000" : [ "_x_x_x_x_bach_float64_x_x_x_x_", 48489, 1073829710, "_x_x_x_x_bach_float64_x_x_x_x_", 58254, 1073625315 ],
+									"versionnumber" : 80104,
+									"whole_graph_data_0000000000" : [ "_x_x_x_x_bach_float64_x_x_x_x_", 273090406, 1074314601, "_x_x_x_x_bach_float64_x_x_x_x_", 4135894433, 1073469970 ],
 									"whole_graph_data_count" : [ 1 ]
 								}
 
@@ -991,7 +963,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 80.0, 217.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "0 1 2"
 								}
 
@@ -1007,8 +978,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 47.0, 395.0, 73.0, 23.0 ],
-									"style" : ""
+									"patching_rect" : [ 47.0, 395.0, 73.0, 23.0 ]
 								}
 
 							}
@@ -1022,7 +992,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 24.0, 217.0, 51.0, 23.0 ],
-									"style" : "",
 									"text" : "1 2 3 4"
 								}
 
@@ -1037,7 +1006,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 131.0, 217.0, 85.0, 23.0 ],
-									"style" : "",
 									"text" : "0.707 -0.707"
 								}
 
@@ -1051,9 +1019,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 47.0, 365.0, 72.0, 23.0 ],
-									"style" : "",
-									"text" : "bach.norm"
+									"patching_rect" : [ 47.0, 365.0, 119.0, 23.0 ],
+									"text" : "bach.norm @out m"
 								}
 
 							}
@@ -1139,11 +1106,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p basic",
 					"varname" : "basic_tab"
 				}
@@ -1161,7 +1126,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 10.0, 10.0, 227.739838, 57.567627 ]
+					"patching_rect" : [ 10.0, 10.0, 227.739837999999992, 57.567627000000002 ]
 				}
 
 			}
@@ -1176,13 +1141,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 2,
+							"revision" : 0,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 504.0, 442.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -1211,6 +1177,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [  ],
 						"lines" : [  ]
 					}
@@ -1221,11 +1188,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p ?",
 					"varname" : "q_tab"
 				}
@@ -1247,21 +1212,21 @@
 			}
 , 			{
 				"name" : "bach.norm.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.sum.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.filter.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
