@@ -366,7 +366,7 @@ void set_score_from_llll_from_read(t_score *x, t_llll* inputlist);
 t_llll* get_score_values_as_llll_for_pwgl(t_score *x);
 
 // bach inspector stuff
-void score_declare_bach_attributes(t_score *x);
+void score_bach_attribute_declares(t_score *x);
 t_rect bach_measure_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line);
 t_rect bach_tempo_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line);
 

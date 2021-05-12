@@ -54,12 +54,12 @@ long iexp2(long exponent){
 }
 
 
-
+//////// FUNCTIONS FOR SLOPE REMAPPING
 
 
 // combines two slopes, as applied one after another, and gives a single output slope approximating them
 // In case the two slopes have the SAME SIGN, the result is not approximated.
-// In case the two slopes
+// This works nicely for bach slope functions, not for max slope functions (TO DO)
 double combine_slopes(double slope1, double slope2)
 {
     // same sign, easy.
@@ -78,16 +78,22 @@ double combine_slopes(double slope1, double slope2)
         return ((slope1+slope2)/(slope1*slope2 + 1));
 }
 
-double rescale_with_slope_and_get_derivative_do(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, char sign_of_slopes_to_be_mirrored)
+
+double get_slope_p_Max(double slope)
 {
-    // Curve function is
-    // y = t^((1+slope)/(1-slope))
-    // for positive slopes and
-    // y = 1-(1-t)^((1+|slope|)/(1-|slope|))
-    // for negative slopes.
-    // The parameter t is the normalized x (between 0 and 1), and result is also normalized between 0 and 1
+    double RFACTOR = 1/0.23;
+    double PFACTOR = 5;
+    double DIV_RFACTOR = 1/(exp(RFACTOR)-1.);
     
+    double p = (slope >= 0. ? 1 : -1) * PFACTOR *(exp((1 - abs(slope))*RFACTOR)-1.)*DIV_RFACTOR;
+    if (p>=0. && p<0.005) p = 0.005;
+    if (p<0. && p>-0.005) p = -0.005;
     
+    return p;
+}
+
+double rescale_with_slope_and_get_derivative(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, e_slope_mapping slope_mapping)
+{
 	char mirrored = false;
 	double value_norm, res, res_norm;
 	// slope is between -1 and 1; 0 = linear; this function rescale a given value to new boundaries with a given slope.
@@ -100,27 +106,50 @@ double rescale_with_slope_and_get_derivative_do(double value, double min, double
     
     
     value_norm = (value-min)/(max-min);
+    
+    if (slope_mapping == k_SLOPE_MAPPING_BACH) {
 
-	if ((sign_of_slopes_to_be_mirrored < 0 && slope < 0.) || (sign_of_slopes_to_be_mirrored > 0 && slope > 0.)) {
-		slope = -slope;
-        value_norm = 1 - value_norm;
-        mirrored = true;
-	}
-	
-	if (slope == 0.)
-        res_norm = value_norm; // faster (in most cases we need this)
-	else {
-		double base, exp;
-		base = CLAMP(value_norm, 0., 1.);
-		exp = (1+slope)/(1-slope);
-		res_norm = pow(base, exp);
-        if (derivative) {
-            *derivative = ((new_max - new_min) / (max - min)) * exp * (res_norm / base);
+        // Curve function is
+        // y = t^((1+slope)/(1-slope))
+        // for positive slopes and
+        // y = 1-(1-t)^((1-slope)/(1+slope))
+        // for negative slopes.
+        // The parameter t is the normalized x (between 0 and 1), and result is also normalized between 0 and 1
+        
+        if (slope == 0.)
+            res_norm = value_norm; // faster (in most cases we need this)
+        else {
+            double base, exp;
+
+            if (slope < 0.) {
+                slope = -slope;
+                value_norm = 1 - value_norm;
+                mirrored = true;
+            }
+
+            base = CLAMP(value_norm, 0., 1.);
+            exp = (1+slope)/(1-slope);
+            res_norm = pow(base, exp); // resnorm = valuenorm ^ ((1+slope)/(1-slope))
+            if (derivative) {
+//                if (slope > 0.)
+//                    *derivative = ((new_max - new_min) / (max - min)) * exp * (res_norm / base);
+//                else
+                    *derivative = ((new_max - new_min) / (max - min)) * exp * (res_norm / base);
+            }
+
+            if (mirrored)
+                res_norm = 1 - res_norm;
         }
-	}
-	
-    if (mirrored) {
-        res_norm = 1 - res_norm;
+        
+    } else { // MAX FUNCTION
+        double p = get_slope_p_Max(slope);
+        double div_erp = 1./(exp(1./p)-1.);
+        double div_durp = 1./p;
+        
+        res_norm = (exp(value_norm * div_durp)-1) * div_erp;
+        
+        if (derivative)
+            *derivative = ((new_max - new_min) / (max - min)) * div_durp * (res_norm + div_erp);
     }
 
     res = new_min + (new_max - new_min) * res_norm;
@@ -129,20 +158,56 @@ double rescale_with_slope_and_get_derivative_do(double value, double min, double
 }
 
 
-double rescale_with_slope_and_get_derivative(double value, double min, double max, double new_min, double new_max, double slope, double *derivative)
+
+// inverse mapping
+double rescale_with_slope_inv(double value, double min, double max, double new_min, double new_max, double slope, e_slope_mapping slope_mapping)
 {
-    return rescale_with_slope_and_get_derivative_do(value, min, max, new_min, new_max, slope, derivative, -1);
+    char mirrored = false;
+    double value_norm, res, res_norm;
+    // slope is between -1 and 1; 0 = linear; this function rescale a given value to new boundaries with a given slope.
+    
+    if (slope >= 1.) return new_min;
+    if (slope <= -1.) return new_max;
+    if (max == min) return new_min;
+    
+    value_norm = (value-min)/(max-min);
+    
+    if (slope_mapping == k_SLOPE_MAPPING_BACH) {
+        
+        if (slope == 0.)
+            res_norm = value_norm; // faster (in most cases we need this)
+        else {
+            double base, exp;
+            
+            if (slope < 0.) {
+                slope = -slope;
+                value_norm = 1 - value_norm;
+                mirrored = true;
+            }
+            
+            base = CLAMP(value_norm, 0., 1.);
+            exp = (1-slope)/(1+slope);
+            res_norm = pow(base, exp);
+            
+            if (mirrored)
+                res_norm = 1 - res_norm;
+        }
+        
+    } else { // MAX FUNCTION
+        double p = get_slope_p_Max(slope);
+        res_norm = p * log(1.+(exp(1./p)-1)*value_norm);
+    }
+    
+    res = new_min + (new_max - new_min) * res_norm;
+    
+    return res;
 }
 
-double rescale_with_slope_and_get_derivative_inv(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, char admit_mirroring)
-{
-    return rescale_with_slope_and_get_derivative_do(value, min, max, new_min, new_max, slope, derivative, 1);
-}
 
 
-double rescale_same_boundaries_with_slope(double value, double min, double max, double slope)
+double rescale_same_boundaries_with_slope(double value, double min, double max, double slope, e_slope_mapping slope_mapping)
 {
-	return rescale_with_slope(value, min, max, min, max, slope);
+	return rescale_with_slope(value, min, max, min, max, slope, slope_mapping);
 }
 
 
@@ -152,16 +217,13 @@ double rescale(double value, double min, double max, double new_min, double new_
     return new_min + (new_max - new_min) * (value - min)/(max - min);
 }
 
-double rescale_with_slope(double value, double min, double max, double new_min, double new_max, double slope)
+double rescale_with_slope(double value, double min, double max, double new_min, double new_max, double slope, e_slope_mapping slope_mapping)
 {
-    return rescale_with_slope_and_get_derivative_do(value, min, max, new_min, new_max, slope, NULL, -1);
+    return rescale_with_slope_and_get_derivative(value, min, max, new_min, new_max, slope, NULL, slope_mapping);
 }
 
 
-double rescale_with_slope_inv(double value, double min, double max, double new_min, double new_max, double slope)
-{
-    return rescale_with_slope_and_get_derivative_do(value, min, max, new_min, new_max, -slope, NULL, 1);
-}
+
 
 
 

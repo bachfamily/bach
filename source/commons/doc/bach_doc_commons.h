@@ -1563,10 +1563,17 @@
 	// The <m>erasebreakpoints</m> message deletes all the pitch breakpoints of the selected notes.
 
 
-#define BACH_DOC_MESSAGE_ADDSLOT
-	// An <m>addslot</m> message will replace the content of one or more slots, for all the selected notes.
-	// The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
+#define BACH_DOC_MESSAGE_SETSLOT
+	// A <m>setslot</m> message (or <m>addslot</m> for backward compatibility)
+    // will replace the content of one or more slots, for all the selected notes.
+	// The syntax is <b>setslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
+
+
+#define BACH_DOC_MESSAGE_SETDURATIONLINE
+    // A <m>setedurationline</m> message will replace the duration line of all the selected notes with the introduced breakpoints
+    // The syntax is
+    // <b>setdurationline [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>] [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>]...</b>. <br />
 
 
 #define BACH_DOC_MESSAGE_ERASESLOT
@@ -1625,7 +1632,7 @@
 #define BACH_DOC_MESSAGE_LAMBDA
 	// The <m>lambda</m> message is a general router which can be prepended to all the following operations:
 	// <m>cents</m>, <m>velocity</m>, <m>onset</m>, <m>tail</m>, <m>duration</m>, <m>voice</m>, <m>addbreakpoint</m>, <m>erasebreakpoint</m>,
-    // <m>addslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
+    // <m>setslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
 	// If such router is prepended, the corresponding operation will apply on the currently output selected item.
 	// The idea is that when a selection dump is asked or a command is sent (also see <m>dumpselection</m> or <m>sendcommand</m>), the notation
 	// elements are output one by one from the playout (notewise or chordwise depending on the <m>playmode</m>): if you put a feedback loop from the playout

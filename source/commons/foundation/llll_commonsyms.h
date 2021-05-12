@@ -252,6 +252,8 @@ typedef struct _llllobj_common_symbols_table
     t_symbol	*s_insertslotitem;
     t_symbol	*s_deleteslotitem;
 	t_symbol	*s_addslot;
+    t_symbol    *s_setslot;
+    t_symbol    *s_setdurationline;
 	t_symbol	*s_addbreakpoint;
 	t_symbol	*s_erasebreakpoints;
 	t_symbol	*s_widthfactor;
@@ -646,6 +648,8 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_insertslotitem	(_llllobj_common_symbols->s_insertslotitem)
 #define _llllobj_sym_deleteslotitem	(_llllobj_common_symbols->s_deleteslotitem)
 #define _llllobj_sym_addslot		(_llllobj_common_symbols->s_addslot)
+#define _llllobj_sym_setslot        (_llllobj_common_symbols->s_setslot)
+#define _llllobj_sym_setdurationline        (_llllobj_common_symbols->s_setdurationline)
 #define _llllobj_sym_addbreakpoint	(_llllobj_common_symbols->s_addbreakpoint)
 #define _llllobj_sym_erasebreakpoints	(_llllobj_common_symbols->s_erasebreakpoints)
 #define _llllobj_sym_widthfactor	(_llllobj_common_symbols->s_widthfactor)

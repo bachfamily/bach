@@ -37,6 +37,23 @@ DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, voicenames_as_llll, notation_obj
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, stafflines_as_llll, notation_obj_getattr_stafflines)
 
 
+
+double notationobj_rescale_with_slope(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope)
+{
+    return rescale_with_slope(value, min, max, new_min, new_max, slope, (e_slope_mapping)r_ob->slope_mapping_type);
+}
+
+double notationobj_rescale_with_slope_and_get_derivative(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope, double *derivative)
+{
+    return rescale_with_slope_and_get_derivative(value, min, max, new_min, new_max, slope, derivative, (e_slope_mapping)r_ob->slope_mapping_type);
+}
+
+double notationobj_rescale_with_slope_inv(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope)
+{
+    return rescale_with_slope_inv(value, min, max, new_min, new_max, slope, (e_slope_mapping)r_ob->slope_mapping_type);
+}
+
+
 long notationobj_get_notification_outlet(t_notation_obj *r_ob)
 {
     switch (r_ob->obj_type) {
@@ -185,7 +202,7 @@ void write_text_standard_account_for_insets(t_notation_obj *r_ob, t_jgraphics* g
 
 
 
-char timepoints_compare(t_timepoint tp1, t_timepoint tp2){ 
+char timepoint_compare(t_timepoint tp1, t_timepoint tp2){
 // compares two timepoints. Returns 1 if tp1 is greater, -1 if tp2 is greater, 0 if they coincide.
     if (tp1.measure_num > tp2.measure_num) 
         return 1;
@@ -1293,6 +1310,23 @@ void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
 }
 
 
+void notationobj_paint_curve(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width)
+{
+    paint_curve(g, color, x1, y1, x2, y2, slope, width, (e_slope_mapping)r_ob->slope_mapping_type);
+}
+
+void notationobj_paint_doublewidth_curve(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width_start, double width_end)
+{
+    paint_doublewidth_curve(g, color, x1, y1, x2, y2, slope, width_start, width_end, (e_slope_mapping)r_ob->slope_mapping_type);
+}
+
+
+void notationobj_paint_colorgradient_curve(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color_start, t_jrgba color_end, double x1, double y1, double x2, double y2, double slope, double width, long num_steps, char are_color_from_spectrum, double vel1, double vel2, double max_velocity)
+{
+    paint_colorgradient_curve(g, color_start, color_end, x1, y1, x2, y2, slope, width, num_steps, are_color_from_spectrum, vel1, vel2, max_velocity, (e_slope_mapping)r_ob->slope_mapping_type);
+}
+
+
 void notationobj_paint_legend(t_notation_obj *r_ob, t_jgraphics *g, t_rect rect, t_jfont *jf_text_legend)
 {
     // upper legend (selected element's legend)
@@ -1462,16 +1496,16 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                     double bpt_x = r_ob->width - r_ob->j_inset_x;
                     double bpt_y;
  
-                    bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + rescale_with_slope(rupture_rel_x[curr_rupture_point], temp->prev->rel_x_pos, temp->rel_x_pos, temp->prev->delta_mc, temp->delta_mc, temp->slope), voice);
+                    bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + notationobj_rescale_with_slope(r_ob, rupture_rel_x[curr_rupture_point], temp->prev->rel_x_pos, temp->rel_x_pos, temp->prev->delta_mc, temp->delta_mc, temp->slope), voice);
                     
                     if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH && r_ob->breakpoints_have_velocity) {
                         double width1 = r_ob->durations_line_width * r_ob->zoom_y * (((double) (temp->prev->prev ? temp->prev->velocity : curr_nt->velocity)) / CONST_MAX_VELOCITY + 0.1);
                         double width2 = r_ob->durations_line_width * r_ob->zoom_y * (((double) temp->velocity) / CONST_MAX_VELOCITY + 0.1);
-                        paint_doublewidth_curve(g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
+                        notationobj_paint_doublewidth_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
                     } else if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH) 
-                        paint_curve(g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y * (((double)curr_nt->velocity) / CONST_MAX_VELOCITY + 0.1));
+                        notationobj_paint_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y * (((double)curr_nt->velocity) / CONST_MAX_VELOCITY + 0.1));
                     else
-                        paint_curve(g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y);
+                        notationobj_paint_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y);
                     
                     prev_bpt_x = r_ob->j_inset_x + CONST_ROLL_UX_LEFT_START * r_ob->zoom_y; 
                     prev_bpt_y = bpt_y + system_jump;
@@ -1493,9 +1527,9 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
             if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH && r_ob->breakpoints_have_velocity)  {
                 double width1 = r_ob->durations_line_width * r_ob->zoom_y * (((double) (temp->prev->prev ? temp->prev->velocity : curr_nt->velocity)) / CONST_MAX_VELOCITY + 0.1);
                 double width2 = r_ob->durations_line_width * r_ob->zoom_y * (((double) temp->velocity) / CONST_MAX_VELOCITY + 0.1);
-                paint_doublewidth_curve(g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
+                notationobj_paint_doublewidth_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, width1, width2);
             } else if (r_ob->velocity_handling == k_VELOCITY_HANDLING_DURATIONLINEWIDTH) 
-                paint_curve(g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, rescale((double)curr_nt->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY, 0.5, r_ob->durations_line_width * r_ob->zoom_y));
+                notationobj_paint_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, rescale((double)curr_nt->velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY, 0.5, r_ob->durations_line_width * r_ob->zoom_y));
             else if ((r_ob->velocity_handling == k_VELOCITY_HANDLING_COLORSCALE || r_ob->velocity_handling == k_VELOCITY_HANDLING_ALPHACHANNEL || 
                       r_ob->velocity_handling == k_VELOCITY_HANDLING_COLORSPECTRUM) && r_ob->breakpoints_have_velocity) {
                 long vel1 = temp->prev->prev ? temp->prev->velocity : curr_nt->velocity;
@@ -1504,11 +1538,11 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                 t_jrgba color_end = note_get_color(r_ob, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), 
                                                    is_note_played, is_note_locked, is_note_muted, is_note_solo, false, temp->velocity);
                 long num_steps = MAX(labs(vel1 - CLAMP(temp->velocity, 0, CONST_MAX_VELOCITY)) * 1, 1);
-                paint_colorgradient_curve(g, color_start, color_end, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y, num_steps, 
+                notationobj_paint_colorgradient_curve(r_ob, g, color_start, color_end, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y, num_steps,
                                           r_ob->velocity_handling == k_VELOCITY_HANDLING_COLORSPECTRUM && 
                                           !(!note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected)), vel1, temp->velocity, CONST_MAX_VELOCITY);
             } else
-                paint_curve(g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y);
+                notationobj_paint_curve(r_ob, g, notecolor, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, r_ob->durations_line_width * r_ob->zoom_y);
             if (temp->rel_x_pos < 1.) { 
                 prev_bpt_x = bpt_x; 
                 prev_bpt_y = bpt_y; 
@@ -1544,13 +1578,13 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                 bptcolor = tail_get_color(r_ob, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, false, r_ob->breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
                     
                 if (r_ob->breakpoints_have_noteheads) {
-                    paint_default_small_notehead_with_accidentals(r_ob, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE );
+                    paint_default_small_notehead_with_accidentals(r_ob, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(r_ob, temp->velocity) : CONST_GRACE_CHORD_SIZE );
                 } else { 
                     paint_rhomboid(g, r_ob->j_background_rgba, bptcolor, bpt_x, bpt_y, r_ob->breakpoints_size * 0.6 * r_ob->zoom_y, r_ob->breakpoints_size * r_ob->zoom_y, 0.9);
                 }
             } else { //it's a tail
                 if (r_ob->breakpoints_have_noteheads && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
-                    paint_default_small_notehead_with_accidentals(r_ob, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, end_pos, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(temp->velocity) : CONST_GRACE_CHORD_SIZE);
+                    paint_default_small_notehead_with_accidentals(r_ob, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, end_pos, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(r_ob, temp->velocity) : CONST_GRACE_CHORD_SIZE);
                 } else { 
                     if (r_ob->show_tails) {
                         double bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
@@ -8670,7 +8704,8 @@ void measure_set_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature *t
     measure->timesignature = *ts;
     compute_utf_timesignature(r_ob, &measure->timesignature);
     synchronize_boxes_for_measure(r_ob, measure);
-    measure->need_check_autocompletion = true;
+    if (r_ob->auto_complete_measures)
+        measure->need_check_autocompletion = true;
     measure->need_recompute_beamings = true;
 } 
 
@@ -9650,7 +9685,7 @@ t_rational get_ts_sym_duration(t_timesignature ts) { // calcualte the symbolic (
 }
 
 t_rational get_sym_durations_between_timepoints(t_scorevoice *voice, t_timepoint tp1, t_timepoint tp2) { // calcualte the symbolic (rational) duration between two timepoints
-    if (timepoints_compare(tp1, tp2) >= 0)
+    if (timepoint_compare(tp1, tp2) >= 0)
         return long2rat(0);
     else {
         long start_meas = tp1.measure_num;
@@ -9799,8 +9834,8 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     }
     
     out_duration = long2rat(0);
-    while (tempo && (timepoints_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp2) <= 0)) {
-        long cmp1 = timepoints_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp1);
+    while (tempo && (timepoint_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp2) <= 0)) {
+        long cmp1 = timepoint_compare(build_timepoint(tempo->owner->measure_number, tempo->changepoint), tp1);
         if (cmp1 <= 0) { // tempo->changepoint BEFORE tp1
             if (!tempo_L_has_changed)
                 free_tempo(r_ob, tempo_L);
@@ -9810,7 +9845,7 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
             // gotta add a trapece
             t_rational newtempo, trapece;
             tempo_R = tempo;
-            if (timepoints_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) {
+            if (timepoint_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) {
                 intermediate_point = tp1;
                 intermediate_tempo = (tempo_L->interpolation_type == 1) ? get_intermediate_tempo(voice, tp1, tempo_L, tempo_R) : tempo_L->tempo_value;
             } else {
@@ -9838,10 +9873,10 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     }
     
     // last trapece
-    if (timepoints_compare(tp2, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint)) < 0) {  ///    tp1 --- tp2 --- L
+    if (timepoint_compare(tp2, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint)) < 0) {  ///    tp1 --- tp2 --- L
         intermediate_point = tp1;
         intermediate_tempo = tempo_L->tempo_value;
-    } else if (timepoints_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) { /// L --- tp1 --- tp2
+    } else if (timepoint_compare(build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp1) < 0) { /// L --- tp1 --- tp2
         intermediate_point = tp1;
         if (tempo_R) 
             intermediate_tempo = (tempo_L->interpolation_type == 1) ? get_intermediate_tempo(voice, tp1, tempo_L, tempo_R) : tempo_L->tempo_value;
@@ -9854,7 +9889,7 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     
     if (!tempo_R) // tempo_L was the last tempo! 
         tp2_tempo = tempo_L->tempo_value;
-    else if (timepoints_compare(build_timepoint(tempo_R->owner->measure_number, tempo_R->changepoint), tp2) == 0) // tempo change precisely on the end
+    else if (timepoint_compare(build_timepoint(tempo_R->owner->measure_number, tempo_R->changepoint), tp2) == 0) // tempo change precisely on the end
         tp2_tempo = (tempo_L->interpolation_type == 1) ? tempo_R->tempo_value : tempo_L->tempo_value;
     else // there's another tempo, but later
         tp2_tempo = (tempo_L->interpolation_type == 1) ? get_intermediate_tempo(voice, tp2, tempo_L, tempo_R) : tempo_L->tempo_value;
@@ -10655,8 +10690,8 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
         double new_midicents = note->midicents;
         t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll(r_ob, note, 0., cut_rel_pos, NULL);
         t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll(r_ob, note, cut_rel_pos, 1., &new_midicents);
-        set_breakpoints_values_to_note_from_llll(r_ob, note, left_bpt);
-        set_breakpoints_values_to_note_from_llll(r_ob, right_note, right_bpt);
+        note_set_breakpoints_from_llll(r_ob, note, left_bpt);
+        note_set_breakpoints_from_llll(r_ob, right_note, right_bpt);
         right_note->midicents = new_midicents;
         llll_free(left_bpt);
         llll_free(right_bpt);
@@ -10669,8 +10704,8 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
             t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll(r_ob, (t_notation_item *)note, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, -1.); // -1 means: till the end (it's different from 1. for slot allowing extension beyond note tails)
             llll_wrap_once(&left_slot);
             llll_wrap_once(&right_slot);
-            set_slots_values_to_note_from_llll(r_ob, note, left_slot);
-            set_slots_values_to_note_from_llll(r_ob, right_note, right_slot);
+            note_set_slots_from_llll(r_ob, note, left_slot);
+            note_set_slots_from_llll(r_ob, right_note, right_slot);
         }
     }
 
@@ -11049,7 +11084,7 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
     newmeasure->need_recompute_beamings = true;
     newmeasure->need_recompute_beams_positions = false;
     newmeasure->need_check_ties = true;
-    newmeasure->need_check_autocompletion = true;
+    newmeasure->need_check_autocompletion = false;
     
     newmeasure->custom_boxing = measure->custom_boxing;
     newmeasure->boxes = llll_get();
@@ -20776,12 +20811,12 @@ t_marker *nth_marker(t_notation_obj *r_ob, long n)
     // to be improved: if the marker# is > n/2, pass the list the other way round!
 }
 
-// computes the nth (1-based) chord of the whole nroll
+// computes the nth (0-based) chord of the whole nroll
 t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n)
 {
     t_chord *curr = voice->firstchord; 
     long i; 
-    long zero_based_index = n-1; 
+    long zero_based_index = n;
 
     if (zero_based_index < 0) 
         return NULL;
@@ -21206,7 +21241,7 @@ t_chord *chord_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num
             chord_num = voice->num_chords + chord_num + 1;
 
         if (chord_num > 0 && chord_num <= voice->num_chords)
-            return nth_chord_of_rollvoice(voice, chord_num);
+            return nth_chord_of_rollvoice(voice, chord_num - 1);
         
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
@@ -21242,7 +21277,7 @@ t_note *note_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num, 
             chord_num = voice->num_chords + chord_num + 1;
         
         if (chord_num > 0 && chord_num <= voice->num_chords) {
-            t_chord *temp = nth_chord_of_rollvoice(voice, chord_num);
+            t_chord *temp = nth_chord_of_rollvoice(voice, chord_num - 1);
             if (temp) {
                 if (note_num < 0)
                     note_num = temp->num_notes + note_num + 1;
@@ -24204,7 +24239,7 @@ void assign_chord_lyrics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_lyric
         
         if (slot && slot->firstitem) {
             char *text = (char *)slot->firstitem->item;
-            char len = strlen(text);
+            long len = strlen(text);
             double width, height;
             char *text_ok = (char *)bach_newptr((len + 1) * sizeof(char));
             
@@ -24336,9 +24371,9 @@ void chord_assign_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dyn
 
 
 
-double velocity_to_notesize_factor(long velocity)
+double velocity_to_notesize_factor(t_notation_obj *r_ob, long velocity)
 {
-    return rescale_with_slope(velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY, 0.4, 1., 0);
+    return notationobj_rescale_with_slope(r_ob, velocity, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY, 0.4, 1., 0);
 }
 
 // also calculate note size from velocity_handling, if needed
@@ -24368,7 +24403,7 @@ void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note){
     }
     
     if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) {
-        double factor = velocity_to_notesize_factor(note->velocity);
+        double factor = velocity_to_notesize_factor(r_ob, note->velocity);
         note->accidentals_resize *= factor;
         note->notehead_resize *= factor;
     }
@@ -26022,7 +26057,7 @@ int is_in_durationline_shape(t_notation_obj *r_ob, t_note *note, long point_x, l
     while (temp) {
         double bpt_x, bpt_y;
         breakpoint_get_pt(r_ob, temp, &bpt_x, &bpt_y, &start_pos, &end_pos);
-        if (is_pt_in_curve_shape(point_x, point_y, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, line_tol * CONST_CLICK_BEZIER_TOLLERATION_FACTOR))
+        if (is_pt_in_curve_shape(point_x, point_y, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, line_tol * CONST_CLICK_BEZIER_TOLLERATION_FACTOR, (e_slope_mapping)r_ob->slope_mapping_type))
             return 1;
         
         prev_bpt_x = bpt_x; prev_bpt_y = bpt_y;
@@ -26525,7 +26560,7 @@ t_notation_item *notation_item_retrieve_from_ID(t_notation_obj *r_ob, long ID)
 
 t_notation_item *notation_item_get_first_selected_account_for_lambda(t_notation_obj *r_ob, char lambda)
 {
-    return lambda ? notation_item_retrieve_from_ID(r_ob, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
+    return lambda ? (r_ob->obj_type == k_NOTATION_OBJECT_SLOT ? (t_notation_item *)r_ob->dummynote : notation_item_retrieve_from_ID(r_ob, r_ob->lambda_selected_item_ID)) : r_ob->firstselecteditem;
 }
 
 void notation_item_init(t_notation_item *it, e_element_types item_type)
@@ -27738,7 +27773,7 @@ void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver
     dummy->duration = giver_duration;
     t_llll *temp = llll_get();
     llll_appendllll_clone(temp, slot_llll, 0, WHITENULL_llll, NULL);
-    set_slots_values_to_note_from_llll(r_ob, dummy, temp);
+    note_set_slots_from_llll(r_ob, dummy, temp);
     t_llll *extracted_portion = notation_item_get_partial_single_slot_values_as_llll(r_ob, (t_notation_item *)dummy, k_CONSIDER_FOR_SAVING, slotnum, start_glued_note_portion_rel_x, end_glued_note_portion_rel_x);
     free_note(r_ob, dummy);
     llll_free(temp);
@@ -27800,7 +27835,7 @@ void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver
     // So we set it and then we undo it, just to avoid cropping
     double old_receiver_duration = receiver->duration;
     receiver->duration = total_new_duration;
-    set_slots_values_to_note_from_llll(r_ob, receiver, final_slot_wrapped_ll);
+    note_set_slots_from_llll(r_ob, receiver, final_slot_wrapped_ll);
     receiver->duration = old_receiver_duration;
     
     // easing transition slotitem
@@ -28013,7 +28048,7 @@ void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll 
             }
         }
         
-        set_breakpoints_values_to_note_from_llll(r_ob, receiver, final_breakpoints);
+        note_set_breakpoints_from_llll(r_ob, receiver, final_breakpoints);
         
         // easing transition breakpoint
         if (idx_of_bpt_to_be_smoothed >= 0) {
@@ -28137,7 +28172,7 @@ t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_o
             if (temp && temp->prev && ((t_pts *)temp->item)->x > start_x_pos) {
                 t_pts *pts_prev = (t_pts *)temp->prev->item;
                 t_pts *pts = (t_pts *)temp->item;
-                double start_y_pos = rescale_with_slope(start_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
+                double start_y_pos = notationobj_rescale_with_slope(r_ob, start_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
                 llll_appendllll(out_llll, double_triplet_to_llll(domain_min, start_y_pos, 0.), 0, WHITENULL_llll);
             }
             
@@ -28152,7 +28187,7 @@ t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_o
             if (temp && temp->prev && !can_extend && ((t_pts *)temp->item)->x > end_x_pos) {
                 t_pts *pts_prev = (t_pts *)temp->prev->item;
                 t_pts *pts = (t_pts *)temp->item;
-                double end_y_pos = rescale_with_slope(end_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
+                double end_y_pos = notationobj_rescale_with_slope(r_ob, end_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
                 llll_appendllll(out_llll, double_triplet_to_llll(new_domain_max, end_y_pos, 0.), 0, WHITENULL_llll);
             }
             break;
@@ -28169,8 +28204,8 @@ t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_o
             if (temp && temp->prev && ((t_pts3d *)temp->item)->x > start_x_pos) {
                 t_pts3d *pts_prev = (t_pts3d *)temp->prev->item;
                 t_pts3d *pts = (t_pts3d *)temp->item;
-                double start_y_pos = rescale_with_slope(start_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
-                double start_z_pos = rescale_with_slope(start_x_pos, pts_prev->x, pts->x, pts_prev->z, pts->z, pts->slope);
+                double start_y_pos = notationobj_rescale_with_slope(r_ob, start_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
+                double start_z_pos = notationobj_rescale_with_slope(r_ob, start_x_pos, pts_prev->x, pts->x, pts_prev->z, pts->z, pts->slope);
                 llll_appendllll(out_llll, double_quadruplet_to_llll(domain_min, start_y_pos, start_z_pos, 0.), 0, WHITENULL_llll);
             }
             
@@ -28185,8 +28220,8 @@ t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_o
             if (temp && temp->prev && !can_extend && ((t_pts3d *)temp->item)->x > end_x_pos) {
                 t_pts3d *pts_prev = (t_pts3d *)temp->prev->item;
                 t_pts3d *pts = (t_pts3d *)temp->item;
-                double end_y_pos = rescale_with_slope(end_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
-                double end_z_pos = rescale_with_slope(end_x_pos, pts_prev->x, pts->x, pts_prev->z, pts->z, pts->slope);
+                double end_y_pos = notationobj_rescale_with_slope(r_ob, end_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
+                double end_z_pos = notationobj_rescale_with_slope(r_ob, end_x_pos, pts_prev->x, pts->x, pts_prev->z, pts->z, pts->slope);
                 llll_appendllll(out_llll, double_quadruplet_to_llll(new_domain_max, end_y_pos, end_z_pos, 0.), 0, WHITENULL_llll);
             }
             break;
@@ -28303,9 +28338,9 @@ t_llll* note_get_partial_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note 
         rel_x_pos_ratio = (start_rel_x_pos - temp->prev->rel_x_pos) /(temp->rel_x_pos - temp->prev->rel_x_pos);
         start_y_pos = temp->prev->delta_mc + rel_x_pos_ratio * (temp->delta_mc - temp->prev->delta_mc);
         if (temp->delta_mc >= temp->prev->delta_mc)
-            start_y_pos = rescale_with_slope(start_y_pos, temp->prev->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->delta_mc, temp->slope);
+            start_y_pos = notationobj_rescale_with_slope(r_ob, start_y_pos, temp->prev->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->delta_mc, temp->slope);
         else
-            start_y_pos = temp->delta_mc + temp->prev->delta_mc - rescale_with_slope(temp->prev->delta_mc - start_y_pos, 0, temp->prev->delta_mc - temp->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->slope);
+            start_y_pos = temp->delta_mc + temp->prev->delta_mc - notationobj_rescale_with_slope(r_ob, temp->prev->delta_mc - start_y_pos, 0, temp->prev->delta_mc - temp->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->slope);
         
         inner2_llll = llll_get();
         if (new_start_midicents) *new_start_midicents = note->midicents + start_y_pos; // resetting start midicents
@@ -28380,9 +28415,9 @@ t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e
             rel_x_pos_ratio = (start_x_pos - temp->prev->rel_x_pos) /(temp->rel_x_pos - temp->prev->rel_x_pos);
             start_y_pos = temp->prev->delta_mc + rel_x_pos_ratio * (temp->delta_mc - temp->prev->delta_mc);
             if (temp->delta_mc >= temp->prev->delta_mc)
-                start_y_pos = rescale_with_slope(start_y_pos, temp->prev->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->delta_mc, temp->slope);
+                start_y_pos = notationobj_rescale_with_slope(r_ob, start_y_pos, temp->prev->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->delta_mc, temp->slope);
             else
-                start_y_pos = temp->delta_mc + temp->prev->delta_mc - rescale_with_slope(temp->prev->delta_mc - start_y_pos, 0, temp->prev->delta_mc - temp->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->slope);
+                start_y_pos = temp->delta_mc + temp->prev->delta_mc - notationobj_rescale_with_slope(r_ob, temp->prev->delta_mc - start_y_pos, 0, temp->prev->delta_mc - temp->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->slope);
             
             inner2_llll = llll_get();
             if (new_start_midicents) 
@@ -28514,9 +28549,9 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                     x_ratio = (new_x_pos - prev_x) /(this_x - prev_x);
                     new_y_pos = prev_y + x_ratio * (this_y - prev_y);
                     if (this_y >= prev_y)
-                        new_y_pos = rescale_with_slope(new_y_pos, prev_y, this_y, prev_y, this_y, this_slope);
+                        new_y_pos = notationobj_rescale_with_slope(r_ob, new_y_pos, prev_y, this_y, prev_y, this_y, this_slope);
                     else
-                        new_y_pos = this_y + prev_y - rescale_with_slope(prev_y - new_y_pos, 0, prev_y - this_y, this_y, prev_y, this_slope);
+                        new_y_pos = this_y + prev_y - notationobj_rescale_with_slope(r_ob, prev_y - new_y_pos, 0, prev_y - this_y, this_y, prev_y, this_slope);
                     
                     if (mode == k_CONSIDER_FOR_SAMPLING) {
                         llll_appenddouble(inner4_llll, new_y_pos, 0, WHITENULL_llll); // y position only
@@ -28527,7 +28562,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); //
                         llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
                     }
-                } else if (mode == k_CONSIDER_FOR_SAMPLING && ((t_pts *)temp_item->item)->x == hot_point) {
+                } else if (mode == k_CONSIDER_FOR_SAMPLING && temp_item && ((t_pts *)temp_item->item)->x == hot_point) {
                     llll_appenddouble(inner4_llll, ((t_pts *)temp_item->item)->y, 0, WHITENULL_llll); // y position only
                 }
             }
@@ -28579,14 +28614,14 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                     new_z_pos = prev_z + x_ratio * (this_z - prev_z);
                     
                     if (this_y >= prev_y)
-                        new_y_pos = rescale_with_slope(new_y_pos, prev_y, this_y, prev_y, this_y, this_slope);
+                        new_y_pos = notationobj_rescale_with_slope(r_ob, new_y_pos, prev_y, this_y, prev_y, this_y, this_slope);
                     else
-                        new_y_pos = this_y + prev_y - rescale_with_slope(prev_y - new_y_pos, 0, prev_y - this_y, this_y, prev_y, this_slope);
+                        new_y_pos = this_y + prev_y - notationobj_rescale_with_slope(r_ob, prev_y - new_y_pos, 0, prev_y - this_y, this_y, prev_y, this_slope);
 
                     if (this_z >= prev_z)
-                        new_z_pos = rescale_with_slope(new_z_pos, prev_z, this_z, prev_z, this_z, this_slope);
+                        new_z_pos = notationobj_rescale_with_slope(r_ob, new_z_pos, prev_z, this_z, prev_z, this_z, this_slope);
                     else
-                        new_z_pos = this_z + prev_z - rescale_with_slope(prev_z - new_z_pos, 0, prev_z - this_z, this_z, prev_z, this_slope);
+                        new_z_pos = this_z + prev_z - notationobj_rescale_with_slope(r_ob, prev_z - new_z_pos, 0, prev_z - this_z, this_z, prev_z, this_slope);
                     
                     if (mode == k_CONSIDER_FOR_SAMPLING) {
                         llll_appenddouble(inner4_llll, new_y_pos, 0, WHITENULL_llll); // y position
@@ -29179,11 +29214,11 @@ double get_breakpoints_interpolated_mc(t_notation_obj *r_ob, t_note *note, doubl
         if (bpt1->rel_x_pos <= point && bpt1->next->rel_x_pos >= point) {
             if (velocity) {
                 if (r_ob->breakpoints_have_velocity)
-                    *velocity = rescale_with_slope(point, bpt1->rel_x_pos, bpt1->next->rel_x_pos, bpt1->velocity, bpt1->next->velocity, 0.);
+                    *velocity = notationobj_rescale_with_slope(r_ob, point, bpt1->rel_x_pos, bpt1->next->rel_x_pos, bpt1->velocity, bpt1->next->velocity, 0.);
                 else
                     *velocity = note->velocity;
             }
-            return note->midicents + rescale_with_slope(point, bpt1->rel_x_pos, bpt1->next->rel_x_pos, bpt1->delta_mc, bpt1->next->delta_mc, bpt1->next->slope);
+            return note->midicents + notationobj_rescale_with_slope(r_ob, point, bpt1->rel_x_pos, bpt1->next->rel_x_pos, bpt1->delta_mc, bpt1->next->delta_mc, bpt1->next->slope);
         }
         bpt1 = bpt1->next;
     }
@@ -30623,7 +30658,8 @@ void change_color_according_to_llll(t_jrgba *color, t_llll *llll){
 
 
 
-void set_breakpoints_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints){ // there's not really a TRUE checking about the validity of the breakpoints, so be careful!
+// there's not really a TRUE checking about the validity of the breakpoints, so be careful!
+void note_set_breakpoints_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* breakpoints){
     if (breakpoints){
         t_llllelem *elem;
         if (breakpoints) 
@@ -31218,10 +31254,10 @@ void set_rollnote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* n
                             notation_item_set_flags_from_llllelem(r_ob, extras->l_head, (t_notation_item *)note, false);
                         } else if (pivotsym == _llllobj_sym_breakpoints) {
                             llll_destroyelem(pivot);
-                            set_breakpoints_values_to_note_from_llll(r_ob, note, extras);
+                            note_set_breakpoints_from_llll(r_ob, note, extras);
                         } else if (pivotsym == _llllobj_sym_slots) {
                             llll_destroyelem(pivot);
-                            set_slots_values_to_note_from_llll(r_ob, note, extras);
+                            note_set_slots_from_llll(r_ob, note, extras);
                         } else if (pivotsym == _llllobj_sym_articulations) {
                             llll_destroyelem(pivot);
                             set_articulations_to_element_from_llll(r_ob, (t_notation_item *)note, extras);
@@ -32506,7 +32542,7 @@ void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_not
         return;
     
     t_llll *temp = notation_item_get_slots_to_be_copied(r_ob, from, which_slots_1based, even_if_empty);
-    set_slots_values_to_notationitem_from_llll(r_ob, to, temp);
+    notation_item_set_slots_from_llll(r_ob, to, temp);
     llll_free(temp);
 }
 
@@ -32590,7 +32626,8 @@ void note_delete(t_notation_obj *r_ob, t_note *note, char need_recompute_total_l
             recompute_all_measure_chord_parameters(r_ob, chord->parent); // we have to recalculate chord parameters
             chord->parent->need_recompute_beams_positions = true;
             chord->parent->need_check_ties = true;
-            chord->parent->need_check_autocompletion = true; 
+            if (r_ob->auto_complete_measures)
+                chord->parent->need_check_autocompletion = true;
             if (chord->parent->tuttipoint_reference) 
                 chord->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
             set_need_perform_analysis_and_change_flag(r_ob);
@@ -32698,10 +32735,10 @@ void set_scorenote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* 
                                 notation_item_set_flags_from_llllelem(r_ob, extras->l_head, (t_notation_item *)note, false);
                             } else if (pivotsym == _llllobj_sym_breakpoints) {
                                 llll_destroyelem(pivot);
-                                set_breakpoints_values_to_note_from_llll(r_ob, note, extras);
+                                note_set_breakpoints_from_llll(r_ob, note, extras);
                             } else if (pivotsym == _llllobj_sym_slots) {
                                 llll_destroyelem(pivot);
-                                set_slots_values_to_note_from_llll(r_ob, note, extras);
+                                note_set_slots_from_llll(r_ob, note, extras);
                             } else if (pivotsym == _llllobj_sym_articulations) {
                                 llll_destroyelem(pivot);
                                 set_articulations_to_element_from_llll(r_ob, (t_notation_item *)note, extras);
@@ -32786,7 +32823,7 @@ void set_scorechord_values_from_llll(t_notation_obj *r_ob, t_chord *chord, t_lll
 #ifdef BACH_CHORDS_HAVE_SLOTS
                 } else if (hatom_gettype(&elemllll->l_head->l_hatom) == H_SYM && hatom_getsym(&elemllll->l_head->l_hatom) == _llllobj_sym_slots) {
                     // chord-attached slots (should be for rests only!!!!)
-                    set_slots_values_to_notationitem_from_llll(r_ob, (t_notation_item *)chord, elemllll);
+                    notation_item_set_slots_from_llll(r_ob, (t_notation_item *)chord, elemllll);
 #endif
                 } else if (chord->r_sym_duration.r_num >= 0){
                     if (note) { // there's already a note
@@ -33366,7 +33403,7 @@ void approximate_for_too_high_rationals_fixed_den(t_llll *box_durations, t_ratio
 
 // a small function just like get_sym_durations_between_timepoints but with no need of *voice
 t_rational get_sym_durations_between_timepoints_from_measure_symdurations(t_llll *measure_symdurations, t_timepoint tp1, t_timepoint tp2) {
-    if (timepoints_compare(tp1, tp2) >= 0)
+    if (timepoint_compare(tp1, tp2) >= 0)
         return long2rat(0);
     else {
         long start_meas = tp1.measure_num;
@@ -36190,7 +36227,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->m_inspector.active_bach_inspector_item = NULL;
     r_ob->m_inspector.active_bach_inspector_obj_type = k_NONE;
     r_ob->m_inspector.active_bach_inspector_item = NULL;
-    notation_obj_declare_bach_attributes(r_ob);
+    notation_obj_bach_attribute_declares(r_ob);
     r_ob->m_inspector.bach_inspector_scrollbar_pos = 0;
     r_ob->m_inspector.bach_inspector_scrollbar_delta_y = 0;
     r_ob->m_inspector.active_inspector_enumindex = NULL;
@@ -36865,7 +36902,7 @@ t_rational notation_item_get_symduration(t_notation_obj *r_ob, t_notation_item *
             case k_DURATION_LINE: return zero;
             case k_LYRICS: return zero;
             case k_DYNAMICS: return zero;
-            case k_MEASURE: return zero;
+            case k_MEASURE: return measure_get_sym_duration((t_measure *)it);
             case k_TEMPO: return zero;
             case k_VOICE: return zero;
             case k_MARKER: return zero;
@@ -41051,8 +41088,8 @@ char *undo_op_to_string(long undo_op)
         case k_UNDO_OP_ERASE_BREAKPOINTS_FOR_SELECTION:
             sprintf(buf, "Erase Pitch Breakpoints");
             break;
-        case k_UNDO_OP_ADD_SLOTS_TO_SELECTION:
-            sprintf(buf, "Add Slots");
+        case k_UNDO_OP_SET_SLOTS_TO_SELECTION:
+            sprintf(buf, "Set Slots");
             break;
         case k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION:
             sprintf(buf, "Erase Slots");
@@ -41134,6 +41171,9 @@ char *undo_op_to_string(long undo_op)
             break;
         case k_UNDO_OP_CHANGE_DYNAMICS:
             sprintf(buf, "Change Dynamics");
+            break;
+        case k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION:
+            sprintf(buf, "Change Duration Lines");
             break;
         case k_UNDO_OP_TRIM_END:
             sprintf(buf, "Trim End");
@@ -42208,7 +42248,7 @@ void note_nametoslot_do(t_notation_obj *r_ob, t_note *nt, long slotnum, e_nameto
     llll_wrap_once(&slotll);
     
     if (slotll)
-        set_slots_values_to_notationitem_from_llll(r_ob, nt_it, slotll);
+        notation_item_set_slots_from_llll(r_ob, nt_it, slotll);
     else
         note_clear_slot(r_ob, nt, slotnum);
     llll_free(slotll);
@@ -42239,7 +42279,7 @@ long notation_obj_nametoslot_do(t_notation_obj *r_ob, long slotnum, e_nametoslot
                     t_llll *slotll = llll_clone(curr_it->names);
                     llll_prependlong(slotll, slotnum + 1);
                     llll_wrap_once(&slotll);
-                    set_slots_values_to_notationitem_from_llll(r_ob, curr_it, slotll);
+                    notation_item_set_slots_from_llll(r_ob, curr_it, slotll);
                     llll_free(slotll);
                 }
             }
@@ -43791,7 +43831,7 @@ void trim_note_slots(t_notation_obj *r_ob, t_note *nt, double delta_ms, char tri
                     else {
                         pts->x = domain_max;
                         // beware: ((t_pts *)thisitem->prev->item)->x has already been updated at the previous step
-                        pts->y = rescale_with_slope(domain_max, ((t_pts *)thisitem->prev->item)->x, new_x, ((t_pts *)thisitem->prev->item)->y, pts->y, pts->slope);
+                        pts->y = notationobj_rescale_with_slope(r_ob, domain_max, ((t_pts *)thisitem->prev->item)->x, new_x, ((t_pts *)thisitem->prev->item)->y, pts->y, pts->slope);
                     }
                 } else
                     pts->x = new_x;
@@ -43820,8 +43860,8 @@ void trim_note_slots(t_notation_obj *r_ob, t_note *nt, double delta_ms, char tri
                     else {
                         pts->x = domain_max;
                         // beware: ((t_pts *)thisitem->prev->item)->x has already been updated at the previous step
-                        pts->y = rescale_with_slope(domain_max, ((t_pts3d *)thisitem->prev->item)->x, new_x, ((t_pts3d *)thisitem->prev->item)->y, pts->y, pts->slope);
-                        pts->z = rescale_with_slope(domain_max, ((t_pts3d *)thisitem->prev->item)->x, new_x, ((t_pts3d *)thisitem->prev->item)->z, pts->z, pts->slope);
+                        pts->y = notationobj_rescale_with_slope(r_ob, domain_max, ((t_pts3d *)thisitem->prev->item)->x, new_x, ((t_pts3d *)thisitem->prev->item)->y, pts->y, pts->slope);
+                        pts->z = notationobj_rescale_with_slope(r_ob, domain_max, ((t_pts3d *)thisitem->prev->item)->x, new_x, ((t_pts3d *)thisitem->prev->item)->z, pts->z, pts->slope);
                     }
                 } else
                     pts->x = new_x;
@@ -44117,7 +44157,7 @@ void trim_chord_start(t_notation_obj *r_ob, t_chord *ch, double delta_ms)
                             pts->x = domain_min;
                             // TO DO
                             // beware: ((t_pts *)thisitem->prev->item)->x has already been updated at the previous step
-                            pts->y = rescale_with_slope(new_onset, pts_absolute_onset, next_pts_absolute_onset, pts->y, ((t_pts *)thisitem->next->item)->y, ((t_pts *)thisitem->next->item)->slope);
+                            pts->y = notationobj_rescale_with_slope(r_ob, new_onset, pts_absolute_onset, next_pts_absolute_onset, pts->y, ((t_pts *)thisitem->next->item)->y, ((t_pts *)thisitem->next->item)->slope);
                         }
                     } else
                         pts->x = new_x;
@@ -44146,8 +44186,8 @@ void trim_chord_start(t_notation_obj *r_ob, t_chord *ch, double delta_ms)
                         else {
                             pts->x = domain_max;
                             // beware: ((t_pts *)thisitem->prev->item)->x has already been updated at the previous step
-                            pts->y = rescale_with_slope(domain_max, ((t_pts3d *)thisitem->prev->item)->x, new_x, ((t_pts3d *)thisitem->prev->item)->y, pts->y, pts->slope);
-                            pts->z = rescale_with_slope(domain_max, ((t_pts3d *)thisitem->prev->item)->x, new_x, ((t_pts3d *)thisitem->prev->item)->z, pts->z, pts->slope);
+                            pts->y = notationobj_rescale_with_slope(r_ob, domain_max, ((t_pts3d *)thisitem->prev->item)->x, new_x, ((t_pts3d *)thisitem->prev->item)->y, pts->y, pts->slope);
+                            pts->z = notationobj_rescale_with_slope(r_ob, domain_max, ((t_pts3d *)thisitem->prev->item)->x, new_x, ((t_pts3d *)thisitem->prev->item)->z, pts->z, pts->slope);
                         }
                     } else
                         pts->x = new_x;

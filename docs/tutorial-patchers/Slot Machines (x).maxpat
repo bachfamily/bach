@@ -231,7 +231,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 4.0, 40.0, 842.0, 47.0 ],
-					"text" : "As a final section, we give an example of how some roll information can be stored inside an llll slot of a roll. Each note contains thus an entire roll (one might need this to build a hierarchical score structure). The syncronization is made via a command, which will dump the content of the note preceded by a custom symbol. We'll route the content and retrieve the subslot. To store the subslot into a note, we'll just use the \"addslot\" command, operating on selection."
+					"text" : "As a final section, we give an example of how some roll information can be stored inside an llll slot of a roll. Each note contains thus an entire roll (one might need this to build a hierarchical score structure). The syncronization is made via a command, which will dump the content of the note preceded by a custom symbol. We'll route the content and retrieve the subslot. To store the subslot into a note, we'll just use the \"setslot\" message, operating on selection."
 				}
 
 			}
@@ -307,7 +307,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 359.0, 536.0, 124.0, 22.0 ],
-					"text" : "bach.prepend addslot"
+					"text" : "bach.prepend setslot"
 				}
 
 			}
