@@ -20811,12 +20811,12 @@ t_marker *nth_marker(t_notation_obj *r_ob, long n)
     // to be improved: if the marker# is > n/2, pass the list the other way round!
 }
 
-// computes the nth (1-based) chord of the whole nroll
+// computes the nth (0-based) chord of the whole nroll
 t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n)
 {
     t_chord *curr = voice->firstchord; 
     long i; 
-    long zero_based_index = n-1; 
+    long zero_based_index = n;
 
     if (zero_based_index < 0) 
         return NULL;
@@ -21241,7 +21241,7 @@ t_chord *chord_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num
             chord_num = voice->num_chords + chord_num + 1;
 
         if (chord_num > 0 && chord_num <= voice->num_chords)
-            return nth_chord_of_rollvoice(voice, chord_num);
+            return nth_chord_of_rollvoice(voice, chord_num - 1);
         
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
@@ -21277,7 +21277,7 @@ t_note *note_get_from_path(t_notation_obj *r_ob, long voice_num, long meas_num, 
             chord_num = voice->num_chords + chord_num + 1;
         
         if (chord_num > 0 && chord_num <= voice->num_chords) {
-            t_chord *temp = nth_chord_of_rollvoice(voice, chord_num);
+            t_chord *temp = nth_chord_of_rollvoice(voice, chord_num - 1);
             if (temp) {
                 if (note_num < 0)
                     note_num = temp->num_notes + note_num + 1;
@@ -28562,7 +28562,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); //
                         llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
                     }
-                } else if (mode == k_CONSIDER_FOR_SAMPLING && ((t_pts *)temp_item->item)->x == hot_point) {
+                } else if (mode == k_CONSIDER_FOR_SAMPLING && temp_item && ((t_pts *)temp_item->item)->x == hot_point) {
                     llll_appenddouble(inner4_llll, ((t_pts *)temp_item->item)->y, 0, WHITENULL_llll); // y position only
                 }
             }

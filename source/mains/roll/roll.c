@@ -367,7 +367,7 @@ t_note* ID_to_note(t_roll *x, long ID); //almost unused
 t_chord* ID_to_chord(t_roll *x, long ID); //almost unused
 void verbose_print(t_roll *x);
 t_rollvoice* nth_rollvoice(t_roll *x, long n);    // 0-based!!!!!
-t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n);    /// 1-based!!!!
+t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n);    /// 0-based!!!!
 t_chord* nth_marker(t_rollvoice *voice, long n);    /// 1-based!!!!
 
 // llll communication functions
@@ -4126,7 +4126,7 @@ void roll_play_preschedule(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         x->r_ob.preschedule_cursor = x->r_ob.to_preschedule->l_head;
         for (t_llllelem *el = x->r_ob.to_preschedule->l_head; el; el = el->l_next) {
             t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&el->l_hatom);
-            clock_fdelay(ev->clock, ev->time - start_ms);
+            setclock_fdelay(x->r_ob.setclock->s_thing, ev->clock, ev->time - start_ms);
         }
     }
 }
@@ -9418,7 +9418,7 @@ void set_groups_from_llll(t_roll *x, t_llll *groups_as_llll){
                                 if (num_voice >= 1 && num_voice <= x->r_ob.num_voices){
                                     t_rollvoice *voice = nth_rollvoice(x, num_voice - 1);
                                     if (voice && num_chord >= 1 && num_chord <= voice->num_chords) {
-                                        t_chord *chord = nth_chord_of_rollvoice(voice, num_chord);
+                                        t_chord *chord = nth_chord_of_rollvoice(voice, num_chord - 1);
                                         if (chord && newgroup)
                                             append_element_in_group((t_notation_obj *) x, newgroup, (t_notation_item *)chord);
                                     }
