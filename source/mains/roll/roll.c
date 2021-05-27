@@ -9197,7 +9197,9 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                             foo++;
                         } */
                         
-                        if (breakpoints) { // only if the note to be inserted has breakpoints! We create a dummy note to more easily sample the breakpoints
+                        if (breakpoints) {
+                            // only if the note to be inserted has breakpoints!
+                            // In this case We create a dummy note to more easily sample the breakpoints
                             dummy_breakpoints_note = build_note((t_notation_obj *) x, cents, duration, velocity);
                             note_set_breakpoints_from_llll((t_notation_obj *)x, dummy_breakpoints_note, breakpoints);
                         }
@@ -9211,7 +9213,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                             
                             char chord_has_glissandi = false;
                             for (tempnt = tempch->firstnote; tempnt; tempnt = tempnt->next) {
-                                if (tempnt->num_breakpoints > 2) {
+                                if (note_breakpoints_are_nontrivial((t_notation_obj *)x, tempnt)) {
                                     chord_has_glissandi = true;
                                     break;
                                 }
@@ -9219,12 +9221,12 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                             
                             for (tempnt = tempch->firstnote; tempnt; tempnt = tempnt->next) {
                                 
-                                if (!chord_has_glissandi && tempnt->midicents > cents + threshold_cents)
+                                if (!chord_has_glissandi && !breakpoints && tempnt->midicents > cents + threshold_cents)
                                     break;
                                 
                                 
                                 if (onset >= tempch->onset && onset <= tempch->onset + tempnt->duration + threshold_ms) {
-                                    double left_mc = (tempnt->num_breakpoints <= 2 || tempnt->duration <= 0) ? tempnt->midicents : get_breakpoints_interpolated_mc((t_notation_obj *)x, tempnt, (onset - tempch->onset)/tempnt->duration, NULL);
+                                    double left_mc = (!note_breakpoints_are_nontrivial((t_notation_obj *)x, tempnt) || tempnt->duration <= 0) ? tempnt->midicents : get_breakpoints_interpolated_mc((t_notation_obj *)x, tempnt, (onset - tempch->onset)/tempnt->duration, NULL);
                                     double right_mc = cents;
                                     if (fabs(left_mc - right_mc) <= threshold_cents) {
                                         foundnt = tempnt;

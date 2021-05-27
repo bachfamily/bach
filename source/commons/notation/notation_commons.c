@@ -27710,7 +27710,10 @@ void rescale_breakpoints(t_notation_obj *r_ob, t_note *receiver, double relative
         if (relative_start_x > 0.)
             add_breakpoint(r_ob, receiver, relative_start_x, 0, 0, false, receiver->velocity, false);
         if (relative_end_x < 1.)
-            add_breakpoint(r_ob, receiver, relative_end_x, receiver->lastbreakpoint->prev ? receiver->lastbreakpoint->prev->delta_mc : 0, 0, 
+            add_breakpoint(r_ob, receiver, relative_end_x,
+//                           receiver->lastbreakpoint->prev ? receiver->lastbreakpoint->prev->delta_mc : 0,
+                           receiver->lastbreakpoint ? receiver->lastbreakpoint->delta_mc : 0,
+                           0,
                            false, receiver->lastbreakpoint->prev ? receiver->lastbreakpoint->prev->velocity : receiver->velocity, false);
     }
 }
@@ -27743,7 +27746,7 @@ void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll 
         double working_min = 0, working_max = 1;
         double new_extracted_portion_start_mc;
         
-        // extract portion of slot_llll
+        // extract portion of breakpoints llll
         t_llll *extracted_portion = note_get_partial_breakpoint_values_as_llll(r_ob, dummy_giver, start_glued_note_portion_rel_x, end_glued_note_portion_rel_x, &new_extracted_portion_start_mc);
         
         if (direction > 0) {
@@ -27783,13 +27786,17 @@ void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll 
             for (elem = receiver_breakpoints->l_head; elem; elem = elem->l_next) {
                 if (hatom_gettype(&elem->l_hatom) == H_LLLL && (ll = hatom_getllll(&elem->l_hatom)) && ll->l_head && ll->l_head->l_next && is_hatom_number(&ll->l_head->l_next->l_hatom)) {
                     double old_y = hatom_getdouble(&ll->l_head->l_next->l_hatom);
-                    double new_y = old_y + (new_extracted_portion_start_mc - receiver->midicents);
+                    double new_y = old_y + (receiver->midicents - new_extracted_portion_start_mc);
                     hatom_setdouble(&ll->l_head->l_next->l_hatom, new_y);
                 }
             }
             
             idx_of_bpt_to_be_smoothed = extracted_portion->l_size - 2;
             receiver->midicents = new_extracted_portion_start_mc;
+            note_set_auto_enharmonicity(receiver);
+            note_compute_approximation(r_ob, receiver);
+            if (receiver->parent)
+                receiver->parent->need_recompute_parameters = true;
             
             llll_behead(receiver_breakpoints); // it's the "breakpoints" symbol
             llll_chain(final_breakpoints, extracted_portion);
