@@ -2008,6 +2008,12 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // @copyif bach.roll BACH_DOC_ROLL_START_PAD
         
         
+        CLASS_ATTR_DOUBLE(c, "playheadwidth", 0, t_notation_obj, playhead_width);
+        CLASS_ATTR_STYLE_LABEL(c,"playheadwidth",0,"text","Playhead Width");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playheadwidth",0,"1.");
+        // @exclude bach.slot
+        // @description Sets the playhead width in pixels.
+        
         CLASS_ATTR_CHAR(c, "enhancedstems", 0, t_notation_obj, forceround_stems_to_semiinteger);
         CLASS_ATTR_STYLE_LABEL(c,"enhancedstems",0,"onoff","Enhanced Stem Display");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"enhancedstems",0,"0");
