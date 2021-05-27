@@ -4421,6 +4421,7 @@ typedef struct _notation_obj
                                                     ///< More simply: if this is 1, when a play command starts, first of all the notes who are "active" at the play cursor position are output,
                                                     ///< with the correctly reduced duration (as if they started at the play cursor)
     char        show_playhead;                        ///< Flag telling if we want to show the play cursor or not
+    double      playhead_width;                     ///< Width of the playhead in pixels
     char        playhead_dragging_mode;                ///< Dragging mode for the playhead: 0 = absolute (where one alt+clicks, there the playhead goes), 1 = relative (just clicking won't move the playhead, only pixel differences account)
     char        align_chords_with_what;                ///< (For bach.roll only) One of the #e_chord_align_mode specifying the
     char        forceround_stems_to_semiinteger;    ///< Flag telling if we need to force the stems to be rounded to semi-integers pixels (which might be best in some

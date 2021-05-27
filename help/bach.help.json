@@ -1528,6 +1528,13 @@
 				"tags" : [ "appearance", "color", "note", "notehead", "notation", "attribute", "setnotationcolors", "mainstavescolor", "auxiliarystavescolor", "accidentalcolor", "annotationcolor", "articulationcolor", "beamcolor", "notecolor", "tupletcolor", "flagcolor", "lyricscolor", "stemcolor", "restcolor", "tempocolor staff", "main", "auxili" ],
 				"title" : [ "Notation colors" ]
 			},
+			"Playback" : {
+				"filename" : [ "bach.help.notation.appearance.31_playback.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [  ],
+				"tags" : [ "appearance", "color", "play", "bar", "playcolor", "playback", "highlight", "play", "highlightplay", "playheadwidth", "playhead", "head", "large" ],
+				"title" : [ "Play colors" ]
+			},
 			"Ruler and grid" : {
 				"Ruler" : {
 					"filename" : [ "bach.help.notation.appearance.35_ruler and grid.01_ruler.maxpat" ],
@@ -2578,6 +2585,13 @@
 					"tags" : [ "editing", "edit", "interface", "slot", "slotinfo", "copy", "duplicate", "paste" ],
 					"title" : [ "Copy slotinfo" ]
 				}
+			},
+			"Slurs" : {
+				"filename" : [ "bach.help.notation.editing.42_slurs.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slur" ],
+				"tags" : [ "editing", "edit", "interface", "slur", "flip", "reverse", "up", "down" ],
+				"title" : [ "Slurs interface" ]
 			},
 			"Lyrics" : {
 				"filename" : [ "bach.help.notation.editing.45_lyrics.maxpat" ],
@@ -5452,6 +5466,29 @@
 				}
 			}
 		},
+		"Slurs" : {
+			"Intro" : {
+				"filename" : [ "bach.help.notation.slurs.01_intro.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "path" ],
+				"tags" : [ "slur", "clearslurs", "addslur", "selection", "add", "create", "insert" ],
+				"title" : [ "Slurs in bach" ]
+			},
+			"Direction" : {
+				"filename" : [ "bach.help.notation.slurs.04_direction.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slur+interface" ],
+				"tags" : [ "slur", "clearslurs", "addslur", "selection", "flip", "direction", "slur" ],
+				"title" : [ "Slur direction" ]
+			},
+			"Region" : {
+				"filename" : [ "bach.help.notation.slurs.10_region.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "sel", "unsel", "region" ],
+				"tags" : [ "slur", "select", "sel", "unsel", "select", "under", "across", "underpin", "region" ],
+				"title" : [ "Selecting chords under slurs" ]
+			}
+		},
 		"Syntax" : {
 			"Intro" : {
 				"filename" : [ "bach.help.notation.syntax.01_intro.maxpat" ],
@@ -5786,6 +5823,13 @@
 					"seealso" : [ "lock", "mute", "solo", "lock+rhythmic+tree" ],
 					"tags" : [ "gathered", "syntax", "flag", "notation", "item", "lock", "mute", "solo", "rhythmic", "tree" ],
 					"title" : [ "Notation item flags" ]
+				},
+				"Slurs" : {
+					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.22_slurs.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "slur" ],
+					"tags" : [ "gathered", "syntax", "slur", "span", "name", "chord", "direction", "up", "down", "flip" ],
+					"title" : [ "Slur syntax" ]
 				},
 				"Extras" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.70_extras.maxpat" ],

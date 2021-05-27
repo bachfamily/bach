@@ -1214,6 +1214,29 @@
 				<br />				See also:<m>deletemarker</m>,<m>clearmarkers</m><br />
 			</description>
 		</method>
+		<method name="addslur">
+			<arg name="selection" optional="1" type="symbol" />
+			<arg name="start_path" optional="1" type="llll" />
+			<arg name="end_path" optional="1" type="llll" />
+			<digest>
+				Add a slur
+			</digest>
+			<description>
+				Syntax: <b>addslur <m>[&lt;symbol: selection&gt;]</m> <m>[&lt;llll: start_path&gt;]</m> <m>[&lt;llll: end_path&gt;]</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>addslur [1 1 1] [1 3 2]</b>   <i>→ add a slur from the first chord to the second chord of the 3rd measure</i><br />
+				• <b>addslur [1 1 1] [1 3 2] @name john</b>   <i>→ the same, with a name</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@name</m> (llll, default: null): Name(s) of the slur<br />
+				<br />
+				The <m>addslur</m> message adds a new slur.
+				If "selection" is given as argument, then the selected items will be gathered under a slur.
+				Otherwise, two argument are expected, containing the paths of the starting and ending chord of the slur as wrapped lllls.
+				An optional message attribute "name" also sets the name(s) of the slur.
+				<br />				See also:<m>clearslur</m><br />
+			</description>
+		</method>
 		<method name="adjustadditionalstartpad">
 			<arglist />
 			<digest>
@@ -1502,7 +1525,7 @@
 				Delete all markers
 			</digest>
 			<description>
-				The <m>clearmarkers</m> simply delets all the markers in the notation object.
+				The <m>clearmarkers</m> message deletes all the markers in the notation object.
 				<br />				See also:<m>addmarker</m>,<m>deletemarker</m><br />
 			</description>
 		</method>
@@ -1539,6 +1562,16 @@
 				yielding a situation where no notation item is selected. If an integer is given as argument,
 				it specifies a voice number for which the selection should be cleared (and will be kept for all other voices)
 				<br />				See also:<m>sel</m>,<m>unsel</m>,<m>select</m><br />
+			</description>
+		</method>
+		<method name="clearslurs">
+			<arglist />
+			<digest>
+				Delete all slurs
+			</digest>
+			<description>
+				The <m>clearslurs</m> message delets all the slurs in the notation object.
+				<br />				See also:<m>addslur</m><br />
 			</description>
 		</method>
 		<method name="clock">
@@ -6331,7 +6364,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6371,7 +6403,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidentals Font" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6680,7 +6711,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulations Font" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6777,7 +6807,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.4 0.4 0.4 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Auxiliary Staff Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6792,7 +6821,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="1. 1. 1. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Background Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6872,7 +6900,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.6 0.6 0.6 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7298,7 +7325,6 @@
 			<description>
 			</description>
 			<attributelist>
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7309,7 +7335,6 @@
 			<description>
 			</description>
 			<attributelist>
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7320,7 +7345,6 @@
 			<description>
 			</description>
 			<attributelist>
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7517,7 +7541,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Key Signature Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7579,7 +7602,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.5 0.5 0.5 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mouseover Legend Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7870,7 +7892,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Region" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -7932,7 +7953,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Font" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -8118,7 +8138,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Font" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -8133,7 +8152,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Note Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8297,7 +8315,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -8430,6 +8447,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="playheadwidth" get="1" set="1" type="float" size="1">
+			<digest>
+				Playhead Width
+			</digest>
+			<description>
+				Sets the playhead width in pixels.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Playhead Width" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="playmarkers" get="1" set="1" type="int" size="1">
@@ -9079,7 +9112,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.2 0.2 0.2 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Selection Legend Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9094,7 +9126,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.8 0. 0.8 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Selection Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9570,6 +9601,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="showslurs" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Slurs
+			</digest>
+			<description>
+				Toggles the display of slurs.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Slurs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="showsolocolor" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Solo Color
@@ -9764,6 +9811,36 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="slursavoidaccidentals" get="1" set="1" type="int" size="1">
+			<digest>
+				Slurs Avoid Accidentals
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slurs Avoid Accidentals" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="slursavoidchords" get="1" set="1" type="int" size="1">
+			<digest>
+				Slurs Avoid Chords
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slurs Avoid Chords" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="smartmarkernames" get="1" set="1" type="int" size="1">
 			<digest>
 				Smart Marker Names Placement
@@ -9911,7 +9988,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Main Staff Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9935,7 +10011,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Staff Lines" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -10097,7 +10172,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Names" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -10163,7 +10237,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Spacing" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
