@@ -1260,6 +1260,8 @@ long bach_getbuildnumber(void)
 
 void bach_init_bifs(t_bach *x)
 {
+    if (x->b_bifTable)
+        return;
     auto bifTable = x->b_bifTable = new std::unordered_map<std::string, t_function *>;
     x->b_gvt = new t_globalVariableTable;
     
