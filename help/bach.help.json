@@ -1806,7 +1806,7 @@
 				"filename" : [ "bach.help.notation.articulations.02_defining.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "header" ],
-				"tags" : [ "articulation", "define", "assign", "introduce", "slot", "addslot", "changeslotitem", "delete", "clear", "cleararticulations" ],
+				"tags" : [ "articulation", "define", "assign", "introduce", "slot", "setslot", "changeslotitem", "delete", "clear", "cleararticulations", "addslot" ],
 				"title" : [ "Introducing standard articulations" ]
 			},
 			"Articulationslist" : {
@@ -1819,7 +1819,7 @@
 			"Customarticulations" : {
 				"filename" : [ "bach.help.notation.articulations.10_customarticulations.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "articulationinfo", "custom+articulation" ],
+				"seealso" : [ "articulationinfo", "custom+articulation", "setslot" ],
 				"tags" : [ "articulation", "define", "custom", "assign", "introduce", "slot" ],
 				"title" : [ "Defining custom articulations" ]
 			},
@@ -1907,7 +1907,7 @@
 			"Basicplainsyntax" : {
 				"filename" : [ "bach.help.notation.dynamics.07_basicplainsyntax.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
-				"seealso" : [ "slot+edit", "slot+interface", "addslot", "eraseslot", "checkdynamics" ],
+				"seealso" : [ "slot+edit", "slot+interface", "setslot", "eraseslot", "checkdynamics" ],
 				"tags" : [ "dynamic", "define", "assign", "plain", "syntax", "marking", "piano", "forte", "p", "pp", "ppp", "f", "ff", "fff", "sforzato", "fortissimo", "pianissimo", "crescendo", "decrescendo", "hairpin", "sign", "exponential", "dimminuendo", "next", "zero", "niente", "alniente", "dalniente" ],
 				"title" : [ "Plain dynamics syntax" ]
 			},
@@ -2112,7 +2112,7 @@
 			"Durationlineslope" : {
 				"filename" : [ "bach.help.notation.editing.17_durationlineslope.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [  ],
+				"seealso" : [ "slopemapping" ],
 				"tags" : [ "edit", "editing", "change", "slope", "duration", "line", "breakpoint" ],
 				"title" : [ "Duration line slope" ]
 			},
@@ -2896,7 +2896,7 @@
 			"Clearbachslot" : {
 				"filename" : [ "bach.help.notation.messages.10_clearbachslot.maxpat" ],
 				"objects" : [ "bach.slot" ],
-				"seealso" : [ "addslot" ],
+				"seealso" : [ "setslot" ],
 				"tags" : [ "message", "clear", "slot", "erase" ],
 				"title" : [ "Clearing slots in bach.slot" ]
 			},
@@ -3409,19 +3409,26 @@
 					"tags" : [ "message", "operate", "on", "selection", "in", "place", "inplace", "in-place", "transpose", "transposition", "compress", "compression" ],
 					"title" : [ "In-place modifications" ]
 				},
-				"Breakpoints" : {
-					"filename" : [ "bach.help.notation.messages.30_operate on selection.12_breakpoints.maxpat" ],
+				"A_breakpoints" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.12a_breakpoints.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "breakpoint", "breakpointshavevelocity" ],
 					"tags" : [ "message", "operate", "on", "selection", "breakpoints", "addbreakpoint", "erasebreakpoint", "erase", "add" ],
 					"title" : [ "Adding or deleting breakpoints" ]
 				},
+				"B_setbreakpoints" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.12b_setbreakpoints.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "breakpoint", "breakpointshavevelocity", "copy+duration+line" ],
+					"tags" : [ "message", "operate", "on", "selection", "breakpoints", "addbreakpoint", "erasebreakpoint", "erase", "add", "duration", "line", "durationline", "set", "setdurationline", "dl", "setdl" ],
+					"title" : [ "Setting duration lines" ]
+				},
 				"Slot" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.13_slot.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 					"seealso" : [ "copyslot", "moveslot", "changeslotitem" ],
-					"tags" : [ "message", "operate", "on", "selection", "slot", "addslot", "eraseslot", "add", "erase", "active", "clear" ],
-					"title" : [ "Adding or deleting slot content" ]
+					"tags" : [ "message", "operate", "on", "selection", "slot", "addslot", "eraseslot", "add", "erase", "active", "clear", "set", "setslot" ],
+					"title" : [ "Setting or deleting slot content" ]
 				},
 				"Copymoveslot" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.14_copymoveslot.maxpat" ],
@@ -3464,6 +3471,13 @@
 					"seealso" : [ "relative+modify" ],
 					"tags" : [ "message", "operate", "on", "selection", "slot", "relative", "modify", "changeslotitem", "`nil" ],
 					"title" : [ "Modifying existing slot elements" ]
+				},
+				"Reducefunction" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.20_reducefunction.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [  ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "simplify", "reduce", "function", "reducefunction", "maxnumpoints", "thresh", "p", "relative", "slope", "algorithm", "slopemapping" ],
+					"title" : [ "Simplifying breakpoint functions" ]
 				},
 				"Openslotwin" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.21_openslotwin.maxpat" ],
@@ -3994,14 +4008,14 @@
 				"filename" : [ "bach.help.notation.noteheads.02_defining.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "articulations", "slot+messages" ],
-				"tags" : [ "notehead", "define", "assign", "introduce", "slot", "addslot", "delete", "reset", "clear" ],
+				"tags" : [ "notehead", "define", "assign", "introduce", "slot", "addslot", "delete", "reset", "clear", "setslot" ],
 				"title" : [ "Introducing standard noteheads" ]
 			},
 			"Families" : {
 				"filename" : [ "bach.help.notation.noteheads.03_families.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "notehead+char", "custom+notehead" ],
-				"tags" : [ "notehead", "define", "assign", "introduce", "slot", "addslot", "family", "black", "white", "note", "rhombus", "rhombi", "square", "squares" ],
+				"tags" : [ "notehead", "define", "assign", "introduce", "slot", "addslot", "family", "black", "white", "note", "rhombus", "rhombi", "square", "squares", "setslot" ],
 				"title" : [ "Notehead families" ]
 			},
 			"Noteheadslist" : {
@@ -4014,7 +4028,7 @@
 			"Customnoteheads" : {
 				"filename" : [ "bach.help.notation.noteheads.10_customnoteheads.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "noteheadinfo", "custom+notehead" ],
+				"seealso" : [ "noteheadinfo", "custom+notehead", "setslot" ],
 				"tags" : [ "notehead", "define", "custom", "assign", "introduce", "slot" ],
 				"title" : [ "Defining custom noteheads" ]
 			},
@@ -5022,14 +5036,14 @@
 				"filename" : [ "bach.help.notation.slots.06_openingaslot.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 				"seealso" : [ "clearselection", "sel+chord", "selection", "slot+hotkeys" ],
-				"tags" : [ "slot", "window", "open", "openslotwin" ],
+				"tags" : [ "slot", "window", "open", "openslotwin", "notifyopenslot", "notify" ],
 				"title" : [ "Opening a slot windows" ]
 			},
 			"Slotsforrests" : {
 				"filename" : [ "bach.help.notation.slots.07_slotsforrests.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "clearselection", "sel+rest", "selection", "slot+hotkeys" ],
-				"tags" : [ "slot", "rest", "articulation", "fermata" ],
+				"tags" : [ "slot", "rest", "articulation", "fermata", "setslot" ],
 				"title" : [ "Slots for rests" ]
 			},
 			"Slot types" : {
@@ -5163,9 +5177,16 @@
 			"C_slotrangeslope" : {
 				"filename" : [ "bach.help.notation.slots.12c_slotrangeslope.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "range+slope" ],
+				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "range+slope", "slopemapping" ],
 				"tags" : [ "slot", "slotinfo", "range", "slope", "apply", "warp", "combine", "modulate", "applyslope" ],
 				"title" : [ "Using slot range slope during playback" ]
+			},
+			"D_slopemapping" : {
+				"filename" : [ "bach.help.notation.slots.12d_slopemapping.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "slope" ],
+				"tags" : [ "slot", "slotinfo", "range", "slope", "line", "curve", "mapping", "slopemapping", "bach", "Max" ],
+				"title" : [ "Slope mapping" ]
 			},
 			"Slotzrange" : {
 				"filename" : [ "bach.help.notation.slots.13_slotzrange.maxpat" ],
@@ -6115,29 +6136,29 @@
 				"Content" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.03_content.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "syntax+slot+content", "llll+double+quote", "addslot" ],
-					"tags" : [ "syntax", "slot", "content", "function", "`int", "`float", "`text", "`llll", "intlist", "floatlist", "numeric", "number" ],
+					"seealso" : [ "syntax+slot+content", "llll+double+quote", "setslot" ],
+					"tags" : [ "syntax", "slot", "content", "function", "`int", "`float", "`text", "`llll", "intlist", "floatlist", "numeric", "number", "setslot" ],
 					"title" : [ "Slot content (1)" ]
 				},
 				"Content2" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.04_content2.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "syntax+slot+content", "addslot" ],
-					"tags" : [ "syntax", "slot", "content", "filelist", "spat", "3dfunction" ],
+					"seealso" : [ "syntax+slot+content", "setslot" ],
+					"tags" : [ "syntax", "slot", "content", "filelist", "spat", "3dfunction", "setslot" ],
 					"title" : [ "Slot content (2)" ]
 				},
 				"Content3" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.05_content3.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "syntax+slot+content", "addslot" ],
-					"tags" : [ "syntax", "slot", "content", "togglematrix", "intmatrix", "floatmatrix", "matrix", "color" ],
+					"seealso" : [ "syntax+slot+content", "setslot" ],
+					"tags" : [ "syntax", "slot", "content", "togglematrix", "intmatrix", "floatmatrix", "matrix", "color", "setslot" ],
 					"title" : [ "Slot content (3)" ]
 				},
 				"Content4" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.06_content4.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "syntax+slot+content", "addslot" ],
-					"tags" : [ "syntax", "slot", "content", "filter", "dynfilter" ],
+					"seealso" : [ "syntax+slot+content", "setslot" ],
+					"tags" : [ "syntax", "slot", "content", "filter", "dynfilter", "setslot" ],
 					"title" : [ "Slot content (4)" ]
 				},
 				"Rests" : {

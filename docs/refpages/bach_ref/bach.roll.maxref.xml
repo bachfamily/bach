@@ -1208,85 +1208,6 @@
 				<br />				See also:<m>deletemarker</m>,<m>clearmarkers</m><br />
 			</description>
 		</method>
-		<method name="addslot">
-			<arg name="slots" optional="0" type="llll" />
-			<digest>
-				Set the content of one or more slots for selected items
-			</digest>
-			<description>
-				Syntax: <b>addslot <m>&lt;llll: slots&gt;</m> </b><br />
-				Examples:<br />
-				• <b>addslot [6 0.512]</b>   <i>→ fill (float) slot 6 with number 0.512</i><br />
-				• <b>addslot [5 42]</b>   <i>→ fill (int) slot 5 with number 42</i><br />
-				• <b>addslot [7 "Lorem Ipsum" ]</b>   <i>→ fill (text) slot 7 with some text</i><br />
-				• <b>addslot [10 [John George [Ringo] [Brian]] ]</b>   <i>→ fill (llll) slot 10 with an llll</i><br />
-				• <b>addslot [3 10 20 30]</b>   <i>→ fill (intlist) slot 3 of selected notes with list of values 10, 20, 30</i><br />
-				• <b>addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2]</b>   <i>→ fill (function) slot 2 with a breakpoint function in (x y slope) form</i><br />
-				• <b>addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for slot named 'amplienv'</i><br />
-				• <b>addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for currently open slot</i><br />
-				• <b>addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ set more slots at once</i><br />
-				<br />
-				An <m>addslot</m> message will replace the content of one or more slots, for all the selected notes.
-				The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
-				The slot content syntax depends on the slot type. <br />
-				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
-				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
-				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
-				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
-				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
-				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
-				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
-				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
-				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
-				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
-				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
-				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
-				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
-				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
-				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
-				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
-				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
-				<m>lowpass</m>, <m>highpass</m>, <m>bandpass</m>, <m>bandstop</m>, <m>peaknotch</m>, <m>lowshelf</m>, <m>highshelf</m>, <m>allpass</m>.
-				You can equivalently use for input the syntax
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
-				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
-				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
-				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
-				articulations introduced as symbols.
-				The list of the are standard available articulations as symbols is: "staccato" or "stacc", "staccatissimo" or "staccmo",
-				"fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
-				"portatostaccato" or "portstacc", "martellato" or "mart", "martellatostaccato" or "martstacc", "lefthandpizzicato" or "lhpiz",
-				"trill" or "tr", "gruppetto" or "grupp", "upmordent" or "umord", "downmordent" or "dmord", "doublemordent" or "mmord",
-				"upbowing" or "ubow", "downbowing" or "dbow", "tremolo3" or "trem3" (for the tremolo with three slashes), "tremolo2" or "trem2"
-				(for the tremolo with two slashes), "tremolo1" or "trem1" (for the tremolo with a single slash).
-				Notice that the default bach font has all the articulations glyphs; however, not all the other supported fonts do,
-				in particular Boulez doesn't have a certain number of the previous articulations among its glyphs.
-				If you don't see an articulation as you wish
-				(e.g. tremoli with Boulez), it might be because the font doesn't have the proper character, so try to use another font.
-				Articulation symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
-				- For slot of type <m>notehead</m> the content must a single notehead symbol.
-				The list of the standard available noteheads as symbols is: "default", "doublewhole", "whole", "white", "black", "diamond", "cross", "plus",
-				"none", "accent", "blacksquare", "whitesquare", "square" "blacktriangle", "whitetriangle", "triangle", "blackrhombus", "whiterhombus", "rhombus".
-				In <o>bach.score</o>, the "square", "triangle" and "rhombus" notehead are black or white depending on the note duration; in <o>bach.roll</o> only
-				the black flavour is used.
-				As for articulations, not all fonts support all symbols.
-				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
-				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
-				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
-				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
-				as the number of rows.
-				<br /> <br />
-				<br />				See also:<m>changeslotitem</m>,<m>eraseslot</m><br />
-			</description>
-		</method>
 		<method name="adjustadditionalstartpad">
 			<arglist />
 			<digest>
@@ -1312,7 +1233,7 @@
 				<br />
 				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
-				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="bang">
@@ -1482,7 +1403,7 @@
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
-				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="checkdynamics">
@@ -1662,7 +1583,7 @@
 				A <m>copyslot</m> message will copy the content of a given slot to another slot for any selected note.
 				The slot number of the source slot and of the target slot are given as arguments.
 				Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>moveslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>moveslot</m>,<m>eraseslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="cut">
@@ -1748,7 +1669,7 @@
 				Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
 				wrapped X coordinate of the element to delete (use the <m>thresh</m> message argument to set a tolerance
 				threshold for the X coordinate matching).
-				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="deletevoice">
@@ -2726,7 +2647,7 @@
 				An <m>eraseslot</m> message will clear the content of a specific slot for any selected note.
 				The slot number of the slot to clear is given as argument.
 				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>copyslot</m>,<m>moveslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>copyslot</m>,<m>moveslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="explodechords">
@@ -3568,7 +3489,7 @@
 				The position may be specified explicitly (for slots that do not bear X-axis information) or
 				dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
-				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="insertvoice">
@@ -3861,7 +3782,7 @@
 				<br />
 				The <m>lambda</m> message is a general router which can be prepended to all the following operations:
 				<m>cents</m>, <m>velocity</m>, <m>onset</m>, <m>tail</m>, <m>duration</m>, <m>voice</m>, <m>addbreakpoint</m>, <m>erasebreakpoint</m>,
-				<m>addslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
+				<m>setslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
 				If such router is prepended, the corresponding operation will apply on the currently output selected item.
 				The idea is that when a selection dump is asked or a command is sent (also see <m>dumpselection</m> or <m>sendcommand</m>), the notation
 				elements are output one by one from the playout (notewise or chordwise depending on the <m>playmode</m>): if you put a feedback loop from the playout
@@ -3870,7 +3791,7 @@
 				chords one by one, depending on their parameters, even by performing a collective selection dump.
 				Such feedback cycle must not have any <o>delay</o> nor <o>pipe</o> nor <o>defer</o> nor <o>deferlow</o>, nor anything which may change the thread
 				or defer the modification operation. See #lambda+operation in the help center to have some examples of usage.
-				<br />				See also:<m>cents</m>,<m>velocity</m>,<m>duration</m>,<m>onset</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m>,<m>name</m>,<m>voice</m><br />
+				<br />				See also:<m>cents</m>,<m>velocity</m>,<m>duration</m>,<m>onset</m>,<m>changeslotitem</m>,<m>setslot</m>,<m>eraseslot</m>,<m>name</m>,<m>voice</m><br />
 			</description>
 		</method>
 		<method name="legato">
@@ -4480,7 +4401,7 @@
 				A <m>moveslot</m> message will move the content of a given slot to another slot for any selected note.
 				The slot number of the source slot and of the target slot are given as arguments.
 				Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>copyslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>copyslot</m>,<m>eraseslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="mute">
@@ -4626,7 +4547,7 @@
 				opens the corresponding slot window. If more notes are selected, nothing happens.
 				Instead of the slot number, you can use slot names, so you can set a symbol as argument containing the name of the slot whose window should
 				be open.
-				<br />				See also:<m>addslot</m><br />
+				<br />				See also:<m>setslot</m><br />
 			</description>
 		</method>
 		<method name="paintjit">
@@ -5099,7 +5020,7 @@
 				<br />
 				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
-				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="quantize">
@@ -5206,16 +5127,6 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom articulations definition to the default one
-			</digest>
-			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
 				Reset the custom notehead definition to the default one
 			</digest>
 			<description>
@@ -5235,6 +5146,16 @@
 				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
 				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
 				<br />				See also:<m>eraseslot</m><br />
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the custom articulations definition to the default one
+			</digest>
+			<description>
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="respell">
@@ -5688,6 +5609,21 @@
 				<br />				See also:<m>getcursor</m>,<m>showcursor</m>,<m>hidecursor</m><br />
 			</description>
 		</method>
+		<method name="setdurationline">
+			<arg name="breakpoints" optional="0" type="llll" />
+			<digest>
+				Set the duration line for selected items
+			</digest>
+			<description>
+				Syntax: <b>setdurationline <m>&lt;llll: breakpoints&gt;</m> </b><br />
+				Example: <b>setdurationline [0 0 0] [0.5 200 0.2] [1 500 0]</b>   <i>→ sets duration line breakpoints to selection</i><br />
+				<br />
+				A <m>setedurationline</m> message will replace the duration line of all the selected notes with the introduced breakpoints
+				The syntax is
+				<b>setdurationline [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>] [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>]...</b>. <br />
+				<br />				See also:<m>addbreakpoint</m>,<m>erasebreakpoints</m><br />
+			</description>
+		</method>
 		<method name="setnotationcolors">
 			<arg name="red" optional="0" type="float" />
 			<arg name="green" optional="0" type="float" />
@@ -5702,6 +5638,86 @@
 				<br />
 				Set all the notation colors at once (accidentals, annotations, articulations, clefs, key signatures, lyrics,
 				main and auxiliary staff, notes, stems, rests, tempi), in RGBA format.
+			</description>
+		</method>
+		<method name="setslot">
+			<arg name="slots" optional="0" type="llll" />
+			<digest>
+				Set the content of one or more slots for selected items
+			</digest>
+			<description>
+				Syntax: <b>setslot <m>&lt;llll: slots&gt;</m> </b><br />
+				Examples:<br />
+				• <b>setslot [6 0.512]</b>   <i>→ fill (float) slot 6 with number 0.512</i><br />
+				• <b>setslot [5 42]</b>   <i>→ fill (int) slot 5 with number 42</i><br />
+				• <b>setslot [7 "Lorem Ipsum" ]</b>   <i>→ fill (text) slot 7 with some text</i><br />
+				• <b>setslot [10 [John George [Ringo] [Brian]] ]</b>   <i>→ fill (llll) slot 10 with an llll</i><br />
+				• <b>setslot [3 10 20 30]</b>   <i>→ fill (intlist) slot 3 of selected notes with list of values 10, 20, 30</i><br />
+				• <b>setslot [2 [0 0 0] [0.5 0 1] [1 1 0.2]</b>   <i>→ fill (function) slot 2 with a breakpoint function in (x y slope) form</i><br />
+				• <b>setslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for slot named 'amplienv'</i><br />
+				• <b>setslot [active [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for currently open slot</i><br />
+				• <b>setslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ set more slots at once</i><br />
+				<br />
+				A <m>setslot</m> message (or <m>addslot</m> for backward compatibility)
+				will replace the content of one or more slots, for all the selected notes.
+				The syntax is <b>setslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
+				The slot content syntax depends on the slot type. <br />
+				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
+				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
+				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
+				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
+				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
+				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
+				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
+				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
+				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
+				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
+				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
+				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
+				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
+				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
+				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
+				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
+				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
+				<m>lowpass</m>, <m>highpass</m>, <m>bandpass</m>, <m>bandstop</m>, <m>peaknotch</m>, <m>lowshelf</m>, <m>highshelf</m>, <m>allpass</m>.
+				You can equivalently use for input the syntax
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
+				Finally, when data is output, the syntax is always a combination of the two:
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
+				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
+				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
+				articulations introduced as symbols.
+				The list of the are standard available articulations as symbols is: "staccato" or "stacc", "staccatissimo" or "staccmo",
+				"fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
+				"portatostaccato" or "portstacc", "martellato" or "mart", "martellatostaccato" or "martstacc", "lefthandpizzicato" or "lhpiz",
+				"trill" or "tr", "gruppetto" or "grupp", "upmordent" or "umord", "downmordent" or "dmord", "doublemordent" or "mmord",
+				"upbowing" or "ubow", "downbowing" or "dbow", "tremolo3" or "trem3" (for the tremolo with three slashes), "tremolo2" or "trem2"
+				(for the tremolo with two slashes), "tremolo1" or "trem1" (for the tremolo with a single slash).
+				Notice that the default bach font has all the articulations glyphs; however, not all the other supported fonts do,
+				in particular Boulez doesn't have a certain number of the previous articulations among its glyphs.
+				If you don't see an articulation as you wish
+				(e.g. tremoli with Boulez), it might be because the font doesn't have the proper character, so try to use another font.
+				Articulation symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
+				- For slot of type <m>notehead</m> the content must a single notehead symbol.
+				The list of the standard available noteheads as symbols is: "default", "doublewhole", "whole", "white", "black", "diamond", "cross", "plus",
+				"none", "accent", "blacksquare", "whitesquare", "square" "blacktriangle", "whitetriangle", "triangle", "blackrhombus", "whiterhombus", "rhombus".
+				In <o>bach.score</o>, the "square", "triangle" and "rhombus" notehead are black or white depending on the note duration; in <o>bach.roll</o> only
+				the black flavour is used.
+				As for articulations, not all fonts support all symbols.
+				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
+				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
+				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
+				as the number of rows.
+				<br /> <br />
+				<br />				See also:<m>changeslotitem</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="showcursor">
@@ -9549,6 +9565,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="slopemapping" get="1" set="1" type="int" size="1">
+			<digest>
+				Slope Mapping
+			</digest>
+			<description>
+				Sets the function to be used for slope mapping: either bach (default) or Max.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slope Mapping" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="slotfunctionptradius" get="1" set="1" type="float" size="1">

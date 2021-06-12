@@ -2,7 +2,7 @@
  *  patrons.h
  * (This file has been generated automatically by Doctor Max. You may not want to edit this file directly).
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2021 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
