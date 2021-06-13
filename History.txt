@@ -48,6 +48,8 @@ authorization: now the code for a given year can be entered until January of the
 
 bach ecosystem: no extra memory is claimed by bach before the first bach object is created
 
+multiple objects: help files and doc updated
+
 - bell, bach.expr:
     makepitch function now treats negative degrees as descending steps (e.g. makepitch(-1, 0, 5) returns B4)
     fixed crash when dividing with // an integer by 0
@@ -80,6 +82,24 @@ bach ecosystem: no extra memory is claimed by bach before the first bach object 
 - bach.reg, bach.value, bach.pv
     Fixed memory leak related to the text editor window
 
+- bach.roll, bach.score, bach.slot:
+    fixed potential memory leak when using transferslots
+
+- bach.roll, bach.score: 
+    @playheadwidth attribute added, better doc for playcolor and added doc for playheadwidth
+    now preschedule playing supports setclock
+    removed unnecessary warnings for dynamics2velocities message
+    dynamics can now be copy-pasteed
+    new "reducefunction" message
+    fixed bug potentially causing crashes with label families
+    new message "setdurationline"; "addslot" is renamed "setslot" preserving the older for bwcompatibility
+    @slopemapping attribute added: new support for Max-type slopes
+    fixed bug in getting subvoices
+    added @stard and @end message attributes for "dumpselection" message
+    now "sel XXX if" message is valid for any notation item, chord/measure/voice included
+    fixed bug causing possible crashes at slotinfo definition when extensions mode changed
+    fixed bug preventing markers from having a lambda interaction
+
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
         Accidentals are correctly dealt with when importing multi-voice parts
@@ -87,6 +107,13 @@ bach ecosystem: no extra memory is claimed by bach before the first bach object 
         Time signature can be inferred if not given
     XML import and export: three-quarters-sharp and -flat accidentals have correct name now (was "three-quarter")
         complex time signatures are correctly handled
+    symduration variable now works for measures as well
+    @autocomplete attribute exposed
+    fixed bug potentially causing weird behaviors while setting the score from gathered syntax if the clefs introduced were less than the number of voices
+    fixed bug causing crashed when addtempo was called with improper syntax
+    fixed bug sometimes causing wrong placement of dynamics in bach.score at the very end of a note
+    fixed bug causing possible missing initial tempo in "subscore" command
+    fixed wrong filename in MIDI score import help file
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
@@ -96,6 +123,25 @@ bach ecosystem: no extra memory is claimed by bach before the first bach object 
     exportmidi: new "exportbarlines" message attribute
         new "exportdivisions" message attribute
         fixed bug causing data corruption if notes in channel 16 were present
+    fixed bug sometimes causing wrong gluechord on notes with breakpoints
+    fixed bug with groups
+    fixed bug that broke the "sel chord"/"sel note"
+    solved crashes while using sampling/interp in bach.roll/score
+    fixed bug causing loss of user-defined accidentals during copy-paste
+    fixed bug causing wrong breakpoint and temporal slots handling while stretching bach.roll regions via markers
+
+- bach.slot:
+    redraw is refreshed when changing scrollbar
+    fixed bug causing crashes with writetxt in bach.slot
+    added support for noteheadinfo and articulationinfo to bach.slot
+
+- bach.quantize:
+    fixed bug causing crashes when quantizing an empty score with @sync 1
+    fixed bug causing weird rests when dealing with pickup measures with bach.quantize
+
+- bach.playkeys:
+    now bach.playkeys is able to recognize if slots are given by names, and if so dynamics/articulations/etc. 
+	defaults are adapted accordingly
 
 - bach.shelf: fixed crash with @embed 1 when reopening patch
 
@@ -103,6 +149,9 @@ bach ecosystem: no extra memory is claimed by bach before the first bach object 
 
 - bach.constraints: evaluation order of same-size domains is not changed
 
+- bach.graph: fixed bug causing disappearance of labels in bach.graph
+
+- bach.path2llll: fixed bug causing wrong behavior with names potentially causing conflicts with bach parsing
 
 
 v0.8.1b
