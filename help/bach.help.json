@@ -1528,6 +1528,13 @@
 				"tags" : [ "appearance", "color", "note", "notehead", "notation", "attribute", "setnotationcolors", "mainstavescolor", "auxiliarystavescolor", "accidentalcolor", "annotationcolor", "articulationcolor", "beamcolor", "notecolor", "tupletcolor", "flagcolor", "lyricscolor", "stemcolor", "restcolor", "tempocolor staff", "main", "auxili" ],
 				"title" : [ "Notation colors" ]
 			},
+			"Playback" : {
+				"filename" : [ "bach.help.notation.appearance.31_playback.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [  ],
+				"tags" : [ "appearance", "color", "play", "bar", "playcolor", "playback", "highlight", "play", "highlightplay", "playheadwidth", "playhead", "head", "large" ],
+				"title" : [ "Play colors" ]
+			},
 			"Ruler and grid" : {
 				"Ruler" : {
 					"filename" : [ "bach.help.notation.appearance.35_ruler and grid.01_ruler.maxpat" ],
