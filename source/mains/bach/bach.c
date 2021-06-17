@@ -158,6 +158,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method) bach_sendplatform, "sendplatform", A_SYM, 0);
     class_addmethod(c, (method) bach_sendbuildnumber, "sendbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_donors, "donors", 0);
+    class_addmethod(c, (method) bach_donors, "patrons", 0);
     class_addmethod(c, (method) bach_installatompackage, "installatompackage", 0);
     class_addmethod(c, (method) bach_clearatomcachefolder, "clearatomcachefolder", 0);
 
