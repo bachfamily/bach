@@ -11140,6 +11140,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
+		<attribute name="playheadwidth" get="1" set="1" type="float" size="1">
+			<digest>
+				Playhead Width
+			</digest>
+			<description>
+				Sets the playhead width in pixels.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Playhead Width" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="playmarkers" get="1" set="1" type="int" size="1">
 			<digest>
 				Play Markers
