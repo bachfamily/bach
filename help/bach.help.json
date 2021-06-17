@@ -1199,7 +1199,7 @@
 			"objects" : [  ],
 			"seealso" : [ "message+unlock" ],
 			"tags" : [ "message", "Patreon", "patron", "donor" ],
-			"title" : [ "Messages to bach: donors" ]
+			"title" : [ "Messages to bach: donors, patrons" ]
 		},
 		"Unlock" : {
 			"filename" : [ "bach.help.messages to bach.02_unlock.maxpat" ],
