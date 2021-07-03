@@ -221,6 +221,7 @@ void graph_set(t_graph *x, t_symbol *s, long argc, t_atom *argv);
 void graph_click(t_graph *x, long val);
 void graph_setclick(t_graph *x, long val);
 
+void graph_expr(t_graph *x, t_symbol *s, long argc, t_atom *argv);
 void graph_exprx(t_graph *x, t_symbol *s, long argc, t_atom *argv);
 void graph_expry(t_graph *x, t_symbol *s, long argc, t_atom *argv);
 void graph_exprr(t_graph *x, t_symbol *s, long argc, t_atom *argv);
@@ -378,6 +379,15 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @exemple expry $f2*sin($f1*$f1) @caption the same, $f2 being some parameter
     // @seealso exprx, exprr, bang
 	class_addmethod(c, (method) graph_expry, "expry", A_GIMME, 0);
+
+    // @method expr @digest Define cartesian or polar formula
+    // @description Via <m>expr</m> one defines the expression f for a formula as Y = f(X) (if the graph is in cartesian mode),
+    // or as R = f(Theta) (if the graph is in polar mode). This message does not work if the graph is in parametric mode.
+    // The message hence corresponds to <m>expry</m> for cartesian modes and <m>exprr</m> for polar ones.
+    // Refer to these messages to know more.
+    // @marg 0 @name expression @optional 0 @type llll
+    // @seealso expry, exprr, bang
+    class_addmethod(c, (method) graph_expr, "expr", A_GIMME, 0);
 
 
 	// @method exprr @digest Define formula for R variable (radius)
@@ -908,6 +918,25 @@ void graph_expry(t_graph *x, t_symbol *s, long argc, t_atom *argv){
 	} else {
 		object_error((t_object *) x, "Bad expression!");
 	}
+}
+
+void graph_expr(t_graph *x, t_symbol *s, long argc, t_atom *argv){
+    switch (x->graph_type) {
+        case k_GRAPH_POLAR:
+        case k_GRAPH_POLARPOINTS:
+            graph_exprr(x, s, argc, argv);
+            break;
+
+        case k_GRAPH_CARTESIAN:
+        case k_GRAPH_CARTESIANPOINTS:
+            graph_expry(x, s, argc, argv);
+            break;
+
+        default:
+            object_warn((t_object *)x, "Expr message is only supported in cartesian or polar modes.");
+            object_warn((t_object *)x, "     Use exprx and expry instead.");
+            break;
+    }
 }
 
 
