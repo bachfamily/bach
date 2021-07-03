@@ -152,7 +152,9 @@ multiple objects: help files and doc updated
 
 - bach.constraints: evaluation order of same-size domains is not changed
 
-- bach.graph: fixed bug causing disappearance of labels in bach.graph
+- bach.graph: 
+    fixed bug causing disappearance of labels in bach.graph
+    new "expr" message, mirroring "expry" for cartesian graphs and "exprr" for polar graphs
 
 - bach.path2llll: fixed bug causing wrong behavior with names potentially causing conflicts with bach parsing
 
