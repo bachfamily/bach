@@ -142,6 +142,9 @@ multiple objects: help files and doc updated
 - bach.playkeys:
     now bach.playkeys is able to recognize if slots are given by names, and if so dynamics/articulations/etc. 
 	defaults are adapted accordingly
+    added @voicefilter attribute to filter specific voices
+    fixed behavior with measure-attached markers, now path/measurenumber/voicenumber works properly
+    new "any" key to match any incoming item type
 
 - bach.shelf: fixed crash with @embed 1 when reopening patch
 
@@ -152,6 +155,8 @@ multiple objects: help files and doc updated
 - bach.graph: fixed bug causing disappearance of labels in bach.graph
 
 - bach.path2llll: fixed bug causing wrong behavior with names potentially causing conflicts with bach parsing
+
+
 
 
 v0.8.1b
