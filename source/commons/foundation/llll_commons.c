@@ -6612,6 +6612,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
                     }
                 } else {
                     step = (end - start) / (maxcount - 1);
+                    maxcount_decides = true;
                 }
             } else {
                 step = hatom_getdouble(&step_hatom);
