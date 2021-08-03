@@ -32363,7 +32363,7 @@ char basenote2key(t_notation_obj *r_ob, double screen_midicents, t_rational scre
         (step == 1 && rat_rat_cmp(screen_acc, RAT_1OVER2) == 0 && mode < 0))
         return 6;
     if ((step == 0 && rat_rat_cmp(screen_acc, RAT_1OVER2) == 0 && mode > 0) ||
-        (step == 6 && rat_rat_cmp(screen_acc, RAT_1OVER2) == 0 && mode < 0))
+        (step == 5 && rat_rat_cmp(screen_acc, RAT_1OVER2) == 0 && mode < 0))
         return 7;
 
     if ((step == 3 && rat_rat_cmp(screen_acc, long2rat(0)) == 0 && mode > 0) ||

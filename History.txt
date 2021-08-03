@@ -99,6 +99,7 @@ multiple objects: help files and doc updated
     now "sel XXX if" message is valid for any notation item, chord/measure/voice included
     fixed bug causing possible crashes at slotinfo definition when extensions mode changed
     fixed bug preventing markers from having a lambda interaction
+    fixed bug causing wrong order of accidentals in some key signatures
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
