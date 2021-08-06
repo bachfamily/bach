@@ -1,20 +1,5 @@
 VERSION NOTES:
 
-
-TO BE CATEGORIZED:
-
-*****************
-*** IMPORTANT ***
-*****************
-
-- bach.roll, bach.score, bach.slot: 
-	The "addslot" message is now deprecated in favour of the identical "setslot" message. 
-		The "addslot" message is still kept for backward compatibility, but you are encouraged to use "setslot" from now on.
-
-- bach.roll, bach.score: 
-	New "setdurationline" message setting the duration line from a list of pitch breakpoints
-
-
 v0.8.2b
 
 *****************
@@ -38,6 +23,7 @@ v0.8.2b
         New "importdivisions" message attribute, overriding "markdivisions"
 
 - bach.pitchpack now treats negative degrees as descending steps (see the bell / bach.expr makepitch function)
+
 
 
 ***********************
@@ -83,9 +69,12 @@ multiple objects: help files and doc updated
     Fixed memory leak related to the text editor window
 
 - bach.roll, bach.score, bach.slot:
+    The "addslot" message is now deprecated in favour of the identical "setslot" message. 
+		The "addslot" message is still kept for backward compatibility, but you are encouraged to use "setslot" from now on.
     fixed potential memory leak when using transferslots
 
 - bach.roll, bach.score: 
+    New "setdurationline" message setting the duration line from a list of pitch breakpoints
     @playheadwidth attribute added, better doc for playcolor and added doc for playheadwidth
     now preschedule playing supports setclock
     removed unnecessary warnings for dynamics2velocities message
@@ -160,6 +149,12 @@ multiple objects: help files and doc updated
 - bach.path2llll: fixed bug causing wrong behavior with names potentially causing conflicts with bach parsing
 
 - bach.wrandom: fixed bug causing wrong results with > 32k elements
+
+
+
+
+
+
 
 
 
