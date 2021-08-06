@@ -159,6 +159,7 @@ multiple objects: help files and doc updated
 
 - bach.path2llll: fixed bug causing wrong behavior with names potentially causing conflicts with bach parsing
 
+- bach.wrandom: fixed bug causing wrong results with > 32k elements
 
 
 
