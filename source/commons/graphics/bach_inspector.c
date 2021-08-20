@@ -1475,12 +1475,14 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 			change_single_voicename_from_ac_av(r_ob, (t_voice *)obj, ac, av, true);
 			return;
 		} else if (attr->name == _llllobj_sym_stafflines) {
-			t_llll *parsed = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
-			set_stafflines_to_voice_from_llllelem(r_ob, (t_voice *)obj, parsed->l_head, false, NULL);
-			// synchronizing the llll attribute
-			llll_free(r_ob->stafflines_as_llll);
-			r_ob->stafflines_as_llll = get_stafflines_as_llll(r_ob, false);
-			llll_free(parsed);
+            t_llll *parsed = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
+            if (parsed) {
+                set_stafflines_to_voice_from_llllelem(r_ob, (t_voice *)obj, parsed->l_head, false, NULL);
+                // synchronizing the llll attribute
+                llll_free(r_ob->stafflines_as_llll);
+                r_ob->stafflines_as_llll = get_stafflines_as_llll(r_ob, false);
+                llll_free(parsed);
+            }
 			return;
 		}
 	}
