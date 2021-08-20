@@ -31471,7 +31471,7 @@ void recalculate_voicenames_width(t_notation_obj *r_ob) {
         void *voice = r_ob->firstvoice; 
         double max_width = 0.; 
         char there_is_some_name = false;
-        t_jfont *jf_text_names = jfont_create_debug(r_ob->voice_names_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->voice_names_font_size);
+        t_jfont *jf_text_names = jfont_create_debug(r_ob->voice_names_font ? r_ob->voice_names_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->voice_names_font_size);
         while (voice && ((t_voice *)voice)->number < r_ob->num_voices) {
             double width, height;
             if (((t_voice *)voice)->r_it.names->l_size == 0 || name_is_abr_none_abr(((t_voice *)voice)->r_it.names))
