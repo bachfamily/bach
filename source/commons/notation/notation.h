@@ -2841,7 +2841,7 @@ typedef struct _timepoint
 
 
 // Private
-typedef double (*notation_obj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, char sample_all_voices, char zero_pim_is_measure_first_chord);
+typedef double (*notation_obj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, long flags);
 typedef double (*notation_obj_undo_redo_fn)(void *notation_obj, char direction);
 
 
@@ -5380,7 +5380,16 @@ void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *
 
 
 
-
+/** Internal flags, typically assigned to the #t_notation_item <flag> field.
+ @ingroup    notation
+ */
+typedef enum _bach_timepointtoux_flags {
+    k_TIMEPOINTTOUX_FLAG_NONE = 0,
+    k_TIMEPOINTTOUX_FLAG_SAMPLEALLVOICES = 1, // sample all the voices to convert
+    k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD = 2, // a zero point in measure (pim) corresponds to the first chord
+    k_TIMEPOINTTOUX_FLAG_MANUALGRACEBEHAVIOR = 4, // toggles a manual setting for handling graces (see below)
+    k_TIMEPOINTTOUX_FLAG_NUDGEBACKFORGRACES = 8, // nudge back if the timepoint has a grace note (only meaningful if previous one is set)
+} e_bach_timepointtoux_flags;
 
 
 /// TIMEPOINT CONVERSIONS FOR [bach.score] only, TBD
@@ -5388,9 +5397,9 @@ double timepoint_to_ms(t_notation_obj *r_ob, t_timepoint tp, long voicenum);
 t_timepoint ms_to_timepoint_autochoose_voice(t_notation_obj *r_ob, double ms, char mode, long *chosen_voice);
 t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum);
 t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode);
-double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, char sample_all_voices, char zero_pim_is_first_chord);
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, char accurate = false);
-char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, char accurate = false);
+double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, long flags); // flags are e_bach_timepointtoux_flags
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, long accurate = false, long nudge_back_for_graces = -1);
+char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, long accurate = false, long nudge_back_for_graces = -1);
 
 
 
@@ -19269,6 +19278,8 @@ void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double heig
 // to be documented
 t_chord *chord_get_first(t_notation_obj *r_ob, t_voice *voice);
 t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice);
+t_chord *chord_get_first_nongrace(t_notation_obj *r_ob, t_measure *meas);
+
 t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms);
 t_llll *notationobj_get_interp_tempo(t_notation_obj *r_ob, t_timepoint tp);
 t_llll *notationobj_get_interp_timesig(t_notation_obj *r_ob, t_timepoint tp);

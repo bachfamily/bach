@@ -127,6 +127,20 @@
 				explicitely added by the user
 			</description>
 		</method>
+		<method name="expr">
+			<arg name="expression" optional="0" type="llll" />
+			<digest>
+				Define cartesian or polar formula
+			</digest>
+			<description>
+				Syntax: <b>expr <m>&lt;llll: expression&gt;</m> </b><br />				<br />
+				Via <m>expr</m> one defines the expression f for a formula as Y = f(X) (if the graph is in cartesian mode),
+				or as R = f(Theta) (if the graph is in polar mode). This message does not work if the graph is in parametric mode.
+				The message hence corresponds to <m>expry</m> for cartesian modes and <m>exprr</m> for polar ones.
+				Refer to these messages to know more.
+				<br />				See also:<m>expry</m>,<m>exprr</m>,<m>bang</m><br />
+			</description>
+		</method>
 		<method name="exprr">
 			<arg name="expression" optional="0" type="llll" />
 			<digest>

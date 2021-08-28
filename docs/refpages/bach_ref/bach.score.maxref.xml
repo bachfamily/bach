@@ -5141,7 +5141,7 @@
 				Obtain active notes data at a given instant
 			</digest>
 			<description>
-				Syntax: <b>interp <m>&lt;float/llll: time&gt;</m> </b><br />
+				Syntax: <b>interp <m>&lt;float/llll: time&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>interp 1000</b>   <i>→ get info on chords being played at 1s</i><br />
 				• <b>interp [3]</b>   <i>→ get info on chords being played at beginning of measure 3</i><br />
@@ -5154,6 +5154,10 @@
 				• <b>interp timesig [3]</b>   <i>→ get time signature at beginning of measure 3</i><br />
 				• <b>interp timesig 1s</b>   <i>→ get time signature at 1s</i><br />
 				• <b>interp timesig [2 3 0]</b>   <i>→ get info on time signatures at measure 3 of voice 2</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
 				<br />
 				The <m>interp</m> message, followed by a time value (in milliseconds) retrieves
 				the instantaneous data of all the notes which are active at the given time instant.
@@ -6173,7 +6177,7 @@
 				Replace score content at given points
 			</digest>
 			<description>
-				Syntax: <b>overtype <m>&lt;llll: region&gt;</m> <m>&lt;llll: content&gt;</m> </b><br />
+				Syntax: <b>overtype <m>&lt;llll: region&gt;</m> <m>&lt;llll: content&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>overtype [[1] [1 2/4]] [[[1/2 [C4 100 0]]]]</b>   <i>→ replace first two quarters of measure 1 with a middle C note</i><br />
 				• <b>overtype [[1] [1 1/2]] [[[-1/2]]]</b>   <i>→ replace first two quarters of measure 1 with rests</i><br />
@@ -6182,6 +6186,10 @@
 				• <b>overtype [[2 3 1/2]] [[[1/4 [C4 100 0]] [1/4 [E4 100 0]] [1/4 [G4 100 0]]]]</b>   <i>→ put a C major arpeggio of quarter notes in voice 2, starting from 1/2 after beginning of measure 3</i><br />
 				• <b>overtype [[1 1 3/8] [1 2 1/4]] [[[1/8 [C4 100 0]] [1/8 [E4 100 0]] [1/4 [G4 100 0]] [1/8 [C5 100 0]] [1/4 [E5 100 0]] [1/4 [E5 100 0]]]]</b>   <i>→ replace content of voice 1, from measure 1 (after 3/4) to measure 2 (after 1/4), with the defined gathered-syntax content (if content ove</i><br />
 				• <b>overtype [[1 1 3/8] [2 2 1/4]] [[[1/8 [C4 100 0]] [1/8 [E4 100 0]] [1/8 [G4 100 0]]] [[[leveltype 25] [1/12 [7200. 100 0]] [1/12 [7400 100 0]] [1/12 [7600. 100 0]]] [[1/8 [7700 100 0]] [1/8 [7900 100 0]]] [[-1/8] [1/8 [7700 100 0]]]]]</b>   <i>→ replace portion of score spanning multi</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
 				<br />
 				You can use the <m>overtype</m> message to replace the score content at given points in time for given voices, independently
 				from the measure barline boxing. Somehow, this operation corresponds to putting a cursor somewhere in the score, and start "typing"
@@ -7574,7 +7582,7 @@
 				Move the playhead cursor
 			</digest>
 			<description>
-				Syntax: <b>setcursor <m>&lt;llll: position&gt;</m> </b><br />
+				Syntax: <b>setcursor <m>&lt;llll: position&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>setcursor 2000</b>   <i>→ set the playhead at 2s</i><br />
 				• <b>setcursor [4]</b>   <i>→ set the playhead at beginning of measure 4</i><br />
@@ -7583,6 +7591,10 @@
 				• <b>setcursor [2 4 1/4]</b>   <i>→ set the playhead after 1/4 of measure 4, in second voice</i><br />
 				• <b>setcursor John</b>   <i>→ set the cursor at the onset of the first item named 'John'</i><br />
 				• <b>setcursor John Lennon</b>   <i>→ set the cursor at the onset of the first item named 'John' and 'Lennon'</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
 				<br />
 				The <m>setcursor</m> message moves the playhead cursor to a specific position, given as argument in milliseconds (if a single number is entered)
 				or as a timepoint (if an llll is entered). <br />
@@ -8100,13 +8112,17 @@
 				Perform conversions between timepoint and millisecond syntaxes
 			</digest>
 			<description>
-				Syntax: <b>timepoint <m>[&lt;llll: query_label&gt;]</m> <m>&lt;number/llll: position&gt;</m> </b><br />
+				Syntax: <b>timepoint <m>[&lt;llll: query_label&gt;]</m> <m>&lt;number/llll: position&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>timepoint 1000</b>   <i>→ get the timepoints (measure, point in measure) for all voices, for the point corresponding to 1s</i><br />
 				• <b>timepoint 2000</b>   <i>→ get the timepoints at 2s, for all voices</i><br />
 				• <b>timepoint [2]</b>   <i>→ get the millisecond position and the timepoints at beginning of measure 2, first voice</i><br />
 				• <b>timepoint [2 3/8]</b>   <i>→ the same for position at measure 2, after 3/8</i><br />
 				• <b>timepoint [4 2 3/8]</b>   <i>→ the same for position at measure 2, after 3/8, for voice 4</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
 				<br />
 				The <m>timepoint</m> message, either followed by a single number, considered as milliseconds position,
 				or by an llll representing the timepoint syntax, will convert the inserted time position into milliseconds and timepoint for
@@ -8156,12 +8172,16 @@
 				Convert a time position into a pixel position
 			</digest>
 			<description>
-				Syntax: <b>timetopixel <m>[&lt;llll: query_label&gt;]</m> <m>&lt;llll: position&gt;</m> </b><br />
+				Syntax: <b>timetopixel <m>[&lt;llll: query_label&gt;]</m> <m>&lt;llll: position&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>timetopixel 4000</b>   <i>→ get the pixel position corresponding to 4s</i><br />
 				• <b>timetopixel [2]</b>   <i>→ get the pixel position corresponding to beginning of measure 2</i><br />
 				• <b>timetopixel [1 1/8]</b>   <i>→ the same, for measure 1 after 1/8</i><br />
 				• <b>timetopixel [3 1 1/8]</b>   <i>→ the same, for measure 1 after 1/8 of voice 3</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
 				<br />
 				The <m>timetopixel</m> message converts a position given (as argument) in milliseconds or in the timepoint syntax,
 				into a position given in pixels, representing

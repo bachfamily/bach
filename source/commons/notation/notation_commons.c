@@ -4393,6 +4393,25 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode)
 }
 
 
+double notationobj_get_start_ms_for_grace(t_notation_obj *r_ob, char accurate)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        return 0;
+    } else {
+        double val = 0;
+        for (t_scorevoice *voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = voice->next) {
+            if (voice->firstmeasure && voice->firstmeasure->firstchord && voice->firstmeasure->firstchord->is_grace_chord) {
+                if (accurate)
+                    val = MIN(val, notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)voice->firstmeasure->firstchord));
+                else
+                    val = MIN(val, notation_item_get_onset_ms(r_ob, (t_notation_item *)voice->firstmeasure->firstchord));
+            }
+        }
+        return val;
+    }
+
+}
+
 double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode, char accurate)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
@@ -4405,8 +4424,9 @@ double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode, char
         t_scorevoice *voice; t_measure *meas; t_chord *chord;
         char left_is_emptyrest = false, right_is_emptyrest = false;
         
-        if (ux <= 0.)
-            return 0;
+        if (ux <= 0.) {
+            return notationobj_get_start_ms_for_grace(r_ob, accurate);
+        }
         
         // we try to find two chords who have unscaled_x directly < and directly > of our ux
         for (voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = voice->next) {
@@ -4659,13 +4679,21 @@ t_tuttipoint *tuttipoint_get_last_from_measures(t_notation_obj *r_ob)
     return tpt;
 }
 
-double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, char sample_all_voices, char zero_pim_is_first_chord)
+double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, long flags)
 {
+    char sample_all_voices = (flags & k_TIMEPOINTTOUX_FLAG_SAMPLEALLVOICES) ? 1 : 0;
+    char zero_pim_is_first_chord = (flags & k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD) ? 1 : 0;
+    long include_graces = -1;
     long voicenum = tp.voice_num;
     t_scorevoice *voice_min = NULL, *voice_max = NULL, *voice;
     t_rational left_pim = long2rat(-1), right_pim = long2rat(-1);
     t_rational pim = tp.pt_in_measure; // point in measure
     t_measure *meas;
+    
+    if (flags & k_TIMEPOINTTOUX_FLAG_MANUALGRACEBEHAVIOR)
+        include_graces = (flags & k_TIMEPOINTTOUX_FLAG_NUDGEBACKFORGRACES) ? 1 : 0;
+    else // default behavior
+        include_graces = (tp.measure_num == 0 && rat_rat_cmp(tp.pt_in_measure, long2rat(0)) <= 0) ? 1 : 0;
     
     double left_ux = 0, right_ux = 0;
     
@@ -4687,10 +4715,19 @@ double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, cha
         total_meas_duration = measure_get_sym_duration(meas);
         
         if (rat_rat_cmp(pim, long2rat(0)) <= 0) {
-            if (zero_pim_is_first_chord && meas->firstchord)
-                return chord_get_alignment_ux(r_ob, meas->firstchord);
-            else
-                return meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux;
+            char measure_has_starting_grace = (meas->firstchord && meas->firstchord->is_grace_chord);
+            if (!measure_has_starting_grace || include_graces) {
+                if (zero_pim_is_first_chord && meas->firstchord)
+                    return chord_get_alignment_ux(r_ob, meas->firstchord);
+                else
+                    return meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux;
+            } else {
+                t_chord *firstnongrace = chord_get_first_nongrace(r_ob, meas);
+                if (firstnongrace)
+                    return chord_get_alignment_ux(r_ob,  firstnongrace);
+                else
+                    continue;
+            }
         }
         if (rat_rat_cmp(pim, total_meas_duration) >= 0)
             return meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux;
@@ -4735,20 +4772,21 @@ double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, cha
 
 
 
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, char accurate)
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, long accurate, long nudge_back_for_graces)
 {
     t_llll *temp = llll_get();
     char res = 0;
     llll_appendhatom_clone(temp, &arguments->l_hatom, 0, WHITENULL_llll);
-    res = parse_open_timepoint_syntax(r_ob, temp, ux, ms, tp, false, accurate);
+    res = parse_open_timepoint_syntax(r_ob, temp, ux, ms, tp, false, accurate, nudge_back_for_graces);
     llll_free(temp);
     return res;
 }
 
 // returns true if error, false otherwise
 // open timepoint syntax is <name>, or <ms>, or (<measure>) or (<measure> <position_in_measure>) or (<voice> <measure> <position_in_measure>)
+// nudgebackforgrace = -1: automatic, 0: no, 1: yes
 char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp,
-                                 char zero_pim_is_measure_first_chord, char accurate)
+                                 char zero_pim_is_measure_first_chord, long accurate, long nudge_back_for_graces)
 {
     double unscaled_x = 0;
     double arguments_ms = 0;
@@ -4786,8 +4824,19 @@ char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double
         t_timepoint arguments_tp = llll_to_timepoint(r_ob, innerllll, &is_voice_defined, false);
         
         if (arguments_tp.measure_num >= 0) {
-            if (ux || ms)
-                unscaled_x = timepoint_to_unscaled_xposition(r_ob, arguments_tp, is_voice_defined ? false : true, zero_pim_is_measure_first_chord);
+            if (ux || ms) {
+                long flags = k_TIMEPOINTTOUX_FLAG_NONE;
+                if (!is_voice_defined)
+                    flags |= k_TIMEPOINTTOUX_FLAG_SAMPLEALLVOICES;
+                if (zero_pim_is_measure_first_chord)
+                    flags |= k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD;
+                if (nudge_back_for_graces >= 0) {
+                    flags |= k_TIMEPOINTTOUX_FLAG_MANUALGRACEBEHAVIOR;
+                    if (nudge_back_for_graces > 0)
+                        flags |= k_TIMEPOINTTOUX_FLAG_NUDGEBACKFORGRACES;
+                }
+                unscaled_x = timepoint_to_unscaled_xposition(r_ob, arguments_tp, flags);
+            }
             if (ms)
                 arguments_ms = unscaled_xposition_to_ms(r_ob, unscaled_x, 1, accurate);
         }
@@ -26090,7 +26139,7 @@ int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, lon
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE && r_ob->timepoint_to_unscaled_xposition) {
             t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-            marker_x = unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS));
+            marker_x = unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp,  CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD : k_TIMEPOINTTOUX_FLAG_NONE));
         } else
             marker_x = ms_to_xposition(r_ob, marker->position_ms, 1);
     } else {
@@ -26131,7 +26180,7 @@ int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x,
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
             t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-            marker_x = unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS));
+            marker_x = unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp,  CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD : k_TIMEPOINTTOUX_FLAG_NONE));
         } else
             marker_x = ms_to_xposition(r_ob, marker->position_ms, 1);
 
@@ -44570,6 +44619,25 @@ t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice)
             return NULL;
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
         return ((t_rollvoice *)voice)->lastchord;
+    return NULL;
+}
+
+
+t_chord *chord_get_first_nongrace(t_notation_obj *r_ob, t_measure *meas)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        if (meas) {
+            t_chord *ch = meas->firstchord;
+            while (ch) {
+                if (ch->is_grace_chord)
+                    ch = ch->next;
+                else
+                    break;
+            }
+            return ch;
+        } else
+            return NULL;
+    }
     return NULL;
 }
 

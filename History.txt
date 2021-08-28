@@ -22,6 +22,13 @@ v0.8.2b
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
         New "importdivisions" message attribute, overriding "markdivisions"
 
+
+- bach.score:
+    Default behavior of setcursor in presence of grace notes has changed: it only accounts for grace notes in the first measure.
+	You can change this by using the new attribute @nudgeforgrace, given to many messages, including:
+	"setcursor", "getpixelpos", "timetopixel", "timepoint", "interp", "overtype"
+	The same messages also now allows for an @accurate mode (not breaking any compatibility).
+
 - bach.pitchpack now treats negative degrees as descending steps (see the bell / bach.expr makepitch function)
 
 

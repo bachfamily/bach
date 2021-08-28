@@ -1216,7 +1216,9 @@ t_llll *goto_time(t_notation_obj *r_ob, t_goto_params *par, long *error)
             llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
         }
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, true, true); // accurate parsing
+        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, true,
+                                                  true, // accurate parsing
+                                                  par->nudge_back_for_graces); // we nudge back grace notes
         llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
     }
     
@@ -1470,6 +1472,7 @@ t_goto_params notationobj_goto_get_default_params(t_notation_obj *r_ob)
     par.matchinclude = k_GOTO_ONSETPOINT_HEAD;
     par.force_inscreen = 0;
     par.graces_have_duration = 0;
+    par.nudge_back_for_graces = -1;
     par.repeat = 1;
     par.markershavevoices = 0;
     par.notation_obj = r_ob;
@@ -1486,7 +1489,7 @@ void notationobj_goto_parseargs(t_notation_obj *r_ob, t_llll *args)
     t_llll *where_ll = NULL, *until_ll = NULL, *types_ll = NULL, *matchinclude_ll = NULL;
     t_symbol *voicemode_sym = gensym("anyactive"), *tiemode_sym = _llllobj_sym_all, *from_sym = _llllobj_sym_auto, *to_sym = _llllobj_sym_auto, *polymode_sym = gensym("overlap"), *untilmode_sym = _llllobj_sym_any;
 
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiiiiilllllssssss", gensym("repeat"), &par.repeat, gensym("inscreen"), &par.force_inscreen, gensym("skiprests"), &par.skiprests, gensym("nullmode"), &par.nullmode, gensym("strict"), &par.strictcmp, gensym("graceshavedur"), &par.graces_have_duration, gensym("markershavevoices"), &par.markershavevoices, gensym("voices"), &par.voicenumbers, gensym("where"), &where_ll, gensym("until"), &until_ll, gensym("type"), &types_ll, gensym("include"), &matchinclude_ll, gensym("voicemode"), &voicemode_sym, gensym("tiemode"), &tiemode_sym, gensym("from"), &from_sym, gensym("to"), &to_sym, gensym("polymode"), &polymode_sym, gensym("untilmode"), &untilmode_sym);
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiiiiilllllssssssi", gensym("repeat"), &par.repeat, gensym("inscreen"), &par.force_inscreen, gensym("skiprests"), &par.skiprests, gensym("nullmode"), &par.nullmode, gensym("strict"), &par.strictcmp, gensym("graceshavedur"), &par.graces_have_duration, gensym("markershavevoices"), &par.markershavevoices, gensym("voices"), &par.voicenumbers, gensym("where"), &where_ll, gensym("until"), &until_ll, gensym("type"), &types_ll, gensym("include"), &matchinclude_ll, gensym("voicemode"), &voicemode_sym, gensym("tiemode"), &tiemode_sym, gensym("from"), &from_sym, gensym("to"), &to_sym, gensym("polymode"), &polymode_sym, gensym("untilmode"), &untilmode_sym, gensym("nudgeforgraces"), &par.nudge_back_for_graces);
     
     for (t_llllelem *el = types_ll ? types_ll->l_head : NULL; el; el = el->l_next) {
         if (hatom_getsym(&el->l_hatom) == _llllobj_sym_all) {

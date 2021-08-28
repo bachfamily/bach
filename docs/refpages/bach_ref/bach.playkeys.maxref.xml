@@ -259,6 +259,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="voicefilter" get="1" set="1" type="int_array" size="0">
+			<digest>
+				Filter Voices
+			</digest>
+			<description>
+				Limits the output of items to one or more voices (specified in the array).
+				If no voice is set, all elements are output. Use voice 0 to only output elements that do not have any voice.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Filter Voices" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="wrapmode" get="1" set="1" type="int" size="1">
 			<digest>
 				Only Wrap Chords llll Data

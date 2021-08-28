@@ -104,6 +104,7 @@ typedef struct _goto_params
     long        tiemode;        ///< one of the e_goto_tiemode handling tie sequences
     long        skiprests;      ///< Skip or ignore rests (don't select them)
     long        graces_have_duration;      ///< Grace notes have durations
+    long        nudge_back_for_graces;  ///< Nudge back go-to timepoint syntax for graces
     long        markershavevoices;      ///< Measure-attached markers undergo the same voice sieving behaviors as chords depending on voicemodes, etc.
     
 // With the "next/prev" commands

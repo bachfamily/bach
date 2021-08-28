@@ -4354,12 +4354,19 @@
 				"tags" : [ "query", "queries", "get", "time", "at", "pixel", "pixeltotime", "convert", "conversion", "interp", "left", "right", "nearest" ],
 				"title" : [ "Converting pixels to time" ]
 			},
-			"Timetopixel" : {
-				"filename" : [ "bach.help.notation.queries and notifications.11_timetopixel.maxpat" ],
+			"A_timetopixel" : {
+				"filename" : [ "bach.help.notation.queries and notifications.11a_timetopixel.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "dumpnotepixelpos", "pixeltotime" ],
 				"tags" : [ "query", "queries", "pixel", "time", "position", "get", "pixel", "convert", "conversion", "timetopixel" ],
 				"title" : [ "Converting time to pixels" ]
+			},
+			"B_timetopixel_nudgeforgrace" : {
+				"filename" : [ "bach.help.notation.queries and notifications.11b_timetopixel_nudgeforgrace.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "setcursor", "grace" ],
+				"tags" : [ "query", "queries", "pixel", "time", "position", "get", "pixel", "convert", "conversion", "timetopixel", "interp", "overtype", "setcursor", "getpixelpos", "grace", "note", "chord", "nudge", "nudgeforgrace", "account" ],
+				"title" : [ "Timepoints and and grace notes" ]
 			},
 			"Timepointsconversion" : {
 				"filename" : [ "bach.help.notation.queries and notifications.12_timepointsconversion.maxpat" ],
@@ -4745,7 +4752,7 @@
 				"filename" : [ "bach.help.notation.save and load.60_images.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "export+image+view", "exportlilypondpdf" ],
-				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "dpi" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "dpi", "exportpng" ],
 				"title" : [ "Exporting scores as images" ]
 			},
 			"Imagesview_roll" : {
@@ -4759,14 +4766,14 @@
 				"filename" : [ "bach.help.notation.save and load.62_imagesview_score.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "export+image" ],
-				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "view", "pixelpersystem", "mspersystem", "line", "raw", "multiline", "scroll", "page" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "view", "pixelpersystem", "mspersystem", "line", "raw", "multiline", "scroll", "page", "exportpng" ],
 				"title" : [ "Image export views for bach.score" ]
 			},
 			"Imagesview_score2" : {
 				"filename" : [ "bach.help.notation.save and load.63_imagesview_score2.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "export+image", "export+image+view" ],
-				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "fit", "measure", "layout", "algorithm", "fitmeasure" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "fit", "measure", "layout", "algorithm", "fitmeasure", "exportpng" ],
 				"title" : [ "Image export layout" ]
 			},
 			"Images_fadedomain" : {
@@ -4848,12 +4855,19 @@
 				"tags" : [ "sequencer", "sequencing", "unpack", "explicit", "play", "content" ],
 				"title" : [ "Explicit content unpacking for bach.score" ]
 			},
-			"Cursor" : {
-				"filename" : [ "bach.help.notation.sequencing.10_cursor.maxpat" ],
+			"A_cursor" : {
+				"filename" : [ "bach.help.notation.sequencing.10a_cursor.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "play+interface", "cursor+message", "timepoint+syntax" ],
 				"tags" : [ "sequencer", "sequencing", "play", "playing", "playhead", "cursor", "playbar", "showplayhead", "setcursor", "getcursor", "set", "get" ],
 				"title" : [ "Playhead cursor" ]
+			},
+			"B_cursorgraces" : {
+				"filename" : [ "bach.help.notation.sequencing.10b_cursorgraces.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "grace" ],
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "playhead", "cursor", "playbar", "showplayhead", "setcursor", "nudge", "grace", "note", "chord", "anticipate", "shift", "account" ],
+				"title" : [ "Playhead cursor and grace notes" ]
 			},
 			"Cursorinterface" : {
 				"filename" : [ "bach.help.notation.sequencing.11_cursorinterface.maxpat" ],

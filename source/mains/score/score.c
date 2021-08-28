@@ -994,7 +994,9 @@ void score_setcursor(t_score *x, t_symbol *s, long argc, t_atom *argv){
         unlock_general_mutex((t_notation_obj *)x);
     } else {
         // measure point in measure, voice
-        scoreapi_setcursor_from_llll(x, args);
+        long accurate = 0, nudgeforgrace = -1;
+        llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
+        scoreapi_setcursor_from_llll(x, args, accurate, nudgeforgrace);
     }
     if (x->r_ob.notify_also_upon_messages) {
         send_moved_playhead_position((t_notation_obj *) x, 7);
@@ -2883,7 +2885,7 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
         create_header_undo_tick((t_notation_obj *)x, k_HEADER_MARKERS);
         
         if (attach_to == k_MARKER_ATTACH_TO_MEASURE)
-            pos_ms = unscaled_xposition_to_ms((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS), 1);
+            pos_ms = unscaled_xposition_to_ms((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD : k_TIMEPOINTTOUX_FLAG_NONE), 1);
         
         if (params->l_size >= 3 && hatom_gettype(&params->l_head->l_next->l_next->l_hatom) == H_SYM)
             markerrole = sym_to_marker_role(hatom_getsym(&params->l_head->l_next->l_next->l_hatom));
@@ -4617,6 +4619,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
     // @marg 0 @name region @optional 0 @type llll
     // @marg 1 @name content @optional 0 @type llll
+    // @mattr accurate @type int @default 0 @digest If non-zero, perform more CPU-consuming accurate calculation
+    // @mattr nudgeforgrace @type int @default -1 @digest Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)
     // @example overtype [[1] [1 2/4]] [[[1/2 [C4 100 0]]]] @caption replace first two quarters of measure 1 with a middle C note
     // @example overtype [[1] [1 1/2]] [[[-1/2]]] @caption replace first two quarters of measure 1 with rests
     // @example overtype [[1] [1 1/2]] [[[]]] @caption exactly the same
@@ -4911,6 +4915,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // is retrieved at the specified position in time, for every voice. <br /> <br />
     // @copy BACH_DOC_NOTE_GATHERED_SYNTAX_SCORE
     // @marg 0 @name time @optional 0 @type float/llll
+    // @mattr accurate @type int @default 0 @digest If non-zero, perform more CPU-consuming accurate calculation
+    // @mattr nudgeforgrace @type int @default -1 @digest Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)
     // @example interp 1000 @caption get info on chords being played at 1s
     // @example interp [3] @caption get info on chords being played at beginning of measure 3
     // @example interp [3.5] @caption get info on chords being played at half of measure 3
@@ -5108,6 +5114,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @marg 1 @name position @optional 0 @type llll
+    // @mattr accurate @type int @default 0 @digest If non-zero, perform more CPU-consuming accurate calculation
+    // @mattr nudgeforgrace @type int @default -1 @digest Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)
     // @example timetopixel 4000 @caption get the pixel position corresponding to 4s
     // @example timetopixel [2] @caption get the pixel position corresponding to beginning of measure 2
     // @example timetopixel [1 1/8] @caption the same, for measure 1 after 1/8
@@ -5127,6 +5135,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
     // @marg 1 @name position @optional 0 @type number/llll
+    // @mattr accurate @type int @default 0 @digest If non-zero, perform more CPU-consuming accurate calculation
+    // @mattr nudgeforgrace @type int @default -1 @digest Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)
     // @example timepoint 1000 @caption get the timepoints (measure, point in measure) for all voices, for the point corresponding to 1s
     // @example timepoint 2000 @caption get the timepoints at 2s, for all voices
     // @example timepoint [2] @caption get the millisecond position and the timepoints at beginning of measure 2, first voice
@@ -6384,6 +6394,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // <b>setcursor <m>MARKER_NAME_OR_NAMES</m></b>, where <m>MARKER_NAME_OR_NAMES</m> is a single name or plain list of names. 
     // The playhead cursor is moved to the first marker matching all the names (if any).
     // @marg 0 @name position @optional 0 @type llll
+    // @mattr accurate @type int @default 0 @digest If non-zero, perform more CPU-consuming accurate calculation
+    // @mattr nudgeforgrace @type int @default -1 @digest Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)
     // @example setcursor 2000 @caption set the playhead at 2s
     // @example setcursor [4] @caption set the playhead at beginning of measure 4
     // @example setcursor [4.5] @caption set the playhead at half of measure 4
@@ -8281,11 +8293,11 @@ void set_loop_region_from_llll(t_score *x, t_llll* loop, char lock_mutex)
         } else {
             if (loop->l_head) 
                 parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, loop->l_head, NULL,
-                                                          &x->r_ob.loop_region.start.position_ms, &x->r_ob.loop_region.start.timepoint, false);
+                                                          &x->r_ob.loop_region.start.position_ms, &x->r_ob.loop_region.start.timepoint, false, false, 0);
             
             if (loop->l_head && loop->l_head->l_next) 
                 parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, loop->l_head->l_next, NULL,
-                                                          &x->r_ob.loop_region.end.position_ms, &x->r_ob.loop_region.end.timepoint, false);
+                                                          &x->r_ob.loop_region.end.position_ms, &x->r_ob.loop_region.end.timepoint, false, false, 0);
             
             if (x->r_ob.loop_region.end.position_ms < x->r_ob.loop_region.start.position_ms) {
                 t_timepoint temp = x->r_ob.loop_region.start.timepoint;
@@ -8637,12 +8649,16 @@ void score_getpixelpos(t_score *x, t_symbol *s, long argc, t_atom *argv)
         return;
     
     input_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
+    
+    long accurate = 0, nudgeforgrace = -1;
+    llll_parseattrs((t_object *)x, input_llll, LLLL_PA_DESTRUCTIVE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
+
     label = get_querying_label_from_querying_llll((t_notation_obj *) x, input_llll, true);
 
     if (input_llll && input_llll->l_head)
         llll_behead(input_llll);
     
-    err = scoreapi_getpixelpos(x, input_llll, &pos);
+    err = scoreapi_getpixelpos(x, input_llll, &pos, accurate, nudgeforgrace);
     
     if (!err) {
         t_llll *outlist = llll_get();
@@ -8670,12 +8686,16 @@ void score_timetopixel(t_score *x, t_symbol *s, long argc, t_atom *argv)
         return;
     
     input_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
+    
+    long accurate = 0, nudgeforgrace = -1;
+    llll_parseattrs((t_object *)x, input_llll, LLLL_PA_DESTRUCTIVE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
+    
     label = get_querying_label_from_querying_llll((t_notation_obj *) x, input_llll, true);
     
     if (input_llll && input_llll->l_head)
         llll_behead(input_llll);
     
-    err = scoreapi_getpixelpos(x, input_llll, &pos);
+    err = scoreapi_getpixelpos(x, input_llll, &pos, accurate, nudgeforgrace);
     
     if (!err) {
         t_llll *outlist = llll_get();
@@ -8702,6 +8722,10 @@ void score_timepoint(t_score *x, t_symbol *s, long argc, t_atom *argv)
         return;
     
     input_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
+
+    long accurate = 0, nudgeforgrace = -1;
+    llll_parseattrs((t_object *)x, input_llll, LLLL_PA_DESTRUCTIVE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
+
     label = get_querying_label_from_querying_llll((t_notation_obj *) x, input_llll, true);
     
     if (input_llll && input_llll->l_head)
@@ -8710,7 +8734,7 @@ void score_timepoint(t_score *x, t_symbol *s, long argc, t_atom *argv)
     double ms;
     t_timepoint tp;
     
-    if (!parse_open_timepoint_syntax((t_notation_obj *)x, input_llll, NULL, &ms, &tp, false)) {
+    if (!parse_open_timepoint_syntax((t_notation_obj *)x, input_llll, NULL, &ms, &tp, false, accurate, nudgeforgrace)) {
         t_scorevoice *voice;
         t_llll *outlist = llll_get();
         e_ms_to_tp_modes mode = k_MS_TO_TP_RETURN_INTERPOLATION;
@@ -9484,9 +9508,12 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         recompute_all_and_redraw(x);
                         
                     } else if (firstelem->l_next && router == _llllobj_sym_interp) {
+                        long accurate = 0, nudgeforgrace = -1;
+                        llll_parseattrs((t_object *)x, inputlist, LLLL_PA_NONE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
+                        
                         if (firstelem->l_next->l_next && hatom_getsym(&firstelem->l_next->l_hatom) == _llllobj_sym_tempo) {
                             t_timepoint tp;
-                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next->l_next, NULL, NULL, &tp, false);
+                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next->l_next, NULL, NULL, &tp, false, accurate, nudgeforgrace);
                             t_llll *out = notationobj_get_interp_tempo((t_notation_obj *)x, tp);
                             llll_prependsym(out, _llllobj_sym_tempo);
                             llll_prependsym(out, _llllobj_sym_interp);
@@ -9494,7 +9521,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             llll_free(out);
                         } else if (firstelem->l_next->l_next && hatom_getsym(&firstelem->l_next->l_hatom) == _llllobj_sym_timesig) {
                             t_timepoint tp;
-                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next->l_next, NULL, NULL, &tp, false);
+                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next->l_next, NULL, NULL, &tp, false, accurate, nudgeforgrace);
                             t_llll *out = notationobj_get_interp_timesig((t_notation_obj *)x, tp);
                             llll_prependsym(out, _llllobj_sym_timesig);
                             llll_prependsym(out, _llllobj_sym_interp);
@@ -9502,7 +9529,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             llll_free(out);
                         } else {
                             double ms = 0;
-                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next, NULL, &ms, NULL, false);
+                            parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, firstelem->l_next, NULL, &ms, NULL, false, accurate, nudgeforgrace);
                             t_llll *out = notationobj_get_interp((t_notation_obj *)x, ms);
                             llll_prependsym(out, _llllobj_sym_interp, 0, WHITENULL_llll);
                             llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, out);
@@ -9513,14 +9540,16 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         if (firstelem->l_next && firstelem->l_next->l_next && hatom_gettype(&firstelem->l_next->l_hatom) == H_LLLL && hatom_gettype(&firstelem->l_next->l_next->l_hatom) == H_LLLL) {
                             t_llll *params = hatom_getllll(&firstelem->l_next->l_hatom);
                             t_llll *content = hatom_getllll(&firstelem->l_next->l_next->l_hatom);
+                            long accurate = 0, nudgeforgrace = -1;
+                            llll_parseattrs((t_object *)x, inputlist, LLLL_PA_NONE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
                             t_timepoint from_here, to_here;
                             char to_here_def = false;
                             if (params->l_head) {
-                                parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head, NULL, NULL, &from_here, false);
+                                parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head, NULL, NULL, &from_here, false, accurate, nudgeforgrace);
                                 if (params->l_head->l_next) {
                                     to_here = from_here;
                                     to_here_def = true;
-                                    parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head->l_next, NULL, NULL, &to_here, false);
+                                    parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head->l_next, NULL, NULL, &to_here, false, accurate, nudgeforgrace);
                                 }
                                 
                                 // TO DO: this is a bit overkilling
@@ -10518,7 +10547,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         content = llll_clone(temp_mk->content);
                     if (temp_mk->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
                         t_timepoint orig_tp = measure_attached_marker_to_timepoint((t_notation_obj *) x, temp_mk);
-                        double marker_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, orig_tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS);
+                        double marker_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, orig_tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD : k_TIMEPOINTTOUX_FLAG_NONE);
                         double marker_ms = unscaled_xposition_to_ms((t_notation_obj *)x, marker_ux + delta_ux, 1);
                         long voicenumber = yposition_to_voicenumber((t_notation_obj *)x, x->r_ob.j_mousedown_point.y, NULL, k_VOICEENSEMBLE_INTERFACE_ACTIVE);
                         if (voicenumber < 0)
@@ -15673,7 +15702,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
     } else if (keycode == JKEY_RETURN && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
         if (!x->r_ob.playing) {
             if (x->r_ob.show_loop_region && !(modifiers & eShiftKey)) {
-                x->r_ob.play_head_start_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.timepoint, false, true);
+                x->r_ob.play_head_start_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.timepoint, k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD);
                 x->r_ob.play_head_start_ms = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.play_head_start_ux, 1);
             } else {
                 double first_onset_ms = get_first_onset_ms_for_grace_notes(x);

@@ -94,10 +94,10 @@ void scoreapi_setcursor_from_double(t_score *x, double pos)
     notationobj_redraw((t_notation_obj *) x);
 }
 
-void scoreapi_setcursor_from_llll(t_score *x, t_llll *args)
+void scoreapi_setcursor_from_llll(t_score *x, t_llll *args, long accurate, long nudgeforgrace)
 {
     t_timepoint tp;
-    parse_open_timepoint_syntax((t_notation_obj *)x, args, &x->r_ob.play_head_start_ux, &x->r_ob.play_head_start_ms, &tp, false);
+    parse_open_timepoint_syntax((t_notation_obj *)x, args, &x->r_ob.play_head_start_ux, &x->r_ob.play_head_start_ms, &tp, false, accurate, nudgeforgrace);
     notationobj_redraw((t_notation_obj *) x);
 }
 
@@ -1155,11 +1155,11 @@ void scoreapi_getdomainpixels(t_score *x, double *start, double *end)
     *end = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_end);
 }
 
-t_max_err scoreapi_getpixelpos(t_score *x, t_llll *open_timepoint_syntax, double *pos)
+t_max_err scoreapi_getpixelpos(t_score *x, t_llll *open_timepoint_syntax, double *pos, long accurate, long nudgeforgrace)
 {
     t_max_err err = true;
     double unscaled_x = 0;
-    err = parse_open_timepoint_syntax((t_notation_obj *)x, open_timepoint_syntax, &unscaled_x, NULL, NULL, false);
+    err = parse_open_timepoint_syntax((t_notation_obj *)x, open_timepoint_syntax, &unscaled_x, NULL, NULL, false, accurate, nudgeforgrace);
     if (!err)
         *pos = unscaled_xposition_to_xposition((t_notation_obj *) x, unscaled_x);
     return err;
@@ -10592,14 +10592,14 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     marker_color = x->r_ob.j_marker_rgba;
                 } else if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
                     tp = measure_attached_marker_to_timepoint((t_notation_obj *) x, marker);
-                    marker_onset = marker->position_ms; // unscaled_xposition_to_ms((t_notation_obj *)x, timepoint_to_unscaled_xposition(x, tp, false, true), 1);
+                    marker_onset = marker->position_ms;
                     marker_color = x->r_ob.j_marker_attached_to_tp_rgba;
                 }
                 
                 get_names_as_text(marker->r_it.names, buf, 1000);
 
                 if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE)
-                    marker_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, measure_attached_marker_to_timepoint((t_notation_obj *)x, marker), false, false);
+                    marker_ux = timepoint_to_unscaled_xposition((t_notation_obj *)x, measure_attached_marker_to_timepoint((t_notation_obj *)x, marker), k_TIMEPOINTTOUX_FLAG_NONE);
                 else
                     marker_ux = ms_to_unscaled_xposition((t_notation_obj *)x, marker_onset, 1);
                 
@@ -10994,8 +10994,8 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
     // paint loop region?
     if (x->r_ob.show_loop_region) {
         double playhead_y1, playhead_y2;
-        double x1 = unscaled_xposition_to_xposition((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.timepoint, false, false));
-        double x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.end.timepoint, false, false));
+        double x1 = unscaled_xposition_to_xposition((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.timepoint, k_TIMEPOINTTOUX_FLAG_NONE));
+        double x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.loop_region.end.timepoint, k_TIMEPOINTTOUX_FLAG_NONE));
 //        double x1 = ms_to_xposition(x, x->r_ob.loop_region.start.position_ms, 1);
 //        double x2 = ms_to_xposition(x, x->r_ob.loop_region.end.position_ms, 1);
         get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
@@ -11353,7 +11353,7 @@ void bach_get_marker_measure_attach(t_bach_inspector_manager *man, void *obj, t_
                     bach_default_get_bach_attr((t_notation_obj *)x, obj, attr, ac, av);
                 } else if (attr->name == _llllobj_sym_onset){
                     t_timepoint tp = measure_attached_marker_to_timepoint((t_notation_obj *)x, marker);
-                    double onset = unscaled_xposition_to_ms((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, false, false), 1);
+                    double onset = unscaled_xposition_to_ms((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, k_TIMEPOINTTOUX_FLAG_NONE), 1);
                     atom_setfloat(*av, onset);
                 }
             } else if (marker) {
@@ -11414,7 +11414,7 @@ void change_marker_attachment(t_score *x, t_marker *mk, char new_attachment, lon
     if (mk->attach_to == k_MARKER_ATTACH_TO_MEASURE && new_attachment == k_MARKER_ATTACH_TO_MS){
         t_timepoint tp = measure_attached_marker_to_timepoint((t_notation_obj *)x, mk);
         mk->attach_to = k_MARKER_ATTACH_TO_MS;
-        mk->position_ms = unscaled_xposition_to_ms((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS), 1);
+        mk->position_ms = unscaled_xposition_to_ms((t_notation_obj *)x, timepoint_to_unscaled_xposition((t_notation_obj *)x, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD : k_TIMEPOINTTOUX_FLAG_NONE), 1);
     } else if (mk->attach_to == k_MARKER_ATTACH_TO_MS && new_attachment == k_MARKER_ATTACH_TO_MEASURE) {
         t_timepoint tp = ms_to_timepoint((t_notation_obj *)x, mk->position_ms, voicenum, k_MS_TO_TP_RETURN_INTERPOLATION);
         t_scorevoice *voice = nth_scorevoice(x, voicenum);
