@@ -400,8 +400,8 @@ t_llll* t_fnInsert::call(const t_execEnv &context)
         llll_appendllll(address = llll_get(), llll_clone(context.argv[2]));
         llll_appendllll(model = llll_get(), llll_clone(context.argv[3]));
     } else {
-        address = llll_clone(context.argv[4]);
-        model = llll_clone(context.argv[5]);
+        address = llll_clone(context.argv[2]);
+        model = llll_clone(context.argv[3]);
     }
     
     if (mode == 0 && multi == 1)
