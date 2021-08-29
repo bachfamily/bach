@@ -89,7 +89,7 @@ void score_hidecursor(t_score *x);
 void score_showcursor(t_score *x);
 
 void scoreapi_setcursor_from_double(t_score *x, double pos);
-void scoreapi_setcursor_from_llll(t_score *x, t_llll *args, long accurate, long nudgeforgrace);
+void scoreapi_setcursor_from_llll(t_score *x, t_llll *args, long flags);
 
 // inscreen and playing
 char scoreapi_inscreen(t_score *x, t_llll *inscreen);
@@ -174,7 +174,7 @@ t_llll *getdomain_from_uxstart(t_score *x, double ux_start, t_symbol *message_se
 t_llll *scoreapi_testdomain(t_score *x, t_llll *dom, t_symbol *label);
 t_llll *scoreapi_getdomain(t_score *x, t_symbol *label);
 void scoreapi_getdomainpixels(t_score *x, double *start, double *end);
-t_max_err scoreapi_getpixelpos(t_score *x, t_llll *open_timepoint_syntax, double *pos, long accurate, long nudgeforgrace);
+t_max_err scoreapi_getpixelpos(t_score *x, t_llll *open_timepoint_syntax, double *pos, long flags);
 double scoreapi_getlength(t_score *x);
 double scoreapi_get_end_ux(t_score *x);
 void send_all_values_as_llll(t_score *x, long send_what_for_header, t_symbol *gatheredsyntax_router);

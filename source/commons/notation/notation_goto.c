@@ -1216,9 +1216,12 @@ t_llll *goto_time(t_notation_obj *r_ob, t_goto_params *par, long *error)
             llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
         }
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, true,
-                                                  true, // accurate parsing
-                                                  par->nudge_back_for_graces); // we nudge back grace notes
+        long flags = k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD | k_PARSETIMEPOINT_FLAG_ACCURATE;
+        if (par->nudge_back_for_graces >= 0)
+            flags |= k_PARSETIMEPOINT_FLAG_MANUALGRACEBEHAVIOR;
+        if (par->nudge_back_for_graces > 0)
+            flags |= k_PARSETIMEPOINT_FLAG_NUDGEBACKFORGRACES;
+        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, flags);
         llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
     }
     

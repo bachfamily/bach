@@ -5384,11 +5384,12 @@ void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *
  @ingroup    notation
  */
 typedef enum _bach_timepointtoux_flags {
-    k_TIMEPOINTTOUX_FLAG_NONE = 0,
-    k_TIMEPOINTTOUX_FLAG_SAMPLEALLVOICES = 1, // sample all the voices to convert
-    k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD = 2, // a zero point in measure (pim) corresponds to the first chord
-    k_TIMEPOINTTOUX_FLAG_MANUALGRACEBEHAVIOR = 4, // toggles a manual setting for handling graces (see below)
-    k_TIMEPOINTTOUX_FLAG_NUDGEBACKFORGRACES = 8, // nudge back if the timepoint has a grace note (only meaningful if previous one is set)
+    k_PARSETIMEPOINT_FLAG_NONE = 0,
+    k_PARSETIMEPOINT_FLAG_SAMPLEALLVOICES = 1, // sample all the voices to convert
+    k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD = 2, // a zero point in measure (pim) corresponds to the first chord
+    k_PARSETIMEPOINT_FLAG_MANUALGRACEBEHAVIOR = 4, // toggles a manual setting for handling graces (see below)
+    k_PARSETIMEPOINT_FLAG_NUDGEBACKFORGRACES = 8, // nudge back if the timepoint has a grace note (only meaningful if previous one is set)
+    k_PARSETIMEPOINT_FLAG_ACCURATE = 16, // more CPU-intensive accurate computation
 } e_bach_timepointtoux_flags;
 
 
@@ -5398,8 +5399,8 @@ t_timepoint ms_to_timepoint_autochoose_voice(t_notation_obj *r_ob, double ms, ch
 t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum);
 t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode);
 double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, long flags); // flags are e_bach_timepointtoux_flags
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, long accurate = false, long nudge_back_for_graces = -1);
-char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, char zero_pim_is_measure_first_chord, long accurate = false, long nudge_back_for_graces = -1);
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0);
+char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0);
 
 
 

@@ -5358,7 +5358,7 @@ double get_marker_ux_position(t_notation_obj *r_ob, t_marker *marker)
 {
     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
         t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-        return (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_TIMEPOINTTOUX_FLAG_ZEROPIMISFIRSTCHORD : k_TIMEPOINTTOUX_FLAG_NONE);
+        return (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD : k_PARSETIMEPOINT_FLAG_NONE);
     } else {
         return ms_to_unscaled_xposition(r_ob, marker->position_ms, 1);
     }

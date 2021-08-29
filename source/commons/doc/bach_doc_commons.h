@@ -357,7 +357,7 @@
 	//  - <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice. 
 	//  For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 	//  - <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-	//  but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+	//  but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 	//  For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 	//  - <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number, 
 	//  in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.

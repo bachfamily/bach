@@ -4866,8 +4866,8 @@
 				"filename" : [ "bach.help.notation.sequencing.10b_cursorgraces.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "grace" ],
-				"tags" : [ "sequencer", "sequencing", "play", "playing", "playhead", "cursor", "playbar", "showplayhead", "setcursor", "nudge", "grace", "note", "chord", "anticipate", "shift", "account" ],
-				"title" : [ "Playhead cursor and grace notes" ]
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "playhead", "cursor", "playbar", "showplayhead", "setcursor", "nudge", "grace", "note", "chord", "anticipate", "shift", "account", "zeropimchord", "zero", "point", "in", "measure", "barline" ],
+				"title" : [ "Playhead cursor attributes" ]
 			},
 			"Cursorinterface" : {
 				"filename" : [ "bach.help.notation.sequencing.11_cursorinterface.maxpat" ],
