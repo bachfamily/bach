@@ -69,7 +69,7 @@ void llll_format_modifiers(long *modifiers, long *keycode)
 				break;
             case 'i':
                 if ((*modifiers & 0x0F) == (eControlKey | eAltKey)) {       // ctrl+shift+i
-                    *modifiers = (*modifiers & 0xFFF0) | eCommandKey;           // becomes cmd+y
+                    *modifiers = (*modifiers & 0xFFF0) | eCommandKey;           // becomes cmd+i
                     return;
                 }
                 break;

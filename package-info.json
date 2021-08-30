@@ -23,7 +23,7 @@
 	}
 ,
 	"package_extra" : 	{
-
+        "forcerestart": 1
 	}
 ,
 	"tags" : [ "computer-aided composition", "notation", "score", "roll", "composition", "generation", "symbolic composition" ],

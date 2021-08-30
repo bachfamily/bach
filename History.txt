@@ -59,6 +59,8 @@ multiple objects: help files and doc updated
     map function works correctly with mindepth
     evaluation precedence of the unary minus operator is now lower than exponentiation (-2 ** 2 now returns -4, previously 4)
     fixed bug in local variable scoping causing random crashes and data corruption
+    arithmser: fixed bug potentially causing the series to be one element shorter if step was not given and start and/or end were floats
+    insert: fixed behaviour with "multi" attribute
 
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor
