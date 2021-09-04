@@ -4515,6 +4515,7 @@ typedef struct _notation_obj
                                         ///< course depend on the vertical zoom factor <zoom_y>. When <zoom_y> = 1, <step_y> = #CONST_STEP_UY pixels (which means that staff lines
                                         ///< are 2 * #CONST_STEP_UY pixels apart), thus <step_y> = #CONST_STEP_UY * <zoom_y> pixels.
 
+    char        end_staff_with_final_measure;         ///< Ends the staff with the final measure in bach.score
     char        force_non_antialiased_staff_lines;    ///< Flag telling if we want to force the zoom to be such that only values which yields non-antialiased 
                                                     ///< staff lines are allowed. By default it is so: the user-set (or auto) zoom is approximated so that  
                                                     ///< staff lines fall vertically on a single pixel
