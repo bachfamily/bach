@@ -19152,8 +19152,9 @@ void update_all_label_families_contour(t_notation_obj *r_ob);
     which have been modified (and thus are under undo ticks).
     @ingroup        names
     @param    r_ob    The notation object
+    @param    lock_general_mutex    Toggles the ability to also lock the general mutex
  */
-void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob);
+void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob, char lock_general_mutex);
 
 
 /** Sets the t_bach_label_family::need_update_contour flag for all the label families

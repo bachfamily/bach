@@ -114,6 +114,7 @@ multiple objects: help files and doc updated
     fixed bug preventing markers from having a lambda interaction
     fixed bug causing wrong order of accidentals in some key signatures
     the "setcursor" message has a new @zeropimchord attribute for setting the playhead on chords instead of barlines at the beginning of a measure
+    fixed bug causing hangs when adding voices
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
