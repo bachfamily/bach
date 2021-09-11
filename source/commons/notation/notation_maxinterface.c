@@ -32,6 +32,7 @@ DEFINE_NOTATIONOBJ_LONGPTR_GETTER(midichannels_as_longlist, num_voices)
 DEFINE_NOTATIONOBJ_ATOMPTR_GETTER(prevent_editing_atom, num_prevent_editing_elems)
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(background_slots, num_background_slots)
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(popup_menu_slots, num_popup_menu_slots)
+DEFINE_NOTATIONOBJ_DBLPTR_GETTER(dynamics_uy_pos, num_voices)
 
 
 
@@ -2219,13 +2220,13 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
 		// lyrics display. 0 will set the lyrics top line coinciding with the bottommost staff line.
 		// The default is -16.
 
-        CLASS_ATTR_DOUBLE(c,"dynamicsvadj",0, t_notation_obj, dynamics_uy_pos);
+        CLASS_ATTR_NOTATIONOBJ_DBLPTR(c, "dynamicsvadj", 0, dynamics_uy_pos, CONST_MAX_VOICES, notationobj_setattr_dynamicsuypos);
         CLASS_ATTR_STYLE_LABEL(c,"dynamicsvadj",0,"text","Dynamics Vertical Adjustment");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsvadj",0,"-20");
         // @exclude bach.slot
         // @description Sets the vertical shift (in pixels, rescaled depending on the <m>vzoom</m>) of the
         // dynamics display. 0 will set the dynamics line coinciding with the bottommost staff line.
-        // The default is -20.
+        // The default is -20. You can also provide one element per voice to have different adjustments for different voices.
         
 		CLASS_ATTR_CHAR(c,"lyricsalignment",0, t_notation_obj, lyrics_alignment);
 		CLASS_ATTR_STYLE_LABEL(c,"lyricsalignment",0,"enumindex","Lyrics Alignment");
@@ -3590,6 +3591,17 @@ t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr,
 	return MAX_ERR_NONE;
 }
 
+t_max_err notationobj_setattr_dynamicsuypos(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    t_llll *ll = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
+    long i = 0;
+    for (t_llllelem *el = ll->l_head; el && i < r_ob->num_voices; el = el->l_next ? el->l_next : el, i++) {
+        r_ob->dynamics_uy_pos[i] = hatom_getdouble(&el->l_hatom);
+    }
+    llll_free(ll);
+    return MAX_ERR_NONE;
+}
+
+
 
 t_max_err notationobj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
 	if (ac && is_atom_number(av))
@@ -4727,8 +4739,9 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
 {
     t_object *textfield;
     double top, left;
+    t_voice *voice = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (chord->parent ? (t_voice *) chord->parent->voiceparent : NULL));
     
-    if (notation_item_is_globally_locked(r_ob, (t_notation_item *)chord))
+    if (!voice || notation_item_is_globally_locked(r_ob, (t_notation_item *)chord))
         return;
     
     textfield = jbox_get_textfield((t_object *) r_ob);
@@ -4739,7 +4752,7 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
     r_ob->is_editing_chord = chord;
     r_ob->is_editing_slot_number = r_ob->link_dynamics_to_slot - 1;
     
-    top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), false) - r_ob->dynamics_uy_pos * r_ob->zoom_y - 8 * r_ob->zoom_y;
+    top = get_staff_bottom_y(r_ob, voice, false) - r_ob->dynamics_uy_pos[voice->number] * r_ob->zoom_y - 8 * r_ob->zoom_y;
     left = chord_get_alignment_x(r_ob, chord) - get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;
     
     textfield_set_wordwrap(textfield, 0);
@@ -5032,6 +5045,7 @@ void notationobj_free(t_notation_obj *r_ob)
     bach_freeptr(r_ob->tempo_play_cursor);
     bach_freeptr(r_ob->measure_play_cursor);
     bach_freeptr(r_ob->voice_part);
+    bach_freeptr(r_ob->dynamics_uy_pos);
 
 	// Slot-related stuff
 	bach_freeptr(r_ob->background_slots);

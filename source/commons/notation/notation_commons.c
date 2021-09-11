@@ -1260,7 +1260,7 @@ void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
         else
             play_head_pos = onset_to_xposition_roll(r_ob, r_ob->play_head_start_ms, NULL);
 
-        get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
+        get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
         paint_playhead_line(g, r_ob->j_play_rgba, play_head_pos, playhead_y1, playhead_y2, r_ob->playhead_width, 3 * r_ob->zoom_y);
     }
     
@@ -35481,6 +35481,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->keys_as_symlist = (t_symbol **)bach_newptrclear(CONST_MAX_VOICES * sizeof(t_symbol *));
     r_ob->hidevoices_as_charlist = (char *)bach_newptrclear(CONST_MAX_VOICES * sizeof(char));
     r_ob->midichannels_as_longlist = (long *)bach_newptrclear(CONST_MAX_VOICES * sizeof(long));
+    r_ob->dynamics_uy_pos = (double *)bach_newptrclear(CONST_MAX_VOICES * sizeof(double));
     r_ob->voiceuspacing_as_floatlist = (double *)bach_newptrclear((CONST_MAX_VOICES + 1) * sizeof(double));
     r_ob->show_measure_numbers = (char *)bach_newptrclear(CONST_MAX_VOICES * sizeof(char));
     r_ob->full_acc_repr = (t_symbol **)bach_newptrclear(CONST_MAX_VOICES * sizeof(t_symbol *));
@@ -35506,8 +35507,10 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     // INITIALIZING OTHER STUFF
     // ************************
     
-    for (i = 0; i < CONST_MAX_VOICES; i++)
+    for (i = 0; i < CONST_MAX_VOICES; i++) {
         r_ob->full_acc_repr[i] = _llllobj_sym_default;
+        r_ob->dynamics_uy_pos[i] = -20;
+    }
         
     clear_prevent_edit(&r_ob->prevent_edit);
     r_ob->num_prevent_editing_elems = 0;

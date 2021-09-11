@@ -284,8 +284,9 @@ void dynamics_get_rect(t_notation_obj *r_ob, t_dynamics *dyn, t_rect *enclosure)
     
     
     // top and bottom
-    double bottom_staff_y = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) ch->voiceparent : (t_voice *) ch->parent->voiceparent), false);
-    double middle_y = bottom_staff_y - r_ob->dynamics_uy_pos * r_ob->zoom_y;
+    t_voice *voice = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) ch->voiceparent : (t_voice *) ch->parent->voiceparent);
+    double bottom_staff_y = get_staff_bottom_y(r_ob, voice, false);
+    double middle_y = bottom_staff_y - r_ob->dynamics_uy_pos[voice->number] * r_ob->zoom_y;
     double semiheight = 0.2 * r_ob->dynamics_font_size * r_ob->zoom_y;
     y1 = middle_y - semiheight;
     y2 = middle_y + semiheight;

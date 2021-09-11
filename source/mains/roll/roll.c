@@ -11723,7 +11723,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             
             double end_pos = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
             
-            paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, dyn, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, 0, x->r_ob.fade_predomain ? 0 : predomain_width, false);
+            paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, dyn, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos[voice->v_ob.number] * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, 0, x->r_ob.fade_predomain ? 0 : predomain_width, false);
         }
     }
     
@@ -11823,7 +11823,7 @@ void roll_paint_linear_editing_stuff(t_roll *x, t_jgraphics *g, t_rollvoice *voi
 }
 
 
-void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double staff_bottom_y, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *curr_hairpin_start_x, t_chord *last_drawn_chord, double predomain_width)
+void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double staff_bottom_y, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *curr_hairpin_start_x, t_chord *last_drawn_chord, double predomain_width, long voice_number)
 {
     if (curr_hairpin_type && *curr_hairpin_type && x->r_ob.show_hairpins){
         long s = x->r_ob.link_dynamics_to_slot - 1;
@@ -11833,7 +11833,7 @@ void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf
             double curr_hairpin_end_x = rect.width * 2;
             if (lastch)
                 curr_hairpin_end_x = onset_to_xposition_roll((t_notation_obj *)x, lastch->onset, NULL);
-            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, 0, x->r_ob.fade_predomain ? 0 : predomain_width, false);
+            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos[voice_number] * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, 0, x->r_ob.fade_predomain ? 0 : predomain_width, false);
         }
     }
 }
@@ -11976,7 +11976,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                 }
             }
             
-            roll_paint_last_hairpin(x, g, rect, jf_dynamics, jf_dynamics_roman, staff_bottom_y, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, &curr_hairpin_start_x, curr_ch, predomain_width);
+            roll_paint_last_hairpin(x, g, rect, jf_dynamics, jf_dynamics_roman, staff_bottom_y, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, &curr_hairpin_start_x, curr_ch, predomain_width, voice->v_ob.number);
             
             roll_paint_last_dashed_lines(x, g, jf_lyrics, staff_bottom_y, lyrics_dashed_going_on, left_dashed_x);
 
@@ -12250,7 +12250,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                     }
                 }
 
-                roll_paint_last_hairpin(x, g, rect, jf_dynamics, jf_dynamics_roman, staff_bottom_y, &(curr_hairpin_type[vn]), &(prev_hairpin_color[vn]), &(prev_hairpin_dontpaint[vn]), &(curr_hairpin_start_x[vn]), voice_cur[vn], predomain_width);
+                roll_paint_last_hairpin(x, g, rect, jf_dynamics, jf_dynamics_roman, staff_bottom_y, &(curr_hairpin_type[vn]), &(prev_hairpin_color[vn]), &(prev_hairpin_dontpaint[vn]), &(curr_hairpin_start_x[vn]), voice_cur[vn], predomain_width, voice->v_ob.number);
                 
                 roll_paint_last_dashed_lines(x, g, jf_lyrics, staff_bottom_y, lyrics_dashed_going_on[vn], left_dashed_x[vn]);
                 

@@ -4275,9 +4275,11 @@ typedef struct _notation_obj
     // dynamics
     char        show_dynamics;                  ///< Flag telling if we want to show the dynamics
     char        show_hairpins;                  ///< Flag telling if we want to show the dynamic crescendo/diminuendo hairpins
-    double        dynamics_font_size;             ///< Font size for the dynamics (for zoom_y = 1)
+    double      dynamics_font_size;             ///< Font size for the dynamics (for zoom_y = 1)
     double      dynamics_roman_font_size;       ///< Font size for the textual dynamics-like expressions (for zoom_y = 1)
-    double        dynamics_uy_pos;                ///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
+    double      *dynamics_uy_pos;                ///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
+                                                ///< It is an array with #CONST_MAX_VOICES elements allocated in
+                                                ///  notationobj_init() and freed by notationobj_free()
     char        dynamics_output_mode;           ///< Output mode for the dynamics: 0 = plain textual form; 1 = detailed; 2 = verbose
     
     // lyrics
@@ -17416,6 +17418,7 @@ t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, lo
 t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_dynamicsuypos(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
