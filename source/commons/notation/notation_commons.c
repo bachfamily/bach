@@ -38036,14 +38036,14 @@ void set_all_label_families_update_contour(t_notation_obj *r_ob)
     }
 }
 
-void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob, char lock_general_mutex)
+void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob, char also_lock_general_mutex)
 {
     char must_unlock = true;
     
     if (systhread_mutex_trylock(r_ob->c_undo_mutex))
         must_unlock = false; // already locked
 
-    if (lock_general_mutex)
+    if (also_lock_general_mutex)
         lock_general_mutex(r_ob);
     t_llllelem *elem;
     for (elem = r_ob->undo_llll->l_head; elem; elem = elem->l_next) {
@@ -38097,7 +38097,7 @@ void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob
     }
 
 end:
-    if (lock_general_mutex)
+    if (also_lock_general_mutex)
         unlock_general_mutex(r_ob);
     if (must_unlock)
         systhread_mutex_unlock(r_ob->c_undo_mutex);    
