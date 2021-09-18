@@ -2091,6 +2091,13 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // @description If <m>thinannotations</m> is set to 2 (Remove With Clearing Symbol), this attribute
         // sets the clearing symbol to remove the annotation label.
         
+        if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            CLASS_ATTR_CHAR(c,"finitestaff",0, t_notation_obj, end_staff_with_final_measure);
+            CLASS_ATTR_STYLE_LABEL(c,"finitestaff",0,"onoff","End Staff With Last Measure");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"finitestaff",0,"0");
+            // @exclude bach.slot, bach.roll
+            // @description Toggles the ability to end staff lines with the last measure barline.
+        }
     }
     
     CLASS_STICKY_ATTR_CLEAR(c, "category");

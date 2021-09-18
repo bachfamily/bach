@@ -1409,12 +1409,19 @@
 				"tags" : [ "appearance", "legend", "mousemove", "selection", "shownotenames", "note", "name", "notename", "show" ],
 				"title" : [ "Legend" ]
 			},
-			"Nonantialiasedlines" : {
-				"filename" : [ "bach.help.notation.appearance.15_nonantialiasedlines.maxpat" ],
+			"A_nonantialiasedlines" : {
+				"filename" : [ "bach.help.notation.appearance.15a_nonantialiasedlines.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "vzoom" ],
 				"tags" : [ "voice", "antialias", "alias", "staff", "lines", "antialiased", "nonantialiased", "nonantialiasedstafflines" ],
 				"title" : [ "Toggle staff lines antialiasing" ]
+			},
+			"B_finitestaff" : {
+				"filename" : [ "bach.help.notation.appearance.15b_finitestaff.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "staff" ],
+				"tags" : [ "voice", "staff", "trim", "end", "last", "measure", "finite", "finitestaff", "hide" ],
+				"title" : [ "Trim staff at the end of last measure" ]
 			},
 			"Notenames" : {
 				"filename" : [ "bach.help.notation.appearance.16_notenames.maxpat" ],

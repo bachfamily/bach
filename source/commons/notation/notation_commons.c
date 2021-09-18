@@ -36213,7 +36213,8 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->lock_quarternotehead_surface = NULL;
     r_ob->mute_quarternotehead_surface = NULL;
     r_ob->solo_quarternotehead_surface = NULL;
-
+    r_ob->end_staff_with_final_measure = false;
+    
     r_ob->clef_gradient_surface = NULL;
     notationobj_build_clef_gradient_surface(r_ob);
     

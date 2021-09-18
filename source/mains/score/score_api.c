@@ -200,8 +200,21 @@ void force_notation_item_inscreen(t_score *x, t_notation_item *it, void *dummy){
 double get_last_barline_ux(t_score *x)
 {
     if (x->r_ob.lasttuttipoint) {
-        double final_barline_width = get_barline_ux_width((t_notation_obj *)x, k_BARLINE_FINAL);
-        return x->r_ob.lasttuttipoint->offset_ux + x->r_ob.lasttuttipoint->width_ux + final_barline_width;
+        double final_barline_uwidth = 0;
+        double longest_measure_ux = 0;
+        for (long i = 0; i < x->r_ob.num_voices; i++) {
+            t_measure *meas = x->r_ob.lasttuttipoint->measure[i];
+            if (meas) {
+                while (meas && meas->next) {
+                    meas = meas->next;
+                }
+                if (meas->width_ux > longest_measure_ux) {
+                    final_barline_uwidth = measure_get_barline_ux_width((t_notation_obj *)x, meas);
+                    longest_measure_ux = meas->width_ux;
+                }
+            }
+        }
+        return x->r_ob.lasttuttipoint->offset_ux + x->r_ob.lasttuttipoint->width_ux + final_barline_uwidth;
     } else {
         return 0;
     }
@@ -9142,9 +9155,18 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 
 
     // paint staff lines
+    double staff_lines_end = rect.width - x->r_ob.j_inset_x;
+    // check if we have to trim them
+    if (x->r_ob.end_staff_with_final_measure) {
+        if (voice->lastmeasure && voice->lastmeasure->tuttipoint_reference) {
+            double x_end = unscaled_xposition_to_xposition((t_notation_obj *)x, voice->lastmeasure->tuttipoint_reference->offset_ux + voice->lastmeasure->width_ux + measure_get_barline_ux_width((t_notation_obj *)x, voice->lastmeasure)) - 0.5;
+            if (x_end < staff_lines_end)
+                staff_lines_end = x_end;
+        }
+    }
     if (voice->v_ob.part_index == 0)
         for (k = 0; k < x->r_ob.num_systems; k++)
-            paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint_no_inset, rect.width - x->r_ob.j_inset_x, 1., this_middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
+            paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint_no_inset, staff_lines_end, 1., this_middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
     
     // clefs (and keys) later! at the end!
     

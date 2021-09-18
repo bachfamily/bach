@@ -129,6 +129,7 @@ multiple objects: help files and doc updated
     fixed bug sometimes causing wrong placement of dynamics in bach.score at the very end of a note
     fixed bug causing possible missing initial tempo in "subscore" command
     fixed wrong filename in MIDI score import help file
+    @finitestaff: new attribute to trim staff after last measure
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
