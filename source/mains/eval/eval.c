@@ -144,7 +144,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)eval_assist,        "assist",        A_CANT,        0);
     class_addmethod(c, (method)eval_inletinfo,    "inletinfo",    A_CANT,        0);
 
-    // @method (doubleclick) @digest Edit llll as text
+    // @method (doubleclick) @digest Open text editor
     // @description Double-clicking on the object forces a text editor to open up, where the expression can be edited directly.
     class_addmethod(c, (method)eval_dblclick,        "dblclick",        A_CANT, 0);
     
