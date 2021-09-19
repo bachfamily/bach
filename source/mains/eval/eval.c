@@ -118,7 +118,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     codableclass_add_standard_methods_and_attrs(c);
     codableclass_add_extended_methods_and_attrs(c);
 
-    // @method llll @digest Store values for the expression variables
+    // @method llll @digest Store values for the inlet variables
     // @description
     // The lllls provide the data to the expression.
     // An llll received in the leftmost inlet will trigger the evaluation and cause the result to be output.
@@ -126,7 +126,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     // @method expr @digest Expression to evaluate
     // @description
-    // The <m>expr</m> message, followed by a valid expression, will set the new expression to be evaluated by <o>bach.eval</o>.
+    // The <m>expr</m> message, followed by a valid expression, will set the new program to be evaluated by <o>bach.eval</o>.
     // For more details on the expression syntax, please refer to <o>bach.eval</o>'s help patcher.
     class_addmethod(c, (method)eval_expr,    "expr",            A_GIMME,    0);
     
@@ -450,21 +450,18 @@ void eval_assist(t_eval *x, void *b, long m, long a, char *s)
 {
     if (m == ASSIST_INLET) {
         if (a < x->n_dataInlets)
-            sprintf(s, "llll: Data Inlet %ld", a + 1);
+            sprintf(s, "llll: Data Inlet %ld", a + 1); // @in 0 @loop 1 @type llll @digest llll to be assigned to inlet pseudovariables
         else
-            sprintf(s, "llll: Direct Inlet " ATOM_LONG_PRINTF_FMT, a - x->n_dataInlets + 1);
-
-        // @in 0 @type llll @digest llll to be compared
-        // @in 1 @type llll @digest llll to be compared
+            sprintf(s, "llll: Direct Inlet " ATOM_LONG_PRINTF_FMT, a - x->n_dataInlets + 1); // @in 1 @type llll @digest llll to be assigned to direct inlet pseudovariables
     } else {
         char *type = NULL;
         llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
         if (a < x->n_dataOutlets)
-            sprintf(s, "llll (%s): Data Outlet %ld", type, a + 1); // @out 0 @type int @digest Comparison result (0/1)
+            sprintf(s, "llll (%s): Data Outlet %ld", type, a + 1); // @out 0 @loop 1 @type llll @digest Values assigned to outlet pseudovariables
         else if (a == x->n_dataOutlets)
-            sprintf(s, "llll (%s): Evaluation Result", type); // @out 0 @type int @digest Comparison result (0/1)
+            sprintf(s, "llll (%s): Evaluation Result", type); // @out 1 @type llll @digest Final result of the evaluation
         else
-            sprintf(s, "llll (%s): Direct Outlet " ATOM_LONG_PRINTF_FMT, type, a - x->n_dataOutlets);
+            sprintf(s, "llll (%s): Direct Outlet " ATOM_LONG_PRINTF_FMT, type, a - x->n_dataOutlets); // @out 2 @loop 1 @type llll @digest Values assigned to direct outlet pseudovariables
     }
 }
 
