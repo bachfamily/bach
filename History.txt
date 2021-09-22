@@ -46,6 +46,9 @@ v0.8.2b
 
 - bach.pitchpack now treats negative degrees as descending steps (see the bell / bach.expr makepitch function)
 
+- bach.transcribe: now the "allnotesoff" message only updates tails when the engine is on. 
+			(As this one was a real bug, it should not break any existing patch, but out of caution check them anyway if you used it)
+
 
 
 ***********************
@@ -177,8 +180,6 @@ multiple objects: help files and doc updated
 - bach.path2llll: fixed bug causing wrong behavior with names potentially causing conflicts with bach parsing
 
 - bach.wrandom: fixed bug causing wrong results with > 32k elements
-
-
 
 
 
