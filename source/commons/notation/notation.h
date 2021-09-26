@@ -846,7 +846,7 @@ typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t
 
 
 //TBD
-typedef char (*notation_obj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to);
+typedef char (*notation_obj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to, char also_send_domain);
 
 
 

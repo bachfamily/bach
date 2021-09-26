@@ -319,7 +319,7 @@ double get_last_tpt_barline_width(t_score *x, t_tuttipoint *tpt){
 }
 
 
-char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas)
+char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas, char also_send_domain)
 {
     t_notation_obj *r_ob = (t_notation_obj *)x;
     
@@ -378,7 +378,7 @@ char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_
                 set_need_perform_analysis_and_change_flag(r_ob);
                 perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
                 
-                force_inscreenpos_ux(x, 0., start_tpt->offset_ux, true, false);
+                force_inscreenpos_ux(x, 0., start_tpt->offset_ux, also_send_domain, false);
                 recompute_total_length(r_ob); //x->r_ob.screen_ux_start
                 update_hscrollbar(r_ob, 2);
             }
@@ -420,7 +420,7 @@ char scoreapi_inscreenmeas(t_score *x, t_llll *inscreen_measures)
             start_meas = nth_measure_of_scorevoice(voice, start_meas_num - 1);
             end_meas = nth_measure_of_scorevoice(voice, end_meas_num - 1);
         
-            return scoreapi_inscreenmeas_do(x, start_meas, end_meas);
+            return scoreapi_inscreenmeas_do(x, start_meas, end_meas, true);
         }
     }
 
