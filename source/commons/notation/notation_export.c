@@ -240,6 +240,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         double length_ms_prev = r_ob->length_ms;
         double length_ux_prev = r_ob->length_ux;
         double screen_ms_start_prev = r_ob->screen_ms_start;
+        double screen_ux_start_prev = r_ob->screen_ux_start;
         long fade_predomain_prev = r_ob->fade_predomain;
         long onsetindomain_prev = r_ob->onset_in_domain;
         double postdomain_prev = r_ob->postdomain_width;
@@ -441,6 +442,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             r_ob->inner_height = inner_height_prev;
             
             r_ob->screen_ms_start = screen_ms_start_prev;
+            r_ob->screen_ux_start = screen_ux_start_prev;
             r_ob->length_ms = length_ms_prev;
             r_ob->length_ux = length_ux_prev;
             
