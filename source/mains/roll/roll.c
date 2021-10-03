@@ -4166,7 +4166,7 @@ void roll_do_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         return;
     
     // synchronizing the playhead with out start_ms
-    if (argc == 0 && x->r_ob.show_playhead)
+    if (argc == 0)
         start_ms = x->r_ob.play_head_start_ms;
     else
         x->r_ob.play_head_start_ms = start_ms;

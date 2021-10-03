@@ -3967,7 +3967,7 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
         x->r_ob.play_head_start_ms = start_ms;
         x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, start_ms, 1);
         
-    } else if (argc == 0 && x->r_ob.show_playhead) {
+    } else if (argc == 0) {
         start_ms = x->r_ob.play_head_start_ms;
     } else {
         x->r_ob.play_head_start_ms = start_ms;

@@ -13,6 +13,7 @@ TO BE CATEGORIZED:
 
 - bach.roll, bach.score:
 	New "setdurationline" message setting the duration line from a list of pitch breakpoints
+	Now "setcursor" then "play" will work even if the cursor is not shown.
 
 
 v0.8.2b
