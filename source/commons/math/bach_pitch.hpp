@@ -35,8 +35,25 @@ typedef enum _accidentals_preferences {
 } e_accidentals_preferences;
 
 
+enum {
+    BACH_TUNINGSYSTEM_ET = 0,
+    BACH_TUNINGSYSTEM_JI = 1,
+    BACH_TUNINGSYSTEM_VERTICAL = 2,
+};
+
 
 class t_pitch;
+
+#define BACH_PRIMES_JI_SIZE 25
+static long primes_ji[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97 };
+static t_atom_short numFifthsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {0,1,4,-2,-1,3,7,-3,6,-2,0,2,4,-1,6};
+static t_atom_short numStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,29,30,31,34,35,36,37,38,38};
+
+static t_atom_short ji_alt2[BACH_PRIMES_JI_SIZE] = {1,0};
+static t_atom_short ji_alt3[BACH_PRIMES_JI_SIZE] = {-11,7,0};
+static t_atom_short ji_alt5[BACH_PRIMES_JI_SIZE] = {-4,4,1,0};
+static t_atom_short ji_alt7[BACH_PRIMES_JI_SIZE] = {6,-2,0,-1,0};
+static t_atom_short ji_alt11[BACH_PRIMES_JI_SIZE] = {-5,1,0,0,1,0};
 
 
 class t_pitchMatrices
@@ -95,6 +112,7 @@ public:
         t_shortRational mc;
     } t_stepsAndMC;
 
+    char p_tuningSystem; // 0 = ordinary, 1 = ji, 2 = perhaps vertical dimension only
     t_atom_short p_degree; // 0-6, corresponding to the white keys from c to b
     t_atom_short p_octave; // middle C (MIDI note 60) starts octave 5
     t_shortRational p_alter; // in steps: # is +1/2
@@ -102,17 +120,72 @@ public:
     t_pitch() = default;
     
     t_pitch(const t_atom_short degree) :
-        p_degree(degree), p_octave(0), p_alter(t_shortRational(0)) {}
+        p_tuningSystem(BACH_TUNINGSYSTEM_ET), p_degree(degree), p_octave(0), p_alter(t_shortRational(0)) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational alter) :
-        p_degree(degree), p_octave(0), p_alter(alter) {}
+        p_tuningSystem(BACH_TUNINGSYSTEM_ET), p_degree(degree), p_octave(0), p_alter(alter) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational &alter, const t_atom_short octave) :
-        p_degree(degree), p_octave(octave), p_alter(alter) {}
+        p_tuningSystem(BACH_TUNINGSYSTEM_ET), p_degree(degree), p_octave(octave), p_alter(alter) {}
+    
+    
+    void factorize(long what, t_atom_short *res, long res_size) const
+    {
+        t_atom_short exponent;
+        long *table_last = primes_ji + BACH_PRIMES_JI_SIZE - 1;
+        long *this_table = primes_ji;
+        long cur = 0;
+        long this_prime;
+        
+        // cleaning all factors
+        for (long i = 0; i < res_size; i++)
+            res[i] = 0;
+        
+        if (what < 0)
+            what *= -1;
+        while (what > 1 && this_table <= table_last) {
+            this_prime = *this_table;
+            if (what % this_prime == 0) {
+                exponent = 0;
+                do {
+                    exponent++;
+                    what /= this_prime;
+                } while (what % this_prime == 0);
+                res[cur] = exponent;
+            }
+            this_table++;
+            cur++;
+        }
+    }
+    
+    t_atom_short degree() const {
+        switch (p_tuningSystem) {
+            case BACH_TUNINGSYSTEM_JI:
+                return positive_mod(p_degree*4, 7);
+                break;
+                
+            case BACH_TUNINGSYSTEM_VERTICAL:
+                return p_degree;
+                break;
+                
+            case BACH_TUNINGSYSTEM_ET:
+            default:
+                return p_degree;
+                break;
+        }
+    }
+    
+    // position on the Pythagorean line of fifths
+    t_atom_short plofPosition() const { return (p_tuningSystem == BACH_TUNINGSYSTEM_JI ? p_degree : 0); } // only meaningful for JI
+    
+    t_shortRational alter() const { return p_alter; } // only meaningful for Equal Temperament
+    t_atom_short octave() const { return p_octave; }
+    char tuningSystem() const { return p_tuningSystem; }
+    
     
     t_stepsAndMC toStepsAndMC() const {
         t_stepsAndMC sat;
-        sat.steps = p_degree + p_octave * 7;
+        sat.steps = degree() + p_octave * 7;
         sat.mc = toMC();
         return sat;
     }
@@ -125,7 +198,52 @@ public:
             return 0;
     }
 
+    double f2mc(double f) const {
+        return 6900 + 1200 * log2(f/440); // /0.3010299957;
+    }
+    
+    // Pythagorean line of fifths position to frequency.
+    double plof2freq(t_atom_short pos, t_atom_short octave) const {
+        double freq = 260.7407407407; //middleC tuning: 440*pow(2./3., 3.)*2;
+        short abs_pos = (pos >= 0 ? pos : -pos);
+        short deg = 0;
+        char sign = (pos >= 0 ? 1 : -1);
+        double mul = (sign >= 0 ? 3./2. : 2./3.);
+        for (short i = 0; i < abs_pos; i++) {
+            freq *= mul;
+            deg = deg + 4 * sign;
+            if (deg < 0 || deg >= 7) {
+                deg = positive_mod(deg, 7);
+                if (sign >= 0)
+                    freq /= 2.;
+                else
+                    freq *= 2.;
+            }
+        }
+        return freq;
+    }
+    
+    // Pythagorean line of fifths position to MC.
+    double plof2MC(t_atom_short pos, t_atom_short octave) const {
+        double fifth = 701.9550008654;
+        double mc = 1200 * octave;
+        short abs_pos = (pos >= 0 ? pos : -pos);
+        short deg = 0;
+        char sign = (pos >= 0 ? 1 : -1);
+        for (short i = 1; i < abs_pos; i++) {
+            mc += fifth * sign;
+            deg = deg + 4 * sign;
+            if (deg < 0 || deg >= 7) {
+                deg = positive_mod(deg, 7);
+                mc += 1200 * sign;
+            }
+        }
+        return mc;
+    }
+
+    
     t_pitch(t_stepsAndMC sat) {
+        p_tuningSystem = BACH_TUNINGSYSTEM_ET;
         p_degree = sat.steps % 7;
         if (p_degree < 0)
             p_degree += 7;
@@ -135,33 +253,82 @@ public:
     }
     
     void set(const t_atom_short degree) {
+        p_tuningSystem = BACH_TUNINGSYSTEM_ET;
         p_degree = degree;
         p_octave = 0;
         p_alter.set(0);
     }
     
     void set(const t_atom_short degree, const t_shortRational &alter) {
+        p_tuningSystem = BACH_TUNINGSYSTEM_ET;
         p_degree = degree;
         p_octave = 0;
         p_alter = alter;
     }
     
     void set(const t_atom_short degree, const t_shortRational &alter, const t_atom_short octave) {
+        p_tuningSystem = BACH_TUNINGSYSTEM_ET;
         p_degree = degree;
         p_octave = octave;
         p_alter = alter;
     }
     
-    t_atom_short degree() const { return p_degree; }
-    t_shortRational alter() const { return p_alter; }
-    t_atom_short octave() const { return p_octave; }
+    
+    void setFromJIfundamental(t_atom_short fundamental_in_pythagorean_line_of_fifths, t_atom_short octave, t_shortRational freqRatio)
+    {
+        long numer = freqRatio.num();
+        long denom = freqRatio.den();
+        t_atom_short numer_factors[BACH_PRIMES_JI_SIZE];
+        t_atom_short denom_factors[BACH_PRIMES_JI_SIZE];
+        factorize(numer, numer_factors, BACH_PRIMES_JI_SIZE);
+        factorize(denom, denom_factors, BACH_PRIMES_JI_SIZE);
+        
+        long sum = 0, steps = 0;
+        for (long i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
+            sum += (numer_factors[i] - denom_factors[i]) * numFifthsPerPrimeFactor[i];
+            steps += (numer_factors[i] - denom_factors[i]) * numStepsPerPrimeFactor[i];
+        }
 
-    t_atom_long toSteps() const { return p_octave * 7 + p_degree; }
+        p_tuningSystem = BACH_TUNINGSYSTEM_JI;
+        p_degree = sum + fundamental_in_pythagorean_line_of_fifths; //positive_mod(() * 4),7);
+        p_octave = (octave * 7 + positive_mod(fundamental_in_pythagorean_line_of_fifths * 4, 7) + steps)/7;
+        long delta_octave = p_octave - (octave * 7 + positive_mod(fundamental_in_pythagorean_line_of_fifths * 4, 7))/7;
+        
+        t_shortRational comma = freqRatio;
+        t_shortRational threeovertwo(3,2);
+        long sum_abs = (sum >= 0 ? sum : -sum);
+        long sum_sign = (sum >= 0 ? 1 : -1);
+        for (long i = 0; i < sum_abs; i++) {
+            if (sum_sign > 0)
+                comma = comma / threeovertwo;
+            else
+                comma = comma * threeovertwo;
+        }
+        
+        // refining commas removing factors of 2
+        if (delta_octave > 0) {
+            comma *= ipow(2, delta_octave);
+        } else if (delta_octave < 0) {
+            comma /= ipow(2, -delta_octave);
+        }
+        p_alter = comma;
+    }
+    
+    void setFromJI(t_atom_short pythagorean_note_in_line_of_fifths, t_atom_short octave, t_shortRational comma)
+    {
+        p_tuningSystem = BACH_TUNINGSYSTEM_JI;
+        p_degree = pythagorean_note_in_line_of_fifths;
+        p_octave = octave;
+        p_alter = comma;
+    }
+    
+
+    t_atom_long toSteps() const { return p_octave * 7 + degree(); }
 
     t_atom_long toStepsFromMiddleC() const { return toSteps() - 7*5; }
 
     t_bool operator==(const t_pitch &b) {
-        return p_degree == b.p_degree && p_octave == b.p_octave && p_alter == b.p_alter;
+        return p_tuningSystem == b.p_tuningSystem && p_degree == b.p_degree && p_octave == b.p_octave && p_alter == b.p_alter;
     }
     t_bool operator!=(const t_pitch &b) { return !(*this == b); }
     
@@ -235,7 +402,7 @@ public:
         // return pitch at maximum precision
         return fromMC(mc, 0, k_ACC_AUTO, NULL, NULL);
     }
-    
+
 
 /*    template <typename T> static t_pitch fromMC(const T mc) {
         t_pitch res;
@@ -251,15 +418,70 @@ public:
     } */
     
     t_rational toMC() const {
-        if (p_alter.den() == 0)
-            return t_rational(0, 0);
-        t_atom_long base = degree2MC_safe(p_degree) + p_octave * 1200;
-        return base + p_alter * 200;
+        switch (p_tuningSystem) {
+            case BACH_TUNINGSYSTEM_JI:
+            {
+                if (p_alter.den() == 0)
+                    return t_rational(0, 0);
+                double base_freq = plof2freq(p_degree, p_octave);
+                double mc = f2mc(base_freq * p_alter.num() / p_alter.den());
+                // we approximate this with rationals anyway, but very finely
+                return t_rational((long)mc*10000, 10000); // TO DO: abstract the approximation denominator
+            }
+                break;
+                
+            case BACH_TUNINGSYSTEM_VERTICAL:
+                // TO DO
+                return t_rational(0, 0);
+                break;
+
+            case BACH_TUNINGSYSTEM_ET:
+            default:
+            {
+                if (p_alter.den() == 0)
+                    return t_rational(0, 0);
+                t_atom_long base = degree2MC_safe(p_degree) + p_octave * 1200;
+                return base + p_alter * 200;
+            }
+                break;
+        }
     }
     
-    t_atom_long toMC_wo_accidental() const {
-        t_atom_long base = degree2MC_safe(p_degree) + p_octave * 1200;
-        return base;
+    t_atom_long toScreenMC_wo_accidental() const {
+        switch (p_tuningSystem) {
+            case BACH_TUNINGSYSTEM_VERTICAL:
+                // TO DO
+                return 0;
+                break;
+                
+            case BACH_TUNINGSYSTEM_JI:
+            case BACH_TUNINGSYSTEM_ET:
+            default:
+                t_atom_long base = degree2MC_safe(degree()) + p_octave * 1200;
+                return base;
+                break;
+        }
+    }
+    
+    // accList must be sized BACH_PRIMES_JI_SIZE; the first two entries are irrelevant (corresponding to prime number 2 and 3)
+    void toJIaccidentalList(t_atom_short *accList) const
+    {
+        // we must convert the ratio into the appropriate accidental
+        long numer = p_alter.num();
+        long denom = p_alter.den();
+        t_atom_short numer_factors[BACH_PRIMES_JI_SIZE];
+        t_atom_short denom_factors[BACH_PRIMES_JI_SIZE];
+        factorize(numer, numer_factors, BACH_PRIMES_JI_SIZE);
+        factorize(denom, denom_factors, BACH_PRIMES_JI_SIZE);
+
+//        t_atom_short diff_array[BACH_PRIMES_JI_SIZE];
+        for (long i = 0; i < BACH_PRIMES_JI_SIZE; i++)
+            accList[i] = numer_factors[i] - denom_factors[i];
+        
+        // disregard 2 (identity) and 3 (already accounted for by the pythagorean enharmonic spelling)
+//        for (long i = 2; i < BACH_PRIMES_JI_SIZE; i++) {
+            
+//        }
     }
     
     

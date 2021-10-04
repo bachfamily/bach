@@ -411,7 +411,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_rhythmictree = gensym("rhythmictree");
     x->s_dilationrectangle = gensym("dilationrectangle");
     x->s_popupmenu = gensym("popupmenu");
-    
+    x->s_tuningsystem = gensym("tuningsystem");
+
     
     x->s_create =  gensym("create");
     x->s_delete =  gensym("delete");

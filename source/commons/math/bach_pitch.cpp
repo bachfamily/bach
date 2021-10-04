@@ -237,72 +237,80 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
             return snprintf_zero(buf, bufSize, "NaP ");
     } else if (p_octave >= 0 || always_positive) {
         if (++count == bufSize) { *buf = 0; return count - 1; }
-        *(buf++) = degree2name[p_degree];
-        t_shortRational remainder = p_alter;
-        if (remainder > natural) { // sharps
-            /* // this is probably not convenient, as it complicates simple cases
-             s += std::string("x", t_atom_long(remainder / dblsharp));
-             remainder %= dblsharp;
-             
-             s += std::string("#", t_atom_long(remainder / sharp));
-             remainder %= sharp;
-             
-             s += std::string("q", t_atom_long(remainder / qrtrsharp));
-             remainder %= qrtrsharp;
-             
-             s += std::string("^", t_atom_long(remainder / eighthsharp));
-             remainder %= eighthsharp;
-             */
+        t_atom_short degree_ = degree();
+        *(buf++) = degree2name[degree_];
+        
+        if (p_tuningSystem == BACH_TUNINGSYSTEM_ET) {
+            t_shortRational remainder = p_alter;
+            if (remainder > natural) { // sharps
+                /* // this is probably not convenient, as it complicates simple cases
+                 s += std::string("x", t_atom_long(remainder / dblsharp));
+                 remainder %= dblsharp;
+                 
+                 s += std::string("#", t_atom_long(remainder / sharp));
+                 remainder %= sharp;
+                 
+                 s += std::string("q", t_atom_long(remainder / qrtrsharp));
+                 remainder %= qrtrsharp;
+                 
+                 s += std::string("^", t_atom_long(remainder / eighthsharp));
+                 remainder %= eighthsharp;
+                 */
+                
+                while (remainder >= eighthsharp) {
+                    if (++count == bufSize) { *buf = 0; return count - 1; }
+                    if (remainder >= dblsharp) {
+                        *(buf++) = 'x';
+                        remainder -= dblsharp;
+                    } else if (remainder >= sharp) {
+                        *(buf++) = '#';
+                        remainder -= sharp;
+                    } else if (remainder >= qrtrsharp) {
+                        *(buf++) = 'q';
+                        remainder -= qrtrsharp;
+                    } else if (remainder >= eighthsharp) {
+                        *(buf++) = '^';
+                        remainder -= eighthsharp;
+                    }
+                }
+            } else if (remainder < natural) { // flats
+                while (remainder <= eighthflat) {
+                    if (++count == bufSize) { *buf = 0; return count - 1; }
+                    if (remainder <= flat) {
+                        *(buf++) = 'b';
+                        remainder -= flat;
+                    } else if (remainder <= qrtrflat) {
+                        *(buf++) = 'd';
+                        remainder -= qrtrflat;
+                    } else if (remainder <= eighthflat) {
+                        *(buf++) = 'v';
+                        remainder -= eighthflat;
+                    }
+                }
+            }
             
-            while (remainder >= eighthsharp) {
-                if (++count == bufSize) { *buf = 0; return count - 1; }
-                if (remainder >= dblsharp) {
-                    *(buf++) = 'x';
-                    remainder -= dblsharp;
-                } else if (remainder >= sharp) {
-                    *(buf++) = '#';
-                    remainder -= sharp;
-                } else if (remainder >= qrtrsharp) {
-                    *(buf++) = 'q';
-                    remainder -= qrtrsharp;
-                } else if (remainder >= eighthsharp) {
-                    *(buf++) = '^';
-                    remainder -= eighthsharp;
-                }
+            long len = 0;
+            
+            if (include_octave) {
+                if (remainder > natural)
+                    len = snprintf_zero(buf, bufSize - count, "%d+%d/%dt", p_octave, remainder.num(), remainder.den());
+                else if (remainder < natural)
+                    len = snprintf_zero(buf, bufSize - count, "%d%d/%dt", p_octave, remainder.num(), remainder.den());
+                else
+                    len= snprintf_zero(buf, bufSize - count, "%d", p_octave);
+            } else {
+                if (remainder > natural)
+                    len = snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
+                else if (remainder < natural)
+                    len = snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
             }
-        } else if (remainder < natural) { // flats
-            while (remainder <= eighthflat) {
-                if (++count == bufSize) { *buf = 0; return count - 1; }
-                if (remainder <= flat) {
-                    *(buf++) = 'b';
-                    remainder -= flat;
-                } else if (remainder <= qrtrflat) {
-                    *(buf++) = 'd';
-                    remainder -= qrtrflat;
-                } else if (remainder <= eighthflat) {
-                    *(buf++) = 'v';
-                    remainder -= eighthflat;
-                }
-            }
+            buf += len;
+            count += len;
+            
+        } else if (p_tuningSystem == BACH_TUNINGSYSTEM_JI) {
+            
         }
         
-        long len = 0;
-        
-        if (include_octave) {
-            if (remainder > natural)
-                len = snprintf_zero(buf, bufSize - count, "%d+%d/%dt", p_octave, remainder.num(), remainder.den());
-            else if (remainder < natural)
-                len = snprintf_zero(buf, bufSize - count, "%d%d/%dt", p_octave, remainder.num(), remainder.den());
-            else
-                len= snprintf_zero(buf, bufSize - count, "%d", p_octave);
-        } else {
-            if (remainder > natural)
-                len = snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
-            else if (remainder < natural)
-                len = snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
-        }
-        buf += len;
-        count += len;
     } else { // if (octave < 0 && !always_positive)
         t_pitch mirrored = -*this;
         if (++count == bufSize) { *buf = 0; return count - 1; }
@@ -570,3 +578,4 @@ t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences
     
     return t_pitch(mod_positive(steps, 7), accidental, floor_div_by_7(steps));
 }
+

@@ -1922,7 +1922,7 @@ t_llll *get_coordinates_from_diatonic_interval(t_tonnetz *x, t_llll *interval, l
 t_llll *get_coordinates_from_pitch(t_tonnetz *x, t_pitch pitch, long also_set_velocity, long velocity_value, t_llll *found_lattice_elems, char for_deletion,
                                       char only_return_lattice_elems_with_nonnegative_velocity)
 {
-    long screen_mc = pitch.toMC_wo_accidental();
+    long screen_mc = pitch.toScreenMC_wo_accidental();
     t_rational screen_acc = pitch.alter();
     
     t_llll *res;
@@ -2412,7 +2412,7 @@ void tonnetz_free(t_tonnetz *x){
 
 double purely_diatonic_interval_to_midicents(t_tonnetz *x, t_tonnetz_diatonic_interval purely_diatonic_interval)
 {
-    long screen_midicents = x->pitch_center.toMC_wo_accidental();
+    long screen_midicents = x->pitch_center.toScreenMC_wo_accidental();
     t_rational screen_acc = x->pitch_center.alter();
 	double mc = screen_midicents + rat2double(rat_long_prod(screen_acc, 200));
 	long interval_modulo = positive_mod(purely_diatonic_interval.diatonic_steps, (long)x->purely_diatonic_scale_intervals->l_size);

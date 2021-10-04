@@ -427,6 +427,10 @@ void notation_obj_bach_attribute_declares(t_notation_obj *r_ob){
 	bach_attribute_add_functions(bach_attribute_get(man, k_NOTE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_cents, "Cents", k_NOTE, t_note, midicents, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_pitch, "Pitch", k_NOTE, t_note, midicents, k_BACH_ATTR_SYM, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_tuningsystem, "Tuning System", k_NOTE, t_note, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
+    t_symbol *notetypes[3]; notetypes[0] = gensym("Equal Temperament"); notetypes[1] = gensym("Just Intonation"); notetypes[2] = gensym("Vertically Unconstrained");
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_NOTE, _llllobj_sym_tuningsystem), 3, notetypes);
+    
 	if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
 		DECLARE_BACH_ATTR(man, -1, _llllobj_sym_duration, "Duration (ms)", k_NOTE, t_note, duration, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_velocity, "Velocity", k_NOTE, t_note, velocity, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
@@ -1139,6 +1143,11 @@ long bach_default_attr_inactive(t_notation_obj *r_ob, void *elem, t_bach_attribu
 			if (((t_marker *)elem)->role != k_MARKER_ROLE_TEMPO && ((t_marker *)elem)->role != k_MARKER_ROLE_TIME_SIGNATURE)
 				return 1;	// inactive
 		}
+    } else if (attr->owner_type == k_NOTE) {
+        if (attr->name == _llllobj_sym_cents) {
+            if (((t_note *)elem)->pitch_original.tuningSystem() == BACH_TUNINGSYSTEM_JI)
+                return 1;    // inactive
+        }
 	} else if (attr->owner_type == k_MEASURE) {
 		if (attr->name == _llllobj_sym_number) {
 			if (!((t_measure *)elem)->force_measure_number)
@@ -1327,7 +1336,12 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
                 llll_free(ll);
             }
 			return;
-		}
+        } else if (attr->name == _llllobj_sym_tuningsystem) {
+            if (ac && atom_gettype(av) == A_LONG) { // TODO
+//                note_set_tuning(r_ob, (t_note *)obj, atom_getlong(av));
+            }
+            return;
+        }
 	} else if (attr->owner_type == k_MEASURE) {
 		if (attr->name == _llllobj_sym_timesig) {
 			t_llll *parsed = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
@@ -1644,6 +1658,12 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
             t_pitch pitch = note_get_pitch(r_ob, (t_note *)obj);
 			atom_setsym(*av, pitch.toSym());
 			return;
+        } else if (attr->name == _llllobj_sym_tuningsystem) {
+            *ac = 1;
+            *av = (t_atom *)bach_newptr(sizeof(t_atom));
+            t_pitch pitch = note_get_pitch(r_ob, (t_note *)obj);
+            atom_setlong(*av, pitch.tuningSystem());
+            return;
 		}
 	} else if (attr->owner_type == k_MEASURE) {
 		if (attr->name == _llllobj_sym_timesig) {

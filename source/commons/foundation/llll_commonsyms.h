@@ -390,6 +390,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_rhythmictree;
 	t_symbol	*s_dilationrectangle;
 	t_symbol	*s_popupmenu;
+    t_symbol    *s_tuningsystem;
 
 	t_symbol	*s_create;
 	t_symbol	*s_delete;
@@ -789,6 +790,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_rhythmictree		(_llllobj_common_symbols->s_rhythmictree)
 #define _llllobj_sym_dilationrectangle		(_llllobj_common_symbols->s_dilationrectangle)
 #define _llllobj_sym_popupmenu		(_llllobj_common_symbols->s_popupmenu)
+#define _llllobj_sym_tuningsystem        (_llllobj_common_symbols->s_tuningsystem)
 
 #define _llllobj_sym_create		(_llllobj_common_symbols->s_create)
 #define _llllobj_sym_delete		(_llllobj_common_symbols->s_delete)

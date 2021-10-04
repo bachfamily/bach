@@ -5656,7 +5656,7 @@ void mc_to_screen_approximations_do(long tone_division, char accidentals_prefere
     
     t_pitch pitch = t_pitch::fromMC(mc, tone_division, (e_accidentals_preferences)accidentals_preferences, key_acc_pattern, full_repr);
     
-    *screen_note = pitch.toMC_wo_accidental();
+    *screen_note = pitch.toScreenMC_wo_accidental();
     *screen_accidental = pitch.alter();
     return;
 /*
@@ -11609,6 +11609,212 @@ unicodeChar get_accidental_character(t_notation_obj *r_ob, t_rational accidental
     }
 }
 
+// outChars must be allocated with MAX_NUM_ACCIDENTALS size
+void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, unicodeChar *outChars, int *numOutChars)
+{
+    t_atom_short monzo[BACH_PRIMES_JI_SIZE];
+    pitch.toJIaccidentalList(monzo);
+    
+    unicodeChar *curChar = outChars;
+    int numChars = 0;
+    
+    // 3-limit and 5-limit: to do: standard accidental
+    long plof_offset = 1 + pitch.plofPosition();
+    long num_base_accs = (plof_offset - positive_mod(plof_offset, 7)) / 7;
+    long num_base_accs_abs = abs(num_base_accs);
+    long num_base_accs_sign = (num_base_accs >= 0 ? 1 : -1);
+    if (num_base_accs_abs == 0 && monzo[2] == 0) { // do I need a natural?
+        char need_natural = true;
+        for (long i = 3; i < BACH_PRIMES_JI_SIZE; i++) {
+            if (monzo[i] != 0) {
+                need_natural = false;
+                break;
+            }
+        }
+        if (need_natural) {
+            *curChar = 57953;
+            curChar++;
+            numChars ++;
+        }
+    } else if (num_base_accs_abs == 0 && monzo[2] != 0) { // 5-limit
+        long monzo_abs = abs(monzo[2]);
+        long monzo_sign = (monzo[2] >= 0 ? 1 : -1);
+        while (monzo_abs > 0 && numChars < CONST_MAX_ACCIDENTALS - 1) {
+            if (monzo_abs >= 3) {
+                *curChar = (monzo_sign < 0 ? 58075 : 58070);
+                monzo_abs -= 3;
+            } else if (monzo_abs >= 2) {
+                *curChar = (monzo_sign < 0 ? 58065 : 58060);
+                monzo_abs -= 2;
+            } else if (monzo_abs == 1) {
+                *curChar = (monzo_sign < 0 ? 58055 : 58050);
+                monzo_abs -= 1;
+            }
+            curChar++;
+            numChars ++;
+        }
+    } else {
+        long monzo_5abs = abs(monzo[2]);
+        long monzo_5sign = (monzo[2] >= 0 ? 1 : -1);
+
+        while (num_base_accs_abs > 0 && numChars < CONST_MAX_ACCIDENTALS - 1) {
+            if (num_base_accs_abs >= 2) {
+                if (monzo_5abs > 0) {
+                    if (monzo_5abs >= 3) {
+                        *curChar = (num_base_accs_sign > 0 ? (monzo_5sign < 0 ? 58077 : 58072) : (monzo_5sign < 0 ? 58073 : 58068));
+                        monzo_5abs -= 3;
+                    } else if (monzo_5abs >= 2) {
+                        *curChar = (num_base_accs_sign > 0 ? (monzo_5sign < 0 ? 58067 : 58062) : (monzo_5sign < 0 ? 58063 : 58058));
+                        monzo_5abs -= 2;
+                    } else if (monzo_5abs == 1) {
+                        *curChar = (num_base_accs_sign > 0 ? (monzo_5sign < 0 ? 58057 : 58052) : (monzo_5sign < 0 ? 58054 : 58049));
+                        monzo_5abs -= 1;
+                    }
+                } else {
+                    *curChar = (num_base_accs_sign > 0 ? 57955 : 57956);
+                }
+                curChar++;
+                num_base_accs_abs -= 2;
+            } else if (num_base_accs_abs == 1) {
+                if (monzo_5abs > 0) {
+                    if (monzo_5abs >= 3) {
+                        *curChar = (num_base_accs_sign > 0 ? (monzo_5sign < 0 ? 58076 : 58071) : (monzo_5sign < 0 ? 58074 : 58069));
+                        monzo_5abs -= 3;
+                    } else if (monzo_5abs >= 2) {
+                        *curChar = (num_base_accs_sign > 0 ? (monzo_5sign < 0 ? 58066 : 58061) : (monzo_5sign < 0 ? 58064 : 58059));
+                        monzo_5abs -= 2;
+                    } else if (monzo_5abs == 1) {
+                        *curChar = (num_base_accs_sign > 0 ? (monzo_5sign < 0 ? 58056 : 58051) : (monzo_5sign < 0 ? 58054 : 58049));
+                        monzo_5abs -= 1;
+                    }
+                } else {
+                    *curChar = (num_base_accs_sign > 0 ? 57954 : 57952);
+                }
+                curChar++;
+                num_base_accs_abs -= 1;
+            }
+            numChars ++;
+        }
+        
+        // possibly adding late naturals with arrows
+        while (monzo_5abs > 0 && numChars < CONST_MAX_ACCIDENTALS - 1) {
+            if (monzo_5abs >= 3) {
+                *curChar = (monzo_5sign > 0 ? 58075 : 58.070);
+                monzo_5abs -= 3;
+            } else if (monzo_5abs >= 2) {
+                *curChar = (monzo_5sign > 0 ? 58065 : 58.060);
+                monzo_5abs -= 2;
+            } else if (monzo_5abs == 1) {
+                *curChar = (monzo_5sign > 0 ? 58055 : 58.050);
+                monzo_5abs -= 1;
+            }
+            curChar++;
+            numChars ++;
+        }
+    }
+
+    
+    // from 7-limit onwards
+    for (long i = 3; i < BACH_PRIMES_JI_SIZE && numChars < CONST_MAX_ACCIDENTALS - 1; i++) {
+        long monzo_abs = abs(monzo[i]);
+        long monzo_sign = (monzo[i] >= 0 ? 1 : -1);
+        if (monzo_abs != 0) {
+            switch (i) {
+                case 3: // 7-limit
+                    while (monzo_abs > 0) {
+                        if (monzo_abs >= 2) {
+                            *curChar = (monzo_sign > 0 ? 58080 : 58081);
+                            curChar++;
+                            numChars ++;
+                            monzo_abs -= 2;
+                        } else if (monzo_abs == 1) {
+                            *curChar = (monzo_sign > 0 ? 58078 : 58079);
+                            curChar++;
+                            numChars++;
+                            monzo_abs -= 1;
+                        }
+                    }
+                    break;
+                    
+                case 4: // 11-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign > 0 ? 58082 : 58083);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+                    
+                case 5: // 13-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign > 0 ? 58084 : 58085);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+
+                case 6: // 17-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign > 0 ? 58086 : 58087);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+
+                case 7: // 19-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign > 0 ? 58088 : 58089);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+
+                case 8: // 23-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign > 0 ? 58090 : 58091);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+
+                    
+                case 9: // 27-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign > 0 ? 58103 : 58104);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+
+                case 10: // 31-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign > 0 ? 58093 : 58092);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+    
+    // reverse the string
+    unicodeChar temp[CONST_MAX_ACCIDENTALS];
+    for (long i = 0; i < numChars; i++)
+        temp[i] = outChars[i];
+    for (long i = 0; i < numChars; i++)
+        outChars[numChars - i - 1] = temp[i];
+
+    *numOutChars = numChars;
+}
 
 
 double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental)
@@ -24520,6 +24726,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         double *accidental_x_real;
         double *accidental_width;
         int *note_num_accidentals;
+        t_pitch *pitch_original;
         unsigned short **accidental_text;
         long mem_i;
         long min_scaleposition, max_scaleposition;
@@ -24538,6 +24745,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         show_accidental = (char *) bach_newptr(num_notes * sizeof(char));
         accidental = (t_rational *) bach_newptr(num_notes * sizeof(t_rational));
         reordered = (long *) bach_newptr(num_notes * sizeof(long));
+        pitch_original = (t_pitch *) bach_newptr(num_notes * sizeof(t_pitch)); // original pitches
         noteheads_uwidths = (double *) bach_newptr(num_notes * sizeof(double)); // uwidth of each notehead
         note_acc_resize = (double *) bach_newptr(num_notes * sizeof(double)); // resize factor for the accidental of each note
         note_head_resize = (double *) bach_newptr(num_notes * sizeof(double)); // resize factor for the notehead of each note
@@ -24557,6 +24765,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             calculate_note_sizes_from_slots(r_ob, curr_nt);
             note_acc_resize[i] = curr_nt->accidentals_resize;
             note_head_resize[i] = curr_nt->notehead_resize;
+            pitch_original[i] = curr_nt->pitch_original;
             
             notehead_ux_shift[i] = get_notehead_ux_shift(r_ob, curr_nt);
             
@@ -24700,6 +24909,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                     t_rational temp2; 
                     char temp3;
                     double temp4;
+                    t_pitch temp5;
                     
                     has_been_reordered = true;
                     
@@ -24735,6 +24945,10 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                     reordered[i] = reordered[i+1];
                     reordered[i+1] = temp;
                     
+                    temp5 = pitch_original[i];
+                    pitch_original[i] = pitch_original[i+1];
+                    pitch_original[i+1] = temp5;
+
                     is_ok = false;
                     break;
                 }
@@ -24760,7 +24974,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 
 
         // finding scale-positions (= numbering referred to the display position, C3=0, D3=1, E3=2, F3=4 and so on)
-        min_scaleposition = -32500; // just weird 
+        min_scaleposition = -32500; // just low
         max_scaleposition = -32500;
         for (scalepositionsum = 0, i = 0; i < num_notes; i++){
             scaleposition[i] = midicents_to_diatsteps_from_middleC(r_ob, midicents[i]);
@@ -25132,23 +25346,28 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             this_acc = accidental_copy[best_i];
             for (j = 0; j < CONST_MAX_ACCIDENTALS; j++) 
                 acc_text[j]=0;
-            j = 0;
-            if (this_acc.r_num ==0) {
-                acc_text[j] = get_accidental_character(r_ob, this_acc);
-                acc_width = get_accidental_uwidth(r_ob, this_acc, false) * note_acc_resize[best_i];
-                j = 1;
+            
+            if (pitch_original[best_i].tuningSystem() == BACH_TUNINGSYSTEM_JI) {
+                get_accidental_characters_JI(r_ob, pitch_original[best_i], acc_text, &note_num_accidentals[best_i]);
             } else {
-                while (j < CONST_MAX_ACCIDENTALS && this_acc.r_num != 0){
+                j = 0;
+                if (this_acc.r_num ==0) {
                     acc_text[j] = get_accidental_character(r_ob, this_acc);
-                    acc_width += get_accidental_uwidth(r_ob, this_acc, false) * note_acc_resize[best_i];
-                    j++;
-                    if ((rat_long_cmp(this_acc,1) <= 0) && (rat_long_cmp(this_acc,-1) >= 0))
-                        this_acc.r_num = 0;
-                    else
-                        this_acc = rat_long_sum(this_acc, ((this_acc.r_num * this_acc.r_den > 0) ? -1 : 1));
-                } 
+                    acc_width = get_accidental_uwidth(r_ob, this_acc, false) * note_acc_resize[best_i];
+                    j = 1;
+                } else {
+                    while (j < CONST_MAX_ACCIDENTALS && this_acc.r_num != 0){
+                        acc_text[j] = get_accidental_character(r_ob, this_acc);
+                        acc_width += get_accidental_uwidth(r_ob, this_acc, false) * note_acc_resize[best_i];
+                        j++;
+                        if ((rat_long_cmp(this_acc,1) <= 0) && (rat_long_cmp(this_acc,-1) >= 0))
+                            this_acc.r_num = 0;
+                        else
+                            this_acc = rat_long_sum(this_acc, ((this_acc.r_num * this_acc.r_den > 0) ? -1 : 1));
+                    }
+                }
+                note_num_accidentals[best_i] = j;
             }
-            note_num_accidentals[best_i] = j;
 
             accidental_x_real[best_i] = best_x_pos;
             delta = this_stem_x - (accidental_x_real[best_i] - acc_width); 
@@ -25255,6 +25474,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         bach_freeptr(midicents);
         bach_freeptr(show_accidental);
         bach_freeptr(reordered);
+        bach_freeptr(pitch_original);
         bach_freeptr(noteheads_uwidths);
         bach_freeptr(note_need_aux_stem);
         bach_freeptr(accidental);

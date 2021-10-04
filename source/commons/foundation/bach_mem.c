@@ -407,10 +407,45 @@ t_llll *llll_parse(long ac, t_atom *av, long ignore) // creates a new llll from 
                 } /*else if (llll_contains_separators(s->s_name)) {
                    llll_appendsym(this_llll, s);
                    } */else {
-                       symParser.parse(s->s_name, &this_llll, stack, &depth);
-                       if (depth < 1)
-                           goto llll_parse_err;
-                   }
+                       
+                       // TODO: this portion MUST BE THROWN AWAY!!!!
+                       // manually handing just intonation for now
+                       if (s->s_name && s->s_name[0] == '<' && s->s_name[strlen(s->s_name)-1] == '>') {
+                           error("Using portion of code that must be thrown away!");
+                           std::string st = s->s_name +1;
+                           std::string delimiter = ",";
+                           t_atom_short reference_note_in_pythagorean_line_of_fifths = 0;
+                           t_atom_short octave = 5;
+                           t_atom_short freqRatioNum = 1, freqRatioDen = 1;
+                           size_t pos = 0;
+                           std::string token;
+                           long count = 0;
+                           while ((pos = st.find(delimiter)) != std::string::npos) {
+                               token = st.substr(0, pos);
+                               if (count == 0)
+                                   reference_note_in_pythagorean_line_of_fifths = std::stoi(token);
+                               else if (count == 1)
+                                   octave = std::stoi(token);
+                               else if (count == 2)
+                                   freqRatioNum = std::stoi(token);
+                               else if (count == 3)
+                                   freqRatioDen = std::stoi(token);
+                               st.erase(0, pos + delimiter.length());
+                               count++;
+                           }
+                           
+                           t_pitch pitch;
+                           t_shortRational freqRatio(freqRatioNum, freqRatioDen);
+                           pitch.setFromJIfundamental(reference_note_in_pythagorean_line_of_fifths, octave, freqRatio);
+                           llll_appendpitch(this_llll, pitch, 0, WHITENULL_llll);
+                       } else {
+                           
+                           symParser.parse(s->s_name, &this_llll, stack, &depth);
+                           if (depth < 1)
+                               goto llll_parse_err;
+                           
+                       }
+                 }
                 break;
             }
         }

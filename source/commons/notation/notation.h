@@ -3629,6 +3629,8 @@ typedef struct _accidentals_typo_preferences
                                                         ///< -1 tone (double flat), -7/8 tone, -3/4 (tribemol), -5/8, -1/2 (flat), -3/8, -1/4 (mobemol), -1/8,
                                                         ///< 0 (natural), +1/8, +1/4 (monesis), +3/4, +1/2 (sharp), +5/8, +3/4 (triesis), +7/8, +1 tone (double sharp)
                                                         ///< This sequence is the sequence to which also the fields <binary_top_uextension>, <binary_bottom_uextension> and <binary_uwidth> refer to.
+//    unicodeChar       unicode_ji_characters[BACH_PRIMES_JI_SIZE][5];
+    
     double            binary_top_uextension[17];            ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the topmost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
     double            binary_bottom_uextension[17];        ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the bottommost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
     double            binary_uwidth[17];                    ///< Unscaled width (in pixels) of the accidental. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
