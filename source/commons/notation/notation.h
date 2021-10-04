@@ -5350,6 +5350,10 @@ t_shortRational note_get_screen_accidental(t_note *nt);
 t_rational note_get_screen_midicents_with_accidental(t_note *nt);
 
 
+//TBD
+char note_get_tuningsystem(t_note *nt);
+
+
 /**    Flag telling if the note pitch is user defined or not.
     @ingroup                notation
     @param note             The note
@@ -9496,6 +9500,10 @@ t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note);
 
 // TBD: pitch-or-cents
 void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h);
+
+// TBD tuning systems
+void note_set_tuningsystem(t_notation_obj *r_ob, t_note *note, char tuningsystem);
+char note_get_tuningsystem(t_notation_obj *r_ob, t_note *note);
 
 
 /**    Set the velocity of a note, and also sync the velocity of the first breakpoint (that should always coincide

@@ -29,6 +29,12 @@ const long subs_count = 2;
 
 
 //Midicents of the screen diatonic note, ignoring accidental. For example, for the Eb above the middle C, this will be 6400 (the midicents of the E)
+
+char note_get_tuningsystem(t_note *nt)
+{
+    return nt->pitch_original.tuningSystem();
+}
+
 long note_get_screen_midicents(t_note *nt)
 {
     return nt->pitch_displayed.toScreenMC_wo_accidental();
@@ -175,6 +181,9 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
     t_rational auto_screen_acc;
     if (note_is_enharmonicity_userdefined(nt)) { // there _are_ accidentals user-defined!!!
         if (nt->pitch_original.tuningSystem() == BACH_TUNINGSYSTEM_JI) {
+            // don't do anything
+            nt->pitch_displayed = nt->pitch_original;
+        } else if (nt->pitch_original.tuningSystem() == BACH_TUNINGSYSTEM_VERTICAL) {
             // don't do anything
             nt->pitch_displayed = nt->pitch_original;
         } else {

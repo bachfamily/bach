@@ -304,13 +304,18 @@ public:
             else
                 comma = comma * threeovertwo;
         }
+        long num_octaves_removed = (sum*4)/7;
+        if (num_octaves_removed > 0)
+            comma *= ipow(2, num_octaves_removed);
+        else if (num_octaves_removed < 0)
+            comma /= ipow(2, -num_octaves_removed);
         
         // refining commas removing factors of 2
-        if (delta_octave > 0) {
+/*        if (delta_octave > 0) {
             comma *= ipow(2, delta_octave);
         } else if (delta_octave < 0) {
             comma /= ipow(2, -delta_octave);
-        }
+        } */
         p_alter = comma;
     }
     

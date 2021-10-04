@@ -427,7 +427,9 @@ void notation_obj_bach_attribute_declares(t_notation_obj *r_ob){
 	bach_attribute_add_functions(bach_attribute_get(man, k_NOTE, _llllobj_sym_name), NULL, (bach_setter_fn)bach_set_name_fn, NULL, NULL, NULL);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_cents, "Cents", k_NOTE, t_note, midicents, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_pitch, "Pitch", k_NOTE, t_note, midicents, k_BACH_ATTR_SYM, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
-    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_tuningsystem, "Tuning System", k_NOTE, t_note, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
+    
+    //for this attribute, we are using the "locked" field as any placeholder, it's not going to be touched, using custom getter/setter anyway
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_tuningsystem, "Tuning System", k_NOTE, t_note, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
     t_symbol *notetypes[3]; notetypes[0] = gensym("Equal Temperament"); notetypes[1] = gensym("Just Intonation"); notetypes[2] = gensym("Vertically Unconstrained");
     bach_attribute_add_enumindex(bach_attribute_get(man, k_NOTE, _llllobj_sym_tuningsystem), 3, notetypes);
     
@@ -1337,8 +1339,8 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
             }
 			return;
         } else if (attr->name == _llllobj_sym_tuningsystem) {
-            if (ac && atom_gettype(av) == A_LONG) { // TODO
-//                note_set_tuning(r_ob, (t_note *)obj, atom_getlong(av));
+            if (ac && atom_gettype(av) == A_LONG) {
+                note_set_tuningsystem(r_ob, (t_note *)obj, atom_getlong(av));
             }
             return;
         }
@@ -1661,8 +1663,7 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
         } else if (attr->name == _llllobj_sym_tuningsystem) {
             *ac = 1;
             *av = (t_atom *)bach_newptr(sizeof(t_atom));
-            t_pitch pitch = note_get_pitch(r_ob, (t_note *)obj);
-            atom_setlong(*av, pitch.tuningSystem());
+            atom_setlong(*av, note_get_tuningsystem(r_ob, (t_note *)obj));
             return;
 		}
 	} else if (attr->owner_type == k_MEASURE) {

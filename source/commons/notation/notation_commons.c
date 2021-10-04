@@ -5453,6 +5453,73 @@ char is_y_between_this_staff_and_the_next_or_prev(t_notation_obj *r_ob, double y
     return 0;
 }
 
+void staff_get_first_and_last_line_mc(t_notation_obj *r_ob, t_voice *voice, double *first_mc, double *last_mc)
+{
+    long shift = get_clef_octave_shift(voice->clef);
+    
+    switch (voice->clef) {
+        case k_CLEF_FFGG:
+            *first_mc = 1700; *last_mc = 10100;
+            break;
+        case k_CLEF_FFG:
+            *first_mc = 3300; *last_mc = 7700;
+            break;
+        case k_CLEF_FGG:
+            *first_mc = 4100; *last_mc = 10100;
+            break;
+        case k_CLEF_FF:
+            *first_mc = 1700; *last_mc = 5700;
+            break;
+        case k_CLEF_FG:
+            *first_mc = 4100; *last_mc = 7700;
+            break;
+        case k_CLEF_GG:
+            *first_mc = 6400; *last_mc = 10100;
+            break;
+            
+        case k_CLEF_NONE:
+        case k_CLEF_G:
+        case k_CLEF_G8va:
+        case k_CLEF_G8vb:
+        case k_CLEF_G15ma:
+        case k_CLEF_G15mb:
+            *first_mc = 6400 + shift * 1200; *last_mc = 7700 + shift * 1200;
+            break;
+            
+        case k_CLEF_F:
+        case k_CLEF_F8va:
+        case k_CLEF_F8vb:
+        case k_CLEF_F15ma:
+        case k_CLEF_F15mb:
+            *first_mc = 4100 + shift * 1200; *last_mc = 5700 + shift * 1200;
+            break;
+            
+        case k_CLEF_SOPRANO:
+            *first_mc = 6000; *last_mc = 7400;
+            break;
+        case k_CLEF_MEZZO:
+            *first_mc = 5700; *last_mc = 7100;
+            break;
+        case k_CLEF_ALTO:
+            *first_mc = 5300; *last_mc = 6700;
+            break;
+        case k_CLEF_TENOR:
+            *first_mc = 5000; *last_mc = 6400;
+            break;
+        case k_CLEF_BARYTONE:
+            *first_mc = 4700; *last_mc = 6000;
+            break;
+        case k_CLEF_PERCUSSION:
+            *first_mc = 6400; *last_mc = 7700;
+            break;
+        default:
+            *first_mc = 0; *last_mc = 0;
+            break;
+    }
+    
+    // TO DO: handle non-standard staff lines!
+}
+
 // beware: this does NOT account for nonstandard staff lines!!!
 char is_mc_within_staff(t_notation_obj *r_ob, double mc, int clef) {
     long shift = get_clef_octave_shift(clef);
@@ -5530,12 +5597,27 @@ double scaleposition_to_uyposition(t_notation_obj *r_ob, long scaleposition, t_v
 }
 
 // *note is only needed if notehead is custom
-double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize){ // discretized to the possible locations of the notehead ON the staff line or BETWEEN two staff lines
-    return mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), v_ob) + notehead_resize * (-30. - get_notehead_uy_shift(r_ob, note)) * r_ob->zoom_y;
+double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize)
+{
+    double pos = 0;
+    if (note_get_tuningsystem(note) == BACH_TUNINGSYSTEM_VERTICAL) {
+        // continuously floating
+        double staff_top = get_staff_top_y(r_ob, v_ob, false);
+        double staff_bottom = get_staff_bottom_y(r_ob, v_ob, false);
+        double staff_bottom_mc, staff_top_mc;
+        staff_get_first_and_last_line_mc(r_ob, v_ob, &staff_bottom_mc, &staff_top_mc);
+        pos = rescale(note->midicents, staff_bottom_mc, staff_top_mc, staff_bottom, staff_top);
+    } else {
+        // discretized to the possible locations of the notehead ON the staff line or BETWEEN two staff lines
+        pos = mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), v_ob);
+    }
+    
+    return pos + notehead_resize * (-30. - get_notehead_uy_shift(r_ob, note)) * r_ob->zoom_y;
 }
 
 
-double mc_to_yposition_in_scale(t_notation_obj *r_ob, double mc, t_voice *v_ob){ // discretized to the possible locations of the notehead ON the staff line or BETWEEN two staff lines
+double mc_to_yposition_in_scale(t_notation_obj *r_ob, double mc, t_voice *v_ob){
+// discretized to the possible locations of the notehead ON the staff line or BETWEEN two staff lines
 //no CONST_Y_NOTE_TRANSL constant: this returns the REAL pixel position corresponding to a given midicent!
     long oct = floor(mc / 1200.);
     double pitch = mc - oct * 1200.; 
@@ -11738,7 +11820,7 @@ void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, unicodeCh
                     
                 case 4: // 11-limit
                     while (monzo_abs > 0) {
-                        *curChar = (monzo_sign > 0 ? 58082 : 58083);
+                        *curChar = (monzo_sign < 0 ? 58082 : 58083);
                         curChar++;
                         numChars++;
                         monzo_abs -= 1;
@@ -11765,7 +11847,7 @@ void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, unicodeCh
 
                 case 7: // 19-limit
                     while (monzo_abs > 0) {
-                        *curChar = (monzo_sign > 0 ? 58088 : 58089);
+                        *curChar = (monzo_sign < 0 ? 58088 : 58089);
                         curChar++;
                         numChars++;
                         monzo_abs -= 1;
@@ -11782,9 +11864,9 @@ void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, unicodeCh
                     break;
 
                     
-                case 9: // 27-limit
+                case 9: // 29-limit
                     while (monzo_abs > 0) {
-                        *curChar = (monzo_sign > 0 ? 58103 : 58104);
+                        *curChar = (monzo_sign < 0 ? 58103 : 58104);
                         curChar++;
                         numChars++;
                         monzo_abs -= 1;
@@ -11793,7 +11875,7 @@ void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, unicodeCh
 
                 case 10: // 31-limit
                     while (monzo_abs > 0) {
-                        *curChar = (monzo_sign > 0 ? 58093 : 58092);
+                        *curChar = (monzo_sign < 0 ? 58093 : 58092);
                         curChar++;
                         numChars++;
                         monzo_abs -= 1;
@@ -24887,6 +24969,9 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                         break;
                 }
                 
+                if (note_get_tuningsystem(curr_nt) == BACH_TUNINGSYSTEM_JI)
+                    curr_nt->show_accidental = true;
+                
                 show_accidental[i] = curr_nt->show_accidental;
             }
             
@@ -25774,6 +25859,38 @@ void note_set_velocity(t_notation_obj *r_ob, t_note *note, long velocity)
     note->velocity = velocity;
     if (note->firstbreakpoint)
         note->firstbreakpoint->velocity = velocity;
+}
+
+
+char note_get_tuningsystem(t_notation_obj *r_ob, t_note *note)
+{
+    return note->pitch_original.tuningSystem();
+}
+
+void note_set_tuningsystem(t_notation_obj *r_ob, t_note *note, char tuningsystem)
+{
+    if (tuningsystem != note_get_tuningsystem(note)) {
+        switch (tuningsystem) {
+            case BACH_TUNINGSYSTEM_ET: // converting to ET
+                note->pitch_original.p_tuningSystem = BACH_TUNINGSYSTEM_ET;
+                note_set_auto_enharmonicity(note);
+                note_compute_approximation(r_ob, note);
+                break;
+
+            case BACH_TUNINGSYSTEM_JI: // converting to JI
+                // todo!!!! find best candidate
+//                note_set_auto_enharmonicity(nt);
+//                note_compute_approximation(r_ob, nt);
+                break;
+
+            case BACH_TUNINGSYSTEM_VERTICAL: // converting to VERTICAL
+                note->pitch_original.p_tuningSystem = BACH_TUNINGSYSTEM_VERTICAL; // yep, that's pretty much it!
+                break;
+
+            default:
+                break;
+        }
+    }
 }
 
 void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
