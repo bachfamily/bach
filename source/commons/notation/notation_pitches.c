@@ -179,36 +179,43 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
     t_voice *voice = (nt->parent && nt->parent->is_score_chord) ? (t_voice *)nt->parent->parent->voiceparent : (t_voice *)nt->parent->voiceparent;
     long auto_screen_mc;
     t_rational auto_screen_acc;
-    if (note_is_enharmonicity_userdefined(nt)) { // there _are_ accidentals user-defined!!!
-        if (nt->pitch_original.tuningSystem() == BACH_TUNINGSYSTEM_JI) {
+    
+    switch (nt->pitch_original.tuningSystem()) {
+        case BACH_TUNINGSYSTEM_JI:
             // don't do anything
             nt->pitch_displayed = nt->pitch_original;
-        } else if (nt->pitch_original.tuningSystem() == BACH_TUNINGSYSTEM_VERTICAL) {
-            // don't do anything
-            nt->pitch_displayed = nt->pitch_original;
-        } else {
-            mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
+            break;
             
-            if (!(is_natural_note(note_get_screen_midicents(nt)))) {
-                object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
+        case BACH_TUNINGSYSTEM_UNIFORM:
+            // don't do anything
+            nt->pitch_displayed = nt->pitch_original;
+            break;
+            
+        default:
+            if (note_is_enharmonicity_userdefined(nt)) { // there _are_ accidentals user-defined!!!
+                mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
+                
+                if (!(is_natural_note(note_get_screen_midicents(nt)))) {
+                    object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
+                    long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
+                    nt->pitch_displayed.set(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
+                    note_set_auto_enharmonicity(nt);
+                } else {
+                    nt->pitch_displayed = nt->pitch_original;
+                    
+                    t_rational auto_mc = auto_screen_acc * 200 + auto_screen_mc;
+                    if (nt->pitch_original.toMC() != auto_mc) {
+                        object_warn((t_object *)r_ob, "Warning: mismatch with current microtonal approximation settings, input accidental might not be displayed.");
+                        
+                        nt->pitch_displayed.set(nt->pitch_displayed.degree(), (auto_mc - scaleposition_to_midicents(nt->pitch_displayed.toSteps() - 5 * 7))/200, nt->pitch_displayed.octave());
+                    }
+                }
+            } else { // use default accidentals!
+                mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
                 long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
                 nt->pitch_displayed.set(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
-                note_set_auto_enharmonicity(nt);
-            } else {
-                nt->pitch_displayed = nt->pitch_original;
-                
-                t_rational auto_mc = auto_screen_acc * 200 + auto_screen_mc;
-                if (nt->pitch_original.toMC() != auto_mc) {
-                    object_warn((t_object *)r_ob, "Warning: mismatch with current microtonal approximation settings, input accidental might not be displayed.");
-                    
-                    nt->pitch_displayed.set(nt->pitch_displayed.degree(), (auto_mc - scaleposition_to_midicents(nt->pitch_displayed.toSteps() - 5 * 7))/200, nt->pitch_displayed.octave());
-                }
             }
-        }
-    } else { // use default accidentals!
-        mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
-        long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
-        nt->pitch_displayed.set(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
+            break;
     }
 }
 

@@ -38,23 +38,23 @@ typedef enum _accidentals_preferences {
 enum {
     BACH_TUNINGSYSTEM_ET = 0,
     BACH_TUNINGSYSTEM_JI = 1,
-    BACH_TUNINGSYSTEM_VERTICAL = 2,
+    BACH_TUNINGSYSTEM_UNIFORM = 2,
 };
 
 
 class t_pitch;
 
-#define BACH_PRIMES_JI_SIZE 25
-static long primes_ji[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97 };
+#define BACH_PRIMES_JI_SIZE 15
+static long primes_ji[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
 static t_atom_short numFifthsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {0,1,4,-2,-1,3,7,-3,6,-2,0,2,4,-1,6};
 static t_atom_short numStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,29,30,31,34,35,36,37,38,38};
-
+/*
 static t_atom_short ji_alt2[BACH_PRIMES_JI_SIZE] = {1,0};
 static t_atom_short ji_alt3[BACH_PRIMES_JI_SIZE] = {-11,7,0};
 static t_atom_short ji_alt5[BACH_PRIMES_JI_SIZE] = {-4,4,1,0};
 static t_atom_short ji_alt7[BACH_PRIMES_JI_SIZE] = {6,-2,0,-1,0};
 static t_atom_short ji_alt11[BACH_PRIMES_JI_SIZE] = {-5,1,0,0,1,0};
-
+*/
 
 class t_pitchMatrices
 {
@@ -164,7 +164,7 @@ public:
                 return positive_mod(p_degree*4, 7);
                 break;
                 
-            case BACH_TUNINGSYSTEM_VERTICAL:
+            case BACH_TUNINGSYSTEM_UNIFORM:
                 return p_degree;
                 break;
                 
@@ -435,7 +435,7 @@ public:
             }
                 break;
                 
-            case BACH_TUNINGSYSTEM_VERTICAL:
+            case BACH_TUNINGSYSTEM_UNIFORM:
                 // TO DO
                 return t_rational(0, 0);
                 break;
@@ -454,7 +454,7 @@ public:
     
     t_atom_long toScreenMC_wo_accidental() const {
         switch (p_tuningSystem) {
-            case BACH_TUNINGSYSTEM_VERTICAL:
+            case BACH_TUNINGSYSTEM_UNIFORM:
                 // TO DO
                 return 0;
                 break;

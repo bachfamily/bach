@@ -5600,7 +5600,7 @@ double scaleposition_to_uyposition(t_notation_obj *r_ob, long scaleposition, t_v
 double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize)
 {
     double pos = 0;
-    if (note_get_tuningsystem(note) == BACH_TUNINGSYSTEM_VERTICAL) {
+    if (note_get_tuningsystem(note) == BACH_TUNINGSYSTEM_UNIFORM) {
         // continuously floating
         double staff_top = get_staff_top_y(r_ob, v_ob, false);
         double staff_bottom = get_staff_bottom_y(r_ob, v_ob, false);
@@ -11882,6 +11882,42 @@ void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, unicodeCh
                     }
                     break;
 
+/*                case 11: // 37-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign < 0 ? 58093 : 58092);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+
+                case 12: // 41-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign < 0 ? 58093 : 58092);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+                    
+                case 13: // 43-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign < 0 ? 58093 : 58092);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+
+                case 14: // 47-limit
+                    while (monzo_abs > 0) {
+                        *curChar = (monzo_sign < 0 ? 58093 : 58092);
+                        curChar++;
+                        numChars++;
+                        monzo_abs -= 1;
+                    }
+                    break;
+*/
                 default:
                     break;
             }
@@ -24971,7 +25007,9 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                 
                 if (note_get_tuningsystem(curr_nt) == BACH_TUNINGSYSTEM_JI)
                     curr_nt->show_accidental = true;
-                
+                else if (note_get_tuningsystem(curr_nt) == BACH_TUNINGSYSTEM_UNIFORM)
+                    curr_nt->show_accidental = false;
+
                 show_accidental[i] = curr_nt->show_accidental;
             }
             
@@ -25883,8 +25921,8 @@ void note_set_tuningsystem(t_notation_obj *r_ob, t_note *note, char tuningsystem
 //                note_compute_approximation(r_ob, nt);
                 break;
 
-            case BACH_TUNINGSYSTEM_VERTICAL: // converting to VERTICAL
-                note->pitch_original.p_tuningSystem = BACH_TUNINGSYSTEM_VERTICAL; // yep, that's pretty much it!
+            case BACH_TUNINGSYSTEM_UNIFORM: // converting to VERTICAL
+                note->pitch_original.p_tuningSystem = BACH_TUNINGSYSTEM_UNIFORM; // yep, that's pretty much it!
                 break;
 
             default:
