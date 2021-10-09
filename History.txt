@@ -121,6 +121,7 @@ multiple objects: help files and doc updated
     the "setcursor" message has a new @zeropimchord attribute for setting the playhead on chords instead of barlines at the beginning of a measure
     fixed bug causing hangs when adding voices
     new "auto" possibility for setting breakpoints via "addbreakpoint"
+    fixed bug causing stafflines attribute not to be saved sometimes
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
@@ -137,6 +138,7 @@ multiple objects: help files and doc updated
     fixed bug causing possible missing initial tempo in "subscore" command
     fixed wrong filename in MIDI score import help file
     @finitestaff: new attribute to trim staff after last measure
+    @showfirstmeasurenumber: new attribute
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated

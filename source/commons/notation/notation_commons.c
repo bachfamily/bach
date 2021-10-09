@@ -25944,10 +25944,10 @@ double get_stem_x_from_alignment_point_x(t_notation_obj *r_ob, t_chord *chord, d
     double stem_x = 0;
 
     if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER || r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END) {
-        t_note *nt = NULL;
+        t_note *nt = get_principal_note(r_ob, chord);
         double note_width = get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;
         
-        if (!r_ob->forceround_stems_to_semiinteger && (nt = get_principal_note(r_ob, chord))) {
+        if (!r_ob->forceround_stems_to_semiinteger && nt) {
             if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER)
                 stem_x = chord_alignment_x + chord->direction * note_width / 2.;
             else

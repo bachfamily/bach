@@ -4010,6 +4010,7 @@ typedef struct _notation_obj
     char            *show_measure_numbers;            ///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
     double            measure_numbers_font_size;        ///< Font size for the measure numbers (for zoom_y = 1, will be scaled according to the zoom)
+    char            show_measure_numbers_on_first_measure; ///< Whether to show also the very first measure number
     
     // private, utilities
     long        add_staff;                    ///< (PRIVATE) Flag which is 1 during the process of staff adding

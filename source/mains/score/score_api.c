@@ -10183,21 +10183,21 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             }
         }
             
-            // draw the tree
-            if (x->r_ob.show_rhythmic_tree){
-                char direction = (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1 ? (voice->v_ob.part_index % 2 == 0 ? 1 : -1) : 1);
-                double start_pos;
-                if (direction > 0)
-                    start_pos = staff_top - curr_meas->rhythmic_tree->l_depth * CONST_SCORE_BEAMING_TREE_STEP_UHEIGHT * x->r_ob.zoom_y;
-                else
-                    start_pos = staff_bottom + curr_meas->rhythmic_tree->l_depth * CONST_SCORE_BEAMING_TREE_STEP_UHEIGHT * x->r_ob.zoom_y;
-                void *data[4];
-                data[0] = (t_notation_obj *)x;
-                data[1] = g;
-                data[2] = (direction > 0 ? &staff_top : &staff_bottom);
-                data[3] = &start_pos;
-                llll_funall(curr_meas->rhythmic_tree, show_rhythmic_tree_fn, data, 1, -1, FUNALL_PROCESS_WHOLE_SUBLISTS);
-            }
+        // draw the tree
+        if (x->r_ob.show_rhythmic_tree){
+            char direction = (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1 ? (voice->v_ob.part_index % 2 == 0 ? 1 : -1) : 1);
+            double start_pos;
+            if (direction > 0)
+                start_pos = staff_top - curr_meas->rhythmic_tree->l_depth * CONST_SCORE_BEAMING_TREE_STEP_UHEIGHT * x->r_ob.zoom_y;
+            else
+                start_pos = staff_bottom + curr_meas->rhythmic_tree->l_depth * CONST_SCORE_BEAMING_TREE_STEP_UHEIGHT * x->r_ob.zoom_y;
+            void *data[4];
+            data[0] = (t_notation_obj *)x;
+            data[1] = g;
+            data[2] = (direction > 0 ? &staff_top : &staff_bottom);
+            data[3] = &start_pos;
+            llll_funall(curr_meas->rhythmic_tree, show_rhythmic_tree_fn, data, 1, -1, FUNALL_PROCESS_WHOLE_SUBLISTS);
+        }
         
         
         // linear_edit cursor?
@@ -10344,6 +10344,16 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     measure_numbers_top_y = staff_top - measurenum_height - CONST_MEASURE_NUMBER_STAFF_USEPARATION * x->r_ob.zoom_y - (curr_meas->end_barline->barline_type == k_BARLINE_TICK ? 2 * x->r_ob.zoom_y : 0);
                     write_text_standard_account_for_vinset((t_notation_obj *) x, g, jf_measure_num, x->r_ob.j_mainstaves_rgba, measurenum_txt, end_barline_x - measurenum_width/2., measure_numbers_top_y);
                 }
+            }
+            
+            if (x->r_ob.show_measure_numbers[voice->v_ob.number] && x->r_ob.show_measure_numbers_on_first_measure && curr_meas && !curr_meas->prev) {
+                char measurenum_txt[8];
+                double measurenum_width, measurenum_height;
+                double start_barline_x = unscaled_xposition_to_xposition((t_notation_obj *)x, tuttipoint_ux + curr_meas->start_barline_offset_ux);
+                snprintf_zero(measurenum_txt, 8, "%ld", curr_meas->force_measure_number ? curr_meas->forced_measure_number : curr_meas->measure_number + 1 + x->r_ob.measure_number_offset);
+                jfont_text_measure(jf_measure_num, measurenum_txt, &measurenum_width, &measurenum_height);
+                measure_numbers_top_y = staff_top - measurenum_height - CONST_MEASURE_NUMBER_STAFF_USEPARATION * x->r_ob.zoom_y - (curr_meas->end_barline->barline_type == k_BARLINE_TICK ? 2 * x->r_ob.zoom_y : 0);
+                write_text_standard_account_for_vinset((t_notation_obj *) x, g, jf_measure_num, x->r_ob.j_mainstaves_rgba, measurenum_txt, start_barline_x - measurenum_width/2., measure_numbers_top_y);
             }
             
             if (notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)curr_meas->end_barline)){

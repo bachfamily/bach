@@ -7508,6 +7508,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description Toggles the display of measure numbers. A 0/1 integer for each voice is expected: 0 means that the measure numbers
     // must be hidden, 1 means that the measure numbers will be shown for the given voice. If <m>drawbarlinesacrossstaves</m> is 1 and 
     // barlines are drawn across the staves, in any case the measure numbers can only be shown for the first voice.
+
+    CLASS_ATTR_CHAR(c,"showfirstmeasurenumber", 0, t_notation_obj, show_measure_numbers_on_first_measure);
+    CLASS_ATTR_STYLE_LABEL(c,"showfirstmeasurenumber", 0, "onoff", "Show First Measure Number");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showfirstmeasurenumber", 0, "0");
+    // @description Toggles the display of the first measure number on the first measure (only meaningful if <m>showmeasurenumbers</m>
+    // is active for at least a voice)
+
     
     CLASS_ATTR_CHAR(c,"showbarlines", 0, t_notation_obj, show_barlines);
     CLASS_ATTR_STYLE_LABEL(c,"showbarlines", 0, "onoff", "Show Barlines");
