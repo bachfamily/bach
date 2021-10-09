@@ -6993,7 +6993,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 
         fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 'L', 'O', 'N', 'Q', 'M', 'P');
         fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next 
-        r_ob->notation_typo_preferences.flag_ux_shift = 0.;
+        r_ob->notation_typo_preferences.flag_ux_shift = 0.; // was: 0.
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -29.4+6, -21.+12, -29.4+6, -21.+12, -32.9+6, -18.4+12);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.; //55;
         r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.; //55;

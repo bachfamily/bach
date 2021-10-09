@@ -12618,9 +12618,10 @@ void roll_jsave(t_roll *x, t_dictionary *d)
         if (x->r_ob.j_box.l_dictll) {
             llll_store_in_dictionary(x->r_ob.j_box.l_dictll, d, "whole_roll_data", NULL);
         } else {
-            whole_info = get_roll_values_as_llll(x, x->r_ob.bwcompatible <= 7900 ? k_CONSIDER_FOR_SAVING_WITH_BW_COMPATIBILITY : k_CONSIDER_FOR_SAVING,
-                                                         (e_header_elems) (k_HEADER_BODY + k_HEADER_SLOTINFO + k_HEADER_MARKERS + k_HEADER_GROUPS + k_HEADER_MIDICHANNELS + k_HEADER_COMMANDS + k_HEADER_ARTICULATIONINFO + k_HEADER_NOTEHEADINFO),
-                                                         true, false); // clefs, keys, voicenames and parts are already saved as object attributes!//
+            whole_info = get_roll_values_as_llll(x, x->r_ob.bwcompatible <= 7900 ?
+                                                 k_CONSIDER_FOR_SAVING_WITH_BW_COMPATIBILITY : k_CONSIDER_FOR_SAVING,
+                                                 (e_header_elems) (k_HEADER_BODY + k_HEADER_SLOTINFO + k_HEADER_MARKERS + k_HEADER_GROUPS + k_HEADER_MIDICHANNELS + k_HEADER_COMMANDS + k_HEADER_ARTICULATIONINFO + k_HEADER_NOTEHEADINFO),
+                                                 true, false); // clefs, keys, voicenames, stafflines and parts are already saved as object attributes!//
             llll_store_in_dictionary(whole_info, d, "whole_roll_data", NULL);
             llll_free(whole_info);
         }

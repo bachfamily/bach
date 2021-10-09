@@ -10211,7 +10211,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
     t_llll *right = llll_slice(x->r_ob.voicenames_as_llll, x->r_ob.num_voices);
     llll_free(right);
 
-    notation_obj_setattr_stafflines((t_notation_obj *) x, NULL, -1, NULL); // -1 is to handle it inside
+//    notation_obj_setattr_stafflines((t_notation_obj *) x, NULL, -1, NULL); // -1 is to handle it inside
     
     parse_fullaccpattern_to_voices((t_notation_obj *) x);
 
