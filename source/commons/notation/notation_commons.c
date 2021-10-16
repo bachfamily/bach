@@ -28612,7 +28612,8 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                 double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
                 
                 double dur = notation_item_get_duration_ms(r_ob, nitem);
-                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+//                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && r_ob->slotinfo[j].slot_singleslotfortiednotes)
                     dur = get_all_tied_note_sequence_duration_ms((t_note *)nitem);
 
                 while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? dur : 1) < hot_point))
@@ -29024,7 +29025,7 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
 
     for (j = 0; j < CONST_MAX_SLOTS; j++) {
         t_note *note_for_slot = note;
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && (mode == k_CONSIDER_FOR_SAMPLING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) && r_ob->slotinfo[j].slot_singleslotfortiednotes)
             note_for_slot = note_get_first_in_tieseq(note);
         if (note_for_slot->slot[j].firstitem || force_all_slots) { // do we need this slot?
             if (mode != k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING || r_ob->slotinfo[j].slot_singleslotfortiednotes) {

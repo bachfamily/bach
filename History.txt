@@ -139,6 +139,7 @@ multiple objects: help files and doc updated
     fixed wrong filename in MIDI score import help file
     @finitestaff: new attribute to trim staff after last measure
     @showfirstmeasurenumber: new attribute
+    fixed bug causing possible wrong playback of partial notes' slots with ties
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
