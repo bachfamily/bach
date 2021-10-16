@@ -6993,7 +6993,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 
         fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 'L', 'O', 'N', 'Q', 'M', 'P');
         fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next 
-        r_ob->notation_typo_preferences.flag_ux_shift = 0.;
+        r_ob->notation_typo_preferences.flag_ux_shift = 0.; // was: 0.
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -29.4+6, -21.+12, -29.4+6, -21.+12, -32.9+6, -18.4+12);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.; //55;
         r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.; //55;
@@ -25944,10 +25944,10 @@ double get_stem_x_from_alignment_point_x(t_notation_obj *r_ob, t_chord *chord, d
     double stem_x = 0;
 
     if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER || r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END) {
-        t_note *nt = NULL;
+        t_note *nt = get_principal_note(r_ob, chord);
         double note_width = get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;
         
-        if (!r_ob->forceround_stems_to_semiinteger && (nt = get_principal_note(r_ob, chord))) {
+        if (!r_ob->forceround_stems_to_semiinteger && nt) {
             if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER)
                 stem_x = chord_alignment_x + chord->direction * note_width / 2.;
             else
@@ -28612,7 +28612,8 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                 double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
                 
                 double dur = notation_item_get_duration_ms(r_ob, nitem);
-                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+//                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && r_ob->slotinfo[j].slot_singleslotfortiednotes)
                     dur = get_all_tied_note_sequence_duration_ms((t_note *)nitem);
 
                 while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? dur : 1) < hot_point))
@@ -29024,7 +29025,7 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
 
     for (j = 0; j < CONST_MAX_SLOTS; j++) {
         t_note *note_for_slot = note;
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && (mode == k_CONSIDER_FOR_SAMPLING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) && r_ob->slotinfo[j].slot_singleslotfortiednotes)
             note_for_slot = note_get_first_in_tieseq(note);
         if (note_for_slot->slot[j].firstitem || force_all_slots) { // do we need this slot?
             if (mode != k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING || r_ob->slotinfo[j].slot_singleslotfortiednotes) {
@@ -38036,14 +38037,15 @@ void set_all_label_families_update_contour(t_notation_obj *r_ob)
     }
 }
 
-void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob)
+void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob, char also_lock_general_mutex)
 {
     char must_unlock = true;
     
     if (systhread_mutex_trylock(r_ob->c_undo_mutex))
         must_unlock = false; // already locked
 
-    lock_general_mutex(r_ob);
+    if (also_lock_general_mutex)
+        lock_general_mutex(r_ob);
     t_llllelem *elem;
     for (elem = r_ob->undo_llll->l_head; elem; elem = elem->l_next) {
         
@@ -38096,8 +38098,8 @@ void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob
     }
 
 end:
-    
-    unlock_general_mutex(r_ob);
+    if (also_lock_general_mutex)
+        unlock_general_mutex(r_ob);
     if (must_unlock)
         systhread_mutex_unlock(r_ob->c_undo_mutex);    
 }
@@ -40766,7 +40768,7 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
     
     // need to check for families update?
     if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX) 
-        set_label_families_update_contour_flag_from_undo_ticks(r_ob);
+        set_label_families_update_contour_flag_from_undo_ticks(r_ob, false);
     else if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_VENN) // we never know what could have been dragged inside the family. This is heavy!!!
         set_all_label_families_update_contour(r_ob);
     

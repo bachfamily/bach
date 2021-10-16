@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 45.0, 171.0, 724.0, 548.0 ],
+		"rect" : [ 45.0, 100.0, 724.0, 548.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -59,7 +59,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 45.0, 197.0, 724.0, 522.0 ],
+						"rect" : [ 0.0, 26.0, 724.0, 522.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1919,10 +1919,10 @@
 									"outlettype" : [ "", "", "" ],
 									"patching_rect" : [ 209.125, 352.0, 260.0, 23.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
+										"versionnumber" : 80104
 									}
 ,
-									"text" : "bach.playkeys cents [slot 1] slots"
+									"text" : "bach.playkeys cents 1 slots"
 								}
 
 							}
@@ -2840,6 +2840,35 @@
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
+									"id" : "obj-22",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 122.500076499999977, 277.067627000000016, 150.0, 21.0 ],
+									"text" : "same as"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-11",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 5,
+									"outlettype" : [ "", "", "", "", "" ],
+									"patching_rect" : [ 182.999999999999943, 276.067627000000016, 196.0, 23.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 80001
+									}
+,
+									"text" : "bach.playkeys [slot 1 3 2 1] slots"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"bubble" : 1,
 									"bubbleside" : 0,
 									"fontname" : "Arial",
@@ -3153,10 +3182,10 @@
 									"outlettype" : [ "", "", "", "", "" ],
 									"patching_rect" : [ 22.000091999999999, 307.067627000000016, 350.999969000000021, 23.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
+										"versionnumber" : 80104
 									}
 ,
-									"text" : "bach.playkeys [slot 1 3 2 1] slots"
+									"text" : "bach.playkeys 1 3 2 1 slots"
 								}
 
 							}
@@ -3172,7 +3201,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 295.881896999999981, 57.567627000000002 ]
+									"patching_rect" : [ 10.0, 10.0, 295.85601806640625, 57.599853515625 ]
 								}
 
 							}
@@ -3330,7 +3359,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 724.0, 522.0 ],
+						"rect" : [ 45.0, 126.0, 724.0, 522.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -3360,6 +3389,53 @@
 						"showontab" : 1,
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-26",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 554.142853000000059, 480.0, 133.0, 23.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 80104
+									}
+,
+									"text" : "bach.playkeys [slot 1]"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-25",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 455.0, 481.0, 92.0, 21.0 ],
+									"text" : "is the same as"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-23",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 346.142853000000002, 479.0, 102.0, 23.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 80104
+									}
+,
+									"text" : "bach.playkeys 1"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"id" : "obj-16",
 									"maxclass" : "comment",
@@ -3691,10 +3767,10 @@
 									"outlettype" : [ "", "", "", "", "" ],
 									"patching_rect" : [ 222.142853000000002, 371.0, 371.0, 23.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
+										"versionnumber" : 80104
 									}
 ,
-									"text" : "bach.playkeys cents velocity onset voicenumber [slot 1] @out t"
+									"text" : "bach.playkeys cents velocity onset voicenumber 1 @out t"
 								}
 
 							}

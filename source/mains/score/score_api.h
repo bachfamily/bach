@@ -166,7 +166,7 @@ void recompute_all_and_redraw(t_score *x);
 void recompute_all_except_for_beamings_and_autocompletion(t_score *x);
 
 void remove_all_tuttipoints_flag_modified(t_score *x);
-char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas);
+char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas, char also_send_domain);
 
 
 t_scorevoice* nth_scorevoice(t_score *x, long n);

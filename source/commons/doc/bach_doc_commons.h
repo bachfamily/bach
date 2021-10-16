@@ -1553,7 +1553,7 @@
 	// 0 and 1 should be avoided (since a notehead and notetail already exists for any note), so the
 	// values should be striclty greater than 0 and strictly less than 1. <br />
 	// - a number setting the pitch difference (in midicents) of the breakpoint with respect to the main
-	// note's pitch.
+	// note's pitch. This can be replaced by the "auto" symbol to infer the pitch from the existing duration line.
 	// - an optional slope parameter, between -1 and 1, setting the slope of the segment of duration line preceding the breakpoint
 	// (0 being linear, default).
 	// - an optional velocity parameter, between 1 and 127, but only if the <m>breakpointshavevelocity</m> attribute is active.

@@ -1092,7 +1092,7 @@ long llll_iter(long lists, t_llll **inlist, t_atom_long maxdepth,
                                        ((spikemode == LLLL_M_SPIKE_IGNORE || (direction != -1 || !(elem_types & LLLL_E_LLLL))) &&
                                         (direction != 1 || elem_types != LLLL_E_NULL))); // we ignore spikes or we're not at a spike
                                        
-*/
+*/ 
 
             t_bool leave_this_level = ((elem_types & LLLL_E_LLLL) && // there is at least one llll and
                                        (elem_types == LLLL_E_LLLL || recursionmode != LLLL_M_RECURSION_DONT) && // (all elements are lllls or we resolve lists against atoms) and

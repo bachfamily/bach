@@ -13,6 +13,7 @@ TO BE CATEGORIZED:
 
 - bach.roll, bach.score:
 	New "setdurationline" message setting the duration line from a list of pitch breakpoints
+	Now "setcursor" then "play" will work even if the cursor is not shown.
 
 
 v0.8.2b
@@ -45,6 +46,9 @@ v0.8.2b
 	The same messages also now allows for an @accurate mode (not breaking any compatibility).
 
 - bach.pitchpack now treats negative degrees as descending steps (see the bell / bach.expr makepitch function)
+
+- bach.transcribe: now the "allnotesoff" message only updates tails when the engine is on. 
+			(As this one was a real bug, it should not break any existing patch, but out of caution check them anyway if you used it)
 
 
 
@@ -96,6 +100,7 @@ multiple objects: help files and doc updated
     The "addslot" message is now deprecated in favour of the identical "setslot" message. 
         The "addslot" message is still kept for backward compatibility, but you are encouraged to use "setslot" from now on.
     fixed potential memory leak when using transferslots
+    Objects no longer notify "domain" and "paint" during image export
 
 - bach.roll, bach.score: 
     New "setdurationline" message setting the duration line from a list of pitch breakpoints
@@ -114,6 +119,9 @@ multiple objects: help files and doc updated
     fixed bug preventing markers from having a lambda interaction
     fixed bug causing wrong order of accidentals in some key signatures
     the "setcursor" message has a new @zeropimchord attribute for setting the playhead on chords instead of barlines at the beginning of a measure
+    fixed bug causing hangs when adding voices
+    new "auto" possibility for setting breakpoints via "addbreakpoint"
+    fixed bug causing stafflines attribute not to be saved sometimes
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
@@ -130,6 +138,8 @@ multiple objects: help files and doc updated
     fixed bug causing possible missing initial tempo in "subscore" command
     fixed wrong filename in MIDI score import help file
     @finitestaff: new attribute to trim staff after last measure
+    @showfirstmeasurenumber: new attribute
+    fixed bug causing possible wrong playback of partial notes' slots with ties
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
@@ -175,8 +185,6 @@ multiple objects: help files and doc updated
 - bach.path2llll: fixed bug causing wrong behavior with names potentially causing conflicts with bach parsing
 
 - bach.wrandom: fixed bug causing wrong results with > 32k elements
-
-
 
 
 

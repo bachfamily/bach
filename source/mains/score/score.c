@@ -2380,7 +2380,8 @@ void score_sel_erase_breakpoints(t_score *x, t_symbol *s, long argc, t_atom *arg
 
 void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
     double rel_x_pos, y_pos, slope;
-    long vel = 0; char auto_vel;
+    long vel = 0;
+    char auto_vel, auto_mc = false;
     t_notation_item *curr_it;
     char lambda = (s == _llllobj_sym_lambda);
     char changed = 0;
@@ -2389,7 +2390,15 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
         return;
     
     rel_x_pos = atom_getfloat(argv);
-    y_pos = atom_getfloat(argv+1);
+
+    if (atom_gettype(argv+1) == A_SYM && atom_getsym(argv+1) == _llllobj_sym_auto) {
+        y_pos = 0;
+        auto_mc = true;
+    } else {
+        y_pos = atom_getfloat(argv+1);
+    }
+
+    
     slope = (argc >= 3) ? atom_getfloat(argv+2) : 0.;
     if (slope < -1.) 
         slope = -1.; 
@@ -2408,7 +2417,7 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                 create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, 0, vel, auto_vel);
+                add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, auto_mc, vel, auto_vel);
                 changed = 1;
             }
         } else if (curr_it->type == k_CHORD) {
@@ -2417,7 +2426,7 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
             for (nt=ch->firstnote; nt; nt = nt->next) {
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                     create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                    add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, 0, vel, auto_vel);
+                    add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, auto_mc, vel, auto_vel);
                     changed = 1;
                 }
             }
@@ -2429,7 +2438,7 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
                 for (nt=ch->firstnote; nt; nt = nt->next) {
                     if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                         create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                        add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, 0, vel, auto_vel);
+                        add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, auto_mc, vel, auto_vel);
                         changed = 1;
                     }
                 }
@@ -3958,7 +3967,7 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
         x->r_ob.play_head_start_ms = start_ms;
         x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, start_ms, 1);
         
-    } else if (argc == 0 && x->r_ob.show_playhead) {
+    } else if (argc == 0) {
         start_ms = x->r_ob.play_head_start_ms;
     } else {
         x->r_ob.play_head_start_ms = start_ms;
@@ -6070,12 +6079,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @method addbreakpoint @digest Add a pitch breakpoint to each selected note
     // @description @copy BACH_DOC_MESSAGE_ADDBREAKPOINT
     // @marg 0 @name relative_x_position @optional 0 @type float
-    // @marg 1 @name delta_midicents @optional 0 @type float
+    // @marg 1 @name delta_midicents @optional 0 @type float/symbol
     // @marg 2 @name slope @optional 1 @type float
     // @marg 3 @name velocity @optional 1 @type int
     // @example addbreakpoint 0.5 200 @caption add a breakpoint at the middle of the note of +200cents
     // @example addbreakpoint 0.5 200 0.2 @caption the same, with slope 0.2
     // @example addbreakpoint 0.5 200 0.2 80 @caption the same, with velocity 80
+    // @example addbreakpoint 0.5 auto @caption pop out a breakpoint in the middle of the duration line
     // @see erasebreakpoints
     class_addmethod(c, (method) score_sel_add_breakpoint, "addbreakpoint", A_GIMME, 0);
 
@@ -7498,6 +7508,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description Toggles the display of measure numbers. A 0/1 integer for each voice is expected: 0 means that the measure numbers
     // must be hidden, 1 means that the measure numbers will be shown for the given voice. If <m>drawbarlinesacrossstaves</m> is 1 and 
     // barlines are drawn across the staves, in any case the measure numbers can only be shown for the first voice.
+
+    CLASS_ATTR_CHAR(c,"showfirstmeasurenumber", 0, t_notation_obj, show_measure_numbers_on_first_measure);
+    CLASS_ATTR_STYLE_LABEL(c,"showfirstmeasurenumber", 0, "onoff", "Show First Measure Number");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showfirstmeasurenumber", 0, "0");
+    // @description Toggles the display of the first measure number on the first measure (only meaningful if <m>showmeasurenumbers</m>
+    // is active for at least a voice)
+
     
     CLASS_ATTR_CHAR(c,"showbarlines", 0, t_notation_obj, show_barlines);
     CLASS_ATTR_STYLE_LABEL(c,"showbarlines", 0, "onoff", "Show Barlines");
@@ -10201,7 +10218,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
     t_llll *right = llll_slice(x->r_ob.voicenames_as_llll, x->r_ob.num_voices);
     llll_free(right);
 
-    notation_obj_setattr_stafflines((t_notation_obj *) x, NULL, -1, NULL); // -1 is to handle it inside
+//    notation_obj_setattr_stafflines((t_notation_obj *) x, NULL, -1, NULL); // -1 is to handle it inside
     
     parse_fullaccpattern_to_voices((t_notation_obj *) x);
 
