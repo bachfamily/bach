@@ -6040,7 +6040,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name pitch_or_cents @optional 0 @type number/pitch/llll/anything
     class_addmethod(c, (method) score_sel_change_poc, "poc", A_GIMME, 0);
     
-    // @method cents @digest Modify the measureinfo of selected measures
+    // @method measureinfo @digest Modify the measureinfo of selected measures
     // @description Modifies the measureinfo of select measures. The expected syntax is the standard measureinfo syntax,
     // without the outermost level of parentheses (e.g. <b>measureinfo [4 4] [3/8 120]</b> is a valid message). <br />
     // @copy BACH_DOC_MEASUREINFO_SYNTAX
