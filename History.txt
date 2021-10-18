@@ -101,6 +101,7 @@ multiple objects: help files and doc updated
         The "addslot" message is still kept for backward compatibility, but you are encouraged to use "setslot" from now on.
     fixed potential memory leak when using transferslots
     Objects no longer notify "domain" and "paint" during image export
+    Now "eraseslot" accepts "all" as argument to clear all slots
 
 - bach.roll, bach.score: 
     New "setdurationline" message setting the duration line from a list of pitch breakpoints
