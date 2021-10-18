@@ -2702,7 +2702,7 @@ void roll_poly_do_resume(t_notation_obj *r_ob, t_llll *notes_slicingpoints, long
 // drop_policy = 0: terminate oldest
 // drop_policy = 1: terminate newest
 // drop_policy = 2: terminate closest
-void roll_poly_do(t_roll *x, long maxnumvoices, e_poly_priority drop_priority, char inclusive, char resume, e_poly_priority resume_priority, char only_resume_same_voicing, char voicing_slot, char actually_reassign_voices, char notify_maxusedvoices)
+void roll_poly_do(t_roll *x, long maxnumvoices, e_poly_priority drop_priority, char inclusive, char resume, e_poly_priority resume_priority, char only_resume_same_voicing, char voicing_slot, char actually_reassign_voices, char notify_maxusedvoices, char chordwise)
 {
     t_notation_obj *r_ob = (t_notation_obj *)x;
     long MAX_SUPPORTED_VOICES = CONST_MAX_VOICES;
@@ -2941,8 +2941,8 @@ void roll_poly(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_symbol *droppriority = gensym("closest"), *resumepriority = gensym("closest");
     t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     long max_num_voices = args && args->l_head && is_hatom_number(&args->l_head->l_hatom) ? hatom_getlong(&args->l_head->l_hatom) : 0;
-    long inclusive = 1, voicingslot = 0, resume = 0, resumevoicing = 1, reassign = 0, notify_maxusedvoices = 1;
-    llll_parseargs_and_attrs_destructive((t_object *) x, args, "siiisiii",
+    long inclusive = 1, voicingslot = 0, resume = 0, resumevoicing = 1, reassign = 0, notify_maxusedvoices = 1, chordwise = 0;
+    llll_parseargs_and_attrs_destructive((t_object *) x, args, "siiisiiii",
                                          gensym("droppriority"), &droppriority,
                                          gensym("droppriorityinclusive"), &inclusive,
                                          gensym("voicingslot"), &voicingslot,
@@ -2950,10 +2950,11 @@ void roll_poly(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                                          gensym("resumepriority"), &resumepriority,
                                          gensym("resumevoicing"), &resumevoicing,
                                          gensym("reassign"), &reassign,
-                                         gensym("notify"), &notify_maxusedvoices
+                                         gensym("notify"), &notify_maxusedvoices,
+                                         gensym("chordwise"), &chordwise
                                          );
     
-    roll_poly_do(x, max_num_voices, symbol_to_priority(droppriority), inclusive, resume, symbol_to_priority(resumepriority), resumevoicing, voicingslot, reassign, notify_maxusedvoices);
+    roll_poly_do(x, max_num_voices, symbol_to_priority(droppriority), inclusive, resume, symbol_to_priority(resumepriority), resumevoicing, voicingslot, reassign, notify_maxusedvoices, chordwise);
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LEGATO_FOR_SELECTION);
 
     llll_free(args);
@@ -3497,14 +3498,18 @@ void roll_sel_erase_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     }
     
 // arguments are: slot#, position, new value.
-    
-    slotnum = (atom_gettype(argv) == A_SYM ? slotname_to_slotnum((t_notation_obj *) x, atom_getsym(argv)) : atom_getlong(argv)-1);
-    if (slotnum < 0 || slotnum > CONST_MAX_SLOTS) {
-        object_error((t_object *)x, "Wrong slot number!");
-        return;
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == _llllobj_sym_all) {
+        for (long j = 0; j < CONST_MAX_SLOTS; j++)
+            notationobj_sel_erase_slot((t_notation_obj *)x, j, lambda);
+    } else {
+        slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
+        if (slotnum < 0 || slotnum > CONST_MAX_SLOTS) {
+            object_error((t_object *)x, "Wrong slot number!");
+            return;
+        }
+        
+        notationobj_sel_erase_slot((t_notation_obj *)x, slotnum, lambda);
     }
-
-    notationobj_sel_erase_slot((t_notation_obj *)x, slotnum, lambda);
     
     lock_general_mutex((t_notation_obj *)x);
     if (x->r_ob.need_perform_analysis_and_change)
@@ -5258,6 +5263,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example eraseslot active @caption clear currently open slot for selected items
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
+    // @example eraseslot all @caption clear all slots
     // @seealso copyslot, moveslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) roll_sel_erase_slot, "eraseslot", A_GIMME, 0);
 

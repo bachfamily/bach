@@ -108,6 +108,7 @@ void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_int(t_uislot *x, t_atom_long num);
 void uislot_float(t_uislot *x, double num);
 void uislot_bang(t_uislot *x);
+void uislot_clear(t_uislot *x);
 
 // interface functions
 void uislot_dump(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
@@ -667,6 +668,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example eraseslot active @caption clear currently open slot
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
+    // @example eraseslot all @caption clear all slots
     // @seealso setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_erase_slot, "eraseslot", A_GIMME, 0);
 
@@ -975,17 +977,20 @@ void uislot_erase_slot(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
         object_error((t_object *)x, "Not enough arguments!");
         return;
     }
-    
-    slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
-    if (slotnum < 0 || slotnum >= CONST_MAX_SLOTS) {
-        object_error((t_object *)x, "Wrong slot number!");
-        return;
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == _llllobj_sym_all) {
+        uislot_clear(x);
+    } else {
+        slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
+        if (slotnum < 0 || slotnum >= CONST_MAX_SLOTS) {
+            object_error((t_object *)x, "Wrong slot number!");
+            return;
+        }
+        
+        create_whole_uislot_undo_tick(x);
+        lock_general_mutex((t_notation_obj *)x);
+        note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slotnum);
+        unlock_general_mutex((t_notation_obj *)x);
     }
-
-    create_whole_uislot_undo_tick(x);
-    lock_general_mutex((t_notation_obj *)x);
-    note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slotnum);
-    unlock_general_mutex((t_notation_obj *)x);
     
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
 }
@@ -1158,6 +1163,19 @@ long get_slotnum_from_llllelem(t_notation_obj *r_ob, t_llllelem *elem)
     return slot_num;
 }
 
+void uislot_clear(t_uislot *x)
+{
+    create_whole_uislot_undo_tick(x);
+    if (inputlist->l_head->l_next) {
+        long slot_num = get_slotnum_from_llllelem((t_notation_obj *)x, inputlist->l_head->l_next);
+        note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slot_num);
+    } else {
+        long i;
+        for (i = 0; i < CONST_MAX_SLOTS; i++)
+            note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, i);
+    }
+}
+
 void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv){ //argv+1
     
     t_llll *inputlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
@@ -1171,15 +1189,7 @@ void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv){ //argv+
                 uislot_paste(x, s, argc, argv);
                 
             } else if (router == _llllobj_sym_clear) {
-                create_whole_uislot_undo_tick(x);
-                if (inputlist->l_head->l_next) {
-                    long slot_num = get_slotnum_from_llllelem((t_notation_obj *)x, inputlist->l_head->l_next);
-                    note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slot_num);
-                } else {
-                    long i;
-                    for (i = 0; i < CONST_MAX_SLOTS; i++)
-                        note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, i);
-                }
+                uislot_clear(x);
                 handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CLEAR_UISLOT);
                 
                 

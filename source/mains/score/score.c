@@ -2656,11 +2656,16 @@ void score_sel_erase_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
     if (argc < 1) 
         return;
 
-    slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
-    if (slotnum < 0)
-        return;
-
-    notationobj_sel_erase_slot((t_notation_obj *)x, slotnum, lambda);
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == _llllobj_sym_all) {
+        for (long j = 0; j < CONST_MAX_SLOTS; j++)
+            notationobj_sel_erase_slot((t_notation_obj *)x, j, lambda);
+    } else {
+        slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
+        if (slotnum < 0 || slotnum >= CONST_MAX_SLOTS)
+            return;
+        
+        notationobj_sel_erase_slot((t_notation_obj *)x, slotnum, lambda);
+    }
     
     lock_general_mutex((t_notation_obj *)x);
     if (x->r_ob.need_perform_analysis_and_change)
@@ -6127,6 +6132,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example eraseslot active @caption clear currently open slot for selected notes
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
+    // @example eraseslot all @caption clear all slots
     // @seealso setslot, changeslotitem
     class_addmethod(c, (method) score_sel_erase_slot, "eraseslot", A_GIMME, 0);
 

@@ -1579,7 +1579,8 @@
 #define BACH_DOC_MESSAGE_ERASESLOT
 	// An <m>eraseslot</m> message will clear the content of a specific slot for any selected note. 
 	// The slot number of the slot to clear is given as argument.
-	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
+	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot,
+    // or the word "all" to clear all slots.
 
 #define BACH_DOC_MESSAGE_MOVESLOT
     // A <m>moveslot</m> message will move the content of a given slot to another slot for any selected note.
