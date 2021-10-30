@@ -11559,18 +11559,6 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             // duration line and breakpoints
             paint_duration_line((t_notation_obj *) x, view, g, durationlinecolor, tailcolor, curr_nt, end_pos, system_shift, system_jump, note_unselected, is_chord_selected, is_note_selected, is_durationline_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, &selected_breakpoint);
             
-            // draw the notehead
-            paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, system_shift, 1.);
-            
-#ifdef BACH_PAINT_IDS
-            if (curr_nt->r_it.ID > 0) {
-                char text[140];
-                snprintf_zero(text, 140, "%ld", curr_nt->r_it.ID);
-                write_text(g, jf_text_smallbold, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + notehead_uwidth * x->r_ob.zoom_y,
-                           note_y_real, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
-            }
-#endif
-            
             // draw the auxiliary stems, if needed
             if (x->r_ob.show_stems > 1 && curr_nt->need_auxiliary_stem) {
                 if (curr_ch->direction == 1) { // stem down
@@ -11583,6 +11571,18 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
                     object_warn((t_object *)x, "Warning: chord direction undefined!");
                 }
             }
+            
+            // draw the notehead
+            paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, system_shift, 1.);
+            
+#ifdef BACH_PAINT_IDS
+            if (curr_nt->r_it.ID > 0) {
+                char text[140];
+                snprintf_zero(text, 140, "%ld", curr_nt->r_it.ID);
+                write_text(g, jf_text_smallbold, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + notehead_uwidth * x->r_ob.zoom_y,
+                           note_y_real, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            }
+#endif
             
             // need to put accidentals?
             paint_noteaccidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, NULL, NULL);

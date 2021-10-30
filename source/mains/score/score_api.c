@@ -9702,6 +9702,17 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             }
                         }
                         
+                        // draw the auxiliary stems, if needed
+                        if (x->r_ob.show_stems > 1 && rat_rat_cmp(curr_ch->figure, RAT_1OVER2) <= 0 && curr_nt->need_auxiliary_stem) {
+                            if (curr_ch->direction == 1) { // stem upwards
+                                paint_line(g, stemcolor, stem_x, last_note_y_real - 0.4 * octave_stem_length * grace_ratio, note_x_real, last_note_y_real - 0.2 * octave_stem_length * grace_ratio, CONST_AUX_STEM_WIDTH);
+                                paint_line(g, stemcolor, note_x_real, last_note_y_real - 0.2 * octave_stem_length * grace_ratio, note_x_real, note_y_real - 0.5 * x->r_ob.step_y * grace_ratio, CONST_AUX_STEM_WIDTH);
+                            } else if (curr_ch->direction == -1) { // stem downwards
+                                paint_line(g, stemcolor, stem_x, first_note_y_real + 0.4 * octave_stem_length * grace_ratio, note_x_real, first_note_y_real + 0.2 * octave_stem_length * grace_ratio, CONST_AUX_STEM_WIDTH);
+                                paint_line(g, stemcolor, note_x_real, first_note_y_real + 0.2 * octave_stem_length * grace_ratio, note_x_real, note_y_real + 0.5 * x->r_ob.step_y * grace_ratio, CONST_AUX_STEM_WIDTH);
+                            } else
+                                object_warn((t_object *)x, "Warning: chord direction undefined!");
+                        }
                         
                         // draw the notehead
                         if (x->r_ob.dl_spans_ties < 2 || !curr_nt->tie_from)
@@ -9773,18 +9784,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 if (start_y + CONST_SCORE_TIE_OUTER_UHEIGHT * x->r_ob.zoom_y > curr_ch->bottommost_y)
                                 curr_ch->bottommost_y = start_y + CONST_SCORE_TIE_OUTER_UHEIGHT * x->r_ob.zoom_y;
                             }
-                        }
-                        
-                        // draw the auxiliary stems, if needed
-                        if (x->r_ob.show_stems > 1 && rat_rat_cmp(curr_ch->figure, RAT_1OVER2) <= 0 && curr_nt->need_auxiliary_stem) {
-                            if (curr_ch->direction == 1) { // stem upwards
-                                paint_line(g, stemcolor, stem_x, last_note_y_real - 0.4 * octave_stem_length * grace_ratio, note_x_real, last_note_y_real - 0.2 * octave_stem_length * grace_ratio, CONST_AUX_STEM_WIDTH);
-                                paint_line(g, stemcolor, note_x_real, last_note_y_real - 0.2 * octave_stem_length * grace_ratio, note_x_real, note_y_real - 0.5 * x->r_ob.step_y * grace_ratio, CONST_AUX_STEM_WIDTH);
-                            } else if (curr_ch->direction == -1) { // stem downwards
-                                paint_line(g, stemcolor, stem_x, first_note_y_real + 0.4 * octave_stem_length * grace_ratio, note_x_real, first_note_y_real + 0.2 * octave_stem_length * grace_ratio, CONST_AUX_STEM_WIDTH);
-                                paint_line(g, stemcolor, note_x_real, first_note_y_real + 0.2 * octave_stem_length * grace_ratio, note_x_real, note_y_real + 0.5 * x->r_ob.step_y * grace_ratio, CONST_AUX_STEM_WIDTH);
-                            } else
-                            object_warn((t_object *)x, "Warning: chord direction undefined!");
                         }
                         
                         // need to put accidentals?
