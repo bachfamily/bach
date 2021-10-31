@@ -229,7 +229,7 @@
 #define CONST_SCORE_TIE_INNER_UHEIGHT 3                            ///< Unscaled minimum height (in pixels) of a tie at its middle point
 #define CONST_SCORE_BEAMING_TREE_STEP_UHEIGHT 6                    ///< Unscaled height (in pixels) of each level skip when painting a rhythmic tree (which happens only in [bach.score] and only if the <show_rhythmic_tree> field of the notation object is set)
 #define    CONST_TUPLET_TICK_UHEIGHT 4                                ///< Unscaled height (in pixels) of the tick at the beginning and of at the end of a tuplet bracket
-#define    CONST_TUPLET_USPACE_FROM_CHORDS 5.5                        ///< Unscaled additional vertical distance (in pixels) of the tuplet from the relative chords
+#define    CONST_TUPLET_USPACE_FROM_CHORDS 4 //5.5                        ///< Unscaled additional vertical distance (in pixels) of the tuplet from the relative chords
 #define    CONST_TUPLET_USPACE_FROM_FURTHER_STUFF 4 //2            ///< Unscaled additional vertical distance (in pixels) of the tuplet from other superposed stuff (like another superposed tuplet)
 #define CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION 3 * CONST_STEP_UY    ///< Minimum unscaled vertical distance between the topmost staff line and the ending tip of a stem (only for [bach.score])
 

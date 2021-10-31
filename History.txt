@@ -123,6 +123,7 @@ multiple objects: help files and doc updated
     fixed bug causing hangs when adding voices
     new "auto" possibility for setting breakpoints via "addbreakpoint"
     fixed bug causing stafflines attribute not to be saved sometimes
+    improved display of auxiliary stems
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
