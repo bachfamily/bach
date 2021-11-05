@@ -7751,6 +7751,13 @@ double notation_item_get_tail_ms(t_notation_obj *r_ob, t_notation_item *it);
  */ 
 double notation_item_get_duration_ms(t_notation_obj *r_ob, t_notation_item *it);
 
+/** Obtain the MIDI velocity a given notation item (or zero if none).
+    @ingroup        notation
+    @param    r_ob    The notation object
+    @param    it        The notation item
+    @return            The MIDI velocity of the notation item.
+ */
+double notation_item_get_velocity(t_notation_obj *r_ob, t_notation_item *it);
 
 // Slower but more accurate versions, based on the rational values, less prone to floating point arithmetic errors
 double notation_item_get_onset_ms_accurate(t_notation_obj *r_ob, t_notation_item *it);

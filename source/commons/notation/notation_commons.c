@@ -30461,9 +30461,9 @@ t_hatom *lexpr_eval_for_notation_item(t_notation_obj *r_ob, t_notation_item *it,
     t_hatom vars[LEXPR_MAX_VARS];
     hatom_setdouble(vars, notation_item_get_onset_ms(r_ob, it)); 
     hatom_setdouble(vars+1, notation_item_get_cents(r_ob, it)); 
-    hatom_setdouble(vars+2, notation_item_get_duration_ms(r_ob, it)); 
-    hatom_setlong(vars+3, it->type == k_NOTE ? ((t_note *)it)->velocity : 0); 
-    hatom_setrational(vars+4, notation_item_get_symduration(r_ob, it)); 
+    hatom_setdouble(vars+2, notation_item_get_duration_ms(r_ob, it));
+    hatom_setlong(vars+3, notation_item_get_velocity(r_ob, it));
+    hatom_setrational(vars+4, notation_item_get_symduration(r_ob, it));
     hatom_setrational(vars+5, notation_item_get_symonset(r_ob, it)); 
     hatom_setdouble(vars+6, notation_item_get_tail_ms(r_ob, it)); 
     hatom_setrational(vars+7, (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && it->type == k_CHORD) ? rat_rat_sum(((t_chord *)it)->r_sym_onset, ((t_chord *)it)->r_sym_duration) : long2rat(0));
@@ -36957,6 +36957,17 @@ double notation_item_get_duration_ms(t_notation_obj *r_ob, t_notation_item *it)
         case k_LOOP_START: return 0;
         case k_LOOP_END: return 0;
         case k_LOOP_REGION: return r_ob->loop_region.end.position_ms - r_ob->loop_region.start.position_ms;
+        default: return 0;
+    }
+}
+
+double notation_item_get_velocity(t_notation_obj *r_ob, t_notation_item *it)
+{
+    switch (it->type) {
+        case k_NOTE: return ((t_note *)it)->velocity;
+        case k_CHORD: return chord_get_max_velocity(r_ob, (t_chord *)it);
+        case k_PITCH_BREAKPOINT: return (r_ob->breakpoints_have_velocity ? ((t_bpt *)it)->velocity : 0);
+        case k_DURATION_LINE: return ((t_duration_line *)it)->owner->velocity;
         default: return 0;
     }
 }
