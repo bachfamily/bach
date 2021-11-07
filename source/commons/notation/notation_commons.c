@@ -6313,8 +6313,23 @@ t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 
     change_color_depending_on_group(r_ob, &stemcolor, chord, k_CHORD);
     
-    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
-        note_change_color_depending_on_slot_linkage(r_ob, &stemcolor, chord->firstnote);
+    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote) {
+        t_jrgba firstnotetempcolor = stemcolor;
+        note_change_color_depending_on_slot_linkage(r_ob, &firstnotetempcolor, chord->firstnote);
+        if (!chord->firstnote->next) {
+            stemcolor = firstnotetempcolor;
+        } else {
+            for (t_note *nt = chord->firstnote->next; nt; nt = nt->next) {
+                t_jrgba tempcolor = stemcolor;
+                note_change_color_depending_on_slot_linkage(r_ob, &tempcolor, nt);
+                if (!jrgba_compare(&tempcolor, &firstnotetempcolor)) {
+                    break; // Notes in the chord have different colors. we don't color the stem.
+                } else if (!nt->next) {
+                    stemcolor = firstnotetempcolor;
+                }
+            }
+        }
+    }
     
     change_color_depending_on_playlockmute(r_ob, &stemcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
