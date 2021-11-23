@@ -2715,6 +2715,13 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
             // multiplied by the <m>linearedittimestep</m> in order to obtain the duration of a newly created note.
         }
         
+        if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            CLASS_ATTR_LONG(c, "lineareditquarterkey", 0, t_notation_obj, linear_edit_quarter_key);
+            CLASS_ATTR_STYLE_LABEL(c,"lineareditquarterkey",0,"text","Linear Editing Quarter Key");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"lineareditquarterkey", 0,"5");
+            // @exclude bach.slot, bach.roll
+            // @description In linear editing, sets the digit for the key corresponding to a duration of 1/4
+        }
         
         CLASS_ATTR_LONG(c,"activepart",0, t_notation_obj, active_part);
         CLASS_ATTR_STYLE_LABEL(c,"activepart",0,"text","Active Part");

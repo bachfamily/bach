@@ -17513,25 +17513,25 @@ char align_selection_onsets(t_roll *x){
     t_rollvoice *voice;
     t_notation_item *curr_it = x->r_ob.firstselecteditem;
     char changed = 0;
-    long leftmost_onset = -32000; // local default for non-defined
+    double leftmost_onset = -DBL_MAX; // local default for non-defined
     
     // TO DO: deal with the fact that some notes may be locked, and in this case we're not aligning to them
     
     lock_general_mutex((t_notation_obj *)x);
     while (curr_it) { // cycle on the selected items
         if (curr_it->type == k_NOTE) { // it is a note
-            if ((leftmost_onset == -32000) || (((t_note *)curr_it)->parent->onset < leftmost_onset)) 
+            if ((leftmost_onset == -DBL_MAX) || (((t_note *)curr_it)->parent->onset < leftmost_onset))
                 leftmost_onset = ((t_note *)curr_it)->parent->onset;
         } else if (curr_it->type == k_CHORD) { // it is a chord
-            if ((leftmost_onset == -32000) || (((t_chord *)curr_it)->onset < leftmost_onset)) 
+            if ((leftmost_onset == -DBL_MAX) || (((t_chord *)curr_it)->onset < leftmost_onset))
                 leftmost_onset = ((t_chord *)curr_it)->onset;
         } else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next) { // it is a note tail
             double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
-            if (leftmost_onset == -32000 || thisonset < leftmost_onset) 
+            if (leftmost_onset == -DBL_MAX || thisonset < leftmost_onset)
                 leftmost_onset = thisonset;
         } else if (curr_it->type == k_PITCH_BREAKPOINT && ((t_bpt *)curr_it)->next) { // it is an inner breakpoint
             double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
-            if (leftmost_onset == -32000 || thisonset < leftmost_onset)
+            if (leftmost_onset == -DBL_MAX || thisonset < leftmost_onset)
                 leftmost_onset = thisonset;
         }
         curr_it = curr_it->next_selected;

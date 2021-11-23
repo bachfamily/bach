@@ -16270,6 +16270,13 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                             notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                         }
                     } else {
+                        // accounting for quarter key:
+                        if (keycode >= 48 && keycode <= 57) {
+                            long candidatecode = keycode - (x->r_ob.linear_edit_quarter_key-5);
+                            if (candidatecode > 48 && candidatecode < 57)
+                                keycode = candidatecode;
+                        }
+                        
                         if (keycode == 46 || (keycode > 48 && keycode < 57)) {
                             t_chord *edited_chord = NULL;
                             char was_last = false;
@@ -16277,7 +16284,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 
                             lock_general_mutex((t_notation_obj *)x);
                             
-                            if (keycode == 46) {
+                            if (keycode == 46) { // DOT
                                 verbose_post_rhythmic_tree((t_notation_obj *)x, x->firstvoice->lastmeasure, gensym("before3"), 1);
                                 was_last = (!x->r_ob.notation_cursor.chord || !x->r_ob.notation_cursor.chord->next);
                                 edited_chord = x->r_ob.notation_cursor.chord ? x->r_ob.notation_cursor.chord : (x->r_ob.notation_cursor.measure ? x->r_ob.notation_cursor.measure->lastchord : NULL);
@@ -16290,7 +16297,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                     set_level_type_flag_for_level(x->r_ob.notation_cursor.measure->rhythmic_tree, k_RHYTHM_LEVEL_IGNORE);
                                     op = k_UNDO_OP_LINEAR_EDIT_ADD_DOT;
                                 }
-                            } else {
+                            } else { // SETTING DURATION
                                 verbose_post_rhythmic_tree((t_notation_obj *)x, x->firstvoice->lastmeasure, gensym("before4"), 1);
                                 
                                 create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.measure, k_UNDO_MODIFICATION_CHANGE);

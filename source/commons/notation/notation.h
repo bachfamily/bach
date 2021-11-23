@@ -4412,6 +4412,7 @@ typedef struct _notation_obj
     // for bach.roll
     double          linear_edit_time_step;              ///< Time step for a single "step" in the linear editing (and also for the duration associated by default with key 1)
     double          linear_edit_time_multipliers[10];   ///< Array of multipliers defining the durations associated with keys 1 through 9 and then 0 (meaning 10).
+    long            linear_edit_quarter_key;            ///< Keyboard key corresponding to a quarter note in linear edit
     
     
     // pitches
