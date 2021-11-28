@@ -1,0 +1,457 @@
+Nonterminals useless in grammar
+
+    value
+    simpleexpr
+    sequence_ifthen
+    sequence_nonifthen
+    block_ifthen
+    block_nonifthen
+    block
+    nullified_ifthen
+    nullified_nonifthen
+    nullifiable_nonifthen
+    nullifiable
+    ifthenelse
+    ifthen
+    conditional
+    sequence_end
+    fakelvalue
+    lvalueBricks
+    fakelvalueBricks
+
+
+Terminals unused in grammar
+
+    NULLIFY
+    IF
+    THEN
+    ELSE
+
+
+State 12 conflicts: 3 shift/reduce
+State 17 conflicts: 7 reduce/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: %empty
+    2        | program chain EOL
+
+    3 item: NUMBER
+    4     | OPEN chain CLOSED
+
+    5 lvalue: VAR
+    6       | lvalue NTH item
+    7       | lvalue NTH VAR
+
+    8 assignment: lvalue ASSIGN chain
+
+    9 rvalue: item
+   10       | lvalue
+   11       | assignment
+
+   12 product: rvalue
+   13        | product TIMES rvalue
+
+   14 sum: product
+   15    | sum PLUS product
+
+   16 chainBricks: sum
+   17            | chainBricks sum
+
+   18 chain: chainBricks
+   19      | chainBricks assignment
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    NUMBER <i> (258) 3
+    VAR <i> (259) 5 7
+    OPEN (260) 4
+    CLOSED (261) 4
+    NTH (262) 6 7
+    TIMES (263) 13
+    PLUS (264) 15
+    CHAINHI (265)
+    CHAINLO (266)
+    NULLIFY (267)
+    EOL (268) 2
+    ASSIGN (269) 8
+    IF (270)
+    THEN (271)
+    ELSE (272)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (18)
+        on left: 0
+    program <a> (19)
+        on left: 1 2
+        on right: 0 2
+    item <a> (20)
+        on left: 3 4
+        on right: 6 9
+    lvalue <r> (21)
+        on left: 5 6 7
+        on right: 6 7 8 10
+    assignment <a> (22)
+        on left: 8
+        on right: 11 19
+    rvalue <a> (23)
+        on left: 9 10 11
+        on right: 12 13
+    product <a> (24)
+        on left: 12 13
+        on right: 13 14 15
+    sum <a> (25)
+        on left: 14 15
+        on right: 15 16 17
+    chainBricks <a> (26)
+        on left: 16 17
+        on right: 17 18 19
+    chain <a> (27)
+        on left: 18 19
+        on right: 2 4 8
+
+
+State 0
+
+    0 $accept: • program $end
+
+    $default  reduce using rule 1 (program)
+
+    program  go to state 1
+
+
+State 1
+
+    0 $accept: program • $end
+    2 program: program • chain EOL
+
+    $end    shift, and go to state 2
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+
+    item         go to state 6
+    lvalue       go to state 7
+    assignment   go to state 8
+    rvalue       go to state 9
+    product      go to state 10
+    sum          go to state 11
+    chainBricks  go to state 12
+    chain        go to state 13
+
+
+State 2
+
+    0 $accept: program $end •
+
+    $default  accept
+
+
+State 3
+
+    3 item: NUMBER •
+
+    $default  reduce using rule 3 (item)
+
+
+State 4
+
+    5 lvalue: VAR •
+
+    $default  reduce using rule 5 (lvalue)
+
+
+State 5
+
+    4 item: OPEN • chain CLOSED
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+
+    item         go to state 6
+    lvalue       go to state 7
+    assignment   go to state 8
+    rvalue       go to state 9
+    product      go to state 10
+    sum          go to state 11
+    chainBricks  go to state 12
+    chain        go to state 14
+
+
+State 6
+
+    9 rvalue: item •
+
+    $default  reduce using rule 9 (rvalue)
+
+
+State 7
+
+    6 lvalue: lvalue • NTH item
+    7       | lvalue • NTH VAR
+    8 assignment: lvalue • ASSIGN chain
+   10 rvalue: lvalue •
+
+    NTH     shift, and go to state 15
+    ASSIGN  shift, and go to state 16
+
+    $default  reduce using rule 10 (rvalue)
+
+
+State 8
+
+   11 rvalue: assignment •
+
+    $default  reduce using rule 11 (rvalue)
+
+
+State 9
+
+   12 product: rvalue •
+
+    $default  reduce using rule 12 (product)
+
+
+State 10
+
+   13 product: product • TIMES rvalue
+   14 sum: product •
+
+    $default  reduce using rule 14 (sum)
+
+
+State 11
+
+   15 sum: sum • PLUS product
+   16 chainBricks: sum •
+
+    $default  reduce using rule 16 (chainBricks)
+
+
+State 12
+
+   17 chainBricks: chainBricks • sum
+   18 chain: chainBricks •
+   19      | chainBricks • assignment
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+
+    NUMBER    [reduce using rule 18 (chain)]
+    VAR       [reduce using rule 18 (chain)]
+    OPEN      [reduce using rule 18 (chain)]
+    $default  reduce using rule 18 (chain)
+
+    item        go to state 6
+    lvalue      go to state 7
+    assignment  go to state 17
+    rvalue      go to state 9
+    product     go to state 10
+    sum         go to state 18
+
+    shift/reduce conflict on token NUMBER:
+       18 chain: chainBricks •
+        3 item: • NUMBER
+      Example: lvalue ASSIGN chainBricks • NUMBER
+      Shift derivation
+        chainBricks
+        ↳ sum
+          ↳ product
+            ↳ rvalue
+              ↳ assignment
+                ↳ lvalue ASSIGN chain
+                                ↳ chainBricks
+                                  ↳ chainBricks sum
+                                                ↳ product
+                                                  ↳ rvalue
+                                                    ↳ item
+                                                      ↳ • NUMBER
+      Example: lvalue ASSIGN chainBricks • NUMBER
+      Reduce derivation
+        chainBricks
+        ↳ chainBricks                             sum
+          ↳ sum                                   ↳ product
+            ↳ product                               ↳ rvalue
+              ↳ rvalue                                ↳ item
+                ↳ assignment                            ↳ NUMBER
+                  ↳ lvalue ASSIGN chain
+                                  ↳ chainBricks •
+
+    shift/reduce conflict on token OPEN:
+       18 chain: chainBricks •
+        4 item: • OPEN chain CLOSED
+      First example: • OPEN chain CLOSED
+      Shift derivation
+        chainBricks
+        ↳ item                  sum
+          ↳ • OPEN chain CLOSED ↳ product
+                                  ↳ rvalue
+                                    ↳ ε
+      Second example: CLOSED
+      Reduce derivation
+        chainBricks
+        ↳ CLOSED sum
+                 ↳ product
+                   ↳ ε
+
+    shift/reduce conflict on token VAR:
+       18 chain: chainBricks •
+        5 lvalue: • VAR
+      Example: lvalue ASSIGN chainBricks • VAR ASSIGN chain
+      Shift derivation
+        chainBricks
+        ↳ sum
+          ↳ product
+            ↳ rvalue
+              ↳ assignment
+                ↳ lvalue ASSIGN chain
+                                ↳ chainBricks assignment
+                                              ↳ lvalue  ASSIGN chain
+                                                ↳ • VAR
+      Example: lvalue ASSIGN chainBricks • VAR ASSIGN chain
+      Reduce derivation
+        chain
+        ↳ chainBricks                             assignment
+          ↳ sum                                   ↳ lvalue ASSIGN chain
+            ↳ product                               ↳ VAR
+              ↳ rvalue
+                ↳ assignment
+                  ↳ lvalue ASSIGN chain
+                                  ↳ chainBricks •
+
+
+
+State 13
+
+    2 program: program chain • EOL
+
+    EOL  shift, and go to state 19
+
+
+State 14
+
+    4 item: OPEN chain • CLOSED
+
+    CLOSED  shift, and go to state 20
+
+
+State 15
+
+    6 lvalue: lvalue NTH • item
+    7       | lvalue NTH • VAR
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 21
+    OPEN    shift, and go to state 5
+
+    item  go to state 22
+
+
+State 16
+
+    8 assignment: lvalue ASSIGN • chain
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+
+    item         go to state 6
+    lvalue       go to state 7
+    assignment   go to state 8
+    rvalue       go to state 9
+    product      go to state 10
+    sum          go to state 11
+    chainBricks  go to state 12
+    chain        go to state 23
+
+
+State 17
+
+   11 rvalue: assignment •
+   19 chain: chainBricks assignment •
+
+    NUMBER    reduce using rule 11 (rvalue)
+    NUMBER    [reduce using rule 19 (chain)]
+    VAR       reduce using rule 11 (rvalue)
+    VAR       [reduce using rule 19 (chain)]
+    OPEN      reduce using rule 11 (rvalue)
+    OPEN      [reduce using rule 19 (chain)]
+    CLOSED    reduce using rule 11 (rvalue)
+    CLOSED    [reduce using rule 19 (chain)]
+    TIMES     reduce using rule 11 (rvalue)
+    TIMES     [reduce using rule 19 (chain)]
+    PLUS      reduce using rule 11 (rvalue)
+    PLUS      [reduce using rule 19 (chain)]
+    EOL       reduce using rule 11 (rvalue)
+    EOL       [reduce using rule 19 (chain)]
+    $default  reduce using rule 11 (rvalue)
+
+    reduce/reduce conflict on tokens NUMBER, VAR, OPEN, CLOSED, TIMES, PLUS, EOL:
+       11 rvalue: assignment •
+       19 chain: chainBricks assignment •
+      Example: chainBricks assignment •
+      First reduce derivation
+        chain
+        ↳ chainBricks
+          ↳ chainBricks sum
+                        ↳ product
+                          ↳ rvalue
+                            ↳ assignment •
+      Example: chainBricks assignment •
+      Second reduce derivation
+        chain
+        ↳ chainBricks assignment •
+
+
+
+State 18
+
+   15 sum: sum • PLUS product
+   17 chainBricks: chainBricks sum •
+
+    $default  reduce using rule 17 (chainBricks)
+
+
+State 19
+
+    2 program: program chain EOL •
+
+    $default  reduce using rule 2 (program)
+
+
+State 20
+
+    4 item: OPEN chain CLOSED •
+
+    $default  reduce using rule 4 (item)
+
+
+State 21
+
+    7 lvalue: lvalue NTH VAR •
+
+    $default  reduce using rule 7 (lvalue)
+
+
+State 22
+
+    6 lvalue: lvalue NTH item •
+
+    $default  reduce using rule 6 (lvalue)
+
+
+State 23
+
+    8 assignment: lvalue ASSIGN chain •
+
+    $default  reduce using rule 8 (assignment)

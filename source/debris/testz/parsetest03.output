@@ -1,0 +1,1735 @@
+Nonterminals useless in grammar
+
+    sequence_end
+    lvalueChain
+    fakelvalueChain
+    nullifiable
+
+
+Rules useless in grammar
+
+   55 nullifiable: nullifiable_nonifthen
+   56            | ifthen
+
+
+State 11 conflicts: 5 reduce/reduce
+State 13 conflicts: 1 shift/reduce
+State 14 conflicts: 1 shift/reduce
+State 16 conflicts: 4 shift/reduce
+State 18 conflicts: 5 reduce/reduce
+State 19 conflicts: 1 shift/reduce, 3 reduce/reduce
+State 37 conflicts: 11 reduce/reduce
+State 38 conflicts: 11 reduce/reduce
+State 47 conflicts: 1 shift/reduce, 3 reduce/reduce
+State 51 conflicts: 1 shift/reduce, 3 reduce/reduce
+State 66 conflicts: 1 shift/reduce
+State 67 conflicts: 2 reduce/reduce
+State 68 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: %empty
+    2        | program block EOL
+
+    3 item: NUMBER
+    4     | OPEN block CLOSED
+
+    5 value: item
+    6      | VAR
+
+    7 conditional: ifthen
+    8            | ifthenelse
+
+    9 lvalue: VAR
+   10       | lvalue NTH value
+
+   11 fakelvalue: item NTH value
+   12           | fakelvalue NTH value
+
+   13 assignment: lvalue ASSIGN chain
+   14           | fakelvalue ASSIGN chain
+
+   15 rvalue: item
+   16       | lvalue
+   17       | fakelvalue
+   18       | conditional
+   19       | assignment
+
+   20 product: rvalue
+   21        | product TIMES rvalue
+
+   22 sum: product
+   23    | sum PLUS product
+
+   24 simpleexpr: sum
+
+   25 chainChain: simpleexpr
+   26           | chainChain simpleexpr
+
+   27 chain: chainChain
+   28      | chainChain assignment
+   29      | chainChain conditional
+
+   30 ifthenelse: IF block THEN block_nonifthen ELSE chain
+
+   31 ifthen: IF block THEN chain
+
+   32 block: block_ifthen
+   33      | block_nonifthen
+
+   34 block_ifthen: sequence_ifthen
+   35             | ifthen
+   36             | sequence_nonifthen ifthen
+   37             | sequence_ifthen ifthen
+
+   38 block_nonifthen: sequence_nonifthen
+   39                | nullifiable_nonifthen
+   40                | sequence_nonifthen nullifiable_nonifthen
+   41                | sequence_ifthen nullifiable_nonifthen
+
+   42 nullifiable_nonifthen: chain
+   43                      | assignment
+   44                      | ifthenelse
+
+   45 nullified_ifthen: ifthen NULLIFY
+   46                 | nullified_ifthen NULLIFY
+
+   47 nullified_nonifthen: nullifiable_nonifthen NULLIFY
+   48                    | nullified_nonifthen NULLIFY
+
+   49 sequence_ifthen: nullified_ifthen
+   50                | sequence_ifthen nullified_ifthen
+   51                | sequence_nonifthen nullified_ifthen
+
+   52 sequence_nonifthen: nullified_nonifthen
+   53                   | sequence_nonifthen nullified_nonifthen
+   54                   | sequence_ifthen nullified_nonifthen
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    NUMBER <i> (258) 3
+    VAR <i> (259) 6 9
+    OPEN (260) 4
+    CLOSED (261) 4
+    NTH (262) 10 11 12
+    TIMES (263) 21
+    PLUS (264) 23
+    NULLIFY (265) 45 46 47 48
+    EOL (266) 2
+    ASSIGN (267) 13 14
+    IF (268) 30 31
+    THEN (269) 30 31
+    ELSE (270) 30
+
+
+Nonterminals, with rules where they appear
+
+    $accept (16)
+        on left: 0
+    program <a> (17)
+        on left: 1 2
+        on right: 0 2
+    item <a> (18)
+        on left: 3 4
+        on right: 5 11 15
+    value <a> (19)
+        on left: 5 6
+        on right: 10 11 12
+    conditional <a> (20)
+        on left: 7 8
+        on right: 18 29
+    lvalue <r> (21)
+        on left: 9 10
+        on right: 10 13 16
+    fakelvalue <r> (22)
+        on left: 11 12
+        on right: 12 14 17
+    assignment <a> (23)
+        on left: 13 14
+        on right: 19 28 43
+    rvalue <a> (24)
+        on left: 15 16 17 18 19
+        on right: 20 21
+    product <a> (25)
+        on left: 20 21
+        on right: 21 22 23
+    sum <a> (26)
+        on left: 22 23
+        on right: 23 24
+    simpleexpr <a> (27)
+        on left: 24
+        on right: 25 26
+    chainChain <a> (28)
+        on left: 25 26
+        on right: 26 27 28 29
+    chain <a> (29)
+        on left: 27 28 29
+        on right: 13 14 30 31 42
+    ifthenelse <a> (30)
+        on left: 30
+        on right: 8 44
+    ifthen <a> (31)
+        on left: 31
+        on right: 7 35 36 37 45
+    block <a> (32)
+        on left: 32 33
+        on right: 2 4 30 31
+    block_ifthen <a> (33)
+        on left: 34 35 36 37
+        on right: 32
+    block_nonifthen <a> (34)
+        on left: 38 39 40 41
+        on right: 30 33
+    nullifiable_nonifthen <a> (35)
+        on left: 42 43 44
+        on right: 39 40 41 47
+    nullified_ifthen <a> (36)
+        on left: 45 46
+        on right: 46 49 50 51
+    nullified_nonifthen <a> (37)
+        on left: 47 48
+        on right: 48 52 53 54
+    sequence_ifthen <a> (38)
+        on left: 49 50 51
+        on right: 34 37 41 50 54
+    sequence_nonifthen <a> (39)
+        on left: 52 53 54
+        on right: 36 38 40 51 53
+
+
+State 0
+
+    0 $accept: • program $end
+
+    $default  reduce using rule 1 (program)
+
+    program  go to state 1
+
+
+State 1
+
+    0 $accept: program • $end
+    2 program: program • block EOL
+
+    $end    shift, and go to state 2
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item                   go to state 7
+    conditional            go to state 8
+    lvalue                 go to state 9
+    fakelvalue             go to state 10
+    assignment             go to state 11
+    rvalue                 go to state 12
+    product                go to state 13
+    sum                    go to state 14
+    simpleexpr             go to state 15
+    chainChain             go to state 16
+    chain                  go to state 17
+    ifthenelse             go to state 18
+    ifthen                 go to state 19
+    block                  go to state 20
+    block_ifthen           go to state 21
+    block_nonifthen        go to state 22
+    nullifiable_nonifthen  go to state 23
+    nullified_ifthen       go to state 24
+    nullified_nonifthen    go to state 25
+    sequence_ifthen        go to state 26
+    sequence_nonifthen     go to state 27
+
+
+State 2
+
+    0 $accept: program $end •
+
+    $default  accept
+
+
+State 3
+
+    3 item: NUMBER •
+
+    $default  reduce using rule 3 (item)
+
+
+State 4
+
+    9 lvalue: VAR •
+
+    $default  reduce using rule 9 (lvalue)
+
+
+State 5
+
+    4 item: OPEN • block CLOSED
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item                   go to state 7
+    conditional            go to state 8
+    lvalue                 go to state 9
+    fakelvalue             go to state 10
+    assignment             go to state 11
+    rvalue                 go to state 12
+    product                go to state 13
+    sum                    go to state 14
+    simpleexpr             go to state 15
+    chainChain             go to state 16
+    chain                  go to state 17
+    ifthenelse             go to state 18
+    ifthen                 go to state 19
+    block                  go to state 28
+    block_ifthen           go to state 21
+    block_nonifthen        go to state 22
+    nullifiable_nonifthen  go to state 23
+    nullified_ifthen       go to state 24
+    nullified_nonifthen    go to state 25
+    sequence_ifthen        go to state 26
+    sequence_nonifthen     go to state 27
+
+
+State 6
+
+   30 ifthenelse: IF • block THEN block_nonifthen ELSE chain
+   31 ifthen: IF • block THEN chain
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item                   go to state 7
+    conditional            go to state 8
+    lvalue                 go to state 9
+    fakelvalue             go to state 10
+    assignment             go to state 11
+    rvalue                 go to state 12
+    product                go to state 13
+    sum                    go to state 14
+    simpleexpr             go to state 15
+    chainChain             go to state 16
+    chain                  go to state 17
+    ifthenelse             go to state 18
+    ifthen                 go to state 19
+    block                  go to state 29
+    block_ifthen           go to state 21
+    block_nonifthen        go to state 22
+    nullifiable_nonifthen  go to state 23
+    nullified_ifthen       go to state 24
+    nullified_nonifthen    go to state 25
+    sequence_ifthen        go to state 26
+    sequence_nonifthen     go to state 27
+
+
+State 7
+
+   11 fakelvalue: item • NTH value
+   15 rvalue: item •
+
+    NTH  shift, and go to state 30
+
+    $default  reduce using rule 15 (rvalue)
+
+
+State 8
+
+   18 rvalue: conditional •
+
+    $default  reduce using rule 18 (rvalue)
+
+
+State 9
+
+   10 lvalue: lvalue • NTH value
+   13 assignment: lvalue • ASSIGN chain
+   16 rvalue: lvalue •
+
+    NTH     shift, and go to state 31
+    ASSIGN  shift, and go to state 32
+
+    $default  reduce using rule 16 (rvalue)
+
+
+State 10
+
+   12 fakelvalue: fakelvalue • NTH value
+   14 assignment: fakelvalue • ASSIGN chain
+   17 rvalue: fakelvalue •
+
+    NTH     shift, and go to state 33
+    ASSIGN  shift, and go to state 34
+
+    $default  reduce using rule 17 (rvalue)
+
+
+State 11
+
+   19 rvalue: assignment •
+   43 nullifiable_nonifthen: assignment •
+
+    CLOSED    reduce using rule 19 (rvalue)
+    CLOSED    [reduce using rule 43 (nullifiable_nonifthen)]
+    NULLIFY   reduce using rule 19 (rvalue)
+    NULLIFY   [reduce using rule 43 (nullifiable_nonifthen)]
+    EOL       reduce using rule 19 (rvalue)
+    EOL       [reduce using rule 43 (nullifiable_nonifthen)]
+    THEN      reduce using rule 19 (rvalue)
+    THEN      [reduce using rule 43 (nullifiable_nonifthen)]
+    ELSE      reduce using rule 19 (rvalue)
+    ELSE      [reduce using rule 43 (nullifiable_nonifthen)]
+    $default  reduce using rule 19 (rvalue)
+
+    reduce/reduce conflict on tokens CLOSED, NULLIFY, EOL, THEN, ELSE:
+       19 rvalue: assignment •
+       43 nullifiable_nonifthen: assignment •
+      Example: assignment •
+      First reduce derivation
+        nullifiable_nonifthen
+        ↳ chain
+          ↳ chainChain
+            ↳ simpleexpr
+              ↳ sum
+                ↳ product
+                  ↳ rvalue
+                    ↳ assignment •
+      Example: assignment •
+      Second reduce derivation
+        nullifiable_nonifthen
+        ↳ assignment •
+
+
+
+State 12
+
+   20 product: rvalue •
+
+    $default  reduce using rule 20 (product)
+
+
+State 13
+
+   21 product: product • TIMES rvalue
+   22 sum: product •
+
+    TIMES  shift, and go to state 35
+
+    TIMES     [reduce using rule 22 (sum)]
+    $default  reduce using rule 22 (sum)
+
+    shift/reduce conflict on token TIMES:
+       22 sum: product •
+       21 product: product • TIMES rvalue
+      First example: program lvalue ASSIGN product • TIMES rvalue TIMES rvalue EOL $end
+      Shift derivation
+        $accept
+        ↳ program                                                                                       $end
+          ↳ program block                                                                           EOL
+                    ↳ block_nonifthen
+                      ↳ nullifiable_nonifthen
+                        ↳ chain
+                          ↳ chainChain
+                            ↳ simpleexpr
+                              ↳ sum
+                                ↳ product
+                                  ↳ product                                            TIMES rvalue
+                                    ↳ assignment
+                                      ↳ lvalue ASSIGN chain
+                                                      ↳ chainChain
+                                                        ↳ simpleexpr
+                                                          ↳ sum
+                                                            ↳ product
+                                                              ↳ product • TIMES rvalue
+      Second example: program lvalue ASSIGN product • TIMES rvalue EOL $end
+      Reduce derivation
+        $accept
+        ↳ program                                                                          $end
+          ↳ program block                                                              EOL
+                    ↳ block_nonifthen
+                      ↳ nullifiable_nonifthen
+                        ↳ chain
+                          ↳ chainChain
+                            ↳ simpleexpr
+                              ↳ sum
+                                ↳ product
+                                  ↳ product                               TIMES rvalue
+                                    ↳ rvalue
+                                      ↳ assignment
+                                        ↳ lvalue ASSIGN chain
+                                                        ↳ chainChain
+                                                          ↳ simpleexpr
+                                                            ↳ sum
+                                                              ↳ product •
+
+
+
+State 14
+
+   23 sum: sum • PLUS product
+   24 simpleexpr: sum •
+
+    PLUS  shift, and go to state 36
+
+    PLUS      [reduce using rule 24 (simpleexpr)]
+    $default  reduce using rule 24 (simpleexpr)
+
+    shift/reduce conflict on token PLUS:
+       24 simpleexpr: sum •
+       23 sum: sum • PLUS product
+      First example: PLUS product
+      Shift derivation
+        sum
+        ↳ PLUS product
+      Second example: PLUS product
+      Reduce derivation
+        sum
+        ↳ PLUS product
+
+
+
+State 15
+
+   25 chainChain: simpleexpr •
+
+    $default  reduce using rule 25 (chainChain)
+
+
+State 16
+
+   26 chainChain: chainChain • simpleexpr
+   27 chain: chainChain •
+   28      | chainChain • assignment
+   29      | chainChain • conditional
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    NUMBER    [reduce using rule 27 (chain)]
+    VAR       [reduce using rule 27 (chain)]
+    OPEN      [reduce using rule 27 (chain)]
+    IF        [reduce using rule 27 (chain)]
+    $default  reduce using rule 27 (chain)
+
+    item         go to state 7
+    conditional  go to state 37
+    lvalue       go to state 9
+    fakelvalue   go to state 10
+    assignment   go to state 38
+    rvalue       go to state 12
+    product      go to state 13
+    sum          go to state 14
+    simpleexpr   go to state 39
+    ifthenelse   go to state 40
+    ifthen       go to state 41
+
+    shift/reduce conflict on token NUMBER:
+       27 chain: chainChain •
+        3 item: • NUMBER
+      Example: lvalue ASSIGN chainChain • NUMBER NTH value ASSIGN chain
+      Shift derivation
+        nullifiable_nonifthen
+        ↳ assignment
+          ↳ lvalue ASSIGN chain
+                          ↳ chainChain assignment
+                                       ↳ fakelvalue             ASSIGN chain
+                                         ↳ item       NTH value
+                                           ↳ • NUMBER
+      Example: lvalue ASSIGN chainChain • NUMBER NTH value ASSIGN chain
+      Reduce derivation
+        nullifiable_nonifthen
+        ↳ chain
+          ↳ chainChain                               assignment
+            ↳ simpleexpr                             ↳ fakelvalue           ASSIGN chain
+              ↳ sum                                    ↳ item     NTH value
+                ↳ product                                ↳ NUMBER
+                  ↳ rvalue
+                    ↳ assignment
+                      ↳ lvalue ASSIGN chain
+                                      ↳ chainChain •
+
+    shift/reduce conflict on token OPEN:
+       27 chain: chainChain •
+        4 item: • OPEN block CLOSED
+      First example: ASSIGN chainChain • OPEN block CLOSED
+      Shift derivation
+        chain
+        ↳ ASSIGN assignment
+                 ↳ chainChain item
+                              ↳ • OPEN block CLOSED
+      Second example: CLOSED NTH value ASSIGN chain
+      Reduce derivation
+        chain
+        ↳ CLOSED assignment
+                 ↳ fakelvalue  ASSIGN chain
+                   ↳ NTH value
+
+    shift/reduce conflict on token VAR:
+       27 chain: chainChain •
+        9 lvalue: • VAR
+      Example: lvalue ASSIGN chainChain • VAR ASSIGN chain
+      Shift derivation
+        nullifiable_nonifthen
+        ↳ assignment
+          ↳ lvalue ASSIGN chain
+                          ↳ chainChain assignment
+                                       ↳ lvalue  ASSIGN chain
+                                         ↳ • VAR
+      Example: lvalue ASSIGN chainChain • VAR ASSIGN chain
+      Reduce derivation
+        nullifiable_nonifthen
+        ↳ chain
+          ↳ chainChain                               assignment
+            ↳ simpleexpr                             ↳ lvalue ASSIGN chain
+              ↳ sum                                    ↳ VAR
+                ↳ product
+                  ↳ rvalue
+                    ↳ assignment
+                      ↳ lvalue ASSIGN chain
+                                      ↳ chainChain •
+
+    shift/reduce conflict on token IF:
+       27 chain: chainChain •
+       30 ifthenelse: • IF block THEN block_nonifthen ELSE chain
+      First example: program lvalue ASSIGN chainChain • IF block THEN block_nonifthen ELSE chain conditional EOL $end
+      Shift derivation
+        $accept
+        ↳ program                                                                                                               $end
+          ↳ program block                                                                                                   EOL
+                    ↳ block_nonifthen
+                      ↳ nullifiable_nonifthen
+                        ↳ chain
+                          ↳ chainChain                                                                          conditional
+                            ↳ simpleexpr
+                              ↳ sum
+                                ↳ product
+                                  ↳ assignment
+                                    ↳ lvalue ASSIGN chain
+                                                    ↳ chainChain conditional
+                                                                 ↳ ifthenelse
+                                                                   ↳ • IF block THEN block_nonifthen ELSE chain
+      Second example: program lvalue ASSIGN chainChain • IF block THEN chain EOL $end
+      Reduce derivation
+        $accept
+        ↳ program                                                                                $end
+          ↳ program block                                                                    EOL
+                    ↳ block_nonifthen
+                      ↳ nullifiable_nonifthen
+                        ↳ chain
+                          ↳ chainChain                               conditional
+                            ↳ simpleexpr                             ↳ ifthen
+                              ↳ sum                                    ↳ IF block THEN chain
+                                ↳ product
+                                  ↳ rvalue
+                                    ↳ assignment
+                                      ↳ lvalue ASSIGN chain
+                                                      ↳ chainChain •
+
+    shift/reduce conflict on token IF:
+       27 chain: chainChain •
+       31 ifthen: • IF block THEN chain
+      First example: program lvalue ASSIGN chainChain • IF block THEN chain conditional EOL $end
+      Shift derivation
+        $accept
+        ↳ program                                                                                          $end
+          ↳ program block                                                                              EOL
+                    ↳ block_nonifthen
+                      ↳ nullifiable_nonifthen
+                        ↳ chain
+                          ↳ chainChain                                                     conditional
+                            ↳ simpleexpr
+                              ↳ sum
+                                ↳ product
+                                  ↳ assignment
+                                    ↳ lvalue ASSIGN chain
+                                                    ↳ chainChain conditional
+                                                                 ↳ ifthen
+                                                                   ↳ • IF block THEN chain
+      Second example: program lvalue ASSIGN chainChain • IF block THEN chain EOL $end
+      Reduce derivation
+        $accept
+        ↳ program                                                                                $end
+          ↳ program block                                                                    EOL
+                    ↳ block_nonifthen
+                      ↳ nullifiable_nonifthen
+                        ↳ chain
+                          ↳ chainChain                               conditional
+                            ↳ simpleexpr                             ↳ ifthen
+                              ↳ sum                                    ↳ IF block THEN chain
+                                ↳ product
+                                  ↳ rvalue
+                                    ↳ assignment
+                                      ↳ lvalue ASSIGN chain
+                                                      ↳ chainChain •
+
+
+
+State 17
+
+   42 nullifiable_nonifthen: chain •
+
+    $default  reduce using rule 42 (nullifiable_nonifthen)
+
+
+State 18
+
+    8 conditional: ifthenelse •
+   44 nullifiable_nonifthen: ifthenelse •
+
+    CLOSED    reduce using rule 8 (conditional)
+    CLOSED    [reduce using rule 44 (nullifiable_nonifthen)]
+    NULLIFY   reduce using rule 8 (conditional)
+    NULLIFY   [reduce using rule 44 (nullifiable_nonifthen)]
+    EOL       reduce using rule 8 (conditional)
+    EOL       [reduce using rule 44 (nullifiable_nonifthen)]
+    THEN      reduce using rule 8 (conditional)
+    THEN      [reduce using rule 44 (nullifiable_nonifthen)]
+    ELSE      reduce using rule 8 (conditional)
+    ELSE      [reduce using rule 44 (nullifiable_nonifthen)]
+    $default  reduce using rule 8 (conditional)
+
+    reduce/reduce conflict on tokens CLOSED, NULLIFY, EOL, THEN, ELSE:
+        8 conditional: ifthenelse •
+       44 nullifiable_nonifthen: ifthenelse •
+      Example: ifthenelse •
+      First reduce derivation
+        nullifiable_nonifthen
+        ↳ chain
+          ↳ chainChain
+            ↳ simpleexpr
+              ↳ sum
+                ↳ product
+                  ↳ rvalue
+                    ↳ conditional
+                      ↳ ifthenelse •
+      Example: ifthenelse •
+      Second reduce derivation
+        nullifiable_nonifthen
+        ↳ ifthenelse •
+
+
+
+State 19
+
+    7 conditional: ifthen •
+   35 block_ifthen: ifthen •
+   45 nullified_ifthen: ifthen • NULLIFY
+
+    NULLIFY  shift, and go to state 42
+
+    CLOSED    reduce using rule 7 (conditional)
+    CLOSED    [reduce using rule 35 (block_ifthen)]
+    NULLIFY   [reduce using rule 7 (conditional)]
+    EOL       reduce using rule 7 (conditional)
+    EOL       [reduce using rule 35 (block_ifthen)]
+    THEN      reduce using rule 7 (conditional)
+    THEN      [reduce using rule 35 (block_ifthen)]
+    $default  reduce using rule 7 (conditional)
+
+    shift/reduce conflict on token NULLIFY:
+        7 conditional: ifthen •
+       45 nullified_ifthen: ifthen • NULLIFY
+      Example: ifthen • NULLIFY
+      Shift derivation
+        block
+        ↳ block_ifthen
+          ↳ sequence_ifthen
+            ↳ nullified_ifthen
+              ↳ ifthen • NULLIFY
+      Example: ifthen • NULLIFY
+      Reduce derivation
+        block
+        ↳ block_nonifthen
+          ↳ sequence_nonifthen
+            ↳ nullified_nonifthen
+              ↳ nullifiable_nonifthen     NULLIFY
+                ↳ chain
+                  ↳ chainChain
+                    ↳ simpleexpr
+                      ↳ sum
+                        ↳ product
+                          ↳ rvalue
+                            ↳ conditional
+                              ↳ ifthen •
+
+    reduce/reduce conflict on tokens CLOSED, EOL, THEN:
+        7 conditional: ifthen •
+       35 block_ifthen: ifthen •
+      Example: ifthen •
+      First reduce derivation
+        block
+        ↳ block_nonifthen
+          ↳ nullifiable_nonifthen
+            ↳ chain
+              ↳ chainChain
+                ↳ simpleexpr
+                  ↳ sum
+                    ↳ product
+                      ↳ rvalue
+                        ↳ conditional
+                          ↳ ifthen •
+      Example: ifthen •
+      Second reduce derivation
+        block
+        ↳ block_ifthen
+          ↳ ifthen •
+
+
+
+State 20
+
+    2 program: program block • EOL
+
+    EOL  shift, and go to state 43
+
+
+State 21
+
+   32 block: block_ifthen •
+
+    $default  reduce using rule 32 (block)
+
+
+State 22
+
+   33 block: block_nonifthen •
+
+    $default  reduce using rule 33 (block)
+
+
+State 23
+
+   39 block_nonifthen: nullifiable_nonifthen •
+   47 nullified_nonifthen: nullifiable_nonifthen • NULLIFY
+
+    NULLIFY  shift, and go to state 44
+
+    $default  reduce using rule 39 (block_nonifthen)
+
+
+State 24
+
+   46 nullified_ifthen: nullified_ifthen • NULLIFY
+   49 sequence_ifthen: nullified_ifthen •
+
+    NULLIFY  shift, and go to state 45
+
+    $default  reduce using rule 49 (sequence_ifthen)
+
+
+State 25
+
+   48 nullified_nonifthen: nullified_nonifthen • NULLIFY
+   52 sequence_nonifthen: nullified_nonifthen •
+
+    NULLIFY  shift, and go to state 46
+
+    $default  reduce using rule 52 (sequence_nonifthen)
+
+
+State 26
+
+   34 block_ifthen: sequence_ifthen •
+   37             | sequence_ifthen • ifthen
+   41 block_nonifthen: sequence_ifthen • nullifiable_nonifthen
+   50 sequence_ifthen: sequence_ifthen • nullified_ifthen
+   54 sequence_nonifthen: sequence_ifthen • nullified_nonifthen
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    $default  reduce using rule 34 (block_ifthen)
+
+    item                   go to state 7
+    conditional            go to state 8
+    lvalue                 go to state 9
+    fakelvalue             go to state 10
+    assignment             go to state 11
+    rvalue                 go to state 12
+    product                go to state 13
+    sum                    go to state 14
+    simpleexpr             go to state 15
+    chainChain             go to state 16
+    chain                  go to state 17
+    ifthenelse             go to state 18
+    ifthen                 go to state 47
+    nullifiable_nonifthen  go to state 48
+    nullified_ifthen       go to state 49
+    nullified_nonifthen    go to state 50
+
+
+State 27
+
+   36 block_ifthen: sequence_nonifthen • ifthen
+   38 block_nonifthen: sequence_nonifthen •
+   40                | sequence_nonifthen • nullifiable_nonifthen
+   51 sequence_ifthen: sequence_nonifthen • nullified_ifthen
+   53 sequence_nonifthen: sequence_nonifthen • nullified_nonifthen
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    $default  reduce using rule 38 (block_nonifthen)
+
+    item                   go to state 7
+    conditional            go to state 8
+    lvalue                 go to state 9
+    fakelvalue             go to state 10
+    assignment             go to state 11
+    rvalue                 go to state 12
+    product                go to state 13
+    sum                    go to state 14
+    simpleexpr             go to state 15
+    chainChain             go to state 16
+    chain                  go to state 17
+    ifthenelse             go to state 18
+    ifthen                 go to state 51
+    nullifiable_nonifthen  go to state 52
+    nullified_ifthen       go to state 53
+    nullified_nonifthen    go to state 54
+
+
+State 28
+
+    4 item: OPEN block • CLOSED
+
+    CLOSED  shift, and go to state 55
+
+
+State 29
+
+   30 ifthenelse: IF block • THEN block_nonifthen ELSE chain
+   31 ifthen: IF block • THEN chain
+
+    THEN  shift, and go to state 56
+
+
+State 30
+
+   11 fakelvalue: item NTH • value
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 57
+    OPEN    shift, and go to state 5
+
+    item   go to state 58
+    value  go to state 59
+
+
+State 31
+
+   10 lvalue: lvalue NTH • value
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 57
+    OPEN    shift, and go to state 5
+
+    item   go to state 58
+    value  go to state 60
+
+
+State 32
+
+   13 assignment: lvalue ASSIGN • chain
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item         go to state 7
+    conditional  go to state 8
+    lvalue       go to state 9
+    fakelvalue   go to state 10
+    assignment   go to state 61
+    rvalue       go to state 12
+    product      go to state 13
+    sum          go to state 14
+    simpleexpr   go to state 15
+    chainChain   go to state 16
+    chain        go to state 62
+    ifthenelse   go to state 40
+    ifthen       go to state 41
+
+
+State 33
+
+   12 fakelvalue: fakelvalue NTH • value
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 57
+    OPEN    shift, and go to state 5
+
+    item   go to state 58
+    value  go to state 63
+
+
+State 34
+
+   14 assignment: fakelvalue ASSIGN • chain
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item         go to state 7
+    conditional  go to state 8
+    lvalue       go to state 9
+    fakelvalue   go to state 10
+    assignment   go to state 61
+    rvalue       go to state 12
+    product      go to state 13
+    sum          go to state 14
+    simpleexpr   go to state 15
+    chainChain   go to state 16
+    chain        go to state 64
+    ifthenelse   go to state 40
+    ifthen       go to state 41
+
+
+State 35
+
+   21 product: product TIMES • rvalue
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item         go to state 7
+    conditional  go to state 8
+    lvalue       go to state 9
+    fakelvalue   go to state 10
+    assignment   go to state 61
+    rvalue       go to state 65
+    ifthenelse   go to state 40
+    ifthen       go to state 41
+
+
+State 36
+
+   23 sum: sum PLUS • product
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item         go to state 7
+    conditional  go to state 8
+    lvalue       go to state 9
+    fakelvalue   go to state 10
+    assignment   go to state 61
+    rvalue       go to state 12
+    product      go to state 66
+    ifthenelse   go to state 40
+    ifthen       go to state 41
+
+
+State 37
+
+   18 rvalue: conditional •
+   29 chain: chainChain conditional •
+
+    NUMBER    reduce using rule 18 (rvalue)
+    NUMBER    [reduce using rule 29 (chain)]
+    VAR       reduce using rule 18 (rvalue)
+    VAR       [reduce using rule 29 (chain)]
+    OPEN      reduce using rule 18 (rvalue)
+    OPEN      [reduce using rule 29 (chain)]
+    CLOSED    reduce using rule 18 (rvalue)
+    CLOSED    [reduce using rule 29 (chain)]
+    TIMES     reduce using rule 18 (rvalue)
+    TIMES     [reduce using rule 29 (chain)]
+    PLUS      reduce using rule 18 (rvalue)
+    PLUS      [reduce using rule 29 (chain)]
+    NULLIFY   reduce using rule 18 (rvalue)
+    NULLIFY   [reduce using rule 29 (chain)]
+    EOL       reduce using rule 18 (rvalue)
+    EOL       [reduce using rule 29 (chain)]
+    IF        reduce using rule 18 (rvalue)
+    IF        [reduce using rule 29 (chain)]
+    THEN      reduce using rule 18 (rvalue)
+    THEN      [reduce using rule 29 (chain)]
+    ELSE      reduce using rule 18 (rvalue)
+    ELSE      [reduce using rule 29 (chain)]
+    $default  reduce using rule 18 (rvalue)
+
+    reduce/reduce conflict on tokens NUMBER, VAR, OPEN, CLOSED, TIMES, PLUS, NULLIFY, EOL, IF, THEN, ELSE:
+       18 rvalue: conditional •
+       29 chain: chainChain conditional •
+      Example: chainChain conditional •
+      First reduce derivation
+        chain
+        ↳ chainChain
+          ↳ chainChain simpleexpr
+                       ↳ sum
+                         ↳ product
+                           ↳ rvalue
+                             ↳ conditional •
+      Example: chainChain conditional •
+      Second reduce derivation
+        chain
+        ↳ chainChain conditional •
+
+
+
+State 38
+
+   19 rvalue: assignment •
+   28 chain: chainChain assignment •
+
+    NUMBER    reduce using rule 19 (rvalue)
+    NUMBER    [reduce using rule 28 (chain)]
+    VAR       reduce using rule 19 (rvalue)
+    VAR       [reduce using rule 28 (chain)]
+    OPEN      reduce using rule 19 (rvalue)
+    OPEN      [reduce using rule 28 (chain)]
+    CLOSED    reduce using rule 19 (rvalue)
+    CLOSED    [reduce using rule 28 (chain)]
+    TIMES     reduce using rule 19 (rvalue)
+    TIMES     [reduce using rule 28 (chain)]
+    PLUS      reduce using rule 19 (rvalue)
+    PLUS      [reduce using rule 28 (chain)]
+    NULLIFY   reduce using rule 19 (rvalue)
+    NULLIFY   [reduce using rule 28 (chain)]
+    EOL       reduce using rule 19 (rvalue)
+    EOL       [reduce using rule 28 (chain)]
+    IF        reduce using rule 19 (rvalue)
+    IF        [reduce using rule 28 (chain)]
+    THEN      reduce using rule 19 (rvalue)
+    THEN      [reduce using rule 28 (chain)]
+    ELSE      reduce using rule 19 (rvalue)
+    ELSE      [reduce using rule 28 (chain)]
+    $default  reduce using rule 19 (rvalue)
+
+    reduce/reduce conflict on tokens NUMBER, VAR, OPEN, CLOSED, TIMES, PLUS, NULLIFY, EOL, IF, THEN, ELSE:
+       19 rvalue: assignment •
+       28 chain: chainChain assignment •
+      Example: chainChain assignment •
+      First reduce derivation
+        chain
+        ↳ chainChain
+          ↳ chainChain simpleexpr
+                       ↳ sum
+                         ↳ product
+                           ↳ rvalue
+                             ↳ assignment •
+      Example: chainChain assignment •
+      Second reduce derivation
+        chain
+        ↳ chainChain assignment •
+
+
+
+State 39
+
+   26 chainChain: chainChain simpleexpr •
+
+    $default  reduce using rule 26 (chainChain)
+
+
+State 40
+
+    8 conditional: ifthenelse •
+
+    $default  reduce using rule 8 (conditional)
+
+
+State 41
+
+    7 conditional: ifthen •
+
+    $default  reduce using rule 7 (conditional)
+
+
+State 42
+
+   45 nullified_ifthen: ifthen NULLIFY •
+
+    $default  reduce using rule 45 (nullified_ifthen)
+
+
+State 43
+
+    2 program: program block EOL •
+
+    $default  reduce using rule 2 (program)
+
+
+State 44
+
+   47 nullified_nonifthen: nullifiable_nonifthen NULLIFY •
+
+    $default  reduce using rule 47 (nullified_nonifthen)
+
+
+State 45
+
+   46 nullified_ifthen: nullified_ifthen NULLIFY •
+
+    $default  reduce using rule 46 (nullified_ifthen)
+
+
+State 46
+
+   48 nullified_nonifthen: nullified_nonifthen NULLIFY •
+
+    $default  reduce using rule 48 (nullified_nonifthen)
+
+
+State 47
+
+    7 conditional: ifthen •
+   37 block_ifthen: sequence_ifthen ifthen •
+   45 nullified_ifthen: ifthen • NULLIFY
+
+    NULLIFY  shift, and go to state 42
+
+    CLOSED    reduce using rule 7 (conditional)
+    CLOSED    [reduce using rule 37 (block_ifthen)]
+    NULLIFY   [reduce using rule 7 (conditional)]
+    EOL       reduce using rule 7 (conditional)
+    EOL       [reduce using rule 37 (block_ifthen)]
+    THEN      reduce using rule 7 (conditional)
+    THEN      [reduce using rule 37 (block_ifthen)]
+    $default  reduce using rule 7 (conditional)
+
+    shift/reduce conflict on token NULLIFY:
+        7 conditional: ifthen •
+       45 nullified_ifthen: ifthen • NULLIFY
+      Example: sequence_ifthen ifthen • NULLIFY
+      Shift derivation
+        block
+        ↳ block_ifthen
+          ↳ sequence_ifthen
+            ↳ sequence_ifthen nullified_ifthen
+                              ↳ ifthen • NULLIFY
+      Example: sequence_ifthen ifthen • NULLIFY
+      Reduce derivation
+        block
+        ↳ block_nonifthen
+          ↳ sequence_nonifthen
+            ↳ sequence_ifthen nullified_nonifthen
+                              ↳ nullifiable_nonifthen     NULLIFY
+                                ↳ chain
+                                  ↳ chainChain
+                                    ↳ simpleexpr
+                                      ↳ sum
+                                        ↳ product
+                                          ↳ rvalue
+                                            ↳ conditional
+                                              ↳ ifthen •
+
+    reduce/reduce conflict on tokens CLOSED, EOL, THEN:
+        7 conditional: ifthen •
+       37 block_ifthen: sequence_ifthen ifthen •
+      Example: sequence_ifthen ifthen •
+      First reduce derivation
+        block
+        ↳ block_nonifthen
+          ↳ sequence_ifthen nullifiable_nonifthen
+                            ↳ chain
+                              ↳ chainChain
+                                ↳ simpleexpr
+                                  ↳ sum
+                                    ↳ product
+                                      ↳ rvalue
+                                        ↳ conditional
+                                          ↳ ifthen •
+      Example: sequence_ifthen ifthen •
+      Second reduce derivation
+        block
+        ↳ block_ifthen
+          ↳ sequence_ifthen ifthen •
+
+
+
+State 48
+
+   41 block_nonifthen: sequence_ifthen nullifiable_nonifthen •
+   47 nullified_nonifthen: nullifiable_nonifthen • NULLIFY
+
+    NULLIFY  shift, and go to state 44
+
+    $default  reduce using rule 41 (block_nonifthen)
+
+
+State 49
+
+   46 nullified_ifthen: nullified_ifthen • NULLIFY
+   50 sequence_ifthen: sequence_ifthen nullified_ifthen •
+
+    NULLIFY  shift, and go to state 45
+
+    $default  reduce using rule 50 (sequence_ifthen)
+
+
+State 50
+
+   48 nullified_nonifthen: nullified_nonifthen • NULLIFY
+   54 sequence_nonifthen: sequence_ifthen nullified_nonifthen •
+
+    NULLIFY  shift, and go to state 46
+
+    $default  reduce using rule 54 (sequence_nonifthen)
+
+
+State 51
+
+    7 conditional: ifthen •
+   36 block_ifthen: sequence_nonifthen ifthen •
+   45 nullified_ifthen: ifthen • NULLIFY
+
+    NULLIFY  shift, and go to state 42
+
+    CLOSED    reduce using rule 7 (conditional)
+    CLOSED    [reduce using rule 36 (block_ifthen)]
+    NULLIFY   [reduce using rule 7 (conditional)]
+    EOL       reduce using rule 7 (conditional)
+    EOL       [reduce using rule 36 (block_ifthen)]
+    THEN      reduce using rule 7 (conditional)
+    THEN      [reduce using rule 36 (block_ifthen)]
+    $default  reduce using rule 7 (conditional)
+
+    shift/reduce conflict on token NULLIFY:
+        7 conditional: ifthen •
+       45 nullified_ifthen: ifthen • NULLIFY
+      Example: sequence_nonifthen ifthen • NULLIFY
+      Shift derivation
+        block
+        ↳ block_ifthen
+          ↳ sequence_ifthen
+            ↳ sequence_nonifthen nullified_ifthen
+                                 ↳ ifthen • NULLIFY
+      Example: sequence_nonifthen ifthen • NULLIFY
+      Reduce derivation
+        block
+        ↳ block_nonifthen
+          ↳ sequence_nonifthen
+            ↳ sequence_nonifthen nullified_nonifthen
+                                 ↳ nullifiable_nonifthen     NULLIFY
+                                   ↳ chain
+                                     ↳ chainChain
+                                       ↳ simpleexpr
+                                         ↳ sum
+                                           ↳ product
+                                             ↳ rvalue
+                                               ↳ conditional
+                                                 ↳ ifthen •
+
+    reduce/reduce conflict on tokens CLOSED, EOL, THEN:
+        7 conditional: ifthen •
+       36 block_ifthen: sequence_nonifthen ifthen •
+      Example: sequence_nonifthen ifthen •
+      First reduce derivation
+        block
+        ↳ block_nonifthen
+          ↳ sequence_nonifthen nullifiable_nonifthen
+                               ↳ chain
+                                 ↳ chainChain
+                                   ↳ simpleexpr
+                                     ↳ sum
+                                       ↳ product
+                                         ↳ rvalue
+                                           ↳ conditional
+                                             ↳ ifthen •
+      Example: sequence_nonifthen ifthen •
+      Second reduce derivation
+        block
+        ↳ block_ifthen
+          ↳ sequence_nonifthen ifthen •
+
+
+
+State 52
+
+   40 block_nonifthen: sequence_nonifthen nullifiable_nonifthen •
+   47 nullified_nonifthen: nullifiable_nonifthen • NULLIFY
+
+    NULLIFY  shift, and go to state 44
+
+    $default  reduce using rule 40 (block_nonifthen)
+
+
+State 53
+
+   46 nullified_ifthen: nullified_ifthen • NULLIFY
+   51 sequence_ifthen: sequence_nonifthen nullified_ifthen •
+
+    NULLIFY  shift, and go to state 45
+
+    $default  reduce using rule 51 (sequence_ifthen)
+
+
+State 54
+
+   48 nullified_nonifthen: nullified_nonifthen • NULLIFY
+   53 sequence_nonifthen: sequence_nonifthen nullified_nonifthen •
+
+    NULLIFY  shift, and go to state 46
+
+    $default  reduce using rule 53 (sequence_nonifthen)
+
+
+State 55
+
+    4 item: OPEN block CLOSED •
+
+    $default  reduce using rule 4 (item)
+
+
+State 56
+
+   30 ifthenelse: IF block THEN • block_nonifthen ELSE chain
+   31 ifthen: IF block THEN • chain
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item                   go to state 7
+    conditional            go to state 8
+    lvalue                 go to state 9
+    fakelvalue             go to state 10
+    assignment             go to state 11
+    rvalue                 go to state 12
+    product                go to state 13
+    sum                    go to state 14
+    simpleexpr             go to state 15
+    chainChain             go to state 16
+    chain                  go to state 67
+    ifthenelse             go to state 18
+    ifthen                 go to state 68
+    block_nonifthen        go to state 69
+    nullifiable_nonifthen  go to state 23
+    nullified_ifthen       go to state 24
+    nullified_nonifthen    go to state 25
+    sequence_ifthen        go to state 70
+    sequence_nonifthen     go to state 71
+
+
+State 57
+
+    6 value: VAR •
+
+    $default  reduce using rule 6 (value)
+
+
+State 58
+
+    5 value: item •
+
+    $default  reduce using rule 5 (value)
+
+
+State 59
+
+   11 fakelvalue: item NTH value •
+
+    $default  reduce using rule 11 (fakelvalue)
+
+
+State 60
+
+   10 lvalue: lvalue NTH value •
+
+    $default  reduce using rule 10 (lvalue)
+
+
+State 61
+
+   19 rvalue: assignment •
+
+    $default  reduce using rule 19 (rvalue)
+
+
+State 62
+
+   13 assignment: lvalue ASSIGN chain •
+
+    $default  reduce using rule 13 (assignment)
+
+
+State 63
+
+   12 fakelvalue: fakelvalue NTH value •
+
+    $default  reduce using rule 12 (fakelvalue)
+
+
+State 64
+
+   14 assignment: fakelvalue ASSIGN chain •
+
+    $default  reduce using rule 14 (assignment)
+
+
+State 65
+
+   21 product: product TIMES rvalue •
+
+    $default  reduce using rule 21 (product)
+
+
+State 66
+
+   21 product: product • TIMES rvalue
+   23 sum: sum PLUS product •
+
+    TIMES  shift, and go to state 35
+
+    TIMES     [reduce using rule 23 (sum)]
+    $default  reduce using rule 23 (sum)
+
+    shift/reduce conflict on token TIMES:
+       23 sum: sum PLUS product •
+       21 product: product • TIMES rvalue
+      First example: program lvalue ASSIGN sum PLUS product • TIMES rvalue TIMES rvalue EOL $end
+      Shift derivation
+        $accept
+        ↳ program                                                                                                $end
+          ↳ program block                                                                                    EOL
+                    ↳ block_nonifthen
+                      ↳ nullifiable_nonifthen
+                        ↳ chain
+                          ↳ chainChain
+                            ↳ simpleexpr
+                              ↳ sum
+                                ↳ product
+                                  ↳ product                                                     TIMES rvalue
+                                    ↳ rvalue
+                                      ↳ assignment
+                                        ↳ lvalue ASSIGN chain
+                                                        ↳ chainChain
+                                                          ↳ sum
+                                                            ↳ sum PLUS product
+                                                                       ↳ product • TIMES rvalue
+      Second example: program lvalue ASSIGN sum PLUS product • TIMES rvalue EOL $end
+      Reduce derivation
+        $accept
+        ↳ program                                                                                   $end
+          ↳ program block                                                                       EOL
+                    ↳ block_nonifthen
+                      ↳ nullifiable_nonifthen
+                        ↳ chain
+                          ↳ chainChain
+                            ↳ simpleexpr
+                              ↳ sum
+                                ↳ product
+                                  ↳ product                                        TIMES rvalue
+                                    ↳ rvalue
+                                      ↳ assignment
+                                        ↳ lvalue ASSIGN chain
+                                                        ↳ chainChain
+                                                          ↳ simpleexpr
+                                                            ↳ sum
+                                                              ↳ sum PLUS product •
+
+
+
+State 67
+
+   31 ifthen: IF block THEN chain •
+   42 nullifiable_nonifthen: chain •
+
+    NULLIFY   reduce using rule 31 (ifthen)
+    NULLIFY   [reduce using rule 42 (nullifiable_nonifthen)]
+    ELSE      reduce using rule 31 (ifthen)
+    ELSE      [reduce using rule 42 (nullifiable_nonifthen)]
+    $default  reduce using rule 31 (ifthen)
+
+    reduce/reduce conflict on tokens NULLIFY, ELSE:
+       31 ifthen: IF block THEN chain •
+       42 nullifiable_nonifthen: chain •
+      Example: IF block THEN IF block THEN chain • ELSE chain
+      First reduce derivation
+        conditional
+        ↳ ifthenelse
+          ↳ IF block THEN block_nonifthen                           ELSE chain
+                          ↳ nullifiable_nonifthen
+                            ↳ chain
+                              ↳ chainChain
+                                ↳ simpleexpr
+                                  ↳ sum
+                                    ↳ product
+                                      ↳ rvalue
+                                        ↳ conditional
+                                          ↳ ifthen
+                                            ↳ IF block THEN chain •
+      Example: IF block THEN IF block THEN chain • ELSE chain
+      Second reduce derivation
+        conditional
+        ↳ ifthen
+          ↳ IF block THEN chain
+                          ↳ chainChain
+                            ↳ simpleexpr
+                              ↳ sum
+                                ↳ product
+                                  ↳ rvalue
+                                    ↳ conditional
+                                      ↳ ifthenelse
+                                        ↳ IF block THEN block_nonifthen         ELSE chain
+                                                        ↳ nullifiable_nonifthen
+                                                          ↳ chain •
+
+
+
+State 68
+
+    7 conditional: ifthen •
+   45 nullified_ifthen: ifthen • NULLIFY
+
+    NULLIFY  shift, and go to state 42
+
+    NULLIFY   [reduce using rule 7 (conditional)]
+    $default  reduce using rule 7 (conditional)
+
+    shift/reduce conflict on token NULLIFY:
+        7 conditional: ifthen •
+       45 nullified_ifthen: ifthen • NULLIFY
+      First example: program IF block THEN ifthen • NULLIFY nullifiable_nonifthen ELSE chain EOL
+      Shift derivation
+        program
+        ↳ program block                                                                         EOL
+                  ↳ block_nonifthen
+                    ↳ nullifiable_nonifthen
+                      ↳ ifthenelse
+                        ↳ IF block THEN block_nonifthen                              ELSE chain
+                                        ↳ sequence_ifthen      nullifiable_nonifthen
+                                          ↳ nullified_ifthen
+                                            ↳ ifthen • NULLIFY
+      Second example: program IF block THEN ifthen • NULLIFY EOL $end
+      Reduce derivation
+        $accept
+        ↳ program                                                               $end
+          ↳ program block                                                   EOL
+                    ↳ block_ifthen
+                      ↳ sequence_ifthen
+                        ↳ nullified_ifthen
+                          ↳ ifthen                                  NULLIFY
+                            ↳ IF block THEN chain
+                                            ↳ chainChain
+                                              ↳ simpleexpr
+                                                ↳ sum
+                                                  ↳ product
+                                                    ↳ rvalue
+                                                      ↳ conditional
+                                                        ↳ ifthen •
+
+
+
+State 69
+
+   30 ifthenelse: IF block THEN block_nonifthen • ELSE chain
+
+    ELSE  shift, and go to state 72
+
+
+State 70
+
+   41 block_nonifthen: sequence_ifthen • nullifiable_nonifthen
+   50 sequence_ifthen: sequence_ifthen • nullified_ifthen
+   54 sequence_nonifthen: sequence_ifthen • nullified_nonifthen
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item                   go to state 7
+    conditional            go to state 8
+    lvalue                 go to state 9
+    fakelvalue             go to state 10
+    assignment             go to state 11
+    rvalue                 go to state 12
+    product                go to state 13
+    sum                    go to state 14
+    simpleexpr             go to state 15
+    chainChain             go to state 16
+    chain                  go to state 17
+    ifthenelse             go to state 18
+    ifthen                 go to state 68
+    nullifiable_nonifthen  go to state 48
+    nullified_ifthen       go to state 49
+    nullified_nonifthen    go to state 50
+
+
+State 71
+
+   38 block_nonifthen: sequence_nonifthen •
+   40                | sequence_nonifthen • nullifiable_nonifthen
+   51 sequence_ifthen: sequence_nonifthen • nullified_ifthen
+   53 sequence_nonifthen: sequence_nonifthen • nullified_nonifthen
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    $default  reduce using rule 38 (block_nonifthen)
+
+    item                   go to state 7
+    conditional            go to state 8
+    lvalue                 go to state 9
+    fakelvalue             go to state 10
+    assignment             go to state 11
+    rvalue                 go to state 12
+    product                go to state 13
+    sum                    go to state 14
+    simpleexpr             go to state 15
+    chainChain             go to state 16
+    chain                  go to state 17
+    ifthenelse             go to state 18
+    ifthen                 go to state 68
+    nullifiable_nonifthen  go to state 52
+    nullified_ifthen       go to state 53
+    nullified_nonifthen    go to state 54
+
+
+State 72
+
+   30 ifthenelse: IF block THEN block_nonifthen ELSE • chain
+
+    NUMBER  shift, and go to state 3
+    VAR     shift, and go to state 4
+    OPEN    shift, and go to state 5
+    IF      shift, and go to state 6
+
+    item         go to state 7
+    conditional  go to state 8
+    lvalue       go to state 9
+    fakelvalue   go to state 10
+    assignment   go to state 61
+    rvalue       go to state 12
+    product      go to state 13
+    sum          go to state 14
+    simpleexpr   go to state 15
+    chainChain   go to state 16
+    chain        go to state 73
+    ifthenelse   go to state 40
+    ifthen       go to state 41
+
+
+State 73
+
+   30 ifthenelse: IF block THEN block_nonifthen ELSE chain •
+
+    $default  reduce using rule 30 (ifthenelse)

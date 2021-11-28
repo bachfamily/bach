@@ -27,6 +27,7 @@ Thumbs.db
 ###################
 *.xcworkspace
 **/xcuserdata/*
+**/xcshareddata/*
 *.pbxuser
 *.mode*
 

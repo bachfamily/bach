@@ -1,0 +1,282 @@
+Nonterminals useless in grammar
+
+    sum
+    simpleexpr
+    chain
+    sequence_ifthen
+    sequence_other
+    block_ifthen
+    block_other
+    block
+    nullified_ifthen
+    nullified_other
+    nullifiable_other
+    nullifiable
+    assignment
+    ifthenelse
+    lvalue
+    fakelvalue
+    value
+
+
+Terminals unused in grammar
+
+    VAR
+    NTH
+    PLUS
+    NULLIFY
+    ASSIGN
+    ELSE
+
+
+Rules useless in grammar
+
+   10 value: item
+
+
+State 8 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: %empty
+    2        | program ifthen EOL
+
+    3 item: NUMBER
+    4     | OPEN ifthen CLOSED
+
+    5 rvalue: item
+
+    6 product: rvalue
+    7        | product TIMES ifthen
+
+    8 ifthen: product
+    9       | IF ifthen THEN ifthen
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    NUMBER <i> (258) 3
+    VAR <i> (259)
+    OPEN (260) 4
+    CLOSED (261) 4
+    NTH (262)
+    TIMES (263) 7
+    PLUS (264)
+    NULLIFY (265)
+    EOL (266) 2
+    ASSIGN (267)
+    IF (268) 9
+    THEN (269) 9
+    ELSE (270)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (16)
+        on left: 0
+    program <a> (17)
+        on left: 1 2
+        on right: 0 2
+    item <a> (18)
+        on left: 3 4
+        on right: 5
+    rvalue <a> (19)
+        on left: 5
+        on right: 6
+    product <a> (20)
+        on left: 6 7
+        on right: 7 8
+    ifthen <a> (21)
+        on left: 8 9
+        on right: 2 4 7 9
+
+
+State 0
+
+    0 $accept: • program $end
+
+    $default  reduce using rule 1 (program)
+
+    program  go to state 1
+
+
+State 1
+
+    0 $accept: program • $end
+    2 program: program • ifthen EOL
+
+    $end    shift, and go to state 2
+    NUMBER  shift, and go to state 3
+    OPEN    shift, and go to state 4
+    IF      shift, and go to state 5
+
+    item     go to state 6
+    rvalue   go to state 7
+    product  go to state 8
+    ifthen   go to state 9
+
+
+State 2
+
+    0 $accept: program $end •
+
+    $default  accept
+
+
+State 3
+
+    3 item: NUMBER •
+
+    $default  reduce using rule 3 (item)
+
+
+State 4
+
+    4 item: OPEN • ifthen CLOSED
+
+    NUMBER  shift, and go to state 3
+    OPEN    shift, and go to state 4
+    IF      shift, and go to state 5
+
+    item     go to state 6
+    rvalue   go to state 7
+    product  go to state 8
+    ifthen   go to state 10
+
+
+State 5
+
+    9 ifthen: IF • ifthen THEN ifthen
+
+    NUMBER  shift, and go to state 3
+    OPEN    shift, and go to state 4
+    IF      shift, and go to state 5
+
+    item     go to state 6
+    rvalue   go to state 7
+    product  go to state 8
+    ifthen   go to state 11
+
+
+State 6
+
+    5 rvalue: item •
+
+    $default  reduce using rule 5 (rvalue)
+
+
+State 7
+
+    6 product: rvalue •
+
+    $default  reduce using rule 6 (product)
+
+
+State 8
+
+    7 product: product • TIMES ifthen
+    8 ifthen: product •
+
+    TIMES  shift, and go to state 12
+
+    TIMES     [reduce using rule 8 (ifthen)]
+    $default  reduce using rule 8 (ifthen)
+
+    shift/reduce conflict on token TIMES:
+        8 ifthen: product •
+        7 product: product • TIMES ifthen
+      Example: product TIMES product • TIMES ifthen
+      Shift derivation
+        product
+        ↳ product TIMES ifthen
+                        ↳ product
+                          ↳ product • TIMES ifthen
+      Example: product TIMES product • TIMES ifthen
+      Reduce derivation
+        product
+        ↳ product                     TIMES ifthen
+          ↳ product TIMES ifthen
+                          ↳ product •
+
+
+
+State 9
+
+    2 program: program ifthen • EOL
+
+    EOL  shift, and go to state 13
+
+
+State 10
+
+    4 item: OPEN ifthen • CLOSED
+
+    CLOSED  shift, and go to state 14
+
+
+State 11
+
+    9 ifthen: IF ifthen • THEN ifthen
+
+    THEN  shift, and go to state 15
+
+
+State 12
+
+    7 product: product TIMES • ifthen
+
+    NUMBER  shift, and go to state 3
+    OPEN    shift, and go to state 4
+    IF      shift, and go to state 5
+
+    item     go to state 6
+    rvalue   go to state 7
+    product  go to state 8
+    ifthen   go to state 16
+
+
+State 13
+
+    2 program: program ifthen EOL •
+
+    $default  reduce using rule 2 (program)
+
+
+State 14
+
+    4 item: OPEN ifthen CLOSED •
+
+    $default  reduce using rule 4 (item)
+
+
+State 15
+
+    9 ifthen: IF ifthen THEN • ifthen
+
+    NUMBER  shift, and go to state 3
+    OPEN    shift, and go to state 4
+    IF      shift, and go to state 5
+
+    item     go to state 6
+    rvalue   go to state 7
+    product  go to state 8
+    ifthen   go to state 17
+
+
+State 16
+
+    7 product: product TIMES ifthen •
+
+    $default  reduce using rule 7 (product)
+
+
+State 17
+
+    9 ifthen: IF ifthen THEN ifthen •
+
+    $default  reduce using rule 9 (ifthen)
