@@ -8745,6 +8745,7 @@ long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...
     }
     va_end(ap);
     
+    char temp[2048]; // 2047 will be the longest attribute name for case-insensitive search. Still plenty enough
     for (elem = ll->l_head; elem; elem = nextelem) {
         nextelem = elem->l_next;
         
@@ -8752,7 +8753,17 @@ long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...
             t_max_err ht_err;
             t_llll **item_ll;
             
-            key = gensym(s->s_name + 1);
+            if ((flags & LLLL_PA_CASEINSENSITIVE) && strlen(s->s_name) > 0) {
+                long limit = MIN(strlen(s->s_name)-1, 2047);
+                for (long i = 0; i < limit; i++) {
+                    // beware, only works for UTF8 data, but still, we're not using extended encoding for attribute names
+                    temp[i] = tolower(s->s_name[i+1]);
+                }
+                temp[limit] = 0;
+                key = gensym(temp);
+            } else {
+                key = gensym(s->s_name + 1);
+            }
             ht_err = hashtab_lookup(vars_ht, key, (t_object **) &item);
             
             if (ht_err) {
