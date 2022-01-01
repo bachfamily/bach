@@ -743,6 +743,13 @@ typedef enum _chord_position_in_screen {
 } e_chord_position_in_screen;
 
 
+typedef enum _play_offline_key {
+    k_PLAYOFFLINE_KEY_NONE = 0,
+    k_PLAYOFFLINE_KEY_LEFTCLICK = 1,
+    k_PLAYOFFLINE_KEY_RIGHTCLICK = 2,
+    k_PLAYOFFLINE_KEY_DOUBLECLICK = 3,
+} e_play_offline_key;
+
 
 
 /** Function setting the whole information for the notation object, starting from a ll. 
@@ -4380,8 +4387,16 @@ typedef struct _notation_obj
     char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads
     
     char        notify_when_painted;                ///< Flag telling if we want notifications to be sent whenever the object is repainted
-    char        notify_also_upon_messages;            ///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes 
-    char        dblclick_sends_values;                ///< Flag telling if, when we double click, the selection is sent through the playout (as when we press V)
+    char        notify_also_upon_messages;          ///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes
+    
+    // choosing which command plays offline
+    bool        play_offline_bitfield[128];              ///< Determines what plays offline as a bitfield of ASCII values:
+                                                    ///  if a 1 is on an ascii value, that plays offline. Special values are used
+                                                    ///  for clicks, see k_PLAYOFFLINE_...
+    long        play_offline_via_ac;                ///< Needed to set up the Max attribute
+    t_atom      play_offline_via_av[16];            ///< Needed to set up the Max attribute
+//    char        play_offline_shortcut;              /// one of the k_PLAYOFFLINE_SHORTCUT_
+//    char        dblclick_sends_values;                ///< Flag telling if, when we double click, the selection is sent through the playout (as when we press V)
     
     char        send_rebuild_done_at_startup;                ///< Flag telling if the "done" message is sent at startup when the object content has been reloaded
     char        send_rebuild_done_only_after_paint_method;    ///< Flag telling if the "done" message must be sent NOT after the object content has been reloaded, but after the object has been repainted (and thus a little bit later).
@@ -4922,6 +4937,8 @@ typedef struct _notation_obj
     // backward compatibility stuff
     long                bwcompatible;           ///< Number of the version of bach towards which the object needs to be compatible. E.g. if 7900, this
                                                 ///< will ensure compatibility (whenever possible...) with bach 0.7.9, and so on.
+    
+    char                dont_change_size_now;   ///< Internal flag to overcome an issue of  jbox_set_fontname() changing the size of the object
 } t_notation_obj;
 
 
@@ -10858,6 +10875,11 @@ void initialize_textfield(t_notation_obj *r_ob);
  */
 void start_editing_voicename(t_notation_obj *r_ob, t_object *patcherview, t_voice *voice);
 
+
+// internal
+t_max_err notationobj_set_fontname_safe(t_notation_obj *r_ob, t_symbol *ps);
+t_max_err notationobj_set_fontsize_safe(t_notation_obj *r_ob, double d);
+long notationobj_oksize_check(t_notation_obj *r_ob, t_rect *newrect);
 
 /**    Start typing a text inside a #k_SLOT_TYPE_TEXT slot.
     @ingroup                    textfield
@@ -17631,11 +17653,13 @@ t_max_err notation_obj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, 
 t_max_err notation_obj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notation_obj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notation_obj_set_parts(t_notation_obj *r_ob, long *part);
+t_max_err notation_obj_setattr_playofflinecmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 
 // GETTERS
 
 t_max_err notation_obj_getattr_voicenames(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
 t_max_err notation_obj_getattr_stafflines(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
+t_max_err notation_obj_getattr_playofflinecmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av);
 /** @}*/
 
 

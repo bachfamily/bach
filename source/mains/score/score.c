@@ -10216,6 +10216,8 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
 
     initialize_slots((t_notation_obj *) x, false);
     
+    x->r_ob.width = 526;
+    x->r_ob.height = 120;
     x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
     
     // @arg 0 @name numvoices @optional 1 @type int @digest Number of voices
@@ -12311,6 +12313,12 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     char need_popup = modifiers & eRightButton;
     char need_send_changed_bang = false;
     
+    char must_evaluate_selection = false;
+    char rightclick_to_play_offline = false;
+    if (need_popup && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK]) {
+        rightclick_to_play_offline = true;
+    }
+    
     evnum_incr();
 
     x->r_ob.j_isdragging = false;
@@ -12653,7 +12661,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         t_note *curr_nt = curr_ch->firstnote;
                         while (curr_nt && !clicked_ptr) { // cycle on the notes
                             if (is_in_note_shape((t_notation_obj *)x,curr_nt,this_x,this_y)) {
-                                if (need_popup){
+                                if (need_popup && !rightclick_to_play_offline){
                                     long res = k_CHANGED_DO_NOTHING;
                                     unlock_general_mutex((t_notation_obj *)x);    
 
@@ -12716,7 +12724,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     } else if (res != k_CHANGED_DO_NOTHING)
                                         handle_change((t_notation_obj *)x, res, k_UNDO_OP_UNKNOWN);
                                     return;
-                                } else if ((modifiers == eCommandKey) && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)curr_nt))) { // delete note!
+                                } else if (!rightclick_to_play_offline && (modifiers == eCommandKey) && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)curr_nt))) { // delete note!
                                     if (is_editable((t_notation_obj *)x, curr_nt->parent->num_notes == 1 ? k_CHORD : k_NOTE, k_DELETION)) {
                                         char need_recompute_beamings = (curr_nt->parent->num_notes <= 1 || curr_nt->parent->is_grace_chord);
                                         char there_is_a_tied_note = get_num_tied_to_notes(curr_nt->parent) > 0 || get_num_tied_from_notes(curr_nt->parent) > 0;
@@ -12745,11 +12753,18 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_NOTE);
                                     verbose_post_rhythmic_tree((t_notation_obj *)x, x->firstvoice->firstmeasure, gensym("after"), 1);
                                     return;
-                                } else if ((t_note *)clicked_ptr != curr_nt) {
-                                    clicked_ptr = curr_nt;
-                                    clicked_obj = k_NOTE;
-                                    need_set_selection_dragging_velocity = true;
-                                    break;
+                                } else {
+                                    if ((!rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) ||
+                                        (rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK])) {
+                                        must_evaluate_selection = true;
+                                    }
+                                    
+                                    if ((t_note *)clicked_ptr != curr_nt) {
+                                        clicked_ptr = curr_nt;
+                                        clicked_obj = k_NOTE;
+                                        need_set_selection_dragging_velocity = true;
+                                        break;
+                                    }
                                 }
                             }
                             curr_nt = curr_nt->next;
@@ -13200,7 +13215,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         x->r_ob.selection_type = k_MEASURE;
                     }
                     
-                    if (need_popup && meas){
+                    if (need_popup && meas && !rightclick_to_play_offline){
                         long res = k_CHANGED_DO_NOTHING;
                         unlock_general_mutex((t_notation_obj *)x);    
                         if (barline_clicked) {
@@ -13271,11 +13286,11 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             }
                         }
                         return;
-                    } else if (barline_clicked){
+                    } else if (!rightclick_to_play_offline && barline_clicked){
                         // we add the measure barline to the selection!
                         clicked_ptr = meas->end_barline;
                         clicked_obj = k_MEASURE_END_BARLINE;
-                    } else if (meas && modifiers == eAltKey + eCommandKey && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)meas))){
+                    } else if (!rightclick_to_play_offline && meas && modifiers == eAltKey + eCommandKey && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)meas))){
                         // we pop the tempo out
                         t_chord *nearest_chord = find_ux_nearest_chord_in_measure((t_notation_obj *) x, meas, ux);
                         if (nearest_chord && is_editable((t_notation_obj *)x, k_TEMPO, k_CREATION)) {
@@ -13293,7 +13308,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_POP_OUT_TEMPO); 
                         x->r_ob.item_changed_at_mousedown = 1;
                         return;
-                    } else if (modifiers == eCommandKey + eControlKey || modifiers == eCommandKey + eControlKey + eShiftKey){
+                    } else if (!rightclick_to_play_offline && modifiers == eCommandKey + eControlKey || modifiers == eCommandKey + eControlKey + eShiftKey){
                         // we add an empty measure after this measure
                         if (is_editable((t_notation_obj *)x, k_MEASURE, k_CREATION)) {
                             char direction = modifiers & eShiftKey ? -1 : 1;
@@ -13310,7 +13325,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             unlock_general_mutex((t_notation_obj *)x);    
                         }
                         return;
-                    } else if (modifiers == eCommandKey || modifiers == eCommandKey + eShiftKey){
+                    } else if (!rightclick_to_play_offline && modifiers == eCommandKey || modifiers == eCommandKey + eShiftKey){
                         // we add an empty measure in all voices measure
                         if (is_editable((t_notation_obj *)x, k_MEASURE, k_CREATION)) {
                             t_measure *added_meas[CONST_MAX_VOICES];
@@ -13333,7 +13348,13 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         clicked_obj = k_MEASURE;
 //                        if (!instaff)
 //                            preselect_measure_in_all_voices(x, meas, true);
-                        need_set_selection_dragging_velocity = true; 
+                        need_set_selection_dragging_velocity = true;
+
+                        if ((!rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) ||
+                            (rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK])) {
+                            must_evaluate_selection = true;
+                        }
+
                     }
                 }
             }
@@ -13625,6 +13646,12 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     
     if (need_set_selection_dragging_velocity) 
         set_selection_dragging_velocity((t_notation_obj *) x);
+
+    if (must_evaluate_selection) {
+        evaluate_selection(x, 0, true);
+        return;
+    }
+    
 }
 
 // dirty!
@@ -14786,7 +14813,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
         }
     }
 
-    if (x->r_ob.dblclick_sends_values) {
+    if (x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK]) {
         unlock_general_mutex((t_notation_obj *)x);    
         evaluate_selection(x, 0, true);
         return;
@@ -16629,6 +16656,12 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         return 1;
     }
 
+    // check evaluation
+    if (!(modifiers & eCommandKey) && keycode >= 32 && keycode <= 127 && x->r_ob.play_offline_bitfield[keycode]) {
+        evaluate_selection(x, modifiers, true);
+        return 1;
+    }
+
     // mixed or notes/chord selection
     switch (keycode) {
         case JKEY_UPARROW: // shift note up/down
@@ -16801,9 +16834,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             return 0;
             break;
         case 'V': case 'v': // letter V or v
-            if (!(modifiers & eCommandKey))
-                evaluate_selection(x, modifiers, true);
-            else if (modifiers & eCommandKey && clipboard.gathered_syntax && (clipboard.object == k_NOTATION_OBJECT_SCORE || clipboard.object == k_NOTATION_OBJECT_ANY) && clipboard.gathered_syntax->l_size > 0 && x->r_ob.allow_copy_paste) {
+            if (modifiers & eCommandKey && clipboard.gathered_syntax && (clipboard.object == k_NOTATION_OBJECT_SCORE || clipboard.object == k_NOTATION_OBJECT_ANY) && clipboard.gathered_syntax->l_size > 0 && x->r_ob.allow_copy_paste) {
                 // paste!
                 if (clipboard.type == k_SLOT) {
                     notation_obj_paste_slot((t_notation_obj *) x, &clipboard, (x->r_ob.active_slot_num < 0 || clipboard.gathered_syntax->l_size > 1) ? -1 : x->r_ob.active_slot_num);
@@ -16958,7 +16989,7 @@ void evaluate_selection(t_score *x, long modifiers, char alsosortselectionbyonse
     if ((modifiers & eShiftKey) && (modifiers & eAltKey)) { // send all values
         send_all_values_as_llll(x, k_HEADER_ALL, NULL); // dump all
     } else if (modifiers & eShiftKey) { // send this chord values
-        if ((x->r_ob.num_selecteditems == 1) && (x->r_ob.firstselecteditem->type == k_NOTE)) 
+        if ((x->r_ob.num_selecteditems == 1) && (x->r_ob.firstselecteditem->type == k_NOTE))
             send_chord_as_llll((t_notation_obj *) x, ((t_note *)x->r_ob.firstselecteditem)->parent, 7, k_CONSIDER_FOR_DUMPING, -1, forced_routers);
         else if ((x->r_ob.num_selecteditems == 1) && (x->r_ob.firstselecteditem->type == k_CHORD))
             send_chord_as_llll((t_notation_obj *) x, (t_chord *)x->r_ob.firstselecteditem, 7, k_CONSIDER_FOR_DUMPING, -1, forced_routers);

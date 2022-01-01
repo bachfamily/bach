@@ -10860,6 +10860,7 @@ t_atom_long roll_acceptsdrag_unlocked(t_roll *x, t_object *drag, t_object *view)
 
 long roll_oksize(t_roll *x, t_rect *newrect)
 {
+    notationobj_oksize_check((t_notation_obj *)x, newrect);
 //    post("OkSize: size %.2f, %.2f, it's me? %d", newrect->width, newrect->height, x->r_ob.itsme);
     if (!x->r_ob.itsme) {
         if (x->r_ob.link_vzoom_to_height)
@@ -10929,7 +10930,10 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
                             (notation_obj_notation_item_fn) force_notation_item_inscreen, (notation_obj_undo_redo_fn)roll_new_undo_redo,  (bach_paint_ext_fn)roll_paint_ext);
 
     roll_bach_attribute_declares(x);
-    
+
+    x->r_ob.width = 526;
+    x->r_ob.height = 120;
+
     x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
 
     x->r_ob.show_page_numbers = 1;
@@ -13875,7 +13879,13 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     char need_set_selection_dragging_velocity = false; 
     char need_popup = modifiers & eRightButton;
     char need_send_changed_bang = false;
-        
+
+    char must_evaluate_selection = false;
+    char rightclick_to_play_offline = false;
+    if (need_popup && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK]) {
+        rightclick_to_play_offline = true;
+    }
+    
     evnum_incr();
 
     llll_format_modifiers(&modifiers, NULL);
@@ -14179,7 +14189,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     
                     if ((!clicked_ptr || is_note_generally_selected) && is_in_note_shape((t_notation_obj *)x,curr_nt,this_x,this_y)) {
                         
-                        if (need_popup){
+                        if (need_popup && !rightclick_to_play_offline){
                             long res = k_CHANGED_DO_NOTHING;
                             unlock_general_mutex((t_notation_obj *)x);    
 
@@ -14243,7 +14253,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                             } else if (res != k_CHANGED_DO_NOTHING)
                                 handle_change((t_notation_obj *)x, res, k_UNDO_OP_UNKNOWN);
                             return;
-                        } else if ((modifiers == eCommandKey) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) { // delete note!
+                            
+                        } else if (!rightclick_to_play_offline && (modifiers == eCommandKey) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) { // delete note!
                             if (is_editable((t_notation_obj *)x, curr_nt->parent->num_notes == 1 ? k_CHORD : k_NOTE, k_DELETION)) {
                                 t_rollvoice *voice = curr_nt->parent->voiceparent;
                                 clicked_ptr = NULL;
@@ -14258,14 +14269,23 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                             handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_NOTE);
                             
                             return;
-                        } else if ((t_note *)clicked_ptr != curr_nt) {
-                            clicked_ptr = curr_nt;
-                            clicked_obj = k_NOTE;
                             
-                            clicked_is_selected = is_note_generally_selected;
-                            clicked_onset = curr_ch->onset;
-                            need_set_selection_dragging_velocity = true; 
-                            break;
+                        } else {
+                            if ((!rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) ||
+                                (rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK])) {
+                                must_evaluate_selection = true;
+                            }
+
+                            if ((t_note *)clicked_ptr != curr_nt) {
+                                clicked_ptr = curr_nt;
+                                clicked_obj = k_NOTE;
+                                
+                                clicked_is_selected = is_note_generally_selected;
+                                clicked_onset = curr_ch->onset;
+                                need_set_selection_dragging_velocity = true;
+                                break;
+                            }
+
                         }
                     }
                 } 
@@ -14408,7 +14428,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     if (is_in_durationline_shape((t_notation_obj *)x,curr_nt,this_x,this_y)) {
                         
                         
-                        if (need_popup) {
+                        if (need_popup && !rightclick_to_play_offline) {
                             // popup menu
                             long res = k_CHANGED_DO_NOTHING;
                             unlock_general_mutex((t_notation_obj *)x);
@@ -14421,7 +14441,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                             } else if (res != k_CHANGED_DO_NOTHING)
                                 handle_change((t_notation_obj *)x, res, k_UNDO_OP_UNKNOWN);
                             return;
-                        } else if ((modifiers == eAltKey) && (x->r_ob.allow_glissandi) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
+                        } else if (!rightclick_to_play_offline && (modifiers == eAltKey) && (x->r_ob.allow_glissandi) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
                             // add a breakpoint!
                             if (is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_CREATION)) {
                                 double start_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset, NULL);
@@ -14442,7 +14462,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 //                            handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_PITCH_BREAKPOINT);
 //                            lock_general_mutex((t_notation_obj *)x);    
                             break;
-                        } else if (modifiers == eShiftKey + eControlKey && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
+                        } else if (!rightclick_to_play_offline && modifiers == eShiftKey + eControlKey && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
                             // cut note
                             clicked_ptr = roll_slice_note(x, curr_nt, xposition_to_onset((t_notation_obj *) x, this_x, 0));
                             clicked_obj = k_NOTE;
@@ -14450,7 +14470,13 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                         } else {
                             clicked_ptr = curr_nt->durationline;
                             clicked_obj = k_DURATION_LINE; // was: k_NOTE
-                            need_set_selection_dragging_velocity = true; 
+                            need_set_selection_dragging_velocity = true;
+                            
+                            if ((!rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) ||
+                                (rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK])) {
+                                must_evaluate_selection = true;
+                            }
+
                             break;
                         }
                     }
@@ -14496,6 +14522,12 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 
                     clicked_ptr = marker;
                     clicked_obj = k_MARKER;
+                    
+                    if ((need_popup && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK]) ||
+                        (!need_popup && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK])) {
+                        evaluate_selection(x, 0, true);
+                    }
+
                     break;
                 }
             }
@@ -14789,6 +14821,11 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_SEND_BANG, k_UNDO_OP_UNKNOWN);
     else    
         handle_change_selection((t_notation_obj *)x);
+
+    if (must_evaluate_selection) {
+        evaluate_selection(x, 0, true);
+        return;
+    }
 
 }
 
@@ -15615,7 +15652,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
         }
     }
             
-    if (x->r_ob.dblclick_sends_values) {
+    if (x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK]) {
         unlock_general_mutex((t_notation_obj *)x);    
         evaluate_selection(x, 0, true);
     } else {
@@ -16783,6 +16820,12 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
         return 1;
     }
     
+    // check evaluation
+    if (!(modifiers & eCommandKey) && keycode >= 32 && keycode <= 127 && x->r_ob.play_offline_bitfield[keycode]) {
+        evaluate_selection(x, modifiers, true);
+        return 1;
+    }
+    
     // mixed or notes/chord selection
     switch (keycode) {
         case JKEY_UPARROW:
@@ -17069,9 +17112,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
             break;
 
         case 'v': case 'V': // letter V or v
-            if (!(modifiers & eCommandKey))
-                evaluate_selection(x, modifiers, true);
-            else if (modifiers & eCommandKey && x->r_ob.allow_copy_paste && (clipboard.object == k_NOTATION_OBJECT_ROLL || clipboard.object == k_NOTATION_OBJECT_ANY) && clipboard.gathered_syntax && clipboard.gathered_syntax->l_size > 0) {
+            if (modifiers & eCommandKey && x->r_ob.allow_copy_paste && (clipboard.object == k_NOTATION_OBJECT_ROLL || clipboard.object == k_NOTATION_OBJECT_ANY) && clipboard.gathered_syntax && clipboard.gathered_syntax->l_size > 0) {
                 // paste!
                 if (clipboard.type == k_SLOT) {
                     notation_obj_paste_slot((t_notation_obj *) x, &clipboard, (x->r_ob.active_slot_num < 0 || clipboard.gathered_syntax->l_size > 1) ? -1 : x->r_ob.active_slot_num);

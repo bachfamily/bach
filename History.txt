@@ -14,6 +14,7 @@ TO BE CATEGORIZED:
 - bach.roll, bach.score:
 	New "setdurationline" message setting the duration line from a list of pitch breakpoints
 	Now "setcursor" then "play" will work even if the cursor is not shown.
+	
 
 
 v0.8.2b
@@ -33,6 +34,14 @@ v0.8.2b
 - bach.expr:
     evaluation precedence of the ** operator is now right-to-left, as per the documentation (2**3**2 now returns 512, previously 64)
     evaluation precedence of the ! and ~ operators is now higher than exponentiation
+
+- bach.roll, bach.score:
+    Now Cmd+Alt+V DOES NOT OUTPUT all the parameters any longer
+	Also, Alt+V is used to force the output of chord information instead of Shift+V.
+    The "dblclicksendsvalues" attribute has been eliminated and replaced by the much more general "playofflinecmd" attribute, allowing
+	you to set one or more letters or mouse keys to send offline values.
+		Backward compatibility should be preserved, meaning that the new attribute should already take care of the old value, 
+		but check manually if possible
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
@@ -97,6 +106,7 @@ multiple objects: help files and doc updated
     Fixed memory leak related to the text editor window
 
 - bach.roll, bach.score, bach.slot:
+    Fixed bug causing resizing of objects when double clicking in a text slot
     The "addslot" message is now deprecated in favour of the identical "setslot" message. 
         The "addslot" message is still kept for backward compatibility, but you are encouraged to use "setslot" from now on.
     fixed potential memory leak when using transferslots

@@ -5414,6 +5414,7 @@ void reset_all_slurs_position(t_score *x)
 
 long score_oksize(t_score *x, t_rect *newrect)
 {
+    notationobj_oksize_check((t_notation_obj *)x, newrect);
     if (!x->r_ob.itsme) {
         if (x->r_ob.link_vzoom_to_height)
             notationobj_set_vzoom_depending_on_height((t_notation_obj *)x, newrect->height);
