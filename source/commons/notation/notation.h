@@ -2515,6 +2515,10 @@ typedef struct _group
     struct _notation_item        *firstelem;        ///< Pointer to the first element of the group
     struct _notation_item        *lastelem;        ///< Pointer to the last element of the group
     long                        num_elements;    ///< Number of elements in the group
+
+    // for beamings, calculated and used at paint time
+    char                        imposed_direction;      ///< Direction of beaming (if any)
+    double                      beam_y;                ///< Beam y
     
     struct _group                *prev;        ///< Pointer to the previous group
     struct _group                *next;        ///< Pointer to the next group
@@ -2731,7 +2735,6 @@ typedef struct _chord
     double            dynamics_portion_of_right_uextension;    ///< Part of the right unscaled extension merely due to the fact that there are some dynamics displayed below the chord.
     
     double            stem_x;                                ///< x pixel of the chord stem
-    double            stem_top_y;                            ///< y pixel of the topmost stem point (used for handling beamings)
     double            firstnote_y_real;                    ///< y pixel of the notehead center of the bottommost note
     double            lastnote_y_real;                    ///< y pixel of the notehead center of the topmost note
     double            topmost_y;                            ///< y pixel of the topmost point in the chord similarly
@@ -6644,6 +6647,8 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
  */
 t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
+t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
+
 
 /**    Obtain the color of a chord flag
     @ingroup                        notation_colors
@@ -10134,7 +10139,7 @@ void paint_keysigaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_a
     @remark                    Since the beaming has a certain width, the y1 and y2 refer to the topmost (if direction is 1, upwards) or bottommost 
                             (if direction is -1, downwards) vertical position of the beaming.
  */ 
-void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, double direction);
+void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, char direction);
 
 
 /**    Paint a marker line and write the marker name
@@ -12752,9 +12757,11 @@ double chord_get_alignment_ux(t_notation_obj *r_ob, t_chord *chord);
  */
 double chord_get_alignment_x(t_notation_obj *r_ob, t_chord *chord);
 
+
 // TBD
-double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note);
-double get_tail_alignment_ux(t_notation_obj *r_ob, t_note *note);
+double chord_get_stem_x(t_notation_obj *r_ob, t_chord *chord);
+double tail_get_alignment_x(t_notation_obj *r_ob, t_note *note);
+double tail_get_alignment_ux(t_notation_obj *r_ob, t_note *note);
 
 
 /** Obtain the longest note of a chord
@@ -18095,6 +18102,10 @@ void remove_element_from_group(t_notation_obj *r_ob, t_group *group, t_notation_
     @return        1 if all the selected elements belong to the same group, 0 otherwise
  */
 char is_all_selection_in_one_group(t_notation_obj *r_ob, t_group **whichgroup);
+
+char is_all_group_selected(t_notation_obj *r_ob, t_group *gr); // TBD
+t_notation_item *group_get_leftmost_item(t_notation_obj *r_ob, t_group *gr);
+t_notation_item *group_get_rightmost_item(t_notation_obj *r_ob, t_group *gr);
 
 
 

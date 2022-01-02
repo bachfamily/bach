@@ -46,7 +46,8 @@ v0.8.2b
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
         New "importdivisions" message attribute, overriding "markdivisions"
-
+    New group display mode (@showgroups) as BEAMINGS ---> this has become the default
+	If you wanted to keep the old modes as default, change the attribute explicitly  
 
 - bach.score:
     Default behavior of setcursor in presence of grace notes has changed: it only accounts for grace notes in the first measure.

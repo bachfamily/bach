@@ -138,7 +138,7 @@ void write_text_standard_account_for_vinset_singleline(t_notation_obj *r_ob, t_j
     write_text_standard_singleline(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, r_ob->width - x1 + 30 * r_ob->zoom_y, r_ob->height - y1 + 30 * r_ob->zoom_y);
 }
 
-void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, double direction)
+void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, char direction)
 {
     //actually, it is a quadrilater
     if (direction == -1){
@@ -181,7 +181,7 @@ void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g
     write_text_standard(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, (r_ob->inner_width + r_ob->j_inset_x) - x1, r_ob->inner_height - y1);
 }
 
-void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, double direction)
+void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, char direction)
 {
     Path p;
     if (direction == -1){
@@ -6135,7 +6135,7 @@ void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color
 
 void change_color_depending_on_group(t_notation_obj *r_ob, t_jrgba *color, void* element, char type)
 {
-    if (r_ob->show_groups >= 2) {
+    if (r_ob->show_groups >= 2 && r_ob->show_groups <= 3) {
         t_chord *ch = NULL;
         if (type == k_CHORD)
             ch = (t_chord *) element;
@@ -6339,6 +6339,19 @@ t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     return stemcolor;
 }
 
+t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord)
+{
+    // handling selection
+    char is_chord_selected = (notation_item_is_selected(r_ob, (t_notation_item *)chord) ^ notation_item_is_preselected(r_ob, (t_notation_item *)chord));
+    char is_chord_linear_edited = (r_ob->notation_cursor.voice && r_ob->notation_cursor.chord == chord);
+    
+    char is_chord_locked = notation_item_is_globally_locked(r_ob, (t_notation_item *)chord);
+    char is_chord_muted = notation_item_is_globally_muted(r_ob, (t_notation_item *)chord);
+    char is_chord_solo = notation_item_is_globally_solo(r_ob, (t_notation_item *)chord);
+    char is_chord_played = r_ob->highlight_played_notes ? chord->played : false;
+    
+    return stem_get_color(r_ob, chord, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+}
 
 
 t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
@@ -9390,6 +9403,15 @@ void clear_measure_beams(t_notation_obj *r_ob, t_measure *meas){
     }
 }
 
+char is_all_group_selected(t_notation_obj *r_ob, t_group *gr)
+{
+    for (t_notation_item *it = gr->firstelem; it; it = it->next_selected) {
+        if (!notation_item_is_globally_selected(r_ob, it))
+            return false;
+    }
+    return true;
+}
+
 char is_all_selection_in_one_group(t_notation_obj *r_ob, t_group **whichgroup){ 
     t_notation_item *item;
     t_group *gr = NULL;
@@ -9506,6 +9528,34 @@ t_group *build_group(){
     outgroup->ID = 0;
     outgroup->firstelem = outgroup->lastelem = NULL;
     return outgroup;
+}
+
+t_notation_item *group_get_leftmost_item(t_notation_obj *r_ob, t_group *gr)
+{
+    double leftmost_onset = 0;
+    t_notation_item *leftmost_item = NULL;
+    for (t_notation_item *it = gr->firstelem; it; it = it->next_group_item) {
+        double onset = notation_item_get_onset_ms(r_ob, it);
+        if (!leftmost_item || onset < leftmost_onset) {
+            leftmost_onset = onset;
+            leftmost_item = it;
+        }
+    }
+    return leftmost_item;
+}
+
+t_notation_item *group_get_rightmost_item(t_notation_obj *r_ob, t_group *gr)
+{
+    double rightmost_onset = 0;
+    t_notation_item *rightmost_item = NULL;
+    for (t_notation_item *it = gr->firstelem; it; it = it->next_group_item) {
+        double onset = notation_item_get_onset_ms(r_ob, it);
+        if (!rightmost_item || onset > rightmost_onset) {
+            rightmost_onset = onset;
+            rightmost_item = it;
+        }
+    }
+    return rightmost_item;
 }
 
 
@@ -20802,12 +20852,16 @@ double chord_get_alignment_ux(t_notation_obj *r_ob, t_chord *chord)
 }
 
 
+double chord_get_stem_x(t_notation_obj *r_ob, t_chord *chord)
+{
+    return get_stem_x_from_alignment_point_x(r_ob, chord, chord_get_alignment_x(r_ob, chord));
+}
 
-double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note)
+double tail_get_alignment_x(t_notation_obj *r_ob, t_note *note)
 {
     switch (r_ob->obj_type) {
         case k_NOTATION_OBJECT_SCORE:
-            return unscaled_xposition_to_xposition(r_ob, get_tail_alignment_ux(r_ob, note));
+            return unscaled_xposition_to_xposition(r_ob, tail_get_alignment_ux(r_ob, note));
             break;
             
         case k_NOTATION_OBJECT_ROLL:
@@ -20829,7 +20883,7 @@ double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note)
 }
 
 
-double get_tail_alignment_ux(t_notation_obj *r_ob, t_note *note)
+double tail_get_alignment_ux(t_notation_obj *r_ob, t_note *note)
 {
     switch (r_ob->obj_type) {
         case k_NOTATION_OBJECT_SCORE:
@@ -20855,7 +20909,7 @@ double get_tail_alignment_ux(t_notation_obj *r_ob, t_note *note)
             break;
             
         case k_NOTATION_OBJECT_ROLL:
-            return xposition_to_unscaled_xposition(r_ob, get_tail_alignment_x(r_ob, note));
+            return xposition_to_unscaled_xposition(r_ob, tail_get_alignment_x(r_ob, note));
             break;
             
         default:
@@ -25958,7 +26012,8 @@ double get_stem_x_from_alignment_point_x(t_notation_obj *r_ob, t_chord *chord, d
 {
     double stem_x = 0;
 
-    if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER || r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END) {
+    if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER ||
+        r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END) {
         t_note *nt = get_principal_note(r_ob, chord);
         double note_width = get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;
         
@@ -44916,7 +44971,7 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
         for (curr_ch = chord_get_first(r_ob, voice); curr_ch; curr_ch = chord_get_next(curr_ch)){
             double align_x = chord_get_alignment_x(r_ob, curr_ch);
             t_note *longestnote = chord_get_longest_note(r_ob, curr_ch);
-            double tail_x = longestnote ? get_tail_alignment_x(r_ob, longestnote) : align_x;
+            double tail_x = longestnote ? tail_get_alignment_x(r_ob, longestnote) : align_x;
             
             if (align_x > this_x + 200) // safe threshold to break
                 break;

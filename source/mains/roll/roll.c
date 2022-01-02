@@ -11011,6 +11011,9 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
 
     // clock
     x->r_ob.m_clock = clock_new_debug((t_object *)x, (method) roll_task);
+    x->r_ob.step_y = CONST_STEP_UY * x->r_ob.zoom_y;
+    calculate_voice_offsets((t_notation_obj *) x);
+    compute_middleC_position_for_all_voices((t_notation_obj *) x);
 
     // retrieving vlues
     x->r_ob.add_staff = 0;
@@ -11421,7 +11424,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
         *first_painted_chord = false;
     }
     
-    // finding stem position
+    // finding alignment position
     if (x->r_ob.view == k_VIEW_SCROLL) {
         chord_alignment_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset, NULL);
     } else if (x->r_ob.view == k_VIEW_PAPYRUS) {
@@ -11467,9 +11470,15 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     stemcolor = stem_get_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     if (x->r_ob.show_stems > 0) {
         if (curr_ch->direction == 1) { // stem upwards
-            paint_line(g, stemcolor, stem_x, first_note_y_real, stem_x, last_note_y_real - octave_stem_length, CONST_STEM_WIDTH);
+            double tip_y = last_note_y_real - octave_stem_length;
+            if (curr_ch->r_it.group && x->r_ob.show_groups == 4)
+                tip_y = curr_ch->r_it.group->beam_y;
+            paint_line(g, stemcolor, stem_x, first_note_y_real, stem_x, tip_y, CONST_STEM_WIDTH);
         } else if (curr_ch->direction == -1) { // stem downwards
-            paint_line(g, stemcolor, stem_x, last_note_y_real, stem_x, first_note_y_real + octave_stem_length, CONST_STEM_WIDTH);
+            double tip_y = first_note_y_real + octave_stem_length;
+            if (curr_ch->r_it.group && x->r_ob.show_groups == 4)
+                tip_y = curr_ch->r_it.group->beam_y;
+            paint_line(g, stemcolor, stem_x, last_note_y_real, stem_x, tip_y, CONST_STEM_WIDTH);
         }
     }
     curr_ch->stem_x = stem_x;
@@ -11667,21 +11676,23 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
         paint_chord_label_families((t_notation_obj *)x, view, g, curr_ch, label_family_chord_shape_radius);
     
     // group lines?
-    if ((x->r_ob.show_groups % 2) && curr_ch->r_it.group){
-        t_notation_item *tmp;
-        if (x->r_ob.show_stems == 0 && curr_ch->firstnote != curr_ch->lastnote) {
-            t_note *nt;
-            for (nt = curr_ch->firstnote; nt && nt->next; nt = nt->next)
-                paint_dashed_line(g, stemcolor, stem_x + nt->notecenter_stem_delta_ux * x->r_ob.zoom_y, staff_top_y + nt->center_stafftop_uy * x->r_ob.zoom_y,
-                                  stem_x + nt->next->notecenter_stem_delta_ux * x->r_ob.zoom_y, staff_top_y + nt->next->center_stafftop_uy * x->r_ob.zoom_y, 0.5, 2);
-        }
-        for (tmp = curr_ch->r_it.group->firstelem; tmp; tmp = tmp->next_group_item){
-            if (tmp->type == k_CHORD && (t_chord *)tmp != curr_ch){
-                t_chord *tmpch = (t_chord *) tmp;
-                if (tmpch->onset <= curr_ch->onset) {
-                    double tmp_staff_top_y = (tmpch->voiceparent == curr_ch->voiceparent ? staff_top_y : get_staff_top_y((t_notation_obj *) x, (t_voice *)tmpch->voiceparent, false));
-                    paint_dashed_line(g, stemcolor, onset_to_xposition_roll((t_notation_obj *) x, tmpch->onset, NULL), tmp_staff_top_y + (x->r_ob.show_stems > 0 ? tmpch->stemtip_stafftop_uy : (tmpch->direction == -1 ? tmpch->bottommostnote_stafftop_uy : tmpch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y,
-                                      stem_x, staff_top_y + (x->r_ob.show_stems > 0 ? curr_ch->stemtip_stafftop_uy : (curr_ch->direction == -1 ? curr_ch->bottommostnote_stafftop_uy : curr_ch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y, 0.5, 2);
+    if (curr_ch->r_it.group) {
+        if (x->r_ob.show_groups == 1 || x->r_ob.show_groups == 3) {
+            t_notation_item *tmp;
+            if (x->r_ob.show_stems == 0 && curr_ch->firstnote != curr_ch->lastnote) {
+                t_note *nt;
+                for (nt = curr_ch->firstnote; nt && nt->next; nt = nt->next)
+                    paint_dashed_line(g, stemcolor, stem_x + nt->notecenter_stem_delta_ux * x->r_ob.zoom_y, staff_top_y + nt->center_stafftop_uy * x->r_ob.zoom_y,
+                                      stem_x + nt->next->notecenter_stem_delta_ux * x->r_ob.zoom_y, staff_top_y + nt->next->center_stafftop_uy * x->r_ob.zoom_y, 0.5, 2);
+            }
+            for (tmp = curr_ch->r_it.group->firstelem; tmp; tmp = tmp->next_group_item){
+                if (tmp->type == k_CHORD && (t_chord *)tmp != curr_ch){
+                    t_chord *tmpch = (t_chord *) tmp;
+                    if (tmpch->onset <= curr_ch->onset) {
+                        double tmp_staff_top_y = (tmpch->voiceparent == curr_ch->voiceparent ? staff_top_y : get_staff_top_y((t_notation_obj *) x, (t_voice *)tmpch->voiceparent, false));
+                        paint_dashed_line(g, stemcolor, chord_get_stem_x((t_notation_obj *) x, tmpch), tmp_staff_top_y + (x->r_ob.show_stems > 0 ? tmpch->stemtip_stafftop_uy : (tmpch->direction == -1 ? tmpch->bottommostnote_stafftop_uy : tmpch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y,
+                                          stem_x, staff_top_y + (x->r_ob.show_stems > 0 ? curr_ch->stemtip_stafftop_uy : (curr_ch->direction == -1 ? curr_ch->bottommostnote_stafftop_uy : curr_ch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y, 0.5, 2);
+                    }
                 }
             }
         }
@@ -11795,6 +11806,86 @@ void roll_paint_last_dashed_lines(t_roll *x, t_jgraphics *g, t_jfont *jf_lyrics,
     }
 }
 
+
+void roll_preprocess_group_beamings(t_roll *x)
+{
+    // preprocess groups to set up direction and position of the beaming
+    if (x->r_ob.show_groups == 4) {
+        for (t_group *gr = x->r_ob.firstgroup; gr; gr = gr->next) {
+            // decide beaming direction
+            char beaming_direction = 0;
+            t_chord *firstchord = (t_chord *)gr->firstelem;
+            t_voice *voice = (t_voice *)firstchord->voiceparent;
+            bool all_same_voice = true;
+            double average_scaleposition = 0;
+            double highest_y = x->r_ob.height;
+            double lowest_y = 0;
+            long countnotes = 0;
+            
+            for (t_notation_item *it = gr->firstelem; it; it = it->next_group_item) {
+                t_chord *ch = (t_chord *)it;
+                if ((t_voice *)ch->voiceparent != voice) {
+                    all_same_voice = false;
+                }
+                for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
+                    double this_y = mc_to_yposition_in_scale((t_notation_obj *)x, nt->midicents, (t_voice *)ch->voiceparent);
+                    if (this_y < highest_y)
+                        highest_y = this_y;
+                    if (this_y > lowest_y)
+                        lowest_y = this_y;
+                    average_scaleposition += midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_screen_midicents(nt));
+                    countnotes ++;
+                }
+            }
+            
+            if (!all_same_voice || countnotes == 0) {
+                beaming_direction = 1;
+            } else {
+                // same voice
+                average_scaleposition /= countnotes;
+                
+                char in_voiceensemble = (voiceensemble_get_numparts((t_notation_obj *)x, voice) > 1);
+                if (in_voiceensemble)
+                    beaming_direction = voice->part_index % 2 == 0 ? 1 : -1;
+                else {
+                    beaming_direction = (average_scaleposition >= get_middle_scaleposition(get_voice_clef((t_notation_obj *)x, voice)) ? -1 : 1);
+                }
+            }
+            gr->imposed_direction = beaming_direction;
+            gr->beam_y = beaming_direction > 0 ? highest_y - 7 * x->r_ob.step_y : lowest_y + 7 * x->r_ob.step_y;
+            
+            for (t_notation_item *it = gr->firstelem; it; it = it->next_group_item) {
+                t_chord *ch = (t_chord *)it;
+                if (ch->imposed_direction != beaming_direction) {
+                    ch->imposed_direction = beaming_direction;
+                    ch->need_recompute_parameters = true;
+                }
+            }
+        }
+    }
+}
+
+void roll_paint_groups_as_beams(t_roll *x, t_jgraphics *g)
+{
+    // paint groups as beams if needed
+    if (x->r_ob.show_groups == 4) {
+        for (t_group *gr = x->r_ob.firstgroup; gr; gr = gr->next) {
+            t_notation_item *firstitem = group_get_leftmost_item((t_notation_obj *)x, gr);
+            t_notation_item *lastitem = group_get_rightmost_item((t_notation_obj *)x, gr);
+            if (firstitem && lastitem && firstitem->type == k_CHORD && lastitem->type == k_CHORD) {
+                t_chord *firstchord = (t_chord *)firstitem;
+                t_chord *lastchord = (t_chord *)lastitem;
+                if (firstchord && firstchord->firstnote && lastchord && lastchord->firstnote) {
+                    double firstchordstemx = chord_get_stem_x((t_notation_obj *)x, firstchord);
+                    double lastchordstemx = chord_get_stem_x((t_notation_obj *)x, lastchord);
+                    t_jrgba beamcolor = chord_get_stem_color((t_notation_obj *) x, firstchord);
+                    paint_beam_line((t_notation_obj *)x, g, beamcolor, firstchordstemx, gr->beam_y, lastchordstemx, gr->beam_y, CONST_BEAMING_UWIDTH * x->r_ob.zoom_y, 1);
+                }
+            }
+        }
+    }
+}
+
 void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jgraphics *force_graphic_context)
 {
     t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer1"), rect.width, rect.height) : force_graphic_context;
@@ -11825,6 +11916,10 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 
         
         lock_general_mutex((t_notation_obj *)x);
+        
+        roll_preprocess_group_beamings(x);
+        
+        // cycle on voices
         for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // cycle on the voices
             t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
             t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
@@ -11903,6 +11998,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 
             roll_paint_linear_editing_stuff(x, g, voice, staff_top_y, staff_bottom_y);
 
+            roll_paint_groups_as_beams(x, g);
             
             // TODO: repaint selection!
             // the selction must be in the foreground
@@ -11999,7 +12095,8 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
             if (!jf_dynamics_nozoom) jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
             if (!jf_dynamics_roman_nozoom) jf_dynamics_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
 
-            
+            roll_preprocess_group_beamings(x);
+
             for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // cycle on the voices
                 t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
                 t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
@@ -12176,6 +12273,8 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 roll_paint_last_dashed_lines(x, g, jf_lyrics, staff_bottom_y, lyrics_dashed_going_on[vn], left_dashed_x[vn]);
                 
                 roll_paint_linear_editing_stuff(x, g, voice, staff_top_y, staff_bottom_y);
+                
+                roll_paint_groups_as_beams(x, g);
                 
                 // TODO: repaint selection!
                 // the selction must be in the foreground
@@ -14726,6 +14825,19 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             // this case will be handled at the mouseup: if we won't drag, we'll delete the element from the selection
             if (!(modifiers & eShiftKey))
                 x->r_ob.j_clicked_obj_has_been_selected = true;
+            
+            // handle the second click on a group item
+            if (((t_notation_item *)clicked_ptr)->group) {
+                t_group *whichgroup = NULL;
+                if (is_all_selection_in_one_group((t_notation_obj *)x, &whichgroup)) {
+                    if (whichgroup == ((t_notation_item *)clicked_ptr)->group) {
+                        clear_selection((t_notation_obj *) x);
+                        notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)clicked_ptr);
+                        move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
+                    }
+                }
+            }
+            
         } else if (clicked_obj == k_NOTE && notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)((t_note *)clicked_ptr)->parent)) {
             // this case will be handled at the mouseup too (if we won't drag)
             // particular case of a chord selected and we click on a note, just to deselect the note. but to accomplish this we have to:
@@ -14734,8 +14846,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (!(modifiers & eShiftKey))
                 clear_selection((t_notation_obj *) x);
             notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)clicked_ptr);
-            // move the preselection to the overall selection
-            move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), false);
+            move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, true, false);
             x->r_ob.j_clicked_obj_has_been_selected = true;
         }
         
@@ -14751,7 +14862,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (is_editable((t_notation_obj *)x, k_SELECTION, k_SINGLE_SELECTION)) {
                 notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)clicked_ptr);
                 // move the preselection to the overall selection x->r_ob.selection_type
-                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), false);
+//                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, !(modifiers & eControlKey), false);
+                move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, true, false);
                 x->r_ob.j_clicked_obj_has_been_selected = true;
             }
         }

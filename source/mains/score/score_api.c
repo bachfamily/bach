@@ -10113,8 +10113,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             double tickpoint_beam_ye = tickpoint_beam_ys - beam->slope * beam->tick_direction * CONST_BEAMINGS_TICK_DEFAULT_UEXTENSION * x->r_ob.zoom_y * grace_ratio / x->r_ob.zoom_x;
                             paint_beam_line((t_notation_obj *) x, g, beamcolor, beam->beam_start_chord->stem_x, tickpoint_beam_ys, tickpoint_beam_xe, tickpoint_beam_ye, CONST_BEAMING_UWIDTH * x->r_ob.zoom_y * grace_ratio, direction);
                         } else
-                            paint_beam_line((t_notation_obj *) x, g, beamcolor, beam->beam_start_chord->stem_x, staff_top + beam->beam_start_uy * x->r_ob.zoom_y,
-                                            beam->beam_end_chord->stem_x, staff_top + beam->beam_end_uy * x->r_ob.zoom_y, CONST_BEAMING_UWIDTH * x->r_ob.zoom_y * grace_ratio, direction);
+                            paint_beam_line((t_notation_obj *) x, g, beamcolor, beam->beam_start_chord->stem_x, staff_top + beam->beam_start_uy * x->r_ob.zoom_y,  beam->beam_end_chord->stem_x, staff_top + beam->beam_end_uy * x->r_ob.zoom_y, CONST_BEAMING_UWIDTH * x->r_ob.zoom_y * grace_ratio, direction);
                     }
                     
                     // slash beam?

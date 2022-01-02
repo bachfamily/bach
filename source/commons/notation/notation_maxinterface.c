@@ -2907,14 +2907,15 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         if (obj_type == k_NOTATION_OBJECT_ROLL) {
             CLASS_ATTR_CHAR(c,"showgroups",0, t_notation_obj, show_groups);
             CLASS_ATTR_STYLE_LABEL(c,"showgroups",0,"enumindex","Show Groups");
-            CLASS_ATTR_ENUMINDEX(c,"showgroups", 0, "None Lines Colors Lines And Colors");
-            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showgroups", 0, "3");
+            CLASS_ATTR_ENUMINDEX(c,"showgroups", 0, "None Lines Colors Lines And Colors Beams");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showgroups", 0, "4");
             // @exclude bach.slot, bach.score
             // @description Chooses how the chord grouping should be displayed: <br />
             // - None: groups are not displayed in any way. <br />
             // - Lines: groups are displayed by linking chord stems with dashed lines. <br />
             // - Colors: groups are displayed by assigning to each group a particular color. <br />
-            // - Lines And Colors (default): both of the two previous devices are adopted.
+            // - Lines And Colors: both of the two previous devices are adopted. <br />
+            // - Beams (default): groups are shown by beaming their chords together.
         }
         
         CLASS_ATTR_CHAR(c, "labelfamilies", 0, t_notation_obj, show_label_families);
