@@ -1791,6 +1791,8 @@ typedef enum _undo_operations
     k_UNDO_OP_CLEAR_NAMES,
     k_UNDO_OP_NAMES_FROM_SLOT,
     k_UNDO_OP_NAMES_TO_SLOT,
+    k_UNDO_OP_DURATION_LINE_TO_SLOT,
+    k_UNDO_OP_SLOT_TO_DURATION_LINE,
     k_UNDO_OP_CHANGE_ROLES,
     k_UNDO_OP_RESET_TAIL_SLOPE,
     k_UNDO_OP_DELETE_PITCH_BREAKPOINTS_IN_SELECTION,
@@ -19116,6 +19118,7 @@ void notation_obj_nameappend(t_notation_obj *r_ob, t_symbol *s, long argc, t_ato
 // TBD
 void notation_obj_nametoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notation_obj_slottoname(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notation_obj_dltoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 /** Clear the names of all notation items in the score
     @ingroup        names

@@ -251,6 +251,7 @@ void roll_nametoslot(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_clearnames(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_role(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_dltoslot(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 
 void roll_group(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_ungroup(t_roll *x, t_symbol *s, long argc, t_atom *argv);
@@ -1713,7 +1714,10 @@ void roll_nametoslot(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     notation_obj_nametoslot((t_notation_obj *)x, s, argc, argv);
 }
 
-
+void roll_dltoslot(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    notation_obj_dltoslot((t_notation_obj *)x, s, argc, argv);
+}
 
 void roll_role(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
@@ -5089,6 +5093,18 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) roll_role, "role", A_GIMME, 0);
 
     
+    // @method nametoslot @digest Copy duration line breakpoint function into a slot
+    // @description A <m>dltoslot</m> message copies the duration line envelope (as a breakpoint function)
+    // into a given slot for all the selected notes. Actually, the message copies both a pitch envelope and a velocity envelope
+    // into two different slots, given as arguments (use -1 to avoid assigning one of the slots).
+    // You should ensure that the introduced slots are of the appropriate type (in particular, they should be
+    // function slots, with an appropriate range and a domain between 0 and 1). <br />
+    // @marg 0 @name pitchslot @optional 0 @type int
+    // @marg 1 @name velocityslot @optional 1 @type int
+    // @seealso setslot
+    class_addmethod(c, (method) roll_dltoslot, "dltoslot", A_GIMME, 0);
+    
+    
     // @method group @digest Group selected chords
     // @description A <m>group</m> message groups all selected items.
     // @seealso ungroup
@@ -5232,12 +5248,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) roll_sel_erase_breakpoints, "erasebreakpoints", A_GIMME, 0);
     
 
-    // @method setdurationline @digest Set the duration line for selected items
+    // @method setdl @digest Set the duration line for selected items
     // @description @copy BACH_DOC_MESSAGE_SETDURATIONLINE
     // @marg 0 @name breakpoints @optional 0 @type llll
-    // @example setdurationline [0 0 0] [0.5 200 0.2] [1 500 0] @caption sets duration line breakpoints to selection
+    // @example setdl [0 0 0] [0.5 200 0.2] [1 500 0] @caption sets duration line breakpoints to selection
     // @seealso addbreakpoint, erasebreakpoints
     class_addmethod(c, (method) roll_sel_set_durationline, "setdurationline", A_GIMME, 0);
+    class_addmethod(c, (method) roll_sel_set_durationline, "setdl", A_GIMME, 0);
 
     
     // @method setslot @digest Set the content of one or more slots for selected items

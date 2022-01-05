@@ -281,6 +281,7 @@ void score_nameappend(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_slottoname(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_nametoslot(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_clearnames(t_score *x, t_symbol *s, long argc, t_atom *argv);
+void score_dltoslot(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 void score_copy_selected_measures(t_score *x, char cut);
 void score_paste_replace_measures(t_score *x, char also_paste_tempi);
@@ -5956,6 +5957,18 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso name, nameappend, clearnames, sel, unsel, select
     class_addmethod(c, (method) score_nametoslot, "nametoslot", A_GIMME, 0);
 
+    
+
+    // @method nametoslot @digest Copy duration line breakpoint function into a slot
+    // @description A <m>dltoslot</m> message copies the duration line envelope (as a breakpoint function)
+    // into a given slot. Actually, the message copies both a pitch envelope and a velocity envelope
+    // into two different slots, given as arguments (use -1 to avoid assigning one of the slots).
+    // You should ensure that the introduced slots are of the appropriate type (in particular, they should be
+    // function slots, with an appropriate range and a domain between 0 and 1). <br />
+    // @marg 0 @name pitchslot @optional 0 @type int
+    // @marg 1 @name velocityslot @optional 1 @type int
+    // @seealso setslot
+    class_addmethod(c, (method) score_dltoslot, "dltoslot", A_GIMME, 0);
     
     
     // @method autorhythm @digest Reparse automatically the rhythm of the selected portion of score
@@ -15486,6 +15499,10 @@ void score_nametoslot(t_score *x, t_symbol *s, long argc, t_atom *argv)
     notation_obj_nametoslot((t_notation_obj *)x, s, argc, argv);
 }
 
+void score_dltoslot(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
+    notation_obj_dltoslot((t_notation_obj *)x, s, argc, argv);
+}
 
 void score_clearnames(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {

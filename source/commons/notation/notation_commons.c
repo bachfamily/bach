@@ -41359,6 +41359,12 @@ char *undo_op_to_string(long undo_op)
         case k_UNDO_OP_NAMES_TO_SLOT:
             sprintf(buf, "Export Names To Slot");
             break;
+        case k_UNDO_OP_DURATION_LINE_TO_SLOT:
+            sprintf(buf, "Export Duration Line To Slot");
+            break;
+        case k_UNDO_OP_SLOT_TO_DURATION_LINE:
+            sprintf(buf, "Assign Duration Line From Slot");
+            break;
         case k_UNDO_OP_CHANGE_ROLES:
             sprintf(buf, "Change Roles");
             break;
@@ -42603,6 +42609,102 @@ void notation_obj_clear_names(t_notation_obj *r_ob, long voices, long measures, 
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_NAMES);
 }
 
+
+
+void note_dltoslot_do(t_notation_obj *r_ob, t_note *nt, long pitchslotnum, long velslotnum, bool absolutepitch)
+{
+    t_llll *breakpoints = note_get_breakpoint_values_as_llll(r_ob, nt, k_CONSIDER_FOR_SELECTION_COPYING, NULL, NULL);
+    if (breakpoints) {
+        t_llll *slots_ll = llll_get();
+        t_llll *pitchslot_ll = llll_get();
+        t_llll *velslot_ll = llll_get();
+ 
+        llll_behead(breakpoints);
+
+        llll_appendlong(pitchslot_ll, pitchslotnum+1); // note_set_slots_from_llll() will be 1-based
+        llll_appendlong(velslot_ll, velslotnum+1); // note_set_slots_from_llll() will be 1-based
+        if (pitchslotnum >= 0 && pitchslotnum < CONST_MAX_SLOTS) {
+            t_llll *pitchenv = llll_clone(breakpoints);
+            for (t_llllelem *el = pitchenv->l_head; el; el = el->l_next) {
+                if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                    t_llll *ll = hatom_getllll(&el->l_hatom);
+                    if (ll->l_size == 4)
+                        llll_destroyelem(ll->l_tail);
+                    if (absolutepitch)
+                        hatom_setdouble(&ll->l_head->l_next->l_hatom, hatom_getdouble(&ll->l_head->l_next->l_hatom) + nt->midicents);
+                }
+            }
+            llll_chain(pitchslot_ll, pitchenv);
+            llll_appendllll(slots_ll, pitchslot_ll);
+        }
+        if (velslotnum >= 0 && velslotnum < CONST_MAX_SLOTS) {
+            t_llll *velenv = llll_clone(breakpoints);
+            for (t_llllelem *el = velenv->l_head; el; el = el->l_next) {
+                if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                    t_llll *ll = hatom_getllll(&el->l_hatom);
+                    if (ll->l_size == 4) {
+                        llll_swapelems(ll->l_head->l_next, ll->l_head->l_next->l_next->l_next);
+                        llll_destroyelem(ll->l_tail);
+                    } else if (ll->l_head->l_next) {
+                        hatom_setlong(&ll->l_head->l_next->l_hatom, nt->velocity);
+                    }
+                }
+            }
+            llll_chain(velslot_ll, velenv);
+            llll_appendllll(slots_ll, velslot_ll);
+        }
+        note_set_slots_from_llll(r_ob, nt, slots_ll);
+        llll_free(slots_ll);
+    }
+    llll_free(breakpoints);
+}
+
+
+long notation_obj_dltoslot_do(t_notation_obj *r_ob, long pitchslotnum, long velslotnum, bool absolutepitch)
+{
+    long changed = 0;
+    lock_general_mutex(r_ob);
+    for (t_notation_item *curr_it = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected) {
+        switch (curr_it->type) {
+            case k_NOTE:
+                changed = 1;
+                create_simple_notation_item_undo_tick(r_ob, curr_it, k_UNDO_MODIFICATION_CHANGE);
+                note_dltoslot_do(r_ob, (t_note *)curr_it, pitchslotnum, velslotnum, absolutepitch);
+                break;
+                
+            case k_CHORD:
+            {
+                changed = 1;
+                create_simple_notation_item_undo_tick(r_ob, curr_it, k_UNDO_MODIFICATION_CHANGE);
+                t_chord *ch = (t_chord *)curr_it;
+                for (t_note *nt = ch->firstnote; nt; nt = nt->next)
+                    note_dltoslot_do(r_ob, nt, pitchslotnum, velslotnum, absolutepitch);
+            }
+                break;
+                
+            default:
+                break;
+        }
+    }
+    unlock_general_mutex(r_ob);
+    return changed;
+}
+
+void notation_obj_dltoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *selectllll = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    if (selectllll && selectllll->l_head) {
+        long pitchslotnum = llllelem_to_slotnum(r_ob, selectllll->l_head, true);
+        long velocityslotnum = -1;
+        long absolutepitch = 0;
+        llll_parseattrs((t_object *)r_ob, selectllll, 0, "i", gensym("absolutepitch"), &absolutepitch);
+        if (selectllll->l_head->l_next)
+            velocityslotnum = llllelem_to_slotnum(r_ob, selectllll->l_head->l_next, true);
+        notation_obj_dltoslot_do(r_ob, pitchslotnum, velocityslotnum, absolutepitch);
+        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DURATION_LINE_TO_SLOT);
+    }
+    llll_free(selectllll);
+}
 
 
 

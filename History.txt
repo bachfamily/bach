@@ -115,7 +115,7 @@ multiple objects: help files and doc updated
     Now "eraseslot" accepts "all" as argument to clear all slots
 
 - bach.roll, bach.score: 
-    New "setdurationline" message setting the duration line from a list of pitch breakpoints
+    New "setdl" message setting the duration line from a list of pitch breakpoints
     @playheadwidth attribute added, better doc for playcolor and added doc for playheadwidth
     now preschedule playing supports setclock
     removed unnecessary warnings for dynamics2velocities message
@@ -135,6 +135,7 @@ multiple objects: help files and doc updated
     new "auto" possibility for setting breakpoints via "addbreakpoint"
     fixed bug causing stafflines attribute not to be saved sometimes
     improved display of auxiliary stems
+    New "dltoslot" message to copy pitch and velocity envelopes to slots
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
