@@ -38,7 +38,7 @@ v0.8.2b
 - bach.roll, bach.score:
     Now Cmd+Alt+V DOES NOT OUTPUT all the parameters any longer
 	Also, Alt+V is used to force the output of chord information instead of Shift+V.
-    The "dblclicksendsvalues" attribute has been eliminated and replaced by the much more general "playofflinecmd" attribute, allowing
+    The "dblclicksendsvalues" attribute has been eliminated and replaced by the much more general "dumpplaycmd" attribute, allowing
 	you to set one or more letters or mouse keys to send offline values.
 		Backward compatibility should be preserved, meaning that the new attribute should already take care of the old value, 
 		but check manually if possible

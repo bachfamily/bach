@@ -12677,6 +12677,21 @@ char notation_item_is_globally_selected(t_notation_obj *r_ob, t_notation_item *i
     return 0;
 }
 
+char chord_or_any_of_its_notes_are_selected(t_notation_obj *r_ob, t_chord *ch)
+{
+    if (!ch)
+        return 0;
+    
+    if (notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
+        return 1;
+    for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
+        if (notation_item_is_selected(r_ob, (t_notation_item *)nt))
+            return 1;
+    }
+    
+    return 0;
+}
+
 // supported element_types are chords and notes
 char should_element_be_played(t_notation_obj *r_ob, t_notation_item *item){
     
@@ -29494,9 +29509,10 @@ t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord
 }
 
 
-t_llll* chord_get_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode){ 
+t_llll* chord_get_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only)
+{
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-        return get_rollchord_values_as_llll(r_ob, chord, mode);
+        return get_rollchord_values_as_llll(r_ob, chord, mode, selection_only);
     else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) 
         return get_scorechord_values_as_llll(r_ob, chord, mode, false);
     return NULL;
@@ -29527,7 +29543,8 @@ char name_is_abr_none_abr(t_llll *names)
 }
 
 // mode is one of the e_data_considering_types
-t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode){ // retrieve the chord values as an unmeasured chord, i.e. for [roll]
+t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only)
+{ // retrieve the chord values as an unmeasured chord, i.e. for [roll]
     t_note *temp_note;
     t_llll* out_llll = llll_get(); 
     double playhead_pos_ms = r_ob->play_head_start_ms;
@@ -29553,7 +29570,8 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
             (mode == k_CONSIDER_FOR_SELECTION_COPYING && notation_item_is_globally_selected(r_ob, (t_notation_item *)temp_note)) ||
             (mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE &&
              mode != k_CONSIDER_FOR_SELECTION_COPYING && should_element_be_played(r_ob, (t_notation_item *)temp_note)) )
-                llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, temp_note, mode), 0, WHITENULL_llll);    
+            if (!selection_only || notation_item_is_globally_selected(r_ob, (t_notation_item *)temp_note))
+                llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, temp_note, mode));
         temp_note = temp_note->next;
     }
 
@@ -40365,7 +40383,7 @@ void create_header_undo_tick(t_notation_obj *r_ob, e_header_elems what)
         return;
     
     r_ob->undo_header_elements_under_tick |= what;
-    t_llll *content = get_notation_obj_header_as_llll(r_ob, what, true, true, true, k_CONSIDER_FOR_UNDO);
+    t_llll *content = get_notation_obj_header_as_llll(r_ob, what, true, true, true, k_CONSIDER_FOR_UNDO, false);
     t_undo_redo_information *operation = build_undo_redo_information(0, k_HEADER_DATA, k_UNDO_MODIFICATION_CHANGE, 0, 0, what, content);
     create_undo_redo_tick(r_ob, k_UNDO, 0, operation, true);
 }
@@ -40377,7 +40395,7 @@ t_llll *notation_item_get_values_as_llll_for_undo(t_notation_obj *r_ob, t_notati
         return measure_get_values_as_llll(r_ob, (t_measure *)item, k_CONSIDER_FOR_UNDO, true, true);
     else if (item->type == k_CHORD) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-            return get_rollchord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO);
+            return get_rollchord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false);
         else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
             return get_scorechord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false);
     } else if (item->type == k_NOTE) {
@@ -41985,7 +42003,7 @@ t_llll *bach_rhythmic_tree_to_om_rhythmic_tree(t_llll *durs, t_llll *measureinfo
 
 t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, char add_router_symbol, 
                                         char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector,
-                                        e_data_considering_types for_what)
+                                        e_data_considering_types for_what, bool selection_only)
 {
     t_llll *out_llll = llll_get();
     
@@ -42021,7 +42039,7 @@ t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, ch
         }
 
         if (dump_what & k_HEADER_MARKERS)
-            llll_appendllll(out_llll, get_markers_as_llll(r_ob, 0, 0, 0, false, for_what, 0), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_markers_as_llll(r_ob, selection_only ? 2 : 0, 0, 0, false, for_what, 0), 0, WHITENULL_llll);
 
         if (dump_what & k_HEADER_STAFFLINES)
             llll_appendllll(out_llll, get_stafflines_as_llll(r_ob, true), 0, WHITENULL_llll);

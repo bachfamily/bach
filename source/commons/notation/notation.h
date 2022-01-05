@@ -11409,6 +11409,9 @@ long notation_item_is_selected(t_notation_obj *r_ob, t_notation_item *item);
 */
 char notation_item_is_globally_selected(t_notation_obj *r_ob, t_notation_item *item);
 
+// TBD
+char chord_or_any_of_its_notes_are_selected(t_notation_obj *r_ob, t_chord *ch);
+
 
 /**    Remove from the selection all notation elements of a given type.
     @ingroup            selection
@@ -12412,10 +12415,11 @@ t_llll *get_midichannels_as_llll(t_notation_obj *r_ob, char prepend_router);
                                                     popup menu or have to be kept in background: if this flag is 1, for each slotinfo a specification (popup 1) or
                                                     (popup 0) is added, and similarly for all the alreday-saved-with-the-Max-inspector stuff).
     @param    for_what    One of the #e_data_considering_types, typically either #k_CONSIDER_FOR_DUMPING of #k_CONSIDER_FOR_UNDO.
+    @param    selection_only    If non-zero, only selected markers are output
     @return                An llll containing all notation object's header
  */
 t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, char add_router_symbol, 
-                                        char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, e_data_considering_types for_what);
+                                        char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, e_data_considering_types for_what, bool selection_only);
 
 
 /**    Obtain an llll containing all the stafflines information (one element for each voice).
@@ -12608,9 +12612,10 @@ t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     @param    r_ob        The notation object
     @param    chord        The chord
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+    @param   selection_only  If non-zero, only get selected notes
     @return                The gathered syntax of the chord, as an llll
 */
-t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode);
+t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only);
 
 
 /**    Obtain all the information about a bach.score note, in gathered syntax.
@@ -17662,13 +17667,13 @@ t_max_err notation_obj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, 
 t_max_err notation_obj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notation_obj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notation_obj_set_parts(t_notation_obj *r_ob, long *part);
-t_max_err notation_obj_setattr_playofflinecmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 
 // GETTERS
 
 t_max_err notation_obj_getattr_voicenames(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
 t_max_err notation_obj_getattr_stafflines(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
-t_max_err notation_obj_getattr_playofflinecmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av);
+t_max_err notation_obj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av);
 /** @}*/
 
 

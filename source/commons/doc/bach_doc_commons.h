@@ -1829,7 +1829,7 @@
 	// • <m>Shift+Spacebar</m> while not playing: Play selection (start playing from the leftmost selected item
 	// and only play the selected items) <br />
 	// • <m>V</m>: Off-line play, also known as "selection dump" (immediately send the playout syntax of selected elements
-	// out the playout, see <m>dumpselection</m> message). The V letter can be changed via the <m>playofflinecmd</m> attribute. <br />
+	// out the playout, see <m>dumpselection</m> message). The V letter can be changed via the <m>dumpplaycmd</m> attribute. <br />
 	// • <m>Alt+V</m>: Chordwise off-line play (as the previous command, but if a single note is selected, all its chord content
 	// is output through the playout) <br />
 	// • <m>Shift+Alt+V</m>: Send whole gathered syntax content out the first outlet (this is equivalent to sending a <m>dump</m> message) <br />

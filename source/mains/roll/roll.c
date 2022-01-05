@@ -372,31 +372,31 @@ t_chord* nth_chord_of_rollvoice(t_rollvoice *voice, long n);    /// 0-based!!!!
 t_chord* nth_marker(t_rollvoice *voice, long n);    /// 1-based!!!!
 
 // llll communication functions
-t_llll* get_rollvoice_values_as_llll(t_roll *x, t_rollvoice *voice, e_data_considering_types for_what);
-t_llll* get_onsets_values_as_llll(t_roll *x);
-t_llll* get_cents_values_as_llll(t_roll *x, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
-t_llll* get_durations_values_as_llll(t_roll *x);
-t_llll* get_velocities_values_as_llll(t_roll *x);
-t_llll* get_extras_values_as_llll(t_roll *x);
+t_llll* get_rollvoice_values_as_llll(t_roll *x, t_rollvoice *voice, e_data_considering_types for_what, bool selection_only);
+t_llll* get_onsets_values_as_llll(t_roll *x, bool selection_only);
+t_llll* get_cents_values_as_llll(t_roll *x, bool selection_only, e_output_pitches pitch_output_mode);
+t_llll* get_durations_values_as_llll(t_roll *x, bool selection_only);
+t_llll* get_velocities_values_as_llll(t_roll *x, bool selection_only);
+t_llll* get_extras_values_as_llll(t_roll *x, bool selection_only);
 t_llll* get_pixel_values_as_llll(t_roll *x);
-t_llll* get_voice_onsets_values_as_llll(t_rollvoice *voice);
-t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
-t_llll* get_voice_durations_values_as_llll(t_rollvoice *voice);
-t_llll* get_voice_velocities_values_as_llll(t_rollvoice *voice);
+t_llll* get_voice_onsets_values_as_llll(t_roll *x, t_rollvoice *voice, bool selection_only);
+t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice, bool selection_only, e_output_pitches pitch_output_mode);
+t_llll* get_voice_durations_values_as_llll(t_roll *x, t_rollvoice *voice, bool selection_only);
+t_llll* get_voice_velocities_values_as_llll(t_roll *x, t_rollvoice *voice, bool selection_only);
 t_llll* get_voice_pixel_values_as_llll(t_roll *x, t_rollvoice *voice);
 t_llll *get_selection_gathered_syntax(t_roll *x);
 
 //t_llll* get_voice_extras_values_as_llll(t_roll *x, t_rollvoice *voice);
-void send_all_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *gatheredsyntax_router);
+void send_all_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *gatheredsyntax_router, bool selection_only);
 void send_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type);
 t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type);
 t_llll* get_subvoice_values_as_llll(t_roll *x, t_rollvoice *voice, double start_ms, double end_ms, char subroll_type);
-void send_roll_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *router);
-void send_onsets_values_as_llll(t_roll *x);
-void send_cents_values_as_llll(t_roll *x, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
-void send_durations_values_as_llll(t_roll *x);
-void send_velocities_values_as_llll(t_roll *x);
-void send_extras_values_as_llll(t_roll *x);
+void send_roll_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *router, bool selection_only);
+void send_onsets_values_as_llll(t_roll *x, bool selection_only);
+void send_cents_values_as_llll(t_roll *x, bool selection_only, e_output_pitches pitch_output_mode);
+void send_durations_values_as_llll(t_roll *x, bool selection_only);
+void send_velocities_values_as_llll(t_roll *x, bool selection_only);
+void send_extras_values_as_llll(t_roll *x, bool selection_only);
 void set_voice_onsets_values_from_llll(t_roll *x, t_llll* onsets, t_rollvoice *voice, char also_check_chords_order);
 void set_voice_cents_values_from_llll(t_roll *x, t_llll* cents, t_rollvoice *voice, char force_append_notes);
 void set_voice_durations_values_from_llll(t_roll *x, t_llll* durations, t_rollvoice *voice);
@@ -1248,7 +1248,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     llll_free(what_to_dump_llll);
     
     llll_appendsym(out_llll, gensym("quantize"), 0, WHITENULL_llll);
-    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, what_to_dump, false, false, true, k_CONSIDER_FOR_DUMPING));
+    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, what_to_dump, false, false, true, k_CONSIDER_FOR_DUMPING, false));
     llll_appendllll(out_llll, out_cents, 0, WHITENULL_llll);
     llll_appendllll(out_llll, out_durations, 0, WHITENULL_llll);
     llll_appendllll(out_llll, out_velocities, 0, WHITENULL_llll);
@@ -7730,61 +7730,67 @@ void roll_setdomain(t_roll *x, t_symbol *s, long argc, t_atom *argv){ // TODO
     }*/
 }
 
-void send_all_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *gatheredsyntax_router)
+void send_all_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *gatheredsyntax_router, bool selection_only)
 {
-        send_extras_values_as_llll(x);
-        send_velocities_values_as_llll(x);
-        send_durations_values_as_llll(x);
-        send_cents_values_as_llll(x);
-        send_onsets_values_as_llll(x);
-        send_roll_values_as_llll(x, send_what, gatheredsyntax_router);
+        send_extras_values_as_llll(x, selection_only);
+        send_velocities_values_as_llll(x, selection_only);
+        send_durations_values_as_llll(x, selection_only);
+        send_cents_values_as_llll(x, selection_only, k_OUTPUT_PITCHES_DEFAULT);
+        send_onsets_values_as_llll(x, selection_only);
+        send_roll_values_as_llll(x, send_what, gatheredsyntax_router, selection_only);
 }
 
 void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_symbol *router = NULL;
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    llll_parseargs_and_attrs_destructive((t_object *)x, args, "s", gensym("router"), &router);
+    long selection_only = false;
+    if (args && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_selection) {
+        selection_only = true;
+        llll_behead(args);
+    }
+    llll_parseargs_and_attrs_destructive((t_object *)x, args, "si", gensym("router"), &router,
+                                                                    _llllobj_sym_selection, &selection_only);
     if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
         t_symbol *sym = hatom_getsym(&args->l_head->l_hatom);
         if ((sym == _llllobj_sym_onsets) || (sym == _llllobj_sym_onset)) {
-            send_onsets_values_as_llll(x);
+            send_onsets_values_as_llll(x, selection_only);
             goto end;
         } else if ((sym == _llllobj_sym_cents) || (sym == _llllobj_sym_cent)) {
-            send_cents_values_as_llll(x, k_OUTPUT_PITCHES_NEVER);
+            send_cents_values_as_llll(x, selection_only, k_OUTPUT_PITCHES_NEVER);
             goto end;
         } else if ((sym == _llllobj_sym_pitches) || (sym == _llllobj_sym_pitch)) {
-            send_cents_values_as_llll(x, k_OUTPUT_PITCHES_ALWAYS);
+            send_cents_values_as_llll(x, selection_only, k_OUTPUT_PITCHES_ALWAYS);
             goto end;
         } else if (sym == _llllobj_sym_poc) {
-            send_cents_values_as_llll(x, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
+            send_cents_values_as_llll(x, selection_only, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
             goto end;
         } else if ((sym == _llllobj_sym_durations) || (sym == _llllobj_sym_duration)) {
-            send_durations_values_as_llll(x);
+            send_durations_values_as_llll(x, selection_only);
             goto end;
         } else if ((sym == _llllobj_sym_velocities) || (sym == _llllobj_sym_velocity)) {
-            send_velocities_values_as_llll(x);
+            send_velocities_values_as_llll(x, selection_only);
             goto end;
         } else if ((sym == _llllobj_sym_extras) || (sym == _llllobj_sym_extra)) {
-            send_extras_values_as_llll(x);
+            send_extras_values_as_llll(x, selection_only);
             goto end;
         } else if (sym == _llllobj_sym_separate) {
-            send_extras_values_as_llll(x);
-            send_velocities_values_as_llll(x);
-            send_durations_values_as_llll(x);
-            send_cents_values_as_llll(x);
-            send_onsets_values_as_llll(x);
+            send_extras_values_as_llll(x, selection_only);
+            send_velocities_values_as_llll(x, selection_only);
+            send_durations_values_as_llll(x, selection_only);
+            send_cents_values_as_llll(x, selection_only, k_OUTPUT_PITCHES_DEFAULT);
+            send_onsets_values_as_llll(x, selection_only);
             goto end;
         } else if (sym == _llllobj_sym_roll) {
-            send_roll_values_as_llll(x, k_HEADER_ALL, router); // dump full gathered syntax
+            send_roll_values_as_llll(x, k_HEADER_ALL, router, selection_only); // dump full gathered syntax
             goto end;
         }
     } else if (args->l_size == 0) {
-        send_all_values_as_llll(x, k_HEADER_ALL, router); // dump all separate outlets and full gathered syntax
+        send_all_values_as_llll(x, k_HEADER_ALL, router, selection_only); // dump all separate outlets and full gathered syntax
         goto end;
     }
 
     // otherwise, can have arguments:
-    send_roll_values_as_llll(x, header_objects_to_long(args), router);
+    send_roll_values_as_llll(x, header_objects_to_long(args), router, selection_only);
     
 end:
     llll_free(args);
@@ -14976,40 +14982,40 @@ void send_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms
     llll_free(out_llll);
 }
 
-void send_roll_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *router)
+void send_roll_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *router, bool selection_only)
 {
-    t_llll* out_llll = get_roll_values_as_llll(x, k_CONSIDER_ALL_NOTES, send_what, true, false, router);
+    t_llll* out_llll = get_roll_values_as_llll(x, k_CONSIDER_ALL_NOTES, send_what, true, false, router, selection_only);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, out_llll);
     llll_free(out_llll);
 }
 
-void send_onsets_values_as_llll(t_roll *x){
-    t_llll* out_llll = get_onsets_values_as_llll(x);
+void send_onsets_values_as_llll(t_roll *x, bool selection_only){
+    t_llll* out_llll = get_onsets_values_as_llll(x, selection_only);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 1, out_llll);
     llll_free(out_llll);
 }
 
-void send_durations_values_as_llll(t_roll *x){
-    t_llll* out_llll = get_durations_values_as_llll(x);
+void send_durations_values_as_llll(t_roll *x, bool selection_only){
+    t_llll* out_llll = get_durations_values_as_llll(x, selection_only);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 3, out_llll);
     llll_free(out_llll);
 }
 
-void send_cents_values_as_llll(t_roll *x, e_output_pitches pitch_output_mode)
+void send_cents_values_as_llll(t_roll *x, bool selection_only, e_output_pitches pitch_output_mode)
 {
-    t_llll* out_llll = get_cents_values_as_llll(x, pitch_output_mode);
+    t_llll* out_llll = get_cents_values_as_llll(x, selection_only, pitch_output_mode);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 2, out_llll);
     llll_free(out_llll);
 }
 
-void send_velocities_values_as_llll(t_roll *x){
-    t_llll* out_llll = get_velocities_values_as_llll(x);
+void send_velocities_values_as_llll(t_roll *x, bool selection_only){
+    t_llll* out_llll = get_velocities_values_as_llll(x, selection_only);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 4, out_llll);
     llll_free(out_llll);
 }
 
-void send_extras_values_as_llll(t_roll *x){
-    t_llll* out_llll = get_extras_values_as_llll(x);
+void send_extras_values_as_llll(t_roll *x, bool selection_only){
+    t_llll* out_llll = get_extras_values_as_llll(x, selection_only);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 5, out_llll);
     llll_free(out_llll);
 }
@@ -15128,7 +15134,8 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
 
 // dump_what is a combination of e_header_elems
 // for_what is typically either k_CONSIDER_ALL_NOTES, k_CONSIDER_FOR_SAVING (which should act exactly the same) or k_CONSIDER_FOR_UNDO (only for undo cases, which will also save the ID of elements)
-t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_header_elems dump_what, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router) { //char get_clefs, char get_keys, char get_markers, char get_slotinfo, char get_commands, char get_midichannels){
+t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_header_elems dump_what,
+                                char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router, bool selection_only) {
 
 // get all the information concerning the roll and put it in a llll
 
@@ -15169,12 +15176,12 @@ t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
 
-    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what));
+    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what, selection_only));
     
     if (dump_what & k_HEADER_BODY) {
         voice = x->firstvoice;
         while (voice && (voice->v_ob.number < x->r_ob.num_voices)) { // append chord lllls
-            llll_appendllll(out_llll, get_rollvoice_values_as_llll(x, voice, for_what), 0, WHITENULL_llll);    
+            llll_appendllll(out_llll, get_rollvoice_values_as_llll(x, voice, for_what, selection_only));
             voice = voice->next;
         }
     }
@@ -15209,11 +15216,11 @@ t_llll* get_subvoice_values_as_llll(t_roll *x, t_rollvoice *voice, double start_
         t_llll* to_append = NULL;
         if (subroll_type == 1) {
             if (temp_chord->onset >= start_ms && temp_chord->onset <= end_ms) {
-                to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING);
+                to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, false);
             }
         } else {
             if (temp_chord->onset >= start_ms && temp_chord->onset + max_duration <= end_ms) {
-                to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING);
+                to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, false);
             } else if ((temp_chord->onset >= start_ms && temp_chord->onset <= end_ms) || 
                        (temp_chord->onset + max_duration >= start_ms && temp_chord->onset + max_duration <= end_ms) ||
                        (temp_chord->onset < start_ms && temp_chord->onset + max_duration > end_ms)) {
@@ -15231,12 +15238,14 @@ t_llll* get_subvoice_values_as_llll(t_roll *x, t_rollvoice *voice, double start_
     return out_llll;
 }
 
-t_llll* get_rollvoice_values_as_llll(t_roll *x, t_rollvoice *voice, e_data_considering_types for_what){
+t_llll* get_rollvoice_values_as_llll(t_roll *x, t_rollvoice *voice, e_data_considering_types for_what, bool selection_only)
+{
     t_llll* out_llll = llll_get();
     t_chord *temp_chord = voice->firstchord;
     
     while (temp_chord) { // append chord lllls
-        llll_appendllll(out_llll, get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, for_what), 0, WHITENULL_llll);    
+        if (!selection_only || chord_or_any_of_its_notes_are_selected((t_notation_obj *)x, temp_chord))
+            llll_appendllll(out_llll, get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, for_what, selection_only));
         temp_chord = temp_chord->next;
     }
 
@@ -15249,53 +15258,56 @@ t_llll* get_rollvoice_values_as_llll(t_roll *x, t_rollvoice *voice, e_data_consi
     return out_llll;
 }
 
-t_llll* get_onsets_values_as_llll(t_roll *x){
+t_llll* get_onsets_values_as_llll(t_roll *x, bool selection_only)
+{
     t_llll* out_llll = llll_get();
     t_rollvoice *voice;
     lock_general_mutex((t_notation_obj *)x);    
     voice = x->firstvoice;
     while (voice && (voice->v_ob.number < x->r_ob.num_voices)) { // append chord lllls
-        llll_appendllll(out_llll, get_voice_onsets_values_as_llll(voice), 0, WHITENULL_llll);    
+        llll_appendllll(out_llll, get_voice_onsets_values_as_llll(x, voice, selection_only));
         voice = voice->next;
     }
     unlock_general_mutex((t_notation_obj *)x);    
     return out_llll;
 }
 
-t_llll* get_cents_values_as_llll(t_roll *x, e_output_pitches pitch_output_mode)
+t_llll* get_cents_values_as_llll(t_roll *x, bool selection_only, e_output_pitches pitch_output_mode)
 {
     t_llll* out_llll = llll_get();
     t_rollvoice *voice;
     lock_general_mutex((t_notation_obj *)x);    
     voice = x->firstvoice;
     while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-        llll_appendllll(out_llll, get_voice_cents_values_as_llll(x, voice, pitch_output_mode), 0, WHITENULL_llll);
+        llll_appendllll(out_llll, get_voice_cents_values_as_llll(x, voice, selection_only, pitch_output_mode));
         voice = voice->next;
     }
     unlock_general_mutex((t_notation_obj *)x);    
     return out_llll;
 }
 
-t_llll* get_durations_values_as_llll(t_roll *x){
+t_llll* get_durations_values_as_llll(t_roll *x, bool selection_only)
+{
     t_llll* out_llll = llll_get();
     t_rollvoice *voice;
     lock_general_mutex((t_notation_obj *)x);    
     voice = x->firstvoice;
     while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-        llll_appendllll(out_llll, get_voice_durations_values_as_llll(voice), 0, WHITENULL_llll);    
+        llll_appendllll(out_llll, get_voice_durations_values_as_llll(x, voice, selection_only));
         voice = voice->next;
     }
     unlock_general_mutex((t_notation_obj *)x);    
     return out_llll;
 }
 
-t_llll* get_velocities_values_as_llll(t_roll *x){
+t_llll* get_velocities_values_as_llll(t_roll *x, bool selection_only)
+{
     t_llll* out_llll = llll_get();
     t_rollvoice *voice;
     lock_general_mutex((t_notation_obj *)x);    
     voice = x->firstvoice;
     while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-        llll_appendllll(out_llll, get_voice_velocities_values_as_llll(voice), 0, WHITENULL_llll);    
+        llll_appendllll(out_llll, get_voice_velocities_values_as_llll(x, voice, selection_only));
         voice = voice->next;
     }
     unlock_general_mutex((t_notation_obj *)x);    
@@ -15352,7 +15364,8 @@ t_llll* get_voice_pixel_values_as_llll(t_roll *x, t_rollvoice *voice){
 }
 
 
-t_llll* get_voice_onsets_values_as_llll(t_rollvoice *voice){
+t_llll* get_voice_onsets_values_as_llll(t_roll *x, t_rollvoice *voice, bool selection_only)
+{
 // get all the information concerning the onsets and put it in a llll, just for a voice
 
 // the output is given as a long text-like llll formatted as
@@ -15361,14 +15374,15 @@ t_llll* get_voice_onsets_values_as_llll(t_rollvoice *voice){
     t_llll* out_llll = llll_get();
     t_chord *temp_chord = voice->firstchord;
     while (temp_chord) { // append chord lllls
-        llll_appenddouble(out_llll, temp_chord->onset, 0, WHITENULL_llll);    
+        if (!selection_only || chord_or_any_of_its_notes_are_selected((t_notation_obj *)x, temp_chord))
+            llll_appenddouble(out_llll, temp_chord->onset, 0, WHITENULL_llll);
         temp_chord = temp_chord->next;
     }
 
     return out_llll;
 }
 
-t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice, e_output_pitches pitch_output_mode)
+t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice, bool selection_only, e_output_pitches pitch_output_mode)
 {
 // get all the information concerning the onsets and put it in a llll
 
@@ -15379,20 +15393,24 @@ t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice, e_output_p
     t_llll* out_llll = llll_get();
     t_chord *temp_chord = voice->firstchord;
     while (temp_chord) { // append chord lllls
-        t_note *temp_note = temp_chord->firstnote;
-        t_llll* in_llll = llll_get();
-        while (temp_note) { // append chord lllls
-            note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
-            temp_note = temp_note->next;
+        if (!selection_only || chord_or_any_of_its_notes_are_selected((t_notation_obj *)x, temp_chord)) {
+            t_note *temp_note = temp_chord->firstnote;
+            t_llll* in_llll = llll_get();
+            while (temp_note) { // append chord lllls
+                if (!selection_only || notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)temp_note))
+                    note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
+                temp_note = temp_note->next;
+            }
+            llll_appendllll(out_llll, in_llll, 0, WHITENULL_llll);
         }
-        llll_appendllll(out_llll, in_llll, 0, WHITENULL_llll);    
         temp_chord = temp_chord->next;
     }
 
     return out_llll;
 }
 
-t_llll* get_voice_durations_values_as_llll(t_rollvoice *voice){
+t_llll* get_voice_durations_values_as_llll(t_roll *x, t_rollvoice *voice, bool selection_only)
+{
 // get all the information concerning the onsets and put it in a llll
 
 // the output is given as a long text-like llll formatted as
@@ -15402,20 +15420,23 @@ t_llll* get_voice_durations_values_as_llll(t_rollvoice *voice){
     t_llll* out_llll = llll_get();
     t_chord *temp_chord = voice->firstchord;
     while (temp_chord) { // append chord lllls
-        t_note *temp_note = temp_chord->firstnote;
-        t_llll* in_llll = llll_get();
-        while (temp_note) { // append chord lllls
-            llll_appenddouble(in_llll, temp_note->duration, 0, WHITENULL_llll);    
-            temp_note = temp_note->next;
+        if (!selection_only || chord_or_any_of_its_notes_are_selected((t_notation_obj *)x, temp_chord)) {
+            t_note *temp_note = temp_chord->firstnote;
+            t_llll* in_llll = llll_get();
+            while (temp_note) { // append chord lllls
+                if (!selection_only || notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)temp_note))
+                    llll_appenddouble(in_llll, temp_note->duration, 0, WHITENULL_llll);
+                temp_note = temp_note->next;
+            }
+            llll_appendllll(out_llll, in_llll, 0, WHITENULL_llll);
         }
-        llll_appendllll(out_llll, in_llll, 0, WHITENULL_llll);    
         temp_chord = temp_chord->next;
     }
 
     return out_llll;
 }
 
-t_llll* get_voice_velocities_values_as_llll(t_rollvoice *voice){
+t_llll* get_voice_velocities_values_as_llll(t_roll *x, t_rollvoice *voice, bool selection_only){
 // get all the information concerning the onsets and put it in a llll
 
 // the output is given as a long text-like llll formatted as
@@ -15425,20 +15446,24 @@ t_llll* get_voice_velocities_values_as_llll(t_rollvoice *voice){
     t_llll* out_llll = llll_get();
     t_chord *temp_chord = voice->firstchord;
     while (temp_chord) { // append chord lllls
-        t_note *temp_note = temp_chord->firstnote;
-        t_llll* in_llll = llll_get();
-        while (temp_note) { // append chord lllls
-            llll_appendlong(in_llll, temp_note->velocity, 0, WHITENULL_llll);    
-            temp_note = temp_note->next;
+        if (!selection_only || chord_or_any_of_its_notes_are_selected((t_notation_obj *)x, temp_chord)) {
+            t_note *temp_note = temp_chord->firstnote;
+            t_llll* in_llll = llll_get();
+            while (temp_note) { // append chord lllls
+                if (!selection_only || notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)temp_note))
+                    llll_appendlong(in_llll, temp_note->velocity, 0, WHITENULL_llll);
+                temp_note = temp_note->next;
+            }
+            llll_appendllll(out_llll, in_llll, 0, WHITENULL_llll);
         }
-        llll_appendllll(out_llll, in_llll, 0, WHITENULL_llll);    
         temp_chord = temp_chord->next;
     }
 
     return out_llll;
 }
 
-t_llll* get_extras_values_as_llll(t_roll *x){
+t_llll* get_extras_values_as_llll(t_roll *x, bool selection_only)
+{
 // get all the information concerning the onsets and put it in a llll
 // TO DO!
 // the output is given as a long text-like llll formatted as
@@ -15462,19 +15487,23 @@ t_llll* get_extras_values_as_llll(t_roll *x){
         
         t_chord *temp_chord = voice->firstchord;
         while (temp_chord) { // append chord lllls
-            t_note *temp_note = temp_chord->firstnote;
-//            t_llll* graphic_subllll = llll_get();
-            t_llll* breakpoints_subllll = llll_get();
-            t_llll* slots_subllll = llll_get();
-            while (temp_note) { // append chord lllls
-//                llll_appendllll(graphic_subllll, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
-                llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
-                llll_appendllll(slots_subllll, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, temp_note, false), 0, WHITENULL_llll);
-                temp_note = temp_note->next;
+            if (!selection_only || chord_or_any_of_its_notes_are_selected((t_notation_obj *)x, temp_chord)) {
+                t_note *temp_note = temp_chord->firstnote;
+                //            t_llll* graphic_subllll = llll_get();
+                t_llll* breakpoints_subllll = llll_get();
+                t_llll* slots_subllll = llll_get();
+                while (temp_note) { // append chord lllls
+                    //                llll_appendllll(graphic_subllll, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
+                    if (!selection_only || notation_item_is_globally_selected((t_notation_obj *)x, (t_notation_item *)temp_note)) {
+                        llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
+                        llll_appendllll(slots_subllll, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, temp_note, false), 0, WHITENULL_llll);
+                    }
+                    temp_note = temp_note->next;
+                }
+                //            llll_appendllll(graphic_voicellll, graphic_subllll, 0, WHITENULL_llll);
+                llll_appendllll(breakpoints_voicellll, breakpoints_subllll, 0, WHITENULL_llll);
+                llll_appendllll(slots_voicellll, slots_subllll, 0, WHITENULL_llll);
             }
-//            llll_appendllll(graphic_voicellll, graphic_subllll, 0, WHITENULL_llll);
-            llll_appendllll(breakpoints_voicellll, breakpoints_subllll, 0, WHITENULL_llll);
-            llll_appendllll(slots_voicellll, slots_subllll, 0, WHITENULL_llll);
             temp_chord = temp_chord->next;
         }
         
@@ -17384,7 +17413,7 @@ t_llll *get_selection_gathered_syntax(t_roll *x){
                 }
             }
             if (there_is_something_selected)
-                llll_appendllll(voice_llll, get_rollchord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_SELECTION_COPYING), 0, WHITENULL_llll);
+                llll_appendllll(voice_llll, get_rollchord_values_as_llll((t_notation_obj *) x, chord, k_CONSIDER_FOR_SELECTION_COPYING, false), 0, WHITENULL_llll);
         }
         llll_appendllll(out, voice_llll, 0, WHITENULL_llll);
     }
@@ -17399,7 +17428,7 @@ void evaluate_selection(t_roll *x, long modifiers, char alsosortselectionbyonset
     
     // detect the selection type
     if ((modifiers & eShiftKey) && (modifiers & eAltKey)) { // send all values
-        send_all_values_as_llll(x, k_HEADER_ALL, NULL); // dump all
+        send_all_values_as_llll(x, k_HEADER_ALL, NULL, true); // dump all
     } else if (modifiers & eShiftKey) { // send chord values
         if (x->r_ob.num_selecteditems == 1 && x->r_ob.firstselecteditem->type == k_NOTE)
             send_chord_as_llll((t_notation_obj *) x, ((t_note *)x->r_ob.firstselecteditem)->parent, 6, k_CONSIDER_FOR_EVALUATION, -1, forced_routers);
@@ -18312,7 +18341,7 @@ void roll_new_undo_redo(t_roll *x, char what){
             
         } else if (type == k_CHORD) {
             if (modif_type == k_UNDO_MODIFICATION_CHANGE || modif_type == k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER) {
-                newcontent = get_rollchord_values_as_llll((t_notation_obj *) x, (t_chord *) item, k_CONSIDER_FOR_UNDO);
+                newcontent = get_rollchord_values_as_llll((t_notation_obj *) x, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
                 new_information = build_undo_redo_information(ID, k_CHORD, modif_type, voice_num, 0, k_HEADER_NONE, newcontent);
                 set_rollchord_values_from_llll((t_notation_obj *) x, (t_chord *)item, content, 0, true, false, false);
                 
@@ -18323,7 +18352,7 @@ void roll_new_undo_redo(t_roll *x, char what){
                     need_check_order = true;
                 
             } else if (modif_type == k_UNDO_MODIFICATION_DELETE) {
-                newcontent = get_rollchord_values_as_llll((t_notation_obj *)x, (t_chord *) item, k_CONSIDER_FOR_UNDO);
+                newcontent = get_rollchord_values_as_llll((t_notation_obj *)x, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
                 new_information = build_undo_redo_information(ID, k_CHORD, k_UNDO_MODIFICATION_ADD, voice_num, 0, k_HEADER_NONE, newcontent);
                 need_recompute_total_length = true;
                 if (chord_delete((t_notation_obj *)x, (t_chord *)item, ((t_chord *)item)->prev, false))

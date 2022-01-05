@@ -501,7 +501,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
             } else {
                 append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
                 llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-                llll_appendllll(out_llll, get_rollchord_values_as_llll(r_ob, chord, mode), 0, WHITENULL_llll);
+                llll_appendllll(out_llll, get_rollchord_values_as_llll(r_ob, chord, mode, false), 0, WHITENULL_llll);
             }
             
             llll_appendobj(external_out_llll, out_llll, 0, WHITENULL_llll);
@@ -2448,10 +2448,10 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
         // If this is hidden, all breakpoints are not displayed.
         // This defaults to 1.
         
-        CLASS_ATTR_ATOM_VARSIZE(c, "playofflinecmd", 0, t_notation_obj, play_offline_via_av, play_offline_via_ac, 16);
-        CLASS_ATTR_STYLE_LABEL(c,"playofflinecmd",0,"text","Play Offline Commands");
-        CLASS_ATTR_ACCESSORS(c, "playofflinecmd", (method)notation_obj_getattr_playofflinecmd, (method)notation_obj_setattr_playofflinecmd);
-        CLASS_ATTR_DEFAULT_SAVE(c,"playofflinecmd",0,"v");
+        CLASS_ATTR_ATOM_VARSIZE(c, "dumpplaycmd", 0, t_notation_obj, play_offline_via_av, play_offline_via_ac, 16);
+        CLASS_ATTR_STYLE_LABEL(c,"dumpplaycmd",0,"text","Play Offline Commands");
+        CLASS_ATTR_ACCESSORS(c, "dumpplaycmd", (method)notation_obj_getattr_dumpplaycmd, (method)notation_obj_setattr_dumpplaycmd);
+        CLASS_ATTR_DEFAULT_SAVE(c,"dumpplaycmd",0,"v");
         // @exclude bach.slot
         // @description Determines which keys or command are enabled to send the offline play output (up to 16 choices).
         // You can use lowercase letters only and/or one of the following symbols: "click" "rightclick" "doubleclick".
@@ -3208,7 +3208,7 @@ t_max_err notation_obj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, lo
 }
 
 
-t_max_err notation_obj_setattr_playofflinecmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notation_obj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     for (long i = 0; i < 128; i++)
         r_ob->play_offline_bitfield[i] = 0;
@@ -3245,7 +3245,7 @@ t_max_err notation_obj_setattr_playofflinecmd(t_notation_obj *r_ob, t_object *at
 }
 
 
-t_max_err notation_obj_getattr_playofflinecmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av)
+t_max_err notation_obj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av)
 {
     if (*ac && *av) {
         object_error((t_object *)x, "Error in getattr!");
