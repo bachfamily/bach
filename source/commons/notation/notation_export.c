@@ -240,6 +240,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         double length_ms_prev = r_ob->length_ms;
         double length_ux_prev = r_ob->length_ux;
         double screen_ms_start_prev = r_ob->screen_ms_start;
+        double screen_ux_start_prev = r_ob->screen_ux_start;
         long fade_predomain_prev = r_ob->fade_predomain;
         long onsetindomain_prev = r_ob->onset_in_domain;
         double postdomain_prev = r_ob->postdomain_width;
@@ -365,10 +366,10 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                             }
                             
                             if (num_tuttipoint_slices == 1) {
-                                (r_ob->inscreenmeas_function)((t_object *)r_ob, tuttipoint_get_first_measure(r_ob, from), tuttipoint_get_first_measure(r_ob, to));
+                                (r_ob->inscreenmeas_function)((t_object *)r_ob, tuttipoint_get_first_measure(r_ob, from), tuttipoint_get_first_measure(r_ob, to), false);
                             } else if (num_tuttipoint_slices > 1) {
                                 if (slice_index == 1)
-                                    (r_ob->inscreenmeas_function)((t_object *)r_ob, tuttipoint_get_first_measure(r_ob, from), tuttipoint_get_first_measure(r_ob, to));
+                                    (r_ob->inscreenmeas_function)((t_object *)r_ob, tuttipoint_get_first_measure(r_ob, from), tuttipoint_get_first_measure(r_ob, to), false);
                                 else {
                                     if (slice_index == num_tuttipoint_slices)
                                         r_ob->screen_ux_start = to->offset_ux + to->width_ux - r_ob->domain_ux;
@@ -388,7 +389,10 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             
             jgraphics_set_source_rgba(shot_g, 0, 0, 0, 1.);
             
+            char notify_when_painted_keep = r_ob->notify_when_painted;
+            r_ob->notify_when_painted = false;
             (r_ob->paint_ext_function)((t_object *)r_ob, NULL, shot_g, shot_rect);
+            r_ob->notify_when_painted = notify_when_painted_keep;
             
             if (view == gensym("scroll") || view == gensym("page")) {
                 jgraphics_image_surface_draw(page_g, shot_surface, shot_rect, build_rect(0, (i-1) * (h + systemvshift_pixels), w, h));
@@ -438,6 +442,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             r_ob->inner_height = inner_height_prev;
             
             r_ob->screen_ms_start = screen_ms_start_prev;
+            r_ob->screen_ux_start = screen_ux_start_prev;
             r_ob->length_ms = length_ms_prev;
             r_ob->length_ux = length_ux_prev;
             

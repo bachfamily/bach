@@ -138,7 +138,7 @@ void write_text_standard_account_for_vinset_singleline(t_notation_obj *r_ob, t_j
     write_text_standard_singleline(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, r_ob->width - x1 + 30 * r_ob->zoom_y, r_ob->height - y1 + 30 * r_ob->zoom_y);
 }
 
-void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, double direction)
+void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, char direction)
 {
     //actually, it is a quadrilater
     if (direction == -1){
@@ -181,7 +181,7 @@ void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g
     write_text_standard(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, (r_ob->inner_width + r_ob->j_inset_x) - x1, r_ob->inner_height - y1);
 }
 
-void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, double direction)
+void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, char direction)
 {
     Path p;
     if (direction == -1){
@@ -6135,7 +6135,7 @@ void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color
 
 void change_color_depending_on_group(t_notation_obj *r_ob, t_jrgba *color, void* element, char type)
 {
-    if (r_ob->show_groups >= 2) {
+    if (r_ob->show_groups >= 2 && r_ob->show_groups <= 3) {
         t_chord *ch = NULL;
         if (type == k_CHORD)
             ch = (t_chord *) element;
@@ -6313,8 +6313,23 @@ t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 
     change_color_depending_on_group(r_ob, &stemcolor, chord, k_CHORD);
     
-    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
-        note_change_color_depending_on_slot_linkage(r_ob, &stemcolor, chord->firstnote);
+    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote) {
+        t_jrgba firstnotetempcolor = stemcolor;
+        note_change_color_depending_on_slot_linkage(r_ob, &firstnotetempcolor, chord->firstnote);
+        if (!chord->firstnote->next) {
+            stemcolor = firstnotetempcolor;
+        } else {
+            for (t_note *nt = chord->firstnote->next; nt; nt = nt->next) {
+                t_jrgba tempcolor = stemcolor;
+                note_change_color_depending_on_slot_linkage(r_ob, &tempcolor, nt);
+                if (!jrgba_compare(&tempcolor, &firstnotetempcolor)) {
+                    break; // Notes in the chord have different colors. we don't color the stem.
+                } else if (!nt->next) {
+                    stemcolor = firstnotetempcolor;
+                }
+            }
+        }
+    }
     
     change_color_depending_on_playlockmute(r_ob, &stemcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
@@ -6324,6 +6339,19 @@ t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     return stemcolor;
 }
 
+t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord)
+{
+    // handling selection
+    char is_chord_selected = (notation_item_is_selected(r_ob, (t_notation_item *)chord) ^ notation_item_is_preselected(r_ob, (t_notation_item *)chord));
+    char is_chord_linear_edited = (r_ob->notation_cursor.voice && r_ob->notation_cursor.chord == chord);
+    
+    char is_chord_locked = notation_item_is_globally_locked(r_ob, (t_notation_item *)chord);
+    char is_chord_muted = notation_item_is_globally_muted(r_ob, (t_notation_item *)chord);
+    char is_chord_solo = notation_item_is_globally_solo(r_ob, (t_notation_item *)chord);
+    char is_chord_played = r_ob->highlight_played_notes ? chord->played : false;
+    
+    return stem_get_color(r_ob, chord, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+}
 
 
 t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
@@ -6993,7 +7021,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 
         fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 'L', 'O', 'N', 'Q', 'M', 'P');
         fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // 1/8, 1/16, next 
-        r_ob->notation_typo_preferences.flag_ux_shift = 0.;
+        r_ob->notation_typo_preferences.flag_ux_shift = 0.; // was: 0.
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -29.4+6, -21.+12, -29.4+6, -21.+12, -32.9+6, -18.4+12);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.; //55;
         r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.; //55;
@@ -9375,6 +9403,15 @@ void clear_measure_beams(t_notation_obj *r_ob, t_measure *meas){
     }
 }
 
+char is_all_group_selected(t_notation_obj *r_ob, t_group *gr)
+{
+    for (t_notation_item *it = gr->firstelem; it; it = it->next_selected) {
+        if (!notation_item_is_globally_selected(r_ob, it))
+            return false;
+    }
+    return true;
+}
+
 char is_all_selection_in_one_group(t_notation_obj *r_ob, t_group **whichgroup){ 
     t_notation_item *item;
     t_group *gr = NULL;
@@ -9491,6 +9528,34 @@ t_group *build_group(){
     outgroup->ID = 0;
     outgroup->firstelem = outgroup->lastelem = NULL;
     return outgroup;
+}
+
+t_notation_item *group_get_leftmost_item(t_notation_obj *r_ob, t_group *gr)
+{
+    double leftmost_onset = 0;
+    t_notation_item *leftmost_item = NULL;
+    for (t_notation_item *it = gr->firstelem; it; it = it->next_group_item) {
+        double onset = notation_item_get_onset_ms(r_ob, it);
+        if (!leftmost_item || onset < leftmost_onset) {
+            leftmost_onset = onset;
+            leftmost_item = it;
+        }
+    }
+    return leftmost_item;
+}
+
+t_notation_item *group_get_rightmost_item(t_notation_obj *r_ob, t_group *gr)
+{
+    double rightmost_onset = 0;
+    t_notation_item *rightmost_item = NULL;
+    for (t_notation_item *it = gr->firstelem; it; it = it->next_group_item) {
+        double onset = notation_item_get_onset_ms(r_ob, it);
+        if (!rightmost_item || onset > rightmost_onset) {
+            rightmost_onset = onset;
+            rightmost_item = it;
+        }
+    }
+    return rightmost_item;
 }
 
 
@@ -12607,6 +12672,21 @@ char notation_item_is_globally_selected(t_notation_obj *r_ob, t_notation_item *i
             break;
         default:
             break;
+    }
+    
+    return 0;
+}
+
+char chord_or_any_of_its_notes_are_selected(t_notation_obj *r_ob, t_chord *ch)
+{
+    if (!ch)
+        return 0;
+    
+    if (notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
+        return 1;
+    for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
+        if (notation_item_is_selected(r_ob, (t_notation_item *)nt))
+            return 1;
     }
     
     return 0;
@@ -20787,12 +20867,16 @@ double chord_get_alignment_ux(t_notation_obj *r_ob, t_chord *chord)
 }
 
 
+double chord_get_stem_x(t_notation_obj *r_ob, t_chord *chord)
+{
+    return get_stem_x_from_alignment_point_x(r_ob, chord, chord_get_alignment_x(r_ob, chord));
+}
 
-double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note)
+double tail_get_alignment_x(t_notation_obj *r_ob, t_note *note)
 {
     switch (r_ob->obj_type) {
         case k_NOTATION_OBJECT_SCORE:
-            return unscaled_xposition_to_xposition(r_ob, get_tail_alignment_ux(r_ob, note));
+            return unscaled_xposition_to_xposition(r_ob, tail_get_alignment_ux(r_ob, note));
             break;
             
         case k_NOTATION_OBJECT_ROLL:
@@ -20814,7 +20898,7 @@ double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note)
 }
 
 
-double get_tail_alignment_ux(t_notation_obj *r_ob, t_note *note)
+double tail_get_alignment_ux(t_notation_obj *r_ob, t_note *note)
 {
     switch (r_ob->obj_type) {
         case k_NOTATION_OBJECT_SCORE:
@@ -20840,7 +20924,7 @@ double get_tail_alignment_ux(t_notation_obj *r_ob, t_note *note)
             break;
             
         case k_NOTATION_OBJECT_ROLL:
-            return xposition_to_unscaled_xposition(r_ob, get_tail_alignment_x(r_ob, note));
+            return xposition_to_unscaled_xposition(r_ob, tail_get_alignment_x(r_ob, note));
             break;
             
         default:
@@ -25943,11 +26027,12 @@ double get_stem_x_from_alignment_point_x(t_notation_obj *r_ob, t_chord *chord, d
 {
     double stem_x = 0;
 
-    if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER || r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END) {
-        t_note *nt = NULL;
+    if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER ||
+        r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END) {
+        t_note *nt = get_principal_note(r_ob, chord);
         double note_width = get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;
         
-        if (!r_ob->forceround_stems_to_semiinteger && (nt = get_principal_note(r_ob, chord))) {
+        if (!r_ob->forceround_stems_to_semiinteger && nt) {
             if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER)
                 stem_x = chord_alignment_x + chord->direction * note_width / 2.;
             else
@@ -28612,7 +28697,8 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                 double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
                 
                 double dur = notation_item_get_duration_ms(r_ob, nitem);
-                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+//                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && r_ob->slotinfo[j].slot_singleslotfortiednotes)
                     dur = get_all_tied_note_sequence_duration_ms((t_note *)nitem);
 
                 while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? dur : 1) < hot_point))
@@ -29024,7 +29110,7 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
 
     for (j = 0; j < CONST_MAX_SLOTS; j++) {
         t_note *note_for_slot = note;
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && (mode == k_CONSIDER_FOR_SAMPLING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) && r_ob->slotinfo[j].slot_singleslotfortiednotes)
             note_for_slot = note_get_first_in_tieseq(note);
         if (note_for_slot->slot[j].firstitem || force_all_slots) { // do we need this slot?
             if (mode != k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING || r_ob->slotinfo[j].slot_singleslotfortiednotes) {
@@ -29423,9 +29509,10 @@ t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord
 }
 
 
-t_llll* chord_get_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode){ 
+t_llll* chord_get_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only)
+{
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-        return get_rollchord_values_as_llll(r_ob, chord, mode);
+        return get_rollchord_values_as_llll(r_ob, chord, mode, selection_only);
     else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) 
         return get_scorechord_values_as_llll(r_ob, chord, mode, false);
     return NULL;
@@ -29456,7 +29543,8 @@ char name_is_abr_none_abr(t_llll *names)
 }
 
 // mode is one of the e_data_considering_types
-t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode){ // retrieve the chord values as an unmeasured chord, i.e. for [roll]
+t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only)
+{ // retrieve the chord values as an unmeasured chord, i.e. for [roll]
     t_note *temp_note;
     t_llll* out_llll = llll_get(); 
     double playhead_pos_ms = r_ob->play_head_start_ms;
@@ -29482,7 +29570,8 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
             (mode == k_CONSIDER_FOR_SELECTION_COPYING && notation_item_is_globally_selected(r_ob, (t_notation_item *)temp_note)) ||
             (mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE &&
              mode != k_CONSIDER_FOR_SELECTION_COPYING && should_element_be_played(r_ob, (t_notation_item *)temp_note)) )
-                llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, temp_note, mode), 0, WHITENULL_llll);    
+            if (!selection_only || notation_item_is_globally_selected(r_ob, (t_notation_item *)temp_note))
+                llll_appendllll(out_llll, get_rollnote_values_as_llll(r_ob, temp_note, mode));
         temp_note = temp_note->next;
     }
 
@@ -30445,9 +30534,9 @@ t_hatom *lexpr_eval_for_notation_item(t_notation_obj *r_ob, t_notation_item *it,
     t_hatom vars[LEXPR_MAX_VARS];
     hatom_setdouble(vars, notation_item_get_onset_ms(r_ob, it)); 
     hatom_setdouble(vars+1, notation_item_get_cents(r_ob, it)); 
-    hatom_setdouble(vars+2, notation_item_get_duration_ms(r_ob, it)); 
-    hatom_setlong(vars+3, it->type == k_NOTE ? ((t_note *)it)->velocity : 0); 
-    hatom_setrational(vars+4, notation_item_get_symduration(r_ob, it)); 
+    hatom_setdouble(vars+2, notation_item_get_duration_ms(r_ob, it));
+    hatom_setlong(vars+3, notation_item_get_velocity(r_ob, it));
+    hatom_setrational(vars+4, notation_item_get_symduration(r_ob, it));
     hatom_setrational(vars+5, notation_item_get_symonset(r_ob, it)); 
     hatom_setdouble(vars+6, notation_item_get_tail_ms(r_ob, it)); 
     hatom_setrational(vars+7, (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && it->type == k_CHORD) ? rat_rat_sum(((t_chord *)it)->r_sym_onset, ((t_chord *)it)->r_sym_duration) : long2rat(0));
@@ -36945,6 +37034,17 @@ double notation_item_get_duration_ms(t_notation_obj *r_ob, t_notation_item *it)
     }
 }
 
+double notation_item_get_velocity(t_notation_obj *r_ob, t_notation_item *it)
+{
+    switch (it->type) {
+        case k_NOTE: return ((t_note *)it)->velocity;
+        case k_CHORD: return chord_get_max_velocity(r_ob, (t_chord *)it);
+        case k_PITCH_BREAKPOINT: return (r_ob->breakpoints_have_velocity ? ((t_bpt *)it)->velocity : 0);
+        case k_DURATION_LINE: return ((t_duration_line *)it)->owner->velocity;
+        default: return 0;
+    }
+}
+
 t_rational notation_item_get_symonset(t_notation_obj *r_ob, t_notation_item *it)
 {
     t_rational zero = long2rat(0);
@@ -38036,14 +38136,15 @@ void set_all_label_families_update_contour(t_notation_obj *r_ob)
     }
 }
 
-void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob)
+void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob, char also_lock_general_mutex)
 {
     char must_unlock = true;
     
     if (systhread_mutex_trylock(r_ob->c_undo_mutex))
         must_unlock = false; // already locked
 
-    lock_general_mutex(r_ob);
+    if (also_lock_general_mutex)
+        lock_general_mutex(r_ob);
     t_llllelem *elem;
     for (elem = r_ob->undo_llll->l_head; elem; elem = elem->l_next) {
         
@@ -38096,8 +38197,8 @@ void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob
     }
 
 end:
-    
-    unlock_general_mutex(r_ob);
+    if (also_lock_general_mutex)
+        unlock_general_mutex(r_ob);
     if (must_unlock)
         systhread_mutex_unlock(r_ob->c_undo_mutex);    
 }
@@ -40282,7 +40383,7 @@ void create_header_undo_tick(t_notation_obj *r_ob, e_header_elems what)
         return;
     
     r_ob->undo_header_elements_under_tick |= what;
-    t_llll *content = get_notation_obj_header_as_llll(r_ob, what, true, true, true, k_CONSIDER_FOR_UNDO);
+    t_llll *content = get_notation_obj_header_as_llll(r_ob, what, true, true, true, k_CONSIDER_FOR_UNDO, false);
     t_undo_redo_information *operation = build_undo_redo_information(0, k_HEADER_DATA, k_UNDO_MODIFICATION_CHANGE, 0, 0, what, content);
     create_undo_redo_tick(r_ob, k_UNDO, 0, operation, true);
 }
@@ -40294,7 +40395,7 @@ t_llll *notation_item_get_values_as_llll_for_undo(t_notation_obj *r_ob, t_notati
         return measure_get_values_as_llll(r_ob, (t_measure *)item, k_CONSIDER_FOR_UNDO, true, true);
     else if (item->type == k_CHORD) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-            return get_rollchord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO);
+            return get_rollchord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false);
         else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
             return get_scorechord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false);
     } else if (item->type == k_NOTE) {
@@ -40766,7 +40867,7 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
     
     // need to check for families update?
     if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX) 
-        set_label_families_update_contour_flag_from_undo_ticks(r_ob);
+        set_label_families_update_contour_flag_from_undo_ticks(r_ob, false);
     else if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_VENN) // we never know what could have been dragged inside the family. This is heavy!!!
         set_all_label_families_update_contour(r_ob);
     
@@ -41275,6 +41376,12 @@ char *undo_op_to_string(long undo_op)
             break;
         case k_UNDO_OP_NAMES_TO_SLOT:
             sprintf(buf, "Export Names To Slot");
+            break;
+        case k_UNDO_OP_DURATION_LINE_TO_SLOT:
+            sprintf(buf, "Export Duration Line To Slot");
+            break;
+        case k_UNDO_OP_SLOT_TO_DURATION_LINE:
+            sprintf(buf, "Assign Duration Line From Slot");
             break;
         case k_UNDO_OP_CHANGE_ROLES:
             sprintf(buf, "Change Roles");
@@ -41896,7 +42003,7 @@ t_llll *bach_rhythmic_tree_to_om_rhythmic_tree(t_llll *durs, t_llll *measureinfo
 
 t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, char add_router_symbol, 
                                         char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector,
-                                        e_data_considering_types for_what)
+                                        e_data_considering_types for_what, bool selection_only)
 {
     t_llll *out_llll = llll_get();
     
@@ -41932,7 +42039,7 @@ t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, ch
         }
 
         if (dump_what & k_HEADER_MARKERS)
-            llll_appendllll(out_llll, get_markers_as_llll(r_ob, 0, 0, 0, false, for_what, 0), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_markers_as_llll(r_ob, selection_only ? 2 : 0, 0, 0, false, for_what, 0), 0, WHITENULL_llll);
 
         if (dump_what & k_HEADER_STAFFLINES)
             llll_appendllll(out_llll, get_stafflines_as_llll(r_ob, true), 0, WHITENULL_llll);
@@ -42520,6 +42627,102 @@ void notation_obj_clear_names(t_notation_obj *r_ob, long voices, long measures, 
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_NAMES);
 }
 
+
+
+void note_dltoslot_do(t_notation_obj *r_ob, t_note *nt, long pitchslotnum, long velslotnum, bool absolutepitch)
+{
+    t_llll *breakpoints = note_get_breakpoint_values_as_llll(r_ob, nt, k_CONSIDER_FOR_SELECTION_COPYING, NULL, NULL);
+    if (breakpoints) {
+        t_llll *slots_ll = llll_get();
+        t_llll *pitchslot_ll = llll_get();
+        t_llll *velslot_ll = llll_get();
+ 
+        llll_behead(breakpoints);
+
+        llll_appendlong(pitchslot_ll, pitchslotnum+1); // note_set_slots_from_llll() will be 1-based
+        llll_appendlong(velslot_ll, velslotnum+1); // note_set_slots_from_llll() will be 1-based
+        if (pitchslotnum >= 0 && pitchslotnum < CONST_MAX_SLOTS) {
+            t_llll *pitchenv = llll_clone(breakpoints);
+            for (t_llllelem *el = pitchenv->l_head; el; el = el->l_next) {
+                if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                    t_llll *ll = hatom_getllll(&el->l_hatom);
+                    if (ll->l_size == 4)
+                        llll_destroyelem(ll->l_tail);
+                    if (absolutepitch)
+                        hatom_setdouble(&ll->l_head->l_next->l_hatom, hatom_getdouble(&ll->l_head->l_next->l_hatom) + nt->midicents);
+                }
+            }
+            llll_chain(pitchslot_ll, pitchenv);
+            llll_appendllll(slots_ll, pitchslot_ll);
+        }
+        if (velslotnum >= 0 && velslotnum < CONST_MAX_SLOTS) {
+            t_llll *velenv = llll_clone(breakpoints);
+            for (t_llllelem *el = velenv->l_head; el; el = el->l_next) {
+                if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                    t_llll *ll = hatom_getllll(&el->l_hatom);
+                    if (ll->l_size == 4) {
+                        llll_swapelems(ll->l_head->l_next, ll->l_head->l_next->l_next->l_next);
+                        llll_destroyelem(ll->l_tail);
+                    } else if (ll->l_head->l_next) {
+                        hatom_setlong(&ll->l_head->l_next->l_hatom, nt->velocity);
+                    }
+                }
+            }
+            llll_chain(velslot_ll, velenv);
+            llll_appendllll(slots_ll, velslot_ll);
+        }
+        note_set_slots_from_llll(r_ob, nt, slots_ll);
+        llll_free(slots_ll);
+    }
+    llll_free(breakpoints);
+}
+
+
+long notation_obj_dltoslot_do(t_notation_obj *r_ob, long pitchslotnum, long velslotnum, bool absolutepitch)
+{
+    long changed = 0;
+    lock_general_mutex(r_ob);
+    for (t_notation_item *curr_it = r_ob->firstselecteditem; curr_it; curr_it = curr_it->next_selected) {
+        switch (curr_it->type) {
+            case k_NOTE:
+                changed = 1;
+                create_simple_notation_item_undo_tick(r_ob, curr_it, k_UNDO_MODIFICATION_CHANGE);
+                note_dltoslot_do(r_ob, (t_note *)curr_it, pitchslotnum, velslotnum, absolutepitch);
+                break;
+                
+            case k_CHORD:
+            {
+                changed = 1;
+                create_simple_notation_item_undo_tick(r_ob, curr_it, k_UNDO_MODIFICATION_CHANGE);
+                t_chord *ch = (t_chord *)curr_it;
+                for (t_note *nt = ch->firstnote; nt; nt = nt->next)
+                    note_dltoslot_do(r_ob, nt, pitchslotnum, velslotnum, absolutepitch);
+            }
+                break;
+                
+            default:
+                break;
+        }
+    }
+    unlock_general_mutex(r_ob);
+    return changed;
+}
+
+void notation_obj_dltoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *selectllll = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    if (selectllll && selectllll->l_head) {
+        long pitchslotnum = llllelem_to_slotnum(r_ob, selectllll->l_head, true);
+        long velocityslotnum = -1;
+        long absolutepitch = 0;
+        llll_parseattrs((t_object *)r_ob, selectllll, 0, "i", gensym("absolutepitch"), &absolutepitch);
+        if (selectllll->l_head->l_next)
+            velocityslotnum = llllelem_to_slotnum(r_ob, selectllll->l_head->l_next, true);
+        notation_obj_dltoslot_do(r_ob, pitchslotnum, velocityslotnum, absolutepitch);
+        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DURATION_LINE_TO_SLOT);
+    }
+    llll_free(selectllll);
+}
 
 
 
@@ -44888,7 +45091,7 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
         for (curr_ch = chord_get_first(r_ob, voice); curr_ch; curr_ch = chord_get_next(curr_ch)){
             double align_x = chord_get_alignment_x(r_ob, curr_ch);
             t_note *longestnote = chord_get_longest_note(r_ob, curr_ch);
-            double tail_x = longestnote ? get_tail_alignment_x(r_ob, longestnote) : align_x;
+            double tail_x = longestnote ? tail_get_alignment_x(r_ob, longestnote) : align_x;
             
             if (align_x > this_x + 200) // safe threshold to break
                 break;

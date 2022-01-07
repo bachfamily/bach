@@ -281,6 +281,7 @@ void score_nameappend(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_slottoname(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_nametoslot(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_clearnames(t_score *x, t_symbol *s, long argc, t_atom *argv);
+void score_dltoslot(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 void score_copy_selected_measures(t_score *x, char cut);
 void score_paste_replace_measures(t_score *x, char also_paste_tempi);
@@ -886,7 +887,7 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     
     llll_appendsym(out_llll, gensym("quantize"), 0, WHITENULL_llll);
-    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, what_to_dump, false, false, true, k_CONSIDER_FOR_DUMPING));
+    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, what_to_dump, false, false, true, k_CONSIDER_FOR_DUMPING, false));
     llll_appendllll(out_llll, out_cents, 0, WHITENULL_llll);
     llll_appendllll(out_llll, out_durations, 0, WHITENULL_llll);
     llll_appendllll(out_llll, out_velocities, 0, WHITENULL_llll);
@@ -2380,7 +2381,8 @@ void score_sel_erase_breakpoints(t_score *x, t_symbol *s, long argc, t_atom *arg
 
 void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
     double rel_x_pos, y_pos, slope;
-    long vel = 0; char auto_vel;
+    long vel = 0;
+    char auto_vel, auto_mc = false;
     t_notation_item *curr_it;
     char lambda = (s == _llllobj_sym_lambda);
     char changed = 0;
@@ -2389,7 +2391,15 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
         return;
     
     rel_x_pos = atom_getfloat(argv);
-    y_pos = atom_getfloat(argv+1);
+
+    if (atom_gettype(argv+1) == A_SYM && atom_getsym(argv+1) == _llllobj_sym_auto) {
+        y_pos = 0;
+        auto_mc = true;
+    } else {
+        y_pos = atom_getfloat(argv+1);
+    }
+
+    
     slope = (argc >= 3) ? atom_getfloat(argv+2) : 0.;
     if (slope < -1.) 
         slope = -1.; 
@@ -2408,7 +2418,7 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                 create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, 0, vel, auto_vel);
+                add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, auto_mc, vel, auto_vel);
                 changed = 1;
             }
         } else if (curr_it->type == k_CHORD) {
@@ -2417,7 +2427,7 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
             for (nt=ch->firstnote; nt; nt = nt->next) {
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                     create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                    add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, 0, vel, auto_vel);
+                    add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, auto_mc, vel, auto_vel);
                     changed = 1;
                 }
             }
@@ -2429,7 +2439,7 @@ void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv){
                 for (nt=ch->firstnote; nt; nt = nt->next) {
                     if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                         create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                        add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, 0, vel, auto_vel);
+                        add_breakpoint((t_notation_obj *) x, nt, rel_x_pos, y_pos, slope, auto_mc, vel, auto_vel);
                         changed = 1;
                     }
                 }
@@ -2647,11 +2657,16 @@ void score_sel_erase_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
     if (argc < 1) 
         return;
 
-    slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
-    if (slotnum < 0)
-        return;
-
-    notationobj_sel_erase_slot((t_notation_obj *)x, slotnum, lambda);
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == _llllobj_sym_all) {
+        for (long j = 0; j < CONST_MAX_SLOTS; j++)
+            notationobj_sel_erase_slot((t_notation_obj *)x, j, lambda);
+    } else {
+        slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
+        if (slotnum < 0 || slotnum >= CONST_MAX_SLOTS)
+            return;
+        
+        notationobj_sel_erase_slot((t_notation_obj *)x, slotnum, lambda);
+    }
     
     lock_general_mutex((t_notation_obj *)x);
     if (x->r_ob.need_perform_analysis_and_change)
@@ -3958,7 +3973,7 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
         x->r_ob.play_head_start_ms = start_ms;
         x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, start_ms, 1);
         
-    } else if (argc == 0 && x->r_ob.show_playhead) {
+    } else if (argc == 0) {
         start_ms = x->r_ob.play_head_start_ms;
     } else {
         x->r_ob.play_head_start_ms = start_ms;
@@ -5943,6 +5958,18 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) score_nametoslot, "nametoslot", A_GIMME, 0);
 
     
+
+    // @method nametoslot @digest Copy duration line breakpoint function into a slot
+    // @description A <m>dltoslot</m> message copies the duration line envelope (as a breakpoint function)
+    // into a given slot. Actually, the message copies both a pitch envelope and a velocity envelope
+    // into two different slots, given as arguments (use -1 to avoid assigning one of the slots).
+    // You should ensure that the introduced slots are of the appropriate type (in particular, they should be
+    // function slots, with an appropriate range and a domain between 0 and 1). <br />
+    // @marg 0 @name pitchslot @optional 0 @type int
+    // @marg 1 @name velocityslot @optional 1 @type int
+    // @seealso setslot
+    class_addmethod(c, (method) score_dltoslot, "dltoslot", A_GIMME, 0);
+    
     
     // @method autorhythm @digest Reparse automatically the rhythm of the selected portion of score
     // @description The <m>autorhythm</m> message retranscribes and rebeams the rhythm of the selected portion
@@ -6031,7 +6058,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name pitch_or_cents @optional 0 @type number/pitch/llll/anything
     class_addmethod(c, (method) score_sel_change_poc, "poc", A_GIMME, 0);
     
-    // @method cents @digest Modify the measureinfo of selected measures
+    // @method measureinfo @digest Modify the measureinfo of selected measures
     // @description Modifies the measureinfo of select measures. The expected syntax is the standard measureinfo syntax,
     // without the outermost level of parentheses (e.g. <b>measureinfo [4 4] [3/8 120]</b> is a valid message). <br />
     // @copy BACH_DOC_MEASUREINFO_SYNTAX
@@ -6070,12 +6097,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @method addbreakpoint @digest Add a pitch breakpoint to each selected note
     // @description @copy BACH_DOC_MESSAGE_ADDBREAKPOINT
     // @marg 0 @name relative_x_position @optional 0 @type float
-    // @marg 1 @name delta_midicents @optional 0 @type float
+    // @marg 1 @name delta_midicents @optional 0 @type float/symbol
     // @marg 2 @name slope @optional 1 @type float
     // @marg 3 @name velocity @optional 1 @type int
     // @example addbreakpoint 0.5 200 @caption add a breakpoint at the middle of the note of +200cents
     // @example addbreakpoint 0.5 200 0.2 @caption the same, with slope 0.2
     // @example addbreakpoint 0.5 200 0.2 80 @caption the same, with velocity 80
+    // @example addbreakpoint 0.5 auto @caption pop out a breakpoint in the middle of the duration line
     // @see erasebreakpoints
     class_addmethod(c, (method) score_sel_add_breakpoint, "addbreakpoint", A_GIMME, 0);
 
@@ -6117,6 +6145,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example eraseslot active @caption clear currently open slot for selected notes
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
+    // @example eraseslot all @caption clear all slots
     // @seealso setslot, changeslotitem
     class_addmethod(c, (method) score_sel_erase_slot, "eraseslot", A_GIMME, 0);
 
@@ -7498,6 +7527,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description Toggles the display of measure numbers. A 0/1 integer for each voice is expected: 0 means that the measure numbers
     // must be hidden, 1 means that the measure numbers will be shown for the given voice. If <m>drawbarlinesacrossstaves</m> is 1 and 
     // barlines are drawn across the staves, in any case the measure numbers can only be shown for the first voice.
+
+    CLASS_ATTR_CHAR(c,"showfirstmeasurenumber", 0, t_notation_obj, show_measure_numbers_on_first_measure);
+    CLASS_ATTR_STYLE_LABEL(c,"showfirstmeasurenumber", 0, "onoff", "Show First Measure Number");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showfirstmeasurenumber", 0, "0");
+    // @description Toggles the display of the first measure number on the first measure (only meaningful if <m>showmeasurenumbers</m>
+    // is active for at least a voice)
+
     
     CLASS_ATTR_CHAR(c,"showbarlines", 0, t_notation_obj, show_barlines);
     CLASS_ATTR_STYLE_LABEL(c,"showbarlines", 0, "onoff", "Show Barlines");
@@ -10193,6 +10229,8 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
 
     initialize_slots((t_notation_obj *) x, false);
     
+    x->r_ob.width = 526;
+    x->r_ob.height = 120;
     x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
     
     // @arg 0 @name numvoices @optional 1 @type int @digest Number of voices
@@ -10201,7 +10239,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
     t_llll *right = llll_slice(x->r_ob.voicenames_as_llll, x->r_ob.num_voices);
     llll_free(right);
 
-    notation_obj_setattr_stafflines((t_notation_obj *) x, NULL, -1, NULL); // -1 is to handle it inside
+//    notation_obj_setattr_stafflines((t_notation_obj *) x, NULL, -1, NULL); // -1 is to handle it inside
     
     parse_fullaccpattern_to_voices((t_notation_obj *) x);
 
@@ -12288,6 +12326,12 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     char need_popup = modifiers & eRightButton;
     char need_send_changed_bang = false;
     
+    char must_evaluate_selection = false;
+    char rightclick_to_play_offline = false;
+    if (need_popup && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK]) {
+        rightclick_to_play_offline = true;
+    }
+    
     evnum_incr();
 
     x->r_ob.j_isdragging = false;
@@ -12630,7 +12674,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         t_note *curr_nt = curr_ch->firstnote;
                         while (curr_nt && !clicked_ptr) { // cycle on the notes
                             if (is_in_note_shape((t_notation_obj *)x,curr_nt,this_x,this_y)) {
-                                if (need_popup){
+                                if (need_popup && !rightclick_to_play_offline){
                                     long res = k_CHANGED_DO_NOTHING;
                                     unlock_general_mutex((t_notation_obj *)x);    
 
@@ -12693,7 +12737,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     } else if (res != k_CHANGED_DO_NOTHING)
                                         handle_change((t_notation_obj *)x, res, k_UNDO_OP_UNKNOWN);
                                     return;
-                                } else if ((modifiers == eCommandKey) && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)curr_nt))) { // delete note!
+                                } else if (!rightclick_to_play_offline && (modifiers == eCommandKey) && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)curr_nt))) { // delete note!
                                     if (is_editable((t_notation_obj *)x, curr_nt->parent->num_notes == 1 ? k_CHORD : k_NOTE, k_DELETION)) {
                                         char need_recompute_beamings = (curr_nt->parent->num_notes <= 1 || curr_nt->parent->is_grace_chord);
                                         char there_is_a_tied_note = get_num_tied_to_notes(curr_nt->parent) > 0 || get_num_tied_from_notes(curr_nt->parent) > 0;
@@ -12722,11 +12766,18 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_NOTE);
                                     verbose_post_rhythmic_tree((t_notation_obj *)x, x->firstvoice->firstmeasure, gensym("after"), 1);
                                     return;
-                                } else if ((t_note *)clicked_ptr != curr_nt) {
-                                    clicked_ptr = curr_nt;
-                                    clicked_obj = k_NOTE;
-                                    need_set_selection_dragging_velocity = true;
-                                    break;
+                                } else {
+                                    if ((!rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) ||
+                                        (rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK])) {
+                                        must_evaluate_selection = true;
+                                    }
+                                    
+                                    if ((t_note *)clicked_ptr != curr_nt) {
+                                        clicked_ptr = curr_nt;
+                                        clicked_obj = k_NOTE;
+                                        need_set_selection_dragging_velocity = true;
+                                        break;
+                                    }
                                 }
                             }
                             curr_nt = curr_nt->next;
@@ -13177,7 +13228,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         x->r_ob.selection_type = k_MEASURE;
                     }
                     
-                    if (need_popup && meas){
+                    if (need_popup && meas && !rightclick_to_play_offline){
                         long res = k_CHANGED_DO_NOTHING;
                         unlock_general_mutex((t_notation_obj *)x);    
                         if (barline_clicked) {
@@ -13248,11 +13299,11 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             }
                         }
                         return;
-                    } else if (barline_clicked){
+                    } else if (!rightclick_to_play_offline && barline_clicked){
                         // we add the measure barline to the selection!
                         clicked_ptr = meas->end_barline;
                         clicked_obj = k_MEASURE_END_BARLINE;
-                    } else if (meas && modifiers == eAltKey + eCommandKey && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)meas))){
+                    } else if (!rightclick_to_play_offline && meas && modifiers == eAltKey + eCommandKey && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)meas))){
                         // we pop the tempo out
                         t_chord *nearest_chord = find_ux_nearest_chord_in_measure((t_notation_obj *) x, meas, ux);
                         if (nearest_chord && is_editable((t_notation_obj *)x, k_TEMPO, k_CREATION)) {
@@ -13270,7 +13321,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_POP_OUT_TEMPO); 
                         x->r_ob.item_changed_at_mousedown = 1;
                         return;
-                    } else if (modifiers == eCommandKey + eControlKey || modifiers == eCommandKey + eControlKey + eShiftKey){
+                    } else if (!rightclick_to_play_offline && modifiers == eCommandKey + eControlKey || modifiers == eCommandKey + eControlKey + eShiftKey){
                         // we add an empty measure after this measure
                         if (is_editable((t_notation_obj *)x, k_MEASURE, k_CREATION)) {
                             char direction = modifiers & eShiftKey ? -1 : 1;
@@ -13287,7 +13338,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             unlock_general_mutex((t_notation_obj *)x);    
                         }
                         return;
-                    } else if (modifiers == eCommandKey || modifiers == eCommandKey + eShiftKey){
+                    } else if (!rightclick_to_play_offline && modifiers == eCommandKey || modifiers == eCommandKey + eShiftKey){
                         // we add an empty measure in all voices measure
                         if (is_editable((t_notation_obj *)x, k_MEASURE, k_CREATION)) {
                             t_measure *added_meas[CONST_MAX_VOICES];
@@ -13310,7 +13361,13 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         clicked_obj = k_MEASURE;
 //                        if (!instaff)
 //                            preselect_measure_in_all_voices(x, meas, true);
-                        need_set_selection_dragging_velocity = true; 
+                        need_set_selection_dragging_velocity = true;
+
+                        if ((!rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) ||
+                            (rightclick_to_play_offline && x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK])) {
+                            must_evaluate_selection = true;
+                        }
+
                     }
                 }
             }
@@ -13602,6 +13659,12 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     
     if (need_set_selection_dragging_velocity) 
         set_selection_dragging_velocity((t_notation_obj *) x);
+
+    if (must_evaluate_selection) {
+        evaluate_selection(x, 0, true);
+        return;
+    }
+    
 }
 
 // dirty!
@@ -14763,7 +14826,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
         }
     }
 
-    if (x->r_ob.dblclick_sends_values) {
+    if (x->r_ob.play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK]) {
         unlock_general_mutex((t_notation_obj *)x);    
         evaluate_selection(x, 0, true);
         return;
@@ -15436,6 +15499,10 @@ void score_nametoslot(t_score *x, t_symbol *s, long argc, t_atom *argv)
     notation_obj_nametoslot((t_notation_obj *)x, s, argc, argv);
 }
 
+void score_dltoslot(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
+    notation_obj_dltoslot((t_notation_obj *)x, s, argc, argv);
+}
 
 void score_clearnames(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
@@ -16247,6 +16314,13 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                             notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                         }
                     } else {
+                        // accounting for quarter key:
+                        if (keycode >= 48 && keycode <= 57) {
+                            long candidatecode = keycode - (x->r_ob.linear_edit_quarter_key-5);
+                            if (candidatecode > 48 && candidatecode < 57)
+                                keycode = candidatecode;
+                        }
+                        
                         if (keycode == 46 || (keycode > 48 && keycode < 57)) {
                             t_chord *edited_chord = NULL;
                             char was_last = false;
@@ -16254,7 +16328,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 
                             lock_general_mutex((t_notation_obj *)x);
                             
-                            if (keycode == 46) {
+                            if (keycode == 46) { // DOT
                                 verbose_post_rhythmic_tree((t_notation_obj *)x, x->firstvoice->lastmeasure, gensym("before3"), 1);
                                 was_last = (!x->r_ob.notation_cursor.chord || !x->r_ob.notation_cursor.chord->next);
                                 edited_chord = x->r_ob.notation_cursor.chord ? x->r_ob.notation_cursor.chord : (x->r_ob.notation_cursor.measure ? x->r_ob.notation_cursor.measure->lastchord : NULL);
@@ -16267,7 +16341,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                     set_level_type_flag_for_level(x->r_ob.notation_cursor.measure->rhythmic_tree, k_RHYTHM_LEVEL_IGNORE);
                                     op = k_UNDO_OP_LINEAR_EDIT_ADD_DOT;
                                 }
-                            } else {
+                            } else { // SETTING DURATION
                                 verbose_post_rhythmic_tree((t_notation_obj *)x, x->firstvoice->lastmeasure, gensym("before4"), 1);
                                 
                                 create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.measure, k_UNDO_MODIFICATION_CHANGE);
@@ -16599,6 +16673,12 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
         return 1;
     }
 
+    // check evaluation
+    if (!(modifiers & eCommandKey) && keycode >= 32 && keycode <= 127 && x->r_ob.play_offline_bitfield[keycode]) {
+        evaluate_selection(x, modifiers, true);
+        return 1;
+    }
+
     // mixed or notes/chord selection
     switch (keycode) {
         case JKEY_UPARROW: // shift note up/down
@@ -16771,9 +16851,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             return 0;
             break;
         case 'V': case 'v': // letter V or v
-            if (!(modifiers & eCommandKey))
-                evaluate_selection(x, modifiers, true);
-            else if (modifiers & eCommandKey && clipboard.gathered_syntax && (clipboard.object == k_NOTATION_OBJECT_SCORE || clipboard.object == k_NOTATION_OBJECT_ANY) && clipboard.gathered_syntax->l_size > 0 && x->r_ob.allow_copy_paste) {
+            if (modifiers & eCommandKey && clipboard.gathered_syntax && (clipboard.object == k_NOTATION_OBJECT_SCORE || clipboard.object == k_NOTATION_OBJECT_ANY) && clipboard.gathered_syntax->l_size > 0 && x->r_ob.allow_copy_paste) {
                 // paste!
                 if (clipboard.type == k_SLOT) {
                     notation_obj_paste_slot((t_notation_obj *) x, &clipboard, (x->r_ob.active_slot_num < 0 || clipboard.gathered_syntax->l_size > 1) ? -1 : x->r_ob.active_slot_num);
@@ -16928,7 +17006,7 @@ void evaluate_selection(t_score *x, long modifiers, char alsosortselectionbyonse
     if ((modifiers & eShiftKey) && (modifiers & eAltKey)) { // send all values
         send_all_values_as_llll(x, k_HEADER_ALL, NULL); // dump all
     } else if (modifiers & eShiftKey) { // send this chord values
-        if ((x->r_ob.num_selecteditems == 1) && (x->r_ob.firstselecteditem->type == k_NOTE)) 
+        if ((x->r_ob.num_selecteditems == 1) && (x->r_ob.firstselecteditem->type == k_NOTE))
             send_chord_as_llll((t_notation_obj *) x, ((t_note *)x->r_ob.firstselecteditem)->parent, 7, k_CONSIDER_FOR_DUMPING, -1, forced_routers);
         else if ((x->r_ob.num_selecteditems == 1) && (x->r_ob.firstselecteditem->type == k_CHORD))
             send_chord_as_llll((t_notation_obj *) x, (t_chord *)x->r_ob.firstselecteditem, 7, k_CONSIDER_FOR_DUMPING, -1, forced_routers);
