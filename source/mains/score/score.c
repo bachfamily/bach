@@ -5014,6 +5014,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_SCORE_SEPARATE_SYNTAX
     // @copy BACH_DOC_SEPARATE_SYNTAX_EXTRAS
     // @marg 0 @name selective_dump_options @optional 1 @type list
+    // @mattr router @type symbol @default none @digest Forced router
     // @example dump @caption dump whole information from all outlets
     // @example dump separate @caption dump separate-syntax outlets only
     // @example dump roll @caption dump first outlet only (gathered syntax)
@@ -6235,9 +6236,10 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) score_sel_reducefunction, "reducefunction", A_GIMME, 0);
 
     
-    // @method dumpselection @digest Play selected items off-line
-    // @description The <m>dumpselection</m> message sends the content of each one of selected notation items from the 
-    // playout, in playout syntax (off-line play).
+    // @method dumpselection @digest Get selected items playout syntax
+    // @description The <m>dumpselection</m> message sends the content of each one of selected notation items from the
+    // playout, in playout syntax (similarly to <m>playselection offline</m>, but in a much more direct and agile way,
+    // without all the intricacies of the playback sequencing system).
     // You can safely rely on the fact that elements will be output ordered by onset. <br />
     // If a "router" message attribute is set, then the standard router ("note", "chord", "rest") is replaced by the specified one;
     // if the "router" attribute has length 3, the first symbol will be used for notes, the second one for chords, the third for rests. <br />
