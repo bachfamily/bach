@@ -11,6 +11,7 @@
 
 	<description>
 		Computes the prime form of a pitch-class set, i.e. the "smalles" copy of the set,
+		with respect to a given ordering, defined by the <m>mode</m> attribute.
 	</description>
 
 	<!--METADATA-->
@@ -216,6 +217,41 @@
 	<!--DISCUSSION-->
 	<discussion>
 		To understand the concept of copy, one should first refer to the concept of group action. <br />
+		In Set Theory, two pitch-class sets are often considered to be "the same" when they are linked by the action of some simple transformation.
+		For instance, the sets <b>0 1 4</b> and <b>2 3 6</b> are linked by a transposition of 2 (corresponding, on the clock diagram, to a rotation of 2 steps).
+		Such "simple transformations" usually form a group. One thus usually needs to choose a group to determine a framework; this group will entail
+		the concept of "copy" of a pitch-class set: which is any other pitch-class set obtained by the action of a transformation of the group.
+		For instance, if our group is the group of transposition, <b>2 3 6</b> is a copy of <b>0 1 4</b>, and viceversa. <br />
+		The most common groups of such form in increasing nesting are: <br />
+		- the group of transposition: formed by all the transposition by a certain amount, and there are only 12 transposition if our modulo is 12, or
+		in general n transposition if our modulo is n (the mathemathicians would say that such group is isomorphic to the cyclic group Z_n).
+		For instance, a C major chord is the same as a D major chord, with respect to this group, but it is NOT the same as a C minor chord. <br />
+		- the group of transposition and inversions: formed by all the transposition of the previous group, plus all the combination of such transposition with
+		inversions, i.e. reflection with respect to any axis on the clock diagram. If our modulo is n, this group has 2n elements (the mathemathicians
+		would say that such group is isomorphic to the dihedral group D_n).
+		For instance, a C major chord is the same as a D major chord, with respect to this group, and also the same as a C minor chord. <br />
+		- the affine group of transposition, inversions, and multiplications: this group (here things get a little bit more complicated...) is formed
+		by all the elements of the previous group plus we add the transformation multiplying each pitch class by a certain number k (prime with the modulo).
+		Classical multiplications, with modulo = 12, are M_5 (multiplication by 5) and M_7 (multiplication by 7).
+		For instance, our <b>0 4 7</b> C major chord is the same as <b>0 8 11</b>, since 5 * (0 4 7) = (0 20 35) = (0 8 11). <br />
+		Up to the group of transposition and inversion, the interval vector of a pitch-class set is preserved. The affine group does not preserve the interval vector.
+		<br /> <br />
+		In the standard framework, the modulo is the number of subdivision of the octave (represented as a circle). The modulo is thus the number of
+		points in this circle. The default and most common modulo is 12 (corresponding to semitonal grid). Modulo 24 is the quartertone grid, and so on.
+		<br /> <br />
+		A pitch-class set is a plain collection of pitch-classes. A pitch class is nothing but the representative of a set of pitches.
+		Traditionally, it corresponds to the concept of "note", once we abstract it from its octave.
+		For instance, the semitonal framework (when the modulo is 12), all the C belong to the same pitch-class
+		which will be named 0 = {..., C-1, C0, C1, C2, C3, C4, C5, ...}. The pitch-class 1 will be the one containing all C#'s (or Db's); pitch-class
+		2 will contain all D's, and so on. One will use to name pitch class numbers from 0 to the modulo - 1: indeed, with modulo = 12, pitch-class 12 will coincide
+		with pitch-class 0 (it'll be the C one octave higher). One can thus think at pitch-classes as equally spaced points on a clock, and transposing
+		means rotating them on the clock. A pitch class set is thus represented just by a plain list of pitch classes, such <b>0 4 7</b>, representing the
+		C major chord. Notice that this coincides with any other representation such as <b>12 4 19</b> or <b>0 -8 -5</b>, but the canonical form, where numbers
+		are from 0 to the modulo-1 is always preferred. Also for pitch-class sets the order of elements is immaterial, and thus
+		<b>0 4 7</b> or <b>4 0 7</b> or <b>7 4 0</b> will all represent the same set.
+		On the other hand a pitch-class (as an abstract concept) can be used to represent things other than pitches,
+		as for instance temporal position in a rhythmic pattern (loop) having a certain number (the modulo) of equally spaced elements.
+		<br /> <br />
 	</discussion>
 
 	<!--SEEALSO-->
@@ -262,6 +298,41 @@
 		<entry name ="More details">
 			<description>
 		To understand the concept of copy, one should first refer to the concept of group action. <br />
+		In Set Theory, two pitch-class sets are often considered to be "the same" when they are linked by the action of some simple transformation.
+		For instance, the sets <b>0 1 4</b> and <b>2 3 6</b> are linked by a transposition of 2 (corresponding, on the clock diagram, to a rotation of 2 steps).
+		Such "simple transformations" usually form a group. One thus usually needs to choose a group to determine a framework; this group will entail
+		the concept of "copy" of a pitch-class set: which is any other pitch-class set obtained by the action of a transformation of the group.
+		For instance, if our group is the group of transposition, <b>2 3 6</b> is a copy of <b>0 1 4</b>, and viceversa. <br />
+		The most common groups of such form in increasing nesting are: <br />
+		- the group of transposition: formed by all the transposition by a certain amount, and there are only 12 transposition if our modulo is 12, or
+		in general n transposition if our modulo is n (the mathemathicians would say that such group is isomorphic to the cyclic group Z_n).
+		For instance, a C major chord is the same as a D major chord, with respect to this group, but it is NOT the same as a C minor chord. <br />
+		- the group of transposition and inversions: formed by all the transposition of the previous group, plus all the combination of such transposition with
+		inversions, i.e. reflection with respect to any axis on the clock diagram. If our modulo is n, this group has 2n elements (the mathemathicians
+		would say that such group is isomorphic to the dihedral group D_n).
+		For instance, a C major chord is the same as a D major chord, with respect to this group, and also the same as a C minor chord. <br />
+		- the affine group of transposition, inversions, and multiplications: this group (here things get a little bit more complicated...) is formed
+		by all the elements of the previous group plus we add the transformation multiplying each pitch class by a certain number k (prime with the modulo).
+		Classical multiplications, with modulo = 12, are M_5 (multiplication by 5) and M_7 (multiplication by 7).
+		For instance, our <b>0 4 7</b> C major chord is the same as <b>0 8 11</b>, since 5 * (0 4 7) = (0 20 35) = (0 8 11). <br />
+		Up to the group of transposition and inversion, the interval vector of a pitch-class set is preserved. The affine group does not preserve the interval vector.
+		<br /> <br />
+		In the standard framework, the modulo is the number of subdivision of the octave (represented as a circle). The modulo is thus the number of
+		points in this circle. The default and most common modulo is 12 (corresponding to semitonal grid). Modulo 24 is the quartertone grid, and so on.
+		<br /> <br />
+		A pitch-class set is a plain collection of pitch-classes. A pitch class is nothing but the representative of a set of pitches.
+		Traditionally, it corresponds to the concept of "note", once we abstract it from its octave.
+		For instance, the semitonal framework (when the modulo is 12), all the C belong to the same pitch-class
+		which will be named 0 = {..., C-1, C0, C1, C2, C3, C4, C5, ...}. The pitch-class 1 will be the one containing all C#'s (or Db's); pitch-class
+		2 will contain all D's, and so on. One will use to name pitch class numbers from 0 to the modulo - 1: indeed, with modulo = 12, pitch-class 12 will coincide
+		with pitch-class 0 (it'll be the C one octave higher). One can thus think at pitch-classes as equally spaced points on a clock, and transposing
+		means rotating them on the clock. A pitch class set is thus represented just by a plain list of pitch classes, such <b>0 4 7</b>, representing the
+		C major chord. Notice that this coincides with any other representation such as <b>12 4 19</b> or <b>0 -8 -5</b>, but the canonical form, where numbers
+		are from 0 to the modulo-1 is always preferred. Also for pitch-class sets the order of elements is immaterial, and thus
+		<b>0 4 7</b> or <b>4 0 7</b> or <b>7 4 0</b> will all represent the same set.
+		On the other hand a pitch-class (as an abstract concept) can be used to represent things other than pitches,
+		as for instance temporal position in a rhythmic pattern (loop) having a certain number (the modulo) of equally spaced elements.
+		<br /> <br />
 			</description>
 		</entry>
 		<entry name ="Keywords">

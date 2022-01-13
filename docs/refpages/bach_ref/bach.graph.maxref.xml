@@ -11,6 +11,8 @@
 
 	<description>
 		The purpose of <o>bach.graph</o> is to act as a simple graph plotter: once the expression
+		of the curve to draw has been set (in the first inlet) possibly along with its parameters
+		(in the second inlet), a bang will plot the curve. Vector representation are also possible.
 	</description>
 
 	<!--METADATA-->
@@ -915,6 +917,8 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The syntax is exactly like the on in bach.expr. Notice that $f1 is always the free variable,
+		whereas the parameters are indicated by $f2, $f3, $f4...
+		The graph mode can be Cartesian, Parametric or Polar (depending on the <m>graphmode</m> attribute in the inspector).
 	</discussion>
 
 	<!--SEEALSO-->
@@ -960,6 +964,8 @@
 		<entry name ="More details">
 			<description>
 		The syntax is exactly like the on in bach.expr. Notice that $f1 is always the free variable,
+		whereas the parameters are indicated by $f2, $f3, $f4...
+		The graph mode can be Cartesian, Parametric or Polar (depending on the <m>graphmode</m> attribute in the inspector).
 			</description>
 		</entry>
 		<entry name ="Keywords">

@@ -11,6 +11,9 @@
 
 	<description>
 		Computes the adjugate (or the classical adjoint) of an incoming matrix,
+		i.e. the transposed of the matrix whose entries are the cofactors of the incoming matrix.
+		If such a matrix can't be computed (for instance for non-wellshaped or non-square matrices)
+		a bang is output through the right outlet.
 	</description>
 
 	<!--METADATA-->
@@ -118,6 +121,12 @@
 	<!--DISCUSSION-->
 	<discussion>
 		For a non-singular matrix, adj(A) / det(A) = inv(A). Yet, <o>bach.adj</o> and <o>bach.inv</o> use
+		different algorithms, thus computationally the results might slightly differ on floats. <br /> <br />
+		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
+		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
+		as the number of rows.
+		<br /> <br />
 	</discussion>
 
 	<!--SEEALSO-->
@@ -152,6 +161,12 @@
 		<entry name ="More details">
 			<description>
 		For a non-singular matrix, adj(A) / det(A) = inv(A). Yet, <o>bach.adj</o> and <o>bach.inv</o> use
+		different algorithms, thus computationally the results might slightly differ on floats. <br /> <br />
+		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
+		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
+		as the number of rows.
+		<br /> <br />
 			</description>
 		</entry>
 		<entry name ="Keywords">

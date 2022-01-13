@@ -11,6 +11,7 @@
 
 	<description>
 		Returns the differences between each element's immediate
+		follower and the element itself.
 	</description>
 
 	<!--METADATA-->

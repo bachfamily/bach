@@ -11,6 +11,7 @@
 
 	<description>
 		Takes in input a list of <o>bach.roll</o>'s or <o>bach.score</o>'s gathered syntaxes and
+		combines them to make a new object listing all the input voices.<br />
 	</description>
 
 	<!--METADATA-->
@@ -154,6 +155,18 @@
 	<!--DISCUSSION-->
 	<discussion>
 		Markers and all flags (such as solo/mute flags) are all preserved and combined.
+		Users can choose which incoming bach.roll or bach.score will be considered for the slotinfo
+		and commands information. <br /> <br />
+		The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+		For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+		affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+		Commands are a mechanism to output selected content with given labels.
+		You can define up to 5 user commands which will send user-defined messages upon a note or chord evaluation.
+		The idea is that you can map each command to a hotkey: if one triggers the hot key (when something is selected),
+		this will cause the output of the notes/chord content from the playouts, exactly as if such notes/chords were played.
+		The only difference with the simple play situation, is that the router of those messages is not the "note" or "chord" symbol,
+		but rather the custom symbol defined at the command declaration. This allows you to properly detect and route the message.
+		<br /> <br />
 	</discussion>
 
 	<!--SEEALSO-->
@@ -186,6 +199,18 @@
 		<entry name ="More details">
 			<description>
 		Markers and all flags (such as solo/mute flags) are all preserved and combined.
+		Users can choose which incoming bach.roll or bach.score will be considered for the slotinfo
+		and commands information. <br /> <br />
+		The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+		For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+		affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+		Commands are a mechanism to output selected content with given labels.
+		You can define up to 5 user commands which will send user-defined messages upon a note or chord evaluation.
+		The idea is that you can map each command to a hotkey: if one triggers the hot key (when something is selected),
+		this will cause the output of the notes/chord content from the playouts, exactly as if such notes/chords were played.
+		The only difference with the simple play situation, is that the router of those messages is not the "note" or "chord" symbol,
+		but rather the custom symbol defined at the command declaration. This allows you to properly detect and route the message.
+		<br /> <br />
 			</description>
 		</entry>
 		<entry name ="Keywords">

@@ -11,6 +11,9 @@
 
 	<description>
 		Takes the incoming data and
+		outputs it through its first outlet only if it is
+		not a <b>null</b> llll; otherwise it sends a bang
+		or a default llll through the second outlet.
 	</description>
 
 	<!--METADATA-->
@@ -133,6 +136,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.filternull</o> is slightly more efficient than
+		using <o>bach.filter</o> with argument <b>- n</b>.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -173,6 +177,7 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.filternull</o> is slightly more efficient than
+		using <o>bach.filter</o> with argument <b>- n</b>.
 			</description>
 		</entry>
 		<entry name ="Keywords">

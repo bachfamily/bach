@@ -72,7 +72,8 @@ authorization: now the code for a given year can be entered until January of the
 
 bach ecosystem: no extra memory is claimed by bach before the first bach object is created
 
-multiple objects: help files and doc updated
+multiple objects: 	fixed missing lines in help files and references
+			help files and doc updated
 
 - bell, bach.expr:
     makepitch function now treats negative degrees as descending steps (e.g. makepitch(-1, 0, 5) returns B4)
@@ -173,6 +174,7 @@ multiple objects: help files and doc updated
     fixed bug causing loss of user-defined accidentals during copy-paste
     fixed bug causing wrong breakpoint and temporal slots handling while stretching bach.roll regions via markers
     fixed bug causing loss of onset decimal while aligning chords
+    fixed bug causing wrong groups when bach.roll was loaded
 
 - bach.slot:
     redraw is refreshed when changing scrollbar

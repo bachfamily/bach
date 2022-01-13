@@ -125,6 +125,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		A dictionary in llll form can be visualized by <o>bach.tree</o>'s Outline mode (similar to <o>dict.view</o>, but with a few
+		more features).
 	</discussion>
 
 	<!--SEEALSO-->
@@ -154,6 +155,7 @@
 		<entry name ="More details">
 			<description>
 		A dictionary in llll form can be visualized by <o>bach.tree</o>'s Outline mode (similar to <o>dict.view</o>, but with a few
+		more features).
 			</description>
 		</entry>
 		<entry name ="Keywords">

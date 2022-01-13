@@ -91,6 +91,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The llll is displayed on a single line, in text format.
+		If a line in the Max window is double-clicked, the <o>bach.print</o> object that wrote it is highlighted.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -111,6 +112,7 @@
 		<entry name ="More details">
 			<description>
 		The llll is displayed on a single line, in text format.
+		If a line in the Max window is double-clicked, the <o>bach.print</o> object that wrote it is highlighted.
 			</description>
 		</entry>
 		<entry name ="Keywords">

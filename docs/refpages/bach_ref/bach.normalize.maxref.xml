@@ -11,6 +11,7 @@
 
 	<description>
 		Takes a vector and returns a new one
+		having the same direction but with norm equal to 1.
 	</description>
 
 	<!--METADATA-->
@@ -163,6 +164,14 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The norm is by default the euclidean norm (2-norm), but
+		can be any other p-norm, with p integer greater than 0,
+		or "inf" symbol.
+		In general, the p-norm of a vector is calculated by
+		raising all the absolute values of the elements
+		to the <m>p</m>-th power, summing all values, and taking
+		the <m>p</m>-th root (i.e. raising to 1/<m>p</m>).
+		The inf-norm, on the other hand, is the absolute value
+		of the maximum element in the llll.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -196,6 +205,14 @@
 		<entry name ="More details">
 			<description>
 		The norm is by default the euclidean norm (2-norm), but
+		can be any other p-norm, with p integer greater than 0,
+		or "inf" symbol.
+		In general, the p-norm of a vector is calculated by
+		raising all the absolute values of the elements
+		to the <m>p</m>-th power, summing all values, and taking
+		the <m>p</m>-th root (i.e. raising to 1/<m>p</m>).
+		The inf-norm, on the other hand, is the absolute value
+		of the maximum element in the llll.
 			</description>
 		</entry>
 		<entry name ="Keywords">

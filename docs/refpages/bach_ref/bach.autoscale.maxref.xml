@@ -11,6 +11,7 @@
 
 	<description>
 		Linearly rescales all the numbers in an llll so that the minimum
+		and the maximum be two given numbers.
 	</description>
 
 	<!--METADATA-->
@@ -150,6 +151,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		If all the elements of the incoming llll are the same,
+		they will be set to the mean of the given minimum and maximum.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -190,6 +192,7 @@
 		<entry name ="More details">
 			<description>
 		If all the elements of the incoming llll are the same,
+		they will be set to the mean of the given minimum and maximum.
 			</description>
 		</entry>
 		<entry name ="Keywords">
