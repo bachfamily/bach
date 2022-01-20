@@ -1684,10 +1684,10 @@ void roll_clearnames(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     long voices = 1, chords = 1, notes = 1, markers = 1;
 //    llll_parseargs((t_object *)x, args, "iiiii", _llllobj_sym_markers, &markers, _llllobj_sym_voices, &voices, _llllobj_sym_chords, &chords, _llllobj_sym_notes, &notes);
-    voices = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_voices));
-    chords = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_chords));
-    notes = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_notes));
-    markers = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_markers));
+    voices = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_voices));
+    chords = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_chords));
+    notes = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_notes));
+    markers = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_markers));
     
     notation_obj_clear_names((t_notation_obj *)x, voices, false, chords, notes, markers);
     llll_free(args);
@@ -3791,7 +3791,7 @@ void roll_sel_delete_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 
 void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    if (args->l_size >= 2) { // position, name, role, content
+    if (args && args->l_size >= 2) { // position, name, role, content
         double pos_ms;
         t_symbol *role = _llllobj_sym_none;
         t_llll *content = NULL;
@@ -3829,7 +3829,7 @@ void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
 void roll_deletemarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
-    if (args->l_size >= 1) {
+    if (args && args->l_size >= 1) {
         char res;
         create_header_undo_tick((t_notation_obj *)x, k_HEADER_MARKERS);
         lock_markers_mutex((t_notation_obj *)x);;
@@ -3847,7 +3847,7 @@ void roll_deletemarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
 void roll_markername(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    if (args->l_size >= 1) { // position, name
+    if (args && args->l_size >= 1) { // position, name
         char incremental = find_long_arg_attr_key(args, gensym("incremental"), 0, true);
         create_header_undo_tick((t_notation_obj *)x, k_HEADER_MARKERS);
         if (change_selected_markers_name((t_notation_obj *) x, args, incremental))
@@ -3861,7 +3861,7 @@ void roll_markername(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 void roll_getmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     char namefirst = find_long_arg_attr_key(args, gensym("namefirst"), 0, true);
-    if (args->l_size - get_num_llll_in_llll_first_level(args) >= 1) {
+    if (args && args->l_size - get_num_llll_in_llll_first_level(args) >= 1) {
         t_marker *marker;
         t_llll *marker_llll = NULL;
 
@@ -7837,7 +7837,7 @@ void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
             send_roll_values_as_llll(x, k_HEADER_ALL, router, selection_only); // dump full gathered syntax
             goto end;
         }
-    } else if (args->l_size == 0) {
+    } else if (args && args->l_size == 0) {
         send_all_values_as_llll(x, k_HEADER_ALL, router, selection_only); // dump all separate outlets and full gathered syntax
         goto end;
     }

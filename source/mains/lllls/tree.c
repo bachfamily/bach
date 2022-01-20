@@ -1740,7 +1740,7 @@ void tree_open_close_switch(t_tree *x, t_symbol *s, long argc, t_atom *argv, cha
     long maxdepth = -1;
     char thismode = mode;
     
-    if (args->l_depth == 2 && args->l_size == 1 && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_LLLL) {
+    if (args && args->l_depth == 2 && args->l_size == 1 && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_LLLL) {
         // open single node
         t_llllelem *elem = llll_nth_one(x->tree_as_llll, hatom_getllll(&args->l_head->l_hatom));
         if (elem && hatom_gettype(&elem->l_hatom) == H_LLLL) {
@@ -1754,13 +1754,13 @@ void tree_open_close_switch(t_tree *x, t_symbol *s, long argc, t_atom *argv, cha
                     ll->l_thing.w_long = tree_get_llll_openstate(ll);
             }
         }
-    } else if (args->l_size >= 1 && is_hatom_number(&args->l_head->l_hatom)) {
+    } else if (args && args->l_size >= 1 && is_hatom_number(&args->l_head->l_hatom)) {
         mindepth = maxdepth = hatom_getlong(&args->l_head->l_hatom);
         if (args->l_head->l_next && is_hatom_number(&args->l_head->l_next->l_hatom))
             maxdepth = hatom_getlong(&args->l_head->l_next->l_hatom);
         //		thismode = -thismode; // hack to avoid parsing first node
         llll_funall(x->tree_as_llll, open_close_switch_fn, &thismode, mindepth, maxdepth, FUNALL_SKIP_ATOMS);
-    } else if (args->l_size >= 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_root) {
+    } else if (args && args->l_size >= 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_root) {
         open_close_switch_llll(x->tree_as_llll, mode);
     } else { // all
         llll_funall(x->tree_as_llll, open_close_switch_fn, &thismode, 1, -1, FUNALL_SKIP_ATOMS);

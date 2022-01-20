@@ -985,9 +985,9 @@ void score_send_current_chord(t_score *x){
 void score_setcursor(t_score *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     
-    if (args->l_size == 1 && is_hatom_number(&args->l_head->l_hatom)) {
+    if (args && args->l_size == 1 && is_hatom_number(&args->l_head->l_hatom)) {
         scoreapi_setcursor_from_double(x, atom_getfloat(argv));
-    } else if (args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
+    } else if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
         t_notation_item *it;
         lock_general_mutex((t_notation_obj *)x);
         if ((it = names_to_single_notation_item((t_notation_obj *) x, args)))
@@ -2971,7 +2971,7 @@ void score_markername(t_score *x, t_symbol *s, long argc, t_atom *argv){
 void score_getmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     char namefirst = find_long_arg_attr_key(args, gensym("namefirst"), 0, true);
-    if (args->l_size - get_num_llll_in_llll_first_level(args) >= 1) { // position, name
+    if (args && args->l_size - get_num_llll_in_llll_first_level(args) >= 1) { // position, name
         t_marker *marker;
         t_llll *marker_llll = NULL;
         lock_markers_mutex((t_notation_obj *)x);
@@ -9083,7 +9083,7 @@ void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
             send_score_values_as_llll(x, k_HEADER_ALL, router);
             goto end;
         }
-    } else if (args->l_size == 0) {
+    } else if (args && args->l_size == 0) {
         send_all_values_as_llll(x, k_HEADER_ALL, router); // dump all separate outlets and full gathered syntax
         goto end;
     }
@@ -15511,11 +15511,11 @@ void score_clearnames(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     long voices = 1, measures = 1, chords = 1, notes = 1, markers = 1;
 //    llll_parseargs((t_object *)x, args, "iiiii", _llllobj_sym_markers, &markers, _llllobj_sym_voices, &voices, _llllobj_sym_measures, &measures, _llllobj_sym_chords, &chords, _llllobj_sym_notes, &notes);
-    voices = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_voices));
-    measures = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_measures));
-    chords = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_chords));
-    notes = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_notes));
-    markers = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_markers));
+    voices = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_voices));
+    measures = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_measures));
+    chords = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_chords));
+    notes = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_notes));
+    markers = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_markers));
 
     notation_obj_clear_names((t_notation_obj *)x, voices, measures, chords, notes, markers);
     llll_free(args);
