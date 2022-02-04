@@ -71,7 +71,33 @@ CLASS_ATTR_STYLE_LABEL(c,"maxdepth",0,"text","Maximum Depth");
 CLASS_ATTR_BASIC(c,"maxdepth",0);
 // @description You can use a <m>maxdepth</m> attribute in order to decide until which level of depth
 // the elements should be searched. <br />
-// @copy BACH_DOC_MAXDEPTH
+// @copy BACH_DOC_FIND_MAXDEPTH
+    
+CLASS_ATTR_LONG(c, "mindepth",        0,    t_locate, n_mindepth);
+CLASS_ATTR_LABEL(c, "mindepth", 0, "Minimum Depth");
+CLASS_ATTR_BASIC(c, "mindepth", 0);
+CLASS_ATTR_STANDARD_MINDEPTH_ACCESSORS(c, t_find);
+// @description @copy BACH_DOC_FIND_MINDEPTH
+    
+CLASS_ATTR_LONG(c, "minidx",        0,    t_locate, n_minidx);
+CLASS_ATTR_LABEL(c, "minidx", 0, "Minimum Index");
+// @description @copy BACH_DOC_FIND_MINIDX
+
+CLASS_ATTR_LONG(c, "maxidx",        0,    t_locate, n_maxidx);
+CLASS_ATTR_LABEL(c, "maxidx", 0, "Maximum Index");
+// @description @copy BACH_DOC_FIND_MAXIDX
+
+CLASS_ATTR_LONG(c, "idxreject",        0,    t_locate, n_idxreject);
+CLASS_ATTR_LABEL(c, "idxreject", 0, "Index Reject");
+CLASS_ATTR_STYLE(c, "idxreject", 0, "onoff");
+CLASS_ATTR_FILTER_CLIP(c, "idxreject", 0, 1);
+// @description @copy BACH_DOC_FIND_IDXREJECT
+
+CLASS_ATTR_LONG(c, "depthreject",    0,    t_locate, n_depthreject);
+CLASS_ATTR_LABEL(c, "depthreject", 0, "Depth Reject");
+CLASS_ATTR_STYLE(c, "depthreject", 0, "onoff");
+// @description @copy BACH_DOC_DEPTHREJECT
+
 
 }
 
