@@ -110,12 +110,12 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-4",
-									"linecount" : 3,
+									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 473.0, 317.0, 149.0, 50.0 ],
-									"text" : "\"mindepth\", \"maxdepth\",\n\"minidx\", \"maxidx\",\nwork as in bach.find"
+									"patching_rect" : [ 473.0, 317.0, 149.0, 65.0 ],
+									"text" : "\"mindepth\", \"maxdepth\",\n\"minidx\", \"maxidx\",\n\"idxreject\", \"depthreject\"\nwork as in bach.find"
 								}
 
 							}

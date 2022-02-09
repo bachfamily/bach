@@ -192,6 +192,8 @@ multiple objects: 	fixed missing lines in help files and references
     fixed behavior with measure-attached markers, now path/measurenumber/voicenumber works properly
     new "any" key to match any incoming item type
 
+- bach.locate: more bach.find attributes are now supported
+
 - bach.shelf: fixed crash with @embed 1 when reopening patch
 
 - bach.textin: now works correctly with lllls starting with a number
