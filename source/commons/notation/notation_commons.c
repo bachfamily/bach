@@ -1406,7 +1406,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     
     // notehead and accidentals
     foo->notehead_resize = 1.;
-    paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, mc_to_yposition_in_scale_for_notes(r_ob, foo, voice, 0.7), system_shift, small_note_ratio);
+    paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, mc_to_yposition_in_scale_for_notes(r_ob, foo, voice, 0.7, false), system_shift, small_note_ratio);
     paint_noteaccidentals(r_ob, g, jf_smallacc, jf_text_fractions, jf_smallaccbogus, &color, foo, 
                           get_voice_clef(r_ob, voice), mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(foo), voice), notehead_left_x, NULL, NULL);
     free_chord(r_ob, ch);
@@ -1857,7 +1857,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
     // Setting text boxes
     double note_x_textbox, note_y_textbox;
     note_x_textbox = note_x_real - ((curr_nt->notehead_uwidth * grace_ratio / 2.) * r_ob->zoom_y);
-    note_y_textbox = system_shift + mc_to_yposition_in_scale_for_notes(r_ob,curr_nt, notation_item_get_voice(r_ob, (t_notation_item *)curr_nt), 1);
+    note_y_textbox = system_shift + mc_to_yposition_in_scale_for_notes(r_ob,curr_nt, notation_item_get_voice(r_ob, (t_notation_item *)curr_nt), 1, false);
 
 //    dev_post("note: x_real: %.2f, textbox: %.2f", note_x_real, note_x_textbox);
     
@@ -1913,7 +1913,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
     if (notehead_resize != 1.){
         t_voice *voice = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? ((t_voice *)curr_nt->parent->parent->voiceparent) : ((t_voice *)curr_nt->parent->voiceparent));
         custom_font_size = noteheads_font_size * notehead_resize;
-        note_y_textbox = system_shift + mc_to_yposition_in_scale_for_notes(r_ob, curr_nt, voice, notehead_resize);
+        note_y_textbox = system_shift + mc_to_yposition_in_scale_for_notes(r_ob, curr_nt, voice, notehead_resize, false);
         notehead_need_custom_font = true;
         notehead_is_standard_quarternote = false;
     }
@@ -5530,8 +5530,9 @@ double scaleposition_to_uyposition(t_notation_obj *r_ob, long scaleposition, t_v
 }
 
 // *note is only needed if notehead is custom
-double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize){ // discretized to the possible locations of the notehead ON the staff line or BETWEEN two staff lines
-    return mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), v_ob) + notehead_resize * (-30. - get_notehead_uy_shift(r_ob, note)) * r_ob->zoom_y;
+double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize, char ignore_custom_noteheads)
+{ // discretized to the possible locations of the notehead ON the staff line or BETWEEN two staff lines
+    return mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), v_ob) + notehead_resize * (-30. - get_notehead_uy_shift(r_ob, note, ignore_custom_noteheads)) * r_ob->zoom_y;
 }
 
 
@@ -23559,7 +23560,7 @@ double get_notehead_durationline_start_ux_shift(t_notation_obj *r_ob, t_note *no
 {
     double dl_ux_shift = 0.;
     
-    get_notehead_specs_from_note(r_ob, note, NULL, NULL, NULL, NULL, NULL, NULL, &dl_ux_shift, false);
+    get_notehead_specs_from_note(r_ob, note, NULL, NULL, NULL, NULL, NULL, NULL, &dl_ux_shift, false, false);
     
     if (r_ob->link_notehead_adjust_to_slot > 0 && r_ob->slotinfo[r_ob->link_notehead_adjust_to_slot - 1].slot_type == k_SLOT_TYPE_FLOATLIST &&
         note->slot[r_ob->link_notehead_adjust_to_slot - 1].firstitem) {
@@ -23573,7 +23574,7 @@ double get_notehead_ux_shift(t_notation_obj *r_ob, t_note *note)
 {
     double ux_shift = 0., small_ux_shift = 0.;
     
-    get_notehead_specs_from_note(r_ob, note, NULL, NULL, &ux_shift, NULL, &small_ux_shift, NULL, NULL, false);
+    get_notehead_specs_from_note(r_ob, note, NULL, NULL, &ux_shift, NULL, &small_ux_shift, NULL, NULL, false, false);
     
     if (r_ob->link_notehead_adjust_to_slot > 0 && r_ob->slotinfo[r_ob->link_notehead_adjust_to_slot - 1].slot_type == k_SLOT_TYPE_FLOATLIST && 
         note->slot[r_ob->link_notehead_adjust_to_slot - 1].firstitem) {
@@ -23584,11 +23585,11 @@ double get_notehead_ux_shift(t_notation_obj *r_ob, t_note *note)
     return note->parent && note->parent->is_score_chord && note->parent->is_grace_chord ? small_ux_shift : ux_shift;
 }
 
-double get_notehead_uy_shift(t_notation_obj *r_ob, t_note *note)
+double get_notehead_uy_shift(t_notation_obj *r_ob, t_note *note, char ignore_custom_noteheads)
 {
     double uy_shift = 0.;
     
-    get_notehead_specs_from_note(r_ob, note, NULL, NULL, NULL, &uy_shift, NULL, NULL, NULL, false);
+    get_notehead_specs_from_note(r_ob, note, NULL, NULL, NULL, &uy_shift, NULL, NULL, NULL, false, ignore_custom_noteheads);
 
     if (r_ob->link_notehead_adjust_to_slot > 0 && r_ob->slotinfo[r_ob->link_notehead_adjust_to_slot - 1].slot_type == k_SLOT_TYPE_FLOATLIST &&
         note->slot[r_ob->link_notehead_adjust_to_slot - 1].firstitem && note->slot[r_ob->link_notehead_adjust_to_slot - 1].firstitem->next) {
@@ -23685,11 +23686,11 @@ long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicode
 }
 
 
-long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char avoid_returning_default)
+long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char avoid_returning_default, char ignore_custom_noteheads)
 {
     t_chord *ch = note->parent;
     
-    if (note && r_ob->link_notehead_to_slot > 0 && r_ob->slotinfo[r_ob->link_notehead_to_slot - 1].slot_type == k_SLOT_TYPE_NOTEHEAD && note->slot[r_ob->link_notehead_to_slot - 1].firstitem) {
+    if ((!ignore_custom_noteheads) && note && r_ob->link_notehead_to_slot > 0 && r_ob->slotinfo[r_ob->link_notehead_to_slot - 1].slot_type == k_SLOT_TYPE_NOTEHEAD && note->slot[r_ob->link_notehead_to_slot - 1].firstitem) {
         // NEW WAY OF DEFINING NOTEHEADS
         long id = notationobj_notehead_symbol2id(r_ob, ((t_symbol *)note->slot[r_ob->link_notehead_to_slot - 1].firstitem->item));
         get_notehead_specs(r_ob, id, note->parent->r_sym_duration, character, uwidth, ux_shift, uy_shift, small_ux_shift, small_uy_shift, duration_line_start_ux_shift);
@@ -24646,7 +24647,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             
             noteheads_uwidths[i] = curr_nt->notehead_resize * notehead_get_uwidth(r_ob, chord->is_score_chord ? chord->figure : RAT_1OVER4, curr_nt, false);
             curr_nt->notehead_uwidth = noteheads_uwidths[i];
-            curr_nt->notehead_ID = get_notehead_specs_from_note(r_ob, curr_nt, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false);
+            curr_nt->notehead_ID = get_notehead_specs_from_note(r_ob, curr_nt, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false);
             
             midicents[i] = note_get_screen_midicents(curr_nt);
             accidental[i] = note_get_screen_accidental(curr_nt);

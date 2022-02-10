@@ -157,7 +157,8 @@ multiple objects: 	fixed missing lines in help files and references
     @finitestaff: new attribute to trim staff after last measure
     @showfirstmeasurenumber: new attribute
     fixed bug causing possible wrong playback of partial notes' slots with ties
-    new "lineareditquarterkey" attribute to set the number key corresponding to quarter note duration 
+    new "lineareditquarterkey" attribute to set the number key corresponding to quarter note duration  
+    fixed bug causing wrong positioning of dots with custom noteheads
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
