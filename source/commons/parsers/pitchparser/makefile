@@ -18,12 +18,17 @@
 # */
 
 pitchparser install:	pitchparser.l
-			/opt/homebrew/opt/bison/bin/bison --version
-			/opt/homebrew/opt/flex/bin/flex --version
-			/opt/homebrew/opt/flex/bin/flex -L -o pitchparser.c pitchparser.l
+			if [ -d "/opt/homebrew/opt/" ]; then\
+				/opt/homebrew/opt/bison/bin/bison --version;\
+				/opt/homebrew/opt/flex/bin/flex --version;\
+				/opt/homebrew/opt/flex/bin/flex -L -o pitchparser.c pitchparser.l;\
+			else\
+				/usr/local/opt/bison/bin/bison --version;\
+				/usr/local/opt/flex/bin/flex --version;\
+				/usr/local/opt/flex/bin/flex -L -o pitchparser.c pitchparser.l;\
+			fi;
 			egrep -v "^#line" pitchparser.c >bach_pitchparser.c
 			
-clean:		
+clean:
 			rm -f pitchparser.c
 			rm -f bach_pitchparser.c
-			

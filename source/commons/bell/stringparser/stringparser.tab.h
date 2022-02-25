@@ -161,6 +161,7 @@ extern int stringparser_debug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
+#line 58 "stringparser.y"
 
     astNode *n;
     astFunctionCall *fc;
@@ -184,6 +185,7 @@ union YYSTYPE
     t_pitch p;
     t_symbol *sym;
 
+#line 189 "stringparser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

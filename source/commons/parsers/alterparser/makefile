@@ -27,7 +27,7 @@ alterparser install:	alterparser.l
 				/usr/local/opt/flex/bin/flex --version;\
 				/usr/local/opt/flex/bin/flex -L -o alterparser.c alterparser.l;\
 			fi;
-				egrep -v "^#line" alterparser.c >bach_alterparser.c
+			egrep -v "^#line" alterparser.c >bach_alterparser.c
 			
 clean:		
 			rm -f alterparser.c
