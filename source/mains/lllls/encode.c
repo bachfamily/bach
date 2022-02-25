@@ -177,7 +177,7 @@ void encode_anything(t_encode *x, t_symbol *msg, long ac, t_atom *av)
 	thechunks = (t_chunk *) bach_newptr(512 * sizeof(t_chunk));
 	atom_setlong(chunk_av, rand());
 	atom_setsym(chunk_av + 1, _sym_start);
-	atom_setlong(chunk_av + 2, LONG_MAX);
+	atom_setlong(chunk_av + 2, ATOM_LONG_MAX);
 	atom_setlong(chunk_av + 3, 0);
 	chunk_txt = NULL;
 	atom_gettext(3, chunk_av, &headersize, &chunk_txt, 0);

@@ -20313,7 +20313,7 @@ void reset_floatsteps(t_notation_obj *r_ob, t_measure *measure){
 
     for (chord = measure->firstchord; chord; chord = chord->next) {
 //        chord->min_float_steps = LONG_MIN;
-//        chord->max_float_steps = LONG_MAX;
+//        chord->max_float_steps = ATOM_LONG_MAX;
 //        if (!chord->firstnote && val == CONST_FLOAT_STEP_PART_SHIFT && chord->figure.r_den <= 2)
 //            chord->float_steps = val - 2; // special case for 4/4 and 2/4 rests on upper parts, which would go ABOVE the staff otherwise
 //        else
@@ -42253,7 +42253,7 @@ void notation_obj_name(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *arg
         llll_clear(names);
         t_hatom h;
         long u = -1;
-        for (long i = 1; i < LONG_MAX; i++) {
+        for (long i = 1; i < ATOM_LONG_MAX; i++) {
             hatom_setlong(&h, i);
             if (!notationobj_name_is_used(r_ob, &h)) {
                 u = i;

@@ -4203,7 +4203,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
     this_ch->just_added_from_separate_parameters = false;
     this_ch->float_steps = 0;
 //    this_ch->min_float_steps = LONG_MIN;
-//    this_ch->max_float_steps = LONG_MAX;
+//    this_ch->max_float_steps = ATOM_LONG_MAX;
     this_ch->is_score_chord = true;
     this_ch->system_index = 0;
     this_ch->direction = 0;
@@ -4281,7 +4281,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             this_ch->voiceparent = NULL;
             this_ch->float_steps = 0;
 //            this_ch->min_float_steps = LONG_MIN;
-//            this_ch->max_float_steps = LONG_MAX;
+//            this_ch->max_float_steps = ATOM_LONG_MAX;
             this_ch->is_score_chord = true;
             this_ch->system_index = 0;
             this_ch->direction = 0;

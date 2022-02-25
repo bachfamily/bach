@@ -245,7 +245,7 @@ typedef int yytype_uint16;
 #  define YYPTRDIFF_MAXIMUM PTRDIFF_MAX
 # else
 #  define YYPTRDIFF_T long
-#  define YYPTRDIFF_MAXIMUM LONG_MAX
+#  define YYPTRDIFF_MAXIMUM ATOM_LONG_MAX
 # endif
 #endif
 

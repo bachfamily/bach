@@ -319,7 +319,7 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
         }
         if (temp % lowG == 0)
             return round((double)(temp.toMC() / lowG.toMC()));
-        return LONG_MAX;
+        return ATOM_LONG_MAX;
     }
 
     if (temp.alter() < 0) {
@@ -330,7 +330,7 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
         }
         if (temp % lowG == 0)
             return round((double)(temp.toMC() / lowG.toMC()));
-        return LONG_MAX;
+        return ATOM_LONG_MAX;
     }
     
     return 0;
