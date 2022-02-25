@@ -74,3 +74,6 @@ OTHER_LDFLAGS = $(C74_SYM_LINKER_FLAGS) $(C74_SYM_LINKER_FLAGS)
 // hide all symbols by default
 // mark a function to be exported with the C74_EXPORT macro -- most likely this will only apply to the main() function
 OTHER_CFLAGS = -fvisibility=hidden
+
+LLLL_VERSION = 0.8.0.0
+PRODUCT_VERSION = 0.8.1.5
