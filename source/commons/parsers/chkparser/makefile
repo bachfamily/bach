@@ -18,8 +18,15 @@
 # */
 
 chkparser install:	chkparser.l
-			/opt/homebrew/opt/flex/bin/flex --version
-			/opt/homebrew/opt/flex/bin/flex -o chkparser.c chkparser.l 
+			if [ -d "/opt/homebrew/opt/" ]; then\
+				/opt/homebrew/opt/bison/bin/bison --version;\
+				/opt/homebrew/opt/flex/bin/flex --version;\
+				/opt/homebrew/opt/flex/bin/flex -L -o chkparser.c chkparser.l;\
+			else\
+				/usr/local/opt/bison/bin/bison --version;\
+				/usr/local/opt/flex/bin/flex --version;\
+				/usr/local/opt/flex/bin/flex -L -o chkparser.c chkparser.l;\
+			fi;
 			egrep -v "^#line" chkparser.c >bach_chkparser.c
 						
 clean:		
