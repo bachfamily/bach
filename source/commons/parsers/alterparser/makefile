@@ -18,9 +18,9 @@
 # */
 
 alterparser install:	alterparser.l
-			/usr/local/opt/bison/bin/bison --version
-			/usr/local/opt/flex/bin/flex --version
-			/usr/local/opt/flex/bin/flex -L -o alterparser.c alterparser.l
+			/opt/homebrew/opt/bison/bin/bison --version
+			/opt/homebrew/opt/flex/bin/flex --version
+			/opt/homebrew/opt/flex/bin/flex -L -o alterparser.c alterparser.l
 			egrep -v "^#line" alterparser.c >bach_alterparser.c
 			
 clean:		

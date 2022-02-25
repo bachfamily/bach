@@ -18,6 +18,7 @@
  */
 
 #include "score_files.h"
+#include "unistd.h"
 #ifdef MAC_VERSION
 #include "pwd.h"
 #endif

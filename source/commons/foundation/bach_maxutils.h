@@ -20,7 +20,7 @@
 #ifndef bach_maxutils_h
 #define bach_maxutils_h
 
-#include <ext.h>
+#include "ext.h"
 
 t_patcher *obj_getpatcher(t_object *x);
 

@@ -6,11 +6,11 @@
 // Name & Version
 //PRODUCT_NAME = $(PROJECT_NAME)
 //PRODUCT_VERSION = 0.7.7
-ARCHS = i386 x86_64
+ARCHS = x86_64 arm64
 
 // Paths
-MAXSDK = $(SRCROOT)/../../../max-sdk-7.3.3
-C74SUPPORT = $(MAXSDK)/source/c74support
+MAXSDK = $(SRCROOT)/../../../max-sdk
+C74SUPPORT = $(MAXSDK)/source/max-sdk-base/c74support
 MAINS_ROOT = $(SRCROOT)/../mains
 COMMONS_ROOT = $(SRCROOT)/../commons
 HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes" "$(COMMONS_ROOT)"
@@ -39,7 +39,7 @@ EXT_INSTALL_PATH = /extensions
 
 
 // Special Files
-GCC_PREFIX_HEADER = $(C74SUPPORT)/max-includes/macho-prefix.pch
+//GCC_PREFIX_HEADER = $(C74SUPPORT)/max-includes/macho-prefix.pch
 INFOPLIST_FILE = $(SRCROOT)/Info.plist
 
 

@@ -29,7 +29,7 @@
 #include "ext_critical.h"
 #include "ext_hashtab.h"
 //#include "ext_atomic.h"
-typedef t_object t_binbuf;
+//typedef t_object t_binbuf;
 #endif
 //#include "math/llll_math.h"
 #include "parsers/chkparser/chkparser.h"

@@ -2798,6 +2798,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00812FAD27C8B9B400521C7D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_changevelocity.png; sourceTree = "<group>"; };
 		1E3B57CB15ACECA900B32D1F /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		1E3B57CC15ACECA900B32D1F /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
@@ -4849,6 +4850,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		00812FAC27C8B9B400521C7D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				00812FAD27C8B9B400521C7D /* CoreFoundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		089C166AFE841209C02AAC07 /* iterator */ = {
 			isa = PBXGroup;
 			children = (
@@ -4859,6 +4868,7 @@
 				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				91BA46AC1F71585E0002D515 /* package */,
+				00812FAC27C8B9B400521C7D /* Frameworks */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -5089,8 +5099,8 @@
 				911BB2A017CBA89100B513E8 /* msp-includes */,
 			);
 			name = c74support;
-			path = "../../max-sdk-7.3.3/source/c74support";
-			sourceTree = "<group>";
+			path = "../../../max-sdk/source/max-sdk-base/c74support";
+			sourceTree = SOURCE_ROOT;
 		};
 		911BB20717CBA88F00B513E8 /* jit-includes */ = {
 			isa = PBXGroup;
@@ -16382,7 +16392,6 @@
 			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DSTROOT = "$(LIB_DSTROOT)";
@@ -16406,7 +16415,6 @@
 			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DSTROOT = "$(LIB_DSTROOT)";

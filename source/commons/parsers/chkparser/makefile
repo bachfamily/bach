@@ -18,8 +18,8 @@
 # */
 
 chkparser install:	chkparser.l
-			/usr/local/opt/flex/bin/flex --version
-			/usr/local/opt/flex/bin/flex -o chkparser.c chkparser.l 
+			/opt/homebrew/opt/flex/bin/flex --version
+			/opt/homebrew/opt/flex/bin/flex -o chkparser.c chkparser.l 
 			egrep -v "^#line" chkparser.c >bach_chkparser.c
 						
 clean:		

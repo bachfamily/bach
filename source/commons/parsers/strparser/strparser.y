@@ -20,7 +20,18 @@
 %}
 
 %define api.pure full
-%name-prefix "strparser_"
+%define api.prefix {strparser_}
+
+%code provides
+{
+  // Tell Flex the expected prototype of yylex.
+  #define YY_DECL                             \
+    int strparser_lex (STRPARSER_STYPE *yylval, void* yyscanner)
+
+    typedef STRPARSER_STYPE YYSTYPE;
+  // Declare the scanner.
+  YY_DECL;
+}
 
 %token <l> BACH_LONG
 %token <d> BACH_DOUBLE

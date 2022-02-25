@@ -18,9 +18,9 @@
 # */
 
 exprparser install:	exprparser.l
-			/usr/local/opt/bison/bin/bison --version
-			/usr/local/opt/flex/bin/flex --version
-			/usr/local/opt/flex/bin/flex -L -o exprparser.c exprparser.l
+			/opt/homebrew/opt/bison/bin/bison --version
+			/opt/homebrew/opt/flex/bin/flex --version
+			/opt/homebrew/opt/flex/bin/flex -L -o exprparser.c exprparser.l
 			egrep -v "^#line" exprparser.c >bach_exprparser.c
 			egrep -v "^#line" exprparser.lex.h >bach_exprparser_lex.h
 						

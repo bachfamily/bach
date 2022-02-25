@@ -18,10 +18,10 @@
 # */
 
 stringparser install:	stringparser.l
-			/usr/local/opt/bison/bin/bison --version
-			/usr/local/opt/flex/bin/flex --version
-			/usr/local/opt/bison/bin/bison -ld stringparser.y
-			/usr/local/opt/flex/bin/flex -L -o stringparser.c stringparser.l
+			/opt/homebrew/opt/bison/bin/bison --version
+			/opt/homebrew/opt/flex/bin/flex --version
+			/opt/homebrew/opt/bison/bin/bison -ld stringparser.y
+			/opt/homebrew/opt/flex/bin/flex -L -o stringparser.c stringparser.l
 			egrep -v "^#line" stringparser.c >stringparser_nolines.c
 			egrep -v "^#line" stringparser.lex.h >stringparser_lex_nolines.h			
 			egrep -v "^#line" stringparser.tab.c >stringparser_tab_nolines.c

@@ -23,6 +23,7 @@
 
 #ifdef MAC_VERSION
 #include "pwd.h"
+#include "unistd.h"
 #endif
 
 #ifdef WIN_VERSION

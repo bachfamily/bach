@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.7.6.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -38,22 +38,30 @@
 #ifndef YY_STRPARSER_STRPARSER_TAB_H_INCLUDED
 # define YY_STRPARSER_STRPARSER_TAB_H_INCLUDED
 /* Debug traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
+#ifndef STRPARSER_DEBUG
+# if defined YYDEBUG
 #if YYDEBUG
+#   define STRPARSER_DEBUG 1
+#  else
+#   define STRPARSER_DEBUG 0
+#  endif
+# else /* ! defined YYDEBUG */
+#  define STRPARSER_DEBUG 0
+# endif /* ! defined YYDEBUG */
+#endif  /* ! defined STRPARSER_DEBUG */
+#if STRPARSER_DEBUG
 extern int strparser_debug;
 #endif
 
 /* Token kinds.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
+#ifndef STRPARSER_TOKENTYPE
+# define STRPARSER_TOKENTYPE
+  enum strparser_tokentype
   {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
+    STRPARSER_EMPTY = -2,
+    STRPARSER_EOF = 0,             /* "end of file"  */
+    STRPARSER_error = 256,         /* error  */
+    STRPARSER_UNDEF = 257,         /* "invalid token"  */
     BACH_LONG = 258,               /* BACH_LONG  */
     BACH_DOUBLE = 259,             /* BACH_DOUBLE  */
     BACH_RAT = 260,                /* BACH_RAT  */
@@ -64,14 +72,14 @@ extern int strparser_debug;
     BACH_NULL = 265,               /* BACH_NULL  */
     BACH_NIL = 266                 /* BACH_NIL  */
   };
-  typedef enum yytokentype yytoken_kind_t;
+  typedef enum strparser_tokentype strparser_token_kind_t;
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
+#if ! defined STRPARSER_STYPE && ! defined STRPARSER_STYPE_IS_DECLARED
+union STRPARSER_STYPE
 {
-#line 46 "strparser.y"
+#line 57 "strparser.y"
 
 	long l;
 	double d;
@@ -79,16 +87,30 @@ union YYSTYPE
 	t_pitch p;
 	t_symbol *sym;
 
-#line 83 "strparser.tab.h"
+#line 91 "strparser.tab.h"
 
 };
-typedef union YYSTYPE YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
+typedef union STRPARSER_STYPE STRPARSER_STYPE;
+# define STRPARSER_STYPE_IS_TRIVIAL 1
+# define STRPARSER_STYPE_IS_DECLARED 1
 #endif
 
 
 
+
 int strparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *depth);
+
+/* "%code provides" blocks.  */
+#line 26 "strparser.y"
+
+  // Tell Flex the expected prototype of yylex.
+  #define YY_DECL                             \
+    int strparser_lex (STRPARSER_STYPE *yylval, void* yyscanner)
+
+    typedef STRPARSER_STYPE YYSTYPE;
+  // Declare the scanner.
+  YY_DECL;
+
+#line 115 "strparser.tab.h"
 
 #endif /* !YY_STRPARSER_STRPARSER_TAB_H_INCLUDED  */

@@ -120,10 +120,10 @@ typedef struct _constraints
     long                    n_provisionals;
     t_systhread                n_thread;
     t_bach_atomic_lock        n_inuse;
-    t_qelem                    n_pos_qelem;
-    t_qelem                    n_score_qelem;
-    t_qelem                    n_provisionals_qelem;
-    t_qelem                 n_detailed_score_qelem;
+    t_qelem*                    n_pos_qelem;
+    t_qelem*                    n_score_qelem;
+    t_qelem*                    n_provisionals_qelem;
+    t_qelem*                 n_detailed_score_qelem;
     double                    n_normalized_position;
     long                    n_score;
     t_llll                    *n_provisionals_ll;

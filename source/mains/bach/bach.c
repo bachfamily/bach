@@ -17,6 +17,8 @@
  *
  */
 
+//#include <Foundation/Foundation.h>
+
 #include "foundation/llll_files.h"
 #include "ext_globalsymbol.h"
 #include "ext_common.h"
@@ -1185,8 +1187,6 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
 
 char bach_load_default_font(void)
 {
-    //Sleep(60000);
-
     std::string fontsPath = bach_get_package_path() + "/fonts/November for bach.otf";
     
 #ifdef WIN_VERSION
@@ -1218,7 +1218,7 @@ char bach_load_default_font(void)
     }
 #endif
     
-#ifdef MAC_VERSION
+#ifdef gggMAC_VERSION
     // MAC
     CFErrorRef error = NULL;
     CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
@@ -1245,7 +1245,7 @@ char bach_load_default_font(void)
 
 long bach_getbuildnumber(void)
 {
-#ifdef MAC_VERSION
+#ifdef gggMAC_VERSION
     CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
     if (mainBundle) {
         
