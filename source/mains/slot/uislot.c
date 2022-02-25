@@ -1,7 +1,7 @@
 /*
  *  uislot.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -108,6 +108,7 @@ void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_int(t_uislot *x, t_atom_long num);
 void uislot_float(t_uislot *x, double num);
 void uislot_bang(t_uislot *x);
+void uislot_clear(t_uislot *x, t_llll *args);
 
 // interface functions
 void uislot_dump(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
@@ -667,6 +668,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example eraseslot active @caption clear currently open slot
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
+    // @example eraseslot all @caption clear all slots
     // @seealso setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_erase_slot, "eraseslot", A_GIMME, 0);
 
@@ -975,17 +977,20 @@ void uislot_erase_slot(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
         object_error((t_object *)x, "Not enough arguments!");
         return;
     }
-    
-    slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
-    if (slotnum < 0 || slotnum >= CONST_MAX_SLOTS) {
-        object_error((t_object *)x, "Wrong slot number!");
-        return;
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == _llllobj_sym_all) {
+        uislot_clear(x, NULL);
+    } else {
+        slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
+        if (slotnum < 0 || slotnum >= CONST_MAX_SLOTS) {
+            object_error((t_object *)x, "Wrong slot number!");
+            return;
+        }
+        
+        create_whole_uislot_undo_tick(x);
+        lock_general_mutex((t_notation_obj *)x);
+        note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slotnum);
+        unlock_general_mutex((t_notation_obj *)x);
     }
-
-    create_whole_uislot_undo_tick(x);
-    lock_general_mutex((t_notation_obj *)x);
-    note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slotnum);
-    unlock_general_mutex((t_notation_obj *)x);
     
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
 }
@@ -1158,6 +1163,19 @@ long get_slotnum_from_llllelem(t_notation_obj *r_ob, t_llllelem *elem)
     return slot_num;
 }
 
+void uislot_clear(t_uislot *x, t_llll *args)
+{
+    create_whole_uislot_undo_tick(x);
+    if (args && args->l_head && args->l_head->l_next) {
+        long slot_num = get_slotnum_from_llllelem((t_notation_obj *)x, args->l_head->l_next);
+        note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slot_num);
+    } else {
+        long i;
+        for (i = 0; i < CONST_MAX_SLOTS; i++)
+            note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, i);
+    }
+}
+
 void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv){ //argv+1
     
     t_llll *inputlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
@@ -1171,15 +1189,7 @@ void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv){ //argv+
                 uislot_paste(x, s, argc, argv);
                 
             } else if (router == _llllobj_sym_clear) {
-                create_whole_uislot_undo_tick(x);
-                if (inputlist->l_head->l_next) {
-                    long slot_num = get_slotnum_from_llllelem((t_notation_obj *)x, inputlist->l_head->l_next);
-                    note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slot_num);
-                } else {
-                    long i;
-                    for (i = 0; i < CONST_MAX_SLOTS; i++)
-                        note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, i);
-                }
+                uislot_clear(x, inputlist);
                 handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CLEAR_UISLOT);
                 
                 
@@ -1423,6 +1433,7 @@ void set_uislot_from_llll(t_uislot *x, t_llll* inputlist, char also_lock_general
 
 long uislot_oksize(t_uislot *x, t_rect *newrect)
 {
+    notationobj_oksize_check((t_notation_obj *)x, newrect);
     return 0;
 }
     
@@ -1461,7 +1472,11 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.obj_type = k_NOTATION_OBJECT_SLOT;
     x->r_ob.slot_window_zoom = x->r_ob.bgslot_zoom = 100;
 
+    x->r_ob.width = 200;
+    x->r_ob.height = 100;
+
     notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notation_obj_fn) create_whole_uislot_undo_tick, NULL, (notation_obj_undo_redo_fn)uislot_new_undo_redo, (bach_paint_ext_fn)uislot_paint_ext);
+
 
     x->r_ob.active_slot_num = 0;
     x->r_ob.active_slot_num_1based = 1;
@@ -1871,7 +1886,7 @@ t_llll* get_uislot_values_as_llll(t_uislot *x, e_data_considering_types for_what
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
     
-    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what));
+    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what, false));
     
     if (dump_what & k_HEADER_BODY)
         llll_appendllll(out_llll, note_get_some_slots_values_as_llll((t_notation_obj *) x, x->r_ob.dummynote, 0, slot_indices), 0, WHITENULL_llll);

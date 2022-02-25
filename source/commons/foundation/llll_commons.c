@@ -1,7 +1,7 @@
 /*
  *  llll_commons.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -1092,7 +1092,7 @@ long llll_iter(long lists, t_llll **inlist, t_atom_long maxdepth,
                                        ((spikemode == LLLL_M_SPIKE_IGNORE || (direction != -1 || !(elem_types & LLLL_E_LLLL))) &&
                                         (direction != 1 || elem_types != LLLL_E_NULL))); // we ignore spikes or we're not at a spike
                                        
-*/
+*/ 
 
             t_bool leave_this_level = ((elem_types & LLLL_E_LLLL) && // there is at least one llll and
                                        (elem_types == LLLL_E_LLLL || recursionmode != LLLL_M_RECURSION_DONT) && // (all elements are lllls or we resolve lists against atoms) and
@@ -8745,6 +8745,7 @@ long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...
     }
     va_end(ap);
     
+    char temp[2048]; // 2047 will be the longest attribute name for case-insensitive search. Still plenty enough
     for (elem = ll->l_head; elem; elem = nextelem) {
         nextelem = elem->l_next;
         
@@ -8752,7 +8753,17 @@ long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...
             t_max_err ht_err;
             t_llll **item_ll;
             
-            key = gensym(s->s_name + 1);
+            if ((flags & LLLL_PA_CASEINSENSITIVE) && strlen(s->s_name) > 0) {
+                long limit = MIN(strlen(s->s_name)-1, 2047);
+                for (long i = 0; i < limit; i++) {
+                    // beware, only works for UTF8 data, but still, we're not using extended encoding for attribute names
+                    temp[i] = tolower(s->s_name[i+1]);
+                }
+                temp[limit] = 0;
+                key = gensym(temp);
+            } else {
+                key = gensym(s->s_name + 1);
+            }
             ht_err = hashtab_lookup(vars_ht, key, (t_object **) &item);
             
             if (ht_err) {

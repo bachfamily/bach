@@ -70,7 +70,7 @@
 		<method name="(doubleclick)">
 			<arglist />
 			<digest>
-				Edit llll as text
+				Open text editor
 			</digest>
 			<description>
 				Double-clicking on the object forces a text editor to open up, where the expression can be edited directly.

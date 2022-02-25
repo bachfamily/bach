@@ -1,7 +1,7 @@
 /*
  *  notation_maxinterface.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -501,7 +501,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
             } else {
                 append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)chord, mode);
                 llll_appendlong(out_llll, chord->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-                llll_appendllll(out_llll, get_rollchord_values_as_llll(r_ob, chord, mode), 0, WHITENULL_llll);
+                llll_appendllll(out_llll, get_rollchord_values_as_llll(r_ob, chord, mode, false), 0, WHITENULL_llll);
             }
             
             llll_appendobj(external_out_llll, out_llll, 0, WHITENULL_llll);
@@ -1303,6 +1303,7 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
     long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0;
+    t_atom_long dblclicksendsvalues = 0;
     double slotbgalpha = 0, backgroundslotfontsize = 0;
     t_atom_long velocityhandling = -1, notificationsformessages = -1;
     char brand_new_creation = 0;
@@ -1346,6 +1347,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
             r_ob->old_timepoint_syntax_bw_compatibility = true;
     }
     
+    if (dictionary_hasentry(d, gensym("dblclicksendsvalues")))
+        dictionary_getlong(d, gensym("dblclicksendsvalues"), &dblclicksendsvalues);
+
     if (dictionary_hasentry(d, gensym("mainstavescolor")))
         dictionary_getatoms(d, gensym("mainstavescolor"), &ac_mainstavescolor, &av_mainstavescolor);
     
@@ -1418,6 +1422,10 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     
     if (has_notificationsformessages)
         object_attr_setchar(x, gensym("notifymessages"), notificationsformessages);
+    
+    if (dblclicksendsvalues) {
+        r_ob->play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK] = 1;
+    }
     
     // Setting object size depending on numvoices
     if (brand_new_creation && r_ob->link_vzoom_to_height && r_ob->num_voices > 1) {
@@ -2440,12 +2448,14 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
         // If this is hidden, all breakpoints are not displayed.
         // This defaults to 1.
         
-        CLASS_ATTR_CHAR(c,"dblclicksendsvalues",0, t_notation_obj, dblclick_sends_values);
-        CLASS_ATTR_STYLE_LABEL(c,"dblclicksendsvalues",0,"onoff","Send Selection Upon Double-Click");
-        CLASS_ATTR_DEFAULT_SAVE(c,"dblclicksendsvalues",0,"0");
+        CLASS_ATTR_ATOM_VARSIZE(c, "dumpplaycmd", 0, t_notation_obj, play_offline_via_av, play_offline_via_ac, 16);
+        CLASS_ATTR_STYLE_LABEL(c,"dumpplaycmd",0,"text","Play Offline Commands");
+        CLASS_ATTR_ACCESSORS(c, "dumpplaycmd", (method)notation_obj_getattr_dumpplaycmd, (method)notation_obj_setattr_dumpplaycmd);
+        CLASS_ATTR_DEFAULT_SAVE(c,"dumpplaycmd",0,"v");
         // @exclude bach.slot
-        // @description Toggles the ability to individually off-line dump any note or marker by doubleclicking on it.
-        // This defaults to 0.
+        // @description Determines which keys or command are enabled to send the offline play output (up to 16 choices).
+        // You can use lowercase letters only and/or one of the following symbols: "click" "rightclick" "doubleclick".
+        // Defaults to "v".
     }
     
     
@@ -2715,6 +2725,13 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
             // multiplied by the <m>linearedittimestep</m> in order to obtain the duration of a newly created note.
         }
         
+        if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            CLASS_ATTR_LONG(c, "lineareditquarterkey", 0, t_notation_obj, linear_edit_quarter_key);
+            CLASS_ATTR_STYLE_LABEL(c,"lineareditquarterkey",0,"text","Linear Editing Quarter Key");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"lineareditquarterkey", 0,"5");
+            // @exclude bach.slot, bach.roll
+            // @description In linear editing, sets the digit for the key corresponding to a duration of 1/4
+        }
         
         CLASS_ATTR_LONG(c,"activepart",0, t_notation_obj, active_part);
         CLASS_ATTR_STYLE_LABEL(c,"activepart",0,"text","Active Part");
@@ -2890,14 +2907,15 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         if (obj_type == k_NOTATION_OBJECT_ROLL) {
             CLASS_ATTR_CHAR(c,"showgroups",0, t_notation_obj, show_groups);
             CLASS_ATTR_STYLE_LABEL(c,"showgroups",0,"enumindex","Show Groups");
-            CLASS_ATTR_ENUMINDEX(c,"showgroups", 0, "None Lines Colors Lines And Colors");
-            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showgroups", 0, "3");
+            CLASS_ATTR_ENUMINDEX(c,"showgroups", 0, "None Lines Colors Lines And Colors Beams");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showgroups", 0, "4");
             // @exclude bach.slot, bach.score
             // @description Chooses how the chord grouping should be displayed: <br />
             // - None: groups are not displayed in any way. <br />
             // - Lines: groups are displayed by linking chord stems with dashed lines. <br />
             // - Colors: groups are displayed by assigning to each group a particular color. <br />
-            // - Lines And Colors (default): both of the two previous devices are adopted.
+            // - Lines And Colors: both of the two previous devices are adopted. <br />
+            // - Beams (default): groups are shown by beaming their chords together.
         }
         
         CLASS_ATTR_CHAR(c, "labelfamilies", 0, t_notation_obj, show_label_families);
@@ -3189,6 +3207,100 @@ t_max_err notation_obj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, lo
     return MAX_ERR_NONE;
 }
 
+
+t_max_err notation_obj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    for (long i = 0; i < 128; i++)
+        r_ob->play_offline_bitfield[i] = 0;
+    for (long i = 0; i < ac; i++) {
+        if (atom_gettype(av+i) == A_SYM) {
+            t_symbol *s = atom_getsym(av+i);
+            if (s && s->s_name) {
+                if (strlen(s->s_name) == 1) {
+                    // single letter
+                    long ascii = s->s_name[0];
+                    if (ascii >= 32 && ascii <= 127) {
+                        r_ob->play_offline_bitfield[ascii] = 1;
+                    }
+                } else if (s == gensym("click") || s == gensym("leftclick")) {
+                    r_ob->play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK] = true;
+                } else if (s == gensym("rightclick")) {
+                    r_ob->play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK] = true;
+                } else if (s == gensym("doubleclick") || s == gensym("dblclick")) {
+                    r_ob->play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK] = true;
+                } else if (s == _llllobj_sym_none) {
+                    // nothing to do
+                } else {
+                    object_warn((t_object *)r_ob, "Invalid play offline command.");
+                }
+            } else {
+                object_warn((t_object *)r_ob, "Invalid play offline command.");
+            }
+        } else {
+            object_warn((t_object *)r_ob, "Invalid play offline command.");
+        }
+    }
+    
+    return MAX_ERR_NONE;
+}
+
+
+t_max_err notation_obj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av)
+{
+    if (*ac && *av) {
+        object_error((t_object *)x, "Error in getattr!");
+        return MAX_ERR_GENERIC;
+    }
+    
+    long count = 0;
+    if (x->play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) {
+        count++;
+    }
+    if (x->play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK]) {
+        count++;
+    }
+    if (x->play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK]) {
+        count++;
+    }
+    for (long i = 32; i < 128; i++) {
+        if (x->play_offline_bitfield[i]) {
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        *ac = 1;
+        *av = (t_atom *)sysmem_newptr(1 * sizeof(t_atom));
+        atom_setsym(*av, _llllobj_sym_none);
+    } else {
+        *ac = count;
+        *av = (t_atom *)sysmem_newptr(count * sizeof(t_atom));
+        
+        count = 0;
+        if (x->play_offline_bitfield[k_PLAYOFFLINE_KEY_LEFTCLICK]) {
+            atom_setsym(*av+count, gensym("leftclick"));
+            count++;
+        }
+        if (x->play_offline_bitfield[k_PLAYOFFLINE_KEY_RIGHTCLICK]) {
+            atom_setsym(*av+count, gensym("rightclick"));
+            count++;
+        }
+        if (x->play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK]) {
+            atom_setsym(*av+count, gensym("doubleclick"));
+            count++;
+        }
+        char temp[2];
+        temp[1] = 0;
+        for (long i = 32; i < 128; i++) {
+            if (x->play_offline_bitfield[i]) {
+                temp[0] = i;
+                atom_setsym(*av+count, gensym(temp));
+                count++;
+            }
+        }
+    }
+    return 0;
+}
 
 
 void set_prevent_editing(t_notation_obj *r_ob, e_element_types elem, e_element_actions action, char val)
@@ -3822,6 +3934,36 @@ t_max_err notation_obj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_objec
     return MAX_ERR_NONE;
 }
 
+// safe version that ensures that the object's size won't change (provided that a portion of code is implemented in the
+// oksize() method of the object)
+t_max_err notationobj_set_fontname_safe(t_notation_obj *r_ob, t_symbol *ps)
+{
+    t_max_err err = MAX_ERR_NONE;
+    r_ob->dont_change_size_now = true;
+    err = jbox_set_fontname((t_object *) r_ob, _llllobj_sym_Courier);
+    r_ob->dont_change_size_now = false;
+    return err;
+}
+
+t_max_err notationobj_set_fontsize_safe(t_notation_obj *r_ob, double d)
+{
+    t_max_err err = MAX_ERR_NONE;
+    r_ob->dont_change_size_now = true;
+    err = jbox_set_fontsize((t_object *) r_ob, d);
+    r_ob->dont_change_size_now = false;
+    return err;
+}
+
+long notationobj_oksize_check(t_notation_obj *r_ob, t_rect *newrect)
+{
+    if (r_ob->dont_change_size_now) {
+        newrect->height = r_ob->height;
+        newrect->width = r_ob->width;
+        return 1;
+    }
+    return 0;
+}
+
 void start_editing_numberslot(t_notation_obj *r_ob, t_object *patcherview, t_notation_item *nitem, long slot_num, t_jrgba slot_text_textcolor)
 {
     t_object *textfield;
@@ -3842,8 +3984,8 @@ void start_editing_numberslot(t_notation_obj *r_ob, t_object *patcherview, t_not
     textfield_set_justification(textfield, JGRAPHICS_TEXT_JUSTIFICATION_RIGHT + JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM);
     textfield_set_textcolor(textfield, &slot_text_textcolor);
     
-    jbox_set_fontname((t_object *) r_ob, gensym("Arial"));
-    jbox_set_fontsize((t_object *) r_ob, round(7.2 * zoom_y));
+    notationobj_set_fontname_safe(r_ob, gensym("Arial"));
+    notationobj_set_fontsize_safe(r_ob, round(7.2 * zoom_y));
     if (r_ob->active_slot_notationitem && get_activeitem_slot_firstitem(r_ob, slot_num) && get_activeitem_slot_firstitem(r_ob, slot_num)->item) {
         char *number_txt = NULL;
         number_slot_to_text_buf(r_ob, get_activeitem_slot_firstitem(r_ob, slot_num), 1, &number_txt, r_ob->slotinfo[slot_num].slot_type, slot_num, true);
@@ -3879,13 +4021,14 @@ void start_editing_textslot(t_notation_obj *r_ob, t_object *patcherview, t_notat
     textfield_set_autoscroll(textfield, 1);
     textfield_set_textmargins(textfield, r_ob->slot_window_active_x1, r_ob->slot_window_active_y1, rect.width - r_ob->slot_window_active_x2, rect.height - r_ob->slot_window_active_y2);
     textfield_set_textcolor(textfield, &slot_text_textcolor);
+
     
-    jbox_set_fontname((t_object *) r_ob, _llllobj_sym_Courier);
+    notationobj_set_fontname_safe(r_ob, _llllobj_sym_Courier);
     
     if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS)
-        jbox_set_fontsize((t_object *) r_ob, round(11. * zoom_y));
+        notationobj_set_fontsize_safe(r_ob, round(11. * zoom_y));
     else
-        jbox_set_fontsize((t_object *) r_ob, round(7.2 * zoom_y));
+        notationobj_set_fontsize_safe(r_ob, round(7.2 * zoom_y));
     
     if (r_ob->active_slot_notationitem && get_activeitem_slot_firstitem(r_ob, slot_num) && get_activeitem_slot_firstitem(r_ob, slot_num)->item) {
         if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_TEXT)
@@ -4575,8 +4718,10 @@ void initialize_textfield(t_notation_obj *r_ob){
     t_object *textfield;
     textfield = jbox_get_textfield((t_object *) r_ob);
     if (textfield) {
-        jbox_set_fontname((t_object *) r_ob, gensym("Arial"));
-        jbox_set_fontsize((t_object *) r_ob, 12);
+        jbox_set_fontname((t_object *)r_ob, gensym("Arial"));
+        jbox_set_fontsize((t_object *)r_ob, 12);
+//        notationobj_set_fontname_safe(r_ob, gensym("Arial"));
+//        notationobj_set_fontsize_safe(r_ob, 12);
         
         textfield_set_noactivate(textfield, 1);
         textfield_set_editonclick(textfield, 0); // set it to 0 if you don't want user to edit it in lock mode
@@ -4615,8 +4760,8 @@ void start_editing_voicename(t_notation_obj *r_ob, t_object *patcherview, t_voic
     textfield_set_textmargins(textfield, r_ob->j_inset_x, (top + bottom - text_height)/2, 0, 0);
     textfield_set_textcolor(textfield, &r_ob->j_mainstaves_rgba);
     
-    jbox_set_fontname((t_object *) r_ob, gensym("Arial"));
-    jbox_set_fontsize((t_object *) r_ob, r_ob->voice_names_font_size * r_ob->zoom_y);
+    notationobj_set_fontname_safe(r_ob, gensym("Arial"));
+    notationobj_set_fontsize_safe(r_ob, r_ob->voice_names_font_size * r_ob->zoom_y);
     object_method(patcherview, gensym("insertboxtext"), r_ob, buf);
     
     jfont_destroy_debug(jf_voice_names);
@@ -4646,8 +4791,8 @@ void start_editing_markername(t_notation_obj *r_ob, t_object *patcherview, t_mar
     textfield_set_textcolor(textfield, &r_ob->j_selection_rgba);
     
     get_names_as_text(marker->r_it.names, buf, 1000);
-    jbox_set_fontname((t_object *) r_ob, gensym("Arial"));
-    jbox_set_fontsize((t_object *) r_ob, r_ob->markers_font_size * r_ob->zoom_y);
+    notationobj_set_fontname_safe(r_ob, gensym("Arial"));
+    notationobj_set_fontsize_safe(r_ob, r_ob->markers_font_size * r_ob->zoom_y);
     object_method(patcherview, gensym("insertboxtext"), r_ob, buf);
     
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
@@ -4680,8 +4825,8 @@ void start_editing_lyrics(t_notation_obj *r_ob, t_object *patcherview, t_chord *
     textfield_set_textmargins(textfield, left, top, 0, 0);
     textfield_set_textcolor(textfield, &r_ob->j_lyrics_rgba);
     
-    jbox_set_fontname((t_object *) r_ob, gensym("Arial"));
-    jbox_set_fontsize((t_object *) r_ob, r_ob->lyrics_font_size * r_ob->zoom_y);
+    notationobj_set_fontname_safe(r_ob, gensym("Arial"));
+    notationobj_set_fontsize_safe(r_ob, r_ob->lyrics_font_size * r_ob->zoom_y);
     
     if (true) {
         long len = chord->lyrics->label ? strlen(chord->lyrics->label) : 0;
@@ -4724,8 +4869,8 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
     textfield_set_textmargins(textfield, left, top, 0, 0);
     textfield_set_textcolor(textfield, &r_ob->j_dynamics_rgba);
     
-    jbox_set_fontname((t_object *) r_ob, _llllobj_sym_Courier);
-    jbox_set_fontsize((t_object *) r_ob, 11 * 1.25 * r_ob->zoom_y);
+    notationobj_set_fontname_safe(r_ob, _llllobj_sym_Courier);
+    notationobj_set_fontsize_safe(r_ob, 11 * 1.25 * r_ob->zoom_y);
     
     if (r_ob->is_editing_slot_number >= 0 && r_ob->is_editing_slot_number < CONST_MAX_SLOTS) {
         t_notation_item *it = notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, r_ob->is_editing_slot_number);

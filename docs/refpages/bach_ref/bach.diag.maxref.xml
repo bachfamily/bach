@@ -129,6 +129,7 @@
 		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 		as the number of rows.
 		<br /> <br />
+		A <m>shift</m> attribute can be used to put the llll on a secondary diagonal.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -166,6 +167,7 @@
 		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 		as the number of rows.
 		<br /> <br />
+		A <m>shift</m> attribute can be used to put the llll on a secondary diagonal.
 			</description>
 		</entry>
 		<entry name ="Keywords">

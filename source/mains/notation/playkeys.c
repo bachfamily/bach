@@ -1,7 +1,7 @@
 /*
  *  playkeys.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -2323,11 +2323,11 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
     if ((x = (t_playkeys *) object_alloc_debug(playkeys_class))) {
         // @arg 0 @name playkeys @type anything @digest Parameters
         // @description The names of the parameters to retrieve.
-        // Use an llll of type <b>[slot <m>number</m>]</b> or
+        // Use an integer <m>N</m> or an llll of type <b>[slot <m>N</m>]</b> or
         // <b>[slot <m>name</m>]</b> to retrieve a given slot.
         // If you need to retrieve multiple slots you can also
         // join them in a single llll in the form
-        // <b>[slot <m>name_or_number</m> <m>name_or_number</m>...]</b>.
+        // <b>[slot <m>name_or_number</m> <m>name_or_number</m>...]</b>,
         // Allowed parameters to retrieve correspond to the following symbols:
         // "type", "onset", "symonset", "cents", "pitch", "duration", "symduration", "tail", "velocity",
         // "midichannel", "tie", "voicenumber", "chordindex", "noteindex, "path" (these last three only meaningful
@@ -2413,7 +2413,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                         this_keys->property = k_PLAYKEYS_SLOT;
                         this_keys->allowed_command_router = allowed_command_router;
                         hatom_setlong(&this_keys->specification, slotnum);
-                        this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
+                        this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems : get_default_allowed_notationitems_for_property(this_keys->property);
                         *this_outlets++ = '4';
                         i++;
                         this_keys++;

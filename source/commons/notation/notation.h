@@ -1,7 +1,7 @@
 /*
  *  notation.h
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -229,7 +229,7 @@
 #define CONST_SCORE_TIE_INNER_UHEIGHT 3                            ///< Unscaled minimum height (in pixels) of a tie at its middle point
 #define CONST_SCORE_BEAMING_TREE_STEP_UHEIGHT 6                    ///< Unscaled height (in pixels) of each level skip when painting a rhythmic tree (which happens only in [bach.score] and only if the <show_rhythmic_tree> field of the notation object is set)
 #define    CONST_TUPLET_TICK_UHEIGHT 4                                ///< Unscaled height (in pixels) of the tick at the beginning and of at the end of a tuplet bracket
-#define    CONST_TUPLET_USPACE_FROM_CHORDS 5.5                        ///< Unscaled additional vertical distance (in pixels) of the tuplet from the relative chords
+#define    CONST_TUPLET_USPACE_FROM_CHORDS 4 //5.5                        ///< Unscaled additional vertical distance (in pixels) of the tuplet from the relative chords
 #define    CONST_TUPLET_USPACE_FROM_FURTHER_STUFF 4 //2            ///< Unscaled additional vertical distance (in pixels) of the tuplet from other superposed stuff (like another superposed tuplet)
 #define CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION 3 * CONST_STEP_UY    ///< Minimum unscaled vertical distance between the topmost staff line and the ending tip of a stem (only for [bach.score])
 
@@ -743,6 +743,13 @@ typedef enum _chord_position_in_screen {
 } e_chord_position_in_screen;
 
 
+typedef enum _play_offline_key {
+    k_PLAYOFFLINE_KEY_NONE = 0,
+    k_PLAYOFFLINE_KEY_LEFTCLICK = 1,
+    k_PLAYOFFLINE_KEY_RIGHTCLICK = 2,
+    k_PLAYOFFLINE_KEY_DOUBLECLICK = 3,
+} e_play_offline_key;
+
 
 
 /** Function setting the whole information for the notation object, starting from a ll. 
@@ -846,7 +853,7 @@ typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t
 
 
 //TBD
-typedef char (*notation_obj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to);
+typedef char (*notation_obj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to, char also_send_domain);
 
 
 
@@ -1784,6 +1791,8 @@ typedef enum _undo_operations
     k_UNDO_OP_CLEAR_NAMES,
     k_UNDO_OP_NAMES_FROM_SLOT,
     k_UNDO_OP_NAMES_TO_SLOT,
+    k_UNDO_OP_DURATION_LINE_TO_SLOT,
+    k_UNDO_OP_SLOT_TO_DURATION_LINE,
     k_UNDO_OP_CHANGE_ROLES,
     k_UNDO_OP_RESET_TAIL_SLOPE,
     k_UNDO_OP_DELETE_PITCH_BREAKPOINTS_IN_SELECTION,
@@ -2508,6 +2517,10 @@ typedef struct _group
     struct _notation_item        *firstelem;        ///< Pointer to the first element of the group
     struct _notation_item        *lastelem;        ///< Pointer to the last element of the group
     long                        num_elements;    ///< Number of elements in the group
+
+    // for beamings, calculated and used at paint time
+    char                        imposed_direction;      ///< Direction of beaming (if any)
+    double                      beam_y;                ///< Beam y
     
     struct _group                *prev;        ///< Pointer to the previous group
     struct _group                *next;        ///< Pointer to the next group
@@ -2724,7 +2737,6 @@ typedef struct _chord
     double            dynamics_portion_of_right_uextension;    ///< Part of the right unscaled extension merely due to the fact that there are some dynamics displayed below the chord.
     
     double            stem_x;                                ///< x pixel of the chord stem
-    double            stem_top_y;                            ///< y pixel of the topmost stem point (used for handling beamings)
     double            firstnote_y_real;                    ///< y pixel of the notehead center of the bottommost note
     double            lastnote_y_real;                    ///< y pixel of the notehead center of the topmost note
     double            topmost_y;                            ///< y pixel of the topmost point in the chord similarly
@@ -4010,6 +4022,7 @@ typedef struct _notation_obj
     char            *show_measure_numbers;            ///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
     double            measure_numbers_font_size;        ///< Font size for the measure numbers (for zoom_y = 1, will be scaled according to the zoom)
+    char            show_measure_numbers_on_first_measure; ///< Whether to show also the very first measure number
     
     // private, utilities
     long        add_staff;                    ///< (PRIVATE) Flag which is 1 during the process of staff adding
@@ -4379,8 +4392,16 @@ typedef struct _notation_obj
     char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads
     
     char        notify_when_painted;                ///< Flag telling if we want notifications to be sent whenever the object is repainted
-    char        notify_also_upon_messages;            ///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes 
-    char        dblclick_sends_values;                ///< Flag telling if, when we double click, the selection is sent through the playout (as when we press V)
+    char        notify_also_upon_messages;          ///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes
+    
+    // choosing which command plays offline
+    bool        play_offline_bitfield[128];              ///< Determines what plays offline as a bitfield of ASCII values:
+                                                    ///  if a 1 is on an ascii value, that plays offline. Special values are used
+                                                    ///  for clicks, see k_PLAYOFFLINE_...
+    long        play_offline_via_ac;                ///< Needed to set up the Max attribute
+    t_atom      play_offline_via_av[16];            ///< Needed to set up the Max attribute
+//    char        play_offline_shortcut;              /// one of the k_PLAYOFFLINE_SHORTCUT_
+//    char        dblclick_sends_values;                ///< Flag telling if, when we double click, the selection is sent through the playout (as when we press V)
     
     char        send_rebuild_done_at_startup;                ///< Flag telling if the "done" message is sent at startup when the object content has been reloaded
     char        send_rebuild_done_only_after_paint_method;    ///< Flag telling if the "done" message must be sent NOT after the object content has been reloaded, but after the object has been repainted (and thus a little bit later).
@@ -4411,6 +4432,7 @@ typedef struct _notation_obj
     // for bach.roll
     double          linear_edit_time_step;              ///< Time step for a single "step" in the linear editing (and also for the duration associated by default with key 1)
     double          linear_edit_time_multipliers[10];   ///< Array of multipliers defining the durations associated with keys 1 through 9 and then 0 (meaning 10).
+    long            linear_edit_quarter_key;            ///< Keyboard key corresponding to a quarter note in linear edit
     
     
     // pitches
@@ -4920,6 +4942,8 @@ typedef struct _notation_obj
     // backward compatibility stuff
     long                bwcompatible;           ///< Number of the version of bach towards which the object needs to be compatible. E.g. if 7900, this
                                                 ///< will ensure compatibility (whenever possible...) with bach 0.7.9, and so on.
+    
+    char                dont_change_size_now;   ///< Internal flag to overcome an issue of  jbox_set_fontname() changing the size of the object
 } t_notation_obj;
 
 
@@ -5167,12 +5191,13 @@ double mc_to_yposition_in_scale(t_notation_obj *r_ob, double mc, t_voice *v_ob);
     @param note                Pointer to the note
     @param v_ob                The voice for which we need to calculate the y position
     @param notehead_resize    Resize factor for the notehead (1. = standard size)
+    @param ignore_custom_noteheads  If non-zero ignores custom noteheads
     @return                    The y position in pixels of the textbox which will contain the notehead character
  
     @remark                    This works exactly like mc_to_yposition_in_scale(), but an additional vertical shift (which is the shift of the textbox top) is added.
     @see                    mc_to_yposition()
  */
-double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize);
+double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize, char ignore_custom_noteheads);
 
 
 /**    Convert midicents into graphical pitch data: i.e. the midicents of the displayed diatonic note and the displayed accidental. 
@@ -6386,7 +6411,7 @@ double notehead_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_no
 // TBD
 void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
 long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
-long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char avoid_returning_default);
+long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char avoid_returning_default, char ignore_custom_noteheads);
 
 
 /**    Get the default width for a portion of score. This function is used inside tuttipoint_calculate_spacing() in order to determine the
@@ -6624,6 +6649,8 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
     @remark                            This is based on change_color_depending_on_playlockmute()
  */
 t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+
+t_jrgba chord_get_stem_color(t_notation_obj *r_ob, t_chord* chord);
 
 
 /**    Obtain the color of a chord flag
@@ -7750,6 +7777,13 @@ double notation_item_get_tail_ms(t_notation_obj *r_ob, t_notation_item *it);
  */ 
 double notation_item_get_duration_ms(t_notation_obj *r_ob, t_notation_item *it);
 
+/** Obtain the MIDI velocity a given notation item (or zero if none).
+    @ingroup        notation
+    @param    r_ob    The notation object
+    @param    it        The notation item
+    @return            The MIDI velocity of the notation item.
+ */
+double notation_item_get_velocity(t_notation_obj *r_ob, t_notation_item *it);
 
 // Slower but more accurate versions, based on the rational values, less prone to floating point arithmetic errors
 double notation_item_get_onset_ms_accurate(t_notation_obj *r_ob, t_notation_item *it);
@@ -10108,7 +10142,7 @@ void paint_keysigaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_a
     @remark                    Since the beaming has a certain width, the y1 and y2 refer to the topmost (if direction is 1, upwards) or bottommost 
                             (if direction is -1, downwards) vertical position of the beaming.
  */ 
-void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, double direction);
+void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, char direction);
 
 
 /**    Paint a marker line and write the marker name
@@ -10850,6 +10884,11 @@ void initialize_textfield(t_notation_obj *r_ob);
 void start_editing_voicename(t_notation_obj *r_ob, t_object *patcherview, t_voice *voice);
 
 
+// internal
+t_max_err notationobj_set_fontname_safe(t_notation_obj *r_ob, t_symbol *ps);
+t_max_err notationobj_set_fontsize_safe(t_notation_obj *r_ob, double d);
+long notationobj_oksize_check(t_notation_obj *r_ob, t_rect *newrect);
+
 /**    Start typing a text inside a #k_SLOT_TYPE_TEXT slot.
     @ingroup                    textfield
     @param    r_ob                The notation object
@@ -11370,6 +11409,9 @@ long notation_item_is_selected(t_notation_obj *r_ob, t_notation_item *item);
     @return                    1 if the notation item is globally selected, 0 otherwise.
 */
 char notation_item_is_globally_selected(t_notation_obj *r_ob, t_notation_item *item);
+
+// TBD
+char chord_or_any_of_its_notes_are_selected(t_notation_obj *r_ob, t_chord *ch);
 
 
 /**    Remove from the selection all notation elements of a given type.
@@ -12374,10 +12416,11 @@ t_llll *get_midichannels_as_llll(t_notation_obj *r_ob, char prepend_router);
                                                     popup menu or have to be kept in background: if this flag is 1, for each slotinfo a specification (popup 1) or
                                                     (popup 0) is added, and similarly for all the alreday-saved-with-the-Max-inspector stuff).
     @param    for_what    One of the #e_data_considering_types, typically either #k_CONSIDER_FOR_DUMPING of #k_CONSIDER_FOR_UNDO.
+    @param    selection_only    If non-zero, only selected markers are output
     @return                An llll containing all notation object's header
  */
 t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, char add_router_symbol, 
-                                        char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, e_data_considering_types for_what);
+                                        char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, e_data_considering_types for_what, bool selection_only);
 
 
 /**    Obtain an llll containing all the stafflines information (one element for each voice).
@@ -12459,9 +12502,10 @@ double get_notehead_ux_shift(t_notation_obj *r_ob, t_note *note);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    note        The note
+    @param    ignore_custom_noteheads   If non-zero, ignores custom noteheads
     @return        The unscaled horizontal shift of the notehead.    
 */
-double get_notehead_uy_shift(t_notation_obj *r_ob, t_note *note);
+double get_notehead_uy_shift(t_notation_obj *r_ob, t_note *note, char ignore_custom_noteheads);
 
 // TBD
 double get_notehead_durationline_start_ux_shift(t_notation_obj *r_ob, t_note *note);
@@ -12570,9 +12614,10 @@ t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     @param    r_ob        The notation object
     @param    chord        The chord
     @param    mode        One of the possible #e_data_considering_types specifying the reason why the llll is asked, and thus returning slightly different specifications depending on the usage.
+    @param   selection_only  If non-zero, only get selected notes
     @return                The gathered syntax of the chord, as an llll
 */
-t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode);
+t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, bool selection_only);
 
 
 /**    Obtain all the information about a bach.score note, in gathered syntax.
@@ -12721,9 +12766,11 @@ double chord_get_alignment_ux(t_notation_obj *r_ob, t_chord *chord);
  */
 double chord_get_alignment_x(t_notation_obj *r_ob, t_chord *chord);
 
+
 // TBD
-double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note);
-double get_tail_alignment_ux(t_notation_obj *r_ob, t_note *note);
+double chord_get_stem_x(t_notation_obj *r_ob, t_chord *chord);
+double tail_get_alignment_x(t_notation_obj *r_ob, t_note *note);
+double tail_get_alignment_ux(t_notation_obj *r_ob, t_note *note);
 
 
 /** Obtain the longest note of a chord
@@ -17622,11 +17669,13 @@ t_max_err notation_obj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, 
 t_max_err notation_obj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notation_obj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
 t_max_err notation_obj_set_parts(t_notation_obj *r_ob, long *part);
+t_max_err notation_obj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 
 // GETTERS
 
 t_max_err notation_obj_getattr_voicenames(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
 t_max_err notation_obj_getattr_stafflines(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
+t_max_err notation_obj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av);
 /** @}*/
 
 
@@ -18062,6 +18111,10 @@ void remove_element_from_group(t_notation_obj *r_ob, t_group *group, t_notation_
     @return        1 if all the selected elements belong to the same group, 0 otherwise
  */
 char is_all_selection_in_one_group(t_notation_obj *r_ob, t_group **whichgroup);
+
+char is_all_group_selected(t_notation_obj *r_ob, t_group *gr); // TBD
+t_notation_item *group_get_leftmost_item(t_notation_obj *r_ob, t_group *gr);
+t_notation_item *group_get_rightmost_item(t_notation_obj *r_ob, t_group *gr);
 
 
 
@@ -19072,6 +19125,7 @@ void notation_obj_nameappend(t_notation_obj *r_ob, t_symbol *s, long argc, t_ato
 // TBD
 void notation_obj_nametoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 void notation_obj_slottoname(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notation_obj_dltoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 /** Clear the names of all notation items in the score
     @ingroup        names
@@ -19152,8 +19206,9 @@ void update_all_label_families_contour(t_notation_obj *r_ob);
     which have been modified (and thus are under undo ticks).
     @ingroup        names
     @param    r_ob    The notation object
+    @param    lock_general_mutex    Toggles the ability to also lock the general mutex
  */
-void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob);
+void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob, char lock_general_mutex);
 
 
 /** Sets the t_bach_label_family::need_update_contour flag for all the label families

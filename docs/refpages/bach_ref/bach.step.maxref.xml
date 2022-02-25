@@ -349,6 +349,12 @@
 	<!--DISCUSSION-->
 	<discussion>
 		At each step of the iteration, <o>bach.step</o> also report if it has entered or exited a sublist,
+		and the addresses of the elements corresponding to the step.<br />
+		Beware: <o>bach.step</o> has a protection mechanism which can cause a bang to get lost in some cases.
+		A lost bang is harmless, but the step it should trigger does not happen, and a warning is displayed in the Max window instead.
+		The cases in which a bang may get lost are the following: <br />
+		1. bangs coming from the scheduler thread and the main thread are mixed. Some of the incoming bangs, for either thread, might get unpredictably lost.<br />
+		2. One of the outlets of <o>bach.step</o> is connected to the first inlet. In this case, every bang triggered by an outlet gets lost.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -422,6 +428,12 @@
 		<entry name ="More details">
 			<description>
 		At each step of the iteration, <o>bach.step</o> also report if it has entered or exited a sublist,
+		and the addresses of the elements corresponding to the step.<br />
+		Beware: <o>bach.step</o> has a protection mechanism which can cause a bang to get lost in some cases.
+		A lost bang is harmless, but the step it should trigger does not happen, and a warning is displayed in the Max window instead.
+		The cases in which a bang may get lost are the following: <br />
+		1. bangs coming from the scheduler thread and the main thread are mixed. Some of the incoming bangs, for either thread, might get unpredictably lost.<br />
+		2. One of the outlets of <o>bach.step</o> is connected to the first inlet. In this case, every bang triggered by an outlet gets lost.
 			</description>
 		</entry>
 		<entry name ="Keywords">

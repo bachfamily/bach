@@ -11,6 +11,8 @@
 
 	<description>
 		Performs the Fast Fourier transform on
+		the incoming llll (whatever its size is), and outputs
+		either the cartesian or the polar representation.
 	</description>
 
 	<!--METADATA-->

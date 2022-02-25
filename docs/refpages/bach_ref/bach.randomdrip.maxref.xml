@@ -11,6 +11,7 @@
 
 	<description>
 		Outputs random elements from a pool llll repeatedly, with a given
+		time delay between each couple of output elements, depending on given probability weights.
 	</description>
 
 	<!--METADATA-->

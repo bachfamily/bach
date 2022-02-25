@@ -1,7 +1,7 @@
 /*
  *  bach_slots.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -9602,7 +9602,7 @@ char notation_item_has_slot_content(t_notation_obj *r_ob, t_notation_item *nitem
 {
 	long i;
 	for (i=0; i<CONST_MAX_SLOTS; i++) {
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && nitem->type == k_NOTE && r_ob->slotinfo[i].slot_singleslotfortiednotes) {
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && (mode == k_CONSIDER_FOR_SAMPLING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) && nitem->type == k_NOTE && r_ob->slotinfo[i].slot_singleslotfortiednotes) {
             if (notation_item_get_slot_firstitem(r_ob, (t_notation_item *)note_get_first_in_tieseq((t_note *)nitem), i))
                 return true;
         } else {

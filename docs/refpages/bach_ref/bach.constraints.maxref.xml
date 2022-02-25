@@ -11,6 +11,7 @@
 
 	<description>
 		Solves constraints satisfaction problems.
+		The rules for the evaluation of each constraint must be provided in the object's lambda loop, each associated to a unique arbitrary name.
 	</description>
 
 	<!--METADATA-->

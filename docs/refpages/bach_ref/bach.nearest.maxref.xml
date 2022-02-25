@@ -11,6 +11,9 @@
 
 	<description>
 		Snaps each number of an incoming llll to the
+		nearest number of a given reference plain llll. The snapped elements
+		are output, as well as their distances to the original
+		elements and the indices of the chosen elements in the reference llll.
 	</description>
 
 	<!--METADATA-->

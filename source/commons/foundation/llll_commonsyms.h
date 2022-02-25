@@ -1,7 +1,7 @@
 /*
  *  llll_commonsyms.h
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -193,6 +193,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_cursor;
 	t_symbol	*s_commands;
 	t_symbol	*s_play;
+    t_symbol    *s_playout;
 	t_symbol	*s_stop;
     t_symbol	*s_pause;
 	t_symbol	*s_clefs;
@@ -589,6 +590,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_cursor			(_llllobj_common_symbols->s_cursor)
 #define _llllobj_sym_commands		(_llllobj_common_symbols->s_commands)
 #define _llllobj_sym_play			(_llllobj_common_symbols->s_play)
+#define _llllobj_sym_playout        (_llllobj_common_symbols->s_playout)
 #define _llllobj_sym_stop			(_llllobj_common_symbols->s_stop)
 #define _llllobj_sym_pause			(_llllobj_common_symbols->s_pause)
 #define _llllobj_sym_clefs			(_llllobj_common_symbols->s_clefs)

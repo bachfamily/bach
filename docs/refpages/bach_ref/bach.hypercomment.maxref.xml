@@ -11,6 +11,7 @@
 
 	<description>
 		Works like a standard <o>comment</o> object, with the possibility to easily have
+		hyperlink references inside it.
 	</description>
 
 	<!--METADATA-->

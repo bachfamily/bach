@@ -1,7 +1,7 @@
 /*
  *  bach.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -383,7 +383,7 @@ void bach_version(t_bach *x)
 {
     
     post("--- bach: automated composer's helper ---");
-    post("© 2010-2020 - Andrea Agostini and Daniele Ghisi");
+    post("© 2010-2022 - Andrea Agostini and Daniele Ghisi");
     if (x && x->b_no_ss) {
         post("♥ Thank you so much for supporting us on Patreon! ♥");
     } else {
@@ -615,9 +615,16 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     if (bach || gensym("bach")->s_thing) {
         object_error_obtrusive(nullptr, "Can't instantiate bach. You might want to restart Max.");
         bach = nullptr;
-        gensym("bach")->s_thing = nullptr;
+//        gensym("bach")->s_thing = nullptr;
         return NULL;
     }
+    
+    if (gensym("ears")->s_thing) {
+        object_warn(nullptr, "Symbol 'ears' is already in use.");
+    } else {
+        gensym("ears")->s_thing = (t_object *)WHITENULL;
+    }
+    
     t_bach *x = (t_bach *) object_alloc(bach_class);
 #ifdef BACH_TRACK_MEMORY_ALLOCATION
     //t_object *dummy;

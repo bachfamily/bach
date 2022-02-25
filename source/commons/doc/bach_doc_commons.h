@@ -1,7 +1,7 @@
 /*
  *  bach_doc_commons.h
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -1553,7 +1553,7 @@
 	// 0 and 1 should be avoided (since a notehead and notetail already exists for any note), so the
 	// values should be striclty greater than 0 and strictly less than 1. <br />
 	// - a number setting the pitch difference (in midicents) of the breakpoint with respect to the main
-	// note's pitch.
+	// note's pitch. This can be replaced by the "auto" symbol to infer the pitch from the existing duration line.
 	// - an optional slope parameter, between -1 and 1, setting the slope of the segment of duration line preceding the breakpoint
 	// (0 being linear, default).
 	// - an optional velocity parameter, between 1 and 127, but only if the <m>breakpointshavevelocity</m> attribute is active.
@@ -1579,7 +1579,8 @@
 #define BACH_DOC_MESSAGE_ERASESLOT
 	// An <m>eraseslot</m> message will clear the content of a specific slot for any selected note. 
 	// The slot number of the slot to clear is given as argument.
-	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
+	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot,
+    // or the word "all" to clear all slots.
 
 #define BACH_DOC_MESSAGE_MOVESLOT
     // A <m>moveslot</m> message will move the content of a given slot to another slot for any selected note.
@@ -1828,8 +1829,8 @@
 	// • <m>Shift+Spacebar</m> while not playing: Play selection (start playing from the leftmost selected item
 	// and only play the selected items) <br />
 	// • <m>V</m>: Off-line play, also known as "selection dump" (immediately send the playout syntax of selected elements
-	// out the playout, see <m>dumpselection</m> message) <br />
-	// • <m>Shift+V</m>: Chordwise off-line play (as the previous command, but if a single note is selected, all its chord content
+	// out the playout, see <m>dumpselection</m> message). The V letter can be changed via the <m>dumpplaycmd</m> attribute. <br />
+	// • <m>Alt+V</m>: Chordwise off-line play (as the previous command, but if a single note is selected, all its chord content
 	// is output through the playout) <br />
 	// • <m>Shift+Alt+V</m>: Send whole gathered syntax content out the first outlet (this is equivalent to sending a <m>dump</m> message) <br />
     // • Any defined command key: send command off-line <br />
