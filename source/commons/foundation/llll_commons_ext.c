@@ -407,6 +407,25 @@ double llll_stdev_of_plain_double_llll(t_llll *ll, double *average)
 	return stdev;
 }
 
+t_llll* llll_x2dx_of_plain_long_llll(t_llll *in_llll) {
+    // accept as input a llll of rationals, return the integrated list.
+    t_llllelem *elem;
+    t_llll *out_llll = llll_get();
+    long cur = 0;
+    
+    if ((elem = in_llll->l_head)) {
+        cur = hatom_getlong(&elem->l_hatom);
+        
+        for (elem = elem->l_next; elem; elem = elem->l_next) {
+            long old_cur = cur;
+            cur = hatom_getlong(&elem->l_hatom);
+            llll_appendlong(out_llll, cur - old_cur);
+        }
+    }
+    return out_llll;
+}
+
+
 t_llll* llll_x2dx_of_plain_double_llll(t_llll *in_llll) {
 // accept as input a llll of rationals, return the integrated list.
 	t_llllelem *elem;
