@@ -63,7 +63,8 @@
 /* Pull parsers.  */
 #define YYPULL 1
 
-
+/* Substitute the type names.  */
+#define YYSTYPE         STRPARSER_STYPE
 /* Substitute the variable and function names.  */
 #define yyparse         strparser_parse
 #define yylex           strparser_lex
@@ -77,7 +78,7 @@
     /*
      *  strparser.y
      *
-     * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -92,7 +93,7 @@
      * If not, see <https://www.gnu.org/licenses/>.
      *
      */
-#line 34 "strparser.y"
+#line 45 "strparser.y"
 
 	//#define BACH_MAX
 	#ifdef BACH_MAX
@@ -104,7 +105,7 @@
     #define YY_NO_UNISTD_H
 
 
-#line 108 "strparser.tab.c"
+#line 109 "strparser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -152,7 +153,7 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 
 /* Second part of user prologue.  */
-#line 55 "strparser.y"
+#line 66 "strparser.y"
 
     #include "parsers/strparser/bach_strparser_tab.h"
     #include "parsers/strparser/bach_strparser_lex.h"
@@ -163,7 +164,7 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
     void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
     
 
-#line 167 "strparser.tab.c"
+#line 168 "strparser.tab.c"
 
 
 #ifdef short
@@ -420,7 +421,7 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
-         || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
+         || (defined STRPARSER_STYPE_IS_TRIVIAL && STRPARSER_STYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
@@ -536,19 +537,19 @@ static const yytype_int8 yytranslate[] =
        5,     6,     7,     8,     9,    10,    11
 };
 
-#if YYDEBUG
+#if STRPARSER_DEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    76,    76,    77,    80,    83,    86,    89,    93,    96,
-      98,   101,   108
+       0,    87,    87,    88,    91,    94,    97,   100,   104,   107,
+     109,   112,   119
 };
 #endif
 
 /** Accessing symbol of state STATE.  */
 #define YY_ACCESSING_SYMBOL(State) YY_CAST (yysymbol_kind_t, yystos[State])
 
-#if YYDEBUG || 0
+#if STRPARSER_DEBUG || 0
 /* The user-facing name of the symbol whose (internal) number is
    YYSYMBOL.  No bounds checking.  */
 static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
@@ -659,7 +660,7 @@ static const yytype_int8 yyr2[] =
 enum { YYENOMEM = -2 };
 
 #define yyerrok         (yyerrstatus = 0)
-#define yyclearin       (yychar = YYEMPTY)
+#define yyclearin       (yychar = STRPARSER_EMPTY)
 
 #define YYACCEPT        goto yyacceptlab
 #define YYABORT         goto yyabortlab
@@ -670,7 +671,7 @@ enum { YYENOMEM = -2 };
 
 #define YYBACKUP(Token, Value)                                    \
   do                                                              \
-    if (yychar == YYEMPTY)                                        \
+    if (yychar == STRPARSER_EMPTY)                                        \
       {                                                           \
         yychar = (Token);                                         \
         yylval = (Value);                                         \
@@ -686,12 +687,12 @@ enum { YYENOMEM = -2 };
   while (0)
 
 /* Backward compatibility with an undocumented macro.
-   Use YYerror or YYUNDEF. */
-#define YYERRCODE YYUNDEF
+   Use STRPARSER_error or STRPARSER_UNDEF. */
+#define YYERRCODE STRPARSER_UNDEF
 
 
 /* Enable debugging if requested.  */
-#if YYDEBUG
+#if STRPARSER_DEBUG
 
 # ifndef YYFPRINTF
 #  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
@@ -820,12 +821,12 @@ do {                                    \
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
 int yydebug;
-#else /* !YYDEBUG */
+#else /* !STRPARSER_DEBUG */
 # define YYDPRINTF(Args) ((void) 0)
 # define YY_SYMBOL_PRINT(Title, Kind, Value, Location)
 # define YY_STACK_PRINT(Bottom, Top)
 # define YY_REDUCE_PRINT(Rule)
-#endif /* !YYDEBUG */
+#endif /* !STRPARSER_DEBUG */
 
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
@@ -935,7 +936,7 @@ YYSTYPE yylval YY_INITIAL_VALUE (= yyval_default);
 
   YYDPRINTF ((stderr, "Starting parse\n"));
 
-  yychar = YYEMPTY; /* Cause a token to be read.  */
+  yychar = STRPARSER_EMPTY; /* Cause a token to be read.  */
   goto yysetstate;
 
 
@@ -1043,25 +1044,25 @@ yybackup:
   /* Not known => get a lookahead token if don't already have one.  */
 
   /* YYCHAR is either empty, or end-of-input, or a valid lookahead.  */
-  if (yychar == YYEMPTY)
+  if (yychar == STRPARSER_EMPTY)
     {
       YYDPRINTF ((stderr, "Reading a token\n"));
       yychar = yylex (&yylval, scanner);
     }
 
-  if (yychar <= YYEOF)
+  if (yychar <= STRPARSER_EOF)
     {
-      yychar = YYEOF;
+      yychar = STRPARSER_EOF;
       yytoken = YYSYMBOL_YYEOF;
       YYDPRINTF ((stderr, "Now at end of input.\n"));
     }
-  else if (yychar == YYerror)
+  else if (yychar == STRPARSER_error)
     {
       /* The scanner already issued an error message, process directly
          to error recovery.  But do not keep the error token as
          lookahead, it is too special and may lead us to an endless
          loop in error recovery. */
-      yychar = YYUNDEF;
+      yychar = STRPARSER_UNDEF;
       yytoken = YYSYMBOL_YYerror;
       goto yyerrlab1;
     }
@@ -1098,7 +1099,7 @@ yybackup:
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 
   /* Discard the shifted token.  */
-  yychar = YYEMPTY;
+  yychar = STRPARSER_EMPTY;
   goto yynewstate;
 
 
@@ -1134,70 +1135,70 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* term: BACH_LONG  */
-#line 80 "strparser.y"
+#line 91 "strparser.y"
                 {
 	llll_appendlong(*ll, (yyvsp[0].l));
 	parserpost("parse: BACH_LONG %ld", (yyvsp[0].l));
 }
-#line 1143 "strparser.tab.c"
+#line 1144 "strparser.tab.c"
     break;
 
   case 5: /* term: BACH_DOUBLE  */
-#line 83 "strparser.y"
+#line 94 "strparser.y"
                 {
 	llll_appenddouble(*ll, (yyvsp[0].d));
 	parserpost("parse: BACH_DOUBLE %lf", (yyvsp[0].d));
 }
-#line 1152 "strparser.tab.c"
+#line 1153 "strparser.tab.c"
     break;
 
   case 6: /* term: BACH_RAT  */
-#line 86 "strparser.y"
+#line 97 "strparser.y"
              {
 	llll_appendrat(*ll, (yyvsp[0].r));
 	parserpost("parse: BACH_RAT %ld/%ld", (yyvsp[0].r).num(), (yyvsp[0].r).den());
 }
-#line 1161 "strparser.tab.c"
+#line 1162 "strparser.tab.c"
     break;
 
   case 7: /* term: BACH_PITCH  */
-#line 89 "strparser.y"
+#line 100 "strparser.y"
                {
 	llll_appendpitch(*ll, (yyvsp[0].p));
 	parserpost("parse: degree: %c%d+%d/%d", 
 		t_pitch::degree2name[(yyvsp[0].p).degree()], (yyvsp[0].p).octave(), (yyvsp[0].p).alter().num(), (yyvsp[0].p).alter().den());
 }
-#line 1171 "strparser.tab.c"
+#line 1172 "strparser.tab.c"
     break;
 
   case 8: /* term: BACH_SYMBOL  */
-#line 93 "strparser.y"
+#line 104 "strparser.y"
                 {
 	llll_appendsym(*ll, (yyvsp[0].sym));
 	parserpost("parse: BACH_SYMBOL %s", (yyvsp[0].sym)->s_name);
 }
-#line 1180 "strparser.tab.c"
+#line 1181 "strparser.tab.c"
     break;
 
   case 9: /* term: BACH_NULL  */
-#line 96 "strparser.y"
+#line 107 "strparser.y"
               {
     parserpost("parse: NULL");
 }
-#line 1188 "strparser.tab.c"
+#line 1189 "strparser.tab.c"
     break;
 
   case 10: /* term: BACH_NIL  */
-#line 98 "strparser.y"
+#line 109 "strparser.y"
              {
 	llll_appendllll(*ll, llll_get());
     parserpost("parse: NIL");
 }
-#line 1197 "strparser.tab.c"
+#line 1198 "strparser.tab.c"
     break;
 
   case 11: /* term: BACH_PUSH  */
-#line 101 "strparser.y"
+#line 112 "strparser.y"
               {
 	(*depth)++;
 	t_llll *newll = llll_get();
@@ -1206,11 +1207,11 @@ yyreduce:
 	*ll = newll;
 	parserpost("parse: BACH_PUSH");
 }
-#line 1210 "strparser.tab.c"
+#line 1211 "strparser.tab.c"
     break;
 
   case 12: /* term: BACH_POP  */
-#line 108 "strparser.y"
+#line 119 "strparser.y"
              {
 	(*depth)--;
 	if (*depth > 0) {
@@ -1222,11 +1223,11 @@ yyreduce:
 		YYERROR;
 	parserpost("parse: BACH_POP");
 }
-#line 1226 "strparser.tab.c"
+#line 1227 "strparser.tab.c"
     break;
 
 
-#line 1230 "strparser.tab.c"
+#line 1231 "strparser.tab.c"
 
       default: break;
     }
@@ -1268,7 +1269,7 @@ yyreduce:
 yyerrlab:
   /* Make sure we have latest lookahead translation.  See comments at
      user semantic actions for why this is necessary.  */
-  yytoken = yychar == YYEMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
+  yytoken = yychar == STRPARSER_EMPTY ? YYSYMBOL_YYEMPTY : YYTRANSLATE (yychar);
   /* If not already recovering from an error, report this error.  */
   if (!yyerrstatus)
     {
@@ -1281,17 +1282,17 @@ yyerrlab:
       /* If just tried and failed to reuse lookahead token after an
          error, discard it.  */
 
-      if (yychar <= YYEOF)
+      if (yychar <= STRPARSER_EOF)
         {
           /* Return failure if at end of input.  */
-          if (yychar == YYEOF)
+          if (yychar == STRPARSER_EOF)
             YYABORT;
         }
       else
         {
           yydestruct ("Error: discarding",
                       yytoken, &yylval, scanner, ll, stack, depth);
-          yychar = YYEMPTY;
+          yychar = STRPARSER_EMPTY;
         }
     }
 
@@ -1394,7 +1395,7 @@ yyexhaustedlab:
 | yyreturn -- parsing is finished, clean up and return.  |
 `-------------------------------------------------------*/
 yyreturn:
-  if (yychar != YYEMPTY)
+  if (yychar != STRPARSER_EMPTY)
     {
       /* Make sure we have latest lookahead translation.  See comments at
          user semantic actions for why this is necessary.  */
@@ -1420,7 +1421,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 120 "strparser.y"
+#line 131 "strparser.y"
 
 
 void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long *depth)

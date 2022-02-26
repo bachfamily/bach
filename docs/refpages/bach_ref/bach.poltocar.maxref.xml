@@ -11,6 +11,7 @@
 
 	<description>
 		Converts two lllls consisting of amplitudes (radii) and angle values (in radians)
+		into two cartesian-coordinate lllls consisting of real and imaginary values.
 	</description>
 
 	<!--METADATA-->

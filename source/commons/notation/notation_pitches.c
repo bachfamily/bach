@@ -1,7 +1,7 @@
 /*
  *  notation_pitches.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -319,7 +319,7 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
         }
         if (temp % lowG == 0)
             return round((double)(temp.toMC() / lowG.toMC()));
-        return LONG_MAX;
+        return ATOM_LONG_MAX;
     }
 
     if (temp.alter() < 0) {
@@ -330,7 +330,7 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
         }
         if (temp % lowG == 0)
             return round((double)(temp.toMC() / lowG.toMC()));
-        return LONG_MAX;
+        return ATOM_LONG_MAX;
     }
     
     return 0;

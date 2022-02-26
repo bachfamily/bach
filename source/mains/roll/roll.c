@@ -1,7 +1,7 @@
 /*
  *  roll.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -1628,7 +1628,7 @@ void roll_explodechords(t_roll *x, char selection_only)
         while (chord) {
                 t_chord *nextchord = chord->next;
             
-            if (chord->r_it.flags & k_FLAG_TO_BE_MODIFIED) {
+            if (chord->r_it.flags & k_FLAG_TO_BE_MODIFIED && chord->num_notes > 1) {
                 double onset = chord->onset;
                 t_note *note = chord->firstnote;
                 while (note) {
@@ -1684,10 +1684,10 @@ void roll_clearnames(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     long voices = 1, chords = 1, notes = 1, markers = 1;
 //    llll_parseargs((t_object *)x, args, "iiiii", _llllobj_sym_markers, &markers, _llllobj_sym_voices, &voices, _llllobj_sym_chords, &chords, _llllobj_sym_notes, &notes);
-    voices = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_voices));
-    chords = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_chords));
-    notes = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_notes));
-    markers = (args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_markers));
+    voices = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_voices));
+    chords = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_chords));
+    notes = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_notes));
+    markers = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_markers));
     
     notation_obj_clear_names((t_notation_obj *)x, voices, false, chords, notes, markers);
     llll_free(args);
@@ -3626,14 +3626,13 @@ t_symbol *dumpselection_get_start_end_router(t_llll *forced_routers_ll)
     return gensym("dumpselection");
 }
 
-void roll_sel_dumpselection(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+void roll_sel_dumpselection_do(t_roll *x, t_llll *args)
 {
     t_llll *router_ll = NULL;
     t_symbol *start_sym = _llllobj_sym_none;
     t_symbol *end_sym = _llllobj_sym_none;
-    t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
     llll_parseargs_and_attrs((t_object *)x, args, "lss", gensym("router"), &router_ll, gensym("start"), &start_sym, gensym("end"), &end_sym);
-
+    
     if (start_sym != _llllobj_sym_none) {
         t_llll *start_ll = llll_get();
         llll_appendsym(start_ll, dumpselection_get_start_end_router(router_ll));
@@ -3651,9 +3650,44 @@ void roll_sel_dumpselection(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 6, end_ll);
         llll_free(end_ll);
     }
-
-    llll_free(args);
+    
     llll_free(router_ll);
+}
+
+/*
+void roll_sel_dumpplayall_do(t_roll *x, t_llll *args)
+{
+    t_llll *router_ll = NULL;
+    t_symbol *start_sym = _llllobj_sym_none;
+    t_symbol *end_sym = _llllobj_sym_none;
+    llll_parseargs_and_attrs((t_object *)x, args, "lss", gensym("router"), &router_ll, gensym("start"), &start_sym, gensym("end"), &end_sym);
+    
+    if (start_sym != _llllobj_sym_none) {
+        t_llll *start_ll = llll_get();
+        llll_appendsym(start_ll, dumpselection_get_start_end_router(router_ll));
+        llll_appendsym(start_ll, start_sym);
+        llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 6, start_ll);
+        llll_free(start_ll);
+    }
+    
+    evaluate_selection(x, 0, true, router_ll);
+    
+    if (end_sym != _llllobj_sym_none) {
+        t_llll *end_ll = llll_get();
+        llll_appendsym(end_ll, dumpselection_get_start_end_router(router_ll));
+        llll_appendsym(end_ll, end_sym);
+        llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 6, end_ll);
+        llll_free(end_ll);
+    }
+    
+    llll_free(router_ll);
+} */
+
+void roll_sel_dumpselection(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
+    roll_sel_dumpselection_do(x, args);
+    llll_free(args);
 }
 
 void roll_sel_sendcommand(t_roll *x, t_symbol *s, long argc, t_atom *argv){
@@ -3757,7 +3791,7 @@ void roll_sel_delete_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 
 void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    if (args->l_size >= 2) { // position, name, role, content
+    if (args && args->l_size >= 2) { // position, name, role, content
         double pos_ms;
         t_symbol *role = _llllobj_sym_none;
         t_llll *content = NULL;
@@ -3795,7 +3829,7 @@ void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
 void roll_deletemarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
-    if (args->l_size >= 1) {
+    if (args && args->l_size >= 1) {
         char res;
         create_header_undo_tick((t_notation_obj *)x, k_HEADER_MARKERS);
         lock_markers_mutex((t_notation_obj *)x);;
@@ -3813,7 +3847,7 @@ void roll_deletemarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
 void roll_markername(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    if (args->l_size >= 1) { // position, name
+    if (args && args->l_size >= 1) { // position, name
         char incremental = find_long_arg_attr_key(args, gensym("incremental"), 0, true);
         create_header_undo_tick((t_notation_obj *)x, k_HEADER_MARKERS);
         if (change_selected_markers_name((t_notation_obj *) x, args, incremental))
@@ -3827,7 +3861,7 @@ void roll_markername(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 void roll_getmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     char namefirst = find_long_arg_attr_key(args, gensym("namefirst"), 0, true);
-    if (args->l_size - get_num_llll_in_llll_first_level(args) >= 1) {
+    if (args && args->l_size - get_num_llll_in_llll_first_level(args) >= 1) {
         t_marker *marker;
         t_llll *marker_llll = NULL;
 
@@ -5370,9 +5404,10 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) roll_sel_reducefunction, "reducefunction", A_GIMME, 0);
 
     
-    // @method dumpselection @digest Play selected items off-line
+    // @method dumpselection @digest Get selected items playout syntax
     // @description The <m>dumpselection</m> message sends the content of each one of selected notation items from the 
-    // playout, in playout syntax (off-line play).
+    // playout, in playout syntax (similarly to <m>playselection offline</m>, but in a much more direct and agile way,
+    // without all the intricacies of the playback sequencing system).
     // You can safely rely on the fact that elements will be output ordered by onset. <br />
     // If a "router" message attribute is set, then the standard router ("note", "chord") is replaced by the specified one;
     // if the "router" attribute has length 2, the first symbol will be used for notes, the second one for chords. <br />
@@ -5801,17 +5836,23 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_ROLL_GATHERED_SYNTAX 
     // @copy BACH_DOC_ROLL_SEPARATE_SYNTAX
     // @copy BACH_DOC_SEPARATE_SYNTAX_EXTRAS
-    // @marg 0 @name selective_dump_options @optional 1 @type list
+    // @marg 0 @name selection @optional 1 @type symbol
+    // @marg 1 @name dump_options @optional 1 @type list
+    // @mattr router @type symbol @default none @digest Forced router
+    // @mattr selection @type int @default 0 @digest Dump selection only
     // @example dump @caption dump whole information from all outlets
+    // @example dump selection @caption the same, but only for selected items
     // @example dump separate @caption dump separate-syntax outlets only
     // @example dump roll @caption dump first outlet only (gathered syntax)
     // @example dump onsets @caption dump onsets only
+    // @example dump selection onsets @caption dump onsets for selection only
     // @example dump velocities @caption dump velocities only
     // @example dump pitches @caption dump pitch information as diatonic pitches
     // @example dump cents @caption dump pitch information as MIDIcents
     // @example dump body @caption dump first outlet only, but without dumping the header
     // @example dump header @caption the same, but only dumping the header
     // @example dump keys clefs body @caption dump keys, clefs and body from first outlet
+    // @example dump selection markers @caption dump selected markers only
     // @seealso getmarker, llll
     class_addmethod(c, (method) roll_dump, "dump", A_GIMME, 0);
     
@@ -7742,16 +7783,28 @@ void send_all_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *gath
 
 void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_symbol *router = NULL;
+    t_symbol *sym = NULL;
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     long selection_only = false;
     if (args && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_selection) {
         selection_only = true;
         llll_behead(args);
     }
+    
+    if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && (sym = hatom_getsym(&args->l_head->l_hatom)) && ((sym == _llllobj_sym_play) || (sym == _llllobj_sym_playout))) {
+        llll_parseargs_and_attrs_destructive((t_object *)x, args, "i", _llllobj_sym_selection, &selection_only);
+        if (selection_only)
+            roll_sel_dumpselection_do(x, args);
+        else {
+         //    TO DO : play all!
+        }
+        goto end;
+    }
+        
     llll_parseargs_and_attrs_destructive((t_object *)x, args, "si", gensym("router"), &router,
                                                                     _llllobj_sym_selection, &selection_only);
     if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
-        t_symbol *sym = hatom_getsym(&args->l_head->l_hatom);
+        sym = hatom_getsym(&args->l_head->l_hatom);
         if ((sym == _llllobj_sym_onsets) || (sym == _llllobj_sym_onset)) {
             send_onsets_values_as_llll(x, selection_only);
             goto end;
@@ -7784,7 +7837,7 @@ void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
             send_roll_values_as_llll(x, k_HEADER_ALL, router, selection_only); // dump full gathered syntax
             goto end;
         }
-    } else if (args->l_size == 0) {
+    } else if (args && args->l_size == 0) {
         send_all_values_as_llll(x, k_HEADER_ALL, router, selection_only); // dump all separate outlets and full gathered syntax
         goto end;
     }
@@ -9729,18 +9782,19 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
             voiceelem = voiceelem->l_next;
         }
     }
-
-    // setting groups
-    if (groups){
-        clear_all_groups((t_notation_obj *) x);
-        set_groups_from_llll(x, groups);
-        llll_free(groups);
-    }
     
     x->must_append_chords = false;
     x->must_preselect_appended_chords = false;
     x->must_apply_delta_onset = 0.;
     check_all_chords_order(x); // this has to be done ONLY at the end! otherwise, it's a mess! :-)
+
+    // setting groups: must be done AFTER check_all_chords order()
+    if (groups){
+        clear_all_groups((t_notation_obj *) x);
+        set_groups_from_llll(x, groups);
+        llll_free(groups);
+    }
+
     x->r_ob.are_there_solos = are_there_solos((t_notation_obj *) x);
     recompute_total_length((t_notation_obj *)x);
     
@@ -11491,7 +11545,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     
     // draw stem
     stemcolor = stem_get_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
-    if (x->r_ob.show_stems > 0) {
+    if (x->r_ob.show_stems > 0 || (x->r_ob.show_groups == 4 && curr_ch->r_it.group)) {
         if (curr_ch->direction == 1) { // stem upwards
             double tip_y = last_note_y_real - octave_stem_length;
             if (curr_ch->r_it.group && x->r_ob.show_groups == 4)

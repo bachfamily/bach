@@ -11,6 +11,7 @@
 
 	<description>
 		Turns a generic <o>bach.roll</o> (possibly containing overlapping notes)
+		into a monophonic one, by trimming the note tails if needed.
 	</description>
 
 	<!--METADATA-->
@@ -139,6 +140,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.mono</o> might be useful, for instance,
+		as a preparation for quantization tasks.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -174,6 +176,7 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.mono</o> might be useful, for instance,
+		as a preparation for quantization tasks.
 			</description>
 		</entry>
 		<entry name ="Keywords">

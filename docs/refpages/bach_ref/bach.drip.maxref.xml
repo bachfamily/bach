@@ -11,6 +11,7 @@
 
 	<description>
 		The purpose of <o>bach.drip</o> is to automatically output elements of an llll,
+		with a given delay between each couple of output elements.
 	</description>
 
 	<!--METADATA-->

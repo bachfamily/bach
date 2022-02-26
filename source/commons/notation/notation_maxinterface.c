@@ -1,7 +1,7 @@
 /*
  *  notation_maxinterface.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -6320,11 +6320,11 @@ void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
                     if (!state) {
                         // finger released
                         method mouseup = object_method_direct_getmethod((t_object *) r_ob, gensym("mouseup"));
-                        if (mouseup) (mouseup)(r_ob, firstview, pos, 0);
+                        if (mouseup) CALL_METHOD_SAFE(void, (t_notation_obj*, t_object*, t_pt, int), mouseup, r_ob, firstview, pos, 0);
                     } else {
                         // finger dragged
                         method mousedrag = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedrag"));
-                        if (mousedrag) (mousedrag)(r_ob, firstview, pos, 0);
+                        if (mousedrag) CALL_METHOD_SAFE(void, (t_notation_obj*, t_object*, t_pt, int), mousedrag, r_ob, firstview, pos, 0);
                     }
                 } else {
                     if (!state) {
@@ -6332,7 +6332,7 @@ void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
                     } else {
                         // finger pressed
                         method mousedown = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedown"));
-                        if (mousedown) (mousedown)(r_ob, firstview, pos, 0);
+                        if (mousedown) CALL_METHOD_SAFE(void, (t_notation_obj*, t_object*, t_pt, int), mousedown, r_ob, firstview, pos, 0);
                     }
                 }
             }
@@ -6349,9 +6349,9 @@ void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
             method mousewheel = object_method_direct_getmethod((t_object *) r_ob, gensym("mousewheel"));
             if (mousewheel) {
                 if (direction == gensym("left"))
-                    (mousewheel)(r_ob, firstview, r_ob->mt_finger_pos[0], 0, -get_domain_width_pixels(r_ob) / (25. * CONST_X_MOUSEWHEEL_FACTOR), 0.);
+                    CALL_METHOD_SAFE(void, (t_notation_obj*, t_object*, t_pt, int, double, double), mousewheel, r_ob, firstview, r_ob->mt_finger_pos[0], 0, -get_domain_width_pixels(r_ob) / (25. * CONST_X_MOUSEWHEEL_FACTOR), 0.);
                 else if (direction == gensym("right"))
-                    (mousewheel)(r_ob, firstview, r_ob->mt_finger_pos[0], 0, get_domain_width_pixels(r_ob) / (25. * CONST_X_MOUSEWHEEL_FACTOR), 0.);
+                    CALL_METHOD_SAFE(void, (t_notation_obj*, t_object*, t_pt, int, double, double), mousewheel, r_ob, firstview, r_ob->mt_finger_pos[0], 0, get_domain_width_pixels(r_ob) / (25. * CONST_X_MOUSEWHEEL_FACTOR), 0.);
             }
             
             // pinch = change zoom
@@ -6371,8 +6371,8 @@ void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
             t_pt pos = build_pt(atom_getfloat(argv + 1) * r_ob->width, atom_getfloat(argv + 2) * r_ob->height);
             method mousedown = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedown"));
             method mouseup = object_method_direct_getmethod((t_object *) r_ob, gensym("mouseup"));
-            if (mousedown) (mousedown)(r_ob, firstview, pos, eCommandKey);
-            if (mouseup) (mouseup)(r_ob, firstview, pos, eCommandKey);
+            if (mousedown) CALL_METHOD_SAFE(void, (t_notation_obj*, t_object*, t_pt, t_modifiers), mousedown, r_ob, firstview, pos, eCommandKey);
+            if (mouseup) CALL_METHOD_SAFE(void, (t_notation_obj*, t_object*, t_pt, t_modifiers), mouseup, r_ob, firstview, pos, eCommandKey);
         }
     }
 }

@@ -11,6 +11,7 @@
 
 	<description>
 		Computes the binomial coefficient (N K) = N! / (K! * (N-K)!),
+		corresponding to the number K-element subsets in a set containing N elements.
 	</description>
 
 	<!--METADATA-->

@@ -11,6 +11,7 @@
 
 	<description>
 		Computes the factorial of a given number N, that is
+		N! = N*(N-1)*(N-2)...*2*1.
 	</description>
 
 	<!--METADATA-->

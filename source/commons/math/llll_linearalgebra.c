@@ -1,7 +1,7 @@
 /*
  *  llll_linearalgebra.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  */
 
 #include "math/llll_linearalgebra.h"
-#include <ext_common.h> 
+#include "ext_common.h"
 
 // returns the matrix having 1's on the diagonal, and 0 elsewhere
 t_llll* llll_get_identity_matrix(long size){

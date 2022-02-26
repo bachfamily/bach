@@ -535,8 +535,8 @@
 				• <m>Shift+Spacebar</m> while not playing: Play selection (start playing from the leftmost selected item
 				and only play the selected items) <br />
 				• <m>V</m>: Off-line play, also known as "selection dump" (immediately send the playout syntax of selected elements
-				out the playout, see <m>dumpselection</m> message) <br />
-				• <m>Shift+V</m>: Chordwise off-line play (as the previous command, but if a single note is selected, all its chord content
+				out the playout, see <m>dumpselection</m> message). The V letter can be changed via the <m>dumpplaycmd</m> attribute. <br />
+				• <m>Alt+V</m>: Chordwise off-line play (as the previous command, but if a single note is selected, all its chord content
 				is output through the playout) <br />
 				• <m>Shift+Alt+V</m>: Send whole gathered syntax content out the first outlet (this is equivalent to sending a <m>dump</m> message) <br />
 				• Any defined command key: send command off-line <br />
@@ -830,18 +830,19 @@
 		</method>
 		<method name="addbreakpoint">
 			<arg name="relative_x_position" optional="0" type="float" />
-			<arg name="delta_midicents" optional="0" type="float" />
+			<arg name="delta_midicents" optional="0" type="float/symbol" />
 			<arg name="slope" optional="1" type="float" />
 			<arg name="velocity" optional="1" type="int" />
 			<digest>
 				Add a pitch breakpoint to each selected note
 			</digest>
 			<description>
-				Syntax: <b>addbreakpoint <m>&lt;float: relative_x_position&gt;</m> <m>&lt;float: delta_midicents&gt;</m> <m>[&lt;float: slope&gt;]</m> <m>[&lt;int: velocity&gt;]</m> </b><br />
+				Syntax: <b>addbreakpoint <m>&lt;float: relative_x_position&gt;</m> <m>&lt;float/symbol: delta_midicents&gt;</m> <m>[&lt;float: slope&gt;]</m> <m>[&lt;int: velocity&gt;]</m> </b><br />
 				Examples:<br />
 				• <b>addbreakpoint 0.5 200</b>   <i>→ add a breakpoint at the middle of the note of +200cents</i><br />
 				• <b>addbreakpoint 0.5 200 0.2</b>   <i>→ the same, with slope 0.2</i><br />
 				• <b>addbreakpoint 0.5 200 0.2 80</b>   <i>→ the same, with velocity 80</i><br />
+				• <b>addbreakpoint 0.5 auto</b>   <i>→ pop out a breakpoint in the middle of the duration line</i><br />
 				<br />
 				Adds a pitch breakpoint to each one of the selected notes.
 				The breakpoint is given by three arguments: <br />
@@ -850,7 +851,7 @@
 				0 and 1 should be avoided (since a notehead and notetail already exists for any note), so the
 				values should be striclty greater than 0 and strictly less than 1. <br />
 				- a number setting the pitch difference (in midicents) of the breakpoint with respect to the main
-				note's pitch.
+				note's pitch. This can be replaced by the "auto" symbol to infer the pitch from the existing duration line.
 				- an optional slope parameter, between -1 and 1, setting the slope of the segment of duration line preceding the breakpoint
 				(0 being linear, default).
 				- an optional velocity parameter, between 1 and 127, but only if the <m>breakpointshavevelocity</m> attribute is active.
@@ -1732,23 +1733,31 @@
 			</description>
 		</method>
 		<method name="dump">
-			<arg name="selective_dump_options" optional="1" type="list" />
+			<arg name="selection" optional="1" type="symbol" />
+			<arg name="dump_options" optional="1" type="list" />
 			<digest>
 				Dump information
 			</digest>
 			<description>
-				Syntax: <b>dump <m>[&lt;list: selective_dump_options&gt;]</m> </b><br />
+				Syntax: <b>dump <m>[&lt;symbol: selection&gt;]</m> <m>[&lt;list: dump_options&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>dump</b>   <i>→ dump whole information from all outlets</i><br />
+				• <b>dump selection</b>   <i>→ the same, but only for selected items</i><br />
 				• <b>dump separate</b>   <i>→ dump separate-syntax outlets only</i><br />
 				• <b>dump roll</b>   <i>→ dump first outlet only (gathered syntax)</i><br />
 				• <b>dump onsets</b>   <i>→ dump onsets only</i><br />
+				• <b>dump selection onsets</b>   <i>→ dump onsets for selection only</i><br />
 				• <b>dump velocities</b>   <i>→ dump velocities only</i><br />
 				• <b>dump pitches</b>   <i>→ dump pitch information as diatonic pitches</i><br />
 				• <b>dump cents</b>   <i>→ dump pitch information as MIDIcents</i><br />
 				• <b>dump body</b>   <i>→ dump first outlet only, but without dumping the header</i><br />
 				• <b>dump header</b>   <i>→ the same, but only dumping the header</i><br />
 				• <b>dump keys clefs body</b>   <i>→ dump keys, clefs and body from first outlet</i><br />
+				• <b>dump selection markers</b>   <i>→ dump selected markers only</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@router</m> (symbol, default: none): Forced router<br />
+				<m>@selection</m> (int, default: 0): Dump selection only<br />
 				<br />
 				A <m>dump</m> message will simply output
 				the content of all separate parameters from all separate outlets (in separate syntax, right-to-left), and
@@ -2314,7 +2323,7 @@
 		<method name="dumpselection">
 			<arglist />
 			<digest>
-				Play selected items off-line
+				Get selected items playout syntax
 			</digest>
 			<description>
 				Message attributes:<br />
@@ -2323,7 +2332,8 @@
 				<m>@end</m> (symbol, default: none): Sets a router used to mark the end of the dumping<br />
 				<br />
 				The <m>dumpselection</m> message sends the content of each one of selected notation items from the
-				playout, in playout syntax (off-line play).
+				playout, in playout syntax (similarly to <m>playselection offline</m>, but in a much more direct and agile way,
+				without all the intricacies of the playback sequencing system).
 				You can safely rely on the fact that elements will be output ordered by onset. <br />
 				If a "router" message attribute is set, then the standard router ("note", "chord") is replaced by the specified one;
 				if the "router" attribute has length 2, the first symbol will be used for notes, the second one for chords. <br />
@@ -2643,10 +2653,12 @@
 				• <b>eraseslot active</b>   <i>→ clear currently open slot for selected items</i><br />
 				• <b>eraseslot 4</b>   <i>→ clear 4th slot</i><br />
 				• <b>eraseslot amplienv</b>   <i>→ clear slot named amplienv</i><br />
+				• <b>eraseslot all</b>   <i>→ clear all slots</i><br />
 				<br />
 				An <m>eraseslot</m> message will clear the content of a specific slot for any selected note.
 				The slot number of the slot to clear is given as argument.
-				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot.
+				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot,
+				or the word "all" to clear all slots.
 				<br />				See also:<m>copyslot</m>,<m>moveslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
@@ -4483,6 +4495,22 @@
 				<br />				See also:<m>name</m>,<m>nameappend</m>,<m>clearnames</m>,<m>sel</m>,<m>unsel</m>,<m>select</m><br />
 			</description>
 		</method>
+		<method name="nametoslot">
+			<arg name="pitchslot" optional="0" type="int" />
+			<arg name="velocityslot" optional="1" type="int" />
+			<digest>
+				Copy duration line breakpoint function into a slot
+			</digest>
+			<description>
+				Syntax: <b>nametoslot <m>&lt;int: pitchslot&gt;</m> <m>[&lt;int: velocityslot&gt;]</m> </b><br />				<br />
+				A <m>dltoslot</m> message copies the duration line envelope (as a breakpoint function)
+				into a given slot for all the selected notes. Actually, the message copies both a pitch envelope and a velocity envelope
+				into two different slots, given as arguments (use -1 to avoid assigning one of the slots).
+				You should ensure that the introduced slots are of the appropriate type (in particular, they should be
+				function slots, with an appropriate range and a domain between 0 and 1). <br />
+				<br />				See also:<m>setslot</m><br />
+			</description>
+		</method>
 		<method name="onset">
 			<arg name="onset" optional="0" type="number/llll/anything" />
 			<digest>
@@ -5127,16 +5155,6 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom notehead definition to the default one
-			</digest>
-			<description>
-				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
-				all the user-defined noteheads.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
 				Reset the slotinfo to the default one
 			</digest>
 			<description>
@@ -5156,6 +5174,16 @@
 			<description>
 				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
 				all the user-defined articulations.
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the custom notehead definition to the default one
+			</digest>
+			<description>
+				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
+				all the user-defined noteheads.
 			</description>
 		</method>
 		<method name="respell">
@@ -5609,14 +5637,14 @@
 				<br />				See also:<m>getcursor</m>,<m>showcursor</m>,<m>hidecursor</m><br />
 			</description>
 		</method>
-		<method name="setdurationline">
+		<method name="setdl">
 			<arg name="breakpoints" optional="0" type="llll" />
 			<digest>
 				Set the duration line for selected items
 			</digest>
 			<description>
-				Syntax: <b>setdurationline <m>&lt;llll: breakpoints&gt;</m> </b><br />
-				Example: <b>setdurationline [0 0 0] [0.5 200 0.2] [1 500 0]</b>   <i>→ sets duration line breakpoints to selection</i><br />
+				Syntax: <b>setdl <m>&lt;llll: breakpoints&gt;</m> </b><br />
+				Example: <b>setdl [0 0 0] [0.5 200 0.2] [1 500 0]</b>   <i>→ sets duration line breakpoints to selection</i><br />
 				<br />
 				A <m>setedurationline</m> message will replace the duration line of all the selected notes with the introduced breakpoints
 				The syntax is
@@ -6955,22 +6983,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
-		<attribute name="dblclicksendsvalues" get="1" set="1" type="int" size="1">
-			<digest>
-				Send Selection Upon Double-Click
-			</digest>
-			<description>
-				Toggles the ability to individually off-line dump any note or marker by doubleclicking on it.
-				This defaults to 0.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Send Selection Upon Double-Click" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-			</attributelist>
-		</attribute>
 		<attribute name="defaultmarkername" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Default Marker Name
@@ -7017,6 +7029,23 @@
 				<attribute name="default" get="1" set="1" type="int" size="1" value="100" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Default Velocity" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="dumpplaycmd" get="1" set="1" type="atom_array" size="1">
+			<digest>
+				Play Offline Commands
+			</digest>
+			<description>
+				Determines which keys or command are enabled to send the offline play output (up to 16 choices).
+				You can use lowercase letters only and/or one of the following symbols: "click" "rightclick" "doubleclick".
+				Defaults to "v".
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="default" get="1" set="1" type="atom_array" size="1" value="v" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Offline Commands" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
@@ -9222,11 +9251,12 @@
 				- None: groups are not displayed in any way. <br />
 				- Lines: groups are displayed by linking chord stems with dashed lines. <br />
 				- Colors: groups are displayed by assigning to each group a particular color. <br />
-				- Lines And Colors (default): both of the two previous devices are adopted.
+				- Lines And Colors: both of the two previous devices are adopted. <br />
+				- Beams (default): groups are shown by beaming their chords together.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="3" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="4" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Groups" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />

@@ -1,7 +1,7 @@
 /*
  *  llllobj.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -2250,7 +2250,7 @@ void llllobj_class_add_versionnumber_attr(t_class *c, e_llllobj_obj_types type)
 	 atom_setsym(&a, gensym("fonts"));
 	 atomarray_appendatom(aa, &a);
 
-	 fileusage_addpackage(w, "bach", (t_object*)aa);
+	 fileusage_addpackage(w, "bach", aa);
  // fileusage takes ownership of aa and thus will take care of freeing it
  }
 
@@ -2511,7 +2511,7 @@ t_max_err llllobj_obj_rebuild_notify(t_llllobj_object *x, t_symbol *s, t_symbol 
 #endif
     method bachnotify_method = zgetfn((t_object *) x, gensym("bachnotify"));
     if (bachnotify_method) {
-        (bachnotify_method)((t_object *) x, gensym("bachnotify"), msg, sender, data);
+		CALL_METHOD_SAFE(void, (t_object*, t_symbol*, t_symbol*, void*, void*), bachnotify_method, (t_object *) x, gensym("bachnotify"), msg, sender, data);
     }
     return MAX_ERR_NONE;
 }
@@ -2534,7 +2534,7 @@ t_max_err llllobj_jbox_rebuild_notify(t_llllobj_jbox *x, t_symbol *s, t_symbol *
 #endif
     method bachnotify_method = zgetfn((t_object *) x, gensym("bachnotify"));
     if (bachnotify_method) {
-        (bachnotify_method)((t_object *) x, gensym("bachnotify"), msg, sender, data);
+		CALL_METHOD_SAFE(void, (t_object*, t_symbol*, t_symbol*, void*, void*), bachnotify_method, (t_object *) x, gensym("bachnotify"), msg, sender, data);
     }
     return MAX_ERR_NONE;
 }
@@ -2555,7 +2555,7 @@ t_max_err llllobj_pxobj_rebuild_notify(t_llllobj_pxobject *x, t_symbol *s, t_sym
 #endif
     method bachnotify_method = zgetfn((t_object *) x, gensym("bachnotify"));
     if (bachnotify_method) {
-        (bachnotify_method)((t_object *) x, gensym("bachnotify"), msg, sender, data);
+		CALL_METHOD_SAFE(void, (t_object*, t_symbol*, t_symbol*, void*, void*), bachnotify_method, (t_object *) x, gensym("bachnotify"), msg, sender, data);
     }
     return MAX_ERR_NONE;
 }
@@ -2578,7 +2578,7 @@ t_max_err llllobj_pxjbox_rebuild_notify(t_llllobj_pxjbox *x, t_symbol *s, t_symb
 #endif
     method bachnotify_method = zgetfn((t_object *) x, gensym("bachnotify"));
     if (bachnotify_method) {
-        (bachnotify_method)((t_object *) x, gensym("bachnotify"), msg, sender, data);
+		CALL_METHOD_SAFE(void, (t_object*, t_symbol*, t_symbol*, void*, void*), bachnotify_method, (t_object *) x, gensym("bachnotify"), msg, sender, data);
     }
     return MAX_ERR_NONE;
 }

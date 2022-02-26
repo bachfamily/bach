@@ -11,6 +11,8 @@
 
 	<description>
 		Takes the gathered syntax of a notation object and separates the
+		header part (containing meta-information about the score) and the body part (containing
+		the actual content).
 	</description>
 
 	<!--METADATA-->

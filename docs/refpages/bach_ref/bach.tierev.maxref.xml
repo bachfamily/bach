@@ -11,6 +11,7 @@
 
 	<description>
 		Accepts in its left inlet an llll of pitches, in its right inlet an llll ties,
+		and properly reverses the tie sequence.<br />
 	</description>
 
 	<!--METADATA-->
@@ -120,6 +121,8 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.tierev</o> accepts either a chord-wise sequence of pitches and ties,
+		or a voice-wise lllls of chords. It won't accept measure-syntaxed lllls: if you want to use it
+		on more than one measure, make use of <o>bach.beatunbox</o>.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -158,6 +161,8 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.tierev</o> accepts either a chord-wise sequence of pitches and ties,
+		or a voice-wise lllls of chords. It won't accept measure-syntaxed lllls: if you want to use it
+		on more than one measure, make use of <o>bach.beatunbox</o>.
 			</description>
 		</entry>
 		<entry name ="Keywords">

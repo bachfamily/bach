@@ -1,7 +1,7 @@
 /*
  *  rational.h
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -62,7 +62,7 @@ typedef t_uint32 t_atom_ushort;
 
 /*
 #ifdef MAC_VERSION
-#define ATOM_LONG_MAX LONG_MAX
+#define ATOM_LONG_MAX ATOM_LONG_MAX
 #define ATOM_LONG_MIN LONG_MIN
 #define ATOM_ULONG_MAX ULONG_MAX
 #else
@@ -98,7 +98,7 @@ typedef t_uint16 t_atom_ushort;
 #define ATOM_USHORT_MAX (0xFFFFu)
 
 /*
-#define ATOM_LONG_MAX LONG_MAX
+#define ATOM_LONG_MAX ATOM_LONG_MAX
 #define ATOM_LONG_MIN LONG_MIN
 #define ATOM_ULONG_MAX ULONG_MAX
 */

@@ -11,6 +11,8 @@
 
 	<description>
 		Accepts an llll to reverse, an llll of reference durations,
+		and reverses only the elements of the left llll corresponding to non-negative elements in the
+		durations llll.<br />
 	</description>
 
 	<!--METADATA-->
@@ -133,6 +135,9 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.chordrev</o> is especially useful to reverse parameters like cents,
+		velocities or extras, without affecting the elements corresponding to rests. <br />
+		<o>bach.chordrev</o> also accepts lllls of depth 2, considering them to be a list for each voice,
+		and operates accordingly.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -171,6 +176,9 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.chordrev</o> is especially useful to reverse parameters like cents,
+		velocities or extras, without affecting the elements corresponding to rests. <br />
+		<o>bach.chordrev</o> also accepts lllls of depth 2, considering them to be a list for each voice,
+		and operates accordingly.
 			</description>
 		</entry>
 		<entry name ="Keywords">

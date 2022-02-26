@@ -11,6 +11,8 @@
 
 	<description>
 		Constructs an llll starting from a given number
+		and then summing one by one the numeric steps
+		contained in the incoming differences llll.
 	</description>
 
 	<!--METADATA-->

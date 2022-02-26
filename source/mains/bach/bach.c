@@ -1,7 +1,7 @@
 /*
  *  bach.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -16,6 +16,8 @@
  * If not, see <https://www.gnu.org/licenses/>.
  *
  */
+
+//#include <Foundation/Foundation.h>
 
 #include "foundation/llll_files.h"
 #include "ext_globalsymbol.h"
@@ -144,6 +146,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         error("Couldn't instantiate the bach common symbols table.");
         return;
     }
+    
     CLASS_NEW_CHECK_SIZE(c,"bach", (method) bach_new, NULL, sizeof(t_bach), 0, A_GIMME, 0);
 
     class_addmethod(c, (method) bach_poolstatus, "poolstatus", 0);
@@ -381,7 +384,7 @@ void bach_version(t_bach *x)
 {
     
     post("--- bach: automated composer's helper ---");
-    post("© 2010-2020 - Andrea Agostini and Daniele Ghisi");
+    post("© 2010-2022 - Andrea Agostini and Daniele Ghisi");
     if (x && x->b_no_ss) {
         post("♥ Thank you so much for supporting us on Patreon! ♥");
     } else {
@@ -1192,8 +1195,6 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
 
 char bach_load_default_font(void)
 {
-    //Sleep(60000);
-
     std::string fontsPath = bach_get_package_path() + "/fonts/November for bach.otf";
     
 #ifdef WIN_VERSION
@@ -1225,7 +1226,7 @@ char bach_load_default_font(void)
     }
 #endif
     
-#ifdef MAC_VERSION
+#ifdef gggMAC_VERSION
     // MAC
     CFErrorRef error = NULL;
     CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
@@ -1252,7 +1253,7 @@ char bach_load_default_font(void)
 
 long bach_getbuildnumber(void)
 {
-#ifdef MAC_VERSION
+#ifdef gggMAC_VERSION
     CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
     if (mainBundle) {
         

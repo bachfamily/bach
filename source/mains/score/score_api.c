@@ -1,7 +1,7 @@
 /*
  *  score_api.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -4203,7 +4203,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
     this_ch->just_added_from_separate_parameters = false;
     this_ch->float_steps = 0;
 //    this_ch->min_float_steps = LONG_MIN;
-//    this_ch->max_float_steps = LONG_MAX;
+//    this_ch->max_float_steps = ATOM_LONG_MAX;
     this_ch->is_score_chord = true;
     this_ch->system_index = 0;
     this_ch->direction = 0;
@@ -4281,7 +4281,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             this_ch->voiceparent = NULL;
             this_ch->float_steps = 0;
 //            this_ch->min_float_steps = LONG_MIN;
-//            this_ch->max_float_steps = LONG_MAX;
+//            this_ch->max_float_steps = ATOM_LONG_MAX;
             this_ch->is_score_chord = true;
             this_ch->system_index = 0;
             this_ch->direction = 0;
@@ -9581,7 +9581,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 						chord_first_notehead_uwidth = notehead_uwidth;
 						
 						// finding y positions
-						note_y = mc_to_yposition_in_scale_for_notes((t_notation_obj *) x,curr_nt, (t_voice *) voice, 1);
+						note_y = mc_to_yposition_in_scale_for_notes((t_notation_obj *) x,curr_nt, (t_voice *) voice, 1, false);
 						note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice);
 						curr_nt->center.y = note_y_real;
 						
@@ -9748,9 +9748,10 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 char dot_txt[5];
                                 long dot_utf_len;
                                 char *dot_utf = charset_unicodetoutf8_debug(&dot_char, 1, &dot_utf_len);
+                                double note_y_for_dot = mc_to_yposition_in_scale_for_notes((t_notation_obj *) x,curr_nt, (t_voice *) voice, 1, true);
                                 strncpy(dot_txt, dot_utf, 4);
                                 bach_freeptr(dot_utf);
-                                write_text_standard_account_for_vinset((t_notation_obj *) x, g, is_grace_chord ? jf_grace : jf, notecolor, dot_txt, stem_x + dot_x_offset, note_y + dot_y_offset);
+                                write_text_standard_account_for_vinset((t_notation_obj *) x, g, is_grace_chord ? jf_grace : jf, notecolor, dot_txt, stem_x + dot_x_offset, note_y_for_dot + dot_y_offset);
                                 dot_x_offset += CONST_DOT_DOT_USEPARATION * x->r_ob.zoom_y * grace_ratio;
                             }
                         }

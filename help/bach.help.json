@@ -2384,7 +2384,7 @@
 					"filename" : [ "bach.help.notation.editing.35_linear editing.10_score.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [  ],
-					"tags" : [ "editing", "edit", "interface", "mouse", "keyboard", "linear", "speedy", "fast", "number", "assign", "linearedit" ],
+					"tags" : [ "editing", "edit", "interface", "mouse", "keyboard", "linear", "speedy", "fast", "number", "assign", "linearedit", "lineareditquarterkey", "quarter", "key", "duration" ],
 					"title" : [ "Linear editing: basics in bach.score" ]
 				},
 				"Scoreextended" : {
@@ -2420,7 +2420,7 @@
 				"filename" : [ "bach.help.notation.editing.38_groups.maxpat" ],
 				"objects" : [ "bach.roll" ],
 				"seealso" : [  ],
-				"tags" : [ "editing", "edit", "interface", "group" ],
+				"tags" : [ "editing", "edit", "interface", "group", "beam", "connect", "line", "color" ],
 				"title" : [ "Using groups" ]
 			},
 			"Slots" : {
@@ -2955,6 +2955,13 @@
 				"seealso" : [ "dumpselection", "router" ],
 				"tags" : [ "message", "dump", "single", "outlet", "router", "change", "changing", "symbol", "label" ],
 				"title" : [ "Changing router for dump" ]
+			},
+			"D_dumpselecteditems" : {
+				"filename" : [ "bach.help.notation.messages.14d_dumpselecteditems.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "play", "dump" ],
+				"tags" : [ "message", "dump", "selection", "items", "selected", "filter" ],
+				"title" : [ "Dump selected items only" ]
 			},
 			"Mergeroll" : {
 				"filename" : [ "bach.help.notation.messages.15_mergeroll.maxpat" ],
@@ -3611,6 +3618,13 @@
 					"seealso" : [ "edit+copy", "edit+cut", "edit+paste", "message+copy", "message+cut", "message+paste", "sel" ],
 					"tags" : [ "message", "operate", "on", "selection", "copy", "cut", "paste", "duration", "line", "pitch", "breakpoint", "durationline", "glissando", "curve", "point" ],
 					"title" : [ "Cut, copy or paste duration lines" ]
+				},
+				"Dltoslot" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.59_dltoslot.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "breakpoint", "duration+line" ],
+					"tags" : [ "message", "operate", "on", "selection", "copy", "duration", "line", "dl", "to", "slot", "breakpoint", "absolute", "pitch", "absolutepitch", "velocity", "curve", "envelope" ],
+					"title" : [ "Copy duration lines to slots" ]
 				},
 				"Grace" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.60_grace.maxpat" ],
@@ -4834,6 +4848,13 @@
 				"tags" : [ "sequencer", "sequencing", "play", "playing", "catch", "play", "playhead", "head", "follow", "redraw", "screen", "optimize", "optimization", "improve", "time", "timing", "cpu", "usage", "encapsulate", "score" ],
 				"title" : [ "Catch playhead and optimization" ]
 			},
+			"B_playinginterfacecmd" : {
+				"filename" : [ "bach.help.notation.sequencing.05b_playinginterfacecmd.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "play+offline" ],
+				"tags" : [ "sequencer", "sequencing", "play", "playing", "interface", "selection", "offline", "off-line", "off", "line", "play", "command", "keyboard", "shortcut", "right", "left", "double", "click", "leftclick", "rightclick", "doubleclick", "evaluate", "playofflinecmd", "dump", "play" ],
+				"title" : [ "Dump play command" ]
+			},
 			"Playmode" : {
 				"filename" : [ "bach.help.notation.sequencing.06_playmode.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -4992,7 +5013,7 @@
 				"filename" : [ "bach.help.notation.sequencing.33_varyingplayrate.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "lock", "mute", "solo" ],
-				"tags" : [ "sequencer", "sequencing", "vary", "play", "rate", "setclock", "clock" ],
+				"tags" : [ "sequencer", "sequencing", "vary", "play", "rate", "setclock", "clock", "speed", "playback" ],
 				"title" : [ "Varying play rate" ]
 			},
 			"Playrefresh" : {
@@ -5679,35 +5700,35 @@
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.02_rollnotes.maxpat" ],
 					"objects" : [ "bach.roll" ],
 					"seealso" : [ "gathered+syntax", "syntax+flag", "gathered+note+name", "cents", "duration", "velocity" ],
-					"tags" : [ "gathered", "syntax", "note" ],
+					"tags" : [ "gathered", "syntax", "note", "roll" ],
 					"title" : [ "Gathered syntax for notes in bach.roll" ]
 				},
 				"Scorenotes" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.03_scorenotes.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "gathered+syntax", "syntax+flag", "gathered+note+name", "cents", "velocity", "tie" ],
-					"tags" : [ "gathered", "syntax", "note" ],
+					"tags" : [ "gathered", "syntax", "note", "score" ],
 					"title" : [ "Gathered syntax for notes in bach.score" ]
 				},
 				"Rollchords" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.04_rollchords.maxpat" ],
 					"objects" : [ "bach.roll" ],
 					"seealso" : [ "gathered+syntax", "gathered+syntax+note", "onset" ],
-					"tags" : [ "gathered", "syntax", "chord" ],
+					"tags" : [ "gathered", "syntax", "chord", "roll" ],
 					"title" : [ "Gathered syntax for chords in bach.roll" ]
 				},
 				"Scorechords" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.05_scorechords.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "gathered+syntax", "syntax+flag", "gathered+syntax+note", "duration" ],
-					"tags" : [ "gathered", "syntax", "chord" ],
+					"tags" : [ "gathered", "syntax", "chord", "score" ],
 					"title" : [ "Gathered syntax for chords in bach.score" ]
 				},
 				"Scorerests" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.06_scorerests.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "gathered+syntax", "syntax+flag", "gathered+syntax+note", "duration" ],
-					"tags" : [ "gathered", "syntax", "chord" ],
+					"tags" : [ "gathered", "syntax", "chord", "score", "rest" ],
 					"title" : [ "Gathered syntax for rests in bach.score" ]
 				},
 				"Measures" : {

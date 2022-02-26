@@ -105,6 +105,34 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
+		<attribute name="depthreject" get="1" set="1" type="int" size="1">
+			<digest>
+				Depth Reject
+			</digest>
+			<description>
+				When set to 1, the search depth range set through the <m>mindepth</m> and <m>maxdepth</m> attributes is inverted,
+				meaning that the specified depth range is excluded from the search, rather than included.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Depth Reject" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="idxreject" get="1" set="1" type="int" size="1">
+			<digest>
+				Index Reject
+			</digest>
+			<description>
+				When set to 1, the search range set through the <m>minidx</m> and <m>maxidx</m> attributes is inverted,
+				meaning that the specified range is excluded from the search, rather than included.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Index Reject" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="maxdepth" get="1" set="1" type="int" size="1">
 			<digest>
 				Maximum Depth
@@ -117,9 +145,62 @@
 				A value of 0 is not accepted.
 				Defaults to -1, i.e. there is no limitation (stop at the innermost level).
 				<br /> <br />
+				<br />N.B.: when the <m>depthreject</m> attribute is set to 1, the specified depth range is excluded from the search, rather than included.
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Depth" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="maxidx" get="1" set="1" type="int" size="1">
+			<digest>
+				Maximum Index
+			</digest>
+			<description>
+				<m>maxidx</m> sets the position at which the search should end, for the root llll as well as any sublist.
+				If negative, the position is counted backwards from the end.
+				Defaults to 0, i.e. there is no limitation (equivalent to -1: end at the last element).<br />
+				N.B.: when the <m>idxreject</m> attribute is set to 1,
+				the specified index range is excluded from the search, rather than included.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Index" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="mindepth" get="1" set="1" type="int" size="1">
+			<digest>
+				Minimum Depth
+			</digest>
+			<description>
+				<m>mindepth</m> sets the minimum depth level at which the operation must be performed.
+				If negative, the depth level is counted from the innermost level of each branch of the tree.
+				A value of 0 is not accepted.
+				Defaults to 1, i.e. there is no limitation.
+				<br /> <br />
+				<br />N.B.: when the <m>depthreject</m> attribute is set to 1, the specified depth range is excluded from the search, rather than included.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Minimum Depth" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="minidx" get="1" set="1" type="int" size="1">
+			<digest>
+				Minimum Index
+			</digest>
+			<description>
+				<m>minidx</m> sets the position at which the search should begin, for the root llll as well as any sublist.
+				If negative, the position is counted backwards from the end.
+				Defaults to 0, i.e. there is no limitation (equivalent to 1: begin at the first element).<br />
+				N.B.: when the <m>idxreject</m> attribute is set to 1,
+				the specified index range is excluded from the search, rather than included.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Minimum Index" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>

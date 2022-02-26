@@ -1,7 +1,7 @@
 /*
  *  llll_commons.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -29,7 +29,7 @@
 #include "ext_critical.h"
 #include "ext_hashtab.h"
 //#include "ext_atomic.h"
-typedef t_object t_binbuf;
+//typedef t_object t_binbuf;
 #endif
 //#include "math/llll_math.h"
 #include "parsers/chkparser/chkparser.h"
@@ -6510,7 +6510,7 @@ t_llll *llll_primeser(long min, long max, long maxcount)
 
     
     if (max < 0)
-        max = LONG_MAX;
+        max = ATOM_LONG_MAX;
     if (min <= 2) {
         min = 2;
         center_elem = primes;
@@ -6585,7 +6585,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         else
             hatom_setlong(&step_hatom, -1);
         step_is_num = true;
-        maxcount = LONG_MAX;
+        maxcount = ATOM_LONG_MAX;
     }
     
     if (start_is_num + end_is_num + step_is_num + (maxcount > 0) < 3) {
@@ -6867,7 +6867,7 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
         }
         
         if (maxcount <= 0)
-            maxcount = LONG_MAX;
+            maxcount = ATOM_LONG_MAX;
             
         if (hatom_type_is_number(end_type)) {
             end = hatom_getdouble(&end_hatom);
@@ -6925,7 +6925,7 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
         }
         
         if (maxcount <= 0)
-            maxcount = LONG_MAX;
+            maxcount = ATOM_LONG_MAX;
 
         if (hatom_type_is_number(end_type)) {
             end = hatom_getrational(&end_hatom);

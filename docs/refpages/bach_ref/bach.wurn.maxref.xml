@@ -11,6 +11,7 @@
 
 	<description>
 		Outputs one or more random elements, extracted from a given urn llll,
+		without repeating them, depending on given probability weights.
 	</description>
 
 	<!--METADATA-->
@@ -202,6 +203,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Default llll" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -303,6 +305,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		Nonetheless, if elements are repeated inside the urn llll, such repetition can remain
+		in the extracted elements.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -374,6 +377,7 @@
 		<entry name ="More details">
 			<description>
 		Nonetheless, if elements are repeated inside the urn llll, such repetition can remain
+		in the extracted elements.
 			</description>
 		</entry>
 		<entry name ="Keywords">

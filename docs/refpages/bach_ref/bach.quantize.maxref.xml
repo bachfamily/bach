@@ -11,6 +11,8 @@
 
 	<description>
 		In its simplest usage, <o>bach.quantize</o> converts a <o>bach.roll</o> into a bach.score, by using specific time signatures
+		and tempi, or by handling the information about the position of barlines. In its most extensive usage, it
+		performs a general quantization of incoming data.
 	</description>
 
 	<!--METADATA-->
@@ -842,6 +844,13 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.quantize</o> typically performs the task of converting a <o>bach.roll</o> object into a <o>bach.score</o> object.
+		Yet, it can be used for a much wider range of purposes (e.g. for performing a score-to-score quantization).
+		Generally speaking, it approximates a list of durations with combinations of a given set of so-called "minimal-units".
+		To accomplish this, bach.quantize implements a box-wise algorithm: it performs an initial subdivision of the original
+		rhythm into "boxes" where the quantization has to be achieved; then it quantizes each box separately;
+		finally the boxes are merged into the requested measures. The criterion to decide the bounty of an approximation
+		is simply the euclidean distance of quantized durations with the original durations, but a lot of attributes
+		can partially modify this behaviour.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -1029,6 +1038,13 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.quantize</o> typically performs the task of converting a <o>bach.roll</o> object into a <o>bach.score</o> object.
+		Yet, it can be used for a much wider range of purposes (e.g. for performing a score-to-score quantization).
+		Generally speaking, it approximates a list of durations with combinations of a given set of so-called "minimal-units".
+		To accomplish this, bach.quantize implements a box-wise algorithm: it performs an initial subdivision of the original
+		rhythm into "boxes" where the quantization has to be achieved; then it quantizes each box separately;
+		finally the boxes are merged into the requested measures. The criterion to decide the bounty of an approximation
+		is simply the euclidean distance of quantized durations with the original durations, but a lot of attributes
+		can partially modify this behaviour.
 			</description>
 		</entry>
 		<entry name ="Keywords">

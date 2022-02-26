@@ -1,7 +1,7 @@
 /*
  *  notation.h
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -5191,12 +5191,13 @@ double mc_to_yposition_in_scale(t_notation_obj *r_ob, double mc, t_voice *v_ob);
     @param note                Pointer to the note
     @param v_ob                The voice for which we need to calculate the y position
     @param notehead_resize    Resize factor for the notehead (1. = standard size)
+    @param ignore_custom_noteheads  If non-zero ignores custom noteheads
     @return                    The y position in pixels of the textbox which will contain the notehead character
  
     @remark                    This works exactly like mc_to_yposition_in_scale(), but an additional vertical shift (which is the shift of the textbox top) is added.
     @see                    mc_to_yposition()
  */
-double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize);
+double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize, char ignore_custom_noteheads);
 
 
 /**    Convert midicents into graphical pitch data: i.e. the midicents of the displayed diatonic note and the displayed accidental. 
@@ -6410,7 +6411,7 @@ double notehead_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_no
 // TBD
 void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
 long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
-long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char avoid_returning_default);
+long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char avoid_returning_default, char ignore_custom_noteheads);
 
 
 /**    Get the default width for a portion of score. This function is used inside tuttipoint_calculate_spacing() in order to determine the
@@ -12501,9 +12502,10 @@ double get_notehead_ux_shift(t_notation_obj *r_ob, t_note *note);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    note        The note
+    @param    ignore_custom_noteheads   If non-zero, ignores custom noteheads
     @return        The unscaled horizontal shift of the notehead.    
 */
-double get_notehead_uy_shift(t_notation_obj *r_ob, t_note *note);
+double get_notehead_uy_shift(t_notation_obj *r_ob, t_note *note, char ignore_custom_noteheads);
 
 // TBD
 double get_notehead_durationline_start_ux_shift(t_notation_obj *r_ob, t_note *note);
