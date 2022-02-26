@@ -5169,7 +5169,25 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
+<<<<<<< HEAD
 				Reset the custom articulations definition to the default one
+=======
+				Reset the slotinfo to the default one
+			</digest>
+			<description>
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the custom notehead definition to the default one
+>>>>>>> dg-devel-newcommands
 			</digest>
 			<description>
 				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
@@ -5179,11 +5197,18 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
+<<<<<<< HEAD
 				Reset the custom notehead definition to the default one
 			</digest>
 			<description>
 				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
 				all the user-defined noteheads.
+=======
+				Reset the commands to the default one
+			</digest>
+			<description>
+				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
+>>>>>>> dg-devel-newcommands
 			</description>
 		</method>
 		<method name="respell">

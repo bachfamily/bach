@@ -150,6 +150,7 @@ void roll_inhibit_undo(t_roll *x, long val);
 void roll_prune_last_undo_step(t_roll *x);
 
 void roll_resetslotinfo(t_roll *x);
+void roll_resetcommands(t_roll *x);
 void roll_resetarticulationinfo(t_roll *x);
 void roll_resetnoteheadinfo(t_roll *x);
 void roll_distribute(t_roll *x);
@@ -430,7 +431,7 @@ void check_all_chords_order_and_correct_scheduling_fn(t_bach_inspector_manager *
 void clear_voice(t_roll *x, t_rollvoice *voice);
 void clear_roll_body(t_roll *x, long voicenum);
 void evaluate_selection(t_roll *x, long modifiers, char alsosortselectionbyonset, t_llll *forced_routers = NULL);
-void selection_send_command(t_roll *x, long modifiers, long command_number, char alsosortselectionbyonset);
+void selection_send_command(t_roll *x, long modifiers, long command_number, char alsosortselectionbyonset, char also_send_start_and_end_if_needed);
 double get_selection_leftmost_onset(t_roll *x);
 double get_selection_rightmost_onset(t_roll *x);
 long get_selection_topmost_voice(t_roll *x);
@@ -3694,7 +3695,7 @@ void roll_sel_sendcommand(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     if (argc > 0) {
         long command_num = atom_getlong(argv) - 1;
         if ((command_num >= 0) && (command_num < CONST_MAX_COMMANDS))
-            selection_send_command(x, 0, command_num, true);
+            selection_send_command(x, 0, command_num, true, true);
     }
 }
 
@@ -3868,7 +3869,7 @@ void roll_getmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst);
+            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, -1, namefirst);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, marker_llll);
@@ -4529,7 +4530,7 @@ void roll_task(t_roll *x){
                     }
                     this_llll = chord_get_as_llll_for_sending((t_notation_obj *) x, (t_chord *)items_to_send[i], k_CONSIDER_FOR_PLAYING, -1, NULL, &references, &is_notewise);
                 } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true);
+                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], -1, true);
                     this_llll = llll_get();
                     references = llll_get();
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
@@ -6512,6 +6513,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description @copy BACH_DOC_RESET_SLOTINFO
     // @seealso eraseslot
     class_addmethod(c, (method) roll_resetslotinfo, "resetslotinfo", 0);
+
+    
+    // @method resetslotinfo @digest Reset the commands to the default one
+    // @description @copy BACH_DOC_RESET_COMMANDS
+    class_addmethod(c, (method) roll_resetcommands, "resetcommands", 0);
 
 
     // @method resetslotinfo @digest Reset the custom articulations definition to the default one
@@ -16897,9 +16903,9 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
     
     if (!(modifiers & eCommandKey) && !(modifiers & eAltKey) && !(modifiers & eControlKey)) {
         for (j=0; j<CONST_MAX_COMMANDS; j++) {
-            if (x->r_ob.command_key[j] == textcharacter) {
+            if (x->r_ob.commands[j].command_key == textcharacter) {
                 // send command values
-                selection_send_command(x, modifiers, j, true);
+                selection_send_command(x, modifiers, j, true, true);
                 return 1;
             }
         }
@@ -17493,11 +17499,22 @@ void evaluate_selection(t_roll *x, long modifiers, char alsosortselectionbyonset
     }
 }
 
-void selection_send_command(t_roll *x, long modifiers, long command_number, char alsosortselectionbyonset)
+void selection_send_command(t_roll *x, long modifiers, long command_number,
+                            char alsosortselectionbyonset, char also_send_start_and_end_if_needed)
 {
     if (alsosortselectionbyonset)
         sort_selection((t_notation_obj *)x, false);
 
+    if (also_send_start_and_end_if_needed) {
+        if (x->r_ob.commands[command_number].start_sym != _llllobj_sym_none) {
+            t_llll *start_ll = llll_get();
+            llll_appendsym(start_ll, x->r_ob.commands[command_number].command_name);
+            llll_appendsym(start_ll, x->r_ob.commands[command_number].start_sym);
+            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 6, start_ll);
+            llll_free(start_ll);
+        }
+    }
+    
     if (command_number == -1 && modifiers & eShiftKey) {
         // chord-wise dump but not for commands: we might wanna define a command for Shift+Something!
         if ((x->r_ob.num_selecteditems == 1) && (x->r_ob.firstselecteditem->type == k_NOTE))
@@ -17506,6 +17523,16 @@ void selection_send_command(t_roll *x, long modifiers, long command_number, char
             send_chord_as_llll((t_notation_obj *) x, (t_chord *)x->r_ob.firstselecteditem, 6, k_CONSIDER_FOR_EVALUATION, command_number);
     } else { // send selection values
         standard_dump_selection((t_notation_obj *)x, 6, command_number, (delete_item_fn)roll_sel_delete_item);
+    }
+    
+    if (also_send_start_and_end_if_needed) {
+        if (x->r_ob.commands[command_number].end_sym != _llllobj_sym_none) {
+            t_llll *end_ll = llll_get();
+            llll_appendsym(end_ll, x->r_ob.commands[command_number].command_name);
+            llll_appendsym(end_ll, x->r_ob.commands[command_number].end_sym);
+            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 6, end_ll);
+            llll_free(end_ll);
+        }
     }
 }
 
@@ -18776,6 +18803,13 @@ void roll_resetslotinfo(t_roll *x)
     create_whole_roll_undo_tick(x);
     notation_obj_reset_slotinfo((t_notation_obj *)x);
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
+}
+
+void roll_resetcommands(t_roll *x)
+{
+    create_whole_roll_undo_tick(x);
+    notation_obj_reset_commands((t_notation_obj *)x);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_COMMANDS);
 }
 
 

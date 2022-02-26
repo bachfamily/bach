@@ -6047,6 +6047,22 @@
 		<method name="name">
 			<arg name="names" optional="0" type="llll" />
 			<digest>
+				Append name(s) to selected items
+			</digest>
+			<description>
+				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
+				Examples:<br />
+				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
+				• <b>name [Ringo Starr] [[Low High Snare] [Sizzle Crash]]</b>   <i>→ append complex llll name</i><br />
+				<br />
+				Works like the <m>name</m> message, but appends the given names
+				to the already existing ones (see <m>name</m>).
+				<br />				See also:<m>name</m>,<m>clearnames</m><br />
+			</description>
+		</method>
+		<method name="name">
+			<arg name="names" optional="0" type="llll" />
+			<digest>
 				Assign name(s) to selected items
 			</digest>
 			<description>
@@ -6071,22 +6087,6 @@
 				If a <b>@progeny 1</b> attribute is added and chords are selected, not only the chord name is changed, but also the name of all its notes.
 				This is handy for instance, if one needs to send <b>name @progeny 1</b> to delete all names of selected chords and notes.
 				<br />				See also:<m>nameappend</m>,<m>clearnames</m>,<m>sel</m>,<m>unsel</m>,<m>select</m><br />
-			</description>
-		</method>
-		<method name="name">
-			<arg name="names" optional="0" type="llll" />
-			<digest>
-				Append name(s) to selected items
-			</digest>
-			<description>
-				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
-				Examples:<br />
-				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
-				• <b>name [Ringo Starr] [[Low High Snare] [Sizzle Crash]]</b>   <i>→ append complex llll name</i><br />
-				<br />
-				Works like the <m>name</m> message, but appends the given names
-				to the already existing ones (see <m>name</m>).
-				<br />				See also:<m>name</m>,<m>clearnames</m><br />
 			</description>
 		</method>
 		<method name="nametoslot">
@@ -6904,6 +6904,16 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
+				Reset the custom articulations definition to the default one
+			</digest>
+			<description>
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
 				Reset the slotinfo to the default one
 			</digest>
 			<description>
@@ -6918,11 +6928,18 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
+<<<<<<< HEAD
 				Reset the custom articulations definition to the default one
 			</digest>
 			<description>
 				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
 				all the user-defined articulations.
+=======
+				Reset the commands to the default one
+			</digest>
+			<description>
+				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
+>>>>>>> dg-devel-newcommands
 			</description>
 		</method>
 		<method name="resetslotinfo">
