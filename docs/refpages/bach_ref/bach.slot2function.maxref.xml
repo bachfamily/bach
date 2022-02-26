@@ -11,6 +11,8 @@
 
 	<description>
 		Converts the llll content of a given slot,
+		of type "function", into a list of messages in order to build
+		a Max <o>function</o> object accordingly. Slopes of slot segments are ignored.
 	</description>
 
 	<!--METADATA-->

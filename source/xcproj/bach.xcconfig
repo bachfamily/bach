@@ -6,11 +6,11 @@
 // Name & Version
 //PRODUCT_NAME = $(PROJECT_NAME)
 //PRODUCT_VERSION = 0.7.7
-ARCHS = i386 x86_64
+ARCHS = x86_64 arm64
 
 // Paths
-MAXSDK = $(SRCROOT)/../../../max-sdk-7.3.3
-C74SUPPORT = $(MAXSDK)/source/c74support
+MAXSDK = $(SRCROOT)/../../../max-sdk
+C74SUPPORT = $(MAXSDK)/source/max-sdk-base/c74support
 MAINS_ROOT = $(SRCROOT)/../mains
 COMMONS_ROOT = $(SRCROOT)/../commons
 HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes" "$(COMMONS_ROOT)"
@@ -39,7 +39,7 @@ EXT_INSTALL_PATH = /extensions
 
 
 // Special Files
-GCC_PREFIX_HEADER = $(C74SUPPORT)/max-includes/macho-prefix.pch
+//GCC_PREFIX_HEADER = $(C74SUPPORT)/max-includes/macho-prefix.pch
 INFOPLIST_FILE = $(SRCROOT)/Info.plist
 
 
@@ -74,3 +74,6 @@ OTHER_LDFLAGS = $(C74_SYM_LINKER_FLAGS) $(C74_SYM_LINKER_FLAGS)
 // hide all symbols by default
 // mark a function to be exported with the C74_EXPORT macro -- most likely this will only apply to the main() function
 OTHER_CFLAGS = -fvisibility=hidden
+
+LLLL_VERSION = 0.8.0.0
+PRODUCT_VERSION = 0.8.1.5

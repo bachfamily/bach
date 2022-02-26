@@ -1,7 +1,7 @@
 /*
  *  llll_commons.h
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -208,6 +208,7 @@ typedef enum _llll_parseattr_flags {
     LLLL_PA_DONTWARNFORWRONGKEYS  = 0x0002,   // don't warn for missing keys
     LLLL_PA_DONTWARNFORWRONGITEMS   = 0x0004,   // don't warn for wrong items
     LLLL_PA_DONTWARNFORDUPLICATES   = 0x0008,   // don't warn for duplicates
+    LLLL_PA_CASEINSENSITIVE         = 0x0010,   // case insensitive search (the keywords in llll_parseattrs() must still be given in lowercase)
 } e_llll_parseattr_flags;
 
 

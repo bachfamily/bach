@@ -1,7 +1,7 @@
 /*
  *  uislot.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -1433,6 +1433,7 @@ void set_uislot_from_llll(t_uislot *x, t_llll* inputlist, char also_lock_general
 
 long uislot_oksize(t_uislot *x, t_rect *newrect)
 {
+    notationobj_oksize_check((t_notation_obj *)x, newrect);
     return 0;
 }
     
@@ -1471,7 +1472,11 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.obj_type = k_NOTATION_OBJECT_SLOT;
     x->r_ob.slot_window_zoom = x->r_ob.bgslot_zoom = 100;
 
+    x->r_ob.width = 200;
+    x->r_ob.height = 100;
+
     notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notation_obj_fn) create_whole_uislot_undo_tick, NULL, (notation_obj_undo_redo_fn)uislot_new_undo_redo, (bach_paint_ext_fn)uislot_paint_ext);
+
 
     x->r_ob.active_slot_num = 0;
     x->r_ob.active_slot_num_1based = 1;
@@ -1881,7 +1886,7 @@ t_llll* get_uislot_values_as_llll(t_uislot *x, e_data_considering_types for_what
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
     
-    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what));
+    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what, false));
     
     if (dump_what & k_HEADER_BODY)
         llll_appendllll(out_llll, note_get_some_slots_values_as_llll((t_notation_obj *) x, x->r_ob.dummynote, 0, slot_indices), 0, WHITENULL_llll);

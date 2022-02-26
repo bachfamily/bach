@@ -77,7 +77,7 @@ On a Mac, you need the following tools for building bach:
 - Xcode (version 9.4 or higher)
 - The Max SDK (version 7.3.3 or higher: the provided Xcode project looks for version 7.3.3, but it should not be difficult to upgrade it for a higher version), installed in the Max packages folder.
 - Flex (version 2.6.0 or higher) and Bison (version 2.3 or higher). Notice that you need to install manually Flex and Bison, as the versions provided with Xcode are not compatible with the grammars included in bach.
-The provided makefiles look for the correct versions of Flex and Bison respectively in /usr/local/opt/bison/bin and /usr/local/opt/flex/bin, which should be where brew installs them. You may want to make sure of that though, and possibly fix manually the makefiles. A cleaner way might actually be including a configure script in the distribution.
+The provided makefiles look for the correct versions of Flex and Bison respectively in /opt/homebrew/opt/bison/bin and /opt/homebrew/opt/flex/bin, which should be where homebrew installs them. You may want to make sure of that though, and possibly fix manually the makefiles. A cleaner way might actually be including a configure script in the distribution.
 
 On Windows, you only need Visual Studio 2017 or higher.
 

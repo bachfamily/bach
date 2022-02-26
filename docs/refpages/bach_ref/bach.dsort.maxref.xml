@@ -11,6 +11,7 @@
 
 	<description>
 		Sorts a list depending to the distance of its
+		element to a given fixed number (nearest elements coming first, farthest element at the end).
 	</description>
 
 	<!--METADATA-->

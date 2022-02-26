@@ -1,7 +1,7 @@
 /*
  *  score_api.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -4203,7 +4203,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
     this_ch->just_added_from_separate_parameters = false;
     this_ch->float_steps = 0;
 //    this_ch->min_float_steps = LONG_MIN;
-//    this_ch->max_float_steps = LONG_MAX;
+//    this_ch->max_float_steps = ATOM_LONG_MAX;
     this_ch->is_score_chord = true;
     this_ch->system_index = 0;
     this_ch->direction = 0;
@@ -4281,7 +4281,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
             this_ch->voiceparent = NULL;
             this_ch->float_steps = 0;
 //            this_ch->min_float_steps = LONG_MIN;
-//            this_ch->max_float_steps = LONG_MAX;
+//            this_ch->max_float_steps = ATOM_LONG_MAX;
             this_ch->is_score_chord = true;
             this_ch->system_index = 0;
             this_ch->direction = 0;
@@ -5414,6 +5414,7 @@ void reset_all_slurs_position(t_score *x)
 
 long score_oksize(t_score *x, t_rect *newrect)
 {
+    notationobj_oksize_check((t_notation_obj *)x, newrect);
     if (!x->r_ob.itsme) {
         if (x->r_ob.link_vzoom_to_height)
             notationobj_set_vzoom_depending_on_height((t_notation_obj *)x, newrect->height);
@@ -8362,7 +8363,7 @@ void check_tempi(t_score *x)
 }
 
 // getwhat is one of the e_data_considering_types
-t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router) // char get_clefs, char get_keys, char get_markers, char get_slotinfo, char get_commands, char get_midichannels)
+t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router, bool selection_only)
 {
     // get all the information concerning the score and put it in a llll
     
@@ -8406,7 +8407,7 @@ t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, 
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
     
-    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, get_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what));
+    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, get_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what, selection_only));
 
     if (get_what & k_HEADER_BODY) {
         voice = x->firstvoice;
@@ -9580,7 +9581,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 						chord_first_notehead_uwidth = notehead_uwidth;
 						
 						// finding y positions
-						note_y = mc_to_yposition_in_scale_for_notes((t_notation_obj *) x,curr_nt, (t_voice *) voice, 1);
+						note_y = mc_to_yposition_in_scale_for_notes((t_notation_obj *) x,curr_nt, (t_voice *) voice, 1, false);
 						note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice);
 						curr_nt->center.y = note_y_real;
 						
@@ -9747,9 +9748,10 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 char dot_txt[5];
                                 long dot_utf_len;
                                 char *dot_utf = charset_unicodetoutf8_debug(&dot_char, 1, &dot_utf_len);
+                                double note_y_for_dot = mc_to_yposition_in_scale_for_notes((t_notation_obj *) x,curr_nt, (t_voice *) voice, 1, true);
                                 strncpy(dot_txt, dot_utf, 4);
                                 bach_freeptr(dot_utf);
-                                write_text_standard_account_for_vinset((t_notation_obj *) x, g, is_grace_chord ? jf_grace : jf, notecolor, dot_txt, stem_x + dot_x_offset, note_y + dot_y_offset);
+                                write_text_standard_account_for_vinset((t_notation_obj *) x, g, is_grace_chord ? jf_grace : jf, notecolor, dot_txt, stem_x + dot_x_offset, note_y_for_dot + dot_y_offset);
                                 dot_x_offset += CONST_DOT_DOT_USEPARATION * x->r_ob.zoom_y * grace_ratio;
                             }
                         }
@@ -10112,8 +10114,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             double tickpoint_beam_ye = tickpoint_beam_ys - beam->slope * beam->tick_direction * CONST_BEAMINGS_TICK_DEFAULT_UEXTENSION * x->r_ob.zoom_y * grace_ratio / x->r_ob.zoom_x;
                             paint_beam_line((t_notation_obj *) x, g, beamcolor, beam->beam_start_chord->stem_x, tickpoint_beam_ys, tickpoint_beam_xe, tickpoint_beam_ye, CONST_BEAMING_UWIDTH * x->r_ob.zoom_y * grace_ratio, direction);
                         } else
-                            paint_beam_line((t_notation_obj *) x, g, beamcolor, beam->beam_start_chord->stem_x, staff_top + beam->beam_start_uy * x->r_ob.zoom_y,
-                                            beam->beam_end_chord->stem_x, staff_top + beam->beam_end_uy * x->r_ob.zoom_y, CONST_BEAMING_UWIDTH * x->r_ob.zoom_y * grace_ratio, direction);
+                            paint_beam_line((t_notation_obj *) x, g, beamcolor, beam->beam_start_chord->stem_x, staff_top + beam->beam_start_uy * x->r_ob.zoom_y,  beam->beam_end_chord->stem_x, staff_top + beam->beam_end_uy * x->r_ob.zoom_y, CONST_BEAMING_UWIDTH * x->r_ob.zoom_y * grace_ratio, direction);
                     }
                     
                     // slash beam?

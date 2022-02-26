@@ -108,6 +108,18 @@
 	<!--DISCUSSION-->
 	<discussion>
 		bach.p2mc accepts microtones following the ASCII convention used throughout bach. <br />
+		Accidentals are defined as string of ASCII characters, each identifying one accidental.
+		The list of allowed characters is the following one: <br />
+		"n" = natural <br />
+		"#" = sharp (+1/2 tone) <br />
+		"x" = double sharp (+ 1 tone) <br />
+		"+" = monesis = quarter sharp (+1/4 tone) <br />
+		"^" = +1/8 tone <br />
+		"b" = flat (-1/2 tone) <br />
+		"d" or "-" = mobemol = quarter flat (-1/4 tone) <br />
+		"v" = -1/8 tone <br />
+		If no accidental is defined, the natural is used by default.
+		<br /> <br />
 	</discussion>
 
 	<!--SEEALSO-->
@@ -138,6 +150,18 @@
 		<entry name ="More details">
 			<description>
 		bach.p2mc accepts microtones following the ASCII convention used throughout bach. <br />
+		Accidentals are defined as string of ASCII characters, each identifying one accidental.
+		The list of allowed characters is the following one: <br />
+		"n" = natural <br />
+		"#" = sharp (+1/2 tone) <br />
+		"x" = double sharp (+ 1 tone) <br />
+		"+" = monesis = quarter sharp (+1/4 tone) <br />
+		"^" = +1/8 tone <br />
+		"b" = flat (-1/2 tone) <br />
+		"d" or "-" = mobemol = quarter flat (-1/4 tone) <br />
+		"v" = -1/8 tone <br />
+		If no accidental is defined, the natural is used by default.
+		<br /> <br />
 			</description>
 		</entry>
 		<entry name ="Keywords">

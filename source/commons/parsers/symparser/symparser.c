@@ -1034,7 +1034,7 @@ static const flex_int16_t yy_chk[1195] =
     /*
      *  symparser.l
      *
-     * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -1054,17 +1054,17 @@ static const flex_int16_t yy_chk[1195] =
     #define BACH_MAX
     #endif
     #ifdef BACH_MAX
-    #include "llllobj.h"
+    #include "foundation/llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
-    #include "symparser.h"
+    #include "parsers/symparser/symparser.h"
     #else
     #include <stdio.h>
     #include <ctype.h>
     #define parserpost printf
     #endif
     
-    #include "bach_symparser_tab.h"
+    #include "parsers/symparser/bach_symparser_tab.h"
     #define YY_DECL int yylex(YYSTYPE *yylval_param, yyscan_t yyscanner)
     
     #define YY_NO_UNISTD_H

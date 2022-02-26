@@ -11,6 +11,7 @@
 
 	<description>
 		Applies the Gaussian elimination algorithm to reduce the incoming matrix to a row echelon form.
+		It also outputs some additional information, such as determinant and rank.
 	</description>
 
 	<!--METADATA-->
@@ -175,6 +176,10 @@
 		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 		as the number of rows.
 		<br /> <br />
+		The algorithm has attributes to admit column swap, and to perform (in addition) also the reversed Gauss elimination.
+		To know more: http://mathworld.wolfram.com/GaussianElimination.html <br />
+		Rank and determinant are immediate to compute once the matrix is in echelon form, so no big further additional
+		computation is required. Indeed, the bach.rank and bach.det abstractions are little wrappers of bach.gausselim.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -236,6 +241,10 @@
 		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 		as the number of rows.
 		<br /> <br />
+		The algorithm has attributes to admit column swap, and to perform (in addition) also the reversed Gauss elimination.
+		To know more: http://mathworld.wolfram.com/GaussianElimination.html <br />
+		Rank and determinant are immediate to compute once the matrix is in echelon form, so no big further additional
+		computation is required. Indeed, the bach.rank and bach.det abstractions are little wrappers of bach.gausselim.
 			</description>
 		</entry>
 		<entry name ="Keywords">

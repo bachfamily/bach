@@ -11,6 +11,8 @@
 
 	<description>
 		Adds a parenthesis level representing measures in a plain list of parameters.
+		More precisely, it formats plain lists of <o>bach.score</o> parameters into measure-wise packets,
+		according to the given time signature(s).
 	</description>
 
 	<!--METADATA-->
@@ -310,6 +312,8 @@
 	<!--DISCUSSION-->
 	<discussion>
 		bach.beatbox is an useful tool if you don't want to think about your data (cents, durations...) measure-wise,
+		but just as a long plain sequence: you can enter the long sequence (actually, one long sequence for each voice
+		you want to create) and then let beatbox make the boxing.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -418,6 +422,8 @@
 		<entry name ="More details">
 			<description>
 		bach.beatbox is an useful tool if you don't want to think about your data (cents, durations...) measure-wise,
+		but just as a long plain sequence: you can enter the long sequence (actually, one long sequence for each voice
+		you want to create) and then let beatbox make the boxing.
 			</description>
 		</entry>
 		<entry name ="Keywords">

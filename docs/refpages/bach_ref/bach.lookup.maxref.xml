@@ -11,6 +11,7 @@
 
 	<description>
 		Returns one or more specific elements of an llll, based on their addresses.
+		It works exactly like <o>bach.nth</o>, but with reversed inlets.
 	</description>
 
 	<!--METADATA-->

@@ -1,7 +1,7 @@
 /*
  *  llll_commons.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -29,7 +29,7 @@
 #include "ext_critical.h"
 #include "ext_hashtab.h"
 //#include "ext_atomic.h"
-typedef t_object t_binbuf;
+//typedef t_object t_binbuf;
 #endif
 //#include "math/llll_math.h"
 #include "parsers/chkparser/chkparser.h"
@@ -6510,7 +6510,7 @@ t_llll *llll_primeser(long min, long max, long maxcount)
 
     
     if (max < 0)
-        max = LONG_MAX;
+        max = ATOM_LONG_MAX;
     if (min <= 2) {
         min = 2;
         center_elem = primes;
@@ -6585,7 +6585,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         else
             hatom_setlong(&step_hatom, -1);
         step_is_num = true;
-        maxcount = LONG_MAX;
+        maxcount = ATOM_LONG_MAX;
     }
     
     if (start_is_num + end_is_num + step_is_num + (maxcount > 0) < 3) {
@@ -6867,7 +6867,7 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
         }
         
         if (maxcount <= 0)
-            maxcount = LONG_MAX;
+            maxcount = ATOM_LONG_MAX;
             
         if (hatom_type_is_number(end_type)) {
             end = hatom_getdouble(&end_hatom);
@@ -6925,7 +6925,7 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
         }
         
         if (maxcount <= 0)
-            maxcount = LONG_MAX;
+            maxcount = ATOM_LONG_MAX;
 
         if (hatom_type_is_number(end_type)) {
             end = hatom_getrational(&end_hatom);
@@ -8745,6 +8745,7 @@ long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...
     }
     va_end(ap);
     
+    char temp[2048]; // 2047 will be the longest attribute name for case-insensitive search. Still plenty enough
     for (elem = ll->l_head; elem; elem = nextelem) {
         nextelem = elem->l_next;
         
@@ -8752,7 +8753,17 @@ long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...
             t_max_err ht_err;
             t_llll **item_ll;
             
-            key = gensym(s->s_name + 1);
+            if ((flags & LLLL_PA_CASEINSENSITIVE) && strlen(s->s_name) > 0) {
+                long limit = MIN(strlen(s->s_name)-1, 2047);
+                for (long i = 0; i < limit; i++) {
+                    // beware, only works for UTF8 data, but still, we're not using extended encoding for attribute names
+                    temp[i] = tolower(s->s_name[i+1]);
+                }
+                temp[limit] = 0;
+                key = gensym(temp);
+            } else {
+                key = gensym(s->s_name + 1);
+            }
             ht_err = hashtab_lookup(vars_ht, key, (t_object **) &item);
             
             if (ht_err) {

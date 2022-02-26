@@ -118,6 +118,16 @@
 	<!--DISCUSSION-->
 	<discussion>
 		As usual, the formats of the output lllls are controlled by the <m>out</m> attribute.
+		In <o>bach.portal</o>, though, the latter can have an additional value, <m>p</m>,
+		which allows controlling the output format for subpatchers and abstractions.
+		If <o>bach.portal</o>'s <m>out</m> attribute is set to <m>p</m>,
+		its outlets are not immediately initialized as soon as the patch is loaded.
+		For this reason, a message coming from a <o>loadbang</o> or <o>loadmess</o> object might get lost, or be output in the wrong format.
+		When <o>bach.portal</o> is ready, it outputs a <m>bang</m> from its rightmost outlet
+		which can be used to trigger any message to output automatically when the patch is loaded.
+		<o>bach.portal</o> has a communication mechanism with <o>bach.args</o>,
+		ensuring that for each subpatcher <o>bach.portal</o> is ready when <o>bach.args</o> outputs its arguments.
+		In this way, it is safe for the arguments of the patch to trigger messages to the outside of the patch itself.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -157,6 +167,16 @@
 		<entry name ="More details">
 			<description>
 		As usual, the formats of the output lllls are controlled by the <m>out</m> attribute.
+		In <o>bach.portal</o>, though, the latter can have an additional value, <m>p</m>,
+		which allows controlling the output format for subpatchers and abstractions.
+		If <o>bach.portal</o>'s <m>out</m> attribute is set to <m>p</m>,
+		its outlets are not immediately initialized as soon as the patch is loaded.
+		For this reason, a message coming from a <o>loadbang</o> or <o>loadmess</o> object might get lost, or be output in the wrong format.
+		When <o>bach.portal</o> is ready, it outputs a <m>bang</m> from its rightmost outlet
+		which can be used to trigger any message to output automatically when the patch is loaded.
+		<o>bach.portal</o> has a communication mechanism with <o>bach.args</o>,
+		ensuring that for each subpatcher <o>bach.portal</o> is ready when <o>bach.args</o> outputs its arguments.
+		In this way, it is safe for the arguments of the patch to trigger messages to the outside of the patch itself.
 			</description>
 		</entry>
 		<entry name ="Keywords">

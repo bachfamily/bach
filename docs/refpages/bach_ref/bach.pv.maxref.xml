@@ -154,6 +154,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		Other <o>bach.pv</o> objects with the same name, but belonging to different patcher hierarchies,
+		will share independently their own data.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -185,6 +186,7 @@
 		<entry name ="More details">
 			<description>
 		Other <o>bach.pv</o> objects with the same name, but belonging to different patcher hierarchies,
+		will share independently their own data.
 			</description>
 		</entry>
 		<entry name ="Keywords">

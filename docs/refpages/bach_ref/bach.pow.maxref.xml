@@ -11,6 +11,7 @@
 
 	<description>
 		Raises all elements of an llll (or a number) coming in first inlet,
+		to the power defined by another llll (or number).
 	</description>
 
 	<!--METADATA-->
@@ -131,6 +132,8 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The abstraction is equivalent to an exponentiation performed
+		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
+		attribute set to 1.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -166,6 +169,8 @@
 		<entry name ="More details">
 			<description>
 		The abstraction is equivalent to an exponentiation performed
+		in a <o>bach.expr</o> object, with the <m>scalarmode</m>
+		attribute set to 1.
 			</description>
 		</entry>
 		<entry name ="Keywords">

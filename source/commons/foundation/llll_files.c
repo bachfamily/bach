@@ -1,7 +1,7 @@
 /*
  *  llll_files.c
  *
- * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 
 #ifdef MAC_VERSION
 #include "pwd.h"
+#include "unistd.h"
 #endif
 
 #ifdef WIN_VERSION

@@ -1,7 +1,7 @@
 # /*
 # *  makefile
 # *
-# * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+# * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
 # *
 # * This program is free software: you can redistribute it and/or modify it
 # * under the terms of the GNU General Public License
@@ -18,16 +18,24 @@
 # */
 
 symparser install:	symparser.l
-			/usr/local/opt/bison/bin/bison --version
-			/usr/local/opt/flex/bin/flex --version
-			/usr/local/opt/bison/bin/bison -ld symparser.y
-			/usr/local/opt/flex/bin/flex -L -o symparser.c symparser.l
-			egrep -v "^#line" symparser.c >bach_symparser.c
-			egrep -v "^#line" symparser.lex.h >bach_symparser_lex.h
-			egrep -v "^#line" symparser.tab.c >bach_symparser_tab.c
-			egrep -v "^#line" symparser.tab.h >bach_symparser_tab.h
-			
-clean:		
+		if [ -d "/opt/homebrew/opt/" ]; then\
+			/opt/homebrew/opt/bison/bin/bison --version;\
+			/opt/homebrew/opt/flex/bin/flex --version;\
+			/opt/homebrew/opt/bison/bin/bison -d symparser.y;\
+			/opt/homebrew/opt/flex/bin/flex -L -o symparser.c symparser.l;\
+		else\
+			/usr/local/opt/bison/bin/bison --version;\
+			/usr/local/opt/flex/bin/flex --version;\
+			/usr/local/opt/bison/bin/bison -d symparser.y;\
+			/usr/local/opt/flex/bin/flex -L -o symparser.c symparser.l;\
+		fi;
+		
+		egrep -av "^#line" symparser.c >bach_symparser.c
+		egrep -av "^#line" symparser.lex.h >bach_symparser_lex.h
+		egrep -av "^#line" symparser.tab.c >bach_symparser_tab.c
+		egrep -av "^#line" symparser.tab.h >bach_symparser_tab.h
+
+clean:
 			rm -f symparser.c
 			rm -f symparser.tab.c
 			rm -f symparser.tab.h
@@ -36,4 +44,3 @@ clean:
 			rm -f bach_symparser_lex.h
 			rm -f bach_symparser_tab.c
 			rm -f bach_symparser_tab.h
-			

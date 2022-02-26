@@ -11,6 +11,7 @@
 
 	<description>
 		Converts the llll content of a given slot,
+		of type "function", into a list of messages for <o>curve~</o>.
 	</description>
 
 	<!--METADATA-->

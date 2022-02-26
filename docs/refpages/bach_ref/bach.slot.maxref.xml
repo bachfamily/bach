@@ -11,6 +11,7 @@
 
 	<description>
 		Provides the display and interface for the content of a slot window.
+		You can perfectly imagine its content as the whole slot content of an hidden dummy note.
 	</description>
 
 	<!--METADATA-->
@@ -627,6 +628,7 @@
 				• <b>eraseslot active</b>   <i>→ clear currently open slot</i><br />
 				• <b>eraseslot 4</b>   <i>→ clear 4th slot</i><br />
 				• <b>eraseslot amplienv</b>   <i>→ clear slot named amplienv</i><br />
+				• <b>eraseslot all</b>   <i>→ clear all slots</i><br />
 				<br />
 				An <m>eraseslot</m> message will clear the content of a specific slot. The slot number of the slot to clear is given as argument.
 				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot.

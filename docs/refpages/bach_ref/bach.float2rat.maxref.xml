@@ -11,6 +11,7 @@
 
 	<description>
 		Approximates a floating point number with a rational number, within
+		a given error threshold and with a given maximum denominator.
 	</description>
 
 	<!--METADATA-->
@@ -204,6 +205,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The object supports multiple algorithms: have a look at the <m>algorithm</m> attribute
+		to have an insight on them all.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -240,6 +242,7 @@
 		<entry name ="More details">
 			<description>
 		The object supports multiple algorithms: have a look at the <m>algorithm</m> attribute
+		to have an insight on them all.
 			</description>
 		</entry>
 		<entry name ="Keywords">

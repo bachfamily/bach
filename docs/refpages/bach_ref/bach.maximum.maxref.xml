@@ -11,6 +11,7 @@
 
 	<description>
 		Compares every element of the left llll with the corresponding
+		element of the right llll, and outputs the bigger.
 	</description>
 
 	<!--METADATA-->

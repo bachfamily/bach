@@ -11,6 +11,7 @@
 
 	<description>
 		Builds a random matrix of given dimensions,
+		randomly picking elements from a given set of possible elements.
 	</description>
 
 	<!--METADATA-->

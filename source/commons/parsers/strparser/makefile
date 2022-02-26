@@ -1,7 +1,7 @@
 # /*
 # *  makefile
 # *
-# * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+# * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
 # *
 # * This program is free software: you can redistribute it and/or modify it
 # * under the terms of the GNU General Public License
@@ -18,14 +18,22 @@
 # */
 
 strparser install:	strparser.l
-			/usr/local/opt/bison/bin/bison --version
-			/usr/local/opt/flex/bin/flex --version
-			/usr/local/opt/bison/bin/bison -d strparser.y
-			/usr/local/opt/flex/bin/flex -L -o strparser.c strparser.l
-			egrep -v "^#line" strparser.c >bach_strparser.c
-			egrep -v "^#line" strparser.lex.h >bach_strparser_lex.h
-			egrep -v "^#line" strparser.tab.c >bach_strparser_tab.c
-			egrep -v "^#line" strparser.tab.h >bach_strparser_tab.h
+		if [ -d "/opt/homebrew/opt/" ]; then\
+			/opt/homebrew/opt/bison/bin/bison --version;\
+			/opt/homebrew/opt/flex/bin/flex --version;\
+			/opt/homebrew/opt/bison/bin/bison -d strparser.y;\
+			/opt/homebrew/opt/flex/bin/flex -L -o strparser.c strparser.l;\
+		else\
+			/usr/local/opt/bison/bin/bison --version;\
+			/usr/local/opt/flex/bin/flex --version;\
+			/usr/local/opt/bison/bin/bison -d strparser.y;\
+			/usr/local/opt/flex/bin/flex -L -o strparser.c strparser.l;\
+		fi;
+			
+		egrep -v "^#line" strparser.c >bach_strparser.c
+		egrep -v "^#line" strparser.lex.h >bach_strparser_lex.h
+		egrep -v "^#line" strparser.tab.c >bach_strparser_tab.c
+		egrep -v "^#line" strparser.tab.h >bach_strparser_tab.h
 			
 						
 clean:		

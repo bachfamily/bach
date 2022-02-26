@@ -121,6 +121,8 @@
 	<!--DISCUSSION-->
 	<discussion>
 		If the llll has repeated elements, only distinct permutations are output.
+		Beware: the number of permutations grows huge even for lllls with more than a few elements.
+		Requesting all the permutations of such an llll can cause Max to get stuck for minutes, or even crash.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -153,6 +155,8 @@
 		<entry name ="More details">
 			<description>
 		If the llll has repeated elements, only distinct permutations are output.
+		Beware: the number of permutations grows huge even for lllls with more than a few elements.
+		Requesting all the permutations of such an llll can cause Max to get stuck for minutes, or even crash.
 			</description>
 		</entry>
 		<entry name ="Keywords">

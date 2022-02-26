@@ -14,6 +14,7 @@ TO BE CATEGORIZED:
 - bach.roll, bach.score:
 	New "setdurationline" message setting the duration line from a list of pitch breakpoints
 	Now "setcursor" then "play" will work even if the cursor is not shown.
+	
 
 
 v0.8.2b
@@ -34,10 +35,21 @@ v0.8.2b
     evaluation precedence of the ** operator is now right-to-left, as per the documentation (2**3**2 now returns 512, previously 64)
     evaluation precedence of the ! and ~ operators is now higher than exponentiation
 
+- bach.roll, bach.score:
+    Now Cmd+Alt+V DOES NOT OUTPUT all the parameters any longer
+	Also, Alt+V is used to force the output of chord information instead of Shift+V.
+    The "dblclicksendsvalues" attribute has been eliminated and replaced by the much more general "dumpplaycmd" attribute, allowing
+	you to set one or more letters or mouse keys to send offline values.
+		Backward compatibility should be preserved, meaning that the new attribute should already take care of the old value, 
+		but check manually if possible
+
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
         New "importdivisions" message attribute, overriding "markdivisions"
-
+    New group display mode (@showgroups) as BEAMINGS ---> this has become the default
+	If you wanted to keep the old modes as default, change the attribute explicitly  
+    New "dump selection ..." message for bach.roll to only output parameters for selected content.
+    At the same time, the "dumpselection" message is deprecated in favor of either "dump selection playout" "plump"
 
 - bach.score:
     Default behavior of setcursor in presence of grace notes has changed: it only accounts for grace notes in the first measure.
@@ -60,7 +72,8 @@ authorization: now the code for a given year can be entered until January of the
 
 bach ecosystem: no extra memory is claimed by bach before the first bach object is created
 
-multiple objects: help files and doc updated
+multiple objects: 	fixed missing lines in help files and references
+			help files and doc updated
 
 - bell, bach.expr:
     makepitch function now treats negative degrees as descending steps (e.g. makepitch(-1, 0, 5) returns B4)
@@ -97,6 +110,7 @@ multiple objects: help files and doc updated
     Fixed memory leak related to the text editor window
 
 - bach.roll, bach.score, bach.slot:
+    Fixed bug causing resizing of objects when double clicking in a text slot
     The "addslot" message is now deprecated in favour of the identical "setslot" message. 
         The "addslot" message is still kept for backward compatibility, but you are encouraged to use "setslot" from now on.
     fixed potential memory leak when using transferslots
@@ -104,7 +118,7 @@ multiple objects: help files and doc updated
     Now "eraseslot" accepts "all" as argument to clear all slots
 
 - bach.roll, bach.score: 
-    New "setdurationline" message setting the duration line from a list of pitch breakpoints
+    New "setdl" message setting the duration line from a list of pitch breakpoints
     @playheadwidth attribute added, better doc for playcolor and added doc for playheadwidth
     now preschedule playing supports setclock
     removed unnecessary warnings for dynamics2velocities message
@@ -124,6 +138,7 @@ multiple objects: help files and doc updated
     new "auto" possibility for setting breakpoints via "addbreakpoint"
     fixed bug causing stafflines attribute not to be saved sometimes
     improved display of auxiliary stems
+    New "dltoslot" message to copy pitch and velocity envelopes to slots
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
@@ -142,6 +157,8 @@ multiple objects: help files and doc updated
     @finitestaff: new attribute to trim staff after last measure
     @showfirstmeasurenumber: new attribute
     fixed bug causing possible wrong playback of partial notes' slots with ties
+    new "lineareditquarterkey" attribute to set the number key corresponding to quarter note duration  
+    fixed bug causing wrong positioning of dots with custom noteheads
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
@@ -157,6 +174,8 @@ multiple objects: help files and doc updated
     solved crashes while using sampling/interp in bach.roll/score
     fixed bug causing loss of user-defined accidentals during copy-paste
     fixed bug causing wrong breakpoint and temporal slots handling while stretching bach.roll regions via markers
+    fixed bug causing loss of onset decimal while aligning chords
+    fixed bug causing wrong groups when bach.roll was loaded
 
 - bach.slot:
     redraw is refreshed when changing scrollbar
@@ -173,6 +192,8 @@ multiple objects: help files and doc updated
     added @voicefilter attribute to filter specific voices
     fixed behavior with measure-attached markers, now path/measurenumber/voicenumber works properly
     new "any" key to match any incoming item type
+
+- bach.locate: more bach.find attributes are now supported
 
 - bach.shelf: fixed crash with @embed 1 when reopening patch
 
