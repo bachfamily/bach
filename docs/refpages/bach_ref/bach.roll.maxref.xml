@@ -5169,9 +5169,6 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-<<<<<<< HEAD
-				Reset the custom articulations definition to the default one
-=======
 				Reset the slotinfo to the default one
 			</digest>
 			<description>
@@ -5187,7 +5184,6 @@
 			<arglist />
 			<digest>
 				Reset the custom notehead definition to the default one
->>>>>>> dg-devel-newcommands
 			</digest>
 			<description>
 				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
@@ -5197,18 +5193,10 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-<<<<<<< HEAD
-				Reset the custom notehead definition to the default one
-			</digest>
-			<description>
-				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
-				all the user-defined noteheads.
-=======
 				Reset the commands to the default one
 			</digest>
 			<description>
 				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
->>>>>>> dg-devel-newcommands
 			</description>
 		</method>
 		<method name="respell">
