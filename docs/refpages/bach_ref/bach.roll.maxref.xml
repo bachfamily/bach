@@ -7290,7 +7290,7 @@
 		</attribute>
 		<attribute name="fontface" get="1" set="1" type="" size="1">
 			<digest>
-				
+
 			</digest>
 			<description>
 			</description>
@@ -7300,7 +7300,7 @@
 		</attribute>
 		<attribute name="fontname" get="1" set="1" type="" size="1">
 			<digest>
-				
+
 			</digest>
 			<description>
 			</description>
@@ -7310,7 +7310,7 @@
 		</attribute>
 		<attribute name="fontsize" get="1" set="1" type="" size="1">
 			<digest>
-				
+
 			</digest>
 			<description>
 			</description>
