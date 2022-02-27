@@ -130,6 +130,7 @@ enum playkeys_incoming // incoming notation items
     k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND  = (1 << 16),
     k_PLAYKEYS_INCOMING_SCOREREST_COMMAND   = (1 << 17),
     k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND = (1 << 18),
+    k_PLAYKEYS_INCOMING_MARKER_COMMAND   = (1 << 19),
 };
 
 
@@ -155,12 +156,14 @@ typedef struct _playkeys
     long                    n_use_default_breakpoints;
     long                    n_breakpoints_have_velocity;
 
+    long                    n_autoassigncommands;
     t_llll                  *n_process;
     long                    n_notationitems_to_process;
 
     t_llll                  *n_note_commands;
     t_llll                  *n_chord_commands;
     t_llll                  *n_rest_commands;
+    t_llll                  *n_marker_commands;
 
     t_atom                  n_dynamicsslot;
     t_atom                  n_articulationsslot;
@@ -182,6 +185,8 @@ typedef struct _playkeys
     t_bach_atomic_lock      n_process_lock;
 
     t_llll                    *n_empty;
+
+    long                    n_creatingnewobject;
 } t_playkeys;
 
 
@@ -498,6 +503,14 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_STICKY_ATTR(c,"category",0,"Settings");
 
+    CLASS_ATTR_LONG(c, "autoassigncommands",        0,    t_playkeys, n_autoassigncommands);
+    CLASS_ATTR_LABEL(c, "autoassigncommands",        0, "Autoassign Commands To Notes");
+    CLASS_ATTR_STYLE(c, "autoassigncommands",        0, "onoff");
+    CLASS_ATTR_BASIC(c, "autoassigncommands", 0);
+    // @description When set to 1, any unknown command router found is assigned to a note element (unless explicitly assigned
+    // to other commands via the <m>routers</m> attribute). <br />
+    // This attribute is static and can only be set in the object box.
+
     CLASS_ATTR_LLLL(c, "routers", 0, t_playkeys, n_process, playkeys_getattr_process, playkeys_setattr_process);
     CLASS_ATTR_LABEL(c, "routers", 0, "Routers To Accept");
     CLASS_ATTR_STYLE(c, "routers",        0, "text");
@@ -506,13 +519,9 @@ void C74_EXPORT ext_main(void *moduleRef)
     // E.g. <b>note tempo</b> will only accept "note"- and "tempo"-routed playout lllls. <br />
     // You can have <o>bach.playkeys</o> intercept commands as well, provided that you set aliases via an llll starting
     // with "note", "chord" or "rest" (depending on the type of alias). E.g. <b>@routers note [note mynotecommand1 mynotecommand2]</b>
-    // will intercept <b>note</b> messages, as well as note commands <b>mynotecommand1</b> and <b>mynotecommand2</b>.
-    // To only intercept commands, simply use something like <b>@routers [note mynotecommand1 mynotecommand2]</b>.
-    // If you want to add some commands for acceptance (and to keep everything else accepted) use "+" as first element, such as in
-    // <b>@routers + [rest myrestcommand]</b>.
-
-
-
+    // will intercept <b>note</b> messages, as well as note commands <b>mynotecommand1</b> and <b>mynotecommand2</b>. <br />
+    // This attribute is static and can only be set in the object box.
+    
     CLASS_ATTR_LONG(c, "wrapmode",        0,    t_playkeys, n_flattenfornotes);
     CLASS_ATTR_LABEL(c, "wrapmode",        0, "Only Wrap Chords llll Data");
     CLASS_ATTR_STYLE(c, "wrapmode",        0, "onoff");
@@ -741,6 +750,11 @@ void playkeys_handle_flattening_and_nullmode(t_playkeys *x, t_llll **ll, long in
 
 t_max_err playkeys_setattr_process(t_playkeys *x, t_object *attr, long ac, t_atom *av)
 {
+    if (!x->n_creatingnewobject) {
+        object_error((t_object *)x, "Attribute \"routers\" is static and can only be set in the object box.");
+        return MAX_ERR_GENERIC;
+    }
+    
     t_llll *ll;
     if (ac == 0 || av) {
         if ((ll = llllobj_parse_llllattr_llll((t_object *) x, LLLL_OBJ_VANILLA, ac, av))) {
@@ -752,13 +766,15 @@ t_max_err playkeys_setattr_process(t_playkeys *x, t_object *attr, long ac, t_ato
             llll_clear(x->n_note_commands);
             llll_clear(x->n_chord_commands);
             llll_clear(x->n_rest_commands);
+            llll_clear(x->n_marker_commands);
 
-            char defaultval = ((x->n_process && x->n_process->l_size > 0 && hatom_getsym(&x->n_process->l_head->l_hatom) != gensym("+")) ? 0 : 1);
+/*            char defaultval = ((x->n_process && x->n_process->l_size > 0 && hatom_getsym(&x->n_process->l_head->l_hatom) != gensym("+")) ? 0 : 1);
             if (defaultval)
                 x->n_notationitems_to_process = -1;  // all 1's
             else
                 x->n_notationitems_to_process = 0;
-
+*/
+            
             for (t_llllelem *elem = x->n_process->l_head; elem; elem = elem->l_next) {
                 if (hatom_gettype(&elem->l_hatom) == H_SYM) {
                     t_symbol *thisprocess = hatom_getsym(&elem->l_hatom);
@@ -801,6 +817,11 @@ t_max_err playkeys_setattr_process(t_playkeys *x, t_object *attr, long ac, t_ato
                             for (t_llllelem *el2 = ll->l_head->l_next; el2; el2=el2->l_next)
                                 if (hatom_gettype(&el2->l_hatom) == H_SYM)
                                     llll_appendsym(x->n_rest_commands, hatom_getsym(&el2->l_hatom));
+                        } else if (ref == _llllobj_sym_marker) {
+                            x->n_notationitems_to_process |= k_PLAYKEYS_INCOMING_MARKER_COMMAND;
+                            for (t_llllelem *el2 = ll->l_head->l_next; el2; el2=el2->l_next)
+                                if (hatom_gettype(&el2->l_hatom) == H_SYM)
+                                    llll_appendsym(x->n_marker_commands, hatom_getsym(&el2->l_hatom));
                         }
                     }
                 }
@@ -950,13 +971,30 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
             }
             if (!found) {
                 for (t_llllelem *elem = x->n_rest_commands->l_head; elem; elem = elem->l_next) {
-                    if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
-                        incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
-                        found = 1;
-                    } else {
-                        if (router == hatom_getsym(&elem->l_hatom)) {
-                            incoming = k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
+                    if (router == hatom_getsym(&elem->l_hatom)) {
+                        if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                            incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
                             found = 1;
+                        } else {
+                            if (router == hatom_getsym(&elem->l_hatom)) {
+                                incoming = k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
+                                found = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                for (t_llllelem *elem = x->n_marker_commands->l_head; elem; elem = elem->l_next) {
+                    if (router == hatom_getsym(&elem->l_hatom)) {
+                        if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                            incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                            found = 1;
+                        } else {
+                            if (router == hatom_getsym(&elem->l_hatom)) {
+                                incoming = k_PLAYKEYS_INCOMING_MARKER_COMMAND;
+                                found = 1;
+                            }
                         }
                     }
                 }
@@ -985,6 +1023,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
 
                 case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
                     if (is_symbol_in_llll_first_level(x->n_rest_commands, router))
+                        must_process_incoming = true;
+                    break;
+
+                case k_PLAYKEYS_INCOMING_MARKER_COMMAND:
+                    if (is_symbol_in_llll_first_level(x->n_marker_commands, router))
                         must_process_incoming = true;
                     break;
 
@@ -1060,7 +1103,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
 
             if (incoming & x->n_keys[outlet].allowed_notationitems) { // must process key
 
-                if ((incoming == k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCOREREST_COMMAND) && this_key->allowed_command_router != router)
+                if ((incoming == k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCOREREST_COMMAND || incoming == k_PLAYKEYS_INCOMING_MARKER_COMMAND) && this_key->allowed_command_router != router)
                     continue; // not the right command
 
                 found = NULL;
@@ -1409,6 +1452,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 break;
 
                             case k_PLAYKEYS_INCOMING_MARKER:
+                            case k_PLAYKEYS_INCOMING_MARKER_COMMAND:
                                 found = llll_get();
                                 if ((target_el = llll_getindex(in_ll, 3, I_STANDARD)))
                                     llll_appendhatom_clone(found, &target_el->l_hatom);
@@ -2347,6 +2391,7 @@ void playkeys_free(t_playkeys *x)
     llll_free(x->n_note_commands);
     llll_free(x->n_chord_commands);
     llll_free(x->n_rest_commands);
+    llll_free(x->n_marker_commands);
 
     bach_freeptr(x->n_keys);
     llll_free(x->n_empty);
@@ -2384,13 +2429,17 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         // As a shortcut for dynamics-, lyrics-, articulations- and noteheads-slot (whose numbers are settable via the four corresponding attributes)
         // the "dynamics", "lyrics", "articulations" and "noteheads" symbol can be used.
 
+        x->n_creatingnewobject = 1;
+
         x->n_process = llll_make();
         x->n_note_commands = llll_make();
         x->n_chord_commands = llll_make();
         x->n_rest_commands = llll_make();
+        x->n_marker_commands = llll_make();
 
         reset_warnings(x);
 
+        x->n_autoassigncommands = 1;
         x->n_notationitems_to_process = -1; // all of them
 
         t_llll *args_ll = llll_parse(true_ac, av);
@@ -2514,13 +2563,15 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                                 if (is_symbol_in_llll_first_level(x->n_note_commands, allowed_command_router)) {
                                     operate_on = 1;
                                 } else if (is_symbol_in_llll_first_level(x->n_chord_commands, allowed_command_router)) {
-                                        operate_on = 2;
+                                    operate_on = 2;
                                 } else if (is_symbol_in_llll_first_level(x->n_rest_commands, allowed_command_router)) {
                                     operate_on = 3;
+                                } else if (is_symbol_in_llll_first_level(x->n_marker_commands, allowed_command_router)) {
+                                    operate_on = 4;
                                 }
 
-                                if (operate_on == 0) { // the command was not assigned to any of the routers
-                                    // ASSIGNING IT TO NOTES
+                                if (operate_on == 0 && x->n_autoassigncommands) { // the command was not assigned to any of the routers
+                                    // we perform automatic assignment on notes (unless the user only wants otherwise).
                                     operate_on = 1;
                                     x->n_notationitems_to_process |= k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND + k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND;
                                     llll_appendsym(x->n_note_commands, allowed_command_router);
@@ -2530,6 +2581,8 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                                     curr_allowed_notationitems = k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND + k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND;
                                 } else if (operate_on == 3) {
                                     curr_allowed_notationitems = k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
+                                } else if (operate_on == 4) {
+                                    curr_allowed_notationitems = k_PLAYKEYS_INCOMING_MARKER_COMMAND;
                                 } else {
                                     curr_allowed_notationitems = k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND + k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND;
                                 }
@@ -2635,6 +2688,10 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         llllobj_obj_setup((t_llllobj_object *) x, 1, outlets);
 
         x->n_empty = llll_get();
+        
+        object_attr_setdisabled((t_object *)x, gensym("routers"), true);
+        object_attr_setdisabled((t_object *)x, gensym("autoassigncommands"), true);
+        x->n_creatingnewobject = 0;
     } else
         error(BACH_CANT_INSTANTIATE);
 
