@@ -8711,10 +8711,14 @@ t_slotitem *nth_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slot
 void initialize_commands(t_notation_obj *r_ob){
     long i;
     for (i= 0; i < CONST_MAX_COMMANDS; i++) {
-        r_ob->command_key[i] = 0;
-        r_ob->command_note[i] = _llllobj_sym_note;
-        r_ob->command_chord[i] = _llllobj_sym_chord;
-        r_ob->command_rest[i] = _llllobj_sym_rest;
+        r_ob->commands[i].command_key = 0;
+        r_ob->commands[i].command_name = _llllobj_sym_command;
+        r_ob->commands[i].command_note = _llllobj_sym_note;
+        r_ob->commands[i].command_chord = _llllobj_sym_chord;
+        r_ob->commands[i].command_rest = _llllobj_sym_rest;
+        r_ob->commands[i].command_marker = _llllobj_sym_marker;
+        r_ob->commands[i].start_sym = _llllobj_sym_none;
+        r_ob->commands[i].end_sym = _llllobj_sym_none;
     }
 }
 
@@ -27758,33 +27762,31 @@ t_llll* get_commands_values_as_llll(t_notation_obj *r_ob, char bw_compatible)
     
     for (j=0; j < (bw_compatible ? 5 : CONST_MAX_COMMANDS); j++) {
         t_llll* inner_llll = llll_get(); 
-        t_llll *note = llll_get(), *chord = llll_get(), *rest = llll_get(), *key = llll_get();
+        t_llll* key = llll_get();
         
-        llll_appendlong(inner_llll, j + 1, 0, WHITENULL_llll); // command number, 1-based
+        t_commandinfo *cinfo = &r_ob->commands[j];
         
-        llll_appendsym(note, _llllobj_sym_note, 0, WHITENULL_llll); // command for note
-        llll_appendsym(note, r_ob->command_note[j] ? r_ob->command_note[j] : _llllobj_sym_note, 0, WHITENULL_llll);
-        llll_appendllll(inner_llll, note, 0, WHITENULL_llll);
+        llll_appendlong(inner_llll, j + 1); // command number, 1-based
 
-        llll_appendsym(chord, _llllobj_sym_chord, 0, WHITENULL_llll); // command for chord
-        llll_appendsym(chord, r_ob->command_chord[j] ? r_ob->command_chord[j] : _llllobj_sym_chord, 0, WHITENULL_llll); // command for chord
-        llll_appendllll(inner_llll, chord, 0, WHITENULL_llll);
-
-        llll_appendsym(rest, _llllobj_sym_rest, 0, WHITENULL_llll); // command for rest
-        llll_appendsym(rest, r_ob->command_rest[j] ? r_ob->command_rest[j] : _llllobj_sym_rest, 0, WHITENULL_llll); // command for chord
-        llll_appendllll(inner_llll, rest, 0, WHITENULL_llll);
+        llll_appendllll(inner_llll, symbol_and_symbol_to_llll(_llllobj_sym_name, cinfo->command_name ? cinfo->command_name : _llllobj_sym_command));
+        llll_appendllll(inner_llll, symbol_and_symbol_to_llll(_llllobj_sym_note, cinfo->command_note ? cinfo->command_note : _llllobj_sym_note));
+        llll_appendllll(inner_llll, symbol_and_symbol_to_llll(_llllobj_sym_chord, cinfo->command_chord ? cinfo->command_chord : _llllobj_sym_chord));
+        llll_appendllll(inner_llll, symbol_and_symbol_to_llll(_llllobj_sym_rest, cinfo->command_rest ? cinfo->command_rest : _llllobj_sym_rest));
+        llll_appendllll(inner_llll, symbol_and_symbol_to_llll(_llllobj_sym_marker, cinfo->command_marker ? cinfo->command_marker : _llllobj_sym_marker));
+        llll_appendllll(inner_llll, symbol_and_symbol_to_llll(_llllobj_sym_start, cinfo->start_sym ? cinfo->start_sym : _llllobj_sym_none));
+        llll_appendllll(inner_llll, symbol_and_symbol_to_llll(_llllobj_sym_end, cinfo->end_sym ? cinfo->end_sym : _llllobj_sym_none));
 
         char key_char[2];
-        key_char[0] = r_ob->command_key[j];
+        key_char[0] = cinfo->command_key;
         key_char[1] = 0;
-        llll_appendsym(key, _llllobj_sym_key, 0, WHITENULL_llll); // hot key
-        if (r_ob->command_key[j] > 0)
-            llll_appendsym(key, gensym(key_char), 0, WHITENULL_llll);
+        llll_appendsym(key, _llllobj_sym_key); // hot key
+        if (cinfo->command_key > 0)
+            llll_appendsym(key, gensym(key_char));
         else 
-            llll_appendlong(key, 0, 0, WHITENULL_llll);
-        llll_appendllll(inner_llll, key, 0, WHITENULL_llll);
+            llll_appendlong(key, 0);
+        llll_appendllll(inner_llll, key);
         
-        llll_appendllll(out_llll, inner_llll, 0, WHITENULL_llll);
+        llll_appendllll(out_llll, inner_llll);
     }
     
     return out_llll;
@@ -31302,17 +31304,18 @@ void set_commands_from_llll(t_notation_obj *r_ob, t_llll* commands){
                     
                     long j = hatom_getlong(&single_command->l_head->l_hatom) - 1; // commands number is 1-based in the interface, 0-based inside the code
                     if (j >= 0 && j < CONST_MAX_COMMANDS) {
+                        t_commandinfo *cinfo = &r_ob->commands[j];
                         
                         // OLD WAY:
                         if (single_command->l_depth == 1 && single_command->l_size >= 4 && hatom_gettype(&single_command->l_head->l_next->l_hatom) == H_SYM) {
                             
-                            r_ob->command_note[j] = (hatom_gettype(&single_command->l_head->l_next->l_hatom) == H_SYM) ? hatom_getsym(&single_command->l_head->l_next->l_hatom) : NULL;
-                            r_ob->command_chord[j] = (hatom_gettype(&single_command->l_head->l_next->l_next->l_hatom) == H_SYM) ? hatom_getsym(&single_command->l_head->l_next->l_next->l_hatom) : NULL;
+                            cinfo->command_note = (hatom_gettype(&single_command->l_head->l_next->l_hatom) == H_SYM) ? hatom_getsym(&single_command->l_head->l_next->l_hatom) : NULL;
+                            cinfo->command_chord = (hatom_gettype(&single_command->l_head->l_next->l_next->l_hatom) == H_SYM) ? hatom_getsym(&single_command->l_head->l_next->l_next->l_hatom) : NULL;
                             
                             if (hatom_gettype(&single_command->l_head->l_next->l_next->l_next->l_hatom) == H_LONG)
-                                r_ob->command_key[j] = hatom_getlong(&single_command->l_head->l_next->l_next->l_next->l_hatom);
+                                cinfo->command_key = hatom_getlong(&single_command->l_head->l_next->l_next->l_next->l_hatom);
                             else if (hatom_gettype(&single_command->l_head->l_next->l_next->l_next->l_hatom) == H_SYM)
-                                r_ob->command_key[j] = hatom_getsym(&single_command->l_head->l_next->l_next->l_next->l_hatom)->s_name[0];
+                                cinfo->command_key = hatom_getsym(&single_command->l_head->l_next->l_next->l_next->l_hatom)->s_name[0];
                             
                         } else {
                             // new way, as for slots
@@ -31326,21 +31329,37 @@ void set_commands_from_llll(t_notation_obj *r_ob, t_llll* commands){
                                         
                                         if (router == _llllobj_sym_chord && this_llll->l_head->l_next){
                                             t_symbol *sym = (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM) ? hatom_getsym(&this_llll->l_head->l_next->l_hatom) : _llllobj_sym_chord;
-                                            r_ob->command_chord[j] = sym;
+                                            cinfo->command_chord = sym;
                                             
                                         } else if (router == _llllobj_sym_note && this_llll->l_head->l_next){
                                             t_symbol *sym = (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM) ? hatom_getsym(&this_llll->l_head->l_next->l_hatom) : _llllobj_sym_note;
-                                            r_ob->command_note[j] = sym;
+                                            cinfo->command_note = sym;
                                             
                                         } else if (router == _llllobj_sym_rest && this_llll->l_head->l_next){
                                             t_symbol *sym = (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM) ? hatom_getsym(&this_llll->l_head->l_next->l_hatom) : _llllobj_sym_rest;
-                                            r_ob->command_rest[j] = sym;
+                                            cinfo->command_rest = sym;
                                             
+                                        } else if (router == _llllobj_sym_marker && this_llll->l_head->l_next){
+                                            t_symbol *sym = (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM) ? hatom_getsym(&this_llll->l_head->l_next->l_hatom) : _llllobj_sym_marker;
+                                            cinfo->command_marker = sym;
+                                            
+                                        } else if (router == _llllobj_sym_name && this_llll->l_head->l_next){
+                                            t_symbol *sym = (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM) ? hatom_getsym(&this_llll->l_head->l_next->l_hatom) : _llllobj_sym_command;
+                                            cinfo->command_name = sym;
+
+                                        } else if (router == _llllobj_sym_start && this_llll->l_head->l_next){
+                                            t_symbol *sym = (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM) ? hatom_getsym(&this_llll->l_head->l_next->l_hatom) : _llllobj_sym_none;
+                                            cinfo->start_sym = sym;
+
+                                        } else if (router == _llllobj_sym_end && this_llll->l_head->l_next){
+                                            t_symbol *sym = (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM) ? hatom_getsym(&this_llll->l_head->l_next->l_hatom) : _llllobj_sym_none;
+                                            cinfo->end_sym = sym;
+
                                         } else if (router == _llllobj_sym_key && this_llll->l_head->l_next){
                                             if (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_LONG)
-                                                r_ob->command_key[j] = hatom_getlong(&this_llll->l_head->l_next->l_hatom);
+                                                cinfo->command_key = hatom_getlong(&this_llll->l_head->l_next->l_hatom);
                                             else if (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM)
-                                                r_ob->command_key[j] = hatom_getsym(&this_llll->l_head->l_next->l_hatom)->s_name[0];
+                                                cinfo->command_key = hatom_getsym(&this_llll->l_head->l_next->l_hatom)->s_name[0];
                                         }
                                     }
                                 }
@@ -44708,6 +44727,11 @@ void notation_obj_reset_slotinfo(t_notation_obj *r_ob)
     object_attr_setlong(r_ob, gensym("linklyricstoslot"), BACH_DEFAULT_SLOT_LYRICS);
     object_attr_setlong(r_ob, gensym("linkarticulationstoslot"), BACH_DEFAULT_SLOT_ARTICULATIONS);
     object_attr_setlong(r_ob, gensym("linknoteheadstoslot"),BACH_DEFAULT_SLOT_NOTEHEADS);
+}
+
+void notation_obj_reset_commands(t_notation_obj *r_ob)
+{
+    initialize_commands(r_ob);
 }
 
 void notation_obj_reset_noteheadinfo(t_notation_obj *r_ob)

@@ -14857,11 +14857,11 @@
 				CLANG_CXX_LIBRARY = "compiler-default";
 				CODE_SIGN_IDENTITY = "";
 				DSTROOT = "";
-				LLLL_VERSION = 0.8.0.0;
+				LLLL_VERSION = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PRODUCT_VERSION = 0.8.1.4;
+				PRODUCT_VERSION = "$(BACH_VERSION)";
 				SDKROOT = macosx;
 				WARNING_CFLAGS = "";
 			};
@@ -14874,11 +14874,11 @@
 				CLANG_CXX_LIBRARY = "compiler-default";
 				CODE_SIGN_IDENTITY = "";
 				DSTROOT = "";
-				LLLL_VERSION = 0.8.0.0;
+				LLLL_VERSION = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PRODUCT_VERSION = 0.8.1.4;
+				PRODUCT_VERSION = "$(BACH_VERSION)";
 				SDKROOT = macosx;
 				WARNING_CFLAGS = "";
 			};

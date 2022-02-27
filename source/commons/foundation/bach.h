@@ -76,7 +76,7 @@
 				#define CONFIGURATION_Deployment
 			#endif
 			#define BACH_LLLL_VERSION "0.8.0.0"
-			#define BACH_VERSION "0.8.1.4"
+			#define BACH_VERSION "0.8.1.5"
 
 			#define MAXAPI_USE_MSCRT
 		#endif
@@ -160,7 +160,7 @@
         CLASS = class_new(name, mnew, mfree, size, mmenu, type, __VA_ARGS__); \
     else { \
         post("Class %s too large, size = %d", name, (int) size); \
-        return -1; \
+        return /*-1*/; \
     } \
 }
 

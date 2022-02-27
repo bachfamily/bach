@@ -46,6 +46,7 @@ v0.8.2b
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
         New "importdivisions" message attribute, overriding "markdivisions"
+        Fixed bug potentially producing negative durations. This has entailed removing a 1ms reduction to all durations.
     New group display mode (@showgroups) as BEAMINGS ---> this has become the default
 	If you wanted to keep the old modes as default, change the attribute explicitly  
     New "dump selection ..." message for bach.roll to only output parameters for selected content.
@@ -62,6 +63,8 @@ v0.8.2b
 - bach.transcribe: now the "allnotesoff" message only updates tails when the engine is on. 
 			(As this one was a real bug, it should not break any existing patch, but out of caution check them anyway if you used it)
 
+- bach.playkeys: the "routers" attribute is now static (only settable in the object box) and does not support the initial "+" sign any longer
+    Use the new "autoassigncommands" attribute instead.
 
 
 ***********************
@@ -116,6 +119,7 @@ multiple objects: 	fixed missing lines in help files and references
     fixed potential memory leak when using transferslots
     Objects no longer notify "domain" and "paint" during image export
     Now "eraseslot" accepts "all" as argument to clear all slots
+    Extended system for commands: now commands can be assigned to markers too, and can have a name and a start/end symbol
 
 - bach.roll, bach.score: 
     New "setdl" message setting the duration line from a list of pitch breakpoints

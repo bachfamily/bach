@@ -1857,7 +1857,7 @@
 				"filename" : [ "bach.help.notation.commands.01_intro.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "playmode", "header" ],
-				"tags" : [ "command", "define", "assign" ],
+				"tags" : [ "command", "define", "assign", "reset", "dump", "defining" ],
 				"title" : [ "Defining commands" ]
 			},
 			"Behavior" : {
@@ -1874,8 +1874,22 @@
 				"tags" : [ "command", "note", "chord", "router" ],
 				"title" : [ "Using note or chord router" ]
 			},
+			"Markers" : {
+				"filename" : [ "bach.help.notation.commands.04_markers.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "playmode", "play+syntax" ],
+				"tags" : [ "command", "note", "marker", "router" ],
+				"title" : [ "Using commands on markers" ]
+			},
+			"Startend" : {
+				"filename" : [ "bach.help.notation.commands.05_startend.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "playmode", "play+syntax" ],
+				"tags" : [ "command", "note", "start", "end", "notify", "begin", "stop", "signal", "marker", "symbol", "dump", "initial" ],
+				"title" : [ "Notifying start and end of command dump" ]
+			},
 			"Usage" : {
-				"filename" : [ "bach.help.notation.commands.04_usage.maxpat" ],
+				"filename" : [ "bach.help.notation.commands.10_usage.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "playmode", "play+syntax" ],
 				"tags" : [ "command", "example", "usage" ],
