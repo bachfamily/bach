@@ -3838,6 +3838,25 @@ typedef struct _slotinfo
 } t_slotinfo;
 
 
+/** A structure representing the configuration of a single command.
+ @ingroup    notation
+ @ingroup    commands
+ */
+typedef struct _commandinfo
+{
+    char        command_key;    ///< Ascii value of the keyboard key which triggers the command.
+                                ///< (Commands are a way to have an evaluation dumped from the playout, whose elements are not routed by "note" and "chord", but by any other chosen symbol.
+                                ///< One can thusly define commands to operate differently on selection, and retrieve them with [bach.keys] right after the playout)
+    t_symbol*    command_name;  ///< Generic name of the command
+    t_symbol*    command_note;  ///< Symbol which will be output from the playout instead of the "note" symbol
+    t_symbol*    command_chord; ///< Symbol which will be output from the playout instead of the "chord" symbol
+    t_symbol*    command_rest;  ///< Symbol which will be output from the playout instead of the "rest" symbol
+    t_symbol*    command_marker;  ///< Symbol which will be output from the playout instead of the "marker" symbol
+    t_symbol*    start_sym;     ///< Symbol sent BEFORE starting to output
+    t_symbol*    end_sym;       ///< Symbol sent AFTER end of output
+} t_commandinfo;
+
+
 /** Manager for the attributes inside the bach environment. Each notation object should have an unique allocated instance of this structure, holding all its attributes
     @ingroup attributes
  */
@@ -4241,13 +4260,8 @@ typedef struct _notation_obj
                                                     ///< 2 = They also change measure width, but only if some dynamics are overlapping
                                                     ///< 3 = They also affect measure width, always
 
-    // command fields, arrays (containing one element for each command; considering that usable commands are no more than #CONST_MAX_COMMANDS)
-    char        command_key[CONST_MAX_COMMANDS];    ///< Ascii value of the keyboard key which triggers the command.
-                                                    ///< (Commands are a way to have an evaluation dumped from the playout, whose elements are not routed by "note" and "chord", but by any other chosen symbol.
-                                                    ///< One can thusly define commands to operate differently on selection, and retrieve them with [bach.keys] right after the playout)
-    t_symbol*    command_note[CONST_MAX_COMMANDS];    ///< Symbol which will be output from the playout instead of the "note" symbol, when the command is sent on a musical element
-    t_symbol*    command_chord[CONST_MAX_COMMANDS];    ///< Symbol which will be output from the playout instead of the "chord" symbol, when the command is sent on a musical element
-    t_symbol*    command_rest[CONST_MAX_COMMANDS];    ///< Symbol which will be output from the playout instead of the "rest" symbol, when the command is sent on a musical element
+    // command fields, arrays (containing one element for each command)
+    t_commandinfo commands[CONST_MAX_COMMANDS];
     
     // text editor
     t_object *m_editor;                        ///< Text editor (for the #k_SLOT_TYPE_TEXT and #k_SLOT_TYPE_LLLL slot)
@@ -8578,6 +8592,12 @@ t_notation_item *notation_item_to_notation_item_for_slot_win_opening(t_notation_
 */
 void notation_obj_reset_slotinfo(t_notation_obj *r_ob);
 
+/**    Reinitialize the commands.
+ @ingroup            commands
+ @param r_ob            The notation object
+ */
+void notation_obj_reset_commands(t_notation_obj *r_ob);
+
 
 /**    Set or update the slotinfo in the notation object structure, starting from a slotinfo-llll
     @ingroup            slots
@@ -11799,10 +11819,11 @@ void send_loop_region_on_off(t_notation_obj *r_ob, long outlet);
     @param    namefirst    If this is 1, the usual (<position_ms> <name>) coupling is reversed for each marker, and becomes (<name> <position_ms>).
                         If this is 0, the syntax is the usual (<position_ms> <name>).
     @param    outlet        The outlet through which the llll containing the information will be sent (usually the play outlet)
+    @param   command_number The command number, if any (or leave -1 otherwise)
     @param  forced_router   If non-NULL, a router that will be forced to be put instead of the standard "marker" one
     @see                get_single_marker_as_llll()
  */
-void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, t_llll *forced_router = NULL);
+void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, long command_number = -1, t_llll *forced_router = NULL);
 
 
 /**    Send a "done" message through the playout. 
@@ -17987,6 +18008,7 @@ t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, do
     @ingroup            markers
     @param    r_ob        The notation object
     @param    marker        The marker whose information has to be got, or NULL if you need the information about all markers
+    @param    command_number    Command number, if any (if no command is to be sent, use -1)
     @param    namefirst    If this is 1, the usual (<position_ms> <name>) coupling is reversed for each marker, and becomes (<name> <position_ms>).
                         If this is 0, the syntax is the usual (<position_ms> <name>).
     @return                A list containing the information about a single marker or all markers.
@@ -17994,7 +18016,7 @@ t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, do
                         (but cannot concern a temporal window).
     @see                get_markers_as_llll()
  */
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst);
+t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, long command_number, char namefirst);
 
 
 /** Set all markers of a given notation objet from a list of markers in the usual syntax (<position_ms> <name>) (<position_ms> <name>) ...

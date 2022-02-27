@@ -25,8 +25,8 @@
 
 #ifndef parserpost
 #ifdef CONFIGURATION_Development
-//#define parserpost post
-#define parserpost(...) ((void) 0)
+#define parserpost post
+//#define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
 #endif

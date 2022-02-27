@@ -146,6 +146,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         error("Couldn't instantiate the bach common symbols table.");
         return;
     }
+    
     CLASS_NEW_CHECK_SIZE(c,"bach", (method) bach_new, NULL, sizeof(t_bach), 0, A_GIMME, 0);
 
     class_addmethod(c, (method) bach_poolstatus, "poolstatus", 0);

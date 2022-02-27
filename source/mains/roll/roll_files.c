@@ -693,7 +693,12 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 				t_llll *chord = note->l_owner->l_parent;
 				double chord_onset = chord->l_head->l_hatom.h_w.w_double; // if we have a noteoff, its noteon has surely been converted before
 				t_hatom *note_duration_hatom = &note->l_head->l_next->l_hatom;
-				hatom_setdouble(note_duration_hatom, event_ms_time - chord_onset - 1.);
+                double dur = event_ms_time - chord_onset;
+                if (dur < 0) {
+                    object_bug((t_object *) x, "Note at %ld ms has duration %ld: setting to 0", chord_onset, dur);
+                    dur = 0;
+                }
+				hatom_setdouble(note_duration_hatom, dur);
 				break;
 			}
 			case E_TEMPO: // E_TEMPO <time> <tempo>

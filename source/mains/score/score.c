@@ -104,6 +104,7 @@ void score_inhibit_undo(t_score *x, long val);
 void score_prune_last_undo_step(t_score *x);
 
 void score_resetslotinfo(t_score *x);
+void score_resetcommands(t_score *x);
 void score_resetnoteheadinfo(t_score *x);
 void score_resetarticulationinfo(t_score *x);
 
@@ -235,7 +236,7 @@ void score_lock(t_score *x);
 void score_unlock(t_score *x);
 
 void evaluate_selection(t_score *x, long modifiers, char alsosortselectionbyonset, t_llll *forced_routers = NULL);
-void selection_send_command(t_score *x, long modifiers, long command_number, char alsosortselectionbyonset);
+void selection_send_command(t_score *x, long modifiers, long command_number, char alsosortselectionbyonset, char also_send_start_and_end_if_needed);
 
 // conversions
 void calculate_tuttipoints(t_score *x);
@@ -2644,8 +2645,9 @@ void score_sel_dumpselection(t_score *x, t_symbol *s, long argc, t_atom *argv){
 void score_sel_sendcommand(t_score *x, t_symbol *s, long argc, t_atom *argv){
     if (argc > 0) {
         long command_num = atom_getlong(argv) - 1;
-        if ((command_num >= 0) && (command_num < CONST_MAX_COMMANDS))
-            selection_send_command(x, 0, command_num, true);
+        if ((command_num >= 0) && (command_num < CONST_MAX_COMMANDS)) {
+            selection_send_command(x, 0, command_num, true, true);
+        }
     }
 }
 
@@ -2977,7 +2979,7 @@ void score_getmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
         lock_markers_mutex((t_notation_obj *)x);
         marker = markername2marker((t_notation_obj *) x, args);
         if (marker)
-            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, namefirst);
+            marker_llll = get_single_marker_as_llll((t_notation_obj *) x, marker, -1, namefirst);
         unlock_markers_mutex((t_notation_obj *)x);
         if (marker_llll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 7, marker_llll);
@@ -4451,7 +4453,7 @@ void score_task(t_score *x)
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
                     llll_appendobj(references, items_to_send[i], 0, WHITENULL_llll);
                 } else if (items_to_send[i]->type == k_MARKER) {
-                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], true);
+                    t_llll *temp = get_single_marker_as_llll((t_notation_obj *) x, (t_marker *)items_to_send[i], -1, true);
                     this_llll = llll_get();
                     references = llll_get();
                     llll_appendobj(this_llll, temp, 0, WHITENULL_llll);
@@ -5469,6 +5471,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso eraseslot
     class_addmethod(c, (method) score_resetslotinfo, "resetslotinfo", 0);
     
+    
+    // @method resetslotinfo @digest Reset the commands to the default one
+    // @description @copy BACH_DOC_RESET_COMMANDS
+    class_addmethod(c, (method) score_resetcommands, "resetcommands", 0);
+
     
     // @method resetslotinfo @digest Reset the custom articulations definition to the default one
     // @description @copy BACH_DOC_RESET_ARTICULATIONINFO
@@ -16467,9 +16474,9 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
     
     if (!(modifiers & eCommandKey) && !(modifiers & eAltKey) && !(modifiers & eControlKey)) {
         for (j=0; j<CONST_MAX_COMMANDS; j++) {
-            if (x->r_ob.command_key[j] == textcharacter) {
+            if (x->r_ob.commands[j].command_key == textcharacter) {
                 // send command values
-                selection_send_command(x, modifiers, j, true);
+                selection_send_command(x, modifiers, j, true, true);
                 return 1;
             }
         }
@@ -17021,11 +17028,21 @@ void evaluate_selection(t_score *x, long modifiers, char alsosortselectionbyonse
     }
 }
 
-void selection_send_command(t_score *x, long modifiers, long command_number, char alsosortselectionbyonset)
+void selection_send_command(t_score *x, long modifiers, long command_number,
+                            char alsosortselectionbyonset, char also_send_start_and_end_if_needed)
 {
     if (alsosortselectionbyonset)
         sort_selection((t_notation_obj *)x, false);
 
+    if (also_send_start_and_end_if_needed) {
+        if (x->r_ob.commands[command_number].start_sym != _llllobj_sym_none) {
+            t_llll *start_ll = llll_get();
+            llll_appendsym(start_ll, x->r_ob.commands[command_number].command_name);
+            llll_appendsym(start_ll, x->r_ob.commands[command_number].start_sym);
+            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, start_ll);
+            llll_free(start_ll);
+        }
+    }
     
     if (command_number == -1 && modifiers & eShiftKey) {
         // chord-wise dump but not for commands: we might wanna define a command for Shift+Something!
@@ -17035,6 +17052,16 @@ void selection_send_command(t_score *x, long modifiers, long command_number, cha
             send_chord_as_llll((t_notation_obj *) x, (t_chord *)x->r_ob.firstselecteditem, 7, k_CONSIDER_FOR_DUMPING, command_number);
     } else { // send selection values
         standard_dump_selection((t_notation_obj *)x, 7, command_number, (delete_item_fn)score_sel_delete_item);
+    }
+    
+    if (also_send_start_and_end_if_needed) {
+        if (x->r_ob.commands[command_number].end_sym != _llllobj_sym_none) {
+            t_llll *end_ll = llll_get();
+            llll_appendsym(end_ll, x->r_ob.commands[command_number].command_name);
+            llll_appendsym(end_ll, x->r_ob.commands[command_number].end_sym);
+            llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, end_ll);
+            llll_free(end_ll);
+        }
     }
 }
 
@@ -17955,6 +17982,12 @@ void score_resetslotinfo(t_score *x)
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
 }
 
+void score_resetcommands(t_score *x)
+{
+    create_whole_score_undo_tick(x);
+    notation_obj_reset_commands((t_notation_obj *)x);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_COMMANDS);
+}
 
 void score_resetarticulationinfo(t_score *x)
 {
