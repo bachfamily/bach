@@ -35,6 +35,11 @@ v0.8.2b
     evaluation precedence of the ** operator is now right-to-left, as per the documentation (2**3**2 now returns 512, previously 64)
     evaluation precedence of the ! and ~ operators is now higher than exponentiation
 
+- bach.beatunbox:
+    now the default merge mode is "always": if you need the previous default ("Merge When Drawable") please add @merge 1 to your object.
+    fixed bug causing slot information being transferred onto breakpoints:
+        if you had used a manual workaround, please update your patches
+
 - bach.roll, bach.score:
     Now Cmd+Alt+V DOES NOT OUTPUT all the parameters any longer
 	Also, Alt+V is used to force the output of chord information instead of Shift+V.
