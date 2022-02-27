@@ -1,6 +1,3 @@
-#line 1 "chkparser.c"
-
-#line 3 "chkparser.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -712,8 +709,6 @@ static const flex_int16_t yy_chk[281] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "chkparser.l"
-#line 2 "chkparser.l"
     /*
      *  chkparser.l
      *
@@ -733,8 +728,6 @@ static const flex_int16_t yy_chk[281] =
      *
      */
 
-#line 736 "chkparser.c"
-#line 37 "chkparser.l"
     #ifndef BACH_MAX
     #define BACH_MAX
     #endif
@@ -750,9 +743,6 @@ static const flex_int16_t yy_chk[281] =
     #endif
     
     #define YY_NO_UNISTD_H
-
-#line 754 "chkparser.c"
-#line 755 "chkparser.c"
 
 #define INITIAL 0
 
@@ -1015,10 +1005,6 @@ YY_DECL
 		}
 
 	{
-#line 55 "chkparser.l"
-
-
-#line 1021 "chkparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1074,7 +1060,6 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 57 "chkparser.l"
 {
     parserpost("typecheck: long");
     return H_LONG;
@@ -1082,7 +1067,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 62 "chkparser.l"
 {
     parserpost("typecheck: double");
     return H_DOUBLE;
@@ -1090,7 +1074,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 67 "chkparser.l"
 {
     parserpost("typecheck: rational");
     return H_RAT;
@@ -1098,7 +1081,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 72 "chkparser.l"
 {
     parserpost("typecheck: pitch");
     return H_PITCH;
@@ -1106,7 +1088,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 77 "chkparser.l"
 {
     parserpost("typecheck: pitch");
     return H_PITCH;
@@ -1114,7 +1095,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 82 "chkparser.l"
 {
     parserpost("typecheck: pitch");
     return H_PITCH;
@@ -1122,7 +1102,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 87 "chkparser.l"
 {
     parserpost("typecheck: pitch");
     return H_PITCH;
@@ -1130,7 +1109,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 92 "chkparser.l"
 {
     parserpost("typecheck: no parens, no separators, no double quotes / backslashes");
     return H_SYM;
@@ -1138,7 +1116,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 97 "chkparser.l"
 {
     parserpost("typecheck: parens, no separators, no double quotes / backslashes");
     return H_SYM | H_PAREN;
@@ -1147,7 +1124,6 @@ YY_RULE_SETUP
 case 10:
 /* rule 10 can match eol */
 YY_RULE_SETUP
-#line 102 "chkparser.l"
 {
     parserpost("typecheck: no parens, separators, no double quotes / backslashes");
     return H_SYM | H_SEPARATOR;
@@ -1156,7 +1132,6 @@ YY_RULE_SETUP
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 107 "chkparser.l"
 {
     parserpost("typecheck: parens, separators, no double quotes / backslashes");
     return H_SYM | H_PAREN | H_SEPARATOR;
@@ -1164,7 +1139,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 112 "chkparser.l"
 {
     parserpost("typecheck: no parens, no separators, double quotes / backslashes");
     return H_SYM | H_SPECIAL;
@@ -1172,7 +1146,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 117 "chkparser.l"
 {
     parserpost("typecheck: parens, no separators, double quotes / backslashes");
     return H_SYM | H_PAREN | H_SPECIAL;
@@ -1181,7 +1154,6 @@ YY_RULE_SETUP
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 122 "chkparser.l"
 {
     parserpost("typecheck: no parens, separators, double quotes / backslashes");
     return H_SYM | H_SEPARATOR | H_SPECIAL;
@@ -1190,7 +1162,6 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 127 "chkparser.l"
 {
     parserpost("typecheck: parens, separators, double quotes / backslashes");
     return H_SYM | H_PAREN | H_SEPARATOR | H_SPECIAL;
@@ -1198,7 +1169,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 132 "chkparser.l"
 {
     parserpost("typecheck: backtick, no parens, no separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK;
@@ -1207,7 +1177,6 @@ YY_RULE_SETUP
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 137 "chkparser.l"
 {
     parserpost("typecheck: backtick, parens, no separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_PAREN;
@@ -1216,7 +1185,6 @@ YY_RULE_SETUP
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 142 "chkparser.l"
 {
     parserpost("typecheck: backtick, no parens, separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SEPARATOR;
@@ -1225,7 +1193,6 @@ YY_RULE_SETUP
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 147 "chkparser.l"
 {
     parserpost("typecheck: backtick, parens, separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
@@ -1233,7 +1200,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 152 "chkparser.l"
 {
     parserpost("typecheck: backtick, no parens, no separators, double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SPECIAL;
@@ -1241,7 +1207,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 157 "chkparser.l"
 {
     parserpost("typecheck: backtick, parens, no separators, double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SPECIAL;
@@ -1250,7 +1215,6 @@ YY_RULE_SETUP
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 162 "chkparser.l"
 {
     parserpost("typecheck: backtick, no parens, separators, double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SEPARATOR | H_SPECIAL;
@@ -1258,7 +1222,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 167 "chkparser.l"
 {
     parserpost("typecheck: backtick, parens, separators, double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_PAREN | H_SPECIAL;
@@ -1267,17 +1230,14 @@ YY_RULE_SETUP
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 172 "chkparser.l"
 {
     parserpost("typecheck: dummy default rule, but matched anyway with %s\n", yytext);
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 176 "chkparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1280 "chkparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2421,18 +2381,12 @@ static int yy_flex_strlen (const char * s , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 176 "chkparser.l"
-
-
 #ifndef BACH_MAX
 int main(int argc, char **argv)
 {
 	yylex();
 }
 #endif
-
-
-
 
 t_chkParser::t_chkParser() : t_parser()
 {
@@ -2486,9 +2440,6 @@ t_symbol *t_chkParser::addQuoteIfNeeded(t_symbol *s)
     else
         return s;
 }
-
-
-
 
 void *chkparser_alloc(size_t bytes, void *yyscanner)
 {
