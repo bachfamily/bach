@@ -62,6 +62,8 @@ v0.8.2b
 - bach.transcribe: now the "allnotesoff" message only updates tails when the engine is on. 
 			(As this one was a real bug, it should not break any existing patch, but out of caution check them anyway if you used it)
 
+- bach.playkeys: the "routers" attribute is now static (only settable in the object box) and does not support the initial "+" sign any longer
+    Use the new "autoassigncommands" attribute instead.
 
 
 ***********************
