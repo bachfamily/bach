@@ -968,6 +968,9 @@
 	// Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
 	// @copy BACH_DOC_SLOTINFO_GENERAL
 
+#define BACH_DOC_RESET_COMMANDS
+    // A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
+
 #define BACH_DOC_RESET_ARTICULATIONINFO
     // A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
     // all the user-defined articulations.
