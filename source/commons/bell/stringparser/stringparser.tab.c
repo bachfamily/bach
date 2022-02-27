@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.7.6.  */
+/* A Bison parser, made by GNU Bison 3.7.4.  */
 
 /* Skeleton implementation for Bison GLR parsers in C
 
-   Copyright (C) 2002-2015, 2018-2021 Free Software Foundation, Inc.
+   Copyright (C) 2002-2015, 2018-2020 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -37,10 +37,10 @@
    private implementation details that can be changed or removed.  */
 
 /* Identify Bison output, and Bison version.  */
-#define YYBISON 30706
+#define YYBISON 30704
 
 /* Bison version string.  */
-#define YYBISON_VERSION "3.7.6"
+#define YYBISON_VERSION "3.7.4"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "glr.c"
@@ -383,18 +383,6 @@ typedef int_least16_t yytype_int16;
 typedef short yytype_int16;
 #endif
 
-/* Work around bug in HP-UX 11.23, which defines these macros
-   incorrectly for preprocessor constants.  This workaround can likely
-   be removed in 2023, as HPE has promised support for HP-UX 11.23
-   (aka HP-UX 11i v2) only through the end of 2022; see Table 2 of
-   <https://h20195.www2.hpe.com/V2/getpdf.aspx/4AA4-7673ENW.pdf>.  */
-#ifdef __hpux
-# undef UINT_LEAST8_MAX
-# undef UINT_LEAST16_MAX
-# define UINT_LEAST8_MAX 255
-# define UINT_LEAST16_MAX 65535
-#endif
-
 #if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
 typedef __UINT_LEAST8_TYPE__ yytype_uint8;
 #elif (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
@@ -522,16 +510,14 @@ typedef int yytype_uint16;
       && ((201103 <= __cplusplus && !(__GNUC__ == 4 && __GNUC_MINOR__ == 7)) \
           || (defined _MSC_VER && 1900 <= _MSC_VER)))
 #  define _Noreturn [[noreturn]]
-# elif ((!defined __cplusplus || defined __clang__) \
-        && (201112 <= (defined __STDC_VERSION__ ? __STDC_VERSION__ : 0) \
-            || (!defined __STRICT_ANSI__ \
-                && (__4 < __GNUC__ + (7 <= __GNUC_MINOR__) \
-                    || (defined __apple_build_version__ \
-                        ? 6000000 <= __apple_build_version__ \
-                        : 3 < __clang_major__ + (5 <= __clang_minor__))))))
+# elif (!defined __cplusplus                     \
+        && (201112 <= (defined __STDC_VERSION__ ? __STDC_VERSION__ : 0)  \
+            || 4 < __GNUC__ + (7 <= __GNUC_MINOR__) \
+            || (defined __apple_build_version__ \
+                ? 6000000 <= __apple_build_version__ \
+                : 3 < __clang_major__ + (5 <= __clang_minor__))))
    /* _Noreturn works as-is.  */
-# elif (2 < __GNUC__ + (8 <= __GNUC_MINOR__) || defined __clang__ \
-        || 0x5110 <= __SUNPRO_C)
+# elif 2 < __GNUC__ + (8 <= __GNUC_MINOR__) || 0x5110 <= __SUNPRO_C
 #  define _Noreturn __attribute__ ((__noreturn__))
 # elif 1200 <= (defined _MSC_VER ? _MSC_VER : 0)
 #  define _Noreturn __declspec (noreturn)
@@ -542,9 +528,9 @@ typedef int yytype_uint16;
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YY_USE(E) ((void) (E))
+# define YYUSE(E) ((void) (E))
 #else
-# define YY_USE(E) /* empty */
+# define YYUSE(E) /* empty */
 #endif
 
 #if defined __GNUC__ && ! defined __ICC && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
@@ -799,7 +785,7 @@ static const yytype_int16 yypgoto[] =
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int16 yydefgoto[] =
 {
-       0,    38,    39,    40,    41,    42,    65,    66,    43,   170,
+      -1,    38,    39,    40,    41,    42,    65,    66,    43,   170,
       69,   334,   174,    44,   154,   398,    45,    46,    47,   238,
      239,   240,    48,    49,    50,    51,    52,   126,   242,    53,
       54,    55,    56,    57,    58
@@ -1892,13 +1878,13 @@ yy_symbol_value_print (FILE *yyo,
                        yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, void *scanner, struct _parseParams *params)
 {
   FILE *yyoutput = yyo;
-  YY_USE (yyoutput);
-  YY_USE (scanner);
-  YY_USE (params);
+  YYUSE (yyoutput);
+  YYUSE (scanner);
+  YYUSE (params);
   if (!yyvaluep)
     return;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YY_USE (yykind);
+  YYUSE (yykind);
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
@@ -2051,8 +2037,8 @@ static inline yysymbol_kind_t
 yygetToken (int *yycharp, yyGLRStack* yystackp, void *scanner, struct _parseParams *params)
 {
   yysymbol_kind_t yytoken;
-  YY_USE (scanner);
-  YY_USE (params);
+  YYUSE (scanner);
+  YYUSE (params);
   if (*yycharp == YYEMPTY)
     {
       YY_DPRINTF ((stderr, "Reading a token\n"));
@@ -2100,10 +2086,10 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 {
   yybool yynormal YY_ATTRIBUTE_UNUSED = yystackp->yysplitPoint == YY_NULLPTR;
   int yylow;
-  YY_USE (yyvalp);
-  YY_USE (scanner);
-  YY_USE (params);
-  YY_USE (yyrhslen);
+  YYUSE (yyvalp);
+  YYUSE (scanner);
+  YYUSE (params);
+  YYUSE (yyrhslen);
 # undef yyerrok
 # define yyerrok (yystackp->yyerrState = 0)
 # undef YYACCEPT
@@ -2137,7 +2123,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *params->codeac = -1;
     code_dev_post ("parse: empty program\n");
 }
-#line 2141 "stringparser.tab.c"
+#line 2127 "stringparser.tab.c"
     break;
 
   case 3: /* program: NAMEDPARAM  */
@@ -2148,7 +2134,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     code_dev_post ("parse: NAMEDPARAM: empty program\n");
     YYACCEPT;
 }
-#line 2152 "stringparser.tab.c"
+#line 2138 "stringparser.tab.c"
     break;
 
   case 4: /* program: sequence  */
@@ -2159,7 +2145,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     code_dev_post("codeac: %ld", *params->codeac);
     code_dev_post ("parse: sequence: program\n");
 }
-#line 2163 "stringparser.tab.c"
+#line 2149 "stringparser.tab.c"
     break;
 
   case 5: /* program: sequence NAMEDPARAM  */
@@ -2170,7 +2156,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     code_dev_post ("parse: sequence NAMEDPARAM: program\n");
     YYACCEPT;
 }
-#line 2174 "stringparser.tab.c"
+#line 2160 "stringparser.tab.c"
     break;
 
   case 7: /* sequence: sequence SEQ list  */
@@ -2179,7 +2165,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSequence((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: seq\n");
 }
-#line 2183 "stringparser.tab.c"
+#line 2169 "stringparser.tab.c"
     break;
 
   case 8: /* ifThenElse: IF_KW sequence THEN_KW list  */
@@ -2188,7 +2174,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astIfThenElse((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), nullptr, params->owner);
     code_dev_post ("parse: if then\n");
 }
-#line 2192 "stringparser.tab.c"
+#line 2178 "stringparser.tab.c"
     break;
 
   case 9: /* ifThenElse: IF_KW sequence THEN_KW list ELSE_KW list  */
@@ -2214,7 +2200,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astIfThenElse((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: if then else\n");
 }
-#line 2218 "stringparser.tab.c"
+#line 2204 "stringparser.tab.c"
     break;
 
   case 10: /* whileloop: WHILE_KW sequence DO_KW list  */
@@ -2223,7 +2209,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astWhileLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: while...do\n");
 }
-#line 2227 "stringparser.tab.c"
+#line 2213 "stringparser.tab.c"
     break;
 
   case 11: /* whileloop: WHILE_KW sequence COLLECT_KW list  */
@@ -2232,7 +2218,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astWhileLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: while...collect\n");
 }
-#line 2236 "stringparser.tab.c"
+#line 2222 "stringparser.tab.c"
     break;
 
   case 12: /* forloop: FOR_KW forargList DO_KW list  */
@@ -2241,7 +2227,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.fal), nullptr, nullptr, nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList DO_KW list\n");
 }
-#line 2245 "stringparser.tab.c"
+#line 2231 "stringparser.tab.c"
     break;
 
   case 13: /* forloop: FOR_KW forargList WITH_KW argsByNameList DO_KW list  */
@@ -2250,7 +2236,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.fal), nullptr, nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: forargList WITH_KW argsByNameList DO_KW list\n");
 }
-#line 2254 "stringparser.tab.c"
+#line 2240 "stringparser.tab.c"
     break;
 
   case 14: /* forloop: FOR_KW forargList AS_KW sequence DO_KW list  */
@@ -2259,7 +2245,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList AS_KW sequence DO_KW list\n");
 }
-#line 2263 "stringparser.tab.c"
+#line 2249 "stringparser.tab.c"
     break;
 
   case 15: /* forloop: FOR_KW forargList AS_KW sequence WITH_KW argsByNameList DO_KW list  */
@@ -2268,7 +2254,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-6)].yystate.yysemantics.yysval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList DO_KW list\n");
 }
-#line 2272 "stringparser.tab.c"
+#line 2258 "stringparser.tab.c"
     break;
 
   case 16: /* forloop: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence DO_KW list  */
@@ -2277,7 +2263,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-6)].yystate.yysemantics.yysval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence DO_KW list\n");
 }
-#line 2281 "stringparser.tab.c"
+#line 2267 "stringparser.tab.c"
     break;
 
   case 17: /* forloop: FOR_KW forargList COLLECT_KW list  */
@@ -2286,7 +2272,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.fal), nullptr, nullptr, nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList COLLECT_KW list\n");
 }
-#line 2290 "stringparser.tab.c"
+#line 2276 "stringparser.tab.c"
     break;
 
   case 18: /* forloop: FOR_KW forargList WITH_KW argsByNameList COLLECT_KW list  */
@@ -2295,7 +2281,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.fal), nullptr, nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: forargList WITH_KW argsByNameList COLLECT_KW list\n");
 }
-#line 2299 "stringparser.tab.c"
+#line 2285 "stringparser.tab.c"
     break;
 
   case 19: /* forloop: FOR_KW forargList AS_KW sequence COLLECT_KW list  */
@@ -2304,7 +2290,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList AS_KW sequence COLLECT_KW list\n");
 }
-#line 2308 "stringparser.tab.c"
+#line 2294 "stringparser.tab.c"
     break;
 
   case 20: /* forloop: FOR_KW forargList AS_KW sequence WITH_KW argsByNameList COLLECT_KW list  */
@@ -2313,7 +2299,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-6)].yystate.yysemantics.yysval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList COLLECT_KW list\n");
 }
-#line 2317 "stringparser.tab.c"
+#line 2303 "stringparser.tab.c"
     break;
 
   case 21: /* forloop: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence COLLECT_KW list  */
@@ -2322,7 +2308,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-6)].yystate.yysemantics.yysval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yysval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence COLLECT_KW list\n");
 }
-#line 2326 "stringparser.tab.c"
+#line 2312 "stringparser.tab.c"
     break;
 
   case 22: /* forargList: forarg  */
@@ -2331,7 +2317,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).fal) = new countedList<forArg *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.forarg));
     code_dev_post ("parse: for iterator (first term)\n");
 }
-#line 2335 "stringparser.tab.c"
+#line 2321 "stringparser.tab.c"
     break;
 
   case 23: /* forargList: forargList COMMA forarg  */
@@ -2340,7 +2326,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).fal) = new countedList<forArg *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.forarg), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.fal));
     code_dev_post ("parse: for iterator (subsequent term)\n");
 }
-#line 2344 "stringparser.tab.c"
+#line 2330 "stringparser.tab.c"
     break;
 
   case 24: /* forarg: LOCALVAR IN_KW sequence  */
@@ -2350,7 +2336,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: for iterator with index");
 }
-#line 2354 "stringparser.tab.c"
+#line 2340 "stringparser.tab.c"
     break;
 
   case 25: /* forarg: LOCALVAR LOCALVAR IN_KW sequence  */
@@ -2361,7 +2347,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).forarg) = new forArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n));
     code_dev_post ("parse: for iterator with index and address");
 }
-#line 2365 "stringparser.tab.c"
+#line 2351 "stringparser.tab.c"
     break;
 
   case 26: /* $@1: %empty  */
@@ -2371,7 +2357,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     *++(params->argumentsStack) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.funarglist);
 }
-#line 2375 "stringparser.tab.c"
+#line 2361 "stringparser.tab.c"
     break;
 
   case 27: /* fundef: funargList FUNDEF $@1 list  */
@@ -2388,7 +2374,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->argumentsStack);
     code_dev_post ("parse: user defined function funargList FUNDEF");
 }
-#line 2392 "stringparser.tab.c"
+#line 2378 "stringparser.tab.c"
     break;
 
   case 28: /* $@2: %empty  */
@@ -2400,7 +2386,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     params->fnDepth++;
     *++(params->argumentsStack) = nullptr;
 }
-#line 2404 "stringparser.tab.c"
+#line 2390 "stringparser.tab.c"
     break;
 
   case 29: /* fundef: FUNDEF $@2 list  */
@@ -2417,7 +2403,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->argumentsStack);
     code_dev_post ("parse: user defined function FUNDEF");
 }
-#line 2421 "stringparser.tab.c"
+#line 2407 "stringparser.tab.c"
     break;
 
   case 30: /* $@3: %empty  */
@@ -2432,7 +2418,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     }
     *++(params->argumentsStack) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.funarglist);
 }
-#line 2436 "stringparser.tab.c"
+#line 2422 "stringparser.tab.c"
     break;
 
   case 31: /* fundef: funargList liftedargList FUNDEF $@3 list  */
@@ -2449,7 +2435,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->argumentsStack);
     code_dev_post ("parse: user defined function funargList liftedargList");
 }
-#line 2453 "stringparser.tab.c"
+#line 2439 "stringparser.tab.c"
     break;
 
   case 32: /* $@4: %empty  */
@@ -2466,7 +2452,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
         (*(params->liftedVariablesStack))->insert(v->getItem().getName());
     }
 }
-#line 2470 "stringparser.tab.c"
+#line 2456 "stringparser.tab.c"
     break;
 
   case 33: /* fundef: liftedargList FUNDEF $@4 list  */
@@ -2483,7 +2469,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->argumentsStack);
     code_dev_post ("parse: user defined function liftedargList FUNDEF");
 }
-#line 2487 "stringparser.tab.c"
+#line 2473 "stringparser.tab.c"
     break;
 
   case 34: /* funargList: LOCALVAR  */
@@ -2495,7 +2481,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     (**(params->localVariablesAuxMapStack))[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)] = 1;
     code_dev_post ("parse: funargList (first term, no default)\n");
 }
-#line 2499 "stringparser.tab.c"
+#line 2485 "stringparser.tab.c"
     break;
 
   case 35: /* funargList: ELLIPSIS  */
@@ -2506,7 +2492,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg(gensym("<...>")));
     code_dev_post ("parse: ELLIPSIS");
 }
-#line 2510 "stringparser.tab.c"
+#line 2496 "stringparser.tab.c"
     break;
 
   case 36: /* $@5: %empty  */
@@ -2520,7 +2506,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     (**(params->localVariablesAuxMapStack))[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.sym)] = 1;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
 }
-#line 2524 "stringparser.tab.c"
+#line 2510 "stringparser.tab.c"
     break;
 
   case 37: /* funargList: LOCALVAR ASSIGN $@5 list  */
@@ -2534,7 +2520,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesStack--) = nullptr;
     code_dev_post ("parse: funargList (first term, with default)\n");
 }
-#line 2538 "stringparser.tab.c"
+#line 2524 "stringparser.tab.c"
     break;
 
   case 38: /* funargList: funargList COMMA LOCALVAR  */
@@ -2544,7 +2530,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     (**(params->localVariablesAuxMapStack))[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)] = 1;
     code_dev_post ("parse: funargList (subsequent term, no default)\n");
 }
-#line 2548 "stringparser.tab.c"
+#line 2534 "stringparser.tab.c"
     break;
 
   case 39: /* funargList: funargList COMMA ELLIPSIS  */
@@ -2553,7 +2539,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg(gensym("<...>")), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.funarglist));
     code_dev_post ("parse: funargList (subsequent term, no default)\n");
 }
-#line 2557 "stringparser.tab.c"
+#line 2543 "stringparser.tab.c"
     break;
 
   case 40: /* $@6: %empty  */
@@ -2563,7 +2549,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
 }
-#line 2567 "stringparser.tab.c"
+#line 2553 "stringparser.tab.c"
     break;
 
   case 41: /* funargList: funargList COMMA LOCALVAR ASSIGN $@6 list  */
@@ -2575,7 +2561,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesStack--) = nullptr;
     code_dev_post ("parse: funargList (subsequent term, with default)\n");
 }
-#line 2579 "stringparser.tab.c"
+#line 2565 "stringparser.tab.c"
     break;
 
   case 42: /* liftedargList: LIFT LOCALVAR  */
@@ -2584,7 +2570,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).liftedarglist) = new countedList<t_localVar>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: liftedargList (first term)\n");
 }
-#line 2588 "stringparser.tab.c"
+#line 2574 "stringparser.tab.c"
     break;
 
   case 43: /* liftedargList: liftedargList COMMA LOCALVAR  */
@@ -2593,7 +2579,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).liftedarglist) = new countedList<t_localVar>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.liftedarglist));
     code_dev_post ("parse: liftedargList (subsequent term)\n");
 }
-#line 2597 "stringparser.tab.c"
+#line 2583 "stringparser.tab.c"
     break;
 
   case 45: /* functionApplication: exp APPLY funcall  */
@@ -2603,7 +2589,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     code_dev_post ("parse: term APPLY funcall");
     ((*yyvalp).fc) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc);
 }
-#line 2607 "stringparser.tab.c"
+#line 2593 "stringparser.tab.c"
     break;
 
   case 46: /* funcall: term STARTPARAMS argsByPositionList CLOSEDROUND  */
@@ -2613,7 +2599,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.nl);
     code_dev_post ("parse: function call with args by position");
 }
-#line 2617 "stringparser.tab.c"
+#line 2603 "stringparser.tab.c"
     break;
 
   case 47: /* funcall: term STARTPARAMS argsByNameList CLOSEDROUND  */
@@ -2623,7 +2609,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl);
     code_dev_post ("parse: function call with args by name");
 }
-#line 2627 "stringparser.tab.c"
+#line 2613 "stringparser.tab.c"
     break;
 
   case 48: /* funcall: term STARTPARAMS argsByPositionList COMMA argsByNameList CLOSEDROUND  */
@@ -2634,7 +2620,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl);
     code_dev_post ("parse: function call with args by position and by name");
 }
-#line 2638 "stringparser.tab.c"
+#line 2624 "stringparser.tab.c"
     break;
 
   case 49: /* funcall: term STARTPARAMS argsByPositionList argsByNameList CLOSEDROUND  */
@@ -2645,7 +2631,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl);
     code_dev_post ("parse: function call with args by position and by name");
 }
-#line 2649 "stringparser.tab.c"
+#line 2635 "stringparser.tab.c"
     break;
 
   case 50: /* funcall: term STARTPARAMS CLOSEDROUND  */
@@ -2654,7 +2640,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), nullptr, nullptr, params->owner);
     code_dev_post ("parse: function call with no args");
 }
-#line 2658 "stringparser.tab.c"
+#line 2644 "stringparser.tab.c"
     break;
 
   case 51: /* argsByPositionList: sequence  */
@@ -2663,7 +2649,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).nl) = new countedList<astNode *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n));
     code_dev_post ("parse: argsByPositionList (first term)\n");
 }
-#line 2667 "stringparser.tab.c"
+#line 2653 "stringparser.tab.c"
     break;
 
   case 52: /* argsByPositionList: argsByPositionList COMMA sequence  */
@@ -2672,7 +2658,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).nl) = new countedList<astNode *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.nl));
     code_dev_post ("parse: argsByPositionList (subsequent term)\n");
 }
-#line 2676 "stringparser.tab.c"
+#line 2662 "stringparser.tab.c"
     break;
 
   case 53: /* argsByNameList: argByName  */
@@ -2681,7 +2667,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).snpl) = new countedList<symNodePair *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.snp));
     code_dev_post ("parse: argsByNameList (first term)\n");
 }
-#line 2685 "stringparser.tab.c"
+#line 2671 "stringparser.tab.c"
     break;
 
   case 54: /* argsByNameList: argsByNameList COMMA argByName  */
@@ -2690,7 +2676,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).snpl) = new countedList<symNodePair *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.snp), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.snpl));
     code_dev_post ("parse: argsByNameList (subsequent term)\n");
 }
-#line 2694 "stringparser.tab.c"
+#line 2680 "stringparser.tab.c"
     break;
 
   case 55: /* argsByNameList: argsByNameList argByName  */
@@ -2699,7 +2685,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).snpl) = new countedList<symNodePair *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.snp), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.snpl));
     code_dev_post ("parse: argsByNameList (subsequent term)\n");
 }
-#line 2703 "stringparser.tab.c"
+#line 2689 "stringparser.tab.c"
     break;
 
   case 56: /* argByName: NAMEDPARAM sequence  */
@@ -2708,7 +2694,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).snp) = new symNodePair((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n));
     code_dev_post ("parse: named parameter %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.sym)->s_name);
 }
-#line 2712 "stringparser.tab.c"
+#line 2698 "stringparser.tab.c"
     break;
 
   case 59: /* list: simpleList listEnd  */
@@ -2717,7 +2703,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConcat((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: cat\n");
 }
-#line 2721 "stringparser.tab.c"
+#line 2707 "stringparser.tab.c"
     break;
 
   case 66: /* simpleList: simpleList exp  */
@@ -2726,7 +2712,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConcat((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: cat\n");
 }
-#line 2730 "stringparser.tab.c"
+#line 2716 "stringparser.tab.c"
     break;
 
   case 68: /* assignment: OUTLET ASSIGN list  */
@@ -2743,7 +2729,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
     code_dev_post("parse: OUTLET ASSIGN list");
 }
-#line 2747 "stringparser.tab.c"
+#line 2733 "stringparser.tab.c"
     break;
 
   case 69: /* assignment: DIROUTLET ASSIGN list  */
@@ -2757,7 +2743,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
     code_dev_post("parse: DIROUTLET ASSIGN list");
 }
-#line 2761 "stringparser.tab.c"
+#line 2747 "stringparser.tab.c"
     break;
 
   case 70: /* assign: var ASSIGN list  */
@@ -2766,7 +2752,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astAssign((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ASSIGN list");
 }
-#line 2770 "stringparser.tab.c"
+#line 2756 "stringparser.tab.c"
     break;
 
   case 71: /* assign: INIT LOCALVAR ASSIGN list  */
@@ -2776,7 +2762,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astInit((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: INIT LOCALVAR ASSIGN list");
 }
-#line 2780 "stringparser.tab.c"
+#line 2766 "stringparser.tab.c"
     break;
 
   case 72: /* assign: var lvalueStepList ASSIGN list  */
@@ -2785,7 +2771,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichAssignment<E_RA_STANDARD>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ASSIGN list");
 }
-#line 2789 "stringparser.tab.c"
+#line 2775 "stringparser.tab.c"
     break;
 
   case 73: /* assign: var APLUS list  */
@@ -2794,7 +2780,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorAPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var APLUS list");
 }
-#line 2798 "stringparser.tab.c"
+#line 2784 "stringparser.tab.c"
     break;
 
   case 74: /* assign: var lvalueStepList APLUS list  */
@@ -2803,7 +2789,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRAPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APLUS list");
 }
-#line 2807 "stringparser.tab.c"
+#line 2793 "stringparser.tab.c"
     break;
 
   case 75: /* assign: var AMINUS list  */
@@ -2812,7 +2798,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorAMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var AMINUS list");
 }
-#line 2816 "stringparser.tab.c"
+#line 2802 "stringparser.tab.c"
     break;
 
   case 76: /* assign: var lvalueStepList AMINUS list  */
@@ -2821,7 +2807,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRAMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AMINUS list");
 }
-#line 2825 "stringparser.tab.c"
+#line 2811 "stringparser.tab.c"
     break;
 
   case 77: /* assign: var ATIMES list  */
@@ -2830,7 +2816,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorATimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ATIMES list");
 }
-#line 2834 "stringparser.tab.c"
+#line 2820 "stringparser.tab.c"
     break;
 
   case 78: /* assign: var lvalueStepList ATIMES list  */
@@ -2839,7 +2825,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRATimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ATIMES list");
 }
-#line 2843 "stringparser.tab.c"
+#line 2829 "stringparser.tab.c"
     break;
 
   case 79: /* assign: var APOWOP list  */
@@ -2848,7 +2834,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorAPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var APOWOP list");
 }
-#line 2852 "stringparser.tab.c"
+#line 2838 "stringparser.tab.c"
     break;
 
   case 80: /* assign: var lvalueStepList APOWOP list  */
@@ -2857,7 +2843,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRAPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APOWOP list");
 }
-#line 2861 "stringparser.tab.c"
+#line 2847 "stringparser.tab.c"
     break;
 
   case 81: /* assign: var ADIV list  */
@@ -2866,7 +2852,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorADiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ADIV list");
 }
-#line 2870 "stringparser.tab.c"
+#line 2856 "stringparser.tab.c"
     break;
 
   case 82: /* assign: var lvalueStepList ADIV list  */
@@ -2875,7 +2861,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRADiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIV list");
 }
-#line 2879 "stringparser.tab.c"
+#line 2865 "stringparser.tab.c"
     break;
 
   case 83: /* assign: var ADIVDIV list  */
@@ -2884,7 +2870,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorADivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ADIVDIV list");
 }
-#line 2888 "stringparser.tab.c"
+#line 2874 "stringparser.tab.c"
     break;
 
   case 84: /* assign: var lvalueStepList ADIVDIV list  */
@@ -2893,7 +2879,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRADivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIVDIV list");
 }
-#line 2897 "stringparser.tab.c"
+#line 2883 "stringparser.tab.c"
     break;
 
   case 85: /* assign: var AREM list  */
@@ -2902,7 +2888,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorARemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var AREM list");
 }
-#line 2906 "stringparser.tab.c"
+#line 2892 "stringparser.tab.c"
     break;
 
   case 86: /* assign: var lvalueStepList AREM list  */
@@ -2911,7 +2897,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRARemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AREM list");
 }
-#line 2915 "stringparser.tab.c"
+#line 2901 "stringparser.tab.c"
     break;
 
   case 87: /* assign: var ABITAND list  */
@@ -2920,7 +2906,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorABitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ABITAND list");
 }
-#line 2924 "stringparser.tab.c"
+#line 2910 "stringparser.tab.c"
     break;
 
   case 88: /* assign: var lvalueStepList ABITAND list  */
@@ -2929,7 +2915,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRABitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITAND list");
 }
-#line 2933 "stringparser.tab.c"
+#line 2919 "stringparser.tab.c"
     break;
 
   case 89: /* assign: var ABITXOR list  */
@@ -2938,7 +2924,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorABitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ABITXOR list");
 }
-#line 2942 "stringparser.tab.c"
+#line 2928 "stringparser.tab.c"
     break;
 
   case 90: /* assign: var lvalueStepList ABITXOR list  */
@@ -2947,7 +2933,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRABitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITXOR list");
 }
-#line 2951 "stringparser.tab.c"
+#line 2937 "stringparser.tab.c"
     break;
 
   case 91: /* assign: var ABITOR list  */
@@ -2956,7 +2942,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorABitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: localVar ABITOR list");
 }
-#line 2960 "stringparser.tab.c"
+#line 2946 "stringparser.tab.c"
     break;
 
   case 92: /* assign: var lvalueStepList ABITOR list  */
@@ -2965,7 +2951,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRABitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITOR list");
 }
-#line 2969 "stringparser.tab.c"
+#line 2955 "stringparser.tab.c"
     break;
 
   case 93: /* assign: var ALSHIFT list  */
@@ -2974,7 +2960,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorALShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALSHIFT list");
 }
-#line 2978 "stringparser.tab.c"
+#line 2964 "stringparser.tab.c"
     break;
 
   case 94: /* assign: var lvalueStepList ALSHIFT list  */
@@ -2983,7 +2969,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRALShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALSHIFT list");
 }
-#line 2987 "stringparser.tab.c"
+#line 2973 "stringparser.tab.c"
     break;
 
   case 95: /* assign: var ARSHIFT list  */
@@ -2992,7 +2978,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorARShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ARSHIFT list");
 }
-#line 2996 "stringparser.tab.c"
+#line 2982 "stringparser.tab.c"
     break;
 
   case 96: /* assign: var lvalueStepList ARSHIFT list  */
@@ -3001,7 +2987,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRARShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARSHIFT list");
 }
-#line 3005 "stringparser.tab.c"
+#line 2991 "stringparser.tab.c"
     break;
 
   case 97: /* assign: var ALOGAND list  */
@@ -3010,7 +2996,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCAAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGAND list");
 }
-#line 3014 "stringparser.tab.c"
+#line 3000 "stringparser.tab.c"
     break;
 
   case 98: /* assign: var lvalueStepList ALOGAND list  */
@@ -3019,7 +3005,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogRASCAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGAND list");
 }
-#line 3023 "stringparser.tab.c"
+#line 3009 "stringparser.tab.c"
     break;
 
   case 99: /* assign: var ALOGANDEXT list  */
@@ -3028,7 +3014,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCAAndExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGANDEXT list");
 }
-#line 3032 "stringparser.tab.c"
+#line 3018 "stringparser.tab.c"
     break;
 
   case 100: /* assign: var lvalueStepList ALOGANDEXT list  */
@@ -3037,7 +3023,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCRichAccessAndExt<astRichAssignment<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGANDEXT list");
 }
-#line 3041 "stringparser.tab.c"
+#line 3027 "stringparser.tab.c"
     break;
 
   case 101: /* assign: var ALOGXOR list  */
@@ -3046,7 +3032,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogAXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGXOR list");
 }
-#line 3050 "stringparser.tab.c"
+#line 3036 "stringparser.tab.c"
     break;
 
   case 102: /* assign: var lvalueStepList ALOGXOR list  */
@@ -3055,7 +3041,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogRAXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGXOR list");
 }
-#line 3059 "stringparser.tab.c"
+#line 3045 "stringparser.tab.c"
     break;
 
   case 103: /* assign: var ALOGOR list  */
@@ -3064,7 +3050,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCAOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGOR list");
 }
-#line 3068 "stringparser.tab.c"
+#line 3054 "stringparser.tab.c"
     break;
 
   case 104: /* assign: var lvalueStepList ALOGOR list  */
@@ -3073,7 +3059,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogRASCOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOR list");
 }
-#line 3077 "stringparser.tab.c"
+#line 3063 "stringparser.tab.c"
     break;
 
   case 105: /* assign: var ALOGOREXT list  */
@@ -3082,7 +3068,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCAOrExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: var ALOGOREXT list");
 }
-#line 3086 "stringparser.tab.c"
+#line 3072 "stringparser.tab.c"
     break;
 
   case 106: /* assign: var lvalueStepList ALOGOREXT list  */
@@ -3091,7 +3077,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCRichAccessOrExt<astRichAssignment<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOREXT list");
 }
-#line 3095 "stringparser.tab.c"
+#line 3081 "stringparser.tab.c"
     break;
 
   case 107: /* assign: var ANTHOP list  */
@@ -3100,7 +3086,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astNthAssignOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: var ANTHOP list op\n");
 }
-#line 3104 "stringparser.tab.c"
+#line 3090 "stringparser.tab.c"
     break;
 
   case 108: /* assign: var lvalueStepList ANTHOP list  */
@@ -3109,7 +3095,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichAccessNthOp<astRichAssignment<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ANTHOP list");
 }
-#line 3113 "stringparser.tab.c"
+#line 3099 "stringparser.tab.c"
     break;
 
   case 109: /* assign: var ACONCAT list  */
@@ -3118,7 +3104,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConcatAssignOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: var ACONCAT list op\n");
 }
-#line 3122 "stringparser.tab.c"
+#line 3108 "stringparser.tab.c"
     break;
 
   case 110: /* assign: var lvalueStepList ACONCAT list  */
@@ -3127,7 +3113,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichAccessConcatOp<astRichAssignment<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ACONCAT list");
 }
-#line 3131 "stringparser.tab.c"
+#line 3117 "stringparser.tab.c"
     break;
 
   case 111: /* assign: var ARCONCAT list  */
@@ -3136,7 +3122,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRevConcatAssignOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: var ARCONCAT list op\n");
 }
-#line 3140 "stringparser.tab.c"
+#line 3126 "stringparser.tab.c"
     break;
 
   case 112: /* assign: var lvalueStepList ARCONCAT list  */
@@ -3145,7 +3131,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichAccessRConcatOp<astRichAssignment<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
-#line 3149 "stringparser.tab.c"
+#line 3135 "stringparser.tab.c"
     break;
 
   case 113: /* assign: localVar AAPPLY funcall  */
@@ -3155,7 +3141,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astAssign(new astLocalVar((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lv)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), params->owner);
     code_dev_post ("parse: localVar AAPPLY funcall");
 }
-#line 3159 "stringparser.tab.c"
+#line 3145 "stringparser.tab.c"
     break;
 
   case 114: /* assign: patcherVar AAPPLY funcall  */
@@ -3167,7 +3153,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astAssign(v, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), params->owner);
     code_dev_post ("parse: patcherVar AAPPLY funcall");
 }
-#line 3171 "stringparser.tab.c"
+#line 3157 "stringparser.tab.c"
     break;
 
   case 115: /* assign: globalVar AAPPLY funcall  */
@@ -3177,7 +3163,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astAssign(new astGlobalVar((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.gv)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), params->owner);
     code_dev_post ("parse: globalVar AAPPLY funcall");
 }
-#line 3181 "stringparser.tab.c"
+#line 3167 "stringparser.tab.c"
     break;
 
   case 116: /* assign: var lvalueStepList AAPPLY funcall  */
@@ -3187,7 +3173,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
-#line 3191 "stringparser.tab.c"
+#line 3177 "stringparser.tab.c"
     break;
 
   case 117: /* lvalueStepList: NTHOP lvalueStepParams  */
@@ -3196,7 +3182,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_NTH, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n)));
     code_dev_post ("parse: lvalueStepList (NTH first term)");
 }
-#line 3200 "stringparser.tab.c"
+#line 3186 "stringparser.tab.c"
     break;
 
   case 118: /* lvalueStepList: APPLY lvalueStepParams  */
@@ -3205,7 +3191,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_KEY, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n)));
     code_dev_post ("parse: lvalueStepList (KEY first term)");
 }
-#line 3209 "stringparser.tab.c"
+#line 3195 "stringparser.tab.c"
     break;
 
   case 119: /* lvalueStepList: lvalueStepList NTHOP lvalueStepParams  */
@@ -3214,7 +3200,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_NTH, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl));
     code_dev_post ("parse: lvalueStepList (NTH subsequent term)");
 }
-#line 3218 "stringparser.tab.c"
+#line 3204 "stringparser.tab.c"
     break;
 
   case 120: /* lvalueStepList: lvalueStepList APPLY lvalueStepParams  */
@@ -3223,7 +3209,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_KEY, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl));
     code_dev_post ("parse: lvalueStepList (KEY subsequent term)");
 }
-#line 3227 "stringparser.tab.c"
+#line 3213 "stringparser.tab.c"
     break;
 
   case 122: /* lvalueStepParams: lvalueStepParams exp  */
@@ -3232,13 +3218,13 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConcat((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: cat\n");
 }
-#line 3236 "stringparser.tab.c"
+#line 3222 "stringparser.tab.c"
     break;
 
   case 124: /* exp: UPLUS listEnd  */
 #line 832 "stringparser.y"
                 { ((*yyvalp).n) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n); }
-#line 3242 "stringparser.tab.c"
+#line 3228 "stringparser.tab.c"
     break;
 
   case 125: /* exp: UMINUS listEnd  */
@@ -3247,7 +3233,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorUMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: U-\n");
 }
-#line 3251 "stringparser.tab.c"
+#line 3237 "stringparser.tab.c"
     break;
 
   case 126: /* exp: LOGNOT listEnd  */
@@ -3256,7 +3242,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogNot((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: !\n");
 }
-#line 3260 "stringparser.tab.c"
+#line 3246 "stringparser.tab.c"
     break;
 
   case 127: /* exp: BITNOT listEnd  */
@@ -3265,7 +3251,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitNot((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: ~\n");
 }
-#line 3269 "stringparser.tab.c"
+#line 3255 "stringparser.tab.c"
     break;
 
   case 128: /* exp: exp PLUS listEnd  */
@@ -3274,7 +3260,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: +\n");
 }
-#line 3278 "stringparser.tab.c"
+#line 3264 "stringparser.tab.c"
     break;
 
   case 129: /* exp: exp MINUS listEnd  */
@@ -3283,7 +3269,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: -\n");
 }
-#line 3287 "stringparser.tab.c"
+#line 3273 "stringparser.tab.c"
     break;
 
   case 130: /* exp: exp TIMES listEnd  */
@@ -3292,7 +3278,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorTimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: *\n");
 }
-#line 3296 "stringparser.tab.c"
+#line 3282 "stringparser.tab.c"
     break;
 
   case 131: /* exp: exp DIV listEnd  */
@@ -3301,7 +3287,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorDiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: /\n");
 }
-#line 3305 "stringparser.tab.c"
+#line 3291 "stringparser.tab.c"
     break;
 
   case 132: /* exp: exp DIVDIV listEnd  */
@@ -3310,7 +3296,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorDivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: //\n");
 }
-#line 3314 "stringparser.tab.c"
+#line 3300 "stringparser.tab.c"
     break;
 
   case 133: /* exp: exp REM listEnd  */
@@ -3319,7 +3305,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: %\n");
 }
-#line 3323 "stringparser.tab.c"
+#line 3309 "stringparser.tab.c"
     break;
 
   case 134: /* exp: exp POWOP listEnd  */
@@ -3328,7 +3314,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: **\n");
 }
-#line 3332 "stringparser.tab.c"
+#line 3318 "stringparser.tab.c"
     break;
 
   case 135: /* exp: exp BITAND listEnd  */
@@ -3337,7 +3323,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &\n");
 }
-#line 3341 "stringparser.tab.c"
+#line 3327 "stringparser.tab.c"
     break;
 
   case 136: /* exp: exp BITXOR listEnd  */
@@ -3346,7 +3332,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ^\n");
 }
-#line 3350 "stringparser.tab.c"
+#line 3336 "stringparser.tab.c"
     break;
 
   case 137: /* exp: exp BITOR listEnd  */
@@ -3355,7 +3341,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: |\n");
 }
-#line 3359 "stringparser.tab.c"
+#line 3345 "stringparser.tab.c"
     break;
 
   case 138: /* exp: exp LSHIFT listEnd  */
@@ -3364,7 +3350,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <<\n");
 }
-#line 3368 "stringparser.tab.c"
+#line 3354 "stringparser.tab.c"
     break;
 
   case 139: /* exp: exp RSHIFT listEnd  */
@@ -3373,7 +3359,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: >>\n");
 }
-#line 3377 "stringparser.tab.c"
+#line 3363 "stringparser.tab.c"
     break;
 
   case 140: /* exp: exp EQUAL listEnd  */
@@ -3382,7 +3368,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorEq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ==\n");
 }
-#line 3386 "stringparser.tab.c"
+#line 3372 "stringparser.tab.c"
     break;
 
   case 141: /* exp: exp NEQ listEnd  */
@@ -3391,7 +3377,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorNeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: !=\n");
 }
-#line 3395 "stringparser.tab.c"
+#line 3381 "stringparser.tab.c"
     break;
 
   case 142: /* exp: exp LT listEnd  */
@@ -3400,7 +3386,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorLt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
-#line 3404 "stringparser.tab.c"
+#line 3390 "stringparser.tab.c"
     break;
 
   case 143: /* exp: exp GT listEnd  */
@@ -3409,7 +3395,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorGt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
-#line 3413 "stringparser.tab.c"
+#line 3399 "stringparser.tab.c"
     break;
 
   case 144: /* exp: exp LEQ listEnd  */
@@ -3418,7 +3404,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorLeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <=\n");
 }
-#line 3422 "stringparser.tab.c"
+#line 3408 "stringparser.tab.c"
     break;
 
   case 145: /* exp: exp GEQ listEnd  */
@@ -3427,7 +3413,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorGeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: >=\n");
 }
-#line 3431 "stringparser.tab.c"
+#line 3417 "stringparser.tab.c"
     break;
 
   case 146: /* exp: exp LOGOR listEnd  */
@@ -3436,7 +3422,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ||\n");
 }
-#line 3440 "stringparser.tab.c"
+#line 3426 "stringparser.tab.c"
     break;
 
   case 147: /* exp: exp LOGAND listEnd  */
@@ -3445,7 +3431,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
-#line 3449 "stringparser.tab.c"
+#line 3435 "stringparser.tab.c"
     break;
 
   case 148: /* exp: exp LOGXOR listEnd  */
@@ -3454,7 +3440,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
-#line 3458 "stringparser.tab.c"
+#line 3444 "stringparser.tab.c"
     break;
 
   case 149: /* exp: exp LOGOREXT listEnd  */
@@ -3463,7 +3449,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCOrExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: |||\n");
 }
-#line 3467 "stringparser.tab.c"
+#line 3453 "stringparser.tab.c"
     break;
 
   case 150: /* exp: exp LOGANDEXT listEnd  */
@@ -3472,7 +3458,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCAndExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&&\n");
 }
-#line 3476 "stringparser.tab.c"
+#line 3462 "stringparser.tab.c"
     break;
 
   case 151: /* exp: exp NTHOP listEnd  */
@@ -3481,7 +3467,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astNthOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: nthop (exp NTHOP listEnd)\n");
 }
-#line 3485 "stringparser.tab.c"
+#line 3471 "stringparser.tab.c"
     break;
 
   case 152: /* exp: exp PICKOP listEnd  */
@@ -3490,7 +3476,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astPickOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: nthop\n");
 }
-#line 3494 "stringparser.tab.c"
+#line 3480 "stringparser.tab.c"
     break;
 
   case 153: /* exp: exp RANGE listEnd  */
@@ -3499,7 +3485,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRangeOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
-#line 3503 "stringparser.tab.c"
+#line 3489 "stringparser.tab.c"
     break;
 
   case 154: /* exp: exp REPEAT listEnd  */
@@ -3508,7 +3494,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRepeatOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
-#line 3512 "stringparser.tab.c"
+#line 3498 "stringparser.tab.c"
     break;
 
   case 155: /* exp: exp APPLY listEnd  */
@@ -3517,7 +3503,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astKeyOp<e_keyOpStandard>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: access\n");
 }
-#line 3521 "stringparser.tab.c"
+#line 3507 "stringparser.tab.c"
     break;
 
   case 156: /* exp: exp ACCESS_UNWRAP listEnd  */
@@ -3526,13 +3512,13 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astKeyOp<e_keyOpUnwrapping>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: access\n");
 }
-#line 3530 "stringparser.tab.c"
+#line 3516 "stringparser.tab.c"
     break;
 
   case 157: /* exp: UPLUS exp  */
 #line 962 "stringparser.y"
             { ((*yyvalp).n) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n); }
-#line 3536 "stringparser.tab.c"
+#line 3522 "stringparser.tab.c"
     break;
 
   case 158: /* exp: UMINUS exp  */
@@ -3541,7 +3527,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorUMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: U-\n");
 }
-#line 3545 "stringparser.tab.c"
+#line 3531 "stringparser.tab.c"
     break;
 
   case 159: /* exp: LOGNOT exp  */
@@ -3550,7 +3536,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogNot((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: !\n");
 }
-#line 3554 "stringparser.tab.c"
+#line 3540 "stringparser.tab.c"
     break;
 
   case 160: /* exp: BITNOT exp  */
@@ -3559,7 +3545,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitNot((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: ~\n");
 }
-#line 3563 "stringparser.tab.c"
+#line 3549 "stringparser.tab.c"
     break;
 
   case 161: /* exp: exp PLUS exp  */
@@ -3568,7 +3554,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: +\n");
 }
-#line 3572 "stringparser.tab.c"
+#line 3558 "stringparser.tab.c"
     break;
 
   case 162: /* exp: exp MINUS exp  */
@@ -3577,7 +3563,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: -\n");
 }
-#line 3581 "stringparser.tab.c"
+#line 3567 "stringparser.tab.c"
     break;
 
   case 163: /* exp: exp TIMES exp  */
@@ -3586,7 +3572,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorTimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: *\n");
 }
-#line 3590 "stringparser.tab.c"
+#line 3576 "stringparser.tab.c"
     break;
 
   case 164: /* exp: exp DIV exp  */
@@ -3595,7 +3581,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorDiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: /\n");
 }
-#line 3599 "stringparser.tab.c"
+#line 3585 "stringparser.tab.c"
     break;
 
   case 165: /* exp: exp DIVDIV exp  */
@@ -3604,7 +3590,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorDivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: //\n");
 }
-#line 3608 "stringparser.tab.c"
+#line 3594 "stringparser.tab.c"
     break;
 
   case 166: /* exp: exp REM exp  */
@@ -3613,7 +3599,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: %\n");
 }
-#line 3617 "stringparser.tab.c"
+#line 3603 "stringparser.tab.c"
     break;
 
   case 167: /* exp: exp POWOP exp  */
@@ -3622,7 +3608,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: **\n");
 }
-#line 3626 "stringparser.tab.c"
+#line 3612 "stringparser.tab.c"
     break;
 
   case 168: /* exp: exp BITAND exp  */
@@ -3631,7 +3617,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &\n");
 }
-#line 3635 "stringparser.tab.c"
+#line 3621 "stringparser.tab.c"
     break;
 
   case 169: /* exp: exp BITXOR exp  */
@@ -3640,7 +3626,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ^\n");
 }
-#line 3644 "stringparser.tab.c"
+#line 3630 "stringparser.tab.c"
     break;
 
   case 170: /* exp: exp BITOR exp  */
@@ -3649,7 +3635,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: |\n");
 }
-#line 3653 "stringparser.tab.c"
+#line 3639 "stringparser.tab.c"
     break;
 
   case 171: /* exp: exp LSHIFT exp  */
@@ -3658,7 +3644,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <<\n");
 }
-#line 3662 "stringparser.tab.c"
+#line 3648 "stringparser.tab.c"
     break;
 
   case 172: /* exp: exp RSHIFT exp  */
@@ -3667,7 +3653,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: >>\n");
 }
-#line 3671 "stringparser.tab.c"
+#line 3657 "stringparser.tab.c"
     break;
 
   case 173: /* exp: exp EQUAL exp  */
@@ -3676,7 +3662,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorEq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ==\n");
 }
-#line 3680 "stringparser.tab.c"
+#line 3666 "stringparser.tab.c"
     break;
 
   case 174: /* exp: exp NEQ exp  */
@@ -3685,7 +3671,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorNeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: !=\n");
 }
-#line 3689 "stringparser.tab.c"
+#line 3675 "stringparser.tab.c"
     break;
 
   case 175: /* exp: exp LT exp  */
@@ -3694,7 +3680,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorLt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
-#line 3698 "stringparser.tab.c"
+#line 3684 "stringparser.tab.c"
     break;
 
   case 176: /* exp: exp GT exp  */
@@ -3703,7 +3689,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorGt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
-#line 3707 "stringparser.tab.c"
+#line 3693 "stringparser.tab.c"
     break;
 
   case 177: /* exp: exp LEQ exp  */
@@ -3712,7 +3698,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorLeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: <=\n");
 }
-#line 3716 "stringparser.tab.c"
+#line 3702 "stringparser.tab.c"
     break;
 
   case 178: /* exp: exp GEQ exp  */
@@ -3721,7 +3707,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astComparatorGeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: >=\n");
 }
-#line 3725 "stringparser.tab.c"
+#line 3711 "stringparser.tab.c"
     break;
 
   case 179: /* exp: exp LOGOR exp  */
@@ -3730,7 +3716,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: ||\n");
 }
-#line 3734 "stringparser.tab.c"
+#line 3720 "stringparser.tab.c"
     break;
 
   case 180: /* exp: exp LOGAND exp  */
@@ -3739,7 +3725,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
-#line 3743 "stringparser.tab.c"
+#line 3729 "stringparser.tab.c"
     break;
 
   case 181: /* exp: exp LOGXOR exp  */
@@ -3748,7 +3734,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
-#line 3752 "stringparser.tab.c"
+#line 3738 "stringparser.tab.c"
     break;
 
   case 182: /* exp: exp LOGOREXT exp  */
@@ -3757,7 +3743,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCOrExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: |||\n");
 }
-#line 3761 "stringparser.tab.c"
+#line 3747 "stringparser.tab.c"
     break;
 
   case 183: /* exp: exp LOGANDEXT exp  */
@@ -3766,7 +3752,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCAndExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: &&&\n");
 }
-#line 3770 "stringparser.tab.c"
+#line 3756 "stringparser.tab.c"
     break;
 
   case 184: /* exp: exp NTHOP exp  */
@@ -3775,7 +3761,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astNthOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: nthop (exp NTHOP exp)\n");
 }
-#line 3779 "stringparser.tab.c"
+#line 3765 "stringparser.tab.c"
     break;
 
   case 185: /* exp: exp PICKOP exp  */
@@ -3784,7 +3770,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astPickOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: nthop\n");
 }
-#line 3788 "stringparser.tab.c"
+#line 3774 "stringparser.tab.c"
     break;
 
   case 186: /* exp: exp RANGE exp  */
@@ -3793,7 +3779,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRangeOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
-#line 3797 "stringparser.tab.c"
+#line 3783 "stringparser.tab.c"
     break;
 
   case 187: /* exp: exp REPEAT exp  */
@@ -3802,7 +3788,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRepeatOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
-#line 3806 "stringparser.tab.c"
+#line 3792 "stringparser.tab.c"
     break;
 
   case 188: /* exp: exp APPLY exp  */
@@ -3811,7 +3797,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astKeyOp<e_keyOpStandard>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: access\n");
 }
-#line 3815 "stringparser.tab.c"
+#line 3801 "stringparser.tab.c"
     break;
 
   case 189: /* exp: exp ACCESS_UNWRAP exp  */
@@ -3820,7 +3806,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astKeyOp<e_keyOpUnwrapping>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post ("parse: access_unwrap\n");
 }
-#line 3824 "stringparser.tab.c"
+#line 3810 "stringparser.tab.c"
     break;
 
   case 190: /* exp: term lvalueStepList ASSIGN list  */
@@ -3829,7 +3815,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichEdit<E_RA_STANDARD>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ASSIGN list");
 }
-#line 3833 "stringparser.tab.c"
+#line 3819 "stringparser.tab.c"
     break;
 
   case 191: /* exp: term lvalueStepList APLUS list  */
@@ -3838,7 +3824,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorREPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APLUS list");
 }
-#line 3842 "stringparser.tab.c"
+#line 3828 "stringparser.tab.c"
     break;
 
   case 192: /* exp: term lvalueStepList AMINUS list  */
@@ -3847,7 +3833,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorREMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AMINUS list");
 }
-#line 3851 "stringparser.tab.c"
+#line 3837 "stringparser.tab.c"
     break;
 
   case 193: /* exp: term lvalueStepList ATIMES list  */
@@ -3856,7 +3842,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRETimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ATIMES list");
 }
-#line 3860 "stringparser.tab.c"
+#line 3846 "stringparser.tab.c"
     break;
 
   case 194: /* exp: term lvalueStepList APOWOP list  */
@@ -3865,7 +3851,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorREPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APOWOP list");
 }
-#line 3869 "stringparser.tab.c"
+#line 3855 "stringparser.tab.c"
     break;
 
   case 195: /* exp: term lvalueStepList ADIV list  */
@@ -3874,7 +3860,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorREDiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIV list");
 }
-#line 3878 "stringparser.tab.c"
+#line 3864 "stringparser.tab.c"
     break;
 
   case 196: /* exp: term lvalueStepList ADIVDIV list  */
@@ -3883,7 +3869,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorREDivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIVDIV list");
 }
-#line 3887 "stringparser.tab.c"
+#line 3873 "stringparser.tab.c"
     break;
 
   case 197: /* exp: term lvalueStepList AREM list  */
@@ -3892,7 +3878,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRERemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AREM list");
 }
-#line 3896 "stringparser.tab.c"
+#line 3882 "stringparser.tab.c"
     break;
 
   case 198: /* exp: term lvalueStepList ABITAND list  */
@@ -3901,7 +3887,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorREBitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITAND list");
 }
-#line 3905 "stringparser.tab.c"
+#line 3891 "stringparser.tab.c"
     break;
 
   case 199: /* exp: term lvalueStepList ABITXOR list  */
@@ -3910,7 +3896,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorREBitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITXOR list");
 }
-#line 3914 "stringparser.tab.c"
+#line 3900 "stringparser.tab.c"
     break;
 
   case 200: /* exp: term lvalueStepList ABITOR list  */
@@ -3919,7 +3905,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorREBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITOR list");
 }
-#line 3923 "stringparser.tab.c"
+#line 3909 "stringparser.tab.c"
     break;
 
   case 201: /* exp: term lvalueStepList ALSHIFT list  */
@@ -3928,7 +3914,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRELShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALSHIFT list");
 }
-#line 3932 "stringparser.tab.c"
+#line 3918 "stringparser.tab.c"
     break;
 
   case 202: /* exp: term lvalueStepList ARSHIFT list  */
@@ -3937,7 +3923,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astOperatorRERShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARSHIFT list");
 }
-#line 3941 "stringparser.tab.c"
+#line 3927 "stringparser.tab.c"
     break;
 
   case 203: /* exp: term lvalueStepList ALOGAND list  */
@@ -3946,7 +3932,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogRESCAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGAND list");
 }
-#line 3950 "stringparser.tab.c"
+#line 3936 "stringparser.tab.c"
     break;
 
   case 204: /* exp: term lvalueStepList ALOGANDEXT list  */
@@ -3955,7 +3941,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCRichAccessAndExt<astRichEdit<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGANDEXT list");
 }
-#line 3959 "stringparser.tab.c"
+#line 3945 "stringparser.tab.c"
     break;
 
   case 205: /* exp: term lvalueStepList ALOGXOR list  */
@@ -3964,7 +3950,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogREXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGXOR list");
 }
-#line 3968 "stringparser.tab.c"
+#line 3954 "stringparser.tab.c"
     break;
 
   case 206: /* exp: term lvalueStepList ALOGOR list  */
@@ -3973,7 +3959,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astLogRESCOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOR list");
 }
-#line 3977 "stringparser.tab.c"
+#line 3963 "stringparser.tab.c"
     break;
 
   case 207: /* exp: term lvalueStepList ALOGOREXT list  */
@@ -3982,7 +3968,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astSCRichAccessOrExt<astRichEdit<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOREXT list");
 }
-#line 3986 "stringparser.tab.c"
+#line 3972 "stringparser.tab.c"
     break;
 
   case 208: /* exp: term lvalueStepList ANTHOP list  */
@@ -3991,7 +3977,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichAccessNthOp<astRichEdit<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ANTHOP list");
 }
-#line 3995 "stringparser.tab.c"
+#line 3981 "stringparser.tab.c"
     break;
 
   case 209: /* exp: term lvalueStepList ACONCAT list  */
@@ -4000,7 +3986,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichAccessConcatOp<astRichEdit<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ACONCAT list");
 }
-#line 4004 "stringparser.tab.c"
+#line 3990 "stringparser.tab.c"
     break;
 
   case 210: /* exp: term lvalueStepList ARCONCAT list  */
@@ -4009,7 +3995,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichAccessRConcatOp<astRichEdit<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
-#line 4013 "stringparser.tab.c"
+#line 3999 "stringparser.tab.c"
     break;
 
   case 211: /* exp: term lvalueStepList AAPPLY funcall  */
@@ -4019,7 +4005,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yysval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.fc), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yysval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
-#line 4023 "stringparser.tab.c"
+#line 4009 "stringparser.tab.c"
     break;
 
   case 212: /* term: LONG_LITERAL  */
@@ -4028,7 +4014,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post("parse: INT %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
-#line 4032 "stringparser.tab.c"
+#line 4018 "stringparser.tab.c"
     break;
 
   case 213: /* term: RAT_LITERAL  */
@@ -4037,7 +4023,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.r), params->owner);
     code_dev_post("parse: RAT_LITERAL %ld/%ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.r).num(), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.r).den());
 }
-#line 4041 "stringparser.tab.c"
+#line 4027 "stringparser.tab.c"
     break;
 
   case 214: /* term: DOUBLE_LITERAL  */
@@ -4046,7 +4032,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.d), params->owner);
     code_dev_post("parse: DOUBLE_LITERAL %lf", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.d));
 }
-#line 4050 "stringparser.tab.c"
+#line 4036 "stringparser.tab.c"
     break;
 
   case 215: /* term: PITCH_LITERAL  */
@@ -4055,7 +4041,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.p), params->owner);
     code_dev_post("parse: PITCH_LITERAL %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.p).toSym()->s_name);
 }
-#line 4059 "stringparser.tab.c"
+#line 4045 "stringparser.tab.c"
     break;
 
   case 216: /* term: SYMBOL_LITERAL  */
@@ -4064,7 +4050,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym), params->owner);
     code_dev_post("parse: SYMBOL_LITERAL %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
-#line 4068 "stringparser.tab.c"
+#line 4054 "stringparser.tab.c"
     break;
 
   case 217: /* term: BACHNULL  */
@@ -4073,7 +4059,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst(llll_get(), params->owner);
     code_dev_post("parse: NULL");
 }
-#line 4077 "stringparser.tab.c"
+#line 4063 "stringparser.tab.c"
     break;
 
   case 218: /* term: ARGCOUNT  */
@@ -4083,7 +4069,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, nullptr, nullptr, params->owner);
     code_dev_post("parse: ARGCOUNT");
 }
-#line 4087 "stringparser.tab.c"
+#line 4073 "stringparser.tab.c"
     break;
 
   case 219: /* term: BACHNIL  */
@@ -4094,7 +4080,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst(ll, params->owner);
     code_dev_post("parse: NIL");
 }
-#line 4098 "stringparser.tab.c"
+#line 4084 "stringparser.tab.c"
     break;
 
   case 220: /* term: INLET  */
@@ -4105,7 +4091,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astInlet((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: INLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
-#line 4109 "stringparser.tab.c"
+#line 4095 "stringparser.tab.c"
     break;
 
   case 221: /* term: INTINLET  */
@@ -4116,7 +4102,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConvInlet<hatom_fn_int>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: INTINLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
-#line 4120 "stringparser.tab.c"
+#line 4106 "stringparser.tab.c"
     break;
 
   case 222: /* term: RATINLET  */
@@ -4127,7 +4113,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConvInlet<hatom_fn_rat>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: RATINLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
-#line 4131 "stringparser.tab.c"
+#line 4117 "stringparser.tab.c"
     break;
 
   case 223: /* term: FLOATINLET  */
@@ -4138,7 +4124,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConvInlet<hatom_fn_float>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: FLOATINLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
-#line 4142 "stringparser.tab.c"
+#line 4128 "stringparser.tab.c"
     break;
 
   case 224: /* term: PITCHINLET  */
@@ -4149,7 +4135,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConvInlet<hatom_fn_pitch>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l), params->owner);
     code_dev_post ("parse: PITCHINLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.l));
 }
-#line 4153 "stringparser.tab.c"
+#line 4139 "stringparser.tab.c"
     break;
 
   case 225: /* term: DIRINLET  */
@@ -4163,7 +4149,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
     code_dev_post("parse: DIRINLET");
 }
-#line 4167 "stringparser.tab.c"
+#line 4153 "stringparser.tab.c"
     break;
 
   case 226: /* term: OPEN sequence CLOSEDROUND  */
@@ -4172,7 +4158,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n);
     code_dev_post ("parse: []\n");
 }
-#line 4176 "stringparser.tab.c"
+#line 4162 "stringparser.tab.c"
     break;
 
   case 227: /* term: OPEN CLOSEDROUND  */
@@ -4180,7 +4166,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
                    {
     ((*yyvalp).n) = new astConst(llll_get(), params->owner);
 }
-#line 4184 "stringparser.tab.c"
+#line 4170 "stringparser.tab.c"
     break;
 
   case 228: /* term: PUSH sequence POP  */
@@ -4189,7 +4175,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astWrap((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yysval.n), params->owner);
     code_dev_post("parse: []\n");
 }
-#line 4193 "stringparser.tab.c"
+#line 4179 "stringparser.tab.c"
     break;
 
   case 229: /* term: PUSH POP  */
@@ -4200,7 +4186,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst(ll, params->owner);
     code_dev_post("parse: PushPop");
 }
-#line 4204 "stringparser.tab.c"
+#line 4190 "stringparser.tab.c"
     break;
 
   case 230: /* term: BIF  */
@@ -4210,7 +4196,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst(fn, params->owner);
     code_dev_post("parse: bif %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
-#line 4214 "stringparser.tab.c"
+#line 4200 "stringparser.tab.c"
     break;
 
   case 231: /* term: OF  */
@@ -4220,7 +4206,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astConst(fn, params->owner);
     code_dev_post("parse: owned function %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
-#line 4224 "stringparser.tab.c"
+#line 4210 "stringparser.tab.c"
     break;
 
   case 237: /* globalVar: GLOBALVAR  */
@@ -4231,7 +4217,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).gv) = v;
     code_dev_post ("parse: Global variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
-#line 4235 "stringparser.tab.c"
+#line 4221 "stringparser.tab.c"
     break;
 
   case 238: /* patcherVar: PATCHERVAR  */
@@ -4242,7 +4228,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).pv) = v;
     code_dev_post ("parse: Patcher variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
-#line 4246 "stringparser.tab.c"
+#line 4232 "stringparser.tab.c"
     break;
 
   case 239: /* localVar: LOCALVAR  */
@@ -4252,7 +4238,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: Local variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
-#line 4256 "stringparser.tab.c"
+#line 4242 "stringparser.tab.c"
     break;
 
   case 240: /* localVar: KEEP LOCALVAR  */
@@ -4262,7 +4248,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: Keep local variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
-#line 4266 "stringparser.tab.c"
+#line 4252 "stringparser.tab.c"
     break;
 
   case 241: /* localVar: UNKEEP LOCALVAR  */
@@ -4272,11 +4258,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
     addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym));
     code_dev_post ("parse: Unkeep local variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yysval.sym)->s_name);
 }
-#line 4276 "stringparser.tab.c"
+#line 4262 "stringparser.tab.c"
     break;
 
 
-#line 4280 "stringparser.tab.c"
+#line 4266 "stringparser.tab.c"
 
       default: break;
     }
@@ -4295,8 +4281,8 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 static void
 yyuserMerge (int yyn, YYSTYPE* yy0, YYSTYPE* yy1)
 {
-  YY_USE (yy0);
-  YY_USE (yy1);
+  YYUSE (yy0);
+  YYUSE (yy1);
 
   switch (yyn)
     {
@@ -4315,15 +4301,15 @@ static void
 yydestruct (const char *yymsg,
             yysymbol_kind_t yykind, YYSTYPE *yyvaluep, void *scanner, struct _parseParams *params)
 {
-  YY_USE (yyvaluep);
-  YY_USE (scanner);
-  YY_USE (params);
+  YYUSE (yyvaluep);
+  YYUSE (scanner);
+  YYUSE (params);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
 
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
-  YY_USE (yykind);
+  YYUSE (yykind);
   YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
@@ -5154,8 +5140,8 @@ static YYRESULTTAG
 yyreportAmbiguity (yySemanticOption* yyx0,
                    yySemanticOption* yyx1, void *scanner, struct _parseParams *params)
 {
-  YY_USE (yyx0);
-  YY_USE (yyx1);
+  YYUSE (yyx0);
+  YYUSE (yyx1);
 
 #if YYDEBUG
   YY_FPRINTF ((stderr, "Ambiguity detected.\n"));
@@ -5701,7 +5687,7 @@ yyparse (void *scanner, struct _parseParams *params)
     #endif
 }
 
-#line 5705 "stringparser.tab.c"
+#line 5691 "stringparser.tab.c"
 
 
   if (! yyinitGLRStack (yystackp, YYINITDEPTH))

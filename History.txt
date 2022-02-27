@@ -116,6 +116,7 @@ multiple objects: 	fixed missing lines in help files and references
     fixed potential memory leak when using transferslots
     Objects no longer notify "domain" and "paint" during image export
     Now "eraseslot" accepts "all" as argument to clear all slots
+    Extended system for commands: now commands can be assigned to markers too, and can have a name and a start/end symbol
 
 - bach.roll, bach.score: 
     New "setdl" message setting the duration line from a list of pitch breakpoints

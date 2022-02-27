@@ -130,6 +130,7 @@ enum playkeys_incoming // incoming notation items
     k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND  = (1 << 16),
     k_PLAYKEYS_INCOMING_SCOREREST_COMMAND   = (1 << 17),
     k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND = (1 << 18),
+    k_PLAYKEYS_INCOMING_MARKER_COMMAND   = (1 << 19),
 };
 
 
@@ -161,6 +162,7 @@ typedef struct _playkeys
     t_llll                  *n_note_commands;
     t_llll                  *n_chord_commands;
     t_llll                  *n_rest_commands;
+    t_llll                  *n_marker_commands;
 
     t_atom                  n_dynamicsslot;
     t_atom                  n_articulationsslot;
@@ -752,6 +754,7 @@ t_max_err playkeys_setattr_process(t_playkeys *x, t_object *attr, long ac, t_ato
             llll_clear(x->n_note_commands);
             llll_clear(x->n_chord_commands);
             llll_clear(x->n_rest_commands);
+            llll_clear(x->n_marker_commands);
 
             char defaultval = ((x->n_process && x->n_process->l_size > 0 && hatom_getsym(&x->n_process->l_head->l_hatom) != gensym("+")) ? 0 : 1);
             if (defaultval)
@@ -801,6 +804,11 @@ t_max_err playkeys_setattr_process(t_playkeys *x, t_object *attr, long ac, t_ato
                             for (t_llllelem *el2 = ll->l_head->l_next; el2; el2=el2->l_next)
                                 if (hatom_gettype(&el2->l_hatom) == H_SYM)
                                     llll_appendsym(x->n_rest_commands, hatom_getsym(&el2->l_hatom));
+                        } else if (ref == _llllobj_sym_marker) {
+                            x->n_notationitems_to_process |= k_PLAYKEYS_INCOMING_MARKER_COMMAND;
+                            for (t_llllelem *el2 = ll->l_head->l_next; el2; el2=el2->l_next)
+                                if (hatom_gettype(&el2->l_hatom) == H_SYM)
+                                    llll_appendsym(x->n_marker_commands, hatom_getsym(&el2->l_hatom));
                         }
                     }
                 }
@@ -961,6 +969,19 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                     }
                 }
             }
+            if (!found) {
+                for (t_llllelem *elem = x->n_marker_commands->l_head; elem; elem = elem->l_next) {
+                    if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                        incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                        found = 1;
+                    } else {
+                        if (router == hatom_getsym(&elem->l_hatom)) {
+                            incoming = k_PLAYKEYS_INCOMING_MARKER_COMMAND;
+                            found = 1;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -985,6 +1006,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
 
                 case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
                     if (is_symbol_in_llll_first_level(x->n_rest_commands, router))
+                        must_process_incoming = true;
+                    break;
+
+                case k_PLAYKEYS_INCOMING_MARKER_COMMAND:
+                    if (is_symbol_in_llll_first_level(x->n_marker_commands, router))
                         must_process_incoming = true;
                     break;
 
@@ -1060,7 +1086,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
 
             if (incoming & x->n_keys[outlet].allowed_notationitems) { // must process key
 
-                if ((incoming == k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCOREREST_COMMAND) && this_key->allowed_command_router != router)
+                if ((incoming == k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCOREREST_COMMAND || incoming == k_PLAYKEYS_INCOMING_MARKER_COMMAND) && this_key->allowed_command_router != router)
                     continue; // not the right command
 
                 found = NULL;
@@ -1409,6 +1435,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 break;
 
                             case k_PLAYKEYS_INCOMING_MARKER:
+                            case k_PLAYKEYS_INCOMING_MARKER_COMMAND:
                                 found = llll_get();
                                 if ((target_el = llll_getindex(in_ll, 3, I_STANDARD)))
                                     llll_appendhatom_clone(found, &target_el->l_hatom);
@@ -2347,6 +2374,7 @@ void playkeys_free(t_playkeys *x)
     llll_free(x->n_note_commands);
     llll_free(x->n_chord_commands);
     llll_free(x->n_rest_commands);
+    llll_free(x->n_marker_commands);
 
     bach_freeptr(x->n_keys);
     llll_free(x->n_empty);
@@ -2388,6 +2416,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         x->n_note_commands = llll_make();
         x->n_chord_commands = llll_make();
         x->n_rest_commands = llll_make();
+        x->n_marker_commands = llll_make();
 
         reset_warnings(x);
 
@@ -2514,9 +2543,11 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                                 if (is_symbol_in_llll_first_level(x->n_note_commands, allowed_command_router)) {
                                     operate_on = 1;
                                 } else if (is_symbol_in_llll_first_level(x->n_chord_commands, allowed_command_router)) {
-                                        operate_on = 2;
+                                    operate_on = 2;
                                 } else if (is_symbol_in_llll_first_level(x->n_rest_commands, allowed_command_router)) {
                                     operate_on = 3;
+                                } else if (is_symbol_in_llll_first_level(x->n_marker_commands, allowed_command_router)) {
+                                    operate_on = 4;
                                 }
 
                                 if (operate_on == 0) { // the command was not assigned to any of the routers
@@ -2530,6 +2561,8 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                                     curr_allowed_notationitems = k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND + k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND;
                                 } else if (operate_on == 3) {
                                     curr_allowed_notationitems = k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
+                                } else if (operate_on == 4) {
+                                    curr_allowed_notationitems = k_PLAYKEYS_INCOMING_MARKER_COMMAND;
                                 } else {
                                     curr_allowed_notationitems = k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND + k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND;
                                 }
