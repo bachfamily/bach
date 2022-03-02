@@ -14006,11 +14006,9 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                 // insert measure
                 insert_measure(x, voice, new_meas, after_this_measure, 0);
                 
-                t_llll *meas_ll = meas_elem ? hatom_getllll(&meas_elem->l_hatom) : get_nilnil();
-                if (!meas_ll)
-                        meas_ll = get_nilnil();
-                set_measure_from_llll(x, new_meas, meas_ll, true, true, &need_update_solos);
-                if (!meas_elem || !meas_ll) llll_free(meas_ll);
+                t_llll *this_measure_ll = meas_elem && hatom_getllll(&meas_elem->l_hatom) ? llll_clone(hatom_getllll(&meas_elem->l_hatom)) : get_nilnil();
+                set_measure_from_llll(x, new_meas, this_measure_ll, true, true, &need_update_solos);
+                llll_free(this_measure_ll);
                 
                 recompute_all_for_measure((t_notation_obj *)x, new_meas, true);
                 if (new_meas->prev)
@@ -14020,7 +14018,7 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                 
                 if (allow_multiple_measures_per_voice)
                     meas_elem = meas_elem ? meas_elem->l_next : NULL;
-                after_this_measure= new_meas;
+                after_this_measure = new_meas;
             }
         }
     }
