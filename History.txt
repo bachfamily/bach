@@ -151,6 +151,7 @@ multiple objects: 	fixed missing lines in help files and references
         Time signature can be inferred if not given
     XML import and export: three-quarters-sharp and -flat accidentals have correct name now (was "three-quarter")
         complex time signatures are correctly handled
+    XML export: figures longer than a whole note are correctly exported
     symduration variable now works for measures as well
     @autocomplete attribute exposed
     fixed bug potentially causing weird behaviors while setting the score from gathered syntax if the clefs introduced were less than the number of voices
