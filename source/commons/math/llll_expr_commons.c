@@ -512,6 +512,9 @@ t_bool lexpr_eval_upon(t_lexpr *expr, t_hatom *vars, t_hatom *stack)
                         case H_PITCH:
                             hatom_setpitch(thisstack++, hatom_getpitch(this_vars));
                             break;
+                        case H_SYM:
+                            hatom_setsym(thisstack++, hatom_getsym(this_vars));
+                            break;
                         case H_DOUBLE:
                             hatom_setdouble(thisstack++, hatom_getdouble(this_vars));
                             break;
@@ -586,7 +589,7 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
             break;
             
         case O_PLUS:
-            hatom_op_plus(h1, h2, res);
+            hatom_op_plus_with_symbols(h1, h2, res);
             return 0;
             break;
             
@@ -596,7 +599,7 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
             break;
             
         case O_TIMES:
-            hatom_op_times(h1, h2, res);
+            hatom_op_times_with_symbols(h1, h2, res);
             return 0;
             break;
             
@@ -834,6 +837,7 @@ long lexpr_append_lexeme_VAR(t_lexpr_lexeme *lex, char type, long index, short *
         case 'f':	lex->l_token.t_contents.c_var.v_type = H_DOUBLE;	break;
         case 'r':	lex->l_token.t_contents.c_var.v_type = H_RAT;		break;
         case 'p':	lex->l_token.t_contents.c_var.v_type = H_PITCH;     break;
+        case 's':    lex->l_token.t_contents.c_var.v_type = H_SYM;     break;
         case 'x':	lex->l_token.t_contents.c_var.v_type = H_ALL;		break;
         default:    lex->l_token.t_contents.c_var.v_type = H_NOTHING;
                     err = E_BAD_VAR_TYPE;
@@ -1224,6 +1228,14 @@ long lexpr_append_lexeme_PITCH(t_lexpr_lexeme *lex, t_pitch p)
     return E_OK;
 }
 
+long lexpr_append_lexeme_SYMBOL(t_lexpr_lexeme *lex, t_symbol *s)
+{
+    lex->l_type = L_TOKEN;
+    lex->l_token.t_type = TT_HATOM;
+    lex->l_token.t_contents.c_hatom.h_type = H_SYM;
+    lex->l_token.t_contents.c_hatom.h_w.w_sym = s;
+    return E_OK;
+}
 
 
 
