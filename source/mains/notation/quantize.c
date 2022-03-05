@@ -1537,6 +1537,12 @@ char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_
     llll_print_named(rough_rat_durations, gensym("rough rat durs"), 0, 2, NULL);
     llll_print_named(rough_quant_boxes_ms, gensym("rough quant boxes (ms)"), 0, 2, NULL);
     llll_print_named(measure_boxes, gensym("measure boxes"), 0, 2, NULL);
+    post("voice durations start");
+    llll_post(voice_durations, 0, 1, 20, NULL, NULL);
+    post("voice durations end");
+    post("rough rat durations start");
+    llll_post(rough_rat_durations, 0, 1, 2, NULL, NULL);
+    post("rough rat durations end");
     llll_post(voice_durations, 0, 1, 2, NULL, NULL);
     llll_post(quant_boxes, 0, 1, 2, NULL, NULL);
 #endif
@@ -1552,7 +1558,9 @@ char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_
     
 #ifdef BACH_QUANTIZE_DEBUG
     dev_llll_print(*unquantized_boxed_voice_durations, NULL, 0, 2, NULL);
+    post("unquantized boxed voice durations start");
     llll_post(*unquantized_boxed_voice_durations, 0, 1, 2, NULL, NULL);
+    post("unquantized boxed voice durations end");
 #endif
     
     // now in each box we have the correct split stuff, but not the correct durations: we have to force that the symbolic sum of each box be the correct one

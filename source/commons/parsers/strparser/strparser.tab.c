@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* A Bison parser, made by GNU Bison 3.8.2.  */
+=======
+/* A Bison parser, made by GNU Bison 3.7.6.  */
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -46,10 +50,17 @@
    USER NAME SPACE" below.  */
 
 /* Identify Bison output, and Bison version.  */
+<<<<<<< HEAD
 #define YYBISON 30802
 
 /* Bison version string.  */
 #define YYBISON_VERSION "3.8.2"
+=======
+#define YYBISON 30706
+
+/* Bison version string.  */
+#define YYBISON_VERSION "3.7.6"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -1132,7 +1143,11 @@ yyreduce:
 	llll_appendlong(*ll, (yyvsp[0].l));
 	parserpost("parse: BACH_LONG %ld", (yyvsp[0].l));
 }
+<<<<<<< HEAD
 #line 1136 "strparser.tab.c"
+=======
+#line 1144 "strparser.tab.c"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
     break;
 
   case 5: /* term: BACH_DOUBLE  */
@@ -1141,7 +1156,11 @@ yyreduce:
 	llll_appenddouble(*ll, (yyvsp[0].d));
 	parserpost("parse: BACH_DOUBLE %lf", (yyvsp[0].d));
 }
+<<<<<<< HEAD
 #line 1145 "strparser.tab.c"
+=======
+#line 1153 "strparser.tab.c"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
     break;
 
   case 6: /* term: BACH_RAT  */
@@ -1150,7 +1169,11 @@ yyreduce:
 	llll_appendrat(*ll, (yyvsp[0].r));
 	parserpost("parse: BACH_RAT %ld/%ld", (yyvsp[0].r).num(), (yyvsp[0].r).den());
 }
+<<<<<<< HEAD
 #line 1154 "strparser.tab.c"
+=======
+#line 1162 "strparser.tab.c"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
     break;
 
   case 7: /* term: BACH_PITCH  */
@@ -1160,7 +1183,11 @@ yyreduce:
 	parserpost("parse: degree: %c%d+%d/%d", 
 		t_pitch::degree2name[(yyvsp[0].p).degree()], (yyvsp[0].p).octave(), (yyvsp[0].p).alter().num(), (yyvsp[0].p).alter().den());
 }
+<<<<<<< HEAD
 #line 1164 "strparser.tab.c"
+=======
+#line 1172 "strparser.tab.c"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
     break;
 
   case 8: /* term: BACH_SYMBOL  */
@@ -1169,7 +1196,11 @@ yyreduce:
 	llll_appendsym(*ll, (yyvsp[0].sym));
 	parserpost("parse: BACH_SYMBOL %s", (yyvsp[0].sym)->s_name);
 }
+<<<<<<< HEAD
 #line 1173 "strparser.tab.c"
+=======
+#line 1181 "strparser.tab.c"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
     break;
 
   case 9: /* term: BACH_NULL  */
@@ -1177,7 +1208,11 @@ yyreduce:
               {
     parserpost("parse: NULL");
 }
+<<<<<<< HEAD
 #line 1181 "strparser.tab.c"
+=======
+#line 1189 "strparser.tab.c"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
     break;
 
   case 10: /* term: BACH_NIL  */
@@ -1186,7 +1221,11 @@ yyreduce:
 	llll_appendllll(*ll, llll_get());
     parserpost("parse: NIL");
 }
+<<<<<<< HEAD
 #line 1190 "strparser.tab.c"
+=======
+#line 1198 "strparser.tab.c"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
     break;
 
   case 11: /* term: BACH_PUSH  */
@@ -1199,7 +1238,11 @@ yyreduce:
 	*ll = newll;
 	parserpost("parse: BACH_PUSH");
 }
+<<<<<<< HEAD
 #line 1203 "strparser.tab.c"
+=======
+#line 1211 "strparser.tab.c"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
     break;
 
   case 12: /* term: BACH_POP  */
@@ -1215,11 +1258,19 @@ yyreduce:
 		YYERROR;
 	parserpost("parse: BACH_POP");
 }
+<<<<<<< HEAD
 #line 1219 "strparser.tab.c"
     break;
 
 
 #line 1223 "strparser.tab.c"
+=======
+#line 1227 "strparser.tab.c"
+    break;
+
+
+#line 1231 "strparser.tab.c"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
 
       default: break;
     }

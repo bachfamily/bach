@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* A Bison parser, made by GNU Bison 3.8.2.  */
+=======
+/* A Bison parser, made by GNU Bison 3.7.6.  */
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
 
 /* Skeleton implementation for Bison GLR parsers in C
 
@@ -37,10 +41,17 @@
    private implementation details that can be changed or removed.  */
 
 /* Identify Bison output, and Bison version.  */
+<<<<<<< HEAD
 #define YYBISON 30802
 
 /* Bison version string.  */
 #define YYBISON_VERSION "3.8.2"
+=======
+#define YYBISON 30706
+
+/* Bison version string.  */
+#define YYBISON_VERSION "3.7.6"
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "glr.c"
@@ -520,7 +531,11 @@ typedef int yytype_uint16;
 # elif ((!defined __cplusplus || defined __clang__) \
         && (201112 <= (defined __STDC_VERSION__ ? __STDC_VERSION__ : 0) \
             || (!defined __STRICT_ANSI__ \
+<<<<<<< HEAD
                 && (4 < __GNUC__ + (7 <= __GNUC_MINOR__) \
+=======
+                && (__4 < __GNUC__ + (7 <= __GNUC_MINOR__) \
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
                     || (defined __apple_build_version__ \
                         ? 6000000 <= __apple_build_version__ \
                         : 3 < __clang_major__ + (5 <= __clang_minor__))))))
@@ -2117,12 +2132,20 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
               yyGLRStack* yystackp, YYPTRDIFF_T yyk,
               YYSTYPE* yyvalp, void *scanner, struct _parseParams *params)
 {
+<<<<<<< HEAD
   const yybool yynormal YY_ATTRIBUTE_UNUSED = yystackp->yysplitPoint == YY_NULLPTR;
   int yylow = 1;
   YY_USE (yyvalp);
   YY_USE (scanner);
   YY_USE (params);
   YY_USE (yyk);
+=======
+  yybool yynormal YY_ATTRIBUTE_UNUSED = yystackp->yysplitPoint == YY_NULLPTR;
+  int yylow;
+  YY_USE (yyvalp);
+  YY_USE (scanner);
+  YY_USE (params);
+>>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
   YY_USE (yyrhslen);
 # undef yyerrok
 # define yyerrok (yystackp->yyerrState = 0)
