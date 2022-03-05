@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 /* A Bison parser, made by GNU Bison 3.8.2.  */
-=======
-/* A Bison parser, made by GNU Bison 3.7.6.  */
->>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -50,17 +46,10 @@
    USER NAME SPACE" below.  */
 
 /* Identify Bison output, and Bison version.  */
-<<<<<<< HEAD
 #define YYBISON 30802
 
 /* Bison version string.  */
 #define YYBISON_VERSION "3.8.2"
-=======
-#define YYBISON 30706
-
-/* Bison version string.  */
-#define YYBISON_VERSION "3.7.6"
->>>>>>> 1525fb86dd4bad7aaab4fca1f8a7b5b9198880d8
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
