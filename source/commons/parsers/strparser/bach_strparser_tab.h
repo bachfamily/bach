@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.7.6.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -95,7 +95,9 @@ typedef union STRPARSER_STYPE STRPARSER_STYPE;
 
 
 
+
 int strparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *depth);
+
 /* "%code provides" blocks.  */
 
   // Tell Flex the expected prototype of yylex.

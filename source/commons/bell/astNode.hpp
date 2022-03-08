@@ -741,7 +741,7 @@ protected:
     
     void lastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_bool previousWasKey, t_execEnv const &context) {
         t_bool created = nonLastNth(step, nStep, lookHere, current, previousWasKey, context);
-        if (current)
+        if (current && lookHere)
             lastNthDo(current, lookHere, origV, created, context);
     }
     
@@ -1012,7 +1012,8 @@ public:
 
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
-        llll_insert_one(lookHere, llll_clone(origV), -1);
+        if (lookHere)
+            llll_insert_one(lookHere, llll_clone(origV), -1);
     }
     
     void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
