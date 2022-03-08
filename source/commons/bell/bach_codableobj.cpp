@@ -453,7 +453,13 @@ void codableobj_dblclick_helper(t_codableobj *x, t_symbol *title)
         object_method(x->c_editor, gensym("filename"), x->c_filename, x->c_path);
         bach_freeptr(folder_cstr);
     }
+    
+    // this is necessary with Max 8.2.0, as if the embed attribute is set
+    // Max won't open the external editor
+    t_atom_long embed_saved = x->c_embed;
+    x->c_embed = 0;
     object_method(x->c_editor, gensym("openwindow"));
+    x->c_embed = embed_saved;
 }
 
 void codableobj_edclose(t_codableobj *x, char **ht, long size)

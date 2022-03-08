@@ -116,7 +116,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_NEW_CHECK_SIZE(c, "bach.eval", (method)eval_new, (method)eval_free, (long) sizeof(t_eval), 0L, A_GIMME, 0);
     
     codableclass_add_standard_methods_and_attrs(c);
-    codableclass_add_extended_methods_and_attrs(c);
+    //codableclass_add_extended_methods_and_attrs(c);
 
     // @method llll @digest Store values for the inlet variables
     // @description
