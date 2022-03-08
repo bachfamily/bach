@@ -424,7 +424,7 @@ t_llll* llll_dx2x_of_plain_rat_llll(t_llll *in_llll, t_rational start_rational);
 t_llll* llll_dx2x_of_plain_double_llll(t_llll *in_llll, double start);
 
 
-/**	Perform discrete derivation on a plain llll containing doubles (or longs).
+/**	Perform discrete derivation on a plain llll containing doubles (or longs, cast to doubles).
 	@ingroup				llll_utilities
 	@param	in_llll			The llll
 	@return					The llll containing the differences
@@ -432,6 +432,14 @@ t_llll* llll_dx2x_of_plain_double_llll(t_llll *in_llll, double start);
  */
 t_llll* llll_x2dx_of_plain_double_llll(t_llll *in_llll);
 
+
+/**    Perform discrete derivation on a plain llll containing longs.
+    @ingroup                llll_utilities
+    @param    in_llll       The llll
+    @return                 The llll containing the differences
+    @see                    llll_x2dx_of_plain_double_llll()
+ */
+t_llll* llll_x2dx_of_plain_long_llll(t_llll *in_llll);
 
 /**	Find average of a a plain llll containing doubles (or longs).
 	@ingroup				llll_utilities

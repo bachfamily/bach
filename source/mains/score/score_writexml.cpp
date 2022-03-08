@@ -26,7 +26,7 @@ mxml_node_t *bach_mxmlNewTextElement(mxml_node_t *parent, const char *name, int 
 mxml_node_t *bach_mxmlNewIntElement(mxml_node_t *parent, const char *name, int whitespace, int value);
 mxml_node_t *bach_mxmlNewRealElement(mxml_node_t *parent, const char *name, int whitespace, double value);
 
-void xml_value_to_name(long den, char *chordtype);
+void xml_value_to_name(t_rational figure, char *chordtype);
 
 
 mxml_node_t *bach_xml_add_clef(mxml_node_t *node, const char *sign, long line, long octave, const char *number);
@@ -269,16 +269,24 @@ mxml_node_t *bach_mxmlNewRealElement(mxml_node_t *parent, const char *name, int 
 
 
 
-void xml_value_to_name(long den, char *chordtype)
+void xml_value_to_name(t_rational figure, char *chordtype)
 {
-    switch (den) {
-        case 1:        strcpy(chordtype, "whole");                break;
-        case 2:        strcpy(chordtype, "half");                break;
-        case 4:        strcpy(chordtype, "quarter");            break;
-        case 8:        strcpy(chordtype, "eighth");            break;
-        case 32:    strcpy(chordtype, "32nd");                break;
-        default:    sprintf(chordtype, "%ldth", den);
+    switch(figure.r_num) {
+        case 2: strcpy(chordtype, "breve");     break;
+        case 4: strcpy(chordtype, "long");      break;
+        case 8: strcpy(chordtype, "maxima");    break;
+        case 1: {
+            switch (figure.r_den) {
+                case 1:     strcpy(chordtype, "whole");     break;
+                case 2:     strcpy(chordtype, "half");      break;
+                case 4:     strcpy(chordtype, "quarter");   break;
+                case 8:     strcpy(chordtype, "eighth");    break;
+                case 32:    strcpy(chordtype, "32nd");  break;
+                default:    sprintf(chordtype, "%ldth", figure.r_den);
+                    break;
+            }
             break;
+        }
     }
 }
 
@@ -930,7 +938,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     t_rational screen_tempo_figure;
                     char tempo_figure_num_dots;
                     if (is_duration_drawable((t_notation_obj *) x, tempo->tempo_figure, &screen_tempo_figure, &tempo_figure_num_dots)) {
-                        xml_value_to_name(screen_tempo_figure.r_den, tempo_figure_txt);
+                        xml_value_to_name(screen_tempo_figure, tempo_figure_txt);
                         bach_mxmlNewTextElement(metronomexml, "beat-unit", 0, tempo_figure_txt);
                         char i;
                         for (i = 0; i < tempo_figure_num_dots; i++)
@@ -1067,7 +1075,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 t_rational screen_accidental;
                 t_llll *open_gliss_chord = export_glissandi ? llll_get() : NULL;
                 char at_least_a_gliss_has_ended = false;
-                xml_value_to_name(chord->figure.r_den, chordtype);
+                xml_value_to_name(chord->figure, chordtype);
                 t_rational dur = chord->r_sym_duration;
                 char durtxt[16];
 
@@ -1085,7 +1093,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 num_tuplets = get_xml_chord_tuplet_info((t_notation_obj *) x, chord, tuplet_info);
                 
                 if (num_tuplets)
-                    xml_value_to_name(tuplet_info[0].tuplet_actual_type.r_den, normal_type);
+                    xml_value_to_name(tuplet_info[0].tuplet_actual_type, normal_type);
                 
                 
                 // cycle on notes
@@ -1404,7 +1412,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                 mxmlElementSetAttr(tuplet, "number", txt);
                                 mxml_node_t *tuplet_actual = mxmlNewElement(tuplet, "tuplet-actual");
                                 bach_mxmlNewIntElement(tuplet_actual, "tuplet-number", 0, tuplet_info[i].tuplet_actual_number);
-                                xml_value_to_name(tuplet_info[i].tuplet_actual_type.r_den, txt);
+                                xml_value_to_name(tuplet_info[i].tuplet_actual_type, txt);
                                 bach_mxmlNewTextElement(tuplet_actual, "tuplet-type", 0, txt);
                                 long j;
                                 for (j = 0; j < tuplet_info[i].tuplet_actual_dots; j++)
@@ -1412,7 +1420,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                 
                                 mxml_node_t *tuplet_normal = mxmlNewElement(tuplet, "tuplet-normal");
                                 bach_mxmlNewIntElement(tuplet_normal, "tuplet-number", 0, tuplet_info[i].tuplet_normal_number);
-                                xml_value_to_name(tuplet_info[i].tuplet_normal_type.r_den, txt);
+                                xml_value_to_name(tuplet_info[i].tuplet_normal_type, txt);
                                 bach_mxmlNewTextElement(tuplet_normal, "tuplet-type", 0, txt);
                                 for (j = 0; j < tuplet_info[i].tuplet_normal_dots; j++)
                                     mxmlNewElement(tuplet_normal, "tuplet-dot");

@@ -34,6 +34,7 @@ UFLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+
 URAT ({UINT}[/][+-]?{UINT})
 NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq\^v]+)
+NO_SPACES ([^ \t\n\r\f\v\x01])
 
 %{
     #ifndef BACH_MAX
@@ -84,7 +85,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return err;
 }
 
-\$[ifrpx][0-9]+ {
+\$[ifrpxs][0-9]+ {
     BEGIN BINARY;
     return lexpr_append_lexeme_VAR(epd->lexeme, *(yytext + 1), atol(yytext + 2) - 1, epd->numvars, yytext, epd->offending);
 }
@@ -311,6 +312,45 @@ ACCIDENTAL ([#bxdq\^v]+)
     parserpost(" lex: BACH_DOUBLE %lf\n", atof(yytext));
     BEGIN BINARY;
     return lexpr_append_lexeme_FLOAT(epd->lexeme, atof(yytext));
+}
+
+
+\`{NO_SPACES}+ {
+    parserpost("lex: BACKTICKED SYMBOL_LITERAL %s\n", yytext + 1);
+    BEGIN BINARY;
+    return lexpr_append_lexeme_SYMBOL(epd->lexeme, gensym(yytext + 1));
+}
+
+["]("\\\""|[^"])*[^\\]["] {
+    parserpost("lex: DOUBLE-QUOTED SYMBOL_LITERAL %s\n", yytext);
+    BEGIN BINARY;
+    char *s = (char *) bach_newptr(yyleng - 1);
+    strncpy_zero(s, yytext + 1, yyleng - 1);
+    t_symbol *sym = gensym(s);
+    bach_freeptr(s);
+    return lexpr_append_lexeme_SYMBOL(epd->lexeme, sym);
+}
+
+[']("\\\'"|[^'])*[^\\]['] {
+    parserpost("lex: DOUBLE-QUOTED SYMBOL_LITERAL %s\n", yytext);
+    BEGIN BINARY;
+    char *s = (char *) bach_newptr(yyleng - 1);
+    strncpy_zero(s, yytext + 1, yyleng - 1);
+    t_symbol *sym = gensym(s);
+    bach_freeptr(s);
+    return lexpr_append_lexeme_SYMBOL(epd->lexeme, sym);
+}
+
+"\"\""/{SEPARATOR} {
+    parserpost("lex: EMPTY DOUBLE-QUOTED SYMBOL_LITERAL\n");
+    BEGIN BINARY;
+    return lexpr_append_lexeme_SYMBOL(epd->lexeme, gensym(""));
+}
+
+"''"/{SEPARATOR} {
+    parserpost("lex: EMPTY SINGLE-QUOTED SYMBOL_LITERAL\n");
+    BEGIN BINARY;
+    return lexpr_append_lexeme_SYMBOL(epd->lexeme, gensym(""));
 }
 
 {NOTENAME}{ACCIDENTAL}?[-+]?{UINT} {

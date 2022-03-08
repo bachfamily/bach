@@ -906,6 +906,26 @@ myobject_end_preset
 // communication with bach.quantize
 // *******************************************************************************************
 
+t_llll* long_llll_x2dx_for_quantize(t_llll *in_llll) {
+    t_llllelem *elem;
+    t_llll *out_llll = llll_get();
+    long cur = 0;
+    
+    if ((elem = in_llll->l_head)) {
+        cur = abs(hatom_getlong(&elem->l_hatom));
+        
+        for (elem = elem->l_next; elem; elem = elem->l_next) {
+            long val = hatom_getlong(&elem->l_hatom);
+            long old_cur = cur;
+            long sign = isign(val);
+            cur = abs(val);
+            llll_appendlong(out_llll, sign * (cur - old_cur));
+        }
+    }
+    return out_llll;
+}
+
+
 void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     // we send a message like
@@ -915,6 +935,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *out_llll = llll_get();
     
     t_llll *out_cents = llll_get();
+    t_llll *out_onsets = llll_get(); // only used for debug purposes
     t_llll *out_durations = llll_get();
     t_llll *out_velocities = llll_get();
     t_llll *out_ties = llll_get();
@@ -924,11 +945,15 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *out_extras = llll_get();
     t_llll *out_IDs = llll_get();
     
-    t_llll *what_to_dump_llll;
+    t_llll *what_to_dump_llll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     long what_to_dump = k_HEADER_ALL;
     
     t_chord *chord;
     t_rollvoice *voice;
+    
+    long integer_durations = 0; // if integer_durations is on, then durations are integers in milliseconds, and hence not subject to floating point... floating errors behavior! :-)
+    llll_parseattrs((t_object *)x, what_to_dump_llll, LLLL_PA_DESTRUCTIVE, "i", gensym("integerdurations"), &integer_durations);
+
     
 //    llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
     llll_appendsym(out_breakpoints, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
@@ -938,6 +963,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     for (voice = x->firstvoice;    voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
         t_llll *out_voice_cents = llll_get();
         t_llll *out_voice_durations = llll_get();
+        t_llll *out_voice_onsets = llll_get();
         t_llll *out_voice_velocities = llll_get();
         t_llll *out_voice_ties = llll_get();
         t_llll *out_voice_graphic = llll_get();
@@ -952,12 +978,20 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         t_llll *active_IDs = llll_get();
         t_llll *active_until = llll_get(); // ms of end activity
         double curr_onset = 0;
+
+        if (integer_durations) {
+            llll_appendlong(out_voice_onsets, 0); // we'll x->dx later on
+        }
         
-        // is there a pause before the beginning of the first chord ?
+        // is there a rest before the beginning of the first chord ?
         if (voice->firstchord && voice->firstchord->onset > 0) {
-            // add a pause
+            // add a rest
             llll_appendllll(out_voice_cents, llll_get(), 0, WHITENULL_llll);
-            llll_appenddouble(out_voice_durations, -voice->firstchord->onset, 0, WHITENULL_llll); // pause: negative
+            if (integer_durations) { // rests are represented by negative numbers
+                llll_appendlong(out_voice_onsets, round(-voice->firstchord->onset));
+            } else {
+                llll_appenddouble(out_voice_durations, -voice->firstchord->onset);
+            }
             llll_appendllll(out_voice_velocities, llll_get(), 0, WHITENULL_llll);
             llll_appendllll(out_voice_ties, llll_get(), 0, WHITENULL_llll);
             llll_appendllll(out_voice_graphic, llll_get(), 0, WHITENULL_llll);
@@ -985,7 +1019,8 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             curr_onset = chord->onset;
             
             // first: we find next event start
-            next_onset = chord->onset + chord->firstnote->duration; // just to inizialize properly
+            double firstnote_duration = MAX(0, chord->firstnote->duration);
+            next_onset = chord->onset + firstnote_duration; // just to inizialize properly
             tmp_chord = chord;
             while (tmp_chord->next) {
                 if (tmp_chord->next->onset > chord->onset) {
@@ -999,8 +1034,9 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             
             for (tmp_chord = chord; tmp_chord; tmp_chord = tmp_chord->next){
                 for (note = tmp_chord->firstnote; note; note = note->next){
+                    double note_duration = MAX(0, note->duration);
                     if (tmp_chord->onset + note->duration < next_onset)
-                        next_onset = tmp_chord->onset + note->duration;
+                        next_onset = tmp_chord->onset + note_duration;
                 }
                 if (tmp_chord == lastchord_of_group)
                     break;
@@ -1071,7 +1107,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
                     llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
                     llll_appendlong(this_event_IDs, note->r_it.ID, 0, WHITENULL_llll);
-                    if (tmp_chord->onset + note->duration == next_onset) {
+                    if (tmp_chord->onset + MAX(0, note->duration) == next_onset) {
                         llll_appendlong(this_event_ties, 0, 0, WHITENULL_llll);
                     } else {
                         llll_appendlong(this_event_ties, note->r_it.ID, 0, WHITENULL_llll);
@@ -1081,7 +1117,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         llll_appendllll(active_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
                         llll_appendllll(active_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
                         llll_appendlong(active_IDs, note->r_it.ID, 0, WHITENULL_llll);
-                        llll_appenddouble(active_until, tmp_chord->onset + note->duration, 0, WHITENULL_llll);
+                        llll_appenddouble(active_until, tmp_chord->onset + MAX(0, note->duration), 0, WHITENULL_llll);
                     }
                 }
                 if (tmp_chord == lastchord_of_group)
@@ -1098,7 +1134,11 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
              llll_to_char_array(this_event_slots, debug6, 999); */
             
             llll_appendllll(out_voice_cents, this_event_cents, 0, WHITENULL_llll);
-            llll_appenddouble(out_voice_durations, next_onset - curr_onset, 0, WHITENULL_llll);
+            if (integer_durations) {
+                llll_appendlong(out_voice_onsets, round(next_onset));
+            } else {
+                llll_appenddouble(out_voice_durations, next_onset - curr_onset, 0, WHITENULL_llll);
+            }
             llll_appendllll(out_voice_velocities, this_event_velocities, 0, WHITENULL_llll);
             llll_appendllll(out_voice_ties, this_event_ties, 0, WHITENULL_llll);
             llll_appendllll(out_voice_graphic, this_event_graphic, 0, WHITENULL_llll);
@@ -1190,7 +1230,11 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                  llll_to_char_array(this_middle_event_slots, debug6, 999); */
                 
                 llll_appendllll(out_voice_cents, this_middle_event_cents, 0, WHITENULL_llll);
-                llll_appenddouble(out_voice_durations, next_onset - curr_onset, 0, WHITENULL_llll);
+                if (integer_durations) {
+                    llll_appendlong(out_voice_onsets, round(next_onset));
+                } else {
+                    llll_appenddouble(out_voice_durations, next_onset - curr_onset);
+                }
                 llll_appendllll(out_voice_velocities, this_middle_event_velocities, 0, WHITENULL_llll);
                 llll_appendllll(out_voice_ties, this_middle_event_ties, 0, WHITENULL_llll);
                 llll_appendllll(out_voice_graphic, this_middle_event_graphic, 0, WHITENULL_llll);
@@ -1207,9 +1251,13 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             
             // is there some pause before the beginning of the next chord ?
             if (active_until->l_size == 0 && chord->next && chord->next->onset > curr_onset) {
-                // add a pause
+                // add a rest
                 llll_appendllll(out_voice_cents, llll_get(), 0, WHITENULL_llll); 
-                llll_appenddouble(out_voice_durations, -(chord->next->onset - curr_onset), 0, WHITENULL_llll); // pause: negative
+                if (integer_durations) { // rest: negative
+                    llll_appendlong(out_voice_onsets, -round(chord->next->onset));
+                } else {
+                    llll_appenddouble(out_voice_durations, -(chord->next->onset - curr_onset));
+                }
                 llll_appendllll(out_voice_velocities, llll_get(), 0, WHITENULL_llll); 
                 llll_appendllll(out_voice_ties, llll_get(), 0, WHITENULL_llll); 
                 llll_appendllll(out_voice_graphic, llll_get(), 0, WHITENULL_llll); 
@@ -1220,14 +1268,24 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             
         }
         
-        llll_appendllll(out_cents, out_voice_cents, 0, WHITENULL_llll);
-        llll_appendllll(out_durations, out_voice_durations, 0, WHITENULL_llll);
-        llll_appendllll(out_velocities, out_voice_velocities, 0, WHITENULL_llll);
-        llll_appendllll(out_ties, out_voice_ties, 0, WHITENULL_llll);
+        if (integer_durations) {
+            llll_free(out_voice_durations);
+            out_voice_durations = long_llll_x2dx_for_quantize(out_voice_onsets);
+        }
+        
+        llll_appendllll(out_cents, out_voice_cents);
+        llll_appendllll(out_durations, out_voice_durations);
+        llll_appendllll(out_velocities, out_voice_velocities);
+        llll_appendllll(out_ties, out_voice_ties);
 //        llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
-        llll_appendllll(out_breakpoints, out_voice_breakpoints, 0, WHITENULL_llll);
-        llll_appendllll(out_slots, out_voice_slots, 0, WHITENULL_llll);
-        llll_appendllll(out_IDs, out_voice_IDs, 0, WHITENULL_llll);
+        llll_appendllll(out_breakpoints, out_voice_breakpoints);
+        llll_appendllll(out_slots, out_voice_slots);
+        llll_appendllll(out_IDs, out_voice_IDs);
+#ifdef BACH_QUANTIZE_DEBUG
+        llll_appendllll(out_onsets, out_voice_onsets);
+#else
+        llll_free(out_voice_onsets);
+#endif
         
         llll_free(active_until);
         llll_free(active_velocities);
@@ -1242,20 +1300,24 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     llll_appendllll(out_extras, out_breakpoints, 0, WHITENULL_llll);    
     llll_appendllll(out_extras, out_slots, 0, WHITENULL_llll);    
     
-    what_to_dump_llll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     what_to_dump = header_objects_to_long(what_to_dump_llll);
     if (what_to_dump == 0)
         what_to_dump = k_HEADER_ALL;
     llll_free(what_to_dump_llll);
     
-    llll_appendsym(out_llll, gensym("quantize"), 0, WHITENULL_llll);
+    llll_appendsym(out_llll, gensym("quantize"));
     llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, what_to_dump, false, false, true, k_CONSIDER_FOR_DUMPING, false));
-    llll_appendllll(out_llll, out_cents, 0, WHITENULL_llll);
-    llll_appendllll(out_llll, out_durations, 0, WHITENULL_llll);
-    llll_appendllll(out_llll, out_velocities, 0, WHITENULL_llll);
-    llll_appendllll(out_llll, out_ties, 0, WHITENULL_llll);
-    llll_appendllll(out_llll, out_extras, 0, WHITENULL_llll);
-    llll_appendllll(out_llll, out_IDs, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_cents);
+    llll_appendllll(out_llll, out_durations);
+    llll_appendllll(out_llll, out_velocities);
+    llll_appendllll(out_llll, out_ties);
+    llll_appendllll(out_llll, out_extras);
+    llll_appendllll(out_llll, out_IDs);
+#ifdef BACH_QUANTIZE_DEBUG
+    llll_appendllll(out_llll, out_onsets);
+#else
+    llll_free(out_onsets);
+#endif
     
     unlock_general_mutex((t_notation_obj *)x);
     
