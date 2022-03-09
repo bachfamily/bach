@@ -105,6 +105,7 @@ multiple objects: 	fixed missing lines in help files and references
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor
     "expr" and "lambda" message processing is now deferred, not deferlow-ed unless at object instantiation
+    external editor, if set, opens instead of default Max editor
 
 - all the bell-compliant objects except bach.eval:
     fixed very general issue preventing objects from working unless they had a bell lambda function
