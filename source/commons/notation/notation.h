@@ -4354,7 +4354,7 @@ typedef struct _notation_obj
     char        keep_selection_if_lost_focus;        ///< Flag telling if we want to keep the current selection when the UI notation object loses the focus (by default: yes)
     char        legend;                                ///< Flag specifying which kind of legend we want to have.
                                                     ///< 0 = No legend at all; 1 = Only the upper legend when an element is selected; 2 = Also the mouse hovering legend, bottom right.
-    e_show_stems_preferences        show_stems;                            ///< Flag telling if we want to show the chord stems
+    char        show_stems;                            ///< Flag telling if we want to show the chord stems
     char        show_auxiliary_stems;                ///< Flag telling if we want to show the chord auxiliary stems. Auxiliary stems are the secondary stems linking notes 
                                                     ///< which are not reachable by the main stem (e.g. dense chords with a lot of unisons...)
     char        allow_glissandi;                    ///< Flag telling if we allot the duration lines to bend, and breakpoints to be added and shown, in order to have glissandi
@@ -4936,7 +4936,8 @@ typedef struct _notation_obj
     t_jsurface        *clef_gradient_surface;                ///< Surface to paint a gradient near the clefs for letting notation elements fade slowly 
     
     // lambda communication for custom spacing
-    e_custom_spacing_mode        lambda_spacing;    ///< Spacing is delegated to lambda functions, if active
+    // changed to char to avoid complaints from vc++
+    char        lambda_spacing;    ///< Spacing is delegated to lambda functions, if active
     double                      lambda_val;        ///< Field containing the return value for spacing
     
     long            tempo_approx_digits;        ///< Number of digits for tempo approximation

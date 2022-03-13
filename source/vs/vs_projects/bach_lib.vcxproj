@@ -288,7 +288,7 @@
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib</TargetName>
     <IncludePath>..\..\commons;..\..\commons\libraries\SDIF-3.11.4-src\include;..\..\commons\libraries\SDIF-3.11.4-src\sdif;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -306,7 +306,7 @@
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib</TargetName>
     <IncludePath>..\..\commons;..\..\commons\libraries\SDIF-3.11.4-src\include;..\..\commons\libraries\SDIF-3.11.4-src\sdif;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
