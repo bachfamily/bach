@@ -84,7 +84,7 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.mxe</TargetExt>
     <OutDir>..\..\..\externals</OutDir>
-    <IntDir>..\vs_stuff\ext_temp\</IntDir>
+    <IntDir>..\vs_stuff\ext_temp\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <IncludePath>..\..\commons;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
@@ -93,7 +93,7 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.mxe64</TargetExt>
     <OutDir>..\..\..\externals</OutDir>
-    <IntDir>..\vs_stuff\ext_temp\</IntDir>
+    <IntDir>..\vs_stuff\ext_temp\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <IncludePath>..\..\commons;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
@@ -102,7 +102,7 @@
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.mxe</TargetExt>
     <OutDir>..\..\..\externals</OutDir>
-    <IntDir>..\vs_stuff\ext_temp\</IntDir>
+    <IntDir>..\vs_stuff\ext_temp\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <IncludePath>..\..\commons;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
@@ -111,7 +111,7 @@
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.mxe64</TargetExt>
     <OutDir>..\..\..\externals</OutDir>
-    <IntDir>..\vs_stuff\ext_temp\</IntDir>
+    <IntDir>..\vs_stuff\ext_temp\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <IncludePath>..\..\commons;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
