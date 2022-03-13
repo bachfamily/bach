@@ -4649,7 +4649,9 @@ typedef struct _notation_obj
     char        show_time_signatures;                    ///< Flag telline if we want to show the time signatures (0 = hide, 1 = classically, 2 = above staff)
     double      big_time_signatures_ratio;              ///< Expansion ratio for big time signatures
     long        measure_number_offset;                    ///< Offset for the measure numbering (by default: 0)
-    e_show_accidentals_preferences   show_accidentals_preferences;            ///< Preferences for accidental handling. When do we want to show the accidentals.
+    
+// changed from e_show_accidentals_preferences to char to avoid VC++ complaints
+    char        show_accidentals_preferences;            ///< Preferences for accidental handling. When do we want to show the accidentals.
     e_show_accidentals_tie_preferences        show_accidentals_tie_preferences;        ///< Flag telling when we want to show accidentals at the end of a tie.
     char        cautionary_accidentals;                    ///< Flag telling when we want to show the cautionary accidentals.
                                                         ///< 0 = Never, 1 = Only for notes on the same staff position and in the same octave, 2 = Also for all the octaves 
