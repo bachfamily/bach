@@ -678,7 +678,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     // @description Allow the creation of more than one measure inside two barline markers, in case they are so far apart that more
     // than one measure will fit, depending on the current tempo.
     
-    CLASS_ATTR_CHAR(c, "tempohandling", 0, t_quantize, tempi_handling);
+    CLASS_ATTR_CHAR_UNSAFE(c, "tempohandling", 0, t_quantize, tempi_handling);
     CLASS_ATTR_STYLE_LABEL(c,"tempohandling",0,"enumindex","Tempi Creation Policy");
     CLASS_ATTR_ENUMINDEX(c,"tempohandling", 0, "Ignore Set From Tempo Markers Set From Barlines Set From Divisions");	// one of the e_tempi_handling
     CLASS_ATTR_BASIC(c,"tempohandling",0);

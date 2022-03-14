@@ -176,6 +176,8 @@ typedef struct _tonnetz // [bach.tonnetz] structure
 	
 	char					j_has_focus;
 	char					show_focus;
+
+	// changed from e_note_names_styles or vc++ complains
 	e_note_names_styles		note_names_style;
 	long					middleC_octave;
 
@@ -1368,7 +1370,7 @@ void C74_EXPORT ext_main(void *moduleRef){
 
 	CLASS_STICKY_ATTR(c,"category",0,"Settings");
 
-		CLASS_ATTR_CHAR(c,"notenamesstyle",0, t_tonnetz, note_names_style);
+		CLASS_ATTR_CHAR_UNSAFE(c,"notenamesstyle",0, t_tonnetz, note_names_style);
 		CLASS_ATTR_STYLE_LABEL(c,"notenamesstyle",0,"enumindex","Note Names Style");
 		CLASS_ATTR_ENUMINDEX(c,"notenamesstyle", 0, "Latin Anglo-Saxon");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notenamesstyle",0,"1");

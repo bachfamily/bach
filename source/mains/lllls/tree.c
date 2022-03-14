@@ -143,7 +143,8 @@ typedef struct _tree // [bach.tree] structure
     t_llll					*tree_as_llll; // stored llll
     t_llll					*treenodes; // linear llll: for each element of the tree_as_llll there's a treenode object in this llll containing all the information about the node
     
-    e_tree_mode				mode;
+    // changed from e_tree_mode to char to avoid complaints from vc++
+    char				    mode;
     
     //	t_symbol				*j_textfont;
     //	double					fontsize;

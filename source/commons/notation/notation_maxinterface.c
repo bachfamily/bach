@@ -2669,7 +2669,7 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
 
 
 
-        CLASS_ATTR_CHAR(c,"defaultvelocity",0, t_notation_obj, default_velocity);
+        CLASS_ATTR_LONG(c,"defaultvelocity",0, t_notation_obj, default_velocity);
         CLASS_ATTR_STYLE_LABEL(c,"defaultvelocity",0,"text","Default Velocity");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"defaultvelocity", 0, "100");
         CLASS_ATTR_FILTER_CLIP(c, "defaultvelocity", CONST_MIN_VELOCITY, CONST_MAX_VELOCITY)

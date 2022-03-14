@@ -38,6 +38,13 @@
 #define CLASS_ATTR_BASIC(c, name, flags) CLASS_ATTR_ATTR_PARSE(c,name,"basic",_sym_long,flags,"1")
 #endif
 
+#ifdef WIN_VERSION
+#define CLASS_ATTR_CHAR_UNSAFE(c,attrname,flags,structname,structmember) \
+		class_addattr((c),attr_offset_new(attrname,USESYM(char),(flags),(method)0L,(method)0L,calcoffset(structname,structmember)))
+#else
+#define CLASS_ATTR_CHAR_UNSAFE CLASS_ATTR_CHAR
+#endif
+
 const char EARS_PROCESS_SPECIALSYM[] = "_x_x_ears.map~_x_x_";
 
 

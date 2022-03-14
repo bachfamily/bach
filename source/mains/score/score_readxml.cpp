@@ -24,6 +24,10 @@
 #include <algorithm>
 #include <numeric>
 
+#ifdef WIN_VERSION
+#include <typeinfo>
+#endif
+
 #define CONST_DYNAMICS_TEXT_ALLOC_SIZE 2048
 
 #ifdef WIN_VERSION

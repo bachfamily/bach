@@ -129,7 +129,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 	CLASS_ATTR_BASIC(c, "auto", 0);	
 	// @description When set to 1, the llll is automatically output immediately after being read from disk.
     
-    CLASS_ATTR_ATOM(c, "ignore",	0,	t_read, n_ignore);
+    CLASS_ATTR_LONG(c, "ignore",	0,	t_read, n_ignore);
     CLASS_ATTR_LABEL(c, "ignore", 0, "Ignore Categories");
     CLASS_ATTR_ACCESSORS(c, "ignore", read_getattr_ignore, read_setattr_ignore);
     // @description The <m>ignore</m> attribute allows preventing certain categories

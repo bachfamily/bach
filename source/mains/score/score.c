@@ -7106,7 +7106,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_BASIC(c,"accidentalsgraphic",0);
     // @description @copy BACH_DOC_ACCIDENTALSGRAPHIC
 
-    CLASS_ATTR_CHAR(c, "accidentalspreferences", 0, t_notation_obj, accidentals_preferences); 
+    CLASS_ATTR_CHAR_UNSAFE(c, "accidentalspreferences", 0, t_notation_obj, accidentals_preferences); 
     CLASS_ATTR_STYLE_LABEL(c,"accidentalspreferences",0,"enumindex","Accidental Preferences");
     CLASS_ATTR_ENUMINDEX(c,"accidentalspreferences", 0, "Auto Sharps Flats Custom");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"accidentalspreferences",0,"0");
@@ -7503,7 +7503,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showdots",0,"1");
     // @description Toggles the display of augmentation dots.
     
-    CLASS_ATTR_CHAR(c,"showrests",0, t_notation_obj, show_rests);
+    CLASS_ATTR_CHAR_UNSAFE(c,"showrests",0, t_notation_obj, show_rests);
     CLASS_ATTR_STYLE_LABEL(c,"showrests",0,"enumindex","Show Rests");
     CLASS_ATTR_ENUMINDEX(c,"showrests", 0, "Never Not In Empty Measures Always");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showrests", 0, "2");
@@ -7700,7 +7700,7 @@ void C74_EXPORT ext_main(void *moduleRef){
         CLASS_ATTR_ACCESSORS(c, "maxdots", (method)NULL, (method)score_setattr_maxdots);
         // @description Sets the maximum number of dots to be used while notating music. Default is 1.
 
-        CLASS_ATTR_CHAR(c,"showaccidentalstiepreferences",0, t_notation_obj, show_accidentals_tie_preferences);
+        CLASS_ATTR_CHAR_UNSAFE(c,"showaccidentalstiepreferences",0, t_notation_obj, show_accidentals_tie_preferences);
         CLASS_ATTR_STYLE_LABEL(c,"showaccidentalstiepreferences",0,"enumindex","Accidental Upon Tie");
         CLASS_ATTR_ENUMINDEX(c,"showaccidentalstiepreferences", 0, "Never At Measure Beginning Always");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showaccidentalstiepreferences", 0, "0");
