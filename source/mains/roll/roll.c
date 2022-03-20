@@ -11079,6 +11079,18 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.width = 526;
     x->r_ob.height = 120;
 
+    // checking if the patching rectangle is present in the dictionary
+    // This is needed because we may need it to use bach.score without displaying it.
+    long patching_rect_ac;
+    t_atom *patching_rect_av = NULL;
+    t_max_err patching_rect_err = dictionary_getatoms(d, gensym("patching_rect"), &patching_rect_ac, &patching_rect_av);
+    if (patching_rect_err == MAX_ERR_NONE) {
+        if (patching_rect_ac >= 4) {
+            x->r_ob.width = atom_getfloat(patching_rect_av+2);
+            x->r_ob.height = atom_getfloat(patching_rect_av+3);
+        }
+    }
+    
     x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
 
     x->r_ob.show_page_numbers = 1;

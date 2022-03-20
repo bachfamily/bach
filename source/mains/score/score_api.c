@@ -3136,8 +3136,8 @@ void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll,
                     case H_OBJ:
                     default:
 #ifdef CONFIGURATION_Development
-                        llll_post_named(measelemllll, 0, 0, 2, NULL, NULL);
-                        llll_print(measelemllll, NULL, 0, 2, NULL);
+//                        llll_post_named(measelemllll, 0, 0, 2, NULL, NULL);
+//                        llll_print(measelemllll, NULL, 0, 2, NULL);
 #endif
                         object_warn((t_object *) x, "Error: wrong input list.");
                         elem = elem->l_next;
