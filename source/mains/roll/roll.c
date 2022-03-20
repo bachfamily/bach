@@ -11079,6 +11079,18 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.width = 526;
     x->r_ob.height = 120;
 
+    // checking if the patching rectangle is present in the dictionary
+    // This is needed because we may need it to use bach.score without displaying it.
+    long patching_rect_ac;
+    t_atom *patching_rect_av = NULL;
+    t_max_err patching_rect_err = dictionary_getatoms(d, gensym("patching_rect"), &patching_rect_ac, &patching_rect_av);
+    if (patching_rect_err == MAX_ERR_NONE) {
+        if (patching_rect_ac >= 4) {
+            x->r_ob.width = atom_getfloat(patching_rect_av+2);
+            x->r_ob.height = atom_getfloat(patching_rect_av+3);
+        }
+    }
+    
     x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
 
     x->r_ob.show_page_numbers = 1;
@@ -12705,29 +12717,31 @@ void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
     if (x->r_ob.zoom_y == 0) 
         x->r_ob.firsttime = 1;
     
-    if (false && x->r_ob.firsttime) { // actually, it shouldn't be used anymore
-        x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
-        calculate_voice_offsets((t_notation_obj *) x);
-
-        if (x->r_ob.link_vzoom_to_height)
-            notationobj_set_vzoom_depending_on_height((t_notation_obj *) x, rect.height);
-        else
-            notationobj_reset_size_related_stuff((t_notation_obj *) x);
-
-        x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *) x);
-        x->r_ob.needed_uheight_for_one_system = x->r_ob.needed_uheight / ((x->r_ob.num_systems > 0) ? x->r_ob.num_systems : 1);
-        calculate_ms_on_a_line((t_notation_obj *) x);
-        update_vscrollbar((t_notation_obj *) x, 0);
-        redraw_hscrollbar((t_notation_obj *)x, 0);
+    if (x->r_ob.firsttime) {
+        if (false) { // actually, it shouldn't be used anymore
+            x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
+            calculate_voice_offsets((t_notation_obj *) x);
+            
+            if (x->r_ob.link_vzoom_to_height)
+                notationobj_set_vzoom_depending_on_height((t_notation_obj *) x, rect.height);
+            else
+                notationobj_reset_size_related_stuff((t_notation_obj *) x);
+            
+            x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *) x);
+            x->r_ob.needed_uheight_for_one_system = x->r_ob.needed_uheight / ((x->r_ob.num_systems > 0) ? x->r_ob.num_systems : 1);
+            calculate_ms_on_a_line((t_notation_obj *) x);
+            update_vscrollbar((t_notation_obj *) x, 0);
+            redraw_hscrollbar((t_notation_obj *)x, 0);
+            
+            // we need to recalculate 2 times the chord parameters the firsttime
+            // this is due to the fact thats 1) we want some parameters to be computed IMMEDIATELY (not in paint function) when a roll is set
+            // or recalled, but 2) some of the parameters depend on the vzoom, which in turn might depend on rect.height, which is given ONLY in the
+            // current view, in the paint function. So we need to recalculate parameters twice, at the beginning
+            recalculate_all_chord_parameters(x);
+            must_repaint = true;
+        }
         
         x->r_ob.firsttime = 0;
-
-        // we need to recalculate 2 times the chord parameters the firsttime
-        // this is due to the fact thats 1) we want some parameters to be computed IMMEDIATELY (not in paint function) when a roll is set
-        // or recalled, but 2) some of the parameters depend on the vzoom, which in turn might depend on rect.height, which is given ONLY in the
-        // current view, in the paint function. So we need to recalculate parameters twice, at the beginning
-        recalculate_all_chord_parameters(x);
-        must_repaint = true;
     }
 
     jf_text = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(11. * x->r_ob.zoom_y)); 
@@ -12853,6 +12867,9 @@ void roll_paint(t_roll *x, t_object *view)
 
 void roll_paint_to_jitter_matrix(t_roll *x, t_symbol *matrix_name)
 {
+//    if (x->r_ob.firsttime) // paint twice
+//        bach_paint_to_jitter_matrix((t_object *)x, matrix_name, x->r_ob.width, x->r_ob.height, (bach_paint_ext_fn)roll_paint_ext);
+    
     bach_paint_to_jitter_matrix((t_object *)x, matrix_name, x->r_ob.width, x->r_ob.height, (bach_paint_ext_fn)roll_paint_ext);
 }
 
