@@ -3477,8 +3477,8 @@ void repaint_left_background_part(t_notation_obj *r_ob, t_jgraphics* g, t_rect g
 double paint_label_for_ruler(t_notation_obj *r_ob, t_jgraphics* g, double milliseconds, double x_pos, double y_pos, char v_alignment){
     char text[1000];
     double width, height;
-    char sign = (milliseconds >= 0 ? 1 : -1);
-    long work_ms = fabs(milliseconds);
+    long work_ms = round(fabs(milliseconds));
+    char sign = (work_ms >= 0 ? 1 : -1);
     long mins = work_ms  /60000;
     long secs = (work_ms - mins * 60000) / 1000;
     long millisecs = work_ms - mins * 60000 - secs * 1000;

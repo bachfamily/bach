@@ -151,6 +151,7 @@ multiple objects: 	fixed missing lines in help files and references
     fixed bug causing stafflines attribute not to be saved sometimes
     improved display of auxiliary stems
     New "dltoslot" message to copy pitch and velocity envelopes to slots
+    Fixed bug causing loss of slots and other data upon "paste @repeat N"
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported

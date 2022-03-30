@@ -10240,8 +10240,21 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
     
     x->r_ob.width = 526;
     x->r_ob.height = 120;
-    x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
     
+    // checking if the patching rectangle is present in the dictionary
+    // This is needed because we may need it to use bach.score without displaying it.
+    long patching_rect_ac;
+    t_atom *patching_rect_av = NULL;
+    t_max_err patching_rect_err = dictionary_getatoms(d, gensym("patching_rect"), &patching_rect_ac, &patching_rect_av);
+    if (patching_rect_err == MAX_ERR_NONE) {
+        if (patching_rect_ac >= 4) {
+            x->r_ob.width = atom_getfloat(patching_rect_av+2);
+            x->r_ob.height = atom_getfloat(patching_rect_av+3);
+        }
+    }
+
+    x->r_ob.inner_width = x->r_ob.width - (2 * x->r_ob.j_inset_x); // 526 is the default object width
+
     // @arg 0 @name numvoices @optional 1 @type int @digest Number of voices
     notation_obj_arg_attr_dictionary_process_with_bw_compatibility(x, d);
     
@@ -14006,11 +14019,9 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                 // insert measure
                 insert_measure(x, voice, new_meas, after_this_measure, 0);
                 
-                t_llll *meas_ll = meas_elem ? hatom_getllll(&meas_elem->l_hatom) : get_nilnil();
-                if (!meas_ll)
-                        meas_ll = get_nilnil();
-                set_measure_from_llll(x, new_meas, meas_ll, true, true, &need_update_solos);
-                if (!meas_elem || !meas_ll) llll_free(meas_ll);
+                t_llll *this_measure_ll = meas_elem && hatom_getllll(&meas_elem->l_hatom) ? llll_clone(hatom_getllll(&meas_elem->l_hatom)) : get_nilnil();
+                set_measure_from_llll(x, new_meas, this_measure_ll, true, true, &need_update_solos);
+                llll_free(this_measure_ll);
                 
                 recompute_all_for_measure((t_notation_obj *)x, new_meas, true);
                 if (new_meas->prev)
@@ -14020,7 +14031,7 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                 
                 if (allow_multiple_measures_per_voice)
                     meas_elem = meas_elem ? meas_elem->l_next : NULL;
-                after_this_measure= new_meas;
+                after_this_measure = new_meas;
             }
         }
     }
