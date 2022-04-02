@@ -4827,13 +4827,6 @@
 				"tags" : [ "sequencer", "sequencing", "play", "playing", "playout", "off", "line", "off-line", "offline" ],
 				"title" : [ "Playing musical content" ]
 			},
-			"Dblclicksendsvalues" : {
-				"filename" : [ "bach.help.notation.sequencing.02_dblclicksendsvalues.maxpat" ],
-				"objects" : [ "bach.score", "bach.roll" ],
-				"seealso" : [ "dumpselection" ],
-				"tags" : [ "sequencer", "sequencing", "off", "line", "off-line", "offline", "double", "click", "doubleclick", "send", "value dblclicksendsvalues", "dump", "selection", "interface", "mouse", "keyboard" ],
-				"title" : [ "Offline play from interface" ]
-			},
 			"Playingmessages" : {
 				"filename" : [ "bach.help.notation.sequencing.03_playingmessages.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],

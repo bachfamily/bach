@@ -83,6 +83,12 @@ On Windows, you only need Visual Studio 2017 or higher.
 
 bach contains a number of Flex / Bison lexers and parsers tackling the llll textual representation, bach.expr expressions and bell programs. The bach repository contains both the Flex / Bison grammar files (.l and .y), with the makefiles invoking Flex and Bison, and the C code files they produce. This is somewhat unorthodox, but necessary because currently Flex and Bison are only invoked when bach is built on a Mac, whereas on Windows the .l, .y and makefiles are ignored, and bach is only built from the C code files. So, if you are a Windows user and you want to modify the grammars, you have to either find a compatible Flex / Bison distribution for Windows, install it and run it on your machine (and, why not, share some information about it with the bach dev community and us), or generate the lexers and parsers on a UNIX machine and transfer them to Windows. If you don't want to fiddle with the grammars instead, you can avoid installing Flex and Bison on a Mac as well, and modify the makefiles or the relevant build targets so as not to invoke them when the project is built (and perhaps adding an exclude file to your local repository, so that these customizations are preserved whenever you pull from the remote).
 
+Important: Max 8.2 SDK seems to have some issues of redefined symbols, so currently bach needs to use a slightly modified version of it. Do not use the original max-sdk, but rather
+1) pull it from the repository https://github.com/bachfamily/max-sdk.
+2) perform the manipulation shown here https://www.youtube.com/watch?v=il5WblTBUgs
+3) go inside the repository max-sdk/source/max-sdk-base and check out the "bach" branch:
+cd  ~/Documents/Max\ 8/Packages/max-sdk/source/max-sdk-base
+git checkout bach
 
 ===================================================
 DEPENDENCIES

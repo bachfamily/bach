@@ -6914,6 +6914,15 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
+				Reset the commands to the default one
+			</digest>
+			<description>
+				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
 				Reset the slotinfo to the default one
 			</digest>
 			<description>
@@ -6923,15 +6932,6 @@
 				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
 				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
 				<br />				See also:<m>eraseslot</m><br />
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
-				Reset the commands to the default one
-			</digest>
-			<description>
-				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -9831,7 +9831,7 @@
 		</attribute>
 		<attribute name="fontface" get="1" set="1" type="" size="1">
 			<digest>
-
+				
 			</digest>
 			<description>
 			</description>
@@ -9841,7 +9841,7 @@
 		</attribute>
 		<attribute name="fontname" get="1" set="1" type="" size="1">
 			<digest>
-
+				
 			</digest>
 			<description>
 			</description>
@@ -9851,7 +9851,7 @@
 		</attribute>
 		<attribute name="fontsize" get="1" set="1" type="" size="1">
 			<digest>
-
+				
 			</digest>
 			<description>
 			</description>

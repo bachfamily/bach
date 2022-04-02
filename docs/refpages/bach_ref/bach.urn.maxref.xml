@@ -160,13 +160,13 @@
 			</description>
 		</method>
 		<method name="seed">
-			<arg name="" optional="116" type="" />
+			<arg name="" optional="0" type="" />
 			<arg name="seed" optional="0" type="int" />
 			<digest>
 				Set the random number generator seed
 			</digest>
 			<description>
-				Syntax: <b>seed <m>[&lt;: &gt;]</m> <m>&lt;int: seed&gt;</m> </b><br />				<br />
+				Syntax: <b>seed <m>&lt;: &gt;</m> <m>&lt;int: seed&gt;</m> </b><br />				<br />
 				Use the <m>seed</m> message to set the random number generator seed
 				(see the reference of <o>urn</o> for more information).
 			</description>
@@ -203,7 +203,6 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Default llll" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>

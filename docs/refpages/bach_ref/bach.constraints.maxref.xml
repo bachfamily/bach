@@ -459,7 +459,7 @@
 		<seealso name="bach.comb" />
 		<seealso name="bach.perm" />
 		<seealso name="bach.cartesianprod" />
-		<seealso name="05-Slot Machines" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">
