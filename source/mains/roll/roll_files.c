@@ -30,7 +30,7 @@ void roll_doreadmidi(t_roll *x, t_symbol *s, long ac, t_atom *av);
 t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av);
 
 unsigned long midi_getvalue(unsigned char **buf, unsigned long bytes);
-unsigned long midi_get_vlen_value(unsigned char **buf, t_ptr_size *size);
+unsigned long midi_get_vlen_value(unsigned char **buf, long *size);
 t_atom_ulong midi_track_and_chan_to_key(t_atom_ulong track, t_atom_ulong chan, long track2voice, long chan2voice);
 void hashtab_free_one_llll(t_hashtab_entry *e, void *dummy);
 
@@ -185,7 +185,7 @@ roll_doread_error_close:
 
 t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long chan2voice, long markmeasures, long markdivisions, long importbarlines, long importdivisions, long importsubdivisions)
 {
-	t_ptr_size size;
+	t_ptr_size uSize;
 	unsigned char *buffer, *buffer_orig = NULL;
 	unsigned long time_division, num_tracks;
 	t_llll *roll_ll = NULL;
@@ -210,13 +210,15 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
     t_timesignature ts;
     
 	// allocate memory block that is the size of the file
-	sysfile_geteof(fh, &size);
-	buffer_orig = buffer = (unsigned char *) bach_newptr(size + 1);
+	sysfile_geteof(fh, &uSize);
+	buffer_orig = buffer = (unsigned char *) bach_newptr(uSize + 1);
     buffer_orig[0] = 0;
 	//buffer_end = buffer + size;
 	// read in the file
-	sysfile_read(fh, &size, buffer);
+	sysfile_read(fh, &uSize, buffer);
 	
+    long size = (long) uSize;
+    
     t_llll *all_calculated_barlines = llll_get();
     t_llll *all_calculated_divisions = llll_get();
     t_bool are_there_imported_barlines = false;
@@ -283,6 +285,10 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 	markers_ll = llll_get();
 	llll_appendsym(markers_ll, _llllobj_sym_markers, 0, WHITENULL_llll);
 	for (this_track = 0; this_track < num_tracks; this_track++) {
+        if (size == 0) {
+            object_warn((t_object *) x, "Misformatted MIDI file: missing track chunks");
+            break;
+        }
 		long go_on = 1;
 		unsigned long abstime = 0; // measured in ticks
 		unsigned long midi_channel_prefix = 0; // for meta-events
@@ -799,7 +805,7 @@ unsigned long midi_getvalue(unsigned char **buf, unsigned long bytes)
 	return res;
 }
 
-unsigned long midi_get_vlen_value(unsigned char **buf, t_ptr_size *size)
+unsigned long midi_get_vlen_value(unsigned char **buf, long *size)
 {
 	long go_on = 1;
 	unsigned long res = 0;
