@@ -5561,7 +5561,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     // @method poly @digest Force maximum polyphony and/or assign voicing numbers for selection
     // @description The <m>poly</m> message followed by a number <m>N</m> forces the selected material to be playable with at most <m>N</m> independent
-    // monophonic voices. For instance <m>poly 1</m> will force the selection to be monophonic, <m>poly 2</m> will force it to be playable with
+    // monophonic voices.
+    // Importantly, this currently only works if the selected material is on a single voice.
+    // For instance <m>poly 1</m> will force the selection to be monophonic, <m>poly 2</m> will force it to be playable with
     // two voices, and so on. Use <m>N</m> = 0 in order to avoid forcing a maximum number of voices - and, possibly, instead using the other following features
     // of the <m>poly</m> message. <br />
     // During the process, each note is assigned its own voice index.
