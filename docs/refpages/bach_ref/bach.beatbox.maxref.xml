@@ -322,7 +322,7 @@
 		<seealso name="bach.score" />
 		<seealso name="bach.quantize" />
 		<seealso name="bach.score2roll" />
-		<seealso name="04-Through The Looking Glass" module="bach" type="tutorial" />
+		<seealso name="pG" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

@@ -26,14 +26,14 @@
 	<inletlist>
 		<inlet id="0" type="INLET_TYPE">
 			<digest>
-				llll to be compared
+				llll to be assigned to inlet pseudovariables
 			</digest>
 			<description>
 			</description>
 		</inlet>
 		<inlet id="1" type="INLET_TYPE">
 			<digest>
-				llll to be compared
+				llll to be assigned to direct inlet pseudovariables
 			</digest>
 			<description>
 			</description>
@@ -44,7 +44,21 @@
 	<outletlist>
 		<outlet id="0" type="INLET_TYPE">
 			<digest>
-				Comparison result (0/1)
+				Values assigned to outlet pseudovariables
+			</digest>
+			<description>
+			</description>
+		</outlet>
+		<outlet id="1" type="INLET_TYPE">
+			<digest>
+				Final result of the evaluation
+			</digest>
+			<description>
+			</description>
+		</outlet>
+		<outlet id="2" type="INLET_TYPE">
+			<digest>
+				Values assigned to direct outlet pseudovariables
 			</digest>
 			<description>
 			</description>
@@ -76,16 +90,6 @@
 				Double-clicking on the object forces a text editor to open up, where the expression can be edited directly.
 			</description>
 		</method>
-		<method name="(doubleclick)">
-			<arglist />
-			<digest>
-				Edit bell code for <m>lambda</m> attribute
-			</digest>
-			<description>
-				Doubleclicking on the object forces a text editor to open up, where the bell code
-				for the <m>lambda</m> attribute can be edited directly.
-			</description>
-		</method>
 		<method name="bang">
 			<arglist />
 			<digest>
@@ -110,7 +114,7 @@
 				Expression to evaluate
 			</digest>
 			<description>
-				The <m>expr</m> message, followed by a valid expression, will set the new expression to be evaluated by <o>bach.eval</o>.
+				The <m>expr</m> message, followed by a valid expression, will set the new program to be evaluated by <o>bach.eval</o>.
 				For more details on the expression syntax, please refer to <o>bach.eval</o>'s help patcher.
 			</description>
 		</method>
@@ -137,7 +141,7 @@
 		<method name="llll">
 			<arglist />
 			<digest>
-				Store values for the expression variables
+				Store values for the inlet variables
 			</digest>
 			<description>
 				The lllls provide the data to the expression.
@@ -281,6 +285,7 @@
 				and the editor.
 				This is a static attribute which can only be set by typing it in the object box.
 				<br /> <br />
+				codableclass_add_extended_methods_and_attrs(c);
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Code file to be read at initialization" />
@@ -299,41 +304,6 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of Inlets" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="lambda" get="1" set="1" type="char_array" size="3276">
-			<digest>
-				Bell Expression For Lambda Function
-			</digest>
-			<description>
-				The <m>lambda</m> attribute allows setting a snipped of bell code
-				to be called instead of the lambda loop. If the lambda attribute is set,
-				the lambda loop will not be evaluated, and the provided code will be executed as well.
-				For each lambda outlet of the object, an input pseudovariable is passed to the lambda loop,
-				with their indices counted from left to right.
-			</description>
-			<attributelist>
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Bell Expression For Lambda Function" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="lambdaparams" get="1" set="1" type="llll" size="1">
-			<digest>
-				Extra Parameters To Lambda Function
-			</digest>
-			<description>
-				The <m>lambdaparams</m> attribute allows setting the values
-				of local variables to be passed to the bell code set by the <m>lambda</m> attribute.
-				It is structured as an llll consisting of one or more sublists,
-				each containing the name of a variable and its value to be passed to the code.
-				For example, the llll <b>[ $foo 1 ] [ $bar [ 2 3 ] ]</b>
-				will set the $foo and $bar local variables respectively to <b>1</b> and <b>[ 2 3 ]</b>.
-			</description>
-			<attributelist>
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Extra Parameters To Lambda Function" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
@@ -482,22 +452,32 @@
 	</seealsolist>
 
 	<misc name = "Input">
-		<entry name ="Inlet 1 (llll)">
+		<entry name ="Inlets 1, 2, 3... (llll)">
 			<description>
-				llll to be compared.
+				llll to be assigned to inlet pseudovariables.
 			</description>
 		</entry>
-		<entry name ="Inlet 2 (llll)">
+		<entry name ="The last Inlet (llll)">
 			<description>
-				llll to be compared.
+				llll to be assigned to direct inlet pseudovariables.
 			</description>
 		</entry>
 	</misc>
 
 	<misc name = "Output">
-		<entry name ="Outlet 1 (int)">
+		<entry name ="Outlets 1, 2, 3... (llll)">
 			<description>
-				Comparison result (0/1).
+				Values assigned to outlet pseudovariables.
+			</description>
+		</entry>
+		<entry name ="The last but 1 Outlet (llll)">
+			<description>
+				Final result of the evaluation.
+			</description>
+		</entry>
+		<entry name ="Outlets 3, 4, 5... (llll)">
+			<description>
+				Values assigned to direct outlet pseudovariables.
 			</description>
 		</entry>
 	</misc>

@@ -122,6 +122,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="autoassigncommands" get="1" set="1" type="int" size="1">
+			<digest>
+				Autoassign Commands To Notes
+			</digest>
+			<description>
+				When set to 1, any unknown command router found is assigned to a note element (unless explicitly assigned
+				to other commands via the <m>routers</m> attribute). <br />
+				This attribute is static and can only be set in the object box.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Autoassign Commands To Notes" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="breakpointshavevelocity" get="1" set="1" type="int" size="1">
 			<digest>
 				Breakpoints Have Velocity
@@ -247,10 +263,8 @@
 				E.g. <b>note tempo</b> will only accept "note"- and "tempo"-routed playout lllls. <br />
 				You can have <o>bach.playkeys</o> intercept commands as well, provided that you set aliases via an llll starting
 				with "note", "chord" or "rest" (depending on the type of alias). E.g. <b>@routers note [note mynotecommand1 mynotecommand2]</b>
-				will intercept <b>note</b> messages, as well as note commands <b>mynotecommand1</b> and <b>mynotecommand2</b>.
-				To only intercept commands, simply use something like <b>@routers [note mynotecommand1 mynotecommand2]</b>.
-				If you want to add some commands for acceptance (and to keep everything else accepted) use "+" as first element, such as in
-				<b>@routers + [rest myrestcommand]</b>.
+				will intercept <b>note</b> messages, as well as note commands <b>mynotecommand1</b> and <b>mynotecommand2</b>. <br />
+				This attribute is static and can only be set in the object box.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />

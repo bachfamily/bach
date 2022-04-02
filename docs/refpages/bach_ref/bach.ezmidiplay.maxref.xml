@@ -950,7 +950,6 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Duration Stretch Factor" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -1026,8 +1025,8 @@
 		<seealso name="bach.playkeys" />
 		<seealso name="makenote" />
 		<seealso name="noteout" />
-		<seealso name="02-Brother John" module="bach" type="tutorial" />
-		<seealso name="06-The Gift Of Synthesis" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

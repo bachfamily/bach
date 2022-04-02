@@ -861,7 +861,7 @@
 		<seealso name="bach.beatunbox" />
 		<seealso name="bach.score2roll" />
 		<seealso name="bach.mono" />
-		<seealso name="08-Real Time Stories" module="bach" type="tutorial" />
+		<seealso name="pG" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">
