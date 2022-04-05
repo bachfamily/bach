@@ -1346,7 +1346,7 @@ void paint_colorgradient_line(t_jgraphics* g, t_jrgba color_start, t_jrgba color
     for (i = 0; i < num_steps; i++) {
         t_jrgba thiscolor;
         if (colors_from_spectrum)
-            thiscolor = double_to_color((num_steps == 1) ? vel1 : vel1 + ((double)i) * vel_step, 0, max_velocity, false);
+            thiscolor = double_to_color((num_steps == 1) ? vel1 : vel1 + ((double)i) * vel_step, 0, max_velocity, false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
         else
             thiscolor = color_interp(color_start, color_end, (num_steps == 1) ? 1 : ((double)i) / numstepsminus1);
 #ifdef BACH_MAX
@@ -1679,7 +1679,7 @@ void apply_velocity_colorscale(t_jrgba *color, double velocity)
 
 void apply_velocity_colorspectrum(t_jrgba *color, double velocity)
 {
-    *color = double_to_color(((double)velocity), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY, false);
+    *color = double_to_color(((double)velocity), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY, false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
 }
 
 void apply_velocity_alphascale(t_jrgba *color, double velocity)
@@ -1689,7 +1689,7 @@ void apply_velocity_alphascale(t_jrgba *color, double velocity)
 }
 
 
-t_jrgba double_to_color(double value, double min, double max, char looped)
+t_jrgba double_to_color(double value, double min, double max, char looped, double saturation_factor)
 {
     t_jrgba out_color = build_jrgba(0, 0, 0, 1);
     double temp;
@@ -1720,9 +1720,13 @@ t_jrgba double_to_color(double value, double min, double max, char looped)
     
 //    return out_color;
 
-    t_jhsla color_hsla = rgba_to_hsla(out_color);
-    color_hsla.saturation /= 2;
-    return hsla_to_rgba(color_hsla);
+    if (saturation_factor != 1) {
+        t_jhsla color_hsla = rgba_to_hsla(out_color);
+        color_hsla.saturation *= CONST_GRAPHICS_COLOR_SATURATION_FACTOR;
+        return hsla_to_rgba(color_hsla);
+    } else {
+        return out_color;
+    }
 }
 
 double color_to_double(t_jrgba color, double min, double max, char looped){
