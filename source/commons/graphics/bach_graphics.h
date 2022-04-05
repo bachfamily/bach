@@ -932,10 +932,10 @@ void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1
                                     (= number of actually painted differently coloured small lines) 
     @param    colors_from_spectrum    If this is 1, the <color_start> and <color_end> are ignored, and the colors are built from the standard bach colourspectrum 
                                     (red to blue), starting from the following velocity parameters <vel1>, <vel2>, <max_velocity>. This mean that the starting 
-                                    color will be double_to_color(vel1, 0, max_velocity), the ending color will be double_to_color(vel2, 0, max_velocity), and
+                                    color will be double_to_color(vel1, 0, max_velocity,CONST_GRAPHICS_COLOR_SATURATION_FACTOR), the ending color will be double_to_color(vel2, 0, max_velocity,CONST_GRAPHICS_COLOR_SATURATION_FACTOR), and
                                     every intermediate color will NOT be the interpolation of the first and last color, but the interpolated parameter will 
                                     actually be the velocity (from <vel1> to <vel2>) and for every interpolated velocity v, the corresponding color will be 
-                                    calculated with double_to_color(v, 0, max_velocity).
+                                    calculated with double_to_color(v, 0, max_velocity,CONST_GRAPHICS_COLOR_SATURATION_FACTOR).
                                     If this is 0, the intermediate colors will be interpolated from <color_start> to <color_end>, via color_interp(), and 
                                     the following velocities parameter <vel1>, <vel2> and <max_velocity> will be ignored.
     @param    vel1                    The starting velocity (used only if <colors_from_spectrum> = 1)
@@ -1150,10 +1150,11 @@ t_jrgba long_to_color(long value);
      @param    min            The minimum value (corresponding to red = build_jrgba(1, 0, 0, 1))
     @param    max            The maximum value (corresponding either to the same red, after a complete loop red->green->blue->red, if <loop> = 1, or to violet = build_jrgba(1, 0, 1, 1), if <loop> = 0)
     @param    loop        Set to 0 if the ending point of the spectrum (when <val> = <max>) is violet = build_jrgba(1, 0, 1, 1); set to 1 if it spectrum goes back to red = build_jrgba(1, 0, 0, 1)
+    @param   saturation_factor   Sets an additional saturation factor (defaults to 1.)
     @return                The color related to <value>
     @see                color_to_double()
  */ 
-t_jrgba double_to_color(double value, double min, double max, char loop);
+t_jrgba double_to_color(double value, double min, double max, char loop, double saturation_factor=1.);
 
 
 /**    Changes a color depending on a velocity, applying the velocity color scale.

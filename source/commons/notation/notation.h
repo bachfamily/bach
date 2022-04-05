@@ -539,6 +539,8 @@
 
 #define CONST_NUM_PART_COLORS 4         ///< Number of part colors (which will be looped as candycane)
 
+#define CONST_GRAPHICS_COLOR_SATURATION_FACTOR   0.5  ///< Saturation factor for double to color conversions
+
 #define CONST_MARKERS_ON_FIRST_MEASURE_CHORDS false             ///< Markers at the beginning of the measure are placed on barlines instead that on starting chords?
 
 /** \addtogroup dynamics
