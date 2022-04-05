@@ -1845,25 +1845,8 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     if (selectllll && selectllll->l_size > 0) {
         long head_type = hatom_gettype(&selectllll->l_head->l_hatom);
         
-        // (un)sel(ect) chord
-        if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_chord && selectllll->l_head->l_next) {
-            t_chord *to_select;
-            lock_general_mutex((t_notation_obj *)x);
-            if (selectllll->l_depth == 1) {
-                if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next, 0, 0, 0)))
-                    add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
-            } else {
-                t_llllelem *elem;
-                for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
-                    if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                        if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
-                            add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
-            }
-            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
-            unlock_general_mutex((t_notation_obj *)x);
-            
         // (un)sel(ect) note/chord/measure/voice/breakpoint/tail/marker if
-        } else if (head_type == H_SYM && selectllll->l_head->l_next &&
+        if (head_type == H_SYM && selectllll->l_head->l_next &&
                    hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
                    hatom_getsym(&selectllll->l_head->l_next->l_hatom) == _llllobj_sym_if) {
 
@@ -1904,7 +1887,25 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             } else {
                 object_error((t_object *) x, "Bad expression!");
             }
-
+            
+        // (un)sel(ect) chord by index
+        } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_chord && selectllll->l_head->l_next) {
+            t_chord *to_select;
+            lock_general_mutex((t_notation_obj *)x);
+            if (selectllll->l_depth == 1) {
+                if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next, 0, 0, 0)))
+                    add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
+            } else {
+                t_llllelem *elem;
+                for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next)
+                    if (hatom_gettype(&elem->l_hatom) == H_LLLL)
+                        if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
+                            add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
+            }
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            unlock_general_mutex((t_notation_obj *)x);
+            
+            
         // (un)sel(ect) marker by index
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next) {
             t_marker *to_select;
