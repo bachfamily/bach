@@ -2612,12 +2612,11 @@ t_symbol *dumpselection_get_start_end_router(t_llll *forced_routers_ll)
     return gensym("dumpselection");
 }
 
-void score_sel_dumpselection(t_score *x, t_symbol *s, long argc, t_atom *argv){
-    
+void score_sel_dumpselection_do(t_score *x, t_llll *args)
+{
     t_llll *router_ll = NULL;
     t_symbol *start_sym = _llllobj_sym_none;
     t_symbol *end_sym = _llllobj_sym_none;
-    t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
     llll_parseargs_and_attrs((t_object *)x, args, "lss", gensym("router"), &router_ll, gensym("start"), &start_sym, gensym("end"), &end_sym);
 
     if (start_sym != _llllobj_sym_none) {
@@ -2637,9 +2636,16 @@ void score_sel_dumpselection(t_score *x, t_symbol *s, long argc, t_atom *argv){
         llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, end_ll);
         llll_free(end_ll);
     }
+    llll_free(router_ll);
+}
+
+void score_sel_dumpselection(t_score *x, t_symbol *s, long argc, t_atom *argv){
+    
+    t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
+
+    score_sel_dumpselection_do(x, args);
 
     llll_free(args);
-    llll_free(router_ll);
 }
 
 void score_sel_sendcommand(t_score *x, t_symbol *s, long argc, t_atom *argv){
@@ -9061,7 +9067,30 @@ void score_domain(t_score *x, t_symbol *s, long argc, t_atom *argv){
 
 void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
     t_symbol *router = NULL;
+    t_symbol *sym = NULL;
+    bool selection_only = false;
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    
+    if (args && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_selection) {
+        selection_only = true; // currently unsupported for whole dump in bach.score, only supported for dump selection play
+        llll_behead(args);
+    }
+    
+    if (args && args->l_size >= 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && (sym = hatom_getsym(&args->l_head->l_hatom)) && ((sym == _llllobj_sym_play) || (sym == _llllobj_sym_playout))) {
+        llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE | LLLL_PA_DONTWARNFORWRONGKEYS, "i", _llllobj_sym_selection, &selection_only);
+        if (selection_only)
+            score_sel_dumpselection_do(x, args);
+        else {
+         //    TO DO : play all!
+            object_warn((t_object *)x, "Currently unsupported.");
+        }
+        goto end;
+    }
+    
+    if (selection_only) {
+        object_warn((t_object *)x, "Currently unsupported.");
+    }
+    
     llll_parseargs_and_attrs_destructive((t_object *)x, args, "s", gensym("router"), &router);
     if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
         t_symbol *sym = hatom_getsym(&args->l_head->l_hatom);

@@ -7859,12 +7859,13 @@ void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         llll_behead(args);
     }
     
-    if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && (sym = hatom_getsym(&args->l_head->l_hatom)) && ((sym == _llllobj_sym_play) || (sym == _llllobj_sym_playout))) {
-        llll_parseargs_and_attrs_destructive((t_object *)x, args, "i", _llllobj_sym_selection, &selection_only);
+    if (args && args->l_size >= 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && (sym = hatom_getsym(&args->l_head->l_hatom)) && ((sym == _llllobj_sym_play) || (sym == _llllobj_sym_playout))) {
+        llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE | LLLL_PA_DONTWARNFORWRONGKEYS, "i", _llllobj_sym_selection, &selection_only);
         if (selection_only)
             roll_sel_dumpselection_do(x, args);
         else {
          //    TO DO : play all!
+            object_warn((t_object *)x, "Currently unsupported.");
         }
         goto end;
     }
