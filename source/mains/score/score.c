@@ -3843,6 +3843,11 @@ void score_pause(t_score *x)
 
 void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
+    if (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("selection")) {
+        score_playselection(x, s, argc-1, argv+1);
+        return;
+    }
+
     char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     long preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
 
@@ -5407,10 +5412,14 @@ void C74_EXPORT ext_main(void *moduleRef){
     // Sequencing can be controlled with a variable speed via the <m>clock</m> message and the <o>setclock</o> object.
     // The <m>play</m> message, without any further argument, plays the <o>bach.score</o> from the current playhead cursor position 
     // (by default: the beginning of the <o>bach.score</o>) to the end. <br />
-    // If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
+    // If you put as first optional argument the "selection" symbol, only the selected content is played:
+    // playback starts at the beginning of the selection and ends once the last selected item is played. <br />
+     // If you put as additional argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
     // will be still output from the playout, but one after another, "immediately". <br />
-    // If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
+    // If you put as additional argument the "preschedule" symbol, all the playing events will be prescheduled.
     // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
+    // The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
+    // "preschedule" are mutually exclusive. <br />
     // If you give a single numeric argument, it will be the starting point in milliseconds
     // of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
     // ending point in milliseconds of the region to be played.
@@ -5423,6 +5432,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play @caption play from current playhead position
     // @example play offline @caption play in non-realtime mode ("uzi-like")
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
+    // @example play selection @caption play selected items only
+    // @example play selection offline @caption the same, in non-realtime mode ("uzi-like")
     // @example play 2000 @caption play starting from 2s till the end
     // @example play 2000 4000 @caption play starting from 2s, stop at 4s
     // @example play [4] @caption play starting from measure 4

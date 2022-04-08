@@ -14,6 +14,7 @@ TO BE CATEGORIZED:
 - bach.roll, bach.score:
 	New "setdurationline" message setting the duration line from a list of pitch breakpoints
 	Now "setcursor" then "play" will work even if the cursor is not shown.
+    "playselection" is now deprecated in favor of "play selection"
 	
 
 
