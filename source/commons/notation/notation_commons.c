@@ -1684,7 +1684,7 @@ t_jrgba label_family_to_color(t_notation_obj *r_ob, t_bach_label_family *fam)
     // This algorithm assures that families "close" to each other (in the llll of families) have rather different colors!
     // which is rather useful, especially for pattern matching.
     double val =  fmod(llllelem_retrieve_index(r_ob->m_labels.families, fam->llelem) * PI/5., 1.);
-    return change_alpha(double_to_color(val, 0., 1., false), 0.7);
+    return change_alpha(double_to_color(val, 0., 1., false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR), 0.7);
 /*    t_jrgba color = double_to_color(val, 0., 1., false);
     t_jhsla color_hsla = rgba_to_hsla(color);
     color_hsla.saturation /= 2;
@@ -6426,7 +6426,7 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
             if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
                 articulationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
                 articulationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
@@ -6457,7 +6457,7 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
             if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
                 annotationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
                 annotationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
@@ -6491,7 +6491,7 @@ t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_s
             if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
                 dynamicscolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
                 dynamicscolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
@@ -30767,7 +30767,7 @@ void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, 
                 if ((r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INTLIST))
                     *color = long_to_color(*((long *)slot->firstitem->item));
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT)
-                    *color = double_to_color(*((double *)slot->firstitem->item), r_ob->slotinfo[slotnum].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
+                    *color = double_to_color(*((double *)slot->firstitem->item), r_ob->slotinfo[slotnum].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOATLIST)
                     *color = floatlist_slot_to_color(slot);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_COLOR)
@@ -30804,7 +30804,7 @@ void durationline_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t
                 if ((r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INTLIST))
                 *color = long_to_color(*((long *)note_to_consider->slot[slotnum].firstitem->item));
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT)
-                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
+                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOATLIST)
                 *color = floatlist_slot_to_color(&note_to_consider->slot[slotnum]);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_COLOR)
@@ -36251,7 +36251,7 @@ t_jrgba partidx_to_color(long part_idx)
     if (part_idx == 0)
         part_idx = CONST_NUM_PART_COLORS;
 
-    return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false);
+    return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
 }
 
 void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, notation_obj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended)
