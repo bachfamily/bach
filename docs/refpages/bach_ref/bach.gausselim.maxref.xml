@@ -191,7 +191,7 @@
 		<seealso name="bach.im" />
 		<seealso name="bach.ker" />
 		<seealso name="bach.inv" />
-		<seealso name="pG" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

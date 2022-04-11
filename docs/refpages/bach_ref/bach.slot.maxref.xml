@@ -1359,7 +1359,7 @@
 		<seealso name="bach.slot2line" />
 		<seealso name="bach.slot2curve" />
 		<seealso name="bach.slot2filtercoeff" />
-		<seealso name="pG" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

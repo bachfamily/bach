@@ -202,7 +202,7 @@
 	<seealsolist>
 		<seealso name="bach.iter" />
 		<seealso name="bach.collect" />
-		<seealso name="sG" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

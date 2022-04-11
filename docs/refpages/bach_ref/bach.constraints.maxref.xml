@@ -459,7 +459,7 @@
 		<seealso name="bach.comb" />
 		<seealso name="bach.perm" />
 		<seealso name="bach.cartesianprod" />
-		<seealso name="pG" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

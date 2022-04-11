@@ -152,7 +152,7 @@
 		<seealso name="bach.mtimes" />
 		<seealso name="bach.extractbasis" />
 		<seealso name="jitcellblock" />
-		<seealso name="pG" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">
