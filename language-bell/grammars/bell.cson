@@ -87,6 +87,12 @@ patterns: [ # An array of individual pattern declarations.
     contentName: 'string.unquoted.bell'
   }
   {
+    begin: '{'
+    end: '}'
+    name: 'support.function.general.bell'
+    contentName: 'support.function.max.bell'
+  }
+  {
     begin: '#\\('
     end: '\\)#'
     name: 'comment.block.bell'
