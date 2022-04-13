@@ -25,7 +25,7 @@
 %option header-file="stringparser.lex.h"
 %option prefix="stringparser_"
 
-SEPARATOR           ([[:space:]\(\)\[\]+\-*/%!=~_<>;,.:\\\x01])
+SEPARATOR           ([[:space:]\(\)\[\]\{\}+\-*/%!=~_<>;,.:\\\x01])
 SEPARATOR_STRICT    ([[:space:]\)\]+\-*/%!=~_<>;,:\\\x01])
 NO_SPACES ([^ \t\n\r\f\v\x01])
 RAT_LITERAL ({INTEGER}[/]{INTEGER})
@@ -39,13 +39,13 @@ FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[
 SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 
 %s NOUNARY_NOARGS NOUNARY_ARGS UNARY_ARGS
-%x IFILE LINECOMMENT BLOCKCOMMENT
+%x IFILE LINECOMMENT BLOCKCOMMENT MAXOBJECT
 
 %{
     
     
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
+    #define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
     #endif
     
     #ifndef code_dev_post
@@ -531,6 +531,11 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 <LINECOMMENT>[^\n\r\f]* {
     int c;
     //while ((c = yyinput(yyscanner)) && c != '\r' && c != '\n' && c != '\f') ;
+    for (char *c = yytext; *c; c++) {
+        if (*c == 1) {
+            (*params->codeac)++;
+        }
+    }
     code_dev_post("lex: line comment: %s", yytext);
     //BEGIN UNARY_NOARGS;
 }
@@ -546,16 +551,50 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 }
 
 <BLOCKCOMMENT>[^\)]* {
+    for (char *c = yytext; *c; c++) {
+        if (*c == 1) {
+            (*params->codeac)++;
+        }
+    }
     code_dev_post("lex: block comment [^\\)]* : %s", yytext);
 }
 
 <BLOCKCOMMENT>")"[^\)\#]* {
+    for (char *c = yytext; *c; c++) {
+        if (*c == 1) {
+            (*params->codeac)++;
+        }
+    }
     code_dev_post("lex: block comment \")\"[^\\#]+ : )%s", yytext);
 }
 
 <BLOCKCOMMENT>")#" {
     code_dev_post("lex: end block comment");
     BEGIN lexparams->getState();
+}
+
+\{ {
+    code_dev_post("lex: begin Max object");
+    BEGIN MAXOBJECT;
+}
+
+<MAXOBJECT>[^\}]+ {
+    char *s = (char *) bach_newptr(yyleng + 1);
+    strncpy_zero(s, yytext, yyleng + 1);
+    for (char *c = s; *c; c++) {
+        if (*c == 1) {
+            *c = ' ';
+            (*params->codeac)++;
+        }
+    }
+    yylval->text = s;
+    code_dev_post("lex: Max object: %s", s);
+    return MAXFUNCTION;
+}
+
+<MAXOBJECT>\} {
+    code_dev_post("lex: end Max object");
+    BEGIN lexparams->setState(NOUNARY_ARGS);
 }
 
 

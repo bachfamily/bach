@@ -83,6 +83,55 @@ void t_function::setArgument(const char *name, t_symbol *def, t_codableobj *obj)
     argName2idx[sym] = namedArgumentsCount;
 }
 
+void t_function::setArgumentAfterEllipsis(const char *name, astConst *node)
+{
+    t_symbol *sym = gensym(name);
+    if (argName2idx.find(sym) != argName2idx.end()) {
+        object_bug(nullptr, "duplicate function argument definition");
+        return;
+    }
+    --namedArgumentsCountAfterEllipsis;
+    idx2argNameAndDefault[namedArgumentsCountAfterEllipsis] = new funArg(sym, node);
+    argName2idx[sym] = namedArgumentsCountAfterEllipsis;
+}
+
+void t_function::setArgumentAfterEllipsis(const char *name, t_llll *def, t_codableobj *obj)
+{
+    t_symbol *sym = gensym(name);
+    if (argName2idx.find(sym) != argName2idx.end()) {
+        object_bug(nullptr, "duplicate function argument definition");
+        return;
+    }
+    --namedArgumentsCountAfterEllipsis;
+    idx2argNameAndDefault[namedArgumentsCountAfterEllipsis] = new funArg(sym, new astConst(def, obj));
+    argName2idx[sym] = namedArgumentsCountAfterEllipsis;
+}
+
+void t_function::setArgumentAfterEllipsis(const char *name, long def, t_codableobj *obj)
+{
+    t_symbol *sym = gensym(name);
+    if (argName2idx.find(sym) != argName2idx.end()) {
+        object_bug(nullptr, "duplicate function argument definition");
+        return;
+    }
+    --namedArgumentsCountAfterEllipsis;
+    idx2argNameAndDefault[namedArgumentsCountAfterEllipsis] = new funArg(sym, new astConst(def, obj));
+    argName2idx[sym] = namedArgumentsCountAfterEllipsis;
+}
+
+void t_function::setArgumentAfterEllipsis(const char *name, t_symbol *def, t_codableobj *obj)
+{
+    t_symbol *sym = gensym(name);
+    if (argName2idx.find(sym) != argName2idx.end()) {
+        object_bug(nullptr, "duplicate function argument definition");
+        return;
+    }
+    --namedArgumentsCountAfterEllipsis;
+    idx2argNameAndDefault[namedArgumentsCountAfterEllipsis] = new funArg(sym, new astConst(def, obj));
+    argName2idx[sym] = namedArgumentsCountAfterEllipsis;
+}
+
+
 t_userFunction::~t_userFunction()
 {
     delete[] localVariables;
@@ -144,12 +193,117 @@ t_llll* t_userFunction::call(const t_execEnv &context) {
 
 ///////////////////////
 
+
+t_maxFunction::t_maxFunction(std::string text) {
+    std::string t;
+    t_atom a[4], rv;
+    int c;
+
+    patcher = (t_object*) object_new_typed(CLASS_NOBOX, gensym("jpatcher"), 0, NULL);
+    
+    for (c = 0; c < text.length(); c++) {
+        if (!isspace(text[c]))
+            break;
+    }
+    t_symbol *defOut = _llllobj_sym_n;
+    if (c < text.length()) {
+        std::string ns = text.substr(c, 4);
+        if (!ns.compare("max.")) {
+            defOut = _llllobj_sym_m;
+            text = text.substr(c + 4);
+        }
+    }
+    
+    t = "@maxclass newobj @text \"" + text + "\"";
+    engine_box = newobject_sprintf(patcher, t.c_str());
+    engine = jbox_get_object(engine_box);
+    nInlets = object_attr_getlong(engine_box, gensym("numinlets"));
+    nOutlets = object_attr_getlong(engine_box, gensym("numoutlets"));
+    objText = t;
+    
+    t = "@maxclass newobj @text \"bach.bell.in " + std::to_string(nInlets) +
+        " @out " +
+        defOut->s_name +
+        "\"";
+    in_box = newobject_sprintf(patcher, t.c_str());
+    in_obj = jbox_get_object(in_box);
+    
+    t = "@maxclass newobj @text \"bach.bell.out " + std::to_string(nOutlets) + "\"";
+    out_box = newobject_sprintf(patcher, t.c_str());
+    out_obj = jbox_get_object(out_box);
+    
+    for (int i = 0; i < nInlets; i++) {
+        atom_setobj(a, in_box);       // source
+        atom_setlong(a + 1, i);       // outlet number (0 is leftmost)
+        atom_setobj(a + 2, engine_box);    // destination
+        atom_setlong(a + 3, i);       // inlet number (0 is leftmost)
+        object_method_typed(patcher, gensym("connect"), 4, a, &rv);
+    }
+    
+    for (int i = 0; i < nOutlets; i++) {
+        atom_setobj(a, engine_box);       // source
+        atom_setlong(a + 1, i);       // outlet number (0 is leftmost)
+        atom_setobj(a + 2, out_box);    // destination
+        atom_setlong(a + 3, i);       // inlet number (0 is leftmost)
+        object_method_typed(patcher, gensym("connect"), 4, a, &rv);
+    }
+
+    variadic = true;
+    setArgumentAfterEllipsis("to");
+    setArgumentAfterEllipsis("out", defOut);
+    setArgumentAfterEllipsis("fetch");
+}
+
+t_maxFunction::~t_maxFunction() {
+    object_free(patcher);
+}
+
+t_llll* t_maxFunction::call(t_execEnv const &context) {
+    t_llll* order = context.scope.find(gensym("to"))->second->get();
+    t_llll* outLl = context.scope.find(gensym("out"))->second->get();
+    t_llll *fetchLl =
+        context.scope.find(gensym("fetch"))->second->get();
+    
+    t_symbol *out = nullptr;
+    if (outLl->l_size) {
+        out = hatom_getsym(&outLl->l_head->l_hatom);
+    }
+    if (out) {
+        object_attr_setsym(in_obj, _llllobj_sym_out, out);
+    }
+    if (order->l_size == 0) {
+        for (int i = context.argc; i > 0; i--) {
+            object_method(in_obj, gensym("pass"), i - 1, context.argv[i]);
+        }
+    } else {
+        t_llllelem *el;
+        int i;
+        for (el = order->l_tail, i = order->l_size; el; el = el->l_prev, i--) {
+            int n = hatom_getlong(&el->l_hatom);
+            if (n > 0 && n <= nInlets) {
+                if (t_llll *passed = context.argv[i]; passed) {
+                    object_method(in_obj, gensym("pass"), n - 1, passed);
+                }
+            }
+            else
+                object_error((t_object *) context.obj, "Wrong order in Max object call");
+        }
+    }
+    t_llll* res = (t_llll *) object_method(out_obj, gensym("fetch"), fetchLl, context.obj);
+    return res;
+}
+
+
+///////////////////////
+
+
 t_mainFunction::t_mainFunction(astNode *mainAst,
                                countedList<t_localVar> *localVariablesList,
                                std::unordered_set<t_globalVariable*> *globalVariables,
                                pvMap *name2astVars,
+                               std::unordered_set<t_function*> *funcs,
                                t_codableobj *caller) :
-inlet(0), name2astVars(name2astVars), globalVars(globalVariables), owner(caller)
+inlet(0), name2astVars(name2astVars), globalVars(globalVariables), functions(funcs), owner(caller)
 {
     ast = mainAst;
     if (!ast)
@@ -199,6 +353,10 @@ t_mainFunction::~t_mainFunction() {
     clearOutletData();
     removePatcherVars();
     removeFromGlobalVarsClients();
+    for (t_function* f: *functions) {
+        f->decrease();
+    }
+    delete functions;
     delete name2astVars;
     delete globalVars;
 }

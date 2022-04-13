@@ -447,6 +447,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 #define IFILE 4
 #define LINECOMMENT 5
 #define BLOCKCOMMENT 6
+#define MAXOBJECT 7
 
 #endif
 
