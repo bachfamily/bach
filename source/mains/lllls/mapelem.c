@@ -44,7 +44,7 @@
 	The transformation is defined via the lambda inlet and outlet.
 	
 	@discussion
-	Elements are iterated (as in <o>bach.iter</o>) and spit out the lambda outlet (the rightmost one).
+	Elements are iterated (as in <o>bach.iter</o>) and passed to the lambda outlet (the rightmost one).
 	They are supposed to be individually modified then by patching, and the modified element is expected
 	to be received in the lambda inlet. <br />
 	@copy BACH_DOC_LAMBDA

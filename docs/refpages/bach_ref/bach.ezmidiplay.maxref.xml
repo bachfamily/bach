@@ -1024,8 +1024,8 @@
 		<seealso name="bach.playkeys" />
 		<seealso name="makenote" />
 		<seealso name="noteout" />
-		<seealso name="02-Brother John" module="bach" type="tutorial" />
-		<seealso name="06-The Gift Of Synthesis" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

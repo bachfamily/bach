@@ -303,7 +303,7 @@
 		<seealso name="bach.roll" />
 		<seealso name="bach.quantize" />
 		<seealso name="bach.ezmidiplay" />
-		<seealso name="08-Real Time Stories" module="bach" type="tutorial" />
+		<seealso name="" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

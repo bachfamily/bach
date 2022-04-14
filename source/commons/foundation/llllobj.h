@@ -493,6 +493,12 @@ void llllobj_clear_all_outs(t_object *x, e_llllobj_obj_types type);
 void llllobj_clear_all_stores_and_outs(t_object *x, e_llllobj_obj_types type);
 
 
+// returns whatever is in the specified output cache
+// no error checking, retaining or cloning is performed
+// so this should only be used for inspection,
+// not for actually working with the returned llll
+t_llll* llllobj_get_loaded_llll(t_object *x, e_llllobj_obj_types type, long outnum);
+
 
 /////////////
 // FUNCTIONS TO MANAGE STORES

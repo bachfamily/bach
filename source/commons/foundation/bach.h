@@ -160,7 +160,7 @@
         CLASS = class_new(name, mnew, mfree, size, mmenu, type, __VA_ARGS__); \
     else { \
         post("Class %s too large, size = %d", name, (int) size); \
-        return /*-1*/; \
+        return -1; \
     } \
 }
 
