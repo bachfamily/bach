@@ -214,7 +214,10 @@ double rescale_same_boundaries_with_slope(double value, double min, double max, 
 
 double rescale(double value, double min, double max, double new_min, double new_max)
 {
-    return new_min + (new_max - new_min) * (value - min)/(max - min);
+    if (max == min)
+        return new_min;
+    else
+        return new_min + (new_max - new_min) * (value - min)/(max - min);
 }
 
 double rescale_with_slope(double value, double min, double max, double new_min, double new_max, double slope, e_slope_mapping slope_mapping)

@@ -12808,7 +12808,7 @@ double tail_get_alignment_ux(t_notation_obj *r_ob, t_note *note);
 t_note *chord_get_longest_note(t_notation_obj *r_ob, t_chord *chord);
 
 
-/** Obtain the onset of a chord in milliseconds.
+/** Calculate the onset of a chord in milliseconds roughly. Use notation_item_get_onset_ms_accurate() for accurate computation.
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    chord        The chord
@@ -12826,7 +12826,6 @@ double chord_get_onset_ms(t_chord *chord);
     @remark                This is also stored in the t_tempo::onset field.
  */
 double get_tempo_onset_ms(t_tempo *tempo);
-
 
 /** Obtain the global onset of a chord in milliseconds, as a rational number (in bach.score).
     @ingroup            notation_data
@@ -14272,11 +14271,12 @@ double get_max_rhythm_length(t_llll *chords_in_gathered_syntax);
 
 /** Obtain the maximum duration of all the notes of a chord, in milliseconds.
     @ingroup notation
-    @param    r_ob        The notation object
-    @param    chord        The chord
+    @param  r_ob             The notation object
+    @param  chord           The chord
+    @param  accurate     Accurate processing
     @return                The duration of the longest note of the chord, in milliseconds
 */
-double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord, bool accurate = false);
 
 
 /** Obtain the maximum velocity of all the notes of a chord.
