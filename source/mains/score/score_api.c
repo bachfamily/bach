@@ -2803,6 +2803,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                             while (note) {
                                 note_set_slots_from_llll((t_notation_obj *) x, note, notes_slots);
                                 note = note->next;
+                            }
 #endif
                         }
                         

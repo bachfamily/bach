@@ -110,7 +110,7 @@
 		<seealso name="bach.mc2r" />
 		<seealso name="bach.f2mc" />
 		<seealso name="bach.mc2f" />
-		<seealso name="" module="bach" type="tutorial" />
+		<seealso name="04-Through The Looking Glass" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">
