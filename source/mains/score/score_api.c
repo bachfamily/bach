@@ -5143,14 +5143,13 @@ void turn_measure_into_single_rest(t_score *x, t_measure *measure)
     
     // add a single chord
     newch->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newch, 0, WHITENULL_llll);
-    newch->r_measure_onset_sec = long2rat(0);
-    newch->onset = chord_get_onset_ms(newch);
-    newch->r_tuttipoint_onset_sec = measure->r_tuttipoint_onset_sec;
+    newch->measure_onset_ms = 0;
+    newch->onset = chord_get_onset_ms((t_notation_obj *)x, newch);
     newch->tuttipoint_onset_ms = measure->tuttipoint_onset_ms;
-    newch->duration_ms = measure->total_duration_ms;
-    newch->r_duration_sec = measure->r_total_duration_sec;
-    newch->play_r_duration_sec = newch->r_duration_sec;
-    newch->play_r_measure_onset_sec = newch->r_measure_onset_sec;
+    newch->tuttipoint_onset_ms = measure->tuttipoint_onset_ms;
+    newch->duration_ms = measure_get_duration_ms((t_notation_obj *)x, measure);
+    newch->play_duration_ms = newch->duration_ms;
+    newch->play_measure_onset_ms = newch->measure_onset_ms;
     if (x->r_ob.whole_rests_in_empty_measures)
         newch->figure = long2rat(1);
     else {
@@ -5188,7 +5187,7 @@ void turn_measure_into_single_rest(t_score *x, t_measure *measure)
 
     newch->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newch, 0, WHITENULL_llll);
     newch->r_measure_onset_sec = long2rat(0);
-    newch->onset = chord_get_onset_ms(newch);
+    newch->onset = chord_get_onset_ms((t_notation_obj *)x, newch);
     newch->r_tuttipoint_onset_sec = measure->r_tuttipoint_onset_sec;
     newch->tuttipoint_onset_ms = measure->tuttipoint_onset_ms;
     newch->duration_ms = measure->total_duration_ms;
@@ -5712,9 +5711,9 @@ void calculate_all_chords_remaining_onsets(t_score *x)
             for (chord = measure->firstchord; chord; chord = chord->next) {
                 double diff_ms = 0;
                 
-                chord->onset = chord_get_onset_ms(chord);
+                chord->onset = chord_get_onset_ms((t_notation_obj *)x, chord);
                 chord->play_r_sym_onset = chord->r_sym_onset;
-                chord->play_r_measure_onset_sec = chord->r_measure_onset_sec;
+                chord->play_measure_onset_ms = chord->measure_onset_ms;
 
                 if (chord->is_grace_chord) {
                     if (grace_equiv.r_num == 0)
@@ -5728,12 +5727,12 @@ void calculate_all_chords_remaining_onsets(t_score *x)
                     diff_ms = (rat2double(total_grace_chords_r_sym_duraions_after_chord(chord)) + rat2double(rat_abs(chord->r_sym_duration))) * rat2double(grace_equiv) * 8 * 4 * 60000 / rat2double(tempo_value); // it's a trade off between precision and preventing overflows... we give up a bit of precision here, we could have just said that this is rat2double(diff_sec)*1000
                     
                     play_r_sec_cur = rat_rat_sum(play_r_sec_cur, diff_sec);
-                    chord->play_r_measure_onset_sec = rat_rat_diff(chord->play_r_measure_onset_sec, diff_sec);
+                    chord->play_measure_onset_ms = chord->play_measure_onset_ms - diff_ms;
                     
                     chord->play_r_sym_onset = rat_rat_diff(chord->play_r_sym_onset, diff_sym);
                     if (!chord->prev && measure->prev && measure->prev->lastchord) {
                         measure->prev->lastchord->play_r_sym_duration = rat_rat_sum(measure->prev->lastchord->play_r_sym_duration, chord->play_r_sym_onset);
-                        measure->prev->lastchord->play_r_duration_sec = rat_rat_diff(measure->prev->lastchord->play_r_duration_sec, diff_sec);
+                        measure->prev->lastchord->play_duration_ms = measure->prev->lastchord->play_duration_ms - diff_ms;
                     }
                 } else {
                     tot_sym_duration = rat_rat_sum(tot_sym_duration, rat_abs(chord->r_sym_duration));
@@ -5741,11 +5740,10 @@ void calculate_all_chords_remaining_onsets(t_score *x)
                 }
                 
                 if (chord->prev)
-                    chord->prev->play_r_duration_sec = rat_rat_diff(chord->play_r_measure_onset_sec, chord->prev->play_r_measure_onset_sec);
+                    chord->prev->play_duration_ms = chord->play_measure_onset_ms - chord->prev->play_measure_onset_ms;
 
                 
-                chord->r_tuttipoint_onset_sec = rat_rat_sum(chord->r_measure_onset_sec, chord->parent->r_tuttipoint_onset_sec);
-                chord->tuttipoint_onset_ms = (rat2double(chord->r_measure_onset_sec) + rat2double(chord->parent->r_tuttipoint_onset_sec)) * 1000.;
+                chord->tuttipoint_onset_ms = chord->measure_onset_ms + chord->parent->tuttipoint_onset_ms;
                 
                 chord->onset = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)chord);
                 
@@ -5757,7 +5755,7 @@ void calculate_all_chords_remaining_onsets(t_score *x)
                 
                 if (chord->prev) {
                     chord->prev->duration_ms = chord->onset - chord->prev->onset; 
-                    chord->prev->r_duration_sec = rat_rat_diff(chord->r_tuttipoint_onset_sec, chord->prev->r_tuttipoint_onset_sec);
+                    chord->prev->duration_ms = chord->tuttipoint_onset_ms - chord->prev->tuttipoint_onset_ms;
                     
                     for (nt = chord->prev->firstnote; nt; nt = nt->next)
                         nt->duration = chord->prev->duration_ms;
@@ -5767,16 +5765,14 @@ void calculate_all_chords_remaining_onsets(t_score *x)
             
             if (measure->lastchord) {
                 measure->lastchord->play_r_sym_duration = rat_rat_diff(measure_get_sym_duration(measure), measure->lastchord->play_r_sym_onset);
-                measure->lastchord->play_r_duration_sec = rat_rat_diff(measure->r_total_duration_sec, measure->lastchord->play_r_measure_onset_sec);
+                measure->lastchord->play_duration_ms = measure->total_duration_ms - measure->lastchord->play_measure_onset_ms;
                 if (measure->lastchord->is_grace_chord) {
                     t_rational grace_equiv = get_grace_note_equivalent(x, measure->lastchord);
                     get_tempo_at_timepoint((t_notation_obj *)x, voice, build_timepoint_with_voice(measure->measure_number, measure->lastchord->r_sym_onset, voice->v_ob.number), &figure_tempo_value, &tempo_figure, &tempo_value, &interp);
                     measure->lastchord->duration_ms = rat2double(rat_abs(measure->lastchord->r_sym_duration)) * rat2double(grace_equiv) * 8 * 4 * 60000 / rat2double(tempo_value);
-                    measure->lastchord->r_duration_sec = rat_rat_div(rat_long_prod(rat_rat_prod(rat_abs(measure->lastchord->r_sym_duration), grace_equiv), 8*4*60), tempo_value);
                 } else {
-                    t_rational last_chord_dur = get_rat_durations_sec_between_timepoints((t_notation_obj *)x, voice, build_timepoint(measure->measure_number, measure->lastchord->r_sym_onset), build_timepoint(measure->measure_number, rat_rat_sum(measure->lastchord->r_sym_onset, rat_abs(measure->lastchord->r_sym_duration))));
-                    measure->lastchord->duration_ms = 1000 * rat2double(last_chord_dur);
-                    measure->lastchord->r_duration_sec = last_chord_dur;
+                    double last_chord_dur_ms = get_duration_ms_between_timepoints((t_notation_obj *)x, voice, build_timepoint(measure->measure_number, measure->lastchord->r_sym_onset), build_timepoint(measure->measure_number, rat_rat_sum(measure->lastchord->r_sym_onset, rat_abs(measure->lastchord->r_sym_duration))));
+                    measure->lastchord->duration_ms = last_chord_dur_ms;
                 }
                 for (nt = measure->lastchord->firstnote; nt; nt = nt->next)
                     nt->duration = measure->lastchord->duration_ms;
@@ -5799,9 +5795,8 @@ void calculate_all_tempi_remaining_onsets(t_score *x)
     for (voice = x->firstvoice; voice && (voice->v_ob.number < x->r_ob.num_voices); voice = voice->next)
         for (measure = voice->firstmeasure; measure; measure = measure->next) {
             for (tempo = measure->firsttempo; tempo; tempo = tempo->next) {
-                tempo->onset = get_tempo_onset_ms(tempo);
-                tempo->r_tuttipoint_onset_sec = rat_rat_sum(tempo->r_measure_onset_sec, measure->r_tuttipoint_onset_sec);
-                tempo->tuttipoint_onset_ms = (rat2double(tempo->r_measure_onset_sec) + rat2double(measure->r_tuttipoint_onset_sec)) * 1000.;
+                tempo->onset = get_tempo_onset_ms((t_notation_obj *)x, tempo);
+                tempo->tuttipoint_onset_ms = tempo->measure_onset_ms + measure->tuttipoint_onset_ms;
             }
         }
 }
@@ -5816,7 +5811,6 @@ t_tuttipoint *build_tuttipoint(t_score *x)
     tpt->firstalignmentpoint = tpt->lastalignmentpoint = NULL;
     tpt->num_alignmentpoints = 0;
     tpt->need_recompute_spacing = k_SPACING_RECALCULATE;
-    tpt->r_onset_sec = long2rat(0);
     tpt->onset_ms = 0;
     return tpt;
 }
@@ -5830,7 +5824,7 @@ void calculate_tuttipoints(t_score *x)
     char we_needed_to_approximate = false;
     char we_are_done;
     t_tuttipoint *active_tuttipoint;
-    t_rational tpt_onset, *totdur;
+    t_rational *totdur;
     double tpt_onset_ms, *totdur_ms, last_onset_ms = 0;
     t_scorevoice *voice;
     t_tuttipoint *this_tpt; 
@@ -5860,7 +5854,6 @@ void calculate_tuttipoints(t_score *x)
     tpt->need_recompute_spacing = k_SPACING_RECALCULATE;
     
     meas = (t_measure **) bach_newptr(x->r_ob.num_voices * sizeof(t_measure *));
-    totdur = (t_rational *) bach_newptr(x->r_ob.num_voices * sizeof(t_rational));
     totdur_ms = (double *) bach_newptr(x->r_ob.num_voices * sizeof(double));
     
     for (i = 0, voice = x->firstvoice; i < x->r_ob.num_voices; i++, voice = voice->next) {
@@ -5869,7 +5862,6 @@ void calculate_tuttipoints(t_score *x)
         totdur_ms[i] = 0;
         if (meas[i]) {
             meas[i]->tuttipoint_reference = tpt;
-            meas[i]->r_tuttipoint_onset_sec = long2rat(0);
             meas[i]->tuttipoint_onset_ms = 0;
             tpt->measure[i] = meas[i];
         } else {
@@ -5880,8 +5872,7 @@ void calculate_tuttipoints(t_score *x)
     
     for (i = 0; i < x->r_ob.num_voices; i++) {
         if (meas[i]) {
-            totdur[i] = rat_rat_sum(totdur[i], meas[i]->r_total_duration_sec);
-            totdur_ms[i] += meas[i]->total_duration_ms;
+            totdur_ms[i] += measure_get_duration_ms((t_notation_obj *)x, meas[i]);
             meas[i] = meas[i]->next;
         }
     }
@@ -5896,7 +5887,6 @@ void calculate_tuttipoints(t_score *x)
 
     we_are_done = false; 
     active_tuttipoint = tpt; 
-    tpt_onset = long2rat(0);
     tpt_onset_ms = 0;
     
     long ref_voice = 0;
@@ -5932,14 +5922,8 @@ void calculate_tuttipoints(t_score *x)
             } else if (cmp == 1) { // measure i is early, maybe we can increase the measure in the i voice...
                 long cmp2;
                 while (meas[i] && (double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], CONST_THRESHOLD) == 1)) {
-                    totdur[i] = rat_rat_sum(totdur[i], meas[i]->r_total_duration_sec);
-                    totdur_ms[i] += meas[i]->total_duration_ms;
-
-                    if (go_safe) {
-                        char changed;
-                        totdur[i] = approx_rat_with_rat_notify(totdur[i], CONST_RAT_MAX_NUM_SAFETY, CONST_RAT_MAX_DEN_SAFETY, &changed);
-                        we_needed_to_approximate |= changed;
-                    }
+                    totdur_ms[i] += measure_get_duration_ms((t_notation_obj *)x, meas[i]);
+                    
                     meas[i]->tuttipoint_reference = active_tuttipoint;
                     meas[i] = meas[i]->next;
                 }
@@ -5978,8 +5962,7 @@ void calculate_tuttipoints(t_score *x)
                     tp2.pt_in_measure = long2rat(0); 
                     while (meas[j]) {
                         tp2.measure_num = meas[j]->measure_number; tp2.pt_in_measure = long2rat(0);
-                        meas[j]->r_tuttipoint_onset_sec = get_rat_durations_sec_between_timepoints((t_notation_obj *)x, nth_scorevoice(x, j), tp1, tp2);
-                        meas[j]->tuttipoint_onset_ms = rat2double(meas[j]->r_tuttipoint_onset_sec) * 1000;
+                        meas[j]->tuttipoint_onset_ms = meas[j]->tuttipoint_onset_ms * 1000;
                         meas[j]->tuttipoint_reference = active_tuttipoint;
                         meas[j] = meas[j]->next;
                     }
@@ -5996,7 +5979,7 @@ void calculate_tuttipoints(t_score *x)
             tpt->firstalignmentpoint = tpt->lastalignmentpoint = NULL;
             tpt->num_alignmentpoints = 0;
             tpt->need_recompute_spacing = k_SPACING_RECALCULATE;
-            tpt->r_onset_sec = totdur[ref_voice]; 
+            tpt->onset_ms = totdur_ms[ref_voice];
             for (j = 0; j < x->r_ob.num_voices; j++)
                 tpt->measure[j] = meas[j] ? meas[j] : NULL;
             insert_tuttipoint(x, tpt, active_tuttipoint);
@@ -6010,21 +5993,11 @@ void calculate_tuttipoints(t_score *x)
                 tpt->prev->duration_ms = tpt->onset_ms - last_onset_ms;
             last_onset_ms = tpt->onset_ms;
                 
-            tpt_onset = tpt->r_onset_sec;
             tpt_onset_ms = tpt->onset_ms;
         }
         
-        totdur[ref_voice] = rat_rat_sum(totdur[ref_voice], meas[ref_voice]->r_total_duration_sec); // totdur[0].r_num/(double)totdur[0].r_den
-        totdur_ms[ref_voice] += meas[ref_voice]->total_duration_ms;
+        totdur_ms[ref_voice] += measure_get_duration_ms((t_notation_obj *)x, meas[ref_voice]);
 
-        if (go_safe) {
-            for (i = 0; i < x->r_ob.num_voices; i++) {
-                char changed;
-                totdur[i] = approx_rat_with_rat_notify(totdur[i], CONST_RAT_MAX_NUM_SAFETY, CONST_RAT_MAX_DEN_SAFETY, &changed);
-                we_needed_to_approximate |= changed;
-            }
-        }
-        
         meas[ref_voice] = meas[ref_voice]->next;
     }
 
@@ -6035,15 +6008,11 @@ void calculate_tuttipoints(t_score *x)
     // finally, calculate r_tuttipoint_onset_sec for each measure
     for (this_tpt = x->r_ob.firsttuttipoint; this_tpt; this_tpt = this_tpt->next) {
         for (i = 0; i < x->r_ob.num_voices; i++) {
-            t_rational r_measure_onset = long2rat(0);
             double measure_onset_ms = 0;
             for (this_meas = this_tpt->measure[i]; (this_tpt->next && this_meas != this_tpt->next->measure[i]) || (!this_tpt->next && this_meas); this_meas = this_meas->next) { // TODO: check that this_meas exists?
                 this_meas->tuttipoint_reference = this_tpt;
-                this_meas->r_tuttipoint_onset_sec = r_measure_onset;
                 this_meas->tuttipoint_onset_ms = measure_onset_ms;
-//                r_measure_onset = rat_rat_sum(r_measure_onset, this_meas->r_total_duration_sec);
-                measure_onset_ms += rat2double(this_meas->r_total_duration_sec)*1000;
-                r_measure_onset = approx_rat_with_rat(rat_rat_sum(r_measure_onset, this_meas->r_total_duration_sec), CONST_RAT_MAX_NUM_SAFETY, CONST_RAT_MAX_DEN_SAFETY);
+                measure_onset_ms += this_meas->total_duration_ms;
             }
         }
     }
@@ -6150,8 +6119,8 @@ double get_interpolated_offset_ux(t_score *x, t_tuttipoint *tpt, void *obj_ptr, 
         if (!al->next) 
             return al->offset_ux;
         else {
-            double this_alpt_onset_ms = 1000 * rat2double(al->r_onset_sec);
-            double next_alpt_onset_ms = 1000 * rat2double(al->next->r_onset_sec);
+            double this_alpt_onset_ms = al->onset_ms;
+            double next_alpt_onset_ms = al->next->onset_ms;
             double onset_ms = (obj_type == k_CHORD) ? ((t_chord *)obj_ptr)->tuttipoint_onset_ms : ((t_tempo *)obj_ptr)->tuttipoint_onset_ms;
             if (onset_ms >= this_alpt_onset_ms && onset_ms < next_alpt_onset_ms)
                 return rescale(onset_ms, this_alpt_onset_ms, next_alpt_onset_ms, al->offset_ux, al->next->offset_ux);
@@ -6200,7 +6169,7 @@ t_alignmentpoint *build_alignmentpoint(){
     align_pt->global_lyrics_uwidth = align_pt->global_dynamics_uwidth = 0;
     align_pt->offset_ux = 0;
     align_pt->tuttipoint_reference = NULL;
-    align_pt->r_onset_sec = long2rat(0);
+    align_pt->onset_ms = 0;
     return align_pt;
 }
 
@@ -6227,8 +6196,8 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt)
         for (this_meas = tpt->measure[i]; (tpt->next && this_meas != tpt->next->measure[i]) || (!tpt->next && this_meas); this_meas = this_meas->next) { // cycle on the measures within the tuttipoin
             t_tempo *tempo;
             
-            this_meas->start_barline_offset_ux = 1000 * rat2double(this_meas->r_tuttipoint_onset_sec) * x->r_ob.spacing_width * XSCALE_FACTOR * wf;
-            this_meas->width_ux = 1000 * rat2double(this_meas->r_total_duration_sec) * x->r_ob.spacing_width * XSCALE_FACTOR * wf;
+            this_meas->start_barline_offset_ux = this_meas->tuttipoint_onset_ms * x->r_ob.spacing_width * XSCALE_FACTOR * wf;
+            this_meas->width_ux = this_meas->total_duration_ms * x->r_ob.spacing_width * XSCALE_FACTOR * wf;
             
             // This mitigates some approximation issues
             if (this_meas->prev && this_meas->prev->tuttipoint_reference == this_meas->tuttipoint_reference)
@@ -6262,10 +6231,8 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt)
     }
     tpt->width_ux = temp;
     if (last_done_meas) {
-        tpt->r_duration_sec = rat_rat_sum(last_done_meas->r_tuttipoint_onset_sec, last_done_meas->r_total_duration_sec);
-        tpt->duration_ms = last_done_meas->tuttipoint_onset_ms + last_done_meas->total_duration_ms;
+        tpt->duration_ms = last_done_meas->tuttipoint_onset_ms + measure_get_duration_ms((t_notation_obj *)x, last_done_meas);
     } else {
-        tpt->r_duration_sec = long2rat(0);
         tpt->duration_ms = 0;
     }
 }
@@ -6326,11 +6293,11 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                     tempo->need_recalculate_onset = true;
         
         meas = (t_measure **) bach_newptr(x->r_ob.num_voices * sizeof(t_measure *));
-        for (i = 0; i < x->r_ob.num_voices; i++) 
+        for (i = 0; i < x->r_ob.num_voices; i++)
             meas[i] = tpt->measure[i];
         
         rightlim = (double *) bach_newptr(x->r_ob.num_voices * sizeof(double)); // here we keep the right limit of all the voices, during the spacing calculation
-        for (i = 0; i < x->r_ob.num_voices; i++) 
+        for (i = 0; i < x->r_ob.num_voices; i++)
             rightlim[i] = 0.;
 
         portion_of_rightlim_due_to_lyrics = (double *) bach_newptr(x->r_ob.num_voices * sizeof(double));
@@ -6343,7 +6310,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
             // finding first chord:
             t_chord *firstchord = NULL; 
             t_tempo *firsttempo = NULL;
-            t_rational best_r_onset_sec;
+            double best_onset_ms;
             t_alignmentpoint *align_pt;
             long i = 0;
             long num_chords_to_align = 0;
@@ -6375,22 +6342,21 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                             firsttempo = tempo;
                             break;
                         } else if (firstchord && !firsttempo && tempo->tuttipoint_onset_ms == firstchord->tuttipoint_onset_ms) {
-//                                   (rat_rat_cmp(rat_rat_sum(tempo->r_measure_onset_sec, tempo->owner->r_tuttipoint_onset_sec), 
-//                                                rat_rat_sum(firstchord->r_measure_onset_sec, firstchord->parent->r_tuttipoint_onset_sec)) == 0)) {
+                            //                                   (rat_rat_cmp(rat_rat_sum(tempo->r_measure_onset_sec, tempo->owner->r_tuttipoint_onset_sec),
+                            //                                                rat_rat_sum(firstchord->r_measure_onset_sec, firstchord->parent->r_tuttipoint_onset_sec)) == 0)) {
                             firsttempo = tempo;
                             break;
                         }
                     }
-
             
-            if (!firstchord && !firsttempo) 
+            
+            if (!firstchord && !firsttempo)
                 break; // we're done, we've calculated all the offsets
             
-            best_r_onset_sec = firstchord ? rat_rat_sum(firstchord->r_measure_onset_sec, firstchord->parent->r_tuttipoint_onset_sec) : 
-            rat_rat_sum(firsttempo->r_measure_onset_sec, firsttempo->owner->r_tuttipoint_onset_sec) ;
+            best_onset_ms = firstchord ? firstchord->measure_onset_ms + firstchord->parent->tuttipoint_onset_ms : firsttempo->measure_onset_ms + firsttempo->owner->tuttipoint_onset_ms;
             
             align_pt = build_alignmentpoint();
-
+            
             num_align_pt++;
             if (!firstalignmentpoint) {
                 firstalignmentpoint = align_pt;
@@ -6400,9 +6366,9 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 align_pt->prev = lastalignmentpoint;
                 lastalignmentpoint = align_pt;
             }
-            #ifdef CONFIGURATION_Development
+#ifdef CONFIGURATION_Development
             check_alignment_points(firstalignmentpoint, lastalignmentpoint);
-            #endif
+#endif
             chords_to_align = (t_chord **) bach_newptr(MAX(1, x->r_ob.num_voices) * sizeof(t_chord *)); // a "syncronous chord family"
             tempi_to_align = (t_tempo **) bach_newptr(MAX(1, x->r_ob.num_voices) * sizeof(t_tempo *)); // a "syncronous tempi family"
             
@@ -6414,9 +6380,9 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 for (i = 0; i < x->r_ob.num_voices; i++)
                     for (this_meas = tpt->measure[i]; this_meas && ((tpt->next && this_meas != tpt->next->measure[i]) || (!tpt->next && this_meas)); this_meas = this_meas->next)
                         for (chord = this_meas->firstchord; chord; chord = chord->next)
-                            if (chord->need_recalculate_onset == true &&    
-                                (chord == firstchord || 
-                                 rat_rat_cmp(rat_rat_sum(chord->r_measure_onset_sec, this_meas->r_tuttipoint_onset_sec), best_r_onset_sec) == 0)) {
+                            if (chord->need_recalculate_onset == true &&
+                                (chord == firstchord ||
+                                 double_double_cmp_with_threshold(chord->measure_onset_ms + this_meas->tuttipoint_onset_ms, best_onset_ms, CONST_EPSILON_DOUBLE_EQ) == 0)) {
                                 if (chord->is_grace_chord) {
                                     // don't account for it now
                                 } else {
@@ -6430,10 +6396,10 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                             }
                 
                 // adding the alignment point
-                align_pt->r_onset_sec = rat_rat_sum(force_standard_rational(firstchord->r_measure_onset_sec), firstchord->parent->r_tuttipoint_onset_sec);
+                align_pt->onset_ms = firstchord->measure_onset_ms + firstchord->parent->tuttipoint_onset_ms;
 
                 #ifdef BACH_SPACING_DEBUG
-                    object_post((t_object *) x, "- Adding an alignment point with r_onset_sec: %ld/%ld = %f", align_pt->r_onset_sec.r_num, align_pt->r_onset_sec.r_den, rat2double(align_pt->r_onset_sec));
+                    object_post((t_object *) x, "- Adding an alignment point with onset_ms: %f", align_pt->onset_ms);
                     object_post((t_object *) x, "   chord_onset: %ld/%ld = %f", firstchord->r_measure_onset_sec.r_num, firstchord->r_measure_onset_sec.r_den, rat2double(firstchord->r_measure_onset_sec));
                     object_post((t_object *) x, "   parent_onset: %ld/%ld = %f", firstchord->parent->r_tuttipoint_onset_sec.r_num, firstchord->parent->r_tuttipoint_onset_sec.r_den, rat2double(firstchord->parent->r_tuttipoint_onset_sec));
                     object_post((t_object *) x, "   num_chords_to_align: %ld", num_chords_to_align);
@@ -6465,7 +6431,8 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                     for (this_meas = tpt->measure[i]; ((tpt->next && this_meas != tpt->next->measure[i]) || (!tpt->next && this_meas)); this_meas = this_meas->next)
                         for (tempo = this_meas->firsttempo; tempo; tempo = tempo->next)
                             if ((tempo->need_recalculate_onset == true) &&    
-                                ((tempo == firsttempo) || (rat_rat_cmp(rat_rat_sum(tempo->r_measure_onset_sec, this_meas->r_tuttipoint_onset_sec), rat_rat_sum(firsttempo->r_measure_onset_sec, firsttempo->owner->r_tuttipoint_onset_sec)) == 0))) {
+                                ((tempo == firsttempo) ||
+                                 double_double_cmp_with_threshold(tempo->measure_onset_ms + this_meas->tuttipoint_onset_ms, firsttempo->measure_onset_ms + firsttempo->owner->tuttipoint_onset_ms, CONST_EPSILON_DOUBLE_EQ) == 0)) {
                                 if (num_tempi_to_align >= 0 && num_tempi_to_align < x->r_ob.num_voices) {
                                     tempi_to_align[num_tempi_to_align] = tempo;
                                     num_tempi_to_align++;
@@ -6475,7 +6442,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                             }
                 
                 // adding the alignment point
-                align_pt->r_onset_sec = rat_rat_sum(force_standard_rational(firsttempo->r_measure_onset_sec), firsttempo->owner->r_tuttipoint_onset_sec);
+                align_pt->onset_ms = firsttempo->measure_onset_ms + firsttempo->owner->tuttipoint_onset_ms;
                 align_pt->num_aligned_obj += num_tempi_to_align;
                 for (i = 0; i < num_tempi_to_align && i < x->r_ob.num_voices && i + offset < 3 * CONST_MAX_VOICES; i++) {
                     t_timepoint tp1, tp2;
@@ -6596,7 +6563,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                                 align_pt_meas->r_onset_sym[align_pt_meas->num_aligned_obj] = align_pt->r_onset_sym[i];
                                 align_pt_meas->voice_number[align_pt_meas->num_aligned_obj] = chords_to_align[i]->parent->voiceparent->v_ob.number;
                                 align_pt_meas->timepoints[align_pt_meas->num_aligned_obj] = build_timepoint(chords_to_align[i]->parent->measure_number, long2rat(0));
-                                align_pt_meas->r_onset_sec = align_pt->r_onset_sec;
+                                align_pt_meas->onset_ms = align_pt->onset_ms;
                                 align_pt_meas->offset_ux = general_rightlim;
 //                                dev_post(">> align_meas_off_ux = %.2f",  align_pt_meas->offset_ux);
                                 align_pt_meas->left_uext = align_pt_meas->right_uext = 0;
@@ -6826,8 +6793,8 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                     if (is_measure_single_whole_rest((t_notation_obj *) x, chords_to_align[i]->parent))
                         rightlim[voices_i] = chords_to_align[i]->stem_offset_ux + chords_to_align[i]->right_uextension + CONST_SCORE_USPACE_BETWEEN_THINGS;
                     else {
-                        rightlim[voices_i] = chords_to_align[i]->stem_offset_ux + chords_to_align[i]->right_uextension + 
-                                                    chords_to_align[i]->num_dots * CONST_DOT_UWIDTH + 
+                        rightlim[voices_i] = chords_to_align[i]->stem_offset_ux + chords_to_align[i]->right_uextension +
+                                                    chords_to_align[i]->num_dots * CONST_DOT_UWIDTH +
                                                     tied * CONST_SCORE_TIE_ADDITIONAL_USPACING + CONST_SCORE_USPACE_BETWEEN_THINGS;
                         portion_of_rightlim_due_to_lyrics[voices_i] = chords_to_align[i]->lyrics_portion_of_right_uextension;
                     }
@@ -6852,9 +6819,9 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                         if (new_rightlim_i > rightlim[i]) {
                             rightlim[i] = new_rightlim_i;
                             portion_of_rightlim_due_to_lyrics[i] = 0;
-                        } else 
+                        } else
                             portion_of_rightlim_due_to_lyrics[i] = MIN(portion_of_rightlim_due_to_lyrics[i], rightlim[i] - new_rightlim_i);
-                    } else 
+                    } else
                         portion_of_rightlim_due_to_lyrics[i] = MIN(portion_of_rightlim_due_to_lyrics[i], rightlim[i] - new_general_right_lim);
                 }
                 
@@ -6892,10 +6859,8 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
         general_rightlim = array_fmax(x->r_ob.num_voices, 0, x->r_ob.num_voices-1, rightlim);    //rightlim[0] rightlim[1] lastalignmentpoint
         tpt->width_ux = general_rightlim; // updating tpt->width rightlim[0]
         if (lastalignmentpoint) {
-            tpt->r_duration_sec = lastalignmentpoint->r_onset_sec; // will be reupdated with the last measure barline onset_ms
-            tpt->duration_ms = rat2double(lastalignmentpoint->r_onset_sec) * 1000;
+            tpt->duration_ms = lastalignmentpoint->onset_ms * 1000;
         } else {
-            tpt->r_duration_sec = long2rat(0);
             tpt->duration_ms = 0;
         }
         
@@ -6947,7 +6912,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
         while (true) {
             // searching for the measure that ends first
             t_measure *firstendingmeasure = NULL; 
-            t_rational *r_sec_durations = (t_rational *) bach_newptr(x->r_ob.num_voices * sizeof(t_rational)); 
+            double *ms_durations = (double *) bach_newptr(x->r_ob.num_voices * sizeof(t_rational));
             t_timepoint *timepoints = (t_timepoint *) bach_newptr(x->r_ob.num_voices * sizeof(t_timepoint)); 
             t_measure **endingmeasures = (t_measure **) bach_newptr(x->r_ob.num_voices * sizeof(t_measure *));
             t_timepoint *endingtimepoints = (t_timepoint *) bach_newptr(x->r_ob.num_voices * sizeof(t_timepoint));
@@ -6956,20 +6921,20 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
             t_alignmentpoint *a_pt; 
             t_alignmentpoint *insert_endmeasures_here = NULL;
             long j;
-            t_rational min_r_sec_dur = long2rat(-1);
+            double min_ms_dur = -1;
             
             for (i = 0; i < x->r_ob.num_voices; i++) {
                 if (!done[i]) {
                     t_timepoint this_end_meas_tp;
-                    t_rational this_r_sec_duration;
+                    double this_ms_duration;
                     t_scorevoice *vc = nth_scorevoice(x, i);
                     timepoints[i] = build_timepoint(last_tpt_measures[i]->measure_number, genrat(last_tpt_measures[i]->timesignature.numerator, last_tpt_measures[i]->timesignature.denominator));
                     this_end_meas_tp = timepoints[i];
-                    this_r_sec_duration = get_rat_durations_sec_between_timepoints((t_notation_obj *)x, vc, build_timepoint(tpt->measure[i]->measure_number, long2rat(0)), this_end_meas_tp);
-                    r_sec_durations[i] = this_r_sec_duration;
-                    if (min_r_sec_dur.r_num < 0 || rat_rat_cmp(this_r_sec_duration, min_r_sec_dur) == -1) {
+                    this_ms_duration = get_duration_ms_between_timepoints((t_notation_obj *)x, vc, build_timepoint(tpt->measure[i]->measure_number, long2rat(0)), this_end_meas_tp);
+                    ms_durations[i] = this_ms_duration;
+                    if (min_ms_dur < 0 || this_ms_duration < min_ms_dur) {
                         firstendingmeasure = last_tpt_measures[i];
-                        min_r_sec_dur = this_r_sec_duration;
+                        min_ms_dur = this_ms_duration;
                     }
                 }
             }
@@ -6984,7 +6949,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 }
                 
                 for (i = 0; i < x->r_ob.num_voices && num_ending_measures < x->r_ob.num_voices; i++) {
-                    if (!done[i] && rat_rat_cmp(r_sec_durations[i], min_r_sec_dur) == 0) {
+                    if (!done[i] && double_double_cmp_with_threshold(ms_durations[i], min_ms_dur, CONST_EPSILON_DOUBLE_EQ) == 0) {
                         endingmeasures[num_ending_measures] = last_tpt_measures[i];
                         endingtimepoints[num_ending_measures] = timepoints[i];
                         endingvoices[num_ending_measures] = i;
@@ -6995,13 +6960,13 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 
                 // is there another event at min_r_ms_dur?
                 for (a_pt = firstalignmentpoint; a_pt; a_pt = a_pt->next) {
-                    if (rat_rat_cmp(a_pt->r_onset_sec, min_r_sec_dur) == 0)
+                    if (double_double_cmp_with_threshold(a_pt->onset_ms, min_ms_dur, CONST_EPSILON_DOUBLE_EQ) == 0)
                         insert_endmeasures_here = a_pt;
                 }
                 
                 if (insert_endmeasures_here) { // gotta insert them
                     
-                    while (insert_endmeasures_here->prev && rat_rat_cmp(insert_endmeasures_here->prev->r_onset_sec, insert_endmeasures_here->r_onset_sec) == 0)
+                    while (insert_endmeasures_here->prev && double_double_cmp_with_threshold(insert_endmeasures_here->prev->onset_ms, insert_endmeasures_here->onset_ms, CONST_EPSILON_DOUBLE_EQ) == 0)
                         insert_endmeasures_here = insert_endmeasures_here->prev;
                     
                     for (j = 0; j < num_ending_measures && j < x->r_ob.num_voices; j++) {
@@ -7022,7 +6987,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                     num_align_pt++;
                     align_pt_meas->num_aligned_obj = num_ending_measures; 
                     align_pt_meas->tuttipoint_reference = tpt;
-                    align_pt_meas->r_onset_sec = min_r_sec_dur;
+                    align_pt_meas->onset_ms = min_ms_dur;
                     for (j = 0; j < num_ending_measures && j < x->r_ob.num_voices; j++) {
                         t_scorevoice *vc;
                         long voice_num = CLAMP(endingvoices[j], 0, x->r_ob.num_voices - 1);
@@ -7053,7 +7018,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                     
                     // where do we insert it?
                     for (a_pt = firstalignmentpoint; a_pt; a_pt = a_pt->next) {
-                        if (rat_rat_cmp(a_pt->r_onset_sec, min_r_sec_dur) <= 0) {
+                        if (a_pt->onset_ms <= min_ms_dur) {
                             insert_after_this = a_pt;
                         }
                     }
@@ -7062,8 +7027,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                         lastalignmentpoint = firstalignmentpoint = align_pt_meas;
                         align_pt_meas->prev = align_pt_meas->next = NULL;
                         align_pt_meas->offset_ux = general_rightlim;
-                        tpt->r_duration_sec = align_pt_meas->r_onset_sec; // here we go, we update the r_duration_sec.
-                        tpt->duration_ms = rat2double(align_pt_meas->r_onset_sec) * 1000;
+                        tpt->duration_ms = align_pt_meas->onset_ms;
                         general_rightlim += 2 * CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_NO_TS;
                      } else if (insert_after_this == lastalignmentpoint) { // at the end!
                         align_pt_meas->next = NULL;
@@ -7071,8 +7035,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                         lastalignmentpoint->next = align_pt_meas;
                         lastalignmentpoint = align_pt_meas;
                         align_pt_meas->offset_ux = general_rightlim;
-                        tpt->r_duration_sec = align_pt_meas->r_onset_sec; // here we go, we update the r_duration_sec.
-                        tpt->duration_ms = rat2double(align_pt_meas->r_onset_sec) * 1000;
+                        tpt->duration_ms = align_pt_meas->onset_ms;
                         general_rightlim += 2 * CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_NO_TS;
                     } else if (insert_after_this) { // this has NEVER to be NULL! we don't insert ending measure barlines at the BEGINNING, do we?
                         align_pt_meas->next = insert_after_this->next;
@@ -7084,8 +7047,8 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                         insert_after_this->next = align_pt_meas;
                         // finding offset_ux
                         if (align_pt_meas->next)
-                            align_pt_meas->offset_ux = align_pt_meas->prev->offset_ux + (align_pt_meas->next->offset_ux - align_pt_meas->prev->offset_ux) * 
-                            (rat2double(rat_rat_diff(align_pt_meas->r_onset_sec, align_pt_meas->prev->r_onset_sec))) / (rat2double(rat_rat_diff(align_pt_meas->next->r_onset_sec, align_pt_meas->prev->r_onset_sec)));
+                            align_pt_meas->offset_ux = align_pt_meas->prev->offset_ux + (align_pt_meas->next->offset_ux - align_pt_meas->prev->offset_ux) *
+                            ( (align_pt_meas->onset_ms - align_pt_meas->prev->onset_ms)/(align_pt_meas->next->onset_ms - align_pt_meas->prev->onset_ms) );
                         else
                             align_pt_meas->offset_ux = general_rightlim;
                     } else {
@@ -7114,7 +7077,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 }
             }
 
-            bach_freeptr(r_sec_durations);
+            bach_freeptr(ms_durations);
             bach_freeptr(timepoints);
             bach_freeptr(endingmeasures);
             bach_freeptr(endingtimepoints);
@@ -7142,9 +7105,9 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                     if (al_next) {
                         // now al_prev and al_next are both non-tempi alignment points. 
                         double al_prev_next_x_distance = al_next->offset_ux - al_prev->offset_ux; 
-                        t_rational al_prev_next_r_ms_distance = rat_rat_diff(al_next->r_onset_sec, al_prev->r_onset_sec);
-                        t_rational al_prev_this_r_ms_distance = rat_rat_diff(al_pt->r_onset_sec, al_prev->r_onset_sec);
-                        new_x_distance = al_prev->offset_ux + rat2double(al_prev_this_r_ms_distance) * al_prev_next_x_distance / rat2double(al_prev_next_r_ms_distance);
+                        double al_prev_next_ms_distance = al_next->onset_ms - al_prev->onset_ms;
+                        double al_prev_this_ms_distance = al_pt->onset_ms - al_prev->onset_ms;
+                        new_x_distance = al_prev->offset_ux + al_prev_this_ms_distance * al_prev_next_x_distance / al_prev_next_ms_distance;
                     }
                     
                     for (i=0; i<al_pt->num_aligned_obj; i++) {
@@ -7213,9 +7176,9 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                    (!are_there_measures_in_alignmentpoint(al_pt) || !are_there_only_measures_in_alignmentpoint(al_pt) || 
                     (are_there_measures_in_alignmentpoint(al_pt) && are_there_measures_in_alignmentpoint(al_pt->next)))) {
                        
-                       t_rational diff = rat_rat_diff(al_pt->next->r_onset_sec, al_pt->r_onset_sec); //rat_rat_diff(al_pt->next->r_onset_sym[i], al_pt->r_onset_sym[i]);
-                       if (diff.r_num > 0) {
-                           dist_ratio = (al_pt->next->offset_ux - al_pt->offset_ux) / rat2double(diff);
+                       double diff = al_pt->next->onset_ms - al_pt->onset_ms; //rat_rat_diff(al_pt->next->r_onset_sym[i], al_pt->r_onset_sym[i]);
+                       if (double_double_cmp_with_threshold(diff, 0, CONST_EPSILON_DOUBLE_EQ) > 0) {
+                           dist_ratio = (al_pt->next->offset_ux - al_pt->offset_ux) / diff;
                            if (dist_ratio > max_ratio)    
                                max_ratio = dist_ratio;
                        }
@@ -7258,13 +7221,13 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
             if (count == 0) { // possible...
 //                dev_post(". count was 0");
 //                tranche_sym_dur = long2rat(0);
-                t_timepoint tp = ms_to_timepoint((t_notation_obj *)x, rat2double(end_tranche->r_onset_sec)*1000, start_tranche->voice_number[0], k_MS_TO_TP_RETURN_LEFT_CHORD);
+                t_timepoint tp = ms_to_timepoint((t_notation_obj *)x, end_tranche->onset_ms, start_tranche->voice_number[0], k_MS_TO_TP_RETURN_LEFT_CHORD);
                 tranche_sym_dur = get_sym_durations_between_timepoints(nth_scorevoice(x, start_tranche->voice_number[0]), 
                                                                        start_tranche->timepoints[0], tp);
             } else // averaging
                 tranche_sym_dur = rat_long_div(tranche_sym_dur, count);
             
-            tranche_sec_dur = rat2double(end_tranche->r_onset_sec) - rat2double(start_tranche->r_onset_sec); //in seconds!!!
+            tranche_sec_dur = (end_tranche->onset_ms - start_tranche->onset_ms)/1000.; //in seconds!!!
             tranche_sym_density = (tranche_sym_dur.r_num == 0 ? genrat(1, 40000): rat_long_prod(rat_inv(tranche_sym_dur), count_times));
 //            dev_post("tpt: %x, tranche_sec_dur: %.2f, tranche_sym_dur: %ld/%ld, tranche_sym_density: %ld/%ld", tpt, tranche_sec_dur, tranche_sym_dur.r_num, tranche_sym_dur.r_den, tranche_sym_density.r_num, tranche_sym_density.r_den);
             
@@ -7409,7 +7372,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
             if (x->r_ob.spacing_type == k_SPACING_SPRING) {
                 double k_sum = 0;
                 double end_shift = 0.; 
-                double tranche_duration_sec = rat2double(end_tranche->r_onset_sec) - rat2double(start_tranche->r_onset_sec);
+                double tranche_duration_sec = (end_tranche->onset_ms - start_tranche->onset_ms)/1000.;
                 double alpha = x->r_ob.spacing_proportionality;
                 
                 // ASSIGNING k values
@@ -7419,7 +7382,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                         s_contribution += x->r_ob.noteheads_typo_preferences.nhpref[k_NOTEHEAD_BLACK_NOTE].uwidth/2.;
 //                    temp_al_pt->k = 1;
 //                    temp_al_pt->k = rat2double(rat_rat_diff(al_pt->next->r_onset_sec, al_pt->r_onset_sec));
-                    temp_al_pt->k = rat2double(rat_rat_diff(temp_al_pt->next->r_onset_sec, temp_al_pt->r_onset_sec)) * pow(tranche_duration_sec * s_contribution, alpha);
+                    temp_al_pt->k = (temp_al_pt->next->onset_ms - temp_al_pt->onset_ms) * pow(tranche_duration_sec * s_contribution, alpha);
                     if (temp_al_pt == end_tranche) 
                         break;
                 }
@@ -7486,7 +7449,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                         double curr_grace_spacing = 0;
                         
                         for (temp_al_pt = start_tranche->next; temp_al_pt; temp_al_pt = temp_al_pt->next) {
-                            double ts_respaced_offset_ux = start_tranche->offset_ux + (rat2double(rat_rat_diff(temp_al_pt->r_onset_sec, start_tranche->r_onset_sec))/tranche_sec_dur) * width + curr_grace_spacing;
+                            double ts_respaced_offset_ux = start_tranche->offset_ux + (((temp_al_pt->onset_ms - start_tranche->onset_ms)/1000.)/tranche_sec_dur) * width + curr_grace_spacing;
                             double note_respaced_offset_ux = start_tranche->offset_ux + tranche_width_no_graces_minwidth_no_graces_ratio * (temp_al_pt->offset_ux - start_tranche->offset_ux) + curr_grace_spacing;
                             double this_collision = (ts_respaced_offset_ux - prev_ts_respaced_offset_ux) - (temp_al_pt->offset_ux - temp_al_pt->prev->offset_ux) - CONST_THRESHOLD_FOR_SMART_SPACING;
                             
@@ -7519,7 +7482,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                     temp_al_pt = start_tranche;
                     double curr_grace_width = 0;
                     while (temp_al_pt) { 
-                        double onset_abs = rat2double(temp_al_pt->r_onset_sec) - rat2double(start_tranche->r_onset_sec);
+                        double onset_abs = (temp_al_pt->onset_ms - start_tranche->onset_ms)/1000.;
                         double original_offset_ux = temp_al_pt->offset_ux;
 //was:                        double coeff1 = onset_abs < CONST_EPSILON4 || tranche_sec_dur < CONST_EPSILON1 ? 0 : onset_abs/tranche_sec_dur;
                         double coeff1 = tranche_sec_dur < CONST_EPSILON1 ? 0 : onset_abs/tranche_sec_dur;
@@ -8320,7 +8283,7 @@ void check_tempi(t_score *x)
                     } else {
                         // hard case.
                         for (tmp3 = tempo_get_first(tmp_voice); tmp3; tmp3 = tempo_get_next(tmp3)) {
-                            if (are_tempi_the_same_and_with_the_same_onset(tmp_tempo, tmp3)) {
+                            if (are_tempi_the_same_and_with_the_same_onset((t_notation_obj *)x, tmp_tempo, tmp3)) {
                                 found = true;
                                 found_tempi[CLAMP(tmp_voice->v_ob.number, 0, CONST_MAX_VOICES - 1)] = tmp3;
                                 break;
@@ -8354,7 +8317,7 @@ void check_tempi(t_score *x)
                             t_tempo *pivot = tempo_get_next(tmp_tempo);
                             if (pivot) {
                                 for (long i = firstvisible->number + 1; i < x->r_ob.num_voices; i++) {
-                                    if (!are_tempi_the_same_and_with_the_same_onset(tempo_get_next(found_tempi[i]), pivot)) {
+                                    if (!are_tempi_the_same_and_with_the_same_onset((t_notation_obj *)x, tempo_get_next(found_tempi[i]), pivot)) {
                                         must_hide = false;
                                         break;
                                     }
@@ -11929,7 +11892,7 @@ t_scorevoice *get_longest_scorevoice(t_score *x)
     for (voice = x->firstvoice; voice; voice = voice->next) {
         if (!voice->lastmeasure || !voice->lastmeasure->tuttipoint_reference)
             continue;
-        this_length = voice->lastmeasure->tuttipoint_reference->onset_ms + voice->lastmeasure->tuttipoint_onset_ms + voice->lastmeasure->total_duration_ms;
+        this_length = voice->lastmeasure->tuttipoint_reference->onset_ms + voice->lastmeasure->tuttipoint_onset_ms + measure_get_duration_ms((t_notation_obj *)x, voice->lastmeasure);
         if (this_length > max_length) {
             max_length = this_length;
             longest_voice = voice;

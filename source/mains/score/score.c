@@ -923,7 +923,7 @@ void score_send_current_chord(t_score *x){
                 (!x->r_ob.dl_spans_ties || !meas->lastchord || !chord_is_all_tied_to((t_notation_obj *)x, meas->lastchord, false, NULL)))
                 continue;
             for (chord = meas->firstchord; chord; ) {
-                double this_chord_ms = chord_get_onset_ms(chord);
+                double this_chord_ms = chord_get_onset_ms((t_notation_obj *)x, chord);
                 t_chord *next_chord = NULL, *next_chord_to_set = chord->next;
                 if (x->r_ob.dl_spans_ties) {
                     t_chord *last_all_tied = last_all_tied_chord(chord, false);
@@ -935,7 +935,7 @@ void score_send_current_chord(t_score *x){
                 } else {
                     next_chord = chord_get_next(chord);
                 }
-                double next_chord_ms = next_chord ? chord_get_onset_ms(chord_get_next(chord)) : x->r_ob.length_ms_till_last_note;
+                double next_chord_ms = next_chord ? chord_get_onset_ms((t_notation_obj *)x, chord_get_next(chord)) : x->r_ob.length_ms_till_last_note;
                 if (this_chord_ms > curr_pos_ms)
                     break;
 
@@ -3001,6 +3001,7 @@ void score_getmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
 /// *** VOICE COLLAPSING *** ///
 void score_collapse(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
+    /*
     if (proxy_getinlet((t_object *) x) == 0) {
         t_llll *inputlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
         if (inputlist) {
@@ -3358,8 +3359,9 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
     }
     
     unlock_general_mutex((t_notation_obj *)x);
-
-    return out_llll;
+    return out_llll; */
+    // TODO: MAKE COLLAPSE WORK
+    return NULL;
 }
 
 
@@ -3798,17 +3800,17 @@ void score_playselection(t_score *x, t_symbol *s, long argc, t_atom *argv)
     for (selitem = x->r_ob.firstselecteditem; selitem; selitem = selitem->next_selected) {
         if (selitem->type == k_CHORD) {
             t_chord *chord = (t_chord *) selitem;
-            double this_onset = chord_get_onset_ms(chord);
+            double this_onset = chord_get_onset_ms((t_notation_obj *)x, chord);
             if (start_ms < 0 || this_onset < start_ms)
                 start_ms = this_onset;
         } else if (selitem->type == k_NOTE) {
             t_chord *chord = ((t_note *) selitem)->parent;
-            double this_onset = chord_get_onset_ms(chord);
+            double this_onset = chord_get_onset_ms((t_notation_obj *)x, chord);
             if (start_ms < 0 || this_onset < start_ms)
                 start_ms = this_onset;
         } else if (selitem->type == k_MEASURE) {
             t_measure *measure = (t_measure *) selitem;
-            double this_onset = measure->tuttipoint_reference->onset_ms + measure->tuttipoint_onset_ms;
+            double this_onset = measure_get_onset_ms((t_notation_obj *)x, measure);
             if (start_ms < 0 || this_onset < start_ms)
                 start_ms = this_onset;
         } else if (selitem->type == k_VOICE) {
@@ -4017,8 +4019,8 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
         
         for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
             for (temp_meas = voice->firstmeasure; temp_meas; temp_meas = temp_meas->next) {
-                double measure_start_ms = temp_meas->tuttipoint_reference->onset_ms + temp_meas->tuttipoint_onset_ms;
-                double measure_end_ms = measure_start_ms + temp_meas->total_duration_ms;
+                double measure_start_ms = measure_get_onset_ms((t_notation_obj *)x, temp_meas);
+                double measure_end_ms = notation_item_get_tail_ms_accurate((t_notation_obj *)x, (t_notation_item *)temp_meas);
 
                 if (measure_start_ms > start_ms)
                     break;
@@ -11335,12 +11337,13 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
             if (temp_meas->tuttipoint_reference == note->parent->parent->tuttipoint_reference) {
                 t_chord *temp_ch = temp_meas->firstchord;
                 while (temp_ch) {
-                    long cmp = rat_rat_cmp(rat_rat_sum(temp_meas->r_tuttipoint_onset_sec, temp_ch->r_measure_onset_sec),  
-                                           rat_rat_sum(note->parent->parent->r_tuttipoint_onset_sec, note->parent->r_measure_onset_sec));
-                    if (cmp == 0) { // same onset
+                    double onset1 = chord_get_onset_ms((t_notation_obj *)x, temp_ch);
+                    double onset2 = chord_get_onset_ms((t_notation_obj *)x, note->parent);
+//                    long cmp = rat_rat_cmp(rat_rat_sum(temp_meas->r_tuttipoint_onset_sec, temp_ch->r_measure_onset_sec), rat_rat_sum(note->parent->parent->r_tuttipoint_onset_sec, note->parent->r_measure_onset_sec));
+                    if (fabs(onset1-onset2) < CONST_EPSILON_DOUBLE_EQ) { // same onset
                         chord_for_note_insertion = temp_ch;
                         break;
-                    } else if (cmp == 1) { // temp_ch has a bigger onset
+                    } else if (onset1 > onset2) { // temp_ch has a bigger onset
                         break;
                     }
                     temp_ch = temp_ch->next; 
@@ -13730,10 +13733,12 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 }
 
 // dirty!
-char measure_position_cmp(t_measure *meas1, t_measure *meas2)
+char measure_position_cmp(t_notation_obj *r_ob, t_measure *meas1, t_measure *meas2)
 {
-    double onset1 = measure_get_overall_onset(meas1);
-    double onset2 = measure_get_overall_onset(meas2);
+    double onset1 = measure_get_onset_ms(r_ob, meas1);
+    double onset2 = measure_get_onset_ms(r_ob, meas2);
+    if (fabs(onset1 - onset2) < CONST_EPSILON_DOUBLE_EQ)
+        return 0;
     if (onset1 < onset2)
         return -1;
     if (onset2 > onset1)
@@ -13763,10 +13768,10 @@ void select_all_measure_in_selected_measures_range(t_score *x) {
             if (voice_max < 0 || this_voice_num > voice_max)
                 voice_max = this_voice_num;
                 
-            if (!leftmost_selected[this_voice_num] || measure_position_cmp(this_meas, leftmost_selected[this_voice_num]) < 0)
+            if (!leftmost_selected[this_voice_num] || measure_position_cmp((t_notation_obj *)x, this_meas, leftmost_selected[this_voice_num]) < 0)
                 leftmost_selected[this_voice_num] = this_meas;
 
-            if (!rightmost_selected[this_voice_num] || measure_position_cmp(this_meas, rightmost_selected[this_voice_num]) > 0)
+            if (!rightmost_selected[this_voice_num] || measure_position_cmp((t_notation_obj *)x, this_meas, rightmost_selected[this_voice_num]) > 0)
                 rightmost_selected[this_voice_num] = this_meas;
             
             t_tuttipoint *this_tpt = this_meas->tuttipoint_reference;
@@ -13789,14 +13794,14 @@ void select_all_measure_in_selected_measures_range(t_score *x) {
                 tpt_right = this_tpt;
                 if (tpt_right->measure[this_voice_num] != this_meas) {
                     if (this_tpt->onset_ms > tpt_right->onset_ms)
-                        tpt_right_measure_offset = this_meas->tuttipoint_onset_ms + this_meas->total_duration_ms;
+                        tpt_right_measure_offset = this_meas->tuttipoint_onset_ms + measure_get_duration_ms((t_notation_obj *)x, this_meas);
                     else if (tpt_left_measure_offset < 0 || this_meas->tuttipoint_onset_ms > tpt_right_measure_offset)
-                        tpt_right_measure_offset = this_meas->tuttipoint_onset_ms + this_meas->total_duration_ms;
+                        tpt_right_measure_offset = this_meas->tuttipoint_onset_ms + measure_get_duration_ms((t_notation_obj *)x, this_meas);
                 } else {
                     if (this_tpt->onset_ms > tpt_right->onset_ms)
-                        tpt_right_measure_offset = this_meas->total_duration_ms;
+                        tpt_right_measure_offset = measure_get_duration_ms((t_notation_obj *)x, this_meas);
                     else if (tpt_right_measure_offset < 0)
-                        tpt_right_measure_offset = this_meas->total_duration_ms;
+                        tpt_right_measure_offset = measure_get_duration_ms((t_notation_obj *)x, this_meas);
                 }
             
             }
@@ -13825,7 +13830,7 @@ void select_all_measure_in_selected_measures_range(t_score *x) {
             for (; start_meas && start_meas->tuttipoint_reference == tpt_left && start_meas->tuttipoint_onset_ms < tpt_left_measure_offset;)
                 start_meas = start_meas->next;
                 
-            if (leftmost_selected[i] && measure_position_cmp(leftmost_selected[i], start_meas) < 0)
+            if (leftmost_selected[i] && measure_position_cmp((t_notation_obj *)x, leftmost_selected[i], start_meas) < 0)
                     start_meas = leftmost_selected[i];
 
             end_meas = tpt_right->measure[i];
@@ -13836,7 +13841,7 @@ void select_all_measure_in_selected_measures_range(t_score *x) {
             if (!end_meas)
                 end_meas = nth_scorevoice(x, i)->lastmeasure;
             
-            if (rightmost_selected[i] && measure_position_cmp(end_meas, rightmost_selected[i]) < 0)
+            if (rightmost_selected[i] && measure_position_cmp((t_notation_obj *)x, end_meas, rightmost_selected[i]) < 0)
                 end_meas = rightmost_selected[i];
                 
             if (start_meas && end_meas) {
@@ -14095,9 +14100,9 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
         for (i = 0; i < x->r_ob.num_voices; i++) {
             if (meas[i]){
                 if (dur < 0) {
-                    dur = meas[i]->total_duration_ms;
+                    dur = measure_get_duration_ms((t_notation_obj *)x, meas[i]);
                 } else {
-                    long cmp = double_double_cmp_with_threshold(dur, meas[i]->total_duration_ms, CONST_THRESHOLD);
+                    long cmp = double_double_cmp_with_threshold(dur, measure_get_duration_ms((t_notation_obj *)x, meas[i]), CONST_THRESHOLD);
                     if (cmp != 0) {
                         tuttipoint_aligned = 0;
                         break;
@@ -14122,14 +14127,11 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                     meas[i]->tuttipoint_reference = tpt;
             
             char changed = false;
-            double dur_ms = meas[start_voice_num_one_based - 1]->total_duration_ms;
-            t_rational r_dur_sec = approx_rat_with_rat_notify(meas[start_voice_num_one_based - 1]->r_total_duration_sec, CONST_RAT_MAX_NUM_SAFETY, CONST_RAT_MAX_DEN_SAFETY, &changed);
+            double dur_ms = measure_get_duration_ms((t_notation_obj *)x, meas[start_voice_num_one_based - 1]);
             
-            tpt->r_duration_sec = r_dur_sec;
-            tpt->r_onset_sec = (ref_tpt && ref_tpt_next) ? ref_tpt_next->r_onset_sec : (ref_tpt ? rat_rat_sum(ref_tpt->r_onset_sec, ref_tpt->r_duration_sec) : long2rat(0));
+            tpt->duration_ms = dur_ms;
             tpt->onset_ms = (ref_tpt && ref_tpt_next) ? ref_tpt_next->onset_ms : (ref_tpt ? ref_tpt->onset_ms + ref_tpt->duration_ms : 0);
             for (t_tuttipoint *temp = ref_tpt_next; temp; temp = temp->next) {
-                temp->r_onset_sec = rat_rat_sum(temp->r_onset_sec, r_dur_sec);
                 temp->onset_ms += dur_ms;
             }
             
@@ -14250,8 +14252,8 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
             t_measure *m1 = nth_measure_of_scorevoice(x->firstvoice, start_meas);
             t_measure *m2 = nth_measure_of_scorevoice(x->firstvoice, end_meas);
             if (m1 && m2) {
-                double start_ms = (m1->firstchord) ? chord_get_onset_ms(m1->firstchord) : unscaled_xposition_to_ms((t_notation_obj *)x, m1->tuttipoint_reference->offset_ux + m1->start_barline_offset_ux, 1);
-                double end_ms = (m2->next && m2->next->firstchord) ? chord_get_onset_ms(m2->next->firstchord) : unscaled_xposition_to_ms((t_notation_obj *)x, m2->tuttipoint_reference->offset_ux + m2->start_barline_offset_ux + m2->width_ux, 1);
+                double start_ms = (m1->firstchord) ? chord_get_onset_ms((t_notation_obj *)x, m1->firstchord) : unscaled_xposition_to_ms((t_notation_obj *)x, m1->tuttipoint_reference->offset_ux + m1->start_barline_offset_ux, 1);
+                double end_ms = (m2->next && m2->next->firstchord) ? chord_get_onset_ms((t_notation_obj *)x, m2->next->firstchord) : unscaled_xposition_to_ms((t_notation_obj *)x, m2->tuttipoint_reference->offset_ux + m2->start_barline_offset_ux + m2->width_ux, 1);
                 llll_appendllll(out_llll, get_markers_as_llll((t_notation_obj *) x, 1, start_ms, end_ms, false, k_CONSIDER_FOR_SUBDUMPING, start_meas), 0, WHITENULL_llll);
             }
         }
@@ -16439,14 +16441,13 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                             set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
 
                             if (x->r_ob.playback_during_linear_editing && edited_chord && keycode != 46) {
-                                t_rational r_chord_dur = get_rat_durations_sec_between_timepoints((t_notation_obj *)x, edited_chord->parent->voiceparent, build_timepoint(edited_chord->parent->measure_number, edited_chord->r_sym_onset), build_timepoint(edited_chord->parent->measure_number, rat_rat_sum(edited_chord->r_sym_onset, rat_abs(edited_chord->r_sym_duration))));
-                                edited_chord->duration_ms = 1000 * rat2double(r_chord_dur);
-                                edited_chord->r_duration_sec = r_chord_dur;
-                                edited_chord->play_r_duration_sec = r_chord_dur;
+                                double chord_dur = get_duration_ms_between_timepoints((t_notation_obj *)x, edited_chord->parent->voiceparent, build_timepoint(edited_chord->parent->measure_number, edited_chord->r_sym_onset), build_timepoint(edited_chord->parent->measure_number, rat_rat_sum(edited_chord->r_sym_onset, rat_abs(edited_chord->r_sym_duration))));
+                                edited_chord->duration_ms = chord_dur;
+                                edited_chord->play_duration_ms = chord_dur;
                                 if (edited_chord->prev)
                                     edited_chord->onset = edited_chord->prev->onset + edited_chord->prev->duration_ms;
                                 else
-                                    edited_chord->onset = edited_chord->parent->tuttipoint_reference->onset_ms + 1000 * rat2double(edited_chord->parent->r_tuttipoint_onset_sec);
+                                    edited_chord->onset = edited_chord->parent->tuttipoint_reference->onset_ms + edited_chord->parent->tuttipoint_onset_ms;
                                 unlock_general_mutex((t_notation_obj *)x);
                                 send_chord_as_llll((t_notation_obj *) x, edited_chord, 7, k_CONSIDER_FOR_DUMPING, -1);
                             } else {
