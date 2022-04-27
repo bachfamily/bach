@@ -5824,7 +5824,6 @@ void calculate_tuttipoints(t_score *x)
     char we_needed_to_approximate = false;
     char we_are_done;
     t_tuttipoint *active_tuttipoint;
-    t_rational *totdur;
     double tpt_onset_ms, *totdur_ms, last_onset_ms = 0;
     t_scorevoice *voice;
     t_tuttipoint *this_tpt; 
@@ -5858,7 +5857,6 @@ void calculate_tuttipoints(t_score *x)
     
     for (i = 0, voice = x->firstvoice; i < x->r_ob.num_voices; i++, voice = voice->next) {
         meas[i] = voice->firstmeasure;
-        totdur[i] = long2rat(0);
         totdur_ms[i] = 0;
         if (meas[i]) {
             meas[i]->tuttipoint_reference = tpt;
@@ -5874,14 +5872,6 @@ void calculate_tuttipoints(t_score *x)
         if (meas[i]) {
             totdur_ms[i] += measure_get_duration_ms((t_notation_obj *)x, meas[i]);
             meas[i] = meas[i]->next;
-        }
-    }
-    
-    if (go_safe) {
-        for (i = 0; i < x->r_ob.num_voices; i++) {
-            char changed;
-            totdur[i] = approx_rat_with_rat_notify(totdur[i], CONST_RAT_MAX_NUM_SAFETY, CONST_RAT_MAX_DEN_SAFETY, &changed);
-            we_needed_to_approximate |= changed;
         }
     }
 
@@ -5904,8 +5894,9 @@ void calculate_tuttipoints(t_score *x)
         char equals = 1; // is it == to all the others?
         for (i = 0; i < x->r_ob.num_voices; i++) {
             long cmp;
-            if (!meas[i]) { 
-                if (rat_rat_cmp(totdur[ref_voice], totdur[i]) == -1) {
+            if (!meas[i]) {
+                if (double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], CONST_EPSILON_DOUBLE_EQ) == -1) {
+//                if (rat_rat_cmp(totdur[ref_voice], totdur[i]) == -1) {
                     equals = 0; // no tuttipoint! we've ended
                     break;
                 } 
@@ -6051,7 +6042,6 @@ void calculate_tuttipoints(t_score *x)
         }
 
     bach_freeptr(meas);
-    bach_freeptr(totdur);
     bach_freeptr(totdur_ms);
     
 #ifdef BACH_CHECK_NOTATION_ITEMS
@@ -6397,13 +6387,12 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 
                 // adding the alignment point
                 align_pt->onset_ms = firstchord->measure_onset_ms + firstchord->parent->tuttipoint_onset_ms;
-
-                #ifdef BACH_SPACING_DEBUG
-                    object_post((t_object *) x, "- Adding an alignment point with onset_ms: %f", align_pt->onset_ms);
-                    object_post((t_object *) x, "   chord_onset: %ld/%ld = %f", firstchord->r_measure_onset_sec.r_num, firstchord->r_measure_onset_sec.r_den, rat2double(firstchord->r_measure_onset_sec));
-                    object_post((t_object *) x, "   parent_onset: %ld/%ld = %f", firstchord->parent->r_tuttipoint_onset_sec.r_num, firstchord->parent->r_tuttipoint_onset_sec.r_den, rat2double(firstchord->parent->r_tuttipoint_onset_sec));
-                    object_post((t_object *) x, "   num_chords_to_align: %ld", num_chords_to_align);
-                #endif
+                
+#ifdef BACH_SPACING_DEBUG
+                object_post((t_object *) x, "- Adding an alignment point with onset_ms: %f", align_pt->onset_ms);
+                object_post((t_object *) x, "   chord_onset: %f", notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)firstchord)); object_post((t_object *) x, "   parent_onset: %f", notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)firstchord->parent));
+                object_post((t_object *) x, "   num_chords_to_align: %ld", num_chords_to_align);
+#endif
                 
                 align_pt->num_aligned_obj = num_chords_to_align;
                 for (i = 0; i < num_chords_to_align && i < x->r_ob.num_voices; i++) {
@@ -9183,7 +9172,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 double xx = unscaled_xposition_to_xposition((t_notation_obj *)x, curr_tuttipt->offset_ux + al->offset_ux);
                 for (i = 0; i < al->num_aligned_obj; i++)
                     text[i] = (al->aligned_obj[i]->type == k_CHORD ? 'c' : (al->aligned_obj[i]->type == k_MEASURE_END_BARLINE ? 'b' : (al->aligned_obj[i]->type == k_TEMPO ? 't' : '?')));
-                snprintf(text + al->num_aligned_obj, 150, ": %.2fux, %ld/%ld = %.2fsec", al->offset_ux, al->r_onset_sec.r_num, al->r_onset_sec.r_den, rat2double(al->r_onset_sec));
+                snprintf(text + al->num_aligned_obj, 150, ": %.2fux, %.2fms", al->offset_ux, al->onset_ms);
                 write_text_standard(g, jf_text_markers, build_jrgba(0.1, 0.3, 0.6, 0.7), text, xx, (yy + 10) * x->r_ob.zoom_y, 400* x->r_ob.zoom_y, 30 * x->r_ob.zoom_y);
                 paint_dashed_line(g, build_jrgba(0.1, 0.3, 0.6, 0.7), xx, 0, xx, rect.height, 1, 5);
                 yy = (yy + 10) % 100;

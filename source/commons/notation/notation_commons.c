@@ -10046,7 +10046,7 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
 }
 
 double get_duration_ms_between_timepoints(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp1, t_timepoint tp2) {
-    return rat2double(get_rat_durations_sec_between_timepoints(r_ob, voice, tp1, tp2));
+    return 1000*rat2double(get_rat_durations_sec_between_timepoints(r_ob, voice, tp1, tp2));
 }
 
 
