@@ -10058,7 +10058,8 @@ t_rational get_tempo_trapece_sec(t_scorevoice *voice, t_rational tempo_L_value, 
 }
 
 // calculates the intermediate tempo at point <tp>, in voice <voice>, given the previous <tempo_L> and the following <tempo_R>
-t_rational get_intermediate_tempo(t_scorevoice *voice, t_timepoint tp, t_tempo *tempo_L, t_tempo *tempo_R){
+t_rational get_intermediate_tempo(t_scorevoice *voice, t_timepoint tp, t_tempo *tempo_L, t_tempo *tempo_R)
+{
     t_rational D = rat_rat_div(get_sym_durations_between_timepoints(voice, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp), 
                                get_sym_durations_between_timepoints(voice, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), build_timepoint(tempo_R->owner->measure_number, tempo_R->changepoint)));
     t_rational PR0 = rat_rat_prod(tempo_R->tempo_value, tempo_L->tempo_value);
