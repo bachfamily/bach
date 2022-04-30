@@ -4437,6 +4437,9 @@ typedef struct _notation_obj
     double          linear_edit_time_multipliers[10];   ///< Array of multipliers defining the durations associated with keys 1 through 9 and then 0 (meaning 10).
     long            linear_edit_quarter_key;            ///< Keyboard key corresponding to a quarter note in linear edit
     
+    // for bach.score
+    double          onset_equality_threshold_ms;        ///< A threshold in milliseconds to determine whether two onsets are equal.
+                                                        ///This is needed to perform complex tempo calculations (once upon a time we used to have rationals everywhere, but it had many drawbacks...)
     
     // pitches
     char    output_pitches_gathered; ///< Flag telling if we output pitches (instead of MIDIcents) from gathered syntax
@@ -17616,6 +17619,7 @@ t_max_err notation_obj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object
 t_max_err notation_obj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_showmeasurenumbers(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -19282,6 +19286,11 @@ long change_pitch(t_notation_obj *r_ob, t_pitch *pitch, double *cents, t_lexpr *
 
 void change_poc(t_notation_obj *r_ob, t_hatom *poc, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
 
+/**    Get the current threshold for equality of onsets (in ms).
+    @param    r_ob            The notation object
+    @return            Onset equality threshold in milliseconds
+ */
+double notationobj_get_onset_equality_threshold(t_notation_obj *r_ob);
 
 /// SLOPE functions for notation objects (see corresponding abstract function in bach_math_utilitites.h
 /// The slope type is inferred from the notation object attributes

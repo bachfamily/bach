@@ -3031,6 +3031,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
     
     t_llll *active_chords, *active_until;
     double curr_nonref_onset_ms_next;
+    double EQ_THRESH = notationobj_get_onset_equality_threshold((t_notation_obj *)x);
     t_chord *curr_nonref_chord;
     t_llllelem *active_chords_elem, *active_until_elem, *temp1, *temp2;
     long k = 0; long i;
@@ -3158,7 +3159,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     if (we_take_it[i] && i != reference_voice) {
                         while (cur_ch[i] && cur_ch[i]->r_sym_duration.r_num < 0)
                             cur_ch[i] = chord_get_next(cur_ch[i]);
-                        if (cur_ch[i] && double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), ref_chord_onset_ms, CONST_EPSILON_DOUBLE_EQ) == 0) {
+                        if (cur_ch[i] && double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), ref_chord_onset_ms, EQ_THRESH) == 0) {
                             if (k < CONST_MAX_VOICES)
                                 these_ch[k++] = cur_ch[i];
                             // increasing chord
@@ -3176,20 +3177,20 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 for (i = 0; i < x->r_ob.num_voices; i++)
                     if (we_take_it[i] && i != reference_voice)
                         if (cur_ch[i] && (cur < 0 ||
-                                          double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), cur, CONST_EPSILON_DOUBLE_EQ) < 0)) {
+                                          double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), cur, EQ_THRESH) < 0)) {
                             curr_nonref_chord = cur_ch[i];
                             cur = chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]);
                         }
                 for (i = 0; i < k - 1; i++) {
                     double end = chord_get_onset_ms((t_notation_obj *)x, these_ch[i]);
-                    if (cur < 0  || double_double_cmp_with_threshold(end, cur, CONST_EPSILON_DOUBLE_EQ) < 0) {
+                    if (cur < 0  || double_double_cmp_with_threshold(end, cur, EQ_THRESH) < 0) {
                         curr_nonref_chord = NULL;
                         cur = end;
                     }
                 }
                 for (active_until_elem = active_until->l_head; active_until_elem; active_until_elem = active_until_elem->l_next) {
                     double until = hatom_getrational(&active_until_elem->l_hatom);
-                    if (cur < 0  || double_double_cmp_with_threshold(until, cur, CONST_EPSILON_DOUBLE_EQ) < 0) {
+                    if (cur < 0  || double_double_cmp_with_threshold(until, cur, EQ_THRESH) < 0) {
                         curr_nonref_chord = NULL;
                         cur = until;
                     }
@@ -3198,7 +3199,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 curr_nonref_onset_ms_next = cur;
                 
                 curr_nonref_onset_ms_this = ref_chord_onset_ms;
-                while (curr_nonref_onset_ms_next > 0 && double_double_cmp_with_threshold(curr_nonref_onset_ms_next, ref_nextchord_onset_ms, CONST_EPSILON_DOUBLE_EQ) < 0) {
+                while (curr_nonref_onset_ms_next > 0 && double_double_cmp_with_threshold(curr_nonref_onset_ms_next, ref_nextchord_onset_ms, EQ_THRESH) < 0) {
                     t_timepoint curr_nonref_onset_next_timepoint = ms_to_timepoint((t_notation_obj *)x, curr_nonref_onset_ms_next, reference_voice, k_MS_TO_TP_RETURN_INTERPOLATION);
                     t_timepoint curr_nonref_onset_this_timepoint = ms_to_timepoint((t_notation_obj *)x, curr_nonref_onset_ms_this, reference_voice, k_MS_TO_TP_RETURN_INTERPOLATION);
                     t_rational sym_dur = get_sym_durations_between_timepoints(refvoice, curr_nonref_onset_this_timepoint, curr_nonref_onset_next_timepoint);
@@ -3211,7 +3212,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     while (active_chords_elem && active_until_elem) { // chords which remain to be completed
                         t_chord *ch_to_complete = (t_chord *) hatom_getobj(&active_chords_elem->l_hatom);
                         double until = hatom_getdouble(&active_until_elem->l_hatom);
-                        char last_one = double_double_cmp_with_threshold(until, curr_nonref_onset_ms_next, CONST_EPSILON_DOUBLE_EQ) <= 0 ? 1 : 0;
+                        char last_one = double_double_cmp_with_threshold(until, curr_nonref_onset_ms_next, EQ_THRESH) <= 0 ? 1 : 0;
                         
                         for (nt = ch_to_complete->firstnote; nt; nt = nt->next)
                             llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE), 0, WHITENULL_llll);    
@@ -3231,7 +3232,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     
                     for (i = 0; i < k; i++) { // syncronous chords
                         double ch_end = notation_item_get_tail_ms_accurate((t_notation_obj *)x, (t_notation_item *)these_ch[i]);
-                        char ended = double_double_cmp_with_threshold(ch_end, curr_nonref_onset_ms_next, CONST_EPSILON_DOUBLE_EQ) <= 0 ? 1 : 0;
+                        char ended = double_double_cmp_with_threshold(ch_end, curr_nonref_onset_ms_next, EQ_THRESH) <= 0 ? 1 : 0;
                         
                         for (nt = these_ch[i]->firstnote; nt; nt = nt->next){
                             these_ch[i]->r_it.flags = (e_bach_internal_notation_flags) (these_ch[i]->r_it.flags | k_FLAG_COLLAPSE);
@@ -3260,7 +3261,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                             while (cur_ch[i] && cur_ch[i]->r_sym_duration.r_num < 0)
                                 cur_ch[i] = chord_get_next(cur_ch[i]);
                             if (cur_ch[i] &&
-                                double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), curr_nonref_onset_ms_next, CONST_EPSILON_DOUBLE_EQ) == 0) {
+                                double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), curr_nonref_onset_ms_next, EQ_THRESH) == 0) {
                                 if (k < CONST_MAX_VOICES)
                                     these_ch[k++] = cur_ch[i];
                                 // increasing chord
@@ -3276,20 +3277,20 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     for (i = 0; i < x->r_ob.num_voices; i++)
                         if (we_take_it[i] && i != reference_voice)
                             if (cur_ch[i] && (cur < 0 ||
-                                              double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), cur, CONST_EPSILON_DOUBLE_EQ) < 0)) {
+                                              double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), cur, EQ_THRESH) < 0)) {
                                 curr_nonref_chord = cur_ch[i];
                                 cur = chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]);
                             }
                     for (i = 0; i < k; i++) {
                         double end = chord_get_onset_ms((t_notation_obj *)x, these_ch[i]);
-                        if (cur < 0  || (double_double_cmp_with_threshold(end, cur, CONST_EPSILON_DOUBLE_EQ) < 0 && double_double_cmp_with_threshold(end, curr_nonref_onset_ms_next, CONST_EPSILON_DOUBLE_EQ) > 0)) {
+                        if (cur < 0  || (double_double_cmp_with_threshold(end, cur, EQ_THRESH) < 0 && double_double_cmp_with_threshold(end, curr_nonref_onset_ms_next, EQ_THRESH) > 0)) {
                             curr_nonref_chord = NULL;
                             cur = end;
                         }
                     }
                     for (active_until_elem = active_until->l_head; active_until_elem; active_until_elem = active_until_elem->l_next) {
                         double until = hatom_getdouble(&active_until_elem->l_hatom);
-                        if (cur < 0  || (double_double_cmp_with_threshold(until, cur, CONST_EPSILON_DOUBLE_EQ) < 0  && double_double_cmp_with_threshold(until, curr_nonref_onset_ms_next, CONST_EPSILON_DOUBLE_EQ) > 0)) {
+                        if (cur < 0  || (double_double_cmp_with_threshold(until, cur, EQ_THRESH) < 0  && double_double_cmp_with_threshold(until, curr_nonref_onset_ms_next, EQ_THRESH) > 0)) {
                             curr_nonref_chord = NULL;
                             cur = until;
                         }
@@ -3312,7 +3313,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 while (active_chords_elem && active_until_elem) { // chords which remain to be completed
                     t_chord *ch_to_complete = (t_chord *) hatom_getobj(&active_chords_elem->l_hatom);
                     t_rational until = hatom_getrational(&active_until_elem->l_hatom);
-                    char last_one = double_double_cmp_with_threshold(until, ref_nextchord_onset_ms, CONST_EPSILON_DOUBLE_EQ) <= 0 ? 1 : 0;
+                    char last_one = double_double_cmp_with_threshold(until, ref_nextchord_onset_ms, EQ_THRESH) <= 0 ? 1 : 0;
                     
                     for (nt = ch_to_complete->firstnote; nt; nt = nt->next){
                         llll_appendllll(out_ch, get_scorenote_values_as_llll((t_notation_obj *) x, nt, last_one ? k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END : k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE), 0, WHITENULL_llll);    
@@ -3333,7 +3334,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 
                 for (i = 0; i < k; i++) { // syncronous chords
                     double ch_end = chord_get_onset_ms((t_notation_obj *)x, these_ch[i]);
-                    char ended = double_double_cmp_with_threshold(ch_end, ref_nextchord_onset_ms, CONST_EPSILON_DOUBLE_EQ) <= 0 ? 1 : 0;
+                    char ended = double_double_cmp_with_threshold(ch_end, ref_nextchord_onset_ms, EQ_THRESH) <= 0 ? 1 : 0;
                     
                     for (nt = these_ch[i]->firstnote; nt; nt = nt->next){
                         these_ch[i]->r_it.flags = (e_bach_internal_notation_flags) (these_ch[i]->r_it.flags | k_FLAG_COLLAPSE);
@@ -11342,7 +11343,7 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
                     double onset1 = chord_get_onset_ms((t_notation_obj *)x, temp_ch);
                     double onset2 = chord_get_onset_ms((t_notation_obj *)x, note->parent);
 //                    long cmp = rat_rat_cmp(rat_rat_sum(temp_meas->r_tuttipoint_onset_sec, temp_ch->r_measure_onset_sec), rat_rat_sum(note->parent->parent->r_tuttipoint_onset_sec, note->parent->r_measure_onset_sec));
-                    if (fabs(onset1-onset2) < CONST_EPSILON_DOUBLE_EQ) { // same onset
+                    if (fabs(onset1-onset2) < notationobj_get_onset_equality_threshold((t_notation_obj *)x)) { // same onset
                         chord_for_note_insertion = temp_ch;
                         break;
                     } else if (onset1 > onset2) { // temp_ch has a bigger onset
@@ -13739,7 +13740,7 @@ char measure_position_cmp(t_notation_obj *r_ob, t_measure *meas1, t_measure *mea
 {
     double onset1 = measure_get_onset_ms(r_ob, meas1);
     double onset2 = measure_get_onset_ms(r_ob, meas2);
-    if (fabs(onset1 - onset2) < CONST_EPSILON_DOUBLE_EQ)
+    if (fabs(onset1 - onset2) < notationobj_get_onset_equality_threshold(r_ob))
         return 0;
     if (onset1 < onset2)
         return -1;

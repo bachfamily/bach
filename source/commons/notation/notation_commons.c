@@ -37,6 +37,10 @@ DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, voicenames_as_llll, notation_obj
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, stafflines_as_llll, notation_obj_getattr_stafflines)
 
 
+double notationobj_get_onset_equality_threshold(t_notation_obj *r_ob)
+{
+    return r_ob->onset_equality_threshold_ms;
+}
 
 double notationobj_rescale_with_slope(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope)
 {
@@ -4331,7 +4335,9 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode, bool
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         return onset_to_unscaled_xposition(r_ob, ms);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        if (false && r_ob->spacing_type == k_SPACING_PROPORTIONAL) {
+        double EQ_THRESH = notationobj_get_onset_equality_threshold(r_ob);
+
+        if (false && r_ob->spacing_type == k_SPACING_PROPORTIONAL) { // unused, the other way should work still robustly
             t_tuttipoint *left = NULL, *right = NULL;
             for (t_tuttipoint *tpt = r_ob->firsttuttipoint; tpt; tpt = tpt->next) {
                 if (tpt->onset_ms == ms) {
@@ -4371,9 +4377,9 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode, bool
                         for (chord = meas->firstchord; chord; chord = chord->next) {
                             char is_chord_whole_measure_chord = is_chord_a_whole_measure_rest(r_ob, chord);
                             double chord_onset = accurate ? notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)chord) : chord->onset;
-                            if (fabs(chord_onset - ms) < CONST_EPSILON_DOUBLE_EQ && !is_chord_whole_measure_chord) {
+                            if (fabs(chord_onset - ms) < EQ_THRESH && !is_chord_whole_measure_chord) {
                                 return chord_get_alignment_ux(r_ob, chord); // precise!!!
-                            } else if ((chord_onset >= ms) && (!right || (right && (chord_onset < right_ms || (fabs(chord_onset - right_ms) < CONST_EPSILON_DOUBLE_EQ && is_right_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
+                            } else if ((chord_onset >= ms) && (!right || (right && (chord_onset < right_ms || (fabs(chord_onset - right_ms) < EQ_THRESH && is_right_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
                                 right = chord;
                                 is_right_chord_whole_measure_chord = is_chord_whole_measure_chord;
                                 right_ms = chord_onset;
@@ -4382,7 +4388,7 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode, bool
                                     right_ux = right->parent->tuttipoint_reference->offset_ux + right->parent->start_barline_offset_ux;
                             } else if ((chord_onset >= ms) && right) {
                                 break;
-                            } else if ((chord_onset <= ms) && (!left || (left && (chord_onset > left_ms || (fabs(chord_onset - left_ms) < CONST_EPSILON_DOUBLE_EQ && is_left_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
+                            } else if ((chord_onset <= ms) && (!left || (left && (chord_onset > left_ms || (fabs(chord_onset - left_ms) < EQ_THRESH && is_left_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
                                 left = chord;
                                 is_left_chord_whole_measure_chord = is_chord_whole_measure_chord;
                                 left_ms = chord_onset;
@@ -4620,7 +4626,7 @@ t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char
                     } else if (mode == k_MS_TO_TP_RETURN_INTERPOLATION){
                         t_timepoint left = build_timepoint(this_meas->measure_number, this_chord_pim);
                         t_timepoint right = build_timepoint(this_meas->measure_number, next_chord_pim);
-                        double prev_chord_onset = tmp_chord->onset;
+                        double prev_chord_onset = chord_get_onset_ms(r_ob, tmp_chord); // we don't use tmp_chord->onset; because it may not be assigned when we use this function
                         res = interpolate_timepoints(left, right, (ms - prev_chord_onset)/(next_chord_onset - prev_chord_onset));
                         res.voice_num = voicenum;
                     }
@@ -10062,6 +10068,7 @@ t_rational get_intermediate_tempo(t_scorevoice *voice, t_timepoint tp, t_tempo *
 {
     t_rational D = rat_rat_div(get_sym_durations_between_timepoints(voice, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp), 
                                get_sym_durations_between_timepoints(voice, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), build_timepoint(tempo_R->owner->measure_number, tempo_R->changepoint)));
+    // now this hould depend on the interpolation type. Simple default case: linear in 1/tau.
     t_rational PR0 = rat_rat_prod(tempo_R->tempo_value, tempo_L->tempo_value);
     t_rational PR1 = rat_rat_prod(D, tempo_L->tempo_value);
     t_rational PR2 = rat_rat_prod(long_rat_diff(1, D), tempo_R->tempo_value);

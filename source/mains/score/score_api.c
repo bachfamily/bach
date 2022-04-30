@@ -5889,13 +5889,13 @@ void calculate_tuttipoints(t_score *x)
         }
     }
     
-    const double CONST_THRESHOLD = 1;
+    const double EQ_THRESH = notationobj_get_onset_equality_threshold((t_notation_obj *)x);
     while (meas[ref_voice] && !we_are_done) {
         char equals = 1; // is it == to all the others?
         for (i = 0; i < x->r_ob.num_voices; i++) {
             long cmp;
             if (!meas[i]) {
-                if (double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], CONST_EPSILON_DOUBLE_EQ) == -1) {
+                if (double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], EQ_THRESH) == -1) {
 //                if (rat_rat_cmp(totdur[ref_voice], totdur[i]) == -1) {
                     equals = 0; // no tuttipoint! we've ended
                     break;
@@ -5903,7 +5903,7 @@ void calculate_tuttipoints(t_score *x)
                 continue;
             }
             
-            cmp = double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], CONST_THRESHOLD);
+            cmp = double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], EQ_THRESH);
 //            cmp = rat_rat_cmp_account_for_approximations(&totdur[ref_voice], &totdur[i], we_needed_to_approximate, CONST_THRESHOLD_FOR_APPROX_TPT_EQ);
             
             if (cmp == -1) { // measure i is farther, nothing to do, just increase meas[0]!
@@ -5912,7 +5912,7 @@ void calculate_tuttipoints(t_score *x)
                 break;
             } else if (cmp == 1) { // measure i is early, maybe we can increase the measure in the i voice...
                 long cmp2;
-                while (meas[i] && (double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], CONST_THRESHOLD) == 1)) {
+                while (meas[i] && (double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], EQ_THRESH) == 1)) {
                     totdur_ms[i] += measure_get_duration_ms((t_notation_obj *)x, meas[i]);
                     
                     meas[i]->tuttipoint_reference = active_tuttipoint;
@@ -5923,7 +5923,7 @@ void calculate_tuttipoints(t_score *x)
                     break;
                 }
 
-                cmp2 = double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], CONST_THRESHOLD);
+                cmp2 = double_double_cmp_with_threshold(totdur_ms[ref_voice], totdur_ms[i], EQ_THRESH);
                 
                 if (cmp2 == 1) { // still early, but then it means that the number of measure is over. break everything!!!
                     equals = 0;
@@ -6248,6 +6248,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
     char are_there_stem_up_chords_in_prev_al_pt = false;
     double prev_align_x = 0;
     t_measure *first_tpt_measure = tuttipoint_get_first_measure((t_notation_obj *)x, tpt);
+    double EQ_THRESH = notationobj_get_onset_equality_threshold((t_notation_obj *)x);
     double wf = 1.;
     long ct;
     wf = tpt->local_spacing_width_multiplier = first_tpt_measure ? first_tpt_measure->local_spacing_width_multiplier : 1.;
@@ -6372,7 +6373,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                         for (chord = this_meas->firstchord; chord; chord = chord->next)
                             if (chord->need_recalculate_onset == true &&
                                 (chord == firstchord ||
-                                 double_double_cmp_with_threshold(chord->measure_onset_ms + this_meas->tuttipoint_onset_ms, best_onset_ms, CONST_EPSILON_DOUBLE_EQ) == 0)) {
+                                 double_double_cmp_with_threshold(chord->measure_onset_ms + this_meas->tuttipoint_onset_ms, best_onset_ms, EQ_THRESH) == 0)) {
                                 if (chord->is_grace_chord) {
                                     // don't account for it now
                                 } else {
@@ -6421,7 +6422,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                         for (tempo = this_meas->firsttempo; tempo; tempo = tempo->next)
                             if ((tempo->need_recalculate_onset == true) &&    
                                 ((tempo == firsttempo) ||
-                                 double_double_cmp_with_threshold(tempo->measure_onset_ms + this_meas->tuttipoint_onset_ms, firsttempo->measure_onset_ms + firsttempo->owner->tuttipoint_onset_ms, CONST_EPSILON_DOUBLE_EQ) == 0)) {
+                                 double_double_cmp_with_threshold(tempo->measure_onset_ms + this_meas->tuttipoint_onset_ms, firsttempo->measure_onset_ms + firsttempo->owner->tuttipoint_onset_ms, EQ_THRESH) == 0)) {
                                 if (num_tempi_to_align >= 0 && num_tempi_to_align < x->r_ob.num_voices) {
                                     tempi_to_align[num_tempi_to_align] = tempo;
                                     num_tempi_to_align++;
@@ -6938,7 +6939,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 }
                 
                 for (i = 0; i < x->r_ob.num_voices && num_ending_measures < x->r_ob.num_voices; i++) {
-                    if (!done[i] && double_double_cmp_with_threshold(ms_durations[i], min_ms_dur, CONST_EPSILON_DOUBLE_EQ) == 0) {
+                    if (!done[i] && double_double_cmp_with_threshold(ms_durations[i], min_ms_dur, EQ_THRESH) == 0) {
                         endingmeasures[num_ending_measures] = last_tpt_measures[i];
                         endingtimepoints[num_ending_measures] = timepoints[i];
                         endingvoices[num_ending_measures] = i;
@@ -6949,13 +6950,13 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 
                 // is there another event at min_r_ms_dur?
                 for (a_pt = firstalignmentpoint; a_pt; a_pt = a_pt->next) {
-                    if (double_double_cmp_with_threshold(a_pt->onset_ms, min_ms_dur, CONST_EPSILON_DOUBLE_EQ) == 0)
+                    if (double_double_cmp_with_threshold(a_pt->onset_ms, min_ms_dur, EQ_THRESH) == 0)
                         insert_endmeasures_here = a_pt;
                 }
                 
                 if (insert_endmeasures_here) { // gotta insert them
                     
-                    while (insert_endmeasures_here->prev && double_double_cmp_with_threshold(insert_endmeasures_here->prev->onset_ms, insert_endmeasures_here->onset_ms, CONST_EPSILON_DOUBLE_EQ) == 0)
+                    while (insert_endmeasures_here->prev && double_double_cmp_with_threshold(insert_endmeasures_here->prev->onset_ms, insert_endmeasures_here->onset_ms, EQ_THRESH) == 0)
                         insert_endmeasures_here = insert_endmeasures_here->prev;
                     
                     for (j = 0; j < num_ending_measures && j < x->r_ob.num_voices; j++) {
@@ -7156,24 +7157,41 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
             t_alignmentpoint *temp_al_pt;
             double delta_ux_start_tranche = delta_ux_start_next_tranche;
             
+            bool voice_implied_in_tranche[CONST_MAX_VOICES];
+            for (long v = 0; v < x->r_ob.num_voices; v++)
+                voice_implied_in_tranche[v] = false;
+            if (al_pt) {
+                for (j = 0; j < al_pt->num_aligned_obj; j++) {
+                    long this_voice = al_pt->voice_number[j];
+                    if (this_voice >= 0 && this_voice < x->r_ob.num_voices)
+                        voice_implied_in_tranche[this_voice] = true;
+                }
+            }
+
             tranche_id++;
 
             // detecting tranche
             // we split the alignment points into tranches; each tranch 
             start_tranche = al_pt;
-            while (al_pt && al_pt->next && 
-                   (!are_there_measures_in_alignmentpoint(al_pt) || !are_there_only_measures_in_alignmentpoint(al_pt) || 
+            while (al_pt && al_pt->next &&
+                   (!are_there_measures_in_alignmentpoint(al_pt) || !are_there_only_measures_in_alignmentpoint(al_pt) ||
                     (are_there_measures_in_alignmentpoint(al_pt) && are_there_measures_in_alignmentpoint(al_pt->next)))) {
-                       
-                       double diff = al_pt->next->onset_ms - al_pt->onset_ms; //rat_rat_diff(al_pt->next->r_onset_sym[i], al_pt->r_onset_sym[i]);
-                       if (double_double_cmp_with_threshold(diff, 0, CONST_EPSILON_DOUBLE_EQ) > 0) {
-                           dist_ratio = (al_pt->next->offset_ux - al_pt->offset_ux) / diff;
-                           if (dist_ratio > max_ratio)    
-                               max_ratio = dist_ratio;
-                       }
-                       count_times++;
-                       al_pt = al_pt->next;
-                   }
+                
+                double diff = al_pt->next->onset_ms - al_pt->onset_ms; //rat_rat_diff(al_pt->next->r_onset_sym[i], al_pt->r_onset_sym[i]);
+                if (double_double_cmp_with_threshold(diff, 0, EQ_THRESH) > 0) {
+                    dist_ratio = (al_pt->next->offset_ux - al_pt->offset_ux) / diff;
+                    if (dist_ratio > max_ratio)
+                        max_ratio = dist_ratio;
+                }
+                count_times++;
+                al_pt = al_pt->next;
+                for (j = 0; j < al_pt->num_aligned_obj; j++) {
+                    long this_voice = al_pt->voice_number[j];
+                    if (this_voice >= 0 && this_voice < x->r_ob.num_voices)
+                        voice_implied_in_tranche[this_voice] = true;
+                }
+                
+            }
             if (count_times == 0) {
                 delta_ux_start_next_tranche = al_pt->next ? al_pt->next->offset_ux - al_pt->offset_ux : 0;
                 al_pt = al_pt ? al_pt->next : NULL;
@@ -7194,6 +7212,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
             delta_ux_start_next_tranche = end_tranche->next ? end_tranche->next->offset_ux + grace_width - end_tranche->offset_ux : 0;
             
             // calculating whole tranche symbolic duration; we make an average of symbolic durations in each voice
+            {
             tranche_sym_dur = long2rat(0); 
             for (j = 0; j < start_tranche->num_aligned_obj; j++) {
                 long this_voice = start_tranche->voice_number[j];
@@ -7207,14 +7226,24 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 }
             }
 
-            if (count == 0) { // possible...
+            if (count == 0) { // if there's no start-end alignment in the same voice
 //                dev_post(". count was 0");
-//                tranche_sym_dur = long2rat(0);
-                t_timepoint tp = ms_to_timepoint((t_notation_obj *)x, end_tranche->onset_ms, start_tranche->voice_number[0], k_MS_TO_TP_RETURN_LEFT_CHORD);
-                tranche_sym_dur = get_sym_durations_between_timepoints(nth_scorevoice(x, start_tranche->voice_number[0]), 
-                                                                       start_tranche->timepoints[0], tp);
+//                t_timepoint tp = ms_to_timepoint((t_notation_obj *)x, end_tranche->onset_ms, start_tranche->voice_number[0], k_MS_TO_TP_RETURN_LEFT_CHORD);
+                long count_v = 0;
+                tranche_sym_dur = long2rat(0);
+                for (long v = 0; v < x->r_ob.num_voices; v++) {
+                    if (voice_implied_in_tranche[v]) {
+                        t_timepoint tp_start = ms_to_timepoint((t_notation_obj *)x, start_tranche->onset_ms, v, k_MS_TO_TP_RETURN_INTERPOLATION);
+                        t_timepoint tp_end = ms_to_timepoint((t_notation_obj *)x, end_tranche->onset_ms, v, k_MS_TO_TP_RETURN_INTERPOLATION);
+                        tranche_sym_dur = rat_rat_sum(tranche_sym_dur, get_sym_durations_between_timepoints(nth_scorevoice(x, v), tp_start, tp_end));
+                        count_v++;
+                    }
+                }
+                if (count_v > 0)
+                    tranche_sym_dur = rat_long_div(tranche_sym_dur, count_v);
             } else // averaging
                 tranche_sym_dur = rat_long_div(tranche_sym_dur, count);
+            }
             
             tranche_sec_dur = (end_tranche->onset_ms - start_tranche->onset_ms)/1000.; //in seconds!!!
             tranche_sym_density = (tranche_sym_dur.r_num == 0 ? genrat(1, 40000): rat_long_prod(rat_inv(tranche_sym_dur), count_times));
@@ -11033,6 +11062,7 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
         long num_subdivisions = x->r_ob.grid_subdivisions;
         double step_ms = x->r_ob.grid_step_ms / num_subdivisions;
         double ms;
+        double EQ_THRESH = CONST_EPSILON_DOUBLE_EQ;
         long i, div, number_of_labels, number_of_divisions_in_window, label_step;
         double bottom_y = (x->r_ob.need_hscrollbar && x->r_ob.show_hscrollbar) ? graphic_rect.height - (CONST_XSCROLLBAR_UHEIGHT + CONST_XSCROLLBAR_WHITE_UPAD_UPON + 2) * x->r_ob.zoom_y : graphic_rect.height;
         double right_cur = -1000;
@@ -11055,7 +11085,7 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
         x->r_ob.current_num_grid_subdivisions = num_subdivisions;
         
         for (i = 0, ms = start_ms; ms < screen_ms_end; ms += step_ms, i++){
-            if (!x->r_ob.fade_predomain && ms + CONST_EPSILON_DOUBLE_EQ < x->r_ob.screen_ms_start)
+            if (!x->r_ob.fade_predomain && ms + EQ_THRESH < x->r_ob.screen_ms_start)
                 continue;
 
             double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
@@ -11089,7 +11119,7 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
         if (x->r_ob.show_ruler_labels && x->r_ob.ruler > 0) {
             for (ms = start_ms, i = 0, div = 0; ms < screen_ms_end; ms += x->r_ob.grid_step_ms, i+= num_subdivisions){
 
-                if (!x->r_ob.fade_predomain && ms + CONST_EPSILON_DOUBLE_EQ < x->r_ob.screen_ms_start)
+                if (!x->r_ob.fade_predomain && ms + EQ_THRESH < x->r_ob.screen_ms_start)
                     continue;
                 
                 double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
