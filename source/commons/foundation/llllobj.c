@@ -2775,7 +2775,10 @@ t_object *getParentEarsProcess(t_object *x)
 	t_object *t = s->s_thing;
 	if (t && !NOGOOD(t) && object_classname(t) == gensym("ears.process~"))
 		return gensym(EARS_PROCESS_SPECIALSYM)->s_thing;
-	
+	else
+		return NULL;
+		
+	/*
 	t_object *box = x;
 	t_symbol *containerName;
 	do {
@@ -2787,4 +2790,6 @@ t_object *getParentEarsProcess(t_object *x)
 	} while (containerName && containerName != gensym("ears.process~"));
 	
 	return box;
+	*/
+
 }

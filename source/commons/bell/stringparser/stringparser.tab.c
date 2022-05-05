@@ -3393,7 +3393,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   case 138: /* exp: exp LSHIFT listEnd  */
 #line 891 "stringparser.y"
                      {
-    ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
+    ((*yyvalp).n) = new astOperatorLShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: <<\n");
 }
 #line 3400 "stringparser.tab.c"
@@ -3402,7 +3402,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   case 139: /* exp: exp RSHIFT listEnd  */
 #line 895 "stringparser.y"
                      {
-    ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
+    ((*yyvalp).n) = new astOperatorRShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: >>\n");
 }
 #line 3409 "stringparser.tab.c"

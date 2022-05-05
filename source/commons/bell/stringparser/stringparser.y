@@ -889,11 +889,11 @@ exp: term %dprec 2
     code_dev_post ("parse: |\n");
 }
 | exp LSHIFT listEnd {
-    $$ = new astOperatorBitOr($1, $3, params->owner);
+    $$ = new astOperatorLShift($1, $3, params->owner);
     code_dev_post ("parse: <<\n");
 }
 | exp RSHIFT listEnd {
-    $$ = new astOperatorBitOr($1, $3, params->owner);
+    $$ = new astOperatorRShift($1, $3, params->owner);
     code_dev_post ("parse: >>\n");
 }
 | exp EQUAL listEnd {

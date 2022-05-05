@@ -676,7 +676,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     x->b_reservedselectors = hashtab_new(0);
     object_method(x->b_reservedselectors, gensym("readonly"), 1);
     
-    hashtab_store(x->b_reservedselectors, _sym_bang, (t_object *) x);
+    //hashtab_store(x->b_reservedselectors, _sym_bang, (t_object *) x);
     
     hashtab_store(x->b_reservedselectors, _sym_int, (t_object *) x);
     hashtab_store(x->b_reservedselectors, gensym("in1"), (t_object *) x);
@@ -701,10 +701,10 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     hashtab_store(x->b_reservedselectors, gensym("ft9"), (t_object *) x);
     
     hashtab_store(x->b_reservedselectors, _sym_list, (t_object *) x);
-    hashtab_store(x->b_reservedselectors, _sym_symbol, (t_object *) x);
+    //hashtab_store(x->b_reservedselectors, _sym_symbol, (t_object *) x);
     
-    hashtab_store(x->b_reservedselectors, _llllobj_sym_bach_llll, (t_object *) x);
-    hashtab_store(x->b_reservedselectors, _llllobj_sym_null, (t_object *) x);
+    //hashtab_store(x->b_reservedselectors, _llllobj_sym_bach_llll, (t_object *) x);
+    //hashtab_store(x->b_reservedselectors, _llllobj_sym_null, (t_object *) x);
     
     x->b_no_ss = bach_checkauth();
     

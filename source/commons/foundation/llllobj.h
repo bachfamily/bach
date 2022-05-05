@@ -45,7 +45,7 @@
 #define CLASS_ATTR_CHAR_UNSAFE CLASS_ATTR_CHAR
 #endif
 
-const char EARS_PROCESS_SPECIALSYM[] = "_x_x_ears.map~_x_x_";
+const char EARS_PROCESS_SPECIALSYM[] = "_x_x_ears.process~_x_x_";
 
 
 ///////////////////////////////
