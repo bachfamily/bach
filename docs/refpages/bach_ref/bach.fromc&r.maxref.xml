@@ -139,7 +139,7 @@
 		<seealso name="bach.chordrev" />
 		<seealso name="bach.restrot" />
 		<seealso name="bach.score" />
-		<seealso name="" module="bach" type="tutorial" />
+		<seealso name="04-Through The Looking Glass" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

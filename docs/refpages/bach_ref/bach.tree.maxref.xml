@@ -1031,8 +1031,8 @@
 		<seealso name="bach.portal" />
 		<seealso name="bach.keychain" />
 		<seealso name="bach.path2llll" />
-		<seealso name="" module="bach" type="tutorial" />
-		<seealso name="" module="bach" type="tutorial" />
+		<seealso name="01-Hello World" module="bach" type="tutorial" />
+		<seealso name="05-Slot Machines" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">

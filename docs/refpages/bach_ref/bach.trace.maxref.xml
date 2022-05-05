@@ -135,7 +135,7 @@
 	<seealsolist>
 		<seealso name="bach.det" />
 		<seealso name="bach.m2jitcellblock" />
-		<seealso name="" module="bach" type="tutorial" />
+		<seealso name="16-Into The Matrix" module="bach" type="tutorial" />
 	</seealsolist>
 
 	<misc name = "Input">
