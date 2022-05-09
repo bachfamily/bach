@@ -79,7 +79,7 @@
      */
 
     #ifdef CONFIGURATION_Development
-    #define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
+    //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
     #endif
     
     #ifndef code_dev_post

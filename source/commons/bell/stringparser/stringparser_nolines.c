@@ -1966,7 +1966,7 @@ static const flex_int32_t yy_rule_can_match_eol[138] =
      */
 
     #ifdef CONFIGURATION_Development
-    #define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
+    //#define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
     #endif
     
     #ifndef code_dev_post
