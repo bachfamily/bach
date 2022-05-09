@@ -63,7 +63,8 @@ void C74_EXPORT ext_main(void *moduleRef)
 
 void bell_in_pass(t_bell_in *x, long n, t_llll *ll)
 {
-    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, n, ll);
+    if (n < x->n_ob.l_numllllouts)
+        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, n, ll);
 }
 
 void bell_in_free(t_bell_in *x)

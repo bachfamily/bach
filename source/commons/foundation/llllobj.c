@@ -2016,6 +2016,8 @@ t_max_err llllobj_obj_setout(t_llllobj_object *x, t_object *attr, long argc, t_a
     char *outtypes;
     t_llllobj_out *this_out;
     long numlllloutlets = x->l_numllllouts;
+	if (numlllloutlets == 0)
+		return MAX_ERR_NONE;
     t_symbol *sym;
     if (argc && atom_gettype(argv) == A_SYM && (sym = argv->a_w.w_sym)) {
         if (x->l_running) {
@@ -2775,10 +2777,7 @@ t_object *getParentEarsProcess(t_object *x)
 	t_object *t = s->s_thing;
 	if (t && !NOGOOD(t) && object_classname(t) == gensym("ears.process~"))
 		return gensym(EARS_PROCESS_SPECIALSYM)->s_thing;
-	else
-		return NULL;
 		
-	/*
 	t_object *box = x;
 	t_symbol *containerName;
 	do {
@@ -2787,9 +2786,13 @@ t_object *getParentEarsProcess(t_object *x)
 		if (!(box = object_attr_getobj(patcher, gensym("box"))))
 			object_method(patcher, gensym("getassoc"), &box);
 		containerName = box ? object_classname(box) : nullptr;
-	} while (containerName && containerName != gensym("ears.process~"));
+	} while (containerName && containerName != gensym("ears.process.loader"));
 	
-	return box;
-	*/
+	if (box) {
+		t_object *processloader = jbox_get_object(box);
+		t_object *process = (t_object*) object_method(processloader, gensym("get_owner"));
+		return process;
+	} else
+		return NULL;
 
 }
