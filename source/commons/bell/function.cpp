@@ -217,6 +217,14 @@ t_maxFunction::t_maxFunction(std::string text) {
     t = "@maxclass newobj @text \"" + text + "\"";
     engine_box = newobject_sprintf(patcher, t.c_str());
     engine = jbox_get_object(engine_box);
+    t_symbol *classname = object_classname(engine);
+    if (classname == _sym_jbogus) {
+        object_free(patcher);
+        patcher = nullptr;
+        engine_box = nullptr;
+        engine = nullptr;
+        return;
+    }
     nInlets = object_attr_getlong(engine_box, gensym("numinlets"));
     nOutlets = object_attr_getlong(engine_box, gensym("numoutlets"));
     objText = t;
@@ -259,6 +267,8 @@ t_maxFunction::~t_maxFunction() {
 }
 
 t_llll* t_maxFunction::call(t_execEnv const &context) {
+    if (!patcher)
+        return llll_get();
     t_llll* order = context.scope.find(gensym("to"))->second->get();
     t_llll* outLl = context.scope.find(gensym("out"))->second->get();
     t_llll *fetchLl =

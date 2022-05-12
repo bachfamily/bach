@@ -2016,8 +2016,6 @@ t_max_err llllobj_obj_setout(t_llllobj_object *x, t_object *attr, long argc, t_a
     char *outtypes;
     t_llllobj_out *this_out;
     long numlllloutlets = x->l_numllllouts;
-	if (numlllloutlets == 0)
-		return MAX_ERR_NONE;
     t_symbol *sym;
     if (argc && atom_gettype(argv) == A_SYM && (sym = argv->a_w.w_sym)) {
         if (x->l_running) {
