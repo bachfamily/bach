@@ -714,7 +714,7 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                 
                 
             } else if (args && args->l_size >= 2){
-                // input is: pitch, velocity, voice
+                // input is: pitch, velocity, (voice)
                 // we make a new event to keep track of the note ons and note offs.
                 
                 long voice = (args->l_size >= 3 ? hatom_getlong(&args->l_head->l_next->l_next->l_hatom) : 1);
