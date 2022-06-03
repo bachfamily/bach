@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 1,
-			"revision" : 5,
+			"minor" : 3,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 616.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 616.0, 100.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -92,7 +92,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 373.0, 593.0, 79.0 ],
+					"patching_rect" : [ 15.0, 373.0, 596.0, 79.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "where each point llll is in the form:                                               , representing the X, Y, Z values of the function point, as well as the slope parameter for the function segment before the point (the one ending with the point, thus the slope of the first point is unused and ignored). Such parameter is the usual Max slope parameter (-1 to 1, 0 being linear). If the slot window width is \"temporal\", which is the default for function slots (see #syntax+slotinfo), the X parameter ranges from 0. (notehead) to 1. (tail).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -189,7 +189,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 179.0, 583.0, 123.0 ],
+					"patching_rect" : [ 15.0, 179.0, 584.0, 123.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "where each point llll is in the form:                                                                , where t is the relative time position of the point (corresponding to the X coordinate), the radius is the distance of the point from the listener, the angle is measured in degrees and taken with respect to the reference line passing right in front of the listener, and type can be 0 or 1, depending if the spatialization movements will be circular (0, default) or linear (1). Please remark that all such parameters are representation parameters: bach is not a DSP library, so you are perfectly and assign them different meaning. If the slot window width is \"temporal\", which is the default for function slots (see #syntax+slotinfo), the t parameter ranges from 0. (notehead) to 1. (tail).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -336,7 +336,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 602.0, 19.0 ],
-					"text" : "Objects: bach.roll, bach.score",
+					"text" : "Objects: bach.roll, bach.score, bach.slot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}

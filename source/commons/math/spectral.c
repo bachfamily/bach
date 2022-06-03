@@ -127,13 +127,20 @@ void normalize(long num_samples, double *wave, double max_amplitude_to_set)
 }
 
 
-void bach_fft_cartesian_complex(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, kiss_fft_cpx *fout){
+void bach_fft_cartesian_complex(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, kiss_fft_cpx *fout, bool unitary)
+{
 	int i;
 	kiss_fft_cfg cfg = kiss_fft_alloc(nfft, is_inverse_fft, NULL, NULL);
 	
     kiss_fft(cfg, fin, fout);
 	
-	if (is_inverse_fft){	// apparently there's a bug in the library...
+    if (unitary) {
+        double s = sqrt(nfft);
+        for (long i = 0; i < nfft; i++) {
+            fout[i].r /= s;
+            fout[i].i /= s;
+        }
+    } else if (is_inverse_fft){	// apparently there's a bug in the library...
 		for (i = 0; i < nfft; i++) {
 			fout[i].r /= nfft;
 			fout[i].i /= nfft;
@@ -144,11 +151,11 @@ void bach_fft_cartesian_complex(int nfft, char is_inverse_fft, const kiss_fft_cp
 
 // ampli and phase must be already initialized
 // this makes sense if you do it just once, otherwise use the _kiss versions
-void bach_fft(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, double *ampli, double *phase)
+void bach_fft(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, double *ampli, double *phase, bool unitary)
 {
 	int i;
 	kiss_fft_cpx *fout = (kiss_fft_cpx *) bach_newptr(nfft * sizeof (kiss_fft_cpx));
-	bach_fft_cartesian_complex(nfft, is_inverse_fft, fin, fout);
+	bach_fft_cartesian_complex(nfft, is_inverse_fft, fin, fout, unitary);
 
 	// splitting freq and phase
 	for (i = 0; i < nfft; i++) {
@@ -159,7 +166,7 @@ void bach_fft(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, double *am
 }
 
 
-void bach_rfft(int nfft, const double *input, double *ampli, double *phase)
+void bach_rfft(int nfft, const double *input, double *ampli, double *phase, bool unitary)
 {
     int i;
     kiss_fft_cpx *fin = (kiss_fft_cpx *) bach_newptr(nfft * sizeof (kiss_fft_cpx));
@@ -170,7 +177,7 @@ void bach_rfft(int nfft, const double *input, double *ampli, double *phase)
         fin[i].i = 0.;
     }
     
-    bach_fft_cartesian_complex(nfft, false, fin, fout);
+    bach_fft_cartesian_complex(nfft, false, fin, fout, unitary);
     
     // splitting freq and phase
     for (i = 0; i < nfft; i++) {
@@ -181,7 +188,7 @@ void bach_rfft(int nfft, const double *input, double *ampli, double *phase)
     bach_freeptr(fout);
 }
 
-void bach_irfft(int nfft, const double *input_ampli, const double *input_phase, double *output)
+void bach_irfft(int nfft, const double *input_ampli, const double *input_phase, double *output, bool unitary)
 {
     int i;
     kiss_fft_cpx *fin = (kiss_fft_cpx *) bach_newptr(nfft * sizeof (kiss_fft_cpx));
@@ -192,7 +199,7 @@ void bach_irfft(int nfft, const double *input_ampli, const double *input_phase, 
         fin[i].i = input_ampli[i]*sin(input_phase[i]);
     }
     
-    bach_fft_cartesian_complex(nfft, true, fin, fout);
+    bach_fft_cartesian_complex(nfft, true, fin, fout, unitary);
     
     // splitting freq and phase
     for (i = 0; i < nfft; i++) {
@@ -203,11 +210,18 @@ void bach_irfft(int nfft, const double *input_ampli, const double *input_phase, 
 }
 
 // use this one if you want to make fft repeatedly: this does not allocate memory (you do, outside)
-void bach_fft_kiss(kiss_fft_cfg cfg, int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, kiss_fft_cpx *fout)
+void bach_fft_kiss(kiss_fft_cfg cfg, int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, kiss_fft_cpx *fout, bool unitary)
 {
     kiss_fft(cfg, fin, fout);
     
-    if (is_inverse_fft){    // apparently there's a bug in the library...
+    if (unitary) {
+        double s = sqrt(nfft);
+        for (long i = 0; i < nfft; i++) {
+            fout[i].r /= s;
+            fout[i].i /= s;
+        }
+    } else if (is_inverse_fft){
+        // apparently kissfft won't normalize by the number of samples...
         for (long i = 0; i < nfft; i++) {
             fout[i].r /= nfft;
             fout[i].i /= nfft;
@@ -219,13 +233,13 @@ void bach_fft_kiss(kiss_fft_cfg cfg, int nfft, char is_inverse_fft, const kiss_f
 
 
 // freq_mapped_acf must be already inizialized and sized at least nfft
-void bach_fm_acf(int nfft, const kiss_fft_cpx *fin, double sample_rate, double *freq_mapped_acf, char rectify, char filter_last_peak)
+void bach_fm_acf(int nfft, const kiss_fft_cpx *fin, double sample_rate, double *freq_mapped_acf, char rectify, char filter_last_peak, bool unitary)
 {
 	// following TIME VARIABLE TEMPO DETECTION AND BEAT MARKING (Geoffroy Peeters)
 	
 	kiss_fft_cpx *fout = (kiss_fft_cpx *) bach_newptr (nfft * sizeof(kiss_fft_cpx));
 	kiss_fft_cpx *prod = (kiss_fft_cpx *) bach_newptr (nfft * sizeof(kiss_fft_cpx));
-	bach_fft_cartesian_complex(nfft, false, fin, fout);
+	bach_fft_cartesian_complex(nfft, false, fin, fout, unitary);
 	double *ac_ampli = (double *) bach_newptr(nfft * sizeof(double));
 	double *ac_phase = (double *) bach_newptr(nfft * sizeof(double));
 	long i;
@@ -243,7 +257,7 @@ void bach_fm_acf(int nfft, const kiss_fft_cpx *fin, double sample_rate, double *
 	for (i = 0; i < nfft; i++) 
 		prod[i] = cpx_product(fout[i], cpx_conjugate(fout[i]));
 
-	bach_fft(nfft, true, prod, ac_ampli, ac_phase); 
+	bach_fft(nfft, true, prod, ac_ampli, ac_phase, unitary);
 	
 	// since prod[i] is mirrored, the outcome will be real!
 	// so we put it real, and change sign if needed
