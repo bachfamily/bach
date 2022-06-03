@@ -45,7 +45,7 @@
 #define CLASS_ATTR_CHAR_UNSAFE CLASS_ATTR_CHAR
 #endif
 
-const char EARS_PROCESS_SPECIALSYM[] = "_x_x_ears.map~_x_x_";
+const char EARS_PROCESS_SPECIALSYM[] = "_x_x_ears.process~_x_x_";
 
 
 ///////////////////////////////
@@ -492,6 +492,12 @@ void llllobj_clear_all_stores(t_object *x, e_llllobj_obj_types type);
 void llllobj_clear_all_outs(t_object *x, e_llllobj_obj_types type);
 void llllobj_clear_all_stores_and_outs(t_object *x, e_llllobj_obj_types type);
 
+
+// returns whatever is in the specified output cache
+// no error checking, retaining or cloning is performed
+// so this should only be used for inspection,
+// not for actually working with the returned llll
+t_llll* llllobj_get_loaded_llll(t_object *x, e_llllobj_obj_types type, long outnum);
 
 
 /////////////

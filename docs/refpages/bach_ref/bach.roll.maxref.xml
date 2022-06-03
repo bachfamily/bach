@@ -2332,7 +2332,7 @@
 				<m>@end</m> (symbol, default: none): Sets a router used to mark the end of the dumping<br />
 				<br />
 				The <m>dumpselection</m> message sends the content of each one of selected notation items from the
-				playout, in playout syntax (similarly to <m>playselection offline</m>, but in a much more direct and agile way,
+				playout, in playout syntax (similarly to <m>play selection offline</m>, but in a much more direct and agile way,
 				without all the intricacies of the playback sequencing system).
 				You can safely rely on the fact that elements will be output ordered by onset. <br />
 				If a "router" message attribute is set, then the standard router ("note", "chord") is replaced by the specified one;
@@ -4474,22 +4474,6 @@
 			</description>
 		</method>
 		<method name="nametoslot">
-			<arg name="pitchslot" optional="0" type="int" />
-			<arg name="velocityslot" optional="1" type="int" />
-			<digest>
-				Copy duration line breakpoint function into a slot
-			</digest>
-			<description>
-				Syntax: <b>nametoslot <m>&lt;int: pitchslot&gt;</m> <m>[&lt;int: velocityslot&gt;]</m> </b><br />				<br />
-				A <m>dltoslot</m> message copies the duration line envelope (as a breakpoint function)
-				into a given slot for all the selected notes. Actually, the message copies both a pitch envelope and a velocity envelope
-				into two different slots, given as arguments (use -1 to avoid assigning one of the slots).
-				You should ensure that the introduced slots are of the appropriate type (in particular, they should be
-				function slots, with an appropriate range and a domain between 0 and 1). <br />
-				<br />				See also:<m>setslot</m><br />
-			</description>
-		</method>
-		<method name="nametoslot">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<arg name="policy" optional="1" type="symbol" />
 			<digest>
@@ -4509,6 +4493,22 @@
 				- "merge" or "mergeprepend" (default): only chord names which don't already belong to the note are prepended to existing note names; <br />
 				- "mergeappend": only chord names which don't already belong to note are appendend to existing note names.
 				<br />				See also:<m>name</m>,<m>nameappend</m>,<m>clearnames</m>,<m>sel</m>,<m>unsel</m>,<m>select</m><br />
+			</description>
+		</method>
+		<method name="nametoslot">
+			<arg name="pitchslot" optional="0" type="int" />
+			<arg name="velocityslot" optional="1" type="int" />
+			<digest>
+				Copy duration line breakpoint function into a slot
+			</digest>
+			<description>
+				Syntax: <b>nametoslot <m>&lt;int: pitchslot&gt;</m> <m>[&lt;int: velocityslot&gt;]</m> </b><br />				<br />
+				A <m>dltoslot</m> message copies the duration line envelope (as a breakpoint function)
+				into a given slot for all the selected notes. Actually, the message copies both a pitch envelope and a velocity envelope
+				into two different slots, given as arguments (use -1 to avoid assigning one of the slots).
+				You should ensure that the introduced slots are of the appropriate type (in particular, they should be
+				function slots, with an appropriate range and a domain between 0 and 1). <br />
+				<br />				See also:<m>setslot</m><br />
 			</description>
 		</method>
 		<method name="onset">
@@ -4743,6 +4743,8 @@
 				• <b>play 2000 4000</b>   <i>→ play starting from 2s, stop at 4s</i><br />
 				• <b>play offline</b>   <i>→ play in non-realtime mode ("uzi-like")</i><br />
 				• <b>play offline 2000 4000</b>   <i>→ play from 2s to 4s in non-realtime mode</i><br />
+				• <b>play selection</b>   <i>→ play selected items only</i><br />
+				• <b>play selection offline</b>   <i>→ the same, in non-realtime mode ("uzi-like")</i><br />
 				• <b>play preschedule</b>   <i>→ accurate prescheduled playback (with limitations)</i><br />
 				<br />
 				The <m>play</m> message plays a portion or all the <o>bach.roll</o>.
@@ -4755,9 +4757,11 @@
 				Sequencing can be controlled with a variable speed via the <m>clock</m> message and the <o>setclock</o> object.
 				The <m>play</m> message, without any further argument, plays the <o>bach.roll</o> from the current playhead cursor position
 				(by default: the beginning of the <o>bach.roll</o>) to the end. <br />
-				If you put as first argument the "offline" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
+				If you put as first optional argument the "selection" symbol, only the selected content is played:
+				playback starts at the beginning of the selection and ends once the last selected item is played. <br />
+				If you put as additional argument the "offline" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
 				will be still output from the playout, but one after another, "immediately". <br />
-				If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
+				If you put as additional argument the "preschedule" symbol, all the playing events will be prescheduled.
 				Prescheduled playback schedules the events at the beginning of the playback, hence taking a bit more time before playback starts, but also ensuring
 				ensures the best possible timing. Prescheduled playback has some limitations: <br />
 				- no live modification to the roll or score is accounted for during playback; <br />
@@ -4765,6 +4769,8 @@
 				- lambda+modifications won't work;  <br />
 				- redraw is only performed at each new event;  <br />
 				- the "pause" message won't work.  <br />
+				The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
+				"preschedule" are mutually exclusive. <br />
 				If you give a single numeric argument, it will be the starting point in milliseconds
 				of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
 				ending point in milliseconds of the region to be played.
@@ -4916,34 +4922,7 @@
 				An item named "(high 1) (low 2)" will correspond to the llll <b>[name [high 1] [low 2]]</b>.
 				If an element has no names, the <m>name</m> specification is never given as output.
 				<br /> <br />
-				<br />				See also:<m>stop</m>,<m>pause</m>,<m>setcursor</m>,<m>playselection</m><br />
-			</description>
-		</method>
-		<method name="playselection">
-			<arg name="scheduling_mode" optional="1" type="symbol" />
-			<digest>
-				Only play selected items
-			</digest>
-			<description>
-				Syntax: <b>playselection <m>[&lt;symbol: scheduling_mode&gt;]</m> </b><br />
-				Examples:<br />
-				• <b>playselection</b>   <i>→ play selected items only</i><br />
-				• <b>playselection offline</b>   <i>→ the same, in non-realtime mode ("uzi-like")</i><br />
-				<br />
-				The <m>playselection</m> message only plays the selected content. It works exactly like <m>play</m>, but it starts playing
-				at the beginning of the selection, and ends playing at the end of the last selected item. Only selected items are sequenced.
-				Mute and solo status are also taken into account (see <m>play</m>). <br />
-				If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
-				will be still output from the playout, but one after another, "immediately", in the low-priority queue. <br />
-				If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
-				Prescheduled playback schedules the events at the beginning of the playback, hence taking a bit more time before playback starts, but also ensuring
-				ensures the best possible timing. Prescheduled playback has some limitations: <br />
-				- no live modification to the roll or score is accounted for during playback; <br />
-				- loops won't work;  <br />
-				- lambda+modifications won't work;  <br />
-				- redraw is only performed at each new event;  <br />
-				- the "pause" message won't work.  <br />
-				<br />				See also:<m>stop</m>,<m>pause</m>,<m>play</m><br />
+				<br />				See also:<m>stop</m>,<m>pause</m>,<m>setcursor</m><br />
 			</description>
 		</method>
 		<method name="poc">
@@ -5157,10 +5136,11 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the commands to the default one
+				Reset the custom notehead definition to the default one
 			</digest>
 			<description>
-				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
+				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
+				all the user-defined noteheads.
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -5180,21 +5160,20 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom articulations definition to the default one
+				Reset the commands to the default one
 			</digest>
 			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
+				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
 			</description>
 		</method>
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom notehead definition to the default one
+				Reset the custom articulations definition to the default one
 			</digest>
 			<description>
-				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
-				all the user-defined noteheads.
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="respell">

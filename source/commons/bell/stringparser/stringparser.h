@@ -35,6 +35,7 @@ typedef struct _parseParams {
     t_atom_long *directOutlets;
     long *codeac;
     std::unordered_map<std::string, t_function *> *bifs;
+    std::unordered_set<t_function *> *funcs;
     t_ofTable *ofTable;
     t_codableobj *owner;
 } t_parseParams;

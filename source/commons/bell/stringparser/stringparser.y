@@ -77,6 +77,7 @@
     double d;
     t_pitch p;
     t_symbol *sym;
+    char *text;
 }
 
 %token <l> LONG_LITERAL INLET INTINLET RATINLET FLOATINLET PITCHINLET OUTLET DIRINLET DIROUTLET
@@ -84,6 +85,7 @@
 %token <d> DOUBLE_LITERAL
 %token <p> PITCH_LITERAL
 %token <sym> SYMBOL_LITERAL GLOBALVAR PATCHERVAR LOCALVAR NAMEDPARAM BIF OF
+%token <text> MAXFUNCTION
 %token SEQ
 %token IF_KW THEN_KW ELSE_KW
 %token WHILE_KW DO_KW FOR_KW IN_KW COLLECT_KW
@@ -357,6 +359,7 @@ fundef : funargList FUNDEF {
     *++(params->argumentsStack) = $1;
 } list {
     t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $4, params->owner);
+    params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;
     --(params->fnDepth);
@@ -375,6 +378,7 @@ fundef : funargList FUNDEF {
     *++(params->argumentsStack) = nullptr;
 } list {
     t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $3, params->owner);
+    params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;;
     --(params->fnDepth);
@@ -396,6 +400,7 @@ fundef : funargList FUNDEF {
     *++(params->argumentsStack) = $1;
 } list {
     t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $5, params->owner);
+    params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;
     --(params->fnDepth);
@@ -419,6 +424,7 @@ fundef : funargList FUNDEF {
     }
 } list {
     t_function *fn = new t_userFunction(*++(params->argumentsStack), *(params->localVariablesStack), $4, params->owner);
+    params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;;
     --(params->fnDepth);
@@ -883,11 +889,11 @@ exp: term %dprec 2
     code_dev_post ("parse: |\n");
 }
 | exp LSHIFT listEnd {
-    $$ = new astOperatorBitOr($1, $3, params->owner);
+    $$ = new astOperatorLShift($1, $3, params->owner);
     code_dev_post ("parse: <<\n");
 }
 | exp RSHIFT listEnd {
-    $$ = new astOperatorBitOr($1, $3, params->owner);
+    $$ = new astOperatorRShift($1, $3, params->owner);
     code_dev_post ("parse: >>\n");
 }
 | exp EQUAL listEnd {
@@ -1281,6 +1287,12 @@ term: LONG_LITERAL {
     $$ = new astConst(fn, params->owner);
     code_dev_post("parse: owned function %s", $1->s_name);
 }
+| MAXFUNCTION {
+    t_function *fn = new t_maxFunction(std::string($1));
+    params->funcs->insert(fn);
+    $$ = new astConst(fn, params->owner);
+    code_dev_post("parse: Max function %s", $1);
+}
 | var
 | functionApplication
 ;
@@ -1356,6 +1368,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.ofTable = x->c_ofTable;
     params.name2patcherVars = new pvMap;
     params.globalVariables = new std::unordered_set<t_globalVariable*>;
+    params.funcs = new std::unordered_set<t_function*>;
     
     code_dev_post("--- BUILDING AST!\n");
     stringparser_parse(myscanner, &params);
@@ -1376,6 +1389,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
             params.localVariablesStackBase[0],
             params.globalVariables,
             params.name2patcherVars,
+            params.funcs,
             x
         );
         codableobj_clear_included_filewatchers(x);
@@ -1383,6 +1397,11 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
         return mainFunction;
     } else {
         object_error((t_object *) x, "Syntax errors present — couldn't parse code");
+        delete params.name2patcherVars;
+        delete params.globalVariables;
+        for (t_function* f: *params.funcs)
+            f->decrease();
+        delete params.funcs;
         return nullptr;
     }
 }

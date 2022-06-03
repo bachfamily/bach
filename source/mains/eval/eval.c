@@ -104,7 +104,7 @@ t_class *eval_class;
 void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
-    
+        
     common_symbols_init();
     llllobj_common_symbols_init();
     
@@ -112,6 +112,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         error("bach: bad installation");
         return;
     }
+
     
     CLASS_NEW_CHECK_SIZE(c, "bach.eval", (method)eval_new, (method)eval_free, (long) sizeof(t_eval), 0L, A_GIMME, 0);
     
@@ -475,8 +476,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
     t_eval *x = NULL;
     long true_ac, i;
     t_max_err err = 0;
-    
-    //true_ac = attr_args_offset(ac, av);
 
     if ((x = (t_eval *) object_alloc_debug(eval_class))) {
         // @arg 0 @name expression @optional 1 @type anything @digest Expression to evaluate

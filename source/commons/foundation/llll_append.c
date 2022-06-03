@@ -227,7 +227,7 @@ t_llllelem *llll_appendpitch_from_elems(t_llll *where, t_atom_short degree, t_sh
 }
 
 // a new llllelem is created
-t_llllelem *llll_appendsym(t_llll *where, t_symbol *what, long flags, t_llll *adopter)
+t_llllelem *llll_appendsym(t_llll *where, const t_symbol *what, long flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!where)

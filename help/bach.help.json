@@ -3330,7 +3330,7 @@
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+all", "clearselection", "dump", "play", "playmode" ],
 					"tags" : [ "message", "operate", "on", "selection", "dump", "dumpselection", "send", "order", "onset" ],
-					"title" : [ "Dump selection" ]
+					"title" : [ "Playout dump" ]
 				},
 				"B_moredump" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.01b_moredump.maxpat" ],
