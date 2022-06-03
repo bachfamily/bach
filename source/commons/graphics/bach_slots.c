@@ -7949,26 +7949,34 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 					case k_SLOT_TYPE_COLOR:
 					{
 						char redraw = 0;
-						
-						if (pt.y >= r_ob->slot_window_active_y1 && pt.y <= r_ob->slot_window_active_y2) {
-							if (pt.x >= r_ob->slot_window_active_x1 && pt.x <= r_ob->slot_window_active_x1 + r_ob->slot_window_palette_width) {
-								*clicked_obj = k_SLOT_COLOR_PALETTE;
-								*clicked_ptr = WHITENULL;
-								set_mousedown(r_ob, *clicked_ptr, (e_element_types) *clicked_obj);
-								if (!(modifiers & eControlKey)) { 
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-									slot_handle_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
-								}
-							} else if (pt.x >= r_ob->slot_window_spectrum_x && pt.x <= r_ob->slot_window_spectrum_x + r_ob->slot_window_spectrum_width) {
-								*clicked_obj = k_SLOT_COLOR_SPECTRUM;
-								*clicked_ptr = WHITENULL;
-								set_mousedown(r_ob, *clicked_ptr, (e_element_types) *clicked_obj);
-								if (!(modifiers & eControlKey)) { 
-									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-									slot_handle_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
-								}
-							}
-						}
+                        
+                        if (modifiers == eCommandKey) { // delete point
+                            create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                            notation_item_clear_slot(r_ob, r_ob->active_slot_notationitem, s);
+                            r_ob->changed_while_dragging = true;
+                            *changed = 1;
+                            redraw = 1;
+                        } else {
+                            if (pt.y >= r_ob->slot_window_active_y1 && pt.y <= r_ob->slot_window_active_y2) {
+                                if (pt.x >= r_ob->slot_window_active_x1 && pt.x <= r_ob->slot_window_active_x1 + r_ob->slot_window_palette_width) {
+                                    *clicked_obj = k_SLOT_COLOR_PALETTE;
+                                    *clicked_ptr = WHITENULL;
+                                    set_mousedown(r_ob, *clicked_ptr, (e_element_types) *clicked_obj);
+                                    if (!(modifiers & eControlKey)) {
+                                        create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                        slot_handle_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
+                                    }
+                                } else if (pt.x >= r_ob->slot_window_spectrum_x && pt.x <= r_ob->slot_window_spectrum_x + r_ob->slot_window_spectrum_width) {
+                                    *clicked_obj = k_SLOT_COLOR_SPECTRUM;
+                                    *clicked_ptr = WHITENULL;
+                                    set_mousedown(r_ob, *clicked_ptr, (e_element_types) *clicked_obj);
+                                    if (!(modifiers & eControlKey)) {
+                                        create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                        slot_handle_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
+                                    }
+                                }
+                            }
+                        }
 						if (redraw)
 							notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 					}

@@ -2612,12 +2612,11 @@ t_symbol *dumpselection_get_start_end_router(t_llll *forced_routers_ll)
     return gensym("dumpselection");
 }
 
-void score_sel_dumpselection(t_score *x, t_symbol *s, long argc, t_atom *argv){
-    
+void score_sel_dumpselection_do(t_score *x, t_llll *args)
+{
     t_llll *router_ll = NULL;
     t_symbol *start_sym = _llllobj_sym_none;
     t_symbol *end_sym = _llllobj_sym_none;
-    t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
     llll_parseargs_and_attrs((t_object *)x, args, "lss", gensym("router"), &router_ll, gensym("start"), &start_sym, gensym("end"), &end_sym);
 
     if (start_sym != _llllobj_sym_none) {
@@ -2637,9 +2636,16 @@ void score_sel_dumpselection(t_score *x, t_symbol *s, long argc, t_atom *argv){
         llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 7, end_ll);
         llll_free(end_ll);
     }
+    llll_free(router_ll);
+}
+
+void score_sel_dumpselection(t_score *x, t_symbol *s, long argc, t_atom *argv){
+    
+    t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
+
+    score_sel_dumpselection_do(x, args);
 
     llll_free(args);
-    llll_free(router_ll);
 }
 
 void score_sel_sendcommand(t_score *x, t_symbol *s, long argc, t_atom *argv){
@@ -3843,6 +3849,11 @@ void score_pause(t_score *x)
 
 void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
+    if (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("selection")) {
+        score_playselection(x, s, argc-1, argv+1);
+        return;
+    }
+
     char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     long preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
 
@@ -5407,10 +5418,14 @@ void C74_EXPORT ext_main(void *moduleRef){
     // Sequencing can be controlled with a variable speed via the <m>clock</m> message and the <o>setclock</o> object.
     // The <m>play</m> message, without any further argument, plays the <o>bach.score</o> from the current playhead cursor position 
     // (by default: the beginning of the <o>bach.score</o>) to the end. <br />
-    // If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
+    // If you put as first optional argument the "selection" symbol, only the selected content is played:
+    // playback starts at the beginning of the selection and ends once the last selected item is played. <br />
+     // If you put as additional argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
     // will be still output from the playout, but one after another, "immediately". <br />
-    // If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
+    // If you put as additional argument the "preschedule" symbol, all the playing events will be prescheduled.
     // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
+    // The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
+    // "preschedule" are mutually exclusive. <br />
     // If you give a single numeric argument, it will be the starting point in milliseconds
     // of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
     // ending point in milliseconds of the region to be played.
@@ -5423,6 +5438,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play @caption play from current playhead position
     // @example play offline @caption play in non-realtime mode ("uzi-like")
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
+    // @example play selection @caption play selected items only
+    // @example play selection offline @caption the same, in non-realtime mode ("uzi-like")
     // @example play 2000 @caption play starting from 2s till the end
     // @example play 2000 4000 @caption play starting from 2s, stop at 4s
     // @example play [4] @caption play starting from measure 4
@@ -7106,7 +7123,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_BASIC(c,"accidentalsgraphic",0);
     // @description @copy BACH_DOC_ACCIDENTALSGRAPHIC
 
-    CLASS_ATTR_CHAR(c, "accidentalspreferences", 0, t_notation_obj, accidentals_preferences); 
+    CLASS_ATTR_CHAR_UNSAFE(c, "accidentalspreferences", 0, t_notation_obj, accidentals_preferences); 
     CLASS_ATTR_STYLE_LABEL(c,"accidentalspreferences",0,"enumindex","Accidental Preferences");
     CLASS_ATTR_ENUMINDEX(c,"accidentalspreferences", 0, "Auto Sharps Flats Custom");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"accidentalspreferences",0,"0");
@@ -7503,7 +7520,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showdots",0,"1");
     // @description Toggles the display of augmentation dots.
     
-    CLASS_ATTR_CHAR(c,"showrests",0, t_notation_obj, show_rests);
+    CLASS_ATTR_CHAR_UNSAFE(c,"showrests",0, t_notation_obj, show_rests);
     CLASS_ATTR_STYLE_LABEL(c,"showrests",0,"enumindex","Show Rests");
     CLASS_ATTR_ENUMINDEX(c,"showrests", 0, "Never Not In Empty Measures Always");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showrests", 0, "2");
@@ -7700,7 +7717,7 @@ void C74_EXPORT ext_main(void *moduleRef){
         CLASS_ATTR_ACCESSORS(c, "maxdots", (method)NULL, (method)score_setattr_maxdots);
         // @description Sets the maximum number of dots to be used while notating music. Default is 1.
 
-        CLASS_ATTR_CHAR(c,"showaccidentalstiepreferences",0, t_notation_obj, show_accidentals_tie_preferences);
+        CLASS_ATTR_CHAR_UNSAFE(c,"showaccidentalstiepreferences",0, t_notation_obj, show_accidentals_tie_preferences);
         CLASS_ATTR_STYLE_LABEL(c,"showaccidentalstiepreferences",0,"enumindex","Accidental Upon Tie");
         CLASS_ATTR_ENUMINDEX(c,"showaccidentalstiepreferences", 0, "Never At Measure Beginning Always");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showaccidentalstiepreferences", 0, "0");
@@ -9050,7 +9067,30 @@ void score_domain(t_score *x, t_symbol *s, long argc, t_atom *argv){
 
 void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
     t_symbol *router = NULL;
+    t_symbol *sym = NULL;
+    bool selection_only = false;
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    
+    if (args && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_selection) {
+        selection_only = true; // currently unsupported for whole dump in bach.score, only supported for dump selection play
+        llll_behead(args);
+    }
+    
+    if (args && args->l_size >= 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && (sym = hatom_getsym(&args->l_head->l_hatom)) && ((sym == _llllobj_sym_play) || (sym == _llllobj_sym_playout))) {
+        llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE | LLLL_PA_DONTWARNFORWRONGKEYS, "i", _llllobj_sym_selection, &selection_only);
+        if (selection_only)
+            score_sel_dumpselection_do(x, args);
+        else {
+         //    TO DO : play all!
+            object_warn((t_object *)x, "Currently unsupported.");
+        }
+        goto end;
+    }
+    
+    if (selection_only) {
+        object_warn((t_object *)x, "Currently unsupported.");
+    }
+    
     llll_parseargs_and_attrs_destructive((t_object *)x, args, "s", gensym("router"), &router);
     if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
         t_symbol *sym = hatom_getsym(&args->l_head->l_hatom);
@@ -10240,8 +10280,21 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
     
     x->r_ob.width = 526;
     x->r_ob.height = 120;
-    x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
     
+    // checking if the patching rectangle is present in the dictionary
+    // This is needed because we may need it to use bach.score without displaying it.
+    long patching_rect_ac;
+    t_atom *patching_rect_av = NULL;
+    t_max_err patching_rect_err = dictionary_getatoms(d, gensym("patching_rect"), &patching_rect_ac, &patching_rect_av);
+    if (patching_rect_err == MAX_ERR_NONE) {
+        if (patching_rect_ac >= 4) {
+            x->r_ob.width = atom_getfloat(patching_rect_av+2);
+            x->r_ob.height = atom_getfloat(patching_rect_av+3);
+        }
+    }
+
+    x->r_ob.inner_width = x->r_ob.width - (2 * x->r_ob.j_inset_x); // 526 is the default object width
+
     // @arg 0 @name numvoices @optional 1 @type int @digest Number of voices
     notation_obj_arg_attr_dictionary_process_with_bw_compatibility(x, d);
     
@@ -14006,11 +14059,9 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                 // insert measure
                 insert_measure(x, voice, new_meas, after_this_measure, 0);
                 
-                t_llll *meas_ll = meas_elem ? hatom_getllll(&meas_elem->l_hatom) : get_nilnil();
-                if (!meas_ll)
-                        meas_ll = get_nilnil();
-                set_measure_from_llll(x, new_meas, meas_ll, true, true, &need_update_solos);
-                if (!meas_elem || !meas_ll) llll_free(meas_ll);
+                t_llll *this_measure_ll = meas_elem && hatom_getllll(&meas_elem->l_hatom) ? llll_clone(hatom_getllll(&meas_elem->l_hatom)) : get_nilnil();
+                set_measure_from_llll(x, new_meas, this_measure_ll, true, true, &need_update_solos);
+                llll_free(this_measure_ll);
                 
                 recompute_all_for_measure((t_notation_obj *)x, new_meas, true);
                 if (new_meas->prev)
@@ -14020,7 +14071,7 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                 
                 if (allow_multiple_measures_per_voice)
                     meas_elem = meas_elem ? meas_elem->l_next : NULL;
-                after_this_measure= new_meas;
+                after_this_measure = new_meas;
             }
         }
     }

@@ -3330,7 +3330,7 @@
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+all", "clearselection", "dump", "play", "playmode" ],
 					"tags" : [ "message", "operate", "on", "selection", "dump", "dumpselection", "send", "order", "onset" ],
-					"title" : [ "Dump selection" ]
+					"title" : [ "Playout dump" ]
 				},
 				"B_moredump" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.01b_moredump.maxpat" ],
@@ -4826,13 +4826,6 @@
 				"seealso" : [ "playmode", "playout+syntax" ],
 				"tags" : [ "sequencer", "sequencing", "play", "playing", "playout", "off", "line", "off-line", "offline" ],
 				"title" : [ "Playing musical content" ]
-			},
-			"Dblclicksendsvalues" : {
-				"filename" : [ "bach.help.notation.sequencing.02_dblclicksendsvalues.maxpat" ],
-				"objects" : [ "bach.score", "bach.roll" ],
-				"seealso" : [ "dumpselection" ],
-				"tags" : [ "sequencer", "sequencing", "off", "line", "off-line", "offline", "double", "click", "doubleclick", "send", "value dblclicksendsvalues", "dump", "selection", "interface", "mouse", "keyboard" ],
-				"title" : [ "Offline play from interface" ]
 			},
 			"Playingmessages" : {
 				"filename" : [ "bach.help.notation.sequencing.03_playingmessages.maxpat" ],

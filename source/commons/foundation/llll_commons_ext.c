@@ -1576,6 +1576,7 @@ t_llllelem *llll_appendatom(t_llll *where, t_atom *what, long flags, t_llll *ado
 	return NULL;
 }
 
+// not the true median if the list length is even!
 void llll_median(t_llll *ll, t_hatom *h)
 {
 	long pos = floor((ll->l_size + 1)/2.);

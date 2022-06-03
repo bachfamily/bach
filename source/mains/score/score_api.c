@@ -2748,19 +2748,19 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
     onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
     num_chords = slots->l_size;
     
-    for (elem = slots->l_head; elem; elem = elem->l_next) { // elem cycles on the chords, e.g. elem = (((0 0 0) (1 1 1)) ((0 0 0) (0.5 20 0.) (1 1 1)))    or    elem = ((0 0 0) (1 1 1)) 
+    for (elem = slots->l_head; elem; elem = elem->l_next) { // elem cycles on the chords, e.g. elem = (((0 0 0) (1 1 1)) ((0 0 0) (0.5 20 0.) (1 1 1)))    or    elem = ((0 0 0) (1 1 1))
         long type = hatom_gettype(&elem->l_hatom);
-        if (chord) { 
+        if (chord) {
             
             if (type == H_LLLL) { // it must to be a LLLL
-                t_llll *notes_slots = hatom_getllll(&elem->l_hatom); 
+                t_llll *notes_slots = hatom_getllll(&elem->l_hatom);
                 if (notes_slots ->l_size > 0) { // it has to be non nil!
                     
-                    char specif_for_each_note = true; 
-                    if (hatom_gettype(&notes_slots->l_head->l_hatom) != H_LLLL) 
+                    char specif_for_each_note = true;
+                    if (hatom_gettype(&notes_slots->l_head->l_hatom) != H_LLLL)
                         specif_for_each_note = false;
                     else if ((hatom_gettype(&notes_slots->l_head->l_hatom) == H_LLLL) &&
-                             (hatom_getllll(&notes_slots->l_head->l_hatom)->l_size > 0) && 
+                             (hatom_getllll(&notes_slots->l_head->l_hatom)->l_size > 0) &&
                              (hatom_gettype(&hatom_getllll(&notes_slots->l_head->l_hatom)->l_head->l_hatom) != H_LLLL))
                         specif_for_each_note = false;
                     
@@ -2771,15 +2771,15 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                             long subtype = hatom_gettype(&subelem->l_hatom);
                             if (subtype == H_LLLL) { // it must be a LLLL
                                 t_llll *slots = hatom_getllll(&subelem->l_hatom);
-//                                if (slots->l_size >= 1) {
-                                    if (note){ // there's already a note: we change its graphic values
-                                        note_set_slots_from_llll((t_notation_obj *) x, note, slots);
-                                    } else { // we create a note within the same chord!
-                                        t_note *this_nt = build_default_note((t_notation_obj *) x);
-                                        note_insert((t_notation_obj *) x, chord, this_nt, 0);
-                                        note_set_slots_from_llll((t_notation_obj *) x, this_nt, slots);
-                                    }
-//                                }
+                                //                                if (slots->l_size >= 1) {
+                                if (note){ // there's already a note: we change its graphic values
+                                    note_set_slots_from_llll((t_notation_obj *) x, note, slots);
+                                } else { // we create a note within the same chord!
+                                    t_note *this_nt = build_default_note((t_notation_obj *) x);
+                                    note_insert((t_notation_obj *) x, chord, this_nt, 0);
+                                    note_set_slots_from_llll((t_notation_obj *) x, this_nt, slots);
+                                }
+                                //                                }
                             }
                             if (note) note = note->next;
                         }
@@ -2803,12 +2803,12 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                             while (note) {
                                 note_set_slots_from_llll((t_notation_obj *) x, note, notes_slots);
                                 note = note->next;
+                            }
 #endif
                         }
-                        
                     }
                     
-                    chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                    chord->need_recompute_parameters = true; // we have to recalculate chord parameters
                 }
             }
             
@@ -2818,7 +2818,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
         } else { // there's no chord: we create one
             
             if (type == H_LLLL) { // it has to be a LLLL
-                t_llll *notes_slots = hatom_getllll(&elem->l_hatom); 
+                t_llll *notes_slots = hatom_getllll(&elem->l_hatom);
                 if (notes_slots->l_size > 0) { // it has to be non nil!
                     
                     t_rational remaining_duration = rat_rat_diff(measure_dur, onset);
@@ -2829,14 +2829,14 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                             
                             long num_notes = notes_slots->l_size;
                             if (num_notes > 0) {
-                                double *argv = (double *) bach_newptr(2 * num_notes * sizeof(double)); 
-                                t_llllelem *subelem; 
+                                double *argv = (double *) bach_newptr(2 * num_notes * sizeof(double));
+                                t_llllelem *subelem;
                                 long z = 0;
                                 for (subelem = notes_slots->l_head; subelem && z < 2 * num_notes - 1; subelem = subelem->l_next) {
                                     if (hatom_gettype(&subelem->l_hatom) == H_LLLL) {
                                         t_llll *telem = hatom_getllll(&subelem->l_hatom);
                                         if (telem->l_size > 0) {
-                                            argv[z] = CONST_DEFAULT_NEW_NOTE_DURATION; 
+                                            argv[z] = CONST_DEFAULT_NEW_NOTE_DURATION;
                                             argv[z+1] = CONST_DEFAULT_NEW_NOTE_CENTS;
                                             z += 2;
                                         }
@@ -2847,14 +2847,14 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                     t_note *newnote;
                                     t_chord *newchord = addchord_in_measure_from_values(x, measure, measure->lastchord, r_sym_duration, -1, num_notes, 2 * num_notes, argv, NULL, NULL, 0, NULL, 0, NULL);
                                     newchord->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newchord, 0, WHITENULL_llll);
-                                    chord_num++; 
+                                    chord_num++;
                                     onset = rat_rat_sum(onset, r_sym_duration);
                                     newnote = newchord->firstnote;
                                     for (subelem = notes_slots->l_head; subelem; subelem = subelem->l_next) { // subelem cycles on the notes, e.g. subelem = ((0 0 0) (1 1 1))
                                         note_set_slots_from_llll((t_notation_obj *) x, newnote, hatom_getllll(&subelem->l_hatom));
                                         newnote = newnote->next;
-                                    } 
-                                    newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                                    }
+                                    newchord->need_recompute_parameters = true; // we have to recalculate chord parameters
                                 }
                                 bach_freeptr(argv);
                             }
@@ -2877,15 +2877,13 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
                                 llll_appendllll_clone(slots, notes_slots, 0, WHITENULL_llll);
                                 note_set_slots_from_llll((t_notation_obj *) x, newchord->firstnote, slots);
-                                newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
+                                newchord->need_recompute_parameters = true; // we have to recalculate chord parameters
                                 llll_free(slots);
                             }
                         }
                     }
                 }
-                
-                
-            } 
+            }
         }
     }
 }
@@ -3136,8 +3134,8 @@ void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll,
                     case H_OBJ:
                     default:
 #ifdef CONFIGURATION_Development
-                        llll_post_named(measelemllll, 0, 0, 2, NULL, NULL);
-                        llll_print(measelemllll, NULL, 0, 2, NULL);
+//                        llll_post_named(measelemllll, 0, 0, 2, NULL, NULL);
+//                        llll_print(measelemllll, NULL, 0, 2, NULL);
 #endif
                         object_warn((t_object *) x, "Error: wrong input list.");
                         elem = elem->l_next;
@@ -5712,12 +5710,13 @@ void calculate_all_chords_remaining_onsets(t_score *x)
         for (measure = voice->firstmeasure; measure; measure = measure->next) {
             t_rational tot_sym_duration = long2rat(0), play_r_sec_cur = long2rat(0);
             for (chord = measure->firstchord; chord; chord = chord->next) {
+                double diff_ms = 0;
+                
                 chord->onset = chord_get_onset_ms(chord);
                 chord->play_r_sym_onset = chord->r_sym_onset;
                 chord->play_r_measure_onset_sec = chord->r_measure_onset_sec;
 
                 if (chord->is_grace_chord) {
-                    t_chord *prevch;
                     if (grace_equiv.r_num == 0)
                         grace_equiv = get_grace_note_equivalent(x, chord);
                     get_tempo_at_timepoint((t_notation_obj *)x, voice, build_timepoint_with_voice(measure->measure_number, chord->r_sym_onset, voice->v_ob.number), &figure_tempo_value, &tempo_figure, &tempo_value, &interp);
@@ -5726,16 +5725,12 @@ void calculate_all_chords_remaining_onsets(t_score *x)
                     t_rational diff_sym = rat_long_prod(rat_rat_prod(rat_rat_sum(total_grace_chords_r_sym_duraions_after_chord(chord),
                                                                                  rat_abs(chord->r_sym_duration)), grace_equiv), 8);
                     t_rational diff_sec = rat_rat_div(rat_long_prod(diff_sym, 4 * 60), tempo_value);
-                    double diff_ms = (rat2double(total_grace_chords_r_sym_duraions_after_chord(chord)) + rat2double(rat_abs(chord->r_sym_duration))) * rat2double(grace_equiv) * 8 * 4 * 60000 / rat2double(tempo_value); // it's a trade off between precision and preventing overflows... we give up a bit of precision here, we could have just said that this is rat2double(diff_sec)*1000
+                    diff_ms = (rat2double(total_grace_chords_r_sym_duraions_after_chord(chord)) + rat2double(rat_abs(chord->r_sym_duration))) * rat2double(grace_equiv) * 8 * 4 * 60000 / rat2double(tempo_value); // it's a trade off between precision and preventing overflows... we give up a bit of precision here, we could have just said that this is rat2double(diff_sec)*1000
                     
                     play_r_sec_cur = rat_rat_sum(play_r_sec_cur, diff_sec);
                     chord->play_r_measure_onset_sec = rat_rat_diff(chord->play_r_measure_onset_sec, diff_sec);
                     
-                    chord->onset -= diff_ms;
                     chord->play_r_sym_onset = rat_rat_diff(chord->play_r_sym_onset, diff_sym);
-                    prevch = chord_get_prev(chord);
-                    if (prevch && chord->onset < prevch->onset)
-                        chord->onset = prevch->onset;
                     if (!chord->prev && measure->prev && measure->prev->lastchord) {
                         measure->prev->lastchord->play_r_sym_duration = rat_rat_sum(measure->prev->lastchord->play_r_sym_duration, chord->play_r_sym_onset);
                         measure->prev->lastchord->play_r_duration_sec = rat_rat_diff(measure->prev->lastchord->play_r_duration_sec, diff_sec);
@@ -5751,6 +5746,15 @@ void calculate_all_chords_remaining_onsets(t_score *x)
                 
                 chord->r_tuttipoint_onset_sec = rat_rat_sum(chord->r_measure_onset_sec, chord->parent->r_tuttipoint_onset_sec);
                 chord->tuttipoint_onset_ms = (rat2double(chord->r_measure_onset_sec) + rat2double(chord->parent->r_tuttipoint_onset_sec)) * 1000.;
+                
+                chord->onset = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)chord);
+                
+                chord->onset -= diff_ms;
+                t_chord *prevch = chord_get_prev(chord);
+                if (prevch && chord->onset < prevch->onset)
+                    chord->onset = prevch->onset;
+
+                
                 if (chord->prev) {
                     chord->prev->duration_ms = chord->onset - chord->prev->onset; 
                     chord->prev->r_duration_sec = rat_rat_diff(chord->r_tuttipoint_onset_sec, chord->prev->r_tuttipoint_onset_sec);
@@ -6209,21 +6213,27 @@ t_chord *measure_get_first_non_grace_chord(t_measure *meas){
 
 
 // wf = width factor
-void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt, double wf)
+void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt)
 { // No Need for alignment points
     // easy case! everything is just proportional
     double temp = 0.;
+    double wf = tpt->local_spacing_width_multiplier;
     t_chord *chord = NULL;
     t_measure *this_meas = NULL, *last_done_meas = NULL;
     long i;
     double XSCALE_FACTOR = CONST_X_SCALING;
     
-    for (i = 0; i < x->r_ob.num_voices; i++) // cycle on the voices
+    for (i = 0; i < x->r_ob.num_voices; i++) { // cycle on the voices
         for (this_meas = tpt->measure[i]; (tpt->next && this_meas != tpt->next->measure[i]) || (!tpt->next && this_meas); this_meas = this_meas->next) { // cycle on the measures within the tuttipoin
             t_tempo *tempo;
             
             this_meas->start_barline_offset_ux = 1000 * rat2double(this_meas->r_tuttipoint_onset_sec) * x->r_ob.spacing_width * XSCALE_FACTOR * wf;
             this_meas->width_ux = 1000 * rat2double(this_meas->r_total_duration_sec) * x->r_ob.spacing_width * XSCALE_FACTOR * wf;
+            
+            // This mitigates some approximation issues
+            if (this_meas->prev && this_meas->prev->tuttipoint_reference == this_meas->tuttipoint_reference)
+                this_meas->prev->width_ux = this_meas->start_barline_offset_ux - this_meas->prev->start_barline_offset_ux;
+            
             if (this_meas->start_barline_offset_ux + this_meas->width_ux > temp)
                 temp = this_meas->start_barline_offset_ux + this_meas->width_ux;
             
@@ -6249,6 +6259,7 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt, do
             
             last_done_meas = this_meas;
         }
+    }
     tpt->width_ux = temp;
     if (last_done_meas) {
         tpt->r_duration_sec = rat_rat_sum(last_done_meas->r_tuttipoint_onset_sec, last_done_meas->r_total_duration_sec);
@@ -6290,7 +6301,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
     tuttipoint_free_alignmentpoints((t_notation_obj *)x, tpt);
 
     if (x->r_ob.spacing_type == k_SPACING_PROPORTIONAL) {
-        tuttipoint_calculate_spacing_proportional(x, tpt, wf);
+        tuttipoint_calculate_spacing_proportional(x, tpt);
     } else {
         
         double delta_ux_start_next_tranche = 0;
@@ -10122,7 +10133,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         paint_line(g, beamcolor, beam->beam_start_chord->stem_x - 3 * x->r_ob.zoom_y, staff_top + beam->beam_start_uy * x->r_ob.zoom_y + 5 * x->r_ob.zoom_y * beam->direction - (beam->direction == -1 ? x->r_ob.zoom_y : 0),
                                    beam->beam_start_chord->stem_x + 4 * x->r_ob.zoom_y, staff_top + beam->beam_start_uy * x->r_ob.zoom_y - 3 * x->r_ob.zoom_y * beam->direction - (beam->direction == -1 ? x->r_ob.zoom_y : 0), 1);
                     
-                    if (beam->is_tuplet){
+                    if (beam->is_tuplet) {
                         double x1t = (beam->beam_start_chord->stem_x + beam->beam_end_chord->stem_x)/2. + beam->tuplet_text1_delta_ux * x->r_ob.zoom_y;
                         double y1t = staff_top + beam->tuplet_text1_uy * x->r_ob.zoom_y;
                         double cur_x = x1t;
@@ -10157,9 +10168,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 x2 += notehead_get_uwidth((t_notation_obj *) x, beam->beam_end_chord->r_sym_duration, NULL, false) * x->r_ob.zoom_y;
                             
                             xm1 = x1t - 1 * x->r_ob.zoom_y;
-                            ym1 = rescale(xm1, x1, x2, y1, y2);
+                            ym1 = x1 == x2 ? y1 : rescale(xm1, x1, x2, y1, y2);
                             xm2 = (beam->tuplet_text2[0] ? cur_x : x1t + tt_width1) + 1 * x->r_ob.zoom_y;
-                            ym2 = rescale(xm2, x1, x2, y1, y2);
+                            ym2 = x1 == x2 ? y1 : rescale(xm2, x1, x2, y1, y2);
                             
                             if (x->r_ob.tuplet_shape == k_TUPLET_SHAPE_BRACKET) {
                                 if (beam->dashed) {
@@ -11064,8 +11075,8 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
 
 void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_rect){
     if (x->r_ob.ruler > 0 || x->r_ob.show_grid) {
-        double screen_ms_start = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.screen_ux_start, 1);
-        double screen_ms_end = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.screen_ux_end, 1);
+        double screen_ms_start = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.screen_ux_start, 1, 1);
+        double screen_ms_end = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.screen_ux_end, 1, 1);
         double start_ms = x->r_ob.grid_step_ms * MAX(0, (round(screen_ms_start / x->r_ob.grid_step_ms) - 1));
         long num_subdivisions = x->r_ob.grid_subdivisions;
         double step_ms = x->r_ob.grid_step_ms / num_subdivisions;

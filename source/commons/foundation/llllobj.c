@@ -595,6 +595,13 @@ void llllobj_gunload_llll(t_object *x, e_llllobj_obj_types type, t_llll *inll, l
     }
 }
 
+
+t_llll* llllobj_get_loaded_llll(t_object *x, e_llllobj_obj_types type, long outnum)
+{
+	t_llllobj_out *cache = llllobj_get_out(x, type) + outnum;
+	return cache->b_ll;
+}
+
 void llllobj_gunload_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type, t_llll *inll, t_atom_ulong phonenumber, long outnum)
 {
     t_llllobj_out *cache;
@@ -2781,3 +2788,4 @@ t_object *getParentEarsProcess(t_object *x)
 	
 	return box;
 }
+

@@ -260,7 +260,7 @@ void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_
     int num_ts = ((clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FFGG) || (clef == k_CLEF_FG)) ? 2 : 1; // number of time signatures to paint
     double *tsbox_y1a = (double *) bach_newptr(num_ts * sizeof(double));
     double *tsbox_y1b = (double *) bach_newptr(num_ts * sizeof(double));
-    double tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux + CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS); 
+    double tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux) + CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS * r_ob->zoom_y;
     double tsbox_x_width = curr_meas->timesignature_uwidth * r_ob->zoom_y * (big ? r_ob->big_time_signatures_ratio : 1);
     double tsbox_y_height;
     char num_txt[150]; char den_txt[50]; 
@@ -269,9 +269,9 @@ void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_
     
     if (r_ob->spacing_type == k_SPACING_PROPORTIONAL) {
         if (r_ob->show_time_signatures != 2)
-            tsbox_x1 = tsbox_x1 - 2 * CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS - tsbox_x_width;
+            tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux)  - CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS * r_ob->zoom_y - tsbox_x_width;
         else {
-            tsbox_x1 = tsbox_x1 - CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS - tsbox_x_width / 2.;
+            tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux) - tsbox_x_width / 2.;
         }
     }
     
@@ -1341,7 +1341,7 @@ void notationobj_paint_legend(t_notation_obj *r_ob, t_jgraphics *g, t_rect rect,
 }
 
 
-double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord)
+double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord, bool accurate)
 {
     double max_duration = 0;
     t_note *curr_nt;
@@ -1350,10 +1350,12 @@ double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord)
             if (curr_nt->duration > max_duration)
                 max_duration = curr_nt->duration;
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
-        max_duration = chord->duration_ms;
+        max_duration = accurate ? notation_item_get_duration_ms_accurate(r_ob, (t_notation_item *)chord) : chord->duration_ms;
     }
     return max_duration;
 }
+
+
 
 long chord_get_max_velocity(t_notation_obj *r_ob, t_chord *chord)
 {
@@ -1684,7 +1686,7 @@ t_jrgba label_family_to_color(t_notation_obj *r_ob, t_bach_label_family *fam)
     // This algorithm assures that families "close" to each other (in the llll of families) have rather different colors!
     // which is rather useful, especially for pattern matching.
     double val =  fmod(llllelem_retrieve_index(r_ob->m_labels.families, fam->llelem) * PI/5., 1.);
-    return change_alpha(double_to_color(val, 0., 1., false), 0.7);
+    return change_alpha(double_to_color(val, 0., 1., false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR), 0.7);
 /*    t_jrgba color = double_to_color(val, 0., 1., false);
     t_jhsla color_hsla = rgba_to_hsla(color);
     color_hsla.saturation /= 2;
@@ -3320,9 +3322,11 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
             nt = ((t_note *)firstsel);
         
         char onset_text[256], dur_text[256];
-        time_to_char_buf(r_ob, chord_get_onset_ms(nt->parent), onset_text, 256);
-        time_to_char_buf(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? nt->parent->duration_ms : nt->duration, dur_text, 256);
-        
+//        time_to_char_buf(r_ob, chord_get_onset_ms(nt->parent), onset_text, 256);
+//        time_to_char_buf(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? nt->parent->duration_ms : nt->duration, dur_text, 256);
+        time_to_char_buf(r_ob, notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)(nt->parent)), onset_text, 256);
+        time_to_char_buf(r_ob, notation_item_get_duration_ms_accurate(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? (t_notation_item *)nt->parent : (t_notation_item *)nt), dur_text, 256);
+
         if (r_ob->show_note_names) {
             char notename[255];
             note_get_pitch(r_ob, nt).toTextBuf(notename, 255);
@@ -3340,8 +3344,9 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
     } else if (num_sel == 1 && firstsel && firstsel->type == k_CHORD) { // single chord
         t_chord *ch = (t_chord *)firstsel;
         char onset_text[256], dur_text[256];
-        time_to_char_buf(r_ob, chord_get_onset_ms(ch), onset_text, 256);
-        time_to_char_buf(r_ob, chord_get_max_duration(r_ob, ch), dur_text, 256);
+        time_to_char_buf(r_ob, notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)ch), onset_text, 256);
+        time_to_char_buf(r_ob, chord_get_max_duration(r_ob, ch, true), dur_text, 256);
+        
         
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
             snprintf(legend_text, 255, "Duration " RATIONAL_PRINTF_FMT "   Onset %s   Duration %s", rat_abs(ch->r_sym_duration).r_num, ch->r_sym_duration.r_den, onset_text, dur_text);
@@ -3477,8 +3482,8 @@ void repaint_left_background_part(t_notation_obj *r_ob, t_jgraphics* g, t_rect g
 double paint_label_for_ruler(t_notation_obj *r_ob, t_jgraphics* g, double milliseconds, double x_pos, double y_pos, char v_alignment){
     char text[1000];
     double width, height;
-    char sign = (milliseconds >= 0 ? 1 : -1);
-    long work_ms = fabs(milliseconds);
+    long work_ms = round(fabs(milliseconds));
+    char sign = (work_ms >= 0 ? 1 : -1);
     long mins = work_ms  /60000;
     long secs = (work_ms - mins * 60000) / 1000;
     long millisecs = work_ms - mins * 60000 - secs * 1000;
@@ -4325,68 +4330,89 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode)
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         return onset_to_unscaled_xposition(r_ob, ms);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        // if mode == 1, the position is computed only BEFORE the next barline.
-        // E.g. if one has a 4/4 note and then a 4/4 rest, tempo = 60, t.s. = 4/4, the 3900 ms will not be in the SECOND measure, but at the end of the first one!
-        t_chord *left = NULL, *right = NULL; double left_ms = 0, right_ms = 0;
-        t_voice *voice;
-        t_measure *meas;
-        t_chord *chord;
-        double left_ux = 0, right_ux = 0;
-        char is_left_chord_whole_measure_chord = false, is_right_chord_whole_measure_chord = true;
-        if (ms < 0.)
-            return 0;
-        
-        // we try to find two chords who have ms directly < and ms > of our ms
-        
-        for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
-            for (meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next) {
-                if (meas->firstchord && right && (meas->firstchord->onset > right_ms))
+        if (false && r_ob->spacing_type == k_SPACING_PROPORTIONAL) {
+            t_tuttipoint *left = NULL, *right = NULL;
+            for (t_tuttipoint *tpt = r_ob->firsttuttipoint; tpt; tpt = tpt->next) {
+                if (tpt->onset_ms == ms) {
+                    left = right = tpt;
                     break;
-                else {
-                    for (chord = meas->firstchord; chord; chord = chord->next) {
-                        char is_chord_whole_measure_chord = is_chord_a_whole_measure_rest(r_ob, chord);
-                        if (fabs(chord->onset - ms) < CONST_EPSILON_DOUBLE_EQ && !is_chord_whole_measure_chord) {
-                            return chord_get_alignment_ux(r_ob, chord); // precise!!!
-                        } else if ((chord->onset >= ms) && (!right || (right && (chord->onset < right_ms || (fabs(chord->onset - right_ms) < CONST_EPSILON_DOUBLE_EQ && is_right_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
-                            right = chord;
-                            is_right_chord_whole_measure_chord = is_chord_whole_measure_chord;
-                            right_ms = chord->onset;
-                            right_ux = is_chord_whole_measure_chord ? right->parent->tuttipoint_reference->offset_ux + right->parent->start_barline_offset_ux : chord_get_alignment_ux(r_ob, right);
-                            if (mode == 1 && !right->prev)
-                                right_ux = right->parent->tuttipoint_reference->offset_ux + right->parent->start_barline_offset_ux;
-                        } else if ((chord->onset >= ms) && right) {
-                            break;
-                        } else if ((chord->onset <= ms) && (!left || (left && (chord->onset > left_ms || (fabs(chord->onset - left_ms) < CONST_EPSILON_DOUBLE_EQ && is_left_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
-                            left = chord;
-                            is_left_chord_whole_measure_chord = is_chord_whole_measure_chord;
-                            left_ms = chord->onset;
-                            left_ux = is_chord_whole_measure_chord ? left->parent->tuttipoint_reference->offset_ux + left->parent->start_barline_offset_ux : chord_get_alignment_ux(r_ob, left);
+                } else if (tpt->onset_ms > ms) {
+                    left = tpt->prev;
+                    right = tpt;
+                    break;
+                }
+            }
+            if (left)
+                return left->offset_ux + (ms - left->onset_ms) * r_ob->spacing_width * CONST_X_SCALING * left->local_spacing_width_multiplier;
+            else if (r_ob->lasttuttipoint && ms > r_ob->lasttuttipoint->onset_ms)
+                return r_ob->lasttuttipoint->offset_ux + (ms - r_ob->lasttuttipoint->onset_ms) * r_ob->spacing_width * CONST_X_SCALING * r_ob->lasttuttipoint->local_spacing_width_multiplier;
+            else
+                return ms * r_ob->spacing_width * CONST_X_SCALING;
+        } else {
+            // if mode == 1, the position is computed only BEFORE the next barline.
+            // E.g. if one has a 4/4 note and then a 4/4 rest, tempo = 60, t.s. = 4/4, the 3900 ms will not be in the SECOND measure, but at the end of the first one!
+            t_chord *left = NULL, *right = NULL; double left_ms = 0, right_ms = 0;
+            t_voice *voice;
+            t_measure *meas;
+            t_chord *chord;
+            double left_ux = 0, right_ux = 0;
+            char is_left_chord_whole_measure_chord = false, is_right_chord_whole_measure_chord = true;
+            if (ms < 0.)
+                return 0;
+            
+            // we try to find two chords who have ms directly < and ms > of our ms
+            
+            for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
+                for (meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next) {
+                    if (meas->firstchord && right && (meas->firstchord->onset > right_ms))
+                        break;
+                    else {
+                        for (chord = meas->firstchord; chord; chord = chord->next) {
+                            char is_chord_whole_measure_chord = is_chord_a_whole_measure_rest(r_ob, chord);
+                            if (fabs(chord->onset - ms) < CONST_EPSILON_DOUBLE_EQ && !is_chord_whole_measure_chord) {
+                                return chord_get_alignment_ux(r_ob, chord); // precise!!!
+                            } else if ((chord->onset >= ms) && (!right || (right && (chord->onset < right_ms || (fabs(chord->onset - right_ms) < CONST_EPSILON_DOUBLE_EQ && is_right_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
+                                right = chord;
+                                is_right_chord_whole_measure_chord = is_chord_whole_measure_chord;
+                                right_ms = chord->onset;
+                                right_ux = is_chord_whole_measure_chord ? right->parent->tuttipoint_reference->offset_ux + right->parent->start_barline_offset_ux : chord_get_alignment_ux(r_ob, right);
+                                if (mode == 1 && !right->prev)
+                                    right_ux = right->parent->tuttipoint_reference->offset_ux + right->parent->start_barline_offset_ux;
+                            } else if ((chord->onset >= ms) && right) {
+                                break;
+                            } else if ((chord->onset <= ms) && (!left || (left && (chord->onset > left_ms || (fabs(chord->onset - left_ms) < CONST_EPSILON_DOUBLE_EQ && is_left_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
+                                left = chord;
+                                is_left_chord_whole_measure_chord = is_chord_whole_measure_chord;
+                                left_ms = chord->onset;
+                                left_ux = is_chord_whole_measure_chord ? left->parent->tuttipoint_reference->offset_ux + left->parent->start_barline_offset_ux : chord_get_alignment_ux(r_ob, left);
+                            }
                         }
                     }
                 }
+            
+            if (left && right){
+                if (left_ms == right_ms)
+                    return left_ux;
+                else
+                    return left_ux + (right_ux - left_ux) *    (ms - left_ms) / (right_ms - left_ms);
+            } else if (right) {
+                if (ms == right_ms || right_ms == 0)
+                    return right_ux;
+                else
+                    return right_ux * ms / right_ms; // was (right_ms - ms) at the denominator
+            } else if (left) {
+                double ms_measure_end = left->onset + left->duration_ms;
+                if (ms == left_ms)
+                    return left_ux;
+                else if (ms_measure_end == left_ms)
+                    return left->parent->tuttipoint_reference->offset_ux + left->parent->start_barline_offset_ux + left->parent->width_ux;
+                else
+                    return left_ux + (left->parent->tuttipoint_reference->offset_ux + left->parent->start_barline_offset_ux + left->parent->width_ux - left_ux)
+                    * (ms - left_ms) / (ms_measure_end - left_ms);
+            } else {
+                return 0.;
             }
-        
-        if (left && right){
-            if (left_ms == right_ms)
-                return left_ux;
-            else
-                return left_ux + (right_ux - left_ux) *    (ms - left_ms) / (right_ms - left_ms);
-        } else if (right) {
-            if (ms == right_ms || right_ms == 0)
-                return right_ux;
-            else
-                return right_ux * ms / right_ms; // was (right_ms - ms) at the denominator
-        } else if (left) {
-            double ms_measure_end = left->onset + left->duration_ms;
-            if (ms == left_ms)
-                return left_ux;
-            else if (ms_measure_end == left_ms)
-                return left->parent->tuttipoint_reference->offset_ux + left->parent->start_barline_offset_ux + left->parent->width_ux;
-            else
-                return left_ux + (left->parent->tuttipoint_reference->offset_ux + left->parent->start_barline_offset_ux + left->parent->width_ux - left_ux)
-                * (ms - left_ms) / (ms_measure_end - left_ms);
-        } else 
-            return 0.;
+        }
     } else {
         return 0.;
     }
@@ -6426,7 +6452,7 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
             if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
                 articulationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
                 articulationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
@@ -6457,7 +6483,7 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
             if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
                 annotationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
                 annotationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
@@ -6491,7 +6517,7 @@ t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_s
             if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
                 dynamicscolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
                 dynamicscolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
             else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
@@ -20801,6 +20827,7 @@ void calculate_chords_and_tempi_measure_onsets(t_notation_obj *r_ob, t_measure *
 double chord_get_onset_ms(t_chord *chord){
     if (!chord->is_score_chord)
         return chord->onset;
+    
     return 1000 * rat2double(chord->r_measure_onset_sec) + chord->parent->tuttipoint_onset_ms + (chord->parent->tuttipoint_reference ? chord->parent->tuttipoint_reference->onset_ms : 0);
 }
 
@@ -30767,7 +30794,7 @@ void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, 
                 if ((r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INTLIST))
                     *color = long_to_color(*((long *)slot->firstitem->item));
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT)
-                    *color = double_to_color(*((double *)slot->firstitem->item), r_ob->slotinfo[slotnum].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
+                    *color = double_to_color(*((double *)slot->firstitem->item), r_ob->slotinfo[slotnum].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOATLIST)
                     *color = floatlist_slot_to_color(slot);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_COLOR)
@@ -30804,7 +30831,7 @@ void durationline_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t
                 if ((r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INTLIST))
                 *color = long_to_color(*((long *)note_to_consider->slot[slotnum].firstitem->item));
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT)
-                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
+                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOATLIST)
                 *color = floatlist_slot_to_color(&note_to_consider->slot[slotnum]);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_COLOR)
@@ -36251,7 +36278,7 @@ t_jrgba partidx_to_color(long part_idx)
     if (part_idx == 0)
         part_idx = CONST_NUM_PART_COLORS;
 
-    return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false);
+    return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false, CONST_GRAPHICS_COLOR_SATURATION_FACTOR);
 }
 
 void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, notation_obj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended)

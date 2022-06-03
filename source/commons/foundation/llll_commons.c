@@ -8942,6 +8942,13 @@ t_llll *get_double_ll(const double d)
     return ll;
 }
 
+t_llll *get_sym_ll(const t_symbol* s)
+{
+    t_llll *ll = llll_get();
+    llll_appendsym(ll, s);
+    return ll;
+}
+
 void llll_destroy_everything_but_head(t_llll *ll)
 {
     t_llllelem *currElem, *nextElem;

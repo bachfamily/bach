@@ -1845,25 +1845,8 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     if (selectllll && selectllll->l_size > 0) {
         long head_type = hatom_gettype(&selectllll->l_head->l_hatom);
         
-        // (un)sel(ect) chord
-        if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_chord && selectllll->l_head->l_next) {
-            t_chord *to_select;
-            lock_general_mutex((t_notation_obj *)x);
-            if (selectllll->l_depth == 1) {
-                if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next, 0, 0, 0)))
-                    add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
-            } else {
-                t_llllelem *elem;
-                for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next) 
-                    if (hatom_gettype(&elem->l_hatom) == H_LLLL)
-                        if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
-                            add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
-            }
-            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
-            unlock_general_mutex((t_notation_obj *)x);
-            
         // (un)sel(ect) note/chord/measure/voice/breakpoint/tail/marker if
-        } else if (head_type == H_SYM && selectllll->l_head->l_next &&
+        if (head_type == H_SYM && selectllll->l_head->l_next &&
                    hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
                    hatom_getsym(&selectllll->l_head->l_next->l_hatom) == _llllobj_sym_if) {
 
@@ -1904,7 +1887,25 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             } else {
                 object_error((t_object *) x, "Bad expression!");
             }
-
+            
+        // (un)sel(ect) chord by index
+        } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_chord && selectllll->l_head->l_next) {
+            t_chord *to_select;
+            lock_general_mutex((t_notation_obj *)x);
+            if (selectllll->l_depth == 1) {
+                if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, selectllll->l_head->l_next, 0, 0, 0)))
+                    add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
+            } else {
+                t_llllelem *elem;
+                for (elem = selectllll->l_head->l_next; elem; elem = elem->l_next)
+                    if (hatom_gettype(&elem->l_hatom) == H_LLLL)
+                        if ((to_select = chord_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head, 0, 0, 0)))
+                            add_all_chord_notes_to_preselection((t_notation_obj *)x, to_select);
+            }
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            unlock_general_mutex((t_notation_obj *)x);
+            
+            
         // (un)sel(ect) marker by index
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_marker && selectllll->l_head->l_next) {
             t_marker *to_select;
@@ -4155,6 +4156,11 @@ void roll_pause(t_roll *x)
 
 void roll_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
+    if (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("selection")) {
+        roll_playselection(x, s, argc-1, argv+1);
+        return;
+    }
+    
     long offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     long preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
     
@@ -5469,7 +5475,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     // @method dumpselection @digest Get selected items playout syntax
     // @description The <m>dumpselection</m> message sends the content of each one of selected notation items from the 
-    // playout, in playout syntax (similarly to <m>playselection offline</m>, but in a much more direct and agile way,
+    // playout, in playout syntax (similarly to <m>play selection offline</m>, but in a much more direct and agile way,
     // without all the intricacies of the playback sequencing system).
     // You can safely rely on the fact that elements will be output ordered by onset. <br />
     // If a "router" message attribute is set, then the standard router ("note", "chord") is replaced by the specified one;
@@ -5561,7 +5567,9 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     // @method poly @digest Force maximum polyphony and/or assign voicing numbers for selection
     // @description The <m>poly</m> message followed by a number <m>N</m> forces the selected material to be playable with at most <m>N</m> independent
-    // monophonic voices. For instance <m>poly 1</m> will force the selection to be monophonic, <m>poly 2</m> will force it to be playable with
+    // monophonic voices.
+    // Importantly, this currently only works if the selected material is on a single voice.
+    // For instance <m>poly 1</m> will force the selection to be monophonic, <m>poly 2</m> will force it to be playable with
     // two voices, and so on. Use <m>N</m> = 0 in order to avoid forcing a maximum number of voices - and, possibly, instead using the other following features
     // of the <m>poly</m> message. <br />
     // During the process, each note is assigned its own voice index.
@@ -6247,10 +6255,14 @@ void C74_EXPORT ext_main(void *moduleRef){
     // Sequencing can be controlled with a variable speed via the <m>clock</m> message and the <o>setclock</o> object.
     // The <m>play</m> message, without any further argument, plays the <o>bach.roll</o> from the current playhead cursor position 
     // (by default: the beginning of the <o>bach.roll</o>) to the end. <br />
-    // If you put as first argument the "offline" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
+    // If you put as first optional argument the "selection" symbol, only the selected content is played:
+    // playback starts at the beginning of the selection and ends once the last selected item is played. <br />
+    // If you put as additional argument the "offline" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
     // will be still output from the playout, but one after another, "immediately". <br />
-    // If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
+    // If you put as additional argument the "preschedule" symbol, all the playing events will be prescheduled.
     // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
+    // The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
+    // "preschedule" are mutually exclusive. <br />
     // If you give a single numeric argument, it will be the starting point in milliseconds
     // of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
     // ending point in milliseconds of the region to be played.
@@ -6264,23 +6276,11 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play 2000 4000 @caption play starting from 2s, stop at 4s
     // @example play offline @caption play in non-realtime mode ("uzi-like")
     // @example play offline 2000 4000 @caption play from 2s to 4s in non-realtime mode
+    // @example play selection @caption play selected items only
+    // @example play selection offline @caption the same, in non-realtime mode ("uzi-like")
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
-    // @seealso stop, pause, setcursor, playselection
+    // @seealso stop, pause, setcursor
     class_addmethod(c, (method) roll_play, "play", A_GIMME, 0);
-
-
-    // @method playselection @digest Only play selected items
-    // @description The <m>playselection</m> message only plays the selected content. It works exactly like <m>play</m>, but it starts playing
-    // at the beginning of the selection, and ends playing at the end of the last selected item. Only selected items are sequenced.
-    // Mute and solo status are also taken into account (see <m>play</m>). <br />
-    // If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
-    // will be still output from the playout, but one after another, "immediately", in the low-priority queue. <br />
-    // If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
-    // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
-    // @marg 0 @name scheduling_mode @optional 1 @type symbol
-    // @example playselection @caption play selected items only
-    // @example playselection offline @caption the same, in non-realtime mode ("uzi-like")
-    // @seealso stop, pause, play
     class_addmethod(c, (method) roll_playselection, "playselection", A_GIMME, 0);
     
     
@@ -6883,7 +6883,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_BASIC(c,"accidentalsgraphic",0);
     // @description @copy BACH_DOC_ACCIDENTALSGRAPHIC
     
-    CLASS_ATTR_CHAR(c, "accidentalspreferences", 0, t_notation_obj, accidentals_preferences); 
+    CLASS_ATTR_CHAR_UNSAFE(c, "accidentalspreferences", 0, t_notation_obj, accidentals_preferences); 
     CLASS_ATTR_STYLE_LABEL(c,"accidentalspreferences",0,"enumindex","Accidental Preferences");
     CLASS_ATTR_ENUMINDEX(c,"accidentalspreferences", 0, "Auto Sharps Flats Custom");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"accidentalspreferences",0,"0");
@@ -7859,12 +7859,13 @@ void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         llll_behead(args);
     }
     
-    if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && (sym = hatom_getsym(&args->l_head->l_hatom)) && ((sym == _llllobj_sym_play) || (sym == _llllobj_sym_playout))) {
-        llll_parseargs_and_attrs_destructive((t_object *)x, args, "i", _llllobj_sym_selection, &selection_only);
+    if (args && args->l_size >= 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && (sym = hatom_getsym(&args->l_head->l_hatom)) && ((sym == _llllobj_sym_play) || (sym == _llllobj_sym_playout))) {
+        llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE | LLLL_PA_DONTWARNFORWRONGKEYS, "i", _llllobj_sym_selection, &selection_only);
         if (selection_only)
             roll_sel_dumpselection_do(x, args);
         else {
          //    TO DO : play all!
+            object_warn((t_object *)x, "Currently unsupported.");
         }
         goto end;
     }
@@ -11079,6 +11080,18 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.width = 526;
     x->r_ob.height = 120;
 
+    // checking if the patching rectangle is present in the dictionary
+    // This is needed because we may need it to use bach.score without displaying it.
+    long patching_rect_ac;
+    t_atom *patching_rect_av = NULL;
+    t_max_err patching_rect_err = dictionary_getatoms(d, gensym("patching_rect"), &patching_rect_ac, &patching_rect_av);
+    if (patching_rect_err == MAX_ERR_NONE) {
+        if (patching_rect_ac >= 4) {
+            x->r_ob.width = atom_getfloat(patching_rect_av+2);
+            x->r_ob.height = atom_getfloat(patching_rect_av+3);
+        }
+    }
+    
     x->r_ob.inner_width = 526 - (2 * x->r_ob.j_inset_x); // 526 is the default object width
 
     x->r_ob.show_page_numbers = 1;
@@ -12705,29 +12718,31 @@ void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
     if (x->r_ob.zoom_y == 0) 
         x->r_ob.firsttime = 1;
     
-    if (false && x->r_ob.firsttime) { // actually, it shouldn't be used anymore
-        x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
-        calculate_voice_offsets((t_notation_obj *) x);
-
-        if (x->r_ob.link_vzoom_to_height)
-            notationobj_set_vzoom_depending_on_height((t_notation_obj *) x, rect.height);
-        else
-            notationobj_reset_size_related_stuff((t_notation_obj *) x);
-
-        x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *) x);
-        x->r_ob.needed_uheight_for_one_system = x->r_ob.needed_uheight / ((x->r_ob.num_systems > 0) ? x->r_ob.num_systems : 1);
-        calculate_ms_on_a_line((t_notation_obj *) x);
-        update_vscrollbar((t_notation_obj *) x, 0);
-        redraw_hscrollbar((t_notation_obj *)x, 0);
+    if (x->r_ob.firsttime) {
+        if (false) { // actually, it shouldn't be used anymore
+            x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
+            calculate_voice_offsets((t_notation_obj *) x);
+            
+            if (x->r_ob.link_vzoom_to_height)
+                notationobj_set_vzoom_depending_on_height((t_notation_obj *) x, rect.height);
+            else
+                notationobj_reset_size_related_stuff((t_notation_obj *) x);
+            
+            x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *) x);
+            x->r_ob.needed_uheight_for_one_system = x->r_ob.needed_uheight / ((x->r_ob.num_systems > 0) ? x->r_ob.num_systems : 1);
+            calculate_ms_on_a_line((t_notation_obj *) x);
+            update_vscrollbar((t_notation_obj *) x, 0);
+            redraw_hscrollbar((t_notation_obj *)x, 0);
+            
+            // we need to recalculate 2 times the chord parameters the firsttime
+            // this is due to the fact thats 1) we want some parameters to be computed IMMEDIATELY (not in paint function) when a roll is set
+            // or recalled, but 2) some of the parameters depend on the vzoom, which in turn might depend on rect.height, which is given ONLY in the
+            // current view, in the paint function. So we need to recalculate parameters twice, at the beginning
+            recalculate_all_chord_parameters(x);
+            must_repaint = true;
+        }
         
         x->r_ob.firsttime = 0;
-
-        // we need to recalculate 2 times the chord parameters the firsttime
-        // this is due to the fact thats 1) we want some parameters to be computed IMMEDIATELY (not in paint function) when a roll is set
-        // or recalled, but 2) some of the parameters depend on the vzoom, which in turn might depend on rect.height, which is given ONLY in the
-        // current view, in the paint function. So we need to recalculate parameters twice, at the beginning
-        recalculate_all_chord_parameters(x);
-        must_repaint = true;
     }
 
     jf_text = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(11. * x->r_ob.zoom_y)); 
@@ -12853,6 +12868,9 @@ void roll_paint(t_roll *x, t_object *view)
 
 void roll_paint_to_jitter_matrix(t_roll *x, t_symbol *matrix_name)
 {
+//    if (x->r_ob.firsttime) // paint twice
+//        bach_paint_to_jitter_matrix((t_object *)x, matrix_name, x->r_ob.width, x->r_ob.height, (bach_paint_ext_fn)roll_paint_ext);
+    
     bach_paint_to_jitter_matrix((t_object *)x, matrix_name, x->r_ob.width, x->r_ob.height, (bach_paint_ext_fn)roll_paint_ext);
 }
 

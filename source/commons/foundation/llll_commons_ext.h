@@ -1019,6 +1019,7 @@ t_llllelem *get_nearest_llllelem_to_double(t_llll *ll, double num);
 	@ingroup		llll_utilities
 	@param	ll		The llll
 	@param	h		The hatom to be filled with the median of the llll
+ @remark         WARNING: this doesn't give the true median if the lenght is even: it points to an existing hatom.
 */
 void llll_median(t_llll *ll, t_hatom *h);
 

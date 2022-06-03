@@ -18,8 +18,8 @@
  */
 
 #include "score_files.h"
-#include "unistd.h"
 #ifdef MAC_VERSION
+#include "unistd.h"
 #include "pwd.h"
 #endif
 #ifdef WIN_VERSION

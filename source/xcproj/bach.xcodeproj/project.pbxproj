@@ -13,6 +13,8 @@
 			buildPhases = (
 			);
 			dependencies = (
+				0038AFA8280597D30012316C /* PBXTargetDependency */,
+				0038AFA6280597CF0012316C /* PBXTargetDependency */,
 				916336331CBB745B00A77708 /* PBXTargetDependency */,
 				916336351CBB745B00A77708 /* PBXTargetDependency */,
 				916336371CBB745B00A77708 /* PBXTargetDependency */,
@@ -212,6 +214,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0038AF882805934E0012316C /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
+		0038AF892805934E0012316C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
+		0038AF922805970F0012316C /* bell.in.c in Sources */ = {isa = PBXBuildFile; fileRef = 0038AF7F2805931C0012316C /* bell.in.c */; };
+		0038AF9C280597160012316C /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
+		0038AF9D280597160012316C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
+		0038AFA4280597B70012316C /* bell.out.c in Sources */ = {isa = PBXBuildFile; fileRef = 0038AF91280596FC0012316C /* bell.out.c */; };
 		1E1BD664223EA95F0000A1DF /* cursor_changevelocity.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */; };
 		1E53253D20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
 		1E53253E20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
@@ -905,6 +913,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0038AF822805934E0012316C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 918129441611AEA700473F86;
+			remoteInfo = lib_bach;
+		};
+		0038AF95280597160012316C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 918129441611AEA700473F86;
+			remoteInfo = lib_bach;
+		};
+		0038AFA5280597CF0012316C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038AF802805934E0012316C;
+			remoteInfo = bach.bell.in;
+		};
+		0038AFA7280597D30012316C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0038AF93280597160012316C;
+			remoteInfo = bach.bell.out;
+		};
 		1E5F4386152612740085FA87 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -2798,6 +2834,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0038AF7F2805931C0012316C /* bell.in.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bell.in.c; sourceTree = "<group>"; };
+		0038AF8E2805934E0012316C /* bach.bell.in.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.bell.in.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		0038AF91280596FC0012316C /* bell.out.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bell.out.c; sourceTree = "<group>"; };
+		0038AFA2280597160012316C /* bach.bell.out.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.bell.out.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		00812FAD27C8B9B400521C7D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_changevelocity.png; sourceTree = "<group>"; };
 		1E3B57CB15ACECA900B32D1F /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
@@ -3641,6 +3681,24 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0038AF872805934E0012316C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0038AF882805934E0012316C /* lib_bach.a in Frameworks */,
+				0038AF892805934E0012316C /* CoreServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038AF9B280597160012316C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0038AF9C280597160012316C /* lib_bach.a in Frameworks */,
+				0038AF9D280597160012316C /* CoreServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1E5F435E1526109A0085FA87 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5030,6 +5088,8 @@
 				91F58B2F1FC6E698008156B7 /* bach.textin.mxo */,
 				1E784F9D20274BC400F11D75 /* bach.recurser.mxo */,
 				914A85432502A59D007975FC /* bach.mxo */,
+				0038AF8E2805934E0012316C /* bach.bell.in.mxo */,
+				0038AFA2280597160012316C /* bach.bell.out.mxo */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5536,6 +5596,8 @@
 		9157F58B232F6A3200A4ADAB /* eval */ = {
 			isa = PBXGroup;
 			children = (
+				0038AF7F2805931C0012316C /* bell.in.c */,
+				0038AF91280596FC0012316C /* bell.out.c */,
 				911B65D220684BAA00464E16 /* eval.c */,
 			);
 			path = eval;
@@ -6159,6 +6221,20 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		0038AF832805934E0012316C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038AF96280597160012316C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1E5F43511526109A0085FA87 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -7307,6 +7383,46 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
+		0038AF802805934E0012316C /* bach.bell.in */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038AF8B2805934E0012316C /* Build configuration list for PBXNativeTarget "bach.bell.in" */;
+			buildPhases = (
+				0038AF832805934E0012316C /* Headers */,
+				0038AF842805934E0012316C /* Resources */,
+				0038AF852805934E0012316C /* Sources */,
+				0038AF872805934E0012316C /* Frameworks */,
+				0038AF8A2805934E0012316C /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038AF812805934E0012316C /* PBXTargetDependency */,
+			);
+			name = bach.bell.in;
+			productName = iterator;
+			productReference = 0038AF8E2805934E0012316C /* bach.bell.in.mxo */;
+			productType = "com.apple.product-type.bundle";
+		};
+		0038AF93280597160012316C /* bach.bell.out */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0038AF9F280597160012316C /* Build configuration list for PBXNativeTarget "bach.bell.out" */;
+			buildPhases = (
+				0038AF96280597160012316C /* Headers */,
+				0038AF97280597160012316C /* Resources */,
+				0038AF98280597160012316C /* Sources */,
+				0038AF9B280597160012316C /* Frameworks */,
+				0038AF9E280597160012316C /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0038AF94280597160012316C /* PBXTargetDependency */,
+			);
+			name = bach.bell.out;
+			productName = iterator;
+			productReference = 0038AFA2280597160012316C /* bach.bell.out.mxo */;
+			productType = "com.apple.product-type.bundle";
+		};
 		1E5F43501526109A0085FA87 /* bach.omtree2bachtree */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1E5F43621526109A0085FA87 /* Build configuration list for PBXNativeTarget "bach.omtree2bachtree" */;
@@ -10040,6 +10156,8 @@
 				1E5F43E91526150E0085FA87 /* bach.bachtree2omtree */,
 				91C9725312722FF6008F76B6 /* bach.beatbox */,
 				91E8F4AC1275C6C2007E7A0A /* bach.beatunbox */,
+				0038AF802805934E0012316C /* bach.bell.in */,
+				0038AF93280597160012316C /* bach.bell.out */,
 				913F87801C20B59000C9CAE0 /* bach.clanger */,
 				911289EC17E08EDC008381E3 /* bach.cartesianprod */,
 				91DA80E0131B34CD00FCB316 /* bach.circle */,
@@ -10178,6 +10296,20 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0038AF842805934E0012316C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038AF97280597160012316C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1E5F435B1526109A0085FA87 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -11182,6 +11314,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXRezBuildPhase section */
+		0038AF8A2805934E0012316C /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038AF9E280597160012316C /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1E5F43611526109A0085FA87 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
@@ -12116,6 +12262,22 @@
 /* End PBXRezBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0038AF852805934E0012316C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0038AF922805970F0012316C /* bell.in.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0038AF98280597160012316C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0038AFA4280597B70012316C /* bell.out.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1E5F435C1526109A0085FA87 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -13303,6 +13465,26 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0038AF812805934E0012316C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 918129441611AEA700473F86 /* lib_bach */;
+			targetProxy = 0038AF822805934E0012316C /* PBXContainerItemProxy */;
+		};
+		0038AF94280597160012316C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 918129441611AEA700473F86 /* lib_bach */;
+			targetProxy = 0038AF95280597160012316C /* PBXContainerItemProxy */;
+		};
+		0038AFA6280597CF0012316C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038AF802805934E0012316C /* bach.bell.in */;
+			targetProxy = 0038AFA5280597CF0012316C /* PBXContainerItemProxy */;
+		};
+		0038AFA8280597D30012316C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0038AF93280597160012316C /* bach.bell.out */;
+			targetProxy = 0038AFA7280597D30012316C /* PBXContainerItemProxy */;
+		};
 		1E5F4387152612740085FA87 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1E5F43501526109A0085FA87 /* bach.omtree2bachtree */;
@@ -14656,6 +14838,76 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0038AF8C2805934E0012316C /* Development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Library/Frameworks,
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		0038AF8D2805934E0012316C /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Library/Frameworks,
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
+		0038AFA0280597160012316C /* Development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Library/Frameworks,
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		0038AFA1280597160012316C /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Library/Frameworks,
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
 		1E5F43631526109A0085FA87 /* Development */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
@@ -19742,6 +19994,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0038AF8B2805934E0012316C /* Build configuration list for PBXNativeTarget "bach.bell.in" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038AF8C2805934E0012316C /* Development */,
+				0038AF8D2805934E0012316C /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		0038AF9F280597160012316C /* Build configuration list for PBXNativeTarget "bach.bell.out" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0038AFA0280597160012316C /* Development */,
+				0038AFA1280597160012316C /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
 		1E5F43621526109A0085FA87 /* Build configuration list for PBXNativeTarget "bach.omtree2bachtree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

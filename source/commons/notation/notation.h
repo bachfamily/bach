@@ -539,6 +539,8 @@
 
 #define CONST_NUM_PART_COLORS 4         ///< Number of part colors (which will be looped as candycane)
 
+#define CONST_GRAPHICS_COLOR_SATURATION_FACTOR   0.5  ///< Saturation factor for double to color conversions
+
 #define CONST_MARKERS_ON_FIRST_MEASURE_CHORDS false             ///< Markers at the beginning of the measure are placed on barlines instead that on starting chords?
 
 /** \addtogroup dynamics
@@ -4354,7 +4356,7 @@ typedef struct _notation_obj
     char        keep_selection_if_lost_focus;        ///< Flag telling if we want to keep the current selection when the UI notation object loses the focus (by default: yes)
     char        legend;                                ///< Flag specifying which kind of legend we want to have.
                                                     ///< 0 = No legend at all; 1 = Only the upper legend when an element is selected; 2 = Also the mouse hovering legend, bottom right.
-    e_show_stems_preferences        show_stems;                            ///< Flag telling if we want to show the chord stems
+    char        show_stems;                            ///< Flag telling if we want to show the chord stems
     char        show_auxiliary_stems;                ///< Flag telling if we want to show the chord auxiliary stems. Auxiliary stems are the secondary stems linking notes 
                                                     ///< which are not reachable by the main stem (e.g. dense chords with a lot of unisons...)
     char        allow_glissandi;                    ///< Flag telling if we allot the duration lines to bend, and breakpoints to be added and shown, in order to have glissandi
@@ -4649,7 +4651,9 @@ typedef struct _notation_obj
     char        show_time_signatures;                    ///< Flag telline if we want to show the time signatures (0 = hide, 1 = classically, 2 = above staff)
     double      big_time_signatures_ratio;              ///< Expansion ratio for big time signatures
     long        measure_number_offset;                    ///< Offset for the measure numbering (by default: 0)
-    e_show_accidentals_preferences   show_accidentals_preferences;            ///< Preferences for accidental handling. When do we want to show the accidentals.
+    
+// changed from e_show_accidentals_preferences to char to avoid VC++ complaints
+    char        show_accidentals_preferences;            ///< Preferences for accidental handling. When do we want to show the accidentals.
     e_show_accidentals_tie_preferences        show_accidentals_tie_preferences;        ///< Flag telling when we want to show accidentals at the end of a tie.
     char        cautionary_accidentals;                    ///< Flag telling when we want to show the cautionary accidentals.
                                                         ///< 0 = Never, 1 = Only for notes on the same staff position and in the same octave, 2 = Also for all the octaves 
@@ -4934,7 +4938,8 @@ typedef struct _notation_obj
     t_jsurface        *clef_gradient_surface;                ///< Surface to paint a gradient near the clefs for letting notation elements fade slowly 
     
     // lambda communication for custom spacing
-    e_custom_spacing_mode        lambda_spacing;    ///< Spacing is delegated to lambda functions, if active
+    // changed to char to avoid complaints from vc++
+    char        lambda_spacing;    ///< Spacing is delegated to lambda functions, if active
     double                      lambda_val;        ///< Field containing the return value for spacing
     
     long            tempo_approx_digits;        ///< Number of digits for tempo approximation
@@ -12803,7 +12808,7 @@ double tail_get_alignment_ux(t_notation_obj *r_ob, t_note *note);
 t_note *chord_get_longest_note(t_notation_obj *r_ob, t_chord *chord);
 
 
-/** Obtain the onset of a chord in milliseconds.
+/** Calculate the onset of a chord in milliseconds roughly. Use notation_item_get_onset_ms_accurate() for accurate computation.
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    chord        The chord
@@ -12821,7 +12826,6 @@ double chord_get_onset_ms(t_chord *chord);
     @remark                This is also stored in the t_tempo::onset field.
  */
 double get_tempo_onset_ms(t_tempo *tempo);
-
 
 /** Obtain the global onset of a chord in milliseconds, as a rational number (in bach.score).
     @ingroup            notation_data
@@ -14267,11 +14271,12 @@ double get_max_rhythm_length(t_llll *chords_in_gathered_syntax);
 
 /** Obtain the maximum duration of all the notes of a chord, in milliseconds.
     @ingroup notation
-    @param    r_ob        The notation object
-    @param    chord        The chord
+    @param  r_ob             The notation object
+    @param  chord           The chord
+    @param  accurate     Accurate processing
     @return                The duration of the longest note of the chord, in milliseconds
 */
-double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord, bool accurate = false);
 
 
 /** Obtain the maximum velocity of all the notes of a chord.

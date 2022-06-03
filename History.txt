@@ -14,6 +14,7 @@ TO BE CATEGORIZED:
 - bach.roll, bach.score:
 	New "setdurationline" message setting the duration line from a list of pitch breakpoints
 	Now "setcursor" then "play" will work even if the cursor is not shown.
+    "playselection" is now deprecated in favor of "play selection"
 	
 
 
@@ -52,6 +53,8 @@ v0.8.2b
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
         New "importdivisions" message attribute, overriding "markdivisions"
         Fixed bug potentially producing negative durations. This has entailed removing a 1ms reduction to all durations.
+        Fixed bug potentially crashing Max with invalid MIDI files.
+        Now files with a larger track chunk count than actually existing are imported (with a warning).
     New group display mode (@showgroups) as BEAMINGS ---> this has become the default
 	If you wanted to keep the old modes as default, change the attribute explicitly  
     New "dump selection ..." message for bach.roll to only output parameters for selected content.
@@ -101,6 +104,7 @@ multiple objects: 	fixed missing lines in help files and references
     fixed bug in local variable scoping causing random crashes and data corruption
     arithmser: fixed bug potentially causing the series to be one element shorter if step was not given and start and/or end were floats
     insert: fixed behaviour with "multi" attribute
+    new { } syntax for creating functions that wrap Max objects
 
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor
@@ -149,6 +153,7 @@ multiple objects: 	fixed missing lines in help files and references
     fixed bug causing stafflines attribute not to be saved sometimes
     improved display of auxiliary stems
     New "dltoslot" message to copy pitch and velocity envelopes to slots
+    Fixed bug causing loss of slots and other data upon "paste @repeat N"
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported

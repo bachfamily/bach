@@ -93,7 +93,13 @@ protected:
     void setArgument(const char *name, t_llll* def, t_codableobj *obj = nullptr);
     void setArgument(const char *name, t_symbol* def, t_codableobj *obj = nullptr);
     void setArgument(const char *name, astConst *node);
-    void setArgument(const char *name) { setArgument(name, (astConst *) 0); };
+    void setArgument(const char *name) { setArgument(name, (astConst *) 0); }
+        
+    void setArgumentAfterEllipsis(const char *name, long def, t_codableobj *obj = nullptr);
+    void setArgumentAfterEllipsis(const char *name, t_llll* def, t_codableobj *obj = nullptr);
+    void setArgumentAfterEllipsis(const char *name, t_symbol* def, t_codableobj *obj =nullptr);
+    void setArgumentAfterEllipsis(const char *name, astConst *node);
+    void setArgumentAfterEllipsis(const char *name) { setArgumentAfterEllipsis(name, (astConst *) 0); }
     
 public:
     virtual t_llll* call(const t_execEnv &context) = 0;
@@ -195,6 +201,7 @@ private:
     long inlet;
     pvMap *name2astVars;
     std::unordered_set<t_globalVariable*> *globalVars;
+    std::unordered_set<t_function*> *functions;
     t_codableobj *owner;
     
     void removePatcherVars();
@@ -207,6 +214,7 @@ public:
                    countedList<t_localVar> *localVariablesList,
                    std::unordered_set<t_globalVariable*> *globalVariables,
                    pvMap *name2astVars,
+                   std::unordered_set<t_function*> *funcs,
                    t_codableobj *caller);
     
     virtual t_llll* call(t_execEnv const &context);
@@ -235,6 +243,27 @@ public:
     }
 };
 
+class t_maxFunction : public t_function
+{
+private:
+    t_object* patcher;
+    t_object* engine_box;
+    t_object* engine;
+    t_object* in_box;
+    t_object* in_obj;
+    t_object* out_box;
+    t_object* out_obj;
+    long nInlets;
+    long nOutlets;
+    std::string objText;
+    
+protected:
+    virtual ~t_maxFunction();
+    
+public:
+    t_maxFunction(std::string text);
+    virtual t_llll* call(t_execEnv const &context);
+};
 
 
 class astFunctionCall : public astNode

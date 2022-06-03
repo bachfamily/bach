@@ -24,27 +24,27 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141_xp</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141_xp</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141_xp</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141_xp</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -55,25 +55,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
     <Import Project="..\bach_extern_common.props" />
-    <Import Project="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\max_extern_x86.props" />
+
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
     <Import Project="..\bach_extern_common.props" />
-    <Import Project="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\max_extern_x86.props" />
+
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
     <Import Project="..\bach_extern_common.props" />
-    <Import Project="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\max_extern_x64.props" />
+
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
     <Import Project="..\bach_extern_common.props" />
-    <Import Project="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\max_extern_x64.props" />
+
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -83,44 +83,44 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.mxe</TargetExt>
     <OutDir>..\..\..\externals</OutDir>
-    <IntDir>..\vs_stuff\ext_temp\</IntDir>
+    <IntDir>..\vs_stuff\ext_temp\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>..\..\commons;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\commons;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.mxe64</TargetExt>
     <OutDir>..\..\..\externals</OutDir>
-    <IntDir>..\vs_stuff\ext_temp\</IntDir>
+    <IntDir>..\vs_stuff\ext_temp\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>..\..\commons;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes\x64;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes\x64;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\commons;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.mxe</TargetExt>
     <OutDir>..\..\..\externals</OutDir>
-    <IntDir>..\vs_stuff\ext_temp\</IntDir>
+    <IntDir>..\vs_stuff\ext_temp\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>..\..\commons;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\commons;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.mxe64</TargetExt>
     <OutDir>..\..\..\externals</OutDir>
-    <IntDir>..\vs_stuff\ext_temp\</IntDir>
+    <IntDir>..\vs_stuff\ext_temp\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>..\..\commons;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\commons;$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes\x64;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN_VERSION;WIN32;_DEBUG;_WINDOWS;_USRDLL;WIN_EXT_VERSION;BACH_MAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling />
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -158,9 +158,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN_VERSION;WIN32;_DEBUG;_WINDOWS;_USRDLL;WIN_EXT_VERSION;BACH_MAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling />
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -203,7 +203,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN_VERSION;WIN32;NDEBUG;_WINDOWS;_USRDLL;WIN_EXT_VERSION;BACH_MAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling />
@@ -249,7 +249,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\msp-includes;..\..\..\..\max-sdk\source\max-sdk-base\c74support\jit-includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN_VERSION;WIN32;NDEBUG;_WINDOWS;_USRDLL;WIN_EXT_VERSION;BACH_MAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling />
@@ -288,8 +288,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\commonsyms.c" />
-    <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\dllmain_win.c" />
+    <ClCompile Include="..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\common\commonsyms.c" />
+    <ClCompile Include="..\..\..\..\max-sdk\source\max-sdk-base\c74support\max-includes\common\dllmain_win.c" />
     <ClCompile Include="..\..\mains\math\resample.c" />
   </ItemGroup>
   <ItemGroup>
