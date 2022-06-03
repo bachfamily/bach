@@ -130,13 +130,10 @@ void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
 
-#ifdef BACH_SLEEP_BEFORE_INIT
-    Sleep(60000);
-#endif
-
     if (gensym("bach")->s_thing) {
-        if (!bach_exists)
+        if (!bach_exists) {
             error("Can't instantiate bach");
+        }
         return;
     }
     
@@ -1269,6 +1266,8 @@ long bach_getbuildnumber(void)
 
 void bach_init_bifs(t_bach *x)
 {
+    cpost("bach : initializing bell built-in functions");
+
     if (x->b_bifTable)
         return;
     auto bifTable = x->b_bifTable = new std::unordered_map<std::string, t_function *>;
