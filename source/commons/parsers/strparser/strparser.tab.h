@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.8.2.  */
+/* A Bison parser, made by GNU Bison 3.7.6.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -97,9 +97,7 @@ typedef union STRPARSER_STYPE STRPARSER_STYPE;
 
 
 
-
 int strparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *depth);
-
 /* "%code provides" blocks.  */
 #line 26 "strparser.y"
 
@@ -111,6 +109,6 @@ int strparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *dept
   // Declare the scanner.
   YY_DECL;
 
-#line 115 "strparser.tab.h"
+#line 113 "strparser.tab.h"
 
 #endif /* !YY_STRPARSER_STRPARSER_TAB_H_INCLUDED  */
