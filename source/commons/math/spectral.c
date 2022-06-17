@@ -72,7 +72,9 @@ kiss_fft_scalar get_cpx_phase(kiss_fft_cpx num)
 {
 	kiss_fft_scalar phase;
 	
-	if (num.r > 0)
+    if (num.r == 0)
+        phase = 0;
+	else if (num.r > 0)
 		phase = atan(num.i/num.r);
 	else
 		phase = atan(num.i/num.r) + PI;
