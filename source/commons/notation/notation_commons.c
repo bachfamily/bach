@@ -6969,7 +6969,7 @@ void set_notation_typo_preferences_from_llll(t_notation_obj *r_ob, t_llll *ll)
     t_llll *numberchars_ll = NULL, /* *noteheadchars_ll = NULL, */ *restchars_ll = NULL, *clefchars_ll = NULL, /* *noteheadwidths_ll = NULL, */
     *flagchars_ll = NULL, *flagwidths_ll = NULL, *flagyshifts_ll = NULL, *flagnoteheadalignments_ll = NULL;
     
-    llll_parseargs((t_object *)r_ob, ll, "dddddddddddddllllll" /*"dddddddddddddddddllllllll" */,
+    llll_parseargs((t_object *)r_ob, ll, "dddddddddddddlllllll" /*"dddddddddddddddddllllllll" */,
                    gensym("basept"), &r_ob->notation_typo_preferences.base_pt,
                    gensym("timesigbasept"), &r_ob->notation_typo_preferences.base_pt_ts,
                    gensym("timesigyshift"), &r_ob->notation_typo_preferences.ts_uy_shift,
@@ -35844,7 +35844,7 @@ void add_custom_articulation_from_llllelem(t_object *x, t_articulations_typo_pre
         t_articulation_preferences *artpr = &atp->artpref[a];
         
         erase_articulation_preferences(artpr);
-        llll_parseargs(x, this_llll, "sdiiidddddssldddddlssss",
+        llll_parseargs(x, this_llll, "sduuudddddssldddddlssss",
                        gensym("font"), &artpr->font,
                        gensym("basept"), &artpr->base_pt,
                        gensym("mainchar"), &artpr->main_char,
@@ -39540,7 +39540,7 @@ void notationobj_scroll_from_gimme(t_notation_obj *r_ob, t_symbol *s, long argc,
     t_llll *ll = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     t_symbol *direction = gensym("horizontal");
     t_symbol *unit = gensym("pixel");
-    long delta = 0;
+    t_atom_long delta = 0;
     llll_parseargs_and_attrs_destructive((t_object *) r_ob, ll, "ssi", gensym("direction"), &direction, gensym("unit"), &unit, gensym("delta"), &delta);
     if (ll && ll->l_head) {
         t_llllelem *el = ll->l_head;
@@ -42761,7 +42761,7 @@ void notation_obj_dltoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom 
     if (selectllll && selectllll->l_head) {
         long pitchslotnum = llllelem_to_slotnum(r_ob, selectllll->l_head, true);
         long velocityslotnum = -1;
-        long absolutepitch = 0;
+        t_atom_long absolutepitch = 0;
         llll_parseattrs((t_object *)r_ob, selectllll, 0, "i", gensym("absolutepitch"), &absolutepitch);
         if (selectllll->l_head->l_next)
             velocityslotnum = llllelem_to_slotnum(r_ob, selectllll->l_head->l_next, true);

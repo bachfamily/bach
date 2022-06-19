@@ -951,7 +951,7 @@ void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_chord *chord;
     t_rollvoice *voice;
     
-    long integer_durations = 0; // if integer_durations is on, then durations are integers in milliseconds, and hence not subject to floating point... floating errors behavior! :-)
+    t_atom_long integer_durations = 0; // if integer_durations is on, then durations are integers in milliseconds, and hence not subject to floating point... floating errors behavior! :-)
     llll_parseattrs((t_object *)x, what_to_dump_llll, LLLL_PA_DESTRUCTIVE, "i", gensym("integerdurations"), &integer_durations);
 
     
@@ -1545,7 +1545,7 @@ void roll_delete_selection(t_roll *x, char ripple, t_llll *slots_to_transfer_to_
 void roll_sel_ripple_delete(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *transfer_slots = NULL;
-    char even_if_empty = false;
+    t_atom_long even_if_empty = false;
     t_llll *ll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     llll_parseargs_and_attrs_destructive((t_object *) x, ll, "li", gensym("transferslots"), &transfer_slots, gensym("empty"), &even_if_empty);
     llll_free(ll);
@@ -1557,7 +1557,7 @@ void roll_sel_ripple_delete(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 void roll_sel_delete(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *transfer_slots = NULL;
-    char even_if_empty = false;
+    t_atom_long even_if_empty = false;
     t_llll *ll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     llll_parseargs_and_attrs_destructive((t_object *) x, ll, "li", gensym("transferslots"), &transfer_slots, gensym("empty"), &even_if_empty);
     llll_free(ll);
@@ -1745,7 +1745,7 @@ void roll_resetgraphic(t_roll *x){
 void roll_clearnames(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
-    long voices = 1, chords = 1, notes = 1, markers = 1;
+    t_atom_long voices = 1, chords = 1, notes = 1, markers = 1;
 //    llll_parseargs((t_object *)x, args, "iiiii", _llllobj_sym_markers, &markers, _llllobj_sym_voices, &voices, _llllobj_sym_chords, &chords, _llllobj_sym_notes, &notes);
     voices = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_voices));
     chords = (args && args->l_size == 0 || is_symbol_in_llll_first_level(args, _llllobj_sym_chords));
@@ -3008,8 +3008,8 @@ void roll_poly(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_symbol *droppriority = gensym("closest"), *resumepriority = gensym("closest");
     t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    long max_num_voices = args && args->l_head && is_hatom_number(&args->l_head->l_hatom) ? hatom_getlong(&args->l_head->l_hatom) : 0;
-    long inclusive = 1, voicingslot = 0, resume = 0, resumevoicing = 1, reassign = 0, notify_maxusedvoices = 1, chordwise = 0;
+    t_atom_long max_num_voices = args && args->l_head && is_hatom_number(&args->l_head->l_hatom) ? hatom_getlong(&args->l_head->l_hatom) : 0;
+    t_atom_long inclusive = 1, voicingslot = 0, resume = 0, resumevoicing = 1, reassign = 0, notify_maxusedvoices = 1, chordwise = 0;
     llll_parseargs_and_attrs_destructive((t_object *) x, args, "siiisiiii",
                                          gensym("droppriority"), &droppriority,
                                          gensym("droppriorityinclusive"), &inclusive,
@@ -7853,7 +7853,7 @@ void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     t_symbol *router = NULL;
     t_symbol *sym = NULL;
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    long selection_only = false;
+    t_atom_long selection_only = false;
     if (args && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_selection) {
         selection_only = true;
         llll_behead(args);
@@ -8104,7 +8104,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         
                     } else if (router == gensym("checkdynamics")) {
                         char selection_only = false;
-                        long inconsistent = true, unnecessary = true;
+                        t_atom_long inconsistent = true, unnecessary = true;
                         llll_destroyelem(firstelem);
                         long slot_num = x->r_ob.link_dynamics_to_slot - 1;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
@@ -8120,9 +8120,9 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     } else if (router == gensym("fixdynamics")) {
                         char selection_only = false;
                         llll_destroyelem(firstelem);
-                        long inconsistent = true, unnecessary = true;
+                        t_atom_long inconsistent = true, unnecessary = true;
                         long slot_num = x->r_ob.link_dynamics_to_slot - 1;
-                        long fix_verbose = 0;
+                        t_atom_long fix_verbose = 0;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
                             selection_only = true;
                             llll_behead(inputlist);
@@ -8138,9 +8138,9 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         char selection_only = false;
                         t_llll *mapping_ll = NULL;
                         llll_destroyelem(firstelem);
-                        long slot_num = x->r_ob.link_dynamics_to_slot - 1, bptmode = 1;
+                        t_atom_long slot_num = x->r_ob.link_dynamics_to_slot - 1, bptmode = 1;
                         double a_exp = CONST_DEFAULT_DYNAMICS_TO_VELOCITY_EXPONENT;
-                        long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
+                        t_atom_long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
                             selection_only = true;
                             llll_behead(inputlist);
@@ -8158,9 +8158,9 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         char selection_only = false;
                         t_llll *mapping_ll = NULL;
                         llll_destroyelem(firstelem);
-                        long slot_num = x->r_ob.link_dynamics_to_slot - 1, delete_unnecessary = true;
+                        t_atom_long slot_num = x->r_ob.link_dynamics_to_slot - 1, delete_unnecessary = true;
                         double a_exp = CONST_DEFAULT_DYNAMICS_TO_VELOCITY_EXPONENT, approx_thresh = CONST_DEFAULT_VELOCITIES_TO_DYNAMICS_HAIRPIN_THRESH;
-                        long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
+                        t_atom_long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
                         t_symbol *mindyn = _llllobj_sym_none, *maxdyn = _llllobj_sym_none;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
                             selection_only = true;
@@ -8255,7 +8255,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         
                     } else if (router == _llllobj_sym_addchord || router == _llllobj_sym_gluechord) {
                         t_llllelem *secondelem, *chordinfo; //let's add a chord!
-                        long voicenumber = 0, also_select = 0;
+                        t_atom_long voicenumber = 0, also_select = 0;
                         llll_destroyelem(firstelem);
                         
                         llll_parseattrs((t_object *)x, inputlist, LLLL_PA_DESTRUCTIVE, "i", _llllobj_sym_sel, &also_select);
@@ -19006,7 +19006,7 @@ void roll_paste(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     } else {
         if (clipboard.type == k_SELECTION_CONTENT) {
             if (clipboard.object == k_NOTATION_OBJECT_ROLL && clipboard.gathered_syntax && clipboard.gathered_syntax->l_head) {
-                long how_many_times = 1;
+                t_atom_long how_many_times = 1;
                 llll_parseargs_and_attrs_destructive((t_object *) x, ll, "i", gensym("repeat"), &how_many_times);
                 
                 for (long i = 0; i < how_many_times; i++) {

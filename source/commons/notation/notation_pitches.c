@@ -207,29 +207,29 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
 
 typedef struct _autospell_params
 {
-    char    selection_only;
-    long    verbose;
-    char    voicewise;
+    t_atom_long    selection_only;
+    t_atom_long    verbose;
+    t_atom_long    voicewise;
     
-    long    max_LOF_position; // max position on the line of fifths
-    long    min_LOF_position; // min position on the line of fifths
+    t_atom_long    max_LOF_position; // max position on the line of fifths
+    t_atom_long    min_LOF_position; // min position on the line of fifths
     
     t_symbol    *algorithm; // either "default" or "chewandchen"
     
-    char    ignore_locked_notes;
+    t_atom_long    ignore_locked_notes;
     
     // PARAMETERS FOR DEFAULT ALGORITHM
     double  lineoffifth_bias;       // Bias for the line of fifths
     t_lexpr *stdev_thresh;          // Equation for the acceptance threshold for the standard deviation of the positions on the line of fifth (may depend on numnotes and note extension)
-    char    discard_altered_repetitions; // discard altered repetitions such as Eb E or F# F
+    t_atom_long    discard_altered_repetitions; // discard altered repetitions such as Eb E or F# F
     
     // PARAMETERS FOR CHEW AND CHEN ALGORITHM
     double  chunk_size_ms;
     double  spiral_r;
     double  spiral_h;
     
-    long    w_sliding;          /// NUmber of chunks in sliding window
-    long    w_selfreferential;  /// Number of chunks in selfreferential window
+    t_atom_long    w_sliding;          /// NUmber of chunks in sliding window
+    t_atom_long    w_selfreferential;  /// Number of chunks in selfreferential window
     double  f;                  ///< f parameter (see paper)
     
     
@@ -1633,12 +1633,30 @@ long llll_to_pos_helper(t_llll *ll)
 void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
 {
 
-    long maxsharps = -1, minflats = -1;
+    t_atom_long maxsharps = -1, minflats = -1;
     t_llll *maxpitch = NULL, *minpitch = NULL;
     t_llll *stdev_thresh_ll = NULL;
     t_autospell_params par = notationobj_autospell_get_default_params(r_ob);
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisdilllii", gensym("selection"), &par.selection_only, gensym("sliding"), &par.w_sliding, gensym("selfreferential"), &par.w_selfreferential, gensym("locality"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &minflats, gensym("maxsharps"), &maxsharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("bias"), &par.lineoffifth_bias, gensym("voicewise"), &par.voicewise, gensym("sharpest"), &maxpitch, gensym("flattest"), &minpitch, gensym("stdevthresh"), &stdev_thresh_ll, gensym("discardalteredrepetitions"), &par.discard_altered_repetitions, gensym("ignorelocked"), &par.ignore_locked_notes);
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisdilllii",
+                                         gensym("selection"), &par.selection_only,
+                                         gensym("sliding"), &par.w_sliding,
+                                         gensym("selfreferential"), &par.w_selfreferential,
+                                         gensym("locality"), &par.f,
+                                         gensym("winsize"), &par.chunk_size_ms,
+                                         gensym("spiralr"), &par.spiral_r,
+                                         gensym("spiralh"), &par.spiral_h,
+                                         gensym("maxflats"), &minflats,
+                                         gensym("maxsharps"), &maxsharps,
+                                         gensym("verbose"), &par.verbose,
+                                         gensym("algorithm"), &par.algorithm,
+                                         gensym("bias"), &par.lineoffifth_bias,
+                                         gensym("voicewise"), &par.voicewise,
+                                         gensym("sharpest"), &maxpitch,
+                                         gensym("flattest"), &minpitch,
+                                         gensym("stdevthresh"), &stdev_thresh_ll,
+                                         gensym("discardalteredrepetitions"), &par.discard_altered_repetitions,
+                                         gensym("ignorelocked"), &par.ignore_locked_notes);
     
     
     if (stdev_thresh_ll) {

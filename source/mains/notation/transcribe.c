@@ -602,8 +602,8 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
             } else if (args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_slot && args->l_head->l_next) {
                 // Inserting a temporal slot item
                 t_symbol *temporalmode = _llllobj_sym_milliseconds;
-                long voice = 0, interp = 0, prepad = 0;
-                llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE, "iiii", _llllobj_sym_temporalmode, &temporalmode, _llllobj_sym_voice, &voice, _llllobj_sym_interp, &interp, _llllobj_sym_prepad, &prepad);
+                t_atom_long voice = 0, interp = 0, prepad = 0;
+                llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE, "siii", _llllobj_sym_temporalmode, &temporalmode, _llllobj_sym_voice, &voice, _llllobj_sym_interp, &interp, _llllobj_sym_prepad, &prepad);
                 
                 if (temporalmode == _llllobj_sym_milliseconds) {
                     

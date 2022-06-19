@@ -87,7 +87,7 @@ typedef struct _goto_params
     t_symbol    *command;                           ///< Symbolic command
 
 // With any command:
-    long        repeat;                             ///< Repeat command N times
+    t_atom_long        repeat;                             ///< Repeat command N times
     
     char        allowed_types[k_NUM_ELEMENT_TYPES]; ///< For each of the e_element_types we say if we consider it or not; All 0's means "the same"
     long        num_allowed_types;                  ///< Number of allowed types
@@ -96,25 +96,25 @@ typedef struct _goto_params
     
     t_lexpr     *where;         ///< Subselecting according to this condition
     t_lexpr     *until;         ///< Repeating the same command until this condition is met
-    long        untilmode;      ///< Is 'until' clause applied to all new selection or at least one element? One of the e_goto_untilmode
+    t_atom_long        untilmode;      ///< Is 'until' clause applied to all new selection or at least one element? One of the e_goto_untilmode
     
-    long        nullmode;       ///< If non-zero, notifies the null
-    long        polymode;      ///< one of the e_goto_polymode, handling the keeping of selection across polyphony (doesn't work with up/down/left/right)
-    long        force_inscreen;      ///< Also force new selected items to be in screen
-    long        tiemode;        ///< one of the e_goto_tiemode handling tie sequences
-    long        skiprests;      ///< Skip or ignore rests (don't select them)
-    long        graces_have_duration;      ///< Grace notes have durations
-    long        nudge_back_for_graces;  ///< Nudge back go-to timepoint syntax for graces
-    long        markershavevoices;      ///< Measure-attached markers undergo the same voice sieving behaviors as chords depending on voicemodes, etc.
+    t_atom_long        nullmode;       ///< If non-zero, notifies the null
+    t_atom_long        polymode;      ///< one of the e_goto_polymode, handling the keeping of selection across polyphony (doesn't work with up/down/left/right)
+    t_atom_long        force_inscreen;      ///< Also force new selected items to be in screen
+    t_atom_long        tiemode;        ///< one of the e_goto_tiemode handling tie sequences
+    t_atom_long        skiprests;      ///< Skip or ignore rests (don't select them)
+    t_atom_long        graces_have_duration;      ///< Grace notes have durations
+    t_atom_long        nudge_back_for_graces;  ///< Nudge back go-to timepoint syntax for graces
+    t_atom_long        markershavevoices;      ///< Measure-attached markers undergo the same voice sieving behaviors as chords depending on voicemodes, etc.
     
 // With the "next/prev" commands
-    long        voicemode;      ///< Mode of operation, one of the e_goto_voicemode
-    long        strictcmp;      ///< If nonzero, comparisons for next and prev are < and >, instead of <= and >=
-    long        from;           ///< one of the e_goto_onsetpoints handling onset points: start searching "next/prev" element from the last head/tail
-    long        to;             ///< one of the e_goto_onsetpoints handling onset points: stop searching "next/prev" element once you reach a head/tail
+    t_atom_long        voicemode;      ///< Mode of operation, one of the e_goto_voicemode
+    t_atom_long        strictcmp;      ///< If nonzero, comparisons for next and prev are < and >, instead of <= and >=
+    t_atom_long        from;           ///< one of the e_goto_onsetpoints handling onset points: start searching "next/prev" element from the last head/tail
+    t_atom_long        to;             ///< one of the e_goto_onsetpoints handling onset points: stop searching "next/prev" element once you reach a head/tail
 
 // With the "time" command:
-    long        matchinclude;       ///< Used with the "time" command:
+    t_atom_long        matchinclude;       ///< Used with the "time" command:
                                     ///< A combination of the e_goto_onsetpoints, determining whether head/tails should be included in the time matching search
 
     

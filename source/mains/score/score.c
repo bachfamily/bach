@@ -996,7 +996,7 @@ void score_setcursor(t_score *x, t_symbol *s, long argc, t_atom *argv){
         unlock_general_mutex((t_notation_obj *)x);
     } else {
         // measure point in measure, voice
-        long accurate = 0, nudgeforgrace = -1, zeropimisfirstchord = 0, flags = k_PARSETIMEPOINT_FLAG_NONE;
+        t_atom_long accurate = 0, nudgeforgrace = -1, zeropimisfirstchord = 0, flags = k_PARSETIMEPOINT_FLAG_NONE;
         llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE, "iii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace, gensym("zeropimchord"), &zeropimisfirstchord);
         
         if (accurate)
@@ -1094,7 +1094,7 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
     char need_check_scheduling = false;
     
     t_llll *transfer_slots = NULL;
-    long even_if_empty = false, even_to_rests = false;
+    t_atom_long even_if_empty = false, even_to_rests = false;
     t_llll *ll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     llll_parseargs_and_attrs((t_object *) x, ll, "lii", gensym("transferslots"), &transfer_slots, gensym("empty"), &even_if_empty, gensym("torests"), &even_to_rests);
     llll_free(ll);
@@ -1350,7 +1350,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *selectllll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE); // We clone it: we operate destructively
 
     t_symbol *tiemode = _llllobj_sym_each, *restseqmode = _llllobj_sym_each;
-    long skiprests = 0;
+    t_atom_long skiprests = 0;
     llll_parseargs_and_attrs_destructive((t_object *) x, selectllll, "ssi", gensym("tiemode"), &tiemode, gensym("restseqmode"), &restseqmode, gensym("skiprests"), &skiprests);
 
     if (selectllll) { 
@@ -1920,7 +1920,7 @@ void score_sel_change_symduration(t_score *x, t_symbol *s, long argc, t_atom *ar
     t_lexpr *lexpr = NULL;
     t_llll *new_durations = NULL;
     char changed = 0;
-    long autocomplete = x->r_ob.auto_complete_measures, autoadapt = 0, autoadapt_scope = 1, autoadapt_simplify = 1, autobeam = 1, autorhythm = 1, global = 0;
+    t_atom_long autocomplete = x->r_ob.auto_complete_measures, autoadapt = 0, autoadapt_scope = 1, autoadapt_simplify = 1, autobeam = 1, autorhythm = 1, global = 0;
     long flags = k_BEAMING_CALCULATION_DO;
     char lambda = (s == _llllobj_sym_lambda);
     t_notation_item *curr_it;
@@ -3857,9 +3857,6 @@ void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
     char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     long preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
 
-    /*    t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-     llll_parseargs_and_attrs((t_object *) x, args, "ii", gensym("offline"), &offline, gensym("accurate"), &accurate);
-     llll_free(args); */
 
     if (offline) {
         if (bach_atomic_trylock(&x->r_ob.c_atomic_lock_play)) {
@@ -8723,7 +8720,7 @@ void score_getpixelpos(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     input_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
     
-    long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
+    t_atom_long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
     llll_parseattrs((t_object *)x, input_llll, LLLL_PA_DESTRUCTIVE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
 
     label = get_querying_label_from_querying_llll((t_notation_obj *) x, input_llll, true);
@@ -8767,7 +8764,7 @@ void score_timetopixel(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     input_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
     
-    long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
+    t_atom_long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
     llll_parseattrs((t_object *)x, input_llll, LLLL_PA_DESTRUCTIVE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
     
     label = get_querying_label_from_querying_llll((t_notation_obj *) x, input_llll, true);
@@ -8810,7 +8807,7 @@ void score_timepoint(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     input_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
 
-    long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
+    t_atom_long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
     llll_parseattrs((t_object *)x, input_llll, LLLL_PA_DESTRUCTIVE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
 
     label = get_querying_label_from_querying_llll((t_notation_obj *) x, input_llll, true);
@@ -9068,7 +9065,7 @@ void score_domain(t_score *x, t_symbol *s, long argc, t_atom *argv){
 void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
     t_symbol *router = NULL;
     t_symbol *sym = NULL;
-    bool selection_only = false;
+    t_atom_long selection_only = false;
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     
     if (args && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_selection) {
@@ -9268,7 +9265,7 @@ void score2roll(t_score *x, char markmeasures, char marktimesig, char marktempi,
 void score_score2roll(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    long markmeasures = false, marktimesig = false, marktempi = false, markdivisions = false;
+    t_atom_long markmeasures = false, marktimesig = false, marktempi = false, markdivisions = false;
     llll_parseargs_and_attrs((t_object *) x, args, "iiii",
                    gensym("markmeasures"), &markmeasures,
                    gensym("marktimesigs"), &marktimesig,
@@ -9535,7 +9532,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
 
                     } else if (router == gensym("checkdynamics")) {
                         char selection_only = false;
-                        long inconsistent = true, unnecessary = true;
+                        t_atom_long inconsistent = true, unnecessary = true;
                         llll_destroyelem(firstelem);
                         long slot_num = x->r_ob.link_dynamics_to_slot - 1;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
@@ -9551,9 +9548,9 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                     } else if (router == gensym("fixdynamics")) {
                         char selection_only = false;
                         llll_destroyelem(firstelem);
-                        long inconsistent = true, unnecessary = true;
+                        t_atom_long inconsistent = true, unnecessary = true;
                         long slot_num = x->r_ob.link_dynamics_to_slot - 1;
-                        long fix_verbose = 0;
+                        t_atom_long fix_verbose = 0;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
                             selection_only = true;
                             llll_behead(inputlist);
@@ -9568,9 +9565,9 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         char selection_only = false;
                         t_llll *mapping_ll = NULL;
                         llll_destroyelem(firstelem);
-                        long slot_num = x->r_ob.link_dynamics_to_slot - 1, bptmode = 1;
+                        t_atom_long slot_num = x->r_ob.link_dynamics_to_slot - 1, bptmode = 1;
                         double a_exp = CONST_DEFAULT_DYNAMICS_TO_VELOCITY_EXPONENT;
-                        long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
+                        t_atom_long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
                             selection_only = true;
                             llll_behead(inputlist);
@@ -9588,9 +9585,9 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         char selection_only = false;
                         t_llll *mapping_ll = NULL;
                         llll_destroyelem(firstelem);
-                        long slot_num = x->r_ob.link_dynamics_to_slot - 1, delete_unnecessary = true;
+                        t_atom_long slot_num = x->r_ob.link_dynamics_to_slot - 1, delete_unnecessary = true;
                         double a_exp = CONST_DEFAULT_DYNAMICS_TO_VELOCITY_EXPONENT, approx_thresh = CONST_DEFAULT_VELOCITIES_TO_DYNAMICS_HAIRPIN_THRESH;
-                        long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
+                        t_atom_long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
                         t_symbol *mindyn = _llllobj_sym_none, *maxdyn = _llllobj_sym_none;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
                             selection_only = true;
@@ -9625,7 +9622,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         recompute_all_and_redraw(x);
                         
                     } else if (firstelem->l_next && router == _llllobj_sym_interp) {
-                        long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
+                        t_atom_long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
                         llll_parseattrs((t_object *)x, inputlist, LLLL_PA_NONE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
                         if (accurate)
                             flags |= k_PARSETIMEPOINT_FLAG_ACCURATE;
@@ -9664,7 +9661,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             t_llll *params = hatom_getllll(&firstelem->l_next->l_hatom);
                             t_llll *content = hatom_getllll(&firstelem->l_next->l_next->l_hatom);
                             
-                            long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
+                            t_atom_long accurate = 0, nudgeforgrace = -1, flags = k_PARSETIMEPOINT_FLAG_NONE;
                             llll_parseattrs((t_object *)x, inputlist, LLLL_PA_NONE, "ii", gensym("accurate"), &accurate, gensym("nudgeforgrace"), &nudgeforgrace);
                             if (accurate)
                                 flags |= k_PARSETIMEPOINT_FLAG_ACCURATE;
@@ -18179,8 +18176,8 @@ void score_paste(t_score *x, t_symbol *s, long argc, t_atom *argv){
                                     (ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_SYM &&
                                      hatom_getsym(&ll->l_head->l_next->l_hatom) == _llllobj_sym_active ? x->r_ob.active_slot_num : -1));
     } else if (clipboard.type == k_GATHERED_SYNTAX) {
-        long tempi = 0, how_many_times = 1, ignore_copied_voice_offset = false;
-        llll_parseargs_and_attrs_destructive((t_object *) x, ll, "iii", gensym("tempi"), &tempi, gensym("repeat"), &how_many_times);
+        t_atom_long tempi = 0, how_many_times = 1, ignore_copied_voice_offset = false;
+        llll_parseargs_and_attrs_destructive((t_object *) x, ll, "ii", gensym("tempi"), &tempi, gensym("repeat"), &how_many_times);
         if (argc && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("replace")) { // paste replace
             if (x->r_ob.selection_type == k_MEASURE)
                 score_paste_replace_measures(x, tempi);
@@ -18394,9 +18391,9 @@ t_llll *t2g_get_notes_to_process(t_notation_obj *r_ob, t_chord *ch, char nontriv
 void score_tail_to_grace(t_score *x, t_llll *args)
 {
     t_rational symduration = genrat(1, 8);
-    long nontrivial = true, noncontinuous = false;
+    t_atom_long nontrivial = true, noncontinuous = false;
     double thresh = 1;
-    llll_parseargs_and_attrs((t_object *)x, args, "riii", gensym("symduration"), &symduration, gensym("nontrivial"), &nontrivial, gensym("noncontinuous"), &noncontinuous, gensym("noncontinuousthresh"), &thresh);
+    llll_parseargs_and_attrs((t_object *)x, args, "riid", gensym("symduration"), &symduration, gensym("nontrivial"), &nontrivial, gensym("noncontinuous"), &noncontinuous, gensym("noncontinuousthresh"), &thresh);
 
     create_whole_score_undo_tick(x);
 

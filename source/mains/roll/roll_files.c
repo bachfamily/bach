@@ -73,7 +73,7 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 	t_symbol *filename_sym = NULL;
 	t_filehandle fh;
 	double chord_thresh = 0;
-	long merging_policy = 0;
+    t_atom_long merging_policy = 0;
 	t_fourcc outtype = 0;
 	t_fourcc file_types[] = {'Midi', 'TEXT', 'LLLL'};
 	t_llll *roll_ll = NULL;
@@ -87,13 +87,13 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 	//bach_breakpoint(0);
 	
     // these are only need to prevent llll_parseargs_and_attrs_destructive to complain for them
-    long track2voice = -1;
-    long chan2voice = -1;
-    long markmeasures = 1;
-    long markdivisions = 1;
-    long importbarlines = 1;
-    long importdivisions = 1;
-    long importsubdivisions = 1;
+    t_atom_long track2voice = -1;
+    t_atom_long chan2voice = -1;
+    t_atom_long markmeasures = 1;
+    t_atom_long markdivisions = 1;
+    t_atom_long importbarlines = 1;
+    t_atom_long importdivisions = 1;
+    t_atom_long importsubdivisions = 1;
 
     llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "disiiiiiii",
                                          gensym("chordthresh"), &chord_thresh,
@@ -888,9 +888,9 @@ t_llllelem* append_marker_to_midi_import(t_llll *all_events, t_llll *markers_ll,
 
 t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 {
-	long format = 0;
+    t_atom_long format = 0;
 	long num_tracks = 0;
-	long time_division = 960;
+    t_atom_long time_division = 960;
 	double tempo = 60;
 	long timesig_num = 4, timesig_den = 4; // unused for now, that's ok
 	long i;
@@ -904,10 +904,10 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 	unsigned char *buffer = NULL;
 	t_llll *arguments = (t_llll *) atom_getobj(av);
 	t_symbol *filename_sym = NULL;
-	long export_markers = 1;
-	long export_barlines = 1;
-    long export_divisions = 1;
-    long export_subdivisions = 1;
+    t_atom_long export_markers = 1;
+    t_atom_long export_barlines = 1;
+    t_atom_long export_divisions = 1;
+    t_atom_long export_subdivisions = 1;
 	t_llll *voices_to_write = NULL;
 	t_rollvoice *firstvoice = NULL;
 	long ok = 1;

@@ -10590,7 +10590,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
     if (!args || !args->l_head)
         return;
     
-    long voice = 0, modify = 0;
+    t_atom_long voice = 0, modify = 0;
     double thresh = 0.;
     llll_parseattrs((t_object *)r_ob, args, LLLL_PA_DESTRUCTIVE, "iid", _llllobj_sym_voice, &voice, _llllobj_sym_modify, &modify, _llllobj_sym_thresh, &thresh);
     voice -= 1;
@@ -10744,7 +10744,7 @@ void notationobj_sel_reducefunction(t_notation_obj *r_ob, t_llll *args_orig, cha
     if (!args || !args->l_head)
         return;
     
-    long maxnumpoints = 0, p = 1, relative = 1, slope = 1, algorithm = 1;
+    t_atom_long maxnumpoints = 0, p = 1, relative = 1, slope = 1, algorithm = 1;
     t_symbol *slopemapping_sym = gensym("bach");
     double thresh = 0.;
     llll_parseattrs((t_object *)r_ob, args, LLLL_PA_DESTRUCTIVE, "idiisi", gensym("maxnumpoints"), &maxnumpoints, _llllobj_sym_thresh, &thresh, _llllobj_sym_p, &p, _llllobj_sym_slope, &slope, gensym("slopemapping"), &slopemapping_sym, gensym("algorithm"), &algorithm);

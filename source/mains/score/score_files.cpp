@@ -92,13 +92,13 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
     char filename[2048];
     t_dictionary *dict = NULL;
     
-    long parenthesizedquartertones = 0;
-    long lyricsslot = x->r_ob.link_lyrics_to_slot;
-    long noteheadslot = x->r_ob.link_notehead_to_slot;
-    long articulationsslot = x->r_ob.link_articulations_to_slot;
-    long dynamicsslot = x->r_ob.link_dynamics_to_slot;
-    long directionsslot = x->r_ob.link_annotation_to_slot;
-    long import_lyrics = 1, import_noteheads = 1, import_articulations = 1, import_dynamics = 1, import_directions = 1;
+    t_atom_long parenthesizedquartertones = 0;
+    t_atom_long lyricsslot = x->r_ob.link_lyrics_to_slot;
+    t_atom_long noteheadslot = x->r_ob.link_notehead_to_slot;
+    t_atom_long articulationsslot = x->r_ob.link_articulations_to_slot;
+    t_atom_long dynamicsslot = x->r_ob.link_dynamics_to_slot;
+    t_atom_long directionsslot = x->r_ob.link_annotation_to_slot;
+    t_atom_long import_lyrics = 1, import_noteheads = 1, import_articulations = 1, import_dynamics = 1, import_directions = 1;
 
     llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiiiiii",
                                          gensym("filename"), &filename_sym,
@@ -328,11 +328,11 @@ t_rational ticks2rat(long ticks, long time_division)
 
 t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
 {
-    long format = 1;
+    t_atom_long format = 1;
     long num_tracks;
-    long time_division = 960;
+    t_atom_long time_division = 960;
     double tempo = 60;
-    long tempo_interp_sampling_interval = 240;
+    t_atom_long tempo_interp_sampling_interval = 240;
     long timesig_num = 4, timesig_den = 4; // unused for now, that's ok
     long i;
     long voice_num;
@@ -341,7 +341,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     t_marker *this_marker;
     unsigned char *buffer = NULL;
     long first_onset = 0;
-    long export_markers = 1;
+    t_atom_long export_markers = 1;
     t_llll *voices_to_write = NULL;
     t_scorevoice *firstvoice = NULL;
     t_symbol *filename_sym = NULL;
@@ -353,8 +353,8 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     t_scorevoice *longest_voice = NULL;
     long longest_voice_num = 0;
     t_timepoint longest_voice_start;
-    long exportbarlines = 1;
-    long exportdivisions = 1;
+    t_atom_long exportbarlines = 1;
+    t_atom_long exportdivisions = 1;
 
     
     llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiil",

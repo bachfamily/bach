@@ -136,15 +136,15 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     t_ptr_size len;
     t_llll *ll = (t_llll *) av->a_w.w_obj;
     t_llll *arguments = (t_llll *) (av + 1)->a_w.w_obj;
-    long maxdecimals = atom_getlong(av + 2);
-    long wrap = atom_getlong(av + 3);
+    t_atom_long maxdecimals = atom_getlong(av + 2);
+    t_atom_long wrap = atom_getlong(av + 3);
     char *default_indent = (char *) (av + 4)->a_w.w_obj;
-    long maxdepth = atom_getlong(av + 5);
+    t_atom_long maxdepth = atom_getlong(av + 5);
     long general_flags = atom_getlong(av + 6);
     long escape_flags = atom_getlong(av + 7);
     long backslash_flags = atom_getlong(av + 8);
-    long negative_octaves = (general_flags & LLLL_T_NEGATIVE_OCTAVES) != 0;
-    long parens = (general_flags & LLLL_T_PARENS) != 0;
+    t_atom_long negative_octaves = (general_flags & LLLL_T_NEGATIVE_OCTAVES) != 0;
+    t_atom_long parens = (general_flags & LLLL_T_PARENS) != 0;
     char *indent;
 
     t_symbol *filename_sym = NULL;

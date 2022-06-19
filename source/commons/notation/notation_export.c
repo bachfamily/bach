@@ -134,12 +134,12 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     t_llll *arguments = (t_llll *) atom_getobj(av);
     char ok = true;
     t_symbol *view = gensym("line");
-    long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1, onsetindomain = 0, adaptwidth = 0;
+    t_atom_long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1, onsetindomain = 0, adaptwidth = 0;
     t_symbol *filename_sym = NULL, *type_sym = NULL;
     double mspersystem = r_ob->domain, uxperline = r_ob->domain_ux;
     t_llll *tuttipoint_system_layout = NULL;
     double new_inner_width = 0, postdomain_uwidth = -1;
-    long systemvshift_pixels = 0;
+    t_atom_long systemvshift_pixels = 0;
     
     llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssididiiiid",
                                          _sym_filename, &filename_sym,

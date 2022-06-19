@@ -56,6 +56,7 @@ typedef enum _parseargs_types {
     P_PITCH,
     P_HATOM,
     P_LLLL, // lllls are cloned, and the previous contents of the variable are freed
+    P_USHORT,
 } e_parseargs_types;
 
 typedef union _parseargs_ptr {
@@ -67,6 +68,7 @@ typedef union _parseargs_ptr {
     t_llll            **p_llll;
     t_hatom         *p_hatom;
     void            *p_void; // for convenience
+    unsigned short        *p_ushort;
 } t_parseargs_ptr;
 
 typedef struct _parseargs_item {
@@ -8593,6 +8595,9 @@ long llll_parseargs(t_object *x, t_llll *ll, const char *types, ...)
             case 'i':
                 item = parseargs_item_new(P_LONG, va_arg(ap, t_atom_long*));
                 break;
+            case 'u': // this is for unicodeChars and for unsigned shorts
+                item = parseargs_item_new(P_USHORT, va_arg(ap, unsigned short*));
+                break;
             case 'd':
                 item = parseargs_item_new(P_DOUBLE, va_arg(ap, double*));
                 break;
@@ -8651,6 +8656,16 @@ long llll_parseargs(t_object *x, t_llll *ll, const char *types, ...)
                     bach_freeptr(s_unicode);
                 } else
                     *(item->p_ptr.p_long) = hatom_getlong(&arg_ll->l_tail->l_hatom);
+                break;
+            case P_USHORT:
+                if (hatom_gettype(&arg_ll->l_tail->l_hatom) == H_SYM) {
+                    t_symbol *s = hatom_getsym(&arg_ll->l_tail->l_hatom);
+                    long outlen = 0;
+                    unsigned short *s_unicode = charset_utf8tounicode_debug(s->s_name, &outlen);
+                    *(item->p_ptr.p_ushort) = outlen > 0 ? s_unicode[0] : 0;
+                    bach_freeptr(s_unicode);
+                } else
+                    *(item->p_ptr.p_ushort) = (unsigned short)hatom_getlong(&arg_ll->l_tail->l_hatom);
                 break;
             case P_DOUBLE:
                 *(item->p_ptr.p_double) = hatom_getdouble(&arg_ll->l_tail->l_hatom);
@@ -8716,6 +8731,9 @@ long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...
         switch (*this_types) {
             case 'i':
                 item = parseargs_item_new(P_LONG, va_arg(ap, t_atom_long*));
+                break;
+            case 'u': // this is for unicodeChars and for unsigned shorts
+                item = parseargs_item_new(P_USHORT, va_arg(ap, unsigned short*));
                 break;
             case 'd':
                 item = parseargs_item_new(P_DOUBLE, va_arg(ap, double*));
@@ -8805,6 +8823,16 @@ long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...
                         bach_freeptr(s_unicode);
                     } else
                         *(item->p_ptr.p_long) = hatom_getlong(&elem->l_next->l_hatom);
+                    break;
+                case P_USHORT:
+                    if (hatom_gettype(&elem->l_next->l_hatom) == H_SYM) {
+                        t_symbol *s = hatom_getsym(&elem->l_next->l_hatom);
+                        long outlen = 0;
+                        unsigned short *s_unicode = charset_utf8tounicode_debug(s->s_name, &outlen);
+                        *(item->p_ptr.p_ushort) = outlen > 0 ? s_unicode[0] : 0;
+                        bach_freeptr(s_unicode);
+                    } else
+                        *(item->p_ptr.p_ushort) = (unsigned short)hatom_getlong(&elem->l_next->l_hatom);
                     break;
                 case P_DOUBLE:
                     *(item->p_ptr.p_double) = hatom_getdouble(&elem->l_next->l_hatom);

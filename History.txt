@@ -84,7 +84,8 @@ authorization: now the code for a given year can be entered until January of the
 bach ecosystem: no extra memory is claimed by bach before the first bach object is created
 
 multiple objects: 	fixed missing lines in help files and references
-			help files and doc updated
+                    help files and doc updated
+                    fixed potential instabilities (especially, but not only, on Windows) with message attributes
 
 - bell, bach.expr:
     makepitch function now treats negative degrees as descending steps (e.g. makepitch(-1, 0, 5) returns B4)

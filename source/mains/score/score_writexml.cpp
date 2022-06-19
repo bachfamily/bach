@@ -581,11 +581,11 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     t_chord *chord;
     t_note *note;
     t_llll *export_slots = NULL;
-    long export_velocities = 0, export_noteheads = 1, export_lyrics = 1, export_dynamics = 1, export_articulations = 1, export_glissandi = 0;
-    long dynamics_slot = x->r_ob.link_dynamics_to_slot;
+    t_atom_long export_velocities = 0, export_noteheads = 1, export_lyrics = 1, export_dynamics = 1, export_articulations = 1, export_glissandi = 0;
+    t_atom_long dynamics_slot = x->r_ob.link_dynamics_to_slot;
     long articulations_slot = x->r_ob.link_articulations_to_slot;
     const t_articulations_typo_preferences *atp = &x->r_ob.articulations_typo_preferences;
-    long parenthesized_quartertones = 0;
+    t_atom_long parenthesized_quartertones = 0;
     t_llll *arguments = (t_llll *) atom_getobj(av);
     t_slotitem *slotitem;
     
