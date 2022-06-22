@@ -2855,6 +2855,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"ruler",0,"enumindex","Show Ruler");
         CLASS_ATTR_ENUMINDEX(c,"ruler", 0, "Never Above Below Both");
         CLASS_ATTR_ACCESSORS(c, "ruler", (method)NULL, (method)notation_obj_setattr_ruler);
+        CLASS_ATTR_BASIC(c,"ruler", 0);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"ruler",0,"0");
         // @exclude bach.slot
         // @description Toggles the display of the ruler. Four options are possible: <br />
