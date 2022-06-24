@@ -6177,42 +6177,42 @@
 			"Slots" : {
 				"Intro" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.01_intro.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 					"seealso" : [ "syntax+extra+gathered", "syntax+extra+separate", "syntax+slotinfo", "slot+rest" ],
 					"tags" : [ "syntax", "slot" ],
 					"title" : [ "Slots" ]
 				},
 				"Slotnames" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.02_slotnames.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 					"seealso" : [ "syntax+extra+gathered", "syntax+extra+separate", "syntax+slot" ],
 					"tags" : [ "syntax", "slot", "name", "outputslotnames" ],
 					"title" : [ "Using slot names" ]
 				},
 				"Content" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.03_content.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 					"seealso" : [ "syntax+slot+content", "llll+double+quote", "setslot" ],
 					"tags" : [ "syntax", "slot", "content", "function", "`int", "`float", "`text", "`llll", "intlist", "floatlist", "numeric", "number", "setslot" ],
 					"title" : [ "Slot content (1)" ]
 				},
 				"Content2" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.04_content2.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 					"seealso" : [ "syntax+slot+content", "setslot" ],
 					"tags" : [ "syntax", "slot", "content", "filelist", "spat", "3dfunction", "setslot" ],
 					"title" : [ "Slot content (2)" ]
 				},
 				"Content3" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.05_content3.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 					"seealso" : [ "syntax+slot+content", "setslot" ],
 					"tags" : [ "syntax", "slot", "content", "togglematrix", "intmatrix", "floatmatrix", "matrix", "color", "setslot" ],
 					"title" : [ "Slot content (3)" ]
 				},
 				"Content4" : {
 					"filename" : [ "bach.help.notation.syntax.80_slots.06_content4.maxpat" ],
-					"objects" : [ "bach.roll", "bach.score" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 					"seealso" : [ "syntax+slot+content", "setslot" ],
 					"tags" : [ "syntax", "slot", "content", "filter", "dynfilter", "setslot" ],
 					"title" : [ "Slot content (4)" ]

@@ -115,6 +115,8 @@ multiple objects: 	fixed missing lines in help files and references
 - all the bell-compliant objects except bach.eval:
     fixed very general issue preventing objects from working unless they had a bell lambda function
 
+- bach.ezmidiplay: fixed bug causing wrong handling of microtonality
+
 - bach.expr:
     evaluation precedence of the ** operator is now right-to-left, as per the documentation (2**3**2 now returns 512, previously 64)
     evaluation precedence of the ! and ~ operators is now higher than exponentiation

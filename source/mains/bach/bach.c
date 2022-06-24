@@ -391,7 +391,8 @@ void bach_version(t_bach *x)
         post("The bach project is maintained thanks to our generous supporters on Patreon.");
         post("Please consider supporting us on www.patreon.com/bachproject for as little as the price of a coffee.");
     }
-    
+    post("Our top-tier Patreon institutional supporters are: IRCAM (Paris).");
+
     
 // Post version
     char version_buf[4096];

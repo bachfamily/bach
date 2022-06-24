@@ -147,6 +147,20 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="unitary" get="1" set="1" type="int" size="1">
+			<digest>
+				Unitary
+			</digest>
+			<description>
+				Toggles the unitary normalization of the Fourier Transform (so that the
+				if coincides with its inverse up to conjugation).
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Unitary" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 	</attributelist>
 
 	<!--DISCUSSION-->
