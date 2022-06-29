@@ -4704,7 +4704,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) score_ceilmeasures, "ceilmeasures", A_GIMME, 0);
 
     
-    // @method filltiedsequenceswithslots @digest Fill tie sequences with slots
+    // @method filltiesequenceswithslots @digest Fill tie sequences with slots
     // @description Fills each note in a sequence of ties with the slots of the first tied note, provided that the <m>singleslotfortiednotes</m> specification
     // is set in the slotinfo (otherwise the slot is not copied). This might be useful for instance while reversing, scrambling or modifying sequences of tied notes
     // while preserving the correct slot information.
@@ -9353,6 +9353,7 @@ void score_copy_slots_to_tied_noted_sequences(t_score *x)
             }
         }
     }
+    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
     unlock_general_mutex((t_notation_obj *)x);
 }
 
