@@ -2259,6 +2259,16 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // If the attachment mode is "manual" or "auto", then <m>breakpoint_attachment</m> is meaningless (and left to 0),
         // but in both cases the <m>relative_position</m> is correct.
 
+        if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            CLASS_ATTR_DOUBLE(c,"onseteqthresh",0, t_notation_obj, onset_equality_threshold_ms);
+            CLASS_ATTR_STYLE_LABEL(c,"onseteqthresh",0,"text","Onset Equality Threshold in Milliseconds");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"onseteqthresh", 0, "0.001");
+            CLASS_ATTR_ACCESSORS(c, "onseteqthresh", (method)NULL, (method)notation_obj_setattr_onseteqthresh);
+            // @exclude bach.slot, bach.roll
+            // @description Sets a threshold in milliseconds to determine whether two onsets coincide.
+            // This is used to find synchronicities across voices with different tempi.
+            // Defaults to 0.001 (i.e. 1 microsecond).
+        }
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -3813,6 +3823,18 @@ t_max_err notation_obj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return MAX_ERR_NONE;
 }
+
+t_max_err notation_obj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && is_atom_number(av))
+        r_ob->onset_equality_threshold_ms = atom_getfloat(av);
+
+    implicitely_recalculate_all(r_ob, false);
+
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
+
 
 
 t_max_err notation_obj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){

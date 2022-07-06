@@ -37,6 +37,10 @@ DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, voicenames_as_llll, notation_obj
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, stafflines_as_llll, notation_obj_getattr_stafflines)
 
 
+double notationobj_get_onset_equality_threshold(t_notation_obj *r_ob)
+{
+    return r_ob->onset_equality_threshold_ms;
+}
 
 double notationobj_rescale_with_slope(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope)
 {
@@ -3054,7 +3058,7 @@ void get_legend(t_notation_obj *r_ob, t_note *curr_nt, t_bpt *selected_breakpoin
             *there_is_legend = 1;
         
         char onset_text[256], dur_text[256];
-        time_to_char_buf(r_ob, chord_get_onset_ms(temp_nt->parent), onset_text, 256);
+        time_to_char_buf(r_ob, chord_get_onset_ms(r_ob, temp_nt->parent), onset_text, 256);
         time_to_char_buf(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? temp_nt->parent->duration_ms : temp_nt->duration, dur_text, 256);
 
         if (r_ob->show_note_names) {
@@ -3074,7 +3078,7 @@ void get_legend(t_notation_obj *r_ob, t_note *curr_nt, t_bpt *selected_breakpoin
     } else if (r_ob->num_selecteditems == 1 && r_ob->firstselecteditem->type == k_CHORD && (t_chord *)r_ob->firstselecteditem == curr_nt->parent) {
         // chord
         char onset_text[256], dur_text[256];
-        time_to_char_buf(r_ob, chord_get_onset_ms(curr_nt->parent), onset_text, 256);
+        time_to_char_buf(r_ob, chord_get_onset_ms(r_ob, curr_nt->parent), onset_text, 256);
         time_to_char_buf(r_ob, chord_get_max_duration(r_ob, curr_nt->parent), dur_text, 256);
 
         if (there_is_legend)
@@ -3091,8 +3095,8 @@ void get_legend(t_notation_obj *r_ob, t_note *curr_nt, t_bpt *selected_breakpoin
                 *there_is_legend = 1;
             
             char dur_text[256], end_text[256];
-            time_to_char_buf(r_ob, curr_nt->duration, dur_text, 256);
-            time_to_char_buf(r_ob, curr_nt->parent->onset + curr_nt->duration, end_text, 256);
+            time_to_char_buf(r_ob, notation_item_get_duration_ms_accurate(r_ob, (t_notation_item *)curr_nt), dur_text, 256);
+            time_to_char_buf(r_ob, notation_item_get_tail_ms_accurate(r_ob, (t_notation_item *)curr_nt), end_text, 256);
 
             if (r_ob->breakpoints_have_velocity && r_ob->allow_glissandi)
                 snprintf(legend_text, 255, "Cents %.1f (Δ %s%.1f)   Duration %s   End %s   Velocity %ld", curr_nt->midicents + curr_nt->lastbreakpoint->delta_mc, curr_nt->lastbreakpoint->delta_mc >= 0 ? "+" : "", curr_nt->lastbreakpoint->delta_mc, dur_text, end_text, (long)curr_nt->lastbreakpoint->velocity);
@@ -3304,11 +3308,12 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
             }
             ts_num[offset] = '\0';
         }
-        double onset_ms = meas->firstchord ? chord_get_onset_ms(meas->firstchord) : unscaled_xposition_to_ms(r_ob, meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux, 1);
+//        double onset_ms = meas->firstchord ? chord_get_onset_ms(r_ob, meas->firstchord) : unscaled_xposition_to_ms(r_ob, meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux, 1);
+        double onset_ms = measure_get_onset_ms(r_ob, meas);
         
         char onset_text[256], dur_text[256];
         time_to_char_buf(r_ob, onset_ms, onset_text, 256);
-        time_to_char_buf(r_ob, rat2double(meas->r_total_duration_sec) * 1000., dur_text, 256);
+        time_to_char_buf(r_ob, notation_item_get_duration_ms_accurate(r_ob, (t_notation_item *)meas), dur_text, 256);
         snprintf_zero(legend_text, 256, "Measure %ld   Voice %ld   Time Signature %s/%d   Onset %s   Duration %s", meas->measure_number + 1, meas->voiceparent->v_ob.number + 1, ts_num, meas->timesignature.denominator, onset_text, dur_text);
         
     } else if ((num_sel == 1 && firstsel && firstsel->type == k_NOTE) ||
@@ -3322,7 +3327,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
             nt = ((t_note *)firstsel);
         
         char onset_text[256], dur_text[256];
-//        time_to_char_buf(r_ob, chord_get_onset_ms(nt->parent), onset_text, 256);
+//        time_to_char_buf(r_ob, chord_get_onset_ms(r_ob, nt->parent), onset_text, 256);
 //        time_to_char_buf(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? nt->parent->duration_ms : nt->duration, dur_text, 256);
         time_to_char_buf(r_ob, notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)(nt->parent)), onset_text, 256);
         time_to_char_buf(r_ob, notation_item_get_duration_ms_accurate(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? (t_notation_item *)nt->parent : (t_notation_item *)nt), dur_text, 256);
@@ -3401,7 +3406,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
                 }
                 
                 char onset_text[256], dur_text[256];
-                time_to_char_buf(r_ob, chord_get_onset_ms(start), onset_text, 256);
+                time_to_char_buf(r_ob, chord_get_onset_ms(r_ob, start), onset_text, 256);
                 time_to_char_buf(r_ob, duration, dur_text, 256);
                 
                 if (all_chords_have_one_note && start->firstnote) {
@@ -3439,7 +3444,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
                 }
                 
                 char onset_text[256], dur_text[256];
-                time_to_char_buf(r_ob, chord_get_onset_ms(start), onset_text, 256);
+                time_to_char_buf(r_ob, chord_get_onset_ms(r_ob, start), onset_text, 256);
                 time_to_char_buf(r_ob, duration, dur_text, 256);
 
                 t_note *nt = startnt;
@@ -4325,12 +4330,14 @@ double xposition_to_ms(t_notation_obj *r_ob, double xpos, char mode)
         return 0.;
 }
 
-double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode)
+double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode, bool accurate)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         return onset_to_unscaled_xposition(r_ob, ms);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        if (false && r_ob->spacing_type == k_SPACING_PROPORTIONAL) {
+        double EQ_THRESH = notationobj_get_onset_equality_threshold(r_ob);
+
+        if (false && r_ob->spacing_type == k_SPACING_PROPORTIONAL) { // unused, the other way should work still robustly
             t_tuttipoint *left = NULL, *right = NULL;
             for (t_tuttipoint *tpt = r_ob->firsttuttipoint; tpt; tpt = tpt->next) {
                 if (tpt->onset_ms == ms) {
@@ -4369,21 +4376,22 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode)
                     else {
                         for (chord = meas->firstchord; chord; chord = chord->next) {
                             char is_chord_whole_measure_chord = is_chord_a_whole_measure_rest(r_ob, chord);
-                            if (fabs(chord->onset - ms) < CONST_EPSILON_DOUBLE_EQ && !is_chord_whole_measure_chord) {
+                            double chord_onset = accurate ? notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)chord) : chord->onset;
+                            if (fabs(chord_onset - ms) < EQ_THRESH && !is_chord_whole_measure_chord) {
                                 return chord_get_alignment_ux(r_ob, chord); // precise!!!
-                            } else if ((chord->onset >= ms) && (!right || (right && (chord->onset < right_ms || (fabs(chord->onset - right_ms) < CONST_EPSILON_DOUBLE_EQ && is_right_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
+                            } else if ((chord_onset >= ms) && (!right || (right && (chord_onset < right_ms || (fabs(chord_onset - right_ms) < EQ_THRESH && is_right_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
                                 right = chord;
                                 is_right_chord_whole_measure_chord = is_chord_whole_measure_chord;
-                                right_ms = chord->onset;
+                                right_ms = chord_onset;
                                 right_ux = is_chord_whole_measure_chord ? right->parent->tuttipoint_reference->offset_ux + right->parent->start_barline_offset_ux : chord_get_alignment_ux(r_ob, right);
                                 if (mode == 1 && !right->prev)
                                     right_ux = right->parent->tuttipoint_reference->offset_ux + right->parent->start_barline_offset_ux;
-                            } else if ((chord->onset >= ms) && right) {
+                            } else if ((chord_onset >= ms) && right) {
                                 break;
-                            } else if ((chord->onset <= ms) && (!left || (left && (chord->onset > left_ms || (fabs(chord->onset - left_ms) < CONST_EPSILON_DOUBLE_EQ && is_left_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
+                            } else if ((chord_onset <= ms) && (!left || (left && (chord_onset > left_ms || (fabs(chord_onset - left_ms) < EQ_THRESH && is_left_chord_whole_measure_chord && !is_chord_whole_measure_chord))))) {
                                 left = chord;
                                 is_left_chord_whole_measure_chord = is_chord_whole_measure_chord;
-                                left_ms = chord->onset;
+                                left_ms = chord_onset;
                                 left_ux = is_chord_whole_measure_chord ? left->parent->tuttipoint_reference->offset_ux + left->parent->start_barline_offset_ux : chord_get_alignment_ux(r_ob, left);
                             }
                         }
@@ -4401,7 +4409,7 @@ double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode)
                 else
                     return right_ux * ms / right_ms; // was (right_ms - ms) at the denominator
             } else if (left) {
-                double ms_measure_end = left->onset + left->duration_ms;
+                double ms_measure_end = accurate ? notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)left) + notation_item_get_duration_ms_accurate(r_ob, (t_notation_item *)left) : left->onset + left->duration_ms;
                 if (ms == left_ms)
                     return left_ux;
                 else if (ms_measure_end == left_ms)
@@ -4468,9 +4476,9 @@ double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode, char
                     for (chord = meas->firstchord; chord; chord = chord->next) {
                         double this_chord_align_pt_ux = is_measure_single_whole_rest(r_ob, meas) ? meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux : chord_get_alignment_ux(r_ob, chord);
                         if (this_chord_align_pt_ux == ux) {
-                            return chord->onset; // precise!!!
+                            return accurate ? notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)chord) : chord->onset; // precise!!!
                         } else if (this_chord_align_pt_ux > ux &&
-                                   (!right || (right_is_emptyrest && chord_get_onset_ms(chord) <= chord_get_onset_ms(right) + CONST_EPSILON1)
+                                   (!right || (right_is_emptyrest && chord_get_onset_ms(r_ob, chord) <= chord_get_onset_ms(r_ob, right) + CONST_EPSILON1)
                                     || (this_chord_align_pt_ux < right_ux))) {
                                        right_is_emptyrest = is_measure_single_whole_rest(r_ob, meas);
                                        right = chord;
@@ -4480,7 +4488,7 @@ double unscaled_xposition_to_ms(t_notation_obj *r_ob, double ux, char mode, char
                                    } else if ((this_chord_align_pt_ux > ux) && right) {
                                        break;
                                    } else if (this_chord_align_pt_ux < ux &&
-                                              (!left || (left_is_emptyrest && chord_get_onset_ms(chord) >= chord_get_onset_ms(left) - CONST_EPSILON1)
+                                              (!left || (left_is_emptyrest && chord_get_onset_ms(r_ob, chord) >= chord_get_onset_ms(r_ob, left) - CONST_EPSILON1)
                                                || (left && (this_chord_align_pt_ux > left_ux)))) {
                                                   left_is_emptyrest = is_measure_single_whole_rest(r_ob, meas);
                                                   left = chord;
@@ -4540,7 +4548,7 @@ double timepoint_to_ms(t_notation_obj *r_ob, t_timepoint tp, long voicenum)
     
     if (!this_meas || !this_meas->tuttipoint_reference) {
         if (tp.measure_num >= voice->num_measures && voice->num_measures > 0 && voice->lastmeasure && voice->lastmeasure->tuttipoint_reference)
-            return voice->lastmeasure->tuttipoint_reference->onset_ms + voice->lastmeasure->tuttipoint_onset_ms + voice->lastmeasure->total_duration_ms;
+            return voice->lastmeasure->tuttipoint_reference->onset_ms + voice->lastmeasure->tuttipoint_onset_ms + measure_get_duration_ms(r_ob, voice->lastmeasure);
         else
             return 0;
     }
@@ -4584,7 +4592,7 @@ t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char
             return build_timepoint_with_voice(0, long2rat(0), voicenum);
         
         while (tmp_meas && tmp_meas->tuttipoint_reference) {
-            if (ms/1000. <= rat2double(tmp_meas->tuttipoint_reference->r_onset_sec) + rat2double(tmp_meas->r_tuttipoint_onset_sec) + rat2double(tmp_meas->r_total_duration_sec) + CONST_EPSILON_SELECT) {
+            if (ms <= notation_item_get_tail_ms_accurate(r_ob, (t_notation_item *)tmp_meas) + CONST_EPSILON_SELECT) {
                 this_meas = tmp_meas;
                 break;
             }
@@ -4598,7 +4606,7 @@ t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char
             if (ms <= this_meas->firstchord->onset + CONST_EPSILON_SELECT)
                 return build_timepoint_with_voice(this_meas->measure_number, long2rat(0), voicenum);
             while (tmp_chord) {
-                double next_chord_onset = (tmp_chord->next) ? tmp_chord->next->onset : 1000.*(rat2double(this_meas->tuttipoint_reference->r_onset_sec) + rat2double(this_meas->r_tuttipoint_onset_sec) + rat2double(this_meas->r_total_duration_sec));
+                double next_chord_onset = (tmp_chord->next) ? chord_get_onset_ms(r_ob, tmp_chord->next) : notation_item_get_tail_ms_accurate(r_ob, (t_notation_item *)this_meas);
                 t_rational this_chord_pim = tmp_chord->r_sym_onset;
                 t_rational next_chord_pim = (tmp_chord->next) ? tmp_chord->next->r_sym_onset : measure_get_sym_duration(this_meas);
                 if (fabs(ms - next_chord_onset) < CONST_EPSILON_SELECT)
@@ -4618,7 +4626,7 @@ t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char
                     } else if (mode == k_MS_TO_TP_RETURN_INTERPOLATION){
                         t_timepoint left = build_timepoint(this_meas->measure_number, this_chord_pim);
                         t_timepoint right = build_timepoint(this_meas->measure_number, next_chord_pim);
-                        double prev_chord_onset = tmp_chord->onset;
+                        double prev_chord_onset = chord_get_onset_ms(r_ob, tmp_chord); // we don't use tmp_chord->onset; because it may not be assigned when we use this function
                         res = interpolate_timepoints(left, right, (ms - prev_chord_onset)/(next_chord_onset - prev_chord_onset));
                         res.voice_num = voicenum;
                     }
@@ -4644,49 +4652,7 @@ t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char
     return build_timepoint_with_voice(0, long2rat(0), voicenum);
 }
 
-t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum)
-{
-    t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voicenum);
-    t_measure *this_meas = NULL, *tmp_meas = voice->firstmeasure;
-    if (rat_sec.r_num <= 0)
-        return build_timepoint(0, long2rat(0));
-    
-    while (tmp_meas) {
-        if (rat_rat_cmp(rat_sec, measure_get_overall_rat_onset_sec_plus_duration(tmp_meas)) <= 0) {
-            this_meas = tmp_meas;
-            break;
-        }
-        tmp_meas = tmp_meas->next;
-    }
-    
-    if (this_meas) {
-        t_chord *tmp_chord = this_meas->firstchord;
-        if (!this_meas->firstchord) return build_timepoint(this_meas->measure_number, long2rat(0));
-        if (rat_rat_cmp(rat_sec, chord_get_overall_rat_onset_sec(this_meas->firstchord)) <= 0)
-            return build_timepoint(this_meas->measure_number, long2rat(0));
-        while (tmp_chord) {
-            t_rational this_chord_r_onset_sec = chord_get_overall_rat_onset_sec(tmp_chord);
-            t_rational next_chord_r_onset_sec = tmp_chord->next ? chord_get_overall_rat_onset_sec(tmp_chord->next) : measure_get_overall_rat_onset_sec_plus_duration(this_meas);
-            t_rational this_chord_pim = tmp_chord->r_sym_onset;
-            t_rational next_chord_pim = (tmp_chord->next) ? tmp_chord->next->r_sym_onset : measure_get_sym_duration(this_meas);
-            
-            if (rat_rat_cmp(rat_sec, next_chord_r_onset_sec) < 0) 
-                return build_timepoint(this_meas->measure_number, rat_rescale(rat_sec, this_chord_r_onset_sec, next_chord_r_onset_sec, this_chord_pim, next_chord_pim));
-            
-            // this should work well as long as there are no tempo changes between this_chord and next_chord!
-            // TO DO: handle the tempi change case!!!
-            
-            tmp_chord = tmp_chord->next;
-        }
-        
-        if (this_meas->next)
-            return build_timepoint(this_meas->next->measure_number, long2rat(0));
-        
-        return build_timepoint(this_meas->measure_number, measure_get_sym_duration(this_meas));
-    }
-    
-    return build_timepoint(voice->lastmeasure->measure_number, measure_get_sym_duration(voice->lastmeasure));
-}
+
 
 
 // A hack, because the <lasttuttipoint> field is in the t_score structure, and NOT in the t_notation_obj,
@@ -9980,6 +9946,7 @@ t_llll *get_timepoint_as_llll(t_notation_obj *r_ob, t_timepoint tp)
     return out;
 }
 
+
 t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp1, t_timepoint tp2) { 
 // calcualte the rational duration in ms between two timepoints (must be tp1 < tp2)
     char go_safe = true;
@@ -10084,6 +10051,11 @@ t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scor
     return out_duration;
 }
 
+double get_duration_ms_between_timepoints(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp1, t_timepoint tp2) {
+    return 1000*rat2double(get_rat_durations_sec_between_timepoints(r_ob, voice, tp1, tp2));
+}
+
+
 // calculate tempo trapece area
 t_rational get_tempo_trapece_sec(t_scorevoice *voice, t_rational tempo_L_value, t_timepoint tempo_L_tp, t_rational tempo_R_value, t_timepoint tempo_R_tp){ //, char go_safe){
     t_rational r1 = rat_rat_sum(long_rat_div(1, tempo_L_value), long_rat_div(1, tempo_R_value));
@@ -10092,9 +10064,11 @@ t_rational get_tempo_trapece_sec(t_scorevoice *voice, t_rational tempo_L_value, 
 }
 
 // calculates the intermediate tempo at point <tp>, in voice <voice>, given the previous <tempo_L> and the following <tempo_R>
-t_rational get_intermediate_tempo(t_scorevoice *voice, t_timepoint tp, t_tempo *tempo_L, t_tempo *tempo_R){
+t_rational get_intermediate_tempo(t_scorevoice *voice, t_timepoint tp, t_tempo *tempo_L, t_tempo *tempo_R)
+{
     t_rational D = rat_rat_div(get_sym_durations_between_timepoints(voice, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), tp), 
                                get_sym_durations_between_timepoints(voice, build_timepoint(tempo_L->owner->measure_number, tempo_L->changepoint), build_timepoint(tempo_R->owner->measure_number, tempo_R->changepoint)));
+    // now this hould depend on the interpolation type. Simple default case: linear in 1/tau.
     t_rational PR0 = rat_rat_prod(tempo_R->tempo_value, tempo_L->tempo_value);
     t_rational PR1 = rat_rat_prod(D, tempo_L->tempo_value);
     t_rational PR2 = rat_rat_prod(long_rat_diff(1, D), tempo_R->tempo_value);
@@ -10162,9 +10136,8 @@ void calculate_rat_measure_durations_ms(t_notation_obj *r_ob, t_measure *meas)
     t_timepoint tp1, tp2;
     tp1.measure_num = meas->measure_number; tp1.pt_in_measure = long2rat(0); // beginning of measure
     tp2.measure_num = meas->measure_number; tp2.pt_in_measure = measure_get_sym_duration(meas); // end of measure
-    meas->r_total_duration_sec = get_rat_durations_sec_between_timepoints(r_ob, voice, tp1, tp2);
-    meas->total_duration_ms = rat2double(meas->r_total_duration_sec) * 1000;
-
+//    meas->r_total_duration_sec = get_rat_durations_sec_between_timepoints(r_ob, voice, tp1, tp2);
+    meas->total_duration_ms = get_duration_ms_between_timepoints(r_ob, voice, tp1, tp2);
 }
 
 
@@ -10282,10 +10255,9 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
     outmeas->start_barline_offset_ux = 0;
     outmeas->width_ux = 0.;
     outmeas->tuttipoint_reference = NULL;
-    outmeas->r_tuttipoint_onset_sec = long2rat(0);
+    outmeas->tuttipoint_onset_ms = 0;
     outmeas->r_total_content_duration = long2rat(0);
-    outmeas->r_total_duration_sec = long2rat(0);
-    outmeas->tuttipoint_onset_ms = outmeas->total_duration_ms = 0;
+    outmeas->total_duration_ms = 0;
     outmeas->need_recompute_beamings = false;
     outmeas->need_recompute_beams_positions = false;
     outmeas->need_check_ties = false;
@@ -10977,7 +10949,7 @@ t_tempo* clone_tempo(t_notation_obj *r_ob, t_tempo *tempo){
     newtempo->figure_tempo_value = tempo->figure_tempo_value;
     newtempo->tempo_value = tempo->tempo_value;
     newtempo->interpolation_type = tempo->interpolation_type;
-    newtempo->r_measure_onset_sec = tempo->r_measure_onset_sec;
+    newtempo->measure_onset_ms = tempo->measure_onset_ms;
     newtempo->tuttipoint_offset_ux = tempo->tuttipoint_offset_ux;
     newtempo->need_recalculate_onset = true;
     
@@ -11048,15 +11020,14 @@ t_chord* clone_chord(t_notation_obj *r_ob, t_chord *chord, e_clone_for_types clo
     newchord->r_sym_duration = chord->r_sym_duration;
     newchord->r_sym_onset = chord->r_sym_onset;
     newchord->duration_ms = chord->duration_ms;
-    newchord->r_duration_sec = chord->r_duration_sec;
-    newchord->play_r_duration_sec = chord->play_r_duration_sec;
-    newchord->play_r_measure_onset_sec = chord->play_r_measure_onset_sec;
+    newchord->play_duration_ms = chord->play_duration_ms;
+    newchord->play_measure_onset_ms = chord->play_measure_onset_ms;
     newchord->left_uextension = chord->left_uextension;
     newchord->right_uextension = chord->right_uextension;
     newchord->stem_offset_ux = chord->stem_offset_ux;
     newchord->alignment_ux = chord->alignment_ux;
     newchord->duration_ux = chord->duration_ux;
-    newchord->r_measure_onset_sec = chord->r_measure_onset_sec;
+    newchord->measure_onset_ms = chord->measure_onset_ms;
 
     newchord->firstnote = NULL;
     newchord->lastnote = NULL;
@@ -11142,15 +11113,14 @@ t_chord* clone_selected_notes_into_chord(t_notation_obj *r_ob, t_chord *chord, e
     newchord->r_sym_duration = chord->r_sym_duration;
     newchord->r_sym_onset = chord->r_sym_onset;
     newchord->duration_ms = chord->duration_ms;
-    newchord->r_duration_sec = chord->r_duration_sec;
-    newchord->play_r_duration_sec = chord->play_r_duration_sec;
-    newchord->play_r_measure_onset_sec = chord->play_r_measure_onset_sec;
+    newchord->play_duration_ms = chord->play_duration_ms;
+    newchord->play_measure_onset_ms = chord->play_measure_onset_ms;
     newchord->left_uextension = chord->left_uextension;
     newchord->right_uextension = chord->right_uextension;
     newchord->stem_offset_ux = chord->stem_offset_ux;
     newchord->alignment_ux = chord->alignment_ux;
     newchord->duration_ux = chord->duration_ux;
-    newchord->r_measure_onset_sec = chord->r_measure_onset_sec;
+    newchord->measure_onset_ms = chord->measure_onset_ms;
 
     
     newchord->firstnote = NULL;
@@ -11226,9 +11196,8 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
 
     newmeasure->timesignature = measure->timesignature;
     newmeasure->r_total_content_duration = measure->r_total_content_duration;
-    newmeasure->r_total_duration_sec = measure->r_total_duration_sec;
-    newmeasure->r_tuttipoint_onset_sec = measure->r_tuttipoint_onset_sec;
     newmeasure->total_duration_ms = measure->total_duration_ms;
+    newmeasure->tuttipoint_onset_ms = measure->tuttipoint_onset_ms;
     newmeasure->tuttipoint_onset_ms = measure->tuttipoint_onset_ms;
     
     newmeasure->start_barline_offset_ux = measure->start_barline_offset_ux;
@@ -20804,10 +20773,10 @@ void calculate_chords_and_tempi_measure_onsets(t_notation_obj *r_ob, t_measure *
     if (verbose)
         post("**** Measure %ld", measure->measure_number + 1);
     while (curr_ch) {
-        curr_ch->r_measure_onset_sec = get_rat_durations_sec_between_timepoints(r_ob, measure->voiceparent, tp1, tp2);
+        curr_ch->measure_onset_ms = get_duration_ms_between_timepoints(r_ob, measure->voiceparent, tp1, tp2);
         if (verbose) {
             conta++;
-            object_post((t_object *) r_ob, "Chord %ld. r_onset_sec: %ld/%ld = %f", conta, curr_ch->r_measure_onset_sec.r_num, curr_ch->r_measure_onset_sec.r_den, rat2double(curr_ch->r_measure_onset_sec));
+//            object_post((t_object *) r_ob, "Chord %ld. r_onset_sec: %ld/%ld = %f", conta, curr_ch->r_measure_onset_sec.r_num, curr_ch->r_measure_onset_sec.r_den, rat2double(curr_ch->r_measure_onset_sec));
         }
         if (!curr_ch->is_grace_chord)
             tp2.pt_in_measure = rat_rat_sum(tp2.pt_in_measure, rat_abs(curr_ch->r_sym_duration));
@@ -20816,7 +20785,7 @@ void calculate_chords_and_tempi_measure_onsets(t_notation_obj *r_ob, t_measure *
     
     curr_tempo = measure->firsttempo;
     while (curr_tempo) {
-        curr_tempo->r_measure_onset_sec = get_rat_durations_sec_between_timepoints(r_ob, measure->voiceparent, tp1, build_timepoint(curr_tempo->owner->measure_number, curr_tempo->changepoint));
+        curr_tempo->measure_onset_ms = get_duration_ms_between_timepoints(r_ob, measure->voiceparent, tp1, build_timepoint(curr_tempo->owner->measure_number, curr_tempo->changepoint));
         curr_tempo = curr_tempo->next;
     }
 }
@@ -20824,15 +20793,26 @@ void calculate_chords_and_tempi_measure_onsets(t_notation_obj *r_ob, t_measure *
 
 
 
-double chord_get_onset_ms(t_chord *chord){
+double chord_get_onset_ms(t_notation_obj *r_ob, t_chord *chord){
     if (!chord->is_score_chord)
         return chord->onset;
     
-    return 1000 * rat2double(chord->r_measure_onset_sec) + chord->parent->tuttipoint_onset_ms + (chord->parent->tuttipoint_reference ? chord->parent->tuttipoint_reference->onset_ms : 0);
+    return notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)chord);
+//    return 1000 * rat2double(chord->r_measure_onset_sec) + chord->parent->tuttipoint_onset_ms + (chord->parent->tuttipoint_reference ? chord->parent->tuttipoint_reference->onset_ms : 0);
 }
 
-double get_tempo_onset_ms(t_tempo *tempo){
-    return 1000 * rat2double(tempo->r_measure_onset_sec) + tempo->owner->tuttipoint_onset_ms + tempo->owner->tuttipoint_reference->onset_ms;
+double measure_get_onset_ms(t_notation_obj *r_ob, t_measure *meas){
+    return notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)meas);
+}
+
+double measure_get_duration_ms(t_notation_obj *r_ob, t_measure *meas){
+    return notation_item_get_duration_ms_accurate(r_ob, (t_notation_item *)meas);
+}
+
+
+double get_tempo_onset_ms(t_notation_obj *r_ob, t_tempo *tempo){
+    return notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)tempo);
+//    return 1000 * rat2double(tempo->r_measure_onset_sec) + tempo->owner->tuttipoint_onset_ms + tempo->owner->tuttipoint_reference->onset_ms;
 }
 
 t_note *chord_get_longest_note(t_notation_obj *r_ob, t_chord *chord)
@@ -21622,7 +21602,7 @@ void get_tempo_at_timepoint(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoi
     }
 }
 
-
+/*
 t_rational chord_get_overall_rat_onset_sec(t_chord *chord){
     return rat_rat_sum(rat_rat_sum(chord->r_measure_onset_sec, chord->parent->r_tuttipoint_onset_sec), chord->parent->tuttipoint_reference->r_onset_sec);
 }
@@ -21647,6 +21627,7 @@ t_rational measure_get_overall_rat_onset_sec(t_measure *measure){
     return rat_rat_sum(measure->r_tuttipoint_onset_sec, measure->tuttipoint_reference->r_onset_sec);
 }
 
+
 double measure_get_overall_onset(t_measure *measure){
     return measure->tuttipoint_onset_ms + measure->tuttipoint_reference->onset_ms;
 }
@@ -21654,7 +21635,7 @@ double measure_get_overall_onset(t_measure *measure){
 t_rational measure_get_overall_rat_onset_sec_plus_duration(t_measure *measure){
     return rat_rat_sum(rat_rat_sum(measure->r_tuttipoint_onset_sec, measure->tuttipoint_reference->r_onset_sec), measure->r_total_duration_sec);
 }
-
+*/
 
 void update_measure_chordnumbers(t_measure *measure) {
     long count = 0; t_chord *chord = measure->firstchord;
@@ -22282,13 +22263,13 @@ char ts_are_equal(t_timesignature *ts1, t_timesignature *ts2){
 }
 
 // 1 if the tempi are the the same tempo and in the same timepoint
-char are_tempi_the_same_and_with_the_same_onset(t_tempo *tempo1, t_tempo *tempo2)
+char are_tempi_the_same_and_with_the_same_onset(t_notation_obj *r_ob, t_tempo *tempo1, t_tempo *tempo2)
 {
     
     if (!tempo1 || !tempo2 || !tempo1->owner || !tempo2->owner)
         return 0;
     
-    if (get_tempo_onset_ms(tempo1) != get_tempo_onset_ms(tempo2))
+    if (get_tempo_onset_ms(r_ob, tempo1) != get_tempo_onset_ms(r_ob, tempo2))
         return 0;
     
     if (rat_rat_cmp(tempo1->tempo_figure, tempo2->tempo_figure) != 0)
@@ -36662,7 +36643,7 @@ double notation_item_get_tail_ms(t_notation_obj *r_ob, t_notation_item *it)
         case k_DURATION_LINE: return ((t_duration_line *)it)->owner->parent->onset + ((t_duration_line *)it)->owner->duration;
         case k_LYRICS: return notation_item_get_onset_ms(r_ob, it);
         case k_DYNAMICS: return notation_item_get_onset_ms(r_ob, it);
-        case k_MEASURE: return ((t_measure *)it)->tuttipoint_onset_ms + ((t_measure *)it)->tuttipoint_reference->onset_ms + ((t_measure *)it)->total_duration_ms;
+        case k_MEASURE: return ((t_measure *)it)->tuttipoint_onset_ms + ((t_measure *)it)->tuttipoint_reference->onset_ms + measure_get_duration_ms(r_ob, (t_measure *)it);
         case k_TEMPO: return notation_item_get_onset_ms(r_ob, it);
         case k_VOICE: {
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
@@ -36698,9 +36679,7 @@ double notation_item_get_onset_ms_accurate(t_notation_obj *r_ob, t_notation_item
         case k_NOTE: return notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)((t_note *)it)->parent);
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                temp = rat_rat_sum(((t_chord *)it)->parent->tuttipoint_reference->r_onset_sec, ((t_chord *)it)->r_tuttipoint_onset_sec);
-                temp.r_num *= 1000;
-                return rat2double(temp);
+                return ((t_chord *)it)->parent->tuttipoint_reference->onset_ms + ((t_chord *)it)->tuttipoint_onset_ms;
             } else {
                 return ((t_chord *)it)->onset;
             }
@@ -36709,21 +36688,15 @@ double notation_item_get_onset_ms_accurate(t_notation_obj *r_ob, t_notation_item
         case k_PITCH_BREAKPOINT:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 t_chord *ch = ((t_bpt *)it)->owner->parent;
-                temp = rat_rat_sum(ch->parent->tuttipoint_reference->r_onset_sec, ch->r_tuttipoint_onset_sec);
-                temp.r_num *= 1000;
-                return rat2double(temp) + rat2double(rat_long_prod(ch->r_duration_sec, 1000)) * ((t_bpt *)it)->rel_x_pos;
+                return ch->parent->tuttipoint_reference->onset_ms + ch->tuttipoint_onset_ms + ch->duration_ms * ((t_bpt *)it)->rel_x_pos;
             } else {
                 return ((t_bpt *)it)->owner->parent->onset + ((t_bpt *)it)->owner->duration * ((t_bpt *)it)->rel_x_pos;
             }
         case k_DURATION_LINE: return notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)((t_duration_line *)it)->owner);
         case k_MEASURE:
-            temp = rat_rat_sum(((t_measure *)it)->tuttipoint_reference->r_onset_sec, ((t_measure *)it)->r_tuttipoint_onset_sec);
-            temp.r_num *= 1000;
-            return rat2double(temp);
+            return ((t_measure *)it)->tuttipoint_reference->onset_ms + ((t_measure *)it)->tuttipoint_onset_ms;
         case k_TEMPO:
-            temp = rat_rat_sum(((t_tempo *)it)->owner->tuttipoint_reference->r_onset_sec, ((t_tempo *)it)->r_tuttipoint_onset_sec);
-            temp.r_num *= 1000;
-            return rat2double(temp);
+            return ((t_tempo *)it)->owner->tuttipoint_reference->onset_ms + ((t_tempo *)it)->measure_onset_ms;
         case k_VOICE: return 0;
         case k_MARKER: return ((t_marker *)it)->position_ms;
         case k_LOOP_START: case k_LOOP_REGION: return r_ob->loop_region.start.position_ms;
@@ -36736,7 +36709,6 @@ double notation_item_get_onset_ms_accurate(t_notation_obj *r_ob, t_notation_item
 
 double notation_item_get_duration_ms_accurate(t_notation_obj *r_ob, t_notation_item *it)
 {
-    t_rational temp;
     switch (it->type) {
         case k_NOTE:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
@@ -36745,9 +36717,7 @@ double notation_item_get_duration_ms_accurate(t_notation_obj *r_ob, t_notation_i
                 return ((t_note *)it)->duration;
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                temp = ((t_chord *)it)->r_duration_sec;
-                temp.r_num *= 1000;
-                return rat2double(temp);
+                return ((t_chord *)it)->duration_ms;
             } else
                 return chord_get_max_duration(r_ob, (t_chord *)it);
         case k_LYRICS: return notation_item_get_duration_ms_accurate(r_ob, (t_notation_item *)((t_lyrics *)it)->owner);
@@ -36755,9 +36725,7 @@ double notation_item_get_duration_ms_accurate(t_notation_obj *r_ob, t_notation_i
         case k_DURATION_LINE: return notation_item_get_duration_ms_accurate(r_ob, (t_notation_item *)((t_duration_line *)it)->owner);
         case k_PITCH_BREAKPOINT: return 0;
         case k_MEASURE:
-            temp = ((t_measure *)it)->r_total_duration_sec;
-            temp.r_num *= 1000;
-            return rat2double(temp);
+            return ((t_measure *)it)->total_duration_ms;
         case k_TEMPO: return 0;
         case k_VOICE: {
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
@@ -36810,7 +36778,7 @@ double notation_item_get_duration_ms_for_slots_account_for_ties(t_notation_obj *
         case k_DURATION_LINE: return notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slotnum, (t_notation_item *)((t_duration_line *)it)->owner);
         case k_LYRICS: return 0;
         case k_DYNAMICS: return 0;
-        case k_MEASURE: return ((t_measure *)it)->total_duration_ms;
+        case k_MEASURE: return measure_get_duration_ms(r_ob, ((t_measure *)it));
         case k_TEMPO: return 0;
         case k_VOICE: return 0;
         case k_MARKER: return 0;
@@ -36835,10 +36803,7 @@ double notation_item_get_tail_ms_accurate(t_notation_obj *r_ob, t_notation_item 
                 return ((t_note *)it)->parent->onset + ((t_note *)it)->duration;
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                temp = rat_rat_sum(rat_rat_sum(((t_chord *)it)->parent->tuttipoint_reference->r_onset_sec, ((t_chord *)it)->r_tuttipoint_onset_sec),
-                                   ((t_chord *)it)->r_duration_sec);
-                temp.r_num *= 1000;
-                return rat2double(temp);
+                return ((t_chord *)it)->parent->tuttipoint_reference->onset_ms + ((t_chord *)it)->tuttipoint_onset_ms + ((t_chord *)it)->duration_ms;
             } else
                 return ((t_chord *)it)->onset + chord_get_max_duration(r_ob, (t_chord *)it);
         case k_LYRICS: return notation_item_get_tail_ms_accurate(r_ob, (t_notation_item *)((t_lyrics *)it)->owner);
@@ -36846,9 +36811,7 @@ double notation_item_get_tail_ms_accurate(t_notation_obj *r_ob, t_notation_item 
         case k_PITCH_BREAKPOINT: return notation_item_get_onset_ms_accurate(r_ob, it);
         case k_DURATION_LINE: return notation_item_get_tail_ms_accurate(r_ob, (t_notation_item *)((t_duration_line *)it)->owner);
         case k_MEASURE:
-            temp = rat_rat_sum(rat_rat_sum(((t_measure *)it)->tuttipoint_reference->r_onset_sec, ((t_measure *)it)->r_tuttipoint_onset_sec), ((t_measure *)it)->r_total_duration_sec);
-            temp.r_num *= 1000;
-            return rat2double(temp);
+            return ((t_measure *)it)->tuttipoint_reference->onset_ms + ((t_measure *)it)->tuttipoint_onset_ms + ((t_measure *)it)->total_duration_ms;
         case k_TEMPO: notation_item_get_onset_ms_accurate(r_ob, it);
         case k_VOICE: {
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
@@ -36876,11 +36839,7 @@ double notation_item_get_play_onset_ms_accurate(t_notation_obj *r_ob, t_notation
         case k_NOTE: return notation_item_get_play_onset_ms_accurate(r_ob, (t_notation_item *)((t_note *)it)->parent);
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                temp = rat_rat_sum(rat_rat_sum(((t_chord *)it)->parent->tuttipoint_reference->r_onset_sec,
-                                   ((t_chord *)it)->parent->r_tuttipoint_onset_sec),
-                                   ((t_chord *)it)->play_r_measure_onset_sec);
-                temp.r_num *= 1000;
-                return rat2double(temp);
+                return ((t_chord *)it)->parent->tuttipoint_reference->onset_ms + ((t_chord *)it)->parent->tuttipoint_onset_ms + ((t_chord *)it)->measure_onset_ms;
             } else {
                 return ((t_chord *)it)->onset;
             }
@@ -36889,11 +36848,7 @@ double notation_item_get_play_onset_ms_accurate(t_notation_obj *r_ob, t_notation
         case k_PITCH_BREAKPOINT:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 t_chord *ch = ((t_bpt *)it)->owner->parent;
-                temp = rat_rat_sum(rat_rat_sum(ch->parent->tuttipoint_reference->r_onset_sec,
-                                               ch->parent->r_tuttipoint_onset_sec),
-                                   ch->play_r_measure_onset_sec);
-                temp.r_num *= 1000;
-                return rat2double(temp) + rat2double(rat_long_prod(ch->r_duration_sec, 1000)) * ((t_bpt *)it)->rel_x_pos;
+                return ch->parent->tuttipoint_reference->onset_ms + ch->parent->tuttipoint_onset_ms + ch->play_measure_onset_ms + ch->duration_ms * ((t_bpt *)it)->rel_x_pos;
             } else {
                 return ((t_bpt *)it)->owner->parent->onset + ((t_bpt *)it)->owner->duration * ((t_bpt *)it)->rel_x_pos;
             }
@@ -36921,9 +36876,7 @@ double notation_item_get_play_duration_ms_accurate(t_notation_obj *r_ob, t_notat
                 return ((t_note *)it)->duration;
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                temp = ((t_chord *)it)->play_r_duration_sec;
-                temp.r_num *= 1000;
-                return rat2double(temp);
+                return ((t_chord *)it)->play_duration_ms;
             } else
                 return chord_get_max_duration(r_ob, (t_chord *)it);
         case k_LYRICS: return notation_item_get_play_duration_ms_accurate(r_ob, (t_notation_item *)((t_lyrics *)it)->owner);
@@ -36955,12 +36908,7 @@ double notation_item_get_play_tail_ms_accurate(t_notation_obj *r_ob, t_notation_
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 t_chord *ch = (t_chord *)it;
-                temp = rat_rat_sum(rat_rat_sum(rat_rat_sum(ch->parent->tuttipoint_reference->r_onset_sec,
-                                                           ch->parent->r_tuttipoint_onset_sec),
-                                               ch->play_r_measure_onset_sec),
-                                   ch->play_r_duration_sec);
-                temp.r_num *= 1000;
-                return rat2double(temp);
+                return ch->parent->tuttipoint_reference->onset_ms + ch->parent->tuttipoint_onset_ms + ch->play_measure_onset_ms;
             } else
                 return notation_item_get_tail_ms_accurate(r_ob, it);
         case k_LYRICS: return notation_item_get_play_tail_ms_accurate(r_ob, (t_notation_item *)((t_lyrics *)it)->owner);
@@ -37070,7 +37018,7 @@ double notation_item_get_duration_ms(t_notation_obj *r_ob, t_notation_item *it)
         case k_DURATION_LINE: return ((t_duration_line *)it)->owner->duration;
         case k_LYRICS: return 0;
         case k_DYNAMICS: return 0;
-        case k_MEASURE: return ((t_measure *)it)->total_duration_ms;
+        case k_MEASURE: return measure_get_duration_ms(r_ob, (t_measure *)it);
         case k_TEMPO: return 0;
         case k_VOICE: return 0;
         case k_MARKER: return 0;
@@ -39405,7 +39353,7 @@ double breakpoint_get_absolute_onset(t_notation_obj *r_ob, t_bpt *bpt)
     
     if (bpt->owner->parent->is_score_chord) {
         double tot_dur = r_ob->dl_spans_ties ? get_all_tied_chord_sequence_duration_ms(bpt->owner->parent, false) : bpt->owner->parent->duration_ms;
-        return chord_get_onset_ms(bpt->owner->parent) + bpt->rel_x_pos * tot_dur;
+        return chord_get_onset_ms(r_ob, bpt->owner->parent) + bpt->rel_x_pos * tot_dur;
     } else
         return bpt->owner->parent->onset + bpt->rel_x_pos * bpt->owner->duration;
 }
@@ -43509,7 +43457,7 @@ void preselect_notes_in_region(t_notation_obj *r_ob, double ms_min, double ms_ma
         if (voice->number < voice_min) continue;
         if (voice->number > voice_max) break;
         for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
-            double chord_onset = chord_get_onset_ms(chord);
+            double chord_onset = chord_get_onset_ms(r_ob, chord);
             if (chord_onset >= ms_min && chord_onset <= ms_max) {
                 for (note = chord->firstnote; note; note = note->next) {
                     if (note->midicents >= mc_min && note->midicents <= mc_max)
@@ -45368,7 +45316,7 @@ t_chord *chord_get_first_before_ms(t_notation_obj *r_ob, t_voice *voice, double 
 {
     t_chord *ch;
     for (ch = chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
-        if (chord_get_onset_ms(ch) > ms)
+        if (chord_get_onset_ms(r_ob, ch) > ms)
             return ch->prev;
     }
     return chord_get_last(r_ob, voice);
@@ -45378,7 +45326,7 @@ t_chord *chord_get_first_after_ms(t_notation_obj *r_ob, t_voice *voice, double m
 {
     t_chord *ch;
     for (ch = chord_get_last(r_ob, voice); ch; ch = chord_get_prev(ch)) {
-        if (chord_get_onset_ms(ch) < ms)
+        if (chord_get_onset_ms(r_ob, ch) < ms)
             return ch->next;
     }
     return chord_get_first(r_ob, voice);

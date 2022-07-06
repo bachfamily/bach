@@ -2714,18 +2714,13 @@ typedef struct _chord
     t_rational        r_sym_duration;                ///< Symbolic duration of the chord. By convention, if this is negative, it means that the element is a rest lasting the absolute value of this r_sym_duration.
                                                 ///     For instance, a value of -1/4 means a rest during 1/4. To retrieve absolute value of a #t_rational, use rat_abs().
                                                 ///     This r_sym_duration should NEVER be zero.
-    t_rational        r_measure_onset_sec;        ///< Onset in seconds of the chord with respect to the measure beginning. Please notice that this value is a #t_rational and NOT a double.
-                                                ///     This fact is throuroughly explained in the bach function documentation (section "Tempo functions: absolute and symbolic time").
-                                                ///< Briefly: the fact is that bach algorithms to handle accelerando and rallentando are such that every chord in any point has a
-                                                ///< rational onset. This is handy in a lot of situations.
-    t_rational      r_duration_sec;             ///< Duration in seconds of the chord. Also a rational value.
-    t_rational        r_tuttipoint_onset_sec;        ///< Onset in seconds of the chord with respect to the tuttipoint beginning. This is also a rational value.
+    double            measure_onset_ms;
     double            tuttipoint_onset_ms;        ///< Onset in milliseconds of the chord with respect to the tuttipoint beginning: this value is a double. 
     double            duration_ms;                ///< Duration of the chord in milliseconds. In [bach.score], this is also the duration of each note - in [bach.roll], as we said, all these values are unused.
     
 // PLAY VERSIONS, accounting for grace notes
-    t_rational        play_r_measure_onset_sec;        ///< As <r_measure_onset_sec> but changed with respect to the presence of grace notes
-    t_rational        play_r_duration_sec;            ///< As <r_duration_sec> but changed with respect to the presence of grace notes
+    double            play_measure_onset_ms;        ///< As <r_measure_onset_sec> but changed with respect to the presence of grace notes
+    double            play_duration_ms;            ///< As <r_duration_sec> but changed with respect to the presence of grace notes
     t_rational        play_r_sym_onset;            ///< Symbolic onset used by the play system, changed with respect to the presence of grace notes before the next chord – only used by [bach.score]
     t_rational        play_r_sym_duration;        ///< Symbolic duration used by the play system, changed with respect to the presence of grace notes before the next chord – only used by [bach.score]
 
@@ -2882,9 +2877,8 @@ typedef struct _tempo
     t_rational            tempo_value;                ///< Tempo referred to the standard 1/4 tempo-figure
     char                interpolation_type;            ///< Type of interpolation towards the NEXT tempo: 0 = no interpolation (next tempo, if any, changes abruptly), 1 = linear interpolation (accelerando or rallentando towards next tempo, if any, and depending on the next tempo value)
 
-    t_rational            r_measure_onset_sec;        ///< Tempo onset in seconds with respect to the beginning of the measure (see the <r_measure_onset_sec> field in the #t_chord structure to know why this is a #t_rational value)
-    t_rational            r_tuttipoint_onset_sec;        ///< Tempo onset in seconds with respect to to the tuttipoint
-    double                tuttipoint_onset_ms;        ///< Tempo onset in milliseconds with respect to the tuttipoint 
+    double                measure_onset_ms;
+    double                tuttipoint_onset_ms;        ///< Tempo onset in milliseconds with respect to the tuttipoint
     double                onset;                        ///< Tempo GLOBAL onset in milliseconds (with respect to the score beginning!) 
 
     // flags
@@ -3063,9 +3057,7 @@ typedef struct _measure
     t_beam            *lastbeam;        ///< Pointer to the last beam of the measure
     
     // time values
-    t_rational        r_total_duration_sec;        ///< Total duration of the measure in seconds;
-    t_rational        r_tuttipoint_onset_sec;        ///< Onset in seconds of the measure beginning with respect to the reference tuttipoint
-    double            total_duration_ms;            ///< Total duraiton of the measure in ms
+    double            total_duration_ms;
     double            tuttipoint_onset_ms;        ///< Onset in milliseconds of the measure beginning with respect to the reference tuttipoint
 
     t_rational        r_total_content_duration;    ///< Total symbolic duration of the measure _content_ in seconds: which means: if the measure is not complete, or if 
@@ -3245,10 +3237,6 @@ typedef struct _tuttipoint
     
     double        offset_ux;        ///< Unscaled offset (in pixels) of the tuttipoint x position (with respect to the beginning of the score)
     double        width_ux;        ///< Unscaled width (in pixels) of the tuttipoint region (region between the tuttipoint and the next one)
-    t_rational    r_onset_sec;    ///< Tuttipoint onset in seconds (with respect to the beginning of the score).
-                                ///  Might be imprecise in case of big rationals and weird tempi (approximated). Don't use it, use #onset_ms instead.
-    t_rational    r_duration_sec;    ///< Duration, in seconds, of the tuttipoint region. This is always a #t_rational (see #t_chord for more explaination about this). 
-                                ///  Might be imprecise in case of big rationals and weird tempi (approximated). Don't use it, use #duration_ms instead.
     double        onset_ms;        ///< Tuttipoint onset in milliseconds, precise.
     double        duration_ms;    ///< Tuttipoint duration in milliseconds, precise.
     
@@ -3310,8 +3298,7 @@ typedef struct _alignmentpoint
                                                             ///< then this symbolic onset is 3/4 + 1/2 * 3/4 = 3/4 + 3/8 = 9/8.
     
     // general quantities for the alignment point
-    t_rational            r_onset_sec;                ///< Onset in seconds of the alignment points (with respect to the reference tuttipoint).
-                                                    ///< This does NOT depend on the aligned object: if aligned, all these object have the same onset
+    double                onset_ms;
     double                offset_ux;                    ///< Unscaled horizontal offset alignment point with respect to the tuttipoint pixel position.
                                                     ///< Once again: if objects are aligned, they all share this quantity.
 
@@ -4450,6 +4437,9 @@ typedef struct _notation_obj
     double          linear_edit_time_multipliers[10];   ///< Array of multipliers defining the durations associated with keys 1 through 9 and then 0 (meaning 10).
     long            linear_edit_quarter_key;            ///< Keyboard key corresponding to a quarter note in linear edit
     
+    // for bach.score
+    double          onset_equality_threshold_ms;        ///< A threshold in milliseconds to determine whether two onsets are equal.
+                                                        ///This is needed to perform complex tempo calculations (once upon a time we used to have rationals everywhere, but it had many drawbacks...)
     
     // pitches
     char    output_pitches_gathered; ///< Flag telling if we output pitches (instead of MIDIcents) from gathered syntax
@@ -5343,7 +5333,7 @@ double ms_to_xposition(t_notation_obj *r_ob, double ms, char mode = 1);
     @return                    The unscaled x position
     @see                    ms_to_xposition()
  */
-double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode);
+double ms_to_unscaled_xposition(t_notation_obj *r_ob, double ms, char mode, bool accurate = true);
 
 
 /**    Convert an unscaled horizontal pixel position into a millisecond position.
@@ -12815,7 +12805,11 @@ t_note *chord_get_longest_note(t_notation_obj *r_ob, t_chord *chord);
     @return                The onset of the chord in milliseconds
     @remark                Both in bach.roll and in bach.score, this is also stored in the t_chord::onset field.
  */
-double chord_get_onset_ms(t_chord *chord);
+double chord_get_onset_ms(t_notation_obj *r_ob, t_chord *chord);
+
+
+double measure_get_onset_ms(t_notation_obj *r_ob, t_measure *meas);
+double measure_get_duration_ms(t_notation_obj *r_ob, t_measure *meas);
 
 
 /** Obtain the onset of a tempo in milliseconds. (Only for bach.score)
@@ -12825,53 +12819,7 @@ double chord_get_onset_ms(t_chord *chord);
     @return                The onset of the tempo in milliseconds
     @remark                This is also stored in the t_tempo::onset field.
  */
-double get_tempo_onset_ms(t_tempo *tempo);
-
-/** Obtain the global onset of a chord in milliseconds, as a rational number (in bach.score).
-    @ingroup            notation_data
-    @param    r_ob        The notation object
-    @param    chord        The chord
-    @return                The global onset of the chord (with respect to the beginning of the score), in rational milliseconds.
-    @see chord_get_onset_ms()
- */
-t_rational chord_get_overall_rat_onset_sec(t_chord *chord);
-
-
-/** Obtain the global onset of the end of a chord in milliseconds (onset of the chord plus its duration), as a rational number (in bach.score).
-    @ingroup            notation_data
-    @param    r_ob        The notation object
-    @param    chord        The chord
-    @return                The position in rational milliseconds of the end of the chord (with respect to the beginning of the score).
-    @see chord_get_overall_rat_onset_sec()
- */
-t_rational chord_get_overall_rat_onset_sec_plus_duration(t_chord *chord);
-
-
-/** Obtain the global onset of a measure, as a rational number (in bach.score). (Only for bach.score)
-    @ingroup            notation_data
-    @param    r_ob        The notation object
-    @param    measure        The measure
-    @return                The onset of the measure (with respect to the beginning of the score), in rational seconds
-*/
-t_rational measure_get_overall_rat_onset_sec(t_measure *measure);
-
-
-/** Obtain the global onset of the ending barline of a measure, as a rational number (in bach.score). (Only for bach.score)
-    @ingroup            notation_data
-    @param    r_ob        The notation object
-    @param    measure        The measure
-    @return                The position in rational milliseconds of the ending barline of the measure (with respect to the beginning of the score).
-*/
-t_rational measure_get_overall_rat_onset_sec_plus_duration(t_measure *measure);
-
-
-/** Obtain the global onset of a measure, as a floating point number, in milliseconds (in bach.score). (Only for bach.score)
-    @ingroup            notation_data
-    @param    r_ob        The notation object
-    @param    measure        The measure
-    @return                The onset of the measure (with respect to the beginning of the score), in milliseconds
-*/
-double measure_get_overall_onset(t_measure *measure);
+double get_tempo_onset_ms(t_notation_obj *r_ob, t_tempo *tempo);
 
 
 /** Get the previous chord (in case the chord is a bach.score chord, the previous chord may not necessarily belong to the the same measure).
@@ -13251,7 +13199,7 @@ void delete_tempo(t_notation_obj *r_ob, t_tempo *tempo);
 char are_tempi_the_same_and_in_the_same_tp(t_tempo *tempo1, t_tempo *tempo2);
 
 // TBD
-char are_tempi_the_same_and_with_the_same_onset(t_tempo *tempo1, t_tempo *tempo2);
+char are_tempi_the_same_and_with_the_same_onset(t_notation_obj *r_ob, t_tempo *tempo1, t_tempo *tempo2);
 
 
 /**    Delete all the tempi of a given (score)voice.
@@ -14102,6 +14050,7 @@ void calculate_rat_measure_durations_ms_for_voice(t_notation_obj *r_ob, t_scorev
  */
 t_rational get_rat_durations_sec_between_timepoints(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp1, t_timepoint tp2);
 
+double get_duration_ms_between_timepoints(t_notation_obj *r_ob, t_scorevoice *voice, t_timepoint tp1, t_timepoint tp2);
 
 /**    Calculate the symbolic rational duration between two timepoints.
     @ingroup            notation
@@ -17670,6 +17619,7 @@ t_max_err notation_obj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object
 t_max_err notation_obj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_showmeasurenumbers(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -19336,6 +19286,11 @@ long change_pitch(t_notation_obj *r_ob, t_pitch *pitch, double *cents, t_lexpr *
 
 void change_poc(t_notation_obj *r_ob, t_hatom *poc, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
 
+/**    Get the current threshold for equality of onsets (in ms).
+    @param    r_ob            The notation object
+    @return            Onset equality threshold in milliseconds
+ */
+double notationobj_get_onset_equality_threshold(t_notation_obj *r_ob);
 
 /// SLOPE functions for notation objects (see corresponding abstract function in bach_math_utilitites.h
 /// The slope type is inferred from the notation object attributes

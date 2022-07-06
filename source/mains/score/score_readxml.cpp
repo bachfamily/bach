@@ -671,7 +671,7 @@ private:
                     beat_type = mxmlGetInteger(beat_typeXML);
                     long d = den / beat_type;
                     
-                    char *rest = bach_newptr(2048);
+                    char *rest = (char *)bach_newptr(2048);
                     const char *beatstxt = mxmlGetOpaque(beatsXML);
                     strncpy_zero(rest, beatstxt, 2048);
                     char *tok;
