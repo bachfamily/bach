@@ -61,7 +61,7 @@ BEGIN_CHECK_LINKAGE
 #define CONST_EPSILON3 0.0005 
 #define CONST_EPSILON4 0.0005 
 #define CONST_EPSILON5 0.01 
-#define CONST_EPSILON_DOUBLE_EQ 0.0001    ///< Used in ms_to_unscaled_xposition() to handle the equality of doubles
+#define CONST_EPSILON_DOUBLE_EQ 5 // 0.0001    ///< Used in ms_to_unscaled_xposition() to handle the equality of doubles
 #define CONST_EPSILON_ALIGNMENTS 0.01    ///< Threshold used in functions determining the position of points with respect to points/figures 
 
 #ifndef PIOVERTWO
