@@ -3159,7 +3159,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     if (we_take_it[i] && i != reference_voice) {
                         while (cur_ch[i] && cur_ch[i]->r_sym_duration.r_num < 0)
                             cur_ch[i] = chord_get_next(cur_ch[i]);
-                        if (cur_ch[i] && double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), ref_chord_onset_ms, EQ_THRESH) == 0) {
+                        if (cur_ch[i] && double_double_cmp_with_threshold(notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]), ref_chord_onset_ms, EQ_THRESH) == 0) {
                             if (k < CONST_MAX_VOICES)
                                 these_ch[k++] = cur_ch[i];
                             // increasing chord
@@ -3177,12 +3177,12 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 for (i = 0; i < x->r_ob.num_voices; i++)
                     if (we_take_it[i] && i != reference_voice)
                         if (cur_ch[i] && (cur < 0 ||
-                                          double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), cur, EQ_THRESH) < 0)) {
+                                          double_double_cmp_with_threshold(notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]), cur, EQ_THRESH) < 0)) {
                             curr_nonref_chord = cur_ch[i];
-                            cur = chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]);
+                            cur = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]);
                         }
                 for (i = 0; i < k - 1; i++) {
-                    double end = chord_get_onset_ms((t_notation_obj *)x, these_ch[i]);
+                    double end = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)these_ch[i]);
                     if (cur < 0  || double_double_cmp_with_threshold(end, cur, EQ_THRESH) < 0) {
                         curr_nonref_chord = NULL;
                         cur = end;
@@ -3261,7 +3261,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                             while (cur_ch[i] && cur_ch[i]->r_sym_duration.r_num < 0)
                                 cur_ch[i] = chord_get_next(cur_ch[i]);
                             if (cur_ch[i] &&
-                                double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), curr_nonref_onset_ms_next, EQ_THRESH) == 0) {
+                                double_double_cmp_with_threshold(notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]), curr_nonref_onset_ms_next, EQ_THRESH) == 0) {
                                 if (k < CONST_MAX_VOICES)
                                     these_ch[k++] = cur_ch[i];
                                 // increasing chord
@@ -3277,12 +3277,12 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     for (i = 0; i < x->r_ob.num_voices; i++)
                         if (we_take_it[i] && i != reference_voice)
                             if (cur_ch[i] && (cur < 0 ||
-                                              double_double_cmp_with_threshold(chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]), cur, EQ_THRESH) < 0)) {
+                                double_double_cmp_with_threshold(notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]), cur, EQ_THRESH) < 0)) {
                                 curr_nonref_chord = cur_ch[i];
-                                cur = chord_get_onset_ms((t_notation_obj *)x, cur_ch[i]);
+                                cur = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]);
                             }
                     for (i = 0; i < k; i++) {
-                        double end = chord_get_onset_ms((t_notation_obj *)x, these_ch[i]);
+                        double end = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)these_ch[i]);
                         if (cur < 0  || (double_double_cmp_with_threshold(end, cur, EQ_THRESH) < 0 && double_double_cmp_with_threshold(end, curr_nonref_onset_ms_next, EQ_THRESH) > 0)) {
                             curr_nonref_chord = NULL;
                             cur = end;
@@ -3333,7 +3333,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 }
                 
                 for (i = 0; i < k; i++) { // syncronous chords
-                    double ch_end = chord_get_onset_ms((t_notation_obj *)x, these_ch[i]);
+                    double ch_end = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)these_ch[i]);
                     char ended = double_double_cmp_with_threshold(ch_end, ref_nextchord_onset_ms, EQ_THRESH) <= 0 ? 1 : 0;
                     
                     for (nt = these_ch[i]->firstnote; nt; nt = nt->next){
