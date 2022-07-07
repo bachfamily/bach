@@ -5431,8 +5431,8 @@ typedef enum _bach_timepointtoux_flags {
 /// TIMEPOINT CONVERSIONS FOR [bach.score] only, TBD
 double timepoint_to_ms(t_notation_obj *r_ob, t_timepoint tp, long voicenum);
 t_timepoint ms_to_timepoint_autochoose_voice(t_notation_obj *r_ob, double ms, char mode, long *chosen_voice);
-t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum);
-t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode);
+//t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum);
+t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode, t_llll *include_denominators = NULL);
 double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, long flags); // flags are e_bach_timepointtoux_flags
 char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0);
 char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0);
@@ -5847,11 +5847,11 @@ char timepoint_compare(t_timepoint tp1, t_timepoint tp2);
     @param    tp1        First timepoint
     @param    tp2        Second timepoint
     @param    param    Parameter, 0 to 1, for the interpolation, 0 being #tp1 and 1 being #tp2
-    @param    allowed_denominators_for_interpolation    A flat list of allowed denominators for the interpolation
+    @param    include_denominators    A flat list of allowed denominators for the interpolation
     @return            The interpolated timepoint.
     @remark            The two timepoints must lie within the same measure of the same voice!
 */ 
-t_timepoint interpolate_timepoints(t_timepoint tp1, t_timepoint tp2, double param, t_llll *allowed_denominators_for_interpolation = NULL);
+t_timepoint interpolate_timepoints(t_timepoint tp1, t_timepoint tp2, double param, t_llll *include_denominators = NULL);
 
 
 /**    Convert a llll in the form of (measure_number position_in_measure voice_number), or any of the subforms (measure_number) or (measure_number position_in_measure)

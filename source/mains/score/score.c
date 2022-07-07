@@ -3027,6 +3027,51 @@ void score_collapse(t_score *x, t_symbol *s, long argc, t_atom *argv)
     }
 }
 
+
+t_llll* get_included_denominators_for_chord(t_score *x, t_chord *ch, t_chord *ch_in_ref_voice)
+{
+    t_llll *ll = llll_get();
+    t_llll *multipliers = llll_get();
+    
+    if (ch && ch_in_ref_voice && ch->parent && ch_in_ref_voice->parent && ch->parent->voiceparent && ch_in_ref_voice->parent->voiceparent
+        && ch->parent->voiceparent != ch_in_ref_voice->parent->voiceparent) {
+        // accounting for tempo
+        t_rational figure_tempo_value, tempo_figure, tempo_value;
+        char interpolation;
+        t_timepoint ch_tp = build_timepoint_with_voice(ch->parent->measure_number, ch->r_sym_onset, ch->parent->voiceparent->v_ob.number);
+        get_tempo_at_timepoint((t_notation_obj *)x, (t_scorevoice *)ch->parent->voiceparent, ch_tp, &figure_tempo_value, &tempo_figure, &tempo_value, &interpolation);
+
+        t_rational figure_tempo_value_ref, tempo_figure_ref, tempo_value_ref;
+        char interpolation_ref;
+        t_timepoint ch_in_ref_voice_tp = build_timepoint_with_voice(ch_in_ref_voice->parent->measure_number, ch_in_ref_voice->r_sym_onset, ch_in_ref_voice->parent->voiceparent->v_ob.number);
+        get_tempo_at_timepoint((t_notation_obj *)x, (t_scorevoice *)ch_in_ref_voice->parent->voiceparent, ch_in_ref_voice_tp, &figure_tempo_value_ref, &tempo_figure_ref, &tempo_value_ref, &interpolation_ref);
+        
+        t_rational r1 = rat_rat_prod(rat_rat_div(figure_tempo_value, tempo_figure), tempo_figure_ref);
+        t_rational rapp = rat_rat_div(r1, figure_tempo_value_ref);
+        if (rapp.r_num > 1)
+            llll_appendlong(multipliers, rapp.r_num);
+        if (rapp.r_den > 1)
+            llll_appendlong(multipliers, rapp.r_den);
+    }
+    
+    if (ch && ch->r_sym_duration.r_den > 0) {
+        llll_appendlong(ll, ch->r_sym_duration.r_den);
+        for (t_llllelem *el = multipliers->l_head; el; el = el->l_next) {
+            llll_appendlong(ll, ch->r_sym_duration.r_den * hatom_getlong(&el->l_hatom));
+        }
+    }
+
+    return ll;
+}
+
+t_timepoint ms_to_timepoint_smart_for_chord(t_score *x, double ms, long voicenum, t_chord *ch, t_chord *ch_in_ref_voice)
+{
+    t_llll *ll = get_included_denominators_for_chord(x, ch, ch_in_ref_voice);
+    t_timepoint tp = ms_to_timepoint((t_notation_obj *)x, ms, voicenum, k_MS_TO_TP_RETURN_INTERPOLATION, ll);
+    llll_free(ll);
+    return tp;
+}
+
 t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long reference_voice, t_llll *what_to_dump) {
     
     t_llll *active_chords, *active_until;
@@ -3035,7 +3080,6 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
     t_chord *curr_nonref_chord;
     t_llllelem *active_chords_elem, *active_until_elem, *temp1, *temp2;
     long k = 0; long i;
-    e_ms_to_tp_modes mstotpmode = k_MS_TO_TP_RETURN_INTERPOLATION;
     
     t_scorevoice *refvoice = nth_scorevoice(x, reference_voice);
 
@@ -3151,7 +3195,8 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 t_note *nt;
                 t_timepoint ref_nextchord_timepoint, curr_nonref_onset_this_timepoint;
                 t_rational sym_dur;
-                
+                t_chord *nextapprefchord = NULL, *thisapprefchord = NULL;
+
                 // finding all chords syncronous with *chord 
                 k = 0;
                 for (i = 0; i < x->r_ob.num_voices; i++)
@@ -3175,34 +3220,43 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 // finding curr nonref chord (which starts AFTER *chord)
                 cur = -1;
                 curr_nonref_onset_ms_next = -1;
-                for (i = 0; i < x->r_ob.num_voices; i++)
-                    if (we_take_it[i] && i != reference_voice)
+                for (i = 0; i < x->r_ob.num_voices; i++) {
+                    if (we_take_it[i] && i != reference_voice) {
                         if (cur_ch[i] && (cur < 0 ||
                                           double_double_cmp_with_threshold(notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]), cur, EQ_THRESH) < 0)) {
                             curr_nonref_chord = cur_ch[i];
                             cur = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]);
+                            nextapprefchord = cur_ch[i];
                         }
+                    }
+                }
                 for (i = 0; i < k - 1; i++) {
                     double end = notation_item_get_tail_ms_accurate((t_notation_obj *)x, (t_notation_item *)these_ch[i]);
                     if (cur < 0  || double_double_cmp_with_threshold(end, cur, EQ_THRESH) < 0) {
                         curr_nonref_chord = NULL;
                         cur = end;
+                        nextapprefchord = these_ch[i];
                     }
                 }
-                for (active_until_elem = active_until->l_head; active_until_elem; active_until_elem = active_until_elem->l_next) {
-                    double until = hatom_getrational(&active_until_elem->l_hatom);
+                for (active_until_elem = active_until->l_head, active_chords_elem = active_chords->l_head; active_until_elem; active_until_elem = active_until_elem->l_next, active_chords_elem = active_chords_elem ? active_chords_elem->l_next : NULL) {
+                    double until = hatom_getdouble(&active_until_elem->l_hatom);
                     if (cur < 0  || double_double_cmp_with_threshold(until, cur, EQ_THRESH) < 0) {
                         curr_nonref_chord = NULL;
                         cur = until;
+                        nextapprefchord = active_chords_elem ? (t_chord *)hatom_getobj(&active_chords_elem->l_hatom) : NULL;
                     }
                 }
                 
                 curr_nonref_onset_ms_next = cur;
                 
+                
                 curr_nonref_onset_ms_this = ref_chord_onset_ms;
+                thisapprefchord = chord;
                 while (curr_nonref_onset_ms_next > 0 && double_double_cmp_with_threshold(curr_nonref_onset_ms_next, ref_nextchord_onset_ms, EQ_THRESH) < 0) {
-                    t_timepoint curr_nonref_onset_next_timepoint = ms_to_timepoint((t_notation_obj *)x, curr_nonref_onset_ms_next, reference_voice, mstotpmode);
-                    t_timepoint curr_nonref_onset_this_timepoint = ms_to_timepoint((t_notation_obj *)x, curr_nonref_onset_ms_this, reference_voice, mstotpmode);
+                    // getting approximation values
+                    
+                    t_timepoint curr_nonref_onset_next_timepoint = ms_to_timepoint_smart_for_chord(x, curr_nonref_onset_ms_next, reference_voice, nextapprefchord, chord);
+                    t_timepoint curr_nonref_onset_this_timepoint = ms_to_timepoint_smart_for_chord(x, curr_nonref_onset_ms_this, reference_voice, thisapprefchord, chord);
                     t_rational sym_dur = get_sym_durations_between_timepoints(refvoice, curr_nonref_onset_this_timepoint, curr_nonref_onset_next_timepoint);
                     t_llll *out_ch_cloned;
                     // setting chord values
@@ -3274,6 +3328,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                     
                     // finding next nonref chord (which starts AFTER *chord)
                     curr_nonref_onset_ms_this = curr_nonref_onset_ms_next;
+                    thisapprefchord = nextapprefchord;
                     cur = long2rat(-1);
                     for (i = 0; i < x->r_ob.num_voices; i++)
                         if (we_take_it[i] && i != reference_voice)
@@ -3281,19 +3336,22 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                                 double_double_cmp_with_threshold(notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]), cur, EQ_THRESH) < 0)) {
                                 curr_nonref_chord = cur_ch[i];
                                 cur = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)cur_ch[i]);
+                                nextapprefchord = cur_ch[i];
                             }
                     for (i = 0; i < k; i++) {
                         double end = notation_item_get_tail_ms_accurate((t_notation_obj *)x, (t_notation_item *)these_ch[i]);
                         if (cur < 0  || (double_double_cmp_with_threshold(end, cur, EQ_THRESH) < 0 && double_double_cmp_with_threshold(end, curr_nonref_onset_ms_next, EQ_THRESH) > 0)) {
                             curr_nonref_chord = NULL;
                             cur = end;
+                            nextapprefchord = these_ch[i];
                         }
                     }
-                    for (active_until_elem = active_until->l_head; active_until_elem; active_until_elem = active_until_elem->l_next) {
+                    for (active_until_elem = active_until->l_head, active_chords_elem = active_chords->l_head; active_until_elem; active_until_elem = active_until_elem->l_next, active_chords_elem = active_chords_elem ? active_chords_elem->l_next : NULL) {
                         double until = hatom_getdouble(&active_until_elem->l_hatom);
                         if (cur < 0  || (double_double_cmp_with_threshold(until, cur, EQ_THRESH) < 0  && double_double_cmp_with_threshold(until, curr_nonref_onset_ms_next, EQ_THRESH) > 0)) {
                             curr_nonref_chord = NULL;
                             cur = until;
+                            nextapprefchord = active_chords_elem ? (t_chord *)hatom_getobj(&active_chords_elem->l_hatom) : NULL;
                         }
                     } 
                     curr_nonref_onset_ms_next = cur;
@@ -3304,8 +3362,8 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
                 }
                 
                 // ** last subchord **
-                ref_nextchord_timepoint = ms_to_timepoint((t_notation_obj *)x, ref_nextchord_onset_ms, reference_voice, mstotpmode);
-                curr_nonref_onset_this_timepoint = ms_to_timepoint((t_notation_obj *)x, curr_nonref_onset_ms_this, reference_voice, mstotpmode);
+                ref_nextchord_timepoint = ms_to_timepoint_smart_for_chord(x, ref_nextchord_onset_ms, reference_voice, nextapprefchord, chord);
+                curr_nonref_onset_this_timepoint = ms_to_timepoint_smart_for_chord(x, curr_nonref_onset_ms_this, reference_voice, thisapprefchord, chord);
                 sym_dur = get_sym_durations_between_timepoints(refvoice, curr_nonref_onset_this_timepoint, ref_nextchord_timepoint);
                 llll_appendrat(out_ch, sym_dur, 0, WHITENULL_llll); // rational_duration
                 
