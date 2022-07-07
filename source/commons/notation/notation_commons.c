@@ -3355,9 +3355,9 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
         
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
             snprintf(legend_text, 255, "Duration " RATIONAL_PRINTF_FMT "   Onset %s   Duration %s", rat_abs(ch->r_sym_duration).r_num, ch->r_sym_duration.r_den, onset_text, dur_text);
-        } else if (obj_type == k_NOTATION_OBJECT_ROLL)
+        } else if (obj_type == k_NOTATION_OBJECT_ROLL) {
             snprintf(legend_text, 255, "Onset %s  Duration %s", onset_text, dur_text);
-        
+        }
     } else if (num_sel == 1 && firstsel && firstsel->type == k_PITCH_BREAKPOINT) {
         t_bpt *bpt = (t_bpt *)firstsel;
         t_note *nt = bpt->owner;

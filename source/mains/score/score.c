@@ -1076,7 +1076,15 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
             delete_breakpoint((t_notation_obj *) x, bpt);
             changed = 1;
         }
-    }    
+    } else if (curr_it->type == k_VOICE) {
+        t_voice *voice = (t_voice *) curr_it;
+        notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
+        create_whole_score_undo_tick_nolock(x);
+        score_delete_voice(x, (t_scorevoice *)voice);
+        update_solos((t_notation_obj *)x);
+        recompute_all_except_for_beamings_and_autocompletion(x);
+        changed = 1;
+    }
     return changed;
 }
 

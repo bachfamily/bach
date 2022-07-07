@@ -458,7 +458,7 @@ void process_chord_parameters_calculation_NOW(t_roll *x);
 char change_note_voice_from_lexpr_or_llll(t_roll *x, t_note *note, t_lexpr *lexpr, t_llll *new_voice, char also_select, t_note **changed_note);
 char change_chord_voice_from_lexpr_or_llll(t_roll *x, t_chord *chord, t_lexpr *lexpr, t_llll *new_voice, char also_select, t_chord **changed_chord);
 
-void create_whole_roll_undo_tick(t_roll *x);
+void create_whole_roll_undo_tick(t_roll *x, char also_lock_general_mutex = true);
 void roll_clear_all(t_roll *x);
 
 
@@ -1479,7 +1479,14 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
         notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
         delete_marker((t_notation_obj *) x, (t_marker *)curr_it);
         changed = 1;
-    }    
+    } else if (curr_it->type == k_VOICE) {
+        t_voice *voice = (t_voice *) curr_it;
+        notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
+        create_whole_roll_undo_tick(x, false);
+        roll_delete_voice(x, (t_rollvoice *)voice);
+        update_solos((t_notation_obj *)x);
+        changed = 1;
+    }
     return changed;
 }
 
@@ -9596,12 +9603,12 @@ void set_groups_from_llll(t_roll *x, t_llll *groups_as_llll){
 }
 
 
-void create_whole_roll_undo_tick(t_roll *x)
+void create_whole_roll_undo_tick(t_roll *x, char also_lock_general_mutex)
 {
     if (x->r_ob.inhibited_undo)
         return;
     if (!(atom_gettype(&x->r_ob.max_undo_steps) == A_LONG && atom_getlong(&x->r_ob.max_undo_steps) == 0)) {
-        t_llll *content = get_roll_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, true, true);
+        t_llll *content = get_roll_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, also_lock_general_mutex, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
         t_undo_redo_information *operation = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
