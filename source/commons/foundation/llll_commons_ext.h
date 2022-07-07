@@ -475,6 +475,12 @@ t_llll *llll_meanfilter(t_llll *ll, long window_in_samples);
  */
 t_llll *llll_medianfilter(t_llll *ll, long window_in_samples);
 
+/**    Produce lcm of all the elements in an llll.
+    @ingroup            llll_utilities
+    @param    in_llll        The llll
+    @return             The lcm of all of the elements.
+ */
+long llll_lcm(t_llll *in_llll);
 
 /**	Quick debug function to show the content of an llll in an array of chars.
 	@ingroup			llll_utilities

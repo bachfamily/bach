@@ -5846,11 +5846,12 @@ char timepoint_compare(t_timepoint tp1, t_timepoint tp2);
     @ingroup        notation_utilities
     @param    tp1        First timepoint
     @param    tp2        Second timepoint
-    @param    param    Parameter, 0 to 1, for the interpolation, 0 being #tp1 and 1 being #tp2 
+    @param    param    Parameter, 0 to 1, for the interpolation, 0 being #tp1 and 1 being #tp2
+    @param    allowed_denominators_for_interpolation    A flat list of allowed denominators for the interpolation
     @return            The interpolated timepoint.
     @remark            The two timepoints must lie within the same measure of the same voice!
 */ 
-t_timepoint interpolate_timepoints(t_timepoint tp1, t_timepoint tp2, double param);
+t_timepoint interpolate_timepoints(t_timepoint tp1, t_timepoint tp2, double param, t_llll *allowed_denominators_for_interpolation = NULL);
 
 
 /**    Convert a llll in the form of (measure_number position_in_measure voice_number), or any of the subforms (measure_number) or (measure_number position_in_measure)

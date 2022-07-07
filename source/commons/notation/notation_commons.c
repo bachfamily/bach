@@ -4579,6 +4579,20 @@ t_timepoint ms_to_timepoint_autochoose_voice(t_notation_obj *r_ob, double ms, ch
     return best_tp;
 }
 
+/*
+t_timepoint ms_to_timepoint_smart(t_notation_obj *r_ob, double ms, long voicenum)
+{
+    long chosen_voice = -1;
+    t_timepoint tp = ms_to_timepoint_autochoose_voice(r_ob, ms, k_MS_TO_TP_RETURN_NEAREST, &chosen_voice);
+    if (chosen_voice >= 0 && chosen_voice < r_ob->num_voices) {
+        
+        get_rat_durations_sec_between_timepoints(r_ob, nth_voice(r_ob, chosen_voice), <#t_timepoint tp1#>, tp);
+        chord_get_overall_rat_onset_sec(<#t_chord *chord#>)
+    }
+    return tp;
+}
+ */
+
 // mode is one of the e_ms_to_tp_modes
 t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode)
 {
@@ -21607,7 +21621,7 @@ t_rational chord_get_overall_rat_onset_sec(t_chord *chord){
     return rat_rat_sum(rat_rat_sum(chord->r_measure_onset_sec, chord->parent->r_tuttipoint_onset_sec), chord->parent->tuttipoint_reference->r_onset_sec);
 }
 
-t_rational chord_get_overall_rat_onset_sec_plus_duration(t_chord *chord){
+t_rational chord_get_overall_rat_tail_sec(t_chord *chord){
     t_chord *nextchord;
     if (!chord)
         return long2rat(0);
@@ -21627,7 +21641,7 @@ t_rational measure_get_overall_rat_onset_sec(t_measure *measure){
     return rat_rat_sum(measure->r_tuttipoint_onset_sec, measure->tuttipoint_reference->r_onset_sec);
 }
 
-
+/*
 double measure_get_overall_onset(t_measure *measure){
     return measure->tuttipoint_onset_ms + measure->tuttipoint_reference->onset_ms;
 }
@@ -42137,7 +42151,23 @@ char only_tails_are_selected(t_notation_obj *r_ob){
 
 // param == 0 returns tp1, params == 1 returns tp2
 // only works when voices and meas_num are the same
-t_timepoint interpolate_timepoints(t_timepoint tp1, t_timepoint tp2, double param){
+t_timepoint interpolate_timepoints(t_timepoint tp1, t_timepoint tp2, double param, t_llll *allowed_denominators_for_interpolation)
+{
+    unsigned long fixed_den = lcm(lcm(100, lcm(tp1.pt_in_measure.r_den, tp2.pt_in_measure.r_den)), llll_lcm(allowed_denominators_for_interpolation));
+    if (tp1.voice_num == tp2.voice_num && tp1.measure_num == tp2.measure_num) {
+        double d1 = rat2double(tp1.pt_in_measure);
+        double d2 = rat2double(tp2.pt_in_measure);
+        double res = rescale(param, 0, 1, d1, d2);
+        t_rational new_pim = approx_double_with_rat_fixed_den(res, fixed_den, 0, NULL);
+        return build_timepoint_with_voice(tp1.measure_num, new_pim, tp1.voice_num);
+    }
+    return tp1;
+}
+
+
+// param == 0 returns tp1, params == 1 returns tp2
+// only works when voices and meas_num are the same
+t_timepoint interpolate_timepoints_raw(t_timepoint tp1, t_timepoint tp2, double param){
     if (tp1.voice_num == tp2.voice_num && tp1.measure_num == tp2.measure_num) {
         double d1 = rat2double(tp1.pt_in_measure);
         double d2 = rat2double(tp2.pt_in_measure);

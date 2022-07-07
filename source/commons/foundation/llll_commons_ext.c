@@ -616,6 +616,17 @@ double llll_sum_abs_of_double_llll(t_llll *in_llll){
 	return sum;
 }
 
+long llll_lcm(t_llll *in_llll){
+    long out_lcm = 1;
+    for (t_llllelem *el = in_llll->l_head; el; el = el->l_next) {
+        long l = hatom_getlong(&el->l_hatom);
+        if (l > 0) {
+            out_lcm = lcm(out_lcm, l);
+        }
+    }
+    return out_lcm;
+}
+
 
 long llll_sum_abs_of_rat_llll_up_to_g_list_fn(void *data, t_hatom *a, const t_llll *address){
 	if (hatom_gettype(a) == H_LLLL && hatom_getllll(a)->l_head && hatom_gettype(&hatom_getllll(a)->l_head->l_hatom) == H_SYM && hatom_getsym(&hatom_getllll(a)->l_head->l_hatom) == _llllobj_sym_g)
