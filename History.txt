@@ -48,6 +48,7 @@ v0.8.2b
 	you to set one or more letters or mouse keys to send offline values.
 		Backward compatibility should be preserved, meaning that the new attribute should already take care of the old value, 
 		but check manually if possible
+    "delete" message now also works to delete voices if selected
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
