@@ -276,6 +276,8 @@ void score_pause(t_score *x);
 void score_play_offline(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_play_preschedule(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_task(t_score *x);
+void score_task_gimme(t_score *x, t_symbol *s, long argc, t_atom *argv);
+void score_task_chain_deferlow(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 void score_name(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_nameappend(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -3863,8 +3865,10 @@ void score_playselection(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_notation_item *selitem;
     char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     char preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
-    t_atom av[2];
+    t_atom av[3];
     
+    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
+
     // find selected chords and ms_boundaries
     lock_general_mutex((t_notation_obj *)x);
     for (selitem = x->r_ob.firstselecteditem; selitem; selitem = selitem->next_selected) {
@@ -3896,15 +3900,26 @@ void score_playselection(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     x->r_ob.only_play_selection = true;
     
+    long acount = 0;
     if (offline) {
         atom_setsym(av, gensym("offline"));
-        atom_setfloat(av + 1, start_ms);
+        if (x->r_ob.playback_deferlow) {
+            atom_setsym(av+1, gensym("deferlow"));
+            atom_setfloat(av+2, start_ms);
+            acount = 3;
+        } else {
+            atom_setfloat(av + 1, start_ms);
+            acount = 2;
+        }
     } else if (preschedule) {
         atom_setsym(av, gensym("preschedule"));
         atom_setfloat(av + 1, start_ms);
-    } else
+        acount = 2;
+    } else {
         atom_setfloat(av, start_ms);
-    score_play(x, NULL, (offline || preschedule) ? 2 : 1, av);
+        acount = 1;
+    }
+    score_play(x, NULL, acount, av);
 }
 
 void score_pause(t_score *x)
@@ -3921,6 +3936,8 @@ void score_pause(t_score *x)
 
 void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
+    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
+
     if (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("selection")) {
         score_playselection(x, s, argc-1, argv+1);
         return;
@@ -3929,20 +3946,21 @@ void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
     char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     long preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
 
-
+    long offset = (x->r_ob.playback_deferlow ? 2 : 1);
+    
     if (offline) {
         if (bach_atomic_trylock(&x->r_ob.c_atomic_lock_play)) {
             object_warn((t_object *) x, "Already playing offline!");
             return;
         }
-        score_play_offline(x, s, argc - 1, argv + 1);
+        score_play_offline(x, s, argc - offset, argv + offset);
         bach_atomic_unlock(&x->r_ob.c_atomic_lock_play);
         return;
     }
     
     if (preschedule) {
         // play in preschedule mode (more accurate)
-        score_play_preschedule(x, s, argc - 1, argv + 1);
+        score_play_preschedule(x, s, argc - offset, argv + offset);
         return;
     }
 
@@ -3972,9 +3990,13 @@ void score_play_offline(t_score *x, t_symbol *s, long argc, t_atom *argv)
     } else {
         x->r_ob.playing_scheduling_type = k_SCHEDULING_OFFLINE;
         score_do_play(x, s, argc, argv);
-        while (x->r_ob.playing) {
-            x->r_ob.play_step_count = x->r_ob.play_num_steps;
-            score_task(x);
+        if (x->r_ob.playback_deferlow) {
+            score_task_chain_deferlow(x, NULL, 0, NULL);
+        } else {
+            while (x->r_ob.playing) {
+                x->r_ob.play_step_count = x->r_ob.play_num_steps;
+                score_task(x);
+            }
         }
     }
 }
@@ -4237,6 +4259,7 @@ void score_do_stop(t_score *x, t_symbol *s, long argc, t_atom *argv){
     x->r_ob.dont_schedule_loop_end = x->r_ob.dont_schedule_loop_start = false;
     setclock_unset(x->r_ob.setclock->s_thing, x->r_ob.m_clock);
     x->r_ob.only_play_selection = false;
+    x->r_ob.playback_deferlow = false;
     x->r_ob.play_step_count = 0;
     unlock_general_mutex((t_notation_obj *)x);
 
@@ -4255,6 +4278,20 @@ void set_everything_unplayed(t_score *x){
             }
         }
     llll_clear(x->r_ob.notes_being_played);
+}
+
+void score_task_chain_deferlow(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
+    if (x->r_ob.playing) {
+        x->r_ob.play_step_count = x->r_ob.play_num_steps;
+        defer_low(x, (method)score_task_gimme, NULL, 0, NULL);
+        defer_low(x, (method)score_task_chain_deferlow, NULL, 0, NULL);
+    }
+}
+
+void score_task_gimme(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
+    score_task(x);
 }
 
 void score_task(t_score *x)
@@ -4598,6 +4635,7 @@ void score_task(t_score *x)
             x->r_ob.play_head_ux = -1;
             x->r_ob.scheduled_item = NULL;
             x->r_ob.only_play_selection = false;
+            x->r_ob.playback_deferlow = false;
             x->r_ob.play_step_count = 0;
             unlock_general_mutex((t_notation_obj *)x);
             
@@ -5495,6 +5533,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
     // The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
     // "preschedule" are mutually exclusive. <br />
+    // If you use the "offline" symbol, you can follow it by a "deferlow" symbol to force a defer-low operation for every output note. <br />
     // If you give a single numeric argument, it will be the starting point in milliseconds
     // of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
     // ending point in milliseconds of the region to be played.
@@ -5509,6 +5548,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
     // @example play selection @caption play selected items only
     // @example play selection offline @caption the same, in non-realtime mode ("uzi-like")
+    // @example play selection offline deferlow @caption play selection offline but deferlow between consecutive outputs
     // @example play 2000 @caption play starting from 2s till the end
     // @example play 2000 4000 @caption play starting from 2s, stop at 4s
     // @example play [4] @caption play starting from measure 4

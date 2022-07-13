@@ -3716,7 +3716,7 @@
 				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportxml</m>,<m>exportom</m>,<m>exportpwgl</m>,<m>exportlilypond</m>,<m>exportlilypondpdf</m><br />
 			</description>
 		</method>
-		<method name="filltiedsequenceswithslots">
+		<method name="filltiesequenceswithslots">
 			<arglist />
 			<digest>
 				Fill tie sequences with slots
@@ -6429,6 +6429,7 @@
 				• <b>play preschedule</b>   <i>→ accurate prescheduled playback (with limitations)</i><br />
 				• <b>play selection</b>   <i>→ play selected items only</i><br />
 				• <b>play selection offline</b>   <i>→ the same, in non-realtime mode ("uzi-like")</i><br />
+				• <b>play selection offline deferlow</b>   <i>→ play selection offline but deferlow between consecutive outputs</i><br />
 				• <b>play 2000</b>   <i>→ play starting from 2s till the end</i><br />
 				• <b>play 2000 4000</b>   <i>→ play starting from 2s, stop at 4s</i><br />
 				• <b>play [4]</b>   <i>→ play starting from measure 4</i><br />
@@ -6466,6 +6467,7 @@
 				- the "pause" message won't work.  <br />
 				The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
 				"preschedule" are mutually exclusive. <br />
+				If you use the "offline" symbol, you can follow it by a "deferlow" symbol to force a defer-low operation for every output note. <br />
 				If you give a single numeric argument, it will be the starting point in milliseconds
 				of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
 				ending point in milliseconds of the region to be played.
@@ -11022,6 +11024,24 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Voices" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="onseteqthresh" get="1" set="1" type="float" size="1">
+			<digest>
+				Onset Equality Threshold in Milliseconds
+			</digest>
+			<description>
+				Sets a threshold in milliseconds to determine whether two onsets coincide.
+				This is used to find synchronicities across voices with different tempi.
+				Defaults to 0.001 (i.e. 1 microsecond).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0.001" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Onset Equality Threshold in Milliseconds" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>

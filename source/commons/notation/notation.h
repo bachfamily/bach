@@ -4042,6 +4042,7 @@ typedef struct _notation_obj
     char        firsttime;                    ///< (PRIVATE) Flag which is 1 before the first paint method has been called
     char        freeing;                    ///< (PRIVAGE) Flag which is 1 when the freeing of the notation object is started
     char        only_play_selection;        ///< (PRIVATE) Flag which is 1 when the play() function is called via the playselection function
+    char        playback_deferlow;          ///< (PRIVATE) Flag which is 1 when play offline function is asked to be defer-lowed at each output
     char        defining_numerator;            ///< (PRIVATE) Flag which is 1 if the user is defining the tuplet numerator in the bach.score linear editing system
     char        item_changed_at_mousedown;    ///< (PRIVATE) Flag which is 1 after mousedown when something has been changed directly on mousedown and NOT on mousedrag; it becomes 0 at mouseup
     long        private_count;                ///< (PRIVATE) Private utility counter
@@ -19332,6 +19333,8 @@ void notation_obj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob,
 
 void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut);
 void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard);
+
+void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *argv, char *selection, char *offline, char *preschedule, char *deferlow);
 
 
 void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked_elem_ptr, long *clicked_elem_type);

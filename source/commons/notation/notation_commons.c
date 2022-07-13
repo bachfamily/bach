@@ -36501,6 +36501,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->is_editing_type = k_NONE;
     r_ob->is_editing_voice_name = -1;
     r_ob->only_play_selection = false;
+    r_ob->playback_deferlow = false;
     r_ob->automessage_ac = 0;
     r_ob->is_sending_automessage = false;
     r_ob->show_barlines = 1;
@@ -45600,3 +45601,25 @@ void note_stretch_portion_of_duration_line_and_temporal_slots(t_notation_obj *r_
     }
 }
 
+
+
+void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *argv, char *selection, char *offline, char *preschedule, char *deferlow)
+{
+    if (selection) *selection = false;
+    if (offline) *offline = false;
+    if (preschedule) *preschedule = false;
+    if (deferlow) *deferlow = false;
+    for (long i = 0; i < argc; i++) {
+        if (atom_gettype(argv) == A_SYM) {
+            if (selection && atom_getsym(argv+i) == gensym("selection")) {
+                *selection = true;
+            } else if (offline && atom_getsym(argv+i) == gensym("offline")) {
+                *offline = true;
+            } else if (preschedule && atom_getsym(argv+i) == gensym("preschedule")) {
+                *preschedule = true;
+            } else if (deferlow && atom_getsym(argv+i) == gensym("deferlow")) {
+                *deferlow = true;
+            }
+        }
+    }
+}
