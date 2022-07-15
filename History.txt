@@ -1,22 +1,6 @@
 VERSION NOTES:
 
 
-TO BE CATEGORIZED:
-
-*****************
-*** IMPORTANT ***
-*****************
-
-- bach.roll, bach.score, bach.slot:
-	The "addslot" message is now deprecated in favour of the identical "setslot" message.
-		The "addslot" message is still kept for backward compatibility, but you are encouraged to use "setslot" from now on.
-
-- bach.roll, bach.score:
-	New "setdurationline" message setting the duration line from a list of pitch breakpoints
-	Now "setcursor" then "play" will work even if the cursor is not shown.
-    "playselection" is now deprecated in favor of "play selection"
-	
-
 
 v0.8.2b
 
@@ -41,6 +25,10 @@ v0.8.2b
     fixed bug causing slot information being transferred onto breakpoints:
         if you had used a manual workaround, please update your patches
 
+- bach.roll, bach.score, bach.slot:
+    The "addslot" message is now deprecated in favour of the identical "setslot" message.
+        The "addslot" message is still kept for backward compatibility, but you are encouraged to use "setslot" from now on.
+
 - bach.roll, bach.score:
     Now Cmd+Alt+V DOES NOT OUTPUT all the parameters any longer
 	Also, Alt+V is used to force the output of chord information instead of Shift+V.
@@ -49,6 +37,9 @@ v0.8.2b
 		Backward compatibility should be preserved, meaning that the new attribute should already take care of the old value, 
 		but check manually if possible
     "delete" message now also works to delete voices if selected
+    New "setdurationline" message setting the duration line from a list of pitch breakpoints
+    Now "setcursor" then "play" will work even if the cursor is not shown.
+    "playselection" is now deprecated in favor of "play selection"
 
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
@@ -62,10 +53,12 @@ v0.8.2b
     At the same time, the "dumpselection" message is deprecated in favor of either "dump selection playout" "plump"
 
 - bach.score:
+    Measure properties such as barline types, widths, etc. are now properly output from the second outlet upon "dump" / "dump measureinfo".
     Default behavior of setcursor in presence of grace notes has changed: it only accounts for grace notes in the first measure.
 	You can change this by using the new attribute @nudgeforgrace, given to many messages, including:
 	"setcursor", "getpixelpos", "timetopixel", "timepoint", "interp", "overtype"
 	The same messages also now allows for an @accurate mode (not breaking any compatibility).
+    
 
 - bach.pitchpack now treats negative degrees as descending steps (see the bell / bach.expr makepitch function)
 

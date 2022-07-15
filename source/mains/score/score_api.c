@@ -8482,7 +8482,7 @@ t_llll* get_all_measuresinfo_values_as_llll(t_score *x)
     lock_general_mutex((t_notation_obj *)x);    
     voice = x->firstvoice;
     while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-        llll_appendllll(out_llll, get_voice_measuresinfo_values_as_llll(voice), 0, WHITENULL_llll);    
+        llll_appendllll(out_llll, get_voice_measuresinfo_values_as_llll(x, voice), 0, WHITENULL_llll);
         voice = voice->next;
     }
     unlock_general_mutex((t_notation_obj *)x);    
@@ -8589,18 +8589,20 @@ t_llll* get_all_measure_pixel_values_as_llll(t_score *x)
     return out_llll;
 }
 
-t_llll* get_voice_measuresinfo_values_as_llll(t_scorevoice *voice)
+t_llll* get_voice_measuresinfo_values_as_llll(t_score *x, t_scorevoice *voice)
 {
     t_llll* out_llll = llll_get();
     t_measure *temp_meas = voice->firstmeasure;
     while (temp_meas) { // append chord lllls
         
-        t_llll* ts_tempo_llll = llll_get();
+        llll_appendllll(out_llll, measure_get_measureinfo_as_llll((t_notation_obj *)x, temp_meas));
+        
+/*        t_llll* ts_tempo_llll = llll_get();
         llll_appendllll(ts_tempo_llll, get_timesignature_as_llll(&temp_meas->timesignature), 0, WHITENULL_llll);
         llll_appendllll(ts_tempo_llll, measure_get_tempi_as_llll(temp_meas), 0, WHITENULL_llll);
         if (temp_meas->end_barline->barline_type > 0 && temp_meas->end_barline->barline_type != k_BARLINE_AUTOMATIC)
             llll_appendlong(ts_tempo_llll, temp_meas->end_barline->barline_type, 0, WHITENULL_llll);
-        llll_appendllll(out_llll, ts_tempo_llll, 0, WHITENULL_llll);    
+        llll_appendllll(out_llll, ts_tempo_llll, 0, WHITENULL_llll);    */
         
         temp_meas = temp_meas->next;
     }
