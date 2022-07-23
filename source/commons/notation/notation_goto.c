@@ -1221,8 +1221,21 @@ t_llll *goto_time(t_notation_obj *r_ob, t_goto_params *par, long *error)
             flags |= k_PARSETIMEPOINT_FLAG_MANUALGRACEBEHAVIOR;
         if (par->nudge_back_for_graces > 0)
             flags |= k_PARSETIMEPOINT_FLAG_NUDGEBACKFORGRACES;
-        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, flags);
-        llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
+        long syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NONE;
+        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, flags, &syntaxtype);
+        switch (syntaxtype) {
+            case k_PARSETIMEPOINT_SYNTAXTYPE_MS:
+            case k_PARSETIMEPOINT_SYNTAXTYPE_NAME:
+                llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
+                break;
+                
+            default:
+                // for now:
+                llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
+                // TODO: should implement goto_get_notation_item_at_timepoint() and use that instead
+//                llll_chain(toselect, goto_get_notation_item_at_timepoint(r_ob, par, tp, false, error));
+                break;
+        }
     }
     
     return toselect;

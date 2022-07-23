@@ -4772,8 +4772,9 @@ double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, lon
         }
        
        
-        if (rat_rat_cmp(pim, total_meas_duration) >= 0)
+       if (rat_rat_cmp(pim, total_meas_duration) >= 0) {
             return meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux;
+       }
         
         for (chord = meas->firstchord; chord; chord = chord->next) {
             char is_chord_whole_rest = is_chord_a_whole_measure_rest(r_ob, chord);
@@ -4815,28 +4816,31 @@ double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, lon
 
 
 
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags)
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags, long *syntaxtype)
 {
     t_llll *temp = llll_get();
     char res = 0;
     llll_appendhatom_clone(temp, &arguments->l_hatom);
-    res = parse_open_timepoint_syntax(r_ob, temp, ux, ms, tp, flags);
+    res = parse_open_timepoint_syntax(r_ob, temp, ux, ms, tp, flags, syntaxtype);
     llll_free(temp);
     return res;
 }
 
 // returns true if error, false otherwise
 // open timepoint syntax is <name>, or <ms>, or (<measure>) or (<measure> <position_in_measure>) or (<voice> <measure> <position_in_measure>)
-char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags)
+char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags, long *syntaxtype)
 {
     double unscaled_x = 0;
     double arguments_ms = 0;
+    
+    if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NONE;
     
     if (arguments && arguments->l_depth == 1 && arguments->l_size >= 1) {
         if (is_hatom_number(&arguments->l_head->l_hatom)) {
             // This is just a single number: milliseconds
             arguments_ms = hatom_getdouble(&arguments->l_head->l_hatom);
             unscaled_x = ms_to_unscaled_xposition(r_ob, arguments_ms, 1);
+            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_MS;
         } else {
             // This is possibly a name
             t_notation_item *it;
@@ -4848,6 +4852,7 @@ char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double
                     unscaled_x = ms_to_unscaled_xposition(r_ob, arguments_ms, 1);
             }
             unlock_general_mutex(r_ob);
+            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NAME;
         }
         if (tp)
             *tp = ms_to_timepoint(r_ob, arguments_ms, 0, k_MS_TO_TP_RETURN_INTERPOLATION);
@@ -4862,7 +4867,7 @@ char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double
         }
         
         char is_voice_defined = true;
-        t_timepoint arguments_tp = llll_to_timepoint(r_ob, innerllll, &is_voice_defined, false);
+        t_timepoint arguments_tp = llll_to_timepoint(r_ob, innerllll, &is_voice_defined, false, syntaxtype);
         
         if (arguments_tp.measure_num >= 0) {
             if (ux || ms) {
@@ -35578,7 +35583,7 @@ void timepoint_handle_pim(t_notation_obj *r_ob, t_timepoint *arguments_tp, char 
 
 }
 
-t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_voice_defined, char also_clip) {
+t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_voice_defined, char also_clip, long *syntaxtype) {
     t_timepoint arguments_tp; 
     t_measure *meas = NULL;
     char voice_defined = false;
@@ -35587,12 +35592,16 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
     arguments_tp.measure_num = 0;
     arguments_tp.pt_in_measure = long2rat(0);
     
+    if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NONE;
+
     if (innerllll && (innerllll->l_size == 1) && (hatom_gettype(&innerllll->l_head->l_hatom) == H_LONG || hatom_gettype(&innerllll->l_head->l_hatom) == H_RAT)) {
         // (<measure_num>)
 
         arguments_tp.measure_num = hatom_getlong(&innerllll->l_head->l_hatom) - 1;
         timepoint_handle_measure_numbers(r_ob, &arguments_tp, also_clip);
         
+        if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASURE;
+
     } else if (innerllll && (innerllll->l_size == 1) && (hatom_gettype(&innerllll->l_head->l_hatom) == H_DOUBLE)){
         // (<float_measure_num>)
         
@@ -35604,9 +35613,11 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
 
         meas = nth_measure_of_scorevoice((t_scorevoice *)r_ob->firstvoice, arguments_tp.measure_num);
         if (meas)
-            arguments_tp.pt_in_measure = rat_rat_prod(approx_double_with_rat_fixed_den(val - floor(val), 100, 0, NULL), measure_get_sym_duration(meas));
+            arguments_tp.pt_in_measure = rat_rat_prod(approx_double_with_rat_fixed_den(val - floor(val), CONST_RAT_SINGLE_DEN, 0, NULL), measure_get_sym_duration(meas));
         timepoint_handle_pim(r_ob, &arguments_tp, also_clip);
         
+        if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASUREFLOAT;
+
     } else if (innerllll && innerllll->l_size == 2 && (is_hatom_number(&innerllll->l_head->l_hatom) && is_hatom_number(&innerllll->l_head->l_next->l_hatom))) {
         // (<measure_num> <point_in_measure>)
         
@@ -35621,6 +35632,8 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
             arguments_tp.pt_in_measure = hatom_getrational(&innerllll->l_head->l_next->l_hatom);
         }
         timepoint_handle_pim(r_ob, &arguments_tp, also_clip);
+
+        if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASURE_PIM;
 
     } else if (innerllll && innerllll->l_size >= 3 && is_hatom_number(&innerllll->l_head->l_hatom)
                && is_hatom_number(&innerllll->l_head->l_next->l_hatom)  && is_hatom_number(&innerllll->l_head->l_next->l_hatom)) {
@@ -35660,7 +35673,8 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
             timepoint_handle_pim(r_ob, &arguments_tp, also_clip);
         }
         
-        
+        if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_VOICE_MEASURE_PIM;
+
     } else if (innerllll && (innerllll->l_size == 2 || innerllll->l_size == 3) &&
                ((hatom_gettype(&innerllll->l_tail->l_prev->l_hatom) == H_LLLL && hatom_getllll(&innerllll->l_tail->l_prev->l_hatom)->l_size == 0 && is_hatom_number(&innerllll->l_tail->l_hatom)) ||
                 (hatom_gettype(&innerllll->l_tail->l_prev->l_hatom) == H_SYM && hatom_getsym(&innerllll->l_tail->l_prev->l_hatom) == _llllobj_sym_any && is_hatom_number(&innerllll->l_tail->l_hatom)))){
@@ -35668,10 +35682,13 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
         
         t_rational global_sym_onset = hatom_getrational(&innerllll->l_tail->l_hatom);
         arguments_tp.voice_num = (innerllll->l_size == 2 ? 0 : hatom_getlong(&innerllll->l_head->l_hatom) - 1);
-        if (innerllll->l_size == 2)
+        if (innerllll->l_size == 2) {
             voice_defined = false;
-        else
+            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_GLOBAL_VOICE_PIM;
+        } else {
             voice_defined = true;
+            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_GLOBAL_PIM;
+        }
         
         timepoint_handle_voice_numbers(r_ob, &arguments_tp, also_clip);
         

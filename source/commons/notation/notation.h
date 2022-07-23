@@ -5428,6 +5428,19 @@ typedef enum _bach_timepointtoux_flags {
     k_PARSETIMEPOINT_FLAG_ACCURATE = 16, // more CPU-intensive accurate computation
 } e_bach_timepointtoux_flags;
 
+typedef enum _bach_parsetimepoint_syntaxtype {
+    k_PARSETIMEPOINT_SYNTAXTYPE_NONE = 0,
+    k_PARSETIMEPOINT_SYNTAXTYPE_MS,
+    k_PARSETIMEPOINT_SYNTAXTYPE_NAME,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASURE,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASUREFLOAT,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASURE_PIM,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_VOICE_MEASURE_PIM,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_GLOBAL_VOICE_PIM,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_GLOBAL_PIM,
+} _bach_parsetimepoint_syntaxtype;
+
+
 
 /// TIMEPOINT CONVERSIONS FOR [bach.score] only, TBD
 double timepoint_to_ms(t_notation_obj *r_ob, t_timepoint tp, long voicenum);
@@ -5435,8 +5448,10 @@ t_timepoint ms_to_timepoint_autochoose_voice(t_notation_obj *r_ob, double ms, ch
 //t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum);
 t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode, t_llll *include_denominators = NULL);
 double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, long flags); // flags are e_bach_timepointtoux_flags
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0);
-char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0);
+
+// syntaxtype is one of the e_bach_parsetimepoint_syntaxtype
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0, long *syntaxtype = NULL);
+char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0, long *syntaxtype = NULL);
 
 
 
@@ -5862,9 +5877,10 @@ t_timepoint interpolate_timepoints(t_timepoint tp1, t_timepoint tp2, double para
     @param    ll        The llll
     @param    is_voice_defined                If non-NULL, this is a pointer which will be filled with 1 if the voice number is defined, 0 otherwise
     @param    also_clip                       If non-zero, the goodness of voice number and measure numbers will be checked, otherwise they will be clipped.
+    @param    syntaxtype                    If non-null, will be filled with one of the e_bach_parsetimepoint_syntaxtype
     @return            The timepoint corresponding to the llll, with the syntax explained above.
 */ 
-t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_voice_defined, char also_clip);
+t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_voice_defined, char also_clip, long *syntaxtype = NULL);
 
 
 /**    Retrieve the number of sub-lllls of a given llll (but only at the base level) which do NOT start with an attribute symbol, such as "name", "ID", "lyrics...".
