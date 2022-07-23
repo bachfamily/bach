@@ -13656,7 +13656,7 @@ double get_all_tied_chord_sequence_duration_ms(t_chord *chord, char within_measu
 
 //TBD
 double get_all_tied_note_sequence_duration_ms(t_note *nt);
-
+t_rational get_all_tied_note_sequence_abs_r_duration(t_note *nt);
 
 /**    Get the last rest in a sequence of rest containing #chord. If #chord is not a rest, NULL is returned
     @ingroup                notation

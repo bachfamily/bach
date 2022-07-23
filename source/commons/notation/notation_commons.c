@@ -14504,6 +14504,20 @@ double get_all_tied_note_sequence_duration_ms(t_note *nt)
     return tot_duration;
 }
 
+t_rational get_all_tied_note_sequence_abs_r_duration(t_note *nt)
+{
+    t_note *first = note_get_first_in_tieseq(nt);
+    t_note *last = note_get_last_in_tieseq(nt);
+    t_note *temp;
+    t_rational tot_duration = long2rat(0);
+    for (temp = first; temp && temp != WHITENULL; temp = temp->tie_to) {
+        tot_duration = rat_rat_sum(tot_duration, rat_abs(temp->parent->r_sym_duration));
+        if (temp == last)
+            break;
+    }
+    return tot_duration;
+}
+
 void check_ties_around_measure(t_measure *measure){
     measure->need_check_ties = true;
     if (measure->prev) measure->prev->need_check_ties = true;
@@ -17770,7 +17784,7 @@ char is_level_original(t_llll *box){
 }
 
 char is_level_tuplet(t_llll *box){
-    if (box->l_thing.w_obj && (((t_rhythm_level_properties *)box->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_TUPLET))
+    if (box && box->l_thing.w_obj && (((t_rhythm_level_properties *)box->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_TUPLET))
         return true;
     return false;
 }

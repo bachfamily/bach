@@ -18332,14 +18332,31 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
     for (t_chord *ch = meas->firstchord; ch; ch = ch->next) {
         char sign = ch->r_sym_duration.r_num >= 0 ? 1 : -1;
         t_rational r_sym_tail = rat_rat_sum(ch->r_sym_onset, rat_abs(ch->r_sym_duration));
-        if (!ch->is_grace_chord && ch->r_sym_duration.r_num != 0 && rat_rat_cmp(ch->r_sym_onset, tp.pt_in_measure) < 0 && rat_rat_cmp(r_sym_tail, tp.pt_in_measure) > 0) {
+        if (!ch->is_grace_chord && ch->r_sym_duration.r_num != 0 && rat_rat_cmp(ch->r_sym_onset, tp.pt_in_measure) == 0) {
+            // just remove ties
+            if (!changed) {
+                create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
+                if (meas->prev)
+                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_CHANGE);
+                if (meas->next)
+                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->next, k_UNDO_MODIFICATION_CHANGE);
+                changed = true;
+                recompute_all_for_measure((t_notation_obj *) x, meas, true);
+            }
+            for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
+                if (nt->tie_from && nt->tie_from != WHITENULL)
+                    nt->tie_from->tie_to = NULL;
+                nt->tie_from = NULL;
+            }
+            break;
+        } else if (!ch->is_grace_chord && ch->r_sym_duration.r_num != 0 && rat_rat_cmp(ch->r_sym_onset, tp.pt_in_measure) < 0 && rat_rat_cmp(r_sym_tail, tp.pt_in_measure) > 0) {
             // slice the chord!
             if (!changed) {
                 create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
                 if (meas->prev)
-                create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_CHANGE);
+                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_CHANGE);
                 if (meas->next)
-                create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->next, k_UNDO_MODIFICATION_CHANGE);
+                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->next, k_UNDO_MODIFICATION_CHANGE);
                 changed = true;
                 recompute_all_for_measure((t_notation_obj *) x, meas, true);
             }
@@ -18347,27 +18364,71 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
             t_rational left_dur = rat_rat_diff(tp.pt_in_measure, ch->r_sym_onset);
             t_rational right_dur = rat_rat_diff(r_sym_tail, tp.pt_in_measure);
             double cut_rel_pos = rat2double(left_dur)/rat2double(rat_abs(ch->r_sym_duration));
+
+            double *cut_rel_pos_wties = (double *)bach_newptr(MAX(1, ch->num_notes) * sizeof(double));
+            t_note *nt, *new_nt;
+            t_llll *tiednotes = llll_get();
+            long i;
+            for (i = 0, nt = ch->firstnote; nt && i < ch->num_notes; nt = nt->next) {
+                t_rational tiesymdur = get_all_tied_note_sequence_abs_r_duration(nt);
+                cut_rel_pos_wties[i] = rat2double(left_dur)/rat2double(tiesymdur);
+                
+                t_llll *these_tiednotes = llll_get();
+                for (t_note *tempnt = nt->tie_to; tempnt && tempnt != WHITENULL; tempnt = tempnt->tie_to)
+                    llll_appendobj(these_tiednotes, tempnt);
+                llll_appendllll(tiednotes, these_tiednotes);
+            }
+            
             
             t_chord *new_chord = clone_chord((t_notation_obj *) x, ch, k_CLONE_FOR_NEW);
             new_chord->parent = ch->parent;
+            
+            // transfer ties
+            for (nt = ch->firstnote, new_nt = new_chord->firstnote;
+                 nt && new_nt;
+                 nt = nt->next, new_nt = new_nt->next) {
+                // add ties to ntnew if needed
+                new_nt->tie_to = nt->tie_to;
+                new_nt->tie_from = NULL;
 
+                // remove ties from nt
+                if (nt->tie_to && nt->tie_to != WHITENULL)
+                    nt->tie_to->tie_from = new_nt;
+                nt->tie_to = NULL;
+            }
+            
             ch->r_sym_duration = rat_long_prod(left_dur, sign);
             new_chord->r_sym_duration = rat_long_prod(right_dur, sign);
             new_chord->rhythmic_tree_elem = llll_insertobj_after(new_chord, ch->rhythmic_tree_elem);
 
             chord_insert_in_measure((t_notation_obj *)x, meas, new_chord, ch, 0);
             
-            t_note *nt, *new_nt;
-            for (nt = ch->firstnote, new_nt = new_chord->firstnote; nt && new_nt; nt = nt->next, new_nt = new_nt->next) {
+            t_llllelem *tiednotes_el;
+            for (i = 0, tiednotes_el = tiednotes->l_head, nt = ch->firstnote, new_nt = new_chord->firstnote;
+                 nt && new_nt && i < ch->num_notes && tiednotes_el;
+                 nt = nt->next, new_nt = new_nt->next, i++, tiednotes_el = tiednotes_el->l_next) {
                 
+                t_llll *these_tiednotes = hatom_getllll(&tiednotes_el->l_hatom);
+                double this_cut_rel_pos_wties = cut_rel_pos_wties[i];
                 if (note_breakpoints_are_nontrivial((t_notation_obj *)x, nt)) {
                     // split breakpoints
                     double new_midicents = nt->midicents;
-                    t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, 0., cut_rel_pos, NULL);
-                    t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, cut_rel_pos, 1., &new_midicents);
+                    t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, 0., x->r_ob.dl_spans_ties ? this_cut_rel_pos_wties : cut_rel_pos, NULL);
+                    t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, x->r_ob.dl_spans_ties ? this_cut_rel_pos_wties : cut_rel_pos, 1., &new_midicents);
                     note_set_breakpoints_from_llll((t_notation_obj *)x, nt, left_bpt);
                     note_set_breakpoints_from_llll((t_notation_obj *)x, new_nt, right_bpt);
                     new_nt->midicents = new_midicents;
+                    if (x->r_ob.dl_spans_ties && these_tiednotes) {
+                        for (t_llllelem *ntel = these_tiednotes->l_head; ntel; ntel = ntel->l_next) {
+                            t_note *thisnt = (t_note *)hatom_getobj(&ntel->l_hatom);
+                            if (thisnt) {
+                                thisnt->midicents = new_midicents;
+                                note_compute_approximation((t_notation_obj *)x, thisnt);
+                                if (thisnt->parent && thisnt->parent->parent)
+                                    recompute_all_for_measure((t_notation_obj *) x, thisnt->parent->parent, true);
+                            }
+                        }
+                    }
                     llll_free(left_bpt);
                     llll_free(right_bpt);
                 }
@@ -18375,8 +18436,9 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                 for (long i = 0; i < CONST_MAX_SLOTS; i++) {
                     if (slot_is_temporal((t_notation_obj *)x, i)) { // temporal slots
                         // need to split!
-                        t_llll *left_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, 0., cut_rel_pos);
-                        t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, -1);
+                        bool slot_spans_ties = x->r_ob.slotinfo[i].slot_singleslotfortiednotes;
+                        t_llll *left_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, 0.,  slot_spans_ties ? this_cut_rel_pos_wties : cut_rel_pos);
+                        t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, slot_spans_ties ? this_cut_rel_pos_wties : cut_rel_pos, -1);
                         llll_wrap_once(&left_slot);
                         llll_wrap_once(&right_slot);
                         note_set_slots_from_llll((t_notation_obj *)x, nt, left_slot);
@@ -18385,6 +18447,9 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                 }
             }
             
+            bach_freeptr(cut_rel_pos_wties);
+            llll_free(tiednotes);
+            break;
         }
     }
 }
