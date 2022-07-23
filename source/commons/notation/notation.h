@@ -12219,9 +12219,10 @@ long get_breakpoint_position(t_notation_obj *r_ob, t_bpt *bpt);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    chord        The chord
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                The path in the notation object to get to the chord (in the form explained above).
  */
-t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice);
 
 
 /**    Returns the path of a note inside the notation object. This will be in the form (<voice_number> <measure_number> <chord_index_in_measure> <note_index_in_chord>) if the note
@@ -12230,9 +12231,10 @@ t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    note        The note
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                The path in the notation object to get to the note (in the form explained above).
  */
-t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note);
+t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note, char attach_voicename_to_voice);
 
 
 /**    Returns the path of a tempo inside the notation object. This will be in the form (<voice_number> <measure_number> <tempo_index_in_measure>).
@@ -12241,9 +12243,10 @@ t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    tempo        The tempo
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                The path in the notation object to get to the tempo (in the form explained above).
  */
-t_llll *get_tempo_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo);
+t_llll *tempo_get_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo, char attach_voicename_to_voice);
 
 
 /**    Returns the path of a measure inside the notation object. This will be in the form (<voice_number> <measure_number>).
@@ -12252,9 +12255,10 @@ t_llll *get_tempo_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    meas        The measure
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                The path in the notation object to get to the measure (in the form explained above).
  */
-t_llll *measure_get_path_in_notationobj(t_notation_obj *r_ob, t_measure *meas);
+t_llll *measure_get_path_in_notationobj(t_notation_obj *r_ob, t_measure *meas, char attach_voicename_to_voice);
 
 
 /**    Returns the list of paths of all the notes belonging to a tied sequence of notes (given one note of the sequence).
@@ -12264,10 +12268,11 @@ t_llll *measure_get_path_in_notationobj(t_notation_obj *r_ob, t_measure *meas);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    note        A note
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                A list with the path of each note inside the sequence of tied notes to which the given note belongs.
     @seealso            note_get_path_in_notationobj()
  */
-t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note *note);
+t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note *note, char attach_voicename_to_voice);
 
 
 /**    Returns the list of paths of all the chord belonging to a completely-tied sequence of chord (given one chord of the sequence).
@@ -12278,10 +12283,11 @@ t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    chord        A chord
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                A list with the path of each chord inside the sequence of completely tied chords to which the given chord belongs.
     @seealso            chord_get_path_in_notationobj()
  */
-t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice);
 t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord);
 
 
@@ -12290,10 +12296,11 @@ t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    chord        A rest
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                A list with the path of each rest inside the sequence of consecutive rests to which the given rest belongs.
     @seealso            get_tied_chords_sequence_path_in_notationobj()
  */
-t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice);
 t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord);
 
 
