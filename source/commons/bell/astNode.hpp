@@ -928,7 +928,7 @@ public:
         }
         
         // last round with assignment
-        if (current && lookHere) {
+        if (current /* && lookHere */) { // was it there for some good reason????
             switch(lvStep[i]->type) {
                 case lvalueStep::E_LV_KEY:
                     lastKey(lvStep + i, lookHere, current, origV, context);
