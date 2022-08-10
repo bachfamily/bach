@@ -15214,6 +15214,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
     t_llll *clefs = llll_get();
     t_llll *keys = llll_get();
     t_llll *voicenames = llll_get();
+    t_llll *voicespacing = llll_get();
     t_llll *stafflines = llll_get();
     
     t_rollvoice *voice;
@@ -15233,6 +15234,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
     llll_appendsym(keys, _llllobj_sym_keys, 0, WHITENULL_llll);
     llll_appendsym(midichannels, _llllobj_sym_midichannels, 0, WHITENULL_llll);
     llll_appendsym(voicenames, _llllobj_sym_voicenames, 0, WHITENULL_llll);
+    llll_appendsym(voicespacing, _llllobj_sym_voicespacing, 0, WHITENULL_llll);
     llll_appendsym(stafflines, _llllobj_sym_stafflines, 0, WHITENULL_llll);
 
     voice = x->firstvoice;
@@ -15259,6 +15261,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
             llll_appendsym(keys, x->r_ob.keys_as_symlist[voice->v_ob.number], 0, WHITENULL_llll);
             llll_append_notation_item_name(voicenames, (t_notation_item *)voice);
 //            llll_appendsym(voicenames, voice->v_ob.r_it.name, 0, WHITENULL_llll);
+            llll_appenddouble(voicespacing, x->r_ob.voiceuspacing_as_floatlist[voice->v_ob.number]);
             llll_append(stafflines, get_voice_stafflines_as_llllelem((t_notation_obj *)x, (t_voice *)voice), WHITENULL_llll);
         }
         voice = voice->next;
@@ -15278,6 +15281,12 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
         llll_appendllll(out_llll, voicenames, 0, WHITENULL_llll); // voicenames
     else
         llll_free(voicenames);
+
+    if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_voicespacing)) {
+        llll_appenddouble(voicespacing, x->r_ob.voiceuspacing_as_floatlist[x->r_ob.num_voices]);
+        llll_appendllll(out_llll, voicespacing, 0, WHITENULL_llll); // voicespacing
+    } else
+        llll_free(voicespacing);
     
     if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_markers)) {
         if (x->r_ob.firstmarker) // markers

@@ -151,6 +151,7 @@ multiple objects: 	fixed missing lines in help files and references
     improved display of auxiliary stems
     New "dltoslot" message to copy pitch and velocity envelopes to slots
     Fixed bug causing loss of slots and other data upon "paste @repeat N"
+    Now voicenames can be output from playout for each note by setting @playoutfullpath 2, and they can be retrieved via bach.playkeys
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
@@ -333,9 +334,11 @@ Scroll down for very important things you should now about v0.8b
         Fixed doubleclick method for slots, checking for text too long added
         Feat: added possibility to copy-paste slotinfo; added copy slotinfo and paste slotinfo messages
 
-- bach.roll    Fixed behavior with marker stretching in bach.roll
+- bach.roll     Fixed behavior with marker stretching in bach.roll
+                "subroll" message now accounts for voicespacing
 
 - bach.score    Fixed possible crashes with "inscreenmeas"
+        "subscore" message now accounts for voicespacing
         Fixed possible crashes in rare scenarios when the score was hidden.
         Fixed bug causing crash in bach.score when all voices are hidden
         Fixed issues with image export in bach.score
