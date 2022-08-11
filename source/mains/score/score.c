@@ -7590,10 +7590,16 @@ void C74_EXPORT ext_main(void *moduleRef){
 
     CLASS_STICKY_ATTR(c,"category",0,"Show");
 
-    CLASS_ATTR_CHAR(c,"showtempointerpline",0, t_notation_obj, show_tempi_interp_line);
-    CLASS_ATTR_STYLE_LABEL(c,"showtempointerpline",0,"onoff","Show Tempi Interpolation Dashed Line");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtempointerpline", 0, "1");
-    // @description Toggles the display of the dashed line for "rall." and "acc." specifications.
+    CLASS_ATTR_CHAR(c,"showtempointerp",0, t_notation_obj, show_tempi_interp);
+    CLASS_ATTR_STYLE_LABEL(c,"showtempointerp",0,"enumindex","Show Tempi Interpolation");
+    CLASS_ATTR_ENUMINDEX(c,"showtempointerp", 0, "Don't Text And Dashed Line Text Only Dashed Line Only Arrows");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtempointerp", 0, "1");
+    // @description Chooses the display of tempo interpolation:
+    // - Don't: no display; <br />
+    // - Text And Dashed Line (default): "acc." and "rall." indications plus a dashed line to next tempo; <br />
+    // - Text Only: "acc." and "rall." indications only; <br />
+    // - Dashed Line Only: dashed line to next tempo only; <br />
+    // - Arrows: use ascending and descending arrows
 
     CLASS_ATTR_CHAR(c,"showstems",0, t_notation_obj, show_stems);
     CLASS_ATTR_STYLE_LABEL(c,"showstems",0,"enumindex","Show Stems");
@@ -12411,10 +12417,12 @@ char create_level_for_selected_tree_nodes(t_score *x){
             
             
             new_ll = llll_wrap_element_range(first_element_in_row, last_element_in_row);
-            set_level_type_flag_for_level(new_ll, k_RHYTHM_LEVEL_ORIGINAL);
-            recompute_all_for_measure((t_notation_obj *) x, meas, true);
-            set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-            changed = 1;
+            if (new_ll) {
+                set_level_type_flag_for_level(new_ll, k_RHYTHM_LEVEL_ORIGINAL);
+                recompute_all_for_measure((t_notation_obj *) x, meas, true);
+                set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
+                changed = 1;
+            }
         }
     }
     

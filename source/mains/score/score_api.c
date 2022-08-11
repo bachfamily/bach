@@ -9154,7 +9154,13 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     // check if we have to trim them
     if (x->r_ob.end_staff_with_final_measure) {
         if (voice->lastmeasure && voice->lastmeasure->tuttipoint_reference) {
-            double x_end = unscaled_xposition_to_xposition((t_notation_obj *)x, voice->lastmeasure->tuttipoint_reference->offset_ux + voice->lastmeasure->width_ux + measure_get_barline_ux_width((t_notation_obj *)x, voice->lastmeasure)) - 0.5;
+            // tuttipoint_ux + curr_meas->start_barline_offset_ux + curr_meas->width_ux
+            double x_end = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, voice->lastmeasure->tuttipoint_reference->offset_ux + voice->lastmeasure->start_barline_offset_ux + voice->lastmeasure->width_ux)) + measure_get_barline_ux_width((t_notation_obj *)x, voice->lastmeasure) - 0.5;
+            
+            if (x->r_ob.spacing_type == k_SPACING_PROPORTIONAL) {
+                x_end += x->r_ob.barline_ushift_for_proportional_spacing * x->r_ob.zoom_y; // barline_ushift_for_proportional_spacing is not exposed, so it's constantly 0
+            }
+            
             if (x_end < staff_lines_end)
                 staff_lines_end = x_end;
         }
@@ -10396,7 +10402,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 if (!curr_tempo->hidden) {
                     
                     double tempibox_x1 = unscaled_xposition_to_xposition((t_notation_obj *)x, curr_tempo->owner->tuttipoint_reference->offset_ux + curr_tempo->tuttipoint_offset_ux) - CONST_USHIFT_TEMPI_LEFT * x->r_ob.zoom_y;
-                    double tempibox_y1 = staff_top + (-x->r_ob.tempi_uy_pos + curr_tempo->uy_offset) * x->r_ob.zoom_y;
+                    double tempibox_y1 = staff_top + (-x->r_ob.tempi_uy_pos + curr_tempo->uy_offset) * x->r_ob.zoom_y + 8 *x->r_ob.zoom_y;
                     char veryfirsttempo;
                     double line_x, line_y;
                     double tempo_text_width = 0., tempo_text_height = 0., text_x = 0., width;
@@ -10405,8 +10411,14 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     //                    t_jtextlayout *jtl; 
                     
                     // if tempo_interp != 0: paint the ........... line!
-                    if (tempo_interp != 0 && x->r_ob.show_tempi_interp_line) {
-                        paint_dashed_x_line(g, x->r_ob.j_tempi_rgba, start_dottedline_x, tempibox_x1, tempibox_y1 + 7 *x->r_ob.zoom_y, 1, 3);
+                    if (tempo_interp != 0) {
+                        if (x->r_ob.show_tempi_interp == 1 || x->r_ob.show_tempi_interp == 3)
+                            paint_dashed_x_line(g, x->r_ob.j_tempi_rgba, start_dottedline_x, tempibox_x1, tempibox_y1, 1, 3);
+                        else if (x->r_ob.show_tempi_interp == 4) {
+                            double starty =  (tempo_interp == 1) ? tempibox_y1 : tempibox_y1 - 18 * x->r_ob.zoom_y * x->r_ob.tempo_size;
+                            double endy =  (tempo_interp == 1) ? tempibox_y1 - 18 * x->r_ob.zoom_y * x->r_ob.tempo_size : tempibox_y1;
+                                paint_arrow(g, x->r_ob.j_tempi_rgba, start_dottedline_x, starty, tempibox_x1 + 2 * x->r_ob.zoom_y * x->r_ob.tempo_size, endy, 1.5, 8 * x->r_ob.zoom_y * x->r_ob.tempo_size, 8 * x->r_ob.zoom_y * x->r_ob.tempo_size);
+                        }
                         tempo_interp = 0;
                     }
                     
@@ -10419,11 +10431,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     x->r_ob.j_selection_rgba : x->r_ob.j_tempi_rgba;
                     
                     // tempo figure.
-                    line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, curr_tempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
-                    line_y = tempibox_y1 + 5 * x->r_ob.zoom_y;
+                    line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, curr_tempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * x->r_ob.tempo_size;
+                    line_y = tempibox_y1 - 3 * x->r_ob.zoom_y;
                     // if it's the veryfirst tempo (the one that is meant to go over the clef) we paint it trasparently, since we'll repaint it later on.
                     // however we need the "width" variable to be properly filled.
-                    paint_small_note((t_notation_obj *) x, g, veryfirsttempo ? build_jrgba(1., 1., 1., 0) : tempocolor, curr_tempo->tempo_figure, line_x, line_y, CONST_TEMPI_FIGURE_PT, &width);
+                    paint_small_note((t_notation_obj *) x, g, veryfirsttempo ? build_jrgba(1., 1., 1., 0) : tempocolor, curr_tempo->tempo_figure, line_x, line_y, x->r_ob.tempo_size, &width);
                     
                     // text
                     text_x = line_x + width + 1 * x->r_ob.zoom_y; 
@@ -10431,7 +10443,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     
                     jfont_text_measure(jf_tempi, tempo_chars, &tempo_text_width, &tempo_text_height); // we get how much space do we need
                     if (!veryfirsttempo) { // we draw it if it's not the VERY FIRST! (the very first is drawn over the clef! but later)
-                        write_text_standard_singleline(g, jf_tempi, tempocolor, tempo_chars, text_x, tempibox_y1, text_x + 500, tempibox_y1 + 500);
+                        write_text_standard_singleline(g, jf_tempi, tempocolor, tempo_chars, text_x, tempibox_y1 - 8 *x->r_ob.zoom_y * (x->r_ob.tempo_size / 0.7), text_x + 500, tempibox_y1 + 500);
                     }
                     
                     tempo_interp = get_actual_tempo_interp(x, curr_tempo);
@@ -10439,14 +10451,18 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     // write acc/rall?
                     if (tempo_interp != 0) {
                         double acc_rall_x = text_x + tempo_text_width + 2 * x->r_ob.zoom_y;
-                        double accrall_text_width, accrall_text_height; char accrall_text[10]; 
-                        //                        t_jtextlayout *jtl = jtextlayout_create(); // numerator
-                        snprintf_zero(accrall_text, 10, (tempo_interp == 1) ? "acc." : "rall.");
-                        
-                        jfont_text_measure(jf_tempi_italic, accrall_text, &accrall_text_width, &accrall_text_height); // we get how much space do we need
-                        write_text_standard_singleline(g, jf_tempi_italic, tempocolor, accrall_text, acc_rall_x, tempibox_y1, text_x + 500, tempibox_y1 + 500);
-                        
-                        start_dottedline_x = acc_rall_x + accrall_text_width;
+                        if (x->r_ob.show_tempi_interp == 1 || x->r_ob.show_tempi_interp == 2) {
+                            double accrall_text_width, accrall_text_height; char accrall_text[10];
+                            //                        t_jtextlayout *jtl = jtextlayout_create(); // numerator
+                            snprintf_zero(accrall_text, 10, (tempo_interp == 1) ? "acc." : "rall.");
+                            
+                            jfont_text_measure(jf_tempi_italic, accrall_text, &accrall_text_width, &accrall_text_height); // we get how much space do we need
+                            write_text_standard_singleline(g, jf_tempi_italic, tempocolor, accrall_text, acc_rall_x, tempibox_y1 - 8 *x->r_ob.zoom_y * (x->r_ob.tempo_size / 0.7), text_x + 500, tempibox_y1 + 500);
+                            
+                            start_dottedline_x = acc_rall_x + accrall_text_width;
+                        } else {
+                            start_dottedline_x = acc_rall_x;
+                        }
                     }
                     curr_tempo->real_x_width = text_x + tempo_text_width - tempibox_x1;
                 }
@@ -10457,9 +10473,16 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     }
     
     // if tempo_interp != 0: paint the ........... line!
-    if (last_cur_tempo && tempo_interp != 0 && x->r_ob.show_tempi_interp_line) {
-        double tempibox_y1 = staff_top + (-x->r_ob.tempi_uy_pos + last_cur_tempo->uy_offset) * x->r_ob.zoom_y;
-        paint_dashed_x_line(g, x->r_ob.j_tempi_rgba, start_dottedline_x, rect.width - x->r_ob.j_inset_x, tempibox_y1 + 7 *x->r_ob.zoom_y, 1, 3);
+    if (last_cur_tempo && tempo_interp != 0) {
+        double tempibox_y1 = staff_top + (-x->r_ob.tempi_uy_pos + last_cur_tempo->uy_offset) * x->r_ob.zoom_y + 8 *x->r_ob.zoom_y;
+
+        if (x->r_ob.show_tempi_interp == 1 || x->r_ob.show_tempi_interp == 3) {
+            paint_dashed_x_line(g, x->r_ob.j_tempi_rgba, start_dottedline_x, rect.width - x->r_ob.j_inset_x, tempibox_y1, 1, 3);
+        } else if (x->r_ob.show_tempi_interp == 4) {
+            double starty =  (tempo_interp == 1) ? tempibox_y1 : tempibox_y1 - 18 * x->r_ob.zoom_y * x->r_ob.tempo_size;
+            double endy =  (tempo_interp == 1) ? tempibox_y1 - 18 * x->r_ob.zoom_y * x->r_ob.tempo_size : tempibox_y1;
+            paint_arrow(g, x->r_ob.j_tempi_rgba, start_dottedline_x, starty, rect.width - x->r_ob.j_inset_x, endy, 1.5, 8 * x->r_ob.zoom_y * x->r_ob.tempo_size, 8 * x->r_ob.zoom_y * x->r_ob.tempo_size);
+        }
     }
 
     
@@ -10535,8 +10558,8 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
         jf_text_small = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small)
         jf_text_smallbold = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small and bold)
         jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.markers_font_size * x->r_ob.zoom_y));  // text font for markers
-        jf_tempi_italic = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_ITALIC , JGRAPHICS_FONT_WEIGHT_NORMAL, round(8.8 * x->r_ob.zoom_y)); 
-        jf_tempi_figure = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, CONST_TEMPI_FIGURE_PT * x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y);
+        jf_tempi_italic = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_ITALIC , JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.tempo_size * 12.5714285714 * x->r_ob.zoom_y));
+        jf_tempi_figure = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.tempo_size * x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y);
         jf_tuplets = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(CONST_TUPLET_BASE_PT * x->r_ob.zoom_y));
         jf_lyrics = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size * x->r_ob.zoom_y);
         jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
@@ -10788,22 +10811,22 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         t_jrgba tempocolor = ((x->r_ob.num_selecteditems == 1) && (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)thistempo))) ?
                         x->r_ob.j_selection_rgba : x->r_ob.j_tempi_rgba;
                         double tempibox_x1 = x->r_ob.j_inset_x + 1 + x->r_ob.notation_typo_preferences.clef_ux_shift + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y; // we put the tempo over the clef
-                        double tempibox_y1 = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, false) + (-x->r_ob.tempi_uy_pos + thistempo->uy_offset) * x->r_ob.zoom_y;
+                        double tempibox_y1 = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, false) + (-x->r_ob.tempi_uy_pos + thistempo->uy_offset) * x->r_ob.zoom_y  + 8 * x->r_ob.zoom_y;
                         // tempo figure.
-                        double line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, thistempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
-                        double line_y = tempibox_y1 + 5 * x->r_ob.zoom_y;
+                        double line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, thistempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * x->r_ob.tempo_size;
+                        double line_y = tempibox_y1 - 3 * x->r_ob.zoom_y;
                         double tempo_text_width = 0., tempo_text_height = 0., text_x = 0.;
                         double width;
                         char tempo_chars[30];
                         
-                        paint_small_note((t_notation_obj *) x, g, tempocolor, thistempo->tempo_figure, line_x, line_y, CONST_TEMPI_FIGURE_PT, &width);
+                        paint_small_note((t_notation_obj *) x, g, tempocolor, thistempo->tempo_figure, line_x, line_y, x->r_ob.tempo_size, &width);
                         
                         // text
                         text_x = line_x + width + 1 * x->r_ob.zoom_y;
                         tempo_to_char_buf(thistempo, tempo_chars, 30, x->r_ob.tempo_approx_digits);
                         
                         jfont_text_measure(jf_tempi, tempo_chars, &tempo_text_width, &tempo_text_height); // we get how much space do we need
-                        write_text_standard_singleline(g, jf_tempi, tempocolor, tempo_chars, text_x, tempibox_y1, text_x + 500, tempibox_y1 + 500);
+                        write_text_standard_singleline(g, jf_tempi, tempocolor, tempo_chars, text_x, tempibox_y1 - 8 *x->r_ob.zoom_y * (x->r_ob.tempo_size / 0.7), text_x + 500, tempibox_y1 + 500);
                         
                         thistempo->real_x_width = text_x + tempo_text_width - tempibox_x1;
                     }
@@ -10951,7 +10974,7 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
     jf_text_fractions = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_TEXT_FRACTIONS_PT * x->r_ob.zoom_y);
     jf_ts = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt_ts * x->r_ob.zoom_y);
     jf_ts_big = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt_ts * x->r_ob.zoom_y * x->r_ob.big_time_signatures_ratio);
-    jf_tempi = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(8.8 * x->r_ob.zoom_y));
+    jf_tempi = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.tempo_size * 12.5714285714 * x->r_ob.zoom_y));
     jf_measure_num = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.measure_numbers_font_size * x->r_ob.zoom_y));
 
 //    dev_post("val = %.3f", x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y);

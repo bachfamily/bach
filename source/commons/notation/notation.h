@@ -389,7 +389,6 @@
 #define CONST_UX_ACC_SEPARATION_FROM_NOTE 3.0                    ///< Unscaled separation (in pixels) between a note and its accidental (if there's no other accidental horizontally in between)  
 #define CONST_SCORE_TIE_ADDITIONAL_USPACING 6                    ///< Unscaled horizontal additional spacing if note has a tie which starts on it
 
-#define CONST_TEMPI_FIGURE_PT 0.7                                ///< Rescaling factor of the small figures in the tempi equations (e.g. 'q = 120') with respect to the ordinary figures
 #define CONST_FIGURE_IN_TUPLET_LEGEND_RATIO 0.55                ///< Rescaling factor of the small note in the tuplet ratio specification, as 'aq:b'
 
 #define CONST_TEXT_FRACTIONS_PT 7.5                                ///< For <zoom_y> = 1, size (in pt) of the font used to write the fractions-like and cents-like accidentals (as '-1/5' or '+34c')
@@ -4232,6 +4231,9 @@ typedef struct _notation_obj
     double        dynamics_uy_pos;                ///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
     char        dynamics_output_mode;           ///< Output mode for the dynamics: 0 = plain textual form; 1 = detailed; 2 = verbose
     
+    // tempo
+    double      tempo_size;                     ///< A multiplier for tempo size with respect to standard note size.
+    
     // lyrics
     double        lyrics_font_size;                    ///< Font size for the lyrics (for zoom_y = 1)
     double        lyrics_uy_pos;                        ///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
@@ -4633,7 +4635,7 @@ typedef struct _notation_obj
     // tempi
     char        show_tempi;                                ///< Flag telling if we want to show tempi
     double      tempi_uy_pos;                           ///< Unscaled vertical shift for tempi
-    char        show_tempi_interp_line;                 ///< Show/hide dashed rall/acc line
+    char        show_tempi_interp;                          ///< Show/hide dashed rall/acc line, or text, or arrows
     
     char        show_barlines;                            ///< Flag telling if we want to show barlines
     char        show_barline_locks;                        ///< Flag telling if we want to show the barline locks (appearing when barline width has been locked, fixed)
@@ -17628,6 +17630,7 @@ t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object 
 t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);

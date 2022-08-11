@@ -58,7 +58,8 @@ v0.8.2b
 	You can change this by using the new attribute @nudgeforgrace, given to many messages, including:
 	"setcursor", "getpixelpos", "timetopixel", "timepoint", "interp", "overtype"
 	The same messages also now allows for an @accurate mode (not breaking any compatibility).
-    
+    The @showtempointerpline attribute is now renamed to @showtempointerp, and has several more modes
+
 
 - bach.pitchpack now treats negative degrees as descending steps (see the bell / bach.expr makepitch function)
 
@@ -338,6 +339,7 @@ Scroll down for very important things you should now about v0.8b
                 "subroll" message now accounts for voicespacing
 
 - bach.score    Fixed possible crashes with "inscreenmeas"
+        Tempi can be resized via @temposize
         "subscore" message now accounts for voicespacing
         Fixed possible crashes in rare scenarios when the score was hidden.
         Fixed bug causing crash in bach.score when all voices are hidden

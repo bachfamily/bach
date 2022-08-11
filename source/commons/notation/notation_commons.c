@@ -1920,6 +1920,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
         t_voice *voice = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? ((t_voice *)curr_nt->parent->parent->voiceparent) : ((t_voice *)curr_nt->parent->voiceparent));
         custom_font_size = noteheads_font_size * notehead_resize;
         note_y_textbox = system_shift + mc_to_yposition_in_scale_for_notes(r_ob, curr_nt, voice, notehead_resize, false);
+        note_x_textbox = note_x_real - ((curr_nt->notehead_uwidth * grace_ratio * notehead_resize / 2.) * r_ob->zoom_y);
         notehead_need_custom_font = true;
         notehead_is_standard_quarternote = false;
     }
@@ -6784,14 +6785,16 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     set_notehead_names(ntp, i, gensym("accent"), gensym("acc"));
     if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61502);
+        ntp->nhpref[i].uy_shift -= 2.9;
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '/');
+        ntp->nhpref[i].uy_shift -= 2;
     } else {
         set_all_unicode_characters(r_ob, i, 62);
+        ntp->nhpref[i].uy_shift -= 2;
     }
     ntp->nhpref[i].uwidth = 9.5;
     ntp->nhpref[i].durationline_start_ux_shift -= 0.2;
-    ntp->nhpref[i].uy_shift -= 2.9;
 
     
     i = k_NOTEHEAD_PLUS;

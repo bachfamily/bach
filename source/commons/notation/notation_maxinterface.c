@@ -1302,10 +1302,10 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
-    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0;
+    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0;
     t_atom_long dblclicksendsvalues = 0;
     double slotbgalpha = 0, backgroundslotfontsize = 0;
-    t_atom_long velocityhandling = -1, notificationsformessages = -1;
+    t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0;
     char brand_new_creation = 0;
 
 
@@ -1371,6 +1371,10 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     if ((has_notificationsformessages = dictionary_hasentry(d, gensym("notificationsformessages"))))
         dictionary_getlong(d, gensym("notificationsformessages"), &notificationsformessages);
 
+    if ((has_showtempointerpline = dictionary_hasentry(d, gensym("showtempointerpline"))))
+        dictionary_getlong(d, gensym("showtempointerpline"), &showtempointerpline);
+    
+    
     if (num_voices_from_argument > 0) {
         t_atom av;
         atom_setlong(&av, num_voices_from_argument);
@@ -1420,6 +1424,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     if (has_velocityhandling)
         object_attr_setchar(x, gensym("showvelocity"), velocityhandling);
 
+    if (has_showtempointerpline)
+        object_attr_setchar(x, gensym("showtempointerp"), showtempointerpline);
+    
     if (has_notificationsformessages)
         object_attr_setchar(x, gensym("notifymessages"), notificationsformessages);
 
@@ -3090,7 +3097,16 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_ACCESSORS(c, "lyricsfontsize", (method)NULL, (method)notation_obj_setattr_lyrics_font_size);
         // @exclude bach.slot
         // @description Sets the font size of lyrics (rescaled according to the <m>vzoom</m>).
-
+        
+        if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            CLASS_ATTR_DOUBLE(c,"temposize",0, t_notation_obj, tempo_size);
+            CLASS_ATTR_STYLE_LABEL(c,"temposize",0,"text","Tempi Relative Size");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"temposize", 0, "0.7");
+            CLASS_ATTR_ACCESSORS(c, "temposize", (method)NULL, (method)notation_obj_setattr_tempo_size);
+            // @exclude bach.slot, bach.roll
+            // @description Sets the relative size of tempo markings with respect to standard notation.
+        }
+        
         CLASS_ATTR_DOUBLE(c,"dynamicsfontsize",0, t_notation_obj, dynamics_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"dynamicsfontsize",0,"text","Dynamics Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsfontsize", 0, "24");
@@ -3784,6 +3800,17 @@ t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return MAX_ERR_NONE;
 }
+
+t_max_err notation_obj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && is_atom_number(av))
+        r_ob->tempo_size = atom_getfloat(av);
+
+    implicitely_recalculate_all(r_ob, false);
+
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
 
 t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
