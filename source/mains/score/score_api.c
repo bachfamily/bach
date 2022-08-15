@@ -7947,9 +7947,9 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                         if (n->show_accidental && note->show_accidental) {
                             double n_uy = scaleposition_to_uyposition((t_notation_obj *)x, n_steps, v);
                             double n_top = note_get_accidental_top_uextension((t_notation_obj *)x, n);
-                            double n_bottom = note_get_accidental_top_uextension((t_notation_obj *)x, n);
+                            double n_bottom = note_get_accidental_bottom_uextension((t_notation_obj *)x, n);
                             double note_top = note_get_accidental_top_uextension((t_notation_obj *)x, note);
-                            double note_bottom = note_get_accidental_top_uextension((t_notation_obj *)x, note);
+                            double note_bottom = note_get_accidental_bottom_uextension((t_notation_obj *)x, note);
                             if (!((n_uy - n_top < note_uy + note_bottom && n_uy + n_bottom < note_uy - note_top) ||
                                 (n_uy - n_top > note_uy + note_bottom && n_uy + n_bottom > note_uy - note_top))) {
                                     acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + CONST_UX_ACC_SEPARATION_FROM_NOTE);
@@ -9155,7 +9155,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     if (x->r_ob.end_staff_with_final_measure) {
         if (voice->lastmeasure && voice->lastmeasure->tuttipoint_reference) {
             // tuttipoint_ux + curr_meas->start_barline_offset_ux + curr_meas->width_ux
-            double x_end = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, voice->lastmeasure->tuttipoint_reference->offset_ux + voice->lastmeasure->start_barline_offset_ux + voice->lastmeasure->width_ux)) + measure_get_barline_ux_width((t_notation_obj *)x, voice->lastmeasure) - 0.5;
+            double x_end = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, voice->lastmeasure->tuttipoint_reference->offset_ux + voice->lastmeasure->start_barline_offset_ux + voice->lastmeasure->width_ux)) + x->r_ob.zoom_y * measure_get_barline_ux_width((t_notation_obj *)x, voice->lastmeasure) - 0.5;
             
             if (x->r_ob.spacing_type == k_SPACING_PROPORTIONAL) {
                 x_end += x->r_ob.barline_ushift_for_proportional_spacing * x->r_ob.zoom_y; // barline_ushift_for_proportional_spacing is not exposed, so it's constantly 0

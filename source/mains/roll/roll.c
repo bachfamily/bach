@@ -4115,7 +4115,7 @@ void roll_playselection(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_notation_item *selitem;
     char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     char preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
-    t_atom av[2];
+    t_atom av[3];
     
     notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
 
