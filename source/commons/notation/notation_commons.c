@@ -1920,7 +1920,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
         t_voice *voice = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? ((t_voice *)curr_nt->parent->parent->voiceparent) : ((t_voice *)curr_nt->parent->voiceparent));
         custom_font_size = noteheads_font_size * notehead_resize;
         note_y_textbox = system_shift + mc_to_yposition_in_scale_for_notes(r_ob, curr_nt, voice, notehead_resize, false);
-        note_x_textbox = note_x_real - ((curr_nt->notehead_uwidth * grace_ratio * notehead_resize / 2.) * r_ob->zoom_y);
+//        note_x_textbox = note_x_real - ((curr_nt->notehead_uwidth * grace_ratio * notehead_resize / 2.) * r_ob->zoom_y);
         notehead_need_custom_font = true;
         notehead_is_standard_quarternote = false;
     }
@@ -43974,6 +43974,8 @@ double get_midicents_from_double_elem_or_notename(t_notation_obj *r_ob, t_llllel
         return notename2midicents(r_ob->middleC_octave, &r_ob->last_used_octave, hatom_getsym(&elem->l_hatom)->s_name, NULL, NULL);
     else if (is_hatom_number(&elem->l_hatom))
         return hatom_getdouble(&elem->l_hatom);
+    else if (hatom_gettype(&elem->l_hatom) == H_PITCH)
+        return hatom_getpitch(&elem->l_hatom).toMC();
     else
         return 0;
 }
