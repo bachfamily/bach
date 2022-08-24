@@ -1606,18 +1606,16 @@ void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_
                             parent->l_size += rv->l_size;
                             new_address->l_tail->l_hatom.h_w.w_long += rv->l_size - 1;
                             
+                            if (rv->l_depth > subll_depth + 1) {
+                                for (t_llllelem *this_elem = rv->l_head; this_elem != rv->l_tail->l_next; this_elem = this_elem->l_next) {
+                                    t_llll *this_subll;
+                                    if ((this_subll = hatom_getllll(&this_elem->l_hatom)))
+                                        llll_upgrade_depth(this_subll);
+                                }
+                            } else if (rv->l_depth <= subll_depth) {
+                                llll_downgrade_depth(parent);
+                            }
                             if (subll_depth) {
-                                if (rv->l_depth > subll_depth + 1) {
-                                    for (t_llllelem *this_elem = rv->l_head; this_elem != rv->l_tail; this_elem = this_elem->l_next) {
-                                        t_llll *this_subll;
-                                        if ((this_subll = hatom_getllll(&this_elem->l_hatom)))
-                                            llll_upgrade_depth(this_subll);
-                                    }
-                                }
-                                else if (rv->l_depth <= subll_depth) {
-                                    llll_downgrade_depth(parent);
-                                }
-                                
                                 deepenough = ((mindepth >= 0 && depth >= mindepth) || (parent->l_depth <= -mindepth));
                             }
                         }
@@ -6616,7 +6614,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
                 }
             } else {
                 step = hatom_getdouble(&step_hatom);
-                if (step == 0)
+                if (step == 0 && maxcount <= 0)
                     return outll;
                 end = step > 0 ? DBL_MAX : -DBL_MAX;
             }
@@ -6629,19 +6627,19 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         }
         
         
-        if (hatom_type_is_number(start_type)) {
+        if (start_is_num) {
             start = hatom_getdouble(&start_hatom);
             if (maxcount == 1) {
                 end = start;
                 step = 1;
             }
         } else { // if start is none
-            if (!(hatom_type_is_number(end_type))) { // if end is none
+            if (!end_is_num) { // if end is none
                 return outll;
             } else if (maxcount == 1) { // start is none, end is number, maxcount = 1
                 start = end = hatom_getdouble(&end_hatom);
                 step = 1;
-            } else if (!hatom_type_is_number(step_type) || maxcount <= 0) { // start is none, end is number, either step and maxcount, or both, are none
+            } else if (!step_is_num || maxcount <= 0) { // start is none, end is number, either step and maxcount, or both, are none
                 return outll;
             } else { // start is none, end, step and maxcount are numbers
                 end = hatom_getdouble(&end_hatom);
@@ -6650,7 +6648,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
             }
         }
         
-        if (hatom_type_is_number(end_type)) {
+        if (end_is_num) {
             end = hatom_getdouble(&end_hatom);
         } else if (maxcount == 1) {
             end = start;
@@ -6669,9 +6667,11 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
                     object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
             } else {
                 maxcount_decides = true;
-                step = (end - start) / (maxcount - 1);
-                if (hatom_type_is_number(step_type))
-                    object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
+                if (start_is_num && end_is_num) {
+                    step = (end - start) / (maxcount - 1);
+                    if (hatom_type_is_number(step_type))
+                        object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
+                }
             }
         } else if (maxcount <= 0)
             maxcount = ATOM_LONG_MAX;
@@ -6692,7 +6692,8 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
             //    for (v = start, count = 0; count < maxcount; v += step, count++)
             //        llll_appenddouble(outll, v, 0, WHITENULL_llll);
             //}
-            outll->l_tail->l_hatom.h_w.w_double = end;
+            if (step != 0)
+                outll->l_tail->l_hatom.h_w.w_double = end;
         }
         pedantic_llll_check(outll);
         return outll;
@@ -6708,14 +6709,14 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
             step = {0, 1};
         }
         
-        if (hatom_type_is_number(start_type)) {
+        if (start_is_num) {
             start = hatom_getrational(&start_hatom);
             if (maxcount == 1) {
                 end = start;
                 step = t_rational(1, 1);
             }
         } else {
-            if (!(hatom_type_is_number(end_type))) {
+            if (!end_is_num) {
                 return outll;
             } else if (maxcount == 1) {
                 start = end = hatom_getrational(&end_hatom);
@@ -6728,7 +6729,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
             }
         }
         
-        if (hatom_type_is_number(end_type)) {
+        if (end_is_num) {
             end = hatom_getrational(&end_hatom);
         } else {
             if (step.r_num == 0 || maxcount <= 0)
