@@ -221,6 +221,11 @@
 		0038AF9D280597160012316C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		0038AFA4280597B70012316C /* bell.out.c in Sources */ = {isa = PBXBuildFile; fileRef = 0038AF91280596FC0012316C /* bell.out.c */; };
 		1E1BD664223EA95F0000A1DF /* cursor_changevelocity.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */; };
+		1E1C53B328BA48D4004026BB /* neuralnet.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E1C53B228BA48D4004026BB /* neuralnet.c */; };
+		1E1C53B928BA48E5004026BB /* dataEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E1C53B528BA48E4004026BB /* dataEntry.h */; };
+		1E1C53BB28BA48E5004026BB /* dataReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E1C53B628BA48E5004026BB /* dataReader.h */; };
+		1E1C53BD28BA48E5004026BB /* neuralNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E1C53B728BA48E5004026BB /* neuralNetwork.h */; };
+		1E1C53BF28BA48E5004026BB /* neuralNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1E1C53B828BA48E5004026BB /* neuralNetwork.cpp */; };
 		1E53253D20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
 		1E53253E20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
 		1E53253F20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
@@ -2840,6 +2845,12 @@
 		0038AFA2280597160012316C /* bach.bell.out.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.bell.out.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		00812FAD27C8B9B400521C7D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_changevelocity.png; sourceTree = "<group>"; };
+		1E1C53B128BA48AF004026BB /* bach.adj copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.adj copy-Info.plist"; path = "/Users/danieleghisi/Documents/Max 8/Packages/bach/source/xcproj/bach.adj copy-Info.plist"; sourceTree = "<absolute>"; };
+		1E1C53B228BA48D4004026BB /* neuralnet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = neuralnet.c; path = "../../../../../../../Dropbox/BACH/bach0799-src/mains/dg/neuralnet.c"; sourceTree = "<group>"; };
+		1E1C53B528BA48E4004026BB /* dataEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dataEntry.h; path = "../../../../../../../Dropbox/BACH/bach0799-src/commons/nn/dataEntry.h"; sourceTree = "<group>"; };
+		1E1C53B628BA48E5004026BB /* dataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dataReader.h; path = "../../../../../../../Dropbox/BACH/bach0799-src/commons/nn/dataReader.h"; sourceTree = "<group>"; };
+		1E1C53B728BA48E5004026BB /* neuralNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = neuralNetwork.h; path = "../../../../../../../Dropbox/BACH/bach0799-src/commons/nn/neuralNetwork.h"; sourceTree = "<group>"; };
+		1E1C53B828BA48E5004026BB /* neuralNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = neuralNetwork.cpp; path = "../../../../../../../Dropbox/BACH/bach0799-src/commons/nn/neuralNetwork.cpp"; sourceTree = "<group>"; };
 		1E3B57CB15ACECA900B32D1F /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		1E3B57CC15ACECA900B32D1F /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
 		1E3B57CD15ACECA900B32D1F /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
@@ -4927,6 +4938,7 @@
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				91BA46AC1F71585E0002D515 /* package */,
 				00812FAC27C8B9B400521C7D /* Frameworks */,
+				1E1C53B128BA48AF004026BB /* bach.adj copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -5526,6 +5538,11 @@
 		9157F586232F694C00A4ADAB /* utilities */ = {
 			isa = PBXGroup;
 			children = (
+				1E1C53B528BA48E4004026BB /* dataEntry.h */,
+				1E1C53B628BA48E5004026BB /* dataReader.h */,
+				1E1C53B828BA48E5004026BB /* neuralNetwork.cpp */,
+				1E1C53B728BA48E5004026BB /* neuralNetwork.h */,
+				1E1C53B228BA48D4004026BB /* neuralnet.c */,
 				9151A45D131EDC370019DF19 /* args.c */,
 				911FC5C217AF9895004E8E49 /* hypercomment.c */,
 				91B6BB6D18F01DD50093DA53 /* wordcloud.c */,
@@ -7168,6 +7185,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E1C53BD28BA48E5004026BB /* neuralNetwork.h in Headers */,
+				1E1C53B928BA48E5004026BB /* dataEntry.h in Headers */,
+				1E1C53BB28BA48E5004026BB /* dataReader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13337,6 +13357,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E1C53B328BA48D4004026BB /* neuralnet.c in Sources */,
+				1E1C53BF28BA48E5004026BB /* neuralNetwork.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
