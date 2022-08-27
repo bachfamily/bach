@@ -153,6 +153,7 @@ multiple objects: 	fixed missing lines in help files and references
     New "dltoslot" message to copy pitch and velocity envelopes to slots
     Fixed bug causing loss of slots and other data upon "paste @repeat N"
     Now voicenames can be output from playout for each note by setting @playoutfullpath 2, and they can be retrieved via bach.playkeys
+    Fixed bug causing wrong behavior of @pitcheditrange when using pitches
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
