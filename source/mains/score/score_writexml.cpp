@@ -529,6 +529,24 @@ const char *bach_xml_acc2name(t_rational acc, long *mc_alter)
     } else if (acc.r_num == -2 && acc.r_den == 1) {
         acc_name = "double-flat";
         *mc_alter = 200;
+    } else if (acc.r_num == 1 && acc.r_den == 8) {
+        acc_name = "natural-up";
+        *mc_alter = 25;
+    } else if (acc.r_num == -1 && acc.r_den == 8) {
+        acc_name = "natural-down";
+        *mc_alter = 25;
+    } else if (acc.r_num == 5 && acc.r_den == 8) {
+        acc_name = "sharp-up";
+        *mc_alter = 125;
+    } else if (acc.r_num == 3 && acc.r_den == 8) {
+        acc_name = "sharp-down";
+        *mc_alter = 75;
+    } else if (acc.r_num == -3 && acc.r_den == 8) {
+        acc_name = "flat-up";
+        *mc_alter = 75;
+    } else if (acc.r_num == -5 && acc.r_den == 8) {
+        acc_name = "flat-down";
+        *mc_alter = 125;
     } else {
         acc_name = "unknown";
         *mc_alter = 0;

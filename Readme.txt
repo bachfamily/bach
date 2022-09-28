@@ -22,7 +22,16 @@ HOW TO INSTALL
 
 You should install bach directly from the Max Package Manager.
 
+
 Alternatively, you can copy the "bach" folder inside the "packages" folder in your Max folder. The Max packages folder is under "Documents/Max 7" (for Max 7) or "Documents/Max 8" (for Max 8).
+
+If you installed bach "by hand" on a Mac, chances are that you'll have to remove the quarantine manually as well. 
+The simplest way to do it is by going in the terminal and typing
+
+xattr -rd com.apple.quarantine ~/Documents/Max\ 8/Packages/bach/*
+
+or substitute the folder where the package is in, if it's a different one. 
+
 
 You can also build bach from its source code. For more information about this, see below.
 
