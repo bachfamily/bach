@@ -32530,7 +32530,7 @@ void fill_default_full_repr(t_notation_obj *r_ob, t_rational *full_repr, char ke
             full_repr[4*i] = long2rat(0);
             full_repr[4*i + 1] = RAT_1OVER8;
             full_repr[4*i + 2] = RAT_1OVER4;
-            full_repr[4*i + 3] = genrat(3, 4);
+            full_repr[4*i + 3] = genrat(3, 8); // why was this 4????
             full_repr[4*i + 4] = RAT_1OVER2;
             full_repr[4*i + 5] = genrat(-3, 8);
             full_repr[4*i + 6] = genrat(-1, 4);
