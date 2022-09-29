@@ -5216,235 +5216,259 @@ void notation_item_set_slots_from_llll(t_notation_obj *r_ob, t_notation_item *ni
 						if (j >= 0 && j < CONST_MAX_SLOTS) {
 							double slotmin, slotmax;
                             t_slot *slot = notation_item_get_slot(r_ob, nitem, j);
-                            
-							// we erase the slot
-							notation_item_clear_slot(r_ob, nitem, j);
-							
-							slotmin = r_ob->slotinfo[j].slot_range[0];	
-							slotmax = r_ob->slotinfo[j].slot_range[1];
-							//  now it depends on the slot
-							switch (r_ob->slotinfo[j].slot_type) {
-								case k_SLOT_TYPE_FUNCTION:
-								{
-                                    t_llll *sorted_ll = llll_clone(this_slot);
-                                    llll_behead(sorted_ll);
-                                    llll_mergesort_inplace(&sorted_ll, llll_sort_by_first, NULL);
 
-                                    t_llllelem *subelem;
-									for (subelem = sorted_ll->l_head /* this_slot->l_head->l_next */; subelem; subelem = subelem->l_next) { // elem iterates on the slot
-										long subtype = hatom_gettype(&subelem->l_hatom);
-										if (subtype == H_LLLL) { // must be a llll: in the form (x y slope) or (x y)
-											t_llll *single_point = hatom_getllll(&subelem->l_hatom);
-											if ((single_point->l_size >= 2)  && (single_point->l_size <= 3)) {
-												double x_val, y_val, slope;
-												t_pts *point;
-												t_slotitem *thisitem = build_slotitem(r_ob, slot);
-												x_val = hatom_getdouble(&single_point->l_head->l_hatom);
-												y_val = hatom_getdouble(&single_point->l_head->l_next->l_hatom);
-												if (single_point->l_size == 2) 
-													slope = 0;
-												else
-													slope = hatom_getdouble(&single_point->l_head->l_next->l_next->l_hatom);
-                                                slot_clip_domain_value(r_ob, nitem, j, &x_val);
-												clip_double(&y_val, slotmin, slotmax);
-												clip_double(&slope, -1., 1.);
-												point = (t_pts *)bach_newptr(sizeof(t_pts));
-												point->x = x_val; point->y = y_val; point->slope = slope;
-												thisitem->item = point;
-												slotitem_append(thisitem); // points are ordered! we just have to append them
-											}
-										}
-									}
-                                    
-                                    llll_free(sorted_ll);
-
-									break;
-								}
-								case k_SLOT_TYPE_3DFUNCTION:
-								{
-									double slotzmin = r_ob->slotinfo[j].slot_zrange[0];	
-									double slotzmax = r_ob->slotinfo[j].slot_zrange[1];
-									t_llllelem *subelem;
-
-                                    t_llll *sorted_ll = llll_clone(this_slot);
-                                    llll_behead(sorted_ll);
-                                    llll_mergesort_inplace(&sorted_ll, llll_sort_by_first, NULL);
-
-									for (subelem = sorted_ll->l_head; subelem; subelem = subelem->l_next) { // elem iterates on the slot
-										long subtype = hatom_gettype(&subelem->l_hatom);
-										if (subtype == H_LLLL) { // must be a llll: in the form (x y z slope) or (x y z)
-											t_llll *single_point = hatom_getllll(&subelem->l_hatom);
-											if ((single_point->l_size >= 3)  && (single_point->l_size <= 4)) {
-												double x_val, y_val, z_val, slope;
-												t_pts3d *point;
-												t_slotitem *thisitem = build_slotitem(r_ob, slot);
-												x_val = hatom_getdouble(&single_point->l_head->l_hatom);
-												y_val = hatom_getdouble(&single_point->l_head->l_next->l_hatom);
-												z_val = hatom_getdouble(&single_point->l_head->l_next->l_next->l_hatom);
-												if (single_point->l_size == 3) 
-													slope = 0;
-												else
-													slope = hatom_getdouble(&single_point->l_head->l_next->l_next->l_next->l_hatom);
-                                                slot_clip_domain_value(r_ob, nitem, j, &x_val);
-												clip_double(&y_val, slotmin, slotmax);
-												clip_double(&z_val, slotzmin, slotzmax); 
-												clip_double(&slope, -1., 1.);
-												point = (t_pts3d *)bach_newptr(sizeof(t_pts3d));
-												point->x = x_val; 
-												point->y = y_val; 
-												point->z = z_val;
-												point->slope = slope;
-												thisitem->item = point;
-												slotitem_append(thisitem); // points are ordered! we just have to append them
-											}
-										}
-									}
-
-                                    llll_free(sorted_ll);
-                                    break;
-								}
-								case k_SLOT_TYPE_SPAT:
-								{
-                                    t_llll *sorted_ll = llll_clone(this_slot);
-                                    llll_behead(sorted_ll);
-                                    llll_mergesort_inplace(&sorted_ll, llll_sort_by_first, NULL);
-
-                                    t_llllelem *subelem;
-									for (subelem = sorted_ll->l_head; subelem; subelem = subelem->l_next) { // elem iterates on the slot
-										long subtype = hatom_gettype(&subelem->l_hatom);
-										if (subtype == H_LLLL) { // must be a llll: in the form (t radius angle) or (t radius)
-											t_llll *single_point = hatom_getllll(&subelem->l_hatom);
-											if ((single_point->l_size >= 2)  && (single_point->l_size <= 4)) {
-												double t_val, r_val, angle;
-												long interp;
-												t_spatpt *point;
-												t_slotitem *thisitem = build_slotitem(r_ob, slot);
-												t_val = hatom_getdouble(&single_point->l_head->l_hatom);
-												r_val = hatom_getdouble(&single_point->l_head->l_next->l_hatom);
-												if (single_point->l_size == 2) {
-													angle = 0; interp = k_SPAT_INTERPOLATION_ARC;
-												} else {
-													angle = deg2rad(hatom_getdouble(&single_point->l_head->l_next->l_next->l_hatom));
-													interp = (single_point->l_size >= 4) ? hatom_getlong(&single_point->l_head->l_next->l_next->l_next->l_hatom) : k_SPAT_INTERPOLATION_ARC;
-												}
-                                                slot_clip_domain_value(r_ob, nitem, j, &t_val);
-                                                clip_double(&r_val, slotmin, slotmax);
-												clip_double(&angle, -CONST_MAX_TURN_ANGLE * 2 * M_PI, CONST_MAX_TURN_ANGLE * 2 * M_PI);
-												clip_long(&interp, 0, 1);
-												point = (t_spatpt *)bach_newptr(sizeof(t_spatpt));
-												point->t = t_val; point->radius = r_val; point->angle = angle; point->interp = (char) interp;
-												thisitem->item = point;
-												slotitem_append(thisitem); // points are ordered! we just have to append them
-											}
-										}
-									}
-                                    llll_free(sorted_ll);
-									break;
-								}
-								case k_SLOT_TYPE_INT:
-								{
-									t_llllelem *subelem = this_slot->l_head->l_next;
-									t_slotitem *thisitem = build_slotitem(r_ob, slot);
-									long *val = (long *)bach_newptr(sizeof(long));
-									*val = hatom_getlong(&subelem->l_hatom);
-									clip_long(val, round(slotmin), round(slotmax));
-									thisitem->item = val;
-									slotitem_append(thisitem);
-									break;
-								}
-
-								case k_SLOT_TYPE_FLOAT:
-								{
-									t_llllelem *subelem = this_slot->l_head->l_next;
-									t_slotitem *thisitem = build_slotitem(r_ob, slot);
-									double *val = (double *)bach_newptr(sizeof(double));
-									*val = hatom_getdouble(&subelem->l_hatom);
-									clip_double(val, slotmin, slotmax);
-									thisitem->item = val;
-									slotitem_append(thisitem);
-									break;
-								}
-								case k_SLOT_TYPE_INTLIST:
-								{
-									t_llllelem *subelem;
-									for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
-										long *val = (long *)bach_newptr(sizeof(long));
-										t_slotitem *thisitem = build_slotitem(r_ob, slot);
-										*val = hatom_getlong(&subelem->l_hatom);
-										clip_long(val, round(slotmin), round(slotmax));
-										thisitem->item = val;
-										slotitem_append(thisitem);
-									}
-									break;
-								}
-                                case k_SLOT_TYPE_ARTICULATIONS:
-                                {
-                                    t_llllelem *subelem;
-                                    for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
-                                        long art_ID = hatom_gettype(&subelem->l_hatom) == H_SYM ? notationobj_articulation_symbol2id(r_ob, hatom_getsym(&subelem->l_hatom)) : hatom_getlong(&subelem->l_hatom);
-                                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                                        t_articulation *art = build_articulation(r_ob, art_ID, nitem, thisitem, hatom_getsym(&subelem->l_hatom));
-                                        thisitem->item = art;
-                                        slotitem_append(thisitem);
+                            if (slot) {
+                                
+                                // we erase the slot
+                                notation_item_clear_slot(r_ob, nitem, j);
+                                
+                                slotmin = r_ob->slotinfo[j].slot_range[0];
+                                slotmax = r_ob->slotinfo[j].slot_range[1];
+                                //  now it depends on the slot
+                                switch (r_ob->slotinfo[j].slot_type) {
+                                    case k_SLOT_TYPE_FUNCTION:
+                                    {
+                                        t_llll *sorted_ll = llll_clone(this_slot);
+                                        llll_behead(sorted_ll);
+                                        llll_mergesort_inplace(&sorted_ll, llll_sort_by_first, NULL);
+                                        
+                                        t_llllelem *subelem;
+                                        for (subelem = sorted_ll->l_head /* this_slot->l_head->l_next */; subelem; subelem = subelem->l_next) { // elem iterates on the slot
+                                            long subtype = hatom_gettype(&subelem->l_hatom);
+                                            if (subtype == H_LLLL) { // must be a llll: in the form (x y slope) or (x y)
+                                                t_llll *single_point = hatom_getllll(&subelem->l_hatom);
+                                                if ((single_point->l_size >= 2)  && (single_point->l_size <= 3)) {
+                                                    double x_val, y_val, slope;
+                                                    t_pts *point;
+                                                    t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                                    x_val = hatom_getdouble(&single_point->l_head->l_hatom);
+                                                    y_val = hatom_getdouble(&single_point->l_head->l_next->l_hatom);
+                                                    if (single_point->l_size == 2)
+                                                        slope = 0;
+                                                    else
+                                                        slope = hatom_getdouble(&single_point->l_head->l_next->l_next->l_hatom);
+                                                    slot_clip_domain_value(r_ob, nitem, j, &x_val);
+                                                    clip_double(&y_val, slotmin, slotmax);
+                                                    clip_double(&slope, -1., 1.);
+                                                    point = (t_pts *)bach_newptr(sizeof(t_pts));
+                                                    point->x = x_val; point->y = y_val; point->slope = slope;
+                                                    thisitem->item = point;
+                                                    slotitem_append(thisitem); // points are ordered! we just have to append them
+                                                }
+                                            }
+                                        }
+                                        
+                                        llll_free(sorted_ll);
+                                        
+                                        break;
                                     }
-                                    break;
-                                }
-                                case k_SLOT_TYPE_NOTEHEAD:
-                                {
-                                    t_llllelem *subelem;
-                                    for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
-                                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                                        t_symbol *s = hatom_gettype(&subelem->l_hatom) == H_SYM ? hatom_getsym(&subelem->l_hatom) : _llllobj_sym_none;
-                                        thisitem->item = s;
-                                        slotitem_append(thisitem);
+                                    case k_SLOT_TYPE_3DFUNCTION:
+                                    {
+                                        double slotzmin = r_ob->slotinfo[j].slot_zrange[0];
+                                        double slotzmax = r_ob->slotinfo[j].slot_zrange[1];
+                                        t_llllelem *subelem;
+                                        
+                                        t_llll *sorted_ll = llll_clone(this_slot);
+                                        llll_behead(sorted_ll);
+                                        llll_mergesort_inplace(&sorted_ll, llll_sort_by_first, NULL);
+                                        
+                                        for (subelem = sorted_ll->l_head; subelem; subelem = subelem->l_next) { // elem iterates on the slot
+                                            long subtype = hatom_gettype(&subelem->l_hatom);
+                                            if (subtype == H_LLLL) { // must be a llll: in the form (x y z slope) or (x y z)
+                                                t_llll *single_point = hatom_getllll(&subelem->l_hatom);
+                                                if ((single_point->l_size >= 3)  && (single_point->l_size <= 4)) {
+                                                    double x_val, y_val, z_val, slope;
+                                                    t_pts3d *point;
+                                                    t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                                    x_val = hatom_getdouble(&single_point->l_head->l_hatom);
+                                                    y_val = hatom_getdouble(&single_point->l_head->l_next->l_hatom);
+                                                    z_val = hatom_getdouble(&single_point->l_head->l_next->l_next->l_hatom);
+                                                    if (single_point->l_size == 3)
+                                                        slope = 0;
+                                                    else
+                                                        slope = hatom_getdouble(&single_point->l_head->l_next->l_next->l_next->l_hatom);
+                                                    slot_clip_domain_value(r_ob, nitem, j, &x_val);
+                                                    clip_double(&y_val, slotmin, slotmax);
+                                                    clip_double(&z_val, slotzmin, slotzmax);
+                                                    clip_double(&slope, -1., 1.);
+                                                    point = (t_pts3d *)bach_newptr(sizeof(t_pts3d));
+                                                    point->x = x_val;
+                                                    point->y = y_val;
+                                                    point->z = z_val;
+                                                    point->slope = slope;
+                                                    thisitem->item = point;
+                                                    slotitem_append(thisitem); // points are ordered! we just have to append them
+                                                }
+                                            }
+                                        }
+                                        
+                                        llll_free(sorted_ll);
+                                        break;
                                     }
-                                    break;
-                                }
-                                case k_SLOT_TYPE_DYNAMICS:
-                                {
-                                    t_llll *cloned_ll = llll_clone(this_slot);
-                                    t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                                    llll_behead(cloned_ll);
-                                    t_dynamics *dyn = dynamics_from_llll(r_ob, nitem, cloned_ll);
-                                    thisitem->item = dyn;
-                                    slotitem_append(thisitem);
-                                    llll_free(cloned_ll);
-                                    break;
-                                }
-                                case k_SLOT_TYPE_FLOATLIST:
-								{
-									t_llllelem *subelem;
-									for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
-										double *val = (double *)bach_newptr(sizeof(double));
-										t_slotitem *thisitem = build_slotitem(r_ob, slot);
-										*val = hatom_getdouble(&subelem->l_hatom);
-										clip_double(val, slotmin, slotmax);
-										thisitem->item = val;
-										slotitem_append(thisitem);
-									}
-									break;
-								}
-								case k_SLOT_TYPE_TEXT:
-								{
-									t_llllelem *subelem = this_slot->l_head->l_next;
-									t_symbol *text = (hatom_gettype(&subelem->l_hatom) == H_SYM) ? hatom_getsym(&subelem->l_hatom) : _llllobj_sym_empty_symbol;
-									long numchars = MAX(0, strlen(text->s_name));
-									t_slotitem *thisitem = build_slotitem(r_ob, slot);
-									thisitem->item = (char *)bach_newptr((numchars + 10) * sizeof(char));
-									memcpy(thisitem->item, text->s_name, numchars * sizeof(char));
-									((char *) thisitem->item)[numchars] = 0;
-									slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
-									slotitem_append(thisitem);
-									slot->length = numchars;
-									break;
-								}
-                                case k_SLOT_TYPE_LLLL:
-                                case k_SLOT_TYPE_INTMATRIX:
-                                case k_SLOT_TYPE_FLOATMATRIX:
-                                case k_SLOT_TYPE_TOGGLEMATRIX:
-								{
+                                    case k_SLOT_TYPE_SPAT:
+                                    {
+                                        t_llll *sorted_ll = llll_clone(this_slot);
+                                        llll_behead(sorted_ll);
+                                        llll_mergesort_inplace(&sorted_ll, llll_sort_by_first, NULL);
+                                        
+                                        t_llllelem *subelem;
+                                        for (subelem = sorted_ll->l_head; subelem; subelem = subelem->l_next) { // elem iterates on the slot
+                                            long subtype = hatom_gettype(&subelem->l_hatom);
+                                            if (subtype == H_LLLL) { // must be a llll: in the form (t radius angle) or (t radius)
+                                                t_llll *single_point = hatom_getllll(&subelem->l_hatom);
+                                                if ((single_point->l_size >= 2)  && (single_point->l_size <= 4)) {
+                                                    double t_val, r_val, angle;
+                                                    long interp;
+                                                    t_spatpt *point;
+                                                    t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                                    t_val = hatom_getdouble(&single_point->l_head->l_hatom);
+                                                    r_val = hatom_getdouble(&single_point->l_head->l_next->l_hatom);
+                                                    if (single_point->l_size == 2) {
+                                                        angle = 0; interp = k_SPAT_INTERPOLATION_ARC;
+                                                    } else {
+                                                        angle = deg2rad(hatom_getdouble(&single_point->l_head->l_next->l_next->l_hatom));
+                                                        interp = (single_point->l_size >= 4) ? hatom_getlong(&single_point->l_head->l_next->l_next->l_next->l_hatom) : k_SPAT_INTERPOLATION_ARC;
+                                                    }
+                                                    slot_clip_domain_value(r_ob, nitem, j, &t_val);
+                                                    clip_double(&r_val, slotmin, slotmax);
+                                                    clip_double(&angle, -CONST_MAX_TURN_ANGLE * 2 * M_PI, CONST_MAX_TURN_ANGLE * 2 * M_PI);
+                                                    clip_long(&interp, 0, 1);
+                                                    point = (t_spatpt *)bach_newptr(sizeof(t_spatpt));
+                                                    point->t = t_val; point->radius = r_val; point->angle = angle; point->interp = (char) interp;
+                                                    thisitem->item = point;
+                                                    slotitem_append(thisitem); // points are ordered! we just have to append them
+                                                }
+                                            }
+                                        }
+                                        llll_free(sorted_ll);
+                                        break;
+                                    }
+                                    case k_SLOT_TYPE_INT:
+                                    {
+                                        t_llllelem *subelem = this_slot->l_head->l_next;
+                                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                        long *val = (long *)bach_newptr(sizeof(long));
+                                        *val = hatom_getlong(&subelem->l_hatom);
+                                        clip_long(val, round(slotmin), round(slotmax));
+                                        thisitem->item = val;
+                                        slotitem_append(thisitem);
+                                        break;
+                                    }
+                                        
+                                    case k_SLOT_TYPE_FLOAT:
+                                    {
+                                        t_llllelem *subelem = this_slot->l_head->l_next;
+                                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                        double *val = (double *)bach_newptr(sizeof(double));
+                                        *val = hatom_getdouble(&subelem->l_hatom);
+                                        clip_double(val, slotmin, slotmax);
+                                        thisitem->item = val;
+                                        slotitem_append(thisitem);
+                                        break;
+                                    }
+                                    case k_SLOT_TYPE_INTLIST:
+                                    {
+                                        t_llllelem *subelem;
+                                        for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
+                                            long *val = (long *)bach_newptr(sizeof(long));
+                                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                            *val = hatom_getlong(&subelem->l_hatom);
+                                            clip_long(val, round(slotmin), round(slotmax));
+                                            thisitem->item = val;
+                                            slotitem_append(thisitem);
+                                        }
+                                        break;
+                                    }
+                                    case k_SLOT_TYPE_ARTICULATIONS:
+                                    {
+                                        t_llllelem *subelem;
+                                        for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
+                                            long art_ID = hatom_gettype(&subelem->l_hatom) == H_SYM ? notationobj_articulation_symbol2id(r_ob, hatom_getsym(&subelem->l_hatom)) : hatom_getlong(&subelem->l_hatom);
+                                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                            t_articulation *art = build_articulation(r_ob, art_ID, nitem, thisitem, hatom_getsym(&subelem->l_hatom));
+                                            thisitem->item = art;
+                                            slotitem_append(thisitem);
+                                        }
+                                        break;
+                                    }
+                                    case k_SLOT_TYPE_NOTEHEAD:
+                                    {
+                                        t_llllelem *subelem;
+                                        for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
+                                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                            t_symbol *s = hatom_gettype(&subelem->l_hatom) == H_SYM ? hatom_getsym(&subelem->l_hatom) : _llllobj_sym_none;
+                                            thisitem->item = s;
+                                            slotitem_append(thisitem);
+                                        }
+                                        break;
+                                    }
+                                    case k_SLOT_TYPE_DYNAMICS:
+                                    {
+                                        t_llll *cloned_ll = llll_clone(this_slot);
+                                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                        llll_behead(cloned_ll);
+                                        t_dynamics *dyn = dynamics_from_llll(r_ob, nitem, cloned_ll);
+                                        thisitem->item = dyn;
+                                        slotitem_append(thisitem);
+                                        llll_free(cloned_ll);
+                                        break;
+                                    }
+                                    case k_SLOT_TYPE_FLOATLIST:
+                                    {
+                                        t_llllelem *subelem;
+                                        for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
+                                            double *val = (double *)bach_newptr(sizeof(double));
+                                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                            *val = hatom_getdouble(&subelem->l_hatom);
+                                            clip_double(val, slotmin, slotmax);
+                                            thisitem->item = val;
+                                            slotitem_append(thisitem);
+                                        }
+                                        break;
+                                    }
+                                    case k_SLOT_TYPE_TEXT:
+                                    {
+                                        t_llllelem *subelem = this_slot->l_head->l_next;
+                                        t_symbol *text = (hatom_gettype(&subelem->l_hatom) == H_SYM) ? hatom_getsym(&subelem->l_hatom) : _llllobj_sym_empty_symbol;
+                                        long numchars = MAX(0, strlen(text->s_name));
+                                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                        thisitem->item = (char *)bach_newptr((numchars + 10) * sizeof(char));
+                                        memcpy(thisitem->item, text->s_name, numchars * sizeof(char));
+                                        ((char *) thisitem->item)[numchars] = 0;
+                                        slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+                                        slotitem_append(thisitem);
+                                        slot->length = numchars;
+                                        break;
+                                    }
+                                    case k_SLOT_TYPE_LLLL:
+                                    case k_SLOT_TYPE_INTMATRIX:
+                                    case k_SLOT_TYPE_FLOATMATRIX:
+                                    case k_SLOT_TYPE_TOGGLEMATRIX:
+                                    {
 #ifdef BACH_NEW_LLLLSLOT_SYNTAX
-                                    if (r_ob->creatingnewobj && llllobj_get_version_number((t_object *)r_ob, LLLL_OBJ_UI) <= 70908) {
+                                        if (r_ob->creatingnewobj && llllobj_get_version_number((t_object *)r_ob, LLLL_OBJ_UI) <= 70908) {
+                                            t_llllelem *subelem = this_slot->l_head->l_next;
+                                            t_llll *this_llll = (hatom_gettype(&subelem->l_hatom) == H_LLLL) ? hatom_getllll(&subelem->l_hatom) : NULL;
+                                            if (this_llll) {
+                                                t_llll *cloned = llll_clone(this_llll);
+                                                t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                                thisitem->item = cloned;
+                                                slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+                                                slotitem_append(thisitem);
+                                                slot->length = 1;
+                                            }
+                                        } else {
+                                            t_llll *this_llll = llll_clone(this_slot);
+                                            if (this_llll) {
+                                                llll_behead(this_llll);
+                                                t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                                thisitem->item = this_llll;
+                                                slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+                                                slotitem_append(thisitem);
+                                                slot->length = 1;
+                                            }
+                                        }
+#else
                                         t_llllelem *subelem = this_slot->l_head->l_next;
                                         t_llll *this_llll = (hatom_gettype(&subelem->l_hatom) == H_LLLL) ? hatom_getllll(&subelem->l_hatom) : NULL;
                                         if (this_llll) {
@@ -5455,112 +5479,91 @@ void notation_item_set_slots_from_llll(t_notation_obj *r_ob, t_notation_item *ni
                                             slotitem_append(thisitem);
                                             slot->length = 1;
                                         }
-                                    } else {
-                                        t_llll *this_llll = llll_clone(this_slot);
-                                        if (this_llll) {
-                                            llll_behead(this_llll);
-                                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                                            thisitem->item = this_llll;
-                                            slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
-                                            slotitem_append(thisitem);
-                                            slot->length = 1;
-                                        }
+#endif
+                                        break;
                                     }
-#else
-									t_llllelem *subelem = this_slot->l_head->l_next;
-									t_llll *this_llll = (hatom_gettype(&subelem->l_hatom) == H_LLLL) ? hatom_getllll(&subelem->l_hatom) : NULL;
-									if (this_llll) {
-										t_llll *cloned = llll_clone(this_llll);
-										t_slotitem *thisitem = build_slotitem(r_ob, slot);
-										thisitem->item = cloned;
-										slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
-										slotitem_append(thisitem);
-										slot->length = 1;
-									}
-#endif
-									break;
-								}		
 #ifdef BACH_MAX
-								case k_SLOT_TYPE_FILELIST:
-								{
-									t_llllelem *subelem;
-									t_llllelem *end_elem = NULL;
-									long active_file_index = 1; 
-									long i = 1;
-									if (hatom_gettype(&this_slot->l_tail->l_hatom) == H_LONG) {
-										active_file_index = hatom_getlong(&this_slot->l_tail->l_hatom);
-										end_elem = this_slot->l_tail;
-									}
-									for (subelem = this_slot->l_head->l_next; subelem && subelem != end_elem; subelem = subelem->l_next) { // elem iterates on the slot
-										t_symbol *single_path = (hatom_gettype(&subelem->l_hatom) == H_SYM) ? hatom_getsym(&subelem->l_hatom) : _llllobj_sym_empty_symbol;
-										t_slotitem *thisitem = build_slotitem(r_ob, slot);
-										t_file *file;
-										file = (t_file *)bach_newptr(sizeof(t_file));
-										set_file_from_symbol(r_ob, file, single_path);
-										thisitem->item = file;
-										if (i == active_file_index)
-                                            slot_set_active_item(slot, thisitem);
-										slotitem_append(thisitem); // files are ordered! we just have to append them
-										i++;
-									}	
-									break;
-								}
-									
-								case k_SLOT_TYPE_FILTER:
-								{
-									t_slotitem *thisitem = build_slotitem(r_ob, slot);
-									t_biquad *biquad = (t_biquad *)bach_newptr(sizeof(t_biquad));
-									t_llll *biquadllll;
-									
-									initialize_biquad(biquad);
-									biquadllll = llll_clone(this_slot);
-									
-									if (biquadllll && biquadllll->l_head)
-										llll_behead(biquadllll);
-									
-									set_biquad_filter_from_llll(r_ob, biquad, biquadllll);
-									thisitem->item = biquad;
-									slotitem_append(thisitem);
-									llll_free(biquadllll);
-									break;
-								}
-									
-								case k_SLOT_TYPE_DYNFILTER:
-								{
-									t_llllelem *subelem;
-									for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
-										if (hatom_gettype(&subelem->l_hatom) == H_LLLL) {
-											t_slotitem *thisitem = build_slotitem(r_ob, slot);
-											t_biquad *biquad = (t_biquad *)bach_newptr(sizeof(t_biquad));
-											set_biquad_filter_from_llll(r_ob, biquad, hatom_getllll(&subelem->l_hatom));
-											thisitem->item = biquad;
-											slotitem_append(thisitem);
-										}
-									}
-									break;
-								}
-									
-								case k_SLOT_TYPE_COLOR:
-								{
-									t_jrgba *col = (t_jrgba *)bach_newptr(sizeof(t_jrgba));
-									t_slotitem *thisitem = build_slotitem(r_ob, slot);
-									t_llll *col_llll;
-									
-									*col = get_grey(0);
-									col_llll = llll_clone(this_slot);
-									
-									if (col_llll && col_llll->l_head)
-										llll_behead(col_llll);
-									
-									change_color_according_to_llll(col, col_llll);
-									
-									thisitem->item = col;
-									slotitem_append(thisitem);
-									llll_free(col_llll);
-									break;
-								}
+                                    case k_SLOT_TYPE_FILELIST:
+                                    {
+                                        t_llllelem *subelem;
+                                        t_llllelem *end_elem = NULL;
+                                        long active_file_index = 1;
+                                        long i = 1;
+                                        if (hatom_gettype(&this_slot->l_tail->l_hatom) == H_LONG) {
+                                            active_file_index = hatom_getlong(&this_slot->l_tail->l_hatom);
+                                            end_elem = this_slot->l_tail;
+                                        }
+                                        for (subelem = this_slot->l_head->l_next; subelem && subelem != end_elem; subelem = subelem->l_next) { // elem iterates on the slot
+                                            t_symbol *single_path = (hatom_gettype(&subelem->l_hatom) == H_SYM) ? hatom_getsym(&subelem->l_hatom) : _llllobj_sym_empty_symbol;
+                                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                            t_file *file;
+                                            file = (t_file *)bach_newptr(sizeof(t_file));
+                                            set_file_from_symbol(r_ob, file, single_path);
+                                            thisitem->item = file;
+                                            if (i == active_file_index)
+                                                slot_set_active_item(slot, thisitem);
+                                            slotitem_append(thisitem); // files are ordered! we just have to append them
+                                            i++;
+                                        }
+                                        break;
+                                    }
+                                        
+                                    case k_SLOT_TYPE_FILTER:
+                                    {
+                                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                        t_biquad *biquad = (t_biquad *)bach_newptr(sizeof(t_biquad));
+                                        t_llll *biquadllll;
+                                        
+                                        initialize_biquad(biquad);
+                                        biquadllll = llll_clone(this_slot);
+                                        
+                                        if (biquadllll && biquadllll->l_head)
+                                            llll_behead(biquadllll);
+                                        
+                                        set_biquad_filter_from_llll(r_ob, biquad, biquadllll);
+                                        thisitem->item = biquad;
+                                        slotitem_append(thisitem);
+                                        llll_free(biquadllll);
+                                        break;
+                                    }
+                                        
+                                    case k_SLOT_TYPE_DYNFILTER:
+                                    {
+                                        t_llllelem *subelem;
+                                        for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
+                                            if (hatom_gettype(&subelem->l_hatom) == H_LLLL) {
+                                                t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                                t_biquad *biquad = (t_biquad *)bach_newptr(sizeof(t_biquad));
+                                                set_biquad_filter_from_llll(r_ob, biquad, hatom_getllll(&subelem->l_hatom));
+                                                thisitem->item = biquad;
+                                                slotitem_append(thisitem);
+                                            }
+                                        }
+                                        break;
+                                    }
+                                        
+                                    case k_SLOT_TYPE_COLOR:
+                                    {
+                                        t_jrgba *col = (t_jrgba *)bach_newptr(sizeof(t_jrgba));
+                                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                        t_llll *col_llll;
+                                        
+                                        *col = get_grey(0);
+                                        col_llll = llll_clone(this_slot);
+                                        
+                                        if (col_llll && col_llll->l_head)
+                                            llll_behead(col_llll);
+                                        
+                                        change_color_according_to_llll(col, col_llll);
+                                        
+                                        thisitem->item = col;
+                                        slotitem_append(thisitem);
+                                        llll_free(col_llll);
+                                        break;
+                                    }
 #endif
-							}
+                                }
+                            }
 						}
 					} else {
 						notation_item_clear_slot(r_ob, nitem, j);
