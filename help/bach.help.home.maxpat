@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 5,
+			"minor" : 3,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 294.0, 79.0, 1112.0, 738.0 ],
+		"rect" : [ 294.0, 100.0, 1400.0, 738.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -37,7 +37,140 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-145",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patcher" : 					{
+						"fileversion" : 1,
+						"appversion" : 						{
+							"major" : 8,
+							"minor" : 3,
+							"revision" : 2,
+							"architecture" : "x64",
+							"modernui" : 1
+						}
+,
+						"classnamespace" : "box",
+						"rect" : [ 0.0, 0.0, 640.0, 480.0 ],
+						"bglocked" : 0,
+						"openinpresentation" : 0,
+						"default_fontsize" : 12.0,
+						"default_fontface" : 0,
+						"default_fontname" : "Arial",
+						"gridonopen" : 1,
+						"gridsize" : [ 15.0, 15.0 ],
+						"gridsnaponopen" : 1,
+						"objectsnaponopen" : 1,
+						"statusbarvisible" : 2,
+						"toolbarvisible" : 1,
+						"lefttoolbarpinned" : 0,
+						"toptoolbarpinned" : 0,
+						"righttoolbarpinned" : 0,
+						"bottomtoolbarpinned" : 0,
+						"toolbars_unpinned_last_save" : 0,
+						"tallnewobj" : 0,
+						"boxanimatetime" : 200,
+						"enablehscroll" : 1,
+						"enablevscroll" : 1,
+						"devicewidth" : 0.0,
+						"description" : "",
+						"digest" : "",
+						"tags" : "",
+						"style" : "",
+						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
+						"boxes" : [ 							{
+								"box" : 								{
+									"id" : "obj-131",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 50.0, 128.5, 36.0, 22.0 ],
+									"text" : "defer"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-121",
+									"maxclass" : "newobj",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 50.0, 100.0, 80.0, 22.0 ],
+									"text" : "speedlim 100"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"comment" : "",
+									"id" : "obj-140",
+									"index" : 1,
+									"maxclass" : "inlet",
+									"numinlets" : 0,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 50.0, 40.0, 30.0, 30.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"comment" : "",
+									"id" : "obj-142",
+									"index" : 1,
+									"maxclass" : "outlet",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 50.0, 210.5, 30.0, 30.0 ]
+								}
+
+							}
+ ],
+						"lines" : [ 							{
+								"patchline" : 								{
+									"destination" : [ "obj-131", 0 ],
+									"source" : [ "obj-121", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-142", 0 ],
+									"source" : [ "obj-131", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-121", 0 ],
+									"source" : [ "obj-140", 0 ]
+								}
+
+							}
+ ]
+					}
+,
+					"patching_rect" : [ 382.0, -65.0, 127.0, 22.0 ],
+					"saved_object_attributes" : 					{
+						"description" : "",
+						"digest" : "",
+						"globalpatchername" : "",
+						"tags" : ""
+					}
+,
+					"text" : "p speedlim_and_defer"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -158,8 +291,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 5,
+							"minor" : 3,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -192,6 +325,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"comment" : "",
@@ -306,9 +440,9 @@
 					"patching_rect" : [ -209.570312000000001, 1262.0, 507.0, 269.0 ],
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 					"valign" : 3,
-					"versionnumber" : 80100,
+					"versionnumber" : 80105,
 					"vscatter" : 0.5,
-					"whole_wordcloud_data_0000000000" : [ "[", "$argcount", "$args", "3dfunction", "CAC", "MIDI", "Max", "Patreon", "``bang", "``float", "``floatlist", "``int", "``llll", "``nil", "``text", "above", "absolute", "acc", "accelerando", "accent", "access", "accidental", "accidentalcolor", "accidentalpreferences", "accidentals", "accidentalsfont", "accurate", "acknowledgment", "across", "active", "adapt", "adaptive", "adaptscope", "adaptsimplify", "adaptts", "adapttsscope", "adapttssimplify", "add", "addbreakpoint", "addchord", "addchords", "adding", "additional", "additionalstartpad", "addmarker", "addmeasure", "addmeasures", "address", "addslot", "addtempi", "addtempo", "adjust", "adjustadditionalstartpad", "admid", "admit", "admitdottedtuplets", "advanced", "advantage", "affect", "after", "al", "algorithm", "alias", "align", "alignment", "all", "allactive", "allow", "allowbeaming", "allowcopypaste", "allowglissandi", "alniente", "alpha", "alter", "altered", "always", "amplitude", "and", "annotation", "annotationcolor", "annotationfontsize", "anonymous", "another", "answer", "antialias", "antialiased", "any", "anyactive", "appearance", "append", "appendmeasure", "appendmeasures", "appendslotitem", "apply", "applyslope", "approximate", "approximation", "arco", "argument", "arithmetic", "arithmetics", "arithmser", "arrow", "articulation", "articulationcolor", "articulationinfo", "articulations", "articulationsfont", "as", "ascii", "assign", "assigning", "assignment", "asymmetry", "at", "atan2", "atom", "atonal", "attach", "attachment", "attribute", "attributes", "auto", "autobeam", "autoceil", "autoclear", "autoclef", "autojump", "automatic", "automatical", "automatically", "automation", "automessage", "autoparserhythm", "autoplay", "autorhythm", "autosize", "auxclef", "auxclefcolor", "auxili", "auxiliary", "auxiliarystavescolor", "avoid", "bach", "bach.llll", "bach.pv", "bach.quantize", "bach.roll", "bach.score", "bach.value", "background", "backtick", "bar", "barline", "barlines", "base", "baseline", "basept", "basic", "beam", "beamcolor", "beamgracesequences", "beaming", "beams", "beatbox", "beats", "beatunbox", "before", "begin", "beginning", "behavior", "bell", "below", "better", "beware", "beyond", "bgslot", "bgslots", "bgslotzoom", "biquad", "black", "blackrhombus", "blacksquare", "blacktriangle", "blank", "block", "body", "boolean", "bottom", "bounding", "bowing", "box", "boxes", "boxing", "bpm", "bracket", "break", "breakpoint", "breakpointmode", "breakpoints", "breakpointshavenoteheads", "breakpointshavevelocity", "breakrootlevelbeam", "build", "built", "call", "calling", "capitalized", "cartesian", "cartesianprod", "cast", "casting", "catch", "cautionary", "cautionaryaccidentals", "cautionaryaccidentalsdecay", "cautionaryaccidentalsremind", "caveat", "ceil", "ceilmeasures", "cent", "center", "centered", "cents", "chain", "change", "changed", "changeslotitem", "changing", "channel", "chans2voices", "char", "character", "check", "checkdynamics", "chen", "chew", "chewandchen", "chord", "chord-seq", "chordindex", "chords", "chordwise", "chromatic", "circle", "class", "classes", "classic", "classical", "classify", "clause", "clear", "clearall", "cleararticulations", "clearbreakpoints", "clearglobals", "clearmarkers", "clearname", "clearnotes", "clearselection", "clearselectionarticulations", "cleartempi", "cleartempo", "clef", "clefcolor", "clefs", "click", "clock", "closest", "code", "coefficient", "collapse", "colon", "color", "colorgradient", "colorspectrum", "column", "comb", "combination", "combine", "command", "comment", "commentary", "common", "communication", "compensate", "compensation", "complete", "complex", "composer", "compound", "compress", "compressed", "compression", "compute", "concatenation", "condition", "conditional", "configuration", "console", "constraint", "constraintbeamsinspaces", "construct", "construction", "contains", "content", "contents", "contextual", "continuous", "continuousbang", "continuously", "control", "conversion", "convert", "coordinate", "copy", "copyslot", "corner", "correct", "cpu", "create", "creation", "creative", "credit", "crescendo", "crop", "cross", "current", "currently", "cursor", "curve", "custom", "customize", "cut", "cycle", "dal", "dalniente", "danger", "dangling", "dashed", "data", "database", "dataflow", "decay", "decrease", "decrescendo", "dedicated", "default", "defaultmarkername", "defaultnoteslots", "defaultvelocity", "defer", "deferlow", "deferring", "define", "defined", "definition", "deinterlace", "deinterleave", "delace", "delay", "delete", "deletemarker", "deletemeasures", "deleteslotitem", "deletevoice", "delta", "density", "deny", "depth", "deselect", "deselecting", "deselection", "destroy", "detect", "detection", "deviation", "diamond", "diatonic", "diatonism", "diff", "difference", "different", "digit", "dilate", "dilating", "dilation", "diminuendo", "dimminuendo", "direct", "directin", "direction", "directionslots", "directout", "disable", "disabled", "discard", "discardalteredrepetition", "disclaimer", "display", "display single", "distance", "distartxshift", "distinguish", "distribute", "div", "divide", "division", "dl", "dlcolor", "dlspansties", "do", "dollar", "domain", "domainslope", "done", "donor", "donors", "dot", "dotted", "double", "doubleclick", "doublewhole", "down", "download", "downward", "dpi", "drag", "dragmode", "dragndrop", "draw", "drawbarlinesacrossstaves", "drift", "drop", "droplastundo", "droppriority", "dump", "dumpchordpixelpos", "dumpnotepixelpos", "dumppixelpos", "dumpselection", "dumpvoicepixelpos", "duplicate", "duration", "durationline", "durationlinecolor", "durationlinewidth", "durationslinewidth", "durthresh", "dynamic", "dynamics", "dynamics2velocities", "dynamicsaffectspacing", "dynamicsfontsize", "dynfilter", "e-notation", "each", "ease", "edit", "editing", "editor", "edittiedelementstogether", "efficiency", "eighth", "element", "elements", "ellipsis", "else", "embed", "empty", "encapsulate", "end", "enhance", "enhancedstems", "enhancement", "enharmonic", "enharmonicity", "enharmony", "enhramonic", "enotation", "ensemble", "enter", "enum", "enumeration", "envelope", "environment", "equal", "equally", "equation", "equivalent", "erase", "erasebreakpoint", "eraseslot", "evaluate", "evaluation", "even", "evenly", "event", "example", "exhaustive", "exist", "existing", "exit", "exp", "expand", "explicit", "explode", "explodechords", "exponent", "exponential", "export", "exportbarlines", "exported", "exportimage", "exportlilypond", "exportlilypondpdf", "exportmarkers", "exportmidi", "exportom", "exportpwgl", "exportxml", "expression", "extend", "extendbeamsoverrests", "extended", "extending", "extension", "external", "extra", "extract", "extraoutlet", "extras", "f", "factor", "factorial", "fade", "faded", "fadedomain", "fake", "false", "families", "family", "fast", "feature", "fermata", "ff", "fff", "ffff", "fibonacci", "fifths", "figure", "file", "filelist", "fill", "filltiesequenceswithslots", "filter", "final", "finale", "find", "findaddrs", "finditems", "fine", "finger", "first", "fit", "fitmeasure", "fitting", "fix", "fixdynamics", "fixed", "fixvzoom", "flag", "flagcolor", "flat", "flatter", "flattest", "flippedchar", "flippedheight", "flippedxshift", "flippedyshift", "float", "floating", "floatlist", "floatmatrix", "focus", "follow", "following", "follownoteheadtrim", "font", "for", "forbid", "force", "forcing", "form", "format", "forte", "fortissimo", "fraction", "french", "frequency", "friendly", "from", "fromslot", "full", "fullname", "function", "functional", "gamma", "gathered", "generate", "generation", "generic", "geomethric", "geomser", "get", "getcurrentchord", "getcursor", "getdomain", "getdomainpixels", "getlength", "getloop", "getmarker", "getnumchords", "getnummeasures", "getnumnotes", "getnumvoices", "getpixelpos", "gettimeatpixel", "getvoicepixelpos", "getvzoom", "getzoom", "gliss", "glissandi", "glissando", "global", "glue", "gluechord", "glueing", "gluing", "go", "go-to", "golden", "goto", "grace", "gracedur", "gracemaxperc", "gradient", "granted", "graphic", "graphical", "graphics", "greedy", "grid", "gridcolor", "gridperiodms", "group", "groups", "gruppetto", "hairpin", "hand", "handle", "handling", "happen", "harmonic", "hash", "head", "header", "height", "held", "help", "hidden", "hide", "hidecursor", "hidetupletshapeonbeams", "hidevoices", "hiding", "hierarchical", "hierarchy", "highlight", "hint", "hold", "horizontal", "hot", "hotkey", "hover", "how", "i", "if", "ignore", "ignoreclick", "ignorelocked", "image", "import", "importarticulations", "importbarlines", "importlyrics", "importnoteheads", "importxml", "improve", "in", "in-place", "include", "incoherent", "incoherentsubdivisions", "incoming", "inconsistent", "increase", "incremental", "index", "individual", "infer", "info", "information", "inhibit", "init", "initialization", "inlet", "inplace", "input", "inscreen", "inscreenmeas", "inscreenpos", "insert", "inserting", "insertion", "insertmeasure", "insertmeasures", "insertslotitem", "insertvoice", "inset", "inside", "inspector", "instance", "instant", "instruction", "int", "integer", "inter", "interaction", "interface", "interp", "interpolate", "interpolation", "interpret", "intersect", "intersection", "intersel", "interval", "intervoice", "intervoices", "intlist", "intmatrix", "intro", "introduce", "introducing", "introduction", "involutive", "issue", "italic", "italics", "item", "iterate", "iteration", "jit", "jitmatrix", "jitter", "join", "jointuplets", "jump", "junction", "keep", "keeping", "keepselection", "keepselectioniflostfocus", "key", "keyboard", "keys", "keysignature", "label", "labelfamilies", "labeling", "lambda", "language", "last", "latch", "layer", "layout", "ledger", "ledgerlines", "left", "legato", "legend", "length", "less", "level", "leveltobeam", "leveltype", "license", "lifecycle", "lift", "lifted", "like", "lilypond", "limit", "line", "line dynamicsvadj", "line lyricsvadj", "linear", "linearedit", "linearedittimemultipliers", "linearedittimestep", "lines", "link", "linkage", "linkannotationtoslot", "linkarticulationstoslot", "linkdlcolortoslot", "linkdurationlinecolortoslot", "linkdynamicstoslot", "linked", "linklyricstoslot", "linknotecolortoslot", "linknoteheadadjusttoslot", "linknoteheadfonttoslot", "linknoteheadtoslot", "linknotesizetoslot", "linkto", "lisp", "list", "listable", "literal", "literaly", "llll", "load", "local", "locality", "lock", "locking", "logical", "long", "longer", "longest", "lookup", "loop", "lost", "loudest", "lower", "lyric", "lyrics", "lyricsaffectspacing", "lyricscolor", "lyricsfontsize", "m", "machine", "magnetic", "magnetically", "main", "mainchar", "mainheight", "mainstavescolor", "mainxshift", "mainyshift", "make", "maketreecompatiblewithts", "manual", "many", "map", "mark", "markbarline", "markdivision", "markdivisions", "marker", "markername", "markers", "marking", "markmeasure", "markmeasures", "marktempi", "marktempo", "marktimesig", "martellato", "master", "match", "math", "mathematics", "matrix", "max", "maxbeamdeltay", "maxchar", "maxdepth", "maxdot", "maxdots", "maximum", "maxlevel", "maxnum", "maxrestfloatsteps", "measure", "measure-wise", "measureinfo", "measurement", "measurenumberfontsize", "measurenumberoffset", "measurewise", "menu", "merge", "mergeappend", "merged", "mergeprepend", "merging", "mergingpolicy", "message", "messages", "meta", "meta-data", "mezzoforte", "mezzopiano", "mf", "microtonal", "microtonality", "microtone", "middle", "middlecoctave", "midi", "midicent", "midicents", "midichannel", "midichannels", "millisecond", "milliseconds", "mindepth", "minimal", "minimalunits", "minimum", "minlength", "minlevel", "minmax", "minmeaswidth", "minmeaswidthpersymunit", "minus", "minute", "mira", "miraweb", "mirror", "mirroring", "mixed", "mode", "modification", "modify", "modulate", "modules", "modulo", "moment", "mono", "monophony", "mordent", "more", "mouse", "mousehover", "mousemove", "mousewheel", "move", "moveslot", "mp", "ms", "mspersystem", "mt", "multi", "multi-address", "multi-seq", "multiaddress", "multiinterp", "multiline", "multimeas", "multimeasure", "multinumerator", "multiple", "multiplemeas", "multiplicative", "multiplier", "multiply", "multitouch", "musescore", "music", "musicxml", "mute", "muted", "mutliple click", "mxl", "name", "nameappend", "named", "namefirst", "namefromslot", "names", "nametoslot", "naming", "narrow", "native", "natural", "navigate", "navigating", "navigation", "nearest", "neat", "neater", "negative", "nest", "nested", "network", "networking", "never", "new", "newest", "next", "niente", "`nil", "no", "non", "non-composer", "non-real-time", "nonantialiased", "nonantialiasedstafflines", "none", "nonempty", "nonstandard", "normal", "notation", "notationfont", "note", "notecolor", "notehead", "noteheadinfo", "noteheads", "noteindex", "notename", "notenames", "notes", "notetail", "notewise", "notification", "notify", "notifypaint", "november", "nth", "`null", "number", "numbering", "numbers", "numerator", "numeric", "numgridsubdivisions", "numparts", "numvoices", "o", "object", "octave", "octavized", "of", "off", "off-line", "official", "offline", "offset", "oldest", "om", "on", "once", "one", "only", "onset", "onsetindomain", "open", "openmusic", "openslotwin", "operate", "operation", "operator", "optimization", "optimize", "option", "or", "ord", "order", "ordering", "ordinario", "original", "out", "out-of-time", "outlet", "output", "outputslotnames", "outputtiesindurationtree", "outputtrees", "over", "overflow", "overhang", "overlap", "overtype", "overtyping", "overwrite", "p", "pack", "pad", "padding", "page", "paint", "paintjit", "parallel", "parameter", "params", "paren", "parens", "parentheses", "parenthesis", "parenthesize", "parenthesized", "parenthesizedquartertones", "parse", "parsimonious", "part", "partial", "passing", "paste", "patch", "patcher", "patchwork", "path", "patron", "pause", "pdf", "pen", "per", "period", "perm", "permutation", "persistence", "pi", "pianissimo", "piano", "picking", "pickup", "picture", "piechaud", "pipe", "pitch", "pitche", "pitcheditrange", "pitches", "pitchorcents", "pitchpack", "pitchunpack", "pixel", "pixelpersystem", "pixelpos", "pixels", "pixeltotime", "pizz", "pizzicato", "place", "plain", "play", "playback", "playbar", "played", "playhead", "playheaddragmode", "playing", "playkeys", "playmarkers", "playmeasures", "playmode", "playout", "playoutfullpath", "playpartialnotes", "playrest", "playrestseparately", "playselection", "playstep", "playtempi", "playtiedelementsseparately", "playwhenlinearediting", "plus", "png", "poc", "point", "pointed", "policy", "poll", "poly", "polyphonic", "polyphony", "pont", "ponticello", "pop", "popup", "popupmenuslots", "portal", "portato", "portion", "position", "post", "postpend", "pow", "pp", "ppp", "pppp", "pre", "precedence", "precision", "preference", "prepend", "prependslotitem", "preschedule", "prescheduled", "preserve", "preset", "pretime", "prev", "prevent", "preventedit", "previous", "prime", "primeser", "principal", "print", "printglobals", "printglobalswithvalues", "priority", "process", "product", "progeny", "pronounce", "pronounciation", "propagation", "property", "proportional", "pseudo", "pseudovariable", "pt", "pv", "pwgl", "quantization", "quantizationpriority", "quantize", "quarter", "quartertone", "queries", "query", "quietest", "quote", "radius", "raise", "rall", "rallentando", "ramp", "random", "range", "rate", "ratio", "rational", "raw", "reach", "read", "readandwrite", "readonly", "real", "real-time", "realtime", "reassign", "rebeam", "rebuild", "recall", "recomputation", "record", "rectangle", "recursion", "recursionmode", "recursive", "redo", "redraw", "reduce", "reduced", "redundant", "refine", "refresh", "region", "regularity", "relative", "remainder", "remind", "remove", "repaint", "reparse", "repeat", "repeating", "repetition", "replace", "replacenull", "representation", "reserved", "reset", "resetslotinfo", "resetwidthfactors", "resolution", "respace", "respell", "rest", "restcolor", "restrict", "restricting", "rests", "restswithinbeaming", "resume", "resumepriority", "resumevoicing", "resuming", "retranscribe", "retrieval", "retrieve", "return", "rev", "reverse", "reversegracedirection", "revert", "rhombi", "rhombus", "rhythm", "rhythmic", "rhythmic+tree", "rich", "right", "rightclick", "rightclickslot", "ripple", "rippledelete", "role", "roll", "roll-to-score", "roman", "root", "rot", "rotate", "rotation", "round", "rounded", "router", "row", "rule", "ruler", "rulercolor", "rulerlabels", "rulerlabelsfontsize", "safe", "safety", "same", "sample", "sampling", "samplingrate", "satisfy", "satistied", "save", "saveleveltypes", "scalarmode", "scale", "schedule", "scheduler", "scientific", "scissor", "scope", "scoping", "score", "score-to-score", "score2roll", "scramble", "scratch", "screen", "script", "scripting", "scroll", "scrollbar", "search", "sel", "select", "selected", "selection", "selective", "selfreferential", "semicolon", "semitonal", "semitone", "send", "sendcommand", "senddoneafterpaint", "senddoneatstartup", "sendversion", "separate", "separately", "separation", "sequence", "sequencer", "sequencing", "series", "set", "setclock", "setcursor", "setmeasureparameters", "setnotationcolors", "setting", "several", "sforzato", "shape", "sharp", "sharper", "sharpest", "shebang", "shelf", "shift", "shifting", "short-circuit", "shortcut", "shortest", "shortname", "show", "showaccidentalspreferences", "showaccidentalstiepreferences", "showarticulations", "showarticulationsextensions", "showauxclefs", "showauxiliarystems", "showbarlinelocks", "showbarlines", "showbeams", "showclefs", "showcursor", "showdots", "showdurations", "showdynamics", "showflags", "showfocus", "showhairpins", "showledgerlines", "showloop", "showlyrics", "showlyricswordextensions", "showmarkers", "showmeasurenumbers", "shownotenames", "shownumber", "showpartcolors", "showplayhead", "showrests", "showrhythmictree", "showscrollbar", "showstems", "showsynchronoustempionce", "showtails", "showtempi", "showtempointerpline", "showties", "showtimesignatures", "showtupletspreferences", "showvelocity", "showvscrollbar", "shrink", "shuffle", "sibelius", "side", "sieve", "sign", "signature", "silence", "simple", "simplify", "simplifytuplets", "single", "singleslotfortiednotes", "singleton", "size", "skip", "skipping", "slap", "slash", "slashgracebeams", "slashgraceflags", "slave", "slice", "slicing", "sliding", "slope", "slot", "slotinfo", "slotitem", "slottoname", "slotwinalpha", "slotwinzoom", "slur", "small", "smalleventshandling", "smart", "smooth", "smufl", "snap", "snaplinearedit", "snapmarkers", "snaponset", "snaponsettogrid", "snapping", "snappitchtogrid", "snaptail", "snaptailtogrid", "solid", "solo", "soloed", "sort", "sorting", "source", "space", "spaced", "spaces", "spacing", "spacingproportionality", "spacingtype", "spacingwidth", "span", "spat", "spatialization", "spec", "specific", "specification", "spectral", "spectrum", "speed", "speedy", "spell", "spikemode", "spiral", "spiralh", "spiralr", "split", "splitting", "sprint", "sqrt", "square", "squares", "staccatissimo", "staccato", "staff", "stafflines", "standard", "start", "startpad", "startup", "static", "staves", "stdev", "stdevthresh", "stem", "stemcolor", "step", "stick", "stop", "store", "stretch", "stretching", "structure", "structured", "style", "subdivision", "subdivisiongridcolor", "sublist", "subroll", "subs", "subscore", "subsel", "subselection", "substitution", "subtract", "support", "swap", "switch", "symbol", "symbolic", "symdiff", "symduration", "symmetric", "symonset", "symtail", "sync", "synchronicity", "synchronization", "synchronize", "synchronous", "syncopation", "syncopationasymratio", "syncopationmaxdots", "syncopationposdurratio", "syntax", "synthesis", "system", "systemvshift", "tab", "table", "tag", "tail", "take", "tap", "target", "tasto", "technique", "tempi", "tempo", "tempocolor staff", "tempocompensation", "tempodigits", "tempohandling", "temporal", "temporality", "temporalmode", "temporamsamplingrate", "temporarily", "tempovadj", "terminate", "test", "testdomain", "text", "textout", "than", "then", "thin", "thread", "threading", "thresh", "threshold", "tick", "tie", "tieassignspitch", "tied", "tiemode", "ties", "time", "timeatpixel", "timepoint", "timepoints", "times", "timesig", "timesignature", "timetopixel", "timing", "tips", "to", "together", "toggle", "togglematrix", "tone", "tonedivision", "too", "top", "torests", "toslot", "touch", "track", "tracks2voices", "trans", "transcribe", "transfer", "transferslots", "transparency", "transparent", "transpose", "transposing", "transposition", "tree", "treehandling", "tremolo", "triangle", "trill", "trim", "trimming", "triple", "triplet", "trivial", "true", "ts", "tune", "tuning", "tuplet", "tupletcolor", "tupletshape", "turn", "two", "type", "ui", "unary", "under", "underline", "underscore", "undo", "undobang", "uneven", "ungroup", "union", "unique", "unison", "unit", "units", "unkeep", "unlock", "unlocking", "unmute", "unnecessary", "unpack", "unpacking", "unpacknote", "unreduced", "unsel", "unsolo", "until", "unwrap", "up", "update", "upon", "upward", "usage", "use", "used", "useloop", "user", "user-defined", "userdefined", "using", "validate", "value", "value dblclicksendsvalues", "variable", "variables", "variaric", "vary", "velocities", "velocities2dynamics", "velocity", "velocityhandlin", "velocityhandling", "venn", "verbose", "verified", "verify", "version", "vertical", "view", "visibility", "voice", "voiceensemble", "voicemode", "voicename", "voicepixelpos", "voices", "voicespacing", "voicewise", "voicing", "vzoom", "warn", "warning", "warp", "waveform", "ways", "web", "welcome", "wheel", "where", "while", "white", "whiterhombus", "whitespace", "whitesquare", "whitetriangle", "whole", "width", "widthfactor", "win", "window", "winsize", "with", "within", "word", "work", "wraning", "wrap", "write", "writetrees", "writetxt", "x", "xml", "xshift", "xshiftsmall", "yshift", "yshiftsmall", "ysnap", "zero", "zip", "zl", "zoom", "zrange", "zslope", "zsnap", "]", "[", 1, 3, 6, 1, 1, 1, 2, 2, 5, 1, 5, 2, 1, 2, 1, 11, 1, 4, 2, 2, 15, 1, 1, 1, 2, 1, 1, 3, 5, 4, 3, 1, 1, 1, 1, 1, 32, 1, 2, 2, 5, 1, 1, 6, 1, 2, 14, 4, 1, 1, 5, 1, 1, 1, 1, 7, 1, 3, 2, 1, 7, 3, 6, 4, 6, 1, 7, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 3, 1, 1, 1, 1, 1, 1, 1, 7, 1, 78, 10, 1, 2, 1, 1, 1, 2, 1, 1, 12, 2, 1, 1, 1, 18, 1, 1, 3, 2, 2, 1, 35, 3, 28, 1, 6, 1, 1, 2, 2, 2, 9, 1, 21, 3, 1, 2, 2, 1, 8, 3, 11, 7, 1, 1, 1, 4, 1, 1, 1, 1, 3, 1, 3, 12, 1, 1, 1, 1, 1, 2, 6, 4, 2, 20, 1, 2, 2, 2, 1, 24, 1, 1, 7, 1, 1, 1, 1, 1, 1, 2, 1, 114, 1, 1, 2, 2, 1, 1, 1, 1, 4, 1, 1, 1, 4, 1, 11, 3, 1, 1, 1, 9, 4, 1, 1, 4, 7, 23, 1, 2, 1, 1, 1, 12, 47, 1, 1, 2, 1, 1, 3, 1, 2, 1, 1, 1, 1, 1, 3, 1, 7, 3, 1, 13, 2, 62, 2, 3, 9, 4, 1, 3, 1, 2, 2, 1, 1, 1, 57, 2, 1, 3, 2, 1, 1, 1, 1, 1, 2, 1, 4, 16, 1, 2, 1, 2, 2, 1, 1, 2, 1, 2, 1, 8, 1, 1, 15, 1, 1, 120, 1, 2, 2, 15, 1, 1, 1, 1, 2, 3, 6, 2, 2, 2, 1, 1, 1, 2, 1, 1, 2, 5, 1, 1, 1, 4, 15, 11, 4, 1, 2, 1, 5, 3, 1, 28, 1, 8, 3, 1, 1, 1, 12, 18, 1, 19, 1, 1, 2, 3, 6, 1, 1, 1, 7, 1, 1, 3, 1, 10, 1, 17, 1, 10, 2, 1, 1, 1, 1, 4, 33, 1, 1, 1, 1, 4, 12, 11, 1, 1, 1, 2, 1, 1, 20, 14, 1, 1, 1, 1, 1, 26, 2, 1, 2, 1, 4, 1, 5, 12, 1, 1, 1, 1, 4, 2, 1, 1, 3, 1, 1, 3, 2, 2, 1, 1, 1, 3, 1, 5, 2, 2, 1, 2, 1, 1, 3, 1, 1, 23, 1, 1, 1, 1, 2, 1, 5, 8, 2, 1, 1, 4, 4, 16, 2, 2, 1, 1, 5, 2, 8, 1, 2, 4, 1, 1, 1, 7, 1, 1, 5, 1, 1, 8, 1, 1, 16, 1, 1, 1, 3, 1, 7, 39, 4, 1, 1, 2, 1, 20, 10, 4, 1, 2, 7, 1, 1, 1, 111, 107, 2, 2, 1, 1, 16, 1, 2, 2, 2, 5, 1, 7, 1, 1, 1, 9, 9, 1, 1, 1, 7, 1, 1, 1, 1, 1, 7, 4, 3, 1, 7, 1, 1, 1, 119, 3, 2, 2, 21, 1, 1, 2, 1, 1, 1, 2, 2, 2, 2, 2, 19, 1, 1, 5, 1, 1, 1, 2, 1, 1, 3, 7, 6, 1, 1, 1, 1, 13, 5, 4, 1, 1, 5, 4, 2, 2, 1, 2, 1, 3, 2, 3, 6, 1, 2, 4, 4, 2, 1, 1, 3, 10, 5, 2, 1, 5, 2, 2, 5, 1, 4, 3, 9, 2, 3, 1, 1, 4, 1, 2, 1, 3, 1, 6, 1, 1, 1, 1, 1, 1, 2, 1, 4, 4, 2, 3, 3, 1, 8, 7, 3, 3, 1, 2, 1, 6, 3, 2, 1, 1, 1, 5, 1, 6, 2, 86, 2, 1, 27, 2, 2, 1, 1, 1, 8, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 11, 3, 3, 3, 3, 20, 20, 2, 20, 13, 1, 1, 1, 2, 6, 2, 1, 1, 7, 1, 1, 5, 1, 2, 9, 1, 6, 10, 1, 1, 2, 16, 27, 4, 2, 2, 4, 12, 1, 1, 1, 1, 13, 13, 1, 1, 2, 5, 2, 2, 2, 1, 1, 7, 6, 1, 1, 6, 9, 1, 1, 1, 1, 1, 1, 53, 2, 2, 1, 1, 1, 1, 1, 2, 7, 2, 2, 2, 1, 1, 4, 1, 7, 2, 6, 5, 1, 4, 14, 1, 1, 1, 3, 2, 1, 1, 3, 13, 1, 4, 1, 1, 1, 1, 5, 109, 4, 2, 8, 1, 1, 1, 1, 1, 1, 1, 4, 4, 5, 8, 2, 18, 1, 1, 1, 1, 11, 1, 1, 3, 1, 3, 2, 1, 2, 1, 12, 1, 1, 1, 10, 20, 2, 1, 7, 1, 1, 14, 119, 1, 1, 1, 1, 1, 1, 9, 2, 1, 5, 2, 27, 1, 2, 1, 1, 2, 2, 1, 2, 1, 21, 1, 1, 12, 7, 2, 2, 4, 19, 18, 3, 3, 1, 1, 2, 1, 3, 5, 2, 2, 3, 2, 2, 3, 6, 1, 7, 1, 45, 4, 16, 1, 14, 2, 3, 1, 1, 1, 3, 13, 1, 1, 1, 1, 8, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 2, 1, 1, 1, 42, 1, 3, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 8, 5, 1, 1, 5, 1, 1, 3, 1, 1, 1, 67, 1, 21, 3, 1, 1, 3, 12, 9, 1, 1, 1, 3, 1, 191, 2, 1, 1, 2, 2, 2, 3, 1, 9, 1, 1, 9, 2, 1, 4, 1, 4, 1, 3, 8, 7, 3, 2, 1, 1, 1, 1, 1, 1, 3, 3, 6, 2, 1, 15, 4, 25, 1, 1, 1, 1, 4, 4, 1, 6, 19, 2, 1, 1, 14, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 15, 1, 1, 4, 1, 2, 1, 8, 1, 11, 1, 1, 1, 44, 1, 2, 1, 1, 1, 1, 4, 3, 2, 1, 35, 1, 20, 1, 1, 1, 3, 1, 2, 2, 2, 1, 2, 1, 5, 2, 3, 2, 1, 1, 1, 1, 1, 5, 1, 3, 1, 13, 2, 78, 2, 26, 1, 2, 1, 4, 1, 3, 1, 2, 7, 7, 1, 1, 3, 4, 22, 1, 2, 1, 7, 1, 2, 2, 1, 1, 1, 1, 7, 4, 4, 1, 4, 8, 1, 3, 51, 2, 3, 2, 30, 1, 11, 5, 2, 50, 2, 14, 1, 2, 7, 2, 1, 6, 1, 1, 2, 6, 1, 18, 8, 1, 1, 1, 4, 1, 1, 1, 3, 3, 3, 5, 1, 3, 2, 2, 10, 1, 1, 29, 1, 1, 2, 4, 9, 1, 1, 1, 4, 2, 9, 1, 4, 14, 2, 2, 1, 9, 2, 2, 1, 1, 1, 1, 1, 6, 7, 1, 3, 6, 3, 2, 5, 1, 2, 43, 2, 1, 6, 3, 1, 1, 5, 2, 3, 1, 1, 1, 3, 1, 6, 32, 1, 4, 1, 5, 1, 8, 2, 1, 1, 1, 10, 3, 1, 1, 1, 2, 1, 2, 1, 1, 2, 5, 3, 16, 1, 4, 1, 6, 1, 5, 1, 1, 4, 15, 1, 1, 1, 6, 40, 1, 1, 1, 4, 4, 2, 1, 2, 2, 4, 2, 1, 1, 1, 3, 1, 1, 3, 8, 3, 6, 1, 1, 1, 1, 2, 2, 3, 2, 1, 1, 2, 2, 2, 2, 2, 1, 5, 1, 1, 5, 30, 1, 31, 1, 1, 13, 17, 1, 2, 1, 1, 1, 4, 2, 1, 17, 5, 4, 2, 2, 1, 8, 1, 1, 2, 7, 2, 1, 4, 5, 2, 1, 1, 3, 1, 1, 1, 1, 4, 1, 1, 1, 2, 3, 5, 2, 8, 1, 1, 5, 1, 2, 5, 1, 3, 9, 1, 7, 1, 6, 2, 2, 2, 2, 9, 17, 1, 2, 2, 1, 1, 1, 1, 1, 1, 5, 1, 8, 1, 1, 3, 1, 4, 1, 2, 31, 30, 1, 4, 16, 3, 1, 3, 3, 4, 11, 1, 2, 2, 2, 1, 1, 2, 1, 4, 1, 2, 5, 1, 1, 1, 1, 1, 1, 3, 4, 1, 2, 2, 13, 3, 1, 1, 1, 1, 1, 1, 9, 3, 27, 1, 2, 1, 1, 9, 119, 119, 3, 6, 5, 23, 33, 3, 115, 5, 1, 1, 1, 1, 5, 2, 1, 1, 1, 33, 1, 2, 11, 32, 33, 3, 13, 1, 2, 1, 1, 1, 7, 2, 1, 4, 1, 1, 1, 1, 15, 1, 2, 3, 1, 2, 26, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 21, 2, 3, 3, 1, 20, 1, 1, 7, 3, 1, 1, 2, 1, 1, 1, 5, 2, 1, 8, 129, 37, 3, 1, 1, 1, 1, 2, 1, 3, 1, 1, 10, 1, 1, 1, 1, 2, 1, 1, 1, 2, 11, 1, 2, 1, 1, 10, 2, 2, 19, 1, 1, 2, 1, 6, 2, 5, 1, 4, 1, 1, 1, 8, 6, 1, 1, 1, 1, 5, 3, 1, 2, 3, 1, 1, 1, 8, 3, 3, 4, 1, 1, 4, 2, 1, 1, 6, 1, 6, 1, 2, 3, 2, 1, 2, 3, 1, 4, 1, 1, 2, 1, 2, 2, 1, 5, 2, 2, 1, 2, 9, 13, 1, 7, 1, 4, 3, 8, 2, 5, 2, 3, 4, 1, 1, 1, 117, 1, 2, 1, 3, 2, 2, 19, 2, 9, 1, 1, 1, 12, 27, 1, 1, 2, 2, 9, 2, 3, 2, 1, 1, 1, 1, 1, 10, 1, 3, 3, 3, 2, 1, 5, 5, 2, 19, 1, 6, 2, 2, 41, 1, 9, 1, 1, 3, 1, 1, 1, 1, 32, 3, 1, 4, 3, 2, 1, 1, 1, 1, 2, 3, 1, 1, 1, 1, 1, 2, 1, 4, 1, 2, 31, 2, 1, 1, 1, 7, 1, 1, 1, 1, 3, 1, 2, 1, 12, 1, 1, 2, 10, 37, 1, 1, 2, 1, 1, 3, 2, 1, 1, 1, 2, 1, 5, 7, 1, 2, 1, 1, 4, 4, 1, 1, 1, 16, 1, 1, 1, 6, 1, 1, 1, 6, 3, 1, 2, 15, 1, 1, 1, 1, 9, 1, 25, 4, 2, 1, 14, 2, 27, 1, 1, 1, 1, 2, 2, 1, 4, 2, 3, 62, 7, 2, 2, 1, 2, 1, 3, 4, 3, 2, 1, 4, 2, 1, 3, 1, 2, 2, 2, 4, 1, 5, 1, 1, 7, 13, 3, 1, 12, 1, 4, 2, 1, 1, 1, 1, 11, 1, 2, 2, 5, 2, 1, 2, 1, 2, 7, 1, 1, 7, 2, 2, 2, "]" ],
+					"whole_wordcloud_data_0000000000" : [ "[", "3dfunction", "MIDI", "Max", "``bang", "``float", "``floatlist", "``int", "``llll", "``nil", "``text", "above", "absolute", "absolutepitch", "accent", "access", "accidental", "accidentalcolor", "accidentaldecay", "accidentalpreferences", "accidentalsfont", "accurate", "across", "active", "adapt", "adaptive", "add", "addbreakpoint", "addchord", "addchords", "adding", "additional", "additionalstartpad", "addmarker", "address", "addslot", "adjust", "adjustadditionalstartpad", "admit", "advanced", "advantage", "affect", "after", "al", "algorithm", "alias", "align", "alignment", "all", "allactive", "allow", "allowcopypaste", "allowglissandi", "alniente", "alpha", "alter", "altered", "always", "amplitude", "annotation", "annotationcolor", "annotationfontsize", "annotationsfont", "another", "antialias", "antialiased", "any", "anyactive", "appearance", "append", "appendslotitem", "apply", "applyslope", "approximate", "arco", "argument", "arithmetics", "arrow", "articulation", "articulationcolor", "articulationinfo", "articulations", "articulationsfont", "ascii", "assign", "assignment", "at", "atonal", "attach", "attribute", "auto", "autoceil", "autoclear", "autoclef", "autojump", "automatic", "automatically", "automation", "automessage", "autoplay", "autosize", "auxclef", "auxclefcolor", "auxili", "auxiliary", "auxiliarystavescolor", "avoid", "bach", "background", "bar", "barline", "base", "baseline", "basept", "beam", "beamcolor", "beatbox", "beatunbox", "begin", "behavior", "below", "better", "beware", "beyond", "bgslot", "bgslotfontsize", "bgslots", "bgslotzoom", "biquad", "black", "blackrhombus", "blacksquare", "blacktriangle", "blank", "body", "bottom", "bounding", "bowing", "box", "boxing", "bracket", "break", "breakpoint", "breakpointmode", "breakpoints", "breakpointshavenoteheads", "breakpointshavevelocity", "breakpointsize", "build", "cast", "catch", "caution", "cautionary", "caveat", "ceil", "cent", "center", "cents", "change", "changed", "changeslotitem", "changing", "channel", "chans2voices", "char", "check", "checkdynamics", "chen", "chew", "chewandchen", "chord", "chord-seq", "chordindex", "chords", "chordwise", "chromatic", "circle", "class", "classes", "classic", "classical", "clear", "clearall", "cleararticulations", "clearbreakpoints", "clearmarkers", "clearname", "clearnotes", "clearselection", "cleartempi", "clef", "clefcolor", "clefs", "click", "clock", "closest", "coefficient", "color", "colorgradient", "colorspectrum", "column", "combination", "combine", "command", "comment", "commentary", "communication", "compensate", "compensation", "complete", "compound", "compress", "compression", "compute", "condition", "conditional", "configuration", "connect", "constraint", "construct", "content", "contextual", "continuous", "continuousbang", "continuously", "control", "conversion", "convert", "coordinate", "copy", "copyslot", "corner", "correct", "count", "cpu", "create", "creation", "crescendo", "crop", "cross", "current", "currently", "cursor", "curve", "custom", "customize", "cut", "cycle", "dal", "dalniente", "danger", "dashed", "data", "database", "decay", "decrease", "decrescendo", "dedicated", "default", "defaultmarkername", "defaultnoteslots", "defaultvelocity", "defer", "deferlow", "define", "defined", "defining", "definition", "delete", "deletemarker", "deletemeasures", "deleteslotitem", "deletevoice", "delta", "density", "deny", "depth", "deselect", "deselecting", "deselection", "detect", "detection", "deviation", "diamond", "diatonic", "difference", "different", "digit", "dilate", "dilating", "dilation", "diminuendo", "dimminuendo", "direct", "direction", "discard", "discardalteredrepetition", "display", "displaying", "distartxshift", "distinguish", "distribute", "div", "divide", "division", "dl", "dlcolor", "domain", "domainslope", "done", "dot", "double", "doubleclick", "doublewhole", "down", "download", "downward", "dpi", "drag", "dragmode", "dragndrop", "draw", "drift", "drop", "droplastundo", "droppriority", "dump", "dumpchordpixelpos", "dumpnotepixelpos", "dumppixelpos", "dumpselection", "dumpvoicepixelpos", "duplicate", "duration", "durationline", "durationlinecolor", "durationlinewidth", "durationslinewidth", "durthresh", "dynamic", "dynamics", "dynamics2velocities", "dynamicsaffectspacing", "dynamicsexprfontsize", "dynamicsfontsize", "dynfilter", "each", "ease", "edit", "editing", "editor", "eighth", "element", "embed", "empty", "encapsulate", "end", "enhance", "enhancedstems", "enhancement", "enharmonic", "enharmonicity", "enharmony", "enhramonic", "ensemble", "enter", "enum", "enumeration", "envelope", "equal", "equally", "equation", "equivalent", "erase", "erasebreakpoint", "eraseslot", "evaluate", "even", "evenly", "event", "example", "exhaustive", "exist", "existing", "exit", "expand", "explicit", "explode", "explodechords", "exponent", "exponential", "export", "exportbarlines", "exportdivisions", "exported", "exportimage", "exportmarkers", "exportmidi", "exportom", "exportpng", "exportpwgl", "expression", "extend", "extending", "extension", "external", "extra", "extract", "f", "fade", "faded", "fadedomain", "fake", "families", "family", "fast", "fermata", "ff", "fff", "ffff", "fifths", "file", "filelist", "filter", "find", "fine", "finger", "first", "fit", "fitmeasure", "fix", "fixdynamics", "fixed", "fixvzoom", "flag", "flagcolor", "flat", "flatter", "flattest", "flippedchar", "flippedheight", "flippedxshift", "flippedyshift", "floatlist", "floatmatrix", "focus", "follow", "following", "follownoteheadtrim", "font", "forbid", "force", "forcing", "format", "forte", "fortissimo", "fraction", "frequency", "from", "fromslot", "full", "fullname", "function", "gathered", "generate", "generation", "generic", "get", "getcurrentchord", "getcursor", "getdomain", "getdomainpixels", "getlength", "getloop", "getmarker", "getnumchords", "getnummeasures", "getnumnotes", "getnumvoices", "getpixelpos", "gettimeatpixel", "getvoicepixelpos", "getvzoom", "getzoom", "gliss", "glissandi", "glissando", "global", "glue", "gluechord", "glueing", "gluing", "go", "go-to", "goto", "grace", "gradient", "graphic", "graphical", "graphics", "greedy", "grid", "gridcolor", "gridperiodms", "group", "groups", "gruppetto", "hairpin", "hand", "handle", "handling", "happen", "harmonic", "head", "header", "height", "held", "help", "hide", "hidecursor", "hidevoices", "hiding", "hierarchical", "hierarchy", "highlight", "highlightplay", "hold", "horizontal", "hot", "hotkey", "hover", "i", "if", "ignore", "ignoreclick", "ignorelocked", "image", "import", "importbarlines", "importdivisions", "importsubdivisions", "improve", "in", "in-place", "include", "incoherent", "incoherentsubdivisions", "incoming", "inconsistent", "increase", "incremental", "index", "individual", "infer", "influence", "info", "information", "inhibit", "initial", "inlet", "inplace", "input", "inscreen", "inscreenpos", "insert", "insertslotitem", "insertvoice", "inset", "inspector", "instance", "instant", "instruction", "int", "integer", "inter", "interaction", "interface", "interp", "interpolate", "intersect", "intersel", "interval", "intlist", "intmatrix", "intro", "introduce", "introducing", "introduction", "involutive", "italic", "italics", "item", "items", "iterate", "jit", "jitmatrix", "jitter", "jump", "junction", "keep", "keeping", "keepselection", "keepselectioniflostfocus", "key", "keyboard", "keys", "keysignature", "label", "labelfamilies", "labeling", "lambda", "large", "latch", "layout", "ledger", "ledgerlines", "left", "leftclick", "legato", "legend", "legendfontsize", "length", "less", "level", "limit", "line", "line dynamicsvadj", "line lyricsvadj", "linear", "linearedit", "linearedittimemultipliers", "linearedittimestep", "lines", "link", "linkage", "linkannotationtoslot", "linkarticulationstoslot", "linkdlcolortoslot", "linkdurationlinecolortoslot", "linkdynamicstoslot", "linklyricstoslot", "linknotecolortoslot", "linknoteheadadjusttoslot", "linknoteheadfonttoslot", "linknoteheadtoslot", "linknotesizetoslot", "linkto", "list", "llll", "load", "local", "locality", "lock", "locking", "longer", "longest", "loop", "lost", "loudest", "lower", "lyric", "lyrics", "lyricsaffectspacing", "lyricscolor", "lyricsfont", "lyricsfontsize", "machine", "magnetic", "magnetically", "main", "mainchar", "mainheight", "mainstavescolor", "mainxshift", "mainyshift", "make", "manual", "map", "mapping", "mark", "markbarline", "markdivision", "markdivisions", "marker", "markername", "markers", "markersfontsize", "marking", "markmeasure", "markmeasures", "marktempi", "marktempo", "marktimesig", "martellato", "master", "matrix", "max", "maxchar", "maxnum", "maxnumpoints", "maxundosteps", "measure", "measure-wise", "measureinfo", "measurement", "measures", "measurewise", "menu", "merge", "mergeappend", "mergeprepend", "merging", "mergingpolicy", "message", "messages", "mezzoforte", "mezzopiano", "mf", "microtonal", "microtonality", "microtone", "middle", "middlecoctave", "midi", "midicent", "midicents", "midichannel", "midichannels", "millisecond", "milliseconds", "minimal", "minimalunits", "minimum", "minlength", "minus", "mira", "miraweb", "mirror", "mirroring", "mode", "modification", "modify", "modulate", "moment", "mono", "monophony", "mordent", "more", "mouse", "mousehover", "mousemove", "mousewheel", "move", "moveslot", "mp", "ms", "mspersystem", "mt", "multi", "multi-seq", "multiline", "multimeas", "multimeasure", "multinumerator", "multiple", "multiplemeas", "multiplicative", "multiplier", "multiply", "multitouch", "music", "musicxml", "mute", "muted", "name", "nameappend", "namefirst", "namefromslot", "names", "nametoslot", "naming", "narrow", "natural", "navigate", "navigating", "navigation", "nearest", "neat", "neater", "network", "networking", "never", "new", "newest", "next", "niente", "non-real-time", "nonantialiased", "nonantialiasedstafflines", "none", "nonstandard", "normalizedpixel", "notation", "notationfont", "note", "notecolor", "notehead", "noteheadinfo", "noteindex", "notename", "notenames", "notes", "notetail", "notewise", "notification", "notify", "notifying", "notifyopenslot", "notifypaint", "november", "number", "numchords", "numerator", "numeric", "numgridsubdivisions", "numnotes", "numparts", "numvoices", "octave", "octavized", "of", "off", "off-line", "official", "offline", "offset", "oldest", "om", "on", "once", "one", "only", "onset", "onsetindomain", "open", "openmusic", "openslotwin", "operate", "operation", "optimization", "optimize", "option", "ord", "order", "ordinario", "original", "outlet", "output", "outputslotnames", "overhang", "overlap", "p", "pack", "pad", "padding", "page", "paint", "paintjit", "parameter", "parentheses", "parenthesis", "parsimonious", "part", "partial", "paste", "patch", "patcher", "path", "pause", "pen", "period", "pianissimo", "piano", "pickup", "picture", "piechaud", "pitch", "pitche", "pitcheditrange", "pitches", "pitchorcents", "pitchpack", "pitchunpack", "pixel", "pixelpersystem", "pixelpos", "pixels", "pixeltotime", "pizz", "pizzicato", "place", "plain", "play", "playback", "playbar", "playcolor", "played", "playhead", "playheaddragmode", "playheadwidth", "playing", "playkeys", "playmarkers", "playmode", "playofflinecmd", "playout", "playoutfullpath", "playpartialnotes", "playselection", "playstep", "playwhenlinearediting", "plus", "png", "poc", "point", "policy", "poll", "poly", "polyphonic", "polyphony", "pont", "ponticello", "pop", "popup", "popupmenuslots", "portato", "portion", "position", "post", "postpend", "pp", "ppp", "pppp", "pre", "precision", "preference", "prepend", "prependslotitem", "preschedule", "prescheduled", "preserve", "preset", "pretime", "prev", "prevent", "preventedit", "previous", "principal", "priority", "progeny", "property", "pt", "pwgl", "quantization", "quantizationpriority", "quantize", "quarter", "queries", "query", "quietest", "radius", "raise", "range", "rate", "raw", "read", "readandwrite", "readonly", "real", "real-time", "realtime", "reassign", "rebuild", "recall", "recomputation", "record", "rectangle", "redo", "redraw", "reduce", "reduced", "reducefunction", "refresh", "region", "regularity", "relative", "remainder", "remove", "repaint", "repeat", "repeating", "repetition", "replace", "replacenull", "representation", "reset", "resetslotinfo", "resolution", "respace", "respell", "rest", "restcolor", "restrict", "restricting", "rests", "restseqmode", "resume", "resumepriority", "resumevoicing", "resuming", "retranscribe", "retrieve", "reverse", "revert", "rhombi", "rhombus", "rhythm", "rhythmic", "right", "rightclick", "rightclickslot", "ripple", "rippledelete", "role", "roll", "roll-to-score", "roman", "round", "rounded", "router", "row", "ruler", "rulercolor", "rulerlabels", "rulerlabelsfontsize", "safe", "safety", "same", "sample", "sampling", "samplingrate", "satisfy", "satistied", "save", "scale", "schedule", "scheduler", "scissor", "scope", "score", "score2roll", "scratch", "screen", "scroll", "scrollbar", "search", "sel", "select", "selected", "selection", "selective", "selfreferential", "semitonal", "semitone", "send", "sendcommand", "senddoneafterpaint", "senddoneatstartup", "separate", "separation", "sequence", "sequencer", "sequencing", "set", "setclock", "setcursor", "setdl", "setdurationline", "setnotationcolors", "setslot", "setting", "several", "sforzato", "sharp", "sharper", "sharpest", "shift", "shifting", "shortcut", "shortest", "shortname", "show", "showaccidentalspreferences", "showauxclefs", "showauxiliarystems", "showbarlines", "showbeams", "showclefs", "showcursor", "showdots", "showdurations", "showdynamics", "showflags", "showfocus", "showhairpins", "showledgerlines", "showloop", "showlyrics", "showlyricswordextensions", "showmarkers", "shownotenames", "showpartcolors", "showplayhead", "showrests", "showscrollbar", "showstems", "showtails", "showtempi", "showtempointerpline", "showties", "showtimesignatures", "showvelocity", "showvscrollbar", "shrink", "sieve", "sign", "signal", "signature", "silence", "simplify", "single", "singleslotfortiednotes", "singleton", "size", "skip", "skiprests", "slap", "slash", "slave", "slice", "slicing", "sliding", "slope", "slopemapping", "slot", "slotinfo", "slotitem", "slottoname", "slotwinalpha", "slotwinzoom", "small", "smalleventshandling", "smart", "smooth", "smufl", "snap", "snaplinearedit", "snapmarkers", "snaponset", "snaponsettogrid", "snapping", "snappitchtogrid", "snaptail", "snaptailtogrid", "solo", "soloed", "space", "spaced", "spaces", "spacing", "spat", "spatialization", "spec", "specific", "specification", "spectral", "spectrum", "speed", "speedy", "spell", "spiral", "spiralh", "spiralr", "split", "splitting", "square", "squares", "staccatissimo", "staccato", "staff", "stafflines", "standard", "start", "startpad", "startup", "staves", "stdev", "stdevthresh", "stem", "stemcolor", "step", "stop", "store", "stretch", "stretching", "structure", "structured", "subdivision", "subdivisiongridcolor", "subroll", "subsel", "subselection", "subtract", "support", "swap", "switch", "symbol", "symbolic", "symduration", "symonset", "symtail", "sync", "synchronicity", "synchronization", "synchronize", "synchronous", "syntax", "synthesis", "system", "systemvshift", "table", "tag", "tail", "tap", "target", "tasto", "technique", "tempi", "tempo", "tempocolor staff", "tempocompensation", "tempodigits", "tempohandling", "temporal", "temporality", "temporalmode", "temporarily", "terminate", "text", "than", "thin", "thread", "threading", "thresh", "threshold", "tie", "tied", "tiemode", "ties", "time", "timeatpixel", "timepoint", "times", "timesig", "timetopixel", "timing", "tips", "to", "toggle", "togglematrix", "tone", "tonedivision", "too", "top", "torests", "toslot", "touch", "track", "tracks2voices", "transfer", "transferslots", "transparency", "transparent", "transpose", "transposing", "transposition", "tree", "tremolo", "triangle", "trill", "trim", "trimming", "trivial", "tune", "tuning", "tupletcolor", "turn", "two", "type", "ui", "underline", "underscore", "undo", "undobang", "ungroup", "unique", "unison", "unit", "units", "unlock", "unmute", "unnecessary", "unpack", "unpacking", "unpacknote", "unreduced", "unsel", "unsolo", "until", "up", "upon", "upward", "usage", "use", "used", "useloop", "user", "user-defined", "userdefined", "using", "validate", "value", "variable", "vary", "velocities", "velocities2dynamics", "velocity", "velocityhandlin", "velocityhandling", "venn", "verbose", "verified", "verify", "vertical", "view", "voice", "voiceensemble", "voicemode", "voicename", "voicenames", "voicepixelpos", "voices", "voicespacing", "voicewise", "voicing", "vzoom", "warn", "warp", "waveform", "web", "welcome", "wheel", "where", "white", "whiterhombus", "whitesquare", "whitetriangle", "whole", "width", "win", "window", "winsize", "with", "word", "wraning", "write", "writetxt", "x", "xml", "xshift", "xshiftsmall", "yshift", "yshiftsmall", "ysnap", "zero", "zoom", "zrange", "zslope", "zsnap", "]", "[", 6, 1, 1, 2, 5, 1, 5, 2, 1, 2, 1, 7, 1, 2, 2, 13, 1, 1, 1, 2, 1, 1, 3, 3, 3, 23, 2, 2, 1, 2, 1, 1, 4, 5, 4, 4, 1, 1, 5, 1, 3, 1, 1, 7, 3, 4, 3, 7, 1, 6, 1, 1, 1, 2, 1, 2, 1, 1, 4, 1, 2, 1, 1, 1, 1, 6, 1, 57, 5, 1, 1, 1, 2, 1, 1, 1, 1, 14, 1, 1, 2, 3, 1, 27, 4, 5, 2, 1, 7, 12, 1, 1, 2, 1, 7, 7, 7, 1, 1, 1, 1, 1, 1, 3, 1, 2, 1, 7, 3, 13, 2, 2, 2, 2, 1, 1, 1, 2, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 5, 1, 1, 1, 4, 1, 1, 7, 24, 1, 3, 2, 2, 1, 8, 3, 2, 1, 1, 1, 2, 5, 2, 11, 52, 2, 3, 9, 4, 1, 3, 2, 2, 1, 1, 1, 37, 2, 1, 2, 2, 1, 1, 1, 1, 1, 2, 11, 1, 2, 1, 1, 1, 1, 2, 1, 8, 1, 1, 11, 1, 1, 1, 17, 1, 1, 1, 1, 2, 10, 1, 2, 1, 1, 1, 2, 1, 4, 1, 1, 3, 6, 4, 1, 1, 4, 23, 5, 2, 1, 1, 1, 11, 17, 1, 17, 1, 1, 2, 1, 3, 4, 1, 7, 1, 1, 2, 1, 10, 3, 15, 1, 9, 2, 1, 1, 1, 2, 18, 1, 1, 1, 4, 7, 9, 1, 1, 1, 1, 1, 19, 1, 1, 1, 21, 1, 1, 2, 1, 2, 1, 5, 5, 1, 1, 1, 4, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 3, 1, 1, 1, 2, 1, 20, 1, 1, 1, 2, 1, 3, 8, 3, 1, 12, 2, 3, 1, 4, 1, 1, 4, 1, 1, 1, 7, 1, 1, 5, 1, 6, 1, 1, 16, 1, 1, 1, 4, 1, 6, 28, 4, 1, 2, 2, 1, 19, 10, 4, 1, 1, 3, 7, 1, 1, 89, 87, 1, 1, 7, 1, 1, 1, 4, 1, 1, 1, 9, 9, 1, 1, 7, 1, 1, 1, 2, 3, 3, 3, 1, 7, 2, 1, 2, 2, 2, 2, 18, 1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 11, 2, 1, 1, 4, 1, 2, 1, 2, 1, 5, 5, 1, 1, 8, 5, 2, 5, 2, 1, 2, 1, 1, 2, 4, 1, 4, 4, 2, 1, 5, 5, 6, 1, 3, 6, 1, 2, 1, 3, 1, 1, 1, 2, 1, 4, 1, 1, 1, 1, 1, 1, 4, 4, 2, 2, 3, 1, 9, 3, 3, 1, 1, 6, 3, 1, 1, 5, 1, 6, 2, 15, 15, 1, 1, 1, 7, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 3, 3, 3, 3, 16, 16, 16, 4, 1, 5, 1, 1, 1, 7, 1, 1, 4, 1, 2, 9, 1, 6, 8, 1, 1, 16, 25, 4, 2, 2, 9, 1, 2, 1, 1, 1, 3, 2, 2, 5, 2, 2, 2, 1, 5, 4, 1, 1, 5, 6, 1, 1, 1, 1, 3, 2, 1, 1, 1, 1, 1, 1, 2, 7, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 3, 3, 6, 2, 1, 1, 8, 1, 2, 1, 1, 1, 1, 6, 93, 2, 1, 1, 1, 1, 4, 4, 4, 7, 1, 6, 1, 1, 1, 11, 1, 1, 3, 1, 3, 2, 1, 7, 1, 1, 1, 9, 14, 2, 1, 7, 1, 1, 5, 1, 1, 1, 1, 1, 8, 1, 2, 3, 1, 2, 2, 3, 1, 21, 1, 1, 7, 6, 2, 2, 4, 19, 18, 3, 3, 1, 1, 2, 3, 5, 2, 2, 3, 2, 2, 5, 5, 3, 1, 1, 8, 1, 1, 1, 6, 1, 1, 1, 1, 7, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 41, 1, 3, 1, 7, 1, 1, 1, 1, 1, 1, 1, 7, 2, 1, 1, 1, 1, 23, 2, 2, 3, 1, 1, 9, 5, 1, 1, 2, 1, 140, 1, 2, 2, 2, 2, 1, 7, 1, 1, 7, 1, 1, 4, 1, 3, 1, 7, 7, 1, 2, 1, 3, 3, 6, 2, 13, 3, 21, 1, 1, 4, 4, 1, 2, 12, 2, 1, 1, 15, 1, 2, 2, 1, 1, 1, 2, 1, 1, 1, 1, 6, 1, 1, 2, 1, 2, 3, 1, 8, 1, 35, 1, 1, 1, 1, 1, 4, 3, 1, 25, 1, 16, 1, 1, 1, 2, 2, 1, 2, 1, 5, 2, 1, 1, 1, 6, 2, 1, 11, 2, 57, 2, 25, 1, 1, 4, 1, 2, 1, 2, 7, 10, 1, 1, 1, 1, 13, 1, 1, 3, 1, 3, 2, 2, 1, 1, 6, 4, 4, 1, 5, 5, 1, 2, 46, 3, 1, 2, 29, 1, 8, 2, 2, 45, 1, 1, 2, 7, 1, 3, 1, 2, 4, 3, 1, 1, 1, 6, 1, 2, 2, 1, 9, 1, 18, 2, 2, 2, 9, 1, 11, 1, 1, 8, 2, 1, 1, 3, 6, 2, 4, 1, 37, 2, 1, 5, 2, 1, 1, 6, 1, 3, 1, 1, 1, 3, 1, 5, 31, 4, 4, 1, 1, 6, 1, 1, 9, 1, 1, 1, 1, 9, 3, 1, 2, 1, 1, 2, 4, 2, 11, 4, 1, 6, 1, 5, 1, 1, 2, 12, 1, 1, 4, 21, 1, 1, 4, 4, 2, 1, 1, 3, 2, 1, 1, 1, 3, 1, 1, 3, 8, 3, 6, 1, 3, 1, 2, 1, 3, 28, 1, 28, 1, 11, 12, 1, 1, 1, 12, 2, 1, 4, 1, 1, 3, 6, 2, 1, 4, 2, 1, 1, 3, 1, 4, 1, 1, 1, 4, 5, 2, 9, 1, 2, 1, 3, 1, 3, 4, 1, 7, 5, 2, 1, 2, 9, 3, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 6, 1, 2, 1, 2, 1, 1, 13, 4, 1, 3, 3, 5, 12, 1, 2, 1, 1, 5, 1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 7, 1, 1, 1, 1, 2, 8, 2, 1, 7, 3, 5, 2, 22, 33, 4, 103, 3, 1, 1, 1, 5, 2, 1, 1, 16, 1, 2, 26, 27, 8, 1, 2, 1, 1, 1, 8, 1, 2, 2, 4, 1, 1, 14, 1, 3, 1, 2, 20, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 2, 2, 11, 2, 1, 14, 1, 1, 8, 1, 1, 1, 1, 1, 1, 1, 1, 10, 2, 124, 38, 3, 1, 1, 1, 2, 1, 2, 1, 1, 10, 1, 1, 1, 1, 2, 1, 1, 1, 8, 1, 6, 1, 1, 7, 6, 2, 4, 1, 4, 1, 1, 1, 6, 6, 1, 1, 1, 2, 1, 2, 1, 1, 1, 7, 3, 2, 5, 1, 1, 1, 1, 1, 6, 1, 6, 3, 1, 2, 1, 2, 3, 5, 1, 2, 3, 1, 2, 1, 1, 2, 4, 3, 4, 3, 2, 8, 2, 5, 1, 1, 71, 1, 2, 1, 2, 2, 19, 6, 1, 1, 1, 3, 9, 1, 1, 1, 2, 9, 2, 3, 1, 1, 7, 1, 2, 2, 1, 6, 5, 7, 2, 1, 1, 25, 1, 2, 1, 3, 1, 1, 1, 28, 1, 4, 3, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1, 2, 1, 4, 1, 1, 1, 1, 1, 1, 6, 1, 1, 2, 1, 1, 1, 6, 22, 1, 1, 1, 4, 2, 1, 2, 1, 4, 7, 1, 1, 4, 3, 1, 1, 1, 16, 1, 1, 5, 1, 1, 6, 3, 1, 2, 1, 1, 1, 1, 1, 4, 1, 1, 13, 2, 26, 1, 1, 1, 1, 2, 2, 4, 1, 57, 7, 2, 2, 1, 1, 2, 2, 3, 4, 3, 1, 4, 1, 3, 1, 2, 2, 3, 1, 1, 1, 2, 5, 1, 10, 1, 1, 1, 1, 5, 1, 1, 1, 2, 1, 2, 1, 2, 2, 6, 2, 2, 2, "]" ],
 					"whole_wordcloud_data_count" : [ 1 ]
 				}
 
@@ -862,10 +996,18 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
+					"parameter_enable" : 0,
 					"patching_rect" : [ 1.0, 385.0, 35.0, 15.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 1.0, 385.0, 35.0, 15.0 ],
-					"rightarrow" : 0
+					"rightarrow" : 0,
+					"saved_attribute_attributes" : 					{
+						"blinkcolor" : 						{
+							"expression" : ""
+						}
+
+					}
+
 				}
 
 			}
@@ -1127,8 +1269,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 5,
+							"minor" : 3,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1161,6 +1303,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -1704,9 +1847,17 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
+					"parameter_enable" : 0,
 					"patching_rect" : [ 54.0, 385.0, 35.0, 15.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 54.0, 385.0, 35.0, 15.0 ],
+					"saved_attribute_attributes" : 					{
+						"blinkcolor" : 						{
+							"expression" : ""
+						}
+
+					}
+,
 					"uparrow" : 0
 				}
 
@@ -2029,8 +2180,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 5,
+							"minor" : 3,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -2063,6 +2214,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -3231,7 +3383,7 @@
 					"presentation" : 1,
 					"presentation_rect" : [ 132.4296875, 10.0, 147.22894287109375, 21.0 ],
 					"text" : "Filter by tag...",
-					"textcolor" : [ 0.0, 0.0, 0.0, 0.200000002980232 ]
+					"textcolor" : [ 1.0, 1.0, 1.0, 0.0 ]
 				}
 
 			}
@@ -3248,8 +3400,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 5,
+							"minor" : 3,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -3282,6 +3434,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -4187,8 +4340,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 5,
+							"minor" : 3,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -4221,6 +4374,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"comment" : "",
@@ -4334,8 +4488,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 5,
+							"minor" : 3,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -4368,6 +4522,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-37",
@@ -4393,8 +4548,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 0,
-											"revision" : 5,
+											"minor" : 3,
+											"revision" : 2,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -4427,6 +4582,7 @@
 										"tags" : "",
 										"style" : "",
 										"subpatcher_template" : "",
+										"assistshowspatchername" : 0,
 										"boxes" : [ 											{
 												"box" : 												{
 													"fontname" : "Arial",
@@ -4436,13 +4592,13 @@
 													"maxclass" : "newobj",
 													"numinlets" : 1,
 													"numoutlets" : 2,
-													"outlettype" : [ "", "int" ],
+													"outlettype" : [ "Xllll", "int" ],
 													"patcher" : 													{
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -4475,6 +4631,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -5105,8 +5262,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -5139,6 +5296,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -5391,8 +5549,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -5425,6 +5583,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -6028,8 +6187,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -6062,6 +6221,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"comment" : "",
@@ -6336,8 +6496,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -6370,6 +6530,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -6557,8 +6718,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -6591,6 +6752,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -7202,8 +7364,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 0,
-											"revision" : 5,
+											"minor" : 3,
+											"revision" : 2,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -7236,6 +7398,7 @@
 										"tags" : "",
 										"style" : "",
 										"subpatcher_template" : "",
+										"assistshowspatchername" : 0,
 										"boxes" : [ 											{
 												"box" : 												{
 													"fontname" : "Arial",
@@ -7912,8 +8075,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 0,
-											"revision" : 5,
+											"minor" : 3,
+											"revision" : 2,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -7946,6 +8109,7 @@
 										"tags" : "",
 										"style" : "",
 										"subpatcher_template" : "",
+										"assistshowspatchername" : 0,
 										"boxes" : [ 											{
 												"box" : 												{
 													"fontname" : "Arial",
@@ -7955,13 +8119,13 @@
 													"maxclass" : "newobj",
 													"numinlets" : 1,
 													"numoutlets" : 2,
-													"outlettype" : [ "", "int" ],
+													"outlettype" : [ "Xllll", "int" ],
 													"patcher" : 													{
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -7994,6 +8158,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -8624,8 +8789,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -8658,6 +8823,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -8910,8 +9076,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -8944,6 +9110,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -9547,8 +9714,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -9581,6 +9748,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"comment" : "",
@@ -9855,8 +10023,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -9889,6 +10057,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -10076,8 +10245,8 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 0,
-															"revision" : 5,
+															"minor" : 3,
+															"revision" : 2,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -10110,6 +10279,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"fontname" : "Arial",
@@ -11332,8 +11502,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 5,
+							"minor" : 3,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -11366,6 +11536,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -11466,6 +11637,7 @@
 					"keymode" : 1,
 					"lines" : 1,
 					"maxclass" : "textedit",
+					"nosymquotes" : 1,
 					"numinlets" : 1,
 					"numoutlets" : 4,
 					"outlettype" : [ "", "int", "", "" ],
@@ -11474,6 +11646,7 @@
 					"presentation" : 1,
 					"presentation_rect" : [ 132.4296875, 12.0, 148.0, 19.0 ],
 					"rounded" : 0.0,
+					"text" : "absolut",
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 					"wordwrap" : 0
 				}
@@ -11492,8 +11665,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 5,
+							"minor" : 3,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -11526,6 +11699,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -11941,8 +12115,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 5,
+							"minor" : 3,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -11975,6 +12149,7 @@
 						"tags" : "",
 						"style" : "",
 						"subpatcher_template" : "",
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-8",
@@ -12353,10 +12528,10 @@
 					"preventedit" : 1,
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 					"textdecayfactor" : 0.94,
-					"tree_openstate_data_0000000000" : [ 0, "[", 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, "]", 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, "]", 0, 0, "]", "[", 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "]", 0, "[", 0, 0, 0, 0, 0, 0, "]", "]", "[", 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, "[", 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, "]", "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "]", "[", 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "]", "[", 0, 0, 0, 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, 0, 0, "[", 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", 0, "[", 0, 0, 0, 0, 0, 0, "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "]", "[", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "]", "]", "[", 0, 0, 0, 0, 0, 0, 0, "]" ],
+					"tree_openstate_data_0000000000" : [ "[", 1, 0, "[", 1, 0, "[", 1, 0, 0, "]", "]", "[", 1, 0, 0, "]", "[", 1, 0, "[", 1, 0, 0, "]", "]", "[", 1, 0, 0, "]", "[", 1, 0, 0, 0, 0, "]", "]" ],
 					"tree_openstate_data_count" : [ 1 ],
-					"versionnumber" : 80100,
-					"whole_tree_data_0000000000" : [ "Welcome to the bach Help Center", "[", "Introduction", "What is bach?", "The notation editors", "Notation features", "[", "New data types", "Rational numbers", "Pitches and diatonism", "Lisp-like linked lists", "]", "[", "bach and Lisp-based environments", "From Lisp-based environments to bach", "Notable differences", "]", "A real-time compositional paradigm", "bach for a non-composer", "License and credits", "]", "[", "Lisp-like linked lists", "Introduction to lllls", "Square brackets or parentheses", "Length of an llll", "The bach.llll message", "[", "Outlet types", "Outlet types: native or text", "Output to Max and backticks", "Mixing outlet types", "]", "[", "Depths", "Depth of an llll", "Depth of elements inside an llll", "Negative depths", "Mindepth and maxdepth", "Operating with mindepth and maxdepth", "]", "[", "Addresses", "Address of an element in an llll", "Negative addresses", "Multi-addresses and address ranges", "]", "The nil and null keywords", "Messages, lllls and dollar signs", "Messages, lllls and double quotes", "Attributes symbols and backticks", "Elements and backticks", "Rational numbers and scientific notation", "The golden rule", "Deferring an llll", "[", "Lambda behavior", "Lambda inlets and outlets", "Lambda modifications", "Lambda sorting", "Lambda disclaimer", "]", "Efficiency hints", "How llll should be pronounced", "]", "[", "Evaluation language (bell)", "Introduction", "[", "Basics", "Simple expressions", "List functions", "llll literals", "Symbols", "More about symbols", "Implicit llll construction", "Precedence", "Unary operators", "Retrieval of elements", "Picking elements", "Access by keys", "Range operator", "Print", "Comments", "Examples", "]", "[", "Conditionals", "If ... then", "If ... then ... else", "Chained ifs", "Conditions", "Booleans", "Conditional booleans", "]", "Sequence", "[", "Variables", "Local variables", "Local variables: details", "Local variables: more details", "Lifecycle of local variables", "Global variables", "Global variables with different objects", "Global variables: reserved words", "Querying and resetting global variables", "Patcher variables", "Assigning operators", "More about assigning operators", "Rich assignment syntax", "More about rich assignment syntax", "Rich assignment operators", "Variable-less rich assignment", "]", "[", "Loops", "\"While\" loops", "\"While\" loop examples and details", "\"For\" loops", "\"For\" loops: address and parallel iteration", "\"For\" loops: as clause", "\"For\" loops: with clause", "\"For\" loops: \"with\" clause attributes", "]", "[", "Functions", "Function calls", "Named arguments and defaults", "User-defined functions", "Global functions and function assignment", "Scope of local variables", "Lifted variables", "Keeping the value of a local variable", "Keeping values inside functions", "Precedence of variable initialization", "Unkeeping values", "Lifted local variables: examples", "Argument names", "Function fun", "Dataflow-style function calls", "Lambda functions", "Passing parameters to lambda functions", "Passing built-in functions as lambdas", "Functional forms of operators", "Recursion", "Input pseudovariables", "Casting input pseudovariables", "$args and $argcount", "Variadic functions", "More variadic stuff", "[", "Built-in functions reference", "Math functions reference", "$apply() function reference", "$args() function reference", "arithmser() function reference", "cartesianprod() function reference", "classify() function reference", "comb() function reference", "contains() function reference", "delace() function reference", "depth() function reference", "diff() function reference", "directin() function reference", "directout() function reference", "find() function reference", "findaddrs() function reference", "finditems() function reference", "flat() function reference", "geomser() function reference", "group() function reference", "inlet() function reference", "insert() function reference", "intersection() function reference", "left() function reference", "length() function reference", "map() function reference", "minmax() function reference", "nth() function reference", "outlet() function reference", "perm() function reference", "primeser() function reference", "print() function reference", "reduce() function reference", "rev() function reference", "right() function reference", "rot() function reference", "scramble() function reference", "slice() function reference", "sort() function reference", "subs() function reference", "symdiff() function reference", "thin() function reference", "trans() function reference", "union() function reference", "wrap() function reference", "The depth / level arguments", "]", "]", "Source code files", "[", "Object specific features", "Multiple outlets", "$o<n> pseudovariables", "Outputting data during evaluation", "Receiving data during evaluation", "]", "]", "[", "Notation", "[", "Accidentals and microtones", "Microtonality", "Microtonal equivalent parameters", "Accidentals display", "Accidental preferences", "Using semitonal enharmonic tables", "Using microtonal enharmonic tables", "User-defined enharmonicity", "Accidental display policy", "Accidentals and ties", "Cautionary accidentals", "]", "[", "Appearance", "Horizontal and vertical zoom", "Automatic vertical zoom", "Horizontal zoom interface", "Scrollbars", "Zoom vs spacing width", "Displaying velocities", "Stems and duration lines", "Stem enhancement", "Clefs appearance", "Score elements display", "Chord alignment", "Additional padding space", "Horizontal inset and rounded corners", "Legend", "Toggle staff lines antialiasing", "Show note names in upper legend", "Ledger lines", "Lyrics display", "Dynamics display", "Change fonts", "Supported and default fonts", "Synchronous tempi", "Ties display", "Beams", "Floating rests", "Centered whole measure rests", "Tuplets", "Grace chords", "Notation colors", "[", "Ruler and grid", "Ruler, grid and labels", "Period and subdivisions for grid and ruler", "Grid and ruler mode", "Grid and ruler colors", "]", "Marker names", "Highlight domain", "Fade domain", "[", "Slots", "Keeping slots in background", "Slot zooms", "Slot window width and temporal slots", "Slot window height", "Slot window transparency", "]", "[", "Spacing", "Spacing algorithm", "Note/Time Signature spacing", "Smart spacing", "Proportional spacing", "Proportional spacing example", "Spring spacing", "Measure width", "Global spacing factor", "Minimal widths", "Local spacing factors", "Resetting spacing factors", "Custom spacing in bach.roll", "Custom spacing in absolute mode", "Custom spacing in relative mode", "]", "Barlines", "Measure numbers", "Individual measure numbers", "Tempi and time signatures", "Score display and threading", "Articulations", "Manual mirroring to Jitter matrix", "Automatic mirroring to Jitter matrix", "Using bach with Mira and Miraweb", "Adding interaction with Mira and Miraweb", "Customizing interaction with Mira and Miraweb", "]", "[", "Articulations", "Defining articulations", "Introducing standard articulations", "Standard articulations list", "Defining custom articulations", "Custom articulations specifications", "A custom articulation example", "]", "[", "Commands", "Defining commands", "Commands behavior", "Using note or chord router", "Usage of commands", "]", "[", "Dynamics", "Defining dynamics", "Syntax for dynamics", "Attaching dynamics to breakpoints", "Output syntax", "Hairpins and dynamics symbols", "Plain dynamics syntax", "More plain dynamics syntax", "Checking and fixing dynamics", "Convert dynamics to velocities", "Dynamics to velocities parameters", "Dynamics to velocities and breakpoints", "Convert velocities to dynamics", "Velocities to dynamics parameters", "Hairpin detection threshold", "]", "[", "Editing", "Editing items", "Editing notification", "Adding a chord in bach.roll", "Adding or deleting measures in bach.score", "Splitting chords in bach.score", "Chord joining and ties in bach.score", "Selecting elements", "Navigate with selection", "Change onsets and durations in bach.roll", "Trimming or extending noteheads or tails", "Change pitches", "Delete selection", "Split notes", "Ties editing", "Editing tempi", "Copy, cut or paste music content", "Extended copy and paste", "Adding and deleting pitch breakpoints", "Breakpoint velocity and pitch", "Breakpoint and note tail position", "Duration line slope", "Aligning or evenly distributing chords", "Rhythmic tree levels", "[", "Popup menu", "Popup menu: an introduction", "Popup menu for voices", "Popup menu for voice ensembles", "Popup menu for bach.roll selection", "Popup menu for bach.score selection", "Popup menu for measures", "Popup menu for measure barlines", "Popup menu for background", "]", "Respell notes", "Snap pitches to microtonal grid", "Snap onsets or tails to time grid", "Basic markers interface", "Snapping markers to chords", "Using markers to stretch or move elements", "Fine editing", "[", "Inspector", "Using the bach inspector", "Voice inspector ", "Measure inspector ", "Chord inspector for bach.roll", "Chord inspector for bach.score", "Note inspector for bach.roll", "Note inspector for bach.score", "Tempo inspector", "Marker inspector for bach.roll", "Marker inspector for bach.score", "Pitch breakpoint and note tail inspector", "Slotinfo inspector", "]", "Navigating elements with selection", "Undo/redo system", "[", "Linear editing", "An introduction to linear editing", "Linear editing: moving in time in bach.roll", "Linear editing: notes in bach.roll", "Linear editing: modifications in bach.roll", "Linear editing: basics in bach.score", "Linear editing: modifications in bach.score", "Autojumping to next chord", "Playing while linear editing", "]", "Dilating musical content", "Using groups", "[", "Slots", "Slot editing, slot windows and hotkeys", "Switching or closing slot window", "Delete or edit slot content", "Copy, cut or paste slot content", "Slots in popup menu", "Slot window direct popup", "Slot default", "Interface for function slots", "Point selection in function slots ", "Copy, cut or paste selected points", "Pen mode in function slots", "Interface for numeric slots", "Interface for text and llll slots", "Interface for filelist and color slots", "Interface for spat slots", "Interface for matrix slots", "Interface for 3dfunction slots", "Interface for filter slots", "Interface for dynfilter slots", "Interface for notehead slots", "Interface for articulations slots", "Snapping function points", "Horizontal zoom for slots", "Copy slotinfo", "]", "Editing lyrics", "Editing articulations", "Editing dynamics", "Modifying dynamics via interface", "Prevent all interface interactions", "Locking elements", "Locking barlines", "Changing measure widths", "Locking rhythmic trees", "Prevent editing for single elements", "Reversed prevent editing", "All the preventedit possibilities", "Constrainting pitches to ranges or positions", "Advanced undo system handling", "Default editing parameters", "Keyboard and mouse shortcuts", "]", "[", "Markers", "Create and delete markers in bach.roll", "Create and delete markers in bach.score", "Marker attachment", "Basic interface for markers", "Snapping markers magnetically", "Shifting and stretching regions", "Marker selection and onset change", "Change marker names", "Marker interaction with cursor and domain", "Marker roles and content", "Marker roles and quantization", "Querying markers", "]", "[", "Messages", "Adding a chord in bach.roll", "Adding several chords at once in bach.roll", "Adding and deleting tempi", "Gluing chords in bach.roll", "Gluing pitch breakpoint and envelopes", "Gluechord and real-time grains", "[", "Measures", "Appending several empty measures", "Appending several measures", "Appending a single measure", "Inserting several empty measures", "Inserting several measures", "Inserting a single measure", "More about measure insertion", "]", "Inserting or deleting voices", "Clearing musical content", "Clearing specific elements", "Clearing slots in bach.slot", "The dump message", "Selective dump for bach.roll", "Selective dump for bach.score", "Selective dump for bach.slot", "Selective dump for header content", "Changing router for dump", "Merging content in bach.roll", "Merging content in bach.score", "Exploding chords", "Slicing chords in bach.roll", "Slicing chords in bach.roll", "Splitting chords in bach.score", "[", "Selection", "Selecting via messages: an introduction", "Selecting classes of elements", "Region selection", "Selecting content via timepoints", "Deselecting content", "Involutive selection", "Restricting the selection", "Selecting content in different voices", "Selecting single chords", "Selecting single notes", "Selecting single measures", "Selecting single markers", "Selecting single voices", "Selecting multiple items", "Selecting measure ranges", "Selecting by name", "Conditional selection for notes", "Conditional selection for rests", "Conditional selection for markers", "Conditional selection for pitch breakpoints", "]", "[", "Navigation", "The go-to navigation system", "Showing go-to selection inside the domain", "Narrow selection to specific voices", "Tie mode for go-to system", "Restricting go-to navigation to specific types", "Skipping or dropping rests", "Tie mode for go-to system", "Grace notes in the go-to navigation", "Repeated go-to", "Go to elements at time or timepoint", "Advanced options for goto time", "Move selection up, down, left or right", "Move selection to previous or next item", "Go-to and onsets in bach.roll", "Handling voices during navigation", "More voice modes", "Respecting polyphony", "Fine tuning navigation", "Go-to where clause", "Go-to until clause", "]", "[", "Operate on selection", "Dump selection", "Changing routers for dump", "Delete selection", "Delete selection and transfer slots", "Changing onsets, tails or durations", "Changing pitches or velocities", "Transposing via pitches or cents", "Changing ties", "Changing voice assignment", "Changing measureinfo", "Changing duration in bach.score", "Adapting time signatures as durations change", "Changing marker onsets", "Modify existing parameter values", "Assigning values via expressions", "In-place modifications", "Adding or deleting breakpoints", "Adding or deleting slot content", "Copying or moving slots", "Inserting or deleting slot elements", "Inserting function points", "Deleting function points", "Setting single slot elements", "Modifying existing slot elements", "Open slot window", "Snapping selection", "Deleting articulations for selection", "Legato", "Legato preserving rests", "Glissando", "Distributing onsets evenly", "Rebeaming selection", "Assigning names", "Lambda interaction", "Lambda operations", "A lambda interaction example", "Cut, copy or paste roll content", "Cut, copy or paste score content", "Cut, copy or paste slot content", "Copy and paste slotinfo", "Cut, copy or paste duration lines", "Merge or delete grace chords", "Change marker roles", "Creating or breaking groups", "Forcing polyphony or assigning voicing", "Priorities in assigning voicing", "Resuming notes in voice assignments", "Obtaining the number of used voices", "Other messages", "]", "Symbolic variables for expressions", "[", "Respell pitches automatically", "Respell pitches", "Basic respell options", "Atonal algorithm options", "Chew and Chen algorithm", "Respelling scope", "Keeping notes during respelling", "]", "Extract a portion of a bach.roll", "Options for subroll extraction", "Extract a portion of a bach.score", "Options for subscore extraction", "Setting measure parameters", "Setting the domain", "Setting the domain for bach.slot", "Scrollbar interaction", "Scrollbar interaction with timepoints", "Fitting measure range inside the domain", "Real-time scrollbar interaction", "Defining an automessage", "Force refresh", "Toggle real-time mode", "Collapsing voices", "Collapse and combine voices", "Ceiling measures", "Retrieving notes at cursor position", "Polling played notes while sequencing", "Retrieving notes at a generic instant", "Sample note data", "Sample via timepoints", "Score to roll conversion", "Options for score to roll conversion", "Filling tied sequences with slots", "Basic overtyping", "Advanced overtyping", "Inserting grace notes", "]", "[", "Naming", "Assign names to elements", "Multiple names", "Append names to elements", "Clear names", "Names in gathered syntax", "Real-time naming", "Using integers as names", "Label families", "Names and slots", "Names to slots conversion policies", "]", "[", "Noteheads", "Defining noteheads", "Introducing standard noteheads", "Notehead families", "Standard notehead list", "Defining custom noteheads", "Custom noteheads specifications", "A custom noteheads example", "Another custom noteheads example", "]", "[", "Parts", "Voices, voice ensembles and parts", "Defining voice ensembles and parts", "Displaying parts with colors", "Set active part for editing", "Part selection", "]", "[", "Quantization", "Quantization", "Roll-to-score quantization", "Score-to-score quantization", "Selective quantization", "Separate parameters quantization", "[", "Minimal units", "Minimal units", "Different minimal units for different voices", "Adaptive minimal units", "Symbolic density of events", "Adaptive minimal units syntax", "Adaptive minimal units are the default", "Minimal units tips", "]", "Preserving synchronicities", "[", "Quantization from markers", "Quantization from markers", "Tempi handling and synchronization", "Synchronization with original content", "Synchronization and pickup measures", "Quantization markers and MIDI import", "Parsimonious barline definition", "Nonstandard time signatures", "Incoherent subdivisions handling", "]", "Basic quantization attributes", "Small events handling", "Quantization priority", "[", "Regularity boxes", "Regularity boxes", "An example of regularity boxes usage", "]", "[", "Allow or forbid configurations", "Allow or forbid configurations", "Allow or forbid configuration for a voice", "Dangers of allow and forbid", "]", "]", "[", "Queries and notifications", "Querying number of elements", "Querying length and domain", "Querying pixel position for notes", "Querying pixel position for voices and measures", "Querying zoom and vzoom", "Converting pixels to time", "Converting time to pixels", "Converting timepoints to and from milliseconds", "Testing domain", "Assigning labels to queries", "Playhead cursor and domain notifications", "The \"done\" notification", "Attributes for \"done\" notification", "Loop query and notifications", "Notify incoming messages", "Notify when display refreshes", "]", "[", "Rhythm and beams", "Rhythm, trees, tuplets and beams", "Maximum number of dots", "Parsing and beaming automatically", "Autobeam vs autorhythm", "Parsing rhythms", "[", "Syncopations", "Syncopation display, position and sides", "Syncopation asymmetry ratio", "Syncopation position/duration ratio", "Syncopation and dots", "]", "[", "Rhythmic trees", "Rhythmic trees", "Rhythmic tree levels", "The golden rules for inputting duration trees", "The treehandling attribute", "Rhythmic tree and beats", "Converting levels to beams", "Rest and beams", "Root level beamings", "Automatically join tuplets", "Automatically simplify tuplets", "Dotted tuplets", "Nested tuplets tuplets", "Grace chords", "]", "]", "[", "Save and load", "Save data with patch", "Preset support", "Save and load files", "Saving rhythmic tree levels", "[", "MIDI", "MIDI import", "MIDI import and measure markers", "MIDI import in bach.score", "MIDI export", "MIDI export and measure markers", "MIDI tempo ramp sampling rate", "]", "[", "MusicXML", "MusicXML import", "MusicXML export", "More MusicXML specifications", "MusicXML and quartertones", "]", "[", "OpenMusic", "OpenMusic import", "OpenMusic export", "]", "[", "PWGL", "PWGL communication", "PWGL import", "PWGL export", "]", "LilyPond export", "PDF export via LilyPond", "Exporting scores as images", "Image export views for bach.roll", "Image export views for bach.score", "Image export layout", "Exported image appearance", "]", "[", "Sequencing", "Playing musical content", "Offline play from interface", "Playing controls", "Playing selected content", "Playing interface", "Catch playhead and optimization", "Play mode", "Unpacking played content", "Explicit content unpacking for bach.roll", "Explicit content unpacking for bach.score", "Playhead cursor", "Playhead cursor interface", "Partial notes handling", "Sequencing markers", "Playing tied elements separately", "Playing grace chords", "Sequencing rests", "Sequencing measure beginnings", "Sequencing tempi", "Tracking tempo", "Loop region", "Loop region interface", "Offline playing from messages", "Prescheduling playback", "Muting elements", "Solo elements", "Combining mute, solo and lock colors", "Varying play rate", "Playhead refresh time", "Full path in playout syntax", "Usage of full path in playout syntax", "Setting minimum length", "]", "[", "Slots", "An introduction to slots", "Usage of slot types", "Slot editing, appearance, syntax, messages", "Slotinfo", "Slotinfo examples", "Opening a slot windows", "Slots for rests", "[", "Slot types", "Function slots", "Int, float, intlist and floatlist slots", "Text slots", "Lisp-like linked list slots", "Filelist slots", "Spat slots", "Filter slots", "Dynfilter slots", "Togglematrix, intmatrix and floatmatrix slots", "Color slots", "3dfunction slots", "Articulations slots", "Notehead slots", "Dynamics slots", "]", "Slot temporal modes", "Extend temporal slots beyond tails", "Slot domain", "Slot range", "Using slot range slope during playback", "Slot Z range", "Restricting access to slots", "Sampling and interpolating function slots", "Performing multiple interpolations at once", "Sampling rate for filter slots", "[", "Slot representation", "Slot representation", "Units of measurement for numeric slots", "Units of measurement for function slots", "Units of measurement for filter slots", "Slot representation and enumerations", "Slot representation and matrices", "]", "Slot type conversion", "Slot range conversion", "Explicit slot range conversion", "Resetting the slotinfo", "Slot temporal mode conversion", "[", "Slot linkage", "Slot linkage", "Lyrics", "Dynamics", "Advantage of lyrics slot linkage", "Changing note color with a color slot", "Changing note color with an int slot", "Changing note color with a float slot", "Changing note color with a floatlist slot", "Changing duration line color", "Defining articulations", "Changing noteheads", "Changing noteheads via int slots", "Changing notehead font", "Adjusting notehead position", "Changing notehead or accidental size", "Setting up annotations", "Handling annotation duplicates", "]", "]", "[", "Syntax", "Three different types of syntax", "Inlets and outlets", "The notation items parameters", "Notation items hierarchy", "More parameters and extras", "[", "Pitches", "Inputting pitches", "Pitch syntax", "Pitch arithmetics and intervals", "Packing and unpacking pitches", "]", "Timepoints in bach.score", "Extended timepoint syntax", "Negative timepoint syntax", "Global symbolic onset in timepoints", "[", "Separate syntax", "The separate syntax", "Separate parameters build for bach.roll", "Separate parameters build for bach.score", "Representing rests", "Two ways of introducing rests", "Representing ties", "Separate parameters and autoclear", "Single message build", "Voice syntax padding", "Defining Extras", "Inputting rhythmic tree levels", "Separate syntax and grace chords", "Parameters default", "Build and modify bach.roll", "Build and modify bach.score", "Continuous bach.roll generation", "Continuous bach.score generation", "]", "[", "Gathered syntax", "The gathered syntax", "Gathered syntax for notes in bach.roll", "Gathered syntax for notes in bach.score", "Gathered syntax for chords in bach.roll", "Gathered syntax for chords in bach.score", "Gathered syntax for rests in bach.score", "Plain gathered syntax for measures", "Measure rhythmic levels", "Measure rhythmic level types", "Gathered syntax and grace chords", "Gathered syntax for voices in bach.roll", "Gathered syntax for voices in bach.score", "Gathered syntax for the whole bach.roll", "Gathered syntax for the whole bach.score", "Gathered syntax for bach.slot", "The router symbol", "Notation item flags", "Extras", "]", "Outputting rhythmic tree levels", "Ties input or output in duration tree", "Grace chords output", "[", "Playout syntax", "The playout syntax", "Notewise playout syntax", "Chordwise playout syntax", "Playout syntax for grace chords", "Full path in playout syntax", "]", "[", "Measureinfo", "Measureinfo", "Measureinfo assignment", "Time signature", "Skipping time signature assignment", "Tempo", "Multiple tempi inside a measure", "Tempo precision", "Order of tempi inside a measure", "Redundant tempi", "Measure parameters", "Measure width parameters", "Barline types", "Measure numbers", "Beaming boxes", "Reverting to default beaming boxes", "A beaming boxes warning", "Measureinfo for more than one measure", "]", "[", "Header", "Header information", "Body and header assignment", "Attributes or header elements?", "Output header", "Clefs, keys, voice names, MIDI channels", "Staff lines", "Markers", "Slotinfo", "Basic slotinfo parameters (1)", "Basic slotinfo parameters (2)", "More slotinfo parameters", "Lasts slotinfo parameters", "Commands", "Groups", "Articulationinfo", "Noteheadinfo", "Parts", "Loop", "]", "Graphic enharmonicity", "[", "Pitch breakpoints", "Pitch breakpoints", "Trivial pitch breakpoints", "Pitch breakpoint velocity", "Pitch breakpoints: an example", "]", "[", "Slots", "Slots", "Using slot names", "Slot content (1)", "Slot content (2)", "Slot content (3)", "Slot content (4)", "Slots for rests in separate syntax", "]", "]", "[", "Voice properties", "Change number of voices", "Automatically adapting number of voices", "Change clefs", "Automatic clef detection", "Scope of automatic clef detection", "Adding or changing voice names", "Defining key signatures", "Defining custom key signatures", "Assigning MIDI channels", "Hiding voices", "Change space between voices", "Change number or position of staff lines", "]", "]", "[", "Messages to bach", "Messages to bach: donors", "Messages to bach: unlock", "Messages to bach: version and sendversion", "Messages to bach: nonative", "Messages to bach: management of global variables", "]" ],
+					"versionnumber" : 80105,
+					"whole_tree_data_0000000000" : [ "[", "Notation", "[", "Appearance", "[", "Spacing", "Custom spacing in absolute mode", "]", "]", "[", "Editing", "Trimming or extending noteheads or tails", "]", "[", "Messages", "[", "Operate on selection", "Copy duration lines to slots", "]", "]", "[", "Sequencing", "Playhead cursor interface", "]", "[", "Slots", "Slot temporal modes", "Extend temporal slots beyond tails", "Slot temporal mode conversion", "]", "]" ],
 					"whole_tree_data_count" : [ 1 ]
 				}
 
@@ -12399,6 +12574,7 @@
 					"enablevscroll" : 0,
 					"id" : "obj-7",
 					"lockeddragscroll" : 0,
+					"lockedsize" : 0,
 					"maxclass" : "bpatcher",
 					"name" : "bach.help.welcome.maxpat",
 					"numinlets" : 0,
@@ -12903,6 +13079,22 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-129", 0 ],
+					"order" : 0,
+					"source" : [ "obj-145", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-52", 0 ],
+					"order" : 1,
+					"source" : [ "obj-145", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-130", 0 ],
 					"source" : [ "obj-147", 1 ]
 				}
@@ -13246,16 +13438,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-129", 0 ],
-					"order" : 0,
-					"source" : [ "obj-42", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-52", 0 ],
-					"order" : 1,
+					"destination" : [ "obj-145", 0 ],
 					"source" : [ "obj-42", 0 ]
 				}
 

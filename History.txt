@@ -176,7 +176,8 @@ multiple objects: 	fixed missing lines in help files and references
     new "lineareditquarterkey" attribute to set the number key corresponding to quarter note duration  
     fixed bug causing wrong positioning of dots with custom noteheads
     fixed bug causing wrong behavior upon "slice" message with respect to ties and glissandi
-
+    fixed bug causing crashes with wrong slot syntax
+    
 - bach.roll:
     MIDI import: if both markmeasures and markdivisions are on (as per default), and "bach barline" markers are present in the MIDI file, then measure barlines are not calculated
         New "importdivisions" message attribute, overriding "markdivisions"
