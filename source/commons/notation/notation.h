@@ -389,7 +389,6 @@
 #define CONST_UX_ACC_SEPARATION_FROM_NOTE 3.0                    ///< Unscaled separation (in pixels) between a note and its accidental (if there's no other accidental horizontally in between)  
 #define CONST_SCORE_TIE_ADDITIONAL_USPACING 6                    ///< Unscaled horizontal additional spacing if note has a tie which starts on it
 
-#define CONST_TEMPI_FIGURE_PT 0.7                                ///< Rescaling factor of the small figures in the tempi equations (e.g. 'q = 120') with respect to the ordinary figures
 #define CONST_FIGURE_IN_TUPLET_LEGEND_RATIO 0.55                ///< Rescaling factor of the small note in the tuplet ratio specification, as 'aq:b'
 
 #define CONST_TEXT_FRACTIONS_PT 7.5                                ///< For <zoom_y> = 1, size (in pt) of the font used to write the fractions-like and cents-like accidentals (as '-1/5' or '+34c')
@@ -4042,6 +4041,7 @@ typedef struct _notation_obj
     char        firsttime;                    ///< (PRIVATE) Flag which is 1 before the first paint method has been called
     char        freeing;                    ///< (PRIVAGE) Flag which is 1 when the freeing of the notation object is started
     char        only_play_selection;        ///< (PRIVATE) Flag which is 1 when the play() function is called via the playselection function
+    char        playback_deferlow;          ///< (PRIVATE) Flag which is 1 when play offline function is asked to be defer-lowed at each output
     char        defining_numerator;            ///< (PRIVATE) Flag which is 1 if the user is defining the tuplet numerator in the bach.score linear editing system
     char        item_changed_at_mousedown;    ///< (PRIVATE) Flag which is 1 after mousedown when something has been changed directly on mousedown and NOT on mousedrag; it becomes 0 at mouseup
     long        private_count;                ///< (PRIVATE) Private utility counter
@@ -4230,6 +4230,9 @@ typedef struct _notation_obj
     double      dynamics_roman_font_size;       ///< Font size for the textual dynamics-like expressions (for zoom_y = 1)
     double        dynamics_uy_pos;                ///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
     char        dynamics_output_mode;           ///< Output mode for the dynamics: 0 = plain textual form; 1 = detailed; 2 = verbose
+    
+    // tempo
+    double      tempo_size;                     ///< A multiplier for tempo size with respect to standard note size.
     
     // lyrics
     double        lyrics_font_size;                    ///< Font size for the lyrics (for zoom_y = 1)
@@ -4632,7 +4635,7 @@ typedef struct _notation_obj
     // tempi
     char        show_tempi;                                ///< Flag telling if we want to show tempi
     double      tempi_uy_pos;                           ///< Unscaled vertical shift for tempi
-    char        show_tempi_interp_line;                 ///< Show/hide dashed rall/acc line
+    char        show_tempi_interp;                          ///< Show/hide dashed rall/acc line, or text, or arrows
     
     char        show_barlines;                            ///< Flag telling if we want to show barlines
     char        show_barline_locks;                        ///< Flag telling if we want to show the barline locks (appearing when barline width has been locked, fixed)
@@ -5427,6 +5430,19 @@ typedef enum _bach_timepointtoux_flags {
     k_PARSETIMEPOINT_FLAG_ACCURATE = 16, // more CPU-intensive accurate computation
 } e_bach_timepointtoux_flags;
 
+typedef enum _bach_parsetimepoint_syntaxtype {
+    k_PARSETIMEPOINT_SYNTAXTYPE_NONE = 0,
+    k_PARSETIMEPOINT_SYNTAXTYPE_MS,
+    k_PARSETIMEPOINT_SYNTAXTYPE_NAME,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASURE,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASUREFLOAT,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASURE_PIM,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_VOICE_MEASURE_PIM,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_GLOBAL_VOICE_PIM,
+    k_PARSETIMEPOINT_SYNTAXTYPE_TP_GLOBAL_PIM,
+} _bach_parsetimepoint_syntaxtype;
+
+
 
 /// TIMEPOINT CONVERSIONS FOR [bach.score] only, TBD
 double timepoint_to_ms(t_notation_obj *r_ob, t_timepoint tp, long voicenum);
@@ -5434,8 +5450,10 @@ t_timepoint ms_to_timepoint_autochoose_voice(t_notation_obj *r_ob, double ms, ch
 //t_timepoint rat_sec_to_timepoint(t_notation_obj *r_ob, t_rational rat_sec, long voicenum);
 t_timepoint ms_to_timepoint(t_notation_obj *r_ob, double ms, long voicenum, char mode, t_llll *include_denominators = NULL);
 double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, long flags); // flags are e_bach_timepointtoux_flags
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0);
-char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0);
+
+// syntaxtype is one of the e_bach_parsetimepoint_syntaxtype
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0, long *syntaxtype = NULL);
+char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags = 0, long *syntaxtype = NULL);
 
 
 
@@ -5861,9 +5879,10 @@ t_timepoint interpolate_timepoints(t_timepoint tp1, t_timepoint tp2, double para
     @param    ll        The llll
     @param    is_voice_defined                If non-NULL, this is a pointer which will be filled with 1 if the voice number is defined, 0 otherwise
     @param    also_clip                       If non-zero, the goodness of voice number and measure numbers will be checked, otherwise they will be clipped.
+    @param    syntaxtype                    If non-null, will be filled with one of the e_bach_parsetimepoint_syntaxtype
     @return            The timepoint corresponding to the llll, with the syntax explained above.
 */ 
-t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_voice_defined, char also_clip);
+t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_voice_defined, char also_clip, long *syntaxtype = NULL);
 
 
 /**    Retrieve the number of sub-lllls of a given llll (but only at the base level) which do NOT start with an attribute symbol, such as "name", "ID", "lyrics...".
@@ -12202,9 +12221,10 @@ long get_breakpoint_position(t_notation_obj *r_ob, t_bpt *bpt);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    chord        The chord
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                The path in the notation object to get to the chord (in the form explained above).
  */
-t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice);
 
 
 /**    Returns the path of a note inside the notation object. This will be in the form (<voice_number> <measure_number> <chord_index_in_measure> <note_index_in_chord>) if the note
@@ -12213,9 +12233,10 @@ t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    note        The note
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                The path in the notation object to get to the note (in the form explained above).
  */
-t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note);
+t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note, char attach_voicename_to_voice);
 
 
 /**    Returns the path of a tempo inside the notation object. This will be in the form (<voice_number> <measure_number> <tempo_index_in_measure>).
@@ -12224,9 +12245,10 @@ t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    tempo        The tempo
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                The path in the notation object to get to the tempo (in the form explained above).
  */
-t_llll *get_tempo_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo);
+t_llll *tempo_get_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo, char attach_voicename_to_voice);
 
 
 /**    Returns the path of a measure inside the notation object. This will be in the form (<voice_number> <measure_number>).
@@ -12235,9 +12257,10 @@ t_llll *get_tempo_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    meas        The measure
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                The path in the notation object to get to the measure (in the form explained above).
  */
-t_llll *measure_get_path_in_notationobj(t_notation_obj *r_ob, t_measure *meas);
+t_llll *measure_get_path_in_notationobj(t_notation_obj *r_ob, t_measure *meas, char attach_voicename_to_voice);
 
 
 /**    Returns the list of paths of all the notes belonging to a tied sequence of notes (given one note of the sequence).
@@ -12247,10 +12270,11 @@ t_llll *measure_get_path_in_notationobj(t_notation_obj *r_ob, t_measure *meas);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    note        A note
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                A list with the path of each note inside the sequence of tied notes to which the given note belongs.
     @seealso            note_get_path_in_notationobj()
  */
-t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note *note);
+t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note *note, char attach_voicename_to_voice);
 
 
 /**    Returns the list of paths of all the chord belonging to a completely-tied sequence of chord (given one chord of the sequence).
@@ -12261,10 +12285,11 @@ t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    chord        A chord
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                A list with the path of each chord inside the sequence of completely tied chords to which the given chord belongs.
     @seealso            chord_get_path_in_notationobj()
  */
-t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice);
 t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord);
 
 
@@ -12273,10 +12298,11 @@ t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    chord        A rest
+    @param    attach_voicename_to_voice If non-zero, instead of the simple voice number it attaches the voicenames as well
     @return                A list with the path of each rest inside the sequence of consecutive rests to which the given rest belongs.
     @seealso            get_tied_chords_sequence_path_in_notationobj()
  */
-t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord);
+t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice);
 t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord);
 
 
@@ -13655,7 +13681,7 @@ double get_all_tied_chord_sequence_duration_ms(t_chord *chord, char within_measu
 
 //TBD
 double get_all_tied_note_sequence_duration_ms(t_note *nt);
-
+t_rational get_all_tied_note_sequence_abs_r_duration(t_note *nt);
 
 /**    Get the last rest in a sequence of rest containing #chord. If #chord is not a rest, NULL is returned
     @ingroup                notation
@@ -17604,6 +17630,7 @@ t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object 
 t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -19332,6 +19359,8 @@ void notation_obj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob,
 
 void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut);
 void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard);
+
+void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *argv, char *selection, char *offline, char *preschedule, char *deferlow);
 
 
 void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked_elem_ptr, long *clicked_elem_type);

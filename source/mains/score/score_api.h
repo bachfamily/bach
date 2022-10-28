@@ -307,7 +307,7 @@ t_llll* get_all_extras_values_as_llll(t_score *x, char tree);
 t_llll* get_all_pixel_values_as_llll(t_score *x);
 t_llll* get_all_measure_pixel_values_as_llll(t_score *x);
 t_llll* get_timesignature_as_llll(t_timesignature *ts);
-t_llll* get_voice_measuresinfo_values_as_llll(t_scorevoice *voice);
+t_llll* get_voice_measuresinfo_values_as_llll(t_score *x, t_scorevoice *voice);
 t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tree, e_output_pitches pitch_output_mode);
 t_llll* get_voice_ties_values_as_llll(t_scorevoice *voice, char tree);
 t_llll* get_voice_durations_values_as_llll(t_score *x, t_scorevoice *voice, char tree);

@@ -81,6 +81,7 @@ enum playkeys_properties
     k_PLAYKEYS_MIDICHANNEL,
     k_PLAYKEYS_TIE,
     k_PLAYKEYS_VOICENUMBER,
+    k_PLAYKEYS_VOICENAME,
     k_PLAYKEYS_PATH,
     k_PLAYKEYS_MEASURENUMBER,
     k_PLAYKEYS_BREAKPOINTS,
@@ -310,6 +311,7 @@ long get_default_allowed_notationitems_for_property(long property)
         case k_PLAYKEYS_MIDICHANNEL: return standard_set;
         case k_PLAYKEYS_TIE: return score_set;
         case k_PLAYKEYS_VOICENUMBER: return standard_set;
+        case k_PLAYKEYS_VOICENAME: return standard_set;
         case k_PLAYKEYS_PATH: return standard_set;
         case k_PLAYKEYS_MEASURENUMBER: return gensym("measurenumber");
         case k_PLAYKEYS_BREAKPOINTS: return _llllobj_sym_breakpoints;
@@ -360,6 +362,8 @@ long symbol_to_property(t_symbol *s)
         return k_PLAYKEYS_TIE;
     if (s == gensym("voicenumber"))
         return k_PLAYKEYS_VOICENUMBER;
+    if (s == gensym("voicename"))
+        return k_PLAYKEYS_VOICENAME;
 //    if (s == _llllobj_sym_voice)
 //        return k_PLAYKEYS_VOICENUMBER;
     if (s == gensym("measurenumber"))
@@ -433,6 +437,7 @@ t_symbol *property_to_symbol(long property)
         case k_PLAYKEYS_MIDICHANNEL: return _llllobj_sym_midichannel;
         case k_PLAYKEYS_TIE: return _llllobj_sym_tie;
         case k_PLAYKEYS_VOICENUMBER: return gensym("voicenumber");
+        case k_PLAYKEYS_VOICENAME: return gensym("voicename");
         case k_PLAYKEYS_PATH: return _llllobj_sym_path;
         case k_PLAYKEYS_MEASURENUMBER: return gensym("measurenumber");
         case k_PLAYKEYS_BREAKPOINTS: return _llllobj_sym_breakpoints;
@@ -895,6 +900,34 @@ char are_slots_output_by_name(long incoming, t_llll *in_ll)
     }
     return false;
 }
+
+void possibly_remove_voicename(t_llll *this_path)
+{
+    if (this_path && this_path->l_head) {
+        if (hatom_gettype(&this_path->l_head->l_hatom) == H_LLLL) {
+            // only take first element
+            t_llll *vl = hatom_getllll(&this_path->l_head->l_hatom);
+            long voicenum = vl && vl->l_head ? hatom_getlong(&vl->l_head->l_hatom) : 0;
+            hatom_change_to_long_and_free(&this_path->l_head->l_hatom, voicenum);
+        }
+    }
+}
+
+void extract_voicename_and_append_it(t_llll *out, t_llll *this_path)
+{
+    if (this_path && this_path->l_head) {
+        if (hatom_gettype(&this_path->l_head->l_hatom) == H_LLLL) {
+            // only take first element
+            t_llll *vl = hatom_getllll(&this_path->l_head->l_hatom);
+            if (vl && vl->l_head && vl->l_head->l_next) {
+                llll_appendhatom_clone(out, &vl->l_head->l_next->l_hatom);
+            } else {
+                llll_appendllll(out, llll_get());
+            }
+        }
+    }
+}
+
 
 void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
 {
@@ -1619,8 +1652,12 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = llll_getindex(in_ll, 2, I_STANDARD))) {
                                     if (hatom_gettype(&target_el->l_hatom) == H_LLLL) // playout full path
                                         target_el = llll_getindex(hatom_getllll(&target_el->l_hatom), 1, I_STANDARD);
-                                    if (target_el)
-                                        llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                    if (target_el) {
+                                        if (hatom_gettype(&target_el->l_hatom) == H_LONG) // voicenumber only
+                                            llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                        else if (hatom_gettype(&target_el->l_hatom) == H_LLLL && hatom_getllll(&target_el->l_hatom)->l_head) // voicenumber + voicename(s)
+                                            llll_appendlong(found, hatom_getlong(&hatom_getllll(&target_el->l_hatom)->l_head->l_hatom));
+                                    }
                                 }
                                 break;
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
@@ -1635,8 +1672,13 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = llll_getindex(in_ll, 2, I_STANDARD))) {
                                     if (hatom_gettype(&target_el->l_hatom) == H_LLLL) // playout full path
                                         target_el = getindex_2levels(hatom_getllll(&target_el->l_hatom), 1, 1);
-                                    if (target_el)
-                                        llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                    
+                                    if (target_el) {
+                                        if (hatom_gettype(&target_el->l_hatom) == H_LONG) // voicenumber only
+                                            llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                        else if (hatom_gettype(&target_el->l_hatom) == H_LLLL && hatom_getllll(&target_el->l_hatom)->l_head) // voicenumber + voicename(s)
+                                            llll_appendlong(found, hatom_getlong(&hatom_getllll(&target_el->l_hatom)->l_head->l_hatom));
+                                    }
                                 }
                                 break;
 
@@ -1678,12 +1720,45 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     if (hatom_gettype(&target_el->l_hatom) != H_LLLL) { // playout full path
                                         if (x->n_warn_fullpathrequestedbutnotpresent) {
                                             object_warn((t_object *)x, "Full path requested, but not present in the playout llll.");
-                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object, or use the \"voice\" playkey to avoid this warning.");
+                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object, or use the \"voicenumber\" playkey to avoid this warning.");
                                             x->n_warn_fullpathrequestedbutnotpresent = false;
                                         }
                                     }
-                                    if (target_el)
-                                        llll_appendhatom_clone(found, &target_el->l_hatom);
+                                    if (target_el) {
+                                        t_llll *ll = hatom_gettype(&target_el->l_hatom) == H_LLLL ? hatom_getllll(&target_el->l_hatom) : NULL;
+                                        if (ll) {
+                                            t_llll *path_ll = llll_clone(ll);
+                                            switch (incoming) {
+                                                case k_PLAYKEYS_INCOMING_SCORENOTE:
+                                                case k_PLAYKEYS_INCOMING_SCORECHORD:
+                                                case k_PLAYKEYS_INCOMING_SCOREREST:
+                                                case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+                                                case k_PLAYKEYS_INCOMING_TEMPO:
+                                                    if (ll->l_depth > 2) {
+                                                        t_llllelem *el = path_ll->l_head;
+                                                        while (el) {
+                                                            t_llllelem *nextel = el->l_next;
+                                                            if (hatom_gettype(&el->l_hatom) == H_LLLL)
+                                                                possibly_remove_voicename(hatom_getllll(&el->l_hatom));
+                                                            el = nextel;
+                                                        }
+                                                    }
+                                                    break;
+                                                    
+                                                default:
+                                                    if (ll->l_depth > 1) {
+                                                        possibly_remove_voicename(path_ll);
+                                                    }
+                                                    break;
+                                            }
+                                            llll_appendllll(found, path_ll);
+                                        } else {
+                                            llll_appendhatom_clone(found, &target_el->l_hatom);
+                                        }
+                                    }
                                 }
                                 break;
 
@@ -1695,6 +1770,86 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appendhatom_clone(found, &target_el->l_hatom);
                                     }
                                 }
+
+                            default:
+                                break;
+                        }
+                    }
+                        break;
+                        
+                        
+                    case k_PLAYKEYS_VOICENAME:
+                    {
+                        switch (incoming) {
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD:
+                            case k_PLAYKEYS_INCOMING_SCOREREST:
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+                            case k_PLAYKEYS_INCOMING_TEMPO:
+                                found = llll_get();
+                                if ((target_el = llll_getindex(in_ll, 2, I_STANDARD))) {
+                                    if (hatom_gettype(&target_el->l_hatom) != H_LLLL) { // playout full path
+                                        if (x->n_warn_fullpathrequestedbutnotpresent) {
+                                            object_warn((t_object *)x, "Voice name requested, but not present in the playout llll.");
+                                            object_warn((t_object *)x, "   You might want to set \"playoutfullpath\" to 2 for your notation object, or use the \"voicenumber\" playkey instead to avoid this warning.");
+                                            x->n_warn_fullpathrequestedbutnotpresent = false;
+                                        }
+                                    }
+                                    if (target_el) {
+                                        t_llll *ll = hatom_gettype(&target_el->l_hatom) == H_LLLL ? hatom_getllll(&target_el->l_hatom) : NULL;
+                                        if (ll) {
+                                            t_llll *path_ll = llll_clone(ll);
+                                            switch (incoming) {
+                                                case k_PLAYKEYS_INCOMING_SCORENOTE:
+                                                case k_PLAYKEYS_INCOMING_SCORECHORD:
+                                                case k_PLAYKEYS_INCOMING_SCOREREST:
+                                                case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+                                                case k_PLAYKEYS_INCOMING_TEMPO:
+                                                    if (ll->l_depth > 2) {
+                                                        t_llllelem *el = path_ll->l_head;
+                                                        while (el) {
+                                                            t_llllelem *nextel = el->l_next;
+                                                            if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                                                                extract_voicename_and_append_it(found, hatom_getllll(&el->l_hatom));
+                                                                break;
+                                                            }
+                                                            el = nextel;
+                                                        }
+                                                    } else {
+                                                        if (x->n_warn_fullpathrequestedbutnotpresent) {
+                                                            object_warn((t_object *)x, "Voice name requested, but not present in the playout llll.");
+                                                            object_warn((t_object *)x, "   You might want to set \"playoutfullpath\" to 2 for your notation object, or use the \"voicenumber\" playkey instead to avoid this warning.");
+                                                            x->n_warn_fullpathrequestedbutnotpresent = false;
+                                                        }
+                                                    }
+                                                    break;
+                                                    
+                                                default:
+                                                    if (ll->l_depth > 1) {
+                                                        extract_voicename_and_append_it(found, path_ll);
+                                                    } else {
+                                                        if (x->n_warn_fullpathrequestedbutnotpresent) {
+                                                            object_warn((t_object *)x, "Voice name requested, but not present in the playout llll.");
+                                                            object_warn((t_object *)x, "   You might want to set \"playoutfullpath\" to 2 for your notation object, or use the \"voicenumber\" playkey instead to avoid this warning.");
+                                                            x->n_warn_fullpathrequestedbutnotpresent = false;
+                                                        }
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
 
                             default:
                                 break;

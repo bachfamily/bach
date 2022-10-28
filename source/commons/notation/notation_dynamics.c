@@ -2431,9 +2431,23 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                             }
                         }
                     } else {
-                        dynamics_mark_to_textbuf(prev_mark, marktext, 1024);
-                        dynamics_mark_to_textbuf(right_dyn_mark, marktext2, 1024);
-                        object_warn((t_object *)r_ob, "Incoherent hairpin found between dynamic markings '%s' and '%s'. Skipping assignments.", marktext, marktext2);
+                        if (right_velocity == left_velocity) {
+                            for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
+                                note_set_velocity(r_ob, nt, left_velocity);
+                                if (r_ob->breakpoints_have_velocity) {
+                                    for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next) {
+                                        bpt->velocity = left_velocity;
+                                    }
+                                }
+                            }
+                            dynamics_mark_to_textbuf(prev_mark, marktext, 1024);
+                            dynamics_mark_to_textbuf(right_dyn_mark, marktext2, 1024);
+                            object_warn((t_object *)r_ob, "Incoherent hairpin found between dynamic markings '%s' and '%s'.", marktext, marktext2);
+                        } else {
+                            dynamics_mark_to_textbuf(prev_mark, marktext, 1024);
+                            dynamics_mark_to_textbuf(right_dyn_mark, marktext2, 1024);
+                            object_warn((t_object *)r_ob, "Incoherent hairpin found between dynamic markings '%s' and '%s'. Skipping assignments.", marktext, marktext2);
+                        }
                     }
                 } else {
                     if (!dynamics_mark_is_placeholder(right_dyn_mark)) {

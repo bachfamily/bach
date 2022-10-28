@@ -350,6 +350,8 @@ void roll_pause(t_roll *x);
 void roll_play_offline(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_play_preschedule(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_task(t_roll *x);
+void roll_task_gimme(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_task_chain_deferlow(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 
 void roll_adjustadditionalstartpad(t_roll *x);
 
@@ -4113,7 +4115,9 @@ void roll_playselection(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_notation_item *selitem;
     char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     char preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
-    t_atom av[2];
+    t_atom av[3];
+    
+    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
 
     // find selected chords and ms_boundaries
     lock_general_mutex((t_notation_obj *)x);
@@ -4139,15 +4143,26 @@ void roll_playselection(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     
     x->r_ob.only_play_selection = true;
     
+    long acount = 0;
     if (offline) {
         atom_setsym(av, gensym("offline"));
-        atom_setfloat(av + 1, start_ms);
+        if (x->r_ob.playback_deferlow) {
+            atom_setsym(av+1, gensym("deferlow"));
+            atom_setfloat(av+2, start_ms);
+            acount = 3;
+        } else {
+            atom_setfloat(av + 1, start_ms);
+            acount = 2;
+        }
     } else if (preschedule) {
         atom_setsym(av, gensym("preschedule"));
         atom_setfloat(av + 1, start_ms);
-    } else
+        acount = 2;
+    } else {
         atom_setfloat(av, start_ms);
-    roll_play(x, NULL, (offline || preschedule) ? 2 : 1, av);
+        acount = 1;
+    }
+    roll_play(x, NULL, acount, av);
 }
 
 void roll_pause(t_roll *x)
@@ -4163,6 +4178,8 @@ void roll_pause(t_roll *x)
 
 void roll_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
+    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
+    
     if (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("selection")) {
         roll_playselection(x, s, argc-1, argv+1);
         return;
@@ -4175,20 +4192,22 @@ void roll_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     llll_parseargs_and_attrs((t_object *) x, args, "ii", gensym("offline"), &offline, gensym("accurate"), &accurate);
     llll_free(args); */
     
+    long offset = (x->r_ob.playback_deferlow ? 2 : 1);
+    
     if (offline) {
         // play in offline mode
         if (bach_atomic_trylock(&x->r_ob.c_atomic_lock_play)) {
             object_warn((t_object *) x, "Already playing offline!");
             return;
         }
-        roll_play_offline(x, s, argc - 1, argv + 1);
+        roll_play_offline(x, s, argc - offset, argv + offset);
         bach_atomic_unlock(&x->r_ob.c_atomic_lock_play);
         return;
     }
     
     if (preschedule) {
         // play in preschedule mode (more accurate)
-        roll_play_preschedule(x, s, argc - 1, argv + 1);
+        roll_play_preschedule(x, s, argc - offset, argv + offset);
         return;
     }
     
@@ -4218,9 +4237,13 @@ void roll_play_offline(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     } else {
         x->r_ob.playing_scheduling_type = k_SCHEDULING_OFFLINE;
         roll_do_play(x, s, argc, argv);
-        while (x->r_ob.playing) {
-            x->r_ob.play_step_count = x->r_ob.play_num_steps;
-            roll_task(x);
+        if (x->r_ob.playback_deferlow) {
+            roll_task_chain_deferlow(x, NULL, 0, NULL);
+        } else {
+            while (x->r_ob.playing) {
+                x->r_ob.play_step_count = x->r_ob.play_num_steps;
+                roll_task(x);
+            }
         }
     }
 }
@@ -4429,6 +4452,7 @@ void roll_do_stop(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     setclock_unset(x->r_ob.setclock->s_thing, x->r_ob.m_clock);
     x->r_ob.scheduled_item = NULL;
     x->r_ob.only_play_selection = false;
+    x->r_ob.playback_deferlow = false;
     x->r_ob.play_step_count = 0;
     unlock_general_mutex((t_notation_obj *)x);
     
@@ -4454,6 +4478,19 @@ void set_everything_unplayed(t_roll *x){
 
 
 
+
+void roll_task_chain_deferlow(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    if (x->r_ob.playing) {
+        x->r_ob.play_step_count = x->r_ob.play_num_steps;
+        defer_low(x, (method)roll_task_gimme, NULL, 0, NULL);
+        defer_low(x, (method)roll_task_chain_deferlow, NULL, 0, NULL);
+    }
+}
+
+void roll_task_gimme(t_roll *x, t_symbol *s, long argc, t_atom *argv){
+    roll_task(x);
+}
 
 void roll_task(t_roll *x){ 
 
@@ -4668,6 +4705,7 @@ void roll_task(t_roll *x){
             x->r_ob.play_head_ms = -1;
             x->r_ob.scheduled_item = NULL;
             x->r_ob.only_play_selection = false;
+            x->r_ob.playback_deferlow = false;
             x->r_ob.play_step_count = 0;
             unlock_general_mutex((t_notation_obj *)x);
             
@@ -6270,6 +6308,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
     // The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
     // "preschedule" are mutually exclusive. <br />
+    // If you use the "offline" symbol, you can follow it by a "deferlow" symbol to force a defer-low operation for every output note. <br />
     // If you give a single numeric argument, it will be the starting point in milliseconds
     // of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
     // ending point in milliseconds of the region to be played.
@@ -6285,6 +6324,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play offline 2000 4000 @caption play from 2s to 4s in non-realtime mode
     // @example play selection @caption play selected items only
     // @example play selection offline @caption the same, in non-realtime mode ("uzi-like")
+    // @example play selection offline deferlow @caption play selection offline but deferlow between consecutive outputs
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
     // @seealso stop, pause, setcursor
     class_addmethod(c, (method) roll_play, "play", A_GIMME, 0);
@@ -15174,6 +15214,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
     t_llll *clefs = llll_get();
     t_llll *keys = llll_get();
     t_llll *voicenames = llll_get();
+    t_llll *voicespacing = llll_get();
     t_llll *stafflines = llll_get();
     
     t_rollvoice *voice;
@@ -15193,6 +15234,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
     llll_appendsym(keys, _llllobj_sym_keys, 0, WHITENULL_llll);
     llll_appendsym(midichannels, _llllobj_sym_midichannels, 0, WHITENULL_llll);
     llll_appendsym(voicenames, _llllobj_sym_voicenames, 0, WHITENULL_llll);
+    llll_appendsym(voicespacing, _llllobj_sym_voicespacing, 0, WHITENULL_llll);
     llll_appendsym(stafflines, _llllobj_sym_stafflines, 0, WHITENULL_llll);
 
     voice = x->firstvoice;
@@ -15219,6 +15261,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
             llll_appendsym(keys, x->r_ob.keys_as_symlist[voice->v_ob.number], 0, WHITENULL_llll);
             llll_append_notation_item_name(voicenames, (t_notation_item *)voice);
 //            llll_appendsym(voicenames, voice->v_ob.r_it.name, 0, WHITENULL_llll);
+            llll_appenddouble(voicespacing, x->r_ob.voiceuspacing_as_floatlist[voice->v_ob.number]);
             llll_append(stafflines, get_voice_stafflines_as_llllelem((t_notation_obj *)x, (t_voice *)voice), WHITENULL_llll);
         }
         voice = voice->next;
@@ -15238,6 +15281,12 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
         llll_appendllll(out_llll, voicenames, 0, WHITENULL_llll); // voicenames
     else
         llll_free(voicenames);
+
+    if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_voicespacing)) {
+        llll_appenddouble(voicespacing, x->r_ob.voiceuspacing_as_floatlist[x->r_ob.num_voices]);
+        llll_appendllll(out_llll, voicespacing, 0, WHITENULL_llll); // voicespacing
+    } else
+        llll_free(voicespacing);
     
     if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_markers)) {
         if (x->r_ob.firstmarker) // markers

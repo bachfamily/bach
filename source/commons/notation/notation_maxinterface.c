@@ -316,7 +316,7 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
 
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
                 if (r_ob->full_path_from_playout_syntax) // append the full path...
-                    llll_appendllll(playout_llll, note_get_path_in_notationobj(r_ob, note), 0, WHITENULL_llll);
+                    llll_appendllll(playout_llll, note_get_path_in_notationobj(r_ob, note, r_ob->full_path_from_playout_syntax == 2), 0, WHITENULL_llll);
                 else // just append 1-based voice number
                     llll_appendlong(playout_llll, note->parent->voiceparent->v_ob.number + 1, 0, WHITENULL_llll);
 
@@ -324,11 +324,11 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
                 if (r_ob->full_path_from_playout_syntax) { // append the full path...
                     if (r_ob->play_tied_elements_separately ||
                         (mode != k_CONSIDER_FOR_PLAYING && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)) { //... of the single note, wrapped, or ...
-                        t_llll *temp = note_get_path_in_notationobj(r_ob, note);
+                        t_llll *temp = note_get_path_in_notationobj(r_ob, note, r_ob->full_path_from_playout_syntax == 2);
                         llll_wrap_once(&temp);
                         llll_appendllll(playout_llll, temp, 0, WHITENULL_llll);
                     } else // ... of all the notes belonging to which the given note is tied to.
-                        llll_appendllll(playout_llll, get_tied_notes_sequence_path_in_notationobj(r_ob, note), 0, WHITENULL_llll);
+                        llll_appendllll(playout_llll, get_tied_notes_sequence_path_in_notationobj(r_ob, note, r_ob->full_path_from_playout_syntax == 2), 0, WHITENULL_llll);
                 } else // just append 1-based voice number
                     llll_appendlong(playout_llll, note->parent->parent->voiceparent->v_ob.number + 1, 0, WHITENULL_llll);
             }
@@ -340,7 +340,7 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
 
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
                 if (r_ob->full_path_from_playout_syntax) // append the full path...
-                    llll_appendllll(playout_llll, chord_get_path_in_notationobj(r_ob, chord), 0, WHITENULL_llll);
+                    llll_appendllll(playout_llll, chord_get_path_in_notationobj(r_ob, chord, r_ob->full_path_from_playout_syntax == 2), 0, WHITENULL_llll);
                 else // just append 1-based voice number
                     llll_appendlong(playout_llll, chord->voiceparent->v_ob.number + 1, 0, WHITENULL_llll);
 
@@ -348,14 +348,14 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
                 if (r_ob->full_path_from_playout_syntax) { // append the full path...
                     if (((chord->r_sym_duration.r_num >= 0 && r_ob->play_tied_elements_separately) || (chord->r_sym_duration.r_num < 0 && r_ob->play_rests_separately)) ||
                         (mode != k_CONSIDER_FOR_PLAYING && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)) { //... of the single chord, wrapped, or ...
-                        t_llll *temp = chord_get_path_in_notationobj(r_ob, chord);
+                        t_llll *temp = chord_get_path_in_notationobj(r_ob, chord, r_ob->full_path_from_playout_syntax == 2);
                         llll_wrap_once(&temp);
                         llll_appendllll(playout_llll, temp, 0, WHITENULL_llll);
                     } else { // ... of all the chord belonging to the all-tied-sequence.
                         if (chord->r_sym_duration.r_num >= 0)
-                            llll_appendllll(playout_llll, get_tied_chords_sequence_path_in_notationobj(r_ob, chord), 0, WHITENULL_llll);
+                            llll_appendllll(playout_llll, get_tied_chords_sequence_path_in_notationobj(r_ob, chord, r_ob->full_path_from_playout_syntax == 2), 0, WHITENULL_llll);
                         else
-                            llll_appendllll(playout_llll, get_rests_sequence_path_in_notationobj(r_ob, chord), 0, WHITENULL_llll);
+                            llll_appendllll(playout_llll, get_rests_sequence_path_in_notationobj(r_ob, chord, r_ob->full_path_from_playout_syntax == 2), 0, WHITENULL_llll);
                     }
                 } else // just append 1-based voice number
                     llll_appendlong(playout_llll, chord->parent->voiceparent->v_ob.number + 1, 0, WHITENULL_llll);
@@ -369,7 +369,7 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
 
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 if (r_ob->full_path_from_playout_syntax) { // append the full path...
-                    t_llll *temp = get_tempo_path_in_notationobj(r_ob, tempo);
+                    t_llll *temp = tempo_get_path_in_notationobj(r_ob, tempo, r_ob->full_path_from_playout_syntax == 2);
                     llll_wrap_once(&temp);
                     llll_appendllll(playout_llll, temp, 0, WHITENULL_llll);
                 } else // just append 1-based voice number
@@ -383,7 +383,7 @@ void append_voice_or_full_path_to_playout_syntax(t_notation_obj *r_ob, t_llll *p
 
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 if (r_ob->full_path_from_playout_syntax) { // append the full path...
-                    t_llll *temp = measure_get_path_in_notationobj(r_ob, meas);
+                    t_llll *temp = measure_get_path_in_notationobj(r_ob, meas, r_ob->full_path_from_playout_syntax == 2);
                     llll_wrap_once(&temp);
                     llll_appendllll(playout_llll, temp, 0, WHITENULL_llll);
                 } else // just append 1-based voice number
@@ -1302,10 +1302,10 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
-    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0;
+    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0;
     t_atom_long dblclicksendsvalues = 0;
     double slotbgalpha = 0, backgroundslotfontsize = 0;
-    t_atom_long velocityhandling = -1, notificationsformessages = -1;
+    t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0;
     char brand_new_creation = 0;
 
 
@@ -1371,6 +1371,10 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     if ((has_notificationsformessages = dictionary_hasentry(d, gensym("notificationsformessages"))))
         dictionary_getlong(d, gensym("notificationsformessages"), &notificationsformessages);
 
+    if ((has_showtempointerpline = dictionary_hasentry(d, gensym("showtempointerpline"))))
+        dictionary_getlong(d, gensym("showtempointerpline"), &showtempointerpline);
+    
+    
     if (num_voices_from_argument > 0) {
         t_atom av;
         atom_setlong(&av, num_voices_from_argument);
@@ -1420,6 +1424,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     if (has_velocityhandling)
         object_attr_setchar(x, gensym("showvelocity"), velocityhandling);
 
+    if (has_showtempointerpline)
+        object_attr_setchar(x, gensym("showtempointerp"), showtempointerpline);
+    
     if (has_notificationsformessages)
         object_attr_setchar(x, gensym("notifymessages"), notificationsformessages);
 
@@ -2371,8 +2378,9 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 
 
         CLASS_ATTR_CHAR(c,"playoutfullpath",0, t_notation_obj, full_path_from_playout_syntax);
-        CLASS_ATTR_STYLE_LABEL(c,"playoutfullpath",0,"onoff","Full Path In Playout Syntax");
-        CLASS_ATTR_FILTER_CLIP(c, "playoutfullpath", 0, 1);
+        CLASS_ATTR_STYLE_LABEL(c,"playoutfullpath",0,"enumindex","Full Path In Playout Syntax");
+        CLASS_ATTR_ENUMINDEX(c,"playoutfullpath", 0, "Voice Number Only Full Path Full Path With Voicename");
+        CLASS_ATTR_FILTER_CLIP(c, "playoutfullpath", 0, 2);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"playoutfullpath", 0, "0");
         // @exclude bach.slot
         // @description Toggle the ability to output from the playout, instead of the voice number, the full path
@@ -3089,7 +3097,16 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_ACCESSORS(c, "lyricsfontsize", (method)NULL, (method)notation_obj_setattr_lyrics_font_size);
         // @exclude bach.slot
         // @description Sets the font size of lyrics (rescaled according to the <m>vzoom</m>).
-
+        
+        if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            CLASS_ATTR_DOUBLE(c,"temposize",0, t_notation_obj, tempo_size);
+            CLASS_ATTR_STYLE_LABEL(c,"temposize",0,"text","Tempi Relative Size");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"temposize", 0, "0.7");
+            CLASS_ATTR_ACCESSORS(c, "temposize", (method)NULL, (method)notation_obj_setattr_tempo_size);
+            // @exclude bach.slot, bach.roll
+            // @description Sets the relative size of tempo markings with respect to standard notation.
+        }
+        
         CLASS_ATTR_DOUBLE(c,"dynamicsfontsize",0, t_notation_obj, dynamics_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"dynamicsfontsize",0,"text","Dynamics Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsfontsize", 0, "24");
@@ -3783,6 +3800,17 @@ t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return MAX_ERR_NONE;
 }
+
+t_max_err notation_obj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && is_atom_number(av))
+        r_ob->tempo_size = atom_getfloat(av);
+
+    implicitely_recalculate_all(r_ob, false);
+
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
 
 t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
@@ -5372,41 +5400,49 @@ long chord_get_position(t_notation_obj *r_ob, t_chord *chord){
 
 
 
-t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord)
+void append_voice_to_path(t_notation_obj *r_ob, t_voice *voice, t_llll *path, char attach_voicename_to_voice)
+{
+    if (r_ob->full_path_from_playout_syntax == 2) {
+        t_llll *ll = llll_get();
+        llll_appendlong(ll, voice->number + 1);
+        llll_append_notation_item_name(ll, (t_notation_item *)voice);
+        llll_appendllll(path, ll);
+    } else {
+        llll_appendlong(path, voice->number + 1);
+    }
+}
+
+t_llll *chord_get_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice)
 {
     t_llll *out = llll_get();
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
-        long voice = chord->voiceparent->v_ob.number + 1;
         long chord_position = chord_get_position(r_ob, chord);
-        llll_appendlong(out, voice, 0, WHITENULL_llll);
+        append_voice_to_path(r_ob, (t_voice *)chord->voiceparent, out, attach_voicename_to_voice);
         llll_appendlong(out, chord_position, 0, WHITENULL_llll);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
-        long voice = chord->parent->voiceparent->v_ob.number + 1;
         long measure = chord->parent->measure_number + 1;
         long chord_position = chord_get_position(r_ob, chord);
-        llll_appendlong(out, voice, 0, WHITENULL_llll);
+        append_voice_to_path(r_ob, (t_voice *)chord->parent->voiceparent, out, attach_voicename_to_voice);
         llll_appendlong(out, measure, 0, WHITENULL_llll);
         llll_appendlong(out, chord_position, 0, WHITENULL_llll);
     }
     return out;
 }
 
-t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note)
+t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note, char attach_voicename_to_voice)
 {
     t_llll *out = llll_get();
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
-        long voice = note->parent->voiceparent->v_ob.number + 1;
         long chord_position = chord_get_position(r_ob, note->parent);
         long note_position = note_get_position(r_ob, note);
-        llll_appendlong(out, voice, 0, WHITENULL_llll);
+        append_voice_to_path(r_ob, (t_voice *)note->parent->voiceparent, out, attach_voicename_to_voice);
         llll_appendlong(out, chord_position, 0, WHITENULL_llll);
         llll_appendlong(out, note_position, 0, WHITENULL_llll);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
-        long voice = note->parent->parent->voiceparent->v_ob.number + 1;
         long measure = note->parent->parent->measure_number + 1;
         long chord_position = chord_get_position(r_ob, note->parent);
         long note_position = note_get_position(r_ob, note);
-        llll_appendlong(out, voice, 0, WHITENULL_llll);
+        append_voice_to_path(r_ob, (t_voice *)note->parent->parent->voiceparent, out, attach_voicename_to_voice);
         llll_appendlong(out, measure, 0, WHITENULL_llll);
         llll_appendlong(out, chord_position, 0, WHITENULL_llll);
         llll_appendlong(out, note_position, 0, WHITENULL_llll);
@@ -5415,39 +5451,37 @@ t_llll *note_get_path_in_notationobj(t_notation_obj *r_ob, t_note *note)
 }
 
 
-t_llll *get_tempo_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo)
+t_llll *tempo_get_path_in_notationobj(t_notation_obj *r_ob, t_tempo *tempo, char attach_voicename_to_voice)
 {
     t_llll *out = llll_get();
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
-        long voice = tempo->owner->voiceparent->v_ob.number + 1;
         long measure = tempo->owner->measure_number + 1;
         long tempo_position = get_tempo_position(r_ob, tempo);
-        llll_appendlong(out, voice, 0, WHITENULL_llll);
+        append_voice_to_path(r_ob, (t_voice *)tempo->owner->voiceparent, out, attach_voicename_to_voice);
         llll_appendlong(out, measure, 0, WHITENULL_llll);
         llll_appendlong(out, tempo_position, 0, WHITENULL_llll);
     }
     return out;
 }
 
-t_llll *measure_get_path_in_notationobj(t_notation_obj *r_ob, t_measure *meas)
+t_llll *measure_get_path_in_notationobj(t_notation_obj *r_ob, t_measure *meas, char attach_voicename_to_voice)
 {
     t_llll *out = llll_get();
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
-        long voice = meas->voiceparent->v_ob.number + 1;
         long measure = meas->measure_number + 1;
-        llll_appendlong(out, voice, 0, WHITENULL_llll);
+        append_voice_to_path(r_ob, (t_voice *)meas->voiceparent, out, attach_voicename_to_voice);
         llll_appendlong(out, measure, 0, WHITENULL_llll);
     }
     return out;
 }
 
-t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note *note){
+t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note *note, char attach_voicename_to_voice){
     t_note *note1 = note_get_first_in_tieseq(note);
     t_note *note2 = note_get_last_in_tieseq(note);
     t_note *temp;
     t_llll *out = llll_get();
     for (temp = note1; temp && temp != WHITENULL; temp = temp->tie_to) {
-        llll_appendllll(out, note_get_path_in_notationobj(r_ob, temp), 0, WHITENULL_llll);
+        llll_appendllll(out, note_get_path_in_notationobj(r_ob, temp, attach_voicename_to_voice), 0, WHITENULL_llll);
         if (temp == note2)
             break;
     }
@@ -5455,7 +5489,8 @@ t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note
 }
 
 
-t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord){
+t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord)
+{
     t_chord *chord1 = chord_get_first_in_tieseq(chord);
     t_chord *chord2 = chord_get_last_in_tieseq(chord);
     t_chord *temp;
@@ -5468,20 +5503,22 @@ t_llll *get_tied_chords_sequence(t_notation_obj *r_ob, t_chord *chord){
     return out;
 }
 
-t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord){
+t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice)
+{
     t_chord *chord1 = chord_get_first_in_tieseq(chord);
     t_chord *chord2 = chord_get_last_in_tieseq(chord);
     t_chord *temp;
     t_llll *out = llll_get();
     for (temp = chord1; temp; temp = chord_get_next(temp)) {
-        llll_appendllll(out, chord_get_path_in_notationobj(r_ob, temp), 0, WHITENULL_llll);
+        llll_appendllll(out, chord_get_path_in_notationobj(r_ob, temp, attach_voicename_to_voice), 0, WHITENULL_llll);
         if (temp == chord2)
             break;
     }
     return out;
 }
 
-t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord){
+t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord)
+{
     t_chord *chord1 = rest_get_first_in_seq(chord, 0);
     t_chord *chord2 = rest_get_last_in_seq(chord, 0);
     t_chord *temp;
@@ -5494,13 +5531,14 @@ t_llll *get_rests_sequence(t_notation_obj *r_ob, t_chord *chord){
     return out;
 }
 
-t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord){
+t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord, char attach_voicename_to_voice)
+{
     t_chord *chord1 = rest_get_first_in_seq(chord, 0);
     t_chord *chord2 = rest_get_last_in_seq(chord, 0);
     t_chord *temp;
     t_llll *out = llll_get();
     for (temp = chord1; temp; temp = chord_get_next(temp)) {
-        llll_appendllll(out, chord_get_path_in_notationobj(r_ob, temp), 0, WHITENULL_llll);
+        llll_appendllll(out, chord_get_path_in_notationobj(r_ob, temp, attach_voicename_to_voice), 0, WHITENULL_llll);
         if (temp == chord2)
             break;
     }
@@ -5519,7 +5557,7 @@ t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double star
         for (el = gr->firstelem; el; el = el->next_group_item)
             if (el->type == k_CHORD)
                 if (mode != 1 || (((t_chord *)el)->onset >= start_ms && ((t_chord *)el)->onset <= end_ms))
-                    llll_appendllll(thisgroup, chord_get_path_in_notationobj(r_ob, (t_chord *)el), 0, WHITENULL_llll);
+                    llll_appendllll(thisgroup, chord_get_path_in_notationobj(r_ob, (t_chord *)el, false), 0, WHITENULL_llll);
         if (thisgroup->l_size <= 1)    // doesn't form a group
             llll_free(thisgroup);
         else

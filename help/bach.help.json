@@ -4995,6 +4995,13 @@
 				"tags" : [ "sequencer", "sequencing", "play", "preschedule", "playback", "schedule", "accurate", "playing", "prescheduled", "scheduler" ],
 				"title" : [ "Prescheduling playback" ]
 			},
+			"Deferlowplay" : {
+				"filename" : [ "bach.help.notation.sequencing.27_deferlowplay.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "play", "play+offline", "play+selection" ],
+				"tags" : [ "sequencer", "sequencing", "play", "offline", "playback", "defer", "deferlow", "display", "refresh" ],
+				"title" : [ "Deferring offline playback" ]
+			},
 			"Mute" : {
 				"filename" : [ "bach.help.notation.sequencing.30_mute.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -5917,13 +5924,6 @@
 					"tags" : [ "separate", "syntax", "measureinfo", "tempo", "figure", "interpolation", "accelerando", "rallentando" ],
 					"title" : [ "Tempo" ]
 				},
-				"Multipletempi" : {
-					"filename" : [ "bach.help.notation.syntax.40_measureinfo.21_multipletempi.maxpat" ],
-					"objects" : [ "bach.score", "bach.quantize" ],
-					"seealso" : [ "hierarchy", "tempo+syntax", "autoclear" ],
-					"tags" : [ "syntax", "measureinfo", "tempo", "multiple", "tempi", "more", "than", "one", "measure" ],
-					"title" : [ "Multiple tempi inside a measure" ]
-				},
 				"Tempoapprox" : {
 					"filename" : [ "bach.help.notation.syntax.40_measureinfo.21_tempoapprox.maxpat" ],
 					"objects" : [ "bach.score" ],
@@ -5931,15 +5931,29 @@
 					"tags" : [ "separate", "syntax", "measureinfo", "tempo", "digit", "approximation", "precision", "tempodigits" ],
 					"title" : [ "Tempo precision" ]
 				},
+				"Multipletempi" : {
+					"filename" : [ "bach.help.notation.syntax.40_measureinfo.22_multipletempi.maxpat" ],
+					"objects" : [ "bach.score", "bach.quantize" ],
+					"seealso" : [ "hierarchy", "tempo+syntax", "autoclear" ],
+					"tags" : [ "syntax", "measureinfo", "tempo", "multiple", "tempi", "more", "than", "one", "measure" ],
+					"title" : [ "Multiple tempi inside a measure" ]
+				},
+				"Onsetthreshold" : {
+					"filename" : [ "bach.help.notation.syntax.40_measureinfo.23_onsetthreshold.maxpat" ],
+					"objects" : [ "bach.score", "bach.quantize" ],
+					"seealso" : [ "hierarchy", "tempo+syntax", "autoclear" ],
+					"tags" : [ "syntax", "measureinfo", "tempo", "multiple", "tempi", "more", "than", "one", "onset", "threshold", "milliseconds", "onseteqthresh", "polytempo", "polytempi" ],
+					"title" : [ "Onset equality threshold" ]
+				},
 				"Tempiorder" : {
-					"filename" : [ "bach.help.notation.syntax.40_measureinfo.22_tempiorder.maxpat" ],
+					"filename" : [ "bach.help.notation.syntax.40_measureinfo.25_tempiorder.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "hierarchy", "tempo+syntax", "multiple+tempi", "autoclear" ],
 					"tags" : [ "syntax", "measureinfo", "tempo", "tempi", "order", "repeat", "bach.quantize" ],
 					"title" : [ "Order of tempi inside a measure" ]
 				},
 				"Tempirepeatacrossmeasures" : {
-					"filename" : [ "bach.help.notation.syntax.40_measureinfo.23_tempirepeatacrossmeasures.maxpat" ],
+					"filename" : [ "bach.help.notation.syntax.40_measureinfo.26_tempirepeatacrossmeasures.maxpat" ],
 					"objects" : [ "bach.score", "bach.quantize" ],
 					"seealso" : [ "hierarchy", "tempo+syntax", "multiple+tempi" ],
 					"tags" : [ "syntax", "measureinfo", "tempo", "tempi", "skip", "skipping", "redundant", "assign", "assignment" ],

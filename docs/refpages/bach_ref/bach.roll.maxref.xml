@@ -4745,6 +4745,7 @@
 				• <b>play offline 2000 4000</b>   <i>→ play from 2s to 4s in non-realtime mode</i><br />
 				• <b>play selection</b>   <i>→ play selected items only</i><br />
 				• <b>play selection offline</b>   <i>→ the same, in non-realtime mode ("uzi-like")</i><br />
+				• <b>play selection offline deferlow</b>   <i>→ play selection offline but deferlow between consecutive outputs</i><br />
 				• <b>play preschedule</b>   <i>→ accurate prescheduled playback (with limitations)</i><br />
 				<br />
 				The <m>play</m> message plays a portion or all the <o>bach.roll</o>.
@@ -4771,6 +4772,7 @@
 				- the "pause" message won't work.  <br />
 				The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
 				"preschedule" are mutually exclusive. <br />
+				If you use the "offline" symbol, you can follow it by a "deferlow" symbol to force a defer-low operation for every output note. <br />
 				If you give a single numeric argument, it will be the starting point in milliseconds
 				of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
 				ending point in milliseconds of the region to be played.

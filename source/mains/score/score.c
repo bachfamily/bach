@@ -276,6 +276,8 @@ void score_pause(t_score *x);
 void score_play_offline(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_play_preschedule(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_task(t_score *x);
+void score_task_gimme(t_score *x, t_symbol *s, long argc, t_atom *argv);
+void score_task_chain_deferlow(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 void score_name(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_nameappend(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -3863,8 +3865,10 @@ void score_playselection(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_notation_item *selitem;
     char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     char preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
-    t_atom av[2];
+    t_atom av[3];
     
+    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
+
     // find selected chords and ms_boundaries
     lock_general_mutex((t_notation_obj *)x);
     for (selitem = x->r_ob.firstselecteditem; selitem; selitem = selitem->next_selected) {
@@ -3896,15 +3900,26 @@ void score_playselection(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     x->r_ob.only_play_selection = true;
     
+    long acount = 0;
     if (offline) {
         atom_setsym(av, gensym("offline"));
-        atom_setfloat(av + 1, start_ms);
+        if (x->r_ob.playback_deferlow) {
+            atom_setsym(av+1, gensym("deferlow"));
+            atom_setfloat(av+2, start_ms);
+            acount = 3;
+        } else {
+            atom_setfloat(av + 1, start_ms);
+            acount = 2;
+        }
     } else if (preschedule) {
         atom_setsym(av, gensym("preschedule"));
         atom_setfloat(av + 1, start_ms);
-    } else
+        acount = 2;
+    } else {
         atom_setfloat(av, start_ms);
-    score_play(x, NULL, (offline || preschedule) ? 2 : 1, av);
+        acount = 1;
+    }
+    score_play(x, NULL, acount, av);
 }
 
 void score_pause(t_score *x)
@@ -3921,6 +3936,8 @@ void score_pause(t_score *x)
 
 void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
+    notationobj_parse_play_arguments((t_notation_obj *)x, argc, argv, NULL, NULL, NULL, &x->r_ob.playback_deferlow);
+
     if (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("selection")) {
         score_playselection(x, s, argc-1, argv+1);
         return;
@@ -3929,20 +3946,21 @@ void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
     char offline = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("offline"));
     long preschedule = (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("preschedule"));
 
-
+    long offset = (x->r_ob.playback_deferlow ? 2 : 1);
+    
     if (offline) {
         if (bach_atomic_trylock(&x->r_ob.c_atomic_lock_play)) {
             object_warn((t_object *) x, "Already playing offline!");
             return;
         }
-        score_play_offline(x, s, argc - 1, argv + 1);
+        score_play_offline(x, s, argc - offset, argv + offset);
         bach_atomic_unlock(&x->r_ob.c_atomic_lock_play);
         return;
     }
     
     if (preschedule) {
         // play in preschedule mode (more accurate)
-        score_play_preschedule(x, s, argc - 1, argv + 1);
+        score_play_preschedule(x, s, argc - offset, argv + offset);
         return;
     }
 
@@ -3972,9 +3990,13 @@ void score_play_offline(t_score *x, t_symbol *s, long argc, t_atom *argv)
     } else {
         x->r_ob.playing_scheduling_type = k_SCHEDULING_OFFLINE;
         score_do_play(x, s, argc, argv);
-        while (x->r_ob.playing) {
-            x->r_ob.play_step_count = x->r_ob.play_num_steps;
-            score_task(x);
+        if (x->r_ob.playback_deferlow) {
+            score_task_chain_deferlow(x, NULL, 0, NULL);
+        } else {
+            while (x->r_ob.playing) {
+                x->r_ob.play_step_count = x->r_ob.play_num_steps;
+                score_task(x);
+            }
         }
     }
 }
@@ -4237,6 +4259,7 @@ void score_do_stop(t_score *x, t_symbol *s, long argc, t_atom *argv){
     x->r_ob.dont_schedule_loop_end = x->r_ob.dont_schedule_loop_start = false;
     setclock_unset(x->r_ob.setclock->s_thing, x->r_ob.m_clock);
     x->r_ob.only_play_selection = false;
+    x->r_ob.playback_deferlow = false;
     x->r_ob.play_step_count = 0;
     unlock_general_mutex((t_notation_obj *)x);
 
@@ -4255,6 +4278,20 @@ void set_everything_unplayed(t_score *x){
             }
         }
     llll_clear(x->r_ob.notes_being_played);
+}
+
+void score_task_chain_deferlow(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
+    if (x->r_ob.playing) {
+        x->r_ob.play_step_count = x->r_ob.play_num_steps;
+        defer_low(x, (method)score_task_gimme, NULL, 0, NULL);
+        defer_low(x, (method)score_task_chain_deferlow, NULL, 0, NULL);
+    }
+}
+
+void score_task_gimme(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
+    score_task(x);
 }
 
 void score_task(t_score *x)
@@ -4598,6 +4635,7 @@ void score_task(t_score *x)
             x->r_ob.play_head_ux = -1;
             x->r_ob.scheduled_item = NULL;
             x->r_ob.only_play_selection = false;
+            x->r_ob.playback_deferlow = false;
             x->r_ob.play_step_count = 0;
             unlock_general_mutex((t_notation_obj *)x);
             
@@ -5495,6 +5533,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @copy BACH_DOC_PRESCHEDULED_PLAYBACK
     // The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
     // "preschedule" are mutually exclusive. <br />
+    // If you use the "offline" symbol, you can follow it by a "deferlow" symbol to force a defer-low operation for every output note. <br />
     // If you give a single numeric argument, it will be the starting point in milliseconds
     // of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
     // ending point in milliseconds of the region to be played.
@@ -5509,6 +5548,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
     // @example play selection @caption play selected items only
     // @example play selection offline @caption the same, in non-realtime mode ("uzi-like")
+    // @example play selection offline deferlow @caption play selection offline but deferlow between consecutive outputs
     // @example play 2000 @caption play starting from 2s till the end
     // @example play 2000 4000 @caption play starting from 2s, stop at 4s
     // @example play [4] @caption play starting from measure 4
@@ -7550,10 +7590,16 @@ void C74_EXPORT ext_main(void *moduleRef){
 
     CLASS_STICKY_ATTR(c,"category",0,"Show");
 
-    CLASS_ATTR_CHAR(c,"showtempointerpline",0, t_notation_obj, show_tempi_interp_line);
-    CLASS_ATTR_STYLE_LABEL(c,"showtempointerpline",0,"onoff","Show Tempi Interpolation Dashed Line");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtempointerpline", 0, "1");
-    // @description Toggles the display of the dashed line for "rall." and "acc." specifications.
+    CLASS_ATTR_CHAR(c,"showtempointerp",0, t_notation_obj, show_tempi_interp);
+    CLASS_ATTR_STYLE_LABEL(c,"showtempointerp",0,"enumindex","Show Tempi Interpolation");
+    CLASS_ATTR_ENUMINDEX(c,"showtempointerp", 0, "Don't Text And Dashed Line Text Only Dashed Line Only Arrows");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtempointerp", 0, "1");
+    // @description Chooses the display of tempo interpolation:
+    // - Don't: no display; <br />
+    // - Text And Dashed Line (default): "acc." and "rall." indications plus a dashed line to next tempo; <br />
+    // - Text Only: "acc." and "rall." indications only; <br />
+    // - Dashed Line Only: dashed line to next tempo only; <br />
+    // - Arrows: use ascending and descending arrows
 
     CLASS_ATTR_CHAR(c,"showstems",0, t_notation_obj, show_stems);
     CLASS_ATTR_STYLE_LABEL(c,"showstems",0,"enumindex","Show Stems");
@@ -12371,10 +12417,12 @@ char create_level_for_selected_tree_nodes(t_score *x){
             
             
             new_ll = llll_wrap_element_range(first_element_in_row, last_element_in_row);
-            set_level_type_flag_for_level(new_ll, k_RHYTHM_LEVEL_ORIGINAL);
-            recompute_all_for_measure((t_notation_obj *) x, meas, true);
-            set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-            changed = 1;
+            if (new_ll) {
+                set_level_type_flag_for_level(new_ll, k_RHYTHM_LEVEL_ORIGINAL);
+                recompute_all_for_measure((t_notation_obj *) x, meas, true);
+                set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
+                changed = 1;
+            }
         }
     }
     
@@ -14300,6 +14348,7 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
     t_llll *clefs = llll_get();
     t_llll *keys = llll_get();
     t_llll *voicenames = llll_get();
+    t_llll *voicespacing = llll_get();
     t_llll *stafflines = llll_get();
 
     t_scorevoice *voice;
@@ -14331,6 +14380,7 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
     llll_appendsym(clefs, _llllobj_sym_clefs, 0, WHITENULL_llll);
     llll_appendsym(keys, _llllobj_sym_keys, 0, WHITENULL_llll);
     llll_appendsym(voicenames, _llllobj_sym_voicenames, 0, WHITENULL_llll);
+    llll_appendsym(voicespacing, _llllobj_sym_voicespacing, 0, WHITENULL_llll);
     llll_appendsym(stafflines, _llllobj_sym_stafflines, 0, WHITENULL_llll);
 
     voice = x->firstvoice;
@@ -14357,6 +14407,7 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
             llll_appendsym(keys, x->r_ob.keys_as_symlist[voice->v_ob.number], 0, WHITENULL_llll);
             llll_append_notation_item_name(voicenames, (t_notation_item *)voice);
 //            llll_appendsym(voicenames, voice->v_ob.r_it.name, 0, WHITENULL_llll);
+            llll_appenddouble(voicespacing, x->r_ob.voiceuspacing_as_floatlist[voice->v_ob.number]);
             llll_append(stafflines, get_voice_stafflines_as_llllelem((t_notation_obj *)x, (t_voice *)voice), WHITENULL_llll);
         }
         voice = voice->next;
@@ -14376,6 +14427,12 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
         llll_appendllll(out_llll, voicenames, 0, WHITENULL_llll); // voicenames
     else
         llll_free(voicenames);
+
+    if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_voicespacing)) {
+        llll_appenddouble(voicespacing, x->r_ob.voiceuspacing_as_floatlist[x->r_ob.num_voices]);
+        llll_appendllll(out_llll, voicespacing, 0, WHITENULL_llll); // voicespacing
+    } else
+        llll_free(voicespacing);
 
     if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_midichannels))
         llll_appendllll(out_llll, midichannels, 0, WHITENULL_llll); // midichannels
@@ -18292,14 +18349,31 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
     for (t_chord *ch = meas->firstchord; ch; ch = ch->next) {
         char sign = ch->r_sym_duration.r_num >= 0 ? 1 : -1;
         t_rational r_sym_tail = rat_rat_sum(ch->r_sym_onset, rat_abs(ch->r_sym_duration));
-        if (!ch->is_grace_chord && ch->r_sym_duration.r_num != 0 && rat_rat_cmp(ch->r_sym_onset, tp.pt_in_measure) < 0 && rat_rat_cmp(r_sym_tail, tp.pt_in_measure) > 0) {
+        if (!ch->is_grace_chord && ch->r_sym_duration.r_num != 0 && rat_rat_cmp(ch->r_sym_onset, tp.pt_in_measure) == 0) {
+            // just remove ties
+            if (!changed) {
+                create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
+                if (meas->prev)
+                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_CHANGE);
+                if (meas->next)
+                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->next, k_UNDO_MODIFICATION_CHANGE);
+                changed = true;
+                recompute_all_for_measure((t_notation_obj *) x, meas, true);
+            }
+            for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
+                if (nt->tie_from && nt->tie_from != WHITENULL)
+                    nt->tie_from->tie_to = NULL;
+                nt->tie_from = NULL;
+            }
+            break;
+        } else if (!ch->is_grace_chord && ch->r_sym_duration.r_num != 0 && rat_rat_cmp(ch->r_sym_onset, tp.pt_in_measure) < 0 && rat_rat_cmp(r_sym_tail, tp.pt_in_measure) > 0) {
             // slice the chord!
             if (!changed) {
                 create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
                 if (meas->prev)
-                create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_CHANGE);
+                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_CHANGE);
                 if (meas->next)
-                create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->next, k_UNDO_MODIFICATION_CHANGE);
+                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->next, k_UNDO_MODIFICATION_CHANGE);
                 changed = true;
                 recompute_all_for_measure((t_notation_obj *) x, meas, true);
             }
@@ -18307,27 +18381,71 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
             t_rational left_dur = rat_rat_diff(tp.pt_in_measure, ch->r_sym_onset);
             t_rational right_dur = rat_rat_diff(r_sym_tail, tp.pt_in_measure);
             double cut_rel_pos = rat2double(left_dur)/rat2double(rat_abs(ch->r_sym_duration));
+
+            double *cut_rel_pos_wties = (double *)bach_newptr(MAX(1, ch->num_notes) * sizeof(double));
+            t_note *nt, *new_nt;
+            t_llll *tiednotes = llll_get();
+            long i;
+            for (i = 0, nt = ch->firstnote; nt && i < ch->num_notes; nt = nt->next) {
+                t_rational tiesymdur = get_all_tied_note_sequence_abs_r_duration(nt);
+                cut_rel_pos_wties[i] = rat2double(left_dur)/rat2double(tiesymdur);
+                
+                t_llll *these_tiednotes = llll_get();
+                for (t_note *tempnt = nt->tie_to; tempnt && tempnt != WHITENULL; tempnt = tempnt->tie_to)
+                    llll_appendobj(these_tiednotes, tempnt);
+                llll_appendllll(tiednotes, these_tiednotes);
+            }
+            
             
             t_chord *new_chord = clone_chord((t_notation_obj *) x, ch, k_CLONE_FOR_NEW);
             new_chord->parent = ch->parent;
+            
+            // transfer ties
+            for (nt = ch->firstnote, new_nt = new_chord->firstnote;
+                 nt && new_nt;
+                 nt = nt->next, new_nt = new_nt->next) {
+                // add ties to ntnew if needed
+                new_nt->tie_to = nt->tie_to;
+                new_nt->tie_from = NULL;
 
+                // remove ties from nt
+                if (nt->tie_to && nt->tie_to != WHITENULL)
+                    nt->tie_to->tie_from = new_nt;
+                nt->tie_to = NULL;
+            }
+            
             ch->r_sym_duration = rat_long_prod(left_dur, sign);
             new_chord->r_sym_duration = rat_long_prod(right_dur, sign);
             new_chord->rhythmic_tree_elem = llll_insertobj_after(new_chord, ch->rhythmic_tree_elem);
 
             chord_insert_in_measure((t_notation_obj *)x, meas, new_chord, ch, 0);
             
-            t_note *nt, *new_nt;
-            for (nt = ch->firstnote, new_nt = new_chord->firstnote; nt && new_nt; nt = nt->next, new_nt = new_nt->next) {
+            t_llllelem *tiednotes_el;
+            for (i = 0, tiednotes_el = tiednotes->l_head, nt = ch->firstnote, new_nt = new_chord->firstnote;
+                 nt && new_nt && i < ch->num_notes && tiednotes_el;
+                 nt = nt->next, new_nt = new_nt->next, i++, tiednotes_el = tiednotes_el->l_next) {
                 
+                t_llll *these_tiednotes = hatom_getllll(&tiednotes_el->l_hatom);
+                double this_cut_rel_pos_wties = cut_rel_pos_wties[i];
                 if (note_breakpoints_are_nontrivial((t_notation_obj *)x, nt)) {
                     // split breakpoints
                     double new_midicents = nt->midicents;
-                    t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, 0., cut_rel_pos, NULL);
-                    t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, cut_rel_pos, 1., &new_midicents);
+                    t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, 0., x->r_ob.dl_spans_ties ? this_cut_rel_pos_wties : cut_rel_pos, NULL);
+                    t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, x->r_ob.dl_spans_ties ? this_cut_rel_pos_wties : cut_rel_pos, 1., &new_midicents);
                     note_set_breakpoints_from_llll((t_notation_obj *)x, nt, left_bpt);
                     note_set_breakpoints_from_llll((t_notation_obj *)x, new_nt, right_bpt);
                     new_nt->midicents = new_midicents;
+                    if (x->r_ob.dl_spans_ties && these_tiednotes) {
+                        for (t_llllelem *ntel = these_tiednotes->l_head; ntel; ntel = ntel->l_next) {
+                            t_note *thisnt = (t_note *)hatom_getobj(&ntel->l_hatom);
+                            if (thisnt) {
+                                thisnt->midicents = new_midicents;
+                                note_compute_approximation((t_notation_obj *)x, thisnt);
+                                if (thisnt->parent && thisnt->parent->parent)
+                                    recompute_all_for_measure((t_notation_obj *) x, thisnt->parent->parent, true);
+                            }
+                        }
+                    }
                     llll_free(left_bpt);
                     llll_free(right_bpt);
                 }
@@ -18335,8 +18453,9 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                 for (long i = 0; i < CONST_MAX_SLOTS; i++) {
                     if (slot_is_temporal((t_notation_obj *)x, i)) { // temporal slots
                         // need to split!
-                        t_llll *left_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, 0., cut_rel_pos);
-                        t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, -1);
+                        bool slot_spans_ties = x->r_ob.slotinfo[i].slot_singleslotfortiednotes;
+                        t_llll *left_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, 0.,  slot_spans_ties ? this_cut_rel_pos_wties : cut_rel_pos);
+                        t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, slot_spans_ties ? this_cut_rel_pos_wties : cut_rel_pos, -1);
                         llll_wrap_once(&left_slot);
                         llll_wrap_once(&right_slot);
                         note_set_slots_from_llll((t_notation_obj *)x, nt, left_slot);
@@ -18345,6 +18464,9 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                 }
             }
             
+            bach_freeptr(cut_rel_pos_wties);
+            llll_free(tiednotes);
+            break;
         }
     }
 }

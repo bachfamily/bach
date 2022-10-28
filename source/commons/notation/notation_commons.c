@@ -1920,6 +1920,7 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
         t_voice *voice = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? ((t_voice *)curr_nt->parent->parent->voiceparent) : ((t_voice *)curr_nt->parent->voiceparent));
         custom_font_size = noteheads_font_size * notehead_resize;
         note_y_textbox = system_shift + mc_to_yposition_in_scale_for_notes(r_ob, curr_nt, voice, notehead_resize, false);
+//        note_x_textbox = note_x_real - ((curr_nt->notehead_uwidth * grace_ratio * notehead_resize / 2.) * r_ob->zoom_y);
         notehead_need_custom_font = true;
         notehead_is_standard_quarternote = false;
     }
@@ -4772,8 +4773,9 @@ double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, lon
         }
        
        
-        if (rat_rat_cmp(pim, total_meas_duration) >= 0)
+       if (rat_rat_cmp(pim, total_meas_duration) >= 0) {
             return meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux;
+       }
         
         for (chord = meas->firstchord; chord; chord = chord->next) {
             char is_chord_whole_rest = is_chord_a_whole_measure_rest(r_ob, chord);
@@ -4815,28 +4817,31 @@ double timepoint_to_unscaled_xposition(t_notation_obj *r_ob, t_timepoint tp, lon
 
 
 
-char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags)
+char parse_open_timepoint_syntax_from_llllelem(t_notation_obj *r_ob, t_llllelem *arguments, double *ux, double *ms, t_timepoint *tp, long flags, long *syntaxtype)
 {
     t_llll *temp = llll_get();
     char res = 0;
     llll_appendhatom_clone(temp, &arguments->l_hatom);
-    res = parse_open_timepoint_syntax(r_ob, temp, ux, ms, tp, flags);
+    res = parse_open_timepoint_syntax(r_ob, temp, ux, ms, tp, flags, syntaxtype);
     llll_free(temp);
     return res;
 }
 
 // returns true if error, false otherwise
 // open timepoint syntax is <name>, or <ms>, or (<measure>) or (<measure> <position_in_measure>) or (<voice> <measure> <position_in_measure>)
-char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags)
+char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double *ux, double *ms, t_timepoint *tp, long flags, long *syntaxtype)
 {
     double unscaled_x = 0;
     double arguments_ms = 0;
+    
+    if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NONE;
     
     if (arguments && arguments->l_depth == 1 && arguments->l_size >= 1) {
         if (is_hatom_number(&arguments->l_head->l_hatom)) {
             // This is just a single number: milliseconds
             arguments_ms = hatom_getdouble(&arguments->l_head->l_hatom);
             unscaled_x = ms_to_unscaled_xposition(r_ob, arguments_ms, 1);
+            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_MS;
         } else {
             // This is possibly a name
             t_notation_item *it;
@@ -4848,6 +4853,7 @@ char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double
                     unscaled_x = ms_to_unscaled_xposition(r_ob, arguments_ms, 1);
             }
             unlock_general_mutex(r_ob);
+            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NAME;
         }
         if (tp)
             *tp = ms_to_timepoint(r_ob, arguments_ms, 0, k_MS_TO_TP_RETURN_INTERPOLATION);
@@ -4862,7 +4868,7 @@ char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double
         }
         
         char is_voice_defined = true;
-        t_timepoint arguments_tp = llll_to_timepoint(r_ob, innerllll, &is_voice_defined, false);
+        t_timepoint arguments_tp = llll_to_timepoint(r_ob, innerllll, &is_voice_defined, false, syntaxtype);
         
         if (arguments_tp.measure_num >= 0) {
             if (ux || ms) {
@@ -6779,14 +6785,16 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     set_notehead_names(ntp, i, gensym("accent"), gensym("acc"));
     if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61502);
+        ntp->nhpref[i].uy_shift -= 2.9;
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '/');
+        ntp->nhpref[i].uy_shift -= 2;
     } else {
         set_all_unicode_characters(r_ob, i, 62);
+        ntp->nhpref[i].uy_shift -= 2;
     }
     ntp->nhpref[i].uwidth = 9.5;
     ntp->nhpref[i].durationline_start_ux_shift -= 0.2;
-    ntp->nhpref[i].uy_shift -= 2.9;
 
     
     i = k_NOTEHEAD_PLUS;
@@ -14504,6 +14512,20 @@ double get_all_tied_note_sequence_duration_ms(t_note *nt)
     return tot_duration;
 }
 
+t_rational get_all_tied_note_sequence_abs_r_duration(t_note *nt)
+{
+    t_note *first = note_get_first_in_tieseq(nt);
+    t_note *last = note_get_last_in_tieseq(nt);
+    t_note *temp;
+    t_rational tot_duration = long2rat(0);
+    for (temp = first; temp && temp != WHITENULL; temp = temp->tie_to) {
+        tot_duration = rat_rat_sum(tot_duration, rat_abs(temp->parent->r_sym_duration));
+        if (temp == last)
+            break;
+    }
+    return tot_duration;
+}
+
 void check_ties_around_measure(t_measure *measure){
     measure->need_check_ties = true;
     if (measure->prev) measure->prev->need_check_ties = true;
@@ -17770,7 +17792,7 @@ char is_level_original(t_llll *box){
 }
 
 char is_level_tuplet(t_llll *box){
-    if (box->l_thing.w_obj && (((t_rhythm_level_properties *)box->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_TUPLET))
+    if (box && box->l_thing.w_obj && (((t_rhythm_level_properties *)box->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_TUPLET))
         return true;
     return false;
 }
@@ -32508,7 +32530,7 @@ void fill_default_full_repr(t_notation_obj *r_ob, t_rational *full_repr, char ke
             full_repr[4*i] = long2rat(0);
             full_repr[4*i + 1] = RAT_1OVER8;
             full_repr[4*i + 2] = RAT_1OVER4;
-            full_repr[4*i + 3] = genrat(3, 4);
+            full_repr[4*i + 3] = genrat(3, 8); // why was this 4????
             full_repr[4*i + 4] = RAT_1OVER2;
             full_repr[4*i + 5] = genrat(-3, 8);
             full_repr[4*i + 6] = genrat(-1, 4);
@@ -35564,7 +35586,7 @@ void timepoint_handle_pim(t_notation_obj *r_ob, t_timepoint *arguments_tp, char 
 
 }
 
-t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_voice_defined, char also_clip) {
+t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_voice_defined, char also_clip, long *syntaxtype) {
     t_timepoint arguments_tp; 
     t_measure *meas = NULL;
     char voice_defined = false;
@@ -35573,12 +35595,16 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
     arguments_tp.measure_num = 0;
     arguments_tp.pt_in_measure = long2rat(0);
     
+    if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NONE;
+
     if (innerllll && (innerllll->l_size == 1) && (hatom_gettype(&innerllll->l_head->l_hatom) == H_LONG || hatom_gettype(&innerllll->l_head->l_hatom) == H_RAT)) {
         // (<measure_num>)
 
         arguments_tp.measure_num = hatom_getlong(&innerllll->l_head->l_hatom) - 1;
         timepoint_handle_measure_numbers(r_ob, &arguments_tp, also_clip);
         
+        if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASURE;
+
     } else if (innerllll && (innerllll->l_size == 1) && (hatom_gettype(&innerllll->l_head->l_hatom) == H_DOUBLE)){
         // (<float_measure_num>)
         
@@ -35590,9 +35616,11 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
 
         meas = nth_measure_of_scorevoice((t_scorevoice *)r_ob->firstvoice, arguments_tp.measure_num);
         if (meas)
-            arguments_tp.pt_in_measure = rat_rat_prod(approx_double_with_rat_fixed_den(val - floor(val), 100, 0, NULL), measure_get_sym_duration(meas));
+            arguments_tp.pt_in_measure = rat_rat_prod(approx_double_with_rat_fixed_den(val - floor(val), CONST_RAT_SINGLE_DEN, 0, NULL), measure_get_sym_duration(meas));
         timepoint_handle_pim(r_ob, &arguments_tp, also_clip);
         
+        if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASUREFLOAT;
+
     } else if (innerllll && innerllll->l_size == 2 && (is_hatom_number(&innerllll->l_head->l_hatom) && is_hatom_number(&innerllll->l_head->l_next->l_hatom))) {
         // (<measure_num> <point_in_measure>)
         
@@ -35607,6 +35635,8 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
             arguments_tp.pt_in_measure = hatom_getrational(&innerllll->l_head->l_next->l_hatom);
         }
         timepoint_handle_pim(r_ob, &arguments_tp, also_clip);
+
+        if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_MEASURE_PIM;
 
     } else if (innerllll && innerllll->l_size >= 3 && is_hatom_number(&innerllll->l_head->l_hatom)
                && is_hatom_number(&innerllll->l_head->l_next->l_hatom)  && is_hatom_number(&innerllll->l_head->l_next->l_hatom)) {
@@ -35646,7 +35676,8 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
             timepoint_handle_pim(r_ob, &arguments_tp, also_clip);
         }
         
-        
+        if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_VOICE_MEASURE_PIM;
+
     } else if (innerllll && (innerllll->l_size == 2 || innerllll->l_size == 3) &&
                ((hatom_gettype(&innerllll->l_tail->l_prev->l_hatom) == H_LLLL && hatom_getllll(&innerllll->l_tail->l_prev->l_hatom)->l_size == 0 && is_hatom_number(&innerllll->l_tail->l_hatom)) ||
                 (hatom_gettype(&innerllll->l_tail->l_prev->l_hatom) == H_SYM && hatom_getsym(&innerllll->l_tail->l_prev->l_hatom) == _llllobj_sym_any && is_hatom_number(&innerllll->l_tail->l_hatom)))){
@@ -35654,10 +35685,13 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
         
         t_rational global_sym_onset = hatom_getrational(&innerllll->l_tail->l_hatom);
         arguments_tp.voice_num = (innerllll->l_size == 2 ? 0 : hatom_getlong(&innerllll->l_head->l_hatom) - 1);
-        if (innerllll->l_size == 2)
+        if (innerllll->l_size == 2) {
             voice_defined = false;
-        else
+            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_GLOBAL_VOICE_PIM;
+        } else {
             voice_defined = true;
+            if (syntaxtype) *syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_TP_GLOBAL_PIM;
+        }
         
         timepoint_handle_voice_numbers(r_ob, &arguments_tp, also_clip);
         
@@ -36501,6 +36535,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->is_editing_type = k_NONE;
     r_ob->is_editing_voice_name = -1;
     r_ob->only_play_selection = false;
+    r_ob->playback_deferlow = false;
     r_ob->automessage_ac = 0;
     r_ob->is_sending_automessage = false;
     r_ob->show_barlines = 1;
@@ -43939,6 +43974,8 @@ double get_midicents_from_double_elem_or_notename(t_notation_obj *r_ob, t_llllel
         return notename2midicents(r_ob->middleC_octave, &r_ob->last_used_octave, hatom_getsym(&elem->l_hatom)->s_name, NULL, NULL);
     else if (is_hatom_number(&elem->l_hatom))
         return hatom_getdouble(&elem->l_hatom);
+    else if (hatom_gettype(&elem->l_hatom) == H_PITCH)
+        return hatom_getpitch(&elem->l_hatom).toMC();
     else
         return 0;
 }
@@ -45600,3 +45637,25 @@ void note_stretch_portion_of_duration_line_and_temporal_slots(t_notation_obj *r_
     }
 }
 
+
+
+void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *argv, char *selection, char *offline, char *preschedule, char *deferlow)
+{
+    if (selection) *selection = false;
+    if (offline) *offline = false;
+    if (preschedule) *preschedule = false;
+    if (deferlow) *deferlow = false;
+    for (long i = 0; i < argc; i++) {
+        if (atom_gettype(argv) == A_SYM) {
+            if (selection && atom_getsym(argv+i) == gensym("selection")) {
+                *selection = true;
+            } else if (offline && atom_getsym(argv+i) == gensym("offline")) {
+                *offline = true;
+            } else if (preschedule && atom_getsym(argv+i) == gensym("preschedule")) {
+                *preschedule = true;
+            } else if (deferlow && atom_getsym(argv+i) == gensym("deferlow")) {
+                *deferlow = true;
+            }
+        }
+    }
+}
