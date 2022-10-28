@@ -200,6 +200,12 @@ multiple objects: 	fixed missing lines in help files and references
     fixed bug causing crashes with writetxt in bach.slot
     added support for noteheadinfo and articulationinfo to bach.slot
 
+- bach.beatbox:
+    fixed bug causing splitting of lyrics across different tied notes.
+        This has been done by introducing a new @oneshotslots attribute, that can be filled with a list of symbols or integers
+        corresponding to the slots that have to be treated as "one shot", i.e. not copied across tied notes.
+        By default this attribute only includes the "lyrics" and "dynamics" slots, but you can change it to whatever you need.
+        
 - bach.quantize:
     fixed bug causing crashes when quantizing an empty score with @sync 1
     fixed bug causing weird rests when dealing with pickup measures with bach.quantize

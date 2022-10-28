@@ -86,6 +86,9 @@ typedef struct _beatbox
     char                autoclear;
     char                separate_mode; // < output separate parameters?
     
+    t_atom              oneshot_slots[2*CONST_MAX_SLOTS];
+    long                num_oneshot_slots;
+    
     t_systhread_mutex    n_mutex;
     
 } t_beatbox;
@@ -153,6 +156,10 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_BASIC(c, "autoclear",0);
     // @description Automatically clears the score before outputting the new data.
 
+    CLASS_ATTR_ATOM_VARSIZE(c, "oneshotslots", 0,  t_beatbox, oneshot_slots, num_oneshot_slots, 2*CONST_MAX_SLOTS);
+    CLASS_ATTR_LABEL(c, "oneshotslots", 0, "One-Shot Slots");
+    // @description A list of numbers corresponding to the slots that will be treated as "one shot" and thereby
+    // not copied when a note is split.
 
     class_register(CLASS_BOX, c);
     beatbox_class = c;
@@ -190,6 +197,24 @@ long debug_print_pointer_fn(void *data, t_hatom *a, const t_llll *address){
     return 0;
 }
 */
+
+char is_slot_llllelem_in_atom_array(t_llllelem *el, t_atom *atomarray, long size)
+{
+    if (hatom_gettype(&el->l_hatom) == H_LONG) {
+        long l = hatom_getlong(&el->l_hatom);
+        for (long i = 0; i < size; i++) {
+            if (atom_gettype(atomarray+i) == A_LONG && atom_getlong(atomarray+i) == l)
+                return true;
+        }
+    } else if (hatom_gettype(&el->l_hatom) == H_SYM) {
+        t_symbol *s = hatom_getsym(&el->l_hatom);
+        for (long i = 0; i < size; i++) {
+            if (atom_gettype(atomarray+i) == A_SYM && atom_getsym(atomarray+i) == s)
+                return true;
+        }
+    }
+    return false;
+}
 
 void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
 {
@@ -514,7 +539,9 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
                     if (measures_elem) measures_elem = measures_elem->l_next;
                 }
             
-                split_rhythm_to_boxes(voice_durations, voice_infos, voice_ties, boxes, &boxed_voice_durations, &boxed_voice_infos, &boxed_voice_ties, false, false, false);
+//                split_rhythm_to_boxes(voice_durations, voice_infos, voice_ties, boxes, &boxed_voice_durations, &boxed_voice_infos, &boxed_voice_ties, false, false, false);
+                
+                split_rhythm_to_boxes(voice_durations, voice_infos, voice_ties, boxes, &boxed_voice_durations, &boxed_voice_infos, &boxed_voice_ties, false, true, false);
                 
                 // now we split the boxed_infos into:
                 boxed_voice_cents = llll_get(); boxed_voice_velocities = llll_get(); 
@@ -537,6 +564,9 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
                     for (    this_box_llllelem = this_box_llll ? this_box_llll->l_head : NULL, this_dur_llllelem = this_durs_llll ? this_durs_llll->l_head : NULL; 
                             this_box_llllelem || this_dur_llllelem; 
                             this_box_llllelem = this_box_llllelem ? this_box_llllelem->l_next : NULL, this_dur_llllelem = this_dur_llllelem ? this_dur_llllelem->l_next : NULL) {
+                        char info_created_from_split = (this_box_llllelem->l_thing.w_obj == WHITENULL_llll);
+                        if (info_created_from_split)
+                            this_box_llllelem->l_thing.w_obj = NULL;
                         if (this_box_llllelem) {
                             t_llll *singleinfo_llll = hatom_getllll(&this_box_llllelem->l_hatom);
 
@@ -564,10 +594,40 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
                                     else
                                         llll_appendllll(this_box_breakpoints, get_nilnil(), 0, WHITENULL_llll);
                                     
-                                    if (theseextras->l_head && theseextras->l_head->l_next && theseextras->l_head->l_next->l_next)
+                                    if (theseextras->l_head && theseextras->l_head->l_next && theseextras->l_head->l_next->l_next) {
                                         llll_appendhatom_clone(this_box_slots, &theseextras->l_head->l_next->l_next->l_hatom, 0, WHITENULL_llll);
-                                    else
+                                        if (info_created_from_split) {
+                                            for (t_llllelem *tbel = this_box_slots->l_head; tbel; tbel = tbel->l_next) { // these are chord-by-chord
+                                                if (hatom_gettype(&tbel->l_hatom) == H_LLLL) {
+                                                    t_llll *tbel_ll = hatom_getllll(&tbel->l_hatom);
+                                                    
+                                                    for (t_llllelem *tbelnote = tbel_ll->l_head; tbelnote; tbelnote = tbelnote->l_next) {
+                                                        if (hatom_gettype(&tbelnote->l_hatom) == H_LLLL) {
+                                                            t_llll *tbelnote_ll = hatom_getllll(&tbelnote->l_hatom);
+
+                                                            t_llllelem *tbelnoteslot = tbelnote_ll->l_head;
+                                                            while (tbelnoteslot) {
+                                                                t_llllelem *tbelnoteslotnext = tbelnoteslot ? tbelnoteslot->l_next : NULL;
+                                                                
+                                                                if (hatom_gettype(&tbelnoteslot->l_hatom) == H_LLLL) {
+                                                                    t_llll *tbelnoteslot_ll = hatom_getllll(&tbelnoteslot->l_hatom);
+                                                                    if (tbelnoteslot_ll && tbelnoteslot_ll->l_head) {
+                                                                        if (is_slot_llllelem_in_atom_array(tbelnoteslot_ll->l_head, x->oneshot_slots, x->num_oneshot_slots)) {
+                                                                            llll_destroyelem(tbelnoteslot);
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                tbelnoteslot = tbelnoteslotnext;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else
                                         llll_appendllll(this_box_slots, get_nilnil(), 0, WHITENULL_llll);
+                                    
                                         
                                     if (theseextras->l_head && theseextras->l_head->l_next && theseextras->l_head->l_next->l_next && theseextras->l_head->l_next->l_next->l_next)
                                         llll_appendhatom_clone(this_box_articulations, &theseextras->l_head->l_next->l_next->l_next->l_hatom, 0, WHITENULL_llll);
@@ -828,7 +888,11 @@ t_beatbox *beatbox_new(t_symbol *s, short ac, t_atom *av)
         // @arg 0 @name separate @optional 1 @type symbol @digest Separate parameters mode  
         // @description Put a "separate" symbol as argument if you want to output the separate parameters (and not the bach.score gathered syntax).
         x->separate_mode = true_ac && atom_gettype(av) == A_SYM && atom_getsym(av) == _llllobj_sym_separate;    
-        object_attr_setdisabled((t_object *)x, gensym("autoclear"), !x->separate_mode); 
+        object_attr_setdisabled((t_object *)x, gensym("autoclear"), !x->separate_mode);
+        
+        x->num_oneshot_slots = 2;
+        atom_setsym(x->oneshot_slots, _llllobj_sym_lyrics);
+        atom_setsym(x->oneshot_slots+1, _llllobj_sym_dynamics);
 
         // if outputs are NOT separated, the score is of course always cleared
 
