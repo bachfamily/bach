@@ -277,6 +277,20 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="oneshotslots" get="1" set="1" type="atom_array" size="0">
+			<digest>
+				One-Shot Slots
+			</digest>
+			<description>
+				A list of numbers corresponding to the slots that will be treated as "one shot" and thereby
+				not copied when a note is split.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="One-Shot Slots" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="out" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Outlet Types

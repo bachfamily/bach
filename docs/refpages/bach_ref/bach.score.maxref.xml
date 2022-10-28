@@ -11585,7 +11585,7 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Full Path In Playout Syntax" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="playpartialnotes" get="1" set="1" type="int" size="1">
@@ -13007,20 +13007,25 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="showtempointerpline" get="1" set="1" type="int" size="1">
+		<attribute name="showtempointerp" get="1" set="1" type="int" size="1">
 			<digest>
-				Show Tempi Interpolation Dashed Line
+				Show Tempi Interpolation
 			</digest>
 			<description>
-				Toggles the display of the dashed line for "rall." and "acc." specifications.
+				Chooses the display of tempo interpolation:
+				- Don't: no display; <br />
+				- Text And Dashed Line (default): "acc." and "rall." indications plus a dashed line to next tempo; <br />
+				- Text Only: "acc." and "rall." indications only; <br />
+				- Dashed Line Only: dashed line to next tempo only; <br />
+				- Arrows: use ascending and descending arrows
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Tempi Interpolation Dashed Line" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Tempi Interpolation" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="showties" get="1" set="1" type="int" size="1">
@@ -13563,6 +13568,22 @@
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Digits For Tempo Approximation" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="temposize" get="1" set="1" type="float" size="1">
+			<digest>
+				Tempi Relative Size
+			</digest>
+			<description>
+				Sets the relative size of tempo markings with respect to standard notation.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0.7" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tempi Relative Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>

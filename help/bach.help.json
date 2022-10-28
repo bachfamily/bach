@@ -1755,7 +1755,7 @@
 				"filename" : [ "bach.help.notation.appearance.63_tempiandts.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "measureinfo" ],
-				"tags" : [ "appearance", "tempo", "tempi", "time", "signature", "show", "hide", "showtempi", "showtimesignatures", "vertical", "shift", "position", "adjust", "tempovadj", "showtempointerpline", "interpolation", "acc", "rall", "accelerando", "rallentando", "line", "dashed" ],
+				"tags" : [ "appearance", "tempo", "tempi", "time", "signature", "show", "hide", "showtempi", "showtimesignatures", "vertical", "shift", "position", "adjust", "tempovadj", "showtempointerpline", "interpolation", "acc", "rall", "accelerando", "rallentando", "line", "dashed", "temposize", "showtempointerp" ],
 				"title" : [ "Tempi and time signatures" ]
 			},
 			"Paintmethodandthreading" : {
@@ -3780,7 +3780,7 @@
 				"filename" : [ "bach.help.notation.messages.51_setmeasureparameters.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "syntax+measure+parameter" ],
-				"tags" : [ "message", "measure", "parameter", "set", "setmeasureparameters" ],
+				"tags" : [ "message", "measure", "parameter", "set", "setmeasureparameters", "width", "barline", "number", "shownumber" ],
 				"title" : [ "Setting measure parameters" ]
 			},
 			"Scroll" : {
@@ -5042,7 +5042,7 @@
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "playmode", "playout+syntax", "playtiednotesseparately", "full+path+playout+example", "address" ],
 				"tags" : [ "sequencer", "sequencing", "play", "full", "path", "playout", "tied", "address", "voice", "playoutfullpath" ],
-				"title" : [ "Full path in playout syntax" ]
+				"title" : [ "Voice number or path" ]
 			},
 			"Fullpathinplayoutexample" : {
 				"filename" : [ "bach.help.notation.sequencing.41_fullpathinplayoutexample.maxpat" ],
@@ -5050,6 +5050,13 @@
 				"seealso" : [ "sel+note", "sel+chord", "playout+syntax", "cents+message", "clearselection" ],
 				"tags" : [ "sequencer", "sequencing", "play", "full", "path", "playout", "example", "usage", "playoutfullpath" ],
 				"title" : [ "Usage of full path in playout syntax" ]
+			},
+			"Fullpathwithvoicename" : {
+				"filename" : [ "bach.help.notation.sequencing.42_fullpathwithvoicename.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "sel+note", "sel+chord", "playout+syntax", "cents+message", "clearselection" ],
+				"tags" : [ "sequencer", "sequencing", "play", "full", "path", "playout", "example", "usage", "voice", "name", "voicename", "data" ],
+				"title" : [ "Voice names in playout data" ]
 			},
 			"Minlength" : {
 				"filename" : [ "bach.help.notation.sequencing.50_minlength.maxpat" ],
