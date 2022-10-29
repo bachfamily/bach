@@ -9764,8 +9764,11 @@ double get_staff_top_y(t_notation_obj *r_ob, t_voice *voice, char ignore_nonstan
     }
     
     // correcting for nonstandard stafflines 
-    if (!ignore_nonstandard_stafflines && voice->max_staff_line > 5)
-        staff_top -= (voice->max_staff_line - 5) * r_ob->step_y * 2;
+    if (!ignore_nonstandard_stafflines) {
+        if ((voice->max_staff_line > 5) || (voice->max_staff_line < 5 && voice->max_staff_line >= 1)) {
+            staff_top -= (voice->max_staff_line - 5) * r_ob->step_y * 2;
+        }
+    }
     return staff_top;
 }
 
@@ -9808,8 +9811,11 @@ double get_staff_bottom_y(t_notation_obj *r_ob, t_voice *voice, char ignore_nons
     }
     
     // correcting for nonstandard stafflines 
-    if (!ignore_nonstandard_stafflines && voice->min_staff_line < 1)
-        staff_bottom += (1 - voice->min_staff_line) * r_ob->step_y * 2;
+    if (!ignore_nonstandard_stafflines) {
+        if ((voice->min_staff_line < 1) || (voice->min_staff_line > 1 && voice->min_staff_line <= 5)) {
+            staff_bottom += (1 - voice->min_staff_line) * r_ob->step_y * 2;
+        }
+    }
     return staff_bottom;
 }
 

@@ -154,6 +154,7 @@ multiple objects: 	fixed missing lines in help files and references
     Fixed bug causing loss of slots and other data upon "paste @repeat N"
     Now voicenames can be output from playout for each note by setting @playoutfullpath 2, and they can be retrieved via bach.playkeys
     Fixed bug causing wrong behavior of @pitcheditrange when using pitches
+    Fixed bug causing wrong positioning of articulations with non-standard number of lines
 
 - bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
