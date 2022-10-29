@@ -119,8 +119,8 @@ void send_voicepixelpos(t_notation_obj *r_ob, char obj_type, long num_voices, vo
     lock_general_mutex(r_ob);
     for (i = 0; i < num_voices; i++){
         t_llll *inner_llll = llll_get();
-        double staff_top = get_staff_top_y(r_ob, (t_voice *) curr_voice, false);
-        double staff_bottom = get_staff_bottom_y(r_ob, (t_voice *) curr_voice, false);
+        double staff_top = get_staff_top_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+        double staff_bottom = get_staff_bottom_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
         llll_appenddouble(inner_llll, ((t_voice *) curr_voice)->middleC_y, 0, WHITENULL_llll);
         llll_appenddouble(inner_llll, staff_bottom, 0, WHITENULL_llll);
         llll_appenddouble(inner_llll, staff_top, 0, WHITENULL_llll);
@@ -4798,8 +4798,8 @@ void start_editing_voicename(t_notation_obj *r_ob, t_object *patcherview, t_voic
 
     r_ob->is_editing_type = k_VOICENAME;
     r_ob->is_editing_voice_name = voice->number;
-    top = get_staff_top_y(r_ob, voice, true);
-    bottom = get_staff_bottom_y(r_ob, voice, true);
+    top = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+    bottom = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
 
     object_attr_setlong(r_ob, gensym("fontface"), 0);
 
@@ -4866,7 +4866,7 @@ void start_editing_lyrics(t_notation_obj *r_ob, t_object *patcherview, t_chord *
     r_ob->is_editing_chord = chord;
     r_ob->is_editing_slot_number = r_ob->link_lyrics_to_slot - 1;
 
-    top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), false) - r_ob->lyrics_uy_pos * r_ob->zoom_y;
+    top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->lyrics_uy_pos * r_ob->zoom_y;
     left = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, chord->onset, NULL) : unscaled_xposition_to_xposition(r_ob, chord_get_alignment_ux(r_ob, chord)))
     + chord->lyrics->lyrics_ux_shift * r_ob->zoom_y;
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
@@ -4913,7 +4913,7 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
     r_ob->is_editing_chord = chord;
     r_ob->is_editing_slot_number = r_ob->link_dynamics_to_slot - 1;
 
-    top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), false) - r_ob->dynamics_uy_pos * r_ob->zoom_y - 8 * r_ob->zoom_y;
+    top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->dynamics_uy_pos * r_ob->zoom_y - 8 * r_ob->zoom_y;
     left = chord_get_alignment_x(r_ob, chord) - get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;
 
     textfield_set_wordwrap(textfield, 0);

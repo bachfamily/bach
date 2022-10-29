@@ -531,8 +531,8 @@ void do_paint_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x2, 
 void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color)
 {
         double x_pos = r_ob->j_inset_x + r_ob->voice_names_uwidth * r_ob->zoom_y;
-        double top_y = get_staff_top_y(r_ob, voice, true);
-        double bottom_y = get_staff_bottom_y(r_ob, voice, true);
+        double top_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+        double bottom_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
         const double LINEWIDTH = 1 * r_ob->zoom_y;
         
         paint_line(g, color, x_pos, top_y, x_pos, bottom_y, LINEWIDTH);
@@ -1758,8 +1758,8 @@ void paint_measure_label_families(t_notation_obj *r_ob, t_object *view, t_jgraph
         return;
     
     t_llllelem *elem;
-    double staff_top = get_staff_top_y(r_ob, (t_voice *) curr_meas->voiceparent, false);
-    double staff_bottom = get_staff_bottom_y(r_ob, (t_voice *) curr_meas->voiceparent, false);
+    double staff_top = get_staff_top_y(r_ob, (t_voice *) curr_meas->voiceparent, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    double staff_bottom = get_staff_bottom_y(r_ob, (t_voice *) curr_meas->voiceparent, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
     t_rect label_rect = build_rect(unscaled_xposition_to_xposition(r_ob, curr_meas->start_barline_offset_ux + curr_meas->tuttipoint_reference->offset_ux), staff_top, curr_meas->width_ux * r_ob->zoom_y * r_ob->zoom_x, staff_bottom - staff_top);
     for (elem = curr_meas->r_it.label_families->l_head; elem; elem = elem->l_next) {
         t_llll *ll = hatom_getllll(&elem->l_hatom);
@@ -2276,8 +2276,8 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, vo
                     paint_line(g, build_jrgba(0,1,0,1), left_x, left_y, left_x + 20, left_y, 1);
                 
                 if (r_ob->articulations_typo_preferences.options[ID] & k_ARTICULATION_OPTION_OUTSIDE_STAFF) {
-                    double top_y = get_staff_top_y(r_ob, voice, false);
-                    double bottom_y = get_staff_bottom_y(r_ob, voice, false);
+                    double top_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+                    double bottom_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                     double top_art = left_y - articulation_height / 2.;
                     double bottom_art = left_y + articulation_height / 2.;
                     double nudge = r_ob->articulations_typo_preferences.outside_staff_uy_nudge[ID] * r_ob->zoom_y;
@@ -2472,7 +2472,7 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
             double beam_y;
             
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                beam_y = chord->firstnote ? chord->beam_y : get_staff_top_y(r_ob, voice, false);
+                beam_y = chord->firstnote ? chord->beam_y : get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                 if (r_ob->articulations_typo_preferences.artpref[ID].options & k_ARTICULATION_OPTION_SHIFT_WITH_BEAMS) {
                     long nb = get_num_beams_from_figure(chord->figure);
                     if (nb > 1) {
@@ -2536,8 +2536,8 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
                 paint_line(g, build_jrgba(0,1,0,1), left_x, left_y, left_x + 20, left_y, 1);
             
             if (r_ob->articulations_typo_preferences.artpref[ID].options & k_ARTICULATION_OPTION_OUTSIDE_STAFF) {
-                double top_y = get_staff_top_y(r_ob, voice, false);
-                double bottom_y = get_staff_bottom_y(r_ob, voice, false);
+                double top_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
+                double bottom_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
                 double top_art = left_y - articulation_height / 2.;
                 double bottom_art = left_y + articulation_height / 2.;
                 double nudge = r_ob->articulations_typo_preferences.artpref[ID].outside_staff_uy_nudge * r_ob->zoom_y;
@@ -2577,8 +2577,8 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
             }
             
             if (r_ob->articulations_typo_preferences.artpref[ID].options & k_ARTICULATION_OPTION_AVOID_STAFF_LINES) {
-                double top_y = get_staff_top_y(r_ob, voice, false);
-                double bottom_y = get_staff_bottom_y(r_ob, voice, false);
+                double top_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
+                double bottom_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
                 double this_y;
                 for (this_y = top_y - 2 * r_ob->step_y; this_y < bottom_y + 2 * r_ob->step_y; this_y += 2 * r_ob->step_y) {
                     if (left_y >= this_y && left_y <= this_y + 2 * r_ob->step_y) {
@@ -5429,8 +5429,8 @@ int max_and_min_mc_to_default_clef(t_notation_obj *r_ob, double min_mc, double m
 
 char is_y_within_voice_staff(t_notation_obj *r_ob, double y, t_voice *voice)
 {
-    double staff_top = get_staff_top_y(r_ob, voice, false);
-    double staff_bottom = get_staff_bottom_y(r_ob, voice, false);
+    double staff_top = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    double staff_bottom = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
     if (y >= staff_top && y <= staff_bottom)
         return 1;
     return 0;
@@ -5450,15 +5450,15 @@ char is_y_between_this_staff_and_the_next_or_prev(t_notation_obj *r_ob, double y
     t_voice *prevvoice = voice_get_prev(r_ob, voice);
 
     if (nextvoice && nextvoice->number < r_ob->num_voices) {
-        double staff_bottom = get_staff_bottom_y(r_ob, voice, false);
-        double staff_top = get_staff_top_y(r_ob, nextvoice, false);
+        double staff_bottom = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+        double staff_top = get_staff_top_y(r_ob, nextvoice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
         if (y >= staff_bottom && y <= staff_top)
             return 1;
     }
 
     if (prevvoice && prevvoice->number < r_ob->num_voices) {
-        double staff_bottom = get_staff_bottom_y(r_ob, prevvoice, false);
-        double staff_top = get_staff_top_y(r_ob, voice, false);
+        double staff_bottom = get_staff_bottom_y(r_ob, prevvoice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+        double staff_top = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
         if (y >= staff_bottom && y <= staff_top)
             return -1;
     }
@@ -9724,7 +9724,7 @@ long get_num_steps_in_staff(t_notation_obj *r_ob, t_voice *voice){
     }
 }
 
-double get_staff_top_y(t_notation_obj *r_ob, t_voice *voice, char ignore_nonstandard_stafflines) {
+double get_staff_top_y(t_notation_obj *r_ob, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines) {
     double staff_top = voice->middleC_y + 24 * r_ob->step_y;
     long clef = get_voice_clef(r_ob, voice);
     
@@ -9764,15 +9764,16 @@ double get_staff_top_y(t_notation_obj *r_ob, t_voice *voice, char ignore_nonstan
     }
     
     // correcting for nonstandard stafflines 
-    if (!ignore_nonstandard_stafflines) {
-        if ((voice->max_staff_line > 5) || (voice->max_staff_line < 5 && voice->max_staff_line >= 1)) {
+    if (nonstandard_stafflines == k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT || nonstandard_stafflines == k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) {
+        if ((voice->max_staff_line > 5) || (nonstandard_stafflines == k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT && voice->max_staff_line < 5 && voice->max_staff_line >= 1)) {
             staff_top -= (voice->max_staff_line - 5) * r_ob->step_y * 2;
         }
     }
     return staff_top;
 }
 
-double get_staff_bottom_y(t_notation_obj *r_ob, t_voice *voice, char ignore_nonstandard_stafflines) {
+//nonstandard_stafflines=0: ignore them
+double get_staff_bottom_y(t_notation_obj *r_ob, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines) {
     double staff_bottom = -100000; //0.;
     long clef = get_voice_clef(r_ob, voice);
 
@@ -9811,8 +9812,8 @@ double get_staff_bottom_y(t_notation_obj *r_ob, t_voice *voice, char ignore_nons
     }
     
     // correcting for nonstandard stafflines 
-    if (!ignore_nonstandard_stafflines) {
-        if ((voice->min_staff_line < 1) || (voice->min_staff_line > 1 && voice->min_staff_line <= 5)) {
+    if (nonstandard_stafflines == k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT || nonstandard_stafflines == k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) {
+        if ((voice->min_staff_line < 1) || (nonstandard_stafflines == k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT && voice->min_staff_line > 1 && voice->min_staff_line <= 5)) {
             staff_bottom += (1 - voice->min_staff_line) * r_ob->step_y * 2;
         }
     }
@@ -19842,7 +19843,7 @@ void correct_straight_line_positioning_for_middle_chords(t_notation_obj *r_ob, t
     t_chord *temp_ch;
     double octave_stem_ulength = 7 * CONST_STEP_UY;
     t_voice *voice = (t_voice *)start_ch->parent->voiceparent;
-    double staff_top = get_staff_top_y(r_ob, voice, false);
+    double staff_top = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
     double best = -32000, flat_uy;
     double forced_diff = forced_slope * (end_ux_pos - first_ux_pos);
     char is_voiceensemble = (start_ch && voiceensemble_get_numparts(r_ob, (t_voice *)start_ch->parent->voiceparent) > 1 ? 1 : 0);
@@ -20155,7 +20156,7 @@ long build_measure_beams_for_level_fn(void *data, t_hatom *a, const t_llll *addr
                     t_measure *measure = start_ch->parent;
                     t_voice *voice = (t_voice *)measure->voiceparent;
                     double octave_stem_ulength = 7 * CONST_STEP_UY;
-                    double staff_top = get_staff_top_y(r_ob, voice, false);
+                    double staff_top = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                     double num_staff_steps = get_num_steps_in_staff(r_ob, voice);
                     
                     if (start_ch_no_rest == end_ch_no_rest){
@@ -20463,7 +20464,7 @@ void reset_stemtip_topmost_bottommost_stafftop_uy_positions(t_notation_obj *r_ob
                 chord->bottommost_stafftop_uy_noacc = chord->bottommostnote_stafftop_uy + CONST_STEP_UY;
             }
         } else {
-            double stafftop = get_staff_top_y(r_ob, (t_voice *)measure->voiceparent, false);
+            double stafftop = get_staff_top_y(r_ob, (t_voice *)measure->voiceparent, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
             double restpos = rest_get_nonfloating_yposition(r_ob, chord, NULL, NULL);
             chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = (restpos - stafftop)/r_ob->zoom_y - rest_get_top_extension_in_steps(r_ob, chord->figure) * CONST_STEP_UY;
             chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = (restpos - stafftop)/r_ob->zoom_y + rest_get_bottom_extension_in_steps(r_ob, chord->figure) * CONST_STEP_UY;
@@ -24633,8 +24634,8 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
     if (!(chord->is_score_chord && rat_long_cmp(chord->r_sym_duration, 0) == -1) && chord->num_notes > 0) { // it's NOT a rest!
         t_voice *voice = r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent;
         
-        double staff_top_y = get_staff_top_y(r_ob, voice, false);
-        double staff_bottom_y = get_staff_bottom_y(r_ob, voice, false);
+        double staff_top_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+        double staff_bottom_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
 
         int scalepos_extension, middle_scaleposition;
         double *left_limit;    
@@ -26419,7 +26420,7 @@ char is_in_chord_lyrics_shape(t_notation_obj *r_ob, t_chord *chord, long point_x
         double left_x = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, chord->onset, NULL) : unscaled_xposition_to_xposition(r_ob, chord_get_alignment_ux(r_ob, chord)))
                          + chord->lyrics->lyrics_ux_shift * r_ob->zoom_y;
         double width = chord->lyrics->lyrics_uwidth * r_ob->zoom_y;
-        double bottom_staff_y = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), false);
+        double bottom_staff_y = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
         double top_y = bottom_staff_y - r_ob->lyrics_uy_pos * r_ob->zoom_y;
         
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
@@ -26525,8 +26526,8 @@ t_symbol* clef_number_to_clef_symbol(t_notation_obj *r_ob, long clef){
 
 // returns 1 if the point (point_x, point_y) is on the clef of the voice *voice
 char is_in_voicename_shape(t_notation_obj *r_ob, long point_x, long point_y, t_voice *voice){
-    long topy = get_staff_top_y(r_ob, voice, true);
-    long bottomy = get_staff_bottom_y(r_ob, voice, true);
+    long topy = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+    long bottomy = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
     if ((point_x < 1 + r_ob->notation_typo_preferences.clef_ux_shift + r_ob->voice_names_uwidth * r_ob->zoom_y + r_ob->j_inset_x) && 
         (point_x > 0) && // was: (point_x > r_ob->j_inset_x) &&
         (point_y >= topy && point_y <= bottomy))
@@ -26537,8 +26538,8 @@ char is_in_voicename_shape(t_notation_obj *r_ob, long point_x, long point_y, t_v
 
 // returns 1 if the point (point_x, point_y) is on the clef of the voice *voice
 char is_in_clef_shape(t_notation_obj *r_ob, long point_x, long point_y, t_voice *voice){
-    long topy = get_staff_top_y(r_ob, voice, true);
-    long bottomy = get_staff_bottom_y(r_ob, voice, true);
+    long topy = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+    long bottomy = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
     long end_x_to_repaint_no_inset = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) ?
         onset_to_xposition_roll(r_ob, r_ob->screen_ms_start - CONST_X_LEFT_START_DELETE_MS / r_ob->zoom_x, NULL) :
     unscaled_xposition_to_xposition(r_ob, r_ob->screen_ux_start - (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? CONST_X_LEFT_START_DELETE_UX_SCORE : CONST_X_LEFT_START_DELETE_UX_ROLL));

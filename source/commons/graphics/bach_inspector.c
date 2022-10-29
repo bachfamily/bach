@@ -813,8 +813,8 @@ t_jsurface *bach_get_icon_surface_fn(t_notation_obj *r_ob, t_bach_inspector_mana
 
 t_rect bach_chord_miniature_fn(t_notation_obj *r_ob, void *elem, long elem_type, char *show_line){
 	t_voice *voice = r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)((t_chord *)elem)->voiceparent : (t_voice *)((t_chord *)elem)->parent->voiceparent;
-	double topmmost_voice_y = get_staff_top_y(r_ob, voice, false);
-	double bottommost_voice_y = get_staff_bottom_y(r_ob, voice, false);
+	double topmmost_voice_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+	double bottommost_voice_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
 	double hh = (bottommost_voice_y - topmmost_voice_y) + 30 * r_ob->zoom_y;
 	double ww = 70 * r_ob->zoom_y;
 	double xx = ((t_chord *)elem)->stem_x - ww/2.;
@@ -834,8 +834,8 @@ t_rect bach_note_miniature_fn(t_notation_obj *r_ob, void *elem, long elem_type, 
 
 t_rect bach_voice_miniature_fn(t_notation_obj *r_ob, void *elem, long elem_type, char *show_line){
 	t_voice *voice = (t_voice *)elem;
-	double topmmost_voice_y = get_staff_top_y(r_ob, voice, false);
-	double bottommost_voice_y = get_staff_bottom_y(r_ob, voice, false);
+	double topmmost_voice_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+	double bottommost_voice_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
 	double hh = (bottommost_voice_y - topmmost_voice_y) + 30 * r_ob->zoom_y;
 	double ww = deltauxpixels_to_deltaxpixels(r_ob, 30 + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth);
 	double xx = r_ob->j_inset_x - 8 * r_ob->zoom_y;

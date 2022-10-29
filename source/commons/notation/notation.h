@@ -1259,6 +1259,12 @@ typedef enum _articulation_options {
 } e_articulation_options;
 
 
+typedef enum _nonstandard_staffline_topbottom_options
+{
+    k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE = 0,
+    k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY = 1,
+    k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT = 2
+} e_nonstandard_staffline_topbottom_options;
 
 /** Noteheads.
     @ingroup    noteheads
@@ -12949,22 +12955,20 @@ double get_key_uwidth(t_notation_obj *r_ob, t_voice *voice);
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    voice        The voice
-    @param    ignore_nonstandard_stafflines    If this flag is non-zero, the voice is always supposed to have standar 5-lines stafflines.
-                                            Otherwise, the proper stafflines of the voice are taken into account to determine the staff topmost vertical point.
+ @param    nonstandard_stafflines    Choose what to do with staves with non-standard stafflines.
     @return        The vertical pixel position of the topmost staff line of the input voice
 */
-double get_staff_top_y(t_notation_obj *x, t_voice *voice, char ignore_nonstandard_stafflines);
+double get_staff_top_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
 
 
 /** Obtain the vertical pixel position of the staff bottom line of a given voice.
     @ingroup            notation_data
     @param    r_ob        The notation object
     @param    voice        The voice
-    @param    ignore_nonstandard_stafflines    If this flag is non-zero, the voice is always supposed to have standar 5-lines stafflines.
-                                            Otherwise, the proper stafflines of the voice are taken into account to determine the staff bottommost vertical point.
+    @param    nonstandard_stafflines    Choose what to do with staves with non-standard stafflines.
     @return        The vertical pixel position of the bottommost staff line of the input voice
 */
-double get_staff_bottom_y(t_notation_obj *x, t_voice *voice, char ignore_nonstandard_stafflines);
+double get_staff_bottom_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
 
 
 /** Obtain the number of steps between the bottommost staff line and the topmost staff line for a given voice.

@@ -8576,8 +8576,8 @@ t_llll* get_all_measure_pixel_values_as_llll(t_score *x)
 
             llll_appenddouble(x_ll, this_meas_pixel_start);
             llll_appenddouble(x_ll, this_meas_pixel_end);
-            llll_appenddouble(y_ll, get_staff_top_y((t_notation_obj *)x, (t_voice *)voice, false));
-            llll_appenddouble(y_ll, get_staff_bottom_y((t_notation_obj *)x, (t_voice *)voice, false));
+            llll_appenddouble(y_ll, get_staff_top_y((t_notation_obj *)x, (t_voice *)voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY));
+            llll_appenddouble(y_ll, get_staff_bottom_y((t_notation_obj *)x, (t_voice *)voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY));
             llll_appendllll(meas_ll, x_ll);
             llll_appendllll(meas_ll, y_ll);
             
@@ -9138,8 +9138,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     
     // paint staff lines
     double this_middleC_y = voice->v_ob.middleC_y;
-    staff_top = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, false);
-    staff_bottom = get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, false);
+    staff_top = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    staff_bottom = get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
 
     // possible forced shift
     if (force_xy_position) {
@@ -9272,7 +9272,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         if (x->r_ob.show_time_signatures && need_to_show_ts(x, curr_meas)) {
             // if it's the first measure, or if the time signature has changed from previous measure, print time signature, one for each staff
             char big = (x->r_ob.show_time_signatures == 2) && (!curr_meas->prev || is_barline_tuttipoint_with_same_ts((t_notation_obj *)x, curr_meas->prev->end_barline));
-            paint_timesignature((t_notation_obj *) x, g, x->r_ob.j_mainstaves_rgba, big ? jf_ts_big : jf_ts, clef, get_staff_top_y((t_notation_obj *)x, (t_voice *)voice, true), curr_meas, big);
+            paint_timesignature((t_notation_obj *) x, g, x->r_ob.j_mainstaves_rgba, big ? jf_ts_big : jf_ts, clef, get_staff_top_y((t_notation_obj *)x, (t_voice *)voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE), curr_meas, big);
         }
         
         
@@ -10309,8 +10309,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     {
                         for (t_voice *v = x->r_ob.firstvoice; v && v->number < x->r_ob.num_voices - 1; v = voice_get_next((t_notation_obj *)x, v)) {
                             t_voice *vn = voice_get_next((t_notation_obj *)x, v);
-                            double v_bottom = get_staff_bottom_y((t_notation_obj *)x, v, false);
-                            double vn_top = get_staff_top_y((t_notation_obj *)x, vn, false);
+                            double v_bottom = get_staff_bottom_y((t_notation_obj *)x, v, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+                            double vn_top = get_staff_top_y((t_notation_obj *)x, vn, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                             paint_line(g, barline_color, end_barline_x, v_bottom, end_barline_x, vn_top, 1.);
                         }
                     }
@@ -10588,7 +10588,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
         if (x->r_ob.num_voices > 0) {
             t_voice *last_visible_voice = voice_get_last_visible((t_notation_obj *)x);
             if (last_visible_voice)
-                last_staff_bottom = get_staff_bottom_y((t_notation_obj *) x, last_visible_voice, false);
+                last_staff_bottom = get_staff_bottom_y((t_notation_obj *) x, last_visible_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
         }
         
 #ifdef BACH_SPACING_DEBUG
@@ -10675,7 +10675,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : marker_color,
                                  jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, 2., x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
                     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
-                        double voice_staff_top_y = get_staff_top_y((t_notation_obj *)x, (t_voice *)nth_scorevoice(x, tp.voice_num), false);
+                        double voice_staff_top_y = get_staff_top_y((t_notation_obj *)x, (t_voice *)nth_scorevoice(x, tp.voice_num), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                         paint_circle(g, change_alpha(marker_color, 1), marker_color, this_marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);
                     }
                     
@@ -10747,7 +10747,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 if (voice->firstmeasure && voice->firstmeasure && unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.firsttuttipoint->offset_ux) > 0) {
                     if (need_to_show_ts(x, voice->firstmeasure)) {
                         char big = (x->r_ob.show_time_signatures == 2 && is_tuttipoint_with_same_ts((t_notation_obj *)x, voice->firstmeasure->tuttipoint_reference));
-                        paint_timesignature((t_notation_obj *) x, g, x->r_ob.j_mainstaves_rgba, big ? jf_ts_big : jf_ts, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, true), voice->firstmeasure, big);
+                        paint_timesignature((t_notation_obj *) x, g, x->r_ob.j_mainstaves_rgba, big ? jf_ts_big : jf_ts, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE), voice->firstmeasure, big);
                     }
                 }
             }
@@ -10762,8 +10762,8 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
 			t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
             t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-            double staff_top_y = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, true);
-            double staff_bottom_y = get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, true);
+            double staff_top_y = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+            double staff_bottom_y = get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
 
             if (voice->v_ob.hidden) 
                 continue;
@@ -10811,7 +10811,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         t_jrgba tempocolor = ((x->r_ob.num_selecteditems == 1) && (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)thistempo))) ?
                         x->r_ob.j_selection_rgba : x->r_ob.j_tempi_rgba;
                         double tempibox_x1 = x->r_ob.j_inset_x + 1 + x->r_ob.notation_typo_preferences.clef_ux_shift + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y; // we put the tempo over the clef
-                        double tempibox_y1 = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, false) + (-x->r_ob.tempi_uy_pos + thistempo->uy_offset) * x->r_ob.zoom_y  + 8 * x->r_ob.zoom_y;
+                        double tempibox_y1 = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) + (-x->r_ob.tempi_uy_pos + thistempo->uy_offset) * x->r_ob.zoom_y  + 8 * x->r_ob.zoom_y;
                         // tempo figure.
                         double line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, thistempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * x->r_ob.tempo_size;
                         double line_y = tempibox_y1 - 3 * x->r_ob.zoom_y;
@@ -11023,7 +11023,7 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
         t_measure *meas = (t_measure *)hatom_getobj(&el->l_hatom);
         char measurenum_txt[8];
         double measurenum_width, measurenum_height;
-        double staff_top = get_staff_top_y((t_notation_obj *) x, (t_voice *) meas->voiceparent, false);
+        double staff_top = get_staff_top_y((t_notation_obj *) x, (t_voice *) meas->voiceparent, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
         snprintf_zero(measurenum_txt, 8, "%ld", meas->force_measure_number ? meas->forced_measure_number : meas->measure_number + 1 + x->r_ob.measure_number_offset);
         jfont_text_measure(jf_measure_num, measurenum_txt, &measurenum_width, &measurenum_height);
         double measure_numbers_top_y = staff_top - measurenum_height - CONST_MEASURE_NUMBER_STAFF_USEPARATION * x->r_ob.zoom_y;
@@ -11204,8 +11204,8 @@ void sync_quartertempo_fn(t_bach_inspector_manager *man, void *obj, t_bach_attri
 t_rect bach_measure_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line){
     t_measure *meas = (t_measure *)elem;
     t_voice *voice = (t_voice *)meas->voiceparent;
-    double topmmost_voice_y = get_staff_top_y((t_notation_obj *)x, voice, false);
-    double bottommost_voice_y = get_staff_bottom_y((t_notation_obj *)x, voice, false);
+    double topmmost_voice_y = get_staff_top_y((t_notation_obj *)x, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    double bottommost_voice_y = get_staff_bottom_y((t_notation_obj *)x, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
     double hh = (bottommost_voice_y - topmmost_voice_y) + 50 * x->r_ob.zoom_y;
     double ww = deltauxpixels_to_deltaxpixels((t_notation_obj *)x, meas->width_ux);
     double yy = (topmmost_voice_y + bottommost_voice_y)/2 - hh/2.;
@@ -11221,8 +11221,8 @@ t_rect bach_measure_miniature_fn(t_score *x, void *elem, long elem_type, char *s
 t_rect bach_tempo_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line){
     t_tempo *tempo = (t_tempo *)elem;
     t_voice *voice = (t_voice *)tempo->owner->voiceparent;
-    double topmmost_voice_y = get_staff_top_y((t_notation_obj *)x, voice, false);
-    double bottommost_voice_y = get_staff_bottom_y((t_notation_obj *)x, voice, false);
+    double topmmost_voice_y = get_staff_top_y((t_notation_obj *)x, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    double bottommost_voice_y = get_staff_bottom_y((t_notation_obj *)x, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
     double hh = (bottommost_voice_y - topmmost_voice_y) + 90 * x->r_ob.zoom_y;
     double ww = 100 * x->r_ob.zoom_y;
     double xx = unscaled_xposition_to_xposition((t_notation_obj *)x, tempo->owner->tuttipoint_reference->offset_ux + tempo->tuttipoint_offset_ux) - ww/2.;
