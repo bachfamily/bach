@@ -3352,6 +3352,9 @@ typedef struct _rollvoice
     @see        #t_voice
     @ingroup    notation
  */ 
+
+struct _scorevoice;
+
 typedef struct _scorevoice
 {
     t_voice                v_ob;            ///< The #t_voice object containing the common fields for #t_rollvoice and #t_scorevoice. Must ALWAYS be the first field!!!
