@@ -2915,21 +2915,26 @@ t_llll *score_readxmlbuffer(t_score *x,
 
 
 
+static const std::unordered_map<std::string, const t_rational> type2figure
+{ { "breve", {2, 1} },
+    { "long", {4, 1} },
+    { "maxima", {8, 1} },
+    { "whole", {1, 1} },
+    { "half", {1, 2} },
+    { "quarter", {1, 4} },
+    { "eighth", {1, 8} },
+    { "16th", {1, 16} },
+    { "32th", {1, 32} },
+    { "64th", {1, 64} },
+    { "128th", {1, 128} },
+    { "256th", {1, 256} }
+};
 
 
 t_rational xml_name_and_dots_to_value(const char *chordtype, long dots)
 {
-    long figure_den;
-    if (!strcmp(chordtype, "whole"))
-        figure_den = 1;
-    else if (!strcmp(chordtype, "half"))
-        figure_den = 2;
-    else if (!strcmp(chordtype, "quarter"))
-        figure_den = 4;
-    else if (!strcmp(chordtype, "eighth"))
-        figure_den = 8;
-    else figure_den = strtol(chordtype, NULL, 0);
-    return figure_and_dots_to_figure_sym_duration(genrat(1, figure_den), dots);
+    const t_rational f = type2figure.at(chordtype);
+    return figure_and_dots_to_figure_sym_duration(f, dots);
 }
 
 
