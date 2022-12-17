@@ -23771,6 +23771,10 @@ double notehead_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_no
 {
     double grace_ratio = account_for_grace_chords && note && note->parent && note->parent->is_score_chord && note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.;
     
+    if (account_for_grace_chords) {
+        grace_ratio *= note->notehead_resize;
+    }
+    
     if (note && r_ob->link_notehead_to_slot > 0 && r_ob->slotinfo[r_ob->link_notehead_to_slot - 1].slot_type == k_SLOT_TYPE_INT && note->slot[r_ob->link_notehead_to_slot - 1].firstitem) {
         // OLD WAY OF DEFINING CUSTOM NOTEHEADS
         t_jfont *jf_custom;
