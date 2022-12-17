@@ -3780,7 +3780,12 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
                 case H_PITCH:
                     sum->h_w.w_pitch += a->h_w.w_pitch;
                     break;
+                default:
+                    break;
             }
+        case H_NOTHING:
+            hatom_setlong(sum, 1);
+            break;
         default:
             break;
     }
@@ -3790,7 +3795,7 @@ t_max_err llll_sum(t_llll *ll, t_hatom *sum, t_int32 mindepth, t_int32 maxdepth)
 {
     if (!ll || !sum)
         return MAX_ERR_GENERIC;
-    hatom_setlong(sum, 0);
+    sum->h_type = H_NOTHING;
     llll_funall(ll, (fun_fn) llll_sum_one, sum, mindepth, maxdepth, 0);
     pedantic_llll_check(ll);
     return MAX_ERR_NONE;
@@ -3867,6 +3872,9 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(prod, double(a->h_w.w_pitch.toMC()) * t_atom_long(prod->h_w.w_pitch.toMC()));
                     break;
             }
+        case H_NOTHING:
+            hatom_setlong(prod, 1);
+            break;
         default:
             break;
     }
@@ -3877,7 +3885,8 @@ t_max_err llll_prod(t_llll *ll, t_hatom *prod, t_int32 mindepth, t_int32 maxdept
 {
     if (!ll || !prod)
         return MAX_ERR_GENERIC;
-    hatom_setlong(prod, 1);
+    prod->h_type = H_NOTHING;
+    //hatom_setlong(prod, 1);
     llll_funall(ll, (fun_fn) llll_prod_one, prod, mindepth, maxdepth, 0);
     pedantic_llll_check(ll);
     return MAX_ERR_NONE;

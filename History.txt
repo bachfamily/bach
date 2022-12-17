@@ -101,6 +101,7 @@ multiple objects: 	fixed missing lines in help files and references
     arithmser: fixed bug potentially causing the series to be one element shorter if step was not given and start and/or end were floats
     insert: fixed behaviour with "multi" attribute
     new { } syntax for creating functions that wrap Max objects
+    sum() and prod() functions now work
 
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor
