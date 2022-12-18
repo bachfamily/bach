@@ -2600,6 +2600,9 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                         
                         if (notes_bpt->l_depth == 3) { //there are specifications for each note,  e.g.: elem = (((0 0 0) (1 1 1)) ((0 0 0) (0.5 20 0.) (1 1 1)))
                             
+                            char *txt = NULL;
+                            llll_to_text_buf(notes_bpt, &txt, 0, 4, 0, 0, 0, NULL);
+
                             long num_notes = notes_bpt->l_size;
                             if (num_notes >= 0) {
                                 t_chord *newchord;
@@ -2621,10 +2624,11 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
                                 newchord->rhythmic_tree_elem = llll_appendobj(measure->rhythmic_tree, newchord, 0, WHITENULL_llll);
                                 newnote = newchord->firstnote;
                                 for (subelem = notes_bpt->l_head; subelem; subelem = subelem->l_next) { // subelem cycles on the notes, e.g. subelem = ((0 0 0) (1 1 1))
+                                    if (!newnote) break;
                                     t_llll *bpts = hatom_getllll(&subelem->l_hatom);
                                     note_set_breakpoints_from_llll((t_notation_obj *) x, newnote, bpts);
                                     newnote = newnote->next;
-                                } 
+                                }
                                 chord_num++; onset = rat_rat_sum(onset, r_sym_duration);
                                 newchord->need_recompute_parameters = true; // we have to recalculate chord parameters 
                                 bach_freeptr(argv);
