@@ -237,16 +237,13 @@ multiple objects: 	fixed missing lines in help files and references
 
 - bach.wrandom: fixed bug causing wrong results with > 32k elements
 
-
-
-
-
-- bach.arithmser: fixed bug potentially causing the series to be one element shorter if step was not given and start and/or end were floats
+- bach.arithmser: fixed bug potentially causing the series to be one element shorter if step was not given and start and/or end were floats. Also applies to the bell arithmser() function.
+    If step is 0 and a starting or ending point and a max count are set, a series of equal numbers is returned. Also applies to the bell arithmser() function.
 
 
 v0.8.1b
 
-Scroll down for very important things you should now about v0.8b
+Scroll down for very important things you should know about v0.8b
 
 **********************
 *** VERY IMPORTANT ***
