@@ -163,6 +163,7 @@ multiple objects: 	fixed missing lines in help files and references
         Fixed crash when importing empty lyrics with empty "text" tag
         Time signature can be inferred if not given
         Breve, long and maxima figures are correctly imported
+        .mxl files exported by Finale 27 are correctly imported (Mac only)
     XML import and export: three-quarters-sharp and -flat accidentals have correct name now (was "three-quarter")
         complex time signatures are correctly handled
     XML export: figures longer than a whole note are correctly exported

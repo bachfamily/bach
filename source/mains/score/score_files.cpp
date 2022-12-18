@@ -188,7 +188,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
             
             filename_sym = gensym(container.c_str());
             
-            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
+            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 4, &outtype, filename) != MAX_ERR_NONE) {
                 object_error((t_object *) x, "Can't open file");
                 goto score_doread_error_dontclose;
             }
@@ -207,7 +207,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
             bach_freeptr(buffer);
             
             filename_sym = gensym(rootfilepath.c_str());
-            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
+            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 4, &outtype, filename) != MAX_ERR_NONE) {
                 object_error((t_object *) x, "Can't open file");
                 goto score_doread_error_dontclose;
             }
