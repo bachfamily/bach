@@ -99,7 +99,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 317.0, 129.0, 256.0, 65.0 ],
-					"text" : "Arguments:\nllll\nkstart (default: 0)\nkend (default: none, meaning the whole llll)",
+					"text" : "Arguments:\nllll\nkstart (default: 0)\nkend (default: 'none', meaning the whole llll)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
