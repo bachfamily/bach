@@ -388,7 +388,7 @@ void bach_version(t_bach *x)
         post("The bach project is maintained thanks to our generous supporters on Patreon.");
         post("Please consider supporting us on www.patreon.com/bachproject for as little as the price of a coffee.");
     }
-    post("Our top-tier Patreon institutional supporters are: IRCAM (Paris).");
+    post("Our top-tier Patreon institutional supporters are: HEM-CME (Genève) and IRCAM (Paris).");
 
     
 // Post version
@@ -549,8 +549,13 @@ void bach_donors(t_bach *x)
 {
     post(" ");
     post("**************************************************************************");
-    post("bach: automated composer's helper would like to thank our top supporters:");
-    
+    post("bach: automated composer's helper would like to thank our top-tier Patreon institutional supporters:");
+//    post_institutional_supporters(); // not using this; better negotiate directly the names that should appear
+    post("• Haute École de Musique de Genève - Centre de musique électroacoustique");
+    post("• IRCAM-Centre Pompidou (Paris)");
+
+    post("...as well as our top supporters:");
+
     // Pre-Patreon Supporters:
     post("- Cody Brookshire");
     post("- Dimitri Fergadis (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research, proprietor of Halocyan Records)");
@@ -559,10 +564,10 @@ void bach_donors(t_bach *x)
     // Patreon supporters:
     post_top_supporters();
 
-    post("...as well as all our patrons:");
-    post_all_patrons();
+    post("...and all our other patrons:");
+    post_ordinary_supporters();
     
-    post("for generously sustaining its development and maintenance");
+    post("for generously sustaining the development and maintenance of bach and its family.");
     post("---peace & love, bach");
     post("**************************************************************************");
     post(" ");
