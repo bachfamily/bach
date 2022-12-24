@@ -253,7 +253,7 @@ public:
     t_bool stopTimeReached() const {
         if (root->timeOver || (stopTime > 0 && systime_ms() > stopTime)) {
             if (!root->timeOver)
-                object_warn((t_object *) obj, "Time limit exceeded");
+                object_warn((t_object *) obj, "Time limit exceeded, as per the maxtime attribute");
             root->timeOver = true;
             return true;
         } else
