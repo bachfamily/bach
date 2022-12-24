@@ -332,7 +332,8 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     long num_tracks;
     t_atom_long time_division = 960;
     double tempo = 60;
-    t_atom_long tempo_interp_sampling_interval = 240;
+    t_atom_long tempo_interp_sampling_interval = 0;
+    t_rational tempo_interp_sampling_figure({1, 16});
     long timesig_num = 4, timesig_den = 4; // unused for now, that's ok
     long i;
     long voice_num;
@@ -357,7 +358,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     t_atom_long exportdivisions = 1;
 
     
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiil",
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiirl",
         _sym_filename, &filename_sym,
         gensym("exportmarkers"), &export_markers,
         gensym("exportbarlines"), &exportbarlines,
@@ -365,8 +366,13 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
         gensym("format"), &format,
         gensym("resolution"), &time_division,
         gensym("temporampsamplingrate"), &tempo_interp_sampling_interval,
+        gensym("temporampsamplingfigure"), &tempo_interp_sampling_figure,
         gensym("voices"), &voices_to_write
         );
+    
+    if (tempo_interp_sampling_interval == 0) {
+        tempo_interp_sampling_interval = rat2ticks(&tempo_interp_sampling_figure, time_division);
+    }
     
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
