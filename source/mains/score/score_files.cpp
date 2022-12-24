@@ -457,9 +457,23 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             
             if (exportdivisions) {
                 t_rational ts_rat({timesig_num, timesig_den});
-                t_rational div({1, timesig_den});
-                for (t_rational divpos({1, timesig_den}); divpos < ts_rat; divpos += div) {
-                    append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divpos, time_division));
+                //t_rational div({1, timesig_den});
+                t_llll *boxes = this_measure->custom_boxing ?
+                    this_measure->boxes :
+                    ts_to_beaming_boxes((t_notation_obj *) x, &this_measure->timesignature, NULL, NULL);
+                t_llllelem *boxElem;
+                t_rational divPos({0, 1});
+                t_rational thisDiv({0, 1});
+                for (boxElem = boxes->l_head; boxElem; boxElem = boxElem->l_next) {
+                    thisDiv = hatom_getrational(&boxElem->l_hatom);
+                    divPos += thisDiv;
+                    append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divPos, time_division));
+                }
+                
+                if (thisDiv > 0) { // one never knows...
+                    for ( ; divPos < ts_rat; divPos += thisDiv)
+                        append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divPos, time_division));
+
                 }
             }
             
