@@ -3780,7 +3780,12 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
                 case H_PITCH:
                     sum->h_w.w_pitch += a->h_w.w_pitch;
                     break;
+                default:
+                    break;
             }
+        case H_NOTHING:
+            hatom_setlong(sum, 1);
+            break;
         default:
             break;
     }
@@ -3790,7 +3795,7 @@ t_max_err llll_sum(t_llll *ll, t_hatom *sum, t_int32 mindepth, t_int32 maxdepth)
 {
     if (!ll || !sum)
         return MAX_ERR_GENERIC;
-    hatom_setlong(sum, 0);
+    sum->h_type = H_NOTHING;
     llll_funall(ll, (fun_fn) llll_sum_one, sum, mindepth, maxdepth, 0);
     pedantic_llll_check(ll);
     return MAX_ERR_NONE;
@@ -3867,6 +3872,9 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(prod, double(a->h_w.w_pitch.toMC()) * t_atom_long(prod->h_w.w_pitch.toMC()));
                     break;
             }
+        case H_NOTHING:
+            hatom_setlong(prod, 1);
+            break;
         default:
             break;
     }
@@ -3877,7 +3885,8 @@ t_max_err llll_prod(t_llll *ll, t_hatom *prod, t_int32 mindepth, t_int32 maxdept
 {
     if (!ll || !prod)
         return MAX_ERR_GENERIC;
-    hatom_setlong(prod, 1);
+    prod->h_type = H_NOTHING;
+    //hatom_setlong(prod, 1);
     llll_funall(ll, (fun_fn) llll_prod_one, prod, mindepth, maxdepth, 0);
     pedantic_llll_check(ll);
     return MAX_ERR_NONE;
@@ -6578,6 +6587,19 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
     long end_is_num = hatom_type_is_number(end_type);
     long step_is_num = hatom_type_is_number(step_type);
     
+    t_llll *outll = llll_get();
+    t_bool maxcount_decides = false;
+    
+    if (maxcount >= 1 && step_is_num && hatom_getdouble(&step_hatom) == 0) {
+        if (start_is_num) {
+            for (int i = 0; i < maxcount; i++)
+                llll_appendhatom(outll, &start_hatom);
+        } else if (end_is_num) {
+            for (int i = 0; i < maxcount; i++)
+                llll_appendhatom(outll, &end_hatom);
+        }
+        return outll;
+    }
     
     if (start_is_num && end_is_num && (!step_is_num && maxcount <= 0)) {
         if (hatom_getdouble(&start_hatom) < hatom_getdouble(&end_hatom))
@@ -6589,11 +6611,8 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
     }
     
     if (start_is_num + end_is_num + step_is_num + (maxcount > 0) < 3) {
-        return llll_get();
+        return outll;
     }
-    
-    t_llll *outll = llll_get();
-    t_bool maxcount_decides = false;
     
     if (start_type == H_DOUBLE || end_type == H_DOUBLE || step_type == H_DOUBLE) {
         double start, end, step, v;

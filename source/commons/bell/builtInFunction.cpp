@@ -782,14 +782,16 @@ t_fnSum::t_fnSum() : t_builtInFunction("sum")
 
 t_llll* t_fnSum::call(const t_execEnv &context)
 {
-    t_llll *ll = llll_clone(context.argv[1]);
+    t_llll *ll = llll_retain(context.argv[1]);
     t_atom_long mindepth, maxdepth;
     t_hatom sum_hatom;
     t_llll *sum_ll = llll_get();
     getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
     llll_sum(ll, &sum_hatom, mindepth, maxdepth);
+    if (sum_hatom.h_type != H_NOTHING)
     llll_appendhatom_clone(sum_ll, &sum_hatom);
-    return ll;
+    llll_release(ll);
+    return sum_ll;
 }
 
 
@@ -805,14 +807,16 @@ t_fnProd::t_fnProd() : t_builtInFunction("prod")
 
 t_llll* t_fnProd::call(const t_execEnv &context)
 {
-    t_llll *ll = llll_clone(context.argv[1]);
+    t_llll *ll = llll_retain(context.argv[1]);
     t_atom_long mindepth, maxdepth;
     t_hatom prod_hatom;
     t_llll *prod_ll = llll_get();
     getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
     llll_prod(ll, &prod_hatom, mindepth, maxdepth);
-    llll_appendhatom_clone(prod_ll, &prod_hatom);
-    return ll;
+    if (prod_hatom.h_type != H_NOTHING)
+        llll_appendhatom_clone(prod_ll, &prod_hatom);
+    llll_release(ll);
+    return prod_ll;
 }
 
 

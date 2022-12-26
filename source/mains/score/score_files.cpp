@@ -188,7 +188,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
             
             filename_sym = gensym(container.c_str());
             
-            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
+            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 4, &outtype, filename) != MAX_ERR_NONE) {
                 object_error((t_object *) x, "Can't open file");
                 goto score_doread_error_dontclose;
             }
@@ -207,7 +207,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
             bach_freeptr(buffer);
             
             filename_sym = gensym(rootfilepath.c_str());
-            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
+            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 4, &outtype, filename) != MAX_ERR_NONE) {
                 object_error((t_object *) x, "Can't open file");
                 goto score_doread_error_dontclose;
             }
@@ -332,7 +332,8 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     long num_tracks;
     t_atom_long time_division = 960;
     double tempo = 60;
-    t_atom_long tempo_interp_sampling_interval = 240;
+    t_atom_long tempo_interp_sampling_interval = 0;
+    t_rational tempo_interp_sampling_figure({1, 16});
     long timesig_num = 4, timesig_den = 4; // unused for now, that's ok
     long i;
     long voice_num;
@@ -357,7 +358,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     t_atom_long exportdivisions = 1;
 
     
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiil",
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiirl",
         _sym_filename, &filename_sym,
         gensym("exportmarkers"), &export_markers,
         gensym("exportbarlines"), &exportbarlines,
@@ -365,8 +366,13 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
         gensym("format"), &format,
         gensym("resolution"), &time_division,
         gensym("temporampsamplingrate"), &tempo_interp_sampling_interval,
+        gensym("temporampsamplingfigure"), &tempo_interp_sampling_figure,
         gensym("voices"), &voices_to_write
         );
+    
+    if (tempo_interp_sampling_interval == 0) {
+        tempo_interp_sampling_interval = rat2ticks(&tempo_interp_sampling_figure, time_division);
+    }
     
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -457,9 +463,23 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             
             if (exportdivisions) {
                 t_rational ts_rat({timesig_num, timesig_den});
-                t_rational div({1, timesig_den});
-                for (t_rational divpos({1, timesig_den}); divpos < ts_rat; divpos += div) {
-                    append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divpos, time_division));
+                //t_rational div({1, timesig_den});
+                t_llll *boxes = this_measure->custom_boxing ?
+                    this_measure->boxes :
+                    ts_to_beaming_boxes((t_notation_obj *) x, &this_measure->timesignature, NULL, NULL);
+                t_llllelem *boxElem;
+                t_rational divPos({0, 1});
+                t_rational thisDiv({0, 1});
+                for (boxElem = boxes->l_head; boxElem; boxElem = boxElem->l_next) {
+                    thisDiv = hatom_getrational(&boxElem->l_hatom);
+                    divPos += thisDiv;
+                    append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divPos, time_division));
+                }
+                
+                if (thisDiv > 0) { // one never knows...
+                    for ( ; divPos < ts_rat; divPos += thisDiv)
+                        append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divPos, time_division));
+
                 }
             }
             

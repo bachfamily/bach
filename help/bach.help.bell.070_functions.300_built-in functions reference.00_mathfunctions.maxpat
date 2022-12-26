@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 1,
-			"revision" : 4,
+			"minor" : 5,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 209.0, 198.0, 617.0, 539.0 ],
+		"rect" : [ 198.0, 100.0, 629.0, 620.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -177,7 +177,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
+					"patching_rect" : [ 6.0, 573.0, 585.0, 19.0 ],
 					"text" : "See Also:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
@@ -192,7 +192,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
+					"patching_rect" : [ 6.0, 554.0, 585.0, 19.0 ],
 					"text" : "Objects: bach.eval, bach.diff, bach.intersection, bach.symdiff, bach.union, bach.classify",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
@@ -219,11 +219,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, math, mathematics, functional, form, operator",
+					"patching_rect" : [ 6.0, 476.0, 585.0, 68.0 ],
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, math, mathematics, functional, form, operator, #!, #~, #u-, abs, acos, acosh, alter, asin, asinh, atan, atanh, ceil, cents, cos, cosh, degree, den, exp, exp2, float, floor, int, log, log10, log2, num, octave, pitch, rat, round, sgn, sin, sinh, sqrt. tan. tanh. trunc, #-, #!=, #*, #/. #//, #&, #&&, #^, #^^, #+, #<, #<<, #<=, #==, #>, #>=, #>>, #|, #||, #|||, approx, atan2, bessel, enharm, fmod, hypot, makepitchsc, max, min, mod, pow, random, makepitch",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

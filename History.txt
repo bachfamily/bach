@@ -101,6 +101,7 @@ multiple objects: 	fixed missing lines in help files and references
     arithmser: fixed bug potentially causing the series to be one element shorter if step was not given and start and/or end were floats
     insert: fixed behaviour with "multi" attribute
     new { } syntax for creating functions that wrap Max objects
+    sum() and prod() functions now work
 
 - all the bell-compliant objects:
     fixed potential crash when reloading a file or re-opening the text editor
@@ -157,14 +158,19 @@ multiple objects: 	fixed missing lines in help files and references
     Fixed bug causing wrong positioning of articulations with non-standard number of lines
     Fixed bug causing crashes when introducing some type of incorrectly formatted extras
 
-- bach.score: XML import: mismatched ties do not cause pitch misplacement on the second note
+- bach.score:
+        XML import: mismatched ties do not cause pitch misplacement on the second note
         Pickup measures are correctly imported
         Accidentals are correctly dealt with when importing multi-voice parts
         Fixed crash when importing empty lyrics with empty "text" tag
         Time signature can be inferred if not given
+        Breve, long and maxima figures are correctly imported
+        .mxl files exported by Finale 27 are correctly imported (Mac only)
     XML import and export: three-quarters-sharp and -flat accidentals have correct name now (was "three-quarter")
         complex time signatures are correctly handled
     XML export: figures longer than a whole note are correctly exported
+    MIDI export: divisions are now exported according to measure boxes
+        new temporampsamplingfigure attribute for message "exportmidi". the temporampsamplingrate attribute is considered deprecated.
     symduration variable now works for measures as well
     @autocomplete attribute exposed
     fixed bug potentially causing weird behaviors while setting the score from gathered syntax if the clefs introduced were less than the number of voices
@@ -235,16 +241,15 @@ multiple objects: 	fixed missing lines in help files and references
 
 - bach.wrandom: fixed bug causing wrong results with > 32k elements
 
-
-
-
-
-- bach.arithmser: fixed bug potentially causing the series to be one element shorter if step was not given and start and/or end were floats
+- bach.arithmser: fixed bug potentially causing the series to be one element shorter if step was not given and start and/or end were floats. Also applies to the bell arithmser() function.
+    If step is 0 and a starting or ending point and a max count are set, a series of equal numbers is returned. Also applies to the bell arithmser() function.
+    
+- bach.writesdif: now works
 
 
 v0.8.1b
 
-Scroll down for very important things you should now about v0.8b
+Scroll down for very important things you should know about v0.8b
 
 **********************
 *** VERY IMPORTANT ***
