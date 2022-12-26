@@ -312,7 +312,7 @@ void writesdif_dowrite(t_writesdif *x, t_symbol *s, long ac, t_atom *av)
 					case H_LONG:	matrix_type = eInt8;	break;
 					case H_DOUBLE:	matrix_type = eFloat8;	break;
 					case H_SYM:		matrix_type = eText;	break;
-					default:		break;
+                    default:		matrix_type = eFloat8;  break;
 				}
 				llll_prependlong(matrix_ll, row_size, 0, WHITENULL_llll);
 				llll_prependlong(matrix_ll, matrix_type, 0, WHITENULL_llll);
