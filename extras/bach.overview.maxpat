@@ -297,7 +297,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 208.0, 19.0 ],
-					"text" : "v0.8.1.6 beta (build 20221105171625)",
+					"text" : "v0.8.2.0 beta (build 20221227172152)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -557,7 +557,7 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, -5988.0 ],
+					"offset" : [ 0.0, 0.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
@@ -607,7 +607,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 6239.0, 641.0, 85.0 ],
-									"presentation_linecount" : 5,
 									"text" : "Our top-tier institutional supporters are, in alphabetical order:\n• Haute École de Musique de Genève - Centre de musique électroacoustique\n• IRCAM-Centre Pompidou (Paris).\n\n Click here for the full list:",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
@@ -624,7 +623,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 313.0, 3344.0, 89.0, 40.0 ],
-									"presentation_linecount" : 2,
 									"text" : ";\rbach patrons"
 								}
 
@@ -7428,7 +7426,7 @@
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"tree_openstate_data_0000000000" : [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
 									"tree_openstate_data_count" : [ 1 ],
-									"versionnumber" : 80106,
+									"versionnumber" : 80200,
 									"vinset" : 0.0,
 									"whole_tree_data_0000000000" : [ "1 – Hello World", "2 – Brother John", "3 – Iterations", "4 – Through The Looking Glass", "5 – Slot Machines", "6 – The Gift Of Synthesis", "7 – Inspector As A Gadget", "8 – Real Time Stories", "9 – The Minimal Way", "10 – The World Outside", "11 – From OpenMusic to bach", "12 – Abstract Thinking", "13 – Beams Through The Trees", "14 – A Mazing Grace", "15 – God Solve The Queens", "16 – Into The Matrix", "17 – Lambda Scores", "18 – Graphical Synchronization", "19 – Filter Filter Little Star", "20 – Edit Path", "21 – Standalone Applications" ],
 									"whole_tree_data_count" : [ 1 ]

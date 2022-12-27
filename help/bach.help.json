@@ -511,7 +511,7 @@
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.00_mathfunctions.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "math", "mathematics", "functional", "form", "operator" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "math", "mathematics", "functional", "form", "operator", "#!", "#~", "#u-", "abs", "acos", "acosh", "alter", "asin", "asinh", "atan", "atanh", "ceil", "cents", "cos", "cosh", "degree", "den", "exp", "exp2", "float", "floor", "int", "log", "log10", "log2", "num", "oct" ],
 					"title" : [ "Math functions reference" ]
 				},
 				"Apply" : {
@@ -4692,12 +4692,12 @@
 					"tags" : [ "data", "midi", "export", "exportmidi", "markers", "exportbarlines", "barline" ],
 					"title" : [ "MIDI export and measure markers" ]
 				},
-				"Midiexportsr" : {
-					"filename" : [ "bach.help.notation.save and load.10_MIDI.15_midiexportsr.maxpat" ],
+				"Midiexportsf" : {
+					"filename" : [ "bach.help.notation.save and load.10_MIDI.15_midiexportsf.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "export+midi", "tempo+interpolation" ],
 					"tags" : [ "data", "export", "midi", "tempo", "ramp", "sampling", "rate", "temporamsamplingrate", "save", "write" ],
-					"title" : [ "MIDI tempo ramp sampling rate" ]
+					"title" : [ "MIDI tempo ramp sampling figure" ]
 				}
 			},
 			"MusicXML" : {

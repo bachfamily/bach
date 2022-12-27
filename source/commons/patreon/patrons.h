@@ -2,7 +2,7 @@
  *  patrons.h
  * (This file has been generated automatically by Doctor Max. You may not want to edit this file directly).
  *
- * Copyright (C) 2010-2023 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -59,10 +59,10 @@ void post_ordinary_supporters()
 	post("Julian Stein, Kenn Kumpf, Kenneth Stewart, Kevin Gironnay, Liam Fisher, Ljubomir Nikolic, Lotus Open Factory, Louis Goldford, ");
 	post("Luca Morino, Luca Richelli, Lucas Rei Ramos, Lucie Jones, Manfred Schreier, Marc Garcia Vitoria, Marlon Schumacher, ");
 	post("Martino Marini, Matias Brizuela, Matthew Goodheart, Matthew Lane, Michael Monhart, Michele, Nicholas Brown, Nick Brown, ");
-	post("Nikola Kołodziejczyk, Ofer Pelz, Orjan Sandred, Pierre Alexandre Tremblay, Pierre Relaño, Reso Kiknadze, Robert White, ");
-	post("Roméo Monteiro, Rubens Askenar, Rubik Ernő Zoltán, Sam Long, Sebastian Adams, Seth, Seth Cluett, Seth Shafer, Solaris, ");
-	post("Stefan Grimus, Takuya Imahori, Timothy Roy, Vens R., Viktor Velthuijs, Wilco Alkema, Wolfgang Schnitzer, Yido Chae, akio, ");
-	post("ignatius, johnmatter, linazero, manueltripero, micron, millot, sandro, Øyvind Torvund.");
+	post("Nikola Kołodziejczyk, Ofer Pelz, Orjan Sandred, Pedro Latas, Pierre Alexandre Tremblay, Pierre Relaño, Reso Kiknadze, ");
+	post("Robert White, Roméo Monteiro, Rubens Askenar, Rubik Ernő Zoltán, Sam Long, Sebastian Adams, Seth, Seth Cluett, Seth Shafer, ");
+	post("Solaris, Stefan Grimus, Takuya Imahori, Timothy Roy, Vens R., Viktor Velthuijs, Wilco Alkema, Wolfgang Schnitzer, Yido Chae, ");
+	post("akio, ignatius, johnmatter, linazero, manueltripero, micron, millot, sandro, scott mc laughlin, Øyvind Torvund.");
 }
 void post_all_patrons()
 {
@@ -77,8 +77,9 @@ void post_all_patrons()
 	post("Kevin Gironnay, Liam Fisher, Ljubomir Nikolic, Lotus Open Factory, Louis Goldford, Luca Morino, Luca Richelli, Lucas Rei Ramos, ");
 	post("Lucie Jones, Manfred Schreier, Marc Garcia Vitoria, Marlon Schumacher, Martino Marini, Matias Brizuela, Matthew Goodheart, ");
 	post("Matthew Lane, Michael Monhart, Michele, Nicholas Brown, Nick Brown, Nikola Kołodziejczyk, Ofer Pelz, Orjan Sandred, ");
-	post("Paul V. Miller, Pierre Alexandre Tremblay, Pierre Relaño, Reso Kiknadze, Robert White, Roméo Monteiro, Rubens Askenar, ");
-	post("Rubik Ernő Zoltán, Sam Long, Sean Ferguson, Sebastian Adams, Seidenberg, Seth, Seth Cluett, Seth Shafer, Solaris, ");
-	post("Stefan Grimus, Takuya Imahori, Timothy Roy, Vens R., Viktor Velthuijs, Vinet, Wilco Alkema, Wolfgang Schnitzer, Yan Maresz, ");
-	post("Yido Chae, Yoshiaki Onishi, akio, ignatius, johnmatter, linazero, manueltripero, micron, millot, sandro, Øyvind Torvund.");
+	post("Paul V. Miller, Pedro Latas, Pierre Alexandre Tremblay, Pierre Relaño, Reso Kiknadze, Robert White, Roméo Monteiro, ");
+	post("Rubens Askenar, Rubik Ernő Zoltán, Sam Long, Sean Ferguson, Sebastian Adams, Seidenberg, Seth, Seth Cluett, Seth Shafer, ");
+	post("Solaris, Stefan Grimus, Takuya Imahori, Timothy Roy, Vens R., Viktor Velthuijs, Vinet, Wilco Alkema, Wolfgang Schnitzer, ");
+	post("Yan Maresz, Yido Chae, Yoshiaki Onishi, akio, ignatius, johnmatter, linazero, manueltripero, micron, millot, sandro, ");
+	post("scott mc laughlin, Øyvind Torvund.");
 }
