@@ -1,7 +1,7 @@
 /*
  *  llll_commonsyms.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -159,7 +159,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_symduration = gensym("symduration");
     x->s_symonset = gensym("symonset");
     x->s_symtail = gensym("symtail");
-    
+    x->s_dumpselection = gensym("dumpselection");
+
     x->s_FFGG = gensym("FFGG");
     x->s_FFG = gensym("FFG");
     x->s_FGG = gensym("FGG");
@@ -212,6 +213,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_cursor = gensym("cursor");
     x->s_commands = gensym("commands");
     x->s_play = gensym("play");
+    x->s_playout = gensym("playout");
     x->s_stop = gensym("stop");
     x->s_pause = gensym("pause");
     x->s_clefs = gensym("clefs");
@@ -219,6 +221,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_markers = gensym("markers");
     x->s_marker = gensym("marker");
     x->s_groups = gensym("groups");
+    x->s_voicespacing = gensym("voicespacing");
+    x->s_hidevoices = gensym("hidevoices");
     x->s_addtempo = gensym("addtempo");
     x->s_addmeasure = gensym("addmeasure");
     x->s_addmeasures = gensym("addmeasures");
@@ -269,6 +273,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_insertslotitem = gensym("insertslotitem");
     x->s_deleteslotitem = gensym("deleteslotitem");
     x->s_addslot = gensym("addslot");
+    x->s_setslot = gensym("setslot");
+    x->s_setdurationline = gensym("setdurationline");
     x->s_addbreakpoint = gensym("addbreakpoint");
     x->s_erasebreakpoints = gensym("erasebreakpoints");
     x->s_widthfactor = gensym("widthfactor");

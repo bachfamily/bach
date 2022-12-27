@@ -1,7 +1,7 @@
 /*
  *  notation_goto.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -27,7 +27,7 @@
 long goto_get_marker_voicenumber(t_notation_obj *r_ob, t_marker *mk)
 {
     if (mk->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_measure *meas = (t_measure *)shashtable_retrieve(r_ob->IDtable, mk->measure_attach_ID);
+        t_measure *meas = (t_measure *)notation_item_retrieve_from_ID(r_ob, mk->measure_attach_ID);
         if (meas)
             return meas->voiceparent->v_ob.number;
         else
@@ -1216,8 +1216,26 @@ t_llll *goto_time(t_notation_obj *r_ob, t_goto_params *par, long *error)
             llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
         }
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, true);
-        llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
+        long flags = k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD | k_PARSETIMEPOINT_FLAG_ACCURATE;
+        if (par->nudge_back_for_graces >= 0)
+            flags |= k_PARSETIMEPOINT_FLAG_MANUALGRACEBEHAVIOR;
+        if (par->nudge_back_for_graces > 0)
+            flags |= k_PARSETIMEPOINT_FLAG_NUDGEBACKFORGRACES;
+        long syntaxtype = k_PARSETIMEPOINT_SYNTAXTYPE_NONE;
+        parse_open_timepoint_syntax_from_llllelem(r_ob, par->arguments->l_head, NULL, &ms, &tp, flags, &syntaxtype);
+        switch (syntaxtype) {
+            case k_PARSETIMEPOINT_SYNTAXTYPE_MS:
+            case k_PARSETIMEPOINT_SYNTAXTYPE_NAME:
+                llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
+                break;
+                
+            default:
+                // for now:
+                llll_chain(toselect, goto_get_notation_item_at_ms(r_ob, par, ms, false, error));
+                // TODO: should implement goto_get_notation_item_at_timepoint() and use that instead
+//                llll_chain(toselect, goto_get_notation_item_at_timepoint(r_ob, par, tp, false, error));
+                break;
+        }
     }
     
     return toselect;
@@ -1421,7 +1439,7 @@ e_goto_error notationobj_goto(t_notation_obj *r_ob, t_goto_params *par)
 //    if (err == k_GOTO_ERROR_NONE)
 //        err = goto_set_selection_from_llll(r_ob, par, toselect);
     
-    if (par->force_inscreen && r_ob->force_notation_item_inscreen) {
+    if (par->force_inscreen && r_ob->force_notation_item_inscreen && toselect) {
         for (t_llllelem *el = toselect->l_head; el; el = el->l_next)
             (r_ob->force_notation_item_inscreen)(r_ob, (t_notation_item *)hatom_getobj(&el->l_hatom), NULL);
     }
@@ -1470,6 +1488,7 @@ t_goto_params notationobj_goto_get_default_params(t_notation_obj *r_ob)
     par.matchinclude = k_GOTO_ONSETPOINT_HEAD;
     par.force_inscreen = 0;
     par.graces_have_duration = 0;
+    par.nudge_back_for_graces = -1;
     par.repeat = 1;
     par.markershavevoices = 0;
     par.notation_obj = r_ob;
@@ -1486,7 +1505,26 @@ void notationobj_goto_parseargs(t_notation_obj *r_ob, t_llll *args)
     t_llll *where_ll = NULL, *until_ll = NULL, *types_ll = NULL, *matchinclude_ll = NULL;
     t_symbol *voicemode_sym = gensym("anyactive"), *tiemode_sym = _llllobj_sym_all, *from_sym = _llllobj_sym_auto, *to_sym = _llllobj_sym_auto, *polymode_sym = gensym("overlap"), *untilmode_sym = _llllobj_sym_any;
 
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiiiiilllllssssss", gensym("repeat"), &par.repeat, gensym("inscreen"), &par.force_inscreen, gensym("skiprests"), &par.skiprests, gensym("nullmode"), &par.nullmode, gensym("strict"), &par.strictcmp, gensym("graceshavedur"), &par.graces_have_duration, gensym("markershavevoices"), &par.markershavevoices, gensym("voices"), &par.voicenumbers, gensym("where"), &where_ll, gensym("until"), &until_ll, gensym("type"), &types_ll, gensym("include"), &matchinclude_ll, gensym("voicemode"), &voicemode_sym, gensym("tiemode"), &tiemode_sym, gensym("from"), &from_sym, gensym("to"), &to_sym, gensym("polymode"), &polymode_sym, gensym("untilmode"), &untilmode_sym);
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiiiiilllllssssssi",
+                                         gensym("repeat"), &par.repeat,
+                                         gensym("inscreen"), &par.force_inscreen,
+                                         gensym("skiprests"), &par.skiprests,
+                                         gensym("nullmode"), &par.nullmode,
+                                         gensym("strict"), &par.strictcmp,
+                                         gensym("graceshavedur"), &par.graces_have_duration,
+                                         gensym("markershavevoices"), &par.markershavevoices,
+                                         gensym("voices"), &par.voicenumbers,
+                                         gensym("where"), &where_ll,
+                                         gensym("until"), &until_ll,
+                                         gensym("type"), &types_ll,
+                                         gensym("include"), &matchinclude_ll,
+                                         gensym("voicemode"), &voicemode_sym,
+                                         gensym("tiemode"), &tiemode_sym,
+                                         gensym("from"), &from_sym,
+                                         gensym("to"), &to_sym,
+                                         gensym("polymode"), &polymode_sym,
+                                         gensym("untilmode"), &untilmode_sym,
+                                         gensym("nudgeforgraces"), &par.nudge_back_for_graces);
     
     for (t_llllelem *el = types_ll ? types_ll->l_head : NULL; el; el = el->l_next) {
         if (hatom_getsym(&el->l_hatom) == _llllobj_sym_all) {

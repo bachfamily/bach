@@ -181,6 +181,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The mapping is always linear. If elements are outside
+		the input range, the result will be an extrapolation.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -231,6 +232,7 @@
 		<entry name ="More details">
 			<description>
 		The mapping is always linear. If elements are outside
+		the input range, the result will be an extrapolation.
 			</description>
 		</entry>
 		<entry name ="Keywords">

@@ -1,7 +1,7 @@
 /*
  *  llll_math.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -87,6 +87,7 @@ void hatom_fn_enharm(t_hatom *h1, t_hatom *h2, t_hatom *res);
 
 
 
+
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_pow(t_hatom *h1, t_hatom *h2, t_hatom *res); // deprecated: use hatom_op_pow instead
 void hatom_fn_abs(t_hatom *arg, t_hatom *res);
@@ -97,12 +98,11 @@ void hatom_fn_jn(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_min(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_max(t_hatom *h1, t_hatom *h2, t_hatom *res);
 
-
-
-
 void hatom_op_plus(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_op_plus_with_symbols(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_minus(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_op_times_with_symbols(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_div(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_uminus(t_hatom *h1, t_hatom *res);

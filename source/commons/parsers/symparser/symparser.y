@@ -2,7 +2,7 @@
     /*
      *  symparser.y
      *
-     * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -20,7 +20,19 @@
 %}
 
 %define api.pure full
-%name-prefix "symparser_"
+%define api.prefix {symparser_}
+
+%code provides
+{
+  // Tell Flex the expected prototype of yylex.
+  #define YY_DECL                             \
+    int symparser_lex (SYMPARSER_STYPE *yylval, void* yyscanner)
+
+    typedef SYMPARSER_STYPE YYSTYPE;
+
+  // Declare the scanner.
+  YY_DECL;
+}
 
 %token <l> BACH_LONG
 %token <d> BACH_DOUBLE

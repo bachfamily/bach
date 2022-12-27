@@ -2,14 +2,15 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
+			"major" : 8,
 			"minor" : 3,
-			"revision" : 4,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 616.0, 79.0, 617.0, 539.0 ],
+		"classnamespace" : "box",
+		"rect" : [ 616.0, 100.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -36,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -47,7 +49,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 65.0, 447.5, 135.0, 25.0 ],
-					"style" : "",
 					"text" : "Here's an example"
 				}
 
@@ -62,8 +63,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 202.0, 450.5, 357.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [2 [0 0 0 0] [0.5 10 20 0] [0.7 30 10 0.5] [1 0 0 -0.4]]"
+					"text" : "setslot [2 [0 0 0 0] [0.5 10 20 0] [0.7 30 10 0.5] [1 0 0 -0.4]]"
 				}
 
 			}
@@ -77,7 +77,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 217.0, 373.0, 174.0, 21.0 ],
-					"style" : "",
 					"text" : "[<x> <y> <z> <slope>]"
 				}
 
@@ -93,7 +92,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 373.0, 593.0, 79.0 ],
+					"patching_rect" : [ 15.0, 373.0, 596.0, 79.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "where each point llll is in the form:                                               , representing the X, Y, Z values of the function point, as well as the slope parameter for the function segment before the point (the one ending with the point, thus the slope of the first point is unused and ignored). Such parameter is the usual Max slope parameter (-1 to 1, 0 being linear). If the slot window width is \"temporal\", which is the default for function slots (see #syntax+slotinfo), the X parameter ranges from 0. (notehead) to 1. (tail).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -130,7 +129,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 109.0, 356.0, 463.0, 21.0 ],
-					"style" : "",
 					"text" : "<POINT1_LLLL> <POINT2_LLLL> <POINT3_LLLL>..."
 				}
 
@@ -147,7 +145,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 1.0, 300.0, 385.0, 54.0 ],
-					"style" : "",
 					"text" : "Here's an example, if slot 6 is a spat slot. Notice that angles are not necessarily between 0 and 360: their value can be higher or lower depending on the number of completed circles"
 				}
 
@@ -163,8 +160,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 381.0, 310.0, 231.0, 38.0 ],
-					"style" : "",
-					"text" : "addslot [ 9 [ 0. 0. 0. 0 ] [ 0.2 4. 60. 1 ] [ 0.7 1.7 -162. 0 ] [ 1. 7.18 474.7 0 ]"
+					"text" : "setslot [ 9 [ 0. 0. 0. 0 ] [ 0.2 4. 60. 1 ] [ 0.7 1.7 -162. 0 ] [ 1. 7.18 474.7 0 ]"
 				}
 
 			}
@@ -178,7 +174,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 217.0, 179.0, 237.0, 21.0 ],
-					"style" : "",
 					"text" : "[<t> <radius> <angle> <type>]"
 				}
 
@@ -194,7 +189,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 179.0, 583.0, 123.0 ],
+					"patching_rect" : [ 15.0, 179.0, 584.0, 123.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "where each point llll is in the form:                                                                , where t is the relative time position of the point (corresponding to the X coordinate), the radius is the distance of the point from the listener, the angle is measured in degrees and taken with respect to the reference line passing right in front of the listener, and type can be 0 or 1, depending if the spatialization movements will be circular (0, default) or linear (1). Please remark that all such parameters are representation parameters: bach is not a DSP library, so you are perfectly and assign them different meaning. If the slot window width is \"temporal\", which is the default for function slots (see #syntax+slotinfo), the t parameter ranges from 0. (notehead) to 1. (tail).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -231,7 +226,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 76.5, 162.0, 463.0, 21.0 ],
-					"style" : "",
 					"text" : "<POINT1_LLLL> <POINT2_LLLL> <POINT3_LLLL>..."
 				}
 
@@ -248,7 +242,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 49.0, 120.5, 213.0, 40.0 ],
-					"style" : "",
 					"text" : "We fill slot 7 with two files, and set the second one as active"
 				}
 
@@ -263,8 +256,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 267.5, 131.0, 320.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 7 bach.help.home.maxpat bach.help.json 2 ]"
+					"text" : "setslot [ 7 bach.help.home.maxpat bach.help.json 2 ]"
 				}
 
 			}
@@ -316,7 +308,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 88.0, 53.0, 463.0, 21.0 ],
-					"style" : "",
 					"text" : "<filepath1> <filepath2> ... <active_file_index>"
 				}
 
@@ -330,8 +321,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 602.0, 19.0 ],
-					"style" : "",
-					"text" : "See Also: syntax+slot+content, addslot",
+					"text" : "See Also: syntax+slot+content, setslot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -346,8 +336,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 602.0, 19.0 ],
-					"style" : "",
-					"text" : "Objects: bach.roll, bach.score",
+					"text" : "Objects: bach.roll, bach.score, bach.slot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -363,7 +352,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 299.0, 23.0 ],
-					"style" : "",
 					"text" : "Slot content (2)",
 					"varname" : "title"
 				}
@@ -378,8 +366,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 602.0, 19.0 ],
-					"style" : "",
-					"text" : "Tags: syntax, slot, content, filelist, spat, 3dfunction",
+					"text" : "Tags: syntax, slot, content, filelist, spat, 3dfunction, setslot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

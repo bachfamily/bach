@@ -1,7 +1,7 @@
 /*
  *  astNode.hpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -41,6 +41,16 @@ public:
     void set(t_symbol *s, astNode *n) { sym = s; node = n; }
 };
 
+class t_localVar {
+protected:
+    t_symbol *name;
+    t_bool lifted;
+public:
+    t_localVar(t_symbol *n, t_bool l = false) : name(n), lifted(l) { }
+    t_localVar() : t_localVar(nullptr) { }
+    t_symbol* getName() { return name; }
+    t_bool isLifted() { return lifted; }
+};
 
 template <typename T>
 class countedList {
@@ -186,7 +196,9 @@ public:
 
 private:
     void setVariableFromArgByPosition(t_function *fn, long i);
-
+    t_variable* createVariable(t_symbol *name);
+    t_variable* createVariable(t_symbol *name, t_llll *ll);
+    
 public:
     // this constructor is only called for the root environment,
     // i.e., the parent of the actual context of main.
@@ -236,13 +248,12 @@ public:
     void adjustArgc(t_function *fn, long abpc);
     
     template <eLoopKinds kind> void setForLoopScope(astForLoop<kind> const &forLoop);
-    void setUniquePseudovariables(t_symbol **names);
-    void setLocalVariables(t_symbol **varNames, t_function *fn = nullptr);
+    void setLocalVariables(t_localVar *vars, t_function *fn = nullptr);
 
     t_bool stopTimeReached() const {
         if (root->timeOver || (stopTime > 0 && systime_ms() > stopTime)) {
             if (!root->timeOver)
-                object_warn((t_object *) obj, "Time limit exceeded");
+                object_warn((t_object *) obj, "Time limit exceeded, as per the maxtime attribute");
             root->timeOver = true;
             return true;
         } else
@@ -730,7 +741,7 @@ protected:
     
     void lastNth(lvalueStep** step, int nStep, t_llllelem* &lookHere, t_llll* &current, t_llll* origV, t_bool previousWasKey, t_execEnv const &context) {
         t_bool created = nonLastNth(step, nStep, lookHere, current, previousWasKey, context);
-        if (current)
+        if (current && lookHere)
             lastNthDo(current, lookHere, origV, created, context);
     }
     
@@ -917,7 +928,7 @@ public:
         }
         
         // last round with assignment
-        if (current && lookHere) {
+        if (current /* && lookHere */) { // was it there for some good reason????
             switch(lvStep[i]->type) {
                 case lvalueStep::E_LV_KEY:
                     lastKey(lvStep + i, lookHere, current, origV, context);
@@ -1001,7 +1012,8 @@ public:
 
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
-        llll_insert_one(lookHere, llll_clone(origV), -1);
+        if (lookHere)
+            llll_insert_one(lookHere, llll_clone(origV), -1);
     }
     
     void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {

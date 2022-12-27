@@ -1,7 +1,7 @@
 /*
  *  bach_doc_commons.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -357,7 +357,7 @@
 	//  - <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice. 
 	//  For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 	//  - <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-	//  but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+	//  but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 	//  For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 	//  - <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number, 
 	//  in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -968,6 +968,9 @@
 	// Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
 	// @copy BACH_DOC_SLOTINFO_GENERAL
 
+#define BACH_DOC_RESET_COMMANDS
+    // A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
+
 #define BACH_DOC_RESET_ARTICULATIONINFO
     // A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
     // all the user-defined articulations.
@@ -1127,12 +1130,16 @@
 
 #define BACH_DOC_SYMBOLIC_VARIABLES
 	// Symbolic variables are variables that can be used in the conditional selection or parameter modification processes. 
-	// These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-    // <m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+	// These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+    // <m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+    // <m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+    // <m>voiceensemble</m> (voiceensemble number).
     // For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 	// <m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 	// <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
     // grace chords, 0 otherwise). <br />
+    // You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+    // that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 	// In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 	// the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
     // (all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -1549,7 +1556,7 @@
 	// 0 and 1 should be avoided (since a notehead and notetail already exists for any note), so the
 	// values should be striclty greater than 0 and strictly less than 1. <br />
 	// - a number setting the pitch difference (in midicents) of the breakpoint with respect to the main
-	// note's pitch.
+	// note's pitch. This can be replaced by the "auto" symbol to infer the pitch from the existing duration line.
 	// - an optional slope parameter, between -1 and 1, setting the slope of the segment of duration line preceding the breakpoint
 	// (0 being linear, default).
 	// - an optional velocity parameter, between 1 and 127, but only if the <m>breakpointshavevelocity</m> attribute is active.
@@ -1559,16 +1566,24 @@
 	// The <m>erasebreakpoints</m> message deletes all the pitch breakpoints of the selected notes.
 
 
-#define BACH_DOC_MESSAGE_ADDSLOT
-	// An <m>addslot</m> message will replace the content of one or more slots, for all the selected notes.
-	// The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
+#define BACH_DOC_MESSAGE_SETSLOT
+	// A <m>setslot</m> message (or <m>addslot</m> for backward compatibility)
+    // will replace the content of one or more slots, for all the selected notes.
+	// The syntax is <b>setslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
+
+
+#define BACH_DOC_MESSAGE_SETDURATIONLINE
+    // A <m>setedurationline</m> message will replace the duration line of all the selected notes with the introduced breakpoints
+    // The syntax is
+    // <b>setdurationline [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>] [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>]...</b>. <br />
 
 
 #define BACH_DOC_MESSAGE_ERASESLOT
 	// An <m>eraseslot</m> message will clear the content of a specific slot for any selected note. 
 	// The slot number of the slot to clear is given as argument.
-	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
+	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot,
+    // or the word "all" to clear all slots.
 
 #define BACH_DOC_MESSAGE_MOVESLOT
     // A <m>moveslot</m> message will move the content of a given slot to another slot for any selected note.
@@ -1621,7 +1636,7 @@
 #define BACH_DOC_MESSAGE_LAMBDA
 	// The <m>lambda</m> message is a general router which can be prepended to all the following operations:
 	// <m>cents</m>, <m>velocity</m>, <m>onset</m>, <m>tail</m>, <m>duration</m>, <m>voice</m>, <m>addbreakpoint</m>, <m>erasebreakpoint</m>,
-    // <m>addslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
+    // <m>setslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
 	// If such router is prepended, the corresponding operation will apply on the currently output selected item.
 	// The idea is that when a selection dump is asked or a command is sent (also see <m>dumpselection</m> or <m>sendcommand</m>), the notation
 	// elements are output one by one from the playout (notewise or chordwise depending on the <m>playmode</m>): if you put a feedback loop from the playout
@@ -1817,8 +1832,8 @@
 	// • <m>Shift+Spacebar</m> while not playing: Play selection (start playing from the leftmost selected item
 	// and only play the selected items) <br />
 	// • <m>V</m>: Off-line play, also known as "selection dump" (immediately send the playout syntax of selected elements
-	// out the playout, see <m>dumpselection</m> message) <br />
-	// • <m>Shift+V</m>: Chordwise off-line play (as the previous command, but if a single note is selected, all its chord content
+	// out the playout, see <m>dumpselection</m> message). The V letter can be changed via the <m>dumpplaycmd</m> attribute. <br />
+	// • <m>Alt+V</m>: Chordwise off-line play (as the previous command, but if a single note is selected, all its chord content
 	// is output through the playout) <br />
 	// • <m>Shift+Alt+V</m>: Send whole gathered syntax content out the first outlet (this is equivalent to sending a <m>dump</m> message) <br />
     // • Any defined command key: send command off-line <br />

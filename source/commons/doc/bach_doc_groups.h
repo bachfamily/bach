@@ -1,7 +1,7 @@
 /*
  *  bach_doc_groups.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -349,7 +349,7 @@
 			value", meaning that they represent some important properties (and not some graphic representation parameters, or some utility value stocked for computational purpose).
 			Those parameters are usually defined as attributes within the bach framework.
 			An attribute is, indeed, a field of a structure having a "public value". To declare this, the macro you need to use is DECLARE_BACH_ATTR().
-			Indeed, some common attributes to notation objects (and also some peculiar ones, for convenience purposes) are declared in the notation_obj_declare_bach_attributes()
+			Indeed, some common attributes to notation objects (and also some peculiar ones, for convenience purposes) are declared in the notation_obj_bach_attribute_declares()
 			routine. Each declared attributes must be associated with a name (a symbol, a good rule is that it has to be the same symbol as the router in the gathered syntax
 			assigning the same field via message), with a label (displayed in the bach inspector), with a owner type (the structure to which the attribute is referred, e.g. k_SLOTINFO
 			or k_CHORD), the structure name directly owning the attribute field, the structure member corresponding to the attribute field,
@@ -359,12 +359,12 @@
 			Attributes are stored in the notation object attr_manager field: a #t_bach_attr_manager structure holding (for each one of the #e_element_types) the number of attributes
 			associated to it, and the attributes themselves, as #t_bach_attribute structures.
 			
-			Once an attribute has been defined, it can be retrieved via get_bach_attribute(). And we can also specify further information, such as (in case the display type was an enumindex)
+			Once an attribute has been defined, it can be retrieved via bach_attribute_get(). And we can also specify further information, such as (in case the display type was an enumindex)
 			the enumindex configuration. For instance, have a look at the following code:			 
 			@code
 			DECLARE_BACH_ATTR(r_ob, -1, _llllobj_sym_type, "Type", k_SLOTINFO, t_slotinfo, slot_type, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
 			get_slottypes_as_sym_list(r_ob, slottypes);
-			bach_attribute_add_enumindex(get_bach_attribute(r_ob, k_SLOTINFO, _llllobj_sym_type), 16, slottypes);
+			bach_attribute_add_enumindex(bach_attribute_get(r_ob, k_SLOTINFO, _llllobj_sym_type), 16, slottypes);
 			@endcode
 			
 			Each attribute is retrieved via a default bach getter (bach_default_get_bach_attr()), and set via a default bach setter (bach_default_set_bach_attr()). 
@@ -374,7 +374,7 @@
 			For instance, setting a "mute" attribute for a note requires to check the correct scheduling (what if the newly muted note was to be played next?), and we can thus define
 			@code
 			DECLARE_BACH_ATTR(r_ob, -1, _llllobj_sym_mute, "Mute", k_NOTE, t_note, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-			bach_attribute_add_functions(get_bach_attribute(r_ob, k_NOTE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn);
+			bach_attribute_add_functions(bach_attribute_get(r_ob, k_NOTE, _llllobj_sym_mute), NULL, (bach_setter_fn)bach_set_flags_fn, NULL, (bach_attr_process_fn)check_correct_scheduling_fn);
 			@endcode
 			
 			The function bach_set_attr() and bach_get_attr() set and get the bach attributes starting from the usual GIMME Max signature, and using the proper setter/getter

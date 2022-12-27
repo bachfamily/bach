@@ -2,7 +2,7 @@
     /*
      *  stringparser.y
      *
-     * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -66,7 +66,7 @@
     countedList<astNode *> *nl;
     countedList<symNodePair *> *snpl;
     countedList<funArg *> *funarglist;
-    countedList<t_symbol *> *liftedarglist;
+    countedList<t_localVar> *liftedarglist;
     countedList<forArg *> *fal;
     lvalueStepList *lvsl;
     symNodePair *snp;
@@ -77,6 +77,7 @@
     double d;
     t_pitch p;
     t_symbol *sym;
+    char *text;
 }
 
 %token <l> LONG_LITERAL INLET INTINLET RATINLET FLOATINLET PITCHINLET OUTLET DIRINLET DIROUTLET
@@ -84,6 +85,7 @@
 %token <d> DOUBLE_LITERAL
 %token <p> PITCH_LITERAL
 %token <sym> SYMBOL_LITERAL GLOBALVAR PATCHERVAR LOCALVAR NAMEDPARAM BIF OF
+%token <text> MAXFUNCTION
 %token SEQ
 %token IF_KW THEN_KW ELSE_KW
 %token WHILE_KW DO_KW FOR_KW IN_KW COLLECT_KW
@@ -119,14 +121,15 @@
 %left LSHIFT RSHIFT
 %left PLUS MINUS
 %left TIMES DIV DIVDIV REM
+%right UPLUS
+%right UMINUS
+%right POWOP
 %left NTHOP PICKOP APPLY ACCESS_UNWRAP
 %nonassoc LVALUESTEPPARAMS
 %nonassoc STARTPARAMS
 %nonassoc IF_KW THEN_KW FOR_KW IN_KW AS_KW WITH_KW WHILE_KW DO_KW COLLECT_KW
 %nonassoc ELSE_KW
-%right UPLUS
-%right LOGNOT BITNOT UMINUS
-%right POWOP
+%right LOGNOT BITNOT
 %nonassoc KEEP UNKEEP INIT
 
 
@@ -162,6 +165,7 @@
     t_parseParams *params,
     const char *s);
     
+    
     YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf);
     void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
     
@@ -172,14 +176,19 @@
             (**(params->localVariablesAuxMapStack))[name] = 1;
             
             if (params->liftedVariablesStack == params->liftedVariablesStackBase) {
-                *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
+                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, true), *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
             } else {
-                auto lifted = (*(params->liftedVariablesStack))->find(name);
+                t_bool lifted = (*(params->liftedVariablesStack))->find(name) != (*(params->liftedVariablesStack))->end();
+                
+                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, lifted), *(params->localVariablesStack));
+
+                /*
                 if (lifted == (*(params->liftedVariablesStack))->end()) { // not lifted
-                    *(params->implicitArgumentsStack) = new countedList<funArg *>(new funArg(name), *(params->implicitArgumentsStack));
+                    *(params->argumentsStack) = new countedList<funArg *>(new funArg(name), *(params->argumentsStack));
                 } else { // old behavior: lifted
                     *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack));
                 }
+                 */
             }
         }
     }
@@ -347,9 +356,10 @@ forarg : LOCALVAR IN_KW sequence {
 fundef : funargList FUNDEF {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->implicitArgumentsStack) = $1;
+    *++(params->argumentsStack) = $1;
 } list {
-    t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), $4, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $4, params->owner);
+    params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;
     --(params->fnDepth);
@@ -357,17 +367,18 @@ fundef : funargList FUNDEF {
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function funargList FUNDEF");
 }
 | FUNDEF {
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     params->fnDepth++;
-    *++(params->implicitArgumentsStack) = nullptr;
+    *++(params->argumentsStack) = nullptr;
 } list {
-    t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), $3, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $3, params->owner);
+    params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;;
     --(params->fnDepth);
@@ -375,20 +386,21 @@ fundef : funargList FUNDEF {
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function FUNDEF");
 }
 | funargList liftedargList FUNDEF {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    for (countedList<t_symbol *> *v = $2->getHead();
+    for (countedList<t_localVar> *v = $2->getHead();
          v;
          v = v->getNext()) {
-             (*(params->liftedVariablesStack))->insert(v->getItem());
+             (*(params->liftedVariablesStack))->insert(v->getItem().getName());
     }
-    *++(params->implicitArgumentsStack) = $1;
+    *++(params->argumentsStack) = $1;
 } list {
-    t_function *fn = new t_userFunction(*(params->implicitArgumentsStack), *(params->localVariablesStack), $5, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $5, params->owner);
+    params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;
     --(params->fnDepth);
@@ -396,24 +408,23 @@ fundef : funargList FUNDEF {
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function funargList liftedargList");
 }
 | liftedargList FUNDEF {
     params->fnDepth++;
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->implicitArgumentsStack);
-    for (countedList<t_symbol *> *v = $1->getHead();
+    *++(params->argumentsStack) = nullptr;
+    for (countedList<t_localVar> *v = $1->getHead();
          v;
          v = v->getNext()) {
-        (*(params->liftedVariablesStack))->insert(v->getItem());
+        (*(params->liftedVariablesStack))->insert(v->getItem().getName());
     }
-    *++(params->implicitArgumentsStack) = nullptr;
-
 } list {
-    t_function *fn = new t_userFunction(*++(params->implicitArgumentsStack), *(params->localVariablesStack), $4, params->owner);
+    t_function *fn = new t_userFunction(*++(params->argumentsStack), *(params->localVariablesStack), $4, params->owner);
+    params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStack--) = nullptr;;
     --(params->fnDepth);
@@ -421,8 +432,8 @@ fundef : funargList FUNDEF {
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->implicitArgumentsStack);
-    code_dev_post ("parse: user defined function");
+    --(params->argumentsStack);
+    code_dev_post ("parse: user defined function liftedargList FUNDEF");
 }
 ;
 
@@ -442,7 +453,7 @@ funargList : LOCALVAR {
 | LOCALVAR ASSIGN {
     // two levels are pushed:
     // one for the function, whose definition is beginning here,
-    // and one for the parameter default, which is in an outer scope
+    // and one for the parameter default, which is in an inner scope
     params->localVariablesStack += 2;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     (**(params->localVariablesAuxMapStack))[$1] = 1;
@@ -479,11 +490,11 @@ funargList : LOCALVAR {
 ;
 
 liftedargList : LIFT LOCALVAR {
-    $$ = new countedList<t_symbol *>($2);
+    $$ = new countedList<t_localVar>($2);
     code_dev_post ("parse: liftedargList (first term)\n");
 }
 | liftedargList COMMA LOCALVAR {
-    $$ = new countedList<t_symbol *>($3, $1);
+    $$ = new countedList<t_localVar>($3, $1);
     code_dev_post ("parse: liftedargList (subsequent term)\n");
 }
 ;
@@ -878,11 +889,11 @@ exp: term %dprec 2
     code_dev_post ("parse: |\n");
 }
 | exp LSHIFT listEnd {
-    $$ = new astOperatorBitOr($1, $3, params->owner);
+    $$ = new astOperatorLShift($1, $3, params->owner);
     code_dev_post ("parse: <<\n");
 }
 | exp RSHIFT listEnd {
-    $$ = new astOperatorBitOr($1, $3, params->owner);
+    $$ = new astOperatorRShift($1, $3, params->owner);
     code_dev_post ("parse: >>\n");
 }
 | exp EQUAL listEnd {
@@ -931,7 +942,7 @@ exp: term %dprec 2
 }
 | exp NTHOP listEnd {
     $$ = new astNthOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP listEnd)\n");
 }
 | exp PICKOP listEnd {
     $$ = new astPickOp($1, $3, params->owner);
@@ -1061,7 +1072,7 @@ exp: term %dprec 2
 }
 | exp NTHOP exp {
     $$ = new astNthOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop\n");
+    code_dev_post ("parse: nthop (exp NTHOP exp)\n");
 }
 | exp PICKOP exp {
     $$ = new astPickOp($1, $3, params->owner);
@@ -1276,6 +1287,12 @@ term: LONG_LITERAL {
     $$ = new astConst(fn, params->owner);
     code_dev_post("parse: owned function %s", $1->s_name);
 }
+| MAXFUNCTION {
+    t_function *fn = new t_maxFunction(std::string($1));
+    params->funcs->insert(fn);
+    $$ = new astConst(fn, params->owner);
+    code_dev_post("parse: Max function %s", $1);
+}
 | var
 | functionApplication
 ;
@@ -1338,7 +1355,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
     params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
     params.liftedVariablesStack = params.liftedVariablesStackBase;
-    params.implicitArgumentsStack = params.implicitArgumentsStackBase;
+    params.argumentsStack = params.argumentsStackBase;
     params.gvt = bach->b_gvt;
     params.bifs = bach->b_bifTable;
     params.codeac = codeac;
@@ -1351,6 +1368,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.ofTable = x->c_ofTable;
     params.name2patcherVars = new pvMap;
     params.globalVariables = new std::unordered_set<t_globalVariable*>;
+    params.funcs = new std::unordered_set<t_function*>;
     
     code_dev_post("--- BUILDING AST!\n");
     stringparser_parse(myscanner, &params);
@@ -1371,22 +1389,21 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
             params.localVariablesStackBase[0],
             params.globalVariables,
             params.name2patcherVars,
+            params.funcs,
             x
         );
-        codableobj_clear_filewatchers(x);
-        codableobj_add_filewatchers(x, &lexparams.files);
+        codableobj_clear_included_filewatchers(x);
+        codableobj_add_included_filewatchers(x, &lexparams.files);
         return mainFunction;
     } else {
         object_error((t_object *) x, "Syntax errors present — couldn't parse code");
+        delete params.name2patcherVars;
+        delete params.globalVariables;
+        for (t_function* f: *params.funcs)
+            f->decrease();
+        delete params.funcs;
         return nullptr;
     }
 }
 
-int yyerror(yyscan_t myscanner, t_parseParams *params, const char *s)
-{
-    params->ast = nullptr;
-    object_error((t_object *) params->owner, "error: %s\n", s);
-    cpost("error: %s\n", s);
 
-    return 0;
-}

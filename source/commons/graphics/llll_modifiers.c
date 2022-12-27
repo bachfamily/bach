@@ -1,7 +1,7 @@
 /*
  *  llll_modifiers.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -69,7 +69,7 @@ void llll_format_modifiers(long *modifiers, long *keycode)
 				break;
             case 'i':
                 if ((*modifiers & 0x0F) == (eControlKey | eAltKey)) {       // ctrl+shift+i
-                    *modifiers = (*modifiers & 0xFFF0) | eCommandKey;           // becomes cmd+y
+                    *modifiers = (*modifiers & 0xFFF0) | eCommandKey;           // becomes cmd+i
                     return;
                 }
                 break;

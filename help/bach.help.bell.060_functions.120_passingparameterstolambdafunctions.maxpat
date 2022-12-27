@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 6,
+			"minor" : 2,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"id" : "obj-31",
@@ -83,7 +84,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 409.0, 367.0, 184.0, 98.0 ],
+					"patching_rect" : [ 409.0, 367.0, 188.0, 98.0 ],
 					"text" : "Even better: since the defaults are only evaluated once in lambda calls, we don't waste time checking if $epsilon is non-null at every tested value."
 				}
 
@@ -273,7 +274,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 111.5, 378.0, 52.0 ],
+					"patching_rect" : [ 6.0, 111.5, 381.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80006
@@ -293,7 +294,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 37.0, 585.0, 36.0 ],
-					"text" : "Lambda functions are subject to the same scoping rules as any other functions, and you can pass parameters to them through lifting.",
+					"text" : "Lambda functions are subject to the same scoping rules as any other function, and you can pass parameters to them through lifting.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

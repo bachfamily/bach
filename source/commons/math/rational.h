@@ -1,7 +1,7 @@
 /*
  *  rational.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -62,7 +62,7 @@ typedef t_uint32 t_atom_ushort;
 
 /*
 #ifdef MAC_VERSION
-#define ATOM_LONG_MAX LONG_MAX
+#define ATOM_LONG_MAX ATOM_LONG_MAX
 #define ATOM_LONG_MIN LONG_MIN
 #define ATOM_ULONG_MAX ULONG_MAX
 #else
@@ -98,7 +98,7 @@ typedef t_uint16 t_atom_ushort;
 #define ATOM_USHORT_MAX (0xFFFFu)
 
 /*
-#define ATOM_LONG_MAX LONG_MAX
+#define ATOM_LONG_MAX ATOM_LONG_MAX
 #define ATOM_LONG_MIN LONG_MIN
 #define ATOM_ULONG_MAX ULONG_MAX
 */
@@ -179,12 +179,33 @@ BEGIN_CHECK_LINKAGE
 
 // -----------------  math utilities needed -------------------
 
+
 /**	Utility to retrieve a sign of a double number. 
 	@param	number		The number.
 	@return				1 if number > 0, -1 if number < 0, 0 if number == 0.
 	@ingroup			math
  */
 char fsign(double number);
+
+
+/**    Non-negative modulo for long numbers (yielding the solution >= 0 also for negative numbers).
+ @ingroup    math
+ @param        num    The number
+ @param        mod    The modulo
+ @return        The positive modulo
+ */
+long positive_mod(long num, long mod);
+
+
+
+/** Integer division with constant downward rounding (e.g. -15/7 = -3)
+ @ingroup    math
+ @param        num    The dividend
+ @param        div    The divisor
+ @return        The integer division rounded down
+ */
+long integer_div_round_down(long num, long div);
+
 
 
 /**	Integer power

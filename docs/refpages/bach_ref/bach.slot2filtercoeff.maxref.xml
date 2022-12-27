@@ -11,6 +11,8 @@
 
 	<description>
 		Converts the llll content of a given slot,
+		of type "dynfilter", into a list of messages for <o>line~</o> objects, which
+		will be used to drive a <o>filtercoeff~</o>, according to the slot content.
 	</description>
 
 	<!--METADATA-->
@@ -257,6 +259,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>

@@ -1,7 +1,7 @@
 /*
  *  args.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -564,7 +564,8 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
             if (patcher_classname == gensym("pfft~") || 
                 patcher_classname == gensym("poly~") ||
                 patcher_classname == gensym("dynamicdsp~") ||
-                patcher_classname == gensym("dynamicserial~")) {
+                patcher_classname == gensym("dynamicserial~") ||
+                patcher_classname == gensym("ears.process~")) {
                 err = object_obex_lookup(box, gensym("#B"), (t_object **) &pfftbox);  // it's a poly
                 patcherargs = (t_atombuf *) pfftbox->b_binbuf;
             } else

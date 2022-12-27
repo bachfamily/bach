@@ -1,7 +1,7 @@
 /*
  *  conditional.hpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -470,13 +470,6 @@ public:
     
     t_llll *eval(t_execEnv const &context) {
         t_llll **lists = (t_llll**) bach_newptr(count * sizeof(t_llll*));
-        
-        /*
-         t_execEnv childContext(&context);
-         childContext.setUniquePseudovariables(dataPseudovariables);
-         childContext.setUniquePseudovariables(addressPseudovariables);
-         childContext.setLocalVariables(localVariableNames);
-         */
         
         // t_int32 maxdepth, long scalarmode, long recursionmode, long iterationmode, long spikemode, long unwrap
         t_atom_long maxdepth = 1;

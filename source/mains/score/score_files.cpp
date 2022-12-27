@@ -1,7 +1,7 @@
 /*
  *  score_files.cpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -19,6 +19,7 @@
 
 #include "score_files.h"
 #ifdef MAC_VERSION
+#include "unistd.h"
 #include "pwd.h"
 #endif
 #ifdef WIN_VERSION
@@ -91,13 +92,13 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
     char filename[2048];
     t_dictionary *dict = NULL;
     
-    long parenthesizedquartertones = 0;
-    long lyricsslot = x->r_ob.link_lyrics_to_slot;
-    long noteheadslot = x->r_ob.link_notehead_to_slot;
-    long articulationsslot = x->r_ob.link_articulations_to_slot;
-    long dynamicsslot = x->r_ob.link_dynamics_to_slot;
-    long directionsslot = x->r_ob.link_annotation_to_slot;
-    long import_lyrics = 1, import_noteheads = 1, import_articulations = 1, import_dynamics = 1, import_directions = 1;
+    t_atom_long parenthesizedquartertones = 0;
+    t_atom_long lyricsslot = x->r_ob.link_lyrics_to_slot;
+    t_atom_long noteheadslot = x->r_ob.link_notehead_to_slot;
+    t_atom_long articulationsslot = x->r_ob.link_articulations_to_slot;
+    t_atom_long dynamicsslot = x->r_ob.link_dynamics_to_slot;
+    t_atom_long directionsslot = x->r_ob.link_annotation_to_slot;
+    t_atom_long import_lyrics = 1, import_noteheads = 1, import_articulations = 1, import_dynamics = 1, import_directions = 1;
 
     llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiiiiii",
                                          gensym("filename"), &filename_sym,
@@ -187,7 +188,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
             
             filename_sym = gensym(container.c_str());
             
-            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
+            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 4, &outtype, filename) != MAX_ERR_NONE) {
                 object_error((t_object *) x, "Can't open file");
                 goto score_doread_error_dontclose;
             }
@@ -206,7 +207,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
             bach_freeptr(buffer);
             
             filename_sym = gensym(rootfilepath.c_str());
-            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
+            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 4, &outtype, filename) != MAX_ERR_NONE) {
                 object_error((t_object *) x, "Can't open file");
                 goto score_doread_error_dontclose;
             }
@@ -276,14 +277,14 @@ void score_exportom(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
     t_llll *score_as_llll_for_om = get_score_values_as_llll(x, k_CONSIDER_FOR_EXPORT_OM, k_HEADER_ALL, false, false, true, false);
-    llll_writetxt((t_object *) x, score_as_llll_for_om, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
+    llll_writetxt((t_object *) x, score_as_llll_for_om, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_PARENS, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 void score_exportpwgl(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
     t_llll *score_as_llll_for_pwgl = get_score_values_as_llll_for_pwgl(x);
-    llll_writetxt((t_object *) x, score_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
+    llll_writetxt((t_object *) x, score_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_PARENS, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 void score_exportmidi(t_score *x, t_symbol *s, long argc, t_atom *argv)
@@ -327,11 +328,12 @@ t_rational ticks2rat(long ticks, long time_division)
 
 t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
 {
-    long format = 1;
+    t_atom_long format = 1;
     long num_tracks;
-    long time_division = 960;
+    t_atom_long time_division = 960;
     double tempo = 60;
-    long tempo_interp_sampling_interval = 240;
+    t_atom_long tempo_interp_sampling_interval = 0;
+    t_rational tempo_interp_sampling_figure({1, 16});
     long timesig_num = 4, timesig_den = 4; // unused for now, that's ok
     long i;
     long voice_num;
@@ -340,7 +342,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     t_marker *this_marker;
     unsigned char *buffer = NULL;
     long first_onset = 0;
-    long export_markers = 1;
+    t_atom_long export_markers = 1;
     t_llll *voices_to_write = NULL;
     t_scorevoice *firstvoice = NULL;
     t_symbol *filename_sym = NULL;
@@ -352,15 +354,25 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     t_scorevoice *longest_voice = NULL;
     long longest_voice_num = 0;
     t_timepoint longest_voice_start;
+    t_atom_long exportbarlines = 1;
+    t_atom_long exportdivisions = 1;
 
     
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiil",
-                   _sym_filename, &filename_sym,
-                   gensym("exportmarkers"), &export_markers,
-                   gensym("format"), &format,
-                   gensym("resolution"), &time_division,
-                   gensym("temporampsamplingrate"), &tempo_interp_sampling_interval,
-                   gensym("voices"), &voices_to_write);
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiirl",
+        _sym_filename, &filename_sym,
+        gensym("exportmarkers"), &export_markers,
+        gensym("exportbarlines"), &exportbarlines,
+        gensym("exportdivisions"), &exportdivisions,
+        gensym("format"), &format,
+        gensym("resolution"), &time_division,
+        gensym("temporampsamplingrate"), &tempo_interp_sampling_interval,
+        gensym("temporampsamplingfigure"), &tempo_interp_sampling_figure,
+        gensym("voices"), &voices_to_write
+        );
+    
+    if (tempo_interp_sampling_interval == 0) {
+        tempo_interp_sampling_interval = rat2ticks(&tempo_interp_sampling_figure, time_division);
+    }
     
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -397,7 +409,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             this_marker_voice = longest_voice;
             this_voice_start = longest_voice_start;
         } else {
-            t_measure *this_marker_measure = (t_measure *) shashtable_retrieve(x->r_ob.IDtable, this_marker->measure_attach_ID);
+            t_measure *this_marker_measure = (t_measure *) notation_item_retrieve_from_ID((t_notation_obj *)x, this_marker->measure_attach_ID);
             this_marker_voice = this_marker_measure->voiceparent;
             long this_marker_voicenum = this_marker_voice->v_ob.number;
             this_voice_start = build_timepoint_with_voice(0, long2rat(0), this_marker_voicenum);
@@ -437,10 +449,38 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             measure_start_tp = build_timepoint_with_voice(this_measure_number, long2rat(0), voice_num);
             measure_start_rat = get_sym_durations_between_timepoints(this_scorevoice, voice_start_tp, measure_start_tp);
             
+            long measure_start_ticks = rat2ticks(&measure_start_rat, time_division);
+            
+            if (exportbarlines && this_measure_number != 0) {
+                append_barline_to_midi_export(track_ll[0], measure_start_ticks);
+            }
+            
             if ((this_measure_number == 0 && voice_num == 0) || new_ts_num != timesig_num || new_ts_den != timesig_den) {
                 timesig_num = new_ts_num;
                 timesig_den = new_ts_den;
-                append_timesig_to_midi_export(track_ll[0], timesig_num, timesig_den, rat2ticks(&measure_start_rat, time_division));
+                append_timesig_to_midi_export(track_ll[0], timesig_num, timesig_den, measure_start_ticks);
+            }
+            
+            if (exportdivisions) {
+                t_rational ts_rat({timesig_num, timesig_den});
+                //t_rational div({1, timesig_den});
+                t_llll *boxes = this_measure->custom_boxing ?
+                    this_measure->boxes :
+                    ts_to_beaming_boxes((t_notation_obj *) x, &this_measure->timesignature, NULL, NULL);
+                t_llllelem *boxElem;
+                t_rational divPos({0, 1});
+                t_rational thisDiv({0, 1});
+                for (boxElem = boxes->l_head; boxElem; boxElem = boxElem->l_next) {
+                    thisDiv = hatom_getrational(&boxElem->l_hatom);
+                    divPos += thisDiv;
+                    append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divPos, time_division));
+                }
+                
+                if (thisDiv > 0) { // one never knows...
+                    for ( ; divPos < ts_rat; divPos += thisDiv)
+                        append_division_to_midi_export(track_ll[0], measure_start_ticks + rat2ticks(&divPos, time_division));
+
+                }
             }
             
             // if there is no tempo at the beginning of the score, start with the default tempo 
@@ -796,11 +836,93 @@ long articulation_to_lilypond_buf(t_notation_obj *r_ob, long articulation_ID, ch
 }
 
 
+long dynamic_mark_to_lilypond(t_dynamics_mark *mark, char *buf, long bufalloc)
+{
+    long cur = 0;
+    if (bufalloc <= 0)
+        return 0;
+    
+    buf[0] = 0;
+    if (mark->num_words == 0) {
+        // nothing
+    } else if (mark->num_words > 1) {
+        // this is a direction
+    } else if (mark->num_words == 1 && (!mark->text_deparsed[0] || strlen(mark->text_deparsed[0]->s_name) == 0)) {
+        // nothing
+    } else {
+        char *n = mark->text_deparsed[0]->s_name;
+        if (strcmp(n, "|") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\!");
+        else if (strcmp(n, "ppppp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\ppppp");
+        else if (strcmp(n, "pppp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\pppp");
+        else if (strcmp(n, "ppp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\ppp");
+        else if (strcmp(n, "pp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\pp");
+        else if (strcmp(n, "p") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\p");
+        else if (strcmp(n, "mp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\mp");
+        else if (strcmp(n, "mf") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\mf");
+        else if (strcmp(n, "f") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\f");
+        else if (strcmp(n, "ff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\ff");
+        else if (strcmp(n, "fff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\fff");
+        else if (strcmp(n, "ffff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\ffff");
+        else if (strcmp(n, "fffff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\fffff");
+        else if (strcmp(n, "fp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\fp");
+        else if (strcmp(n, "sf") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\sf");
+        else if (strcmp(n, "sff") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\sff");
+        else if (strcmp(n, "sp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\sp");
+        else if (strcmp(n, "spp") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\spp");
+        else if (strcmp(n, "sfz") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\sfz");
+        else if (strcmp(n, "rfz") == 0)
+            cur += snprintf_zero(buf+cur, bufalloc - cur, "\\rfz");
+    }
+    return cur;
+}
+
+long dynamics_to_lilypond(t_dynamics *dyn, char *buf, long bufalloc)
+{
+    long cur = 0;
+    buf[0] = 0;
+    
+    if (!dyn)
+        return cur;
+    
+    for (t_dynamics_mark *mark = dyn->firstmark; mark; mark = mark->next) {
+        if (dyn->text_deparsed == gensym("|"))
+            cur += snprintf_zero(buf+cur, bufalloc-cur, "\\!");
+        else
+            cur += dynamic_mark_to_lilypond(mark, buf+cur, bufalloc-cur);
+
+        if (mark->hairpin_to_next > 0)
+            cur += snprintf_zero(buf+cur, bufalloc-cur, "\\<");
+        else if (mark->hairpin_to_next < 0)
+            cur += snprintf_zero(buf+cur, bufalloc-cur, "\\>");
+    }
+    return cur;
+}
+
 long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
 {
     long cur = 0, j;
     char is_all_chord_tie_to_next = chord_is_all_tied_to(r_ob, ch, false, NULL);
-    
+    t_dynamics *dyn = chord_get_dynamics(ch);
+
     // estimating (upper bound!) on length of the string
     long estimated_buffer_length = 0;
     t_note *note;
@@ -810,7 +932,13 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
     estimated_buffer_length += 2; // in case we have a chord
     estimated_buffer_length += 20; // chars needed to write the duration (uuuupper bound)
     estimated_buffer_length += ch->num_dots; // number of dots
-    for (note = ch->firstnote; note; note = note->next) 
+    
+    char dynbuf[2048];
+    dynbuf[0] = 0;
+    if (dyn)
+        estimated_buffer_length += dynamics_to_lilypond(dyn, dynbuf, 2048);
+    
+    for (note = ch->firstnote; note; note = note->next)
         estimated_buffer_length += 40 * note->num_articulations;
     estimated_buffer_length += 40 * ch->num_articulations;
 
@@ -869,6 +997,11 @@ long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
     long i; 
     for (i = 0; i < ch->num_dots; i++)
         (*buf)[cur++] = '.';
+
+    if (dyn) {
+        strncpy((*buf) + cur, dynbuf, strlen(dynbuf));
+        cur += strlen(dynbuf);
+    }
 
     // articulations
     if (ch->num_notes == 1) {
@@ -1025,7 +1158,7 @@ void write_tempo_interp_if_needed(t_notation_obj *r_ob, char *must_start_tempo_s
 
 t_max_err score_dowritelilypond_pdf(t_score *x, t_symbol *s, long ac, t_atom *av)
 {
-    char filename[MAX_FILENAME_CHARS];
+    char filename[MAX_PATH_CHARS];
     char fullname[MAX_PATH_CHARS];
     char fullname_conform[MAX_PATH_CHARS];
     short path = 0;
@@ -1037,7 +1170,8 @@ t_max_err score_dowritelilypond_pdf(t_score *x, t_symbol *s, long ac, t_atom *av
     t_max_err err = score_dowritelilypond(x, s, 4, new_av);
 
     if (!err) {
-        path_topathname(path, filename, fullname);
+        if (path_topathname(path, filename, fullname))
+            strncpy(fullname, filename, MAX_PATH_CHARS);
         long l = strlen(fullname);
 #ifdef MAC_VERSION
         path_nameconform(fullname, fullname_conform, PATH_STYLE_MAX, PATH_TYPE_BOOT);
@@ -1178,8 +1312,13 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
                 err = MAX_ERR_GENERIC;
             }
         } else {
-            strncpy_zero(filename, filename_sym->s_name, MAX_PATH_CHARS);
-            *path = path_getdefault();
+            char *located = bach_ezlocate_file(filename_sym->s_name, NULL);
+            if (located) {
+                snprintf_zero(filename, MAX_PATH_CHARS, "%s", located);
+                bach_freeptr(located);
+            }
+//            strncpy_zero(filename, filename_sym->s_name, MAX_PATH_CHARS);
+//            *path = path_getdefault();
         }
         
         if (!err) {

@@ -11,6 +11,7 @@
 
 	<description>
 		The purpose of <o>bach.change</o> is the to act like a <o>change</o> object for lllls,
+		outputting the incoming llll only if it differs from the one previously entered.
 	</description>
 
 	<!--METADATA-->
@@ -137,6 +138,9 @@
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.change</o> is initialized with a "null" llll, so if you send
+		a "null" llll as first llll, it will not be let through. <br />
+		A <m>matchtype</m> argument will tell if type has to be taken into account
+		for equality testing.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -177,6 +181,9 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.change</o> is initialized with a "null" llll, so if you send
+		a "null" llll as first llll, it will not be let through. <br />
+		A <m>matchtype</m> argument will tell if type has to be taken into account
+		for equality testing.
 			</description>
 		</entry>
 		<entry name ="Keywords">

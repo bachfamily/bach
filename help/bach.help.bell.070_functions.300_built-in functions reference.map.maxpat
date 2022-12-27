@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 4,
+			"minor" : 1,
+			"revision" : 9,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 677.0, 195.0, 617.0, 539.0 ],
+		"rect" : [ 243.0, 155.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -74,11 +75,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"linecount" : 2,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 417.0, 410.5, 170.0, 40.0 ],
+					"patching_rect" : [ 503.0, 396.0, 104.0, 69.0 ],
 					"text" : "Unwrap the sublists only if their length is > 2."
 				}
 
@@ -108,18 +109,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "map($x1, ($a -> $a::1), ($a -> length($a::1) <= 1)) ",
+					"code" : "map($x1, ($a -> $a::1), ($a -> length($a::1) <= 1) @maxdepth -1) ",
 					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 419.0, 403.0, 23.0 ],
+					"patching_rect" : [ 9.0, 419.0, 492.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80104
 					}
 ,
-					"text" : "bach.eval map($x1\\, ($a -> $a::1)\\, ($a -> length($a::1) <= 1)) @out m"
+					"text" : "bach.eval map($x1\\, ($a -> $a::1)\\, ($a -> length($a::1) <= 1) @maxdepth -1) @out m"
 				}
 
 			}
@@ -132,7 +134,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 322.0, 521.0, 65.0 ],
+					"patching_rect" : [ 9.0, 313.0, 521.0, 65.0 ],
 					"text" : "If a sublist is encountered and maxdepth has not been received yet, it is possible to choose whether to enter it and run pass the modification function its elements one by one, or pass the whole sublist. This is accomplished through the \"askfunction\" argument, that can be set to a function receiving the same arguments as the modification function.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -171,6 +173,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 252.0, 561.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -226,6 +229,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 105.0, 255.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -243,7 +247,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 270.0, 61.5, 158.0, 108.0 ],
-					"text" : "Arguments:\nllll\nmodfunction (default: null)\naskfunction (default: null)\ndepth\nmindepth (default: 1)\nmaxdepth (default: -1)",
+					"text" : "Arguments:\nllll\nmodfunction (default: null)\naskfunction (default: null)\ndepth\nmindepth (default: 1)\nmaxdepth (default: 1)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -377,7 +381,7 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "bach.help.searchtag.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1

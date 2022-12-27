@@ -223,7 +223,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 50.0, 192.0, 231.0, 22.0 ],
-					"text" : "addslot [1 [0. 0. 0.] [0.5 20 0.] [1. 100 0.]]"
+					"text" : "setslot [1 [0. 0. 0.] [0.5 20 0.] [1. 100 0.]]"
 				}
 
 			}
@@ -362,7 +362,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.0, 166.0, 127.0, 22.0 ],
-					"text" : "addslot [4 0.5 0.4 0.4]"
+					"text" : "setslot [4 0.5 0.4 0.4]"
 				}
 
 			}

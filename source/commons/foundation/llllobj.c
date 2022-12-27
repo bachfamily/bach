@@ -1,7 +1,7 @@
 /*
  *  llllobj.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -433,7 +433,7 @@ t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg,
 
     } else {
         if (msg == _sym_list || msg == _sym_int || msg == _sym_float || msg == NULL) {
-            inlist = llll_parse(ac, av);
+            inlist = llll_parse(ac, av, ignore);
         } else {
             new_ac = ac + 1;
             new_av = (t_atom *) bach_newptr(sizeof (t_atom) * new_ac);
@@ -593,6 +593,13 @@ void llllobj_gunload_llll(t_object *x, e_llllobj_obj_types type, t_llll *inll, l
             llll_release(inll);
             break;
     }
+}
+
+
+t_llll* llllobj_get_loaded_llll(t_object *x, e_llllobj_obj_types type, long outnum)
+{
+	t_llllobj_out *cache = llllobj_get_out(x, type) + outnum;
+	return cache->b_ll;
 }
 
 void llllobj_gunload_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type, t_llll *inll, t_atom_ulong phonenumber, long outnum)
@@ -1139,6 +1146,8 @@ t_max_err llllobj_test(void)
     }
     llll_free(empty);
     llllelem_free(nothing);
+	object_method_typed(bach, gensym("initbifs"), 0, NULL, NULL);
+//// CULPRIT
     return MAX_ERR_NONE;
 }
 
@@ -2248,7 +2257,7 @@ void llllobj_class_add_versionnumber_attr(t_class *c, e_llllobj_obj_types type)
 	 atom_setsym(&a, gensym("fonts"));
 	 atomarray_appendatom(aa, &a);
 
-	 fileusage_addpackage(w, "bach", (t_object*)aa);
+	 fileusage_addpackage(w, "bach", aa);
  // fileusage takes ownership of aa and thus will take care of freeing it
  }
 
@@ -2509,7 +2518,7 @@ t_max_err llllobj_obj_rebuild_notify(t_llllobj_object *x, t_symbol *s, t_symbol 
 #endif
     method bachnotify_method = zgetfn((t_object *) x, gensym("bachnotify"));
     if (bachnotify_method) {
-        (bachnotify_method)((t_object *) x, gensym("bachnotify"), msg, sender, data);
+		CALL_METHOD_SAFE(void, (t_object*, t_symbol*, t_symbol*, void*, void*), bachnotify_method, (t_object *) x, gensym("bachnotify"), msg, sender, data);
     }
     return MAX_ERR_NONE;
 }
@@ -2532,7 +2541,7 @@ t_max_err llllobj_jbox_rebuild_notify(t_llllobj_jbox *x, t_symbol *s, t_symbol *
 #endif
     method bachnotify_method = zgetfn((t_object *) x, gensym("bachnotify"));
     if (bachnotify_method) {
-        (bachnotify_method)((t_object *) x, gensym("bachnotify"), msg, sender, data);
+		CALL_METHOD_SAFE(void, (t_object*, t_symbol*, t_symbol*, void*, void*), bachnotify_method, (t_object *) x, gensym("bachnotify"), msg, sender, data);
     }
     return MAX_ERR_NONE;
 }
@@ -2553,7 +2562,7 @@ t_max_err llllobj_pxobj_rebuild_notify(t_llllobj_pxobject *x, t_symbol *s, t_sym
 #endif
     method bachnotify_method = zgetfn((t_object *) x, gensym("bachnotify"));
     if (bachnotify_method) {
-        (bachnotify_method)((t_object *) x, gensym("bachnotify"), msg, sender, data);
+		CALL_METHOD_SAFE(void, (t_object*, t_symbol*, t_symbol*, void*, void*), bachnotify_method, (t_object *) x, gensym("bachnotify"), msg, sender, data);
     }
     return MAX_ERR_NONE;
 }
@@ -2576,7 +2585,7 @@ t_max_err llllobj_pxjbox_rebuild_notify(t_llllobj_pxjbox *x, t_symbol *s, t_symb
 #endif
     method bachnotify_method = zgetfn((t_object *) x, gensym("bachnotify"));
     if (bachnotify_method) {
-        (bachnotify_method)((t_object *) x, gensym("bachnotify"), msg, sender, data);
+		CALL_METHOD_SAFE(void, (t_object*, t_symbol*, t_symbol*, void*, void*), bachnotify_method, (t_object *) x, gensym("bachnotify"), msg, sender, data);
     }
     return MAX_ERR_NONE;
 }
@@ -2754,36 +2763,29 @@ t_atom_long llll_getlong(t_llll *ll, t_atom_long def)
     return ll->l_head ? hatom_getlong(&ll->l_head->l_hatom) : def;
 }
 
-char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type)
+
+double llll_getdouble(t_llll *ll, double def)
 {
-    char filename[MAX_FILENAME_CHARS];
-    short path = 0;
-    
-    if (!file_name)
-        return NULL;
-    
-    if (file_type) *file_type = 0;
-    
-    if (path_frompathname(file_name, &path, filename)) {
-        t_fourcc type;
-        char file_path_str[MAX_FILENAME_CHARS];
-        strncpy_zero(file_path_str, file_name, MAX_FILENAME_CHARS);
-        if (!locatefile_extended(file_path_str, &path, &type, &type, -1))  {
-            char *filenameok2 = (char *) bach_newptr(MAX_FILENAME_CHARS);
-            path_topathname(path, file_path_str, filename);
-            path_nameconform(filename, filenameok2, PATH_STYLE_MAX,
-                             PATH_TYPE_BOOT);
-            if (file_type) *file_type = type;
-            return filenameok2;
-        }
-    } else {
-        char filenameok[MAX_FILENAME_CHARS];
-        char *filenameok2 = (char *) bach_newptr(MAX_FILENAME_CHARS);
-        path_topathname(path, filename, filenameok);
-        path_nameconform(filenameok, filenameok2, PATH_STYLE_MAX,
-                         PATH_TYPE_BOOT);
-        return filenameok2;
-    }
-    
-    return NULL;
+	return ll->l_head ? hatom_getdouble(&ll->l_head->l_hatom) : def;
 }
+
+t_object *getParentEarsProcess(t_object *x)
+{
+	t_symbol *s = gensym(EARS_PROCESS_SPECIALSYM);
+	t_object *t = s->s_thing;
+	if (t && !NOGOOD(t) && object_classname(t) == gensym("ears.process~"))
+		return gensym(EARS_PROCESS_SPECIALSYM)->s_thing;
+	
+	t_object *box = x;
+	t_symbol *containerName;
+	do {
+		t_object *patcher = nullptr;
+		object_obex_lookup(box, gensym("#P"), (t_object **) &patcher);
+		if (!(box = object_attr_getobj(patcher, gensym("box"))))
+			object_method(patcher, gensym("getassoc"), &box);
+		containerName = box ? object_classname(box) : nullptr;
+	} while (containerName && containerName != gensym("ears.process~"));
+	
+	return box;
+}
+

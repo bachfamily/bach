@@ -1,7 +1,7 @@
 /*
  *  notation_files.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -30,13 +30,15 @@ BEGIN_CHECK_LINKAGE
 // sorted in priority order in a midi file
 // (that is, if a noteon a keysig have the same onset, the keysig will happen first)
 typedef enum _midievent_types {
-    E_TIMESIG	= 1,
-	E_KEYSIG	= 2,
-	E_TEMPO		= 3,
-	E_MARKER	= 4,
-	E_BARLINE	= 5,
-	E_NOTEON	= 6,
-	E_NOTEOFF	= 7
+    E_TIMESIG	    = 1,
+	E_KEYSIG	    = 2,
+	E_TEMPO		    = 3,
+	E_MARKER	    = 4,
+	E_BARLINE	    = 5,
+    E_DIVISION      = 6,
+    E_SUBDIVISION   = 7,
+	E_NOTEON	    = 8,
+	E_NOTEOFF	    = 9
 } e_midievent_types;
 
 typedef struct _tempochange {
@@ -61,6 +63,8 @@ void append_keysig_to_midi_export(t_llll *track_ll, t_voice *voice);
 void append_note_to_midi_export(t_llll *track_ll, long type, long pitch, long vel, long channel, long time);
 void append_marker_to_midi_export(t_llll *track_ll, t_atomarray *name, long time);
 void append_barline_to_midi_export(t_llll *track_ll, long time);
+void append_division_to_midi_export(t_llll *track_ll, long time);
+void append_subdivision_to_midi_export(t_llll *track_ll, long time);
 
 
 long create_raw_midi_data_buffer(t_llll **track_ll, long num_tracks, long format, long time_division, long time_offset, unsigned char **buffer);

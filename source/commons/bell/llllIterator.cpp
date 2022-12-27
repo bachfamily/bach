@@ -1,7 +1,7 @@
 /*
  *  llllIterator.cpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -25,7 +25,7 @@ long llllIterator<1>::iterCmd(t_iterationData *x, long cmd) {
     
     if (x->evaluate) { // this is not true at the first call, or if no atom has been passed for at least one list
         t_hatom result_hatom;
-        (x->fn)(x->data, &result_hatom);
+        CALL_METHOD_SAFE(void, (t_hatom*, t_hatom*), x->fn, x->data, &result_hatom);
         result_llll = llll_get();
         llll_appendhatom(result_llll, &result_hatom, 0, WHITENULL_llll);
         collector_get(x->collector, result_llll, 0, 0);
@@ -46,7 +46,8 @@ long llllIterator<2>::iterCmd(t_iterationData *x, long cmd) {
         x->data[0].h_type != H_NOTHING &&
         x->data[1].h_type != H_NOTHING) { // this is not true at the first call, or if no atom has been passed for at least one list
         t_hatom result_hatom;
-        (x->fn)(&x->data[0], &x->data[1], &result_hatom);
+        CALL_METHOD_SAFE(void, (t_hatom*, t_hatom*, t_hatom*),
+        x->fn, &x->data[0], &x->data[1], &result_hatom);
         result_llll = llll_get();
         llll_appendhatom(result_llll, &result_hatom, 0, WHITENULL_llll);
         collector_get(x->collector, result_llll, 0, 0);
@@ -66,7 +67,7 @@ long llllIterator<3>::iterCmd(t_iterationData *x, long cmd) {
     
     if (x->evaluate) { // this is not true at the first call, or if no atom has been passed for at least one list
         t_hatom result_hatom;
-        (x->fn)(&x->data[0], &x->data[1], &x->data[2], &result_hatom);
+        CALL_METHOD_SAFE(void, (t_hatom*, t_hatom*, t_hatom*, t_hatom*), x->fn, &x->data[0], &x->data[1], &x->data[2], &result_hatom);
         result_llll = llll_get();
         llll_appendhatom(result_llll, &result_hatom, 0, WHITENULL_llll);
         collector_get(x->collector, result_llll, 0, 0);

@@ -1,7 +1,7 @@
 /*
  *  notation_export.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -134,12 +134,12 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     t_llll *arguments = (t_llll *) atom_getobj(av);
     char ok = true;
     t_symbol *view = gensym("line");
-    long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1, onsetindomain = 0, adaptwidth = 0;
+    t_atom_long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1, onsetindomain = 0, adaptwidth = 0;
     t_symbol *filename_sym = NULL, *type_sym = NULL;
     double mspersystem = r_ob->domain, uxperline = r_ob->domain_ux;
     t_llll *tuttipoint_system_layout = NULL;
     double new_inner_width = 0, postdomain_uwidth = -1;
-    long systemvshift_pixels = 0;
+    t_atom_long systemvshift_pixels = 0;
     
     llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssididiiiid",
                                          _sym_filename, &filename_sym,
@@ -240,6 +240,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         double length_ms_prev = r_ob->length_ms;
         double length_ux_prev = r_ob->length_ux;
         double screen_ms_start_prev = r_ob->screen_ms_start;
+        double screen_ux_start_prev = r_ob->screen_ux_start;
         long fade_predomain_prev = r_ob->fade_predomain;
         long onsetindomain_prev = r_ob->onset_in_domain;
         double postdomain_prev = r_ob->postdomain_width;
@@ -269,9 +270,9 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                     if (mspersystem != r_ob->domain && mspersystem > 0) {
                         // either we change the inner_width or we change the zoom factor.
                         if (adaptwidth) {
-                            r_ob->inner_width = r_ob->postdomain_width + mspersystem * (CONST_X_SCALING * r_ob->zoom_x * r_ob->zoom_y) - (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y);
+                            r_ob->inner_width = r_ob->postdomain_width + mspersystem * (CONST_X_SCALING * r_ob->zoom_x * r_ob->zoom_y) - (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y);
                         } else {
-                            r_ob->zoom_x = (r_ob->inner_width + (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) - r_ob->postdomain_width) / (mspersystem * CONST_X_SCALING * r_ob->zoom_y);
+                            r_ob->zoom_x = (r_ob->inner_width + (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) - r_ob->postdomain_width) / (mspersystem * CONST_X_SCALING * r_ob->zoom_y);
                         }
                     }
                     r_ob->inner_height = notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y;
@@ -365,10 +366,10 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                             }
                             
                             if (num_tuttipoint_slices == 1) {
-                                (r_ob->inscreenmeas_function)((t_object *)r_ob, tuttipoint_get_first_measure(r_ob, from), tuttipoint_get_first_measure(r_ob, to));
+                                (r_ob->inscreenmeas_function)((t_object *)r_ob, tuttipoint_get_first_measure(r_ob, from), tuttipoint_get_first_measure(r_ob, to), false);
                             } else if (num_tuttipoint_slices > 1) {
                                 if (slice_index == 1)
-                                    (r_ob->inscreenmeas_function)((t_object *)r_ob, tuttipoint_get_first_measure(r_ob, from), tuttipoint_get_first_measure(r_ob, to));
+                                    (r_ob->inscreenmeas_function)((t_object *)r_ob, tuttipoint_get_first_measure(r_ob, from), tuttipoint_get_first_measure(r_ob, to), false);
                                 else {
                                     if (slice_index == num_tuttipoint_slices)
                                         r_ob->screen_ux_start = to->offset_ux + to->width_ux - r_ob->domain_ux;
@@ -388,7 +389,10 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             
             jgraphics_set_source_rgba(shot_g, 0, 0, 0, 1.);
             
+            char notify_when_painted_keep = r_ob->notify_when_painted;
+            r_ob->notify_when_painted = false;
             (r_ob->paint_ext_function)((t_object *)r_ob, NULL, shot_g, shot_rect);
+            r_ob->notify_when_painted = notify_when_painted_keep;
             
             if (view == gensym("scroll") || view == gensym("page")) {
                 jgraphics_image_surface_draw(page_g, shot_surface, shot_rect, build_rect(0, (i-1) * (h + systemvshift_pixels), w, h));
@@ -438,6 +442,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             r_ob->inner_height = inner_height_prev;
             
             r_ob->screen_ms_start = screen_ms_start_prev;
+            r_ob->screen_ux_start = screen_ux_start_prev;
             r_ob->length_ms = length_ms_prev;
             r_ob->length_ux = length_ux_prev;
             

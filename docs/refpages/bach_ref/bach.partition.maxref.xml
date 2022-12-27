@@ -147,6 +147,8 @@
 	<!--DISCUSSION-->
 	<discussion>
 		Integer partition are often displayed in Young diagrams.
+		The integer partition algorithm is inspired by the iterative algorithm exposed in
+		http://jeromekelleher.net/generating-integer-partitions.html
 	</discussion>
 
 	<!--SEEALSO-->
@@ -177,6 +179,8 @@
 		<entry name ="More details">
 			<description>
 		Integer partition are often displayed in Young diagrams.
+		The integer partition algorithm is inspired by the iterative algorithm exposed in
+		http://jeromekelleher.net/generating-integer-partitions.html
 			</description>
 		</entry>
 		<entry name ="Keywords">

@@ -1,7 +1,7 @@
 /*
  *  writesdif.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -312,7 +312,7 @@ void writesdif_dowrite(t_writesdif *x, t_symbol *s, long ac, t_atom *av)
 					case H_LONG:	matrix_type = eInt8;	break;
 					case H_DOUBLE:	matrix_type = eFloat8;	break;
 					case H_SYM:		matrix_type = eText;	break;
-					default:		break;
+                    default:		matrix_type = eFloat8;  break;
 				}
 				llll_prependlong(matrix_ll, row_size, 0, WHITENULL_llll);
 				llll_prependlong(matrix_ll, matrix_type, 0, WHITENULL_llll);
@@ -324,7 +324,8 @@ void writesdif_dowrite(t_writesdif *x, t_symbol *s, long ac, t_atom *av)
 	
 	if (!s || s == gensym("")) {      // if no argument supplied, ask for file
 		strncpy_zero(filename, "Untitled.sdif", 512);
-		if (saveasdialog_extended(filename, &path, &outtype, NULL, 0))     // non-zero: user cancelled
+        t_fourcc types = 'SDIF';
+		if (saveasdialog_extended(filename, &path, &outtype, &types, 1))     // non-zero: user cancelled
 			goto writesdif_exit;
 	} else {
 		strcpy(filename, s->s_name);
@@ -497,7 +498,8 @@ void writesdif_dowrite(t_writesdif *x, t_symbol *s, long ac, t_atom *av)
 
 		for (frame_data_elem = frame_data_elem->l_next; frame_data_elem; frame_data_elem= frame_data_elem->l_next) {
 			t_llll *matrix_ll = frame_data_elem->l_hatom.h_w.w_llll;
-			long nrows = matrix_ll->l_size - 3; // type, ncols, sig
+            t_llll *matrix_data_ll = matrix_ll->l_tail->l_hatom.h_w.w_llll;
+			long nrows = matrix_data_ll->l_size; // type, ncols, sig
 			t_llllelem *matrix_elem = matrix_ll->l_head;
 			SdifDataTypeET matrix_type = (SdifDataTypeET) matrix_elem->l_hatom.h_w.w_long;
 			matrix_elem = matrix_elem->l_next;
@@ -506,11 +508,7 @@ void writesdif_dowrite(t_writesdif *x, t_symbol *s, long ac, t_atom *av)
 			SdifSignature matrix_signature = writesdif_get_signature_from_hatom(x, &matrix_elem->l_hatom);
 			SdifFSetCurrMatrixHeader(file, matrix_signature, matrix_type, nrows, ncols);
 			framesize += SdifFWriteMatrixHeader(file);
-			
-			matrix_elem = matrix_elem->l_next;
-			t_llll *matrix_data_ll = matrix_elem->l_hatom.h_w.w_llll;
 			t_llllelem *matrix_data_elem;
-			
 			long row;
 			
 			for (matrix_data_elem = matrix_data_ll->l_head, row = 0; matrix_data_elem; matrix_data_elem = matrix_data_elem->l_next, row++) {
@@ -552,8 +550,8 @@ writesdif_exit:
 
 long writesdif_cmp_by_time(void *dummy, t_llllelem *a, t_llllelem *b)
 {
-	t_atom_long strid1 = a->l_hatom.h_w.w_llll->l_head->l_next->l_next->l_hatom.h_w.w_double;
-	t_atom_long strid2 = b->l_hatom.h_w.w_llll->l_head->l_next->l_next->l_hatom.h_w.w_double;
+	double strid1 = a->l_hatom.h_w.w_llll->l_head->l_next->l_next->l_hatom.h_w.w_double;
+	double strid2 = b->l_hatom.h_w.w_llll->l_head->l_next->l_next->l_hatom.h_w.w_double;
 	return strid1 <= strid2;
 	
 }

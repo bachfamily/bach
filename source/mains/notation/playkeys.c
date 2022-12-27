@@ -1,7 +1,7 @@
 /*
  *  playkeys.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -20,39 +20,39 @@
 /**
  @file
  playkeys.c
- 
+
  @name
  bach.playkeys
- 
+
  @realname
  bach.playkeys
- 
+
  @type
  object
- 
+
  @module
  bach
- 
+
  @author
  bachproject
- 
+
  @digest
  Extract play information
- 
+
  @description
  Outputs selected parameters of <o>bach.score</o>'s and <o>bach.roll</o>'s playout information.
- 
+
  @discussion
- 
+
  @category
  bach, bach objects, bach notation
- 
+
  @keywords
  keys, play, unpack, unpacknote, parameter, playout, syntax
- 
+
  @seealso
  bach.keys, bach.roll, bach.score
- 
+
  @owner
  Daniele Ghisi
  */
@@ -81,6 +81,7 @@ enum playkeys_properties
     k_PLAYKEYS_MIDICHANNEL,
     k_PLAYKEYS_TIE,
     k_PLAYKEYS_VOICENUMBER,
+    k_PLAYKEYS_VOICENAME,
     k_PLAYKEYS_PATH,
     k_PLAYKEYS_MEASURENUMBER,
     k_PLAYKEYS_BREAKPOINTS,
@@ -106,6 +107,7 @@ enum playkeys_properties
     k_PLAYKEYS_ROUTER,
     k_PLAYKEYS_PLAYOFFSET, // due to partial playing
     k_PLAYKEYS_ROLE,
+    k_PLAYKEYS_CUSTOMSTARTENDSYMBOL
 };
 
 enum playkeys_incoming // incoming notation items
@@ -128,6 +130,8 @@ enum playkeys_incoming // incoming notation items
     k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND   = (1 << 15),
     k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND  = (1 << 16),
     k_PLAYKEYS_INCOMING_SCOREREST_COMMAND   = (1 << 17),
+    k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND = (1 << 18),
+    k_PLAYKEYS_INCOMING_MARKER_COMMAND   = (1 << 19),
 };
 
 
@@ -137,45 +141,53 @@ typedef struct _playkeys_key
     long        allowed_notationitems;     // a combination of playkeys_incoming
     t_symbol    *allowed_command_router;     // a command router allowed to enter
     t_hatom     specification;              // content: e.g. slot number/name
-    long        exists;                     // data actually exist for key
+    long        exists;                     // data actually exist for key; if this is 2 means it's a bang
 } t_playkeys_key;
 
 
 typedef struct _playkeys
 {
     struct llllobj_object    n_ob;
-    
+
     t_playkeys_key          *n_keys;
-    
+    long                    n_numkeys;
+
     long                    n_flattenfornotes;
     long                    n_nullmode;
     long                    n_use_default_breakpoints;
     long                    n_breakpoints_have_velocity;
-    
+
+    long                    n_autoassigncommands;
     t_llll                  *n_process;
     long                    n_notationitems_to_process;
-    
+
     t_llll                  *n_note_commands;
     t_llll                  *n_chord_commands;
     t_llll                  *n_rest_commands;
+    t_llll                  *n_marker_commands;
 
     t_atom                  n_dynamicsslot;
     t_atom                  n_articulationsslot;
     t_atom                  n_lyricsslot;
     t_atom                  n_noteheadslot;
     t_atom                  n_annotationslot;
-    
+
+    long                    n_voicefilter_size;
+    long                    n_voicefilter[CONST_MAX_VOICES];
+
     char                    n_warn_pitchrequestedmidicentreceived;
     char                    n_warn_fullpathrequestedbutnotpresent;
     char                    n_warn_measurenumberneedsfullpath;
     char                    n_warn_chordindexneedsfullpath;
     char                    n_warn_noteindexneedsfullpath;
-    
+
     char                    n_must_iterate_on_output;
-    
+
     t_bach_atomic_lock      n_process_lock;
-    
+
     t_llll                    *n_empty;
+
+    long                    n_creatingnewobject;
 } t_playkeys;
 
 
@@ -240,6 +252,8 @@ long symbol_to_incoming(t_symbol *s)
         return k_PLAYKEYS_INCOMING_PAUSE;
     if (s == _llllobj_sym_end)
         return k_PLAYKEYS_INCOMING_END;
+    if (s == _llllobj_sym_all || s == _llllobj_sym_any)
+        return 0xffffff;
 
     /*
      TODO:
@@ -258,7 +272,7 @@ long get_default_allowed_notationitems_for_property(long property)
     long roll_set = k_PLAYKEYS_INCOMING_ROLLNOTE + k_PLAYKEYS_INCOMING_ROLLCHORD;
     long standard_set = roll_set + score_set;
     long all = -1;
-    
+
     switch (property) {
         case k_PLAYKEYS_PLAY: return k_PLAYKEYS_INCOMING_PLAY;
         case k_PLAYKEYS_STOP: return k_PLAYKEYS_INCOMING_STOP;
@@ -267,19 +281,20 @@ long get_default_allowed_notationitems_for_property(long property)
 
         case k_PLAYKEYS_TYPE:
         case k_PLAYKEYS_ROUTER:
+        case k_PLAYKEYS_CUSTOMSTARTENDSYMBOL:
             return all;
-        
+
         case k_PLAYKEYS_ROLE:
             return k_PLAYKEYS_INCOMING_MARKER;
-            
+
         case k_PLAYKEYS_TEMPO:
         case k_PLAYKEYS_QUARTERTEMPO:
             return k_PLAYKEYS_INCOMING_TEMPO;
-            
+
         case k_PLAYKEYS_MEASUREINFO:
             return k_PLAYKEYS_INCOMING_SCOREMEASURE;
-            
-            
+
+
         default: return standard_set;
     }
 /*
@@ -296,6 +311,7 @@ long get_default_allowed_notationitems_for_property(long property)
         case k_PLAYKEYS_MIDICHANNEL: return standard_set;
         case k_PLAYKEYS_TIE: return score_set;
         case k_PLAYKEYS_VOICENUMBER: return standard_set;
+        case k_PLAYKEYS_VOICENAME: return standard_set;
         case k_PLAYKEYS_PATH: return standard_set;
         case k_PLAYKEYS_MEASURENUMBER: return gensym("measurenumber");
         case k_PLAYKEYS_BREAKPOINTS: return _llllobj_sym_breakpoints;
@@ -346,6 +362,8 @@ long symbol_to_property(t_symbol *s)
         return k_PLAYKEYS_TIE;
     if (s == gensym("voicenumber"))
         return k_PLAYKEYS_VOICENUMBER;
+    if (s == gensym("voicename"))
+        return k_PLAYKEYS_VOICENAME;
 //    if (s == _llllobj_sym_voice)
 //        return k_PLAYKEYS_VOICENUMBER;
     if (s == gensym("measurenumber"))
@@ -419,6 +437,7 @@ t_symbol *property_to_symbol(long property)
         case k_PLAYKEYS_MIDICHANNEL: return _llllobj_sym_midichannel;
         case k_PLAYKEYS_TIE: return _llllobj_sym_tie;
         case k_PLAYKEYS_VOICENUMBER: return gensym("voicenumber");
+        case k_PLAYKEYS_VOICENAME: return gensym("voicename");
         case k_PLAYKEYS_PATH: return _llllobj_sym_path;
         case k_PLAYKEYS_MEASURENUMBER: return gensym("measurenumber");
         case k_PLAYKEYS_BREAKPOINTS: return _llllobj_sym_breakpoints;
@@ -453,17 +472,17 @@ t_symbol *property_to_symbol(long property)
 void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
-    
+
     common_symbols_init();
     llllobj_common_symbols_init();
-    
+
     if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
         error("bach: bad installation");
         return;
     }
-    
+
     CLASS_NEW_CHECK_SIZE(c, "bach.playkeys", (method)playkeys_new, (method)playkeys_free, (long) sizeof(t_playkeys), 0L, A_GIMME, 0);
-    
+
     // @method llll @digest Search the llll for the specified playkeys
     // @description
     // The first elements of the llll and all its sublists are examined, traversing the llll depth-first as in <o>bach.iter</o>.
@@ -478,16 +497,24 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)playkeys_int,        "int",            A_LONG,        0);
     class_addmethod(c, (method)playkeys_float,        "float",        A_FLOAT,    0);
     class_addmethod(c, (method)playkeys_anything,    "list",            A_GIMME,    0);
-    
+
     // @method bang @digest Perform last operation
     // @description The playkeys are searched for in the most recently received llll.
     class_addmethod(c, (method)playkeys_bang,        "bang",            0);
-    
+
     class_addmethod(c, (method)playkeys_assist,        "assist",        A_CANT,        0);
     class_addmethod(c, (method)playkeys_inletinfo,    "inletinfo",    A_CANT,        0);
-    
-    
+
+
     CLASS_STICKY_ATTR(c,"category",0,"Settings");
+
+    CLASS_ATTR_LONG(c, "autoassigncommands",        0,    t_playkeys, n_autoassigncommands);
+    CLASS_ATTR_LABEL(c, "autoassigncommands",        0, "Autoassign Commands To Notes");
+    CLASS_ATTR_STYLE(c, "autoassigncommands",        0, "onoff");
+    CLASS_ATTR_BASIC(c, "autoassigncommands", 0);
+    // @description When set to 1, any unknown command router found is assigned to a note element (unless explicitly assigned
+    // to other commands via the <m>routers</m> attribute). <br />
+    // This attribute is static and can only be set in the object box.
 
     CLASS_ATTR_LLLL(c, "routers", 0, t_playkeys, n_process, playkeys_getattr_process, playkeys_setattr_process);
     CLASS_ATTR_LABEL(c, "routers", 0, "Routers To Accept");
@@ -497,12 +524,8 @@ void C74_EXPORT ext_main(void *moduleRef)
     // E.g. <b>note tempo</b> will only accept "note"- and "tempo"-routed playout lllls. <br />
     // You can have <o>bach.playkeys</o> intercept commands as well, provided that you set aliases via an llll starting
     // with "note", "chord" or "rest" (depending on the type of alias). E.g. <b>@routers note [note mynotecommand1 mynotecommand2]</b>
-    // will intercept <b>note</b> messages, as well as note commands <b>mynotecommand1</b> and <b>mynotecommand2</b>.
-    // To only intercept commands, simply use something like <b>@routers [note mynotecommand1 mynotecommand2]</b>.
-    // If you want to add some commands for acceptance (and to keep everything else accepted) use "+" as first element, such as in
-    // <b>@routers + [rest myrestcommand]</b>.
-
-    
+    // will intercept <b>note</b> messages, as well as note commands <b>mynotecommand1</b> and <b>mynotecommand2</b>. <br />
+    // This attribute is static and can only be set in the object box.
     
     CLASS_ATTR_LONG(c, "wrapmode",        0,    t_playkeys, n_flattenfornotes);
     CLASS_ATTR_LABEL(c, "wrapmode",        0, "Only Wrap Chords llll Data");
@@ -510,7 +533,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_BASIC(c, "wrapmode", 0);
     // @description When set to 1, it only wraps llll parameters if the playout input is a chord.
 
-    
+
     CLASS_ATTR_LONG(c, "nullmode",        0,    t_playkeys, n_nullmode);
     CLASS_ATTR_LABEL(c, "nullmode",        0, "Output null");
     CLASS_ATTR_STYLE(c, "nullmode",        0, "enumindex");
@@ -520,21 +543,27 @@ void C74_EXPORT ext_main(void *moduleRef)
     // 0 = Never; 1 = only for keys without any content (default); 2 = also for unmatched keys (e.g. keys that has no meaning for the specific notation item,
     // such as velocity for markers, etc.).
 
-    
+
     CLASS_ATTR_LONG(c, "defaultbreakpoints",        0,    t_playkeys, n_use_default_breakpoints);
     CLASS_ATTR_LABEL(c, "defaultbreakpoints",        0, "Use Default Breakpoints");
     CLASS_ATTR_STYLE(c, "defaultbreakpoints",        0, "onoff");
     // @description When set to 1, uses default breakpoints for notes without glissandi.
 
-    
+
     CLASS_ATTR_LONG(c, "breakpointshavevelocity",        0,    t_playkeys, n_breakpoints_have_velocity);
     CLASS_ATTR_LABEL(c, "breakpointshavevelocity",        0, "Breakpoints Have Velocity");
     CLASS_ATTR_STYLE(c, "breakpointshavevelocity",        0, "onoff");
     // @description Toggles the ability, for pitch breakpoints, to have their own independent velocity.
-    
+
+    CLASS_ATTR_LONG_VARSIZE(c, "voicefilter",    0,    t_playkeys, n_voicefilter, n_voicefilter_size, CONST_MAX_VOICES);
+    CLASS_ATTR_LABEL(c, "voicefilter", 0, "Filter Voices");
+    // @description Limits the output of items to one or more voices (specified in the array).
+    // If no voice is set, all elements are output. Use voice 0 to only output elements that do not have any voice.
+
+
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
-    
+
     CLASS_STICKY_ATTR(c,"category",0,"Slots");
 
     CLASS_ATTR_ATOM(c, "dynamicsslot",        0,    t_playkeys, n_dynamicsslot);
@@ -564,9 +593,9 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     class_register(CLASS_BOX, c);
     playkeys_class = c;
-    
+
     dev_post("bach.playkeys compiled %s %s", __DATE__, __TIME__);
-    
+
     return;
 }
 
@@ -585,10 +614,12 @@ void playkeys_output(t_playkeys *x)
     if (x->n_must_iterate_on_output) {
         // gotta be complicated
         // To be implemented. No iteration for the time being.
-    
+
     } else {
         for (i = x->n_ob.l_numouts - 1; i >= 0; i--) {
-            if (x->n_keys[i].property != k_PLAYKEYS_NONE && (x->n_keys[i].exists || x->n_nullmode == 2))
+            if (x->n_keys[i].exists == 2)
+                llllobj_outlet_bang((t_object *) x, LLLL_OBJ_VANILLA, i);
+            else if (x->n_keys[i].property != k_PLAYKEYS_NONE && (x->n_keys[i].exists || x->n_nullmode == 2))
                 llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, i);
         }
     }
@@ -622,7 +653,7 @@ t_bool can_llll_be_a_note(t_llll *ll)
 {
     if (!ll || !ll->l_head)
         return false;
-    
+
     if (hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
         t_symbol *router = hatom_getsym(&ll->l_head->l_hatom);
         if (router == _llllobj_sym_name ||
@@ -633,7 +664,7 @@ t_bool can_llll_be_a_note(t_llll *ll)
             router == _llllobj_sym_flags)
             return false;
     }
-    
+
     return true;
 }
 
@@ -701,8 +732,8 @@ void playkeys_handle_flattening_and_nullmode(t_playkeys *x, t_llll **ll, long in
                     x->n_keys[outlet].exists = 0;
                 }
                 break;
-                
-                
+
+
             case k_PLAYKEYS_INCOMING_ROLLCHORD:
             case k_PLAYKEYS_INCOMING_SCORECHORD:
             case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
@@ -719,28 +750,35 @@ void playkeys_handle_flattening_and_nullmode(t_playkeys *x, t_llll **ll, long in
                 break;
         }
     }
-    
+
 }
 
 t_max_err playkeys_setattr_process(t_playkeys *x, t_object *attr, long ac, t_atom *av)
 {
+    if (!x->n_creatingnewobject) {
+        object_error((t_object *)x, "Attribute \"routers\" is static and can only be set in the object box.");
+        return MAX_ERR_GENERIC;
+    }
+    
     t_llll *ll;
     if (ac == 0 || av) {
         if ((ll = llllobj_parse_llllattr_llll((t_object *) x, LLLL_OBJ_VANILLA, ac, av))) {
             t_llll *free_me;
-            
+
             bach_atomic_lock(&x->n_process_lock);
             free_me = x->n_process;
             x->n_process = ll;
             llll_clear(x->n_note_commands);
             llll_clear(x->n_chord_commands);
             llll_clear(x->n_rest_commands);
-            
-            char defaultval = ((x->n_process && x->n_process->l_size > 0 && hatom_getsym(&x->n_process->l_head->l_hatom) != gensym("+")) ? 0 : 1);
+            llll_clear(x->n_marker_commands);
+
+/*            char defaultval = ((x->n_process && x->n_process->l_size > 0 && hatom_getsym(&x->n_process->l_head->l_hatom) != gensym("+")) ? 0 : 1);
             if (defaultval)
                 x->n_notationitems_to_process = -1;  // all 1's
             else
                 x->n_notationitems_to_process = 0;
+*/
             
             for (t_llllelem *elem = x->n_process->l_head; elem; elem = elem->l_next) {
                 if (hatom_gettype(&elem->l_hatom) == H_SYM) {
@@ -784,12 +822,17 @@ t_max_err playkeys_setattr_process(t_playkeys *x, t_object *attr, long ac, t_ato
                             for (t_llllelem *el2 = ll->l_head->l_next; el2; el2=el2->l_next)
                                 if (hatom_gettype(&el2->l_hatom) == H_SYM)
                                     llll_appendsym(x->n_rest_commands, hatom_getsym(&el2->l_hatom));
+                        } else if (ref == _llllobj_sym_marker) {
+                            x->n_notationitems_to_process |= k_PLAYKEYS_INCOMING_MARKER_COMMAND;
+                            for (t_llllelem *el2 = ll->l_head->l_next; el2; el2=el2->l_next)
+                                if (hatom_gettype(&el2->l_hatom) == H_SYM)
+                                    llll_appendsym(x->n_marker_commands, hatom_getsym(&el2->l_hatom));
                         }
                     }
                 }
             }
 
-            
+
             bach_atomic_unlock(&x->n_process_lock);
             llll_free(free_me);
         }
@@ -819,26 +862,87 @@ char incoming_is_from_roll(long incoming)
         case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
         case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
             return true;
-            
+
         default:
             return false;
     }
 }
+
+char are_slots_output_by_name(long incoming, t_llll *in_ll)
+{
+    for (t_llllelem *startnoteel = getindex_2levels(in_ll, 4, incoming_is_from_roll(incoming) ? 2 : 5); startnoteel; startnoteel = startnoteel->l_next) {
+        if (hatom_gettype(&startnoteel->l_hatom) != H_LLLL)
+            break;
+        t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
+        if (!can_llll_be_a_note(notell))
+            break;
+
+        t_llllelem *target_el;
+        if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_slots))) {
+            if (hatom_gettype(&target_el->l_hatom) != H_LLLL)
+                break;
+
+            t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
+            if (slotsll->l_head) {
+                for (t_llllelem *temp = slotsll->l_head->l_next; temp; temp = temp->l_next) {
+                    if (hatom_gettype(&temp->l_hatom) == H_LLLL) {
+                        t_llll *this_slot_ll = hatom_getllll(&temp->l_hatom);
+                        if (this_slot_ll && this_slot_ll->l_head) {
+                            if (hatom_gettype(&this_slot_ll->l_head->l_hatom) == H_SYM)
+                                return true;
+                            if (hatom_gettype(&this_slot_ll->l_head->l_hatom) == H_LONG)
+                                return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+void possibly_remove_voicename(t_llll *this_path)
+{
+    if (this_path && this_path->l_head) {
+        if (hatom_gettype(&this_path->l_head->l_hatom) == H_LLLL) {
+            // only take first element
+            t_llll *vl = hatom_getllll(&this_path->l_head->l_hatom);
+            long voicenum = vl && vl->l_head ? hatom_getlong(&vl->l_head->l_hatom) : 0;
+            hatom_change_to_long_and_free(&this_path->l_head->l_hatom, voicenum);
+        }
+    }
+}
+
+void extract_voicename_and_append_it(t_llll *out, t_llll *this_path)
+{
+    if (this_path && this_path->l_head) {
+        if (hatom_gettype(&this_path->l_head->l_hatom) == H_LLLL) {
+            // only take first element
+            t_llll *vl = hatom_getllll(&this_path->l_head->l_hatom);
+            if (vl && vl->l_head && vl->l_head->l_next) {
+                llll_appendhatom_clone(out, &vl->l_head->l_next->l_hatom);
+            } else {
+                llll_appendllll(out, llll_get());
+            }
+        }
+    }
+}
+
 
 void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
 {
     t_playkeys_key *this_key;
     t_llll *in_ll, *found;
     long outlet;
-    
+
     if (msg != _sym_bang) {
         in_ll = llllobj_parse_retain_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, 0);
         if (!in_ll)
             return;
     } else
         in_ll = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 0);
-    
-    
+
+
     bach_atomic_lock(&x->n_process_lock);
 
     long incoming = k_PLAYKEYS_INCOMING_UNKNOWN;
@@ -874,71 +978,167 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
             char found = 0;
             for (t_llllelem *elem = x->n_note_commands->l_head; elem; elem = elem->l_next) {
                 if (router == hatom_getsym(&elem->l_hatom)) {
-                    t_llllelem *test = getindex_2levels(in_ll, 4, 2);
-                    incoming = (test && hatom_gettype(&test->l_hatom) == H_LLLL) ? k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND : k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND;
-                    found = 1;
+                    if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                        incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                        found = 1;
+                    } else {
+                        t_llllelem *test = getindex_2levels(in_ll, 4, 2);
+                        incoming = (test && hatom_gettype(&test->l_hatom) == H_LLLL) ? k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND : k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND;
+                        found = 1;
+                    }
                 }
             }
             if (!found) {
                 for (t_llllelem *elem = x->n_chord_commands->l_head; elem; elem = elem->l_next) {
                     if (router == hatom_getsym(&elem->l_hatom)) {
-                        t_llllelem *test = getindex_2levels(in_ll, 4, 2);
-                        incoming = (test && hatom_gettype(&test->l_hatom) == H_LLLL) ? k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND : k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND;
-                        found = 1;
+                        if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                            incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                            found = 1;
+                        } else {
+                            t_llllelem *test = getindex_2levels(in_ll, 4, 2);
+                            incoming = (test && hatom_gettype(&test->l_hatom) == H_LLLL) ? k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND : k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND;
+                            found = 1;
+                        }
                     }
                 }
             }
             if (!found) {
                 for (t_llllelem *elem = x->n_rest_commands->l_head; elem; elem = elem->l_next) {
                     if (router == hatom_getsym(&elem->l_hatom)) {
-                        incoming = k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
-                        found = 1;
+                        if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                            incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                            found = 1;
+                        } else {
+                            if (router == hatom_getsym(&elem->l_hatom)) {
+                                incoming = k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
+                                found = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                for (t_llllelem *elem = x->n_marker_commands->l_head; elem; elem = elem->l_next) {
+                    if (router == hatom_getsym(&elem->l_hatom)) {
+                        if (in_ll->l_size == 2 && in_ll->l_depth == 1 && hatom_gettype(&in_ll->l_tail->l_hatom) == H_SYM) {
+                            incoming = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                            found = 1;
+                        } else {
+                            if (router == hatom_getsym(&elem->l_hatom)) {
+                                incoming = k_PLAYKEYS_INCOMING_MARKER_COMMAND;
+                                found = 1;
+                            }
+                        }
                     }
                 }
             }
         }
     }
-    
-    
+
+
     char must_process_incoming = false;
     if (incoming != k_PLAYKEYS_INCOMING_UNKNOWN) {
         must_process_incoming = ((x->n_notationitems_to_process & incoming) != 0);
-        
-        switch (incoming) {
-            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
-            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
-                if (is_symbol_in_llll_first_level(x->n_note_commands, router))
-                    must_process_incoming = true;
-                break;
 
-            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
-            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
-                if (is_symbol_in_llll_first_level(x->n_chord_commands, router))
-                    must_process_incoming = true;
-                break;
+        if (!must_process_incoming) {
+            switch (incoming) {
+                case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                    if (is_symbol_in_llll_first_level(x->n_note_commands, router))
+                        must_process_incoming = true;
+                    break;
 
-            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
-                if (is_symbol_in_llll_first_level(x->n_rest_commands, router))
-                    must_process_incoming = true;
-                break;
+                case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                    if (is_symbol_in_llll_first_level(x->n_chord_commands, router))
+                        must_process_incoming = true;
+                    break;
 
-            default:
-                break;
+                case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                    if (is_symbol_in_llll_first_level(x->n_rest_commands, router))
+                        must_process_incoming = true;
+                    break;
+
+                case k_PLAYKEYS_INCOMING_MARKER_COMMAND:
+                    if (is_symbol_in_llll_first_level(x->n_marker_commands, router))
+                        must_process_incoming = true;
+                    break;
+
+                default:
+                    break;
+            }
         }
+
+        // check if voice is OK
+        if (x->n_voicefilter_size) {
+            // getting voice number
+            long voicenum_1based = 0; // = none
+            t_llllelem *voice_target_el = NULL;
+            switch (incoming) {
+                case k_PLAYKEYS_INCOMING_ROLLNOTE:
+                case k_PLAYKEYS_INCOMING_ROLLCHORD:
+                case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                    if ((voice_target_el = llll_getindex(in_ll, 2, I_STANDARD))) {
+                        if (hatom_gettype(&voice_target_el->l_hatom) == H_LLLL) // playout full path
+                            voice_target_el = llll_getindex(hatom_getllll(&voice_target_el->l_hatom), 1, I_STANDARD);
+                        if (voice_target_el)
+                            voicenum_1based = hatom_getlong(&voice_target_el->l_hatom);
+                    }
+                    break;
+                case k_PLAYKEYS_INCOMING_SCORENOTE:
+                case k_PLAYKEYS_INCOMING_SCORECHORD:
+                case k_PLAYKEYS_INCOMING_SCOREREST:
+                case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+                case k_PLAYKEYS_INCOMING_TEMPO:
+                    if ((voice_target_el = llll_getindex(in_ll, 2, I_STANDARD))) {
+                        if (hatom_gettype(&voice_target_el->l_hatom) == H_LLLL) // playout full path
+                            voice_target_el = getindex_2levels(hatom_getllll(&voice_target_el->l_hatom), 1, 1);
+                        if (voice_target_el)
+                            voicenum_1based = hatom_getlong(&voice_target_el->l_hatom);
+                    }
+                    break;
+
+                case k_PLAYKEYS_INCOMING_MARKER:
+                    if ((voice_target_el = llll_getindex(in_ll, 3, I_STANDARD))) {
+                        if (hatom_gettype(&voice_target_el->l_hatom) == H_LLLL) { // measure attached marker
+                            voice_target_el = llll_getindex(hatom_getllll(&voice_target_el->l_hatom), 1, I_STANDARD);
+                            if (voice_target_el) {
+                                voicenum_1based = hatom_getlong(&voice_target_el->l_hatom);
+                            }
+                        }
+                    }
+
+                default:
+                    break;
+            }
+
+            if (!is_long_in_long_array(x->n_voicefilter, x->n_voicefilter_size, voicenum_1based))
+                must_process_incoming = false;
+        }
+
     }
-    
+
     bach_atomic_unlock(&x->n_process_lock);
 
     t_llllelem *target_el = NULL;
     if (must_process_incoming) {
-        for (outlet = 0, this_key = x->n_keys; this_key && this_key->property != k_PLAYKEYS_NONE; this_key++, outlet++) {
+
+        char outputslotnames = -1; // are slot output via their names? -1 = we still don't know
+
+        long num_keys = x->n_numkeys;
+        for (outlet = num_keys-1; outlet >= 0; outlet--) {
+            this_key = x->n_keys + outlet;
             x->n_keys[outlet].exists = 0;
-            
+
             if (incoming & x->n_keys[outlet].allowed_notationitems) { // must process key
-                
-                if ((incoming == k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCOREREST_COMMAND) && this_key->allowed_command_router != router)
+
+                if ((incoming == k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCOREREST_COMMAND || incoming == k_PLAYKEYS_INCOMING_MARKER_COMMAND) && this_key->allowed_command_router != router)
                     continue; // not the right command
-                
+
                 found = NULL;
                 switch (this_key->property) {
                     case k_PLAYKEYS_TYPE:
@@ -951,7 +1151,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_note);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_ROLLCHORD:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
@@ -959,55 +1159,60 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_chord);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCOREREST:
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_rest);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCOREMEASURE:
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_measure);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_MARKER:
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_marker);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_TEMPO:
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_tempo);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_PLAY:
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_play);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_STOP:
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_stop);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_PAUSE:
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_pause);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_END:
                                 found = llll_get();
                                 llll_appendsym(found, _llllobj_sym_end);
                                 break;
-                                
+
+                            case k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND:
+                                found = llll_get();
+                                llll_appendsym(found, _llllobj_sym_command);
+                                break;
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
-                        
+
+
+
                     case k_PLAYKEYS_PITCH: // pitch must be changed at some point
                     {
                         switch (incoming) {
@@ -1036,7 +1241,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     }
                                 }
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
@@ -1062,13 +1267,13 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     }
                                 }
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
+
                     case k_PLAYKEYS_CENTS:
                     {
                         switch (incoming) {
@@ -1087,7 +1292,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
                                 }
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
@@ -1103,14 +1308,14 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
                                 }
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_VELOCITY:
                     {
                         switch (incoming) {
@@ -1129,7 +1334,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
                                 }
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
@@ -1145,14 +1350,14 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
                                 }
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_TIE:
                     {
                         switch (incoming) {
@@ -1169,15 +1374,15 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appendhatom_clone(found, &target_el->l_hatom);
                                 }
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
-                        
+
+
+
                     case k_PLAYKEYS_DURATION:
                     {
                         switch (incoming) {
@@ -1196,7 +1401,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
                                 }
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCOREREST:
@@ -1207,21 +1412,21 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = getindex_2levels(in_ll, 4, 2)))
                                     llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCOREMEASURE:
                                 found = llll_get();
                                 if ((target_el = getindex_2levels(in_ll, 5, 2)))
                                     llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
                                 break;
-                                
-                                
+
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_SYMDURATION:
                     {
                         switch (incoming) {
@@ -1235,21 +1440,21 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = getindex_2levels(in_ll, 4, 1)))
                                     llll_appendrat(found, hatom_getrational(&target_el->l_hatom));
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCOREMEASURE:
                                 found = llll_get();
                                 if ((target_el = getindex_2levels(in_ll, 5, 1)))
                                     llll_appendrat(found, hatom_getrational(&target_el->l_hatom));
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
-                        
+
+
+
                     case k_PLAYKEYS_ONSET:
                     {
                         switch (incoming) {
@@ -1261,7 +1466,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = getindex_2levels(in_ll, 4, 1)))
                                     llll_appenddouble(found, get_onset_from_llllelem(target_el));
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCOREREST:
@@ -1272,26 +1477,27 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = getindex_2levels(in_ll, 4, 4)))
                                     llll_appenddouble(found, get_onset_from_llllelem(target_el));
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCOREMEASURE:
                                 found = llll_get();
                                 if ((target_el = getindex_2levels(in_ll, 5, 3)))
                                     llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_MARKER:
+                            case k_PLAYKEYS_INCOMING_MARKER_COMMAND:
                                 found = llll_get();
                                 if ((target_el = llll_getindex(in_ll, 3, I_STANDARD)))
                                     llll_appendhatom_clone(found, &target_el->l_hatom);
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_PLAYOFFSET:
                     {
                         switch (incoming) {
@@ -1308,7 +1514,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appenddouble(found, 0);
                                 }
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCOREREST:
@@ -1323,13 +1529,13 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     } else
                                         llll_appenddouble(found, 0);
                                 }
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
+
                     case k_PLAYKEYS_TAIL:
                     {
                         switch (incoming) {
@@ -1338,10 +1544,10 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                             case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
                             case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
                                 found = llll_get();
-                                
+
                                 if ((target_el = getindex_2levels(in_ll, 4, 1))) {
                                     double onset = get_onset_from_llllelem(target_el);
-                                    
+
                                     for (t_llllelem *startnoteel = getindex_2levels(in_ll, 4, 2); startnoteel; startnoteel = startnoteel->l_next) {
                                         if (hatom_gettype(&startnoteel->l_hatom) != H_LLLL)
                                             break;
@@ -1353,9 +1559,9 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     }
                                     break;
                                 }
-                                
+
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCOREREST:
@@ -1369,15 +1575,15 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appenddouble(found, onset + hatom_getdouble(&target_el->l_hatom));
                                 }
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
-                        
+
+
+
                     case k_PLAYKEYS_SYMONSET:
                     {
                         switch (incoming) {
@@ -1392,14 +1598,24 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = getindex_2levels(in_ll, 4, 3)))
                                     llll_appendrat(found, hatom_getrational(&target_el->l_hatom));
                                 break;
-                                
+
+                            case k_PLAYKEYS_INCOMING_MARKER:
+                                if ((target_el = llll_getindex(in_ll, 3, I_STANDARD))) {
+                                    if (hatom_gettype(&target_el->l_hatom) == H_LLLL) { // measure attached marker
+                                        target_el = llll_getindex(hatom_getllll(&target_el->l_hatom), 3, I_STANDARD);
+                                        if (target_el) {
+                                            found = llll_get();
+                                            llll_appendrat(found, hatom_getrational(&target_el->l_hatom));
+                                        }
+                                    }
+                                }
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_MIDICHANNEL:
                     {
                         switch (incoming) {
@@ -1417,14 +1633,14 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = llll_getindex(in_ll, 3, I_STANDARD)))
                                     llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_VOICENUMBER:
                     {
                         switch (incoming) {
@@ -1436,8 +1652,12 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = llll_getindex(in_ll, 2, I_STANDARD))) {
                                     if (hatom_gettype(&target_el->l_hatom) == H_LLLL) // playout full path
                                         target_el = llll_getindex(hatom_getllll(&target_el->l_hatom), 1, I_STANDARD);
-                                    if (target_el)
-                                        llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                    if (target_el) {
+                                        if (hatom_gettype(&target_el->l_hatom) == H_LONG) // voicenumber only
+                                            llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                        else if (hatom_gettype(&target_el->l_hatom) == H_LLLL && hatom_getllll(&target_el->l_hatom)->l_head) // voicenumber + voicename(s)
+                                            llll_appendlong(found, hatom_getlong(&hatom_getllll(&target_el->l_hatom)->l_head->l_hatom));
+                                    }
                                 }
                                 break;
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
@@ -1452,17 +1672,34 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = llll_getindex(in_ll, 2, I_STANDARD))) {
                                     if (hatom_gettype(&target_el->l_hatom) == H_LLLL) // playout full path
                                         target_el = getindex_2levels(hatom_getllll(&target_el->l_hatom), 1, 1);
-                                    if (target_el)
-                                        llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                    
+                                    if (target_el) {
+                                        if (hatom_gettype(&target_el->l_hatom) == H_LONG) // voicenumber only
+                                            llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                        else if (hatom_gettype(&target_el->l_hatom) == H_LLLL && hatom_getllll(&target_el->l_hatom)->l_head) // voicenumber + voicename(s)
+                                            llll_appendlong(found, hatom_getlong(&hatom_getllll(&target_el->l_hatom)->l_head->l_hatom));
+                                    }
                                 }
                                 break;
-                                
+
+                            case k_PLAYKEYS_INCOMING_MARKER:
+                                if ((target_el = llll_getindex(in_ll, 3, I_STANDARD))) {
+                                    if (hatom_gettype(&target_el->l_hatom) == H_LLLL) { // measure attached marker
+                                        target_el = llll_getindex(hatom_getllll(&target_el->l_hatom), 1, I_STANDARD);
+                                        if (target_el) {
+                                            found = llll_get();
+                                            llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                        }
+                                    }
+                                }
+
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
+
                     case k_PLAYKEYS_PATH:
                     {
                         switch (incoming) {
@@ -1483,15 +1720,57 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     if (hatom_gettype(&target_el->l_hatom) != H_LLLL) { // playout full path
                                         if (x->n_warn_fullpathrequestedbutnotpresent) {
                                             object_warn((t_object *)x, "Full path requested, but not present in the playout llll.");
-                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object, or use the \"voice\" playkey to avoid this warning.");
+                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object, or use the \"voicenumber\" playkey to avoid this warning.");
                                             x->n_warn_fullpathrequestedbutnotpresent = false;
                                         }
                                     }
-                                    if (target_el)
-                                        llll_appendhatom_clone(found, &target_el->l_hatom);
+                                    if (target_el) {
+                                        t_llll *ll = hatom_gettype(&target_el->l_hatom) == H_LLLL ? hatom_getllll(&target_el->l_hatom) : NULL;
+                                        if (ll) {
+                                            t_llll *path_ll = llll_clone(ll);
+                                            switch (incoming) {
+                                                case k_PLAYKEYS_INCOMING_SCORENOTE:
+                                                case k_PLAYKEYS_INCOMING_SCORECHORD:
+                                                case k_PLAYKEYS_INCOMING_SCOREREST:
+                                                case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+                                                case k_PLAYKEYS_INCOMING_TEMPO:
+                                                    if (ll->l_depth > 2) {
+                                                        t_llllelem *el = path_ll->l_head;
+                                                        while (el) {
+                                                            t_llllelem *nextel = el->l_next;
+                                                            if (hatom_gettype(&el->l_hatom) == H_LLLL)
+                                                                possibly_remove_voicename(hatom_getllll(&el->l_hatom));
+                                                            el = nextel;
+                                                        }
+                                                    }
+                                                    break;
+                                                    
+                                                default:
+                                                    if (ll->l_depth > 1) {
+                                                        possibly_remove_voicename(path_ll);
+                                                    }
+                                                    break;
+                                            }
+                                            llll_appendllll(found, path_ll);
+                                        } else {
+                                            llll_appendhatom_clone(found, &target_el->l_hatom);
+                                        }
+                                    }
                                 }
                                 break;
-                                
+
+
+                            case k_PLAYKEYS_INCOMING_MARKER:
+                                if ((target_el = llll_getindex(in_ll, 3, I_STANDARD))) {
+                                    if (hatom_gettype(&target_el->l_hatom) == H_LLLL) { // measure attached marker
+                                        found = llll_get();
+                                        llll_appendhatom_clone(found, &target_el->l_hatom);
+                                    }
+                                }
+
                             default:
                                 break;
                         }
@@ -1499,6 +1778,86 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                         break;
                         
                         
+                    case k_PLAYKEYS_VOICENAME:
+                    {
+                        switch (incoming) {
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD:
+                            case k_PLAYKEYS_INCOMING_SCOREREST:
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+                            case k_PLAYKEYS_INCOMING_TEMPO:
+                                found = llll_get();
+                                if ((target_el = llll_getindex(in_ll, 2, I_STANDARD))) {
+                                    if (hatom_gettype(&target_el->l_hatom) != H_LLLL) { // playout full path
+                                        if (x->n_warn_fullpathrequestedbutnotpresent) {
+                                            object_warn((t_object *)x, "Voice name requested, but not present in the playout llll.");
+                                            object_warn((t_object *)x, "   You might want to set \"playoutfullpath\" to 2 for your notation object, or use the \"voicenumber\" playkey instead to avoid this warning.");
+                                            x->n_warn_fullpathrequestedbutnotpresent = false;
+                                        }
+                                    }
+                                    if (target_el) {
+                                        t_llll *ll = hatom_gettype(&target_el->l_hatom) == H_LLLL ? hatom_getllll(&target_el->l_hatom) : NULL;
+                                        if (ll) {
+                                            t_llll *path_ll = llll_clone(ll);
+                                            switch (incoming) {
+                                                case k_PLAYKEYS_INCOMING_SCORENOTE:
+                                                case k_PLAYKEYS_INCOMING_SCORECHORD:
+                                                case k_PLAYKEYS_INCOMING_SCOREREST:
+                                                case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                                                case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+                                                case k_PLAYKEYS_INCOMING_TEMPO:
+                                                    if (ll->l_depth > 2) {
+                                                        t_llllelem *el = path_ll->l_head;
+                                                        while (el) {
+                                                            t_llllelem *nextel = el->l_next;
+                                                            if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                                                                extract_voicename_and_append_it(found, hatom_getllll(&el->l_hatom));
+                                                                break;
+                                                            }
+                                                            el = nextel;
+                                                        }
+                                                    } else {
+                                                        if (x->n_warn_fullpathrequestedbutnotpresent) {
+                                                            object_warn((t_object *)x, "Voice name requested, but not present in the playout llll.");
+                                                            object_warn((t_object *)x, "   You might want to set \"playoutfullpath\" to 2 for your notation object, or use the \"voicenumber\" playkey instead to avoid this warning.");
+                                                            x->n_warn_fullpathrequestedbutnotpresent = false;
+                                                        }
+                                                    }
+                                                    break;
+                                                    
+                                                default:
+                                                    if (ll->l_depth > 1) {
+                                                        extract_voicename_and_append_it(found, path_ll);
+                                                    } else {
+                                                        if (x->n_warn_fullpathrequestedbutnotpresent) {
+                                                            object_warn((t_object *)x, "Voice name requested, but not present in the playout llll.");
+                                                            object_warn((t_object *)x, "   You might want to set \"playoutfullpath\" to 2 for your notation object, or use the \"voicenumber\" playkey instead to avoid this warning.");
+                                                            x->n_warn_fullpathrequestedbutnotpresent = false;
+                                                        }
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                        break;
+
+
                     case k_PLAYKEYS_MEASURENUMBER:
                     {
                         switch (incoming) {
@@ -1528,21 +1887,32 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     }
                                 }
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCOREMEASURE:
                                 found = llll_get();
                                 if ((target_el = llll_getindex(in_ll, 3, I_STANDARD)))
                                     llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
                                 break;
-                                
-                                
+
+                            case k_PLAYKEYS_INCOMING_MARKER:
+                                if ((target_el = llll_getindex(in_ll, 3, I_STANDARD))) {
+                                    if (hatom_gettype(&target_el->l_hatom) == H_LLLL) { // measure attached marker
+                                        target_el = llll_getindex(hatom_getllll(&target_el->l_hatom), 2, I_STANDARD);
+                                        if (target_el) {
+                                            found = llll_get();
+                                            llll_appendlong(found, hatom_getlong(&target_el->l_hatom));
+                                        }
+                                    }
+                                }
+
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_CHORDINDEX:
                     {
                         switch (incoming) {
@@ -1566,7 +1936,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     }
                                 }
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCOREREST:
@@ -1592,14 +1962,14 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     }
                                 }
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_NOTEINDEX:
                     {
                         switch (incoming) {
@@ -1623,7 +1993,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     }
                                 }
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCOREREST:
@@ -1649,14 +2019,14 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     }
                                 }
                                 break;
-                                
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_MEASUREINFO:
                     {
                         switch (incoming) {
@@ -1665,16 +2035,16 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = llll_getindex(in_ll, 4, I_STANDARD)))
                                     llll_appendhatom_clone(found, &target_el->l_hatom);
                                 break;
-                                
-                                
+
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
-                        
+
+
+
                     case k_PLAYKEYS_ROLE:
                     {
                         switch (incoming) {
@@ -1685,17 +2055,17 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appendsym(found, hatom_getsym(&target_el->l_hatom));
                                 } else
                                     llll_appendsym(found, _llllobj_sym_none);
-                                
+
                                 break;
-                                
-                                
+
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_TEMPO:
                     {
                         switch (incoming) {
@@ -1705,15 +2075,15 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     if (hatom_gettype(&target_el->l_hatom) == H_LLLL)
                                         llll_chain_clone(found, hatom_getllll(&target_el->l_hatom));
                                 break;
-                                
-                                
+
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
+
+
                     case k_PLAYKEYS_QUARTERTEMPO:
                     {
                         switch (incoming) {
@@ -1726,16 +2096,16 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appendhatom_clone(found, &target_el->l_hatom);
                                 }
                                 break;
-                                
-                                
+
+
                             default:
                                 break;
                         }
                     }
                         break;
-                        
-                        
-                        
+
+
+
                     case k_PLAYKEYS_BREAKPOINTS:
                     {
                         switch (incoming) {
@@ -1754,7 +2124,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
                                     if (!can_llll_be_a_note(notell))
                                         break;
-                                    
+
                                     if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_breakpoints)))
                                         llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
                                     else if (x->n_use_default_breakpoints) {
@@ -1774,16 +2144,16 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         llll_appendllll(found, llll_get());
                                 }
                                 break;
-                                
+
                             default:
                                 break;
                         }
                         playkeys_handle_flattening_and_nullmode(x, &found, incoming, this_key->property, outlet);
                     }
                         break;
-                        
-                        
-                        
+
+
+
                     case k_PLAYKEYS_NAME:
                     {
                         switch (incoming) {
@@ -1792,7 +2162,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 if ((target_el = llll_getindex(in_ll, 2, I_STANDARD)))
                                     llll_appendhatom_clone(found, &target_el->l_hatom);
                                 break;
-                                
+
                             case k_PLAYKEYS_INCOMING_ROLLNOTE:
                             case k_PLAYKEYS_INCOMING_SCORENOTE:
                             case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
@@ -1804,22 +2174,22 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
                                     if (!can_llll_be_a_note(notell))
                                         break;
-                                    
+
                                     if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_name)))
                                         llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
                                     else
                                         llll_appendllll(found, llll_get());
                                 }
                                 break;
-                                
-                                
+
+
                             case k_PLAYKEYS_INCOMING_ROLLCHORD:
                             case k_PLAYKEYS_INCOMING_SCORECHORD:
                             case k_PLAYKEYS_INCOMING_SCOREREST:
                             case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
                             case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
                             case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
-                                
+
                                 found = llll_get();
                                 target_el = llll_getindex(in_ll, 4, I_STANDARD);
                                 if (!target_el || hatom_gettype(&target_el->l_hatom) != H_LLLL)
@@ -1829,17 +2199,17 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 else
                                     llll_appendllll(found, llll_get());
                                 break;
-                                
+
                             default:
                                 break;
                         }
                         playkeys_handle_flattening_and_nullmode(x, &found, incoming, this_key->property, outlet);
                     }
                         break;
-                        
-                        
-                        
-                        
+
+
+
+
                     case k_PLAYKEYS_ALLSLOTS:
                     {
                         switch (incoming) {
@@ -1858,31 +2228,31 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
                                     if (!can_llll_be_a_note(notell))
                                         break;
-                                    
+
                                     if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_slots))) {
                                         if (hatom_gettype(&target_el->l_hatom) != H_LLLL)
                                             break;
-                                        
+
                                         t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
                                         llll_appendllll(found, llll_behead(llll_clone(slotsll)));
                                     } else
                                         llll_appendllll(found, llll_get());
                                 }
                                 break;
-                                
-                                
+
+
                             case k_PLAYKEYS_INCOMING_SCOREREST:
                             case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
                                 // to do
                                 break;
-                                
+
                             default:
                                 break;
                         }
                         playkeys_handle_flattening_and_nullmode(x, &found, incoming, this_key->property, outlet);
                     }
                         break;
-                        
+
                     case k_PLAYKEYS_LYRICS:
                     case k_PLAYKEYS_DYNAMICS:
                     case k_PLAYKEYS_ARTICULATIONS:
@@ -1906,42 +2276,69 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
                                     if (!can_llll_be_a_note(notell))
                                         break;
-                                    
+
                                     if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_slots))) {
                                         if (hatom_gettype(&target_el->l_hatom) != H_LLLL)
                                             break;
-                                        
+
                                         t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
-                                        
+
                                         t_hatom spec = this_key->specification;
-                                        if (this_key->property == k_PLAYKEYS_DYNAMICS)
-                                            hatom_setatom(&spec, &x->n_dynamicsslot);
-                                        if (this_key->property == k_PLAYKEYS_LYRICS)
-                                            hatom_setatom(&spec, &x->n_lyricsslot);
-                                        if (this_key->property == k_PLAYKEYS_ARTICULATIONS)
-                                            hatom_setatom(&spec, &x->n_articulationsslot);
-                                        if (this_key->property == k_PLAYKEYS_NOTEHEAD)
-                                            hatom_setatom(&spec, &x->n_noteheadslot);
-                                        if (this_key->property == k_PLAYKEYS_ANNOTATION)
-                                            hatom_setatom(&spec, &x->n_annotationslot);
-                                        if (spec.h_type == H_LONG) {
-                                            if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec))))
-                                                llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        if (this_key->property == k_PLAYKEYS_DYNAMICS) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_dynamicsslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_dynamics);
                                             else
+                                                hatom_setatom(&spec, &x->n_dynamicsslot);
+                                        }
+                                        if (this_key->property == k_PLAYKEYS_LYRICS) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_lyricsslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_lyrics);
+                                            else
+                                                hatom_setatom(&spec, &x->n_lyricsslot);
+                                        }
+                                        if (this_key->property == k_PLAYKEYS_ARTICULATIONS) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_articulationsslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_articulations);
+                                            else
+                                                hatom_setatom(&spec, &x->n_articulationsslot);
+                                        }
+                                        if (this_key->property == k_PLAYKEYS_NOTEHEAD) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_noteheadslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_notehead);
+                                            else
+                                                hatom_setatom(&spec, &x->n_noteheadslot);
+                                        }
+                                        if (this_key->property == k_PLAYKEYS_ANNOTATION) {
+                                            if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                            if (outputslotnames && atom_gettype(&x->n_annotationslot) == A_LONG)
+                                                hatom_setsym(&spec, _llllobj_sym_annotation);
+                                            else
+                                                hatom_setatom(&spec, &x->n_annotationslot);
+                                        }
+                                        if (spec.h_type == H_LONG) {
+                                            if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec)))) {
+                                                if (outputslotnames < 0) outputslotnames = false;
+                                                llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        } else
                                                 llll_appendllll(found, llll_get());
                                         } else if (spec.h_type == H_SYM) {
-                                            if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec))))
+                                            if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec)))) {
+                                                if (outputslotnames < 0) outputslotnames = true;
                                                 llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
-                                            else
+                                            } else
                                                 llll_appendllll(found, llll_get());
                                         }
-                                        
+
                                     } else
                                         llll_appendllll(found, llll_get());
                                 }
                                 break;
-                                
-                                
+
+
                             case k_PLAYKEYS_INCOMING_SCOREREST:
                             case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
                                 found = llll_get();
@@ -1949,37 +2346,64 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 t_llllelem *restel = llll_getindex(in_ll, 4, I_STANDARD);
                                 if (!restel || hatom_gettype(&restel->l_hatom) != H_LLLL)
                                     break;
-                                
+
                                 t_llll *restll = hatom_getllll(&restel->l_hatom);
                                 if ((target_el = root_find_el_with_sym_router(restll, _llllobj_sym_slots))) {
                                     if (hatom_gettype(&target_el->l_hatom) != H_LLLL)
                                         break;
-                                    
+
                                     t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
-                                    
+
                                     t_hatom spec = this_key->specification;
-                                    if (this_key->property == k_PLAYKEYS_DYNAMICS)
-                                        hatom_setatom(&spec, &x->n_dynamicsslot);
-                                    if (this_key->property == k_PLAYKEYS_LYRICS)
-                                        hatom_setatom(&spec, &x->n_lyricsslot);
-                                    if (this_key->property == k_PLAYKEYS_ARTICULATIONS)
-                                        hatom_setatom(&spec, &x->n_articulationsslot);
-                                    if (this_key->property == k_PLAYKEYS_NOTEHEAD)
-                                        hatom_setatom(&spec, &x->n_noteheadslot);
-                                    if (this_key->property == k_PLAYKEYS_ANNOTATION)
-                                        hatom_setatom(&spec, &x->n_annotationslot);
-                                    if (spec.h_type == H_LONG) {
-                                        if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec))))
-                                            llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                    if (this_key->property == k_PLAYKEYS_DYNAMICS) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_dynamicsslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_dynamics);
                                         else
+                                            hatom_setatom(&spec, &x->n_dynamicsslot);
+                                    }
+                                    if (this_key->property == k_PLAYKEYS_LYRICS) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_lyricsslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_lyrics);
+                                        else
+                                            hatom_setatom(&spec, &x->n_lyricsslot);
+                                    }
+                                    if (this_key->property == k_PLAYKEYS_ARTICULATIONS) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_articulationsslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_articulations);
+                                        else
+                                            hatom_setatom(&spec, &x->n_articulationsslot);
+                                    }
+                                    if (this_key->property == k_PLAYKEYS_NOTEHEAD) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_noteheadslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_notehead);
+                                        else
+                                            hatom_setatom(&spec, &x->n_noteheadslot);
+                                    }
+                                    if (this_key->property == k_PLAYKEYS_ANNOTATION) {
+                                        if (outputslotnames < 0) outputslotnames = are_slots_output_by_name(incoming, in_ll);
+                                        if (outputslotnames && atom_gettype(&x->n_annotationslot) == A_LONG)
+                                            hatom_setsym(&spec, _llllobj_sym_annotation);
+                                        else
+                                            hatom_setatom(&spec, &x->n_annotationslot);
+                                    }
+                                    if (spec.h_type == H_LONG) {
+                                        if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec)))) {
+                                            if (outputslotnames < 0) outputslotnames = false;
+                                            llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        } else
                                             llll_appendllll(found, llll_get());
                                     } else if (spec.h_type == H_SYM) {
-                                        if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec))))
+                                        if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec)))) {
+                                            if (outputslotnames < 0) outputslotnames = true;
                                             llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
-                                        else
+                                        } else
                                             llll_appendllll(found, llll_get());
                                     }
-                                    
+
                                 } else
                                     llll_appendllll(found, llll_get());
                             }
@@ -1990,45 +2414,55 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                         playkeys_handle_flattening_and_nullmode(x, &found, incoming, this_key->property, outlet);
                     }
                         break;
-                        
-                        
-                        
-                        
-                        
+
+
+
+
+
                     case k_PLAYKEYS_PLAY:
                         if (incoming == k_PLAYKEYS_INCOMING_PLAY)
                             found = WHITENULL_llll;
                         break;
-                        
+
                     case k_PLAYKEYS_STOP:
                         if (incoming == k_PLAYKEYS_INCOMING_STOP)
                             found = WHITENULL_llll;
                         break;
-                        
+
                     case k_PLAYKEYS_PAUSE:
                         if (incoming == k_PLAYKEYS_INCOMING_PAUSE)
                             found = WHITENULL_llll;
                         break;
-                        
+
                     case k_PLAYKEYS_END:
                         if (incoming == k_PLAYKEYS_INCOMING_END)
                             found = WHITENULL_llll;
                         break;
-                        
+
+                    case k_PLAYKEYS_CUSTOMSTARTENDSYMBOL:
+                    {
+                        t_symbol *s = hatom_getsym(&this_key->specification);
+                        if (s && in_ll && in_ll->l_size == 2 && hatom_gettype(&in_ll->l_head->l_next->l_hatom) == H_SYM && hatom_getsym(&in_ll->l_head->l_next->l_hatom) == s) {
+                            found = WHITENULL_llll;
+                        }
+                    }
+                        break;
+
                     case k_PLAYKEYS_ROUTER:
                         found = llll_get();
                         if (router)
                             llll_appendsym(found, router);
                         break;
-                        
-                        
+
+
                     default:
                         break;
                 }
-                
+
                 if (found) {
                     if (found == WHITENULL_llll) {
-                        llllobj_outlet_bang((t_object *) x, LLLL_OBJ_VANILLA, outlet);
+                        x->n_keys[outlet].exists = 2;
+//                        llllobj_outlet_bang((t_object *) x, LLLL_OBJ_VANILLA, outlet);
                     } else {
                         x->n_keys[outlet].exists = 1;
                         llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, found, outlet);
@@ -2077,7 +2511,7 @@ void playkeys_assist(t_playkeys *x, void *b, long m, long a, char *s)
                     case H_SYM:
                         sprintf(s, "llll (%s): slot %s", type, hatom_getsym(&x->n_keys[a].specification)->s_name);
                         break;
-                        
+
                     default:
                         sprintf(s, "llll (%s): unknown slot", type);
                         break;
@@ -2088,6 +2522,9 @@ void playkeys_assist(t_playkeys *x, void *b, long m, long a, char *s)
             case k_PLAYKEYS_PAUSE:
             case k_PLAYKEYS_END:
                 sprintf(s, "bang for key %s", property_to_symbol(x->n_keys[a].property)->s_name);
+                break;
+            case k_PLAYKEYS_CUSTOMSTARTENDSYMBOL:
+                sprintf(s, "bang for %s", hatom_getsym(&x->n_keys[a].specification) ? hatom_getsym(&x->n_keys[a].specification)->s_name : "");
                 break;
             default:
                 sprintf(s, "llll (%s): %s", type, property_to_symbol(x->n_keys[a].property)->s_name);
@@ -2109,6 +2546,7 @@ void playkeys_free(t_playkeys *x)
     llll_free(x->n_note_commands);
     llll_free(x->n_chord_commands);
     llll_free(x->n_rest_commands);
+    llll_free(x->n_marker_commands);
 
     bach_freeptr(x->n_keys);
     llll_free(x->n_empty);
@@ -2122,17 +2560,17 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
     long true_ac;
     char outlets[LLLL_MAX_OUTLETS], *this_outlets = outlets;
     t_playkeys_key *this_keys;
-    
+
     true_ac = MIN(attr_args_offset(ac, av), LLLL_MAX_OUTLETS - 1);
-    
+
     if ((x = (t_playkeys *) object_alloc_debug(playkeys_class))) {
         // @arg 0 @name playkeys @type anything @digest Parameters
         // @description The names of the parameters to retrieve.
-        // Use an llll of type <b>[slot <m>number</m>]</b> or
+        // Use an integer <m>N</m> or an llll of type <b>[slot <m>N</m>]</b> or
         // <b>[slot <m>name</m>]</b> to retrieve a given slot.
         // If you need to retrieve multiple slots you can also
         // join them in a single llll in the form
-        // <b>[slot <m>name_or_number</m> <m>name_or_number</m>...]</b>.
+        // <b>[slot <m>name_or_number</m> <m>name_or_number</m>...]</b>,
         // Allowed parameters to retrieve correspond to the following symbols:
         // "type", "onset", "symonset", "cents", "pitch", "duration", "symduration", "tail", "velocity",
         // "midichannel", "tie", "voicenumber", "chordindex", "noteindex, "path" (these last three only meaningful
@@ -2145,14 +2583,18 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         // they will report the corresponding actions with a bang.
         // As a shortcut for dynamics-, lyrics-, articulations- and noteheads-slot (whose numbers are settable via the four corresponding attributes)
         // the "dynamics", "lyrics", "articulations" and "noteheads" symbol can be used.
-        
+
+        x->n_creatingnewobject = 1;
+
         x->n_process = llll_make();
         x->n_note_commands = llll_make();
         x->n_chord_commands = llll_make();
         x->n_rest_commands = llll_make();
-        
+        x->n_marker_commands = llll_make();
+
         reset_warnings(x);
 
+        x->n_autoassigncommands = 1;
         x->n_notationitems_to_process = -1; // all of them
 
         t_llll *args_ll = llll_parse(true_ac, av);
@@ -2161,31 +2603,31 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         llll_flatten(args_ll_flat, 0, 0);
         this_keys = x->n_keys = (t_playkeys_key *) bach_newptr((args_ll_flat ? args_ll_flat->l_size + 1 : 1) * sizeof(t_playkeys_key));
         llll_free(args_ll_flat);
-        
-        
+
+
         x->n_flattenfornotes = 1;
         x->n_nullmode = 1;
         x->n_use_default_breakpoints = 1;
-        
+
         atom_setlong(&x->n_dynamicsslot, BACH_DEFAULT_SLOT_DYNAMICS);
         atom_setlong(&x->n_lyricsslot, BACH_DEFAULT_SLOT_LYRICS);
         atom_setlong(&x->n_articulationsslot, BACH_DEFAULT_SLOT_ARTICULATIONS);
         atom_setlong(&x->n_noteheadslot, BACH_DEFAULT_SLOT_NOTEHEADS);
         atom_setlong(&x->n_annotationslot, BACH_DEFAULT_SLOT_ANNOTATIONS);
         x->n_must_iterate_on_output = false;
-        
+
         attr_args_process(x, ac, av);
-        
+
         if (!args_ll || !args_ll->l_head) {
             object_error((t_object *)x, "No keys defined, or wrong keys syntax.");
             llll_free(args_ll);
             llll_free(args_ll_flat);
             return NULL;
         }
-        
+
         long i = 0;
-        
-        
+
+
         t_llll_stack *stack = llll_stack_new();
         t_llllelem *el = args_ll->l_head;
         t_symbol *allowed_command_router = NULL;
@@ -2199,57 +2641,64 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                         this_keys->property = symbol_to_property(sym);
                         this_keys->allowed_command_router = allowed_command_router;
                         if (this_keys->property == k_PLAYKEYS_NONE) {
-                            object_error((t_object *)x, "Unrecognized key '%s', can't create object.", sym ? sym->s_name : "");
-                            llll_free(args_ll);
-                            llll_free(args_ll_flat);
-                            return NULL;
+                            if (allowed_command_router) { // this is interpreted as a custom start/end dump marker
+                                this_keys->property = k_PLAYKEYS_CUSTOMSTARTENDSYMBOL;
+                                this_keys->allowed_notationitems = k_PLAYKEYS_INCOMING_CUSTOMSTARTENDSYMBOL_COMMAND;
+                                hatom_setsym(&this_keys->specification, sym);
+                            } else {
+                                object_error((t_object *)x, "Unrecognized key '%s', can't create object.", sym ? sym->s_name : "");
+                                llll_free(args_ll);
+                                llll_free(args_ll_flat);
+                                return NULL;
+                            }
+                        } else {
+                            this_keys->specification.h_type = H_NULL;
+                            this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems : get_default_allowed_notationitems_for_property(this_keys->property);
                         }
-                        this_keys->specification.h_type = H_NULL;
-                        this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
                         *this_outlets++ = '4';
                         i++;
                         this_keys++;
                     }
                         break;
-                        
+
                     case H_LONG:
                     {
                         long slotnum = hatom_getlong(&el->l_hatom);
                         this_keys->property = k_PLAYKEYS_SLOT;
                         this_keys->allowed_command_router = allowed_command_router;
                         hatom_setlong(&this_keys->specification, slotnum);
-                        this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
+                        this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems : get_default_allowed_notationitems_for_property(this_keys->property);
                         *this_outlets++ = '4';
                         i++;
                         this_keys++;
                     }
                         break;
-                        
+
                     case H_LLLL:
                     {
                         t_llll *ll = hatom_getllll(&el->l_hatom);
                         char router_is_sym = ll && ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_SYM;
-                        
+
                         if (router_is_sym && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
                             for (t_llllelem *tempel = ll->l_head->l_next; tempel; tempel = tempel->l_next) {
                                 this_keys->property = k_PLAYKEYS_SLOT;
                                 this_keys->allowed_command_router = allowed_command_router;
                                 this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems : get_default_allowed_notationitems_for_property(this_keys->property);
-                                
+
                                 if (hatom_gettype(&tempel->l_hatom) == H_SYM) {
                                     t_symbol *ts = hatom_getsym(&tempel->l_hatom);
                                     hatom_setsym(&this_keys->specification, ts);
-                                    
+
                                     long prop = symbol_to_property(ts);
-                                    if (prop == k_PLAYKEYS_ANNOTATION || prop == k_PLAYKEYS_NOTEHEAD || prop == k_PLAYKEYS_ARTICULATIONS || prop == k_PLAYKEYS_DYNAMICS || k_PLAYKEYS_LYRICS) {
+                                    if (prop == k_PLAYKEYS_ANNOTATION || prop == k_PLAYKEYS_NOTEHEAD || prop == k_PLAYKEYS_ARTICULATIONS || prop == k_PLAYKEYS_DYNAMICS || prop == k_PLAYKEYS_LYRICS) {
                                         this_keys->property = prop;
                                         this_keys->specification.h_type = H_NULL;
-                                        this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
+                                        this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems : get_default_allowed_notationitems_for_property(this_keys->property);
                                     }
 
                                 } else
                                     hatom_setlong(&this_keys->specification, hatom_getlong(&tempel->l_hatom));
-                                
+
                                 *this_outlets++ = '4';
                                 i++;
                                 this_keys++;
@@ -2265,30 +2714,34 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                                 // defining a command
                                 long operate_on = 0;
                                 allowed_command_router = hatom_getsym(&ll->l_head->l_hatom);
-                                
+
                                 if (is_symbol_in_llll_first_level(x->n_note_commands, allowed_command_router)) {
                                     operate_on = 1;
                                 } else if (is_symbol_in_llll_first_level(x->n_chord_commands, allowed_command_router)) {
-                                        operate_on = 2;
+                                    operate_on = 2;
                                 } else if (is_symbol_in_llll_first_level(x->n_rest_commands, allowed_command_router)) {
                                     operate_on = 3;
+                                } else if (is_symbol_in_llll_first_level(x->n_marker_commands, allowed_command_router)) {
+                                    operate_on = 4;
                                 }
 
-                                if (operate_on == 0) { // the command was not assigned to any of the routers
-                                    // ASSIGNING IT TO NOTES
+                                if (operate_on == 0 && x->n_autoassigncommands) { // the command was not assigned to any of the routers
+                                    // we perform automatic assignment on notes (unless the user only wants otherwise).
                                     operate_on = 1;
                                     x->n_notationitems_to_process |= k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND + k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND;
                                     llll_appendsym(x->n_note_commands, allowed_command_router);
                                 }
-                                
+
                                 if (operate_on == 2) {
                                     curr_allowed_notationitems = k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND + k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND;
                                 } else if (operate_on == 3) {
                                     curr_allowed_notationitems = k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
+                                } else if (operate_on == 4) {
+                                    curr_allowed_notationitems = k_PLAYKEYS_INCOMING_MARKER_COMMAND;
                                 } else {
                                     curr_allowed_notationitems = k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND + k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND;
                                 }
-                                
+
                                 llll_stack_push(stack, el->l_next);
                                 el = ll->l_head;
                             }
@@ -2300,7 +2753,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                         }
                     }
                         break;
-                        
+
                     default:
                     {
                         object_error((t_object *)x, "Unknown key.");
@@ -2312,16 +2765,16 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                 }
                 el = el->l_next;
             }
-            
+
             if (!stack->s_items)
-                break; 
-            
+                break;
+
             el = (t_llllelem *) llll_stack_pop(stack);
             curr_allowed_notationitems = -1; // default
         }
         llll_stack_destroy(stack);
 
-        
+
         /*
         for (t_llllelem *el = args_ll->l_head; el && i < LLLL_MAX_OUTLETS - 1; el = el->l_next) {
             if (hatom_gettype(&el->l_hatom) == H_SYM) {
@@ -2363,7 +2816,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                     }
                 } else if (router_is_sym) {
                     this_keys->allowed_notationitems = symbol_to_incoming(hatom_getsym(&ll->l_head->l_hatom));
-                    
+
                 } else {
                     object_error((t_object *)x, "Unknown llll key.");
                     llll_free(args_ll);
@@ -2377,21 +2830,30 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                 return NULL;
             }
         } */
-        
+
         *this_outlets = 0;
         this_keys->property = k_PLAYKEYS_NONE;
         llll_free(args_ll);
-        
+
+        long count = 0;
+        for (t_playkeys_key* this_key = x->n_keys; this_key && this_key->property != k_PLAYKEYS_NONE; this_key++, count++) {
+        }
+        x->n_numkeys = count;
+
         llllobj_obj_setup((t_llllobj_object *) x, 1, outlets);
-        
+
         x->n_empty = llll_get();
+        
+        object_attr_setdisabled((t_object *)x, gensym("routers"), true);
+        object_attr_setdisabled((t_object *)x, gensym("autoassigncommands"), true);
+        x->n_creatingnewobject = 0;
     } else
         error(BACH_CANT_INSTANTIATE);
-    
+
     llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
     if (x && err == MAX_ERR_NONE)
         return x;
-    
+
     object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL
     return NULL;
 }

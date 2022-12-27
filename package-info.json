@@ -7,27 +7,27 @@
 	"extensible" : 0,
 	"homepatcher" : "bach.overview.maxpat",
 	"max_version_max" : "none",
-	"max_version_min" : "6.1",
+	"max_version_min" : "8.2.0",
 	"name" : "bach",
 	"os" : 	{
 		"macintosh" : 		{
-			"platform" : [ "ia32", "x64" ],
-			"min_version" : "10.7.x"
+			"platform" : [ "x64", "aarch64" ],
+			"min_version" : "none"
 		}
 ,
 		"windows" : 		{
-			"platform" : [ "ia32", "x64" ],
+			"platform" : [ "x64" ],
 			"min_version" : "none"
 		}
 
 	}
 ,
 	"package_extra" : 	{
-
+        "forcerestart": 1
 	}
 ,
 	"tags" : [ "computer-aided composition", "notation", "score", "roll", "composition", "generation", "symbolic composition" ],
-	"version" : "0.8.1",
+	"version" : "0.8.2",
 	"website" : "https://www.bachproject.net",
 	"filelist" : 	{
 		"extensions" : [ "bach.mxe", "bach.mxe64", "bach.mxo" ],

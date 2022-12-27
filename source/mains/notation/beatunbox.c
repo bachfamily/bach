@@ -1,7 +1,7 @@
 /*
  *  beatunbox.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -362,7 +362,7 @@ void beatunbox_anything(t_beatunbox *x, t_symbol *msg, long ac, t_atom *av)
 
 			t_llll *unboxed_voice_durations, *unboxed_voice_infos, *unboxed_voice_ties;
 			t_llll *unboxed_voice_cents, *unboxed_voice_velocities, *unboxed_voice_graphic, *unboxed_voice_breakpoints, *unboxed_voice_slots;
-//			char debug1[1000], debug2[1000], debug3[1000], debug4[1000], debug5[1000], debug6[1000], debug7[1000];
+			char debug1[1000], debug2[1000], debug3[1000], debug4[1000], debug5[1000], debug6[1000], debug7[1000];
 //			llll_to_char_array(graphic, debug4, 1000);
 //			llll_to_char_array(voice_graphic, debug5, 1000);
 
@@ -397,19 +397,20 @@ void beatunbox_anything(t_beatunbox *x, t_symbol *msg, long ac, t_atom *av)
 			if (voice_breakpoints) {
 				llll_flatten(voice_breakpoints, 1, 0);
 				flat_up_to_for_breakpoints(voice_breakpoints);
-			} if (voice_slots) {
+			}
+            if (voice_slots) {
 				llll_flatten(voice_slots, 1, 0);
 				flat_up_to_for_slots(voice_slots);
 			}
 			
-/*			llll_to_char_array(voice_cents, debug1, 1000);
+			llll_to_char_array(voice_cents, debug1, 1000);
 			llll_to_char_array(voice_durations, debug2, 1000);
 			llll_to_char_array(voice_velocities, debug3, 1000);
 			llll_to_char_array(voice_ties, debug4, 1000);
 			llll_to_char_array(voice_graphic, debug5, 1000);
 			llll_to_char_array(voice_breakpoints, debug6, 1000);
 			llll_to_char_array(voice_slots, debug6, 1000);
-*/
+
 
 			// substituting 0s to grace levels
 
@@ -429,17 +430,27 @@ void beatunbox_anything(t_beatunbox *x, t_symbol *msg, long ac, t_atom *av)
 				
 				t_llll *thisinlist = llll_get();
 				if (cents_elem) 
-					llll_appendhatom_clone(thisinlist, &cents_elem->l_hatom, 0, WHITENULL_llll); 
-				if (velocities_elem) 
-					llll_appendhatom_clone(thisinlist, &velocities_elem->l_hatom, 0, WHITENULL_llll); 
-				if (graphic_elem) 
-					llll_appendhatom_clone(thisinlist, &graphic_elem->l_hatom, 0, WHITENULL_llll); 
+					llll_appendhatom_clone(thisinlist, &cents_elem->l_hatom);
+                else
+                    llll_appendllll(thisinlist, llll_get());
+				if (velocities_elem)
+					llll_appendhatom_clone(thisinlist, &velocities_elem->l_hatom);
+                else
+                    llll_appendllll(thisinlist, llll_get());
+				if (graphic_elem)
+					llll_appendhatom_clone(thisinlist, &graphic_elem->l_hatom);
+                else
+                    llll_appendllll(thisinlist, llll_get());
 				if (breakpoints_elem) 
-					llll_appendhatom_clone(thisinlist, &breakpoints_elem->l_hatom, 0, WHITENULL_llll); 
-				if (slots_elem) 
-					llll_appendhatom_clone(thisinlist, &slots_elem->l_hatom, 0, WHITENULL_llll); 
-				
-				llll_appendllll(voice_infos, thisinlist, 0, WHITENULL_llll);
+					llll_appendhatom_clone(thisinlist, &breakpoints_elem->l_hatom);
+                else
+                    llll_appendllll(thisinlist, llll_get());
+				if (slots_elem)
+					llll_appendhatom_clone(thisinlist, &slots_elem->l_hatom);
+                else
+                    llll_appendllll(thisinlist, llll_get());
+
+				llll_appendllll(voice_infos, thisinlist);
 			}
 			
             merge_rests_and_alltied_chords_from_separate_parameters(voice_durations, voice_infos, voice_ties, &unboxed_voice_durations, &unboxed_voice_infos, &unboxed_voice_ties, NULL, NULL, (e_merge_when)x->n_merge);
@@ -574,7 +585,7 @@ t_beatunbox *beatunbox_new(t_symbol *s, short ac, t_atom *av)
 		// @description Put a "separate" symbol as argument if you want to input the separate parameters (and not the bach.score gathered syntax).
 		x->input_separate = true_ac && atom_gettype(av) == A_SYM && atom_getsym(av) == _llllobj_sym_separate;
  		
-        x->n_merge = k_MERGE_WHEN_DRAWABLE;
+        x->n_merge = k_MERGE_WHEN_ALWAYS; // k_MERGE_WHEN_DRAWABLE;
         
 		if (x->input_separate) {
 			x->n_proxy[4] = proxy_new_debug((t_object *) x, 4, &x->n_in);

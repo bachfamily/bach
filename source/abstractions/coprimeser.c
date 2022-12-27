@@ -1,7 +1,7 @@
 /*
  *  coprimeser.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -40,7 +40,7 @@
 	Coprime number series
 	
 	@description
-	Finds all the numbers M smaller than the absolute value of a given number N, 
+	Finds all the numbers M smaller than the absolute value of a given number N 
 	such that M and N are coprime.
 	
 	@discussion

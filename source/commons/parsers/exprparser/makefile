@@ -1,7 +1,7 @@
 # /*
 # *  makefile
 # *
-# * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+# * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
 # *
 # * This program is free software: you can redistribute it and/or modify it
 # * under the terms of the GNU General Public License
@@ -18,9 +18,16 @@
 # */
 
 exprparser install:	exprparser.l
-			/usr/local/opt/bison/bin/bison --version
-			/usr/local/opt/flex/bin/flex --version
-			/usr/local/opt/flex/bin/flex -L -o exprparser.c exprparser.l
+			if [ -d "/opt/homebrew/opt/" ]; then\
+				/opt/homebrew/opt/bison/bin/bison --version;\
+				/opt/homebrew/opt/flex/bin/flex --version;\
+				/opt/homebrew/opt/flex/bin/flex -L -o exprparser.c exprparser.l;\
+			else\
+				/usr/local/opt/bison/bin/bison --version;\
+				/usr/local/opt/flex/bin/flex --version;\
+				/usr/local/opt/flex/bin/flex -L -o exprparser.c exprparser.l;\
+			fi;
+			
 			egrep -v "^#line" exprparser.c >bach_exprparser.c
 			egrep -v "^#line" exprparser.lex.h >bach_exprparser_lex.h
 						

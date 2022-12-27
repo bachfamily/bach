@@ -547,7 +547,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -1157,18 +1157,19 @@
 		</method>
 		<method name="addbreakpoint">
 			<arg name="relative_x_position" optional="0" type="float" />
-			<arg name="delta_midicents" optional="0" type="float" />
+			<arg name="delta_midicents" optional="0" type="float/symbol" />
 			<arg name="slope" optional="1" type="float" />
 			<arg name="velocity" optional="1" type="int" />
 			<digest>
 				Add a pitch breakpoint to each selected note
 			</digest>
 			<description>
-				Syntax: <b>addbreakpoint <m>&lt;float: relative_x_position&gt;</m> <m>&lt;float: delta_midicents&gt;</m> <m>[&lt;float: slope&gt;]</m> <m>[&lt;int: velocity&gt;]</m> </b><br />
+				Syntax: <b>addbreakpoint <m>&lt;float: relative_x_position&gt;</m> <m>&lt;float/symbol: delta_midicents&gt;</m> <m>[&lt;float: slope&gt;]</m> <m>[&lt;int: velocity&gt;]</m> </b><br />
 				Examples:<br />
 				• <b>addbreakpoint 0.5 200</b>   <i>→ add a breakpoint at the middle of the note of +200cents</i><br />
 				• <b>addbreakpoint 0.5 200 0.2</b>   <i>→ the same, with slope 0.2</i><br />
 				• <b>addbreakpoint 0.5 200 0.2 80</b>   <i>→ the same, with velocity 80</i><br />
+				• <b>addbreakpoint 0.5 auto</b>   <i>→ pop out a breakpoint in the middle of the duration line</i><br />
 				<br />
 				Adds a pitch breakpoint to each one of the selected notes.
 				The breakpoint is given by three arguments: <br />
@@ -1177,7 +1178,7 @@
 				0 and 1 should be avoided (since a notehead and notetail already exists for any note), so the
 				values should be striclty greater than 0 and strictly less than 1. <br />
 				- a number setting the pitch difference (in midicents) of the breakpoint with respect to the main
-				note's pitch.
+				note's pitch. This can be replaced by the "auto" symbol to infer the pitch from the existing duration line.
 				- an optional slope parameter, between -1 and 1, setting the slope of the segment of duration line preceding the breakpoint
 				(0 being linear, default).
 				- an optional velocity parameter, between 1 and 127, but only if the <m>breakpointshavevelocity</m> attribute is active.
@@ -1212,7 +1213,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -1234,85 +1235,6 @@
 				for instance <b>addmarker 1000 [foo fee]</b>. If no names need to be associated to the marker, leave <b>[]</b> as
 				name llll.
 				<br />				See also:<m>deletemarker</m>,<m>clearmarkers</m><br />
-			</description>
-		</method>
-		<method name="addslot">
-			<arg name="slots" optional="0" type="llll" />
-			<digest>
-				Set the content of one or more slots for selected notes
-			</digest>
-			<description>
-				Syntax: <b>addslot <m>&lt;llll: slots&gt;</m> </b><br />
-				Examples:<br />
-				• <b>addslot [6 0.512]</b>   <i>→ fill (float) slot 6 with number 0.512</i><br />
-				• <b>addslot [5 42]</b>   <i>→ fill (int) slot 5 with number 42</i><br />
-				• <b>addslot [7 "Lorem Ipsum" ]</b>   <i>→ fill (text) slot 7 with some text</i><br />
-				• <b>addslot [10 [John George [Ringo] [Brian]] ]</b>   <i>→ fill (llll) slot 10 with an llll</i><br />
-				• <b>addslot [3 10 20 30]</b>   <i>→ fill (intlist) slot 3 of selected notes with list of values 10, 20, 30</i><br />
-				• <b>addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2]</b>   <i>→ fill (function) slot 2 with a breakpoint function in (x y slope) form</i><br />
-				• <b>addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for slot named 'amplienv'</i><br />
-				• <b>addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for currently open slot</i><br />
-				• <b>addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ set more slots at once</i><br />
-				<br />
-				An <m>addslot</m> message will replace the content of one or more slots, for all the selected notes.
-				The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
-				The slot content syntax depends on the slot type. <br />
-				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
-				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
-				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
-				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
-				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
-				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
-				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
-				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
-				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
-				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
-				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
-				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
-				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
-				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
-				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
-				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
-				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
-				<m>lowpass</m>, <m>highpass</m>, <m>bandpass</m>, <m>bandstop</m>, <m>peaknotch</m>, <m>lowshelf</m>, <m>highshelf</m>, <m>allpass</m>.
-				You can equivalently use for input the syntax
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
-				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
-				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
-				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
-				articulations introduced as symbols.
-				The list of the are standard available articulations as symbols is: "staccato" or "stacc", "staccatissimo" or "staccmo",
-				"fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
-				"portatostaccato" or "portstacc", "martellato" or "mart", "martellatostaccato" or "martstacc", "lefthandpizzicato" or "lhpiz",
-				"trill" or "tr", "gruppetto" or "grupp", "upmordent" or "umord", "downmordent" or "dmord", "doublemordent" or "mmord",
-				"upbowing" or "ubow", "downbowing" or "dbow", "tremolo3" or "trem3" (for the tremolo with three slashes), "tremolo2" or "trem2"
-				(for the tremolo with two slashes), "tremolo1" or "trem1" (for the tremolo with a single slash).
-				Notice that the default bach font has all the articulations glyphs; however, not all the other supported fonts do,
-				in particular Boulez doesn't have a certain number of the previous articulations among its glyphs.
-				If you don't see an articulation as you wish
-				(e.g. tremoli with Boulez), it might be because the font doesn't have the proper character, so try to use another font.
-				Articulation symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
-				- For slot of type <m>notehead</m> the content must a single notehead symbol.
-				The list of the standard available noteheads as symbols is: "default", "doublewhole", "whole", "white", "black", "diamond", "cross", "plus",
-				"none", "accent", "blacksquare", "whitesquare", "square" "blacktriangle", "whitetriangle", "triangle", "blackrhombus", "whiterhombus", "rhombus".
-				In <o>bach.score</o>, the "square", "triangle" and "rhombus" notehead are black or white depending on the note duration; in <o>bach.roll</o> only
-				the black flavour is used.
-				As for articulations, not all fonts support all symbols.
-				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
-				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
-				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
-				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
-				as the number of rows.
-				<br /> <br />
-				<br />				See also:<m>changeslotitem</m>,<m>eraseslot</m>,<m>filltiesequenceswithslots</m><br />
 			</description>
 		</method>
 		<method name="addtempo">
@@ -1829,7 +1751,7 @@
 				<br />
 				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
-				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="autobeam">
@@ -1900,88 +1822,6 @@
 			</description>
 		</method>
 		<method name="cents">
-			<arg name="measureinfo" optional="0" type="llll" />
-			<digest>
-				Modify the measureinfo of selected measures
-			</digest>
-			<description>
-				Syntax: <b>cents <m>&lt;llll: measureinfo&gt;</m> </b><br />
-				Examples:<br />
-				• <b>measureinfo [5 4]</b>   <i>→ change selected measures' time signature to 5/4</i><br />
-				• <b>measureinfo [5 4] [1/4 120]</b>   <i>→ the same, but also add quarter = 120 tempo</i><br />
-				• <b>measureinfo [5 4] [[1/4 120] [1/4 160 1/2]]</b>   <i>→ the same, but also define a quarter = 160 tempo after 1/2 from the measure beginning</i><br />
-				• <b>measureinfo [5 4] [[1/4 120 0 1] [1/4 160 1/2]]</b>   <i>→ the same, with accelerando</i><br />
-				• <b>measureinfo [[3 2 2] 8]</b>   <i>→ change time signature to 3+2+2/8</i><br />
-				• <b>measureinfo [[3 2 2] 8] [[1/4 120] [1/4 180 1/2]]</b>   <i>→ the same, but also add two tempi inside the measure</i><br />
-				• <b>measureinfo [11 8] [boxes 3/8 2/8 3/8 4/8]</b>   <i>→ change time signature to 11/8 and assign custom 3+2+3+4 boxes</i><br />
-				<br />
-				Modifies the measureinfo of select measures. The expected syntax is the standard measureinfo syntax,
-				without the outermost level of parentheses (e.g. <b>measureinfo [4 4] [3/8 120]</b> is a valid message). <br />
-				Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
-				This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
-				an llll in the form <b>[<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
-				All elements except for the <m>TIME_SIGNATURE</m> are optional. <br /> <br />
-				The <m>TIME_SIGNATURE</m> is an llll containing the measure time signature, in one of the following forms: <br />
-				- <b>[<m>numerator</m> <m>denominator</m>]</b> for standard time signatures. For instance, <b>[4 4]</b> corresponds to a 4/4 time signature. <br />
-				- <b>[[<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...] <m>denominator</m>]</b> for time
-				signatures where the numerator is a sum of numbers.For instance <b>[[3 2 3] 8]</b>
-				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
-				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
-				- <b>[<m>tempo_value</m>]</b> will assign a quarter tempo at the beginning of the measure. For instance <b>[60]</b> will set a 1/4 = 60 tempo. <br />
-				- <b>[<m>tempo_figure</m> <m>tempo_value</m>]</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
-				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>[3/8 40]</b> will set a tempo of a dotted quarter = 40.<br />
-				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>]</b> will assign the tempo value to the specified symbolic unit and will put the
-				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>[3/8 40 1/4]</b> will set a tempo of a dotted quarter = 40
-				but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
-				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b> will do exactly as the previous case
-				but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
-				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>[3/8 40 1/4 1]</b>
-				will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
-				If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
-				<b>[<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...]</b>, where each tempo must be in one the forms explained above. As an example, consider
-				<b>[[60] [1/4 70 1/16] [1/8 60 1/8 1] [1/8 80 3/8]]</b>, where four tempi have been defined. The order of tempi is irrelevant,
-				only their onset is accounted for. <br />
-				Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
-				certain number of measures, such as <b>[<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
-				For instance <b>[5 [4 4] [[80] [1/4 160 1/2]]]</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
-				until 1/4 = 160 exactly at half of the measure. For instance
-				<b> [[[4 4] [1/8 60]] [[2 4] [1/4 50 1/4 1]] [4 [4 4]] [nil [180]]]</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
-				pass at 2/4 and quarter = 50 after 1/4 of measure 2, and at that moment, an accelerando starts. The accelerando lasts during 4 4/4-measures,
-				and then ends at the following measure on a new tempo of quarter = 180. <br /> <br />
-				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>[<m>parameter_name</m> <m>parameter_value</m>]</b>.
-				The <m>parameter_name</m> is a symbol identifying the parameter. The complete list of parameters symbols and their corresponding
-				values is the following one: <br />
-				- <b>width</b>: assigns a fixed width to a measure. It expects as value a fixed width in pixels that the measure will have (referred to the default
-				vertical and horizontal zoom of 100%, and modified accordingly to those). Assigning a <m>width</m> parameter will also lock the measure barline,
-				so that the width will remain the same, no matter how many chords and notes the measure does and will contain. Use the "auto" symbol
-				instead of the fixed width to revert to the automatic measure width assignment (depending on the measure content). <br />
-				- <b>widthfactor</b>: assigns a local factor for the spacing. It expects as value a multiplier factor, which will be applied to the whole measure
-				spacing, and which will compress (for values less than 1) or expand (for values
-				greater than 1) the width of the measure and the spacing of its chords accordingly. In this case, the measure barline is not locked, only the
-				width factor is changed. <br />
-				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
-				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
-				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
-				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
-				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
-				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
-				assigned measure number (default). <br />
-				- <b>boxes</b>: assign custom beaming boxes. It expects custom beaming boxes for the measure, as a plain list of rational numbers.
-				Custom boxing allows you to handle beam grouping inside the measure differently than beat-wise.
-				Each number of the expected list is the symbolic width of each beaming box inside the measure.
-				If the given boxes don't fill the whole measure, the last one is padded. For instance, in a 4/4 measure,
-				<b>[boxes 1/8]</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
-				This is equivalent to <b>[boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8]</b>.
-				Analogously, <b>[boxes 1/2 1/8 1/4 1/8]</b> is a more exotic boxing for the same time signature. <br />
-				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
-				compresses the measure by a factor of two, hides its final barline and its number.
-				<br /> <br />
-				<br />				See also:<m>symduration</m><br />
-			</description>
-		</method>
-		<method name="cents">
 			<arg name="velocity" optional="0" type="number/llll/anything" />
 			<digest>
 				Modify the pitch of selected items
@@ -2024,12 +1864,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -2126,7 +1970,7 @@
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
-				<br />				See also:<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="checkdynamics">
@@ -2406,7 +2250,7 @@
 				A <m>copyslot</m> message will copy the content of a given slot to another slot for any selected note.
 				The slot number of the source slot and of the target slot are given as arguments.
 				Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>moveslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>moveslot</m>,<m>eraseslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="cut">
@@ -2517,7 +2361,7 @@
 				Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
 				wrapped X coordinate of the element to delete (use the <m>thresh</m> message argument to set a tolerance
 				threshold for the X coordinate matching).
-				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="deletevoice">
@@ -2576,7 +2420,7 @@
 				Dump information
 			</digest>
 			<description>
-				Syntax: <b>dump <m>[&lt;list: selective_dump_options&gt;]</m> </b><br />
+				Syntax: <b>dump <m>[&lt;list: selective_dump_options&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>dump</b>   <i>→ dump whole information from all outlets</i><br />
 				• <b>dump separate</b>   <i>→ dump separate-syntax outlets only</i><br />
@@ -2588,6 +2432,9 @@
 				• <b>dump body</b>   <i>→ dump first outlet only, but without dumping the header</i><br />
 				• <b>dump header</b>   <i>→ the same, but only dumping the header</i><br />
 				• <b>dump keys clefs body</b>   <i>→ dump keys, clefs and body from first outlet</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@router</m> (symbol, default: none): Forced router<br />
 				<br />
 				A <m>dump</m> message will simply output
 				the content of all separate parameters from all separate outlets (in separate syntax, right-to-left), and
@@ -2683,7 +2530,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -3274,17 +3121,23 @@
 		<method name="dumpselection">
 			<arglist />
 			<digest>
-				Play selected items off-line
+				Get selected items playout syntax
 			</digest>
 			<description>
 				Message attributes:<br />
 				<m>@router</m> (llll, default: null): Sets a forced router to be used instead of the default one<br />
+				<m>@start</m> (symbol, default: none): Sets a router used to mark the beginning of the dumping<br />
+				<m>@end</m> (symbol, default: none): Sets a router used to mark the end of the dumping<br />
 				<br />
 				The <m>dumpselection</m> message sends the content of each one of selected notation items from the
-				playout, in playout syntax (off-line play).
+				playout, in playout syntax (similarly to <m>playselection offline</m>, but in a much more direct and agile way,
+				without all the intricacies of the playback sequencing system).
 				You can safely rely on the fact that elements will be output ordered by onset. <br />
 				If a "router" message attribute is set, then the standard router ("note", "chord", "rest") is replaced by the specified one;
 				if the "router" attribute has length 3, the first symbol will be used for notes, the second one for chords, the third for rests. <br />
+				Additional routers can be set to mark the beginning and the end of the dumping, via the message attributes <m>start</m>
+				and <m>end</m>; these are both set to <b>none</b> by default, hence disabling the reporting of the beginning and end of
+				the routing.
 				For <o>bach.score</o>, the playout syntax is used whenever the information about a note or chord is sent through the playout (either at playtime
 				or at offline play, or selection dump).
 				The playout syntax is a slight variation of the standard chord gathered syntax. Two different cases apply, according to the <m>playmode</m>
@@ -3324,7 +3177,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -3627,11 +3480,13 @@
 				• <b>eraseslot active</b>   <i>→ clear currently open slot for selected notes</i><br />
 				• <b>eraseslot 4</b>   <i>→ clear 4th slot</i><br />
 				• <b>eraseslot amplienv</b>   <i>→ clear slot named amplienv</i><br />
+				• <b>eraseslot all</b>   <i>→ clear all slots</i><br />
 				<br />
 				An <m>eraseslot</m> message will clear the content of a specific slot for any selected note.
 				The slot number of the slot to clear is given as argument.
-				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>addslot</m>,<m>changeslotitem</m><br />
+				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot,
+				or the word "all" to clear all slots.
+				<br />				See also:<m>setslot</m>,<m>changeslotitem</m><br />
 			</description>
 		</method>
 		<method name="exportimage">
@@ -3733,6 +3588,8 @@
 				<br />
 				Message attributes:<br />
 				<m>@exportmarkers</m> (int, default: 1): If non-zero, exports all the markers<br />
+				<m>@exportbarlines</m> (int, default: 1): If non-zero, a "bach barline" marker is added at each measure<br />
+				<m>@exportdivisions</m> (int, default: 1): If non-zero, a "bach division" marker is added at each beat<br />
 				<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
 				<m>@format</m> (int, default: 1): MIDI file format (0 = single track, 1 = multiple tracks)<br />
 				<m>@resolution</m> (int, default: 960): Number of MIDI ticks per beat<br />
@@ -3744,6 +3601,8 @@
 				Furthermore, some exporting specifications are available, and each has to be given as llll after the (optional) file name.
 				Such lllls will be in the form <b>[<m>specification_name</m> <m>specification_value</m>]</b>). Available specifications are: <br />
 				- <b>exportmarkers</b> (default: 1): if non-0, all the markers in the score will be exported. <br />
+				- <b>exportbarlines</b> (default: 1): if non-0, a "bach barline" marker will be added at each measure. <br />
+				- <b>exportdivisions</b> (default: 1): if non-0, a "bach division" marker will be added at each beat. <br />
 				- <b>voices</b> [default: <b>[]</b>): if a list of voices is provided, then only the specified voices will be exported.
 				If no list is provided, then all the voices of the score will be exported. Ranges can also be
 				expressed, as sublists. For example, <b>[voices 1 3 5]</b> will export the first, third and fifth voice,
@@ -3851,13 +3710,13 @@
 				difficult. What might be handy to do, with Finale, is to export quartertone accidentals as if they were parenthesized versions
 				of the standard accidentals. You can easily map inside finale the parenthesized accidentals to the glyphs of
 				quartertone accidentals, via your favorite quartertone accidental font. A parenthesized natural will be displayed as
-				a quarter-sharp; a parenthesized sharp as a three-quarter-sharp, and so on. Everything, if parenthesized, will step up a
+				a quarter-sharp; a parenthesized sharp as a three-quarters-sharp, and so on. Everything, if parenthesized, will step up a
 				quarter tone. Once you have set up your new Finale document in this way, you can use the <b>[parenthesizedquartertones 1]</b>
 				specification in order to export quartertones in this way.
 				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportxml</m>,<m>exportom</m>,<m>exportpwgl</m>,<m>exportlilypond</m>,<m>exportlilypondpdf</m><br />
 			</description>
 		</method>
-		<method name="filltiedsequenceswithslots">
+		<method name="filltiesequenceswithslots">
 			<arglist />
 			<digest>
 				Fill tie sequences with slots
@@ -3866,7 +3725,7 @@
 				Fills each note in a sequence of ties with the slots of the first tied note, provided that the <m>singleslotfortiednotes</m> specification
 				is set in the slotinfo (otherwise the slot is not copied). This might be useful for instance while reversing, scrambling or modifying sequences of tied notes
 				while preserving the correct slot information.
-				<br />				See also:<m>addslot</m><br />
+				<br />				See also:<m>setslot</m><br />
 			</description>
 		</method>
 		<method name="fixdynamics">
@@ -4311,7 +4170,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -4382,7 +4241,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -4420,7 +4279,7 @@
 				The two arguments are the starting and ending numbers of the measures to be displayed in the screen.
 				If a third argument is given, this is the voice number to which the measure range refers (by default: first voice).
 				For instance, <b>inscreenmeas 4 7 3</b> shows exactly in the screen measures 4 to 7 of voice 3.
-				<br />				See also:<m>domain</m>,<m>inscreen</m>,<m>inscreenpos</m>,<m>resetwidthfactors</m><br />
+				<br />				See also:<m>domain</m>,<m>inscreen</m>,<m>inscreenpos</m>,<m>resetwidthfactors</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="inscreenpos">
@@ -4453,7 +4312,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -4469,7 +4328,7 @@
 				For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
 				<b>[3 any 27/4]</b> does the same for voice 3.
 				<br /> <br />
-				<br />				See also:<m>inscreen</m>,<m>inscreenmeas</m><br />
+				<br />				See also:<m>inscreen</m>,<m>inscreenmeas</m>,<m>scroll</m><br />
 			</description>
 		</method>
 		<method name="insertmeasure">
@@ -4969,7 +4828,7 @@
 				The position may be specified explicitly (for slots that do not bear X-axis information) or
 				dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
-				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="insertvoice">
@@ -5207,13 +5066,23 @@
 				Obtain active notes data at a given instant
 			</digest>
 			<description>
-				Syntax: <b>interp <m>&lt;float/llll: time&gt;</m> </b><br />
+				Syntax: <b>interp <m>&lt;float/llll: time&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>interp 1000</b>   <i>→ get info on chords being played at 1s</i><br />
 				• <b>interp [3]</b>   <i>→ get info on chords being played at beginning of measure 3</i><br />
 				• <b>interp [3.5]</b>   <i>→ get info on chords being played at half of measure 3</i><br />
 				• <b>interp [3 1/4]</b>   <i>→ get info on chords being played after 1/4 of measure 3</i><br />
 				• <b>interp [2 3 1/4]</b>   <i>→ get info on chords being played after 1/4 of measure 3 of voice 2 (but retrieve all voices!)</i><br />
+				• <b>interp tempo [3]</b>   <i>→ get tempo at beginning of measure 3</i><br />
+				• <b>interp tempo 1s</b>   <i>→ get tempo at 1s</i><br />
+				• <b>interp tempo [2 3 1/4]</b>   <i>→ get info on tempo after 1/4 of measure 3 of voice 2</i><br />
+				• <b>interp timesig [3]</b>   <i>→ get time signature at beginning of measure 3</i><br />
+				• <b>interp timesig 1s</b>   <i>→ get time signature at 1s</i><br />
+				• <b>interp timesig [2 3 0]</b>   <i>→ get info on time signatures at measure 3 of voice 2</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
 				<br />
 				The <m>interp</m> message, followed by a time value (in milliseconds) retrieves
 				the instantaneous data of all the notes which are active at the given time instant.
@@ -5223,7 +5092,11 @@
 				being the chord notes active at
 				the given time instant, each in the standard note gathered syntax, with two important variations:
 				there is no tie element, and for each slot marked as temporal only the slot element at the given time instant
-				is output (e.g. the interpolated function point of a function slot). <br /> <br />
+				is output (e.g. the interpolated function point of a function slot). <br />
+				If the <m>interp</m> message is followed by the <m>tempo</m> symbol, before any other argument, then the tempo
+				is retrieved at the specified position in time, for every voice. <br />
+				If the <m>interp</m> message is followed by the <m>timesig</m> symbol, before any other argument, then the time signature
+				is retrieved at the specified position in time, for every voice. <br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, the <m>tie?</m> value is 1 only if the note starts a tie and 0 otherwise, and
@@ -5363,7 +5236,7 @@
 				<br />
 				The <m>lambda</m> message is a general router which can be prepended to all the following operations:
 				<m>cents</m>, <m>velocity</m>, <m>onset</m>, <m>tail</m>, <m>duration</m>, <m>voice</m>, <m>addbreakpoint</m>, <m>erasebreakpoint</m>,
-				<m>addslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
+				<m>setslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
 				If such router is prepended, the corresponding operation will apply on the currently output selected item.
 				The idea is that when a selection dump is asked or a command is sent (also see <m>dumpselection</m> or <m>sendcommand</m>), the notation
 				elements are output one by one from the playout (notewise or chordwise depending on the <m>playmode</m>): if you put a feedback loop from the playout
@@ -5372,7 +5245,7 @@
 				chords one by one, depending on their parameters, even by performing a collective selection dump.
 				Such feedback cycle must not have any <o>delay</o> nor <o>pipe</o> nor <o>defer</o> nor <o>deferlow</o>, nor anything which may change the thread
 				or defer the modification operation. See #lambda+operation in the help center to have some examples of usage.
-				<br />				See also:<m>cents</m>,<m>velocity</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m>,<m>name</m><br />
+				<br />				See also:<m>cents</m>,<m>velocity</m>,<m>changeslotitem</m>,<m>setslot</m>,<m>eraseslot</m>,<m>name</m><br />
 			</description>
 		</method>
 		<method name="legato">
@@ -5471,7 +5344,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -6012,6 +5885,88 @@
 				<br />				See also:<m>unlock</m><br />
 			</description>
 		</method>
+		<method name="measureinfo">
+			<arg name="measureinfo" optional="0" type="llll" />
+			<digest>
+				Modify the measureinfo of selected measures
+			</digest>
+			<description>
+				Syntax: <b>measureinfo <m>&lt;llll: measureinfo&gt;</m> </b><br />
+				Examples:<br />
+				• <b>measureinfo [5 4]</b>   <i>→ change selected measures' time signature to 5/4</i><br />
+				• <b>measureinfo [5 4] [1/4 120]</b>   <i>→ the same, but also add quarter = 120 tempo</i><br />
+				• <b>measureinfo [5 4] [[1/4 120] [1/4 160 1/2]]</b>   <i>→ the same, but also define a quarter = 160 tempo after 1/2 from the measure beginning</i><br />
+				• <b>measureinfo [5 4] [[1/4 120 0 1] [1/4 160 1/2]]</b>   <i>→ the same, with accelerando</i><br />
+				• <b>measureinfo [[3 2 2] 8]</b>   <i>→ change time signature to 3+2+2/8</i><br />
+				• <b>measureinfo [[3 2 2] 8] [[1/4 120] [1/4 180 1/2]]</b>   <i>→ the same, but also add two tempi inside the measure</i><br />
+				• <b>measureinfo [11 8] [boxes 3/8 2/8 3/8 4/8]</b>   <i>→ change time signature to 11/8 and assign custom 3+2+3+4 boxes</i><br />
+				<br />
+				Modifies the measureinfo of select measures. The expected syntax is the standard measureinfo syntax,
+				without the outermost level of parentheses (e.g. <b>measureinfo [4 4] [3/8 120]</b> is a valid message). <br />
+				Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
+				This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
+				an llll in the form <b>[<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
+				All elements except for the <m>TIME_SIGNATURE</m> are optional. <br /> <br />
+				The <m>TIME_SIGNATURE</m> is an llll containing the measure time signature, in one of the following forms: <br />
+				- <b>[<m>numerator</m> <m>denominator</m>]</b> for standard time signatures. For instance, <b>[4 4]</b> corresponds to a 4/4 time signature. <br />
+				- <b>[[<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...] <m>denominator</m>]</b> for time
+				signatures where the numerator is a sum of numbers.For instance <b>[[3 2 3] 8]</b>
+				corresponds to a (3+2+3)/8 time signature. <br /> <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
+				- <b>[<m>tempo_value</m>]</b> will assign a quarter tempo at the beginning of the measure. For instance <b>[60]</b> will set a 1/4 = 60 tempo. <br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m>]</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
+				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>[3/8 40]</b> will set a tempo of a dotted quarter = 40.<br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>]</b> will assign the tempo value to the specified symbolic unit and will put the
+				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>[3/8 40 1/4]</b> will set a tempo of a dotted quarter = 40
+				but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b> will do exactly as the previous case
+				but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
+				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>[3/8 40 1/4 1]</b>
+				will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
+				If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
+				<b>[<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...]</b>, where each tempo must be in one the forms explained above. As an example, consider
+				<b>[[60] [1/4 70 1/16] [1/8 60 1/8 1] [1/8 80 3/8]]</b>, where four tempi have been defined. The order of tempi is irrelevant,
+				only their onset is accounted for. <br />
+				Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
+				certain number of measures, such as <b>[<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
+				For instance <b>[5 [4 4] [[80] [1/4 160 1/2]]]</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
+				until 1/4 = 160 exactly at half of the measure. For instance
+				<b> [[[4 4] [1/8 60]] [[2 4] [1/4 50 1/4 1]] [4 [4 4]] [nil [180]]]</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
+				pass at 2/4 and quarter = 50 after 1/4 of measure 2, and at that moment, an accelerando starts. The accelerando lasts during 4 4/4-measures,
+				and then ends at the following measure on a new tempo of quarter = 180. <br /> <br />
+				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>[<m>parameter_name</m> <m>parameter_value</m>]</b>.
+				The <m>parameter_name</m> is a symbol identifying the parameter. The complete list of parameters symbols and their corresponding
+				values is the following one: <br />
+				- <b>width</b>: assigns a fixed width to a measure. It expects as value a fixed width in pixels that the measure will have (referred to the default
+				vertical and horizontal zoom of 100%, and modified accordingly to those). Assigning a <m>width</m> parameter will also lock the measure barline,
+				so that the width will remain the same, no matter how many chords and notes the measure does and will contain. Use the "auto" symbol
+				instead of the fixed width to revert to the automatic measure width assignment (depending on the measure content). <br />
+				- <b>widthfactor</b>: assigns a local factor for the spacing. It expects as value a multiplier factor, which will be applied to the whole measure
+				spacing, and which will compress (for values less than 1) or expand (for values
+				greater than 1) the width of the measure and the spacing of its chords accordingly. In this case, the measure barline is not locked, only the
+				width factor is changed. <br />
+				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
+				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
+				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
+				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
+				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
+				assigned measure number (default). <br />
+				- <b>boxes</b>: assign custom beaming boxes. It expects custom beaming boxes for the measure, as a plain list of rational numbers.
+				Custom boxing allows you to handle beam grouping inside the measure differently than beat-wise.
+				Each number of the expected list is the symbolic width of each beaming box inside the measure.
+				If the given boxes don't fill the whole measure, the last one is padded. For instance, in a 4/4 measure,
+				<b>[boxes 1/8]</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
+				This is equivalent to <b>[boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8]</b>.
+				Analogously, <b>[boxes 1/2 1/8 1/4 1/8]</b> is a more exotic boxing for the same time signature. <br />
+				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
+				compresses the measure by a factor of two, hides its final barline and its number.
+				<br /> <br />
+				<br />				See also:<m>symduration</m><br />
+			</description>
+		</method>
 		<method name="merge">
 			<arg name="selection" optional="1" type="sym" />
 			<arg name="threshold_time" optional="0" type="rational" />
@@ -6076,7 +6031,7 @@
 				A <m>moveslot</m> message will move the content of a given slot to another slot for any selected note.
 				The slot number of the source slot and of the target slot are given as arguments.
 				Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>copyslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>copyslot</m>,<m>eraseslot</m>,<m>setslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="mute">
@@ -6135,6 +6090,22 @@
 			</description>
 		</method>
 		<method name="nametoslot">
+			<arg name="pitchslot" optional="0" type="int" />
+			<arg name="velocityslot" optional="1" type="int" />
+			<digest>
+				Copy duration line breakpoint function into a slot
+			</digest>
+			<description>
+				Syntax: <b>nametoslot <m>&lt;int: pitchslot&gt;</m> <m>[&lt;int: velocityslot&gt;]</m> </b><br />				<br />
+				A <m>dltoslot</m> message copies the duration line envelope (as a breakpoint function)
+				into a given slot. Actually, the message copies both a pitch envelope and a velocity envelope
+				into two different slots, given as arguments (use -1 to avoid assigning one of the slots).
+				You should ensure that the introduced slots are of the appropriate type (in particular, they should be
+				function slots, with an appropriate range and a domain between 0 and 1). <br />
+				<br />				See also:<m>setslot</m><br />
+			</description>
+		</method>
+		<method name="nametoslot">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<arg name="policy" optional="1" type="symbol" />
 			<digest>
@@ -6183,12 +6154,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -6215,7 +6190,7 @@
 				opens the corresponding slot window. If more notes are selected, nothing happens.
 				Instead of the slot number, you can use slot names, so you can set a symbol as argument containing the name of the slot whose window should
 				be open.
-				<br />				See also:<m>addslot</m><br />
+				<br />				See also:<m>setslot</m><br />
 			</description>
 		</method>
 		<method name="overtype">
@@ -6225,7 +6200,7 @@
 				Replace score content at given points
 			</digest>
 			<description>
-				Syntax: <b>overtype <m>&lt;llll: region&gt;</m> <m>&lt;llll: content&gt;</m> </b><br />
+				Syntax: <b>overtype <m>&lt;llll: region&gt;</m> <m>&lt;llll: content&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>overtype [[1] [1 2/4]] [[[1/2 [C4 100 0]]]]</b>   <i>→ replace first two quarters of measure 1 with a middle C note</i><br />
 				• <b>overtype [[1] [1 1/2]] [[[-1/2]]]</b>   <i>→ replace first two quarters of measure 1 with rests</i><br />
@@ -6234,6 +6209,10 @@
 				• <b>overtype [[2 3 1/2]] [[[1/4 [C4 100 0]] [1/4 [E4 100 0]] [1/4 [G4 100 0]]]]</b>   <i>→ put a C major arpeggio of quarter notes in voice 2, starting from 1/2 after beginning of measure 3</i><br />
 				• <b>overtype [[1 1 3/8] [1 2 1/4]] [[[1/8 [C4 100 0]] [1/8 [E4 100 0]] [1/4 [G4 100 0]] [1/8 [C5 100 0]] [1/4 [E5 100 0]] [1/4 [E5 100 0]]]]</b>   <i>→ replace content of voice 1, from measure 1 (after 3/4) to measure 2 (after 1/4), with the defined gathered-syntax content (if content ove</i><br />
 				• <b>overtype [[1 1 3/8] [2 2 1/4]] [[[1/8 [C4 100 0]] [1/8 [E4 100 0]] [1/8 [G4 100 0]]] [[[leveltype 25] [1/12 [7200. 100 0]] [1/12 [7400 100 0]] [1/12 [7600. 100 0]]] [[1/8 [7700 100 0]] [1/8 [7900 100 0]]] [[-1/8] [1/8 [7700 100 0]]]]]</b>   <i>→ replace portion of score spanning multi</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
 				<br />
 				You can use the <m>overtype</m> message to replace the score content at given points in time for given voices, independently
 				from the measure barline boxing. Somehow, this operation corresponds to putting a cursor somewhere in the score, and start "typing"
@@ -6253,7 +6232,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -6372,12 +6351,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -6444,6 +6427,9 @@
 				• <b>play</b>   <i>→ play from current playhead position</i><br />
 				• <b>play offline</b>   <i>→ play in non-realtime mode ("uzi-like")</i><br />
 				• <b>play preschedule</b>   <i>→ accurate prescheduled playback (with limitations)</i><br />
+				• <b>play selection</b>   <i>→ play selected items only</i><br />
+				• <b>play selection offline</b>   <i>→ the same, in non-realtime mode ("uzi-like")</i><br />
+				• <b>play selection offline deferlow</b>   <i>→ play selection offline but deferlow between consecutive outputs</i><br />
 				• <b>play 2000</b>   <i>→ play starting from 2s till the end</i><br />
 				• <b>play 2000 4000</b>   <i>→ play starting from 2s, stop at 4s</i><br />
 				• <b>play [4]</b>   <i>→ play starting from measure 4</i><br />
@@ -6467,9 +6453,11 @@
 				Sequencing can be controlled with a variable speed via the <m>clock</m> message and the <o>setclock</o> object.
 				The <m>play</m> message, without any further argument, plays the <o>bach.score</o> from the current playhead cursor position
 				(by default: the beginning of the <o>bach.score</o>) to the end. <br />
-				If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
+				If you put as first optional argument the "selection" symbol, only the selected content is played:
+				playback starts at the beginning of the selection and ends once the last selected item is played. <br />
+				If you put as additional argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
 				will be still output from the playout, but one after another, "immediately". <br />
-				If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
+				If you put as additional argument the "preschedule" symbol, all the playing events will be prescheduled.
 				Prescheduled playback schedules the events at the beginning of the playback, hence taking a bit more time before playback starts, but also ensuring
 				ensures the best possible timing. Prescheduled playback has some limitations: <br />
 				- no live modification to the roll or score is accounted for during playback; <br />
@@ -6477,6 +6465,9 @@
 				- lambda+modifications won't work;  <br />
 				- redraw is only performed at each new event;  <br />
 				- the "pause" message won't work.  <br />
+				The "selection" symbol can be combined with both "offline" and "preschedule" symbols, but "offline" and
+				"preschedule" are mutually exclusive. <br />
+				If you use the "offline" symbol, you can follow it by a "deferlow" symbol to force a defer-low operation for every output note. <br />
 				If you give a single numeric argument, it will be the starting point in milliseconds
 				of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
 				ending point in milliseconds of the region to be played.
@@ -6489,7 +6480,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -6544,7 +6535,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -6784,12 +6775,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -6815,7 +6810,7 @@
 				<br />
 				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
-				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>setslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="quantize">
@@ -6917,6 +6912,25 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
+				Reset the custom articulations definition to the default one
+			</digest>
+			<description>
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the commands to the default one
+			</digest>
+			<description>
+				A <m>resetcommands</m> message will reset the all the <m>comnands</m> to the original ones
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
 				Reset the slotinfo to the default one
 			</digest>
 			<description>
@@ -6936,16 +6950,6 @@
 			<description>
 				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
 				all the user-defined noteheads.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
-				Reset the custom articulations definition to the default one
-			</digest>
-			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="resetwidthfactors">
@@ -7131,7 +7135,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -7171,13 +7175,35 @@
 				otherwise markers are set for each measure of each voice.
 			</description>
 		</method>
+		<method name="scroll">
+			<arg name="amount" optional="0" type="float" />
+			<digest>
+				Scroll the object horizontally or vertically
+			</digest>
+			<description>
+				Syntax: <b>scroll <m>&lt;float: amount&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>scroll vertical 10</b>   <i>→ scroll 10 pixels vertically</i><br />
+				• <b>scroll vertical 0.5 @unit relative</b>   <i>→ scroll vertically in the center</i><br />
+				• <b>scroll horizontal 0.5 @unit relative</b>   <i>→ the same, horizontally</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@direction</m> (symbol, default: horizontal): Scrolling direction<br />
+				<m>@unit</m> (symbol, default: pixel): Amount unit ("pixel", "normalizedpixel" or "relative")<br />
+				<m>@delta</m> (int, default: 0): Scroll amount is relative<br />
+				<br />
+				The message <m>scroll</m> moves the portion of displayed object either horizontally or vertically,
+				in a similar way of moving horizontal or vertical scrollbars.
+				<br />				See also:<m>inscreenpos</m>,<m>inscreen</m><br />
+			</description>
+		</method>
 		<method name="sel">
 			<arg name="arguments" optional="0" type="llll" />
 			<digest>
 				Select items
 			</digest>
 			<description>
-				Syntax: <b>sel <m>&lt;llll: arguments&gt;</m> </b><br />
+				Syntax: <b>sel <m>&lt;llll: arguments&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>sel all</b>   <i>→ select everything</i><br />
 				• <b>sel notes</b>   <i>→ select all notes</i><br />
@@ -7189,6 +7215,9 @@
 				• <b>sel measures</b>   <i>→ select all measures</i><br />
 				• <b>sel chord 3 2</b>   <i>→ select 2rd chord of 3nd measure (of 1st voice)</i><br />
 				• <b>sel chord any 20</b>   <i>→ select 20th chord of 1st voice (in any measure)</i><br />
+				• <b>sel chord any 20 @tiemode all</b>   <i>→ the same, but consider tied chords as a single one</i><br />
+				• <b>sel chord any 20 @tiemode all @skiprests 1</b>   <i>→ the same, but ignore rests</i><br />
+				• <b>sel chord any 20 @restseqmode all</b>   <i>→ select 20th chord of 1st voice, consider rest sequences as one</i><br />
 				• <b>sel chord 2 5 4</b>   <i>→ select 4th chord of 5th measure 2nd voice</i><br />
 				• <b>sel chord 4 any 21</b>   <i>→ select 21th chord of 4st voice (in any measure)</i><br />
 				• <b>sel chord -1 -2 -1</b>   <i>→ select last chord of one-but-last measure of last voice</i><br />
@@ -7235,6 +7264,11 @@
 				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
 				• <b>sel tail if cents &gt; 6000</b>   <i>→ select all tails above middle C</i><br />
 				<br />
+				Message attributes:<br />
+				<m>@tiemode</m> (symbol, default: each): If "all", tied sequences of chords are counted as one<br />
+				<m>@skiprests</m> (int, default: 0): If non-zero, rests are not counted at all<br />
+				<m>@restseqmode</m> (int, default: each): If "all", sequences of consecutive rests are counted as one<br />
+				<br />
 				The word <m>sel</m> add some notation items to the current selection. In the basic behavior,
 				the word must be followed by four elements, specifying: <br />
 				- the starting temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>[]</b> if you want to select from the beginning); <br />
@@ -7250,7 +7284,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -7301,19 +7335,23 @@
 				For instance, <b>sel note 4 2 3</b> selects the third note of second chord of fourth measure [of first voice], while <b>sel note 5 4 2 3</b> does the same with the fifth voice.
 				Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
 				a sequence of wrapped lists of integers, for instance <b>sel note [5 2 4 3] [1 1 1 -1]</b>.<br />
-				- If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>rest if</b>, <b>marker if</b>, <b>breakpoint if</b>
-				or <b>tail if</b> followed by a
-				condition to be verified, a conditional selection on notes, rests, markers or pitch breakpoints (respectively) is performed.
+				- If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>chord if</b>, <b>voice if</b>, <b>measure if</b>,
+				<b>rest if</b>, <b>marker if</b>, <b>breakpoint if</b> or <b>tail if</b> followed by a
+				condition to be verified, a conditional selection on notes,  markers or pitch breakpoints (respectively) is performed.
 				and notes/markers/pitch breakpoints matching such condition are selected.
 				The condition must be an expr-like expression returning 1 if notes have to be selected, 0 otherwise.
 				You can use symbolic variables inside such expressions. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -7385,7 +7423,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -7584,7 +7622,7 @@
 				Move the playhead cursor
 			</digest>
 			<description>
-				Syntax: <b>setcursor <m>&lt;llll: position&gt;</m> </b><br />
+				Syntax: <b>setcursor <m>&lt;llll: position&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>setcursor 2000</b>   <i>→ set the playhead at 2s</i><br />
 				• <b>setcursor [4]</b>   <i>→ set the playhead at beginning of measure 4</i><br />
@@ -7593,6 +7631,11 @@
 				• <b>setcursor [2 4 1/4]</b>   <i>→ set the playhead after 1/4 of measure 4, in second voice</i><br />
 				• <b>setcursor John</b>   <i>→ set the cursor at the onset of the first item named 'John'</i><br />
 				• <b>setcursor John Lennon</b>   <i>→ set the cursor at the onset of the first item named 'John' and 'Lennon'</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
+				<m>@zeropimchord</m> (int, default: 0): If non-zero, the cursor is set on chords instead of barlines<br />
 				<br />
 				The <m>setcursor</m> message moves the playhead cursor to a specific position, given as argument in milliseconds (if a single number is entered)
 				or as a timepoint (if an llll is entered). <br />
@@ -7604,7 +7647,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -7624,6 +7667,21 @@
 				<b>setcursor <m>MARKER_NAME_OR_NAMES</m></b>, where <m>MARKER_NAME_OR_NAMES</m> is a single name or plain list of names.
 				The playhead cursor is moved to the first marker matching all the names (if any).
 				<br />				See also:<m>getcursor</m>,<m>showcursor</m>,<m>hidecursor</m><br />
+			</description>
+		</method>
+		<method name="setdurationline">
+			<arg name="breakpoints" optional="0" type="llll" />
+			<digest>
+				Set the duration line for selected items
+			</digest>
+			<description>
+				Syntax: <b>setdurationline <m>&lt;llll: breakpoints&gt;</m> </b><br />
+				Example: <b>setdurationline [0 0 0] [0.5 200 0.2] [1 500 0]</b>   <i>→ sets duration line breakpoints to selection</i><br />
+				<br />
+				A <m>setedurationline</m> message will replace the duration line of all the selected notes with the introduced breakpoints
+				The syntax is
+				<b>setdurationline [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>] [<m>relative_x</m> <m>delta_mc</m> <m>slope</m>]...</b>. <br />
+				<br />				See also:<m>addbreakpoint</m>,<m>erasebreakpoints</m><br />
 			</description>
 		</method>
 		<method name="setmeasureparameters">
@@ -7691,6 +7749,86 @@
 				<br />
 				Set all the notation colors at once (accidentals, annotations, articulations, clefs, key signatures,
 				lyrics, main and auxiliary staff, notes, stems, tuplets, beams, flags, rests), in RGBA format.
+			</description>
+		</method>
+		<method name="setslot">
+			<arg name="slots" optional="0" type="llll" />
+			<digest>
+				Set the content of one or more slots for selected notes
+			</digest>
+			<description>
+				Syntax: <b>setslot <m>&lt;llll: slots&gt;</m> </b><br />
+				Examples:<br />
+				• <b>setslot [6 0.512]</b>   <i>→ fill (float) slot 6 with number 0.512</i><br />
+				• <b>setslot [5 42]</b>   <i>→ fill (int) slot 5 with number 42</i><br />
+				• <b>setslot [7 "Lorem Ipsum" ]</b>   <i>→ fill (text) slot 7 with some text</i><br />
+				• <b>setslot [10 [John George [Ringo] [Brian]] ]</b>   <i>→ fill (llll) slot 10 with an llll</i><br />
+				• <b>setslot [3 10 20 30]</b>   <i>→ fill (intlist) slot 3 of selected notes with list of values 10, 20, 30</i><br />
+				• <b>setslot [2 [0 0 0] [0.5 0 1] [1 1 0.2]</b>   <i>→ fill (function) slot 2 with a breakpoint function in (x y slope) form</i><br />
+				• <b>setslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for slot named 'amplienv'</i><br />
+				• <b>setslot [active [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ the same for currently open slot</i><br />
+				• <b>setslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]]</b>   <i>→ set more slots at once</i><br />
+				<br />
+				A <m>setslot</m> message (or <m>addslot</m> for backward compatibility)
+				will replace the content of one or more slots, for all the selected notes.
+				The syntax is <b>setslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
+				The slot content syntax depends on the slot type. <br />
+				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
+				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
+				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
+				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
+				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
+				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
+				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
+				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
+				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
+				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
+				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
+				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
+				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
+				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
+				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
+				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
+				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
+				<m>lowpass</m>, <m>highpass</m>, <m>bandpass</m>, <m>bandstop</m>, <m>peaknotch</m>, <m>lowshelf</m>, <m>highshelf</m>, <m>allpass</m>.
+				You can equivalently use for input the syntax
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
+				Finally, when data is output, the syntax is always a combination of the two:
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
+				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
+				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
+				articulations introduced as symbols.
+				The list of the are standard available articulations as symbols is: "staccato" or "stacc", "staccatissimo" or "staccmo",
+				"fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
+				"portatostaccato" or "portstacc", "martellato" or "mart", "martellatostaccato" or "martstacc", "lefthandpizzicato" or "lhpiz",
+				"trill" or "tr", "gruppetto" or "grupp", "upmordent" or "umord", "downmordent" or "dmord", "doublemordent" or "mmord",
+				"upbowing" or "ubow", "downbowing" or "dbow", "tremolo3" or "trem3" (for the tremolo with three slashes), "tremolo2" or "trem2"
+				(for the tremolo with two slashes), "tremolo1" or "trem1" (for the tremolo with a single slash).
+				Notice that the default bach font has all the articulations glyphs; however, not all the other supported fonts do,
+				in particular Boulez doesn't have a certain number of the previous articulations among its glyphs.
+				If you don't see an articulation as you wish
+				(e.g. tremoli with Boulez), it might be because the font doesn't have the proper character, so try to use another font.
+				Articulation symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
+				- For slot of type <m>notehead</m> the content must a single notehead symbol.
+				The list of the standard available noteheads as symbols is: "default", "doublewhole", "whole", "white", "black", "diamond", "cross", "plus",
+				"none", "accent", "blacksquare", "whitesquare", "square" "blacktriangle", "whitetriangle", "triangle", "blackrhombus", "whiterhombus", "rhombus".
+				In <o>bach.score</o>, the "square", "triangle" and "rhombus" notehead are black or white depending on the note duration; in <o>bach.roll</o> only
+				the black flavour is used.
+				As for articulations, not all fonts support all symbols.
+				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
+				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
+				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
+				as the number of rows.
+				<br /> <br />
+				<br />				See also:<m>changeslotitem</m>,<m>eraseslot</m>,<m>filltiesequenceswithslots</m><br />
 			</description>
 		</method>
 		<method name="showcursor">
@@ -7869,12 +8007,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -7914,7 +8056,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -7983,12 +8125,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -8007,13 +8153,17 @@
 				Perform conversions between timepoint and millisecond syntaxes
 			</digest>
 			<description>
-				Syntax: <b>timepoint <m>[&lt;llll: query_label&gt;]</m> <m>&lt;number/llll: position&gt;</m> </b><br />
+				Syntax: <b>timepoint <m>[&lt;llll: query_label&gt;]</m> <m>&lt;number/llll: position&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>timepoint 1000</b>   <i>→ get the timepoints (measure, point in measure) for all voices, for the point corresponding to 1s</i><br />
 				• <b>timepoint 2000</b>   <i>→ get the timepoints at 2s, for all voices</i><br />
 				• <b>timepoint [2]</b>   <i>→ get the millisecond position and the timepoints at beginning of measure 2, first voice</i><br />
 				• <b>timepoint [2 3/8]</b>   <i>→ the same for position at measure 2, after 3/8</i><br />
 				• <b>timepoint [4 2 3/8]</b>   <i>→ the same for position at measure 2, after 3/8, for voice 4</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
 				<br />
 				The <m>timepoint</m> message, either followed by a single number, considered as milliseconds position,
 				or by an llll representing the timepoint syntax, will convert the inserted time position into milliseconds and timepoint for
@@ -8028,7 +8178,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -8063,12 +8213,16 @@
 				Convert a time position into a pixel position
 			</digest>
 			<description>
-				Syntax: <b>timetopixel <m>[&lt;llll: query_label&gt;]</m> <m>&lt;llll: position&gt;</m> </b><br />
+				Syntax: <b>timetopixel <m>[&lt;llll: query_label&gt;]</m> <m>&lt;llll: position&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>timetopixel 4000</b>   <i>→ get the pixel position corresponding to 4s</i><br />
 				• <b>timetopixel [2]</b>   <i>→ get the pixel position corresponding to beginning of measure 2</i><br />
 				• <b>timetopixel [1 1/8]</b>   <i>→ the same, for measure 1 after 1/8</i><br />
 				• <b>timetopixel [3 1 1/8]</b>   <i>→ the same, for measure 1 after 1/8 of voice 3</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@accurate</m> (int, default: 0): If non-zero, perform more CPU-consuming accurate calculation<br />
+				<m>@nudgeforgrace</m> (int, default: -1): Nudge the cursor to account for grace notes (0=don't, 1=do, -1=automatic)<br />
 				<br />
 				The <m>timetopixel</m> message converts a position given (as argument) in milliseconds or in the timepoint syntax,
 				into a position given in pixels, representing
@@ -8084,7 +8238,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -8145,19 +8299,6 @@
 		<method name="unsel">
 			<arg name="arguments" optional="0" type="llll" />
 			<digest>
-				Deselect items
-			</digest>
-			<description>
-				Syntax: <b>unsel <m>&lt;llll: arguments&gt;</m> </b><br />				<br />
-				The message <m>unsel</m> works in the opposite way of the message <m>sel</m>, i.e. deselect
-				notation items (removes them from the current selection). Refer to the message <m>sel</m> to know more about the
-				syntax, since it is exactly the same.
-				<br />				See also:<m>sel</m>,<m>select</m>,<m>subsel</m>,<m>clearselection</m><br />
-			</description>
-		</method>
-		<method name="unsel">
-			<arg name="arguments" optional="0" type="llll" />
-			<digest>
 				Involutively select items
 			</digest>
 			<description>
@@ -8168,6 +8309,19 @@
 				Refer to the message <m>sel</m> to know more about the syntax, since it is exactly the same.
 				The only exception is for the <m>select all</m> message, which does not work involutively and always select all the notation items.
 				<br />				See also:<m>sel</m>,<m>unsel</m>,<m>subsel</m>,<m>clearselection</m><br />
+			</description>
+		</method>
+		<method name="unsel">
+			<arg name="arguments" optional="0" type="llll" />
+			<digest>
+				Deselect items
+			</digest>
+			<description>
+				Syntax: <b>unsel <m>&lt;llll: arguments&gt;</m> </b><br />				<br />
+				The message <m>unsel</m> works in the opposite way of the message <m>sel</m>, i.e. deselect
+				notation items (removes them from the current selection). Refer to the message <m>sel</m> to know more about the
+				syntax, since it is exactly the same.
+				<br />				See also:<m>sel</m>,<m>select</m>,<m>subsel</m>,<m>clearselection</m><br />
 			</description>
 		</method>
 		<method name="unsolo">
@@ -8287,12 +8441,16 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents),
+				<m>pitch</m> (diatonic pitch), <m>poc</m> (pitch or cents, depending on what was defined by the user),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number),
+				<m>voiceensemble</m> (voiceensemble number).
 				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
 				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
 				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
 				grace chords, 0 otherwise). <br />
+				You can also use the variables <m>numnotes</m>, <m>numchords</m> and <m>nummeasures</m> to determine the number of notes/chords/measures
+				that a otation item has (e.g. the number of chords in a measure, or the number of notes in a chord). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -8546,7 +8704,7 @@
 				Allow Beaming
 			</digest>
 			<description>
-				Toggles the possibility to beam chords. By default, of course, this is active.
+				Toggles the possibility to beam chords. By default this is active.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Rhythm" />
@@ -8772,6 +8930,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="autocomplete" get="1" set="1" type="int" size="1">
+			<digest>
+				Autocomplete Measures
+			</digest>
+			<description>
+				Toggles the ability to complete measures automatically with rests. By default this is active.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Rhythm" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Autocomplete Measures" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="autojump" get="1" set="1" type="int" size="1">
 			<digest>
 				Auto Jump To Next Chord While Linear Editing
@@ -8978,6 +9152,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="bigtsratio" get="1" set="1" type="float" size="1">
+			<digest>
+				Big Time Signatures Ratio
+			</digest>
+			<description>
+				Sets the expansion ratio for big time signatures
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Big Time Signatures Ratio" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="bordercolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Border Color
@@ -9024,6 +9214,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="breakpointsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Pitch Breakpoint Size
+			</digest>
+			<description>
+				Sets the size of diamond shaped breakpoints (when displayed: see <m>breakpointshavenoteheads</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="3." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Pitch Breakpoint Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="breakrootlevelbeam" get="1" set="1" type="int" size="1">
@@ -9228,22 +9434,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="dblclicksendsvalues" get="1" set="1" type="int" size="1">
-			<digest>
-				Send Selection Upon Double-Click
-			</digest>
-			<description>
-				Toggles the ability to individually off-line dump any note or marker by doubleclicking on it.
-				This defaults to 0.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Send Selection Upon Double-Click" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-			</attributelist>
-		</attribute>
 		<attribute name="defaultmarkername" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Default Marker Name
@@ -9330,9 +9520,26 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="dumpplaycmd" get="1" set="1" type="atom_array" size="1">
+			<digest>
+				Play Offline Commands
+			</digest>
+			<description>
+				Determines which keys or command are enabled to send the offline play output (up to 16 choices).
+				You can use lowercase letters only and/or one of the following symbols: "click" "rightclick" "doubleclick".
+				Defaults to "v".
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="default" get="1" set="1" type="atom_array" size="1" value="v" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Offline Commands" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="durationlinewidth" get="1" set="1" type="float" size="1">
 			<digest>
-				Width of the duration line
+				Duration Line Width
 			</digest>
 			<description>
 				Sets the width of the duration lines (when displayed: see <m>showdurations</m>).
@@ -9343,7 +9550,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="float" size="1" value="2." />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Width of the duration line" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Duration Line Width" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -9595,6 +9802,22 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Fade Domain Over Clefs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="finitestaff" get="1" set="1" type="int" size="1">
+			<digest>
+				End Staff With Last Measure
+			</digest>
+			<description>
+				Toggles the ability to end staff lines with the last measure barline.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="End Staff With Last Measure" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -10047,6 +10270,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
+		<attribute name="lineareditquarterkey" get="1" set="1" type="int" size="1">
+			<digest>
+				Linear Editing Quarter Key
+			</digest>
+			<description>
+				In linear editing, sets the digit for the key corresponding to a duration of 1/4
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Linear Editing Quarter Key" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="linkannotationtoslot" get="1" set="1" type="int" size="1">
 			<digest>
 				Link Text Annotation To Slot
@@ -10257,7 +10496,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -10413,6 +10652,20 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="markersfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Markers Font
+			</digest>
+			<description>
+				Sets the font size of markers
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Markers Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="markersfontsize" get="1" set="1" type="float" size="1">
@@ -10775,6 +11028,24 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="onseteqthresh" get="1" set="1" type="float" size="1">
+			<digest>
+				Onset Equality Threshold in Milliseconds
+			</digest>
+			<description>
+				Sets a threshold in milliseconds to determine whether two onsets coincide.
+				This is used to find synchronicities across voices with different tempi.
+				Defaults to 0.001 (i.e. 1 microsecond).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0.001" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Onset Equality Threshold in Milliseconds" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="out" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Outlet Types
@@ -10981,6 +11252,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
+		<attribute name="playheadwidth" get="1" set="1" type="float" size="1">
+			<digest>
+				Playhead Width
+			</digest>
+			<description>
+				Sets the playhead width in pixels.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Playhead Width" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="playmarkers" get="1" set="1" type="int" size="1">
 			<digest>
 				Play Markers
@@ -11061,7 +11348,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -11298,7 +11585,7 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Full Path In Playout Syntax" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="playpartialnotes" get="1" set="1" type="int" size="1">
@@ -11383,7 +11670,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
@@ -12134,7 +12421,7 @@
 				Show Barlines
 			</digest>
 			<description>
-				Toggles the display of barlines.
+				Sets a barline shift for proportional spacing display
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
@@ -12236,6 +12523,23 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Dynamics" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showfirstmeasurenumber" get="1" set="1" type="int" size="1">
+			<digest>
+				Show First Measure Number
+			</digest>
+			<description>
+				Toggles the display of the first measure number on the first measure (only meaningful if <m>showmeasurenumbers</m>
+				is active for at least a voice)
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show First Measure Number" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -12703,20 +13007,25 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="showtempointerpline" get="1" set="1" type="int" size="1">
+		<attribute name="showtempointerp" get="1" set="1" type="int" size="1">
 			<digest>
-				Show Tempi Interpolation Dashed Line
+				Show Tempi Interpolation
 			</digest>
 			<description>
-				Toggles the display of the dashed line for "rall." and "acc." specifications.
+				Chooses the display of tempo interpolation:
+				- Don't: no display; <br />
+				- Text And Dashed Line (default): "acc." and "rall." indications plus a dashed line to next tempo; <br />
+				- Text Only: "acc." and "rall." indications only; <br />
+				- Dashed Line Only: dashed line to next tempo only; <br />
+				- Arrows: use ascending and descending arrows
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Tempi Interpolation Dashed Line" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Tempi Interpolation" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="showties" get="1" set="1" type="int" size="1">
@@ -12740,7 +13049,9 @@
 				Show Time Signatures
 			</digest>
 			<description>
-				Toggles the display of time signatures.
+				Toggles the display of time signatures: 0 = Hide, 1 = Classical display, 2 = Time signatures are
+				displayed above the staff (and with a single big time signature if they coincide across all voices, see also
+				the <m>bigtsratio</m> attribute.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
@@ -12748,7 +13059,7 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Time Signatures" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="showtupletspreferences" get="1" set="1" type="int" size="1">
@@ -12880,6 +13191,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="slopemapping" get="1" set="1" type="int" size="1">
+			<digest>
+				Slope Mapping
+			</digest>
+			<description>
+				Sets the function to be used for slope mapping: either bach (default) or Max.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slope Mapping" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="slotfunctionptradius" get="1" set="1" type="float" size="1">
@@ -13244,6 +13571,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="temposize" get="1" set="1" type="float" size="1">
+			<digest>
+				Tempi Relative Size
+			</digest>
+			<description>
+				Sets the relative size of tempo markings with respect to standard notation.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="0.7" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tempi Relative Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="tempovadj" get="1" set="1" type="float" size="1">
 			<digest>
 				Tempi Vertical Adjustment
@@ -13489,6 +13832,20 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="voicenamesfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Voice Names Font
+			</digest>
+			<description>
+				Sets the font size of voice names
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Names Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="voicenamesfontsize" get="1" set="1" type="float" size="1">
@@ -14110,7 +14467,7 @@
 				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
 				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
 				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
-				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>. Sometimes <m>sym_onset_in_measure</m> is called <m>pim</m> (for point in measure)
 				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
 				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.

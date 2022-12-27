@@ -154,7 +154,7 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
-		<attribute name="indent" get="1" set="1" type="atom" size="1">
+		<attribute name="indent" get="1" set="1" type="int" size="1">
 			<digest>
 				Indentation
 			</digest>
@@ -261,6 +261,8 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The llll can be written in text or native format.
+		Text format is easily editable through any text editor,
+		native format yields exact storage of floats.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -287,6 +289,8 @@
 		<entry name ="More details">
 			<description>
 		The llll can be written in text or native format.
+		Text format is easily editable through any text editor,
+		native format yields exact storage of floats.
 			</description>
 		</entry>
 		<entry name ="Keywords">

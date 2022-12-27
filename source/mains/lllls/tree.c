@@ -1,7 +1,7 @@
 /*
  *  tree.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -143,7 +143,8 @@ typedef struct _tree // [bach.tree] structure
     t_llll					*tree_as_llll; // stored llll
     t_llll					*treenodes; // linear llll: for each element of the tree_as_llll there's a treenode object in this llll containing all the information about the node
     
-    e_tree_mode				mode;
+    // changed from e_tree_mode to char to avoid complaints from vc++
+    char				    mode;
     
     //	t_symbol				*j_textfont;
     //	double					fontsize;
@@ -1740,7 +1741,7 @@ void tree_open_close_switch(t_tree *x, t_symbol *s, long argc, t_atom *argv, cha
     long maxdepth = -1;
     char thismode = mode;
     
-    if (args->l_depth == 2 && args->l_size == 1 && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_LLLL) {
+    if (args && args->l_depth == 2 && args->l_size == 1 && args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_LLLL) {
         // open single node
         t_llllelem *elem = llll_nth_one(x->tree_as_llll, hatom_getllll(&args->l_head->l_hatom));
         if (elem && hatom_gettype(&elem->l_hatom) == H_LLLL) {
@@ -1754,13 +1755,13 @@ void tree_open_close_switch(t_tree *x, t_symbol *s, long argc, t_atom *argv, cha
                     ll->l_thing.w_long = tree_get_llll_openstate(ll);
             }
         }
-    } else if (args->l_size >= 1 && is_hatom_number(&args->l_head->l_hatom)) {
+    } else if (args && args->l_size >= 1 && is_hatom_number(&args->l_head->l_hatom)) {
         mindepth = maxdepth = hatom_getlong(&args->l_head->l_hatom);
         if (args->l_head->l_next && is_hatom_number(&args->l_head->l_next->l_hatom))
             maxdepth = hatom_getlong(&args->l_head->l_next->l_hatom);
         //		thismode = -thismode; // hack to avoid parsing first node
         llll_funall(x->tree_as_llll, open_close_switch_fn, &thismode, mindepth, maxdepth, FUNALL_SKIP_ATOMS);
-    } else if (args->l_size >= 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_root) {
+    } else if (args && args->l_size >= 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_root) {
         open_close_switch_llll(x->tree_as_llll, mode);
     } else { // all
         llll_funall(x->tree_as_llll, open_close_switch_fn, &thismode, 1, -1, FUNALL_SKIP_ATOMS);
@@ -2273,11 +2274,11 @@ void tree_paint(t_tree *x, t_object *view){
                                             tnd->width, tnd->height, 0.5);
                         
                         if (x->textdecayfactor == 1.)
-                            write_text_simple(g, jf_text, tnd == x->clicked_node ? x->j_clickedtextcolor : (tnd == x->hovered_node ? x->j_hovered_text_color : x->j_textcolor), tnd->text, x1, y1, maxwidth, maxheight);
+                            write_text_standard_singleline(g, jf_text, tnd == x->clicked_node ? x->j_clickedtextcolor : (tnd == x->hovered_node ? x->j_hovered_text_color : x->j_textcolor), tnd->text, x1, y1, maxwidth, maxheight);
                         else {
                             t_jfont *jf_text2 = jfont_create_debug(jbox_get_fontname((t_object *)x)->s_name, (t_jgraphics_font_slant)jbox_get_font_slant((t_object *)x),
                                                                    (t_jgraphics_font_weight)jbox_get_font_weight((t_object *)x), jbox_get_fontsize((t_object *)x) * pow(x->textdecayfactor, tnd->depth - 1));
-                            write_text_simple(g, jf_text2, tnd == x->clicked_node ? x->j_clickedtextcolor : (tnd == x->hovered_node ? x->j_hovered_text_color : x->j_textcolor), tnd->text, x1, y1, maxwidth, maxheight);
+                            write_text_standard_singleline(g, jf_text2, tnd == x->clicked_node ? x->j_clickedtextcolor : (tnd == x->hovered_node ? x->j_hovered_text_color : x->j_textcolor), tnd->text, x1, y1, maxwidth, maxheight);
                             jfont_destroy_debug(jf_text2);
                         }
                     }

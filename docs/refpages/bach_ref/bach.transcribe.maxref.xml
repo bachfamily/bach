@@ -11,6 +11,9 @@
 
 	<description>
 		The purpose of <o>bach.transcribe</o> is to act as a machine which, when turned on,
+		receives data containing cents, velocities and voice numbers (and optional durations),
+		and properly adds in real time the notes in the
+		connected <o>bach.roll</o> object.
 	</description>
 
 	<!--METADATA-->
@@ -273,11 +276,26 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="verbose" get="1" set="1" type="int" size="1">
+			<digest>
+				Post Warnings
+			</digest>
+			<description>
+				Toggles the ability to post warning signs for incoming data
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Post Warnings" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 	</attributelist>
 
 	<!--DISCUSSION-->
 	<discussion>
 		<o>bach.transcribe</o> is note-based: each MIDI triplets
+		refers to a note. If you want, a posteriori, to align notes into chords,
+		you should look at <o>bach.roll</o>'s <m>merge</m> message.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -321,6 +339,8 @@
 		<entry name ="More details">
 			<description>
 		<o>bach.transcribe</o> is note-based: each MIDI triplets
+		refers to a note. If you want, a posteriori, to align notes into chords,
+		you should look at <o>bach.roll</o>'s <m>merge</m> message.
 			</description>
 		</entry>
 		<entry name ="Keywords">

@@ -4,13 +4,13 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 1,
-			"revision" : 0,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 97.0, 100.0, 1029.0, 579.0 ],
+		"rect" : [ 71.0, 100.0, 949.0, 579.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,11 +39,12 @@
 		"subpatcher_template" : "",
 		"showrootpatcherontab" : 0,
 		"showontab" : 0,
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"id" : "obj-11",
+					"id" : "obj-12",
 					"maxclass" : "newobj",
 					"numinlets" : 0,
 					"numoutlets" : 0,
@@ -52,13 +53,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
+						"rect" : [ 71.0, 126.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -86,6 +87,774 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
+						"boxes" : [ 							{
+								"box" : 								{
+									"bubble" : 1,
+									"bubblepoint" : 0.91,
+									"bubbleside" : 2,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-25",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 16.0, 407.7999267578125, 107.0, 40.0 ],
+									"text" : "Troubleshooting:"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-24",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 115.0, 499.0, 449.0, 36.0 ],
+									"text" : "Just make sure that you don't have any open editor window as you do this, as you might lose the code you're working on!",
+									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-23",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 230.0, 462.0, 165.0, 38.0 ],
+									"text" : ";\rbach clearatomcachefolder"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-1",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 115.0, 426.0, 449.0, 50.0 ],
+									"text" : "If Max crashes while you have Atom open, it is possible that you stray files remain on your computer. No big deal, but you may clean them up with this message to Max:",
+									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-39",
+									"maxclass" : "newobj",
+									"numinlets" : 0,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patcher" : 									{
+										"fileversion" : 1,
+										"appversion" : 										{
+											"major" : 8,
+											"minor" : 1,
+											"revision" : 4,
+											"architecture" : "x64",
+											"modernui" : 1
+										}
+,
+										"classnamespace" : "box",
+										"rect" : [ 112.0, 282.0, 640.0, 480.0 ],
+										"bglocked" : 0,
+										"openinpresentation" : 0,
+										"default_fontsize" : 12.0,
+										"default_fontface" : 0,
+										"default_fontname" : "Arial",
+										"gridonopen" : 1,
+										"gridsize" : [ 15.0, 15.0 ],
+										"gridsnaponopen" : 1,
+										"objectsnaponopen" : 1,
+										"statusbarvisible" : 2,
+										"toolbarvisible" : 1,
+										"lefttoolbarpinned" : 0,
+										"toptoolbarpinned" : 0,
+										"righttoolbarpinned" : 0,
+										"bottomtoolbarpinned" : 0,
+										"toolbars_unpinned_last_save" : 0,
+										"tallnewobj" : 0,
+										"boxanimatetime" : 200,
+										"enablehscroll" : 1,
+										"enablevscroll" : 1,
+										"devicewidth" : 0.0,
+										"description" : "",
+										"digest" : "",
+										"tags" : "",
+										"style" : "",
+										"subpatcher_template" : "",
+										"assistshowspatchername" : 0,
+										"boxes" : [ 											{
+												"box" : 												{
+													"id" : "obj-3",
+													"maxclass" : "newobj",
+													"numinlets" : 2,
+													"numoutlets" : 2,
+													"outlettype" : [ "", "" ],
+													"patching_rect" : [ 164.0, 265.0, 133.0, 22.0 ],
+													"text" : "route LOCALAPPDATA"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-5",
+													"maxclass" : "newobj",
+													"numinlets" : 1,
+													"numoutlets" : 1,
+													"outlettype" : [ "" ],
+													"patching_rect" : [ 164.0, 299.0, 144.0, 22.0 ],
+													"text" : "sprintf %s/atom/atom.exe"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-4",
+													"maxclass" : "message",
+													"numinlets" : 2,
+													"numoutlets" : 1,
+													"outlettype" : [ "" ],
+													"patching_rect" : [ 116.5, 199.0, 122.0, 22.0 ],
+													"text" : "get LOCALAPPDATA"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-2",
+													"maxclass" : "newobj",
+													"numinlets" : 2,
+													"numoutlets" : 4,
+													"outlettype" : [ "dictionary", "", "", "" ],
+													"patching_rect" : [ 137.0, 232.0, 100.0, 22.0 ],
+													"saved_object_attributes" : 													{
+														"embed" : 0,
+														"parameter_enable" : 0,
+														"parameter_mappable" : 0
+													}
+,
+													"text" : "dict"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-37",
+													"maxclass" : "newobj",
+													"numinlets" : 1,
+													"numoutlets" : 2,
+													"outlettype" : [ "", "int" ],
+													"patching_rect" : [ 137.0, 166.0, 47.0, 22.0 ],
+													"saved_object_attributes" : 													{
+														"selector" : "env"
+													}
+,
+													"text" : "gestalt"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-36",
+													"maxclass" : "message",
+													"numinlets" : 2,
+													"numoutlets" : 1,
+													"outlettype" : [ "" ],
+													"patching_rect" : [ 137.0, 137.0, 29.5, 22.0 ],
+													"text" : "env"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-33",
+													"maxclass" : "message",
+													"numinlets" : 2,
+													"numoutlets" : 1,
+													"outlettype" : [ "" ],
+													"patching_rect" : [ 52.0, 226.0, 39.0, 22.0 ],
+													"text" : "Atom"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-31",
+													"maxclass" : "newobj",
+													"numinlets" : 1,
+													"numoutlets" : 1,
+													"outlettype" : [ "" ],
+													"patching_rect" : [ 52.0, 36.0, 89.0, 22.0 ],
+													"text" : "loadmess plat"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-30",
+													"maxclass" : "newobj",
+													"numinlets" : 2,
+													"numoutlets" : 2,
+													"outlettype" : [ "bang", "" ],
+													"patching_rect" : [ 52.0, 105.0, 104.0, 22.0 ],
+													"text" : "sel mac"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-24",
+													"maxclass" : "message",
+													"numinlets" : 2,
+													"numoutlets" : 1,
+													"outlettype" : [ "" ],
+													"patching_rect" : [ 52.0, 338.0, 249.0, 22.0 ],
+													"text" : "\\; max externaleditor $1 \\, useexternaleditor 1"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"id" : "obj-22",
+													"maxclass" : "newobj",
+													"numinlets" : 1,
+													"numoutlets" : 2,
+													"outlettype" : [ "", "int" ],
+													"patching_rect" : [ 52.0, 73.0, 47.0, 22.0 ],
+													"saved_object_attributes" : 													{
+														"selector" : "plat"
+													}
+,
+													"text" : "gestalt"
+												}
+
+											}
+, 											{
+												"box" : 												{
+													"comment" : "",
+													"id" : "obj-38",
+													"index" : 1,
+													"maxclass" : "outlet",
+													"numinlets" : 1,
+													"numoutlets" : 0,
+													"patching_rect" : [ 52.0, 407.0, 30.0, 30.0 ]
+												}
+
+											}
+ ],
+										"lines" : [ 											{
+												"patchline" : 												{
+													"destination" : [ "obj-3", 0 ],
+													"source" : [ "obj-2", 1 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-30", 0 ],
+													"source" : [ "obj-22", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-38", 0 ],
+													"source" : [ "obj-24", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-5", 0 ],
+													"source" : [ "obj-3", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-33", 0 ],
+													"source" : [ "obj-30", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-36", 0 ],
+													"source" : [ "obj-30", 1 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-22", 0 ],
+													"source" : [ "obj-31", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-24", 0 ],
+													"source" : [ "obj-33", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-37", 0 ],
+													"source" : [ "obj-36", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-2", 0 ],
+													"order" : 0,
+													"source" : [ "obj-37", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-4", 0 ],
+													"order" : 1,
+													"source" : [ "obj-37", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-2", 0 ],
+													"source" : [ "obj-4", 0 ]
+												}
+
+											}
+, 											{
+												"patchline" : 												{
+													"destination" : [ "obj-24", 0 ],
+													"source" : [ "obj-5", 0 ]
+												}
+
+											}
+ ]
+									}
+,
+									"patching_rect" : [ 811.0, 308.0, 19.0, 23.0 ],
+									"saved_object_attributes" : 									{
+										"description" : "",
+										"digest" : "",
+										"globalpatchername" : "",
+										"tags" : ""
+									}
+,
+									"text" : "p"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"bubblepoint" : 0.1,
+									"bubbleside" : 0,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-21",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 628.5, 509.0, 107.0, 40.0 ],
+									"text" : "Double-click me!"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"code" : "$foo = length(1 `two 3) ",
+									"id" : "obj-19",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 603.0, 481.0, 198.0, 23.0 ],
+									"saved_object_attributes" : 									{
+										"embed" : 1,
+										"versionnumber" : 80100
+									}
+,
+									"text" : "bach.eval $foo = length(1 `two 3)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-15",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 603.0, 456.0, 64.0, 21.0 ],
+									"text" : "Have fun!"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-12",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 603.0, 331.0, 191.0, 21.0 ],
+									"text" : "Configure the Max preferences:"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-9",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 603.0, 247.5, 211.0, 21.0 ],
+									"text" : "Install the Atom language package:"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-7",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 603.0, 195.0, 153.0, 36.0 ],
+									"text" : "Install Atom\n(we can't do this for you!)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 18.399758251897243,
+									"id" : "obj-5",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 579.0, 80.104274583899453, 128.0, 27.0 ],
+									"text" : "The easy way:"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-4",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 603.0, 118.0, 103.0, 21.0 ],
+									"text" : "Download Atom:"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-3",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 603.0, 144.0, 206.0, 38.0 ],
+									"text" : ";\rmax launchbrowser https://atom.io"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"dontreplace" : 1,
+									"id" : "obj-18",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 603.0, 357.0, 328.0, 38.0 ],
+									"text" : ";\rmax externaleditor Atom, useexternaleditor 1"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-11",
+									"linecount" : 11,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 10.0, 80.0, 554.0, 166.0 ],
+									"text" : "Writing bell code with the minimalistic text editor integrated in Max can be quite frustrating. \nFor this reason, it is advisable to select an external text editor and set it as the editor for Max through the Max preferences (\"External text editor\" and \"Always use external text editor\").\nIf you do so, the custom text editor will not only work when you explicitly refer to a file (through the \"file\" attribute, or the \"read\" and \"write\" messages), but also if you just want to type code to be stored within the object itself. In the latter case, a \"scratchpad\" file will be created, but it will be entirely and transparently managed for you by bach.eval, so you can work without worrying about it. The only difference is that you don't need to close the editor to reload the code, you only have to save the scratchpad. Unless you specify otherwise, the scratchpad will eventually be destroyed when you delete the object or close the patch, and the code will be saved within the patcher itself."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-8",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 10.0, 345.0, 554.0, 50.0 ],
+									"text" : "This is done once for all: unless you uninstall it, you will not need to repeat this step anymore.\nNow, whenever you open a bell file (including the scratchpad) with Atom, the text will feature syntax coloring."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-6",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 603.0, 275.0, 152.0, 38.0 ],
+									"text" : ";\rbach installatompackage"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-13",
+									"linecount" : 5,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 10.0, 254.5, 554.0, 79.0 ],
+									"text" : "The specific text editor we recommend is Atom, a modern, free, cross-platform and highly customizable text editor which you can download from https://atom.io.\n\nOnce you installed Atom, you can add a syntax coloring package which will make your code much more readable and help you spot errors."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"border" : 0,
+									"filename" : "helpname.js",
+									"id" : "obj-2",
+									"ignoreclick" : 1,
+									"jsarguments" : [ "bach.eval" ],
+									"maxclass" : "jsui",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 10.0, 10.0, 201.00799560546875, 57.599853515625 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-14",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 579.0, 456.0, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "5",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-10",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 579.0, 331.0, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "4",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-17",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 579.0, 247.5, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "3",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-20",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 579.0, 118.0, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "1",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"background" : 1,
+									"bgcolor" : [ 1.0, 0.788235, 0.470588, 1.0 ],
+									"bgoncolor" : [ 0.55, 0.55, 0.55, 1.0 ],
+									"fontface" : 1,
+									"hint" : "",
+									"id" : "obj-16",
+									"ignoreclick" : 1,
+									"legacytextcolor" : 1,
+									"maxclass" : "textbutton",
+									"numinlets" : 1,
+									"numoutlets" : 3,
+									"outlettype" : [ "", "", "int" ],
+									"parameter_enable" : 0,
+									"patching_rect" : [ 579.0, 195.0, 20.0, 20.0 ],
+									"rounded" : 60.0,
+									"text" : "2",
+									"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
+									"textoncolor" : [ 1.0, 1.0, 1.0, 1.0 ],
+									"textovercolor" : [ 0.2, 0.2, 0.2, 1.0 ],
+									"usebgoncolor" : 1,
+									"usetextovercolor" : 1
+								}
+
+							}
+ ],
+						"lines" : [ 							{
+								"patchline" : 								{
+									"destination" : [ "obj-18", 1 ],
+									"hidden" : 1,
+									"source" : [ "obj-39", 0 ]
+								}
+
+							}
+ ]
+					}
+,
+					"patching_rect" : [ 112.5, 322.0, 49.0, 22.0 ],
+					"saved_object_attributes" : 					{
+						"description" : "",
+						"digest" : "",
+						"fontsize" : 13.0,
+						"globalpatchername" : "",
+						"tags" : ""
+					}
+,
+					"text" : "p editor",
+					"varname" : "basic_tab[8]"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-11",
+					"maxclass" : "newobj",
+					"numinlets" : 0,
+					"numoutlets" : 0,
+					"patcher" : 					{
+						"fileversion" : 1,
+						"appversion" : 						{
+							"major" : 8,
+							"minor" : 1,
+							"revision" : 4,
+							"architecture" : "x64",
+							"modernui" : 1
+						}
+,
+						"classnamespace" : "box",
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
+						"bglocked" : 0,
+						"openinpresentation" : 0,
+						"default_fontsize" : 13.0,
+						"default_fontface" : 0,
+						"default_fontname" : "Arial",
+						"gridonopen" : 1,
+						"gridsize" : [ 5.0, 5.0 ],
+						"gridsnaponopen" : 1,
+						"objectsnaponopen" : 1,
+						"statusbarvisible" : 2,
+						"toolbarvisible" : 1,
+						"lefttoolbarpinned" : 0,
+						"toptoolbarpinned" : 0,
+						"righttoolbarpinned" : 0,
+						"bottomtoolbarpinned" : 0,
+						"toolbars_unpinned_last_save" : 0,
+						"tallnewobj" : 0,
+						"boxanimatetime" : 200,
+						"enablehscroll" : 1,
+						"enablevscroll" : 1,
+						"devicewidth" : 0.0,
+						"description" : "",
+						"digest" : "",
+						"tags" : "",
+						"style" : "",
+						"subpatcher_template" : "",
+						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-6",
@@ -126,7 +895,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "68 ",
+									"code" : "42 ",
 									"fontname" : "Arial",
 									"id" : "obj-10",
 									"maxclass" : "newobj",
@@ -195,7 +964,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "68 ",
+									"code" : "42 ",
 									"fontname" : "Arial",
 									"id" : "obj-51",
 									"maxclass" : "newobj",
@@ -239,7 +1008,7 @@
 										"appversion" : 										{
 											"major" : 8,
 											"minor" : 1,
-											"revision" : 0,
+											"revision" : 4,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -272,6 +1041,7 @@
 										"tags" : "",
 										"style" : "",
 										"subpatcher_template" : "",
+										"assistshowspatchername" : 0,
 										"boxes" : [ 											{
 												"box" : 												{
 													"id" : "obj-42",
@@ -542,7 +1312,7 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "68 ",
+									"code" : "42 ",
 									"fontname" : "Arial",
 									"id" : "obj-3",
 									"maxclass" : "newobj",
@@ -669,13 +1439,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 97.0, 126.0, 1029.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -703,6 +1473,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"color" : [ 0.501960784313725, 0.0, 0.0, 1.0 ],
@@ -1225,13 +1996,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1259,6 +2030,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -1362,7 +2134,7 @@
 										"appversion" : 										{
 											"major" : 8,
 											"minor" : 1,
-											"revision" : 0,
+											"revision" : 4,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -1395,6 +2167,7 @@
 										"tags" : "",
 										"style" : "",
 										"subpatcher_template" : "",
+										"assistshowspatchername" : 0,
 										"boxes" : [ 											{
 												"box" : 												{
 													"bgcolor" : [ 0.713725490196078, 0.756862745098039, 0.466666666666667, 1.0 ],
@@ -1415,7 +2188,7 @@
 														"appversion" : 														{
 															"major" : 8,
 															"minor" : 1,
-															"revision" : 0,
+															"revision" : 4,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -1448,6 +2221,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"id" : "obj-2",
@@ -1639,7 +2413,7 @@
 														"appversion" : 														{
 															"major" : 8,
 															"minor" : 1,
-															"revision" : 0,
+															"revision" : 4,
 															"architecture" : "x64",
 															"modernui" : 1
 														}
@@ -1672,6 +2446,7 @@
 														"tags" : "",
 														"style" : "",
 														"subpatcher_template" : "",
+														"assistshowspatchername" : 0,
 														"boxes" : [ 															{
 																"box" : 																{
 																	"id" : "obj-2",
@@ -2251,13 +3026,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -2285,6 +3060,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"bubble" : 1,
@@ -3040,13 +3816,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -3074,6 +3850,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-11",
@@ -3434,13 +4211,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -3468,6 +4245,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"bubble" : 1,
@@ -3485,6 +4263,7 @@
 							}
 , 							{
 								"box" : 								{
+									"code" : " ",
 									"id" : "obj-15",
 									"linecount" : 2,
 									"maxclass" : "newobj",
@@ -3503,6 +4282,7 @@
 							}
 , 							{
 								"box" : 								{
+									"code" : " ",
 									"id" : "obj-14",
 									"maxclass" : "newobj",
 									"numinlets" : 1,
@@ -3806,7 +4586,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 86.5, 297.0, 107.0, 22.0 ],
+					"patching_rect" : [ 92.0, 289.0, 107.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -3833,13 +4613,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -3867,6 +4647,7 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
@@ -3942,7 +4723,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 103.5, 328.0, 113.0, 22.0 ],
+					"patching_rect" : [ 127.0, 358.0, 113.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -3965,7 +4746,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 333.5, 316.0, 143.0, 22.0 ],
+					"patching_rect" : [ 357.0, 346.0, 143.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"filename" : "helpstarter.js",
 						"parameter_enable" : 0
@@ -3988,13 +4769,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -4022,7 +4803,22 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
+								"box" : 								{
+									"fontface" : 0,
+									"id" : "obj-5",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 489.0, 325.5, 276.0, 36.0 ],
+									"text" : "Have a look at the \"editor\" tab of this help file, it contains important information!",
+									"textcolor" : [ 0.996078431372549, 0.0, 0.0, 1.0 ]
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
@@ -4031,8 +4827,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 469.0, 638.0, 50.0 ],
-									"text" : "... user-defined variables and functions, and more. In fact, bach.eval implements a small but Turing-complete programming language, conceived to be as much compatible with the expr family as possible. \nPlease, refer to the \"Help Center\" tab to know everything about both the language and the object in itself."
+									"patching_rect" : [ 10.0, 469.0, 648.0, 50.0 ],
+									"text" : "... user-defined variables and functions, and more. In fact, bach.eval implements a small but Turing-complete programming language called \"bell\" and conceived to be as much compatible with the expr family as possible. \nPlease, refer to the \"Help Center\" tab to know everything about both the language and the object in itself."
 								}
 
 							}
@@ -4271,8 +5067,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 246.0, 310.0, 236.0, 55.0 ],
-									"text" : "You can double-click on the object box to open the expression in a text editor"
+									"patching_rect" : [ 246.0, 310.0, 241.0, 55.0 ],
+									"text" : "You can double-click on the object box to open the expression in a text editor."
 								}
 
 							}
@@ -4409,13 +5205,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 1,
-							"revision" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 1029.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -4443,11 +5239,12 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"showontab" : 1,
+						"assistshowspatchername" : 0,
 						"boxes" : [  ],
 						"lines" : [  ]
 					}
 ,
-					"patching_rect" : [ 244.5, 316.0, 50.0, 22.0 ],
+					"patching_rect" : [ 268.0, 346.0, 50.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -4483,91 +5280,91 @@
 			}
 , 			{
 				"name" : "bach.help.home.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.bell.040_variables.070_queryingandresettingglobalvariables.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
+				"name" : "bach.help.welcome.maxpat",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.lookup.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.replace.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.sum.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.filter.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.filternull.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.change.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.histo.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.repeat.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.-.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.+.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.split.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1

@@ -358,6 +358,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		Since rational numbers are not a Max default supported type,
+		the output is by default an llll containing the rational number.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -392,6 +393,7 @@
 		<entry name ="More details">
 			<description>
 		Since rational numbers are not a Max default supported type,
+		the output is by default an llll containing the rational number.
 			</description>
 		</entry>
 		<entry name ="Keywords">

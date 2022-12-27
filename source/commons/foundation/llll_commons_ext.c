@@ -1,7 +1,7 @@
 /*
  *  llll_commons_ext.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 
 #include "foundation/llll_commons_ext.h"
 #include "foundation/llll_commons.h"
-#include <ext_common.h>
+#include "ext_common.h"
 #include <stdarg.h>
 #include <string.h>
 #include "foundation/llll_commonsyms.h"
@@ -407,6 +407,25 @@ double llll_stdev_of_plain_double_llll(t_llll *ll, double *average)
 	return stdev;
 }
 
+t_llll* llll_x2dx_of_plain_long_llll(t_llll *in_llll) {
+    // accept as input a llll of rationals, return the integrated list.
+    t_llllelem *elem;
+    t_llll *out_llll = llll_get();
+    long cur = 0;
+    
+    if ((elem = in_llll->l_head)) {
+        cur = hatom_getlong(&elem->l_hatom);
+        
+        for (elem = elem->l_next; elem; elem = elem->l_next) {
+            long old_cur = cur;
+            cur = hatom_getlong(&elem->l_hatom);
+            llll_appendlong(out_llll, cur - old_cur);
+        }
+    }
+    return out_llll;
+}
+
+
 t_llll* llll_x2dx_of_plain_double_llll(t_llll *in_llll) {
 // accept as input a llll of rationals, return the integrated list.
 	t_llllelem *elem;
@@ -595,6 +614,17 @@ double llll_sum_abs_of_double_llll(t_llll *in_llll){
 	if (in_llll)
 		llll_funall(in_llll, llll_sum_abs_of_double_llll_fn, &sum, 1, -1, 0);
 	return sum;
+}
+
+long llll_lcm(t_llll *in_llll){
+    long out_lcm = 1;
+    for (t_llllelem *el = in_llll->l_head; el; el = el->l_next) {
+        long l = hatom_getlong(&el->l_hatom);
+        if (l > 0) {
+            out_lcm = lcm(out_lcm, l);
+        }
+    }
+    return out_lcm;
 }
 
 
@@ -1557,6 +1587,7 @@ t_llllelem *llll_appendatom(t_llll *where, t_atom *what, long flags, t_llll *ado
 	return NULL;
 }
 
+// not the true median if the list length is even!
 void llll_median(t_llll *ll, t_hatom *h)
 {
 	long pos = floor((ll->l_size + 1)/2.);
@@ -1882,7 +1913,7 @@ t_llll *rect_to_llll(t_rect rect)
 // the input llll is expected to be in the form (x y slope anything else...) (x y slope anything else...)
 // the "anything else" is also merged with respect to the given input mode.
 // slopehandling = 0: ignore them, slopehandling = 1: approximate
-t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, char markmode, t_object *culprit)
+t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, e_slope_mapping slope_mapping_type, char markmode, t_object *culprit)
 {
 	t_llll *ll = llll_get();
 	t_llllelem *elem;
@@ -1908,7 +1939,7 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 				t_pt ctrl1, ctrl2, middle, ctrl3, ctrl4;
 				unpack_llll_to_double_triplet(hatom_getllll(&elem->l_prev->l_hatom), &prev_x, &prev_y, &prev_slope);
 				paint_curve_and_get_bezier_control_points(NULL, get_grey(0), build_pt(prev_x, prev_y), build_pt(pt_x, pt_y), pt_slope, 1, 
-														  &ctrl1, &ctrl2, &middle, &ctrl3, &ctrl4);
+														  &ctrl1, &ctrl2, &middle, &ctrl3, &ctrl4, slope_mapping_type);
 				
 				if (fabs_pt_slope < 0.4) {
 					// one mid-point
@@ -2363,7 +2394,7 @@ t_pts llllelem_to_pts(t_llllelem *incoming_el)
 	return out;
 }
 
-t_llll *integrate_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, double starting_value)
+t_llll *integrate_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, double starting_value, e_slope_mapping slope_mapping_type)
 {
 	long size = incoming->l_size;
 	long i;
@@ -2401,7 +2432,7 @@ t_llll *integrate_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values,
 		while (right + 1 < size && pts[right].x < this_x)
 			right ++;
 		
-		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
+		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, slope_mapping_type);
 		
 		if (elem->l_prev) {
 			res += (this_y + prev_y) * (this_x - prev_x)/2.;
@@ -2417,7 +2448,7 @@ t_llll *integrate_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values,
 
 
 t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, long num_samples, double starting_value,
-					  char auto_domain)
+					  char auto_domain, e_slope_mapping slope_mapping_type)
 {
 	long size = incoming->l_size;
 	t_llllelem *elem;
@@ -2463,7 +2494,7 @@ t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, 
 		for (i = 0; i < num_samples; i++) {
 			double this_x, this_y;
 			
-			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0);
+			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0, slope_mapping_type);
 			
 			// finding left and right element 
 			while (left + 1 < size && pts[left+1].x < this_x)
@@ -2471,7 +2502,7 @@ t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, 
 			while (right + 1 < size && pts[right].x < this_x)
 				right ++;
 			
-			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
+			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, slope_mapping_type);
 			
 			if (i >= 1) {
 				res += (this_y + prev_y) * (this_x - prev_x)/2.;
@@ -2488,7 +2519,7 @@ t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, 
 }
 
 
-t_llll *derive_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, char discrete_derivative, char discrete_derivative_pad)
+t_llll *derive_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, char discrete_derivative, char discrete_derivative_pad, e_slope_mapping slope_mapping_type)
 {
 	long size = incoming->l_size;
 	long i;
@@ -2524,7 +2555,7 @@ t_llll *derive_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, ch
 		while (right + 1 < size && pts[right].x < this_x)
 			right ++;
 		
-		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
+		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, slope_mapping_type);
 		
 		if (elem->l_prev) {
 			res = (this_y - prev_y) / (this_x - prev_x);
@@ -2555,7 +2586,7 @@ t_llll *derive_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, ch
 }
 
 t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, long num_samples,
-					  char auto_domain, char if_possible_dont_sample, char discrete_derivative, char discrete_derivative_pad)
+					  char auto_domain, char if_possible_dont_sample, char discrete_derivative, char discrete_derivative_pad, e_slope_mapping slope_mapping_type)
 {
 	long size = incoming->l_size;
 	t_llllelem *elem;
@@ -2613,7 +2644,7 @@ t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, lon
 		for (i = 0; i < num_samples; i++) {
 			double this_x, this_y;
 			
-			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0);
+			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0, slope_mapping_type);
 			
 			// finding left and right element 
 			while (left + 1 < size && pts[left+1].x < this_x)
@@ -2621,7 +2652,7 @@ t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, lon
 			while (right + 1 < size && pts[right].x < this_x)
 				right ++;
 			
-			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
+			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, slope_mapping_type);
 			
 			if (i >= 1)
 				res = (this_y - prev_y) / (this_x - prev_x);

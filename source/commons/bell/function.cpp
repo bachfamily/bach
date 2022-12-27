@@ -1,7 +1,7 @@
 /*
  *  function.cpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -83,21 +83,70 @@ void t_function::setArgument(const char *name, t_symbol *def, t_codableobj *obj)
     argName2idx[sym] = namedArgumentsCount;
 }
 
+void t_function::setArgumentAfterEllipsis(const char *name, astConst *node)
+{
+    t_symbol *sym = gensym(name);
+    if (argName2idx.find(sym) != argName2idx.end()) {
+        object_bug(nullptr, "duplicate function argument definition");
+        return;
+    }
+    --namedArgumentsCountAfterEllipsis;
+    idx2argNameAndDefault[namedArgumentsCountAfterEllipsis] = new funArg(sym, node);
+    argName2idx[sym] = namedArgumentsCountAfterEllipsis;
+}
+
+void t_function::setArgumentAfterEllipsis(const char *name, t_llll *def, t_codableobj *obj)
+{
+    t_symbol *sym = gensym(name);
+    if (argName2idx.find(sym) != argName2idx.end()) {
+        object_bug(nullptr, "duplicate function argument definition");
+        return;
+    }
+    --namedArgumentsCountAfterEllipsis;
+    idx2argNameAndDefault[namedArgumentsCountAfterEllipsis] = new funArg(sym, new astConst(def, obj));
+    argName2idx[sym] = namedArgumentsCountAfterEllipsis;
+}
+
+void t_function::setArgumentAfterEllipsis(const char *name, long def, t_codableobj *obj)
+{
+    t_symbol *sym = gensym(name);
+    if (argName2idx.find(sym) != argName2idx.end()) {
+        object_bug(nullptr, "duplicate function argument definition");
+        return;
+    }
+    --namedArgumentsCountAfterEllipsis;
+    idx2argNameAndDefault[namedArgumentsCountAfterEllipsis] = new funArg(sym, new astConst(def, obj));
+    argName2idx[sym] = namedArgumentsCountAfterEllipsis;
+}
+
+void t_function::setArgumentAfterEllipsis(const char *name, t_symbol *def, t_codableobj *obj)
+{
+    t_symbol *sym = gensym(name);
+    if (argName2idx.find(sym) != argName2idx.end()) {
+        object_bug(nullptr, "duplicate function argument definition");
+        return;
+    }
+    --namedArgumentsCountAfterEllipsis;
+    idx2argNameAndDefault[namedArgumentsCountAfterEllipsis] = new funArg(sym, new astConst(def, obj));
+    argName2idx[sym] = namedArgumentsCountAfterEllipsis;
+}
+
+
 t_userFunction::~t_userFunction()
 {
-    delete[] localVariableNames;
+    delete[] localVariables;
     delete ast;
 }
 
-t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList<t_symbol *> *localVariableNamesList, astNode *ast, t_codableobj *culprit) : ast(ast)
+t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList<t_localVar> *localVariablesList, astNode *ast, t_codableobj *culprit) : ast(ast)
 {
     
     // put all the local variables in the array of local variable names (for faster access at function call)
-    if (localVariableNamesList) {
-        localVariableNamesList->copyIntoNullTerminatedArray(&localVariableNames);
-        delete localVariableNamesList->getHead();
+    if (localVariablesList) {
+        localVariablesList->copyIntoNullTerminatedArray(&localVariables);
+        delete localVariablesList->getHead();
     } else {
-        localVariableNames = new t_symbol* [1] { };
+        localVariables = new t_localVar [1] { (nullptr) };
     }
     
     variadic = false;
@@ -144,28 +193,142 @@ t_llll* t_userFunction::call(const t_execEnv &context) {
 
 ///////////////////////
 
+
+t_maxFunction::t_maxFunction(std::string text) {
+    std::string t;
+    t_atom a[4], rv;
+    int c;
+
+    patcher = (t_object*) object_new_typed(CLASS_NOBOX, gensym("jpatcher"), 0, NULL);
+    
+    for (c = 0; c < text.length(); c++) {
+        if (!isspace(text[c]))
+            break;
+    }
+    t_symbol *defOut = _llllobj_sym_n;
+    if (c < text.length()) {
+        std::string ns = text.substr(c, 4);
+        if (!ns.compare("max.")) {
+            defOut = _llllobj_sym_m;
+            text = text.substr(c + 4);
+        }
+    }
+    
+    t = "@maxclass newobj @text \"" + text + "\"";
+    engine_box = newobject_sprintf(patcher, t.c_str());
+    engine = jbox_get_object(engine_box);
+    t_symbol *classname = object_classname(engine);
+    if (classname == _sym_jbogus) {
+        object_free(patcher);
+        patcher = nullptr;
+        engine_box = nullptr;
+        engine = nullptr;
+        return;
+    }
+    nInlets = object_attr_getlong(engine_box, gensym("numinlets"));
+    nOutlets = object_attr_getlong(engine_box, gensym("numoutlets"));
+    objText = t;
+    
+    t = "@maxclass newobj @text \"bach.bell.in " + std::to_string(nInlets) +
+        " @out " +
+        defOut->s_name +
+        "\"";
+    in_box = newobject_sprintf(patcher, t.c_str());
+    in_obj = jbox_get_object(in_box);
+    
+    t = "@maxclass newobj @text \"bach.bell.out " + std::to_string(nOutlets) + "\"";
+    out_box = newobject_sprintf(patcher, t.c_str());
+    out_obj = jbox_get_object(out_box);
+    
+    for (int i = 0; i < nInlets; i++) {
+        atom_setobj(a, in_box);       // source
+        atom_setlong(a + 1, i);       // outlet number (0 is leftmost)
+        atom_setobj(a + 2, engine_box);    // destination
+        atom_setlong(a + 3, i);       // inlet number (0 is leftmost)
+        object_method_typed(patcher, gensym("connect"), 4, a, &rv);
+    }
+    
+    for (int i = 0; i < nOutlets; i++) {
+        atom_setobj(a, engine_box);       // source
+        atom_setlong(a + 1, i);       // outlet number (0 is leftmost)
+        atom_setobj(a + 2, out_box);    // destination
+        atom_setlong(a + 3, i);       // inlet number (0 is leftmost)
+        object_method_typed(patcher, gensym("connect"), 4, a, &rv);
+    }
+
+    variadic = true;
+    setArgumentAfterEllipsis("to");
+    setArgumentAfterEllipsis("out", defOut);
+    setArgumentAfterEllipsis("fetch");
+}
+
+t_maxFunction::~t_maxFunction() {
+    object_free(patcher);
+}
+
+t_llll* t_maxFunction::call(t_execEnv const &context) {
+    if (!patcher)
+        return llll_get();
+    t_llll* order = context.scope.find(gensym("to"))->second->get();
+    t_llll* outLl = context.scope.find(gensym("out"))->second->get();
+    t_llll *fetchLl =
+        context.scope.find(gensym("fetch"))->second->get();
+    
+    t_symbol *out = nullptr;
+    if (outLl->l_size) {
+        out = hatom_getsym(&outLl->l_head->l_hatom);
+    }
+    if (out) {
+        object_attr_setsym(in_obj, _llllobj_sym_out, out);
+    }
+    if (order->l_size == 0) {
+        for (int i = context.argc; i > 0; i--) {
+            object_method(in_obj, gensym("pass"), i - 1, context.argv[i]);
+        }
+    } else {
+        t_llllelem *el;
+        int i;
+        for (el = order->l_tail, i = order->l_size; el; el = el->l_prev, i--) {
+            int n = hatom_getlong(&el->l_hatom);
+            if (n > 0 && n <= nInlets) {
+                if (t_llll *passed = context.argv[i]; passed) {
+                    object_method(in_obj, gensym("pass"), n - 1, passed);
+                }
+            }
+            else
+                object_error((t_object *) context.obj, "Wrong order in Max object call");
+        }
+    }
+    t_llll* res = (t_llll *) object_method(out_obj, gensym("fetch"), fetchLl, context.obj);
+    return res;
+}
+
+
+///////////////////////
+
+
 t_mainFunction::t_mainFunction(astNode *mainAst,
-                               countedList<t_symbol *> *localVariableNamesList,
+                               countedList<t_localVar> *localVariablesList,
                                std::unordered_set<t_globalVariable*> *globalVariables,
                                pvMap *name2astVars,
+                               std::unordered_set<t_function*> *funcs,
                                t_codableobj *caller) :
-inlet(0), name2astVars(name2astVars), globalVars(globalVariables), owner(caller)
+inlet(0), name2astVars(name2astVars), globalVars(globalVariables), functions(funcs), owner(caller)
 {
     ast = mainAst;
     if (!ast)
         return;
-    if (localVariableNamesList) {
-        localVariableNames = new t_symbol* [localVariableNamesList->getCount() + 1];
+    if (localVariablesList) {
+        localVariables = new t_localVar[localVariablesList->getCount() + 1];
         int i = 0;
-        for (countedList<t_symbol *> *thisLvnl = localVariableNamesList->getHead(); thisLvnl; thisLvnl = thisLvnl->getNext()) {
-            localVariableNames[i] = thisLvnl->getItem();
+        for (countedList<t_localVar> *thisLvnl = localVariablesList->getHead(); thisLvnl; thisLvnl = thisLvnl->getNext()) {
+            localVariables[i] = thisLvnl->getItem();
             i++;
         }
-        localVariableNames[i] = nullptr;
-        delete localVariableNamesList->getHead();
+        localVariables[i] = t_localVar();
+        delete localVariablesList->getHead();
     } else {
-        localVariableNames = new t_symbol* [1];
-        localVariableNames[0] = nullptr;
+        localVariables = new t_localVar[1] { };
     }
     
     variadic = true;
@@ -185,7 +348,7 @@ t_llll* t_mainFunction::call(t_execEnv const &context)
     
     t_execEnv childContext(&context, this);
     
-    childContext.setLocalVariables(localVariableNames, this);
+    childContext.setLocalVariables(localVariables, this);
     
     childContext.argc = context.argc;
     childContext.argv = context.argv;
@@ -200,6 +363,10 @@ t_mainFunction::~t_mainFunction() {
     clearOutletData();
     removePatcherVars();
     removeFromGlobalVarsClients();
+    for (t_function* f: *functions) {
+        f->decrease();
+    }
+    delete functions;
     delete name2astVars;
     delete globalVars;
 }
@@ -334,8 +501,8 @@ t_llll *astFunctionCall::callFunction(t_function *fn, t_llll **argsByPositionLl,
     childContext.adjustArgc(fn, argsByPositionCount);
     
     t_llll *res = fn->call(childContext);
-    for (int argByPosIdx = 0; argByPosIdx < childContext.argc; argByPosIdx++)
-        bell_release_llll(childContext.argv[argByPosIdx]);
+    //for (int argByPosIdx = 1; argByPosIdx <= childContext.argc; argByPosIdx++)
+    //    bell_release_llll(childContext.argv[argByPosIdx]);
     return res;
 }
 
@@ -350,8 +517,8 @@ t_llll *astFunctionCall::callFunction(t_function *fn, t_llll *argsByPositionLl, 
     childContext.adjustArgc(fn, argsByPositionLl->l_size);
     
     t_llll *res = fn->call(childContext);
-    for (int argByPosIdx = 0; argByPosIdx < childContext.argc; argByPosIdx++)
-        bell_release_llll(childContext.argv[argByPosIdx]);
+    //for (int argByPosIdx = 0; argByPosIdx < childContext.argc; argByPosIdx++)
+    //    bell_release_llll(childContext.argv[argByPosIdx]);
     return res;
 }
 
@@ -387,7 +554,7 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
             t_hatom *fnhatom = &fnelem->l_hatom;
             switch (hatom_gettype(fnhatom)) {
                 case H_FUNCTION: {
-                    t_function *fn = static_cast<t_function *>(fnhatom->h_w.w_obj);
+                    t_function *fn = fnhatom->h_w.w_func;
                     t_llll *res = callFunction(fn, argsByPositionLl, argsByNameLl, context);
                     llll_chain(resultLl, res);
                     fnelem = fnelem->l_next;
@@ -415,7 +582,16 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
         fnelem = (*--thisElempile)->l_next;
     }
     bell_release_llll(fnll);
+
+    for (int i = 0; i < argsByPositionCount; i++) {
+        llll_release(argsByPositionLl[i]);
+    }
     bach_freeptr(argsByPositionLl);
+
+    for (int i = 0; i < argsByNameCount; i++) {
+        llll_release(argsByNameLl[i]);
+    }
+
     bach_freeptr(argsByNameLl);
     bach_freeptr(elempile);
     return resultLl;

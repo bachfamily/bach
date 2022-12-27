@@ -1,7 +1,7 @@
 /*
  *  score_readxml.cpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -24,7 +24,16 @@
 #include <algorithm>
 #include <numeric>
 
+#ifdef WIN_VERSION
+#include <typeinfo>
+#endif
+
 #define CONST_DYNAMICS_TEXT_ALLOC_SIZE 2048
+
+#ifdef WIN_VERSION
+#define strtok_r strtok_s
+#endif 
+//#define SCORE_READXML_POSTLL
 
 t_rational xml_name_and_dots_to_value(const char *chordtype, long dots);
 
@@ -426,7 +435,7 @@ private:
         bool grace;
         std::vector<note *> notes;
         note* currentNote;
-        bool tied;
+        int ties;
         bool rest; // if a chord is a rest it will anyway have a dummy note
         
         chord(voice *owner, t_rational duration, bool grace = false);
@@ -604,6 +613,28 @@ private:
             return ll;
         }
         
+        void adjust(t_rational dur) {
+            
+            if (valid)
+                return;
+            
+            num.clear();
+            long d = dur.den();
+            if (log2(double(d)) == perfect_log2(d)) {
+                if (d <= 4) {
+                    num.push_back(dur.num() * 4 / d);
+                    den = 4;
+                } else {
+                    num.push_back(dur.num());
+                    den = d;
+                }
+            } else {
+                long q = (long) ceil(double(dur) * 4);
+                num.push_back(q);
+                den = 4;
+            }
+        }
+        
         timeSignature(mxml_node_t* attributesXML, t_score *x) {
             
             valid = false;
@@ -626,7 +657,6 @@ private:
                 den = lcm(den, mxmlGetInteger(beat_typeXML));
             }
             long beat_type = 0;
-            long beats = 1;
             if (den == 0) { // which means that one of the beat_types is 0 - thus we prevent division by 0 below
                 object_error((t_object *) x, "Bad time signature");
             } else {
@@ -639,9 +669,17 @@ private:
                     if (!beat_typeXML)
                         break;
                     beat_type = mxmlGetInteger(beat_typeXML);
-                    beats = mxmlGetInteger(beatsXML);
-                    num.push_back(beats * den / beat_type);
-                    valid = true;
+                    long d = den / beat_type;
+                    
+                    char *rest = (char *)bach_newptr(2048);
+                    const char *beatstxt = mxmlGetOpaque(beatsXML);
+                    strncpy_zero(rest, beatstxt, 2048);
+                    char *tok;
+                    while ((tok = strtok_r(rest, "+", &rest))) {
+                        long beats = strtol(tok, nullptr, 10);
+                        num.push_back(beats * d);
+                        valid = true;
+                    }
                 }
             }
         }
@@ -691,12 +729,23 @@ private:
             if (newTimeSig.valid)
                 timeSig = newTimeSig;
             else if (!prev) {
-                timeSig = timeSignature(4, 4);
-                object_error((t_object *) x, "Missing time signature");
+                timeSig = timeSignature(0, 4);
+                timeSig.valid = false;
+                //object_error((t_object *) x, "Missing time signature");
             } else {
-                timeSig = prev->timeSig;
+                timeSignature prevTimeSig = prev->timeSig;
+                if (prevTimeSig.valid)
+                    timeSig = prevTimeSig;
+                else {
+                    timeSig = timeSignature(0, 4);
+                    timeSig.valid = false;
+                }
             }
             fullDuration = timeSig.getDuration();
+        }
+        
+        timeSignature *getTimeSignature() {
+            return &timeSig;
         }
         
         // the llll ownership is kept.
@@ -780,6 +829,17 @@ private:
         t_llll *getllll() {
             t_llll *ll = llll_get();
             llll_appendllll(ll, llll_clone(getMeasureInfo()->getllll()));
+            if (number == 0) {
+                t_rational fullDur = getMeasureInfo()->fullDuration;
+                t_rational missing = fullDur - usedDuration;
+                if (missing > 0) {
+                    auto l = level();
+                    auto c = chord(owner, missing);
+                    c.rest = true;
+                    l.addChord(&c);
+                    llll_chain(ll, l.getllll());
+                }
+            }
             llll_chain(ll, firstLevel.getllll());
             return ll;
         }
@@ -863,7 +923,7 @@ private:
         }
         
         void adjustTies() {
-            if (!prevChord || !prevChord->tied)
+            if (!prevChord || prevChord->ties == 0)
                 return;
             
             std::vector<note*>::iterator currentNoteIterator = currentChord->notes.begin();
@@ -892,8 +952,11 @@ private:
                         if (!prevChord->grace)
                             (*currentNoteIterator)->prevDuration += prevChord->duration;
                         currentNoteIterator++;
-                    } else
+                    } else {
                         object_error((t_object *) owner->owner->obj, "Tie mismatch");
+                        prevNote->tied = false;
+                        prevChord->ties--;
+                    }
                 }
             }
         }
@@ -1016,6 +1079,14 @@ private:
             measureinfos.back()->setTimeSignature(attributesXML, x);
         }
         
+        void adjustTimeSignatureIfNeeded() {
+            measureinfo *minfo = measureinfos.back();
+            timeSignature *ts = minfo->getTimeSignature();
+            if (!ts->valid) {
+                ts->adjust(positionInMeasure);
+            }
+        }
+        
         void backup(t_rational r, t_score *x) {
             globalPosition -= r;
             positionInMeasure -= r;
@@ -1048,7 +1119,8 @@ private:
             }
             note *n = new note{c, pitch, velocity, tie};
             c->addNote(n);
-            c->tied |= tie;
+            if (tie)
+                c->ties++;
             return n;
         }
         
@@ -1395,6 +1467,10 @@ public:
         return currentPart->finalizeChord();
     }
     
+    void adjustTimeSignatureIfNeeded() {
+        currentPart->adjustTimeSignatureIfNeeded();
+    }
+    
     void finalizePart() {
         currentPart->finalize(singleDyns, singleDirs);
     }
@@ -1405,6 +1481,10 @@ public:
     
     bool updateCurrentVoice(mxml_node_t *itemXML) {
         return currentPart->updateCurrentVoice(itemXML);
+    }
+    
+    t_rational getPositionInMeasure() {
+        return currentPart->positionInMeasure;
     }
     
     t_llll *getllll() {
@@ -1654,7 +1734,7 @@ score::chord::chord(voice *owner, bool grace) :
     duration(t_rational{0, 1}),
     grace(grace),
     currentNote(nullptr),
-    tied(false),
+    ties(0),
     rest(false)
 { }
 
@@ -2191,6 +2271,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                             long directionsslot)
 {
     long new_tonedivision = 2;
+    t_bool startfromzero = false;
     mxml_node_t *scoreXML = mxmlLoadString(NULL, (char *) buffer, xml_load_cb);
     
     mxml_node_t *score_partwiseXML = mxmlFindElement(scoreXML, scoreXML, "score-partwise", NULL, NULL, MXML_DESCEND_FIRST);
@@ -2244,7 +2325,7 @@ t_llll *score_readxmlbuffer(t_score *x,
         // iterate on the measures for this part
         mxml_node_t *measureXML;
         long isfirstmeasure = 1;
-        long measure_number = 1;
+        long measure_number;
         
        //// char dynamics_text[CONST_DYNAMICS_TEXT_ALLOC_SIZE];
         
@@ -2263,6 +2344,19 @@ t_llll *score_readxmlbuffer(t_score *x,
                 //// measurell[i] = llll_get();
                 //// used_duration[i] = t_rational(0);
             //// }
+            
+            if (isfirstmeasure) {
+                const char* number = mxmlElementGetAttr(measureXML, "number");
+                if (number) {
+                    int n = atoi(number);
+                    if (n == 0) {
+                        measure_number = 0;
+                        startfromzero = true;
+                    } else {
+                        measure_number = 1;
+                    }
+                }
+            }
             
             //measure theMeasure;
             theScore.createNewMeasure();
@@ -2330,7 +2424,14 @@ t_llll *score_readxmlbuffer(t_score *x,
             //// long current_voice_in_part = 0;
             
             
-            t_pitch allpitches[10000];
+            class t_pitchWithOnset : public t_pitch {
+            public:
+                t_rational onset;
+                t_pitchWithOnset(t_pitch p, t_rational o) : t_pitch(p), onset(o) { };
+                t_pitchWithOnset() { };
+            } allpitches[10000];
+            
+            //t_pitchWithOnset allpitches[10000];
             long numpitches = 0;
             
             mxml_node_t *itemXML;
@@ -2404,6 +2505,8 @@ t_llll *score_readxmlbuffer(t_score *x,
                 //// }
                 
                 mxml_node_t *notationsXML = mxmlFindElement(itemXML, itemXML, "notations", NULL, NULL, MXML_DESCEND_FIRST);
+                
+                t_pitch pch;
                 
                 if (!chordXML) {
                     //// if (currentChord) { // if there was a previous chord, append its flags to it
@@ -2543,6 +2646,7 @@ t_llll *score_readxmlbuffer(t_score *x,
                     t_shortRational alter;
                     
                     if (pitchXML) {
+                        t_rational currOnset = theScore.getPositionInMeasure();
                         mxml_node_t *stepXML = mxmlFindElement(pitchXML, pitchXML, "step", NULL, NULL, MXML_DESCEND_FIRST);
                         mxml_node_t *alterXML = mxmlFindElement(pitchXML, pitchXML, "alter", NULL, NULL, MXML_DESCEND_FIRST);
                         mxml_node_t *octaveXML = mxmlFindElement(pitchXML, pitchXML, "octave", NULL, NULL, MXML_DESCEND_FIRST);
@@ -2567,15 +2671,26 @@ t_llll *score_readxmlbuffer(t_score *x,
                                 if (new_tonedivision < 4)
                                     new_tonedivision = 4;
                             } else {
+                                // this could be a quarter-tone with an implicit accidental,
+                                // as in the sequence C+ C(+)
                                 for (long i = numpitches - 1; i >= 0; i--) {
                                     if (allpitches[i].degree() == degree &&
-                                        allpitches[i].degree() == octave &&
+                                        allpitches[i].octave() == octave &&
+                                        allpitches[i].onset < currOnset &&
                                         ((!accidentalXML && alter == 0) ||
-                                         allpitches[i].alter() == alter - t_pitch::qrtrsharp))
-                                        alter = allpitches[i].alter();
+                                         allpitches[i].alter() == alter - t_pitch::qrtrsharp)) {
+                                            alter = allpitches[i].alter();
+                                            break;
+                                        }
                                 }
                             }
-                        } else if (!accidentalXML && alter == 0) { // see if there is a previous note to get the alteration from
+                        }
+                        /*
+                         // If a note bears no alteration and no accidentals
+                         // and parenthesizedquartertones is off
+                         // consider it altered if there was a previously altered note anyway
+                         // (AA COMMENTED IT OUT ON SEP 3 2020 - NOW IT IS CONSIDERED NATURAL)
+                         else if (!accidentalXML && alter == 0) {
                             for (long i = numpitches - 1; i >= 0; i--) {
                                 if (allpitches[i].degree() == degree &&
                                     allpitches[i].octave() == octave) {
@@ -2583,9 +2698,10 @@ t_llll *score_readxmlbuffer(t_score *x,
                                     break;
                                 }
                             }
-                        }
+                        }*/
                         
-                        
+                        pch = t_pitch(degree, alter, octave);
+                        allpitches[numpitches++] = { pch, currOnset };
                         
                         
                     } else {
@@ -2605,11 +2721,12 @@ t_llll *score_readxmlbuffer(t_score *x,
                                 octave = 5;
                             }
                         }
+                        pch = t_pitch(degree, alter, octave);
+
                     }
                     
                     //// t_llll *notell = llll_get();
-                    t_pitch pch = t_pitch(degree, alter, octave);
-                    allpitches[numpitches++] = pch;
+
                     //// llll_appendpitch(notell, pch);
                 
                     //// llll_appendlong(notell, velocity, 0, WHITENULL_llll);
@@ -2690,11 +2807,15 @@ t_llll *score_readxmlbuffer(t_score *x,
                             const char *syllabictxt = syllabicXML ? mxmlGetText(syllabicXML, NULL) : NULL;
                             t_symbol *txtsym = _llllobj_sym_empty_symbol;
                             if (syllabictxt && (!strcmp(syllabictxt, "begin") || !strcmp(syllabictxt, "middle"))) {
-                                long len = strlen(txt);
-                                char *temp_txt = (char *)bach_newptr((len + 2) * sizeof(char));
-                                snprintf_zero(temp_txt, len + 2, "%s-", txt);
-                                txtsym = gensym(temp_txt);
-                                bach_freeptr(temp_txt);
+                                if (txt) {
+                                    long len = strlen(txt);
+                                    char *temp_txt = (char *)bach_newptr((len + 2) * sizeof(char));
+                                    snprintf_zero(temp_txt, len + 2, "%s-", txt);
+                                    txtsym = gensym(temp_txt);
+                                    bach_freeptr(temp_txt);
+                                } else {
+                                    txtsym = gensym("-");
+                                }
                             } else if (txt) {
                                 txtsym = gensym(txt);
                             }
@@ -2735,6 +2856,9 @@ t_llll *score_readxmlbuffer(t_score *x,
             //// currentChord = nullptr;
             
             theScore.finalizeChord();
+            
+            // if there was no valid time signature, make one
+            theScore.adjustTimeSignatureIfNeeded();
             
             if (t_llll *barline_ll = xml_get_barline(measureXML);
                 barline_ll) {
@@ -2777,30 +2901,40 @@ t_llll *score_readxmlbuffer(t_score *x,
         object_attr_setlong(x, gensym("tonedivision"), lcm(tone_division, 4));
     }
     
-    //dev_llll_post(scorell, 1, -1, 10, x, NULL);
+    object_attr_setlong(x, gensym("measurenumberoffset"), startfromzero ? -1 : 0);
+    
     t_llll *scorell = theScore.getllll();
     
+#ifdef SCORE_READXML_POSTLL
+    dev_llll_print(scorell, (t_object *) x);
+#endif // SCORE_READXML_POSTLL
+
     return scorell;
 }
 
 
 
 
+static const std::unordered_map<std::string, const t_rational> type2figure
+{ { "breve", {2, 1} },
+    { "long", {4, 1} },
+    { "maxima", {8, 1} },
+    { "whole", {1, 1} },
+    { "half", {1, 2} },
+    { "quarter", {1, 4} },
+    { "eighth", {1, 8} },
+    { "16th", {1, 16} },
+    { "32th", {1, 32} },
+    { "64th", {1, 64} },
+    { "128th", {1, 128} },
+    { "256th", {1, 256} }
+};
 
 
 t_rational xml_name_and_dots_to_value(const char *chordtype, long dots)
 {
-    long figure_den;
-    if (!strcmp(chordtype, "whole"))
-        figure_den = 1;
-    else if (!strcmp(chordtype, "half"))
-        figure_den = 2;
-    else if (!strcmp(chordtype, "quarter"))
-        figure_den = 4;
-    else if (!strcmp(chordtype, "eighth"))
-        figure_den = 8;
-    else figure_den = strtol(chordtype, NULL, 0);
-    return figure_and_dots_to_figure_sym_duration(genrat(1, figure_den), dots);
+    const t_rational f = type2figure.at(chordtype);
+    return figure_and_dots_to_figure_sym_duration(f, dots);
 }
 
 
@@ -2812,7 +2946,6 @@ mxml_type_t xml_load_cb(mxml_node_t *node)
     
     if (!strcmp(name, "divisions") ||
         !strcmp(name, "fifths") ||
-        !strcmp(name, "beats") ||
         !strcmp(name, "beat-type") ||
         !strcmp(name, "line") ||
         !strcmp(name, "duration") ||
@@ -2833,7 +2966,8 @@ mxml_type_t xml_load_cb(mxml_node_t *node)
         return MXML_REAL;
     else if (!strcmp(name, "per-minute"))
         return MXML_TEXT;
-    else if (!strcmp(name, "words"))
+    else if (!strcmp(name, "words") ||
+             !strcmp(name, "beats"))
         return MXML_OPAQUE;
     else
         return MXML_TEXT;

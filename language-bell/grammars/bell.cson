@@ -1,0 +1,126 @@
+# TextMate tutorial: http://manual.macromates.com/en/language_grammars
+
+# Regex to convert keys to unquoted: '(include|match|captures|begin|end|beginCaptures|endCaptures|name|patterns|0|1|2|3|4|5|6|7|8|9|comment|fileTypes|scopeName|repository|contentName|firstLineMatch|foldingStartMarker|foldingStopMarker)':
+
+scopeName: 'source.bell' # <scope> should be a short, unique indicator for the language ("js", "php", "c", etc.)
+name: 'bell' # The title that will show up in grammar selection and on your status bar.
+fileTypes: [ # An array of file extensions.
+  'bell'
+]
+patterns: [ # An array of individual pattern declarations.
+  {
+    match: '([a-g]|[A-G])([#bxdq\\^v]+)?[-+]?[0-9]+[-+](([0-9]+(/[0-9])?)|((([0-9]*\\.[0-9]+)|([0-9]+\\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE]([-+]?)[0-9]+))t(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'constant.other.bell'
+  }
+  {
+    match: '([a-g]|[A-G])([-+]?)([0-9]+)([#bxdq\\^v]+)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'constant.numeric.bell'
+  }
+  {
+    match: '([a-g]|[A-G])([#bxdq\\^v]+)?[-+]?[0-9]+(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'constant.numeric.bell'
+  }
+  {
+    match: '[0-9]+/[0-9]+(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'constant.numeric.bell'
+  }
+  {
+    match: '((([0-9]*\\.[0-9]+)|([0-9]+\\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE]([-+]?)[0-9]+)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'constant.numeric.bell'
+  }
+  {
+    match: '[0-9]+(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'constant.numeric.bell'
+  }
+  {
+    match: '\\$(i|r|f|p|x|l|o|dx|do)[0-9]+(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'variable.language.bell'
+  }
+  {
+    match: '@[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'variable.parameter.bell'
+  }
+  {
+    match: '(for|in|do|collect|with|as|while|if|then|else)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'keyword.control.bell'
+  }
+  {
+    match: '(keep|unkeep|init)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'storage.modifier.bell'
+  }
+  {
+    match: '(length|depth|is|nth|sort|contains|rev|rot|trans|flat|slice|left|right|subs|insert|find|finditems|findaddrs|scramble|minmax|perm|comb|cartesianprod|wrap|group|delace|thin|classify|union|intersection|symdiff|diff|primeser|arithmser|geomser|map|reduce|apply|sum|prod)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'support.function.general.bell'
+  }
+  {
+    match: '(cos|sin|tan|exp|log|acos|asin|atan|cosh|sinh|tanh|exp2|log2|sqrt|ceil|acosh|asinh|atanh|log10|floor|round|trunc|fmod|atan2|hypot|pow|int|rat|num|den|abs|sgn|float|pitch|degree|octave|alter|cents|pow|mod|min|max|random|bessel|approx|enharm|makepitch|makepitchsc|outlet|inlet|\\$args|directin|directout|print|\\$argcount|minimum|maximum|mc2f|f2mc)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'support.function.general.bell'
+  }
+  {
+    match: '\\+=|-=|->|\\+|-|\\*=|\\*|\\*\\*=|\\*\\*|/=|/|//=|//|%=|%|=|==|!|~|!=|<|>|<=|>=|&=|&|\\^=|\\^|\\|=|\\||&&=|&&|&&&=|&&&|\\^\\^=|\\^\\^|\\|\\|=|\\|\\||\\|\\|\\|=|\\|\\|\\|<<=|<<|>>=|>>|:=|::|:|\\.=|_=|!_=|\\.\\.\\.|:\\*|\\.'
+    name: 'keyword.operator.bell'
+  }
+  {
+    match: '#\\+|#-|#u-|#\\*|#/|#//|#%|#==|#!=|#<|#>|#<=|#>=|#&|#\\^|#\\||#&&|#\\^\\^|#\\|\\||#&&&|#\\|\\|\\||#<<|#>>'
+    name: 'support.function.general.bell'
+  }
+  {
+    match: '<\\.\\.\\.>|-\\^'
+    name: 'keyword.other.bell'
+  }
+  {
+    match: ';|\\[|\\]|\\.'
+    name: 'keyword.operator.bell'
+  }
+  {
+    match: '(null|nil|pi)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'constant.language.bell'
+  }
+  {
+    match: '(##|#!).*'
+    name: 'comment.line.bell'
+  }
+  {
+    begin: 'include\\('
+    end: '\\)'
+    name: 'keyword.other.bell'
+    contentName: 'string.unquoted.bell'
+  }
+  {
+    begin: '{'
+    end: '}'
+    name: 'support.function.general.bell'
+    contentName: 'support.function.max.bell'
+  }
+  {
+    begin: '#\\('
+    end: '\\)#'
+    name: 'comment.block.bell'
+  }
+  {
+    match: '[\\$#]?([a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?)(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'variable.other.bell'
+  }
+  {
+    match: '\\`[^\\s]+(?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'string.bell'
+  }
+  {
+    match: '["]("\\\\\\""|[^"])*[^\\\\]["](?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'
+    name: 'string.bell'
+  }
+  {
+    match: '''[\\']("\\\\\\'"|[^\\'])*[^\\\\][\\'](?=[\\s\\(\\)\\[\\]+\\-*/%!=~_<>;,.:])'''
+    name: 'string.bell'
+  }
+]
+repository: # An array of rules. If you're going to be referencing one bit of code over and over again, stick it here so that you can edit all in one place.
+  ruleName: # Can be anything.
+    {
+      name: ''
+      match: ''
+      end: ''
+      endCaptures:
+        0:
+          name: ''
+    }

@@ -1,7 +1,7 @@
 /*
  *  strparser.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -25,8 +25,8 @@
 
 #ifndef parserpost
 #ifdef CONFIGURATION_Development
-//#define parserpost post
-#define parserpost(...) ((void) 0)
+#define parserpost post
+//#define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
 #endif

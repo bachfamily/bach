@@ -1,7 +1,7 @@
 /*
  *  wordcloud.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -813,7 +813,8 @@ void wordcloud_paint(t_wordcloud *x, t_object *view)
 		t_jrgba color = x->mouseclick_tag == i ? j_mousedown_text_color_r : (x->mousemove_tag == i ? j_mouseover_textcolor_r : j_textcolor_r);
 		jf = jfont_create_debug(font_name->s_name, (t_jgraphics_font_slant) font_slant, (t_jgraphics_font_weight) font_weight, size);
 
-		write_text(g, jf, color, this_tag.tag->s_name, this_tag.rect.x, this_tag.rect.y, this_tag.rect.width, this_tag.rect.height, JGRAPHICS_TEXT_JUSTIFICATION_TOPLEFT, false, false);
+        write_text_standard_singleline(g, jf, color, this_tag.tag->s_name, this_tag.rect.x, this_tag.rect.y, this_tag.rect.width + 300, this_tag.rect.height + 300);
+//		write_text(g, jf, color, this_tag.tag->s_name, this_tag.rect.x, this_tag.rect.y, this_tag.rect.width + 300, this_tag.rect.height, JGRAPHICS_TEXT_JUSTIFICATION_TOPLEFT, false, false);
 		
 		if (x->underline && x->mousemove_tag == i) {
 			double underline_shift = size * 1.05;
@@ -860,7 +861,7 @@ char do_rebuild_tags(t_wordcloud *x, t_object *view, t_rect rect, t_symbol *font
 		if (this_weights >= min_drawable_weights) { 
 			t_symbol *tag = hatom_gettype(&tags_elem->l_hatom) == H_SYM ? hatom_getsym(&tags_elem->l_hatom) : _llllobj_sym_empty_symbol;
 			double font_size = x->min_weights == x->max_weights ? (x->min_font_size + x->max_font_size) / 2. : 
-			rescale_with_slope(this_weights, x->autofit ? min_drawable_weights : x->min_weights, x->max_weights, x->min_font_size, x->max_font_size, x->slope);
+			rescale_with_slope(this_weights, x->autofit ? min_drawable_weights : x->min_weights, x->max_weights, x->min_font_size, x->max_font_size, x->slope, k_SLOPE_MAPPING_BACH);
 			t_jfont *jf = jfont_create_debug(font_name->s_name, (t_jgraphics_font_slant) font_slant, (t_jgraphics_font_weight) font_weight, font_size);
 			jfont_text_measure(jf, tag->s_name, &w, &h);
 			

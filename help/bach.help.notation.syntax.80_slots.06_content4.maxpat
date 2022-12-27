@@ -2,14 +2,15 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
+			"major" : 8,
 			"minor" : 3,
-			"revision" : 4,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 494.0, 79.0, 617.0, 539.0 ],
+		"classnamespace" : "box",
+		"rect" : [ 494.0, 100.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -36,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -48,7 +50,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 440.0, 230.0, 173.0, 54.0 ],
-					"style" : "",
 					"text" : "Here we add a \"display\" filter with the given biquad coefficients"
 				}
 
@@ -63,8 +64,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 212.0, 261.0, 225.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [8 0.98 -1.96 0.98 -1.96 0.96]"
+					"text" : "setslot [8 0.98 -1.96 0.98 -1.96 0.96]"
 				}
 
 			}
@@ -98,7 +98,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 21.0, 421.0, 291.0, 54.0 ],
-					"style" : "",
 					"text" : "A filter sequence containing 3 filters: a highpass (at the notehead), a display filter (in the middle), and a lowpass (at the note tail)"
 				}
 
@@ -114,8 +113,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 319.0, 431.0, 279.0, 38.0 ],
-					"style" : "",
-					"text" : "addslot [9 [0. highpass 600 3 10] [0.5 0.98 -1.96 0.98 -1.96 0.96] [1. lowpass 600 -5 0.1]]"
+					"text" : "setslot [9 [0. highpass 600 3 10] [0.5 0.98 -1.96 0.98 -1.96 0.96] [1. lowpass 600 -5 0.1]]"
 				}
 
 			}
@@ -131,7 +129,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 225.5, 223.0, 40.0 ],
-					"style" : "",
 					"text" : "We add a highpass slot at 600Hz, with a 3dB gain, and Q = 10"
 				}
 
@@ -146,7 +143,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 80.0, 351.0, 502.0, 21.0 ],
-					"style" : "",
 					"text" : "<a0> <a1> <a2> <b1> <b2> [<filtertype> <freq_Hz> <gain_dB> <Q>]"
 				}
 
@@ -161,7 +157,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 15.0, 337.0, 291.0, 21.0 ],
-					"style" : "",
 					"text" : "<a0> <a1> <a2> <b1> <b2>"
 				}
 
@@ -176,7 +171,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 248.0, 322.0, 291.0, 21.0 ],
-					"style" : "",
 					"text" : "<filtertype> <freq_Hz> <gain_dB> <Q>"
 				}
 
@@ -191,7 +185,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 181.0, 307.0, 182.0, 21.0 ],
-					"style" : "",
 					"text" : "[<t> <filter_content>]"
 				}
 
@@ -224,7 +217,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 100.0, 288.0, 377.0, 21.0 ],
-					"style" : "",
 					"text" : "<FILTER1_LLLL> <FILTER2_LLLL> <FILTER3_LLLL>..."
 				}
 
@@ -259,7 +251,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 59.0, 208.0, 502.0, 21.0 ],
-					"style" : "",
 					"text" : "<a0> <a1> <a2> <b1> <b2> [<filtertype> <freq_Hz> <gain_dB> <Q>]"
 				}
 
@@ -331,7 +322,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 187.0, 154.0, 291.0, 21.0 ],
-					"style" : "",
 					"text" : "<a0> <a1> <a2> <b1> <b2>"
 				}
 
@@ -364,7 +354,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 653.0, 95.0, 138.0, 22.0 ],
-					"style" : "",
 					"text" : "loadmess (0 1 2) (3 4 5)"
 				}
 
@@ -380,7 +369,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 653.0, 125.0, 111.0, 22.0 ],
-					"style" : "",
 					"text" : "bach.m2jitcellblock"
 				}
 
@@ -395,8 +383,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 229.0, 236.0, 182.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [8 highpass 600 3 10]"
+					"text" : "setslot [8 highpass 600 3 10]"
 				}
 
 			}
@@ -448,7 +435,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 158.0, 70.0, 291.0, 21.0 ],
-					"style" : "",
 					"text" : "<filtertype> <freq_Hz> <gain_dB> <Q>"
 				}
 
@@ -462,8 +448,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 602.0, 19.0 ],
-					"style" : "",
-					"text" : "See Also: syntax+slot+content, addslot",
+					"text" : "See Also: syntax+slot+content, setslot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -478,8 +463,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 602.0, 19.0 ],
-					"style" : "",
-					"text" : "Objects: bach.roll, bach.score",
+					"text" : "Objects: bach.roll, bach.score, bach.slot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -495,7 +479,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 299.0, 23.0 ],
-					"style" : "",
 					"text" : "Slot content (4)",
 					"varname" : "title"
 				}
@@ -510,8 +493,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 602.0, 19.0 ],
-					"style" : "",
-					"text" : "Tags: syntax, slot, content, filter, dynfilter",
+					"text" : "Tags: syntax, slot, content, filter, dynfilter, setslot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -545,11 +527,12 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "bach.m2jitcellblock.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
+				"name" : "bach.args.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.expr.mxo",
+				"type" : "iLaX"
 			}
 , 			{
 				"name" : "bach.hypercomment.mxo",
@@ -564,12 +547,11 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.expr.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.args.mxo",
-				"type" : "iLaX"
+				"name" : "bach.m2jitcellblock.maxpat",
+				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
 			}
  ],
 		"autosave" : 0

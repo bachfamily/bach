@@ -1,7 +1,7 @@
 /*
  *  tonnetz.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -176,6 +176,8 @@ typedef struct _tonnetz // [bach.tonnetz] structure
 	
 	char					j_has_focus;
 	char					show_focus;
+
+	// changed from e_note_names_styles or vc++ complains
 	e_note_names_styles		note_names_style;
 	long					middleC_octave;
 
@@ -353,9 +355,9 @@ t_pitch tonnetz_get_pitch_from_diatonic_and_chromatic_steps(t_tonnetz *x, long d
     }
     
     t_rational mc = chro * genrat(1200,x->modulo);
-    t_pitch temp = t_pitch(diat % 7, long2rat(0), diat / 7);
+    t_pitch temp = t_pitch(positive_mod(diat, 7), long2rat(0), integer_div_round_down(diat, 7));
     t_rational temp_mc = temp.toMC();
-    return t_pitch(diat % 7, genrat(mc - temp_mc, 200), diat / 7);
+    return t_pitch(positive_mod(diat, 7), genrat(mc - temp_mc, 200), integer_div_round_down(diat, 7));
 }
 
 t_tonnetz_diatonic_interval tonnetz_get_diatonic_interval_from_pitch(t_tonnetz *x, t_pitch pitch)
@@ -1368,7 +1370,7 @@ void C74_EXPORT ext_main(void *moduleRef){
 
 	CLASS_STICKY_ATTR(c,"category",0,"Settings");
 
-		CLASS_ATTR_CHAR(c,"notenamesstyle",0, t_tonnetz, note_names_style);
+		CLASS_ATTR_CHAR_UNSAFE(c,"notenamesstyle",0, t_tonnetz, note_names_style);
 		CLASS_ATTR_STYLE_LABEL(c,"notenamesstyle",0,"enumindex","Note Names Style");
 		CLASS_ATTR_ENUMINDEX(c,"notenamesstyle", 0, "Latin Anglo-Saxon");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notenamesstyle",0,"1");

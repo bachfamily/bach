@@ -11,6 +11,7 @@
 
 	<description>
 		Outputs one or more of random elements, extracted from a
+		given pool llll, depending on given probability weights.
 	</description>
 
 	<!--METADATA-->
@@ -159,6 +160,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Default Pool llll" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -238,7 +240,6 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Weights llll" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -247,6 +248,7 @@
 	<!--DISCUSSION-->
 	<discussion>
 		When the weights are left <b>null</b> or are all left equal (uniform picking), this is
+		equivalent to using <o>bach.random</o>.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -310,6 +312,7 @@
 		<entry name ="More details">
 			<description>
 		When the weights are left <b>null</b> or are all left equal (uniform picking), this is
+		equivalent to using <o>bach.random</o>.
 			</description>
 		</entry>
 		<entry name ="Keywords">

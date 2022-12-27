@@ -1,7 +1,7 @@
 /*
  *  notation_pitches.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -145,12 +145,15 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
         case k_CONSIDER_FOR_EVALUATION:
         case k_CONSIDER_FOR_PLAYING:
         case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE:
-        case k_CONSIDER_FOR_PLAYING_ONLY_IF_SELECTED:
         case k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES:
         case k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE:
             pitchmode = r_ob->output_pitches_playout;
             break;
             
+        case k_CONSIDER_FOR_SELECTION_COPYING:
+            pitchmode = k_OUTPUT_PITCHES_WHEN_USER_DEFINED;
+            break;
+
         default:
             pitchmode = k_OUTPUT_PITCHES_NEVER;
             break;
@@ -176,7 +179,7 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
         if (!(is_natural_note(note_get_screen_midicents(nt)))) {
             object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
             long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
-            nt->pitch_displayed.set(steps % 7, auto_screen_acc, steps / 7);
+            nt->pitch_displayed.set(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
             note_set_auto_enharmonicity(nt);
         } else {
             nt->pitch_displayed = nt->pitch_original;
@@ -191,7 +194,7 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
     } else { // use default accidentals!
         mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
         long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
-        nt->pitch_displayed.set(steps % 7, auto_screen_acc, steps / 7);
+        nt->pitch_displayed.set(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
     }
 }
 
@@ -204,29 +207,29 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
 
 typedef struct _autospell_params
 {
-    char    selection_only;
-    long    verbose;
-    char    voicewise;
+    t_atom_long    selection_only;
+    t_atom_long    verbose;
+    t_atom_long    voicewise;
     
-    long    max_LOF_position; // max position on the line of fifths
-    long    min_LOF_position; // min position on the line of fifths
+    t_atom_long    max_LOF_position; // max position on the line of fifths
+    t_atom_long    min_LOF_position; // min position on the line of fifths
     
     t_symbol    *algorithm; // either "default" or "chewandchen"
     
-    char    ignore_locked_notes;
+    t_atom_long    ignore_locked_notes;
     
     // PARAMETERS FOR DEFAULT ALGORITHM
     double  lineoffifth_bias;       // Bias for the line of fifths
     t_lexpr *stdev_thresh;          // Equation for the acceptance threshold for the standard deviation of the positions on the line of fifth (may depend on numnotes and note extension)
-    char    discard_altered_repetitions; // discard altered repetitions such as Eb E or F# F
+    t_atom_long    discard_altered_repetitions; // discard altered repetitions such as Eb E or F# F
     
     // PARAMETERS FOR CHEW AND CHEN ALGORITHM
     double  chunk_size_ms;
     double  spiral_r;
     double  spiral_h;
     
-    long    w_sliding;          /// NUmber of chunks in sliding window
-    long    w_selfreferential;  /// Number of chunks in selfreferential window
+    t_atom_long    w_sliding;          /// NUmber of chunks in sliding window
+    t_atom_long    w_selfreferential;  /// Number of chunks in selfreferential window
     double  f;                  ///< f parameter (see paper)
     
     
@@ -316,7 +319,7 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
         }
         if (temp % lowG == 0)
             return round((double)(temp.toMC() / lowG.toMC()));
-        return LONG_MAX;
+        return ATOM_LONG_MAX;
     }
 
     if (temp.alter() < 0) {
@@ -327,7 +330,7 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
         }
         if (temp % lowG == 0)
             return round((double)(temp.toMC() / lowG.toMC()));
-        return LONG_MAX;
+        return ATOM_LONG_MAX;
     }
     
     return 0;
@@ -1630,12 +1633,30 @@ long llll_to_pos_helper(t_llll *ll)
 void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
 {
 
-    long maxsharps = -1, minflats = -1;
+    t_atom_long maxsharps = -1, minflats = -1;
     t_llll *maxpitch = NULL, *minpitch = NULL;
     t_llll *stdev_thresh_ll = NULL;
     t_autospell_params par = notationobj_autospell_get_default_params(r_ob);
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisdilllii", gensym("selection"), &par.selection_only, gensym("sliding"), &par.w_sliding, gensym("selfreferential"), &par.w_selfreferential, gensym("locality"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &minflats, gensym("maxsharps"), &maxsharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("bias"), &par.lineoffifth_bias, gensym("voicewise"), &par.voicewise, gensym("sharpest"), &maxpitch, gensym("flattest"), &minpitch, gensym("stdevthresh"), &stdev_thresh_ll, gensym("discardalteredrepetitions"), &par.discard_altered_repetitions, gensym("ignorelocked"), &par.ignore_locked_notes);
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisdilllii",
+                                         gensym("selection"), &par.selection_only,
+                                         gensym("sliding"), &par.w_sliding,
+                                         gensym("selfreferential"), &par.w_selfreferential,
+                                         gensym("locality"), &par.f,
+                                         gensym("winsize"), &par.chunk_size_ms,
+                                         gensym("spiralr"), &par.spiral_r,
+                                         gensym("spiralh"), &par.spiral_h,
+                                         gensym("maxflats"), &minflats,
+                                         gensym("maxsharps"), &maxsharps,
+                                         gensym("verbose"), &par.verbose,
+                                         gensym("algorithm"), &par.algorithm,
+                                         gensym("bias"), &par.lineoffifth_bias,
+                                         gensym("voicewise"), &par.voicewise,
+                                         gensym("sharpest"), &maxpitch,
+                                         gensym("flattest"), &minpitch,
+                                         gensym("stdevthresh"), &stdev_thresh_ll,
+                                         gensym("discardalteredrepetitions"), &par.discard_altered_repetitions,
+                                         gensym("ignorelocked"), &par.ignore_locked_notes);
     
     
     if (stdev_thresh_ll) {

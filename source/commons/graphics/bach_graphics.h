@@ -1,7 +1,7 @@
 /*
  *  bach_graphics.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 #define _BACH_GRAPHICS_H_
 
 #include "foundation/bach.h"
+#include "math/bach_math_utilities.h"
 
 //#ifdef USE_GPC_LIBRARY
 //#include "gpc.h"
@@ -60,7 +61,7 @@ BEGIN_CHECK_LINKAGE
 #define CONST_EPSILON3 0.0005 
 #define CONST_EPSILON4 0.0005 
 #define CONST_EPSILON5 0.01 
-#define CONST_EPSILON_DOUBLE_EQ 0.0001    ///< Used in ms_to_unscaled_xposition() to handle the equality of doubles
+#define CONST_EPSILON_DOUBLE_EQ 5 // 0.0001    ///< Used in ms_to_unscaled_xposition() to handle the equality of doubles
 #define CONST_EPSILON_ALIGNMENTS 0.01    ///< Threshold used in functions determining the position of points with respect to points/figures 
 
 #ifndef PIOVERTWO
@@ -215,7 +216,7 @@ void compute_bezier_point(double x0, double y0, double x1, double y1, double x2,
 // (PRIVATE) get a bach-standard choice for the two internal bezier control points for the cubic bezier curve in the convex hull given by x_start y_start x_end y_end, with the slope given by slope (0 = linear). BEWARE: ONLY WORKS FOR POSITIVE SLOPES
 void get_bezier_control_points(double x_start, double y_start, double x_end, double y_end, double slope, double *ctrl_1_x, double *ctrl_1_y, double *ctrl_2_x, double *ctrl_2_y, double *left_derivative, double *right_derivative);
 // (PRIVATE) get the middle refinement point to split a curve display into 2 bezier curves
-void get_middle_refinement_point_for_curve(double x1, double y1, double x2, double y2, double *middle_x, double *middle_y, double *middle_derivative, double slope);
+void get_middle_refinement_point_for_curve(double x1, double y1, double x2, double y2, double *middle_x, double *middle_y, double *middle_derivative, double slope, e_slope_mapping slope_mapping_type);
 
 
 /** Fill an array of #t_unicodeChar with some data.
@@ -403,9 +404,10 @@ double pt_pt_dot(t_pt p, t_pt q);
     @param    end_x            The y of the ending point of the curve
     @param    slope            The slope of the curve (-1 to 1, 0 being linear)
     @param    line_width        The line width of the curve (you might want to increase it to account for toleration factors)
+    @param    slope_mapping_type  The slope mapping function (either bach or Max)
     @return                    1 if the point lies on the curve, 0 otherwise.
  */
-int is_pt_in_curve_shape(double point_x, double point_y, double start_x, double start_y, double end_x, double end_y, double slope, double line_width);
+int is_pt_in_curve_shape(double point_x, double point_y, double start_x, double start_y, double end_x, double end_y, double slope, double line_width, e_slope_mapping slope_mapping_type);
 
 
 /**    Tell if a line and a rectangle intersect (i.e. if there is a collision).
@@ -793,8 +795,9 @@ void paint_simple_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, dou
     @param    y2            The y of the ending point  
     @param    slope        The slope of the curve (Max-like parameter: 0 = linear, -1 = "extremely logarithmic", 1 = "extremely exponential", as in the [curve~] object) 
     @param    width        The width of the line
+ @param    slope_mapping_type  The slope mapping type (either bach or Max)
  */
-void paint_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width);
+void paint_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width, e_slope_mapping slope_mapping_type);
 
 
 /**    Paint a curve, as for paint_curve() function, but also returns the full control points of the two bezier polygons determining the two parts of the curve.
@@ -812,9 +815,10 @@ void paint_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2,
     @param    middle_pt    Pointer which will be filled with the middle point (the intersection point between the two parts of the curve)
     @param    ctrl3        Pointer which will be filled with the first control point of the second bezier curve
     @param    ctrl4        Pointer which will be filled with the second control point of the second bezier curve
+    @param    slope_mapping_type  The slope mapping type (either bach or Max)
  */
 void paint_curve_and_get_bezier_control_points(t_jgraphics* g, t_jrgba color, t_pt start, t_pt end, double slope, double width, 
-                                               t_pt *ctrl1, t_pt *ctrl2, t_pt *middle_pt, t_pt *ctrl3, t_pt *ctrl4);
+                                               t_pt *ctrl1, t_pt *ctrl2, t_pt *middle_pt, t_pt *ctrl3, t_pt *ctrl4, e_slope_mapping slope_mapping_type);
 
 
 /**    Subdivide a (cubic) bezier curve with De Casteljau's algorithm
@@ -908,9 +912,10 @@ void paint_doublewidth_line(t_jgraphics* g, t_jrgba color, double x1, double y1,
     @param    y2            The y of the ending point  
     @param    slope        The slope of the curve (see paint_curve()) 
     @param    width        The width of the line
+    @param   slope_mapping_type The slope mapping function (either bach or Max)
     @see                paint_curve()
  */
-void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width_start, double width_end);
+void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width_start, double width_end, e_slope_mapping slope_mapping_type);
 
 
 /**    Paint a line (like paint_line()), whose color changes as a gradient from a starting color to an ending color.
@@ -927,10 +932,10 @@ void paint_doublewidth_curve(t_jgraphics* g, t_jrgba color, double x1, double y1
                                     (= number of actually painted differently coloured small lines) 
     @param    colors_from_spectrum    If this is 1, the <color_start> and <color_end> are ignored, and the colors are built from the standard bach colourspectrum 
                                     (red to blue), starting from the following velocity parameters <vel1>, <vel2>, <max_velocity>. This mean that the starting 
-                                    color will be double_to_color(vel1, 0, max_velocity), the ending color will be double_to_color(vel2, 0, max_velocity), and
+                                    color will be double_to_color(vel1, 0, max_velocity,CONST_GRAPHICS_COLOR_SATURATION_FACTOR), the ending color will be double_to_color(vel2, 0, max_velocity,CONST_GRAPHICS_COLOR_SATURATION_FACTOR), and
                                     every intermediate color will NOT be the interpolation of the first and last color, but the interpolated parameter will 
                                     actually be the velocity (from <vel1> to <vel2>) and for every interpolated velocity v, the corresponding color will be 
-                                    calculated with double_to_color(v, 0, max_velocity).
+                                    calculated with double_to_color(v, 0, max_velocity,CONST_GRAPHICS_COLOR_SATURATION_FACTOR).
                                     If this is 0, the intermediate colors will be interpolated from <color_start> to <color_end>, via color_interp(), and 
                                     the following velocities parameter <vel1>, <vel2> and <max_velocity> will be ignored.
     @param    vel1                    The starting velocity (used only if <colors_from_spectrum> = 1)
@@ -961,10 +966,11 @@ void paint_colorgradient_line(t_jgraphics* g, t_jrgba color_start, t_jrgba color
     @param    vel1                    The starting velocity (used only if <colors_from_spectrum> = 1)
     @param    vel2                    The ending velocity (used only if <colors_from_spectrum> = 1)
     @param    max_velocity            The maximum admitted velocity (used only if <colors_from_spectrum> = 1), usually #CONST_MAX_VELOCITY
+    @param   slope_mapping_type The slope mapping function (either bach or Max)
     @see                            paint_colorgradient_line()
     @see                            paint_curve()
  */
-void paint_colorgradient_curve(t_jgraphics* g, t_jrgba color_start, t_jrgba color_end, double x1, double y1, double x2, double y2, double slope, double width, long num_steps, char are_color_from_spectrum, double vel1, double vel2, double max_velocity);
+void paint_colorgradient_curve(t_jgraphics* g, t_jrgba color_start, t_jrgba color_end, double x1, double y1, double x2, double y2, double slope, double width, long num_steps, char are_color_from_spectrum, double vel1, double vel2, double max_velocity, e_slope_mapping slope_mapping_type);
 
 
 /**    Paint a line with an arrow at the end.
@@ -1144,10 +1150,11 @@ t_jrgba long_to_color(long value);
      @param    min            The minimum value (corresponding to red = build_jrgba(1, 0, 0, 1))
     @param    max            The maximum value (corresponding either to the same red, after a complete loop red->green->blue->red, if <loop> = 1, or to violet = build_jrgba(1, 0, 1, 1), if <loop> = 0)
     @param    loop        Set to 0 if the ending point of the spectrum (when <val> = <max>) is violet = build_jrgba(1, 0, 1, 1); set to 1 if it spectrum goes back to red = build_jrgba(1, 0, 0, 1)
+    @param   saturation_factor   Sets an additional saturation factor (defaults to 1.)
     @return                The color related to <value>
     @see                color_to_double()
  */ 
-t_jrgba double_to_color(double value, double min, double max, char loop);
+t_jrgba double_to_color(double value, double min, double max, char loop, double saturation_factor=1.);
 
 
 /**    Changes a color depending on a velocity, applying the velocity color scale.
@@ -1393,7 +1400,9 @@ void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text
     @param    max_height        A maximale height of the text box in pixels (for safety, this can be more than the needed height) 
     @see                    write_text()
  */ 
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height);
+void write_text_standard(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height);
+
+void write_text_standard_singleline(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height);
 
 
 /**    Write a given text in a graphic context, but in vertical.
@@ -1428,7 +1437,7 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
 #endif
 
 #ifdef BACH_JUCE
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft);
+void write_text_standard(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft);
 void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft, char single_line, char use_ellipsis);
 char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen);
 #endif

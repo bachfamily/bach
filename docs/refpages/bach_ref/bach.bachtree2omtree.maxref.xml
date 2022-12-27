@@ -11,6 +11,7 @@
 
 	<description>
 		Converts a the measureinfo and the duration rhythmic tree (in bach form, as outputted by <o>bach.score</o>)
+		into an OpenMusic-formatted rhythmic tree.
 	</description>
 
 	<!--METADATA-->

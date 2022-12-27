@@ -1,7 +1,7 @@
 /*
  *  eval.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -104,7 +104,7 @@ t_class *eval_class;
 void C74_EXPORT ext_main(void *moduleRef)
 {
     t_class *c;
-    
+        
     common_symbols_init();
     llllobj_common_symbols_init();
     
@@ -112,13 +112,14 @@ void C74_EXPORT ext_main(void *moduleRef)
         error("bach: bad installation");
         return;
     }
+
     
     CLASS_NEW_CHECK_SIZE(c, "bach.eval", (method)eval_new, (method)eval_free, (long) sizeof(t_eval), 0L, A_GIMME, 0);
     
     codableclass_add_standard_methods_and_attrs(c);
-    codableclass_add_extended_methods_and_attrs(c);
+    //codableclass_add_extended_methods_and_attrs(c);
 
-    // @method llll @digest Store values for the expression variables
+    // @method llll @digest Store values for the inlet variables
     // @description
     // The lllls provide the data to the expression.
     // An llll received in the leftmost inlet will trigger the evaluation and cause the result to be output.
@@ -126,7 +127,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     // @method expr @digest Expression to evaluate
     // @description
-    // The <m>expr</m> message, followed by a valid expression, will set the new expression to be evaluated by <o>bach.eval</o>.
+    // The <m>expr</m> message, followed by a valid expression, will set the new program to be evaluated by <o>bach.eval</o>.
     // For more details on the expression syntax, please refer to <o>bach.eval</o>'s help patcher.
     class_addmethod(c, (method)eval_expr,    "expr",            A_GIMME,    0);
     
@@ -144,7 +145,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)eval_assist,        "assist",        A_CANT,        0);
     class_addmethod(c, (method)eval_inletinfo,    "inletinfo",    A_CANT,        0);
 
-    // @method (doubleclick) @digest Edit llll as text
+    // @method (doubleclick) @digest Open text editor
     // @description Double-clicking on the object forces a text editor to open up, where the expression can be edited directly.
     class_addmethod(c, (method)eval_dblclick,        "dblclick",        A_CANT, 0);
     
@@ -293,7 +294,7 @@ t_max_err eval_setattr_triggers(t_eval *x, t_object *attr, long ac, t_atom *av)
             eval_parse_all_triggers(x);
             bach_atomic_unlock(&x->n_ob.c_triggers_lock);
             llll_free(free_me);
-            if (x->n_ready)
+            if (x->n_ob.c_ready)
                 codableobj_resolve_trigger_vars((t_codableobj*) x, NULL, 0, NULL);
         }
     }
@@ -336,7 +337,7 @@ void eval_dblclick(t_eval *x)
 
 void eval_bang_deferred(t_eval *x, t_symbol *s, long ac, t_atom *av)
 {
-    if (x->n_ready) {
+    if (x->n_ob.c_ready) {
         t_atom_long inlet = atom_getlong(av);
         eval_run(x, inlet);
     } else {
@@ -347,7 +348,7 @@ void eval_bang_deferred(t_eval *x, t_symbol *s, long ac, t_atom *av)
 void eval_bang(t_eval *x)
 {
     t_atom_long inlet = proxy_getinlet((t_object *) x) + 1;
-    if (x->n_ready)
+    if (x->n_ob.c_ready)
         eval_run(x, inlet);
     else {
         t_atom a;
@@ -388,7 +389,7 @@ void eval_run(t_eval *x, long inlet)
         }
     }
     
-    for (int i = 0; i < dataInlets; i++) {
+    for (int i = 1; i <= dataInlets; i++) {
         llll_release(context.argv[i]);
     }
 }
@@ -450,21 +451,18 @@ void eval_assist(t_eval *x, void *b, long m, long a, char *s)
 {
     if (m == ASSIST_INLET) {
         if (a < x->n_dataInlets)
-            sprintf(s, "llll: Data Inlet %ld", a + 1);
+            sprintf(s, "llll: Data Inlet %ld", a + 1); // @in 0 @loop 1 @type llll @digest llll to be assigned to inlet pseudovariables
         else
-            sprintf(s, "llll: Direct Inlet " ATOM_LONG_PRINTF_FMT, a - x->n_dataInlets + 1);
-
-        // @in 0 @type llll @digest llll to be compared
-        // @in 1 @type llll @digest llll to be compared
+            sprintf(s, "llll: Direct Inlet " ATOM_LONG_PRINTF_FMT, a - x->n_dataInlets + 1); // @in 1 @type llll @digest llll to be assigned to direct inlet pseudovariables
     } else {
         char *type = NULL;
         llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
         if (a < x->n_dataOutlets)
-            sprintf(s, "llll (%s): Data Outlet %ld", type, a + 1); // @out 0 @type int @digest Comparison result (0/1)
+            sprintf(s, "llll (%s): Data Outlet %ld", type, a + 1); // @out 0 @loop 1 @type llll @digest Values assigned to outlet pseudovariables
         else if (a == x->n_dataOutlets)
-            sprintf(s, "llll (%s): Evaluation Result", type); // @out 0 @type int @digest Comparison result (0/1)
+            sprintf(s, "llll (%s): Evaluation Result", type); // @out 1 @type llll @digest Final result of the evaluation
         else
-            sprintf(s, "llll (%s): Direct Outlet " ATOM_LONG_PRINTF_FMT, type, a - x->n_dataOutlets);
+            sprintf(s, "llll (%s): Direct Outlet " ATOM_LONG_PRINTF_FMT, type, a - x->n_dataOutlets); // @out 2 @loop 1 @type llll @digest Values assigned to direct outlet pseudovariables
     }
 }
 
@@ -478,8 +476,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
     t_eval *x = NULL;
     long true_ac, i;
     t_max_err err = 0;
-    
-    //true_ac = attr_args_offset(ac, av);
 
     if ((x = (t_eval *) object_alloc_debug(eval_class))) {
         // @arg 0 @name expression @optional 1 @type anything @digest Expression to evaluate
@@ -496,6 +492,8 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         x->n_ob.c_maxtime = 60000;
         x->n_ob.c_watch = 1;
         true_ac = ac;
+        x->n_ob.c_text = (char *) bach_newptr(2);
+        strncpy_zero(x->n_ob.c_text, " ", 2);
         
         t_atom_long dataInlets = -1, dataOutlets = -1, directInlets = -1, directOutlets = -1;
         
@@ -571,7 +569,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         
         codableobj_finalize((t_codableobj *) x);
         
-        defer_low(x, (method)eval_setready, NULL, 0, NULL);
         if (x->n_ob.c_main) {
             x->n_ob.c_main->setOutlets(x->n_dataOutlets);
             defer_low(x, (method)codableobj_resolvepatchervars, NULL, 0, NULL);
@@ -595,11 +592,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
 void eval_deferbang(t_eval *x, t_symbol *msg, long ac, t_atom *av)
 {
     eval_bang(x);
-}
-
-void eval_setready(t_eval *x, t_symbol *msg, long ac, t_atom *av)
-{
-    x->n_ready = true;
 }
 
 void eval_ownedFunctionsSetup(t_eval *x)

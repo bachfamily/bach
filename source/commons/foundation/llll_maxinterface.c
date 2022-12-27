@@ -1,7 +1,7 @@
 /*
  *  llll_maxinterface.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -235,6 +235,7 @@ void llll_print(t_llll *ll, t_object *client, long error_message_type, t_atom_lo
     if (!ll)
         return;
     
+
     llll_to_text_buf(ll, &buf, 0, max_decimals, LLLL_T_NULL, 0, 0, fn);
     if (client) {
         switch (error_message_type) {

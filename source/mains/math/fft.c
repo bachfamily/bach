@@ -1,7 +1,7 @@
 /*
  *  fft.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -84,6 +84,7 @@ typedef struct _fft
 
 	long			inverse;
 	long			polar;
+    long            unitary;
 	
 	void	*n_proxy[2];
 	long	n_in;
@@ -150,6 +151,12 @@ void C74_EXPORT ext_main(void *moduleRef)
 	CLASS_ATTR_LABEL(c, "polar", 0, "Polar Input And Output");
 	CLASS_ATTR_BASIC(c, "polar", 0);	
 	// @description Output data in polar coordinates, instead of cartesian ones.
+
+    CLASS_ATTR_LONG(c, "unitary",    0,    t_fft, unitary);
+    CLASS_ATTR_STYLE_LABEL(c,"unitary",0,"onoff","Unitary");
+    CLASS_ATTR_BASIC(c, "unitary", 0);
+    // @description Toggles the unitary normalization of the Fourier Transform (so that the
+    // if coincides with its inverse up to conjugation).
 
 	class_register(CLASS_BOX, c);
 	fft_class = c;
@@ -244,7 +251,7 @@ void fft_anything(t_fft *x, t_symbol *msg, long ac, t_atom *av)
 				bach_freeptr(in_imag);
 			}
 			
-			bach_fft(nfft, x->inverse, fin, out_ampli, out_phase);
+			bach_fft(nfft, x->inverse, fin, out_ampli, out_phase, x->unitary);
 			
 			if (x->polar) {
 				left = double_array_to_llll(out_ampli, nfft);

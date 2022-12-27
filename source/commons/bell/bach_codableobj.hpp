@@ -1,7 +1,7 @@
 /*
  *  bach_codableobj.hpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -41,6 +41,7 @@ typedef struct _codableobj
     t_symbol *c_file;
     char *c_filename;
     short c_path;
+    t_bool c_scratchpad;
     
     t_mainFunction *c_main;
     t_atom_long c_embed;
@@ -57,9 +58,11 @@ typedef struct _codableobj
     t_atom_long c_maxtime;
     bool c_forceread;
     bool c_readappend;
-    
+    bool c_filechanged;
+
     long c_watch;
     t_object *c_filewatchers[32];
+    t_object *c_default_filewatcher;
     long c_nfilewatchers;
     t_bach_atomic_lock c_fw_lock;
     
@@ -74,6 +77,8 @@ typedef struct _codableobj
     
     t_bool c_allGVTrigger;
     long c_allGVPriority;
+    
+    t_bool c_ready;
     
 } t_codableobj;
 
@@ -156,6 +161,8 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
 short codableobj_setup(t_codableobj *x, short ac, t_atom *av);
 void codableobj_finalize(t_codableobj *x);
 
+void codableobj_setready(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
+
 void codableobj_ownedFunctionsSetup(t_codableobj *x);
 
 t_llll *codableobj_run(t_codableobj* x, class t_execEnv &context);
@@ -163,14 +170,16 @@ t_llll *codableobj_run(t_codableobj* x, class t_execEnv &context);
 t_max_err codableobj_params_get(t_codableobj *x, t_object *attr, long *ac, t_atom **av);
 void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av);
 
-void codableobj_clear_filewatchers(t_codableobj* x);
-void codableobj_add_filewatchers(t_codableobj* x, const fileidSet* files);
-void codableobj_add_one_filewatcher(t_codableobj *x, const t_fileid* file);
-void codableobj_add_one_filewatcher(t_codableobj *x, const short path, const char* name);
-void codableobj_add_default_filewatcher(t_codableobj *x);
-void codableobj_start_filewatchers(t_codableobj* x);
-void codableobj_stop_filewatchers(t_codableobj* x);
+void codableobj_clear_all_filewatchers(t_codableobj* x);
+void codableobj_clear_included_filewatchers(t_codableobj* x);
+void codableobj_add_included_filewatchers(t_codableobj* x, const fileidSet* files);
+t_object* codableobj_add_one_filewatcher(t_codableobj *x, const t_fileid* file);
+t_object* codableobj_add_one_filewatcher(t_codableobj *x, const short path, const char* name);
+void codableobj_replace_default_filewatcher(t_codableobj *x);
+void codableobj_start_all_filewatchers(t_codableobj* x);
+void codableobj_stop_all_filewatchers(t_codableobj* x);
 
+void codableobj_delete_scratchpad(t_codableobj *x);
 
 
 #endif /* bach_codableobj_hpp */

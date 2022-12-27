@@ -273,6 +273,9 @@
 	<!--DISCUSSION-->
 	<discussion>
 		Named lllls can be shared among several <o>bach.shelf</o> objects with the same name.
+		The contents of a family of <o>bach.shelf</o> objects can be saved with the patcher or in a separate file.
+		<o>bach.shelf</o> can be used in conjunction with the <o>umenu</o>, <o>coll</o>, <o>dict</o> or similar objects,
+		allowing them to store references to native lllls.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -317,6 +320,9 @@
 		<entry name ="More details">
 			<description>
 		Named lllls can be shared among several <o>bach.shelf</o> objects with the same name.
+		The contents of a family of <o>bach.shelf</o> objects can be saved with the patcher or in a separate file.
+		<o>bach.shelf</o> can be used in conjunction with the <o>umenu</o>, <o>coll</o>, <o>dict</o> or similar objects,
+		allowing them to store references to native lllls.
 			</description>
 		</entry>
 		<entry name ="Keywords">

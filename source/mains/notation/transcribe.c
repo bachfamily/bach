@@ -1,7 +1,7 @@
 /*
  *  transcribe.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -119,6 +119,7 @@ typedef struct _transcribe
 	void				*n_proxy[2];
 	long				n_in;
 
+    long    n_verbose;
     t_systhread_mutex	n_mutex;
 
 } t_transcribe;
@@ -251,7 +252,10 @@ void C74_EXPORT ext_main(void *moduleRef)
     // a more accurate retrieval. Defaults to 0 (off).
 
     
-
+    CLASS_ATTR_LONG(c, "verbose", 0, t_transcribe, n_verbose);
+    CLASS_ATTR_STYLE_LABEL(c,"verbose",0,"onoff","Post Warnings");
+    // @description Toggles the ability to post warning signs for incoming data
+    
 	class_register(CLASS_BOX, c);
 	transcribe_class = c;
 	
@@ -446,17 +450,19 @@ t_llll *transcribe_event_noteoff(t_transcribe *x, t_transcribe_event *ev)
 
 void transcribe_allnotesoff(t_transcribe *x)
 {
-    transcribe_send_tail(x, transcribe_get_time(x));
-    systhread_mutex_lock(x->n_mutex);
-    for (t_llllelem *el = x->n_active_notes->l_head; el; el = el->l_next) {
-        t_transcribe_event *ev = (t_transcribe_event *)hatom_getobj(&el->l_hatom);
-        if (x->n_use_names)
-            transcribe_send_unsel_long(x, ev->n_assigned_name);
-        else
-            transcribe_send_unsel(x, ev->n_onset, hatom_gettype(&ev->n_pitch) == H_PITCH ? hatom_getpitch(&ev->n_pitch).toMC() : hatom_getdouble(&ev->n_pitch), ev->n_voice);
+    if (x->n_transcribing) {
+        transcribe_send_tail(x, transcribe_get_time(x));
+        systhread_mutex_lock(x->n_mutex);
+        for (t_llllelem *el = x->n_active_notes->l_head; el; el = el->l_next) {
+            t_transcribe_event *ev = (t_transcribe_event *)hatom_getobj(&el->l_hatom);
+            if (x->n_use_names)
+                transcribe_send_unsel_long(x, ev->n_assigned_name);
+            else
+                transcribe_send_unsel(x, ev->n_onset, hatom_gettype(&ev->n_pitch) == H_PITCH ? hatom_getpitch(&ev->n_pitch).toMC() : hatom_getdouble(&ev->n_pitch), ev->n_voice);
+        }
+        transcribe_clear_active_notes(x);
+        systhread_mutex_unlock(x->n_mutex);
     }
-    transcribe_clear_active_notes(x);
-    systhread_mutex_unlock(x->n_mutex);
 }
 
 
@@ -596,8 +602,8 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
             } else if (args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_slot && args->l_head->l_next) {
                 // Inserting a temporal slot item
                 t_symbol *temporalmode = _llllobj_sym_milliseconds;
-                long voice = 0, interp = 0, prepad = 0;
-                llll_parseattrs((t_object *)x, args, true, "iiii", _llllobj_sym_temporalmode, &temporalmode, _llllobj_sym_voice, &voice, _llllobj_sym_interp, &interp, _llllobj_sym_prepad, &prepad);
+                t_atom_long voice = 0, interp = 0, prepad = 0;
+                llll_parseattrs((t_object *)x, args, LLLL_PA_DESTRUCTIVE, "siii", _llllobj_sym_temporalmode, &temporalmode, _llllobj_sym_voice, &voice, _llllobj_sym_interp, &interp, _llllobj_sym_prepad, &prepad);
                 
                 if (temporalmode == _llllobj_sym_milliseconds) {
                     
@@ -678,7 +684,7 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                     llll_free(command);
                 } else {
                     t_llll *command = llll_get();
-                    llll_appendsym(command, _llllobj_sym_addslot);
+                    llll_appendsym(command, _llllobj_sym_setslot);
                     llll_chain(command, llll_subllll(args->l_head->l_next, args->l_tail));
                     llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, command);
                     llll_free(command);
@@ -708,7 +714,7 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                 
                 
             } else if (args && args->l_size >= 2){
-                // input is: pitch, velocity, voice
+                // input is: pitch, velocity, (voice)
                 // we make a new event to keep track of the note ons and note offs.
                 
                 long voice = (args->l_size >= 3 ? hatom_getlong(&args->l_head->l_next->l_next->l_hatom) : 1);
@@ -769,7 +775,8 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                         transcribe_send_inscreenpos(x, t);
                     } else {
                         systhread_mutex_unlock(x->n_mutex);
-                        object_warn((t_object *)x, "Unmatched note-off!");
+                        if (x->n_verbose)
+                            object_warn((t_object *)x, "Unmatched note-off!");
                     }
                 }
             }
@@ -843,6 +850,7 @@ t_transcribe *transcribe_new(t_symbol *s, short ac, t_atom *av)
         x->n_use_names = 0;
         x->n_use_Max_logical_time = 0;
         x->n_active_notes = llll_get();
+        x->n_verbose = true;
         
         for (long i = 0; i <= CONST_MAX_VOICES; i++)
             x->n_active_slotitems[i] = (t_hatom *)bach_newptr(CONST_MAX_SLOTS * sizeof(t_hatom));

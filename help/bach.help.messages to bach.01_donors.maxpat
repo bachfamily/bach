@@ -3,7 +3,7 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 1,
+			"minor" : 2,
 			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
@@ -37,15 +37,30 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"linecount" : 2,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 17.0, 113.0, 78.0, 35.0 ],
+					"presentation_linecount" : 3,
+					"text" : ";\rbach patrons"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-4",
 					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 102.0, 61.0, 314.0, 87.0 ],
-					"text" : "If the \"donors\" message is sent to bach, the names of all the people and institutions that have contributed to the development of bach are printed to the Max console.\n\nEnvious?? Secure your sunny spot in the hall of the donors by supporting bach on Patreon!"
+					"patching_rect" : [ 102.0, 61.0, 343.0, 87.0 ],
+					"text" : "If the \"donors\" or \"patrons\" messages are sent to bach, the names of all the people and institutions that have contributed to the development of bach are printed to the Max console.\n\nEnvious?? Secure your sunny spot in the hall of the donors by supporting bach on Patreon!"
 				}
 
 			}
@@ -101,8 +116,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 198.0, 23.0 ],
-					"text" : "Messages to bach: donors",
+					"patching_rect" : [ 6.0, 8.0, 261.0, 23.0 ],
+					"text" : "Messages to bach: donors, patrons",
 					"varname" : "title"
 				}
 

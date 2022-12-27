@@ -73,7 +73,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 229.0, 541.0, 385.0, 22.0 ],
 					"style" : "",
-					"text" : "sel note if velocity > 80 && noteindex == 1, addslot [ articulations acc ]"
+					"text" : "sel note if velocity > 80 && noteindex == 1, setslot [ articulations acc ]"
 				}
 
 			}

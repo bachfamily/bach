@@ -1,7 +1,7 @@
 /*
  *  notation_dynamics.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -199,7 +199,7 @@ double dynamics_get_spanning_width(t_notation_obj *r_ob, t_dynamics *dyn)
     
     t_notation_item *owner = dynamics_get_owner(r_ob, dyn);
     
-    if (owner->type == k_CHORD) { // gotta be bach.score
+    if (owner->type == k_CHORD) { // gotta be bach.score, and chord must be a rest
         return deltauxpixels_to_deltaxpixels(r_ob, ((t_chord *)owner)->duration_ux);
     } else if (owner->type == k_NOTE){
         t_note *nt = ((t_note *)owner);
@@ -283,7 +283,7 @@ void dynamics_get_rect(t_notation_obj *r_ob, t_dynamics *dyn, t_rect *enclosure)
     
     
     // top and bottom
-    double bottom_staff_y = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) ch->voiceparent : (t_voice *) ch->parent->voiceparent), false);
+    double bottom_staff_y = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) ch->voiceparent : (t_voice *) ch->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
     double middle_y = bottom_staff_y - r_ob->dynamics_uy_pos * r_ob->zoom_y;
     double semiheight = 0.2 * r_ob->dynamics_font_size * r_ob->zoom_y;
     y1 = middle_y - semiheight;
@@ -2301,7 +2301,7 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
             // sticky assignment of the left dynamics to the chord
             if (!dynamics_mark_to_velocity(r_ob, prev_mark, &velocity, dyn_vel_associations, params, -1)) {
                 for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
-                    nt->velocity = velocity;
+                    note_set_velocity(r_ob, nt, velocity);
                     if (r_ob->breakpoints_have_velocity) {
                         
                         if (bptmode >= 1 && dynamics_has_internal_relativeposition(left_dyn)) {
@@ -2342,7 +2342,8 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                                     if (right_dyn_temp) {
                                         if (!dynamics_mark_to_velocity(r_ob, prev_mark, &left_velocity, dyn_vel_associations, params, 1)) {
                                             if (!dynamics_mark_to_velocity(r_ob, right_dyn_temp->firstmark, &right_velocity, dyn_vel_associations, params, -1)) {
-                                                bpt->velocity = rescale_with_slope_inv(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nextchwithdyn), left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
+                                                // was: rescale_with_slope_inv
+                                                bpt->velocity = notationobj_rescale_with_slope(r_ob, notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nextchwithdyn), left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                             } else {
                                                 dynamics_mark_to_textbuf(right_dyn_temp->firstmark, marktext, 1024);
                                                 object_warn((t_object *)r_ob, "Could not find velocity assignment for dynamic marking '%s'. Skipping dynamic marking.", marktext);
@@ -2388,7 +2389,8 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                                 } else {
                                     if (!dynamics_mark_to_velocity(r_ob, left_corrected, &left_velocity, dyn_vel_associations, params, 1)) {
                                         if (!dynamics_mark_to_velocity(r_ob, right, &right_velocity, dyn_vel_associations, params, -1)) {
-                                            bpt->velocity = rescale_with_slope_inv(bpt->rel_x_pos, left->relative_position, right->relative_position, left_velocity, right_velocity, hairpin_is_crescordim(left->hairpin_to_next) == k_DYNAMICS_HAIRPIN_CRESCEXP ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (hairpin_is_crescordim(left->hairpin_to_next) == k_DYNAMICS_HAIRPIN_DIMEXP ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
+                                            // was: rescale_with_slope_inv
+                                            bpt->velocity = notationobj_rescale_with_slope(r_ob, bpt->rel_x_pos, left->relative_position, right->relative_position, left_velocity, right_velocity, left->hairpin_to_next == k_DYNAMICS_HAIRPIN_CRESCEXP ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (left->hairpin_to_next == k_DYNAMICS_HAIRPIN_DIMEXP ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                         } else {
                                             dynamics_mark_to_textbuf(right, marktext, 1024);
                                             object_warn((t_object *)r_ob, "Could not find velocity assignment for dynamic marking '%s'. Skipping dynamic marking.", marktext);
@@ -2414,23 +2416,38 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
             if (!dynamics_mark_to_velocity(r_ob, prev_mark, &left_velocity, dyn_vel_associations, params,  1)) {
                 if (!dynamics_mark_to_velocity(r_ob, right_dyn_mark, &right_velocity, dyn_vel_associations, params, -1)) {
                     if (last_hairpin * (right_velocity - left_velocity) > 0) {
-                        velocity = rescale_with_slope(CLAMP(ch_onset, left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
+                        velocity = notationobj_rescale_with_slope(r_ob, CLAMP(ch_onset, left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                         for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
-                            nt->velocity = velocity;
+                            note_set_velocity(r_ob, nt, velocity);
                             if (r_ob->breakpoints_have_velocity) {
                                 for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next) {
                                     if (!bpt->prev)
                                         bpt->velocity = velocity;
                                     else {
-                                        bpt->velocity = rescale_with_slope_inv(CLAMP(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
+                                        // was: rescale_with_slope_inv
+                                        bpt->velocity = notationobj_rescale_with_slope(r_ob, CLAMP(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                     }
                                 }
                             }
                         }
                     } else {
-                        dynamics_mark_to_textbuf(prev_mark, marktext, 1024);
-                        dynamics_mark_to_textbuf(right_dyn_mark, marktext2, 1024);
-                        object_warn((t_object *)r_ob, "Incoherent hairpin found between dynamic markings '%s' and '%s'. Skipping assignments.", marktext, marktext2);
+                        if (right_velocity == left_velocity) {
+                            for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
+                                note_set_velocity(r_ob, nt, left_velocity);
+                                if (r_ob->breakpoints_have_velocity) {
+                                    for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next) {
+                                        bpt->velocity = left_velocity;
+                                    }
+                                }
+                            }
+                            dynamics_mark_to_textbuf(prev_mark, marktext, 1024);
+                            dynamics_mark_to_textbuf(right_dyn_mark, marktext2, 1024);
+                            object_warn((t_object *)r_ob, "Incoherent hairpin found between dynamic markings '%s' and '%s'.", marktext, marktext2);
+                        } else {
+                            dynamics_mark_to_textbuf(prev_mark, marktext, 1024);
+                            dynamics_mark_to_textbuf(right_dyn_mark, marktext2, 1024);
+                            object_warn((t_object *)r_ob, "Incoherent hairpin found between dynamic markings '%s' and '%s'. Skipping assignments.", marktext, marktext2);
+                        }
                     }
                 } else {
                     if (!dynamics_mark_is_placeholder(right_dyn_mark)) {
@@ -2448,7 +2465,7 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
         } else if (prev_mark) {
             if (!dynamics_mark_to_velocity(r_ob, prev_mark, &velocity, dyn_vel_associations, params, 1)) {
                 for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
-                    nt->velocity = velocity;
+                    note_set_velocity(r_ob, nt, velocity);
                     if (r_ob->breakpoints_have_velocity) {
                         for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next)
                             bpt->velocity = velocity;
@@ -2503,6 +2520,9 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
             }
             
             if (selection_only && !notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
+                continue;
+            
+            if (!ch->firstnote)
                 continue;
             
             chord_assign_velocities_from_dynamics(r_ob, ch, dyn_vel_associations, &params, curr_dyn_chord,
@@ -2584,7 +2604,7 @@ t_symbol *chord_assign_dynamics_from_velocities(t_notation_obj *r_ob, t_chord *c
         
         t_notation_item *nitem = notation_item_get_to_which_dynamics_should_be_assigned(r_ob, (t_notation_item *)ch);
         t_llll *slot_ll = dynamic_mark_to_slots_ll(slot_num, dyn);
-        set_slots_values_to_notationitem_from_llll(r_ob, nitem, slot_ll);
+        notation_item_set_slots_from_llll(r_ob, nitem, slot_ll);
         llll_free(slot_ll);
     } else {
         object_warn((t_object *)r_ob, "Could not convert mean chord velocity '%.2f' to dynamic marking.", mean_vel);
@@ -2639,7 +2659,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
         t_llll *pivot_chords_ll = ll;
         char must_free_pivot_chords_ll = false;
         if (approx_thresh > 0) {
-            pivot_chords_ll = llll_approximate_breakpoint_function(ll, 0, approx_thresh, 2, 1, false, true, (t_object *)r_ob);
+            pivot_chords_ll = llll_approximate_breakpoint_function(ll, 0, approx_thresh, 2, 1, false, (e_slope_mapping)r_ob->slope_mapping_type, true, (t_object *)r_ob);
             must_free_pivot_chords_ll = true;
         }
         

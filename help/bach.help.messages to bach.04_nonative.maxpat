@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 1,
-			"revision" : 0,
+			"revision" : 11,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -47,8 +48,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 361.0, 423.0, 217.0, 54.0 ],
-					"presentation_linecount" : 4,
+					"patching_rect" : [ 361.0, 423.0, 218.0, 54.0 ],
 					"text" : "@out m is kept as it is: double-click the bach.reg objects and you'll see the difference."
 				}
 
@@ -72,6 +72,7 @@
 			}
 , 			{
 				"box" : 				{
+					"dontreplace" : 1,
 					"id" : "obj-19",
 					"linecount" : 3,
 					"maxclass" : "message",
@@ -79,7 +80,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 320.0, 372.0, 155.0, 49.0 ],
-					"presentation_linecount" : 3,
 					"text" : "[ 2/4 6/8 4/4 ] [ 4/4 2/4 6/8 ] [ 4/4 6/8 2/4 ] [ 6/8 2/4 4/4 ] [ 6/8 4/4 2/4 ] [ 2/4 4/4 6/8 ]"
 				}
 
@@ -203,13 +203,14 @@
 			}
 , 			{
 				"box" : 				{
+					"dontreplace" : 1,
 					"id" : "obj-23",
 					"linecount" : 3,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 37.0, 358.0, 178.0, 49.0 ],
+					"patching_rect" : [ 37.0, 358.0, 179.0, 49.0 ],
 					"text" : "[ `2/4 `6/8 `4/4 ] [ `4/4 `2/4 `6/8 ] [ `4/4 `6/8 `2/4 ] [ `6/8 `2/4 `4/4 ] [ `6/8 `4/4 `2/4 ] [ `2/4 `4/4 `6/8 ]"
 				}
 
@@ -289,7 +290,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 42.0, 546.0, 167.0 ],
+					"patching_rect" : [ 6.0, 42.0, 548.0, 167.0 ],
 					"text" : "If the \"nonative\" message followed by 1 is sent to bach, all the native llll outlets of all the bach objects in the Max session will start behaving as if they were text outlets. The behavior of Max-format (@out m), disabled (@out x) and, of course, text-format (@out t) outlets is not changed.\n\nThis is especially useful for debugging, as it allows to take advantage of the Max debugger, the print watchpoints and the event probe, and to easily insert message boxes and other objects for monitoring the data flow.\nOn the other hand, care must be taken as, besides being significantly slower, too long lllls will be truncated by passing them in text format, resulting in data corruption and error messages.\n\nThe \"nonative\" message followed by 0 reinstates the normal behavior, in which outlets declared as native (as by default) output native-format lllls."
 				}
 
@@ -382,7 +383,7 @@
 					"order" : 1,
 					"source" : [ "obj-18", 0 ],
 					"watchpoint_flags" : 5,
-					"watchpoint_id" : 1
+					"watchpoint_id" : 3
 				}
 
 			}
@@ -406,7 +407,7 @@
 					"order" : 1,
 					"source" : [ "obj-27", 0 ],
 					"watchpoint_flags" : 5,
-					"watchpoint_id" : 2
+					"watchpoint_id" : 4
 				}
 
 			}

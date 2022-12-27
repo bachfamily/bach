@@ -1,7 +1,7 @@
 /*
  *  textout.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -223,6 +223,11 @@ void textout_anything(t_textout *x, t_symbol *msg, long ac, t_atom *av)
     long inlet = proxy_getinlet((t_object *) x);
 
     t_llll *ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_CLONE);
+    
+    if (!ll) {
+        object_error((t_object *)x, "Wrong llll.");
+        return;
+    }
     
     switch (ll->l_size) {
         case 0: {

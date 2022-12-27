@@ -2,14 +2,15 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
+			"major" : 8,
 			"minor" : 3,
-			"revision" : 4,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 153.0, 79.0, 617.0, 539.0 ],
+		"classnamespace" : "box",
+		"rect" : [ 52.0, 100.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -36,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -48,7 +50,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 12.0, 263.0, 423.0, 40.0 ],
-					"style" : "",
 					"text" : "The same is valid for intlist and floatlist slots: just give the list of numbers right after the slot number or slot name (in this case: slot 5)"
 				}
 
@@ -63,8 +64,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 438.0, 288.0, 144.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 5 10. 20. 30. ]"
+					"text" : "setslot [ 5 10. 20. 30. ]"
 				}
 
 			}
@@ -78,8 +78,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 438.0, 263.0, 133.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 5 10 20 30 ]"
+					"text" : "setslot [ 5 10 20 30 ]"
 				}
 
 			}
@@ -93,8 +92,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 438.0, 215.0, 94.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 5 1. ]"
+					"text" : "setslot [ 5 1. ]"
 				}
 
 			}
@@ -110,7 +108,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 15.0, 193.0, 415.0, 40.0 ],
-					"style" : "",
 					"text" : "If slot 5 is an int or float slot, we can send one of these messages. If you give a float inside an int slot, it is automatically rounded."
 				}
 
@@ -125,40 +122,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 438.0, 190.0, 90.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 5 1 ]"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"bubbleside" : 3,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-33",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 305.5, 450.0, 98.0, 25.0 ],
-					"style" : "",
-					"text" : "...but do this"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"bubbleside" : 3,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-32",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 25.0, 450.0, 103.0, 25.0 ],
-					"style" : "",
-					"text" : "Don't do this!"
+					"text" : "setslot [ 5 1 ]"
 				}
 
 			}
@@ -171,9 +135,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 134.0, 453.0, 155.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 1 This is wrong]"
+					"patching_rect" : [ 125.0, 453.0, 155.0, 23.0 ],
+					"text" : "setslot [ 1 A plain list ]"
 				}
 
 			}
@@ -186,9 +149,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 407.5, 453.0, 169.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 1 [This is correct]]"
+					"patching_rect" : [ 337.5, 453.0, 169.0, 23.0 ],
+					"text" : "setslot [ 1 [Not a plain list]]"
 				}
 
 			}
@@ -203,8 +165,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 42.0, 407.0, 296.0, 25.0 ],
-					"style" : "",
-					"text" : "Here we add a text slot to the current selection"
+					"text" : "Here we add a llll slot to the current selection"
 				}
 
 			}
@@ -218,8 +179,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 340.0, 407.0, 242.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 1 [This is [[] la] [my mia] text ]]"
+					"text" : "setslot [ 1 This is [[] la] [my mia] text ]"
 				}
 
 			}
@@ -234,7 +194,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 78.0, 357.0, 256.0, 25.0 ],
-					"style" : "",
 					"text" : "Here's an example, if slot 7 is a text slot"
 				}
 
@@ -250,7 +209,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 23.0, 147.0, 257.0, 25.0 ],
-					"style" : "",
 					"text" : "Here's an example, if slot 1 is a function"
 				}
 
@@ -265,8 +223,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 284.0, 150.0, 239.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 1 [0 0 0] [0.5 100 0] [1 0 0.8] ]"
+					"text" : "setslot [ 1 [0 0 0] [0.5 100 0] [1 0 0.8] ]"
 				}
 
 			}
@@ -280,8 +237,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 340.0, 360.0, 175.0, 23.0 ],
-					"style" : "",
-					"text" : "addslot [ 7 \"This is my text\" ]"
+					"text" : "setslot [ 7 \"This is my text\" ]"
 				}
 
 			}
@@ -297,7 +253,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 432.0, 555.0, 21.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "Mind that the llll must be wrapped in a level of parentheses:",
+					"text" : "Plain lllls are not wrapped inside a level of parentheses:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -332,8 +288,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 61.5, 385.0, 120.0, 21.0 ],
-					"style" : "",
-					"text" : "<WRAPPED_LLLL>"
+					"text" : "<LLLL>"
 				}
 
 			}
@@ -385,7 +340,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 72.5, 304.0, 190.0, 21.0 ],
-					"style" : "",
 					"text" : "<text_as_unique_symbol>"
 				}
 
@@ -420,7 +374,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 140.0, 242.0, 463.0, 21.0 ],
-					"style" : "",
 					"text" : "<value1> <value2> <value3>..."
 				}
 
@@ -455,7 +408,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 107.0, 173.0, 463.0, 21.0 ],
-					"style" : "",
 					"text" : "<value>"
 				}
 
@@ -470,7 +422,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 217.0, 70.0, 143.0, 21.0 ],
-					"style" : "",
 					"text" : "[<x> <y> <slope>]"
 				}
 
@@ -523,7 +474,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 98.0, 53.0, 463.0, 21.0 ],
-					"style" : "",
 					"text" : "<POINT1_LLLL> <POINT2_LLLL> <POINT2_LLLL>..."
 				}
 
@@ -537,8 +487,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 602.0, 19.0 ],
-					"style" : "",
-					"text" : "See Also: syntax+slot+content, llll+double+quote, addslot",
+					"text" : "See Also: syntax+slot+content, llll+double+quote, setslot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -553,8 +502,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 602.0, 19.0 ],
-					"style" : "",
-					"text" : "Objects: bach.roll, bach.score",
+					"text" : "Objects: bach.roll, bach.score, bach.slot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -570,7 +518,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 299.0, 23.0 ],
-					"style" : "",
 					"text" : "Slot content (1)",
 					"varname" : "title"
 				}
@@ -585,8 +532,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 602.0, 19.0 ],
-					"style" : "",
-					"text" : "Tags: syntax, slot, content, function, `int, `float, `text, `llll, intlist, floatlist, numeric, number",
+					"text" : "Tags: syntax, slot, content, function, `int, `float, `text, `llll, intlist, floatlist, numeric, number, setslot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

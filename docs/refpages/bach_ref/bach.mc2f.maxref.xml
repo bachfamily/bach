@@ -11,6 +11,7 @@
 
 	<description>
 		Converts an llll containing midicents into an identically structured llll containing the corresponding frequency values.
+		Frequency is reported as a floating point value in Hertz.
 	</description>
 
 	<!--METADATA-->

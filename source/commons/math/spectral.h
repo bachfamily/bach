@@ -1,7 +1,7 @@
 /*
  *  spectral.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -42,18 +42,18 @@ kiss_fft_scalar get_cpx_ampli(kiss_fft_cpx num);
 kiss_fft_scalar get_cpx_phase(kiss_fft_cpx num);
 
 // these makes sense if you do it just once, otherwise use the _kiss versions that do NOT allocate memory inside
-void bach_fft(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, double *ampli, double *phase); // uses kiss_fft
-void bach_rfft(int nfft, const double *input, double *ampli, double *phase); // real-input fft...
-void bach_irfft(int nfft, const double *input_ampli, const double *input_phase, double *output); // ...and its inverse
+void bach_fft(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, double *ampli, double *phase, bool unitary); // uses kiss_fft
+void bach_rfft(int nfft, const double *input, double *ampli, double *phase, bool unitary); // real-input fft...
+void bach_irfft(int nfft, const double *input_ampli, const double *input_phase, double *output, bool unitary); // ...and its inverse
 
 // use this one if you want to make fft repeatedly: this does not allocate memory (you do, outside)
-void bach_fft_kiss(kiss_fft_cfg cfg, int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, kiss_fft_cpx *fout);
+void bach_fft_kiss(kiss_fft_cfg cfg, int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, kiss_fft_cpx *fout, bool unitary);
 
 
-void bach_acf(int nfft, kiss_fft_cfg cfg, kiss_fft_cfg icfg, const kiss_fft_cpx *fin, kiss_fft_cpx *fout); // UNUSED
-void bach_fft_cartesian_complex(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, kiss_fft_cpx *fout); // like bach_fft but returns frequency bin values in a+ib form
+void bach_acf(int nfft, kiss_fft_cfg cfg, kiss_fft_cfg icfg, const kiss_fft_cpx *fin, kiss_fft_cpx *fout, bool unitary); // UNUSED
+void bach_fft_cartesian_complex(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, kiss_fft_cpx *fout, bool unitary); // like bach_fft but returns frequency bin values in a+ib form
 
-void bach_fm_acf(int nfft, const kiss_fft_cpx *fin, double sample_rate, double *freq_mapped_acf, char rectify, char filter_last_peak); // frequency-mapped autocorrelation function
+void bach_fm_acf(int nfft, const kiss_fft_cpx *fin, double sample_rate, double *freq_mapped_acf, char rectify, char filter_last_peak, bool unitary); // frequency-mapped autocorrelation function
 
 
 void normalize(long num_samples, double *wave, double max_amplitude_to_set);

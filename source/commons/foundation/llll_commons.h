@@ -1,7 +1,7 @@
 /*
  *  llll_commons.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -200,6 +200,17 @@ typedef enum _llll_modes_spike {
     LLLL_M_SPIKE_VERBOSE,
     LLLL_M_SPIKE_SHOOT_STEP
 } e_llll_modes_spike;
+
+// flags for llll_parseattr
+typedef enum _llll_parseattr_flags {
+    LLLL_PA_NONE                    = 0x0000,
+    LLLL_PA_DESTRUCTIVE             = 0x0001,   // destroy found keys
+    LLLL_PA_DONTWARNFORWRONGKEYS  = 0x0002,   // don't warn for missing keys
+    LLLL_PA_DONTWARNFORWRONGITEMS   = 0x0004,   // don't warn for wrong items
+    LLLL_PA_DONTWARNFORDUPLICATES   = 0x0008,   // don't warn for duplicates
+    LLLL_PA_CASEINSENSITIVE         = 0x0010,   // case insensitive search (the keywords in llll_parseattrs() must still be given in lowercase)
+} e_llll_parseattr_flags;
+
 
 // flags for llll_funall
 typedef enum _llll_funall_flags {
@@ -842,6 +853,9 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address);
 // calculate the sum of all the numbers in ll, and put it into sum
 t_max_err llll_sum(t_llll *ll, t_hatom *sum, t_int32 mindepth, t_int32 maxdepth);
 
+// calculate the product of all the numbers in ll, and put it into sum
+t_max_err llll_prod(t_llll *ll, t_hatom *prod, t_int32 mindepth, t_int32 maxdepth);
+
 
 // find the minimum, maximum, address of the minimum and address of the maximum number in a list
 void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t_llll *maxaddress, t_int32 mindepth, t_int32 maxdepth);
@@ -1308,10 +1322,10 @@ t_llll *llll_scan(t_llll *in_llll, long sublists);
 void llll_posthatom(t_hatom *hatom);
 
 long llll_parseargs(t_object *x, t_llll *ll, const char *types, ...);
-long llll_parseattrs(t_object *x, t_llll *ll, char destructive, const char *types, ...);
+long llll_parseattrs(t_object *x, t_llll *ll, long flags, const char *types, ...);
 
-#define llll_parseargs_and_attrs(x,ll,types,...) { llll_parseargs(NULL,ll,types,__VA_ARGS__); llll_parseattrs(x,ll,false,types,__VA_ARGS__); }
-#define llll_parseargs_and_attrs_destructive(x,ll,types,...) { llll_parseargs(NULL,ll,types,__VA_ARGS__); llll_parseattrs(x,ll,true,types,__VA_ARGS__); }
+#define llll_parseargs_and_attrs(x,ll,types,...) { llll_parseargs(NULL,ll,types,__VA_ARGS__); llll_parseattrs(x,ll,0,types,__VA_ARGS__); }
+#define llll_parseargs_and_attrs_destructive(x,ll,types,...) { llll_parseargs(NULL,ll,types,__VA_ARGS__); llll_parseattrs(x,ll,LLLL_PA_DESTRUCTIVE,types,__VA_ARGS__); }
 
 
 t_llll *llll_develop_ranges(t_llll *ll);
@@ -1321,8 +1335,11 @@ void llll_remove_lllls_from_lthing(t_llll *ll);
 void llll_destroy_everything_but_head(t_llll *ll);
 
 t_bool llll_istrue(const t_llll *ll);
-t_llll *get_num_ll(const t_atom_long n);
+t_llll *get_long_ll(const t_atom_long n);
+t_llll *get_double_ll(const double d);
+t_llll *get_sym_ll(const t_symbol* s);
 t_atom_long llll_getlong(t_llll *ll, t_atom_long def = 0);
+double llll_getdouble(t_llll *ll, double def = 0.);
 
 void dev_llll_send(t_llll *x, const char* receiver);
 

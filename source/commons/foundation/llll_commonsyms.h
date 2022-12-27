@@ -1,7 +1,7 @@
 /*
  *  llll_commonsyms.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -139,7 +139,8 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_symduration;
 	t_symbol	*s_symonset;
 	t_symbol	*s_symtail;
-	
+    t_symbol    *s_dumpselection;
+
 	t_symbol	*s_FFGG;
 	t_symbol	*s_FFG;
 	t_symbol	*s_FGG;
@@ -192,6 +193,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_cursor;
 	t_symbol	*s_commands;
 	t_symbol	*s_play;
+    t_symbol    *s_playout;
 	t_symbol	*s_stop;
     t_symbol	*s_pause;
 	t_symbol	*s_clefs;
@@ -199,6 +201,8 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_markers;
 	t_symbol	*s_marker;
 	t_symbol	*s_groups;
+    t_symbol    *s_voicespacing;
+    t_symbol    *s_hidevoices;
     t_symbol	*s_addtempo;
     t_symbol	*s_addmeasure;
 	t_symbol	*s_addmeasures;
@@ -249,6 +253,8 @@ typedef struct _llllobj_common_symbols_table
     t_symbol	*s_insertslotitem;
     t_symbol	*s_deleteslotitem;
 	t_symbol	*s_addslot;
+    t_symbol    *s_setslot;
+    t_symbol    *s_setdurationline;
 	t_symbol	*s_addbreakpoint;
 	t_symbol	*s_erasebreakpoints;
 	t_symbol	*s_widthfactor;
@@ -529,6 +535,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_symduration	(_llllobj_common_symbols->s_symduration)
 #define _llllobj_sym_symonset		(_llllobj_common_symbols->s_symonset)
 #define _llllobj_sym_symtail		(_llllobj_common_symbols->s_symtail)
+#define _llllobj_sym_dumpselection  (_llllobj_common_symbols->s_dumpselection)
 
 #define _llllobj_sym_FFGG			(_llllobj_common_symbols->s_FFGG)
 #define _llllobj_sym_FGG			(_llllobj_common_symbols->s_FGG)
@@ -583,6 +590,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_cursor			(_llllobj_common_symbols->s_cursor)
 #define _llllobj_sym_commands		(_llllobj_common_symbols->s_commands)
 #define _llllobj_sym_play			(_llllobj_common_symbols->s_play)
+#define _llllobj_sym_playout        (_llllobj_common_symbols->s_playout)
 #define _llllobj_sym_stop			(_llllobj_common_symbols->s_stop)
 #define _llllobj_sym_pause			(_llllobj_common_symbols->s_pause)
 #define _llllobj_sym_clefs			(_llllobj_common_symbols->s_clefs)
@@ -590,6 +598,8 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_markers		(_llllobj_common_symbols->s_markers)
 #define _llllobj_sym_marker			(_llllobj_common_symbols->s_marker)
 #define _llllobj_sym_groups			(_llllobj_common_symbols->s_groups)
+#define _llllobj_sym_voicespacing   (_llllobj_common_symbols->s_voicespacing)
+#define _llllobj_sym_hidevoices     (_llllobj_common_symbols->s_hidevoices)
 #define _llllobj_sym_addtempo       (_llllobj_common_symbols->s_addtempo)
 #define _llllobj_sym_addmeasure 	(_llllobj_common_symbols->s_addmeasure)
 #define _llllobj_sym_addmeasures	(_llllobj_common_symbols->s_addmeasures)
@@ -640,6 +650,8 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_insertslotitem	(_llllobj_common_symbols->s_insertslotitem)
 #define _llllobj_sym_deleteslotitem	(_llllobj_common_symbols->s_deleteslotitem)
 #define _llllobj_sym_addslot		(_llllobj_common_symbols->s_addslot)
+#define _llllobj_sym_setslot        (_llllobj_common_symbols->s_setslot)
+#define _llllobj_sym_setdurationline        (_llllobj_common_symbols->s_setdurationline)
 #define _llllobj_sym_addbreakpoint	(_llllobj_common_symbols->s_addbreakpoint)
 #define _llllobj_sym_erasebreakpoints	(_llllobj_common_symbols->s_erasebreakpoints)
 #define _llllobj_sym_widthfactor	(_llllobj_common_symbols->s_widthfactor)

@@ -1,7 +1,7 @@
 /*
  *  score_api.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -89,7 +89,7 @@ void score_hidecursor(t_score *x);
 void score_showcursor(t_score *x);
 
 void scoreapi_setcursor_from_double(t_score *x, double pos);
-void scoreapi_setcursor_from_llll(t_score *x, t_llll *args);
+void scoreapi_setcursor_from_llll(t_score *x, t_llll *args, long flags);
 
 // inscreen and playing
 char scoreapi_inscreen(t_score *x, t_llll *inscreen);
@@ -166,7 +166,7 @@ void recompute_all_and_redraw(t_score *x);
 void recompute_all_except_for_beamings_and_autocompletion(t_score *x);
 
 void remove_all_tuttipoints_flag_modified(t_score *x);
-char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas);
+char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas, char also_send_domain);
 
 
 t_scorevoice* nth_scorevoice(t_score *x, long n);
@@ -174,7 +174,7 @@ t_llll *getdomain_from_uxstart(t_score *x, double ux_start, t_symbol *message_se
 t_llll *scoreapi_testdomain(t_score *x, t_llll *dom, t_symbol *label);
 t_llll *scoreapi_getdomain(t_score *x, t_symbol *label);
 void scoreapi_getdomainpixels(t_score *x, double *start, double *end);
-t_max_err scoreapi_getpixelpos(t_score *x, t_llll *open_timepoint_syntax, double *pos);
+t_max_err scoreapi_getpixelpos(t_score *x, t_llll *open_timepoint_syntax, double *pos, long flags);
 double scoreapi_getlength(t_score *x);
 double scoreapi_get_end_ux(t_score *x);
 void send_all_values_as_llll(t_score *x, long send_what_for_header, t_symbol *gatheredsyntax_router);
@@ -215,7 +215,7 @@ void create_whole_score_undo_tick(t_score *x);
 void changed_bang(t_score *x, int change_type);
 void retranscribe_voice(t_score *x, t_scorevoice *voice);
 void score_retranscribe(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void clear_score_body(t_score *x, long voicenum); // voicenum is 0-based; special values include: -1 meaning: all voices (up to the current voice number); -2 meaning: all voices up to the CONST_MAX_VOICES
+void clear_score_body(t_score *x, long voicenum, long min_num_voices_to_be_cleared = 0); // voicenum is 0-based; special values include: -1 meaning: all voices (up to the current voice number); -2 meaning: all voices up to the CONST_MAX_VOICES
 void score_clear_all(t_score *x);
 void score_cleararticulations(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_clearnotes(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -295,11 +295,11 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
 
 void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom, long beaming_calculation_flags);
 void check_tempi(t_score *x);
-t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router = NULL);
+t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router = NULL, bool selection_only = false);
 t_llll* get_subvoice_values_as_llll(t_score *x, t_scorevoice *voice, long start_meas, long end_meas, char tree, char also_get_level_information);
 t_llll* get_scorevoice_values_as_llll(t_score *x, t_scorevoice *voice, e_data_considering_types for_what, char tree, char also_get_level_information);
 t_llll* get_all_measuresinfo_values_as_llll(t_score *x);
-t_llll* get_all_cents_values_as_llll(t_score *x, char tree, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
+t_llll* get_all_cents_values_as_llll(t_score *x, char tree, e_output_pitches pitch_output_mode);
 t_llll* get_all_durations_values_as_llll(t_score *x, char tree);
 t_llll* get_all_velocities_values_as_llll(t_score *x, char tree);
 t_llll* get_all_ties_values_as_llll(t_score *x, char tree);
@@ -307,8 +307,8 @@ t_llll* get_all_extras_values_as_llll(t_score *x, char tree);
 t_llll* get_all_pixel_values_as_llll(t_score *x);
 t_llll* get_all_measure_pixel_values_as_llll(t_score *x);
 t_llll* get_timesignature_as_llll(t_timesignature *ts);
-t_llll* get_voice_measuresinfo_values_as_llll(t_scorevoice *voice);
-t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tree, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
+t_llll* get_voice_measuresinfo_values_as_llll(t_score *x, t_scorevoice *voice);
+t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tree, e_output_pitches pitch_output_mode);
 t_llll* get_voice_ties_values_as_llll(t_scorevoice *voice, char tree);
 t_llll* get_voice_durations_values_as_llll(t_score *x, t_scorevoice *voice, char tree);
 t_llll* measure_get_durations_values_as_llll(t_score *x, t_measure *measure, char tree);
@@ -366,7 +366,7 @@ void set_score_from_llll_from_read(t_score *x, t_llll* inputlist);
 t_llll* get_score_values_as_llll_for_pwgl(t_score *x);
 
 // bach inspector stuff
-void score_declare_bach_attributes(t_score *x);
+void score_bach_attribute_declares(t_score *x);
 t_rect bach_measure_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line);
 t_rect bach_tempo_miniature_fn(t_score *x, void *elem, long elem_type, char *show_line);
 

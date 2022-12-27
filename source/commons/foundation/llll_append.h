@@ -1,7 +1,7 @@
 /*
  *  llll_append.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -80,7 +80,7 @@ t_llllelem *llll_appendrat_from_elems(t_llll *where, t_atom_long what_num, t_ato
 t_llllelem *llll_appendpitch(t_llll *where, t_pitch what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appendpitch_from_elems(t_llll *where, t_atom_short degree, t_shortRational alter, t_atom_short octave, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appenddouble(t_llll *where, double what, long flags = 0, t_llll *adopter = WHITENULL_llll);
-t_llllelem *llll_appendsym(t_llll *where, t_symbol *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_appendsym(t_llll *where, const t_symbol *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appendobj(t_llll *where, void *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appendfunc(t_llll *where, t_function *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 

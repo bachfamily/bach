@@ -1,7 +1,7 @@
 /*
  *  bach.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -76,7 +76,7 @@
 				#define CONFIGURATION_Deployment
 			#endif
 			#define BACH_LLLL_VERSION "0.8.0.0"
-			#define BACH_VERSION "0.8.1"
+			#define BACH_VERSION "0.8.2.0"
 
 			#define MAXAPI_USE_MSCRT
 		#endif
@@ -155,11 +155,12 @@
 #define CLASS_NEW_CHECK_SIZE(CLASS, name, mnew, mfree, size, mmenu, type, ...) \
 { \
     BACH_STATIC_ASSERT(size < 16384 - 16, "Class too large"); \
+    { __BACH_STATIC_ASSERT__ dummy; dummy[0] = 0; }\
     if (size < 16384 - 16) \
         CLASS = class_new(name, mnew, mfree, size, mmenu, type, __VA_ARGS__); \
     else { \
         post("Class %s too large, size = %d", name, (int) size); \
-        return; \
+        return /*-1*/; \
     } \
 }
 

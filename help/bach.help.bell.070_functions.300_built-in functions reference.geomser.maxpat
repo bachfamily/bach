@@ -87,7 +87,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 414.0, 97.0, 131.0, 79.0 ],
-					"text" : "Arguments:\nstart (default: none)\nend (default: none)\nfactor (default: none)\nmaxcount (default: 0)",
+					"text" : "Arguments:\nstart (default: 'none')\nend (default: 'none')\nfactor (default: 'none')\nmaxcount (default: 0)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

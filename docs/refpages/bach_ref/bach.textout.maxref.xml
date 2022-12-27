@@ -11,6 +11,7 @@
 
 	<description>
 		Manages the attribution of backticks and the behavior with respect to negative pitches
+		in the textual representation of the incoming lllls.
 	</description>
 
 	<!--METADATA-->

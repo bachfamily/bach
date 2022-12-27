@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 1,
+			"revision" : 11,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"id" : "obj-1",
@@ -99,12 +100,12 @@
 					"numinlets" : 3,
 					"numoutlets" : 5,
 					"outlettype" : [ "bang", "", "", "", "" ],
-					"patching_rect" : [ 50.0, 79.0, 199.0, 22.0 ],
+					"patching_rect" : [ 50.0, 79.0, 440.0, 22.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"versionnumber" : 80104
 					}
 ,
-					"text" : "bach.args @ins 2 @attrs maxdepth"
+					"text" : "bach.args @ins 2 @attrs mindepth maxdepth maxidx minidx idxreject depthreject"
 				}
 
 			}
@@ -163,11 +164,11 @@
 				"box" : 				{
 					"comment" : "llll to be Located",
 					"id" : "obj-8",
-					"index" : 0,
+					"index" : 1,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
-					"outlettype" : [ "" ],
+					"outlettype" : [ "bang" ],
 					"patching_rect" : [ 50.0, 40.0, 25.0, 25.0 ]
 				}
 
@@ -177,12 +178,12 @@
 					"comment" : "llll to Search",
 					"cool" : 1,
 					"id" : "obj-9",
-					"index" : 0,
+					"index" : 2,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 140.0, 40.0, 25.0, 25.0 ]
+					"patching_rect" : [ 260.5, 40.0, 25.0, 25.0 ]
 				}
 
 			}
@@ -190,7 +191,7 @@
 				"box" : 				{
 					"comment" : "Address of located llll, or null if none",
 					"id" : "obj-11",
-					"index" : 0,
+					"index" : 1,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
@@ -290,29 +291,7 @@
 				}
 
 			}
- ],
-		"dependency_cache" : [ 			{
-				"name" : "bach.find.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.reg.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.args.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.portal.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.pick.mxo",
-				"type" : "iLaX"
-			}
- ],
-		"autosave" : 0
+ ]
 	}
 
 }

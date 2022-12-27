@@ -156,6 +156,12 @@
 #     define HOST_ARCH_686                              1
 #     define HOST_ARCH_X86                              1
 
+// added by Andrea Agostini for compatibility with Apple Silicon
+// Feb 24, 2022
+#elif defined(__arm64__)
+
+#     define HOST_ARCH_ARM64                            1
+
 #endif
 
 
@@ -200,7 +206,7 @@ typedef unsigned char *     StringPtr;
 #if HOST_ARCH_SGI || HOST_ARCH_NEXT || HOST_ARCH_PPC
 #   define HOST_ENDIAN_BIG  1
 #   define WORDS_BIGENDIAN  1
-#elif HOST_ARCH_ALPHA || HOST_ARCH_X86
+#elif HOST_ARCH_ALPHA || HOST_ARCH_X86 || HOST_ARCH_ARM64
 #   define HOST_ENDIAN_LITTLE  1
 #   undef  WORDS_BIGENDIAN
 #endif

@@ -1,7 +1,7 @@
 /*
  *  llllobj.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -37,6 +37,15 @@
 #ifndef CLASS_ATTR_BASIC
 #define CLASS_ATTR_BASIC(c, name, flags) CLASS_ATTR_ATTR_PARSE(c,name,"basic",_sym_long,flags,"1")
 #endif
+
+#ifdef WIN_VERSION
+#define CLASS_ATTR_CHAR_UNSAFE(c,attrname,flags,structname,structmember) \
+		class_addattr((c),attr_offset_new(attrname,USESYM(char),(flags),(method)0L,(method)0L,calcoffset(structname,structmember)))
+#else
+#define CLASS_ATTR_CHAR_UNSAFE CLASS_ATTR_CHAR
+#endif
+
+const char EARS_PROCESS_SPECIALSYM[] = "_x_x_ears.process~_x_x_";
 
 
 ///////////////////////////////
@@ -484,6 +493,12 @@ void llllobj_clear_all_outs(t_object *x, e_llllobj_obj_types type);
 void llllobj_clear_all_stores_and_outs(t_object *x, e_llllobj_obj_types type);
 
 
+// returns whatever is in the specified output cache
+// no error checking, retaining or cloning is performed
+// so this should only be used for inspection,
+// not for actually working with the returned llll
+t_llll* llllobj_get_loaded_llll(t_object *x, e_llllobj_obj_types type, long outnum);
+
 
 /////////////
 // FUNCTIONS TO MANAGE STORES
@@ -786,8 +801,9 @@ long bach_is_loadtime(void);
 t_max_err llllobj_dummy_setter(t_object *x, void *attr, long ac, t_atom *av);
 
 
-
-char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type);
+// returns NULL if the object is loaded inside ears.process~,
+// the ears.process~ object if it is.
+t_object *getParentEarsProcess(t_object *x);
 
 
 

@@ -1,7 +1,7 @@
 /*
  *  uislot.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -108,6 +108,7 @@ void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_int(t_uislot *x, t_atom_long num);
 void uislot_float(t_uislot *x, double num);
 void uislot_bang(t_uislot *x);
+void uislot_clear(t_uislot *x, t_llll *args);
 
 // interface functions
 void uislot_dump(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
@@ -174,7 +175,9 @@ void create_whole_uislot_undo_tick(t_uislot *x);
 void uislot_copy(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_paste(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_cut(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
-            
+
+void uislot_reducefunction(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
+
 
 
 // clipboard
@@ -212,7 +215,7 @@ void uislot_write(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
 }
 
 void uislot_writetxt(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
-    t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
+    t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     t_llll *uislot_as_llll = get_uislot_values_as_llll(x, k_CONSIDER_FOR_SAVING, -1, NULL, true, false); // we save everything
     llll_writetxt((t_object *) x, uislot_as_llll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART);
 }
@@ -637,23 +640,25 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) uislot_writetxt, "writetxt", A_GIMME, 0);
 
 
-    // @method addslot @digest Set the conent of one or more slots
-    // @description An <m>addslot</m> message will modify all the content of one or more slots.
-    // The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
+    // @method setslot @digest Set the content of one or more slots
+    // @description A <m>setslot</m> message (or <m>addslot</m>, for backward compatibility)
+    // modifies all the content of one or more slots.
+    // The syntax is <b>setslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
     // @copy BACH_DOC_NOTE_SLOT_CONTENT
     // Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
-    // @example addslot [6 0.512] @caption fill (float) slot 6 with number 0.512
-    // @example addslot [5 42] @caption fill (int) slot 5 with number 42
-    // @example addslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
-    // @example addslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
-    // @example addslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
-    // @example addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
-    // @example addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
-    // @example addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
-    // @example addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
+    // @example setslot [6 0.512] @caption fill (float) slot 6 with number 0.512
+    // @example setslot [5 42] @caption fill (int) slot 5 with number 42
+    // @example setslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
+    // @example setslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
+    // @example setslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
+    // @example setslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
+    // @example setslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
+    // @example setslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
+    // @example setslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
     // @seealso changeslotitem, eraseslot
     class_addmethod(c, (method) uislot_add_slot, "addslot", A_GIMME, 0);
+    class_addmethod(c, (method) uislot_add_slot, "setslot", A_GIMME, 0);
 
 
     // @method eraseslot @digest Clear a specific slot
@@ -663,7 +668,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example eraseslot active @caption clear currently open slot
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
-    // @seealso addslot, changeslotitem, resetslotinfo
+    // @example eraseslot all @caption clear all slots
+    // @seealso setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_erase_slot, "eraseslot", A_GIMME, 0);
 
     
@@ -674,7 +680,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example moveslot 2 7 @caption move the content of slot 2 to slot 7 for selected items
     // @example moveslot 2 active @caption destination slot is the active slot
     // @example moveslot amplienv myfunction @caption move the 'amplienv' slot to the 'myfunction' slot
-    // @seealso copyslot, eraseslot, addslot, changeslotitem, resetslotinfo
+    // @seealso copyslot, eraseslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_move_slot, "moveslot", A_GIMME, 0);
     
     
@@ -685,7 +691,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example copyslot 2 7 @caption copy the content of slot 2 to slot 7 for selected items
     // @example copyslot 2 active @caption destination slot is the active slot
     // @example copyslot amplienv myfunction @caption copy the slot named amplienv to the slot named myfunction
-    // @seealso moveslot, eraseslot, addslot, changeslotitem, resetslotinfo
+    // @seealso moveslot, eraseslot, setslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_copy_slot, "copyslot", A_GIMME, 0);
     
 
@@ -712,7 +718,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example changeslotitem 9 1 highpass 400 0 2 @caption set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"
     // @example changeslotitem 8 0 Max.app 0 @caption append the Max.app file in the 8th (filelist) slot, and make it active
     // @example changeslotitem 8 0 0 2 @caption Make 2nd file active in 8th (filelist) slot
-    // @seealso addslot, eraseslot
+    // @seealso setslot, eraseslot
     class_addmethod(c, (method) uislot_change_slot_item, "changeslotvalue", A_GIMME, 0);
     class_addmethod(c, (method) uislot_change_slot_item, "changeslotitem", A_GIMME, 0);
 
@@ -725,7 +731,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) uislot_append_slot_item, "appendslotitem", A_GIMME, 0);
     
     // @method prependslotitem @digest Prepend a slot element at the beginning of a slot
@@ -734,7 +740,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 1 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) uislot_prepend_slot_item, "prependslotitem", A_GIMME, 0);
     
     // @method insertslotitem @digest Insert a slot element at a given position in a slot
@@ -744,7 +750,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 2 @name slot_element @optional 0 @type llll
     // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
     // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
-    // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, addslot, eraseslot
+    // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, setslot, eraseslot
     class_addmethod(c, (method) uislot_insert_slot_item, "insertslotitem", A_GIMME, 0);
     
     // @method deleteslotitem @digest Delete the slot element at a given position of a slot
@@ -755,13 +761,16 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @example deleteslotitem 3 2 @caption delete 2nd item of 3rd slot
     // @example deleteslotitem 3 [0.7] @caption delete item 3rd slot matching X = 0.7
     // @example deleteslotitem 3 [0.7] @thresh 0.1 @caption the same, with a tolerance of 0.1
-    // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
+    // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, setslot, eraseslot
     class_addmethod(c, (method) uislot_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 
     
     
     
+    class_addmethod(c, (method) uislot_reducefunction, "reducefunction", A_GIMME, 0);
 
+    
+    
     // @method resetslotinfo @digest Reset the slotinfo to the default one
     // @description @copy BACH_DOC_RESET_SLOTINFO
     // @seealso eraseslot
@@ -833,7 +842,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @example openslotwin 3 @caption open 3rd slot window
     // @example openslotwin amplienv @caption open slot window for slot named 'amplienv'
-    // @seealso addslot
+    // @seealso setslot
     class_addmethod(c, (method) uislot_anything, "openslotwin", A_GIMME, 0);
 
     
@@ -948,9 +957,9 @@ void uislot_add_slot_do(t_uislot *x, t_llll *slot_as_llll)
 {
     create_whole_uislot_undo_tick(x);
     lock_general_mutex((t_notation_obj *)x);
-    set_slots_values_to_note_from_llll((t_notation_obj *) x, x->r_ob.dummynote, slot_as_llll);
+    note_set_slots_from_llll((t_notation_obj *) x, x->r_ob.dummynote, slot_as_llll);
     unlock_general_mutex((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_SLOTS_TO_SELECTION);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
 }
 
 
@@ -968,17 +977,20 @@ void uislot_erase_slot(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
         object_error((t_object *)x, "Not enough arguments!");
         return;
     }
-    
-    slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
-    if (slotnum < 0 || slotnum >= CONST_MAX_SLOTS) {
-        object_error((t_object *)x, "Wrong slot number!");
-        return;
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == _llllobj_sym_all) {
+        uislot_clear(x, NULL);
+    } else {
+        slotnum = atom_to_slotnum((t_notation_obj *)x, argv, true);
+        if (slotnum < 0 || slotnum >= CONST_MAX_SLOTS) {
+            object_error((t_object *)x, "Wrong slot number!");
+            return;
+        }
+        
+        create_whole_uislot_undo_tick(x);
+        lock_general_mutex((t_notation_obj *)x);
+        note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slotnum);
+        unlock_general_mutex((t_notation_obj *)x);
     }
-
-    create_whole_uislot_undo_tick(x);
-    lock_general_mutex((t_notation_obj *)x);
-    note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slotnum);
-    unlock_general_mutex((t_notation_obj *)x);
     
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
 }
@@ -1151,6 +1163,19 @@ long get_slotnum_from_llllelem(t_notation_obj *r_ob, t_llllelem *elem)
     return slot_num;
 }
 
+void uislot_clear(t_uislot *x, t_llll *args)
+{
+    create_whole_uislot_undo_tick(x);
+    if (args && args->l_head && args->l_head->l_next) {
+        long slot_num = get_slotnum_from_llllelem((t_notation_obj *)x, args->l_head->l_next);
+        note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slot_num);
+    } else {
+        long i;
+        for (i = 0; i < CONST_MAX_SLOTS; i++)
+            note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, i);
+    }
+}
+
 void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv){ //argv+1
     
     t_llll *inputlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
@@ -1164,15 +1189,7 @@ void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv){ //argv+
                 uislot_paste(x, s, argc, argv);
                 
             } else if (router == _llllobj_sym_clear) {
-                create_whole_uislot_undo_tick(x);
-                if (inputlist->l_head->l_next) {
-                    long slot_num = get_slotnum_from_llllelem((t_notation_obj *)x, inputlist->l_head->l_next);
-                    note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, slot_num);
-                } else {
-                    long i;
-                    for (i = 0; i < CONST_MAX_SLOTS; i++)
-                        note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, i);
-                }
+                uislot_clear(x, inputlist);
                 handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CLEAR_UISLOT);
                 
                 
@@ -1286,7 +1303,7 @@ void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv){ //argv+
                         llll_free(sampled);
                     }
                 }
-            } else if (router == _llllobj_sym_addslot) {
+            } else if (router == _llllobj_sym_addslot || router == _llllobj_sym_setslot) {
                 llll_behead(inputlist);
                 uislot_add_slot_do(x, inputlist);
             } else if (!x->r_ob.itsme) {
@@ -1377,7 +1394,16 @@ void set_uislot_from_llll(t_uislot *x, t_llll* inputlist, char also_lock_general
                             break;
                         } else if (pivotsym == _llllobj_sym_slotinfo) {
                             llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the set_slotinfo function
-                            set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
+                            if (firstllll && firstllll->l_head)
+                                set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
+                        } else if (pivotsym == _llllobj_sym_articulationinfo) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                set_articulationinfo_from_llll((t_notation_obj *)x, &x->r_ob.articulations_typo_preferences, firstllll, false);
+                        } else if (pivotsym == _llllobj_sym_noteheadinfo) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                set_noteheadinfo_from_llll((t_notation_obj *)x, firstllll, false);
                         }
                     } else 
                         break; // break and go to the body of the object!
@@ -1393,7 +1419,7 @@ void set_uislot_from_llll(t_uislot *x, t_llll* inputlist, char also_lock_general
                 note_clear_slot((t_notation_obj *) x, x->r_ob.dummynote, i);
             
             llll_flatten(wholeuislot, 1, 0);
-            set_slots_values_to_note_from_llll((t_notation_obj *) x, x->r_ob.dummynote, wholeuislot);
+            note_set_slots_from_llll((t_notation_obj *) x, x->r_ob.dummynote, wholeuislot);
         }
     }
     
@@ -1407,6 +1433,7 @@ void set_uislot_from_llll(t_uislot *x, t_llll* inputlist, char also_lock_general
 
 long uislot_oksize(t_uislot *x, t_rect *newrect)
 {
+    notationobj_oksize_check((t_notation_obj *)x, newrect);
     return 0;
 }
     
@@ -1445,7 +1472,11 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.obj_type = k_NOTATION_OBJECT_SLOT;
     x->r_ob.slot_window_zoom = x->r_ob.bgslot_zoom = 100;
 
+    x->r_ob.width = 200;
+    x->r_ob.height = 100;
+
     notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notation_obj_fn) create_whole_uislot_undo_tick, NULL, (notation_obj_undo_redo_fn)uislot_new_undo_redo, (bach_paint_ext_fn)uislot_paint_ext);
+
 
     x->r_ob.active_slot_num = 0;
     x->r_ob.active_slot_num_1based = 1;
@@ -1855,7 +1886,7 @@ t_llll* get_uislot_values_as_llll(t_uislot *x, e_data_considering_types for_what
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
     
-    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what));
+    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what, false));
     
     if (dump_what & k_HEADER_BODY)
         llll_appendllll(out_llll, note_get_some_slots_values_as_llll((t_notation_obj *) x, x->r_ob.dummynote, 0, slot_indices), 0, WHITENULL_llll);
@@ -1985,7 +2016,7 @@ void uislot_mousewheel(t_uislot *x, t_object *view, t_pt pt, long modifiers, dou
     unlock_general_mutex((t_notation_obj *)x);
     
     if (res) {
-        jbox_redraw((t_jbox *)x);
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
         send_domain(x, 1, NULL);
     }
 }
@@ -2068,7 +2099,7 @@ void uislot_paste_slot(t_uislot *x)
     unlock_general_mutex((t_notation_obj *)x);
     if (clonedslot->l_head && hatom_gettype(&clonedslot->l_head->l_hatom) == H_LLLL && hatom_gettype(&clonedslot->l_head->l_hatom.h_w.w_llll->l_head->l_hatom) == H_LONG)
         hatom_setlong(&clonedslot->l_head->l_hatom.h_w.w_llll->l_head->l_hatom, x->r_ob.active_slot_num_1based);
-    set_slots_values_to_note_from_llll((t_notation_obj *) x, x->r_ob.dummynote, clonedslot);
+    note_set_slots_from_llll((t_notation_obj *) x, x->r_ob.dummynote, clonedslot);
     llll_free(clonedslot);
     handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
 }
@@ -2350,7 +2381,7 @@ void uislot_new_undo_redo(t_uislot *x, char what){
                     llll_destroyelem(content->l_head);
                 for (i = 0; i < CONST_MAX_SLOTS; i++)
                     note_clear_slot((t_notation_obj *)x, x->r_ob.dummynote, i);
-                set_slots_values_to_note_from_llll((t_notation_obj *) x, x->r_ob.dummynote, content);
+                note_set_slots_from_llll((t_notation_obj *) x, x->r_ob.dummynote, content);
             }
             
         } else if (type == k_HEADER_DATA) {
@@ -2419,4 +2450,21 @@ void uislot_paste(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
     
     llll_free(ll);
 }
+
+
+
+void uislot_reducefunction(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+
+    lock_general_mutex((t_notation_obj *)x);
+    
+    notationobj_sel_reducefunction((t_notation_obj *)x, args, true);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_REDUCE_FUNCTION);
+    llll_free(args);
+}
+
 

@@ -1,7 +1,7 @@
 /*
  *  bach_mem.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -107,7 +107,7 @@ void bach_remove_from_memmap(void *x);
 
 
 // two macros for quick data validation.
-// if check != 0, post text and goto label...
+// if check == 0, post text and goto label...
 
 #define bach_assert_objerror_goto(obj, check, text, label) { \
 if (!(check)) { \

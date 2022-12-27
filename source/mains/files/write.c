@@ -1,7 +1,7 @@
 /*
  *  write.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -227,7 +227,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     // The attribute has no effect when the file is saved in native format.
 
     
-    CLASS_ATTR_ATOM(c, "indent",	0,	t_write, n_indent);
+    CLASS_ATTR_CHAR_ARRAY(c, "indent",	0,	t_write, n_indent, WRITE_INDENT_MAX_SIZE);
     CLASS_ATTR_LABEL(c, "indent", 0, "Indentation");
     CLASS_ATTR_ACCESSORS(c, "indent", write_getattr_indent, write_setattr_indent);
 

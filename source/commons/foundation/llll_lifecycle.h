@@ -1,7 +1,7 @@
 /*
  *  llll_lifecycle.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -50,6 +50,10 @@ void llll_fix_owner_for_check(t_llll *ll);
 
 // free a llll without calling llll_check() - DEPRECATED
 void llll_free_nocheck(t_llll *ll);
+
+// actually frees the llll (independently from its reference count)
+void llll_destroy(t_llll *ll);
+
 
 // call llll_check() and free the llll (even if llll_check() returns an error)
 void llll_free(t_llll *ll);

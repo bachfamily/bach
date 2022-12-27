@@ -1,7 +1,7 @@
 /*
  *  llll_commons_ext.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -30,6 +30,7 @@
 #include "foundation/bach.h"
 #include "foundation/hatom.h"
 #include "math/lexpr.h"
+#include "math/bach_math_utilities.h"
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -423,7 +424,7 @@ t_llll* llll_dx2x_of_plain_rat_llll(t_llll *in_llll, t_rational start_rational);
 t_llll* llll_dx2x_of_plain_double_llll(t_llll *in_llll, double start);
 
 
-/**	Perform discrete derivation on a plain llll containing doubles (or longs).
+/**	Perform discrete derivation on a plain llll containing doubles (or longs, cast to doubles).
 	@ingroup				llll_utilities
 	@param	in_llll			The llll
 	@return					The llll containing the differences
@@ -431,6 +432,14 @@ t_llll* llll_dx2x_of_plain_double_llll(t_llll *in_llll, double start);
  */
 t_llll* llll_x2dx_of_plain_double_llll(t_llll *in_llll);
 
+
+/**    Perform discrete derivation on a plain llll containing longs.
+    @ingroup                llll_utilities
+    @param    in_llll       The llll
+    @return                 The llll containing the differences
+    @see                    llll_x2dx_of_plain_double_llll()
+ */
+t_llll* llll_x2dx_of_plain_long_llll(t_llll *in_llll);
 
 /**	Find average of a a plain llll containing doubles (or longs).
 	@ingroup				llll_utilities
@@ -466,6 +475,12 @@ t_llll *llll_meanfilter(t_llll *ll, long window_in_samples);
  */
 t_llll *llll_medianfilter(t_llll *ll, long window_in_samples);
 
+/**    Produce lcm of all the elements in an llll.
+    @ingroup            llll_utilities
+    @param    in_llll        The llll
+    @return             The lcm of all of the elements.
+ */
+long llll_lcm(t_llll *in_llll);
 
 /**	Quick debug function to show the content of an llll in an array of chars.
 	@ingroup			llll_utilities
@@ -1010,6 +1025,7 @@ t_llllelem *get_nearest_llllelem_to_double(t_llll *ll, double num);
 	@ingroup		llll_utilities
 	@param	ll		The llll
 	@param	h		The hatom to be filled with the median of the llll
+ @remark         WARNING: this doesn't give the true median if the lenght is even: it points to an existing hatom.
 */
 void llll_median(t_llll *ll, t_hatom *h);
 
@@ -1062,7 +1078,7 @@ t_llll *pt_to_llll(t_pt pt, char add_zero_slope);
 t_llll *rect_to_llll(t_rect rect);
 t_rect llll_to_rect(t_llll *ll);
 t_pt llll_to_pt(t_llll *ll);
-t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, char markmode = 0, t_object *culprit = NULL);
+t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, e_slope_mapping slope_mapping_type, char markmode = 0, t_object *culprit = NULL);
 t_llll *double_triplet_to_llll(double d1, double d2, double d3);
 t_llll *double_couple_to_llll(double d1, double d2);
 t_llll *long_couple_to_llll(long c1, long c2);
@@ -1072,12 +1088,10 @@ t_llll *double_triplet_and_long_to_llll(double d1, double d2, double d3, long d4
 t_llll *symbol_and_double_to_llll(t_symbol *sym, double d);
 t_llll *symbol_and_symbol_to_llll(t_symbol *sym1, t_symbol *sym2);
 t_llll *symbol_and_long_to_llll(t_symbol *sym, long n);
-t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, long num_samples, double starting_value, char auto_domain);
-
-t_llll *integrate_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, double starting_value);
-t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, long num_samples,
-				   char auto_domain, char if_possible_dont_sample, char discrete_derivative, char discrete_derivative_pad);
-t_llll *derive_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, char discrete_derivative, char discrete_derivative_pad);
+t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, long num_samples, double starting_value, char auto_domain, e_slope_mapping slope_mapping_type);
+t_llll *integrate_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, double starting_value, e_slope_mapping slope_mapping_type);
+t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, long num_samples, char auto_domain, char if_possible_dont_sample, char discrete_derivative, char discrete_derivative_pad, e_slope_mapping slope_mapping_type);
+t_llll *derive_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, char discrete_derivative, char discrete_derivative_pad, e_slope_mapping slope_mapping_type);
 void llll_develop_ranges_inplace(t_llll **ll);
 void llll_develop_ranges_and_parse_negative_indices_inplace(t_llll **ll, long maxnum, char convert_from_1based_to_0based);
 long llllelem_retrieve_index(t_llll *ll, t_llllelem *elem);

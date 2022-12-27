@@ -1,7 +1,7 @@
 /*
  *  llll_expr_commons.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -294,7 +294,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                                (*lexstack_ptr)->l_type == L_TOKEN &&
                                (*lexstack_ptr)->l_token.t_type == TT_OP &&
                                ((this_lex->l_order == O_L2R && this_lex->l_precedence <= (*lexstack_ptr)->l_precedence) ||
-                                (this_lex->l_precedence < (*lexstack_ptr)->l_precedence))) {
+                                (this_lex->l_token.t_operands > 1 && this_lex->l_precedence < (*lexstack_ptr)->l_precedence))) {
                                    *tokqueue_ptr = (*lexstack_ptr--)->l_token;
                                    chk -= tokqueue_ptr++->t_operands - 1;
                                    if (chk < 1) {
@@ -512,6 +512,9 @@ t_bool lexpr_eval_upon(t_lexpr *expr, t_hatom *vars, t_hatom *stack)
                         case H_PITCH:
                             hatom_setpitch(thisstack++, hatom_getpitch(this_vars));
                             break;
+                        case H_SYM:
+                            hatom_setsym(thisstack++, hatom_getsym(this_vars));
+                            break;
                         case H_DOUBLE:
                             hatom_setdouble(thisstack++, hatom_getdouble(this_vars));
                             break;
@@ -586,7 +589,7 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
             break;
             
         case O_PLUS:
-            hatom_op_plus(h1, h2, res);
+            hatom_op_plus_with_symbols(h1, h2, res);
             return 0;
             break;
             
@@ -596,7 +599,7 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
             break;
             
         case O_TIMES:
-            hatom_op_times(h1, h2, res);
+            hatom_op_times_with_symbols(h1, h2, res);
             return 0;
             break;
             
@@ -718,8 +721,9 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
 
 /*
  OPERATOR PRECEDENCE AND ORDER OF EVALUATION:
- 14	! ~ ++ -- + - (unary) * (type) sizeof right to left
- 13	** right to left
+ 15	! ~ right to left
+ 14 ** right to left
+ 13 + - (unary) right to left
  12	* / % // left to right
  11	+ - left to right
  10	<< >> left to right
@@ -833,6 +837,7 @@ long lexpr_append_lexeme_VAR(t_lexpr_lexeme *lex, char type, long index, short *
         case 'f':	lex->l_token.t_contents.c_var.v_type = H_DOUBLE;	break;
         case 'r':	lex->l_token.t_contents.c_var.v_type = H_RAT;		break;
         case 'p':	lex->l_token.t_contents.c_var.v_type = H_PITCH;     break;
+        case 's':    lex->l_token.t_contents.c_var.v_type = H_SYM;     break;
         case 'x':	lex->l_token.t_contents.c_var.v_type = H_ALL;		break;
         default:    lex->l_token.t_contents.c_var.v_type = H_NOTHING;
                     err = E_BAD_VAR_TYPE;
@@ -950,7 +955,7 @@ long lexpr_append_lexeme_LOGXOR(t_lexpr_lexeme *lex)
 long lexpr_append_lexeme_BITNOT(t_lexpr_lexeme *lex)
 {
     lex->l_type = L_TOKEN;
-    lex->l_precedence = 13;
+    lex->l_precedence = 15;
     lex->l_order = O_R2L;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 1;
@@ -963,7 +968,7 @@ long lexpr_append_lexeme_LOGNOT(t_lexpr_lexeme *lex)
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 1;
-    lex->l_precedence = 13;
+    lex->l_precedence = 15;
     lex->l_order = O_R2L;
     lex->l_token.t_contents.c_op.o_op = O_LOGNOT;
     return E_OK;
@@ -1107,7 +1112,7 @@ long lexpr_append_lexeme_POW(t_lexpr_lexeme *lex)
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 2;
     lex->l_precedence = 14;
-    lex->l_order = O_L2R;
+    lex->l_order = O_R2L;
     lex->l_token.t_contents.c_op.o_properties = OP_NONE;
     lex->l_token.t_contents.c_op.o_op = O_POW;
     return E_OK;
@@ -1223,6 +1228,14 @@ long lexpr_append_lexeme_PITCH(t_lexpr_lexeme *lex, t_pitch p)
     return E_OK;
 }
 
+long lexpr_append_lexeme_SYMBOL(t_lexpr_lexeme *lex, t_symbol *s)
+{
+    lex->l_type = L_TOKEN;
+    lex->l_token.t_type = TT_HATOM;
+    lex->l_token.t_contents.c_hatom.h_type = H_SYM;
+    lex->l_token.t_contents.c_hatom.h_w.w_sym = s;
+    return E_OK;
+}
 
 
 

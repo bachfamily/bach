@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.5.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Skeleton interface for Bison GLR parsers in C
 
-   Copyright (C) 2002-2015, 2018 Free Software Foundation, Inc.
+   Copyright (C) 2002-2015, 2018-2021 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -40,124 +40,129 @@
 extern int stringparser_debug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    LONG_LITERAL = 258,
-    INLET = 259,
-    INTINLET = 260,
-    RATINLET = 261,
-    FLOATINLET = 262,
-    PITCHINLET = 263,
-    OUTLET = 264,
-    DIRINLET = 265,
-    DIROUTLET = 266,
-    RAT_LITERAL = 267,
-    DOUBLE_LITERAL = 268,
-    PITCH_LITERAL = 269,
-    SYMBOL_LITERAL = 270,
-    GLOBALVAR = 271,
-    PATCHERVAR = 272,
-    LOCALVAR = 273,
-    NAMEDPARAM = 274,
-    BIF = 275,
-    OF = 276,
-    SEQ = 277,
-    IF_KW = 278,
-    THEN_KW = 279,
-    ELSE_KW = 280,
-    WHILE_KW = 281,
-    DO_KW = 282,
-    FOR_KW = 283,
-    IN_KW = 284,
-    COLLECT_KW = 285,
-    ASSIGN = 286,
-    PLUS = 287,
-    MINUS = 288,
-    TIMES = 289,
-    DIV = 290,
-    DIVDIV = 291,
-    APLUS = 292,
-    LOGOR = 293,
-    LOGAND = 294,
-    LOGOREXT = 295,
-    LOGANDEXT = 296,
-    EQUAL = 297,
-    LT = 298,
-    GT = 299,
-    LEQ = 300,
-    GEQ = 301,
-    NEQ = 302,
-    OPEN = 303,
-    CLOSEDROUND = 304,
-    FUNDEF = 305,
-    PUSH = 306,
-    POP = 307,
-    STARTPARAMS = 308,
-    COMMA = 309,
-    ELLIPSIS = 310,
-    BACHNULL = 311,
-    BACHNIL = 312,
-    ARGCOUNT = 313,
-    EOL = 314,
-    UNRECOGNIZED = 315,
-    LIFT = 316,
-    AMINUS = 317,
-    ATIMES = 318,
-    APOWOP = 319,
-    ADIV = 320,
-    ADIVDIV = 321,
-    AREM = 322,
-    ABITAND = 323,
-    ABITXOR = 324,
-    ABITOR = 325,
-    ALSHIFT = 326,
-    ARSHIFT = 327,
-    ALOGAND = 328,
-    ALOGANDEXT = 329,
-    ALOGXOR = 330,
-    ALOGOR = 331,
-    ALOGOREXT = 332,
-    ANTHOP = 333,
-    AAPPLY = 334,
-    ACONCAT = 335,
-    ARCONCAT = 336,
-    CONCAT = 337,
-    LOGXOR = 338,
-    BITOR = 339,
-    BITXOR = 340,
-    BITAND = 341,
-    REPEAT = 342,
-    RANGE = 343,
-    LSHIFT = 344,
-    RSHIFT = 345,
-    REM = 346,
-    NTHOP = 347,
-    PICKOP = 348,
-    APPLY = 349,
-    ACCESS_UNWRAP = 350,
-    LVALUESTEPPARAMS = 351,
-    AS_KW = 352,
-    WITH_KW = 353,
-    UPLUS = 354,
-    LOGNOT = 355,
-    BITNOT = 356,
-    UMINUS = 357,
-    POWOP = 358,
-    KEEP = 359,
-    UNKEEP = 360,
-    INIT = 361
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    LONG_LITERAL = 258,            /* LONG_LITERAL  */
+    INLET = 259,                   /* INLET  */
+    INTINLET = 260,                /* INTINLET  */
+    RATINLET = 261,                /* RATINLET  */
+    FLOATINLET = 262,              /* FLOATINLET  */
+    PITCHINLET = 263,              /* PITCHINLET  */
+    OUTLET = 264,                  /* OUTLET  */
+    DIRINLET = 265,                /* DIRINLET  */
+    DIROUTLET = 266,               /* DIROUTLET  */
+    RAT_LITERAL = 267,             /* RAT_LITERAL  */
+    DOUBLE_LITERAL = 268,          /* DOUBLE_LITERAL  */
+    PITCH_LITERAL = 269,           /* PITCH_LITERAL  */
+    SYMBOL_LITERAL = 270,          /* SYMBOL_LITERAL  */
+    GLOBALVAR = 271,               /* GLOBALVAR  */
+    PATCHERVAR = 272,              /* PATCHERVAR  */
+    LOCALVAR = 273,                /* LOCALVAR  */
+    NAMEDPARAM = 274,              /* NAMEDPARAM  */
+    BIF = 275,                     /* BIF  */
+    OF = 276,                      /* OF  */
+    MAXFUNCTION = 277,             /* MAXFUNCTION  */
+    SEQ = 278,                     /* SEQ  */
+    IF_KW = 279,                   /* IF_KW  */
+    THEN_KW = 280,                 /* THEN_KW  */
+    ELSE_KW = 281,                 /* ELSE_KW  */
+    WHILE_KW = 282,                /* WHILE_KW  */
+    DO_KW = 283,                   /* DO_KW  */
+    FOR_KW = 284,                  /* FOR_KW  */
+    IN_KW = 285,                   /* IN_KW  */
+    COLLECT_KW = 286,              /* COLLECT_KW  */
+    ASSIGN = 287,                  /* ASSIGN  */
+    PLUS = 288,                    /* PLUS  */
+    MINUS = 289,                   /* MINUS  */
+    TIMES = 290,                   /* TIMES  */
+    DIV = 291,                     /* DIV  */
+    DIVDIV = 292,                  /* DIVDIV  */
+    APLUS = 293,                   /* APLUS  */
+    LOGOR = 294,                   /* LOGOR  */
+    LOGAND = 295,                  /* LOGAND  */
+    LOGOREXT = 296,                /* LOGOREXT  */
+    LOGANDEXT = 297,               /* LOGANDEXT  */
+    EQUAL = 298,                   /* EQUAL  */
+    LT = 299,                      /* LT  */
+    GT = 300,                      /* GT  */
+    LEQ = 301,                     /* LEQ  */
+    GEQ = 302,                     /* GEQ  */
+    NEQ = 303,                     /* NEQ  */
+    OPEN = 304,                    /* OPEN  */
+    CLOSEDROUND = 305,             /* CLOSEDROUND  */
+    FUNDEF = 306,                  /* FUNDEF  */
+    PUSH = 307,                    /* PUSH  */
+    POP = 308,                     /* POP  */
+    STARTPARAMS = 309,             /* STARTPARAMS  */
+    COMMA = 310,                   /* COMMA  */
+    ELLIPSIS = 311,                /* ELLIPSIS  */
+    BACHNULL = 312,                /* BACHNULL  */
+    BACHNIL = 313,                 /* BACHNIL  */
+    ARGCOUNT = 314,                /* ARGCOUNT  */
+    EOL = 315,                     /* EOL  */
+    UNRECOGNIZED = 316,            /* UNRECOGNIZED  */
+    LIFT = 317,                    /* LIFT  */
+    AMINUS = 318,                  /* AMINUS  */
+    ATIMES = 319,                  /* ATIMES  */
+    APOWOP = 320,                  /* APOWOP  */
+    ADIV = 321,                    /* ADIV  */
+    ADIVDIV = 322,                 /* ADIVDIV  */
+    AREM = 323,                    /* AREM  */
+    ABITAND = 324,                 /* ABITAND  */
+    ABITXOR = 325,                 /* ABITXOR  */
+    ABITOR = 326,                  /* ABITOR  */
+    ALSHIFT = 327,                 /* ALSHIFT  */
+    ARSHIFT = 328,                 /* ARSHIFT  */
+    ALOGAND = 329,                 /* ALOGAND  */
+    ALOGANDEXT = 330,              /* ALOGANDEXT  */
+    ALOGXOR = 331,                 /* ALOGXOR  */
+    ALOGOR = 332,                  /* ALOGOR  */
+    ALOGOREXT = 333,               /* ALOGOREXT  */
+    ANTHOP = 334,                  /* ANTHOP  */
+    AAPPLY = 335,                  /* AAPPLY  */
+    ACONCAT = 336,                 /* ACONCAT  */
+    ARCONCAT = 337,                /* ARCONCAT  */
+    CONCAT = 338,                  /* CONCAT  */
+    LOGXOR = 339,                  /* LOGXOR  */
+    BITOR = 340,                   /* BITOR  */
+    BITXOR = 341,                  /* BITXOR  */
+    BITAND = 342,                  /* BITAND  */
+    REPEAT = 343,                  /* REPEAT  */
+    RANGE = 344,                   /* RANGE  */
+    LSHIFT = 345,                  /* LSHIFT  */
+    RSHIFT = 346,                  /* RSHIFT  */
+    REM = 347,                     /* REM  */
+    UPLUS = 348,                   /* UPLUS  */
+    UMINUS = 349,                  /* UMINUS  */
+    POWOP = 350,                   /* POWOP  */
+    NTHOP = 351,                   /* NTHOP  */
+    PICKOP = 352,                  /* PICKOP  */
+    APPLY = 353,                   /* APPLY  */
+    ACCESS_UNWRAP = 354,           /* ACCESS_UNWRAP  */
+    LVALUESTEPPARAMS = 355,        /* LVALUESTEPPARAMS  */
+    AS_KW = 356,                   /* AS_KW  */
+    WITH_KW = 357,                 /* WITH_KW  */
+    LOGNOT = 358,                  /* LOGNOT  */
+    BITNOT = 359,                  /* BITNOT  */
+    KEEP = 360,                    /* KEEP  */
+    UNKEEP = 361,                  /* UNKEEP  */
+    INIT = 362                     /* INIT  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
 union YYSTYPE
 {
-
+#line 58 "stringparser.y"
 
     astNode *n;
     astFunctionCall *fc;
@@ -169,7 +174,7 @@ union YYSTYPE
     countedList<astNode *> *nl;
     countedList<symNodePair *> *snpl;
     countedList<funArg *> *funarglist;
-    countedList<t_symbol *> *liftedarglist;
+    countedList<t_localVar> *liftedarglist;
     countedList<forArg *> *fal;
     lvalueStepList *lvsl;
     symNodePair *snp;
@@ -180,10 +185,11 @@ union YYSTYPE
     double d;
     t_pitch p;
     t_symbol *sym;
+    char *text;
 
+#line 191 "stringparser.tab.h"
 
 };
-
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

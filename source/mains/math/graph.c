@@ -1,7 +1,7 @@
 /*
  *  graph.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -221,6 +221,7 @@ void graph_set(t_graph *x, t_symbol *s, long argc, t_atom *argv);
 void graph_click(t_graph *x, long val);
 void graph_setclick(t_graph *x, long val);
 
+void graph_expr(t_graph *x, t_symbol *s, long argc, t_atom *argv);
 void graph_exprx(t_graph *x, t_symbol *s, long argc, t_atom *argv);
 void graph_expry(t_graph *x, t_symbol *s, long argc, t_atom *argv);
 void graph_exprr(t_graph *x, t_symbol *s, long argc, t_atom *argv);
@@ -378,6 +379,15 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @exemple expry $f2*sin($f1*$f1) @caption the same, $f2 being some parameter
     // @seealso exprx, exprr, bang
 	class_addmethod(c, (method) graph_expry, "expry", A_GIMME, 0);
+
+    // @method expr @digest Define cartesian or polar formula
+    // @description Via <m>expr</m> one defines the expression f for a formula as Y = f(X) (if the graph is in cartesian mode),
+    // or as R = f(Theta) (if the graph is in polar mode). This message does not work if the graph is in parametric mode.
+    // The message hence corresponds to <m>expry</m> for cartesian modes and <m>exprr</m> for polar ones.
+    // Refer to these messages to know more.
+    // @marg 0 @name expression @optional 0 @type llll
+    // @seealso expry, exprr, bang
+    class_addmethod(c, (method) graph_expr, "expr", A_GIMME, 0);
 
 
 	// @method exprr @digest Define formula for R variable (radius)
@@ -910,6 +920,25 @@ void graph_expry(t_graph *x, t_symbol *s, long argc, t_atom *argv){
 	}
 }
 
+void graph_expr(t_graph *x, t_symbol *s, long argc, t_atom *argv){
+    switch (x->graph_type) {
+        case k_GRAPH_POLAR:
+        case k_GRAPH_POLARPOINTS:
+            graph_exprr(x, s, argc, argv);
+            break;
+
+        case k_GRAPH_CARTESIAN:
+        case k_GRAPH_CARTESIANPOINTS:
+            graph_expry(x, s, argc, argv);
+            break;
+
+        default:
+            object_warn((t_object *)x, "Expr message is only supported in cartesian or polar modes.");
+            object_warn((t_object *)x, "     Use exprx and expry instead.");
+            break;
+    }
+}
+
 
 void graph_exprx(t_graph *x, t_symbol *s, long argc, t_atom *argv){
 	if (x->n_lexprx) 
@@ -1139,7 +1168,7 @@ void graph_paint(t_graph *x, t_object *view){
 	double font_size = jbox_get_fontsize((t_object *) x);
 	t_symbol *font_name = jbox_get_fontname((t_object *) x);
 	t_jfont *jf_labels = jfont_create_debug(font_name->s_name, (t_jgraphics_font_slant) jbox_get_font_slant((t_object *) x), (t_jgraphics_font_weight) jbox_get_font_weight((t_object *) x), font_size);
-	t_jfont *jf_axisnames = jfont_create_debug("Times", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, font_size * 1.25);
+	t_jfont *jf_axisnames = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, font_size * 1.25);
 	
 	// getting rectangle dimensions
 	g = (t_jgraphics*) patcherview_get_jgraphics(view); 
@@ -1290,16 +1319,16 @@ void graph_paint(t_graph *x, t_object *view){
 			for (p = x->labels_x_step; p < x->max_x && center_x + p * scale_x < rect.width - CONST_ARROW_SIZE - 4; p += x->labels_x_step) {
 				number_to_label_text(x, p, text);
 				jfont_text_measure(jf_labels, text, &width, &height);
-				write_text_simple(g, jf_labels, x->j_textcolor, text, center_x + p * scale_x - width/2., y_pos_for_writing, width+20, height+20);
+				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, center_x + p * scale_x - width/2., y_pos_for_writing, width+20, height+20);
 			}
 			for (p = -x->labels_x_step; p > x->min_x; p -= x->labels_x_step) {
 				number_to_label_text(x, p, text);
 				jfont_text_measure(jf_labels, text, &width, &height);
-				write_text_simple(g, jf_labels, x->j_textcolor, text, center_x + p * scale_x - width/2., y_pos_for_writing, width+20, height+20);
+				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, center_x + p * scale_x - width/2., y_pos_for_writing, width+20, height+20);
 			}
 			if (x->show_xy_labels) {
 				jfont_text_measure(jf_axisnames, "x", &width, &height);
-				write_text_simple(g, jf_axisnames, x->j_textcolor, "x", rect.width - width - 12, y_pos_for_writing, width+20, height+20);
+				write_text_standard_singleline(g, jf_axisnames, x->j_textcolor, "x", rect.width - width - 12, y_pos_for_writing, width+20, height+20);
 			}
 		}
 		if (x->labels_y_step > 0) {
@@ -1308,16 +1337,16 @@ void graph_paint(t_graph *x, t_object *view){
 			for (p = x->labels_y_step; p < x->max_y; p += x->labels_y_step) {
 				number_to_label_text(x, p, text);
 				jfont_text_measure(jf_labels, text, &width, &height);
-				write_text_simple(g, jf_labels, x->j_textcolor, text, writing_direction < 0  ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);
+				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, writing_direction < 0  ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);
 			}
-			for (p = -x->labels_x_step; p > x->min_x && center_x + p * scale_x > CONST_ARROW_SIZE + 4; p -= x->labels_y_step) {
+			for (p = -x->labels_y_step; p > x->min_y && center_y + p * scale_y > CONST_ARROW_SIZE + 4; p -= x->labels_y_step) {
 				number_to_label_text(x, p, text);
 				jfont_text_measure(jf_labels, text, &width, &height);
-				write_text_simple(g, jf_labels, x->j_textcolor, text, writing_direction < 0 ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);
+				write_text_standard_singleline(g, jf_labels, x->j_textcolor, text, writing_direction < 0 ? center_x - offset_x : center_x + offset_x - width, center_y - p * scale_y - height/2., width+20, height+20);
 			}
 			if (x->show_xy_labels) {
 				jfont_text_measure(jf_axisnames, "y", &width, &height);
-				write_text_simple(g, jf_axisnames, x->j_textcolor, "y", writing_direction < 0 ? center_x - offset_x + 6 : center_x + offset_x - width - 6, 4, width+20, height+20);
+				write_text_standard_singleline(g, jf_axisnames, x->j_textcolor, "y", writing_direction < 0 ? center_x - offset_x + 6 : center_x + offset_x - width - 6, 4, width+20, height+20);
 			}
 		}
 	}

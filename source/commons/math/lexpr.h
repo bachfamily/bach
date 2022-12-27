@@ -1,7 +1,7 @@
 /*
  *  lexpr.h
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -223,6 +223,8 @@ long lexpr_append_lexeme_LONG(t_lexpr_lexeme *lex, t_atom_long l);
 long lexpr_append_lexeme_RATIONAL(t_lexpr_lexeme *lex, t_rational r);
 long lexpr_append_lexeme_FLOAT(t_lexpr_lexeme *lex, double d);
 long lexpr_append_lexeme_PITCH(t_lexpr_lexeme *lex, t_pitch p);
+long lexpr_append_lexeme_SYMBOL(t_lexpr_lexeme *lex, t_symbol *s);
+
 
 long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a), const char *name);
 long lexpr_append_lexeme_FUNC_binary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a, double b), const char *name);

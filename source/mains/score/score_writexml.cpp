@@ -1,7 +1,7 @@
 /*
  *  score_writexml.cpp
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ mxml_node_t *bach_mxmlNewTextElement(mxml_node_t *parent, const char *name, int 
 mxml_node_t *bach_mxmlNewIntElement(mxml_node_t *parent, const char *name, int whitespace, int value);
 mxml_node_t *bach_mxmlNewRealElement(mxml_node_t *parent, const char *name, int whitespace, double value);
 
-void xml_value_to_name(long den, char *chordtype);
+void xml_value_to_name(t_rational figure, char *chordtype);
 
 
 mxml_node_t *bach_xml_add_clef(mxml_node_t *node, const char *sign, long line, long octave, const char *number);
@@ -269,16 +269,24 @@ mxml_node_t *bach_mxmlNewRealElement(mxml_node_t *parent, const char *name, int 
 
 
 
-void xml_value_to_name(long den, char *chordtype)
+void xml_value_to_name(t_rational figure, char *chordtype)
 {
-    switch (den) {
-        case 1:        strcpy(chordtype, "whole");                break;
-        case 2:        strcpy(chordtype, "half");                break;
-        case 4:        strcpy(chordtype, "quarter");            break;
-        case 8:        strcpy(chordtype, "eighth");            break;
-        case 32:    strcpy(chordtype, "32nd");                break;
-        default:    sprintf(chordtype, "%ldth", den);
+    switch(figure.r_num) {
+        case 2: strcpy(chordtype, "breve");     break;
+        case 4: strcpy(chordtype, "long");      break;
+        case 8: strcpy(chordtype, "maxima");    break;
+        case 1: {
+            switch (figure.r_den) {
+                case 1:     strcpy(chordtype, "whole");     break;
+                case 2:     strcpy(chordtype, "half");      break;
+                case 4:     strcpy(chordtype, "quarter");   break;
+                case 8:     strcpy(chordtype, "eighth");    break;
+                case 32:    strcpy(chordtype, "32nd");  break;
+                default:    sprintf(chordtype, "%ldth", figure.r_den);
+                    break;
+            }
             break;
+        }
     }
 }
 
@@ -504,23 +512,41 @@ const char *bach_xml_acc2name(t_rational acc, long *mc_alter)
         acc_name = "sharp";
         *mc_alter = 100;
     } else if (acc.r_num == 3 && acc.r_den == 4) {
-        acc_name = "three-quarter-sharp";
+        acc_name = "three-quarters-sharp";
         *mc_alter = 150;
     } else if (acc.r_num == 2 && acc.r_den == 1) {
         acc_name = "double-sharp";
         *mc_alter = 200;
-    } else if (acc.r_num == - 1 && acc.r_den == 4) {
+    } else if (acc.r_num == -1 && acc.r_den == 4) {
         acc_name = "quarter-flat";
         *mc_alter = 50;
     } else if (acc.r_num == -1 && acc.r_den == 2) {
         acc_name = "flat";
         *mc_alter = 100;
     } else if (acc.r_num == -3 && acc.r_den == 4) {
-        acc_name = "three-quarter-flat";
+        acc_name = "three-quarters-flat";
         *mc_alter = 150;
     } else if (acc.r_num == -2 && acc.r_den == 1) {
         acc_name = "double-flat";
         *mc_alter = 200;
+    } else if (acc.r_num == 1 && acc.r_den == 8) {
+        acc_name = "natural-up";
+        *mc_alter = 25;
+    } else if (acc.r_num == -1 && acc.r_den == 8) {
+        acc_name = "natural-down";
+        *mc_alter = 25;
+    } else if (acc.r_num == 5 && acc.r_den == 8) {
+        acc_name = "sharp-up";
+        *mc_alter = 125;
+    } else if (acc.r_num == 3 && acc.r_den == 8) {
+        acc_name = "sharp-down";
+        *mc_alter = 75;
+    } else if (acc.r_num == -3 && acc.r_den == 8) {
+        acc_name = "flat-up";
+        *mc_alter = 75;
+    } else if (acc.r_num == -5 && acc.r_den == 8) {
+        acc_name = "flat-down";
+        *mc_alter = 125;
     } else {
         acc_name = "unknown";
         *mc_alter = 0;
@@ -573,11 +599,11 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     t_chord *chord;
     t_note *note;
     t_llll *export_slots = NULL;
-    long export_velocities = 0, export_noteheads = 1, export_lyrics = 1, export_dynamics = 1, export_articulations = 1, export_glissandi = 0;
-    long dynamics_slot = x->r_ob.link_dynamics_to_slot;
+    t_atom_long export_velocities = 0, export_noteheads = 1, export_lyrics = 1, export_dynamics = 1, export_articulations = 1, export_glissandi = 0;
+    t_atom_long dynamics_slot = x->r_ob.link_dynamics_to_slot;
     long articulations_slot = x->r_ob.link_articulations_to_slot;
     const t_articulations_typo_preferences *atp = &x->r_ob.articulations_typo_preferences;
-    long parenthesized_quartertones = 0;
+    t_atom_long parenthesized_quartertones = 0;
     t_llll *arguments = (t_llll *) atom_getobj(av);
     t_slotitem *slotitem;
     
@@ -596,7 +622,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                          );
     
     if (!export_slots) {
-        export_slots = get_num_ll(x->r_ob.link_annotation_to_slot);
+        export_slots = get_long_ll(x->r_ob.link_annotation_to_slot);
     }
     
     if (arguments->l_size) {
@@ -904,10 +930,15 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         bach_mxmlNewIntElement(timexml, "beat-type", 0, ts->denominator);
                     } else { // composite time signature
                         long i;
-                        for (i = 0; i < ts->num_numerator_elements; i++) {
-                            bach_mxmlNewIntElement(timexml, "beats", 0, ts->numerator_elements[i]);
-                            bach_mxmlNewIntElement(timexml, "beat-type", 0, ts->denominator);
+                        char buf[2048];
+                        char *this_buf = buf;
+                        this_buf += snprintf_zero(this_buf, 10, "%d", ts->numerator_elements[0]);
+                        for (i = 1; i < ts->num_numerator_elements; i++) {
+                            this_buf += snprintf_zero(this_buf, 10, " + %d", ts->numerator_elements[i]);
                         }
+                        
+                        bach_mxmlNewTextElement(timexml, "beats", 0, buf);
+                        bach_mxmlNewIntElement(timexml, "beat-type", 0, ts->denominator);
                     }
                 }
                 
@@ -925,7 +956,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     t_rational screen_tempo_figure;
                     char tempo_figure_num_dots;
                     if (is_duration_drawable((t_notation_obj *) x, tempo->tempo_figure, &screen_tempo_figure, &tempo_figure_num_dots)) {
-                        xml_value_to_name(screen_tempo_figure.r_den, tempo_figure_txt);
+                        xml_value_to_name(screen_tempo_figure, tempo_figure_txt);
                         bach_mxmlNewTextElement(metronomexml, "beat-unit", 0, tempo_figure_txt);
                         char i;
                         for (i = 0; i < tempo_figure_num_dots; i++)
@@ -1062,7 +1093,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 t_rational screen_accidental;
                 t_llll *open_gliss_chord = export_glissandi ? llll_get() : NULL;
                 char at_least_a_gliss_has_ended = false;
-                xml_value_to_name(chord->figure.r_den, chordtype);
+                xml_value_to_name(chord->figure, chordtype);
                 t_rational dur = chord->r_sym_duration;
                 char durtxt[16];
 
@@ -1080,7 +1111,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 num_tuplets = get_xml_chord_tuplet_info((t_notation_obj *) x, chord, tuplet_info);
                 
                 if (num_tuplets)
-                    xml_value_to_name(tuplet_info[0].tuplet_actual_type.r_den, normal_type);
+                    xml_value_to_name(tuplet_info[0].tuplet_actual_type, normal_type);
                 
                 
                 // cycle on notes
@@ -1399,7 +1430,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                 mxmlElementSetAttr(tuplet, "number", txt);
                                 mxml_node_t *tuplet_actual = mxmlNewElement(tuplet, "tuplet-actual");
                                 bach_mxmlNewIntElement(tuplet_actual, "tuplet-number", 0, tuplet_info[i].tuplet_actual_number);
-                                xml_value_to_name(tuplet_info[i].tuplet_actual_type.r_den, txt);
+                                xml_value_to_name(tuplet_info[i].tuplet_actual_type, txt);
                                 bach_mxmlNewTextElement(tuplet_actual, "tuplet-type", 0, txt);
                                 long j;
                                 for (j = 0; j < tuplet_info[i].tuplet_actual_dots; j++)
@@ -1407,7 +1438,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                 
                                 mxml_node_t *tuplet_normal = mxmlNewElement(tuplet, "tuplet-normal");
                                 bach_mxmlNewIntElement(tuplet_normal, "tuplet-number", 0, tuplet_info[i].tuplet_normal_number);
-                                xml_value_to_name(tuplet_info[i].tuplet_normal_type.r_den, txt);
+                                xml_value_to_name(tuplet_info[i].tuplet_normal_type, txt);
                                 bach_mxmlNewTextElement(tuplet_normal, "tuplet-type", 0, txt);
                                 for (j = 0; j < tuplet_info[i].tuplet_normal_dots; j++)
                                     mxmlNewElement(tuplet_normal, "tuplet-dot");

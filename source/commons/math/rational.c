@@ -1,7 +1,7 @@
 /*
  *  rational.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -24,6 +24,23 @@
 
 char fsign(double number){
 	return (number > 0 ? 1 : (number == 0 ? 0 : -1));
+}
+
+
+long integer_div_round_down(long num, long div)
+{
+    long res = num / div;
+    if (num < 0 && res * div != num)
+        res -= 1;
+    return res;
+}
+
+long positive_mod(long num, long mod)
+{
+    if (num >= 0)
+        return num % mod;
+    
+    return ((num % mod) + mod) % mod;
 }
 
 

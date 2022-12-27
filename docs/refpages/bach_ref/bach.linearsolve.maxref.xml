@@ -11,6 +11,9 @@
 
 	<description>
 		Solves a linear system of equations in the matrix form Ax = b, where A
+		is the system matrix and b is the column vector. If the system is solvable and the solution
+		is unique, the vector x is sent through the first outlet. In any case, an information
+		about the solvability is sent through the second outlet.
 	</description>
 
 	<!--METADATA-->
@@ -127,6 +130,14 @@
 	<!--DISCUSSION-->
 	<discussion>
 		The linear system has to be in matrix form Ax = b. <o>bach.linearsolve</o> solves such system by performing
+		a double Gaussian elimination on the juxtaposed matrix [A|b], as <o>bach.gausselim</o> can do.
+		If there is no solution, this is reported from right outlet; if there are infinite solutions
+		this is also reported from right outlet (and no solution is output). <br />
+		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
+		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
+		as the number of rows.
+		<br /> <br />
 	</discussion>
 
 	<!--SEEALSO-->
@@ -169,6 +180,14 @@
 		<entry name ="More details">
 			<description>
 		The linear system has to be in matrix form Ax = b. <o>bach.linearsolve</o> solves such system by performing
+		a double Gaussian elimination on the juxtaposed matrix [A|b], as <o>bach.gausselim</o> can do.
+		If there is no solution, this is reported from right outlet; if there are infinite solutions
+		this is also reported from right outlet (and no solution is output). <br />
+		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
+		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
+		as the number of rows.
+		<br /> <br />
 			</description>
 		</entry>
 		<entry name ="Keywords">

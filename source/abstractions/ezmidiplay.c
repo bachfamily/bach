@@ -1,7 +1,7 @@
 /*
  *  ezmidiplay.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -160,6 +160,10 @@ CLASS_ATTR_BASIC(c,"repeatmode",0);
 CLASS_ATTR_DOUBLE(c, "durstretch", 0, t_ezmidiplay, durstretch); 
 CLASS_ATTR_STYLE_LABEL(c,"durstretch",0,"text","Duration Stretch Factor");
 //	@description Sets a factor to stretch each single duration. Defaults to 1.
+
+CLASS_ATTR_SYM(c, "port", 0, t_ezmidiplay, port); 
+CLASS_ATTR_STYLE_LABEL(c,"port",0,"text","MIDI Port");
+//	@description Sets the MIDI Port (also settable via the right inlet).
 
 }
 

@@ -1,7 +1,7 @@
 /*
  *  roll_files.c
  *
- * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -21,20 +21,21 @@
 #include "foundation/llll_files.h"
 
 void append_timesig_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time, long ts_num, long ts_dem);
-void append_barline_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time);
-void append_division_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time);
-void append_marker_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time, t_symbol *text, t_symbol *role, t_llll *contents);
+t_llllelem* append_barline_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time);
+t_llllelem* append_division_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time);
+t_llllelem* append_subdivision_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time);
+t_llllelem* append_marker_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time, t_symbol *text, t_symbol *role, t_llll *contents);
 
 void roll_doreadmidi(t_roll *x, t_symbol *s, long ac, t_atom *av);
 t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av);
 
 unsigned long midi_getvalue(unsigned char **buf, unsigned long bytes);
-unsigned long midi_get_vlen_value(unsigned char **buf, t_ptr_size *size);
+unsigned long midi_get_vlen_value(unsigned char **buf, long *size);
 t_atom_ulong midi_track_and_chan_to_key(t_atom_ulong track, t_atom_ulong chan, long track2voice, long chan2voice);
 void hashtab_free_one_llll(t_hashtab_entry *e, void *dummy);
 
 void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long chan2voice, long markmeasures, long markdivision, long importbarlines);
+t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long chan2voice, long markmeasures, long markdivision, long importbarlines, long importdivisions, long importsubdivisions);
 
 // chordthresh (default 0) > handlo io
 // mergingpolicy (0 = merge to average, -1 merge to first, 1 merge to last)
@@ -72,7 +73,7 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 	t_symbol *filename_sym = NULL;
 	t_filehandle fh;
 	double chord_thresh = 0;
-	long merging_policy = 0;
+    t_atom_long merging_policy = 0;
 	t_fourcc outtype = 0;
 	t_fourcc file_types[] = {'Midi', 'TEXT', 'LLLL'};
 	t_llll *roll_ll = NULL;
@@ -86,13 +87,15 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 	//bach_breakpoint(0);
 	
     // these are only need to prevent llll_parseargs_and_attrs_destructive to complain for them
-    long track2voice = -1;
-    long chan2voice = -1;
-    long markmeasures = 1;
-    long markdivisions = 0;
-    long importbarlines = 1;
-    
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "disiiiii",
+    t_atom_long track2voice = -1;
+    t_atom_long chan2voice = -1;
+    t_atom_long markmeasures = 1;
+    t_atom_long markdivisions = 1;
+    t_atom_long importbarlines = 1;
+    t_atom_long importdivisions = 1;
+    t_atom_long importsubdivisions = 1;
+
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "disiiiiiii",
                                          gensym("chordthresh"), &chord_thresh,
                                          gensym("mergingpolicy"), &merging_policy,
                                          gensym("filename"), &filename_sym,
@@ -100,7 +103,10 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                                          gensym("chans2voices"), &chan2voice,
                                          gensym("markmeasures"), &markmeasures,
                                          gensym("markdivisions"), &markdivisions,
-                                         gensym("importbarlines"), &importbarlines);
+                                         gensym("importbarlines"), &importbarlines,
+                                         gensym("importdivisions"), &importdivisions,
+                                         gensym("importsubdivisions"), &importsubdivisions
+                                         );
     
     if (arguments->l_size >= 1 && hatom_gettype(&arguments->l_head->l_hatom) == H_SYM) {
 		filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -119,7 +125,7 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 		case 'Midi':
 			if (bach_readfile((t_object *) x, filename, path, &fh) != MAX_ERR_NONE)
 				goto roll_doread_error_dontclose;
-			roll_ll = roll_readmidi_direct(x, fh, track2voice, chan2voice, markmeasures, markdivisions, importbarlines);
+			roll_ll = roll_readmidi_direct(x, fh, track2voice, chan2voice, markmeasures, markdivisions, importbarlines, importdivisions, importsubdivisions);
 			if (!roll_ll)
 				goto roll_doread_error_close;
 			set_roll_from_llll_from_read(x, roll_ll);
@@ -177,9 +183,9 @@ roll_doread_error_close:
  */
 
 
-t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long chan2voice, long markmeasures, long markdivisions, long importbarlines)
+t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long chan2voice, long markmeasures, long markdivisions, long importbarlines, long importdivisions, long importsubdivisions)
 {
-	t_ptr_size size;
+	t_ptr_size uSize;
 	unsigned char *buffer, *buffer_orig = NULL;
 	unsigned long time_division, num_tracks;
 	t_llll *roll_ll = NULL;
@@ -204,13 +210,20 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
     t_timesignature ts;
     
 	// allocate memory block that is the size of the file
-	sysfile_geteof(fh, &size);
-	buffer_orig = buffer = (unsigned char *) bach_newptr(size + 1);
+	sysfile_geteof(fh, &uSize);
+	buffer_orig = buffer = (unsigned char *) bach_newptr(uSize + 1);
     buffer_orig[0] = 0;
 	//buffer_end = buffer + size;
 	// read in the file
-	sysfile_read(fh, &size, buffer);
+	sysfile_read(fh, &uSize, buffer);
 	
+    long size = (long) uSize;
+    
+    t_llll *all_calculated_barlines = llll_get();
+    t_llll *all_calculated_divisions = llll_get();
+    t_bool are_there_imported_barlines = false;
+    t_bool are_there_imported_divisions = false;
+    
 	// check for validity
 	bach_assert_objerror_goto(x, ok = ((size -= 14) >= 0), "Invalid file format: missing file header", readmidi_error); // <header> + <format> + <num tracks> + <ticks per beat>
 	bach_assert_objerror_goto(x, ok = !memcmp(buffer, "MThd\x00\x00\x00\x06", 8), "Invalid file format: bad header", readmidi_error);
@@ -233,9 +246,9 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 	
 	bach_assert_objerror_goto(x, ok = (format_type == 0 || format_type == 1), "Only MIDI file formats 0 and 1 are supported", readmidi_error);
 	
-    if (importbarlines && markmeasures) {
+    /*if (importbarlines && markmeasures) {
 		dev_object_warn((t_object *) x, "markmeasures and importbarlines are both active");
-    }
+    }*/
 	
 	num_tracks = midi_getvalue(&buffer, 2);
 	
@@ -272,6 +285,10 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 	markers_ll = llll_get();
 	llll_appendsym(markers_ll, _llllobj_sym_markers, 0, WHITENULL_llll);
 	for (this_track = 0; this_track < num_tracks; this_track++) {
+        if (size == 0) {
+            object_warn((t_object *) x, "Misformatted MIDI file: missing track chunks");
+            break;
+        }
 		long go_on = 1;
 		unsigned long abstime = 0; // measured in ticks
 		unsigned long midi_channel_prefix = 0; // for meta-events
@@ -340,8 +357,8 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 									first_voice_elem = llll_insertllll_before(voice, first_voice_elem, 0, WHITENULL_llll);
 							} else if (this_elem == NULL) { // then it goes at the last place
 								llll_appendllll(roll_ll, voice, 0, WHITENULL_llll);
-							} else { // it goes right after this_elem
-								llll_insertllll_after(voice, this_elem, 0, WHITENULL_llll);
+							} else { // it goes right before this_elem
+								llll_insertllll_before(voice, this_elem, 0, WHITENULL_llll);
 							}
 							pitches_ll = llll_get();
 							llll_appendllll(voice, pitches_ll, 0, WHITENULL_llll); // this will be removed later on, when the clefs sublist is set
@@ -410,10 +427,26 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 						char text[4096];
 						long textlen = MIN(len, 4095) + 1; // includes terminator
 						strncpy_zero(text, (const char *) buffer, textlen);
-						if (strncmp(text, "bach barline", textlen) != 0)
-							append_marker_to_midi_import(all_events, markers_ll, abstime, gensym(text), _llllobj_sym_none, NULL);
-						else if (importbarlines)
-							append_barline_to_midi_import(all_events, markers_ll, abstime);
+                        
+                        if (!strncmp(text, "bach barline", textlen)) {
+                            if (importbarlines) {
+                                append_barline_to_midi_import(all_events, markers_ll, abstime);
+                                are_there_imported_barlines = true;
+                            }
+                        } else if (!strncmp(text, "bach division", textlen)) {
+                            if (importdivisions) {
+                                append_division_to_midi_import(all_events, markers_ll, abstime);
+                                are_there_imported_divisions = true;
+                            }
+                        } else if (!strncmp(text, "bach subdivision", textlen)) {
+                            if (importsubdivisions) {
+                                append_subdivision_to_midi_import(all_events, markers_ll, abstime);
+                            }
+                        } else {
+                            append_marker_to_midi_import(all_events, markers_ll, abstime, gensym(text), _llllobj_sym_none, NULL);
+
+                        }
+
 						buffer += len;
 						break;
 					}
@@ -433,14 +466,14 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 							while ((long) next_good_ts_onset <= stop_here) {
                                 unsigned long next_division;
                                 if (markmeasures) {
-                                    append_barline_to_midi_import(all_events, markers_ll, next_good_ts_onset);
+                                    llll_appendobj(all_calculated_barlines, append_barline_to_midi_import(all_events, markers_ll, next_good_ts_onset));
                                     next_division = next_good_ts_onset - measure_duration + beat_duration;
                                 } else {
                                     next_division = next_good_ts_onset - measure_duration;
                                 }
                                 if (markdivisions) {
                                     while ((long) next_division < next_good_ts_onset && (long) next_division <= stop_here) {
-                                        append_division_to_midi_import(all_events, markers_ll, next_division);
+                                        llll_appendobj(all_calculated_divisions, append_division_to_midi_import(all_events, markers_ll, next_division));
                                         next_division += beat_duration;
                                     }
                                 }
@@ -481,14 +514,14 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
                             while ((long) next_good_ts_onset <= abstime) {
                                 unsigned long next_division;
                                 if (markmeasures) {
-                                    append_barline_to_midi_import(all_events, markers_ll, next_good_ts_onset);
+                                    llll_appendobj(all_calculated_barlines, append_barline_to_midi_import(all_events, markers_ll, next_good_ts_onset));
                                     next_division = next_good_ts_onset - measure_duration + beat_duration;
                                 } else {
                                     next_division = next_good_ts_onset - measure_duration;
                                 }
                                 if (markdivisions) {
                                     while ((long) next_division < next_good_ts_onset && (long) next_division <= abstime) {
-                                        append_division_to_midi_import(all_events, markers_ll, next_division);
+                                        llll_appendobj(all_calculated_divisions, append_division_to_midi_import(all_events, markers_ll, next_division));
                                         next_division += beat_duration;
                                     }
                                 }
@@ -561,6 +594,37 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 		hashtab_clear(noteons);
 	}
 	
+    
+    if (are_there_imported_barlines) {
+        if (all_calculated_barlines->l_size) {
+            object_warn((t_object*) x, "Removed calculated barlines as there are barline markers in the MIDI file");
+        }
+        for (t_llllelem *barline_ref = all_calculated_barlines->l_head; barline_ref; barline_ref = barline_ref->l_next) {
+            t_llllelem *event_elem = barline_ref->l_hatom.h_w.w_llllelem; // contained in all_events
+            t_llll *this_marker_ll = event_elem->l_hatom.h_w.w_llll->l_tail->l_hatom.h_w.w_llll;
+            t_bool check1 = event_elem->l_parent == all_events;
+            t_bool check2 = this_marker_ll->l_owner->l_parent == markers_ll;
+            
+            llll_destroyelem(event_elem);
+            llll_destroyelem(this_marker_ll->l_owner);
+        }
+    }
+    
+    if (are_there_imported_divisions) {
+        if (all_calculated_divisions->l_size) {
+            object_warn((t_object*) x, "Removed calculated divisions as there are division markers in the MIDI file");
+        }
+        for (t_llllelem *division_ref = all_calculated_divisions->l_head; division_ref; division_ref = division_ref->l_next) {
+            t_llllelem *event_elem = division_ref->l_hatom.h_w.w_llllelem; // contained in all_events
+            t_llll *this_marker_ll = event_elem->l_hatom.h_w.w_llll->l_tail->l_hatom.h_w.w_llll;
+            t_bool check1 = event_elem->l_parent == all_events;
+            t_bool check2 = this_marker_ll->l_owner->l_parent == markers_ll;
+            
+            llll_destroyelem(event_elem);
+            llll_destroyelem(this_marker_ll->l_owner);
+        }
+    }
+    
 	llll_insertllll_after(markers_ll, roll_ll->l_head, 0, WHITENULL_llll);
 	markers_ll = NULL; // don't free it anymore
 	
@@ -606,8 +670,8 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 	} else
 		llll_free(keys_ll);
 	keys_ll = NULL; // don't free it anymore
-	
-	
+
+    
 	// now we need to sort all_events according to time, and change all the onsets and durations according to the tempi
 	t_llll *all_events_sorted;
 	llll_mergesort(all_events, &all_events_sorted, sort_midi_events, NULL);
@@ -635,7 +699,12 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 				t_llll *chord = note->l_owner->l_parent;
 				double chord_onset = chord->l_head->l_hatom.h_w.w_double; // if we have a noteoff, its noteon has surely been converted before
 				t_hatom *note_duration_hatom = &note->l_head->l_next->l_hatom;
-				hatom_setdouble(note_duration_hatom, event_ms_time - chord_onset - 1.);
+                double dur = event_ms_time - chord_onset;
+                if (dur < 0) {
+                    object_bug((t_object *) x, "Note at %ld ms has duration %ld: setting to 0", chord_onset, dur);
+                    dur = 0;
+                }
+				hatom_setdouble(note_duration_hatom, dur);
 				break;
 			}
 			case E_TEMPO: // E_TEMPO <time> <tempo>
@@ -661,6 +730,9 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 //	dev_llll_print(roll_ll, (t_object *) x, 0, 6, NULL);
 	
 readmidi_error:
+    llll_free(all_calculated_barlines);
+    llll_free(all_calculated_divisions);
+
 	if (!ok) {
 		llll_free(roll_ll);
 		roll_ll = NULL;
@@ -713,14 +785,14 @@ void roll_exportom(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *roll_as_llll = get_roll_values_as_llll(x, k_CONSIDER_FOR_EXPORT_OM, k_HEADER_ALL, true, false); // we save everything
-	llll_writetxt((t_object *) x, roll_as_llll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
+	llll_writetxt((t_object *) x, roll_as_llll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_PARENS, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 void roll_exportpwgl(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *roll_as_llll_for_pwgl = get_roll_values_as_llll_for_pwgl(x);
-	llll_writetxt((t_object *) x, roll_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
+	llll_writetxt((t_object *) x, roll_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_PARENS, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 unsigned long midi_getvalue(unsigned char **buf, unsigned long bytes)
@@ -733,7 +805,7 @@ unsigned long midi_getvalue(unsigned char **buf, unsigned long bytes)
 	return res;
 }
 
-unsigned long midi_get_vlen_value(unsigned char **buf, t_ptr_size *size)
+unsigned long midi_get_vlen_value(unsigned char **buf, long *size)
 {
 	long go_on = 1;
 	unsigned long res = 0;
@@ -772,17 +844,22 @@ void append_timesig_to_midi_import(t_llll *all_events, t_llll *markers_ll, long 
 	append_marker_to_midi_import(all_events, markers_ll, time, NULL, _llllobj_sym_timesig, timesig_ll);
 }
 
-void append_barline_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time)
+t_llllelem* append_barline_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time)
 {
-	append_marker_to_midi_import(all_events, markers_ll, time, NULL, _llllobj_sym_barline, NULL);
+	return append_marker_to_midi_import(all_events, markers_ll, time, NULL, _llllobj_sym_barline, NULL);
 }
 
-void append_division_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time)
+t_llllelem* append_division_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time)
 {
-    append_marker_to_midi_import(all_events, markers_ll, time, NULL, _llllobj_sym_division, NULL);
+    return append_marker_to_midi_import(all_events, markers_ll, time, NULL, _llllobj_sym_division, NULL);
 }
 
-void append_marker_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time, t_symbol *text, t_symbol *role, t_llll *contents)
+t_llllelem* append_subdivision_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time)
+{
+    return append_marker_to_midi_import(all_events, markers_ll, time, NULL, _llllobj_sym_subdivision, NULL);
+}
+
+t_llllelem* append_marker_to_midi_import(t_llll *all_events, t_llll *markers_ll, long time, t_symbol *text, t_symbol *role, t_llll *contents)
 {
 	t_llll *this_marker_ll = llll_get();
 	llll_appendlong(this_marker_ll, time, 0, WHITENULL_llll);
@@ -799,7 +876,7 @@ void append_marker_to_midi_import(t_llll *all_events, t_llll *markers_ll, long t
 	llll_appendlong(event, E_MARKER, 0, WHITENULL_llll);
 	llll_appendlong(event, time, 0, WHITENULL_llll);
 	llll_appendobj(event, this_marker_ll, 0, WHITENULL_llll);
-	llll_appendllll(all_events, event, 0, WHITENULL_llll);
+	return llll_appendllll(all_events, event, 0, WHITENULL_llll);
 }
 
 // format (default 1)
@@ -811,9 +888,9 @@ void append_marker_to_midi_import(t_llll *all_events, t_llll *markers_ll, long t
 
 t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 {
-	long format = 0;
+    t_atom_long format = 0;
 	long num_tracks = 0;
-	long time_division = 960;
+    t_atom_long time_division = 960;
 	double tempo = 60;
 	long timesig_num = 4, timesig_den = 4; // unused for now, that's ok
 	long i;
@@ -827,8 +904,10 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 	unsigned char *buffer = NULL;
 	t_llll *arguments = (t_llll *) atom_getobj(av);
 	t_symbol *filename_sym = NULL;
-	long export_markers = 1;
-	long export_barlines = 1;
+    t_atom_long export_markers = 1;
+    t_atom_long export_barlines = 1;
+    t_atom_long export_divisions = 1;
+    t_atom_long export_subdivisions = 1;
 	t_llll *voices_to_write = NULL;
 	t_rollvoice *firstvoice = NULL;
 	long ok = 1;
@@ -836,10 +915,12 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 	long num_voices = 0;
 	t_ptr_size count = 0;
 
-	llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiil",
+	llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiil",
 				   _sym_filename, &filename_sym,
 				   gensym("exportmarkers"), &export_markers,
 				   gensym("exportbarlines"), &export_barlines,
+                   gensym("exportdivisions"), &export_divisions,
+                   gensym("exportsubdivisions"), &export_subdivisions,
 				   gensym("format"), &format,
 				   gensym("resolution"), &time_division,
 				   gensym("voices"), &voices_to_write);
@@ -944,12 +1025,24 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 					append_barline_to_midi_export(track_ll[0], onset);
 				break;
 			}
-			default: {
-				t_atom *av = NULL;
-				long ac = llll_deparse(this_marker->r_it.names, &av, 0, 0);
-				t_atomarray *name = atomarray_new_debug(ac, av);
-				append_marker_to_midi_export(track_ll[0], name, onset);
-				bach_freeptr(av);
+            case k_MARKER_ROLE_MEASURE_DIVISION: {
+                if (export_divisions)
+                    append_division_to_midi_export(track_ll[0], onset);
+                break;
+            }
+            case k_MARKER_ROLE_MEASURE_SUBDIVISION: {
+                if (export_subdivisions)
+                    append_subdivision_to_midi_export(track_ll[0], onset);
+                break;
+            }
+			case k_MARKER_ROLE_NONE: {
+                if (export_markers) {
+                    t_atom *av = NULL;
+                    long ac = llll_deparse(this_marker->r_it.names, &av, 0, 0);
+                    t_atomarray *name = atomarray_new_debug(ac, av);
+                    append_marker_to_midi_export(track_ll[0], name, onset);
+                    bach_freeptr(av);
+                }
 			}
 		}
 	}
@@ -964,7 +1057,7 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 	for (this_voicenum_elem = voices_to_write->l_head; this_voicenum_elem; this_voicenum_elem = this_voicenum_elem->l_next) {
 		this_rollvoice = (t_rollvoice *) nth_voice((t_notation_obj *) x, hatom_getlong(&this_voicenum_elem->l_hatom));
 		t_chord *this_chord;
-		long channel = this_rollvoice->v_ob.midichannel % 16 - 1;
+		long channel = (this_rollvoice->v_ob.midichannel - 1) % 16;
 		long this_tempochange = 0;
 		double next_tempochange_ms = tempochanges[1].t_ms;
 		this_tempo_onset_ms = 0;
