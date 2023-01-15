@@ -191,9 +191,9 @@ void llll2dict_fn(t_object *x, t_llll *ll, t_dictionary *d, char skip_first_elem
 				object_error(x, "Found an empty llll - could not be converted");
 			} else {
 				t_symbol *key;
-				if (hatom_gettype(&subll->l_head->l_hatom) == H_SYM)
+                if (hatom_gettype(&subll->l_head->l_hatom) == H_SYM) {
 					key = hatom_getsym(&subll->l_head->l_hatom);
-				else {
+                } else {
 					key = hatom_to_symbol(&subll->l_head->l_hatom);
 					if (key)
 						object_warn(x, "Non-symbolic key found - converted to symbol %s", key->s_name);
@@ -205,7 +205,19 @@ void llll2dict_fn(t_object *x, t_llll *ll, t_dictionary *d, char skip_first_elem
 					if (!subll->l_head->l_next)
 						object_error(x, "Null value detected for key %s - could not be converted.", key->s_name);
 					else {
-						if (subll->l_depth > 1) {
+                        if (subll->l_depth > 1 && subll->l_size > 1 && subll->l_head->l_next && hatom_gettype(&subll->l_head->l_next->l_hatom) == H_LLLL && hatom_getllll(&subll->l_head->l_next->l_hatom)->l_head && hatom_gettype(&hatom_getllll(&subll->l_head->l_next->l_hatom)->l_head->l_hatom) != H_SYM) {
+                            // this is an array of dictionaries.
+                            long argc = subll->l_size - 1;
+                            t_atom *argv = (t_atom *)bach_newptr(argc * sizeof(t_atom));
+                            long i = 0;
+                            for (t_llllelem *el = subll->l_head->l_next; el; el = el->l_next, i++) {
+                                t_dictionary *subd = dictionary_new();
+                                llll2dict_fn(x, hatom_getllll(&el->l_hatom), subd, false);
+                                atom_setobj(argv+i, subd);
+                            }
+                            dictionary_appendatoms(d, key, argc, argv);
+                            bach_freeptr(argv);
+                        } else if (subll->l_depth > 1) {
 							// gotta make a subdictionary
 							t_dictionary *subd = dictionary_new();
 							llll2dict_fn(x, subll, subd, true);
