@@ -1,5 +1,12 @@
 VERSION NOTES:
 
+v0.8.3
+
+***********************
+*** VERSION CHANGES ***
+***********************
+
+- bach.score: fixed crash with 32nd notes in xml import 
 
 
 v0.8.2b

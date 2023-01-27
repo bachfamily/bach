@@ -2429,9 +2429,11 @@ t_llll *score_readxmlbuffer(t_score *x,
                 t_rational onset;
                 t_pitchWithOnset(t_pitch p, t_rational o) : t_pitch(p), onset(o) { };
                 t_pitchWithOnset() { };
-            } allpitches[10000];
+            };
             
-            //t_pitchWithOnset allpitches[10000];
+            //auto allpitches = new t_pitchWithOnset[10000];
+            
+            t_pitchWithOnset allpitches[10000];
             long numpitches = 0;
             
             mxml_node_t *itemXML;
@@ -2851,6 +2853,8 @@ t_llll *score_readxmlbuffer(t_score *x,
                 }
 
             }
+                        
+            //delete [] allpitches;
 
             //// //llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
             //// currentChord = nullptr;
@@ -2924,7 +2928,7 @@ static const std::unordered_map<std::string, const t_rational> type2figure
     { "quarter", {1, 4} },
     { "eighth", {1, 8} },
     { "16th", {1, 16} },
-    { "32th", {1, 32} },
+    { "32nd", {1, 32} },
     { "64th", {1, 64} },
     { "128th", {1, 128} },
     { "256th", {1, 256} }
@@ -2933,8 +2937,15 @@ static const std::unordered_map<std::string, const t_rational> type2figure
 
 t_rational xml_name_and_dots_to_value(const char *chordtype, long dots)
 {
-    const t_rational f = type2figure.at(chordtype);
-    return figure_and_dots_to_figure_sym_duration(f, dots);
+    //cpost("%s", chordtype);
+    try {
+        const t_rational f = type2figure.at(chordtype);
+        return figure_and_dots_to_figure_sym_duration(f, dots);
+    }
+    catch(std::exception &e) {
+        error("Bad chord type: %s", chordtype);
+        return t_rational(0, 1);
+    }
 }
 
 
