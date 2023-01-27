@@ -138,7 +138,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 115.0, 426.0, 449.0, 50.0 ],
-									"text" : "If Max crashes while you have Atom open, it is possible that you stray files remain on your computer. No big deal, but you may clean them up with this message to Max:",
+									"text" : "If Max crashes while you have Atom open, it is possible that stray files remain on your computer. No big deal, but you may clean them up with this message to Max:",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
