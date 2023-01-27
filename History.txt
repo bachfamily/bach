@@ -8,6 +8,8 @@ v0.8.3
 
 - bach.score: fixed crash with 32nd notes in xml import 
 
+- bach.dict2llll: now supports dictionary arrays 
+
 
 v0.8.2b
 
