@@ -3934,7 +3934,7 @@ char quantize_box_single_step(t_quantize *x, t_llll *box_durations, t_llll **qua
             } else if (x->mixing_mode == k_SMART_MIX && nonzero_index > 0 &&
                        (prev_mu = hatom_getrational(&llll_getindex(minimal_units, nonzero_index, I_NON_NEGATIVE)->l_hatom)).r_num && is_sym_duration_tuplet(prev_mu) &&
                        (first_nonzero_entry = llll_first_nonzero_entry_index_in_plain_long_llll(coefficients[depth])) && first_nonzero_entry != nonzero_index &&
-                       rat_rat_div(get_tail_tuplet_duration(coefficients, depth, nonzero_index, prev_mu), get_tuplet_minimum_complet_unit_from_sym_duration(prev_mu)).r_den != 1) {
+                       (get_tuplet_minimum_complet_unit_from_sym_duration(prev_mu).r_num == 0 || rat_rat_div(get_tail_tuplet_duration(coefficients, depth, nonzero_index, prev_mu), get_tuplet_minimum_complet_unit_from_sym_duration(prev_mu)).r_den != 1)) {
                 if (x->verbose >= 2) object_post((t_object *) x, "     -- approximation for %ld-th duration has an uncompleted tuplet! Rejected.", depth);
                 is_ok = false;
             } else if (depth == num_durations - 1 && approx_elem_to_error(elem_multiindex[depth]).r_num != 0) {
