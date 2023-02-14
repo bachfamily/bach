@@ -788,7 +788,8 @@ t_llll* t_fnSum::call(const t_execEnv &context)
     t_llll *sum_ll = llll_get();
     getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
     llll_sum(ll, &sum_hatom, mindepth, maxdepth);
-    if (sum_hatom.h_type != H_NOTHING)
+    if (sum_hatom.h_type == H_NOTHING)
+        hatom_setlong(&sum_hatom, 0);
     llll_appendhatom_clone(sum_ll, &sum_hatom);
     llll_release(ll);
     return sum_ll;
@@ -813,8 +814,8 @@ t_llll* t_fnProd::call(const t_execEnv &context)
     t_llll *prod_ll = llll_get();
     getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
     llll_prod(ll, &prod_hatom, mindepth, maxdepth);
-    if (prod_hatom.h_type != H_NOTHING)
-        llll_appendhatom_clone(prod_ll, &prod_hatom);
+    if (prod_hatom.h_type == H_NOTHING)
+        hatom_setlong(&prod_hatom, 0);
     llll_release(ll);
     return prod_ll;
 }

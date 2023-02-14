@@ -3783,9 +3783,10 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
                 default:
                     break;
             }
-        case H_NOTHING:
-            hatom_setlong(sum, 1);
+        case H_NOTHING: {
+            *sum = *a;
             break;
+        }
         default:
             break;
     }
@@ -3873,7 +3874,7 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
                     break;
             }
         case H_NOTHING:
-            hatom_setlong(prod, 1);
+            *prod = *a;
             break;
         default:
             break;
