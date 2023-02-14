@@ -1,5 +1,15 @@
 VERSION NOTES:
 
+v0.8.4
+
+***********************
+*** VERSION CHANGES ***
+***********************
+
+- bach.quantize: removed puzzling innocuous errors for SmartMix mode
+
+- bell: bach.sum, bach.prod now work
+
 v0.8.3
 
 ***********************
