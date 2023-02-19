@@ -1182,7 +1182,8 @@ t_max_err llllobj_obj_setup(t_llllobj_object *x, long stores, const char *outlet
             bach_freeptr(outtypes);
         }
         this_outtype = x->l_outtypes->s_name + x->l_numllllouts - 1;
-    }
+    } else
+		x->l_outtypes = gensym("");
     
     if (stores) {
         x->l_numstores = stores;
@@ -2018,7 +2019,7 @@ t_max_err llllobj_obj_setout(t_llllobj_object *x, t_object *attr, long argc, t_a
     long numlllloutlets = x->l_numllllouts;
     t_symbol *sym;
     if (argc && atom_gettype(argv) == A_SYM && (sym = argv->a_w.w_sym)) {
-        if (x->l_running) {
+        if (x->l_running && numlllloutlets > 0) {
             outtypes = sym->s_name;
             llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_VANILLA, &outtypes, 1);
             this_outtype = outtypes + numlllloutlets - 1;
@@ -2059,7 +2060,7 @@ t_max_err llllobj_jbox_setout(t_llllobj_jbox *x, t_object *attr, long argc, t_at
     long numlllloutlets = x->l_numllllouts;
     t_symbol *sym;
     if (argc && atom_gettype(argv) == A_SYM && (sym = argv->a_w.w_sym)) {
-        if (x->l_running) {
+        if (x->l_running && numlllloutlets > 0) {
             outtypes = sym->s_name;
             llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_UI, &outtypes, 1);
             this_outtype = outtypes + numlllloutlets - 1;
@@ -2100,7 +2101,7 @@ t_max_err llllobj_pxobj_setout(t_llllobj_pxobject *x, t_object *attr, long argc,
     long numlllloutlets = x->l_numllllouts;
     t_symbol *sym;
     if (argc && atom_gettype(argv) == A_SYM && (sym = argv->a_w.w_sym)) {
-        if (x->l_running) {
+        if (x->l_running && numlllloutlets > 0) {
             outtypes = sym->s_name;
             llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_UI, &outtypes, 1);
             this_outtype = outtypes + numlllloutlets - 1;
@@ -2141,7 +2142,7 @@ t_max_err llllobj_pxjbox_setout(t_llllobj_pxjbox *x, t_object *attr, long argc, 
     long numlllloutlets = x->l_numllllouts;
     t_symbol *sym;
     if (argc && atom_gettype(argv) == A_SYM && (sym = argv->a_w.w_sym)) {
-        if (x->l_running) {
+        if (x->l_running && numlllloutlets > 0) {
             outtypes = sym->s_name;
             llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_UIMSP, &outtypes, 1);
             this_outtype = outtypes + numlllloutlets - 1;
