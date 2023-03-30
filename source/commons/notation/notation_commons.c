@@ -42853,7 +42853,7 @@ void notationobj_reset_commands(t_notation_obj *r_ob)
     initialize_commands(r_ob);
 }
 
-void notation_obj_reset_noteheadinfo(t_notation_obj *r_ob)
+void notationobj_reset_noteheadinfo(t_notation_obj *r_ob)
 {
     r_ob->noteheads_typo_preferences.num_noteheads = k_NUM_STANDARD_NOTEHEADS;
 }

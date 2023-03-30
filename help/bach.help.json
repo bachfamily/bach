@@ -2607,6 +2607,13 @@
 					"title" : [ "Copy slotinfo" ]
 				}
 			},
+			"Slurs" : {
+				"filename" : [ "bach.help.notation.editing.42_slurs.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slur" ],
+				"tags" : [ "editing", "edit", "interface", "slur", "flip", "reverse", "up", "down" ],
+				"title" : [ "Slurs interface" ]
+			},
 			"Lyrics" : {
 				"filename" : [ "bach.help.notation.editing.45_lyrics.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -5522,6 +5529,29 @@
 				}
 			}
 		},
+		"Slurs" : {
+			"Intro" : {
+				"filename" : [ "bach.help.notation.slurs.01_intro.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "path" ],
+				"tags" : [ "slur", "clearslurs", "addslur", "selection", "add", "create", "insert" ],
+				"title" : [ "Slurs in bach" ]
+			},
+			"Direction" : {
+				"filename" : [ "bach.help.notation.slurs.04_direction.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slur+interface" ],
+				"tags" : [ "slur", "clearslurs", "addslur", "selection", "flip", "direction", "slur" ],
+				"title" : [ "Slur direction" ]
+			},
+			"Region" : {
+				"filename" : [ "bach.help.notation.slurs.10_region.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "sel", "unsel", "region" ],
+				"tags" : [ "slur", "select", "sel", "unsel", "select", "under", "across", "underpin", "region" ],
+				"title" : [ "Selecting chords under slurs" ]
+			}
+		},
 		"Syntax" : {
 			"Intro" : {
 				"filename" : [ "bach.help.notation.syntax.01_intro.maxpat" ],
@@ -5763,14 +5793,14 @@
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.04_rollchords.maxpat" ],
 					"objects" : [ "bach.roll" ],
 					"seealso" : [ "gathered+syntax", "gathered+syntax+note", "onset" ],
-					"tags" : [ "gathered", "syntax", "chord", "roll" ],
+					"tags" : [ "gathered", "syntax", "chord" ],
 					"title" : [ "Gathered syntax for chords in bach.roll" ]
 				},
 				"Scorechords" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.05_scorechords.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "gathered+syntax", "syntax+flag", "gathered+syntax+note", "duration" ],
-					"tags" : [ "gathered", "syntax", "chord", "score" ],
+					"tags" : [ "gathered", "syntax", "chord" ],
 					"title" : [ "Gathered syntax for chords in bach.score" ]
 				},
 				"Scorerests" : {
@@ -5856,6 +5886,13 @@
 					"seealso" : [ "lock", "mute", "solo", "lock+rhythmic+tree" ],
 					"tags" : [ "gathered", "syntax", "flag", "notation", "item", "lock", "mute", "solo", "rhythmic", "tree" ],
 					"title" : [ "Notation item flags" ]
+				},
+				"Slurs" : {
+					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.22_slurs.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "slur" ],
+					"tags" : [ "gathered", "syntax", "slur", "span", "name", "chord", "direction", "up", "down", "flip" ],
+					"title" : [ "Slur syntax" ]
 				},
 				"Extras" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.70_extras.maxpat" ],

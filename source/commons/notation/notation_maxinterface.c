@@ -6203,7 +6203,7 @@ void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notat
 }
 
 // use paste_to_this_slot = -1 to paste to the original position
-void notation_obj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long paste_to_this_slot, char also_paste_to_rests) {
+void notationobj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long paste_to_this_slot, char also_paste_to_rests) {
     if (paste_to_this_slot < 0) {
         set_slots_to_selection(r_ob, clipboard->gathered_syntax, also_paste_to_rests);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
