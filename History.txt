@@ -7,6 +7,7 @@ v0.8.4
 ***********************
 
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
+
 - bach.score: fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
 
 - bell: bach.sum, bach.prod now work
