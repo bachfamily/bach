@@ -195,7 +195,7 @@ double marker_get_onset_ux(t_notation_obj *r_ob, t_marker *marker)
 {
     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
         t_timepoint tp = marker_region_get_start_timepoint(r_ob, marker);
-        return (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS);
+        return (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD : k_PARSETIMEPOINT_FLAG_NONE);
     } else {
         return ms_to_unscaled_xposition(r_ob, marker->position_ms, 1);
     }
@@ -205,7 +205,7 @@ double marker_get_onset_x(t_notation_obj *r_ob, t_marker *marker)
 {
     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
         t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-        return unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS));
+        return unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD : k_PARSETIMEPOINT_FLAG_NONE));
     } else {
         return ms_to_xposition(r_ob, marker->position_ms);
     }
@@ -239,7 +239,7 @@ double marker_region_get_end_ux(t_notation_obj *r_ob, t_marker *marker, char for
 {
     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
         t_timepoint tp = marker_region_get_end_timepoint(r_ob, marker);
-        return (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS);
+        return (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD : k_PARSETIMEPOINT_FLAG_NONE);
     } else {
         return ms_to_unscaled_xposition(r_ob, marker_region_get_end_ms(r_ob, marker, for_painting), 1);
     }
@@ -250,7 +250,7 @@ double marker_region_get_end_x(t_notation_obj *r_ob, t_marker *marker, char for_
 {
     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
         t_timepoint tp = marker_region_get_end_timepoint(r_ob, marker);
-        return unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS));
+        return unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD : k_PARSETIMEPOINT_FLAG_NONE));
     } else {
         return ms_to_xposition(r_ob, marker_region_get_end_ms(r_ob, marker, for_painting), 1);
     }
@@ -416,7 +416,7 @@ int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, lon
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE && r_ob->timepoint_to_unscaled_xposition) {
             t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-            marker_x = unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, false, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS));
+            marker_x = unscaled_xposition_to_xposition(r_ob, (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD : k_PARSETIMEPOINT_FLAG_NONE));
         } else
             marker_x = ms_to_xposition(r_ob, marker->position_ms, 1);
     } else {

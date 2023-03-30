@@ -866,7 +866,7 @@ typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t
 
 
 //TBD
-typedef char (*notation_obj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to, char also_send_domain);
+typedef char (*notationobj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to, char also_send_domain);
 
 
 
@@ -2547,7 +2547,8 @@ typedef struct _note
 
     // Windowed painting parameters (in real pixels, and only calculated when the note is inside the window and painted)
     t_pt              center;                                        ///< Center of the note (it is in real pixels, and not an unscaled ones)
-    
+    double            center_stafftop_uy;                           ///< Unscaled distance of the y of the notehead center from the topmost staff point
+    ///
     // double linked list
     struct _note    *next;                ///< Pointer to the next note
     struct _note    *prev;                ///< Pointer to the previous note
@@ -2914,8 +2915,8 @@ typedef struct _timepoint
 
 
 // Private
-typedef double (*notation_obj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, long flags);
-typedef double (*notation_obj_undo_redo_fn)(void *notation_obj, char direction);
+typedef double (*notationobj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, long flags);
+typedef double (*notationobj_undo_redo_fn)(void *notation_obj, char direction);
 
 
 
@@ -17470,76 +17471,76 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type);
 /** \addtogroup attributes 
  *  @{
  */
-t_max_err notation_obj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknotecolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadfonttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadadjusttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadsizetoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkannotationtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showmeasurenumbers(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_backgroundslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_popupmenuslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_rightclickdirectlypopsoutslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long *must_recompute_all);
-t_max_err notation_obj_set_keys(t_notation_obj *r_ob, t_symbol **keys);
-t_max_err notation_obj_set_hidevoices(t_notation_obj *r_ob, char *hide);
-t_max_err notation_obj_set_voicespacing(t_notation_obj *r_ob, long ac, double *value);
-t_max_err notation_obj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
-t_max_err notation_obj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
-t_max_err notation_obj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
-t_max_err notation_obj_set_parts(t_notation_obj *r_ob, long *part);
-t_max_err notation_obj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknotecolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadfonttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadadjusttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadsizetoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkannotationtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showmeasurenumbers(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_backgroundslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_popupmenuslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_rightclickdirectlypopsoutslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long *must_recompute_all);
+t_max_err notationobj_set_keys(t_notation_obj *r_ob, t_symbol **keys);
+t_max_err notationobj_set_hidevoices(t_notation_obj *r_ob, char *hide);
+t_max_err notationobj_set_voicespacing(t_notation_obj *r_ob, long ac, double *value);
+t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
+t_max_err notationobj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
+t_max_err notationobj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
+t_max_err notationobj_set_parts(t_notation_obj *r_ob, long *part);
+t_max_err notationobj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 
 // GETTERS
 
-t_max_err notation_obj_getattr_voicenames(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
-t_max_err notation_obj_getattr_stafflines(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
-t_max_err notation_obj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av);
+t_max_err notationobj_getattr_voicenames(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
+t_max_err notationobj_getattr_stafflines(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
+t_max_err notationobj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av);
 /** @}*/
 
 
@@ -17599,209 +17600,6 @@ void select_all_measures(t_notation_obj *r_ob, e_selection_modes mode);
     @param voice_number     The voice number, or set a negative number (e.g. -1) for all voices.
  */
 char delete_all_breakpoints(t_notation_obj *r_ob, long voice_number);
-
-
-/** Change a marker name (and recompute also the <name_uwidth> flag accordingly).
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
-    @param    new_names    The new marker's name as an llll
-    @see                recalculate_marker_name_uwidth()
-    @return                1 if the new name is different from the old one, 0 otherwise
- */
-long change_marker_names(t_notation_obj *r_ob, t_marker *marker, t_llll *new_names);
-
-
-/** Properly fill the <name_uwidth> field of a marker, contaning the unscaled width of the marker name label
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
- */
-void recalculate_marker_name_uwidth(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Change a marker position in milliseconds.
-    @ingroup                    markers
-    @param    r_ob                The notation object
-    @param    marker                The marker
-    @param    new_ms                The new marker's position in ms
-    @param    delta_mode            If this is 1, the <new_ms> value will be added to the marker's milliseconds. Otherwise they'll be replaced.
-    @param    also_check_sorting    If this is 1, also the algorithm checks the correct ordering of all markers, increasing with respect to the <position_ms> field.
- */
-void change_marker_ms(t_notation_obj *r_ob, t_marker *marker, double new_ms, char delta_mode, char also_check_sorting);
-
-
-/** Change a marker role.
-    @ingroup                    markers
-    @param    r_ob                The notation object
-    @param    marker                The marker
-    @param    new_role            The new marker's role, as one of the #e_marker_roles
- */
-void change_marker_role(t_notation_obj *r_ob, t_marker *marker, e_marker_roles new_role);
-
-/** Interpret a symbol as a marker role (one of the #e_marker_roles).
-    For gensym("timesig") is interpreted as #k_MARKER_ROLE_TIME_SIGNATURE.
-    @ingroup            markers
-    @param    s            The symbol
-    @return                The element of #e_marker_roles corresponding to the symbol
- */
-e_marker_roles sym_to_marker_role(t_symbol *s);
-
-
-/** Convert a marker role into a symbol. 
-    For instance #k_MARKER_ROLE_TIME_SIGNATURE is translated into _llllobj_sym_tempo = gensym("timesig").
-    @ingroup            markers
-    @param    marker_role    One of the #e_marker_roles
-    @return                The symbol corresponding to the marker role.
- */
-t_symbol *marker_role_to_sym(e_marker_roles marker_role);
-
-
-/** (Internal) Shifts the selected markers depending on the current mousedown marker
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker_with_mousedown_ux    The ux position of the marker currently having the mousedown
-    @param    magnetic    If non-zero, snaps to the nearest chord
-    @param    delta_ms    If non-NULL, will be filled with the actual movement in milliseconds 
-    @return                1 if something has changed, 0 otherwise
- */
-char move_selected_ms_attached_markers(t_notation_obj *r_ob, double marker_with_mousedown_ux, char magnetic, double *delta_ms);
-
-
-/** Shift the selected markers by an amount (in milliseconds)
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    delta_ms    The amount of the shift (in milliseconds)
-    @param    magnetic    If non-zero, snaps to the nearest chord
-    @return                1 if something has changed, 0 otherwise
- */
-char move_selected_ms_attached_markers_delta(t_notation_obj *r_ob, double delta_ms);
-
-
-/** Find the first incremental numbered unused marker name similar to a given name.
-    For instance, if the given name is "foo", he'll try to search for "foo 1", "foo 2"... up to "foo 100000",
-    and if any of these is NOT used, it returns the corresponding atom array (usually with length 2, unless the introduced 
-    marker name was a long atom, in this case the output length will be 1, since the number will be tried to be incremented).
-    If no incremental free names could be found, the original name be copied. 
-    @ingroup                    markers
-    @param    r_ob                The notation object
-    @param    default_name        The base atom for building the incremental numbered sequence
-    @param    ignore_this_marker    A marker which can be ignored while searching for an unused name.
-                                For instance, when trying to make a given marker's name unique, one can ignore the marker itself. 
-                                Leave it to NULL for standard behavior.
-    @return                        The llll of unused incrementally numbered name found.
-    @remark                        To avoid confusions, you might want to be sure that the <default_name> has no numbers at the end.
-                                If you want to make a name unique, use make_marker_name_unique().
- */
-t_llll *find_unused_marker_names(t_notation_obj *r_ob, t_hatom *default_name, t_marker *ignore_this_marker);
-
-
-/** Make a marker name unique, by changing its numerical suffix.
-    For instance, it might change "foo2" to "foo5", if all "foo2", "foo3" and "foo4" are already taken
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The original names
-    @return            The first unused incrementally numered name found as llll.
-    @param    num_found_names        Pointer filled with the number of names found (length of #found_names)
- */
-t_llll *make_marker_name_unique(t_notation_obj *r_ob, t_llll *names);
-
-
-/** Change the name of the selected markers to a new name.
-    @ingroup            selection_changes
-    @param    r_ob        The notation object
-    @param    new_names    The new marker names as llll
-    @param    incremental    If this is 1, every name will be made unique by incrementing its numerical suffix
-    @return                1 if something has changed, 0 otherwise.
- */
-char change_selected_markers_name(t_notation_obj *r_ob, t_llll *new_names, char incremental);
-
-
-/** Get the unscaled x position of the marker.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker      The marker
-    @return                The unscaled x position of the marker
- */
-double get_marker_ux_position(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Get the marker onset in milliseconds.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker      The marker
-    @return                The marker onset in milliseconds
- */
-double get_marker_ms_position(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Obtain all the markers as an llll containing (<position_ms> <name>) for each marker.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    mode        If this is 1, the algorithm only returns the markers within a given "temporal window" (specified by the following paramters)
-                        If this is 0, all the markers are given.
-    @param    start_ms    If <mode> = 1, this is the starting position of the window in milliseconds (otherwise ignored)
-    @param    end_ms        If <mode> = 1, this is the ending position of the window in milliseconds (otherwise ignored)
-    @param    namefirst    If this is non-zero, the llll for each marker will be (<name> <position_ms>) 
-    @param    for_what    This should be usually one of #k_CONSIDER_FOR_DUMPING, #k_CONSIDER_FOR_SUBDUMPING, #k_CONSIDER_FOR_UNDO or #k_CONSIDER_FOR_SCORE2ROLL.
-    @param    start_meas_num    If <for_what> is #k_CONSIDER_FOR_SUBDUMPING and <r_ob> is a bach.score, this is the starting measure number for clipping (so that the dumped
-                            information will be with respect to this measure as the starting one).
-    @return                The markers' positions and names as llll.
-    @see                marker_get_as_llll()
- */
-t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms, char namefirst, char for_what, long start_meas_num);
-
-
-/** Get an llll containing the information about a specific marker (or about all the markers)
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker whose information has to be got, or NULL if you need the information about all markers
-    @param    command_number    Command number, if any (if no command is to be sent, use -1)
-    @param    namefirst    If this is 1, the usual (<position_ms> <name>) coupling is reversed for each marker, and becomes (<name> <position_ms>).
-                        If this is 0, the syntax is the usual (<position_ms> <name>).
-    @return                A list containing the information about a single marker or all markers.
-    @remark                Differntly from get_markers_as_llll(), the information we get can have names first and can concern a single marker
-                        (but cannot concern a temporal window).
-    @see                get_markers_as_llll()
- */
-t_llll *marker_get_as_llll(t_notation_obj *r_ob, t_marker *marker, long command_number, char namefirst);
-
-
-/** Set all markers of a given notation objet from a list of markers in the usual syntax (<position_ms> <name>) (<position_ms> <name>) ...
-    @ingroup            markers
-    @remark                Beware: this function does NOT free the markers llll, but might DELETE some parts of it!!!
-    @param    r_ob        The notation object
-    @param    markers        The llll determining the markers, in the above explained syntax
-    @param    add_mode    If this is 1, the markers will be added to the existing ones, otherwise the existing ones will be removed
-    @param    select      If this is 1, the markers will be added to the current selection
-    @see                marker_get_as_llll()
- */
-void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode, char select);
-
-
-/** Retrieve the timepoint of a measure-attached-marker (for [bach.score]).
-    @remark                Indeed the marker structure only contains the ID of the measure to which it is attached, and the symbolic offset inside the measure,
-                        but it does not contain the precise timepoint.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
-    @return                The timepoint of the marker
- */
-t_timepoint measure_attached_marker_to_timepoint(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Change the onset of a marker (and possibly its attachment type) either from a lexpr
-    containing the new milliseconds position or (if this latter is NULL), from a llllelem containing either the milliseconds position, or the new
-    timepoint (measure_number point_in_measure) or (measure_number point_in_measure voice_number) 
-    @remark                Does NOT check the correct markers order, need to do it later via check_markers_order()
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
-    @param    lexpr        The lexpr
-    @param    elem        The llllelem
- */
-void change_marker_onset_from_lexpr_or_llllelem(t_notation_obj *r_ob, t_marker *marker, t_lexpr *lexpr, t_llllelem *elem);
-
 
 
 

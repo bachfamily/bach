@@ -7956,7 +7956,6 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                         
                         if (modifiers == eCommandKey) { // delete point
                             undo_tick_create_for_notation_item(r_ob, undo_item, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                            create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
                             notation_item_clear_slot(r_ob, r_ob->active_slot_notationitem, s);
                             r_ob->changed_while_dragging = true;
                             *changed = 1;

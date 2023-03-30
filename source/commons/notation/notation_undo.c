@@ -375,7 +375,7 @@ void undo_tick_create_for_header(t_notation_obj *r_ob, e_header_elems what)
         return;
     
     r_ob->undo_header_elements_under_tick |= what;
-    t_llll *content = notationobj_get_header_as_llll(r_ob, what, true, true, true, k_CONSIDER_FOR_UNDO);
+    t_llll *content = notationobj_get_header_as_llll(r_ob, what, true, true, true, k_CONSIDER_FOR_UNDO, false);
     t_undo_redo_information *operation = undo_redo_information_create(0, k_HEADER_DATA, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, what, content);
     undo_redo_tick_create(r_ob, k_UNDO, 0, operation, true);
 }
@@ -1619,10 +1619,10 @@ t_undo_redo_information *undo_redo_information_reverse(t_notation_obj *r_ob, t_u
             if (obj_is_score)
                 newcontent = get_scorechord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
             else
-                newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO);
+                newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
             reverse_information = undo_redo_information_create(ID, k_CHORD, modif_type, param, path_after, path_before, k_HEADER_NONE, newcontent);
         } else if (modif_type == k_UNDO_MODIFICATION_TYPE_REMOVE) { // surely roll
-            newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO);
+            newcontent = get_rollchord_values_as_llll(r_ob, (t_chord *) item, k_CONSIDER_FOR_UNDO, false);
 //            newcontent = llll_clone(this_information->n_it_content);
             reverse_information = undo_redo_information_create(ID, k_CHORD, k_UNDO_MODIFICATION_TYPE_INSERT, param, path_after, path_before, k_HEADER_NONE, newcontent);
         } else if (modif_type == k_UNDO_MODIFICATION_TYPE_INSERT) { // surely roll
@@ -2092,7 +2092,7 @@ t_llll *notation_item_get_values_as_llll_for_undo(t_notation_obj *r_ob, t_notati
         return measure_get_values_as_llll(r_ob, (t_measure *)item, k_CONSIDER_FOR_UNDO, true, true);
     else if (item->type == k_CHORD) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-            return get_rollchord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO);
+            return get_rollchord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false);
         else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
             return get_scorechord_values_as_llll(r_ob, (t_chord *)item, k_CONSIDER_FOR_UNDO, false);
     } else if (item->type == k_NOTE) {

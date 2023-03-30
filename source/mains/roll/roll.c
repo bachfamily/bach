@@ -3657,32 +3657,6 @@ void roll_sel_reducefunction(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
 
 
-void roll_sel_reducefunction(t_roll *x, t_symbol *s, long argc, t_atom *argv){
-    char lambda = (s == _llllobj_sym_lambda);
-    
-    if (argc < 1) {
-        object_error((t_object *)x, "Not enough arguments!");
-        return;
-    }
-
-    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-
-    lock_general_mutex((t_notation_obj *)x);
-
-    notationobj_sel_reducefunction((t_notation_obj *)x, args, lambda);
-    
-    if (x->r_ob.need_perform_analysis_and_change)
-        process_chord_parameters_calculation_NOW(x);
-    
-    unlock_general_mutex((t_notation_obj *)x);
-    
-    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_REDUCE_FUNCTION);
-    
-    llll_free(args);
-}
-
-
-
 
 t_symbol *dumpselection_get_start_end_router(t_llll *forced_routers_ll)
 {

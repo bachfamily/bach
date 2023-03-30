@@ -1264,7 +1264,7 @@ void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
         else
             play_head_pos = onset_to_xposition_roll(r_ob, r_ob->play_head_start_ms, NULL);
 
-        get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
+        get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
         paint_playhead_line(g, r_ob->j_play_rgba, play_head_pos, playhead_y1, playhead_y2, r_ob->playhead_width, 3 * r_ob->zoom_y);
     }
     
@@ -2603,8 +2603,8 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
         }
         
         // standard positioning for start point and end point
-        double staff_top_y = get_staff_top_y(r_ob, chord_get_voice(r_ob, start), false);
-        double staff_bottom_y = get_staff_bottom_y(r_ob, chord_get_voice(r_ob, start), false);
+        double staff_top_y = get_staff_top_y(r_ob, chord_get_voice(r_ob, start), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
+        double staff_bottom_y = get_staff_bottom_y(r_ob, chord_get_voice(r_ob, start), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
         
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
             slur->start_ux = start->parent->tuttipoint_reference->offset_ux + start->stem_offset_ux + (start_nt ? start_nt->notecenter_stem_delta_ux : 0);
@@ -4559,7 +4559,7 @@ double notationobj_get_leftmost_alignment_ux_for_measure_accounting_for_graces(t
     double leftmost_alignment_ux_grace = DBL_MAX, leftmost_alignment_ux = DBL_MAX, barline_ux = 0;
     char has_graces = false;
     for (t_scorevoice *voice = voice_min; voice && voice->prev != voice_max; voice = voice->next) {
-        t_measure *meas = nth_measure_of_scorevoice(voice, tp.measure_num);
+        t_measure *meas = measure_get_nth(voice, tp.measure_num);
         if (!meas || !meas->tuttipoint_reference)
             continue;
         barline_ux = meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux;
@@ -40858,14 +40858,14 @@ long notationobj_dltoslot_do(t_notation_obj *r_ob, long pitchslotnum, long velsl
         switch (curr_it->type) {
             case k_NOTE:
                 changed = 1;
-                create_simple_notation_item_undo_tick(r_ob, curr_it, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_for_notation_item(r_ob, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 note_dltoslot_do(r_ob, (t_note *)curr_it, pitchslotnum, velslotnum, absolutepitch);
                 break;
                 
             case k_CHORD:
             {
                 changed = 1;
-                create_simple_notation_item_undo_tick(r_ob, curr_it, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_for_notation_item(r_ob, curr_it, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 t_chord *ch = (t_chord *)curr_it;
                 for (t_note *nt = ch->firstnote; nt; nt = nt->next)
                     note_dltoslot_do(r_ob, nt, pitchslotnum, velslotnum, absolutepitch);

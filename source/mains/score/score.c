@@ -2816,32 +2816,6 @@ void score_sel_reducefunction(t_score *x, t_symbol *s, long argc, t_atom *argv){
 }
 
 
-void score_sel_reducefunction(t_score *x, t_symbol *s, long argc, t_atom *argv){
-    long slotnum;
-    char lambda = (s == _llllobj_sym_lambda);
-    
-    if (argc < 1) {
-        object_error((t_object *)x, "Not enough arguments!");
-        return;
-    }
-    
-    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-
-    lock_general_mutex((t_notation_obj *)x);
-    
-    notationobj_sel_reducefunction((t_notation_obj *)x, args, lambda);
-    
-    if (x->r_ob.need_perform_analysis_and_change)
-        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
-    
-    unlock_general_mutex((t_notation_obj *)x);
-    
-    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_REDUCE_FUNCTION);
-    
-    llll_free(args);
-}
-
-
 
 
 
@@ -10492,7 +10466,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
     t_llll *right = llll_slice(x->r_ob.voicenames_as_llll, x->r_ob.num_voices);
     llll_free(right);
 
-//    notation_obj_setattr_stafflines((t_notation_obj *) x, NULL, -1, NULL); // -1 is to handle it inside
+//    notationobj_setattr_stafflines((t_notation_obj *) x, NULL, -1, NULL); // -1 is to handle it inside
     
     parse_fullaccpattern_to_voices((t_notation_obj *) x);
 
@@ -14439,7 +14413,7 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
             if (m1 && m2) {
                 double start_ms = (m1->firstchord) ? chord_get_onset_ms((t_notation_obj *)x, m1->firstchord) : unscaled_xposition_to_ms((t_notation_obj *)x, m1->tuttipoint_reference->offset_ux + m1->start_barline_offset_ux, 1);
                 double end_ms = (m2->next && m2->next->firstchord) ? chord_get_onset_ms((t_notation_obj *)x, m2->next->firstchord) : unscaled_xposition_to_ms((t_notation_obj *)x, m2->tuttipoint_reference->offset_ux + m2->start_barline_offset_ux + m2->width_ux, 1);
-                llll_appendllll(out_llll, get_markers_as_llll((t_notation_obj *) x, 1, start_ms, end_ms, false, k_CONSIDER_FOR_SUBDUMPING, start_meas), 0, WHITENULL_llll);
+                llll_appendllll(out_llll, get_markers_as_llll((t_notation_obj *) x, 1, start_ms, end_ms, false, k_CONSIDER_FOR_SUBDUMPING, start_meas, 0), 0, WHITENULL_llll);
             }
         }
     }
@@ -18218,11 +18192,11 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
         if (!ch->is_grace_chord && ch->r_sym_duration.r_num != 0 && rat_rat_cmp(ch->r_sym_onset, tp.pt_in_measure) == 0) {
             // just remove ties
             if (!changed) {
-                create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 if (meas->prev)
-                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_CHANGE);
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 if (meas->next)
-                    create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas->next, k_UNDO_MODIFICATION_CHANGE);
+                    undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)meas->next, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 changed = true;
                 recompute_all_for_measure((t_notation_obj *) x, meas, true);
             }

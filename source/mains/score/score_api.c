@@ -6944,7 +6944,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                     if (voice_implied_in_tranche[v]) {
                         t_timepoint tp_start = ms_to_timepoint((t_notation_obj *)x, start_tranche->onset_ms, v, k_MS_TO_TP_RETURN_INTERPOLATION);
                         t_timepoint tp_end = ms_to_timepoint((t_notation_obj *)x, end_tranche->onset_ms, v, k_MS_TO_TP_RETURN_INTERPOLATION);
-                        tranche_sym_dur = rat_rat_sum(tranche_sym_dur, get_sym_durations_between_timepoints(nth_scorevoice(x, v), tp_start, tp_end));
+                        tranche_sym_dur = rat_rat_sum(tranche_sym_dur, get_sym_durations_between_timepoints(scorevoice_get_nth(x, v), tp_start, tp_end));
                         count_v++;
                     }
                 }
@@ -10403,7 +10403,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 
                     paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, !marker_is_being_edited, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
                     if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
-                        double voice_staff_top_y = get_staff_top_y((t_notation_obj *)x, (t_voice *)nth_scorevoice(x, tp.voice_num), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+                        double voice_staff_top_y = get_staff_top_y((t_notation_obj *)x, (t_voice *)scorevoice_get_nth(x, tp.voice_num), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                         paint_circle(g, change_alpha(marker_color, 1), marker_color, this_marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);
                     }
                     

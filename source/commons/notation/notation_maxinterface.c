@@ -576,7 +576,7 @@ void notationobj_edclose(t_notation_obj *r_ob, char **ht, long size)
 {
     // the editor is closed. Let's replug the slot content!
     if (!r_ob->freeing && ht && r_ob->active_slot_notationitem && r_ob->active_slot_num >= 0) {
-        create_simple_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_CHANGE);
+        undo_tick_create_for_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         t_llll *ll;
         if (r_ob->slotinfo[r_ob->active_slot_num].slot_type == k_SLOT_TYPE_TEXT) {
             ll = llll_get();
@@ -1304,7 +1304,7 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
-    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_notificationsformessages = 0, has_continuousbang = 0;
+    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0;
     t_atom_long dblclicksendsvalues = 0;
     double slotbgalpha = 0, backgroundslotfontsize = 0;
     t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0, continuousbang = -1;
@@ -1510,14 +1510,14 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
     // @description Sets the percentage of transparency of the slot windows (0 being completely transparent, 100
     // being completely opaque.
 
-    CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "bgslots", 0, background_slots, CONST_MAX_SLOTS, notation_obj_setattr_backgroundslots);
+    CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "bgslots", 0, background_slots, CONST_MAX_SLOTS, notationobj_setattr_backgroundslots);
     CLASS_ATTR_STYLE_LABEL(c,"bgslots",0,"text","Slots In Background");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bgslots",0,"");
     // @description Sets the slots to be displayed on the background even when slots windows are not open.
     // The attribute expects a list of integers, each representing a slot number.
 
     // (just for bw compatibility)
-    CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "backgroundslots", 0, background_slots, CONST_MAX_SLOTS, notation_obj_setattr_backgroundslots);
+    CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "backgroundslots", 0, background_slots, CONST_MAX_SLOTS, notationobj_setattr_backgroundslots);
     CLASS_ATTR_PAINT(c,"backgroundslots",0);
     CLASS_ATTR_INVISIBLE(c, "backgroundslots", 0); // just for bw compatibility
                                                    // @exclude all
@@ -1555,7 +1555,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Sets the independent zoom factor relative to the slots displayed in background.
 
-        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "popupmenuslots", 0, popup_menu_slots, CONST_MAX_SLOTS, notation_obj_setattr_popupmenuslots);
+        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "popupmenuslots", 0, popup_menu_slots, CONST_MAX_SLOTS, notationobj_setattr_popupmenuslots);
         CLASS_ATTR_STYLE_LABEL(c,"popupmenuslots",0,"text","Slots In Popup Menu");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"popupmenuslots",0,"");
         // @exclude bach.slot
@@ -1566,7 +1566,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknotecolortoslot",0,"text","Link Note Color To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknotecolortoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknotecolortoslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "linknotecolortoslot", (method)NULL, (method)notation_obj_setattr_linknotecolortoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknotecolortoslot", (method)NULL, (method)notationobj_setattr_linknotecolortoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content must be linked to the note colors.
         // An int, float, floatlist or color slot is expected. Int slots are mapped on default colors,
@@ -1581,7 +1581,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linklyricstoslot",0,"text","Link Lyrics To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linklyricstoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linklyricstoslot",0,tempstr);
-        CLASS_ATTR_ACCESSORS(c, "linklyricstoslot", (method)NULL, (method)notation_obj_setattr_linklyricstoslot);
+        CLASS_ATTR_ACCESSORS(c, "linklyricstoslot", (method)NULL, (method)notationobj_setattr_linklyricstoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is to be displayed as lyrics.
         // A text slot is expected.
@@ -1592,7 +1592,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknoteheadtoslot",0,"text","Link Note Head To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknoteheadtoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknoteheadtoslot",0,tempstr);
-        CLASS_ATTR_ACCESSORS(c, "linknoteheadtoslot", (method)NULL, (method)notation_obj_setattr_linknoteheadtoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknoteheadtoslot", (method)NULL, (method)notationobj_setattr_linknoteheadtoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is to be associated with the notehead
         // characters of each note. A slot of type "notehead" (or, for backward compatibility, "int") is expected.
@@ -1602,7 +1602,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknoteheadfonttoslot",0,"text","Link Note Head Font To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknoteheadfonttoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknoteheadfonttoslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "linknoteheadfonttoslot", (method)NULL, (method)notation_obj_setattr_linknoteheadfonttoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknoteheadfonttoslot", (method)NULL, (method)notationobj_setattr_linknoteheadfonttoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is the name of the font with which
         // the note should be displayed. A text slot is expected.
@@ -1612,7 +1612,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknoteheadadjusttoslot",0,"text","Link Note Head Adjust To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknoteheadadjusttoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknoteheadadjusttoslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "linknoteheadadjusttoslot", (method)NULL, (method)notation_obj_setattr_linknoteheadadjusttoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknoteheadadjusttoslot", (method)NULL, (method)notationobj_setattr_linknoteheadadjusttoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is associated with noteheads
         // horizontal and vertical adjustments. An intlist or floatlist slot is expected.
@@ -1622,7 +1622,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknotesizetoslot",0,"text","Link Note Size To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknotesizetoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknotesizetoslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "linknotesizetoslot", (method)NULL, (method)notation_obj_setattr_linknoteheadsizetoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknotesizetoslot", (method)NULL, (method)notationobj_setattr_linknoteheadsizetoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is linked with a note size factor,
         // as a percentage (100 being the usual size). A float slot is expected (to change both note
@@ -1684,7 +1684,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"rightclickslot",0,"text","Right Click Directly Pops Out Slot");
         CLASS_ATTR_FILTER_CLIP(c, "rightclickslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rightclickslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "rightclickslot", (method)NULL, (method)notation_obj_setattr_rightclickdirectlypopsoutslot);
+        CLASS_ATTR_ACCESSORS(c, "rightclickslot", (method)NULL, (method)notationobj_setattr_rightclickdirectlypopsoutslot);
         // @exclude bach.slot
         // @description Sets the number of the slot whose window should automatically popup when a
         // right-click (or a two-fingers-tap) is performed on a notehead. 0 (default) means: none
@@ -1733,7 +1733,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DOUBLE(c, "samplingrate", 0, t_notation_obj, sampling_freq);
     CLASS_ATTR_STYLE_LABEL(c,"samplingrate",0,"text","Sampling Rate (For Filter Slots)");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"samplingrate",0,"44100");
-    CLASS_ATTR_ACCESSORS(c, "samplingrate", (method)NULL, (method)notation_obj_setattr_samplingrate);
+    CLASS_ATTR_ACCESSORS(c, "samplingrate", (method)NULL, (method)notationobj_setattr_samplingrate);
     // @description Sets the currentl sampling rate. "Manually" setting the sampling rate
     // is necessary for a proper handling of the filter slots. No object in the bach library is a
     // DSP objects, so this information should be set "by hand" (it could easily come from <o>dspstatus~</o>).
@@ -1757,7 +1757,7 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
     CLASS_ATTR_ALIAS(c,"bgcolor", "brgba");
     CLASS_ATTR_STYLE_LABEL(c, "bgcolor", 0, "rgba", "Background Color");
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"bgcolor",0,"1. 1. 1. 1.");
-    CLASS_ATTR_ACCESSORS(c, "bgcolor", (method)NULL, (method)notation_obj_setattr_bgcolor);
+    CLASS_ATTR_ACCESSORS(c, "bgcolor", (method)NULL, (method)notationobj_setattr_bgcolor);
     CLASS_ATTR_BASIC(c,"bgcolor", 0);
     // @description Sets the color of the background in RGBA format.
 
@@ -2062,7 +2062,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         CLASS_ATTR_LONG(c,"inset",0, t_notation_obj, j_inset_x);
         CLASS_ATTR_STYLE_LABEL(c,"inset",0,"text","Border Inset");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"inset",0,"7");
-        CLASS_ATTR_ACCESSORS(c, "inset", (method)NULL, (method)notation_obj_setattr_inset);
+        CLASS_ATTR_ACCESSORS(c, "inset", (method)NULL, (method)notationobj_setattr_inset);
         // @exclude bach.slot
         // @description Sets the stafflines inset at left and right borders of notation object, in pixels (rescaled according to the
         // <m>vzoom</m>). Defaults to 7.
@@ -2086,7 +2086,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"nonantialiasedstafflines",0, t_notation_obj, force_non_antialiased_staff_lines);
         CLASS_ATTR_STYLE_LABEL(c,"nonantialiasedstafflines",0,"onoff","Only Non-Antialiased Staff");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"nonantialiasedstafflines",0,"1");
-        CLASS_ATTR_ACCESSORS(c, "nonantialiasedstafflines", (method)NULL, (method)notation_obj_setattr_nonantialiasedstaff);
+        CLASS_ATTR_ACCESSORS(c, "nonantialiasedstafflines", (method)NULL, (method)notationobj_setattr_nonantialiasedstaff);
         // @exclude bach.slot
         // @description Toggles the ability to force stafflines to precisely lie on pixels on the screen.
         // If this attribute is 1, the <m>vzoom</m> attribute will be snapped to the closest value allowing stafflines to be drawn
@@ -2162,7 +2162,7 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
 
         CLASS_ATTR_LONG(c, "numvoices", 0, t_notation_obj, num_voices);
         CLASS_ATTR_STYLE_LABEL(c,"numvoices",0,"text","Number Of Voices");
-        CLASS_ATTR_ACCESSORS(c, "numvoices", (method)NULL, (method)notation_obj_setattr_numvoices);
+        CLASS_ATTR_ACCESSORS(c, "numvoices", (method)NULL, (method)notationobj_setattr_numvoices);
         CLASS_ATTR_SAVE(c, "numvoices", 0);
         CLASS_ATTR_BASIC(c,"numvoices", 0);
         // @exclude bach.slot
@@ -2176,7 +2176,7 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // notation object depending on the number of voice lllls given as input.
 
 
-        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "numparts", 0, voice_part, CONST_MAX_VOICES, notation_obj_setattr_numparts);
+        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "numparts", 0, voice_part, CONST_MAX_VOICES, notationobj_setattr_numparts);
         CLASS_ATTR_STYLE_LABEL(c,"numparts",0,"text","Number of Voices per Part");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"numparts",0,"1");
         // @exclude bach.slot
@@ -2214,7 +2214,7 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Toggles the ability, for pitch breakpoints, to have their own independent velocity.
 
-        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "midichannels", 0, midichannels_as_longlist, CONST_MAX_VOICES, notation_obj_setattr_midichannels);
+        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "midichannels", 0, midichannels_as_longlist, CONST_MAX_VOICES, notationobj_setattr_midichannels);
         CLASS_ATTR_STYLE_LABEL(c,"midichannels",0,"text","MIDI Channels");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"midichannels",0,"1");
         // @exclude bach.slot
@@ -2254,7 +2254,7 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"lyricsalignment",0,"enumindex","Lyrics Alignment");
         CLASS_ATTR_ENUMINDEX(c,"lyricsalignment", 0, "Auto Left Center Right");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"lyricsalignment", 0, "0");
-        CLASS_ATTR_ACCESSORS(c, "lyricsalignment", (method)NULL, (method)notation_obj_setattr_lyrics_alignment);
+        CLASS_ATTR_ACCESSORS(c, "lyricsalignment", (method)NULL, (method)notationobj_setattr_lyrics_alignment);
         // @exclude bach.slot
         // @description Sets how the lyrics syllables must be aligned with respect to the chord to which they refer.
         // Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Center",
@@ -2293,7 +2293,7 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
             CLASS_ATTR_DOUBLE(c,"onseteqthresh",0, t_notation_obj, onset_equality_threshold_ms);
             CLASS_ATTR_STYLE_LABEL(c,"onseteqthresh",0,"text","Onset Equality Threshold in Milliseconds");
             CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"onseteqthresh", 0, "0.001");
-            CLASS_ATTR_ACCESSORS(c, "onseteqthresh", (method)NULL, (method)notation_obj_setattr_onseteqthresh);
+            CLASS_ATTR_ACCESSORS(c, "onseteqthresh", (method)NULL, (method)notationobj_setattr_onseteqthresh);
             // @exclude bach.slot, bach.roll
             // @description Sets a threshold in milliseconds to determine whether two onsets coincide.
             // This is used to find synchronicities across voices with different tempi.
@@ -2378,7 +2378,7 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"highlightplay",0, t_notation_obj, highlight_played_notes);
         CLASS_ATTR_STYLE_LABEL(c,"highlightplay",0,"onoff","Highlight Played Notes");
         CLASS_ATTR_DEFAULT_SAVE(c,"highlightplay",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "highlightplay", (method)NULL, (method)notation_obj_setattr_highlightplay);
+        CLASS_ATTR_ACCESSORS(c, "highlightplay", (method)NULL, (method)notationobj_setattr_highlightplay);
         // @exclude bach.slot
         // @description Toggle the ability to highlight the played notes with the <m>playcolor</m>.
         // By default this is 0; if you turn it on be aware that it takes significant CPU time with scores with many notes.
@@ -2393,7 +2393,7 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"useloop",0, t_notation_obj, use_loop_region);
         CLASS_ATTR_STYLE_LABEL(c,"useloop",0,"onoff","Activate Loop Region (When Shown)");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"useloop", 0, "1");
-        CLASS_ATTR_ACCESSORS(c, "useloop", (method)NULL, (method)notation_obj_setattr_useloop);
+        CLASS_ATTR_ACCESSORS(c, "useloop", (method)NULL, (method)notationobj_setattr_useloop);
         // @exclude bach.slot
         // @description Toggle the ability to use the loop region during the playback, if such region is shown (see the
         // <m>showloop</m> attribute). If this is 1, and the loop region is shown, the playback will loop inside the region;
@@ -2546,7 +2546,7 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
 
         CLASS_ATTR_ATOM_VARSIZE(c, "dumpplaycmd", 0, t_notation_obj, play_offline_via_av, play_offline_via_ac, 16);
         CLASS_ATTR_STYLE_LABEL(c,"dumpplaycmd",0,"text","Play Offline Commands");
-        CLASS_ATTR_ACCESSORS(c, "dumpplaycmd", (method)notation_obj_getattr_dumpplaycmd, (method)notation_obj_setattr_dumpplaycmd);
+        CLASS_ATTR_ACCESSORS(c, "dumpplaycmd", (method)notationobj_getattr_dumpplaycmd, (method)notationobj_setattr_dumpplaycmd);
         CLASS_ATTR_DEFAULT_SAVE(c,"dumpplaycmd",0,"v");
         // @exclude bach.slot
         // @description Determines which keys or command are enabled to send the offline play output (up to 16 choices).
@@ -2594,17 +2594,6 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot, bach.score
 	}
 	
->>>>>>> devel-dg-slurs
-
-
-    if (obj_type != k_NOTATION_OBJECT_SLOT) {
-        CLASS_ATTR_CHAR(c,"keepselectioniflostfocus",0, t_notation_obj, keep_selection_if_lost_focus);
-        CLASS_ATTR_STYLE_LABEL(c,"keepselectioniflostfocus",0,"onoff","Keep Selection If Lost Focus");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"keepselectioniflostfocus",0,"1");
-        // @exclude bach.slot
-        // @description Toggles the ability to keep the current selection when the object lose the focus.
-        // This defaults to 1.
-    }
 
     CLASS_ATTR_CHAR(c,"senddoneatstartup",0, t_notation_obj, send_rebuild_done_at_startup);
     CLASS_ATTR_STYLE_LABEL(c,"senddoneatstartup",0,"onoff","Send 'Done' At Startup (If Data Was Saved)");
@@ -2629,7 +2618,7 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
         CLASS_ATTR_ENUMINDEX(c,"rulermode", 0, "Fixed Smart");
         CLASS_ATTR_STYLE_LABEL(c,"rulermode",0,"enumindex","Ruler/Grid Mode");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rulermode",0,"1");
-        CLASS_ATTR_ACCESSORS(c, "rulermode", (method)NULL, (method)notation_obj_setattr_rulermode);
+        CLASS_ATTR_ACCESSORS(c, "rulermode", (method)NULL, (method)notationobj_setattr_rulermode);
         // @description Sets the ruler mode: either a "fixed" mode, where division and subdivisions are fixed independently from
         // the horizontal zoom, or a "smart" mode, where divisions and subdivisions are automatically computed depending on the
         // current level of horizontal zoom.
@@ -2647,7 +2636,7 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
     CLASS_ATTR_ATOM(c,"maxundosteps",0, t_notation_obj, max_undo_steps);
     CLASS_ATTR_STYLE_LABEL(c,"maxundosteps",0,"text","Maximum Number Of Undo Steps");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"maxundosteps", 0, "50");
-    CLASS_ATTR_ACCESSORS(c, "maxundosteps", (method)NULL, (method)notation_obj_setattr_maxundosteps);
+    CLASS_ATTR_ACCESSORS(c, "maxundosteps", (method)NULL, (method)notationobj_setattr_maxundosteps);
     // @description Sets the maximum number of undo steps. 0 means that undo/redo system will be made inactive.
     // The "inf" symbol means unlimited undo steps.
     // Defaults to 50. You should change it to 0 if you perform heavy operations in real-time.
@@ -2663,7 +2652,7 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"undobang", 0, "1");
     // @description Toggles the ability of send the bang through the rightmost outlet when an undo/redo action is performed.
 
-    CLASS_ATTR_NOTATIONOBJ_ATOMPTR(c, "preventedit", 0, prevent_editing_atom, CONST_MAX_BACH_ELEMENT_TYPES + 10, notation_obj_setattr_preventedit);
+    CLASS_ATTR_NOTATIONOBJ_ATOMPTR(c, "preventedit", 0, prevent_editing_atom, CONST_MAX_BACH_ELEMENT_TYPES + 10, notationobj_setattr_preventedit);
     CLASS_ATTR_STYLE_LABEL(c,"preventedit",0,"text","Prevent Editing For");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"preventedit",0,"");
     // @description Prevents the interface editing of the specified elements, specified via an llll. Somehow, this is a lock specified globally for given notation items or features.
@@ -2683,7 +2672,7 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
     // prevent the modification of breakpoints onsets, but will, as an example, prevent the modification of breakpoints slopes. Use <b>preventedit [breakpoints onset modify]</b> to do both.
 
     if (obj_type != k_NOTATION_OBJECT_SLOT) {
-        CLASS_ATTR_LLLL(c, "pitcheditrange", 0, t_notation_obj, constraint_pitches_when_editing, notation_obj_getattr_pitcheditrange, notation_obj_setattr_pitcheditrange);
+        CLASS_ATTR_LLLL(c, "pitcheditrange", 0, t_notation_obj, constraint_pitches_when_editing, notationobj_getattr_pitcheditrange, notationobj_setattr_pitcheditrange);
         CLASS_ATTR_STYLE_LABEL(c,"pitcheditrange",0,"text_large","Constraint Pitches While Editing");
         CLASS_ATTR_SAVE(c, "pitcheditrange", 0);
         CLASS_ATTR_PAINT(c, "pitcheditrange", 0);
@@ -2792,7 +2781,7 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
         // Although names in bach can be general lllls, the default name must be a simple single symbol.
         // Marker will be then incrementally numbered starting from this default name.
 
-        CLASS_ATTR_LLLL(c, "defaultnoteslots", 0, t_notation_obj, default_noteslots, notation_obj_getattr_defaultnoteslots, notation_obj_setattr_defaultnoteslots);
+        CLASS_ATTR_LLLL(c, "defaultnoteslots", 0, t_notation_obj, default_noteslots, notationobj_getattr_defaultnoteslots, notationobj_setattr_defaultnoteslots);
         CLASS_ATTR_STYLE_LABEL(c,"defaultnoteslots",0,"text","Default Note Slots");
         CLASS_ATTR_SAVE(c, "defaultnoteslots", 0);
         CLASS_ATTR_PAINT(c, "defaultnoteslots", 0);
@@ -2946,7 +2935,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         CLASS_ATTR_CHAR(c,"showlyrics",0, t_notation_obj, show_lyrics);
         CLASS_ATTR_STYLE_LABEL(c,"showlyrics",0,"onoff","Show Lyrics");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showlyrics", 0, "1");
-        CLASS_ATTR_ACCESSORS(c, "showlyrics", (method)NULL, (method)notation_obj_setattr_showlyrics);
+        CLASS_ATTR_ACCESSORS(c, "showlyrics", (method)NULL, (method)notationobj_setattr_showlyrics);
         // @exclude bach.slot
         // @description Toggles the display of lyrics.
 
@@ -2965,7 +2954,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         CLASS_ATTR_CHAR(c,"ruler",0, t_notation_obj, ruler);
         CLASS_ATTR_STYLE_LABEL(c,"ruler",0,"enumindex","Show Ruler");
         CLASS_ATTR_ENUMINDEX(c,"ruler", 0, "Never Above Below Both");
-        CLASS_ATTR_ACCESSORS(c, "ruler", (method)NULL, (method)notation_obj_setattr_ruler);
+        CLASS_ATTR_ACCESSORS(c, "ruler", (method)NULL, (method)notationobj_setattr_ruler);
         CLASS_ATTR_BASIC(c,"ruler", 0);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"ruler",0,"0");
         // @exclude bach.slot
@@ -2998,7 +2987,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         CLASS_ATTR_CHAR(c,"showvscrollbar",0, t_notation_obj, show_vscrollbar);
         CLASS_ATTR_STYLE_LABEL(c,"showvscrollbar",0,"onoff","Show Vertical Scrollbar If Needed");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showvscrollbar", 0, "1");
-        CLASS_ATTR_ACCESSORS(c, "showvscrollbar", (method)NULL, (method)notation_obj_setattr_showvscrollbar);
+        CLASS_ATTR_ACCESSORS(c, "showvscrollbar", (method)NULL, (method)notationobj_setattr_showvscrollbar);
         // @exclude bach.slot
         // @description Toggles the display of the vertical scrollbar, if needed.
         // If unneeded, the scrollbar is not shown. By default this is 1: you should set it to 0 only
@@ -3034,7 +3023,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         CLASS_ATTR_STYLE_LABEL(c,"labelfamilies",0,"enumindex","Show Label Families");
         CLASS_ATTR_ENUMINDEX(c,"labelfamilies", 0, "None Singleton Bounding Box Venn");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"labelfamilies",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "labelfamilies", (method)NULL, (method)notation_obj_setattr_labelfamilies);
+        CLASS_ATTR_ACCESSORS(c, "labelfamilies", (method)NULL, (method)notationobj_setattr_labelfamilies);
         // @exclude bach.slot
         // @description Chooses the way in which elements bearing the same names should be visually tagged: <br />
         // - None (default): don't show label families. <br />
@@ -3098,7 +3087,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         CLASS_ATTR_CHAR(c,"showloop",0, t_notation_obj, show_loop_region);
         CLASS_ATTR_STYLE_LABEL(c,"showloop",0,"onoff","Show Loop Region");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showloop", 0, "0");
-        CLASS_ATTR_ACCESSORS(c, "showloop", (method)NULL, (method)notation_obj_setattr_showloop);
+        CLASS_ATTR_ACCESSORS(c, "showloop", (method)NULL, (method)notationobj_setattr_showloop);
         // @exclude bach.slot
         // @description Toggles the display of the loop region.
 
@@ -3154,7 +3143,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DOUBLE(c,"voicenamesfontsize",0, t_notation_obj, voice_names_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"voicenamesfontsize",0,"text","Voice Names Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"voicenamesfontsize", 0, "11");
-        CLASS_ATTR_ACCESSORS(c, "voicenamesfontsize", (method)NULL, (method)notation_obj_setattr_voicenames_font_size);
+        CLASS_ATTR_ACCESSORS(c, "voicenamesfontsize", (method)NULL, (method)notationobj_setattr_voicenames_font_size);
         // @exclude bach.slot
         // @description Sets the font size of voice names (rescaled according to the <m>vzoom</m>).
 		
@@ -3168,7 +3157,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DOUBLE(c,"markersfontsize",0, t_notation_obj, markers_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"markersfontsize",0,"text","Markers Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markersfontsize", 0, "9");
-        CLASS_ATTR_ACCESSORS(c, "markersfontsize", (method)NULL, (method)notation_obj_setattr_markers_font_size);
+        CLASS_ATTR_ACCESSORS(c, "markersfontsize", (method)NULL, (method)notationobj_setattr_markers_font_size);
         // @exclude bach.slot
         // @description Sets the font size of marker names (rescaled according to the <m>vzoom</m>).
 
@@ -3187,7 +3176,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DOUBLE(c,"lyricsfontsize",0, t_notation_obj, lyrics_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"lyricsfontsize",0,"text","Lyrics Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"lyricsfontsize", 0, "12");
-        CLASS_ATTR_ACCESSORS(c, "lyricsfontsize", (method)NULL, (method)notation_obj_setattr_lyrics_font_size);
+        CLASS_ATTR_ACCESSORS(c, "lyricsfontsize", (method)NULL, (method)notationobj_setattr_lyrics_font_size);
         // @exclude bach.slot
         // @description Sets the font size of lyrics (rescaled according to the <m>vzoom</m>).
         
@@ -3195,7 +3184,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
             CLASS_ATTR_DOUBLE(c,"temposize",0, t_notation_obj, tempo_size);
             CLASS_ATTR_STYLE_LABEL(c,"temposize",0,"text","Tempi Relative Size");
             CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"temposize", 0, "0.7");
-            CLASS_ATTR_ACCESSORS(c, "temposize", (method)NULL, (method)notation_obj_setattr_tempo_size);
+            CLASS_ATTR_ACCESSORS(c, "temposize", (method)NULL, (method)notationobj_setattr_tempo_size);
             // @exclude bach.slot, bach.roll
             // @description Sets the relative size of tempo markings with respect to standard notation.
         }
@@ -3275,7 +3264,7 @@ t_max_err notationobj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr,
         long prev_vel_handling = r_ob->velocity_handling;
         r_ob->velocity_handling = atom_getlong(av);
         if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || prev_vel_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE)
-            quick_notation_obj_recompute_all_chord_parameters(r_ob);
+            quick_notationobj_recompute_all_chord_parameters(r_ob);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }
     return MAX_ERR_NONE;
@@ -3306,7 +3295,7 @@ t_max_err notationobj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         r_ob->use_loop_region = CLAMP(atom_getlong(av), 0, 1);
         if (r_ob->notify_also_upon_messages && !r_ob->creatingnewobj)
@@ -3766,7 +3755,7 @@ t_max_err notationobj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, lo
 t_max_err notationobj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         r_ob->show_vscrollbar = CLAMP(atom_getlong(av), 0, 1);
-        quick_notation_obj_recompute_all_chord_parameters(r_ob);
+        quick_notationobj_recompute_all_chord_parameters(r_ob);
     }
     return MAX_ERR_NONE;
 }
@@ -4221,7 +4210,7 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
     // enharmonicity
     if (chosenelem > 400 && chosenelem <= 400 + CONST_MAX_ENHARMONICITY_OPTIONS){
         long chosen_idx = chosenelem - 401;
-        create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_CHANGE);
+        undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         enharmonically_retranscribe_note(r_ob, note, false, r_ob->current_enharmonic_list_screenmc[chosen_idx], r_ob->current_enharmonic_list_screenacc[chosen_idx]);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE);
@@ -5343,7 +5332,7 @@ void notationobj_free(t_notation_obj *r_ob)
     llll_free(r_ob->redo_llll);
     llll_free(r_ob->undo_notation_items_under_tick);
 
-    notation_obj_clear_prescheduled_events(r_ob);
+    notationobj_clear_prescheduled_events(r_ob);
     llll_free(r_ob->to_preschedule);
 
     if (r_ob->notation_cursor.touched_measures)
@@ -5355,14 +5344,14 @@ void notationobj_free(t_notation_obj *r_ob)
 
     // Obsolete stuff, kept for compatibility with old undo system
     // freeing old undo/redo lllls
-
+/*
     for (i = 0; i< CONST_MAX_UNDO_STEPS; i++) {
         llll_free(r_ob->old_undo_llll[i]);
         llll_free(r_ob->old_redo_llll[i]);
     }
     bach_freeptr(r_ob->old_undo_llll);
     bach_freeptr(r_ob->old_redo_llll);
-
+*/
 
 
     // **************************
@@ -5698,7 +5687,7 @@ char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_num
     return changed;
 }
 
-t_max_err notation_obj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         long z = atom_getlong(av);
         r_ob->show_lyrics = CLAMP(z, 0, 1);
@@ -6207,7 +6196,7 @@ void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notat
         if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
             r_ob->whole_obj_undo_tick_function(r_ob);
         else
-            undo_tick_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         notation_item_clear_slot(r_ob, nitem, slot_num);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
     }
