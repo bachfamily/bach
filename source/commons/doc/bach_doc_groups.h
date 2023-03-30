@@ -323,11 +323,11 @@
 			
 			Each elementary operation involves a notation item having an ID (which is indeed an "undo"-ID, since it is only used for undo). This ID comes
 			from storing the element into an hashtable. Currently, the smallest element being handled by undo is the chord; this means that if you change a note,
-			the elementary undo information will still be the information involving the whole chord, and so on. Four types of elementary modification can be asked for: #k_UNDO_MODIFICATION_CHANGE (which will store the whole information about the item, and will change it), #k_UNDO_MODIFICATION_ADD (which, be careful, is usually
-			stored when a notation item is DELETED, and which contain the ID and the information to rebuild it), #k_UNDO_MODIFICATION_DELETE (which, in turns, is used when
-			a notation item is ADDED, and will need no content, just the ID of the object to delete), #k_UNDO_MODIFICATION_CHANGE_FLAG (which only stores the flag of the 
+			the elementary undo information will still be the information involving the whole chord, and so on. Four types of elementary modification can be asked for: #k_UNDO_MODIFICATION_TYPE_CHANGE (which will store the whole information about the item, and will change it), #k_UNDO_MODIFICATION_TYPE_INSERT (which, be careful, is usually
+			stored when a notation item is DELETED, and which contain the ID and the information to rebuild it), #k_UNDO_MODIFICATION_TYPE_REMOVE (which, in turns, is used when
+			a notation item is ADDED, and will need no content, just the ID of the object to delete), #k_UNDO_MODIFICATION_TYPE_CHANGE_FLAG (which only stores the flag of the 
 			notation elements - and of its sons - and then will ask only to change the flag; this is used for instance when something is locked or muted), and
-			#k_UNDO_MODIFICATION_CHANGE_NAME (which only stores the names of notation elements, in a llll).
+			#k_UNDO_MODIFICATION_TYPE_CHANGE_NAME (which only stores the names of notation elements, in a llll).
 			
 			We stress once again that the elementary operations are not the operations that were performed, but the operation that HAVE to be performed by the
 			undo routine. On the other hand, the undo marker represent the operation that were actually performed.
@@ -349,7 +349,7 @@
 			value", meaning that they represent some important properties (and not some graphic representation parameters, or some utility value stocked for computational purpose).
 			Those parameters are usually defined as attributes within the bach framework.
 			An attribute is, indeed, a field of a structure having a "public value". To declare this, the macro you need to use is DECLARE_BACH_ATTR().
-			Indeed, some common attributes to notation objects (and also some peculiar ones, for convenience purposes) are declared in the notation_obj_bach_attribute_declares()
+			Indeed, some common attributes to notation objects (and also some peculiar ones, for convenience purposes) are declared in the notationobj_bach_attribute_declares()
 			routine. Each declared attributes must be associated with a name (a symbol, a good rule is that it has to be the same symbol as the router in the gathered syntax
 			assigning the same field via message), with a label (displayed in the bach inspector), with a owner type (the structure to which the attribute is referred, e.g. k_SLOTINFO
 			or k_CHORD), the structure name directly owning the attribute field, the structure member corresponding to the attribute field,

@@ -1333,24 +1333,6 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="continuousbang" get="1" set="1" type="int" size="1">
-			<digest>
-				Continuously Output Bang If Changed
-			</digest>
-			<description>
-				Toggles the ability to output continuously the bang through the last outlet
-				while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously.
-				This defaults to 0.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Continuously Output Bang If Changed" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-			</attributelist>
-		</attribute>
 		<attribute name="dynamicsoutputmode" get="1" set="1" type="int" size="1">
 			<digest>
 				Dynamics Output Mode
@@ -1487,6 +1469,24 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="notifycontinuously" get="1" set="1" type="int" size="1">
+			<digest>
+				Notify Continuously
+			</digest>
+			<description>
+				Toggles the ability to notify continuously via the last outlet
+				while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously.
+				This defaults to 0.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify Continuously" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="notifymessages" get="1" set="1" type="int" size="1">
 			<digest>
 				Notifications When Changed Via Messages
@@ -1497,7 +1497,7 @@
 				By default this is inactive.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Changed Via Messages" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -1531,12 +1531,39 @@
 				whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Display Is Refreshed" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="notifywith" get="1" set="1" type="int" size="1">
+			<digest>
+				Notify Interface Changes Via
+			</digest>
+			<description>
+				Chooses the notification type for interface changes: <br />
+				- 0 (bang, default): the simplest and less CPU-consuming alternative, only notifies with a bang when anything changes; <br />
+				- 1 (Operation): notify with an operation label; <br />
+				- 2 (Redo Transaction): notify verbosely with the operation label plus a sequence of change messages ('ticks') encapsulated
+				in a transaction (set of instructions across which orders are not refreshed).
+				This is the message you can directly provide to another notation object in order to reproduce the same effect; <br />
+				- 3 (Undo Data): same as the previous, but providing undo information instead.
+				- 4 (Redo Data): same as "Redo Transaction" but without the encapsulation, so the notification is a sequence of individual ticks (with a
+				starting operation label).
+				The practical difference between "Redo Transaction" and "Redo Data" is not just the leading "transaction" symbol, but more crucially
+				the path of the items, which in this last case does indeed account for any update of chords/markers/notes order between the change ticks; <br />
+				- 5 (Undo Data): same as the previous, but providing undo information instead. <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify Interface Changes Via" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="out" get="1" set="1" type="symbol" size="1">
@@ -1701,7 +1728,7 @@
 				By default this is 1.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Send 'Done' Only After Paint" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -1718,7 +1745,7 @@
 				for <o>bach.slot</o>) at the object instantiation, if content saved with the object is loaded.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Send 'Done' At Startup (If Data Was Saved)" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />

@@ -160,6 +160,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_symonset = gensym("symonset");
     x->s_symtail = gensym("symtail");
     x->s_dumpselection = gensym("dumpselection");
+    x->s_state = gensym("state");
+    x->s_tillnext = gensym("tillnext");
 
     x->s_FFGG = gensym("FFGG");
     x->s_FFG = gensym("FFG");
@@ -296,6 +298,12 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_quantize = gensym("quantize");
     x->s_zrange = gensym("zrange");
     x->s_zslope = gensym("zslope");
+    x->s_direction = gensym("direction");
+
+    x->s_add = gensym("add");
+    x->s_insert = gensym("insert");
+    x->s_remove = gensym("remove");
+    x->s_change = gensym("change");
 
     x->s_display = gensym("display");
     x->s_lowpass = gensym("lowpass");
@@ -379,6 +387,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_role = gensym("role");
     x->s_loop = gensym("loop");
     x->s_flags = gensym("flags");
+    x->s_flag = gensym("flag");
     x->s_path = gensym("path");
     x->s_painted = gensym("painted");
 
@@ -421,6 +430,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_value =  gensym("value");
     x->s_thresh =  gensym("thresh");
     
+    x->s_slur = gensym("slur");
+    x->s_slurs = gensym("slurs");
 
     x->s_names = gensym("names");
     x->s_usecustomnumber = gensym("usecustomnumber");
@@ -438,6 +449,13 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_header = gensym("header");
     x->s_height = gensym("height");
     x->s_root = gensym("root");
+
+    
+    x->s_mixed = gensym("mixed");
+    x->s_whole = gensym("whole");
+    x->s_durationline = gensym("durationline");
+    x->s_transaction = gensym("transaction");
+
     x->s_bachcursors = gensym("bachcursors");
     x->s_getdomains = gensym("getdomains");
     x->s_setdomains = gensym("setdomains");

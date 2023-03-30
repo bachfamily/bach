@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 505.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 354.0, 79.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,23 @@
 		"subpatcher_template" : "",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-5",
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 355.399993999999936, 169.0, 113.0, 21.0 ],
+					"sendto" : "bach.help.filtertags",
+					"text" : "see #syntax+slur",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"fontface" : 0,
 					"fontname" : "Arial",
@@ -197,8 +214,8 @@
 					"numinlets" : 6,
 					"numoutlets" : 8,
 					"numvoices" : 1,
-					"out" : "nnnnnnn",
-					"outlettype" : [ "", "", "", "", "", "", "", "bang" ],
+					"out" : "nnnnnnnn",
+					"outlettype" : [ "", "", "", "", "", "", "", "" ],
 					"patching_rect" : [ 6.0, 333.0, 335.0, 106.0 ],
 					"pitcheditrange" : [ "null" ],
 					"stafflines" : [ 5 ],
@@ -220,8 +237,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 93.899994000000007, 146.0, 385.0, 21.0 ],
-					"text" : "[<onset_ms> <NOTE1_LLLL> <NOTE2_LLLL>... <flag>]"
+					"patching_rect" : [ 62.899994000000007, 151.0, 477.0, 21.0 ],
+					"text" : "[<onset_ms> <NOTE1_LLLL> <NOTE2_LLLL>... <opt:slurs> <flag>]"
 				}
 
 			}
@@ -311,7 +328,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 602.0, 19.0 ],
-					"text" : "Tags: gathered, syntax, chord, roll",
+					"text" : "Tags: gathered, syntax, chord",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

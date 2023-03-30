@@ -67,6 +67,7 @@
 */
 
 #include "notation/notation.h" // header with all the structures for the notation objects
+#include "notation/notation_undo.h"
 #include "graphics/llll_modifiers.h"
 #include "ext.h"
 #include "ext_obex.h"
@@ -143,9 +144,7 @@ void send_uislot_values_as_llll(t_uislot *x, long send_what, t_llll *slot_indice
 
 void set_uislot_from_llll_from_read(t_uislot *x, t_llll* inputlist);
 
-void uislot_old_undo(t_uislot *x);
-void uislot_old_redo(t_uislot *x);
-void uislot_new_undo_redo(t_uislot *x, char what);
+void uislot_undo_redo(t_uislot *x, char what);
 void uislot_undo(t_uislot *x);
 void uislot_redo(t_uislot *x);
 void uislot_inhibit_undo(t_uislot *x, long val);
@@ -165,8 +164,6 @@ void uislot_resetslotinfo(t_uislot *x);
 void uislot_getdomain(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_getdomainpixels(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_domain(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
-
-void changed_bang(t_uislot *x, int change_type);
 
 t_max_err uislot_setattr_activeslot(t_uislot *x, t_object *attr, long ac, t_atom *av);
 
@@ -226,60 +223,6 @@ void uislot_bang(t_uislot *x)
     jbox_redraw((t_jbox *) x);
 }
 
-
-// OBSOLETE FUNCTION!!!! NOW IT IS NEVER CALLED!!!!
-// change_type: 0 = calculateUNDOSTEP; 1 = BANG+calculateUNDOSTEPonly; 2 = BANGonly
-void changed_bang(t_uislot *x, int change_type){
-    if (!x->r_ob.j_isdragging && (change_type & k_CHANGED_CREATE_UNDO_STEP)) {
-        
-        if (x->r_ob.save_data_with_patcher && !x->r_ob.j_box.l_dictll) // set dirty flag
-            object_attr_setchar(x->r_ob.patcher_parent, gensym("dirty"), 1);
-        
-//        double this_time = systime_ms();
-            
-        if (x->r_ob.allow_undo){
-            // update undo and redo lists
-
-            t_llll *kill_me_redo[CONST_MAX_UNDO_STEPS];
-            t_llll *kill_me_undo; 
-            int i;
-                
-            lock_general_mutex((t_notation_obj *)x);    
-            for (i = 0; i< CONST_MAX_UNDO_STEPS; i++) { // deleting redolist
-                kill_me_redo[i] = x->r_ob.old_redo_llll[i];
-                x->r_ob.old_redo_llll[i] = NULL;
-            }
-            
-            // deleting last element of the undo list
-            kill_me_undo = x->r_ob.old_undo_llll[CONST_MAX_UNDO_STEPS - 1];
-            
-            for (i = CONST_MAX_UNDO_STEPS - 1; i > 0; i--) // reassign undo steps
-                x->r_ob.old_undo_llll[i] = x->r_ob.old_undo_llll[i-1];
-            unlock_general_mutex((t_notation_obj *)x);    
-            
-            // killing elements
-            for (i = 0; i < CONST_MAX_UNDO_STEPS; i++) {
-                if (kill_me_redo[i])
-                    llll_free(kill_me_redo[i]);
-            }
-            if (kill_me_undo) 
-            llll_free(kill_me_undo);
-            
-            
-            // setting first element of the list
-            x->r_ob.old_undo_llll[0] = get_uislot_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_BODY + k_HEADER_SLOTINFO, NULL, true, true); // we don't undo clefs, key, midichannels and commands changes
-
-            // setting new undo time
-            x->r_ob.last_undo_time = systime_ms();
-        }
-    }
-
-    // in any case:
-    jbox_redraw((t_jbox *)x);    
-    
-    if (change_type & k_CHANGED_SEND_BANG)
-        llllobj_outlet_bang((t_object *) x, LLLL_OBJ_UI, 2);
-}
 
 
 void uislot_begin_preset(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
@@ -948,8 +891,8 @@ void C74_EXPORT ext_main(void *moduleRef){
 void uislot_resetslotinfo(t_uislot *x)
 {
     create_whole_uislot_undo_tick(x);
-    notation_obj_reset_slotinfo((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
+    notationobj_reset_slotinfo((t_notation_obj *)x);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
 }
 
 
@@ -959,7 +902,7 @@ void uislot_add_slot_do(t_uislot *x, t_llll *slot_as_llll)
     lock_general_mutex((t_notation_obj *)x);
     note_set_slots_from_llll((t_notation_obj *) x, x->r_ob.dummynote, slot_as_llll);
     unlock_general_mutex((t_notation_obj *)x);
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_SLOTS_TO_SELECTION);
 }
 
 
@@ -992,7 +935,7 @@ void uislot_erase_slot(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
         unlock_general_mutex((t_notation_obj *)x);
     }
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
 }
 
 void uislot_move_slot(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
@@ -1013,7 +956,7 @@ void uislot_move_slot(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
     move_note_slot((t_notation_obj *) x, x->r_ob.dummynote, from, to, false);
     unlock_general_mutex((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MOVE_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MOVE_SLOTS_FOR_SELECTION);
 }
 
 void uislot_copy_slot(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
@@ -1034,7 +977,7 @@ void uislot_copy_slot(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
     move_note_slot((t_notation_obj *) x, x->r_ob.dummynote, from, to, true);
     unlock_general_mutex((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_COPY_SLOTS_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_COPY_SLOTS_FOR_SELECTION);
 }
 
 
@@ -1146,9 +1089,9 @@ void create_whole_uislot_undo_tick(t_uislot *x){
         t_llll *content = get_uislot_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, NULL, true, true);
         // we clone the content outside the memory pool so that it does not fill it
         t_llll *content_cloned = llll_clone_extended(content, WHITENULL_llll, 1, NULL);
-        t_undo_redo_information *operation = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, content_cloned);
+        t_undo_redo_information *operation = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, k_HEADER_NONE, content_cloned);
         llll_free(content);
-        create_undo_redo_tick((t_notation_obj *) x, k_UNDO, 0, operation, true);
+        undo_redo_tick_create((t_notation_obj *) x, k_UNDO, 0, operation, true);
     }
 }
 
@@ -1475,8 +1418,7 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.width = 200;
     x->r_ob.height = 100;
 
-    notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notation_obj_fn) create_whole_uislot_undo_tick, NULL, (notation_obj_undo_redo_fn)uislot_new_undo_redo, (bach_paint_ext_fn)uislot_paint_ext);
-
+    notationobj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notationobj_fn) create_whole_uislot_undo_tick, NULL, (notationobj_undo_redo_fn)uislot_undo_redo, (bach_paint_ext_fn)uislot_paint_ext, NULL, NULL);
 
     x->r_ob.active_slot_num = 0;
     x->r_ob.active_slot_num_1based = 1;
@@ -1484,12 +1426,6 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
 
     // retrieving patcher parent
     object_obex_lookup(x, gensym("#P"), &(x->r_ob.patcher_parent));
-    
-    // initializing undo/redo lists
-    for (i = 0; i < CONST_MAX_UNDO_STEPS; i++) {
-        x->r_ob.old_undo_llll[i] = NULL;
-        x->r_ob.old_redo_llll[i] = NULL;
-    }
     
     initialize_popup_menus((t_notation_obj *) x);
     initialize_slots((t_notation_obj *) x, false);
@@ -1516,7 +1452,7 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
     }
     
     // setup llll
-    llllobj_jbox_setup((t_llllobj_jbox *) x, 2, "b44"); 
+    llllobj_jbox_setup((t_llllobj_jbox *) x, 2, "444", NULL);
 
     initialize_textfield((t_notation_obj *) x);    
     
@@ -1546,9 +1482,6 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
             llll_free(llll_for_rebuild);
         }
         
-        if (!USE_NEW_UNDO_SYSTEM && x->r_ob.allow_undo)
-            x->r_ob.old_undo_llll[0] = get_uislot_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_BODY + k_HEADER_SLOTINFO, NULL, true, true);
-        
         x->r_ob.last_undo_time = systime_ms();
 
         llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_UI);
@@ -1576,7 +1509,7 @@ void uislot_float(t_uislot *x, double num){
 
 void uislot_free(t_uislot *x){
     free_note((t_notation_obj *)x, x->r_ob.dummynote);
-    notation_obj_free((t_notation_obj *) x);
+    notationobj_free((t_notation_obj *) x);
 }
 
 
@@ -1774,8 +1707,8 @@ void uislot_mousedrag(t_uislot *x, t_object *patcherview, t_pt pt, long modifier
     slot_dragged = slot_handle_mousedrag((t_notation_obj *) x, patcherview, pt, modifiers, &changed, &redraw);
     if (slot_dragged) {
         jbox_redraw((t_jbox *) x);
-        handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_DO_NOTHING, k_UNDO_OP_UNKNOWN);
         x->r_ob.changed_while_dragging = true;
+        handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? (x->r_ob.notify_with > 0 ? (k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG | k_CHANGED_FORCE_CREATE_UNDO_STEP_MARKER) : k_CHANGED_STANDARD_SEND_BANG) : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_MOUSEDRAG_CHANGE);
         return;
     }
 }
@@ -1792,7 +1725,7 @@ void uislot_okclose(t_uislot *x, char *s, short *result)
 }
 
 void uislot_edclose(t_uislot *x, char **ht, long size){
-    notation_obj_edclose((t_notation_obj *) x, ht, size);
+    notationobj_edclose((t_notation_obj *) x, ht, size);
 }
 
 
@@ -1832,7 +1765,7 @@ void uislot_mousedown(t_uislot *x, t_object *patcherview, t_pt pt, long modifier
     clicked_slot = slot_handle_mousedown((t_notation_obj *) x, patcherview, pt, modifiers, &clicked_obj, &clicked_ptr, &changed, need_popup);
     unlock_general_mutex((t_notation_obj *)x);    
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_SEND_BANG, k_UNDO_OP_CHANGE_SLOT);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_SEND_BANG, k_UNDO_OP_CHANGE_SLOT);
 }
 
 
@@ -1886,7 +1819,7 @@ t_llll* get_uislot_values_as_llll(t_uislot *x, e_data_considering_types for_what
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
     
-    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what, false));
+    llll_chain(out_llll, notationobj_get_header_as_llll((t_notation_obj *)x, dump_what, false, explicitly_get_also_default_stuff, for_what == k_CONSIDER_FOR_UNDO, for_what, false));
     
     if (dump_what & k_HEADER_BODY)
         llll_appendllll(out_llll, note_get_some_slots_values_as_llll((t_notation_obj *) x, x->r_ob.dummynote, 0, slot_indices), 0, WHITENULL_llll);
@@ -1907,7 +1840,7 @@ void uislot_mouseup(t_uislot *x, t_object *patcherview, t_pt pt, long modifiers)
     x->r_ob.j_mouse_is_down = false;
     x->r_ob.j_isdragging = false;
 
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MOUSEDRAG_CHANGE);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MOUSEDRAG_CHANGE);
 
     bach_set_cursor((t_object *)x, &x->r_ob.j_mouse_cursor, patcherview, BACH_CURSOR_DEFAULT);
 
@@ -2030,7 +1963,7 @@ void uislot_mousedoubleclick(t_uislot *x, t_object *patcherview, t_pt pt, long m
 
     if (clicked_slot) {
         unlock_general_mutex((t_notation_obj *)x);    
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
     }
 }
 
@@ -2079,7 +2012,7 @@ void uislot_enter(t_uislot *x)    // enter is triggerd at "endeditbox time"
         }
     } else if (x->r_ob.is_editing_type == k_NUMBER_IN_SLOT) {
         t_llll *ll = llll_from_text_buf(text, size > MAX_SYM_LENGTH);
-        create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
+        undo_tick_create_for_notation_item((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, ll);
         llll_free(ll);
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
@@ -2162,7 +2095,7 @@ long uislot_key(t_uislot *x, t_object *patcherview, long keycode, long modifiers
             if (x->r_ob.selected_slot_items->l_size > 0) {
                 create_whole_uislot_undo_tick(x);
                 delete_all_selected_function_points((t_notation_obj *)x, x->r_ob.active_slot_num);
-                handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLOT_CONTENT);
+                handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLOT_CONTENT);
             }
         }
     } else if ((keycode == 'c' || keycode == 'x') && x->r_ob.allow_copy_paste) { // Cmd+C or Cmd+X
@@ -2170,9 +2103,9 @@ long uislot_key(t_uislot *x, t_object *patcherview, long keycode, long modifiers
                 // copy/cut
                 if (x->r_ob.active_slot_num >= 0 && x->r_ob.dummynote) { // we copy the slot
                     if (x->r_ob.selected_slot_items->l_size > 0)
-                        notation_obj_copy_slot_selection((t_notation_obj *)x, &clipboard, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, keycode == 'x');
+                        notationobj_copy_slot_selection((t_notation_obj *)x, &clipboard, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, keycode == 'x');
                     else
-                        notation_obj_copy_slot((t_notation_obj *)x, &clipboard, x->r_ob.active_slot_notationitem, (modifiers & eShiftKey) ? -1 : x->r_ob.active_slot_num, keycode == 'x');
+                        notationobj_copy_slot((t_notation_obj *)x, &clipboard, x->r_ob.active_slot_notationitem, (modifiers & eShiftKey) ? -1 : x->r_ob.active_slot_num, keycode == 'x');
                 }
                 return 1;
             }
@@ -2214,7 +2147,7 @@ long uislot_key(t_uislot *x, t_object *patcherview, long keycode, long modifiers
                         
                         create_whole_uislot_undo_tick(x);
                         paste_slotitems((t_notation_obj *) x, (t_notation_item *)x->r_ob.dummynote, x->r_ob.active_slot_num, clipboard.gathered_syntax, activeslotwin, offset, !(modifiers & eControlKey));
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
                     }
                 }
             }
@@ -2238,42 +2171,6 @@ void uislot_focuslost(t_uislot *x, t_object *patcherview) {
 }
 
 
-void uislot_old_redo(t_uislot *x){
-    if (x->r_ob.old_redo_llll[0]) {
-        int i;
-        set_uislot_from_llll(x, x->r_ob.old_redo_llll[0], true); // resetting roll
-        
-        lock_general_mutex((t_notation_obj *)x);    
-        for (i = CONST_MAX_UNDO_STEPS - 1; i > 0; i--) // reshifting all undo elements
-            x->r_ob.old_undo_llll[i]=x->r_ob.old_undo_llll[i-1];
-        x->r_ob.old_undo_llll[0] = x->r_ob.old_redo_llll[0];
-        for (i = 0; i < CONST_MAX_UNDO_STEPS - 1; i++) // reshifting all redo elements
-            x->r_ob.old_redo_llll[i]=x->r_ob.old_redo_llll[i+1];
-        x->r_ob.old_redo_llll[CONST_MAX_UNDO_STEPS - 1] = NULL;
-        unlock_general_mutex((t_notation_obj *)x);    
-    } else {
-        object_warn((t_object *)x, "Can't redo!");
-    }
-}
-
-void uislot_old_undo(t_uislot *x){
-    if (x->r_ob.old_undo_llll[1]) {
-        int i;
-        set_uislot_from_llll(x, x->r_ob.old_undo_llll[1], true); // resetting roll
-        
-        lock_general_mutex((t_notation_obj *)x);    
-        for (i = CONST_MAX_UNDO_STEPS - 1; i > 0; i--) // reshifting all redo elements
-            x->r_ob.old_redo_llll[i]=x->r_ob.old_redo_llll[i-1];
-        x->r_ob.old_redo_llll[0] = x->r_ob.old_undo_llll[0];
-        for (i = 0; i < CONST_MAX_UNDO_STEPS - 1; i++) // reshifting all undo elements
-            x->r_ob.old_undo_llll[i]=x->r_ob.old_undo_llll[i+1];
-        x->r_ob.old_undo_llll[CONST_MAX_UNDO_STEPS - 1] = NULL;
-        unlock_general_mutex((t_notation_obj *)x);    
-    } else {
-        object_warn((t_object *)x, "Can't undo!");
-    }
-}
-
 
 void uislot_inhibit_undo(t_uislot *x, long val){
     x->r_ob.inhibited_undo = val;
@@ -2286,23 +2183,17 @@ void uislot_prune_last_undo_step(t_uislot *x){
 
 
 void uislot_undo(t_uislot *x){
-    if (USE_NEW_UNDO_SYSTEM)
-        uislot_new_undo_redo(x, k_UNDO);
-    else
-        uislot_old_undo(x);
+    uislot_undo_redo(x, k_UNDO);
 }
 
 
 void uislot_redo(t_uislot *x){
-    if (USE_NEW_UNDO_SYSTEM)
-        uislot_new_undo_redo(x, k_REDO);
-    else
-        uislot_old_redo(x);
+    uislot_undo_redo(x, k_REDO);
 }
 
 
 // what = -1 -> undo, what = 1 -> redo
-void uislot_new_undo_redo(t_uislot *x, char what){
+void uislot_undo_redo(t_uislot *x, char what){
     t_llll *llll = NULL;
     long undo_op = k_UNDO_OP_UNKNOWN;
     
@@ -2335,9 +2226,9 @@ void uislot_new_undo_redo(t_uislot *x, char what){
     
     undo_op = hatom_getlong(&llll->l_head->l_hatom);
     if (x->r_ob.verbose_undo_redo) {
-        char *buf = undo_op_to_string(undo_op); 
+        char buf[256];
+        undo_op_to_string(undo_op, buf);
         object_post((t_object *) x, "%s %s", what == k_UNDO ? "Undo" : "Redo", buf);
-        bach_freeptr(buf);
     }
     
     // Destroy the marker
@@ -2359,7 +2250,7 @@ void uislot_new_undo_redo(t_uislot *x, char what){
         t_llll *newcontent = NULL;
         t_undo_redo_information *new_information = NULL;
 
-        if (modif_type != k_UNDO_MODIFICATION_CHANGE && modif_type != k_WHOLE_NOTATION_OBJECT && modif_type != k_HEADER_DATA) {
+        if (modif_type != k_UNDO_MODIFICATION_TYPE_CHANGE && modif_type != k_WHOLE_NOTATION_OBJECT && modif_type != k_HEADER_DATA) {
             object_error((t_object *) x, "Wrong undo/redo data");
             llll_destroyelem(llll->l_head);
             continue;
@@ -2368,14 +2259,14 @@ void uislot_new_undo_redo(t_uislot *x, char what){
         if (type == k_WHOLE_NOTATION_OBJECT){
             // need to reconstruct the whole uislot
             newcontent = get_uislot_values_as_llll(x, k_CONSIDER_FOR_UNDO, k_HEADER_ALL, NULL, false, true);
-            new_information = build_undo_redo_information(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
+            new_information = undo_redo_information_create(0, k_WHOLE_NOTATION_OBJECT, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, k_HEADER_NONE, newcontent);
             set_uislot_from_llll(x, content, false);
             
         } else if (type == k_NOTE) {
-            if (modif_type == k_UNDO_MODIFICATION_CHANGE) {
+            if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE) {
                 long i;
                 newcontent = get_uislotnote_values_as_llll((t_notation_obj *) x, x->r_ob.dummynote, k_CONSIDER_FOR_UNDO);
-                new_information = build_undo_redo_information(0, k_NOTE, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
+                new_information = undo_redo_information_create(0, k_NOTE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, k_HEADER_NONE, newcontent);
                 llll_flatten(content, 1, 0);
                 if (content->l_head)
                     llll_destroyelem(content->l_head);
@@ -2385,22 +2276,22 @@ void uislot_new_undo_redo(t_uislot *x, char what){
             }
             
         } else if (type == k_HEADER_DATA) {
-            if (modif_type == k_UNDO_MODIFICATION_CHANGE) { 
+            if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE) { 
                 newcontent = get_uislot_values_as_llll(x, k_CONSIDER_FOR_UNDO, header_info, NULL, false, true);
-                new_information = build_undo_redo_information(0, k_HEADER_DATA, k_UNDO_MODIFICATION_CHANGE, 0, 0, k_HEADER_NONE, newcontent);
+                new_information = undo_redo_information_create(0, k_HEADER_DATA, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state, 0, 0, k_HEADER_NONE, newcontent);
                 set_uislot_from_llll(x, content, false);
             }
         } 
         
         if (new_information)
-            create_undo_redo_tick((t_notation_obj *) x, -what, 1, new_information, false);
+            undo_redo_tick_create((t_notation_obj *) x, -what, 1, new_information, false);
         
         llll_free(content);
         bach_freeptr(this_information);
         llll_destroyelem(llll->l_head);
     }    
 
-    create_undo_redo_step_marker((t_notation_obj *) x, -what, 1, undo_op, false);
+    undo_redo_step_marker_create((t_notation_obj *) x, -what, 1, undo_op, false);
     systhread_mutex_unlock(x->r_ob.c_undo_mutex);    
     unlock_general_mutex((t_notation_obj *)x);    
 
@@ -2416,7 +2307,7 @@ void uislot_copy_or_cut(t_uislot *x, t_symbol *s, long argc, t_atom *argv, char 
         if (x->r_ob.active_slot_notationitem) {
             if (cut)
                 create_whole_uislot_undo_tick(x);
-            notation_obj_copy_slot((t_notation_obj *)x, &clipboard, x->r_ob.active_slot_notationitem, ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_LONG ?
+            notationobj_copy_slot((t_notation_obj *)x, &clipboard, x->r_ob.active_slot_notationitem, ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_LONG ?
                                    hatom_getlong(&ll->l_head->l_next->l_hatom) - 1 :
                                    (ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_SYM && hatom_getsym(&ll->l_head->l_next->l_hatom) == _sym_all ? -1 : x->r_ob.active_slot_num), cut);
         }
@@ -2441,7 +2332,7 @@ void uislot_paste(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
     } else if (ll->l_size >= 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
         if (clipboard.type == k_SLOT) {
             create_whole_uislot_undo_tick(x);
-            notation_obj_paste_slot((t_notation_obj *) x, &clipboard, 
+            notationobj_paste_slot((t_notation_obj *) x, &clipboard, 
                                     ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_LONG ? hatom_getlong(&ll->l_head->l_next->l_hatom) - 1 :
                                     (ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_SYM &&
                                      hatom_getsym(&ll->l_head->l_next->l_hatom) == _llllobj_sym_active ? x->r_ob.active_slot_num : -1));
@@ -2463,7 +2354,8 @@ void uislot_reducefunction(t_uislot *x, t_symbol *s, long argc, t_atom *argv)
     
     unlock_general_mutex((t_notation_obj *)x);
     
-    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_REDUCE_FUNCTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_REDUCE_FUNCTION);
+
     llll_free(args);
 }
 

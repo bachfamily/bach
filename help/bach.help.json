@@ -2804,6 +2804,34 @@
 				"seealso" : [ "query", "marker+role", "marker+content" ],
 				"tags" : [ "marker", "getmarker", "namefirst", "query", "retrieve", "search" ],
 				"title" : [ "Querying markers" ]
+			},
+			"Regions" : {
+				"filename" : [ "bach.help.notation.markers.30_regions.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "region" ],
+				"tags" : [ "marker", "region", "duration", "select", "selection" ],
+				"title" : [ "Markers and regions" ]
+			},
+			"Regionsyntax" : {
+				"filename" : [ "bach.help.notation.markers.31_regionsyntax.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "marker", "region" ],
+				"tags" : [ "marker", "region", "syntax", "tillnext" ],
+				"title" : [ "Region syntax" ]
+			},
+			"Regionsubroll" : {
+				"filename" : [ "bach.help.notation.markers.32_regionsubroll.maxpat" ],
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ "marker", "region", "subroll" ],
+				"tags" : [ "marker", "region", "output", "subroll", "dump", "single" ],
+				"title" : [ "Outputting single region via subroll" ]
+			},
+			"Regioninterface" : {
+				"filename" : [ "bach.help.notation.markers.35_regioninterface.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "marker", "region" ],
+				"tags" : [ "marker", "region", "interface", "duration" ],
+				"title" : [ "Region interface" ]
 			}
 		},
 		"Messages" : {
@@ -3751,7 +3779,7 @@
 			"Subroll" : {
 				"filename" : [ "bach.help.notation.messages.40_subroll.maxpat" ],
 				"objects" : [ "bach.roll" ],
-				"seealso" : [ "subroll+option" ],
+				"seealso" : [ "subroll+option", "marker+region" ],
 				"tags" : [ "message", "subroll", "extract", "portion", "roll", "dump", "voice", "single" ],
 				"title" : [ "Extract a portion of a bach.roll" ]
 			},

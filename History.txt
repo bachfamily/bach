@@ -1,16 +1,23 @@
 VERSION NOTES:
 
-v0.8.4
+0.9.0
 
-***********************
-*** VERSION CHANGES ***
-***********************
+*********************
+*** MAJOR CHANGES ***
+*********************
+
+- The bach notation objects now feature a new system of notification of interface actions that provides details on the elements being modified. 
+	See the new "notifywith" message. 
+
+- Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
 
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
 
 - bach.score: fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
 
 - bell: bach.sum, bach.prod now work
+
+
 
 v0.8.3
 

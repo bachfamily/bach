@@ -140,6 +140,8 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_symonset;
 	t_symbol	*s_symtail;
     t_symbol    *s_dumpselection;
+    t_symbol    *s_state;
+    t_symbol    *s_tillnext;
 
 	t_symbol	*s_FFGG;
 	t_symbol	*s_FFG;
@@ -276,6 +278,12 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_quantize;
 	t_symbol	*s_zrange;
 	t_symbol	*s_zslope;
+    t_symbol    *s_direction;
+
+    t_symbol    *s_add;
+    t_symbol    *s_insert;
+    t_symbol    *s_remove;
+    t_symbol    *s_change;
 
 	t_symbol	*s_display;
 	t_symbol	*s_lowpass;
@@ -358,6 +366,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_role;
 	t_symbol	*s_loop;
     t_symbol	*s_flags;
+    t_symbol    *s_flag;
     t_symbol	*s_path;
     t_symbol    *s_painted;
 
@@ -415,7 +424,13 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_header;
 	t_symbol	*s_height;
 	t_symbol	*s_root;
-	
+    
+    t_symbol    *s_mixed;
+    t_symbol    *s_whole;
+    t_symbol    *s_breakpointortail;
+    t_symbol    *s_durationline;
+    t_symbol    *s_transaction;
+
 	t_symbol	*s_bachcursors;
     
     t_symbol    *s_getdomains;
@@ -536,6 +551,8 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_symonset		(_llllobj_common_symbols->s_symonset)
 #define _llllobj_sym_symtail		(_llllobj_common_symbols->s_symtail)
 #define _llllobj_sym_dumpselection  (_llllobj_common_symbols->s_dumpselection)
+#define _llllobj_sym_state          (_llllobj_common_symbols->s_state)
+#define _llllobj_sym_tillnext       (_llllobj_common_symbols->s_tillnext)
 
 #define _llllobj_sym_FFGG			(_llllobj_common_symbols->s_FFGG)
 #define _llllobj_sym_FGG			(_llllobj_common_symbols->s_FGG)
@@ -673,6 +690,12 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_quantize		(_llllobj_common_symbols->s_quantize)
 #define _llllobj_sym_zrange			(_llllobj_common_symbols->s_zrange)
 #define _llllobj_sym_zslope			(_llllobj_common_symbols->s_zslope)
+#define _llllobj_sym_direction            (_llllobj_common_symbols->s_direction)
+
+#define _llllobj_sym_add            (_llllobj_common_symbols->s_add)
+#define _llllobj_sym_insert            (_llllobj_common_symbols->s_insert)
+#define _llllobj_sym_remove         (_llllobj_common_symbols->s_remove)
+#define _llllobj_sym_change         (_llllobj_common_symbols->s_change)
 
 #define _llllobj_sym_display		(_llllobj_common_symbols->s_display)
 #define _llllobj_sym_lowpass		(_llllobj_common_symbols->s_lowpass)
@@ -756,6 +779,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_timesig		(_llllobj_common_symbols->s_timesig)
 #define _llllobj_sym_role			(_llllobj_common_symbols->s_role)
 #define _llllobj_sym_loop			(_llllobj_common_symbols->s_loop)
+#define _llllobj_sym_flag           (_llllobj_common_symbols->s_flag)
 #define _llllobj_sym_flags			(_llllobj_common_symbols->s_flags)
 #define _llllobj_sym_path			(_llllobj_common_symbols->s_path)
 #define _llllobj_sym_painted            (_llllobj_common_symbols->s_painted)
@@ -815,6 +839,12 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_header	(_llllobj_common_symbols->s_header)
 #define _llllobj_sym_height	(_llllobj_common_symbols->s_height)
 #define _llllobj_sym_root	(_llllobj_common_symbols->s_root)
+
+#define _llllobj_sym_mixed    (_llllobj_common_symbols->s_mixed)
+#define _llllobj_sym_whole    (_llllobj_common_symbols->s_whole)
+#define _llllobj_sym_breakpointortail    (_llllobj_common_symbols->s_breakpointortail)
+#define _llllobj_sym_durationline    (_llllobj_common_symbols->s_durationline)
+#define _llllobj_sym_transaction    (_llllobj_common_symbols->s_transaction)
 
 #define _llllobj_sym_bachcursors	(_llllobj_common_symbols->s_bachcursors)
 

@@ -611,7 +611,7 @@ void notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(t_notati
     
     note_set_user_enharmonicity(note, new_pitch, false);
     
-    note->parent->need_recompute_parameters = true;
+    chord_set_recompute_parameters_flag(r_ob, note->parent);
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         note->parent->parent->need_check_ties = true;
         validate_accidentals_for_measure(r_ob, note->parent->parent);
@@ -1697,5 +1697,5 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
     if (par.stdev_thresh)
         lexpr_free(par.stdev_thresh);
 
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESPELL);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESPELL);
 }

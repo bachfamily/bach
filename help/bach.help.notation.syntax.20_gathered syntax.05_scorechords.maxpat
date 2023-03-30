@@ -43,6 +43,40 @@
 					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
+					"id" : "obj-7",
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 477.0, 204.0, 113.0, 21.0 ],
+					"sendto" : "bach.help.filtertags",
+					"text" : "see #syntax+slur",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-14",
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 184.0, 584.0, 21.0 ],
+					"sendto" : "bach.help.filtertags",
+					"text" : "The optional slots can be specified if the chord is a rest (otherwise they must be assigned to a note).",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
 					"id" : "obj-2",
 					"linecount" : 4,
 					"maxclass" : "bach.hypercomment",
@@ -177,7 +211,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 193.0, 475.0, 55.0 ],
+					"patching_rect" : [ 6.0, 206.0, 475.0, 55.0 ],
 					"text" : "We're introducing a measure having two chords, each having 1/2 as duration. The first one has a single note, the second one has two notes."
 				}
 
@@ -191,8 +225,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 112.5, 169.0, 385.0, 21.0 ],
-					"text" : "[<duration> <NOTE1_LLLL> <NOTE2_LLLL>... <flag>]"
+					"patching_rect" : [ 22.0, 169.0, 570.0, 21.0 ],
+					"text" : "[<duration> <NOTE1_LLLL> <NOTE2_LLLL>... <opt:slurs> <opt:slots> <flag>]"
 				}
 
 			}
@@ -258,8 +292,8 @@
 					"numinlets" : 7,
 					"numoutlets" : 9,
 					"numvoices" : 1,
-					"out" : "nnnnnnnn",
-					"outlettype" : [ "", "", "", "", "", "", "", "", "bang" ],
+					"out" : "nnnnnnnnn",
+					"outlettype" : [ "", "", "", "", "", "", "", "", "" ],
 					"patching_rect" : [ 6.0, 333.0, 231.0, 110.0 ],
 					"pitcheditrange" : [ "null" ],
 					"stafflines" : [ 5 ],
@@ -326,7 +360,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 602.0, 19.0 ],
-					"text" : "Tags: gathered, syntax, chord, score",
+					"text" : "Tags: gathered, syntax, chord",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -365,7 +399,7 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "int" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 490.399993999999992, 194.0, 20.0, 20.0 ],
+					"patching_rect" : [ 485.399993999999992, 228.0, 20.0, 20.0 ],
 					"rounded" : 60.0,
 					"text" : "1",
 					"textcolor" : [ 0.34902, 0.34902, 0.34902, 1.0 ],
