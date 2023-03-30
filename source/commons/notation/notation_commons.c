@@ -25192,6 +25192,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             note_y = mc_to_yposition(r_ob, note_get_screen_midicents(curr_nt), voice);
             
             double curr_nt_center_stafftop_uy = (note_y - staff_top_y)/r_ob->zoom_y;
+            curr_nt->center_stafftop_uy = curr_nt_center_stafftop_uy;
             
             if (!curr_nt->prev) {
                 chord->bottommostnote_stafftop_uy = curr_nt_center_stafftop_uy;
@@ -40189,7 +40190,7 @@ t_llll *notationobj_get_header_as_llll(t_notation_obj *r_ob, long dump_what, cha
         }
 
         if (dump_what & k_HEADER_MARKERS)
-            llll_appendllll(out_llll, get_markers_as_llll(r_ob, selection_only ? 2 : 0, 0, 0, false, for_what, 0), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_markers_as_llll(r_ob, selection_only ? 2 : 0, 0, 0, false, for_what, 0, 0), 0, WHITENULL_llll);
 
         if (dump_what & k_HEADER_STAFFLINES)
             llll_appendllll(out_llll, get_stafflines_as_llll(r_ob, true), 0, WHITENULL_llll);
