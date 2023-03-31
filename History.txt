@@ -22,10 +22,15 @@ VERSION NOTES:
 *** VERSION CHANGES ***
 ***********************
 
-- bach.score: Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
-
 - bach.roll, bach.score:
     Now clefs and keys behave properly w.r. to undo, even if changed via messages
+
+- bach.score: Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
+
+
+
+
+
 
 v0.8.3
 
