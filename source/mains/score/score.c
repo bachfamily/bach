@@ -1373,9 +1373,9 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
     t_symbol *tiemode = _llllobj_sym_each, *restseqmode = _llllobj_sym_each;
     t_atom_long skiprests = 0;
-    llll_parseargs_and_attrs_destructive((t_object *) x, selectllll, "ssi", gensym("tiemode"), &tiemode, gensym("restseqmode"), &restseqmode, gensym("skiprests"), &skiprests);
 
     if (selectllll) { 
+        llll_parseargs_and_attrs_destructive((t_object *) x, selectllll, "ssi", gensym("tiemode"), &tiemode, gensym("restseqmode"), &restseqmode, gensym("skiprests"), &skiprests);
         double ux1, ux2, mc1, mc2;
         
 // This was here to fake the behavior upon clicks. But it is only confusing!
