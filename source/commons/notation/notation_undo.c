@@ -84,7 +84,7 @@ long undo_redo_tick_create(t_notation_obj *r_ob, char what, char from_what, t_un
         r_ob->whole_obj_under_tick = true;
     
     if (lock_undo_mutex)
-        if (systhread_mutex_trylock(r_ob->c_undo_mutex))
+        if (trylock_undo_mutex(r_ob))
             must_unlock = false; // already locked
     
     if (what == k_UNDO && from_what == 0 && r_ob->redo_llll->l_size > 0)
@@ -98,18 +98,18 @@ long undo_redo_tick_create(t_notation_obj *r_ob, char what, char from_what, t_un
 #endif
     
     if (lock_undo_mutex && must_unlock)
-        systhread_mutex_unlock(r_ob->c_undo_mutex);
+        unlock_undo_mutex(r_ob);
     
     return 0;
 }
 
 
-void prune_last_undo_step(t_notation_obj *r_ob, char lock_undo_mutex)
+void prune_last_undo_step(t_notation_obj *r_ob, char also_lock_undo_mutex)
 {
     undo_ticks_remove_dangling(r_ob, true);
     
-    if (lock_undo_mutex)
-        systhread_mutex_lock(r_ob->c_undo_mutex);
+    if (also_lock_undo_mutex)
+        lock_undo_mutex(r_ob);
     
     if (r_ob->undo_llll->l_head) {
         t_llllelem *elem;
@@ -125,8 +125,8 @@ void prune_last_undo_step(t_notation_obj *r_ob, char lock_undo_mutex)
             hatom_setlong(&r_ob->undo_llll->l_head->l_hatom, marker_val);
     }
     
-    if (lock_undo_mutex)
-        systhread_mutex_unlock(r_ob->c_undo_mutex);
+    if (also_lock_undo_mutex)
+        unlock_undo_mutex(r_ob);
 }
 
 
@@ -191,7 +191,7 @@ int reordering_comparator(const void* p0, const void* p1)
         return ps0->onset - ps1->onset;
 }
 
-t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char from_what, long undo_op, char lock_undo_mutex)
+t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char from_what, long undo_op, char also_lock_undo_mutex)
 {
     t_llllelem *res = NULL;
     
@@ -201,8 +201,8 @@ t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char f
     if (what != k_UNDO && what != k_REDO)
         return NULL;
     
-    if (lock_undo_mutex)
-        systhread_mutex_lock(r_ob->c_undo_mutex);
+    if (also_lock_undo_mutex)
+        lock_undo_mutex(r_ob);
     
     if (what == k_UNDO && from_what == 0 && r_ob->redo_llll->l_size > 0) {
         llll_clear(r_ob->redo_llll); // we empty the redo list
@@ -349,8 +349,8 @@ t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char f
     
     r_ob->last_operation_is = 0;
     
-    if (lock_undo_mutex)
-        systhread_mutex_unlock(r_ob->c_undo_mutex);
+    if (also_lock_undo_mutex)
+        unlock_undo_mutex(r_ob);
     
     return res;
 }
@@ -1818,7 +1818,7 @@ long notationobj_undo_redo(t_notation_obj *r_ob, char what)
     char obj_is_score = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE);
     t_llll *measure_whose_flag_needs_to_be_cleared = obj_is_score ? llll_get() : NULL;
 
-    systhread_mutex_lock(r_ob->c_undo_mutex);
+    lock_undo_mutex(r_ob);
     
     if (what == k_UNDO)
         llll = r_ob->undo_llll;
@@ -1827,7 +1827,7 @@ long notationobj_undo_redo(t_notation_obj *r_ob, char what)
     
     if (!llll) {
         llll_free(measure_whose_flag_needs_to_be_cleared);
-        systhread_mutex_unlock(r_ob->c_undo_mutex);
+        unlock_undo_mutex(r_ob);
         unlock_general_mutex(r_ob);
         return flags;
     }
@@ -1841,7 +1841,7 @@ long notationobj_undo_redo(t_notation_obj *r_ob, char what)
         if (!(atom_gettype(&r_ob->max_undo_steps) == A_LONG && atom_getlong(&r_ob->max_undo_steps) == 0))
             object_warn((t_object *) r_ob, what == k_UNDO ? "Can't undo!" : "Can't redo!");
         llll_free(measure_whose_flag_needs_to_be_cleared);
-        systhread_mutex_unlock(r_ob->c_undo_mutex);
+        unlock_undo_mutex(r_ob);
         unlock_general_mutex(r_ob);
         flags |= k_UNDO_PERFORM_FLAG_NOTHING_DONE;
         return flags;
@@ -1906,7 +1906,7 @@ long notationobj_undo_redo(t_notation_obj *r_ob, char what)
     undo_redo_step_marker_create(r_ob, -what, 1, undo_op, false);
     r_ob->last_operation_is = what;
     
-    systhread_mutex_unlock(r_ob->c_undo_mutex);
+    unlock_undo_mutex(r_ob);
     
     return flags;
 }
@@ -2367,18 +2367,18 @@ void undo_ticks_remove_modif_undo_flag_to_last(t_notation_obj *r_ob){
 char undo_ticks_are_dangling(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty){
     char res = false;
     
-    systhread_mutex_lock(r_ob->c_undo_mutex);
+    lock_undo_mutex(r_ob);
     if ((r_ob->undo_llll && r_ob->undo_llll->l_head && hatom_gettype(&r_ob->undo_llll->l_head->l_hatom) != H_LONG) ||
         (also_return_true_if_undo_is_empty && (!r_ob->undo_llll->l_head || !r_ob->undo_llll)))    // we also set true if there are NO undos!
         res = true;
-    systhread_mutex_unlock(r_ob->c_undo_mutex);
+    unlock_undo_mutex(r_ob);
     
     return res;
 }
 
 
 void undo_ticks_remove_dangling(t_notation_obj *r_ob, char also_clear_ticks_flags){
-    systhread_mutex_lock(r_ob->c_undo_mutex);
+    lock_undo_mutex(r_ob);
     if (also_clear_ticks_flags)
         undo_ticks_remove_modif_undo_flag_to_last(r_ob);
     while (r_ob->undo_llll->l_head && hatom_gettype(&r_ob->undo_llll->l_head->l_hatom) != H_LONG) {
@@ -2388,7 +2388,7 @@ void undo_ticks_remove_dangling(t_notation_obj *r_ob, char also_clear_ticks_flag
         }
         llll_destroyelem(r_ob->undo_llll->l_head);
     }
-    systhread_mutex_unlock(r_ob->c_undo_mutex);
+    unlock_undo_mutex(r_ob);
 }
 
 

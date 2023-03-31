@@ -307,6 +307,8 @@ t_max_err roll_setattr_showstems(t_roll *x, t_object *attr, long ac, t_atom *av)
 t_max_err roll_setattr_nonantialiasedstaff(t_roll *x, t_object *attr, long ac, t_atom *av);
 t_max_err roll_setattr_clefs(t_roll *x, t_object *attr, long ac, t_atom *av);
 t_max_err roll_setattr_keys(t_roll *x, t_object *attr, long ac, t_atom *av);
+t_max_err roll_setattr_clefs_do(t_roll *x, t_object *attr, long ac, t_atom *av);
+t_max_err roll_setattr_keys_do(t_roll *x, t_object *attr, long ac, t_atom *av);
 t_max_err roll_setattr_tonedivision(t_roll *x, t_object *attr, long ac, t_atom *av);
 t_max_err roll_setattr_accidentalsgraphic(t_roll *x, t_object *attr, long ac, t_atom *av);
 t_max_err roll_setattr_accidentalspreferences(t_roll *x, t_object *attr, long ac, t_atom *av);
@@ -7084,12 +7086,35 @@ void C74_EXPORT ext_main(void *moduleRef){
 }
 
 t_max_err roll_setattr_clefs(t_roll *x, t_object *attr, long ac, t_atom *av){
+    t_max_err err = MAX_ERR_NONE;
+    char must_handle_undo = (!x->r_ob.creatingnewobj);
+    if (must_handle_undo)
+        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_CLEFS);
+    err = roll_setattr_clefs_do(x, attr, ac, av);
+    if (must_handle_undo)
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_CLEFS);
+    return err;
+}
+
+t_max_err roll_setattr_clefs_do(t_roll *x, t_object *attr, long ac, t_atom *av){
     t_max_err err = notationobj_setattr_clefs((t_notation_obj *)x, attr, ac, av);
     recalculate_all_chord_parameters(x);
     return err;
 }
 
 t_max_err roll_setattr_keys(t_roll *x, t_object *attr, long ac, t_atom *av){
+    t_max_err err = MAX_ERR_NONE;
+    char must_handle_undo = (!x->r_ob.creatingnewobj);
+    if (must_handle_undo)
+        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_KEYS);
+    err = roll_setattr_keys_do(x, attr, ac, av);
+    if (must_handle_undo)
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_KEYS);
+    return err;
+}
+
+
+t_max_err roll_setattr_keys_do(t_roll *x, t_object *attr, long ac, t_atom *av){
     t_max_err err = notationobj_setattr_keys((t_notation_obj *)x, attr, ac, av);
     check_all_voices_fullaccpatterns((t_notation_obj *)x);
     recalculate_all_chord_parameters(x);
@@ -9606,7 +9631,7 @@ void set_clefs_from_llll(t_roll *x, t_llll* clefs){
     if (clefs) {
         t_atom *av = NULL;
         long ac = llll_deparse(clefs, &av, 0, LLLL_D_NONE); // it's important that we do not backtick symbols, for instance G8vb can be interpreted as pitch and backticked!
-        roll_setattr_clefs(x, NULL, ac, av);
+        roll_setattr_clefs_do(x, NULL, ac, av);
         if (av) bach_freeptr(av);
     }
 }
@@ -9615,7 +9640,7 @@ void set_keys_from_llll(t_roll *x, t_llll* keys){
     if (keys) {
         t_atom *av = NULL;
         long ac = llll_deparse(keys, &av, 0, 1);
-        roll_setattr_keys(x, NULL, ac, av);
+        roll_setattr_keys_do(x, NULL, ac, av);
         if (av) bach_freeptr(av);
     }
 }
@@ -14351,7 +14376,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     }
     
     x->r_ob.j_dragging_operation = k_UNDO_OP_UNKNOWN;
-        
+    x->r_ob.private_flag &= ~k_NOTATION_OBJECT_FLAG_SLUR_WARNED_AT_MOUSEDRAG;
+
     evnum_incr();
 
     llll_format_modifiers(&modifiers, NULL);
@@ -14451,9 +14477,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     chosenclef = popup_menu_result_to_clef((t_notation_obj *) x, chosenelem);
                     if (chosenclef != k_CLEF_WRONG) {
                         if (!is_editable((t_notation_obj *)x, k_VOICE, k_MODIFICATION_CLEF)) return;
-                        change_voiceensemble_clef((t_notation_obj *) x, (t_voice *)voice, chosenclef, true);
-                        handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_CLEFS);
-                    } 
+                        change_voiceensemble_clef((t_notation_obj *) x, (t_voice *)voice, chosenclef); // undo handled inside
+                    }
                     
                     // keys?
                     chosenkeysym = popup_menu_result_to_keysymbol((t_notation_obj *) x, chosenelem);
@@ -14472,9 +14497,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                             else
                                 atom_setsym(av+i, x->r_ob.keys_as_symlist[i]);
                         }
-                        roll_setattr_keys(x, NULL, x->r_ob.num_voices, av);
-                        
-                        handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_KEYS);
+                        roll_setattr_keys(x, NULL, x->r_ob.num_voices, av); // undo handled inside
                     }
 
                     // midichannels?

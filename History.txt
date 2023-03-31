@@ -24,6 +24,8 @@ VERSION NOTES:
 
 - bach.score: Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
 
+- bach.roll, bach.score:
+    Now clefs and keys behave properly w.r. to undo, even if changed via messages
 
 v0.8.3
 

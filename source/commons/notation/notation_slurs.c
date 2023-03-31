@@ -165,7 +165,10 @@ void slur_change_starting_chord(t_notation_obj *r_ob, t_slur *slur, t_chord *new
 {
     if (notation_item_get_voicenumber(r_ob, (t_notation_item *)slur->start_chord) !=
         notation_item_get_voicenumber(r_ob, (t_notation_item *)newchord)) {
-        object_error((t_object *)r_ob, "bach currently does not support cross-voice slurs");
+        if (!(r_ob->private_flag & k_NOTATION_OBJECT_FLAG_SLUR_WARNED_AT_MOUSEDRAG)) {
+            object_warn((t_object *)r_ob, "bach currently does not support cross-voice slurs");
+            r_ob->private_flag |= k_NOTATION_OBJECT_FLAG_SLUR_WARNED_AT_MOUSEDRAG;
+        }
         return;
     }
     
@@ -205,7 +208,10 @@ void slur_change_ending_chord(t_notation_obj *r_ob, t_slur *slur, t_chord *newch
 {
     if (notation_item_get_voicenumber(r_ob, (t_notation_item *)slur->end_chord) !=
         notation_item_get_voicenumber(r_ob, (t_notation_item *)newchord)) {
-        object_error((t_object *)r_ob, "bach currently does not support cross-voice slurs");
+        if (!(r_ob->private_flag & k_NOTATION_OBJECT_FLAG_SLUR_WARNED_AT_MOUSEDRAG)) {
+            object_warn((t_object *)r_ob, "bach currently does not support cross-voice slurs");
+            r_ob->private_flag |= k_NOTATION_OBJECT_FLAG_SLUR_WARNED_AT_MOUSEDRAG;
+        }
         return;
     }
 

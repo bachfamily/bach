@@ -103,6 +103,8 @@ void sync_loop_ms_with_loop_tp(t_score *x);
 
 t_max_err score_setattr_clefs(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_keys(t_score *x, t_object *attr, long ac, t_atom *av);
+t_max_err score_setattr_clefs_do(t_score *x, t_object *attr, long ac, t_atom *av);
+t_max_err score_setattr_keys_do(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_align(t_score *x, t_object *attr, long ac, t_atom *av);
 
 void scoreapi_set_tonedivision(t_score *x, long s);

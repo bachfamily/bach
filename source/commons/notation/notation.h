@@ -1213,6 +1213,16 @@ typedef enum _notation_objects {
 } e_notation_objects;
 
 
+/** Notation object flags – very seldom used, to be honest, don't rely on them too much
+    @ingroup    notation
+ */
+typedef enum _notation_object_flags {
+    k_NOTATION_OBJECT_FLAG_NONE = 0,                            ///< None
+    k_NOTATION_OBJECT_FLAG_PERFORM_ANALYSIS_AND_CHANGE = 1,     ///< Must perform analysis and change
+    k_NOTATION_OBJECT_FLAG_SLUR_WARNED_AT_MOUSEDRAG = 2         ///< A warning about slurs has already been sent at mousedrag
+} e_notation_object_flags;
+
+
 
 /** Articulations.
     @ingroup    articulations
@@ -4114,7 +4124,7 @@ typedef struct _notation_obj
     long        add_staff;                    ///< (PRIVATE) Flag which is 1 during the process of staff adding
     long        add_voice;                    ///< (PRIVATE) Flag which is 1 during the process of voice adding
     char        itsme;                        ///< (PRIVATE) General flag to handle calls
-    long        private_flag;                ///< (PRIVATE) Generic private long flag
+    long        private_flag;                ///< (PRIVATE) Generic private long flag (see #e_notation_object_flags)
     char        numvoices_handled_at_startup;    ///< (PRIVATE) Flag to tell if the numvoices attribute has already been handled at startup or not
     char        creatingnewobj;                ///< (PRIVATE) Flag which is 1 before the attr_dictionary_process() and 0 afterwards
     char        firsttime;                    ///< (PRIVATE) Flag which is 1 before the first paint method has been called
@@ -13264,7 +13274,7 @@ void voiceensemble_create_from_selection(t_notation_obj *r_ob, char add_undo_tic
 
 void change_voiceensemble_key(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, t_symbol *new_key, char also_add_undo_tick);
 void change_voiceensemble_midichannel(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, long new_midichannel, char also_add_undo_tick);
-void change_voiceensemble_clef(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, long new_clef, char also_add_undo_tick);
+void change_voiceensemble_clef(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, long new_clef);
 
 t_llll *get_parts_as_llll(t_notation_obj *r_ob); // DEPRECATED
 t_llll *get_numparts_as_llll(t_notation_obj *r_ob);
@@ -15893,8 +15903,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                                 atom_setsym(av+i, x->r_ob.clefs_as_symlist[i]);
                         }
                         score_setattr_clefs(x, NULL, x->r_ob.num_voices, av);
-                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Clefs"));
-                    } 
+                    }
                     
                     // keys?
                     chosenkeysym = popup_menu_result_to_keysymbol((t_notation_obj *) x, chosenelem);
@@ -15909,7 +15918,6 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                                 atom_setsym(av+i, x->r_ob.keys_as_symlist[i]);
                         }
                         score_setattr_keys(x, NULL, x->r_ob.num_voices, av);
-                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Keys"));
                     }
                     
                     // midichannels?
@@ -18336,6 +18344,29 @@ void unlock_general_mutex(t_notation_obj *r_ob);
     @return            Returns non-zero if there was a problem entering.
  */
 long trylock_general_mutex(t_notation_obj *r_ob);
+
+
+/** Lock the notation object's undo mutex, corresponding to the field t_notation_obj::c_undo_mutex.
+    @ingroup    miscellanea
+    @param        r_ob            The notation object
+ */
+void lock_undo_mutex(t_notation_obj *r_ob);
+
+
+/** Unlock the notation object's undo mutex, corresponding to the field t_notation_obj::c_undo_mutex.
+    @ingroup    miscellanea
+    @param        r_ob            The notation object
+ */
+void unlock_undo_mutex(t_notation_obj *r_ob);
+
+
+/** Try to lock the notation object's undo mutex, corresponding to the field t_notation_obj::c_undo_mutex
+    Returns non-zero if cannot enter the code
+    @ingroup    miscellanea
+    @param        r_ob            The notation object
+    @return            Returns non-zero if there was a problem entering.
+ */
+long trylock_undo_mutex(t_notation_obj *r_ob);
 
 
 // Internal

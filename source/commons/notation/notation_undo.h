@@ -186,10 +186,10 @@ long undo_redo_tick_create(t_notation_obj *r_ob, char what, char from_what, t_un
     @param    from_what    Leave this to 0 if the tick is placed because some interface operation occurred; set this to 1 if the tick is placed because some
                         undo or redo command has been performed (and thus the corresponding inverse redo or undo ticks are being created).
     @param    undo_op        The operation which was performed, as one of the #e_undo_operations.
-    @param    lock_undo_mutex    If this is non-zero, the function also locks the undo mutex
+    @param    also_lock_undo_mutex    If this is non-zero, the function also locks the undo mutex
     @return                Return the llllelem corresponding to the positioned step marker (or NULL if none)
  */
-t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char from_what, long undo_op, char lock_undo_mutex);
+t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char from_what, long undo_op, char also_lock_undo_mutex);
 
 
 /**    Create a undo tick associated with some header change.
@@ -333,9 +333,9 @@ void undo_redo_tick_post(t_notation_obj *r_ob, long what, t_undo_redo_informatio
 /**    Prune the last undo step, by merging its undo ticks (undo information) into the previous undo step.
     @ingroup                undo
     @param    r_ob            The notation object
-    @param    lock_undo_mutex    Flag telling if the function has also to lock/unlock the #c_undo_mutex mutex of the #t_notation_obj.
+    @param    also_lock_undo_mutex    Flag telling if the function has also to lock/unlock the #c_undo_mutex mutex of the #t_notation_obj.
  */
-void prune_last_undo_step(t_notation_obj *r_ob, char lock_undo_mutex);
+void prune_last_undo_step(t_notation_obj *r_ob, char also_lock_undo_mutex);
 
 
 /**    Tell if a given notation item is under undo tick.

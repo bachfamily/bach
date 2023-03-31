@@ -12592,6 +12592,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     }
     
     x->r_ob.j_dragging_operation = k_UNDO_OP_UNKNOWN;
+    x->r_ob.private_flag &= ~k_NOTATION_OBJECT_FLAG_SLUR_WARNED_AT_MOUSEDRAG;
 
     evnum_incr();
 
@@ -12692,9 +12693,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     chosenclef = popup_menu_result_to_clef((t_notation_obj *) x, chosenelem);
                     if (chosenclef != k_CLEF_WRONG) {
                         if (!is_editable((t_notation_obj *)x, k_VOICE, k_MODIFICATION_CLEF)) return;
-                        change_voiceensemble_clef((t_notation_obj *)x, (t_voice *)voice, chosenclef, true);
-                        handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_CLEFS);
-                    } 
+                        change_voiceensemble_clef((t_notation_obj *)x, (t_voice *)voice, chosenclef); // undo marker here inside
+                    }
                     
                     // keys?
                     chosenkeysym = popup_menu_result_to_keysymbol((t_notation_obj *) x, chosenelem);
@@ -12709,8 +12709,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             else
                                 atom_setsym(av+i, x->r_ob.keys_as_symlist[i]);
                         }
-                        score_setattr_keys(x, NULL, x->r_ob.num_voices, av);
-                        handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_KEYS);
+                        score_setattr_keys(x, NULL, x->r_ob.num_voices, av); // undo marker here inside
                     }
                     
                     // midichannels?

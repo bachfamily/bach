@@ -37562,7 +37562,7 @@ void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob
 {
     char must_unlock = true;
     
-    if (systhread_mutex_trylock(r_ob->c_undo_mutex))
+    if (trylock_undo_mutex(r_ob))
         must_unlock = false; // already locked
 
     if (also_lock_general_mutex)
@@ -37622,7 +37622,7 @@ end:
     if (also_lock_general_mutex)
         unlock_general_mutex(r_ob);
     if (must_unlock)
-        systhread_mutex_unlock(r_ob->c_undo_mutex);    
+        unlock_undo_mutex(r_ob);
 }
 
 void free_all_label_families(t_bach_label_manager *man)
@@ -37852,15 +37852,12 @@ long get_num_staves(t_notation_obj *r_ob, char dont_count_hidden_staves)
 }
 
 
-void change_voiceensemble_clef(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, long new_clef, char also_add_undo_tick)
+void change_voiceensemble_clef(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, long new_clef)
 {
     t_atom av[CONST_MAX_VOICES];
     long i;
     t_voice *tmpvoice;
 
-    if (also_add_undo_tick)
-        undo_tick_create_for_header(r_ob, k_HEADER_CLEFS);
-    
     for (i = 0, tmpvoice = r_ob->firstvoice; i < r_ob->num_voices && tmpvoice; i++, tmpvoice = voice_get_next(r_ob, tmpvoice)) {
         if (do_voices_belong_to_same_voiceensemble(r_ob, any_voice_in_voiceensemble, tmpvoice))
             atom_setsym(av+i, clef_number_to_clef_symbol(r_ob, new_clef));
@@ -37868,7 +37865,7 @@ void change_voiceensemble_clef(t_notation_obj *r_ob, t_voice* any_voice_in_voice
             atom_setsym(av+i, r_ob->clefs_as_symlist[i]);
     }
     
-    object_method_typed(r_ob, gensym("clefs"), r_ob->num_voices, av, NULL);
+    object_method_typed(r_ob, gensym("clefs"), r_ob->num_voices, av, NULL); // undo marker here put here inside, if needed
 }
 
 void change_single_clef(t_notation_obj *r_ob, t_voice* voice, long new_clef, char also_add_undo_tick)
@@ -37877,9 +37874,6 @@ void change_single_clef(t_notation_obj *r_ob, t_voice* voice, long new_clef, cha
     long i; 
     t_voice *tmpvoice;
     
-    if (also_add_undo_tick)
-        undo_tick_create_for_header(r_ob, k_HEADER_CLEFS);
-    
     for (i = 0, tmpvoice = r_ob->firstvoice; i < r_ob->num_voices && tmpvoice; i++, tmpvoice = voice_get_next(r_ob, tmpvoice)) {
         if (tmpvoice == voice)
             atom_setsym(av+i, clef_number_to_clef_symbol(r_ob, new_clef));
@@ -37887,7 +37881,7 @@ void change_single_clef(t_notation_obj *r_ob, t_voice* voice, long new_clef, cha
             atom_setsym(av+i, r_ob->clefs_as_symlist[i]);
     }
     
-    object_method_typed(r_ob, gensym("clefs"), r_ob->num_voices, av, NULL);
+    object_method_typed(r_ob, gensym("clefs"), r_ob->num_voices, av, NULL); // undo marker here put here inside, if needed
 }
 
 void change_voiceensemble_midichannel(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, long new_midichannel, char also_add_undo_tick)
@@ -38335,7 +38329,8 @@ t_max_err notationobj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long 
         long new_num_voices = CLAMP(i, 0, CONST_MAX_VOICES);
         if (r_ob->num_voices != new_num_voices) {
             clear_all_measure_tuttipoint_references(r_ob);
-            if (must_recompute_all) *must_recompute_all = true;
+            if (must_recompute_all)
+                *must_recompute_all |= k_NOTATION_OBJECT_FLAG_PERFORM_ANALYSIS_AND_CHANGE;
         }
         r_ob->num_voices = new_num_voices;
         r_ob->num_voices_plus_one = i+1;
@@ -39574,7 +39569,7 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
         if (r_ob->save_data_with_patcher && !r_ob->j_box.l_dictll)    // set dirty flag
             object_attr_setchar(r_ob->patcher_parent, gensym("dirty"), 1);
         
-        systhread_mutex_lock(r_ob->c_undo_mutex);
+        lock_undo_mutex(r_ob);
         undo_ticks_remove_modif_undo_flag_to_last(r_ob);
 
 #ifdef BACH_UNDO_DEBUG
@@ -39631,7 +39626,7 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
 
         r_ob->last_undo_marker = undo_redo_step_marker_create(r_ob, k_UNDO, 0, undo_op, false);
 
-        systhread_mutex_unlock(r_ob->c_undo_mutex);
+        unlock_undo_mutex(r_ob);
     } 
     
     if (change_actions & k_CHANGED_CHECK_CORRECT_SCHEDULING)
@@ -42819,6 +42814,22 @@ long trylock_general_mutex(t_notation_obj *r_ob)
 void unlock_general_mutex(t_notation_obj *r_ob)
 {
     systhread_mutex_unlock(r_ob->c_general_mutex);
+}
+
+
+void lock_undo_mutex(t_notation_obj *r_ob)
+{
+    systhread_mutex_lock(r_ob->c_undo_mutex);
+}
+
+long trylock_undo_mutex(t_notation_obj *r_ob)
+{
+    return systhread_mutex_trylock(r_ob->c_undo_mutex);
+}
+
+void unlock_undo_mutex(t_notation_obj *r_ob)
+{
+    systhread_mutex_unlock(r_ob->c_undo_mutex);
 }
 
 void lock_markers_mutex(t_notation_obj *r_ob)

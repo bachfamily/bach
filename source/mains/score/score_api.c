@@ -2866,7 +2866,7 @@ void set_clefs_from_llll(t_score *x, t_llll* clefs)
     if (clefs) {
         t_atom *av = NULL;
         long ac = llll_deparse(clefs, &av, 0, LLLL_D_NONE); // it's important that we do not backtick symbols, for instance G8vb can be interpreted as pitch and backticked!
-        score_setattr_clefs(x, NULL, ac, av);
+        score_setattr_clefs_do(x, NULL, ac, av);
         if (av) bach_freeptr(av);
     }
 }
@@ -2876,14 +2876,27 @@ void set_keys_from_llll(t_score *x, t_llll* keys)
     if (keys) {
         t_atom *av = NULL;
         long ac = llll_deparse(keys, &av, 0, 1);
-        score_setattr_keys(x, NULL, ac, av);
+        score_setattr_keys_do(x, NULL, ac, av);
         if (av) bach_freeptr(av);
     }
 }
 
-t_max_err score_setattr_clefs(t_score *x, t_object *attr, long ac, t_atom *av){
+t_max_err score_setattr_clefs(t_score *x, t_object *attr, long ac, t_atom *av)
+{
+    t_max_err res = MAX_ERR_NONE;
+    char must_handle_undo = (!x->r_ob.creatingnewobj);
+    if (must_handle_undo)
+        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_CLEFS);
+    res = score_setattr_clefs_do(x, attr, ac, av);
+    if (must_handle_undo)
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_CLEFS);
+    return res;
+}
 
-    x->r_ob.private_flag = 0;
+t_max_err score_setattr_clefs_do(t_score *x, t_object *attr, long ac, t_atom *av)
+{
+    x->r_ob.private_flag &= (~k_NOTATION_OBJECT_FLAG_PERFORM_ANALYSIS_AND_CHANGE);
+
     t_max_err err = notationobj_setattr_clefs((t_notation_obj *)x, attr, ac, av);
 
     char must_unlock = true;
@@ -2891,12 +2904,14 @@ t_max_err score_setattr_clefs(t_score *x, t_object *attr, long ac, t_atom *av){
         must_unlock = false; // already locked
 
     recompute_all_except_for_beamings_and_autocompletion_and_redraw(x);
-    if (x->r_ob.private_flag) {
+    if (x->r_ob.private_flag & k_NOTATION_OBJECT_FLAG_PERFORM_ANALYSIS_AND_CHANGE) {
         perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS + k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS + k_BEAMING_CALCULATION_DONT_CHANGE_TIES);
+        x->r_ob.private_flag &= (~k_NOTATION_OBJECT_FLAG_PERFORM_ANALYSIS_AND_CHANGE);
     }
-    
+
     if (must_unlock)
         unlock_general_mutex((t_notation_obj *)x);
+
     return err;
 }
 
@@ -2908,6 +2923,18 @@ void compute_all_notes_approximations(t_score *x, char also_put_show_accidental_
 }
 
 t_max_err score_setattr_keys(t_score *x, t_object *attr, long ac, t_atom *av)
+{
+    t_max_err res = MAX_ERR_NONE;
+    char must_handle_undo = (!x->r_ob.creatingnewobj);
+    if (must_handle_undo)
+        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_KEYS);
+    res = score_setattr_keys_do(x, attr, ac, av);
+    if (must_handle_undo)
+        handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_KEYS);
+    return res;
+}
+
+t_max_err score_setattr_keys_do(t_score *x, t_object *attr, long ac, t_atom *av)
 {
     char must_unlock = true;
     if (trylock_general_mutex((t_notation_obj *)x))

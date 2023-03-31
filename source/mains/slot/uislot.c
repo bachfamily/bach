@@ -2197,8 +2197,8 @@ void uislot_undo_redo(t_uislot *x, char what){
     t_llll *llll = NULL;
     long undo_op = k_UNDO_OP_UNKNOWN;
     
-    lock_general_mutex((t_notation_obj *)x);    
-    systhread_mutex_lock(x->r_ob.c_undo_mutex);    
+    lock_general_mutex((t_notation_obj *)x);
+    lock_undo_mutex((t_notation_obj *)x);
 
     if (what == k_UNDO)
         llll = x->r_ob.undo_llll;
@@ -2206,8 +2206,8 @@ void uislot_undo_redo(t_uislot *x, char what){
         llll = x->r_ob.redo_llll;
     
     if (!llll) {
-    systhread_mutex_unlock(x->r_ob.c_undo_mutex);    
-        unlock_general_mutex((t_notation_obj *)x);    
+        unlock_undo_mutex((t_notation_obj *)x);
+        unlock_general_mutex((t_notation_obj *)x);
         return;
     }
     
@@ -2219,8 +2219,8 @@ void uislot_undo_redo(t_uislot *x, char what){
     if (!llll->l_head) {
         if (!(atom_gettype(&x->r_ob.max_undo_steps) == A_LONG && atom_getlong(&x->r_ob.max_undo_steps) == 0))
             object_warn((t_object *) x, what == k_UNDO ? "Can't undo!" : "Can't redo!");
-        systhread_mutex_unlock(x->r_ob.c_undo_mutex);    
-        unlock_general_mutex((t_notation_obj *)x);    
+        unlock_undo_mutex((t_notation_obj *)x);
+        unlock_general_mutex((t_notation_obj *)x);
         return;
     }
     
@@ -2292,7 +2292,7 @@ void uislot_undo_redo(t_uislot *x, char what){
     }    
 
     undo_redo_step_marker_create((t_notation_obj *) x, -what, 1, undo_op, false);
-    systhread_mutex_unlock(x->r_ob.c_undo_mutex);    
+    unlock_undo_mutex((t_notation_obj *)x);
     unlock_general_mutex((t_notation_obj *)x);    
 
     handle_change((t_notation_obj *)x, x->r_ob.send_undo_redo_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_STANDARD, k_UNDO_OP_UNKNOWN);
