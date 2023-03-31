@@ -6,10 +6,10 @@ VERSION NOTES:
 *** MAJOR CHANGES ***
 *********************
 
-- The bach notation objects now feature a new system of notification of interface actions that provides details on the elements being modified. 
-	See the new "notifywith" message. 
-
-- Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
+- bach.roll and bach.score:
+    á now support slurs
+    á now feature a new system of notification of interface actions that provides details on the elements being modified. See the new "notifywith" message.
+    á Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
 
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
 
@@ -17,6 +17,12 @@ VERSION NOTES:
 
 - bell: bach.sum, bach.prod now work
 
+
+***********************
+*** VERSION CHANGES ***
+***********************
+
+- bach.score: Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
 
 
 v0.8.3
