@@ -2560,13 +2560,13 @@ char is_barline_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_measure_end_barl
 
 void fill_topmost_bottommost_fields(t_notation_obj *r_ob, t_chord *chord, double staff_top)
 {
-    if (chord->topmost_y == DBL_SMALLEST)
+//    if (chord->topmost_y == DBL_SMALLEST)
         chord->topmost_y = staff_top + chord->topmost_stafftop_uy * r_ob->zoom_y;
-    if (chord->bottommost_y == DBL_SMALLEST)
+//    if (chord->bottommost_y == DBL_SMALLEST)
         chord->bottommost_y = staff_top + chord->bottommost_stafftop_uy * r_ob->zoom_y;
-    if (chord->topmost_y_noacc == DBL_SMALLEST)
+//    if (chord->topmost_y_noacc == DBL_SMALLEST)
         chord->topmost_y_noacc = staff_top + chord->topmost_stafftop_uy_noacc * r_ob->zoom_y;
-    if (chord->bottommost_y_noacc == DBL_SMALLEST)
+//    if (chord->bottommost_y_noacc == DBL_SMALLEST)
         chord->bottommost_y_noacc = staff_top + chord->bottommost_stafftop_uy_noacc * r_ob->zoom_y;
 }
 
