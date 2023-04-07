@@ -44008,3 +44008,16 @@ void insert_measure(t_notation_obj *r_ob, t_scorevoice *voice, t_measure *measur
     measure_to_insert->need_recompute_beamings = true;
     set_need_perform_analysis_and_change_flag(r_ob);
 }
+
+
+
+void send_focus(t_notation_obj *r_ob, long outlet, t_symbol *label)
+{
+    t_llll *outlist = llll_get();
+    llll_appendsym(outlist, _llllobj_sym_focus);
+    if (label)
+        llll_appendsym(outlist, label);
+    llll_appendlong(outlist, r_ob->j_has_focus ? 1 : 0);
+    llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, outlet, outlist);
+    llll_free(outlist);
+}

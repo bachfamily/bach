@@ -166,6 +166,7 @@ void score_dumpvoicepixelpos(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_getvzoom(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_getzoom(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_openslotwin(t_score *x, t_symbol *s, long argc, t_atom *argv);
+void score_getfocus(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 void score_tail_to_grace(t_score *x, t_llll *args);
 
@@ -5221,6 +5222,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) score_openslotwin, "openslotwin", A_GIMME, 0);
 
 
+    // @method getfocus @digest Query whether the object has focus
+    // @description The <m>getfocus</m> message outputs a <b>focus 1</b> message from the playout if the object has focus, and <b>focus 0</b> otherwise.
+    // @copy BACH_DOC_QUERY_LABELS
+    // @marg 0 @name query_label @optional 1 @type llll
+    class_addmethod(c, (method) score_getfocus, "getfocus", A_GIMME, 0);
+
+    
     // @method getdomain @digest Get the current domain
     // @description The <m>getdomain</m> message forces <o>bach.score</o> to output from the playout the current domain,
     // i.e. the portion of <o>bach.score</o> currently displayed inside the screen. The output information is both in milliseconds
@@ -8701,6 +8709,12 @@ void score_getdomain(t_score *x, t_symbol *s, long argc, t_atom *argv)
     send_domain(x, 7, label);
 }
 
+
+void score_getfocus(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_symbol *label = get_querying_label_from_GIMME((t_notation_obj *) x, s, argc, argv);
+    send_focus((t_notation_obj *)x, 7, label);
+}
 
 
 void score_dumpvoicepixelpos(t_score *x, t_symbol *s, long argc, t_atom *argv){
@@ -17850,9 +17864,9 @@ void score_paint(t_score *x, t_object *view)
     score_paint_ext(x, view, g, rect);
     
     if (x->r_ob.are_there_solos)
-        paint_border((t_object *)x, g, &rect, &x->r_ob.j_solo_rgba, 2.5, x->r_ob.corner_roundness);
+        paint_border((t_object *)x, g, &rect, &x->r_ob.j_solo_rgba, (x->r_ob.j_has_focus && x->r_ob.show_focus) ? x->r_ob.focus_border_width : x->r_ob.border_width, x->r_ob.corner_roundness);
     else
-        paint_border((t_object *)x, g, &rect, &x->r_ob.j_border_rgba, (!x->r_ob.show_border) ? 0 : ((x->r_ob.j_has_focus && x->r_ob.show_focus) ? 2.5 : 1), x->r_ob.corner_roundness);
+        paint_border((t_object *)x, g, &rect, &x->r_ob.j_border_rgba, (!x->r_ob.show_border) ? 0 : ((x->r_ob.j_has_focus && x->r_ob.show_focus) ? x->r_ob.focus_border_width : x->r_ob.border_width), x->r_ob.corner_roundness);
 
     if (x->r_ob.jit_destination_matrix && strlen(x->r_ob.jit_destination_matrix->s_name) > 0)
         score_paint_to_jitter_matrix(x, x->r_ob.jit_destination_matrix);

@@ -279,6 +279,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_zrange;
 	t_symbol	*s_zslope;
     t_symbol    *s_direction;
+    t_symbol    *s_focus;
 
     t_symbol    *s_add;
     t_symbol    *s_insert;
@@ -691,6 +692,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_zrange			(_llllobj_common_symbols->s_zrange)
 #define _llllobj_sym_zslope			(_llllobj_common_symbols->s_zslope)
 #define _llllobj_sym_direction            (_llllobj_common_symbols->s_direction)
+#define _llllobj_sym_focus            (_llllobj_common_symbols->s_focus)
 
 #define _llllobj_sym_add            (_llllobj_common_symbols->s_add)
 #define _llllobj_sym_insert            (_llllobj_common_symbols->s_insert)

@@ -7,9 +7,9 @@ VERSION NOTES:
 *********************
 
 - bach.roll and bach.score:
-    á now support slurs
-    á now feature a new system of notification of interface actions that provides details on the elements being modified. See the new "notifywith" message.
-    á Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
+   á now support slurs
+   á now feature a new system of notification of interface actions that provides details on the elements being modified. See the new "notifywith" message.
+   á Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
 
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
 
@@ -21,6 +21,10 @@ VERSION NOTES:
 ***********************
 *** VERSION CHANGES ***
 ***********************
+
+- bach.roll, bach.score, bach.slot:
+    @bordersize, @focusbordersize: new attributes
+    getfocus: new message to query whether objects have focus
 
 - bach.roll, bach.score:
     Now clefs and keys behave properly w.r. to undo, even if changed via messages

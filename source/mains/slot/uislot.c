@@ -1586,7 +1586,7 @@ void uislot_paint_ext(t_uislot *x, t_object *view, t_jgraphics *g, t_rect rect)
     }
 
     t_jrgba border_color = (x->r_ob.active_slot_num >= 0 && x->r_ob.active_slot_num < CONST_MAX_SLOTS) ? x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_color : get_grey(0.5);
-    paint_border((t_object *)x, g, &rect, &border_color, (!x->r_ob.show_border) ? 0 : (x->r_ob.j_has_focus && x->r_ob.show_focus ? 2.5 : 1), x->r_ob.corner_roundness);
+    paint_border((t_object *)x, g, &rect, &border_color, (!x->r_ob.show_border) ? 0 : (x->r_ob.j_has_focus && x->r_ob.show_focus ? x->r_ob.focus_border_width : x->r_ob.border_width), x->r_ob.corner_roundness);
 }
 
 void uislot_paint(t_uislot *x, t_object *view)

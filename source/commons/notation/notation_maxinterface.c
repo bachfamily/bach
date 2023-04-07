@@ -2008,6 +2008,16 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showborder",0,"1");
 	// @description Toggles the ability to display the object border.
 
+    CLASS_ATTR_DOUBLE(c,"bordersize",0, t_notation_obj, border_width);
+    CLASS_ATTR_STYLE_LABEL(c,"bordersize",0,"text","Border Width");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bordersize",0,"1");
+    // @description Sets the border width in pixels.
+
+    CLASS_ATTR_DOUBLE(c,"focusbordersize",0, t_notation_obj, focus_border_width);
+    CLASS_ATTR_STYLE_LABEL(c,"focusbordersize",0,"text","Border Width With Focus");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"focusbordersize",0,"2.5");
+    // @description Sets the border width in pixels when the object has focus.
+
     CLASS_ATTR_SYM(c,"jitmatrix",0, t_notation_obj, jit_destination_matrix);
     CLASS_ATTR_STYLE_LABEL(c,"jitmatrix",0,"text","Mirror To Jitter Matrix");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jitmatrix",0,"");

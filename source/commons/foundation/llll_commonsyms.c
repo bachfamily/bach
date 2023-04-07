@@ -299,6 +299,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_zrange = gensym("zrange");
     x->s_zslope = gensym("zslope");
     x->s_direction = gensym("direction");
+    x->s_focus = gensym("focus");
 
     x->s_add = gensym("add");
     x->s_insert = gensym("insert");

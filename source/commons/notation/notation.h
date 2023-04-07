@@ -142,18 +142,15 @@
 #define CONST_MAX_TEMPO 1000                                ///< A safety upper bound for each tempo value  
 #define CONST_MAX_VOICES 250                                ///< Maximum number of admitted voices (was 35 until bach 0.6.x)
 #define CONST_MAX_VOICES_PLUS_ONE 251
-#define CONST_MAX_VOICE_NAME_CHARS 200                        ///< Maximum number of characters for a voice name
+#define CONST_MAX_VOICE_NAME_CHARS 200                       ///< Maximum number of characters for a voice name
 #define CONST_MAX_TURN_ANGLE 100.                            ///< Maximum absolute value of an angle (in radiants) for a #t_spatpt in a #k_SLOT_TYPE_SPAT slot
 #define CONST_MAX_LEDGER_LINES 20                            ///< Maximum number of ledger lines per note
-#define CONST_MAX_UNDO_STEPS 30                                ///< (OBSOLETE) Old maximum number of undo steps allowed (until bach 0.6.x)
-#define CONST_MAX_BEAMS 10                                    ///< Maximum number of nested beams admitted (e.g. 4 would be up to the 1/64th, 5 would be up to 1/128th)
-#define CONST_MAX_ARTICULATIONS 100                         ///< Maximum number of articulations, including the standard ones (see #e_articulations) and the custom-defined ones.
-#define CONST_MAX_NOTEHEADS 100                             ///< Maximum number of noteheads, including the standard ones (see #e_noteheads) and the custom-defined ones.
-#define CONST_MAX_COMMANDS 5                                ///< Maximum number of used definable commands (should be upgraded to 30 at some point in the future)
+#define CONST_MAX_BEAMS 10                                   ///< Maximum number of nested beams admitted (e.g. 4 would be up to the 1/64th, 5 would be up to 1/128th)
+#define CONST_MAX_ARTICULATIONS 100                          ///< Maximum number of articulations, including the standard ones (see #e_articulations) and the custom-defined ones.
+#define CONST_MAX_NOTEHEADS 100                              ///< Maximum number of noteheads, including the standard ones (see #e_noteheads) and the custom-defined ones.
+#define CONST_MAX_COMMANDS 5                                 ///< Maximum number of used definable commands (should be upgraded to 30 at some point in the future)
 #define CONST_MAX_COMMAND_CHAR 30                            ///< Maximum number of characters for a command label
-#define CONST_MAX_ARTICULATIONS_PER_NOTE 4                  ///< (OBSOLETE, UNUSED) Maximum number of articulations per note and per chord (used to be 10 up to bach 0.7.1)
-#define CONST_MAX_STAFF_LINES 50                            ///< Maximum number of staff lines per staff
-#define    CONST_MAX_TRANCHES 1000                                ///< (UNUSED) Maximum number of tuttipoint tranches per tuttipoint region (this is unused, and actually one can have any number of tranches per tuttipoint region.
+#define CONST_MAX_STAFF_LINES 50                             ///< Maximum number of staff lines per staff
 #define CONST_MAX_ENHARMONICITY_OPTIONS 3                    ///< Maximum number of enharmonicity options appearing in the contextual menu when right-clicking on a note
 #define CONST_MIN_OCTAVE -4                                    ///< Minimum possible octave number (used by notename2midicents conversions)
 #define CONST_MAX_OCTAVE 12                                    ///< Maximum possible octave number (used by notename2midicents conversions)
@@ -2398,8 +2395,7 @@ typedef struct _scheduled_event
 
 /** The data structure representing an articulation. 
     In the old days, just like the #t_slot structure, each note already has a certain number of prepared space
-    to host its articulations (which can be up to #CONST_MAX_ARTICULATIONS_PER_NOTE). 
-    But differently from the slots, also chords have some prepared space for articulations,
+    to host its articulations. But differently from the slots, also chords have some prepared space for articulations,
     so articulations may be attached either to chords or to notes.
     All of this is old. Now the documented way to define articulations is via slots of type #k_SLOT_TYPE_ARTICULATIONS, which contain as 
     slotitems pointers to these (t_articulations *) structures
@@ -4448,6 +4444,8 @@ typedef struct _notation_obj
     char        need_send_changed_bang;                ///< When this is non-zero, the "changed bang" is sent at the end of the paint method 
     char        show_border;                        ///< Flag telling if we display the border
     char        show_focus;                            ///< Flag telling if we want to graphically show when the object has focus by adding a thicker border (by default: yes)
+    double      focus_border_width;                  ///< Border size for object having focus
+    double      border_width;                        ///< Border size for objects not having focus (or if @showfocus is off)
     
     char        catch_playhead;                     ///< Catch the playhead while playing
     char        play_mode;                            ///< Play mode (see e_play_modes 0 = chord-wise, 1 = note-wise, by default it is 1, which should RARELY be changed!)
@@ -18910,6 +18908,8 @@ double notationobj_rescale_with_slope(t_notation_obj *r_ob, double value, double
 double notationobj_rescale_with_slope_and_get_derivative(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope, double *derivative);
 double notationobj_rescale_with_slope_inv(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope);
 
+
+void send_focus(t_notation_obj *r_ob, long outlet, t_symbol *label);
 
 
 // internal
