@@ -13,8 +13,10 @@ VERSION NOTES:
 
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
 
-- bach.score: fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
-
+- bach.score:
+    á fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
+    á @outputnegativerests: new attribute. The new default should not break bw compatibility, but verify.
+   
 - bell: bach.sum, bach.prod now work
 
 

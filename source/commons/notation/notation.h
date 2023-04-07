@@ -1666,6 +1666,7 @@ typedef enum _data_considering_types
     k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE = 16,        ///< Verbosely output the partial note
     k_CONSIDER_FOR_SLOT_VALUES_ONLY = 17,                       ///< Only dump slot values and not slot names (only for single slot dump)
     k_CONSIDER_FOR_SLOT_LLLL_EDITOR = 18,                       ///< The retrieved llll will be displayed in a slot textual editor
+    k_CONSIDER_FOR_DUMPING_FIRST_OUTLET = 19,                   ///< Consider for dumping from the first outlet
 } e_data_considering_types;
 
 
@@ -4964,6 +4965,7 @@ typedef struct _notation_obj
     char        show_half_stem_for_beamed_rests;    ///< Do we want to show a half-stem for beamed rests?
     char        show_rhythmic_tree;                    ///< Graphically paints the beaming tree for each measure
     char        output_trees;                        ///< Output beaming trees while dumping?
+    char        output_negative_rests;              ///< Output negative rests? 
     char        write_trees;                        ///< Include tree information while saving via "write" or "writetxt"
     char        output_full_duration_tree;            ///< Flag telling if we want to output the full duration tree while dumping. This only make sense if #output_trees >= 2, and if 1, this means that
                                                     ///< in addition to all the levels, also the ties information is output as "t" if a chord is all tied

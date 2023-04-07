@@ -649,6 +649,11 @@ void scoreapi_set_outputtrees(t_score *x, long l)
     object_attr_setdisabled((t_object *)x, gensym("outputtiesindurationtree"), x->r_ob.output_trees < 2);
 }
 
+void scoreapi_set_outputnegativerests(t_score *x, long l)
+{
+    x->r_ob.output_negative_rests = CLAMP(l, 0, 3);
+}
+
 void scoreapi_set_maketreecompatiblewithts(t_score *x, long l)
 {
     x->r_ob.make_tree_compatible_with_ts = CLAMP(l, 0, 1);
@@ -8446,7 +8451,10 @@ t_llll* measure_get_durations_values_as_llll(t_score *x, t_measure *measure, cha
     t_chord *temp_chord = measure->firstchord;
     while (temp_chord) { // append chord lllls
         // if we DON'T use trees, grace chords duration is output as 0 (no matter what, dudes: if you don't want to operate with trees, you just have octave grace notes!)
-        llll_appendrat(out_llll, (tree == 0 && temp_chord->is_grace_chord) ? long2rat(0) : temp_chord->r_sym_duration, 0, WHITENULL_llll);    
+        t_rational sym_duration = temp_chord->r_sym_duration;
+        if (sym_duration.num() < 0 && x->r_ob.output_negative_rests < 2)
+            sym_duration = rat_abs(sym_duration);
+        llll_appendrat(out_llll, (tree == 0 && temp_chord->is_grace_chord) ? long2rat(0) : sym_duration, 0, WHITENULL_llll);
 
         // adding ties, if needed to output the whole rhythmic tree
         if (tree == 2 && chord_is_all_tied_to((t_notation_obj *) x, temp_chord, false, NULL))

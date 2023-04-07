@@ -511,6 +511,7 @@ t_llll *dynamics_to_llll(t_notation_obj *r_ob, t_dynamics *dyn, e_data_consideri
     switch (mode) {
         case k_CONSIDER_FOR_UNDO:
         case k_CONSIDER_FOR_SAVING:
+        case k_CONSIDER_FOR_DUMPING_FIRST_OUTLET:
         case k_CONSIDER_FOR_SLOT_LLLL_EDITOR:
             return dynamics_to_llll_detailed(r_ob, dyn);
             break;

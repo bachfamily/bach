@@ -119,6 +119,7 @@ void scoreapi_set_accidentals_font(t_score *x, t_symbol *font);
 void scoreapi_set_articulations_font(t_score *x, t_symbol *font);
 void scoreapi_set_autoretranscribe(t_score *x, long l);
 void scoreapi_set_outputtrees(t_score *x, long l);
+void scoreapi_set_outputnegativerests(t_score *x, long l);
 void scoreapi_set_showaccidentalstiepreferences(t_score *x, long l);
 void scoreapi_set_cautionaryaccidentals(t_score *x, long l);
 void scoreapi_set_cautionaryaccidentalsdecay(t_score *x, long l);

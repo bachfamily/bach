@@ -127,6 +127,7 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
     char pitchmode;
     
     switch (mode) {
+        case k_CONSIDER_FOR_DUMPING_FIRST_OUTLET:
         case k_CONSIDER_FOR_SAVING:
         case k_CONSIDER_FOR_SAVING_WITH_BW_COMPATIBILITY:
         case k_CONSIDER_ALL_NOTES:

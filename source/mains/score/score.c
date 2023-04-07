@@ -186,6 +186,7 @@ t_max_err score_setattr_maxdots(t_score *x, t_object *attr, long ac, t_atom *av)
 t_max_err score_setattr_centeredwholerests(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_autoparserhythm(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_outputtrees(t_score *x, t_object *attr, long ac, t_atom *av);
+t_max_err score_setattr_outputnegativerests(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_maketreecompatiblewithts(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_allowbeaming(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_extendbeamsoverrests(t_score *x, t_object *attr, long ac, t_atom *av);
@@ -7511,6 +7512,19 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_ACCESSORS(c, "allowbeaming", (method)NULL, (method)score_setattr_allowbeaming);
     // @description Toggles the possibility to beam chords. By default this is active.
     
+    CLASS_ATTR_CHAR(c,"outputnegativerests",0, t_notation_obj, output_negative_rests);
+    CLASS_ATTR_STYLE_LABEL(c,"outputnegativerests",0,"enumindex","Output Rests With Negative Duration");
+    CLASS_ATTR_ENUMINDEX(c,"outputnegativerests", 0, "Never First Outlet Only First Outlet And Durations Outlet All Outlets Including Playout");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"outputnegativerests",0,"2");
+    CLASS_ATTR_ACCESSORS(c, "outputnegativerests", (method)NULL, (method)score_setattr_outputnegativerests);
+    // @description Chooses when rest durations should be output as negative numbers: <br />
+    // - Never (0): rests are always output with their positive duration. <br />
+    // - First Outlet Only (1): rests are output with negative duration from the first outlet of <o>bach.score</o> (the one
+    // with the score gathered syntax), but never from any of the other outlets. <br />
+    // - First Outlet And Durations outlet (2, default): rests are output with negative duration from the first outlet of <o>bach.score</o> (the one
+    // with the score gathered syntax) and from the durations outlet, but not from the playout. <br />
+    // - All Outlets Including Playout (3): rhythmic trees are output as negative from all outlets, including playout.
+
 
     CLASS_ATTR_CHAR(c,"autocomplete",0, t_notation_obj, auto_complete_measures);
     CLASS_ATTR_STYLE_LABEL(c,"autocomplete",0,"onoff","Autocomplete Measures");
@@ -8252,6 +8266,11 @@ t_max_err score_set_articulations_font(t_score *x, t_object *attr, long ac, t_at
     return MAX_ERR_NONE;
 }
 
+t_max_err score_setattr_outputnegativerests(t_score *x, t_object *attr, long ac, t_atom *av){
+    if (ac && av)
+        scoreapi_set_outputnegativerests(x, atom_getlong(av));
+    return MAX_ERR_NONE;
+}
 
 t_max_err score_setattr_outputtrees(t_score *x, t_object *attr, long ac, t_atom *av){
     if (ac && av)
@@ -14340,7 +14359,7 @@ void send_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_me
 
 void send_score_values_as_llll(t_score *x, e_header_elems send_what, t_symbol *router)
 {
-    t_llll* out_llll = get_score_values_as_llll(x, k_CONSIDER_FOR_SAVING, send_what, x->r_ob.output_trees, x->r_ob.output_and_save_level_types, true, false, router);
+    t_llll* out_llll = get_score_values_as_llll(x, k_CONSIDER_FOR_DUMPING_FIRST_OUTLET, send_what, x->r_ob.output_trees, x->r_ob.output_and_save_level_types, true, false, router);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, out_llll);
     llll_free(out_llll);
 }

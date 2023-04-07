@@ -29380,6 +29380,7 @@ t_llll* get_rollchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_dat
     while (temp_note) { // append notes lllls
         if (mode == k_CONSIDER_ALL_NOTES ||
             mode == k_CONSIDER_FOR_SAVING ||
+            mode == k_CONSIDER_FOR_DUMPING_FIRST_OUTLET ||
             mode == k_CONSIDER_FOR_EXPORT_OM ||
             mode == k_CONSIDER_FOR_EXPORT_PWGL ||
             mode == k_CONSIDER_FOR_UNDO ||
@@ -30143,7 +30144,8 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
     char is_rest = (chord->r_sym_duration.r_num < 0);
      t_rational non_grace_r_sym_duration = (chord->is_grace_chord) ? long2rat(0) : rat_abs(chord->r_sym_duration);
     double ms_duration = chord->duration_ms;
-    
+    char negative_rests = true;
+
     if (mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_EVALUATION) {
         if ((!is_rest && !r_ob->play_tied_elements_separately) || (is_rest && !r_ob->play_rests_separately)) {
             t_chord *tmp_chord = chord;
@@ -30164,29 +30166,43 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
         }
     }
     
+    if (r_sym_duration.num() < 0) {
+        if (mode == k_CONSIDER_FOR_DUMPING_FIRST_OUTLET && r_ob->output_negative_rests <= 0) {
+            negative_rests = false;
+        } else if ((mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES
+                    || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE
+                    || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE
+                    || mode == k_CONSIDER_FOR_SELECTION_COPYING
+                    || mode == k_CONSIDER_FOR_EVALUATION) && r_ob->output_negative_rests <= 2) {
+            negative_rests = false;
+        }
+    }
+    
     if (mode != k_CONSIDER_FOR_PLAYING 
             && mode != k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES
             && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE
             && mode != k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE
             && mode != k_CONSIDER_FOR_SELECTION_COPYING 
-            && mode != k_CONSIDER_FOR_EVALUATION) 
-        llll_appendrat(out_llll, r_sym_duration, 0, WHITENULL_llll); // rational_duration
-    else if (non_grace_r_sym_duration.r_num > 0)
-        llll_appendrat(out_llll, non_grace_r_sym_duration, 0, WHITENULL_llll); // rational_duration
-    else { // only in rare playout cases we do this:
+        && mode != k_CONSIDER_FOR_EVALUATION) {
+        llll_appendrat(out_llll, negative_rests ? r_sym_duration : rat_abs(r_sym_duration)); // rational_duration
+    } else if (non_grace_r_sym_duration.r_num > 0) {
+        if (is_rest)
+            non_grace_r_sym_duration = -non_grace_r_sym_duration;
+        llll_appendrat(out_llll, negative_rests ? non_grace_r_sym_duration : rat_abs(non_grace_r_sym_duration)); // rational_duration
+    } else { // only in rare playout cases we do this:
         t_llll *ll = llll_get();
-        llll_appendsym(ll, _llllobj_sym_g, 0, WHITENULL_llll);
-        llll_appendrat(ll, r_sym_duration, 0, WHITENULL_llll); // rational_duration
-        llll_appendllll(out_llll, ll, 0, WHITENULL_llll);
+        llll_appendsym(ll, _llllobj_sym_g);
+        llll_appendrat(ll, negative_rests ? r_sym_duration : rat_abs(r_sym_duration)); // rational_duration
+        llll_appendllll(out_llll, ll);
     }
     
-    if (mode != k_CONSIDER_ALL_NOTES && mode != k_CONSIDER_FOR_UNDO && mode != k_CONSIDER_FOR_SAVING && mode != k_CONSIDER_FOR_EXPORT_OM
+    if (mode != k_CONSIDER_ALL_NOTES && mode != k_CONSIDER_FOR_UNDO && mode != k_CONSIDER_FOR_SAVING && mode != k_CONSIDER_FOR_DUMPING_FIRST_OUTLET && mode != k_CONSIDER_FOR_EXPORT_OM
          && mode != k_CONSIDER_FOR_EXPORT_PWGL && mode != k_CONSIDER_FOR_SUBDUMPING) {
         if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)
             llll_appenddouble(out_llll, ms_duration - (r_ob->play_head_start_ms - chord->onset), 0, WHITENULL_llll); // ms_duration
         else
-            llll_appenddouble(out_llll, ms_duration, 0, WHITENULL_llll); // ms_duration
-        llll_appendrat(out_llll, chord->r_sym_onset, 0, WHITENULL_llll); // rational_onset in measure
+            llll_appenddouble(out_llll, ms_duration); // ms_duration
+        llll_appendrat(out_llll, chord->r_sym_onset); // rational_onset in measure
         
         if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
             t_llll *ll = llll_get();
@@ -30203,6 +30219,7 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
     while (temp_note) { // append notes lllls
         if (mode == k_CONSIDER_ALL_NOTES ||
             mode == k_CONSIDER_FOR_SAVING ||
+            mode == k_CONSIDER_FOR_DUMPING_FIRST_OUTLET ||
             mode == k_CONSIDER_FOR_EXPORT_OM ||
             mode == k_CONSIDER_FOR_EXPORT_PWGL ||
             mode == k_CONSIDER_FOR_UNDO ||
