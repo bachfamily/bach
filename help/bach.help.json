@@ -1593,6 +1593,20 @@
 				"tags" : [ "appearance", "domain", "screen", "portion", "fade", "transparency", "faded", "fadedomain", "graphic" ],
 				"title" : [ "Fade domain" ]
 			},
+			"B_focus" : {
+				"filename" : [ "bach.help.notation.appearance.39b_focus.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [  ],
+				"tags" : [ "appearance", "focus", "showfocus", "border", "size", "focusbordersize", "getfocus", "get", "query" ],
+				"title" : [ "Focus" ]
+			},
+			"C_border" : {
+				"filename" : [ "bach.help.notation.appearance.39c_border.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [  ],
+				"tags" : [ "appearance", "border", "bordersize", "focusbordersize", "color", "size", "bordercolor" ],
+				"title" : [ "Border" ]
+			},
 			"Slots" : {
 				"Backgroundslots" : {
 					"filename" : [ "bach.help.notation.appearance.40_slots.01_backgroundslots.maxpat" ],
@@ -2008,7 +2022,7 @@
 				"filename" : [ "bach.help.notation.editing.00b_changedbang.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 				"seealso" : [ "edit", "notification" ],
-				"tags" : [ "editing", "edit", "interface", "mouse", "keyboard", "change", "`bang", "undo", "undobang", "continuousbang", "continuously", "output", "changed", "modify", "notification", "notify" ],
+				"tags" : [ "editing", "edit", "interface", "mouse", "keyboard", "change", "`bang", "undo", "undobang", "continuousbang", "continuously", "output", "changed", "modify", "notification", "notify", "notifycontinuously", "notifywith" ],
 				"title" : [ "Editing notification" ]
 			},
 			"Addchordroll" : {
@@ -4500,6 +4514,13 @@
 				"seealso" : [ "jitmatrix" ],
 				"tags" : [ "query", "queries", "notify", "notification", "paint", "display", "refresh", "redraw", "draw", "jitter", "jit", "matrix", "mirror", "display", "notifypaint" ],
 				"title" : [ "Notify when display refreshes" ]
+			},
+			"Detailednotifications" : {
+				"filename" : [ "bach.help.notation.queries and notifications.50_detailednotifications.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "notify" ],
+				"tags" : [ "query", "queries", "notify", "notification", "verbose", "notifywith", "transaction", "undo", "redo" ],
+				"title" : [ "Detailed notifications" ]
 			}
 		},
 		"Rhythm and beams" : {

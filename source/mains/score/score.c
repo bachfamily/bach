@@ -17662,6 +17662,7 @@ void score_focuslost(t_score *x, t_object *patcherview) {
         lock_general_mutex((t_notation_obj *)x);
         clear_selection((t_notation_obj *) x);
         unlock_general_mutex((t_notation_obj *)x);
+        handle_change_selection((t_notation_obj *)x);
     }
     x->r_ob.j_has_focus = false;
 }
