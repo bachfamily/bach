@@ -9514,6 +9514,8 @@ void score_lambda(t_score *x, t_symbol *s, long argc, t_atom *argv){
             score_sel_set_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_setdurationline){
             score_sel_set_durationline(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_setdl){
+            score_sel_set_durationline(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_addbreakpoint){
             score_sel_add_breakpoint(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_erasebreakpoints){

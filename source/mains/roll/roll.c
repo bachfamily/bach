@@ -8083,6 +8083,8 @@ void roll_lambda(t_roll *x, t_symbol *s, long argc, t_atom *argv){
             roll_sel_set_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_setdurationline){
             roll_sel_set_durationline(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_setdl){
+            roll_sel_set_durationline(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_addbreakpoint){
             roll_sel_add_breakpoint(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_erasebreakpoints){

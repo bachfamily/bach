@@ -31,7 +31,8 @@ VERSION NOTES:
 - bach.roll, bach.score:
     Now clefs and keys behave properly w.r. to undo, even if changed via messages
     Fixed bug causing non-refresh for keepselectioniflostfocus
-    
+    Now setdl works in lambda mode properly
+
 - bach.score: Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
 
 
