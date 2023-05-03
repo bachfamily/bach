@@ -16291,6 +16291,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
                 if (is_in_marker_region_tail_shape((t_notation_obj *)x, marker, pt.x, pt.y, false)) {
                     undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                     marker->duration_ms = -1;
+                    handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_MARKERS);
                 } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) &&
                            (!marker->next || !is_in_markername_shape((t_notation_obj *)x, marker->next, pt.x, pt.y))){
                     unlock_general_mutex((t_notation_obj *)x);    

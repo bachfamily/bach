@@ -3454,7 +3454,7 @@ typedef struct _marker
     e_marker_roles        role;                ///< One of the #e_marker_roles, defining the special role the marker might have in [bach.roll] (specifying, for instance, a tempo value when a midifile is imported, or a time signature value...) 
     t_llll                *content;            ///< If the role is #k_MARKER_ROLE_TEMPO or #k_MARKER_ROLE_TIME_SIGNATURE, here we'll have the content specifying the tempo, as (tempo_value) or (tempo_figure tempo_value), or the time signature, as (num den) or ((num1 num2...) den) 
     
-    double              duration_ms;        ///< Marker duration (> 0 if marker represents a region)
+    double              duration_ms;        ///< Marker duration (> 0 if marker represents a region; == 0 if it's an instantaneous marker; whatever number < 0 means it's a region and goes till next marker)
     t_rational          r_sym_duration;     ///< Symbolic duration of the marker
     
     // utility
