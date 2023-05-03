@@ -3378,9 +3378,11 @@ double paint_label_for_ruler(t_notation_obj *r_ob, t_jgraphics* g, double millis
 //5ms -> 10ms -
 //10ms -> 50ms .
 //50ms -> 100ms -
-//100ms -> 500sec .
+//100ms -> 200ms .
+//200ms -> 500ms .
 //500ms -> 1sec -
-//1 sec -> 5sec .
+//1 sec -> 2sec .
+//2 sec -> 5sec .
 //5 sec -> 10 sec -
 //10 sec -> 30 sec
 //30 sec -> 1 min -
@@ -3391,25 +3393,30 @@ double paint_label_for_ruler(t_notation_obj *r_ob, t_jgraphics* g, double millis
 
 double best_scale_ms(t_notation_obj *r_ob, double ms_optimum){
     long i;
-    double points[15];
+    const long numpoints = 19;
+    double points[19];
     
     points[0] = 1;
-    points[1] = 5;
-    points[2] = 10;
-    points[3] = 50;
-    points[4] = 100;
-    points[5] = 500;
-    points[6] = 1000;
-    points[7] = 5000;
-    points[8] = 10000;
-    points[9] = 30000;
-    points[10] = 60000;
-    points[11] = 300000;
-    points[12] = 600000;
-    points[13] = 1800000;
-    points[14] = 3600000;
+    points[1] = 2;
+    points[2] = 5;
+    points[3] = 10;
+    points[4] = 20;
+    points[5] = 50;
+    points[6] = 100;
+    points[7] = 200;
+    points[8] = 500;
+    points[9] = 1000;
+    points[10] = 2000;
+    points[11] = 5000;
+    points[12] = 10000;
+    points[13] = 30000;
+    points[14] = 60000;
+    points[15] = 300000;
+    points[16] = 600000;
+    points[17] = 1800000;
+    points[18] = 3600000;
     
-    for (i = 0; i < 15; i++) {
+    for (i = 0; i < numpoints; i++) {
         if (points[i] > ms_optimum)
             break;
     }
@@ -3417,10 +3424,10 @@ double best_scale_ms(t_notation_obj *r_ob, double ms_optimum){
     if (i == 0)
         return points[0];
     
-    if (ms_optimum >= points[14])
-        return points[14];
+    if (ms_optimum >= points[numpoints-1])
+        return points[numpoints-1];
     
-    if (i == 5 || i == 3 || i == 1) {
+    if (i == 8 || i == 7 || i == 5 || i == 4 || i == 2 || i == 1) {
         if (fabs(ms_optimum - points[i]) < 2.5 *fabs(ms_optimum - points[i - 1])) // needed because milliseconds writing like 1'12"140 require a lot of space, so we push them farther in the scale
             return points[i];
     } else {
@@ -3517,9 +3524,9 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
             // intelligent ruler
             // best representation: pix_delta must be around CONST_OPTIMAL_PIXEL_DELTA_FOR_RULER_BIG_TICKS  
             
-            double ms_delta_optimum = CONST_OPTIMAL_PIXEL_DELTA_FOR_RULER_BIG_TICKS / (r_ob->zoom_y * CONST_X_SCALING * r_ob->zoom_x);
+            double ms_delta_optimum = deltaxpixels_to_deltaonset(r_ob, CONST_OPTIMAL_PIXEL_DELTA_FOR_RULER_BIG_TICKS);
             ms_delta = best_scale_ms(r_ob, ms_delta_optimum);
-            pixel_delta = ms_delta * r_ob->zoom_y * CONST_X_SCALING * r_ob->zoom_x;
+            pixel_delta = deltaonset_to_deltaxpixels(r_ob, ms_delta);
             num_subdivisions = ms_delta_to_num_subdivisions(r_ob, ms_delta);
 
             ms_delta_sub = ms_delta / num_subdivisions;

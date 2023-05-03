@@ -33,6 +33,8 @@ VERSION NOTES:
     Fixed bug causing non-refresh for keepselectioniflostfocus
     Now setdl works in lambda mode properly
 
+- bach.roll:  Improved intelligent ruler
+
 - bach.score: Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
 
 
