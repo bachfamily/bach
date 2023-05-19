@@ -36515,7 +36515,11 @@ t_rational notation_item_get_symduration(t_notation_obj *r_ob, t_notation_item *
 t_voice *notation_item_get_voice(t_notation_obj *r_ob, t_notation_item *it)
 {
     switch (it->type) {
-        case k_NOTE: return notation_item_get_voice(r_ob, (t_notation_item *)(((t_note *)it)->parent));
+        case k_NOTE:
+            if (((t_note *)it)->parent)
+                return notation_item_get_voice(r_ob, (t_notation_item *)(((t_note *)it)->parent));
+            else // should only happen with bach.slot, whose "fake" note has no parent.
+                return NULL;
         case k_CHORD:
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                 return (t_voice *)(((t_chord *)it)->parent->voiceparent);
@@ -36545,7 +36549,11 @@ t_voice *notation_item_get_voice(t_notation_obj *r_ob, t_notation_item *it)
 long notation_item_get_voicenumber(t_notation_obj *r_ob, t_notation_item *it)
 {
     switch (it->type) {
-        case k_NOTE: return notation_item_get_voicenumber(r_ob, (t_notation_item *)(((t_note *)it)->parent));
+        case k_NOTE:
+            if (((t_note *)it)->parent)
+                return notation_item_get_voicenumber(r_ob, (t_notation_item *)(((t_note *)it)->parent));
+            else // should only happen with bach.slot, whose "fake" note has no parent.
+                return -1;
         case k_CHORD: 
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                 return ((t_chord *)it)->parent->voiceparent->v_ob.number;
@@ -36725,7 +36733,11 @@ long notation_item_get_tie_for_lexpr(t_notation_obj *r_ob, t_notation_item *it)
 long notation_item_get_noteindex_for_lexpr(t_notation_obj *r_ob, t_notation_item *it)
 {
     switch (it->type) {
-        case k_NOTE: return note_get_position(r_ob, (t_note *)it);
+        case k_NOTE:
+            if (((t_note *)it)->parent)
+                return note_get_position(r_ob, (t_note *)it);
+            else // bach.slot case
+                return 0;
         case k_DURATION_LINE: return notation_item_get_noteindex_for_lexpr(r_ob, (t_notation_item *)(((t_duration_line *)it)->owner));
         case k_PITCH_BREAKPOINT: return notation_item_get_noteindex_for_lexpr(r_ob, (t_notation_item *)((t_bpt *)it)->owner);
         default: return 0;
@@ -36736,7 +36748,11 @@ long notation_item_get_chordindex_for_lexpr(t_notation_obj *r_ob, t_notation_ite
 {
     switch (it->type) {
         case k_CHORD: return chord_get_position(r_ob, (t_chord *)it);
-        case k_NOTE: return notation_item_get_chordindex_for_lexpr(r_ob, (t_notation_item *)(((t_note *)it)->parent));
+        case k_NOTE:
+            if (((t_note *)it)->parent)
+                return notation_item_get_chordindex_for_lexpr(r_ob, (t_notation_item *)(((t_note *)it)->parent));
+            else // bach.slot case
+                return 0;
         case k_LYRICS: return notation_item_get_chordindex_for_lexpr(r_ob, (t_notation_item *)(((t_lyrics *)it)->owner));
         case k_DYNAMICS: return notation_item_get_chordindex_for_lexpr(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, ((t_dynamics *)it)->owner_item));
         case k_DURATION_LINE: return notation_item_get_chordindex_for_lexpr(r_ob, (t_notation_item *)(((t_duration_line *)it)->owner->parent));

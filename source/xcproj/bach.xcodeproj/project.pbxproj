@@ -123,6 +123,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				1EA7B01C2A166FF9000F66BF /* PBXTargetDependency */,
 				1ED42DC01F8A9D6D008EC1D9 /* PBXTargetDependency */,
 				916120541DD3D616003CEE3A /* PBXTargetDependency */,
 				1EEB7E751526405F00C8FEEC /* PBXTargetDependency */,
@@ -240,6 +241,9 @@
 		1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A1D4420FCEB020051B9E8 /* notation_export.c */; };
 		1E913CCB25CD3A9800A45D8C /* notation_markers.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E913CCA25CD3A9800A45D8C /* notation_markers.c */; };
 		1E913CCD25CD41CE00A45D8C /* notation_markers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E913CCC25CD41CD00A45D8C /* notation_markers.h */; };
+		1EA7B0112A1667FF000F66BF /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
+		1EA7B0122A1667FF000F66BF /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
+		1EA7B01A2A1668C2000F66BF /* pitchwheel.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA7B0192A1668C2000F66BF /* pitchwheel.c */; };
 		1EB4D4691610C9740041ABFB /* roll.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4681610C9740041ABFB /* roll.h */; };
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
 		1EB4D4821610CB740041ABFB /* roll_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4801610CB740041ABFB /* roll_files.h */; };
@@ -968,6 +972,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1E784F8F20274BC400F11D75;
 			remoteInfo = bach.recurser;
+		};
+		1EA7B00B2A1667FF000F66BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 918129441611AEA700473F86;
+			remoteInfo = lib_bach;
+		};
+		1EA7B01B2A166FF9000F66BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1EA7B0092A1667FF000F66BF;
+			remoteInfo = bach.pitchwheel;
 		};
 		1ED42DAF1F8A9D17008EC1D9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2878,6 +2896,9 @@
 		1E9026EE150FC5380005B502 /* bach_doc_groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_doc_groups.h; sourceTree = "<group>"; };
 		1E913CCA25CD3A9800A45D8C /* notation_markers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_markers.c; sourceTree = "<group>"; };
 		1E913CCC25CD41CD00A45D8C /* notation_markers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_markers.h; sourceTree = "<group>"; };
+		1EA7B0172A1667FF000F66BF /* bach.pitchwheel.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.pitchwheel.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		1EA7B0182A1667FF000F66BF /* bach.circle copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.circle copy-Info.plist"; path = "/Users/danieleghisi/Documents/Max 8/Packages/bach/source/xcproj/bach.circle copy-Info.plist"; sourceTree = "<absolute>"; };
+		1EA7B0192A1668C2000F66BF /* pitchwheel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pitchwheel.c; sourceTree = "<group>"; };
 		1EAE5C1C2288532B005487F4 /* bach_ss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_ss.c; sourceTree = "<group>"; };
 		1EB4D4681610C9740041ABFB /* roll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll.h; sourceTree = "<group>"; };
 		1EB4D47F1610CB740041ABFB /* roll_files.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = roll_files.c; sourceTree = "<group>"; };
@@ -3737,6 +3758,15 @@
 			files = (
 				1E784F9720274BC400F11D75 /* lib_bach.a in Frameworks */,
 				1E784F9820274BC400F11D75 /* CoreServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1EA7B0102A1667FF000F66BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1EA7B0112A1667FF000F66BF /* lib_bach.a in Frameworks */,
+				1EA7B0122A1667FF000F66BF /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4941,6 +4971,7 @@
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				91BA46AC1F71585E0002D515 /* package */,
 				00812FAC27C8B9B400521C7D /* Frameworks */,
+				1EA7B0182A1667FF000F66BF /* bach.circle copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -5104,6 +5135,7 @@
 				914A85432502A59D007975FC /* bach.mxo */,
 				0038AF8E2805934E0012316C /* bach.bell.in.mxo */,
 				0038AFA2280597160012316C /* bach.bell.out.mxo */,
+				1EA7B0172A1667FF000F66BF /* bach.pitchwheel.mxo */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5674,6 +5706,7 @@
 				1E5F437E152610C70085FA87 /* omtree2bachtree.c */,
 				9108DB6B145D65CB00C6289F /* n2mc.c */,
 				1ED51E301F73F5EA0021C2D5 /* p2mc.c */,
+				1EA7B0192A1668C2000F66BF /* pitchwheel.c */,
 				91DA808A131B341400FCB316 /* primeform.c */,
 				916120411DD3D576003CEE3A /* playkeys.c */,
 				91C0A67512C5237000C31264 /* quantize.c */,
@@ -6271,6 +6304,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1E784F9220274BC400F11D75 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1EA7B00C2A1667FF000F66BF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -7505,6 +7545,26 @@
 			name = bach.recurser;
 			productName = iterator;
 			productReference = 1E784F9D20274BC400F11D75 /* bach.recurser.mxo */;
+			productType = "com.apple.product-type.bundle";
+		};
+		1EA7B0092A1667FF000F66BF /* bach.pitchwheel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1EA7B0142A1667FF000F66BF /* Build configuration list for PBXNativeTarget "bach.pitchwheel" */;
+			buildPhases = (
+				1EA7B00C2A1667FF000F66BF /* Headers */,
+				1EA7B00D2A1667FF000F66BF /* Resources */,
+				1EA7B00E2A1667FF000F66BF /* Sources */,
+				1EA7B0102A1667FF000F66BF /* Frameworks */,
+				1EA7B0132A1667FF000F66BF /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1EA7B00A2A1667FF000F66BF /* PBXTargetDependency */,
+			);
+			name = bach.pitchwheel;
+			productName = iterator;
+			productReference = 1EA7B0172A1667FF000F66BF /* bach.pitchwheel.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
 		1ED42DAD1F8A9D17008EC1D9 /* bach.transcribe */ = {
@@ -10257,6 +10317,7 @@
 				91D7CBA51233E33C00D767D4 /* bach.perm */,
 				91E37306123651A200EC4752 /* bach.pick */,
 				9182E8B5145F086A00CDFBA9 /* bach.pipe */,
+				1EA7B0092A1667FF000F66BF /* bach.pitchwheel */,
 				916120421DD3D581003CEE3A /* bach.playkeys */,
 				91CF656C127896A300C44173 /* bach.portal */,
 				91E5622C19989CF90091EAFF /* bach.poset */,
@@ -10349,6 +10410,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1E784F9320274BC400F11D75 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1EA7B00D2A1667FF000F66BF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -11374,6 +11442,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1EA7B0132A1667FF000F66BF /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1ED42DB71F8A9D17008EC1D9 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
@@ -12324,6 +12399,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1E784FA220274C1200F11D75 /* recurser.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1EA7B00E2A1667FF000F66BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1EA7B01A2A1668C2000F66BF /* pitchwheel.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13527,6 +13610,16 @@
 			isa = PBXTargetDependency;
 			target = 1E784F8F20274BC400F11D75 /* bach.recurser */;
 			targetProxy = 1E784F9F20274BF400F11D75 /* PBXContainerItemProxy */;
+		};
+		1EA7B00A2A1667FF000F66BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 918129441611AEA700473F86 /* lib_bach */;
+			targetProxy = 1EA7B00B2A1667FF000F66BF /* PBXContainerItemProxy */;
+		};
+		1EA7B01C2A166FF9000F66BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1EA7B0092A1667FF000F66BF /* bach.pitchwheel */;
+			targetProxy = 1EA7B01B2A166FF9000F66BF /* PBXContainerItemProxy */;
 		};
 		1ED42DAE1F8A9D17008EC1D9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -15027,6 +15120,39 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
+		1EA7B0152A1667FF000F66BF /* Development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/Library/Frameworks\"",
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		1EA7B0162A1667FF000F66BF /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/Library/Frameworks\"",
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				INSTALL_PATH = "$(DG_INSTALL_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Deployment;
@@ -20063,6 +20189,15 @@
 			buildConfigurations = (
 				1E784F9B20274BC400F11D75 /* Development */,
 				1E784F9C20274BC400F11D75 /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		1EA7B0142A1667FF000F66BF /* Build configuration list for PBXNativeTarget "bach.pitchwheel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1EA7B0152A1667FF000F66BF /* Development */,
+				1EA7B0162A1667FF000F66BF /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;
