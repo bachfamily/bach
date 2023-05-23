@@ -2897,7 +2897,6 @@
 		1E913CCA25CD3A9800A45D8C /* notation_markers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_markers.c; sourceTree = "<group>"; };
 		1E913CCC25CD41CD00A45D8C /* notation_markers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_markers.h; sourceTree = "<group>"; };
 		1EA7B0172A1667FF000F66BF /* bach.pitchwheel.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.pitchwheel.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		1EA7B0182A1667FF000F66BF /* bach.circle copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.circle copy-Info.plist"; path = "/Users/danieleghisi/Documents/Max 8/Packages/bach/source/xcproj/bach.circle copy-Info.plist"; sourceTree = "<absolute>"; };
 		1EA7B0192A1668C2000F66BF /* pitchwheel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pitchwheel.c; sourceTree = "<group>"; };
 		1EAE5C1C2288532B005487F4 /* bach_ss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_ss.c; sourceTree = "<group>"; };
 		1EB4D4681610C9740041ABFB /* roll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll.h; sourceTree = "<group>"; };
@@ -4971,7 +4970,6 @@
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				91BA46AC1F71585E0002D515 /* package */,
 				00812FAC27C8B9B400521C7D /* Frameworks */,
-				1EA7B0182A1667FF000F66BF /* bach.circle copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";

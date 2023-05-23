@@ -362,8 +362,8 @@ void C74_EXPORT ext_main(void *moduleRef){
 	// For instance, a valid expression can be <b>exprx sin[$f1+cos[$f1]+$f2]</b>, where <b>$f2</b> is a parameter whose value has to be 
 	// input from the right inlet.
 	// @marg 0 @name expression @optional 0 @type llll
-    // @exemple exprx sin($f1+cos($f1)) @caption define formula for x
-    // @exemple exprx sin($f1+cos($f1*$f2)) @caption the same, $f2 being some parameter
+    // @example exprx sin($f1+cos($f1)) @caption define formula for x
+    // @example exprx sin($f1+cos($f1*$f2)) @caption the same, $f2 being some parameter
     // @seealso expry, exprr, bang
 	class_addmethod(c, (method) graph_exprx, "exprx", A_GIMME, 0);
 
@@ -375,8 +375,8 @@ void C74_EXPORT ext_main(void *moduleRef){
 	// For instance, a valid expression can be <b>expry sin[$f1*$f1+$f2]+$f3</b>, where <b>$f2</b> and <b>$f3</b> are parameters whose values 
 	// have to be input from the right inlet.
 	// @marg 0 @name expression @optional 0 @type llll
-    // @exemple expry $f1*sin($f1*$f1) @caption define formula for y
-    // @exemple expry $f2*sin($f1*$f1) @caption the same, $f2 being some parameter
+    // @example expry $f1*sin($f1*$f1) @caption define formula for y
+    // @example expry $f2*sin($f1*$f1) @caption the same, $f2 being some parameter
     // @seealso exprx, exprr, bang
 	class_addmethod(c, (method) graph_expry, "expry", A_GIMME, 0);
 
@@ -397,8 +397,8 @@ void C74_EXPORT ext_main(void *moduleRef){
 	// style is expected. The free variable Theta is represented by $f1.
 	// For instance, a valid expression can be <b>exprr $f1*$f1</b>.
 	// @marg 0 @name expression @optional 0 @type llll
-    // @exemple exprr $f1 @caption map radius on angle (Archimedean spiral)
-    // @exemple exprr $f2 + $f1 * log($f2+2) @caption define formula for radius, with $f2 being some parameter
+    // @example exprr $f1 @caption map radius on angle (Archimedean spiral)
+    // @example exprr $f2 + $f1 * log($f2+2) @caption define formula for radius, with $f2 being some parameter
     // @seealso exprx, expry, bang
 	class_addmethod(c, (method) graph_exprr, "exprr", A_GIMME, 0);
 
