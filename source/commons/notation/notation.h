@@ -5632,13 +5632,14 @@ long clef_symbol_to_clef_number(t_notation_obj *r_ob, t_symbol *clef);
     @param    name_style        One of the #e_note_names_styles, to specify which convention you want to use for naming (latin or anglosaxon)
     @param  print_octave    If non-zero, adds the note octave number
     @param    outname            Pointer which will be initialized and filled with the resulting string
+    @param  use_capital_b_for_doubleflat    If true, uses "B" instead of "bb" for double flat
                             If *outname is NULL, it also allocates the memory.
     @remark                    For instance, if <middleC_octave> = 4, <screen_mc> = 6200, <screen_acc> = -1 (double flat),
                             <name_style> = k_NOTE_NAMES_LATIN, then outname will be "Rebb4".
     @see                    notename2midicents()
     @see                    ezmidicents2notename()
 */ 
-void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_acc, char name_style, char print_octave, char **outname);
+void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_acc, char name_style, char print_octave, char **outname, char use_capital_b_for_doubleflat = false);
 
 
 /**    Quick'n'dirty conversion of a midicent pitch into its note name. It is a wrapper of midicents2notename(), in which the screen midicents and
@@ -5650,9 +5651,10 @@ void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_a
     @param  print_octave    If non-zero, adds the note octave number
     @param    outname            Pointer which will be initialized and filled with the resulting string
     @param    tonedivision    The microtonal grid (2 = semitones, 4 = quartertones...)
+    @param  use_capital_b_for_doubleflat    If true, uses "B" instead of "bb" for double flat
     @see                    midicents2notename()
 */ 
-void ezmidicents2notename(long middleC_octave, double midicents, char name_style, char print_octave, char **outname, long tonedivision);
+void ezmidicents2notename(long middleC_octave, double midicents, char name_style, char print_octave, char **outname, long tonedivision, char use_capital_b_for_doubleflat = false);
 
 
 /**    Convert a note name into its screen midicents and accidental.

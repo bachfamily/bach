@@ -1442,9 +1442,6 @@ void paint_arrow(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2,
     double S = arrow_height;
     double T = arrow_width * 0.5;
     
-    // line
-    paint_line(g, color, x1, y1, x2, y2, width);
-    
     // arrow
     if (x2 == x1)
         alpha = (y2 < y1) ? PIOVERTWO : PIOVERTWO * 3;
@@ -1454,11 +1451,17 @@ void paint_arrow(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2,
         if (x2 - x1 < 0)
             alpha += PI;
     }
+
+    double cos_alpha = cos(alpha);
+    double sin_alpha = sin(alpha);
     
-    pt1_x = x2 - S * cos(alpha) - T * sin(alpha);
-    pt2_x = pt1_x + 2 * T * sin(alpha);
-    pt1_y = y2 + S * sin(alpha) - T * cos(alpha);
-    pt2_y = pt1_y + 2 * T * cos(alpha);
+    // line
+    paint_line(g, color, x1, y1, x2 - (width * cos_alpha), y2 + (width * sin_alpha), width);
+
+    pt1_x = x2 - S * cos_alpha - T * sin_alpha;
+    pt2_x = pt1_x + 2 * T * sin_alpha;
+    pt1_y = y2 + S * sin_alpha - T * cos_alpha;
+    pt2_y = pt1_y + 2 * T * cos_alpha;
     jgraphics_set_source_jrgba(g, &color); 
     jgraphics_set_line_width(g, 0.);
     jgraphics_move_to(g, x2, y2);

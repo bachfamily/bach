@@ -31873,7 +31873,7 @@ void change_zoom(t_notation_obj *r_ob, double new_zoom_0_to_100){
 // ************* NAME <---> NOTE CONVERSIONS **************
 
 // also allocates the memory for outname if outname is NULL; a safe allocation is 100 chars
-void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_acc, char name_style, char print_octave, char **outname){
+void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_acc, char name_style, char print_octave, char **outname, char use_capital_b_for_doubleflat){
     char notename[5], accidental[100];
     long octave = floor(screen_mc / 1200.);
     long note = (screen_mc - 1200 * octave)/100;
@@ -31909,6 +31909,10 @@ void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_a
             acc = rat_long_diff(acc, 1);
             strncpy(accidental + cur, "x", 1);
             cur++;
+        } else if (use_capital_b_for_doubleflat && sign == -1 && rat_long_cmp(acc, 1) >= 0) {
+            acc = rat_long_diff(acc, 1);
+            strncpy(accidental + cur, "B", 1);
+            cur++;
         } else if (rat_rat_cmp(acc, HALF) >= 0) {
             acc = rat_rat_diff(acc, HALF);
             strncpy(accidental + cur, sign > 0 ? "#" : "b", 1);
@@ -31940,11 +31944,11 @@ void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_a
 }
 
 
-void ezmidicents2notename(long middleC_octave, double midicents, char name_style, char print_octave, char **outname, long tonedivision){
+void ezmidicents2notename(long middleC_octave, double midicents, char name_style, char print_octave, char **outname, long tonedivision, char use_capital_B_for_doubleflat){
     long screen_mc = 6000;
     t_rational screen_acc = genrat(0, 1);
     mc_to_screen_approximations_do(tonedivision, k_ACC_AUTO, midicents, &screen_mc, &screen_acc, NULL, NULL);
-    midicents2notename(middleC_octave, screen_mc, screen_acc, name_style, print_octave, outname);
+    midicents2notename(middleC_octave, screen_mc, screen_acc, name_style, print_octave, outname, use_capital_B_for_doubleflat);
 }
 
 
