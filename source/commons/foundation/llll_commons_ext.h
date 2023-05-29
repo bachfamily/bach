@@ -1088,6 +1088,7 @@ t_llll *double_triplet_and_long_to_llll(double d1, double d2, double d3, long d4
 t_llll *symbol_and_double_to_llll(t_symbol *sym, double d);
 t_llll *symbol_and_symbol_to_llll(t_symbol *sym1, t_symbol *sym2);
 t_llll *symbol_and_long_to_llll(t_symbol *sym, long n);
+t_llll *symbol_and_rational_to_llll(t_symbol *sym, t_rational r);
 t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, long num_samples, double starting_value, char auto_domain, e_slope_mapping slope_mapping_type);
 t_llll *integrate_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, double starting_value, e_slope_mapping slope_mapping_type);
 t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, long num_samples, char auto_domain, char if_possible_dont_sample, char discrete_derivative, char discrete_derivative_pad, e_slope_mapping slope_mapping_type);
