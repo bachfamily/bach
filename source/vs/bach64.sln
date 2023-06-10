@@ -275,6 +275,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.bell.in", "vs_projects
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.bell.out", "vs_projects\bach.bell.out.vcxproj", "{6C109C69-CBC7-4655-8D62-B7C4CE1309C6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bachB", "vs_projects\bachB.vcxproj", "{84D56DD2-6EF5-48A4-999A-8973CFBF1DC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1323,6 +1325,14 @@ Global
 		{6C109C69-CBC7-4655-8D62-B7C4CE1309C6}.Release|Win32.Build.0 = Release|Win32
 		{6C109C69-CBC7-4655-8D62-B7C4CE1309C6}.Release|x64.ActiveCfg = Release|x64
 		{6C109C69-CBC7-4655-8D62-B7C4CE1309C6}.Release|x64.Build.0 = Release|x64
+		{84D56DD2-6EF5-48A4-999A-8973CFBF1DC6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{84D56DD2-6EF5-48A4-999A-8973CFBF1DC6}.Debug|Win32.Build.0 = Debug|Win32
+		{84D56DD2-6EF5-48A4-999A-8973CFBF1DC6}.Debug|x64.ActiveCfg = Debug|x64
+		{84D56DD2-6EF5-48A4-999A-8973CFBF1DC6}.Debug|x64.Build.0 = Debug|x64
+		{84D56DD2-6EF5-48A4-999A-8973CFBF1DC6}.Release|Win32.ActiveCfg = Release|Win32
+		{84D56DD2-6EF5-48A4-999A-8973CFBF1DC6}.Release|Win32.Build.0 = Release|Win32
+		{84D56DD2-6EF5-48A4-999A-8973CFBF1DC6}.Release|x64.ActiveCfg = Release|x64
+		{84D56DD2-6EF5-48A4-999A-8973CFBF1DC6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
