@@ -8176,11 +8176,12 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
         // (BTW: this is not the best way to go... should just recompute when the chord is changed)
         calculate_all_chords_remaining_onsets(x); 
         calculate_all_tempi_remaining_onsets(x); 
+        sync_all_markers_absolute_ms_onset(x);
         x->r_ob.need_recompute_chords_double_onset = false;
     }
     
     check_tempi(x); // decide whether we should hide some tempi
-    
+
     verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
 #ifdef CONFIGURATION_Development
     for (tmp_voice = x->firstvoice; tmp_voice && (tmp_voice->v_ob.number < x->r_ob.num_voices); tmp_voice = tmp_voice->next) { 
