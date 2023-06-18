@@ -10,6 +10,8 @@ v0.8.4
 
 - bach.score: fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
 
+- bach.roll: exportmidi: added "defaulttempo" message attribute
+
 - bell: bach.sum, bach.prod now work
 
 v0.8.3

@@ -915,7 +915,7 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 	long num_voices = 0;
 	t_ptr_size count = 0;
 
-	llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiil",
+	llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiild",
 				   _sym_filename, &filename_sym,
 				   gensym("exportmarkers"), &export_markers,
 				   gensym("exportbarlines"), &export_barlines,
@@ -923,7 +923,8 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
                    gensym("exportsubdivisions"), &export_subdivisions,
 				   gensym("format"), &format,
 				   gensym("resolution"), &time_division,
-				   gensym("voices"), &voices_to_write);
+				   gensym("voices"), &voices_to_write,
+                   gensym("defaulttempo"), &tempo);
 	
     
     if (arguments->l_size) {
