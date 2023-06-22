@@ -1351,15 +1351,15 @@ typedef enum _selection_modes {
 } e_selection_modes;
 
 
-/** Lyrics alignments.
+/** Text alignments.
     @ingroup    notation
  */
-typedef enum e_lyrics_alignments {
-    k_LYRICS_ALIGNMENT_AUTO = 0,        ///< Automatic alignment (currently equal to the #k_LYRICS_ALIGNMENT_CENTER alignment, but will be improved)
-    k_LYRICS_ALIGNMENT_LEFT = 1,        ///< Syllabes are left-aligned
-    k_LYRICS_ALIGNMENT_CENTER = 2,        ///< Syllabes are center-aligned
-    k_LYRICS_ALIGNMENT_RIGHT = 3        ///< Syllabes are right-aligned
-} e_lyrics_alignments;
+typedef enum _alignments {
+    k_ALIGNMENT_AUTO = 0,        ///< Automatic alignment (currently for lyrics this is equal to the #k_ALIGNMENT_CENTER alignment, while for annotations is #k_ALIGNMENT_LEFT)
+    k_ALIGNMENT_LEFT = 1,        ///< Text is left-aligned
+    k_ALIGNMENT_CENTER = 2,      ///< Text is center-aligned
+    k_ALIGNMENT_RIGHT = 3        ///< Text is right-aligned
+} e_alignments;
 
 
 /** Lambda spacing modes for [bach.roll]
@@ -4324,7 +4324,7 @@ typedef struct _notation_obj
     // lyrics
     double        lyrics_font_size;                    ///< Font size for the lyrics (for zoom_y = 1)
     double        lyrics_uy_pos;                        ///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
-    char        lyrics_alignment;                    ///< Alignment type for the syllabes below chords, must be one of the #e_lyrics_alignments
+    char        lyrics_alignment;                    ///< Alignment type for the syllabes below chords, must be one of the #e_alignments
     char        show_lyrics;                        ///< Flag which tells if we need to show lyrics (1) or not (0)
     char        show_lyrics_word_extensions;        ///< Flag which tells if we need to show the word extensions for lyrics (1) or not (0).
                                                     ///< Word extensions are the ______ lines which continue a syllable over melismas, such as "true______"
@@ -4338,6 +4338,8 @@ typedef struct _notation_obj
                                                     ///< 1 = They only change chord position inside measures, but they don't affect measure width
                                                     ///< 2 = They also change measure width, but only if some dynamics are overlapping
                                                     ///< 3 = They also affect measure width, always
+
+    char        annotation_alignment;                    ///< Alignment type for the annotations, must be one of the #e_alignments
 
     // command fields, arrays (containing one element for each command)
     t_commandinfo commands[CONST_MAX_COMMANDS];
@@ -10645,7 +10647,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
 
 // TBD
 void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                                double x_pos, long slot, t_jfont *jf_ann, double staff_top_y,
+                                long slot, t_jfont *jf_ann, double staff_top_y,
                                 char *last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
                                 double *annotation_line_y_pos);
 
@@ -17506,6 +17508,7 @@ t_max_err notationobj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object 
 t_max_err notationobj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_annotation_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_linknotecolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);

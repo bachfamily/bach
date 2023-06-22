@@ -1,5 +1,5 @@
 /*
- *  pitchwheel.c
+ *  jiwheel.c
  *
  * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
  *
@@ -19,13 +19,13 @@
 
 /**
     @file
-    pitchwheel.c
+    jiwheel.c
     
     @name 
-    bach.pitchwheel
+    bach.jiwheel
     
     @realname 
-    bach.pitchwheel
+    bach.jiwheel
 
     @type
     object
@@ -37,17 +37,17 @@
     bachproject
     
     @digest 
-    Pitch clock diagram
+    Just intonation clock diagram
     
     @description
-    The purpose of <o>bach.pitchwheel</o> is to act as a simple clock diagram displaying
-    pitches, especially for just intonation applications.
+    The purpose of <o>bach.jiwheel</o> is to act as a simple clock diagram displaying
+    just intonation pitches.
  
     @category
     bach, bach objects, bach just intonation, bach interface, U/I
     
     @keywords
-    pitchwheel, diagram, clock, just intonation, ratio, Helmholtz-Ellis, wheel, rotate,
+    jiwheel, diagram, clock, just intonation, ratio, Helmholtz-Ellis, wheel, rotate,
 
     @palette
     YES
@@ -85,8 +85,10 @@
 #define MAX_ALLOWED_PRIMES 200
 
 const long commalimits[] = {5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
-const t_rational commas[] = {genrat(81, 80), genrat(64, 63), genrat(32, 33), genrat(27, 26), genrat(2187, 2176), genrat(512, 513), genrat(729,736), genrat(256,261), genrat(32,31), genrat(36,37), genrat(81, 82), genrat(128,129), genrat(729,752)};
-const long numcommas = 13;
+t_rational *commas = NULL;
+long numcommas = 0;
+//const t_rational commas[] = {genrat(81, 80), genrat(64, 63), genrat(32, 33), genrat(27, 26), genrat(2187, 2176), genrat(512, 513), genrat(729,736), genrat(256,261), genrat(32,31), genrat(36,37), genrat(81, 82), genrat(128,129), genrat(729,752)};
+//const long numcommas = 13;
 
 typedef struct _wheelpitch
 {
@@ -147,7 +149,7 @@ enum {
     BACH_PITCHWHEEL_COLORMODE_PYTHAGOREANDIATONICNOTE = 4,
 };
 
-typedef struct _pitchwheel // [bach.pitchwheel] structure
+typedef struct _jiwheel // [bach.jiwheel] structure
 {
     t_llllobj_jbox            j_box; // root object
 
@@ -268,52 +270,53 @@ typedef struct _pitchwheel // [bach.pitchwheel] structure
     
     t_systhread_mutex        c_mutex;
 
-} t_pitchwheel;
+} t_jiwheel;
 
 
 // global class pointer variable
-t_class    *s_pitchwheel_class = NULL;
+t_class    *s_jiwheel_class = NULL;
 
 // functions
-void pitchwheel_inletinfo(t_pitchwheel *x, void *b, long a, char *t);
-void pitchwheel_assist(t_pitchwheel *x, void *b, long m, long a, char *s);
+void jiwheel_inletinfo(t_jiwheel *x, void *b, long a, char *t);
+void jiwheel_assist(t_jiwheel *x, void *b, long m, long a, char *s);
 
-void pitchwheel_free(t_pitchwheel *x);
+void jiwheel_free(t_jiwheel *x);
 
-void pitchwheel_focusgained(t_pitchwheel *x, t_object *patcherview);
-void pitchwheel_focuslost(t_pitchwheel *x, t_object *patcherview);
-void pitchwheel_mousedown(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers);
-void pitchwheel_mousemove(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers);
-void pitchwheel_mouseup(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers);
-void pitchwheel_mousedrag(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers);
-void pitchwheel_mousewheel(t_pitchwheel *x, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc);
-void pitchwheel_mousedoubleclick(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers);
-long pitchwheel_key(t_pitchwheel *x, t_object *patcherview, long keycode, long modifiers, long textcharacter);
-t_max_err pitchwheel_notify(t_pitchwheel *x, t_symbol *s, t_symbol *msg, void *sender, void *data);
+void jiwheel_focusgained(t_jiwheel *x, t_object *patcherview);
+void jiwheel_focuslost(t_jiwheel *x, t_object *patcherview);
+void jiwheel_mousedown(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers);
+void jiwheel_mousemove(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers);
+void jiwheel_mouseup(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers);
+void jiwheel_mousedrag(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers);
+void jiwheel_mousewheel(t_jiwheel *x, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc);
+void jiwheel_mousedoubleclick(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers);
+long jiwheel_key(t_jiwheel *x, t_object *patcherview, long keycode, long modifiers, long textcharacter);
+t_max_err jiwheel_notify(t_jiwheel *x, t_symbol *s, t_symbol *msg, void *sender, void *data);
 
-t_pitchwheel* pitchwheel_new(t_symbol *s, long argc, t_atom *argv);
+t_jiwheel* jiwheel_new(t_symbol *s, long argc, t_atom *argv);
 
-void pitchwheel_paint(t_pitchwheel *x, t_object *view);
+void jiwheel_paint(t_jiwheel *x, t_object *view);
 
-void pitchwheel_anything(t_pitchwheel *x, t_symbol *s, long argc, t_atom *argv);
-void pitchwheel_dump(t_pitchwheel *x, t_symbol *s, long argc, t_atom *argv);
-void pitchwheel_int(t_pitchwheel *x, t_atom_long num);
-void pitchwheel_float(t_pitchwheel *x, double num);
-void pitchwheel_bang(t_pitchwheel *x);
-void pitchwheel_preset(t_pitchwheel *x);
+void jiwheel_anything(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv);
+void jiwheel_dump(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv);
+void jiwheel_int(t_jiwheel *x, t_atom_long num);
+void jiwheel_float(t_jiwheel *x, double num);
+void jiwheel_bang(t_jiwheel *x);
+void jiwheel_preset(t_jiwheel *x);
 
-void pitchwheel_importance(t_pitchwheel *x, t_symbol *s, long argc, t_atom *argv);
-t_max_err pitchwheel_setattr_importance(t_pitchwheel *x, void *attr, long ac, t_atom *av);
+void jiwheel_importance(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv);
+t_max_err jiwheel_setattr_importance(t_jiwheel *x, void *attr, long ac, t_atom *av);
 
-void get_radius_and_center(t_pitchwheel *x, t_object *patcherview, double *radius, double *center_x, double *center_y);
-void pitchwheel_clear_selection(t_pitchwheel *x);
+void get_radius_and_center(t_jiwheel *x, t_object *patcherview, double *radius, double *center_x, double *center_y);
+void jiwheel_clear_selection(t_jiwheel *x);
 
-t_llll *pitchwheel_get_wheelpitch_as_llll(t_pitchwheel *x, t_wheelpitch *p, bool as_interval);
-void pitchwheel_output_selection(t_pitchwheel *x);
+t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_interval);
+void jiwheel_output_selection(t_jiwheel *x);
 void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, long formaloctave);
+t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_interval);
 
 
-DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_pitchwheel, allowed_commas, pitchwheel_getattr_commas, pitchwheel_setattr_commas);
+DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_jiwheel, allowed_commas, jiwheel_getattr_commas, jiwheel_setattr_commas);
 
 // or pseudo octaves!
 void remove_octaves(long formaloctave, t_rational *r)
@@ -326,7 +329,7 @@ void remove_octaves(long formaloctave, t_rational *r)
     }
 }
 
-void remove_octaves(t_pitchwheel *x, t_rational *r)
+void remove_octaves(t_jiwheel *x, t_rational *r)
 {
     long octave = x->formaloctave;
     if (octave >= 2) {
@@ -339,7 +342,91 @@ void remove_octaves(t_pitchwheel *x, t_rational *r)
 
 
 
-const char *pitchwheel_ratio_to_common_interval_name(t_rational r, long *num_octaves)
+void build_commas()
+{
+    if (commas != NULL)
+        return;
+    
+    numcommas = MAX_ALLOWED_PRIMES;
+    commas = (t_rational *)bach_newptr(numcommas * sizeof(t_rational));
+
+    // From Marc Sabat's personal communication
+    // Search no further than + or – 7 fifths to avoid reading the diminished fourth and other enharmonics which differ by a schisma from 5-limit. Those would be possible spellings from a fundamental. Find the smallest comma. Find the nearest comma. Make a choice between the two.... set maximum comma size to 69c (1/3 of a tone) – does that make sense?
+    for (long i = 0; i < numcommas; i++) {
+        long prime = bach->b_primes[i+2];
+        // what's the comma? we search for a ratio of the form
+        // 2^n*3^m*prime
+        t_rational comma = long2rat(0);
+        double threshold = pow(2, 1./18.); // set maximum comma size to 69c (1/3 of a tone)
+        double invthreshold = 2/threshold;
+        double curr_comma_dbl = DBL_MAX;
+        long curr_max_term = LONG_MAX;
+        // "search no further than + or – 7 fifths to avoid reading the diminished fourth and other enharmonics which differ by a schisma from 5-limit"
+        for (long m = 0; m <= 7; m++) {
+            t_rational r;
+            
+            r = genrat(ipow(3, m), prime);
+            ensure_ratio_is_between_1_and_formaloctave(&r, 2);
+            if (rat2double(r) > invthreshold || rat2double(r) < threshold) {
+                if (rat2double(comma) < curr_comma_dbl) {
+//                if (MAX(r.r_num, r.r_den) < curr_max_term) {
+                    comma = r;
+                    curr_max_term = MAX(r.r_num, r.r_den);
+                    curr_comma_dbl = rat2double(r);
+                }
+            }
+
+            r = genrat(1, prime * long2rat(ipow(3, m)));
+            ensure_ratio_is_between_1_and_formaloctave(&r, 2);
+            if (rat2double(r) > invthreshold || rat2double(r) < threshold) {
+                if (rat2double(comma) < curr_comma_dbl) {
+//                if (MAX(r.r_num, r.r_den) < curr_max_term) {
+                    comma = r;
+                    curr_max_term = MAX(r.r_num, r.r_den);
+                    curr_comma_dbl = rat2double(r);
+                }
+            }
+        }
+        
+        if (rat2double(comma) > invthreshold) {
+            comma /= 2;
+        }
+        
+        // Two exceptions to the rule - manual adjustments to comply with HEJIv2
+        if (prime == 17)
+            commas[i] = genrat(2187, 2176);
+        else if (prime == 47)
+            commas[i] = genrat(729,752);
+        else
+            commas[i] = comma;
+        
+        post("prime %ld, comma: %ld/%ld (%.5f)", prime, comma.r_num, comma.r_den, MAX(comma.r_num, comma.r_den)*1./MIN(comma.r_num, comma.r_den));
+    }
+    
+//    {genrat(81, 80), genrat(64, 63), genrat(32, 33), genrat(27, 26), genrat(2187, 2176), genrat(512, 513), genrat(729,736), genrat(256,261), genrat(32,31), genrat(36,37), genrat(81, 82), genrat(128,129), genrat(729,752)}
+
+    
+// 3^4 * 2^-4 * 5  ^-1  = 81/80
+// 2^6 * 3^-2 * 7  ^-1  = 64/63
+// 2^5 * 3^-1 * 11 ^-1  = 32/33
+// 3^3 * 2^-1 * 13 ^-1  = 27/26
+// 3^7 * 2^-7 * 17 ^-1  = 2187/2176     *** 4096/4131
+// 2^9 * 3^-3 * 19 ^-1  = 512/513
+// 3^6 * 2^-5 * 23 ^-1  = 729/736
+// 2^8 * 3^-2 * 29 ^-1  = 256/261
+// 2^5 * 3^0  * 31 ^-1  = 32/31
+// 2^2 * 3^2  * 37 ^-1  = 36/37
+// 3^4 * 2^-1 * 41 ^-1  = 81/82          *** 128/123
+// 2^7 * 3^-1 * 43 ^-1  = 128/129
+// 3^6 * 2^-4 * 47 ^-1  = 729/752
+
+// why 2187/2176 instead of 4096/4131?
+//   3^7*2^-7*17^-1 instead of 2^12*3^-5*17^-1
+}
+
+
+
+const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octaves)
 {
     if (num_octaves) {
         if (rat_rat_cmp(r, long2rat(2)) > 0) {
@@ -1138,7 +1225,7 @@ const char *pitchwheel_ratio_to_common_interval_name(t_rational r, long *num_oct
     return "";
 }
 
-t_jrgba pitchwheel_long_to_color(t_pitchwheel *x, long value)
+t_jrgba jiwheel_long_to_color(t_jiwheel *x, long value)
 {
     if (value == LONG_MAX) {
         return x->j_textcolor;
@@ -1184,13 +1271,13 @@ long num_to_prime_idx(long num)
     return -1;
 }
 
-void pitchwheel_bang(t_pitchwheel *x)
+void jiwheel_bang(t_jiwheel *x)
 {
     if (x->j_box.l_rebuild == 1 || proxy_getinlet((t_object *) x) != 0)
-        pitchwheel_anything(x, _sym_bang, 0, NULL);
+        jiwheel_anything(x, _sym_bang, 0, NULL);
 }
 
-void pitchwheel_preset(t_pitchwheel *x)
+void jiwheel_preset(t_jiwheel *x)
 {
 /*    long ac = x->num_points * 2 + 1;
     t_atom *av = (t_atom *) bach_newptr(ac * sizeof(t_atom)); 
@@ -1236,10 +1323,10 @@ void C74_EXPORT ext_main(void *moduleRef)
         return;
     }
 
-    CLASS_NEW_CHECK_SIZE(c, "bach.pitchwheel",
-                        (method)pitchwheel_new,
-                        (method)pitchwheel_free,
-                        sizeof(t_pitchwheel),
+    CLASS_NEW_CHECK_SIZE(c, "bach.jiwheel",
+                        (method)jiwheel_new,
+                        (method)jiwheel_free,
+                        sizeof(t_jiwheel),
                         (method)NULL,
                         A_GIMME,
                         0L);
@@ -1250,107 +1337,95 @@ void C74_EXPORT ext_main(void *moduleRef)
     jbox_initclass(c, JBOX_TEXTFIELD | JBOX_FONTATTR);    // include textfield and Fonts attributes
     jbox_initclass(c, 0);
     
-    class_addmethod(c, (method) pitchwheel_paint,            "paint", A_CANT, 0);
+    class_addmethod(c, (method) jiwheel_paint,            "paint", A_CANT, 0);
 
-    // @method llll @digest Set points and/or velocities (depending on inlet)
+    class_addmethod(c, (method) jiwheel_anything, "anything", A_GIMME, 0);
+    class_addmethod(c, (method) jiwheel_anything, "list", A_GIMME, 0);
+
+    // @method dump @digest Output all pitches
+    // @description Outputs the information about all pitches from the first outlet. If the "visible" symbol is given as first argument, only visible pitches
+    // are output; otherwise, the ones that have been hidden to avoid collisions are also output (default behavior).
+    // @marg 0 @name visible @optional 1 @type symbol
+    // @example dump @caption output all pitches
+    // @example dump visible @caption output visible pitches only
+    class_addmethod(c, (method) jiwheel_dump, "dump", A_GIMME, 0);
+
+
+    class_addmethod(c, (method) jiwheel_int, "int", A_LONG, 0);
+    class_addmethod(c, (method) jiwheel_float, "float", A_FLOAT, 0);
+
+    class_addmethod(c, (method) jiwheel_bang, "bang", 0);
+
+    class_addmethod(c, (method) jiwheel_anything, "clear", A_GIMME, 0);
+
+    // @method (mouse) @digest Select pitches and create intervals
     // @description 
-    // In first inlet: a plain list sets the points: each point is given as per its index, 0 being the upper one, and then clockwise. 
-    // An interlaced such as [(<m>pt1</m> <m>vel1</m>) (<m>pt2</m> <m>vel2</m>)...] sets both points and velocities. <br />
-    // In second inlet: Sets the velocities for the points you'll send in the first inlet later.
-    class_addmethod(c, (method) pitchwheel_anything, "anything", A_GIMME, 0);
-    class_addmethod(c, (method) pitchwheel_anything, "list", A_GIMME, 0);
+    // • <m>click</m>: select a pitch <br />
+    // • <m>Shift+click</m>: select a pitch to be used as second extreme of an interval <br />
+    // • <m>click+drag</m>: select an interval <br />
+    // • <m>doubleclick</m> or <m>Alt+click</m>: rotate integer wheel so that number 1 matches a specific pitch <br />
+    class_addmethod(c, (method) jiwheel_mousedown, "mousedown", A_CANT, 0);
+    class_addmethod(c, (method) jiwheel_mousedrag, "mousedrag", A_CANT, 0);
+    class_addmethod(c, (method) jiwheel_mouseup, "mouseup", A_CANT, 0);
+    class_addmethod(c, (method) jiwheel_mousemove, "mousemove", A_CANT, 0);
+    class_addmethod(c, (method) jiwheel_mousewheel, "mousewheel", A_CANT, 0);
+    class_addmethod(c, (method) jiwheel_mousedoubleclick, "mousedoubleclick", A_CANT, 0);
 
-    // @method dump @digest Output all data
+    class_addmethod(c, (method) jiwheel_notify, "bachnotify", A_CANT, 0);
+
+    // @method (keyboard) @digest Operate on interface
     // @description 
-    // Send: <br />
-    // - the modulo from the third outlet; <br />
-    // - all the velocities from the second outlet, as a plain list; <br />
-    // - all the points from the first outlet, as a plain list.
-    class_addmethod(c, (method) pitchwheel_dump, "dump", A_GIMME, 0);
+    // • <m>Esc</m>: reset rotation and zoom <br />
+      class_addmethod(c, (method) jiwheel_key, "key", A_CANT, 0);
 
+    class_addmethod(c, (method) jiwheel_preset, "preset", 0);
 
-    class_addmethod(c, (method) pitchwheel_int, "int", A_LONG, 0);
-    class_addmethod(c, (method) pitchwheel_float, "float", A_FLOAT, 0);
+    class_addmethod(c, (method) jiwheel_focusgained, "focusgained", A_CANT, 0);
+    class_addmethod(c, (method) jiwheel_focuslost, "focuslost", A_CANT, 0);
 
-    class_addmethod(c, (method) pitchwheel_bang, "bang", 0);
-
-    // @method clear @digest Clear the diagram
-    // @description Clear all the points of the diagram
-    class_addmethod(c, (method) pitchwheel_anything, "clear", A_GIMME, 0);
-
-    // @method (mouse) @digest Add/delete points, or change their velocities
-    // @description 
-    // • <m>click</m>: Add a point <br />
-    // • <m>Alt+click</m>: Output clicked point index, in the form <b>point <m>pt</m></b>, where <m>pt</m> is as usual the point index. <br />
-    // • <m>Cmd+click</m> (mac) or <m>Ctrl+click</m> (win): Delete a point <br />
-    // • <m>Ctrl+click+drag</m> (mac) or <m>Shift+Ctrl+click+drag</m> (win): Change the velocity of a point (dragging up or down) <br /> 
-    // • <m>Ctrl+Alt+click+drag</m> (mac) or <m>Shift+Ctrl+Alt+click+drag</m> (win): Change the modulo (dragging up or down)
-    class_addmethod(c, (method) pitchwheel_mousedown, "mousedown", A_CANT, 0);
-    class_addmethod(c, (method) pitchwheel_mousedrag, "mousedrag", A_CANT, 0);
-    class_addmethod(c, (method) pitchwheel_mouseup, "mouseup", A_CANT, 0);
-    class_addmethod(c, (method) pitchwheel_mousemove, "mousemove", A_CANT, 0);
-    class_addmethod(c, (method) pitchwheel_mousewheel, "mousewheel", A_CANT, 0);
-    class_addmethod(c, (method) pitchwheel_mousedoubleclick, "mousedoubleclick", A_CANT, 0);
-
-    class_addmethod(c, (method) pitchwheel_notify, "bachnotify", A_CANT, 0);
-
-    // @method (keyboard) @digest Modify points or dump
-    // @description 
-    // • <m>Cmd+T</m> (mac) or <m>Ctrl+T</m> (win): Transpose (rotate) 1 step clockwise <br />
-    // • <m>Cmd+R</m> (mac) or <m>Ctrl+R</m> (win): Transpose (rotate) 1 step counterclockwise <br />
-    // • <m>Cmd+C</m> (mac) or <m>Ctrl+C</m> (win): Take the complement <br />
-    // • <m>Cmd+I</m> (mac) or <m>Ctrl+I</m> (win): Invert with respect to vertical axis <br />
-    // • <m>Cmd+Shift+D</m> (mac) or <m>Ctrl+Shift+D</m> (win): Dump (output modulo, velocities and points)
-      class_addmethod(c, (method) pitchwheel_key, "key", A_CANT, 0);
-
-    class_addmethod(c, (method) pitchwheel_preset, "preset", 0);
-
-    class_addmethod(c, (method) pitchwheel_focusgained, "focusgained", A_CANT, 0);
-    class_addmethod(c, (method) pitchwheel_focuslost, "focuslost", A_CANT, 0);
-
-    class_addmethod(c, (method) pitchwheel_inletinfo, "inletinfo", A_CANT, 0);
-    class_addmethod(c, (method) pitchwheel_assist, "assist", A_CANT, 0);
+    class_addmethod(c, (method) jiwheel_inletinfo, "inletinfo", A_CANT, 0);
+    class_addmethod(c, (method) jiwheel_assist, "assist", A_CANT, 0);
 
     llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_UI);
 
     CLASS_ATTR_DEFAULT(c, "fontsize", 0, "24"); // new font size
-    // @exclude bach.pitchwheel
+    // @exclude bach.jiwheel
     CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 850 600"); // new dimensions
-    // @exclude bach.pitchwheel
+    // @exclude bach.jiwheel
     CLASS_ATTR_DEFAULT(c, "presentation_rect", 0, "0 0 850 600"); // new dimensions
-    // @exclude bach.pitchwheel
+    // @exclude bach.jiwheel
     CLASS_ATTR_DEFAULT(c, "fontname", 0, "Times New Roman"); // new dimensions
-    // @exclude bach.pitchwheel
+    // @exclude bach.jiwheel
 
     CLASS_STICKY_ATTR(c,"category",0,"Color");
 
 #ifdef BACH_MAX7_STYLES_COMPATIBILITY
-        CLASS_ATTR_STYLE_RGBA_PREVIEW(c, "textcolor", 0, t_pitchwheel, j_bgcolor, "Text Color", "text_number");
+        CLASS_ATTR_STYLE_RGBA_PREVIEW(c, "textcolor", 0, t_jiwheel, j_bgcolor, "Text Color", "text_number");
         CLASS_ATTR_LEGACYDEFAULT(c, "textcolor", "textcolor", 0, "0. 0. 0. 1.");
         CLASS_ATTR_BASIC(c, "textcolor", 0);
         CLASS_ATTR_STYLE_ALIAS_NOSAVE(c,"textcolor", "numberstextcolor");
         CLASS_ATTR_STYLE_ALIAS_NOSAVE(c,"textcolor", "modulotextcolor");
         // @exclude all
 #else
-        CLASS_ATTR_RGBA(c, "textcolor", 0, t_pitchwheel, j_textcolor);
+        CLASS_ATTR_RGBA(c, "textcolor", 0, t_jiwheel, j_textcolor);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "textcolor", 0, "0. 0. 0. 1.");
         CLASS_ATTR_STYLE_LABEL(c, "textcolor", 0, "rgba", "Text Color");
         // @description Color of the text.
 #endif
 
 #ifdef BACH_MAX7_STYLES_COMPATIBILITY
-        CLASS_ATTR_STYLE_RGBA_PREVIEW(c, "bgcolor", 0, t_pitchwheel, j_bgcolor, "Background Color", "rect_fill");
+        CLASS_ATTR_STYLE_RGBA_PREVIEW(c, "bgcolor", 0, t_jiwheel, j_bgcolor, "Background Color", "rect_fill");
         CLASS_ATTR_LEGACYDEFAULT(c, "bgcolor", "bgcolor", 0, "1. 1. 1. 1.");
         CLASS_ATTR_BASIC(c, "bgcolor", 0);
         // @description Diagram external background color
 #else
-        CLASS_ATTR_RGBA(c, "bgcolor", 0, t_pitchwheel, j_bgcolor);
+        CLASS_ATTR_RGBA(c, "bgcolor", 0, t_jiwheel, j_bgcolor);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "bgcolor", 0, "1. 1. 1. 1.");
         CLASS_ATTR_STYLE_LABEL(c, "bgcolor", 0, "rgba", "Background Color");
         CLASS_ATTR_BASIC(c, "bgcolor",0);
 #endif
 
-        CLASS_ATTR_RGBA(c, "bordercolor", 0, t_pitchwheel, j_bordercolor);
+        CLASS_ATTR_RGBA(c, "bordercolor", 0, t_jiwheel, j_bordercolor);
 #ifdef BACH_MAX7_STYLES_COMPATIBILITY
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "bordercolor", 0, "0. 0. 0. 0.");
 #else
@@ -1359,17 +1434,17 @@ void C74_EXPORT ext_main(void *moduleRef)
         CLASS_ATTR_STYLE_LABEL(c, "bordercolor", 0, "rgba", "Border Color");
         // @description Color of the diagram border
 
-    CLASS_ATTR_RGBA(c,"selectioncolor", 0, t_pitchwheel, selection_color);
+    CLASS_ATTR_RGBA(c,"selectioncolor", 0, t_jiwheel, selection_color);
     CLASS_ATTR_STYLE_LABEL(c, "selectioncolor",0,"rgba","Selection Color");
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"selectioncolor",0,"0.8 0. 0.8 1.");
     // @description Sets the color for selection in RGBA format.
 
-    CLASS_ATTR_RGBA(c,"legendcolor", 0, t_pitchwheel, legend_color);
+    CLASS_ATTR_RGBA(c,"legendcolor", 0, t_jiwheel, legend_color);
     CLASS_ATTR_STYLE_LABEL(c, "legendcolor",0,"rgba","Legend Color");
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"legendcolor",0,"0.5 0.5 0.5 1.");
     // @description Sets the color for the legend.
 
-    CLASS_ATTR_RGBA(c,"etwheelcolor", 0, t_pitchwheel, etwheel_color);
+    CLASS_ATTR_RGBA(c,"etwheelcolor", 0, t_jiwheel, etwheel_color);
     CLASS_ATTR_STYLE_LABEL(c, "etwheelcolor",0,"rgba","Equal-Temperament Wheel Color");
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"etwheelcolor",0,"0.75 0.75 0.75 1.");
     // @description Sets the color for the equal temperament wheel.
@@ -1380,7 +1455,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_STICKY_ATTR(c,"category",0,"Show");
     
-        CLASS_ATTR_CHAR(c,"showfocus",0, t_pitchwheel, show_focus);
+        CLASS_ATTR_CHAR(c,"showfocus",0, t_jiwheel, show_focus);
         CLASS_ATTR_STYLE_LABEL(c,"showfocus",0,"onoff","Show Focus");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showfocus",0,"1");
         // @description Show that the object has the focus by increasing the width of the border.
@@ -1389,24 +1464,24 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     CLASS_STICKY_ATTR(c, "category", 0, "Font");
     
-        CLASS_ATTR_SYM(c,"accidentalsfont", 0, t_pitchwheel, accidentals_font);
+        CLASS_ATTR_SYM(c,"accidentalsfont", 0, t_jiwheel, accidentals_font);
         CLASS_ATTR_STYLE_LABEL(c, "accidentalsfont",0,"font","Accidentals Font");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"accidentalsfont", 0, "\"Bravura\"");
         // @description @copy BACH_DOC_ACCIDENTALS_FONT
         // <br />
         // The accidentals font must be SMUFL-compliant.
 
-        CLASS_ATTR_DOUBLE(c,"accidentalsfontsize", 0, t_pitchwheel, accidentals_font_size);
+        CLASS_ATTR_DOUBLE(c,"accidentalsfontsize", 0, t_jiwheel, accidentals_font_size);
         CLASS_ATTR_STYLE_LABEL(c, "accidentalsfontsize",0,"text","Accidentals Font Size");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"accidentalsfontsize", 0, "36");
         // @description Sets the maximum size of the accidentals (in pt).
 
-        CLASS_ATTR_SYM(c,"legendfont", 0, t_pitchwheel, legend_fontname);
+        CLASS_ATTR_SYM(c,"legendfont", 0, t_jiwheel, legend_fontname);
         CLASS_ATTR_STYLE_LABEL(c, "legendfont",0,"font","Legend Font");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"legendfont", 0, "\"Arial\"");
         // @description Chooses the font used for the legend.
 
-        CLASS_ATTR_DOUBLE(c,"legendfontsize", 0, t_pitchwheel, legend_fontsize);
+        CLASS_ATTR_DOUBLE(c,"legendfontsize", 0, t_jiwheel, legend_fontsize);
         CLASS_ATTR_STYLE_LABEL(c, "legendfontsize",0,"text","Legend Font Size");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"legendfontsize", 0, "12");
         // @description Sets the legend size (in pt).
@@ -1415,7 +1490,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_STICKY_ATTR(c, "category", 0, "Behavior");
 
-        CLASS_ATTR_CHAR(c, "outputsel", 0, t_pitchwheel, output_selection);
+        CLASS_ATTR_CHAR(c, "outputsel", 0, t_jiwheel, output_selection);
         CLASS_ATTR_STYLE_LABEL(c,"outputsel",0,"onoff","Output Selection");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"outputsel", 0, "1");
         // @description Toggles the ability to output the selection
@@ -1425,26 +1500,26 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_STICKY_ATTR(c, "category", 0, "Settings");
 
-        CLASS_ATTR_LONG(c, "formaloctave", 0, t_pitchwheel, formaloctave);
+        CLASS_ATTR_LONG(c, "formaloctave", 0, t_jiwheel, formaloctave);
         CLASS_ATTR_STYLE_LABEL(c,"formaloctave",0,"text","Formal Octave Harmonic");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"formaloctave",0,"2");
         CLASS_ATTR_FILTER_MIN(c, "formaloctave", 2)
         // @description Sets the harmonic number corresponding to the formal octave (defaults to 2: actual octave)
     
-        CLASS_ATTR_SYM(c, "basis", 0, t_pitchwheel, base_diatonic_pitch);
+        CLASS_ATTR_SYM(c, "basis", 0, t_jiwheel, base_diatonic_pitch);
         CLASS_ATTR_STYLE_LABEL(c,"basis",0,"text","Basis Diatonic Pitch");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"basis",0,"A");
         CLASS_ATTR_BASIC(c,"basis",0);
         // @description Sets the diatonic pitch corresponding to the 1/1 ratio (as one of the letters A through G).
 
-        CLASS_ATTR_CHAR(c, "display", 0, t_pitchwheel, display_what);
+        CLASS_ATTR_CHAR(c, "display", 0, t_jiwheel, display_what);
         CLASS_ATTR_STYLE_LABEL(c,"display",0,"enumindex","Display");
         CLASS_ATTR_ENUMINDEX(c,"display", 0, "Ratios Accidentals");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"display",0,"1");
         CLASS_ATTR_BASIC(c,"display",0);
         // @description Decides what to display: 0 (Ratios) or 1 (Accidentals).
 
-        CLASS_ATTR_CHAR(c, "mode", 0, t_pitchwheel, mode);
+        CLASS_ATTR_CHAR(c, "mode", 0, t_jiwheel, mode);
         CLASS_ATTR_STYLE_LABEL(c,"mode",0,"enumindex","Mode");
         CLASS_ATTR_ENUMINDEX(c,"mode", 0, "Maximum Term Prime Limits");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"mode",0,"0");
@@ -1452,27 +1527,27 @@ void C74_EXPORT ext_main(void *moduleRef)
         // @description Sets the representation mode: either up to a maximum term for numerator/denominator (0) or using prime limits,
         // by combining just intonation commas (1). In the first case, see <m>maxterm</m>. In the second, see <m>fifthext</m> and <m>commas</m>.
 
-        CLASS_ATTR_ATOM(c, "maxterm", 0, t_pitchwheel, maxterm);
+        CLASS_ATTR_ATOM(c, "maxterm", 0, t_jiwheel, maxterm);
         CLASS_ATTR_STYLE_LABEL(c,"maxterm",0,"text","Maximum Term");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"maxterm",0,"auto");
         CLASS_ATTR_BASIC(c,"maxterm",0);
         // @description Sets the maximum term used if <m>mode</m> is 0. Leave this to "auto" for automatic zooming
         // (and tailor the <m>density</m> attribute in this case).
 
-        CLASS_ATTR_ATOM(c, "maxtermintwheel", 0, t_pitchwheel, maxterm_intwheel);
+        CLASS_ATTR_ATOM(c, "maxtermintwheel", 0, t_jiwheel, maxterm_intwheel);
         CLASS_ATTR_STYLE_LABEL(c,"maxtermintwheel",0,"text","Maximum Number in Integers Wheel");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"maxtermintwheel",0,"auto");
         CLASS_ATTR_BASIC(c,"maxtermintwheel",0);
         // @description Sets the maximum number in the integers wheel. Leave this to "auto" for automatic zooming.
 
-        CLASS_ATTR_ATOM(c, "fifthext", 0, t_pitchwheel, maxfifths);
+        CLASS_ATTR_ATOM(c, "fifthext", 0, t_jiwheel, maxfifths);
         CLASS_ATTR_STYLE_LABEL(c,"fifthext",0,"text","Extension Of Pythagorean Fifths");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"fifthext",0,"auto");
         CLASS_ATTR_BASIC(c,"fifthext",0);
         // @description Sets the number of Pythagorean fifths calculated at every side of the basis pitch,
         // used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming.
 
-        CLASS_ATTR_LLLL(c, "commas", 0, t_pitchwheel, allowed_commas, pitchwheel_getattr_commas, pitchwheel_setattr_commas);
+        CLASS_ATTR_LLLL(c, "commas", 0, t_jiwheel, allowed_commas, jiwheel_getattr_commas, jiwheel_setattr_commas);
         CLASS_ATTR_STYLE_LABEL(c,"commas",0,"text_large","Allowed Commas");
         CLASS_ATTR_SAVE(c, "commas", 0);
         CLASS_ATTR_PAINT(c, "commas", 0);
@@ -1480,26 +1555,26 @@ void C74_EXPORT ext_main(void *moduleRef)
         // @description Sets the commas used if <m>mode</m> is 1. Leave this to "auto" for automatic zooming
         // (and tailor the <m>density</m> attribute in this case).
 
-        CLASS_ATTR_DOUBLE(c, "density", 0, t_pitchwheel, density);
+        CLASS_ATTR_DOUBLE(c, "density", 0, t_jiwheel, density);
         CLASS_ATTR_STYLE_LABEL(c,"density",0,"text","Density");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"density",0,"1.");
         CLASS_ATTR_BASIC(c,"density",0);
         // @description Sets the density of displayed pitches, used when display is in automatic zooming.
 
-        CLASS_ATTR_DOUBLE(c, "intwheeldensity", 0, t_pitchwheel, density_intwheel);
+        CLASS_ATTR_DOUBLE(c, "intwheeldensity", 0, t_jiwheel, density_intwheel);
         CLASS_ATTR_STYLE_LABEL(c,"intwheeldensity",0,"text","Integers Wheel Density");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"intwheeldensity",0,"1.");
         CLASS_ATTR_BASIC(c,"intwheeldensity",0);
         // @description Sets the density of integers in the integers wheel, used when display is in automatic zooming.
 
-        CLASS_ATTR_ATOM_VARSIZE(c, "limits", 0, t_pitchwheel, allowed_limits, allowed_limits_count, MAX_ALLOWED_LIMITS);
+        CLASS_ATTR_ATOM_VARSIZE(c, "limits", 0, t_jiwheel, allowed_limits, allowed_limits_count, MAX_ALLOWED_LIMITS);
         CLASS_ATTR_STYLE_LABEL(c,"limits",0,"text","Allowed Limits");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"limits",0,"any");
         CLASS_ATTR_BASIC(c,"limits",0);
         // @description Sets the allowed limits for the displayed pitches. Leave "any" to unconstrain.
         // Use "<=" as first element to choose limits less or equal to a certain number.
 
-        CLASS_ATTR_ATOM_VARSIZE(c, "primes", 0, t_pitchwheel, allowed_primes, allowed_primes_count, MAX_ALLOWED_PRIMES);
+        CLASS_ATTR_ATOM_VARSIZE(c, "primes", 0, t_jiwheel, allowed_primes, allowed_primes_count, MAX_ALLOWED_PRIMES);
         CLASS_ATTR_STYLE_LABEL(c,"primes",0,"text","Allowed Primes");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"primes",0,"any");
         CLASS_ATTR_BASIC(c,"primes",0);
@@ -1509,42 +1584,42 @@ void C74_EXPORT ext_main(void *moduleRef)
         // is constraining the highest prime appearing in the ratio, while when using <m>primes</m>
         // one is constraining _all_ the primes appearing in the ratio.
 
-        CLASS_ATTR_CHAR(c, "mapping", 0, t_pitchwheel, display_mapping);
+        CLASS_ATTR_CHAR(c, "mapping", 0, t_jiwheel, display_mapping);
         CLASS_ATTR_STYLE_LABEL(c,"mapping",0,"enumindex","Mapping");
         CLASS_ATTR_ENUMINDEX(c,"mapping", 0, "Pitch Frequency");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"mapping",0,"0");
         CLASS_ATTR_BASIC(c,"mapping",0);
         // @description Sets the mapping: either linear in pitch (0) or linear in frequency (1)
 
-        CLASS_ATTR_SYM(c, "importance", 0, t_pitchwheel, importance_sym);
+        CLASS_ATTR_SYM(c, "importance", 0, t_jiwheel, importance_sym);
         CLASS_ATTR_STYLE_LABEL(c,"importance",0,"text","Importance");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"importance",0,"(1-atan(maxexp*0.25)/1.5707)/pow(limit,0.3)");
-        CLASS_ATTR_ACCESSORS(c, "importance", (method)NULL, (method)pitchwheel_setattr_importance);
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"importance",0,"(1-atan(maxexp*0.25)/1.5707)/pow(limit\\,0.3)");
+        CLASS_ATTR_ACCESSORS(c, "importance", (method)NULL, (method)jiwheel_setattr_importance);
         // @description Sets the formula defining how important is each fraction. You can use as variables
         // "num" (numerator), "den" (denominator), "min" (min between the two), "max" (max between the two), "limit" (prime limit of the fraction),
         // and "maxexp" (largest power of each limit > 2).
     
-        CLASS_ATTR_CHAR(c, "hidecollisions", 0, t_pitchwheel, avoid_collisions);
+        CLASS_ATTR_CHAR(c, "hidecollisions", 0, t_jiwheel, avoid_collisions);
         CLASS_ATTR_STYLE_LABEL(c,"hidecollisions",0,"onoff","Hide Collisions");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"hidecollisions",0,"1");
         // @description Toggles the ability to hide labels when colliding with others
 
-        CLASS_ATTR_CHAR(c, "boostwhitekeys", 0, t_pitchwheel, boost_whitekeys);
+        CLASS_ATTR_CHAR(c, "boostwhitekeys", 0, t_jiwheel, boost_whitekeys);
         CLASS_ATTR_STYLE_LABEL(c,"boostwhitekeys",0,"onoff","Boost White-Keys Pitches");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"boostwhitekeys",0,"1");
         // @description If set, boosts the importance of diatonic "white-keys" pitches, with no accidentals (i.e. 'A' through 'G').
 
-        CLASS_ATTR_CHAR(c, "boostpythagorean", 0, t_pitchwheel, boost_pythagorean);
+        CLASS_ATTR_CHAR(c, "boostpythagorean", 0, t_jiwheel, boost_pythagorean);
         CLASS_ATTR_STYLE_LABEL(c,"boostpythagorean",0,"onoff","Boost Pythagorean Pitches");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"boostpythagorean",0,"1");
         // @description If set, boosts the importance of purely Pythagorean pitches.
 
-        CLASS_ATTR_CHAR(c, "alwayswhitekeys", 0, t_pitchwheel, always_display_whitekeys);
+        CLASS_ATTR_CHAR(c, "alwayswhitekeys", 0, t_jiwheel, always_display_whitekeys);
         CLASS_ATTR_STYLE_LABEL(c,"alwayswhitekeys",0,"onoff","Always Display White-Keys Pitches");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"alwayswhitekeys",0,"0");
         // @description If set, it always displays diatonic "white-keys" pitches with no accidentals (i.e. 'A' through 'G').
 
-        CLASS_ATTR_CHAR(c, "intwheelpitchestofront", 0, t_pitchwheel, always_show_coincidences_with_intwheel);
+        CLASS_ATTR_CHAR(c, "intwheelpitchestofront", 0, t_jiwheel, always_show_coincidences_with_intwheel);
         CLASS_ATTR_STYLE_LABEL(c,"intwheelpitchestofront",0,"onoff","Move Pitches Coinciding with Integers Wheel to Front");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"intwheelpitchestofront",0,"1");
         // @description If set, it prioritize pitches coinciding with integer wheel numbers, moving them to the front.
@@ -1553,7 +1628,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_STICKY_ATTR(c, "category", 0, "Show");
 
-        CLASS_ATTR_CHAR(c, "showlegend", 0, t_pitchwheel, show_legend);
+        CLASS_ATTR_CHAR(c, "showlegend", 0, t_jiwheel, show_legend);
         CLASS_ATTR_STYLE_LABEL(c,"showlegend",0,"enumindex","Show Legend");
         CLASS_ATTR_ENUMINDEX(c,"showlegend", 0, "Never Only For Selection Always");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showlegend",0,"2");
@@ -1567,28 +1642,28 @@ void C74_EXPORT ext_main(void *moduleRef)
         // moves over the notation object. <br />
 
     
-        CLASS_ATTR_CHAR(c, "showcircles", 0, t_pitchwheel, show_circles);
+        CLASS_ATTR_CHAR(c, "showcircles", 0, t_jiwheel, show_circles);
         CLASS_ATTR_STYLE_LABEL(c,"showcircles",0,"onoff","Show Circles");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showcircles",0,"0");
         // @description Toggles the display of the circles
 
-        CLASS_ATTR_CHAR(c, "showetwheel", 0, t_pitchwheel, show_et_wheel);
+        CLASS_ATTR_CHAR(c, "showetwheel", 0, t_jiwheel, show_et_wheel);
         CLASS_ATTR_STYLE_LABEL(c,"showetwheel",0,"onoff","Show Equal-Temperament Wheel");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showetwheel",0,"1");
         // @description Toggles the display of the equal temperament wheel as a reference
     
-        CLASS_ATTR_CHAR(c, "showintwheel", 0, t_pitchwheel, show_integers_wheel);
+        CLASS_ATTR_CHAR(c, "showintwheel", 0, t_jiwheel, show_integers_wheel);
         CLASS_ATTR_STYLE_LABEL(c,"showintwheel",0,"onoff","Show Integers Wheel");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showintwheel",0,"1");
         // @description Toggles the display of the integers wheel
 
     
-        CLASS_ATTR_CHAR(c, "showticks", 0, t_pitchwheel, show_ticks);
+        CLASS_ATTR_CHAR(c, "showticks", 0, t_jiwheel, show_ticks);
         CLASS_ATTR_STYLE_LABEL(c,"showticks",0,"onoff","Show Ticks");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showticks",0,"1");
         // @description Toggles the display of the ticks
 
-        CLASS_ATTR_CHAR(c, "showfractions", 0, t_pitchwheel, show_ratios);
+        CLASS_ATTR_CHAR(c, "showfractions", 0, t_jiwheel, show_ratios);
         CLASS_ATTR_STYLE_LABEL(c,"showfractions",0,"onoff","Show Fractions");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showfractions",0,"1");
         // @description Toggles the display of the fractions
@@ -1598,117 +1673,117 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     CLASS_STICKY_ATTR(c, "category", 0, "Appearance");
 
-        CLASS_ATTR_CHAR(c, "extendtickstointwheel", 0, t_pitchwheel, extend_ticks_to_integers);
+        CLASS_ATTR_CHAR(c, "extendtickstointwheel", 0, t_jiwheel, extend_ticks_to_integers);
         CLASS_ATTR_STYLE_LABEL(c,"extendtickstointwheel",0,"onoff","Extend Ticks to Integers Wheel");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"extendtickstointwheel",0,"1");
         // @description Toggles the extension of the pitch ticks to the integers wheel, when they line up.
 
-        CLASS_ATTR_CHAR(c, "direction", 0, t_pitchwheel, text_direction);
+        CLASS_ATTR_CHAR(c, "direction", 0, t_jiwheel, text_direction);
         CLASS_ATTR_STYLE_LABEL(c,"direction",0,"enumindex","Text And Accidentals Direction");
         CLASS_ATTR_ENUMINDEX(c,"direction", 0, "Upright Angular Radial");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"direction",0,"0");
         // @description Sets the direction for text and accidentals: upright (0), angular (1) or radial (2)
 
-        CLASS_ATTR_CHAR(c, "autoturn", 0, t_pitchwheel, rotate_for_legibility);
+        CLASS_ATTR_CHAR(c, "autoturn", 0, t_jiwheel, rotate_for_legibility);
         CLASS_ATTR_STYLE_LABEL(c,"autoturn",0,"onoff","Rotate For Legibility");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"autoturn",0,"1");
         // @description Toggles the ability to rotate the text for legibility
 
         
-        CLASS_ATTR_DOUBLE(c, "minfactor", 0, t_pitchwheel, minfactor);
+        CLASS_ATTR_DOUBLE(c, "minfactor", 0, t_jiwheel, minfactor);
         CLASS_ATTR_STYLE_LABEL(c,"minfactor",0,"text","Minimum Reduction Factor");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"minfactor",0,"0.3");
         // @description Sets the minimum reduction factor for importance.
 
-        CLASS_ATTR_CHAR(c, "colormode", 0, t_pitchwheel, color_mode);
+        CLASS_ATTR_CHAR(c, "colormode", 0, t_jiwheel, color_mode);
         CLASS_ATTR_STYLE_LABEL(c,"colormode",0,"enumindex","Color Mode");
         CLASS_ATTR_ENUMINDEX(c,"colormode", 0, "Plain Limit Max Exponent Pythagorean Chromatic Note Pythagorean Diatonic Note");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"colormode",0,"4");
         CLASS_ATTR_BASIC(c,"colormode",0);
         // @description Sets the color mode.
 
-        CLASS_ATTR_DOUBLE(c, "ticklength", 0, t_pitchwheel, tick_length);
+        CLASS_ATTR_DOUBLE(c, "ticklength", 0, t_jiwheel, tick_length);
         CLASS_ATTR_STYLE_LABEL(c,"ticklength",0,"text","Maximum Tick Length");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"ticklength",0,"40");
         // @description Sets the maximum tick length.
 
-        CLASS_ATTR_DOUBLE(c, "etwheelsize", 0, t_pitchwheel, et_wheel_size);
+        CLASS_ATTR_DOUBLE(c, "etwheelsize", 0, t_jiwheel, et_wheel_size);
         CLASS_ATTR_STYLE_LABEL(c,"etwheelsize",0,"text","Equal-Temperament Wheel Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"etwheelsize",0,"30");
         // @description Sets the radial size of the equal-temperament wheel.
 
-        CLASS_ATTR_DOUBLE(c, "intwheelsize", 0, t_pitchwheel, int_wheel_size);
+        CLASS_ATTR_DOUBLE(c, "intwheelsize", 0, t_jiwheel, int_wheel_size);
         CLASS_ATTR_STYLE_LABEL(c,"intwheelsize",0,"text","Integers Wheel Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"intwheelsize",0,"20");
         // @description Sets the radial size of the integers wheel.
 
-        CLASS_ATTR_DOUBLE(c,"inset",0, t_pitchwheel, inset);
+        CLASS_ATTR_DOUBLE(c,"inset",0, t_jiwheel, inset);
         CLASS_ATTR_STYLE_LABEL(c,"inset",0,"text","Inset");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"inset",0,"20.");
         // @description Inset of the clock diagram with respect to the border, in pixels
 
-        CLASS_ATTR_DOUBLE(c,"zoom",0, t_pitchwheel, zoom);
+        CLASS_ATTR_DOUBLE(c,"zoom",0, t_jiwheel, zoom);
         CLASS_ATTR_STYLE_LABEL(c,"zoom",0,"text","Zoom");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"zoom",0,"100.");
         // @description Zoom percentage.
 
-        CLASS_ATTR_DOUBLE(c,"zoomangle",0, t_pitchwheel, zoom_angle);
+        CLASS_ATTR_DOUBLE(c,"zoomangle",0, t_jiwheel, zoom_angle);
         CLASS_ATTR_STYLE_LABEL(c,"zoomangle",0,"text","Zoom Angle");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"zoomangle",0,"0");
         // @description Sets the zoomed angle (in radians).
 
-        CLASS_ATTR_DOUBLE(c,"rotationangle",0, t_pitchwheel, rotation_angle);
+        CLASS_ATTR_DOUBLE(c,"rotationangle",0, t_jiwheel, rotation_angle);
         CLASS_ATTR_STYLE_LABEL(c,"rotationangle",0,"text","Rotation Angle");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rotationangle",0,"0");
         // @description Sets the rotation angle (in radians).
 
     {
-        CLASS_ATTR_RGBA(c, "candycane1", 0, t_pitchwheel, candycane1);
+        CLASS_ATTR_RGBA(c, "candycane1", 0, t_jiwheel, candycane1);
         CLASS_ATTR_STYLE_LABEL(c,"candycane1",0,"rgba","Candycane Color 1");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane1", 0, "0.77 0.11 0. 1.0");
         // @description Sets one of the candycane colors
         
-        CLASS_ATTR_RGBA(c, "candycane2", 0, t_pitchwheel, candycane2);
+        CLASS_ATTR_RGBA(c, "candycane2", 0, t_jiwheel, candycane2);
         CLASS_ATTR_STYLE_LABEL(c,"candycane2",0,"rgba","Candycane Color 2");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane2", 0, "0.51 0.41 0.0 1.0");
         // @description Sets one of the candycane colors
         
-        CLASS_ATTR_RGBA(c, "candycane3", 0, t_pitchwheel, candycane3);
+        CLASS_ATTR_RGBA(c, "candycane3", 0, t_jiwheel, candycane3);
         CLASS_ATTR_STYLE_LABEL(c,"candycane3",0,"rgba","Candycane Color 3");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane3", 0, "0.6 0.8 0. 1.0");
         // @description Sets one of the candycane colors
 
-        CLASS_ATTR_RGBA(c, "candycane4", 0, t_pitchwheel, candycane4);
+        CLASS_ATTR_RGBA(c, "candycane4", 0, t_jiwheel, candycane4);
         CLASS_ATTR_STYLE_LABEL(c,"candycane4",0,"rgba","Candycane Color 4");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane4", 0, "0.8 0.4 0.6 1.0");
         // @description Sets one of the candycane colors
         
-        CLASS_ATTR_RGBA(c, "candycane5", 0, t_pitchwheel, candycane5);
+        CLASS_ATTR_RGBA(c, "candycane5", 0, t_jiwheel, candycane5);
         CLASS_ATTR_STYLE_LABEL(c,"candycane5",0,"rgba","Candycane Color 5");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane5", 0, "0.05 0.62 0.87 1.0");
         // @description Sets one of the candycane colors
         
-        CLASS_ATTR_RGBA(c, "candycane6", 0, t_pitchwheel, candycane6);
+        CLASS_ATTR_RGBA(c, "candycane6", 0, t_jiwheel, candycane6);
         CLASS_ATTR_STYLE_LABEL(c,"candycane6",0,"rgba","Candycane Color 6");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane6", 0, "0. 0. 0.81 1.0");
         // @description Sets one of the candycane colors
         
-        CLASS_ATTR_RGBA(c, "candycane7", 0, t_pitchwheel, candycane7);
+        CLASS_ATTR_RGBA(c, "candycane7", 0, t_jiwheel, candycane7);
         CLASS_ATTR_STYLE_LABEL(c,"candycane7",0,"rgba","Candycane Color 7");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane7", 0, "0. 0.518 0. 1.");
         // @description Sets one of the candycane colors
         
-        CLASS_ATTR_RGBA(c, "candycane8", 0, t_pitchwheel, candycane8);
+        CLASS_ATTR_RGBA(c, "candycane8", 0, t_jiwheel, candycane8);
         CLASS_ATTR_STYLE_LABEL(c,"candycane8",0,"rgba","Candycane Color 8");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane8", 0, "0.764 0.419 0.07 1.0");
         // @description Sets one of the candycane colors
         
-        CLASS_ATTR_RGBA(c, "candycane9", 0, t_pitchwheel, candycane9);
+        CLASS_ATTR_RGBA(c, "candycane9", 0, t_jiwheel, candycane9);
         CLASS_ATTR_STYLE_LABEL(c,"candycane9",0,"rgba","Candycane Color 9");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane9", 0, "0.53 0. 0.59 1.0");
         // @description Sets one of the candycane colors
 
-        CLASS_ATTR_RGBA(c, "candycane10", 0, t_pitchwheel, candycane10);
+        CLASS_ATTR_RGBA(c, "candycane10", 0, t_jiwheel, candycane10);
         CLASS_ATTR_STYLE_LABEL(c,"candycane10",0,"rgba","Candycane Color 10");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "candycane10", 0, "0.84 0.69 0. 1.0");
         // @description Sets one of the candycane colors
@@ -1717,15 +1792,17 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     CLASS_STICKY_ATTR_CLEAR(c, "category"); 
 
-    s_pitchwheel_class = c;
-    class_register(CLASS_BOX, s_pitchwheel_class);
+    s_jiwheel_class = c;
+    class_register(CLASS_BOX, s_jiwheel_class);
     
-    dev_post("bach.pitchwheel compiled %s %s", __DATE__, __TIME__);
+    build_commas();
+
+    dev_post("bach.jiwheel compiled %s %s", __DATE__, __TIME__);
     return;
 }
 
 
-void pitchwheel_importance(t_pitchwheel *x, t_symbol *s, long argc, t_atom *argv)
+void jiwheel_importance(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv)
 {
     const char *subs[] = {"num","den","min","max","limit","maxexp"};
     if (x->n_importance_lexpr)
@@ -1739,10 +1816,10 @@ void pitchwheel_importance(t_pitchwheel *x, t_symbol *s, long argc, t_atom *argv
 }
 
 
-t_max_err pitchwheel_setattr_importance(t_pitchwheel *x, void *attr, long ac, t_atom *av)
+t_max_err jiwheel_setattr_importance(t_jiwheel *x, void *attr, long ac, t_atom *av)
 {
     if (ac && av) {
-        pitchwheel_importance(x, NULL, ac, av);
+        jiwheel_importance(x, NULL, ac, av);
         x->importance_sym = atom_getsym(av);
     } else {
         object_error((t_object *)x, "Wrong importance function defined.");
@@ -1753,13 +1830,13 @@ t_max_err pitchwheel_setattr_importance(t_pitchwheel *x, void *attr, long ac, t_
 }
 
 
-t_max_err pitchwheel_notify(t_pitchwheel *x, t_symbol *s, t_symbol *msg, void *sender, void *data)
+t_max_err jiwheel_notify(t_jiwheel *x, t_symbol *s, t_symbol *msg, void *sender, void *data)
 {
     if (msg == gensym("attr_modified")) {
         t_symbol *attrname = (t_symbol *)object_method((t_object *)data, _sym_getname);
         if (attrname == gensym("limits") || attrname == gensym("primes") || attrname == gensym("formaloctave")) {
             x->rebuild = true;
-            pitchwheel_clear_selection(x);
+            jiwheel_clear_selection(x);
         } else if (attrname == gensym("mode") || attrname == gensym("commas") || attrname == gensym("maxterm") || attrname == gensym("maxfifths") || attrname == gensym("density") || attrname == gensym("display") || attrname == gensym("basis") || attrname == gensym("alwayswhitekeys") || attrname == gensym("mapping")) {
             x->rebuild = true;
         } else if (attrname == gensym("zoom") || attrname == gensym("zoomangle")){
@@ -1774,7 +1851,7 @@ t_max_err pitchwheel_notify(t_pitchwheel *x, t_symbol *s, t_symbol *msg, void *s
     return jbox_notify((t_jbox *)x, s, msg, sender, data);
 }
 
-void pitchwheel_assist(t_pitchwheel *x, void *b, long m, long a, char *s){
+void jiwheel_assist(t_jiwheel *x, void *b, long m, long a, char *s){
     if (m == ASSIST_INLET) {
         if (a == 0) // @in 0 @type llll @digest Messages
             sprintf(s, "llll: Messages");
@@ -1788,30 +1865,46 @@ void pitchwheel_assist(t_pitchwheel *x, void *b, long m, long a, char *s){
     }
 }
 
-void pitchwheel_inletinfo(t_pitchwheel *x, void *b, long a, char *t)
+void jiwheel_inletinfo(t_jiwheel *x, void *b, long a, char *t)
 {
     if (a)
         *t = 1;
 }
 
-void pitchwheel_int(t_pitchwheel *x, t_atom_long num)
+void jiwheel_int(t_jiwheel *x, t_atom_long num)
 {
     t_atom argv[1]; atom_setlong(argv, num);
-    pitchwheel_anything(x, _llllobj_sym_list, 1, argv);
+    jiwheel_anything(x, _llllobj_sym_list, 1, argv);
 }
 
-void pitchwheel_float(t_pitchwheel *x, double num){
+void jiwheel_float(t_jiwheel *x, double num){
     t_atom argv[1]; atom_setfloat(argv, num);
-    pitchwheel_anything(x, _llllobj_sym_list, 1, argv);
+    jiwheel_anything(x, _llllobj_sym_list, 1, argv);
 }
 
 
-void pitchwheel_dump(t_pitchwheel *x, t_symbol *s, long argc, t_atom *argv){
+void jiwheel_dump(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv){
 //    send_values(x);
+    bool visible_only = false;
+    if (argc >= 1 && atom_gettype(argv) == A_SYM && atom_getsym(argv) == _sym_visible) {
+        visible_only = true;
+    }
+    
+    
+    systhread_mutex_lock(x->c_mutex);
+    t_llll *ll = llll_get();
+    for (long i = 0; i < x->num_pitches; i++) {
+        if (visible_only && !x->curr_pitches[i].shown)
+            continue;
+        llll_appendllll(ll, jiwheel_get_wheelpitch_as_llll(x, &x->curr_pitches[i], false));
+    }
+    systhread_mutex_unlock(x->c_mutex);
+    llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 0, ll);
+    llll_free(ll);
 }
 
 
-void pitchwheel_anything(t_pitchwheel *x, t_symbol *s, long argc, t_atom *argv)
+void jiwheel_anything(t_jiwheel *x, t_symbol *s, long argc, t_atom *argv)
 {
 /*
     long inlet = proxy_getinlet((t_object *) x);
@@ -1876,11 +1969,11 @@ void pitchwheel_anything(t_pitchwheel *x, t_symbol *s, long argc, t_atom *argv)
             systhread_mutex_unlock(x->c_mutex);
         } else if (inllll && inllll->l_head && hatom_gettype(&inllll->l_head->l_hatom) == H_SYM && hatom_getsym(&inllll->l_head->l_hatom) == _llllobj_sym_transpose) {
             if (inllll->l_head->l_next)
-                transpose_pitchwheel(x, hatom_getlong(&inllll->l_head->l_next->l_hatom));
+                transpose_jiwheel(x, hatom_getlong(&inllll->l_head->l_next->l_hatom));
         } else if (inllll && inllll->l_head && hatom_gettype(&inllll->l_head->l_hatom) == H_SYM && hatom_getsym(&inllll->l_head->l_hatom) == _llllobj_sym_complement) {
-            complement_pitchwheel(x);
+            complement_jiwheel(x);
         } else if (inllll && inllll->l_head && hatom_gettype(&inllll->l_head->l_hatom) == H_SYM && hatom_getsym(&inllll->l_head->l_hatom) == _llllobj_sym_invert) {
-            invert_pitchwheel(x);
+            invert_jiwheel(x);
         } else if (inllll && inllll->l_head) {
             t_llllelem *elem, *elemv;
             t_llll *vels = NULL;
@@ -1921,9 +2014,9 @@ void pitchwheel_anything(t_pitchwheel *x, t_symbol *s, long argc, t_atom *argv)
 */
 }
 
-t_pitchwheel* pitchwheel_new(t_symbol *s, long argc, t_atom *argv)
+t_jiwheel* jiwheel_new(t_symbol *s, long argc, t_atom *argv)
 {
-    t_pitchwheel* x = NULL;
+    t_jiwheel* x = NULL;
     t_max_err err = MAX_ERR_GENERIC;
     t_dictionary *d;
     t_object *textfield;
@@ -1932,7 +2025,7 @@ t_pitchwheel* pitchwheel_new(t_symbol *s, long argc, t_atom *argv)
     if (!(d=object_dictionaryarg(argc,argv)))
         return NULL;
 
-    x = (t_pitchwheel*) object_alloc_debug(s_pitchwheel_class);
+    x = (t_jiwheel*) object_alloc_debug(s_jiwheel_class);
     flags = 0 
             | JBOX_DRAWFIRSTIN 
             | JBOX_NODRAWBOX
@@ -2002,8 +2095,10 @@ t_pitchwheel* pitchwheel_new(t_symbol *s, long argc, t_atom *argv)
     return NULL;
 }
 
-void pitchwheel_free(t_pitchwheel *x){
+void jiwheel_free(t_jiwheel *x){
     long i;
+    bach_freeptr(commas);
+
     if (x->curr_pitches)
         bach_freeptr(x->curr_pitches);
     if (x->n_importance_lexpr)
@@ -2409,7 +2504,10 @@ void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, long formalo
         } else {
             if (wp->accidentals_overflow) { // we requesteed a +2 of margin in the array, it should be ok
                 wp->accidentals[0] = 59682; // dot dot dot!
+                wp->accidentals_with_spaces[0] = 59682; // dot dot dot!
+                wp->accidentals_with_spaces[1] = 0;
                 wp->accidentals[1] = 0;
+                wp->num_accidentals_with_spaces = wp->num_accidentals = 1;
                 numacc = 1;
             } else {
                 wp->accidentals_with_spaces[0] = 0;
@@ -2422,14 +2520,14 @@ void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, long formalo
         wp->pythagorean_index = wp->pyth_diatonic_step = LONG_MAX;
     }
     
-end:
+
     wp->accidentals[numacc] = 0;
     llll_free(factors);
 }
 
 
 
-long get_default_maxterm(t_pitchwheel *x, t_object *view)
+long get_default_maxterm(t_jiwheel *x, t_object *view)
 {
     double radius, center_x, center_y;
     get_radius_and_center(x, view, &radius, &center_x, &center_y);
@@ -2437,7 +2535,7 @@ long get_default_maxterm(t_pitchwheel *x, t_object *view)
     return round(x->density * sqrt(circle_length / 1.));
 }
 
-long get_default_fifthsext(t_pitchwheel *x, t_object *view)
+long get_default_fifthsext(t_jiwheel *x, t_object *view)
 {
     double radius, center_x, center_y;
     get_radius_and_center(x, view, &radius, &center_x, &center_y);
@@ -2445,7 +2543,7 @@ long get_default_fifthsext(t_pitchwheel *x, t_object *view)
     return round(x->density * sqrt(circle_length/35.));
 }
 
-t_llll *get_default_commamix(t_pitchwheel *x, t_object *view)
+t_llll *get_default_commamix(t_jiwheel *x, t_object *view)
 {
     double radius, center_x, center_y;
     get_radius_and_center(x, view, &radius, &center_x, &center_y);
@@ -2496,7 +2594,7 @@ void ensure_ratio_is_between_1_and_formaloctave(t_rational *r, long formaloctave
         *r = rat_long_div(*r, formaloctave);
 }
 
-void pitchwheel_build_pitches(t_pitchwheel *x, t_object *view)
+void jiwheel_build_pitches(t_jiwheel *x, t_object *view)
 {
     systhread_mutex_lock(x->c_mutex);
     t_llll *curr_pitches_ll = llll_get();
@@ -2779,7 +2877,7 @@ void pitchwheel_build_pitches(t_pitchwheel *x, t_object *view)
 }
 
 
-void pitchwheel_paint_radial_line(t_pitchwheel *x, t_jgraphics *g, t_jrgba color, double center_x, double center_y, double theta, double r_start, double r_end, double linewidth, double *s, double *c, char arrow, bool dotted, double dash_length)
+void jiwheel_paint_radial_line(t_jiwheel *x, t_jgraphics *g, t_jrgba color, double center_x, double center_y, double theta, double r_start, double r_end, double linewidth, double *s, double *c, char arrow, bool dotted, double dash_length)
 {
     double sinus = sin(theta);
     double cosinus = cos(theta);
@@ -2802,16 +2900,16 @@ void pitchwheel_paint_radial_line(t_pitchwheel *x, t_jgraphics *g, t_jrgba color
     
 }
 
-bool wheelpitch_is_sel_or_mouseover(t_pitchwheel *x, t_wheelpitch *p)
+bool wheelpitch_is_sel_or_mouseover(t_jiwheel *x, t_wheelpitch *p)
 {
-    if (p->ratio == x->sel1_ratio || p->ratio == x->sel2_ratio || p->index == x->mouseover_ratio)
+    if (p->ratio == x->sel1_ratio || p->ratio == x->sel2_ratio || p->ratio == x->mouseover_ratio)
         return 1;
     return 0;
 }
 
 long sort_by_importance_modif(void *ptr, t_llllelem *a, t_llllelem *b)
 {
-    t_pitchwheel *x = (t_pitchwheel *)ptr;
+    t_jiwheel *x = (t_jiwheel *)ptr;
     if (a && b) {
         t_wheelpitch *a_p = (t_wheelpitch *)hatom_getobj(&a->l_hatom);
         t_wheelpitch *b_p = (t_wheelpitch *)hatom_getobj(&b->l_hatom);
@@ -2839,7 +2937,7 @@ long sort_by_importance_modif(void *ptr, t_llllelem *a, t_llllelem *b)
     return 0;
 }
 
-void pitchwheel_get_label_specs(t_pitchwheel *x, t_wheelpitch *p, t_pt center, double radius, double cos_alpha, double sin_alpha, char **number_txt, t_jfont **font, t_pt *number_center, t_pt *number_middle_left, t_rect *number_rect, double *fontsize, bool *acc_displayed, t_rect *actual_rect)
+void jiwheel_get_label_specs(t_jiwheel *x, t_wheelpitch *p, t_pt center, double radius, double cos_alpha, double sin_alpha, char **number_txt, t_jfont **font, t_pt *number_center, t_pt *number_middle_left, t_rect *number_rect, double *fontsize, bool *acc_displayed, t_rect *actual_rect)
 {
     double ticklength = x->tick_length * p->curr_normalized_importance;
     t_hatom h;
@@ -2929,7 +3027,7 @@ void pitchwheel_get_label_specs(t_pitchwheel *x, t_wheelpitch *p, t_pt center, d
 }
 
 
-double pitchwheel_paint_legend(t_pitchwheel *x, t_jgraphics *g, t_rect rect, t_wheelpitch *p, double y_start, const char *pitchLabel, bool interval)
+double jiwheel_paint_legend(t_jiwheel *x, t_jgraphics *g, t_rect rect, t_wheelpitch *p, double y_start, const char *pitchLabel, bool interval)
 {
     t_jfont *legendfont = jfont_create_debug(x->legend_fontname->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->legend_fontsize);
     t_jfont *legendfontsuperscript = jfont_create_debug(x->legend_fontname->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->legend_fontsize * 0.7);
@@ -2960,7 +3058,7 @@ double pitchwheel_paint_legend(t_pitchwheel *x, t_jgraphics *g, t_rect rect, t_w
     if (interval) {
         long numoctaves = 0;
         char octavetxt[100];
-        const char *intervalname = pitchwheel_ratio_to_common_interval_name(p->ratio, &numoctaves);
+        const char *intervalname = jiwheel_ratio_to_common_interval_name(p->ratio, &numoctaves);
         snprintf_zero(octavetxt, 100, " %s%doct.", numoctaves >= 0 ? "+" : "−", abs(numoctaves));
         snprintf_zero(buf, 1000, "Interval:%s%s%s", strlen(intervalname) > 0 ? " " : "", intervalname, (numoctaves == 0 || strlen(intervalname) == 0) ? "" : octavetxt);
         jfont_text_measure(legendfont, buf, &width, &height);
@@ -3040,7 +3138,7 @@ double pitchwheel_paint_legend(t_pitchwheel *x, t_jgraphics *g, t_rect rect, t_w
             write_text(g, legendfont, x->legend_color, factor_buf, inset, v, writable_width, writable_height, JGRAPHICS_TEXT_JUSTIFICATION_RIGHT|JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, true);
             writable_width -= w;
         }
-        snprintf_zero(buf, 1000, "Prime decomposition: %s", decomp->l_size == 0 ? "(empty)" : "");
+        snprintf_zero(buf, 1000, "Factors: %s", decomp->l_size == 0 ? "(empty)" : "");
         write_text(g, legendfont, x->legend_color, buf, inset, v, writable_width, writable_height, JGRAPHICS_TEXT_JUSTIFICATION_RIGHT|JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, true);
         writable_height -= interlinea;
         v += interlinea;
@@ -3132,31 +3230,31 @@ double pitchwheel_paint_legend(t_pitchwheel *x, t_jgraphics *g, t_rect rect, t_w
     return v;
 }
 
-void pitchwheel_paint_legend_interval(t_pitchwheel *x, t_jgraphics *g, t_rect rect, t_wheelpitch *p1, t_wheelpitch *p2)
+void jiwheel_paint_legend_interval(t_jiwheel *x, t_jgraphics *g, t_rect rect, t_wheelpitch *p1, t_wheelpitch *p2)
 {
     double v = PITCHWHEEL_LEGEND_INSET;
     double linelen = (rect.width - rect.height) * 0.5 * 0.6;
     if (linelen < 0)
         linelen = 20;
     
-    v = pitchwheel_paint_legend(x, g, rect, p1, v, "Starting Pitch", false);
+    v = jiwheel_paint_legend(x, g, rect, p1, v, "Starting Pitch", false);
 
     v += 10;
     paint_line(g, x->legend_color, rect.width * 0.8, v, rect.width, v, 0.5);
     v += 10;
     
-    v = pitchwheel_paint_legend(x, g, rect, p2, v, "Ending Pitch", false);
+    v = jiwheel_paint_legend(x, g, rect, p2, v, "Ending Pitch", false);
 
     v += 10;
     paint_line(g, x->legend_color, rect.width * 0.8, v, rect.width, v, 0.5);
 
     if (x->curr_interval.ratio.num() > 0) {
         v += 10;
-        v = pitchwheel_paint_legend(x, g, rect, &x->curr_interval, v, "Interval", true);
+        v = jiwheel_paint_legend(x, g, rect, &x->curr_interval, v, "Interval", true);
     }
 }
 
-double pitchwheel_integer_to_theta(t_pitchwheel *x, long i)
+double jiwheel_integer_to_theta(t_jiwheel *x, long i)
 {
     double theta = 0;
     if (x->display_mapping == 0) { // linear pitch
@@ -3169,7 +3267,7 @@ double pitchwheel_integer_to_theta(t_pitchwheel *x, long i)
     return theta;
 }
 
-long pitchwheel_ratio_to_index(t_pitchwheel *x, t_rational r)
+long jiwheel_ratio_to_index(t_jiwheel *x, t_rational r)
 {
     for (long i = 0; i < x->num_pitches; i++) {
         if (x->curr_pitches[i].ratio == r)
@@ -3178,7 +3276,7 @@ long pitchwheel_ratio_to_index(t_pitchwheel *x, t_rational r)
     return -1;
 }
 
-void pitchwheel_paint(t_pitchwheel *x, t_object *view)
+void jiwheel_paint(t_jiwheel *x, t_object *view)
 {
     t_jgraphics *g;
     t_rect rect;
@@ -3209,7 +3307,7 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
     get_radius_and_center(x, view, &radius, &center_x, &center_y);
     
     if (x->rebuild) {
-        pitchwheel_build_pitches(x, view);
+        jiwheel_build_pitches(x, view);
         x->rebuild = false;
     }
     
@@ -3282,7 +3380,7 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
                     } else { // linear frequency
                         theta = PIOVERTWO - positive_fmod(((pow(2, i/octave_interval_cents) - 1) * TWOPI) - x->rotation_angle, TWOPI);
                     }
-                    pitchwheel_paint_radial_line(x, g, etwheel_color, center_x, center_y, theta, r_avg - r_delta, r_avg + r_delta, 1.5*sqrt(et_importance) + 0.5 * (et_importance == 1.), NULL, NULL, 0, false, 0);
+                    jiwheel_paint_radial_line(x, g, etwheel_color, center_x, center_y, theta, r_avg - r_delta, r_avg + r_delta, 1.5*sqrt(et_importance) + 0.5 * (et_importance == 1.), NULL, NULL, 0, false, 0);
                 }
             }
         }
@@ -3303,7 +3401,7 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
                 if (i % x->formaloctave == 0)
                     continue;
                 double int_importance = 1./i;
-                double theta = pitchwheel_integer_to_theta(x, i);
+                double theta = jiwheel_integer_to_theta(x, i);
                 bool emphasis = (x->curr_interval.ratio.r_num > 0 && (i == x->curr_interval.ratio_without_octaves.r_num || i == x->curr_interval.ratio_without_octaves.r_den));
 
                 if (anglemin < TWOPI && anglemax >= TWOPI && theta < anglemin)
@@ -3315,7 +3413,7 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
                     t_jfont *jf = jfont_create_debug(jbox_get_fontname((t_object *) x)->s_name, (t_jgraphics_font_slant)jbox_get_font_slant((t_object *) x), (t_jgraphics_font_weight)jbox_get_font_weight((t_object *) x), fontrescale * jbox_get_fontsize((t_object *) x));
                     
                     double r_end = r_start - (0.15 * x->int_wheel_size + 0.85 * x->int_wheel_size * fontrescale);
-                    pitchwheel_paint_radial_line(x, g, black, center_x, center_y, theta, r_start, r_end, 1*fontrescale * (emphasis ? 2 : 1), NULL, NULL, emphasis, false, 0);
+                    jiwheel_paint_radial_line(x, g, black, center_x, center_y, theta, r_start, r_end, 1*fontrescale * (emphasis ? 2 : 1), NULL, NULL, emphasis, false, 0);
                     write_text(g, jf, black, text, center_x + (r_end - 10) * cos(theta) - 30,center_y - (r_end - 10) * sin(theta) - 30, 60, 60, JGRAPHICS_TEXT_JUSTIFICATION_CENTERED, true, false);
                     jfont_destroy_debug(jf);
                 }
@@ -3375,8 +3473,17 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
             // sorting by importance
             llll_mergesort_inplace(&shown_pitches_ll, (sort_fn)sort_by_importance_modif, x);
             
+            /* // debug: printing reordered ratios
+            t_llll *temp = llll_get();
+            for (t_llllelem *el = shown_pitches_ll->l_head; el; el = el->l_next) {
+                t_wheelpitch *p = (t_wheelpitch *)hatom_getobj(&el->l_hatom);
+                llll_appendrat(temp, p->ratio);
+            }
+            llll_print(temp);
+            llll_free(temp);
+             */
+
             // checking collisions
-            
             for (t_llllelem *el = shown_pitches_ll->l_head; el; el = el->l_next) {
                 t_wheelpitch *p = (t_wheelpitch *)hatom_getobj(&el->l_hatom);
                 char *p_number_txt = NULL;
@@ -3386,7 +3493,7 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
                 double p_fontsize = 0, p_theta = positive_fmod(p->angle + x->rotation_angle, TWOPI);
                 bool p_acc_displayed = false;
                 
-                pitchwheel_get_label_specs(x, p, build_pt(center_x, center_y), radius, cos(p_theta), sin(p_theta), &p_number_txt, &p_font, &p_number_center, &p_number_left, &p_number_rect, &p_fontsize, &p_acc_displayed, &p_actual_rect);
+                jiwheel_get_label_specs(x, p, build_pt(center_x, center_y), radius, cos(p_theta), sin(p_theta), &p_number_txt, &p_font, &p_number_center, &p_number_left, &p_number_rect, &p_fontsize, &p_acc_displayed, &p_actual_rect);
                 
                 bool collision = false;
                 for (t_llllelem *pr_el = el->l_prev; pr_el; pr_el = pr_el->l_prev) {
@@ -3401,7 +3508,7 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
                     double q_fontsize = 0, q_theta = positive_fmod(q->angle + x->rotation_angle, TWOPI);
                     bool q_acc_displayed = false;
 
-                    pitchwheel_get_label_specs(x, q, build_pt(center_x, center_y), radius, cos(q_theta), sin(q_theta), &q_number_txt, &q_font, &q_number_center, &q_number_left, &q_number_rect, &q_fontsize, &q_acc_displayed, &q_actual_rect);
+                    jiwheel_get_label_specs(x, q, build_pt(center_x, center_y), radius, cos(q_theta), sin(q_theta), &q_number_txt, &q_font, &q_number_center, &q_number_left, &q_number_rect, &q_fontsize, &q_acc_displayed, &q_actual_rect);
 
                     bach_freeptr(q_number_txt);
                     jfont_destroy_debug(q_font);
@@ -3441,9 +3548,9 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
 
         }
         
-        long sel1_idx = (x->sel1_ratio.r_num != 0 ? pitchwheel_ratio_to_index(x, x->sel1_ratio) : -1);
-        long sel2_idx = (x->sel2_ratio.r_num != 0 ? pitchwheel_ratio_to_index(x, x->sel2_ratio) : -1);
-        long mouseover_idx = (x->mouseover_ratio.r_num != 0 ? pitchwheel_ratio_to_index(x, x->mouseover_ratio) : -1);
+        long sel1_idx = (x->sel1_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel1_ratio) : -1);
+        long sel2_idx = (x->sel2_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel2_ratio) : -1);
+        long mouseover_idx = (x->mouseover_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->mouseover_ratio) : -1);
 
         
         
@@ -3468,19 +3575,19 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
             
             switch (x->color_mode) {
                 case BACH_PITCHWHEEL_COLORMODE_LIMIT:
-                    color = pitchwheel_long_to_color(x, num_to_prime_idx(p->limit)-1);
+                    color = jiwheel_long_to_color(x, num_to_prime_idx(p->limit)-1);
                     break;
 
                 case BACH_PITCHWHEEL_COLORMODE_MAXEXP:
-                    color = pitchwheel_long_to_color(x, p->maxexp);
+                    color = jiwheel_long_to_color(x, p->maxexp);
                     break;
 
                 case BACH_PITCHWHEEL_COLORMODE_PYTHAGOREANCHROMATICNOTE:
-                    color = pitchwheel_long_to_color(x, p->pythagorean_index);
+                    color = jiwheel_long_to_color(x, p->pythagorean_index);
                     break;
 
                 case BACH_PITCHWHEEL_COLORMODE_PYTHAGOREANDIATONICNOTE:
-                    color = pitchwheel_long_to_color(x, positive_fmod(p->pythagorean_index, 7));
+                    color = jiwheel_long_to_color(x, positive_fmod(p->pythagorean_index, 7));
                     break;
                     
                 case BACH_PITCHWHEEL_COLORMODE_PLAIN:
@@ -3496,12 +3603,12 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
             
             double sinus, cosinus;
             if (x->show_ticks) {
-                pitchwheel_paint_radial_line(x, g, color, center_x, center_y, theta, radius, radius + ticklength, ticklinewidth * (is_mouseover || is_sel ? 2 : 1), &sinus, &cosinus, is_mouseover || is_sel ? -1 : 0, false, 0);
+                jiwheel_paint_radial_line(x, g, color, center_x, center_y, theta, radius, radius + ticklength, ticklinewidth * (is_mouseover || is_sel ? 2 : 1), &sinus, &cosinus, is_mouseover || is_sel ? -1 : 0, false, 0);
                 if (x->extend_ticks_to_integers && p->coincides_with_intwheel) {
 //                    t_rational q = p->ratio / x->rotation_ratio_intwheel;
 //                    remove_octaves(x, &q);
 //                    if (q.den() == 1 && q.num() < max_int_integers_wheel)
-                        pitchwheel_paint_radial_line(x, g, color, center_x, center_y, theta, radius, radius - x->et_wheel_size, MAX(ticklinewidth, 2), NULL, NULL, 0, true, 1);
+                        jiwheel_paint_radial_line(x, g, color, center_x, center_y, theta, radius, radius - x->et_wheel_size, MAX(ticklinewidth, 2), NULL, NULL, 0, true, 1);
                 }
             } else {
                 sinus = sin(theta);
@@ -3520,7 +3627,9 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
                 double fontsize;
                 bool accdisplayed;
                 
-                pitchwheel_get_label_specs(x, p, build_pt(center_x, center_y), radius, cosinus, sinus, &number_txt, &font, &number_center, &number_left, &number_rect, &fontsize, &accdisplayed, &actual_rect);
+                jiwheel_get_label_specs(x, p, build_pt(center_x, center_y), radius, cosinus, sinus, &number_txt, &font, &number_center, &number_left, &number_rect, &fontsize, &accdisplayed, &actual_rect);
+                
+//                paint_rect(g, &actual_rect, &black, NULL, 1, 0);
                 
                 theta = positive_fmod(theta, TWOPI);
                 bool turn_for_legibility = false;
@@ -3600,11 +3709,11 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
         // Legend
         if (x->legend_fontname) {
             if (x->show_legend >= 1 && sel1_idx >= 0 && sel2_idx >= 0) {
-                pitchwheel_paint_legend_interval(x, g, rect, &x->curr_pitches[sel1_idx], &x->curr_pitches[sel2_idx]);
+                jiwheel_paint_legend_interval(x, g, rect, &x->curr_pitches[sel1_idx], &x->curr_pitches[sel2_idx]);
             } else if (x->show_legend >= 1 && sel1_idx >= 0) {
-                pitchwheel_paint_legend(x, g, rect, &x->curr_pitches[sel1_idx], PITCHWHEEL_LEGEND_INSET, "Pitch", false);
+                jiwheel_paint_legend(x, g, rect, &x->curr_pitches[sel1_idx], PITCHWHEEL_LEGEND_INSET, "Pitch", false);
             } else if (x->show_legend >= 2 && mouseover_idx >= 0) {
-                pitchwheel_paint_legend(x, g, rect, &x->curr_pitches[mouseover_idx], PITCHWHEEL_LEGEND_INSET, "Pitch", false);
+                jiwheel_paint_legend(x, g, rect, &x->curr_pitches[mouseover_idx], PITCHWHEEL_LEGEND_INSET, "Pitch", false);
             }
         }
         
@@ -3628,20 +3737,20 @@ void pitchwheel_paint(t_pitchwheel *x, t_object *view)
 }
 
 
-void pitchwheel_focusgained(t_pitchwheel *x, t_object *patcherview) {
+void jiwheel_focusgained(t_jiwheel *x, t_object *patcherview) {
 //    object_post((t_object *)x, "focusgained"); 
     x->j_has_focus = true;
     jbox_redraw((t_jbox *)x);
 }
 
-void pitchwheel_focuslost(t_pitchwheel *x, t_object *patcherview) {
+void jiwheel_focuslost(t_jiwheel *x, t_object *patcherview) {
 //    object_post((t_object *)x, "focuslost"); 
     x->j_has_focus = false;
     jbox_redraw((t_jbox *)x);
 }
 
 
-void get_radius_and_center(t_pitchwheel *x, t_object *patcherview, double *radius, double *center_x, double *center_y){
+void get_radius_and_center(t_jiwheel *x, t_object *patcherview, double *radius, double *center_x, double *center_y){
     t_rect rect;
     jbox_get_rect_for_view(&x->j_box.l_box.b_ob, patcherview, &rect); // rect dimension
     
@@ -3671,7 +3780,7 @@ void get_radius_and_center(t_pitchwheel *x, t_object *patcherview, double *radiu
 }
 
 
-long pt_to_wheelpitch_idx(t_pitchwheel *x, t_object *patcherview, t_pt pt)
+long pt_to_wheelpitch_idx(t_jiwheel *x, t_object *patcherview, t_pt pt)
 {
     double radius;
     t_pt center;
@@ -3696,17 +3805,17 @@ long pt_to_wheelpitch_idx(t_pitchwheel *x, t_object *patcherview, t_pt pt)
     return best;
 }
 
-void pitchwheel_clear_selection(t_pitchwheel *x)
+void jiwheel_clear_selection(t_jiwheel *x)
 {
     x->sel1_ratio = x->sel2_ratio = genrat(0, 1);
     x->curr_interval.ratio = genrat(0, 1);
 }
 
 
-void pitchwheel_set_intwheel_from_sel1(t_pitchwheel *x)
+void jiwheel_set_intwheel_from_sel1(t_jiwheel *x)
 {
     if (x->sel1_ratio.r_num > 0) {
-        long sel1_idx = (x->sel1_ratio.r_num != 0 ? pitchwheel_ratio_to_index(x, x->sel1_ratio) : -1);
+        long sel1_idx = (x->sel1_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel1_ratio) : -1);
         if (sel1_idx >= 0) {
             x->rotation_ratio_intwheel = x->curr_pitches[sel1_idx].ratio;
             x->rotation_angle_intwheel = PIOVERTWO - x->curr_pitches[sel1_idx].angle;
@@ -3714,17 +3823,17 @@ void pitchwheel_set_intwheel_from_sel1(t_pitchwheel *x)
     }
 }
 
-void pitchwheel_set_intwheel_from_selection(t_pitchwheel *x)
+void jiwheel_set_intwheel_from_selection(t_jiwheel *x)
 {
     if (x->sel1_ratio.r_num != 0 && x->sel2_ratio.r_num != 0) {
-        long sel1_idx = (x->sel1_ratio.r_num != 0 ? pitchwheel_ratio_to_index(x, x->sel1_ratio) : -1);
-        long sel2_idx = (x->sel2_ratio.r_num != 0 ? pitchwheel_ratio_to_index(x, x->sel2_ratio) : -1);
+        long sel1_idx = (x->sel1_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel1_ratio) : -1);
+        long sel2_idx = (x->sel2_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel2_ratio) : -1);
         if (sel1_idx >= 0 && sel2_idx >= 0) {
             // find ratio
             t_rational interval = x->curr_interval.ratio_without_octaves;
             // put the interval.r_num integer coinciding with sel1 pitch
             x->rotation_angle_intwheel = 0;
-            double theta = pitchwheel_integer_to_theta(x, interval.r_num) - x->curr_pitches[sel2_idx].angle;
+            double theta = jiwheel_integer_to_theta(x, interval.r_num) - x->curr_pitches[sel2_idx].angle;
             x->rotation_angle_intwheel = theta - x->rotation_angle;
             
             //
@@ -3733,14 +3842,14 @@ void pitchwheel_set_intwheel_from_selection(t_pitchwheel *x)
     }
 }
 
-void pitchwheel_sync_interval(t_pitchwheel *x)
+void jiwheel_sync_interval(t_jiwheel *x)
 {
     t_rational r = x->sel2_ratio / x->sel1_ratio;
     ensure_ratio_is_between_1_and_formaloctave(&r, x->formaloctave);
     rational_to_wheelpitch(r, 'C', x->formaloctave, x->display_mapping > 0, &x->curr_interval);
 }
 
-void pitchwheel_mousemove(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers)
+void jiwheel_mousemove(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers)
 {
     t_rational curr_ratio = x->mouseover_ratio;
     systhread_mutex_lock(x->c_mutex);
@@ -3756,13 +3865,14 @@ void pitchwheel_mousemove(t_pitchwheel *x, t_object *patcherview, t_pt pt, long 
     return;
 }
 
-void pitchwheel_mousedoubleclick(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers)
+void jiwheel_mousedoubleclick(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers)
 {
-    pitchwheel_mousedown(x, patcherview, pt, modifiers | eAltKey);
+    build_commas();
+    jiwheel_mousedown(x, patcherview, pt, modifiers | eAltKey);
 }
 
 
-void pitchwheel_mousedown(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers)
+void jiwheel_mousedown(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers)
 {
     x->mousedrag_pt = pt;
 
@@ -3781,22 +3891,22 @@ void pitchwheel_mousedown(t_pitchwheel *x, t_object *patcherview, t_pt pt, long 
     if (sel_pitch_idx == -1) {
         if (x->sel1_ratio.r_num != 0)
             must_output_selection = true;
-        pitchwheel_clear_selection(x);
+        jiwheel_clear_selection(x);
         jbox_redraw((t_jbox *)x);
     } else {
         if (x->sel1_ratio.r_num != 0 && (modifiers & eShiftKey)) {
             x->sel2_ratio = x->curr_pitches[sel_pitch_idx].ratio;
-            pitchwheel_sync_interval(x);
+            jiwheel_sync_interval(x);
             if (x->auto_move_intwheel)
-                pitchwheel_set_intwheel_from_selection(x);
+                jiwheel_set_intwheel_from_selection(x);
             must_output_selection = true;
             jbox_redraw((t_jbox *)x);
         } else {
-            pitchwheel_clear_selection(x);
+            jiwheel_clear_selection(x);
             x->sel1_ratio = x->curr_pitches[sel_pitch_idx].ratio;
             x->sel2_ratio = genrat(0, 1);
             if (modifiers & eAltKey) {
-                pitchwheel_set_intwheel_from_sel1(x);
+                jiwheel_set_intwheel_from_sel1(x);
             }
             must_output_selection = true;
             jbox_redraw((t_jbox *)x);
@@ -3805,12 +3915,12 @@ void pitchwheel_mousedown(t_pitchwheel *x, t_object *patcherview, t_pt pt, long 
     systhread_mutex_unlock(x->c_mutex);
     
     if (must_output_selection)
-        pitchwheel_output_selection(x);
+        jiwheel_output_selection(x);
 
     return;
 }
 
-void pitchwheel_mouseup(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers){
+void jiwheel_mouseup(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers){
     x->mouse_is_dragging = false;
     x->mousedown_is_in_etwheel = false;
     return;
@@ -3831,7 +3941,7 @@ double get_mousedrag_angle(t_pt center, t_pt mousedown, t_pt mousedrag)
     return dot / radius_norm;
 }
 
-void pitchwheel_mousewheel(t_pitchwheel *x, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc)
+void jiwheel_mousewheel(t_jiwheel *x, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc)
 {
     llll_format_modifiers(&modifiers, NULL);
     
@@ -3867,7 +3977,7 @@ void pitchwheel_mousewheel(t_pitchwheel *x, t_object *view, t_pt pt, long modifi
     }
 }
 
-void pitchwheel_mousedrag(t_pitchwheel *x, t_object *patcherview, t_pt pt, long modifiers)
+void jiwheel_mousedrag(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers)
 {
     t_pt center;
     double radius;
@@ -3879,17 +3989,17 @@ void pitchwheel_mousedrag(t_pitchwheel *x, t_object *patcherview, t_pt pt, long 
     if (modifiers & eControlKey || x->mousedown_is_in_etwheel) {
         x->rotation_angle += get_mousedrag_angle(center, x->mousedrag_pt, pt);
         if (x->sel1_ratio.r_num != 0 && x->sel2_ratio.r_num != 0) {
-            pitchwheel_sync_interval(x);
-            pitchwheel_set_intwheel_from_selection(x);
+            jiwheel_sync_interval(x);
+            jiwheel_set_intwheel_from_selection(x);
         }
     } else {
         if (x->sel1_ratio.r_num != 0) {
             long sel_pitch_idx = pt_to_wheelpitch_idx(x, patcherview, pt);
             if (sel_pitch_idx >= 0 && sel_pitch_idx < x->num_pitches) {
                 x->sel2_ratio = x->curr_pitches[sel_pitch_idx].ratio;
-                pitchwheel_sync_interval(x);
+                jiwheel_sync_interval(x);
                 if (x->auto_move_intwheel)
-                    pitchwheel_set_intwheel_from_selection(x);
+                    jiwheel_set_intwheel_from_selection(x);
             }
         }
     }
@@ -3906,7 +4016,7 @@ double angle_diff(double angle1, double angle2, double modulo)
 }
 
 
-long pitchwheel_get_next(t_pitchwheel *x, long idx, bool only_if_visible)
+long jiwheel_get_next(t_jiwheel *x, long idx, bool only_if_visible)
 {
     if (idx < 0 || idx > x->num_pitches)
         return -1;
@@ -3927,7 +4037,7 @@ long pitchwheel_get_next(t_pitchwheel *x, long idx, bool only_if_visible)
     return curr_best_idx;
 }
 
-long pitchwheel_get_prev(t_pitchwheel *x, long idx, bool only_if_visible)
+long jiwheel_get_prev(t_jiwheel *x, long idx, bool only_if_visible)
 {
     if (idx < 0 || idx > x->num_pitches)
         return -1;
@@ -3949,7 +4059,7 @@ long pitchwheel_get_prev(t_pitchwheel *x, long idx, bool only_if_visible)
 }
 
 
-long pitchwheel_key(t_pitchwheel *x, t_object *patcherview, long keycode, long modifiers, long textcharacter)
+long jiwheel_key(t_jiwheel *x, t_object *patcherview, long keycode, long modifiers, long textcharacter)
 {
     bool must_output_selection = false;
     llll_format_modifiers(&modifiers, &keycode);
@@ -3960,29 +4070,29 @@ long pitchwheel_key(t_pitchwheel *x, t_object *patcherview, long keycode, long m
             object_attr_setfloat((t_object *)x, gensym("zoomangle"), 0);
             object_attr_setfloat((t_object *)x, gensym("rotationangle"), 0);
             must_output_selection = (x->sel1_ratio.r_num != 0);
-            pitchwheel_clear_selection(x);
+            jiwheel_clear_selection(x);
             if (must_output_selection)
-                pitchwheel_output_selection(x);
+                jiwheel_output_selection(x);
             x->mouseover_ratio = genrat(0, 1);
             jbox_redraw((t_jbox *)x);
             return 1;
             
         case JKEY_UPARROW:
             if (x->sel2_ratio.num() > 0) {
-                long nextidx = pitchwheel_get_next(x, pitchwheel_ratio_to_index(x, x->sel2_ratio), modifiers & eAltKey ? true : false);
+                long nextidx = jiwheel_get_next(x, jiwheel_ratio_to_index(x, x->sel2_ratio), modifiers & eAltKey ? true : false);
                 if (nextidx >= 0) {
                     x->sel2_ratio = x->curr_pitches[nextidx].ratio;
-                    pitchwheel_sync_interval(x);
-                    pitchwheel_set_intwheel_from_selection(x);
-                    pitchwheel_output_selection(x);
+                    jiwheel_sync_interval(x);
+                    jiwheel_set_intwheel_from_selection(x);
+                    jiwheel_output_selection(x);
                 }
             } else if (x->sel1_ratio.num() > 0) {
-                long nextidx = pitchwheel_get_next(x, pitchwheel_ratio_to_index(x, x->sel1_ratio), modifiers & eAltKey ? true : false);
+                long nextidx = jiwheel_get_next(x, jiwheel_ratio_to_index(x, x->sel1_ratio), modifiers & eAltKey ? true : false);
                 if (nextidx >= 0) {
                     x->sel1_ratio = x->curr_pitches[nextidx].ratio;
-                    pitchwheel_sync_interval(x);
-                    pitchwheel_set_intwheel_from_sel1(x);
-                    pitchwheel_output_selection(x);
+                    jiwheel_sync_interval(x);
+                    jiwheel_set_intwheel_from_sel1(x);
+                    jiwheel_output_selection(x);
                 }
             }
             jbox_redraw((t_jbox *)x);
@@ -3991,20 +4101,20 @@ long pitchwheel_key(t_pitchwheel *x, t_object *patcherview, long keycode, long m
         case JKEY_DOWNARROW:
         case 'r':
             if (x->sel2_ratio.num() > 0) {
-                long nextidx = pitchwheel_get_prev(x, pitchwheel_ratio_to_index(x, x->sel2_ratio), modifiers & eAltKey ? true : false);
+                long nextidx = jiwheel_get_prev(x, jiwheel_ratio_to_index(x, x->sel2_ratio), modifiers & eAltKey ? true : false);
                 if (nextidx >= 0) {
                     x->sel2_ratio = x->curr_pitches[nextidx].ratio;
-                    pitchwheel_sync_interval(x);
-                    pitchwheel_set_intwheel_from_selection(x);
-                    pitchwheel_output_selection(x);
+                    jiwheel_sync_interval(x);
+                    jiwheel_set_intwheel_from_selection(x);
+                    jiwheel_output_selection(x);
                 }
             } else if (x->sel1_ratio.num() > 0) {
-                long nextidx = pitchwheel_get_prev(x, pitchwheel_ratio_to_index(x, x->sel1_ratio), modifiers & eAltKey ? true : false);
+                long nextidx = jiwheel_get_prev(x, jiwheel_ratio_to_index(x, x->sel1_ratio), modifiers & eAltKey ? true : false);
                 if (nextidx >= 0) {
                     x->sel1_ratio = x->curr_pitches[nextidx].ratio;
-                    pitchwheel_sync_interval(x);
-                    pitchwheel_set_intwheel_from_sel1(x);
-                    pitchwheel_output_selection(x);
+                    jiwheel_sync_interval(x);
+                    jiwheel_set_intwheel_from_sel1(x);
+                    jiwheel_output_selection(x);
                 }
             }
             jbox_redraw((t_jbox *)x);
@@ -4018,7 +4128,7 @@ long pitchwheel_key(t_pitchwheel *x, t_object *patcherview, long keycode, long m
 }
 
 
-t_llll *pitchwheel_get_wheelpitch_as_llll(t_pitchwheel *x, t_wheelpitch *p, bool as_interval)
+t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_interval)
 {
     
     t_llll *out = llll_get();
@@ -4056,7 +4166,7 @@ t_llll *pitchwheel_get_wheelpitch_as_llll(t_pitchwheel *x, t_wheelpitch *p, bool
     llll_appendllll(out, symbol_and_long_to_llll(gensym("whitekey"), p->pyth_diatonic_step));
     if (as_interval) {
         long numoctaves = 0;
-        const char *name = pitchwheel_ratio_to_common_interval_name(p->ratio, &numoctaves);
+        const char *name = jiwheel_ratio_to_common_interval_name(p->ratio, &numoctaves);
         t_llll *ll = llll_get();
         llll_appendsym(ll, gensym("name"));
         llll_appendsym(ll, strlen(name) == 0 ? _llllobj_sym_unknown : gensym(name));
@@ -4069,18 +4179,18 @@ t_llll *pitchwheel_get_wheelpitch_as_llll(t_pitchwheel *x, t_wheelpitch *p, bool
     return out;
 }
 
-void pitchwheel_output_selection(t_pitchwheel *x)
+void jiwheel_output_selection(t_jiwheel *x)
 {
     if (x->output_selection) {
-        long sel1_idx = (x->sel1_ratio.r_num != 0 ? pitchwheel_ratio_to_index(x, x->sel1_ratio) : -1);
-        long sel2_idx = (x->sel2_ratio.r_num != 0 ? pitchwheel_ratio_to_index(x, x->sel2_ratio) : -1);
+        long sel1_idx = (x->sel1_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel1_ratio) : -1);
+        long sel2_idx = (x->sel2_ratio.r_num != 0 ? jiwheel_ratio_to_index(x, x->sel2_ratio) : -1);
         if (sel1_idx >= 0 && sel2_idx >= 0) {
             t_llll *out = llll_get();
             
             systhread_mutex_lock(x->c_mutex);
-            t_llll *sel1 = pitchwheel_get_wheelpitch_as_llll(x, &x->curr_pitches[sel1_idx], false);
-            t_llll *sel2 = pitchwheel_get_wheelpitch_as_llll(x, &x->curr_pitches[sel2_idx], false);
-            t_llll *inter = pitchwheel_get_wheelpitch_as_llll(x, &x->curr_interval, true);
+            t_llll *sel1 = jiwheel_get_wheelpitch_as_llll(x, &x->curr_pitches[sel1_idx], false);
+            t_llll *sel2 = jiwheel_get_wheelpitch_as_llll(x, &x->curr_pitches[sel2_idx], false);
+            t_llll *inter = jiwheel_get_wheelpitch_as_llll(x, &x->curr_interval, true);
             llll_prependsym(sel1, gensym("from"));
             llll_prependsym(sel2, gensym("to"));
             llll_prependsym(inter, gensym("interval"));
@@ -4095,7 +4205,7 @@ void pitchwheel_output_selection(t_pitchwheel *x)
             
             llll_free(out);
         } else if (sel1_idx >= 0) {
-            t_llll *out = pitchwheel_get_wheelpitch_as_llll(x, &x->curr_pitches[sel1_idx], false);
+            t_llll *out = jiwheel_get_wheelpitch_as_llll(x, &x->curr_pitches[sel1_idx], false);
             llll_prependsym(out, gensym("pitch"));
             llll_prependsym(out, gensym("selection"));
 

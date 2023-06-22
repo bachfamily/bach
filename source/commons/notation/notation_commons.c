@@ -2422,11 +2422,24 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
 
 
 void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                                double x_pos, long slot, t_jfont *jf_ann, double staff_top_y,
+                                long slot, t_jfont *jf_ann, double staff_top_y,
                                 char *last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
                                 double *annotation_line_y_pos)
 {
     e_annotations_filterdup_modes thinmode = (e_annotations_filterdup_modes)r_ob->thinannotations;
+    double x_pos = 0;
+    long al = ((r_ob->annotation_alignment == k_ALIGNMENT_LEFT || r_ob->annotation_alignment == k_ALIGNMENT_AUTO) ? -1 : r_ob->annotation_alignment == k_ALIGNMENT_RIGHT ? 1 : 0);
+    if (item->type == k_NOTE && ((t_note *)item)->parent) {
+        x_pos = ((t_note *)item)->center.x + al * (notehead_get_uwidth(r_ob, ((t_note *)item)->parent->r_sym_duration, ((t_note *)item), true) / 2.);
+    } else if (item->type == k_NOTE) {
+        x_pos = ((t_note *)item)->center.x;
+    } else if (item->type == k_CHORD) {
+        x_pos = ((t_chord *)item)->stem_x;
+    } else {
+        return; // something weird going on
+    }
+
+//    paint_line(g, get_grey(0), x_pos, 0, x_pos, 100, 1);
     
     if (item->type == k_NOTE) {
         t_note *note = (t_note *)item;
@@ -2488,6 +2501,7 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
             if (chord->topmost_y_noacc > staff_top_y)
                 chord->topmost_y_noacc = staff_top_y;
             y_pos = chord->topmost_y_noacc - pad - ann_height;
+            x_pos = al == -1 ? x_pos : (al == 0 ? x_pos - ann_width/2. : x_pos - ann_width); // handling alignment
             write_text_standard_account_for_vinset_singleline(r_ob, g, jf_ann, *color, buf, x_pos, y_pos);
             chord->topmost_y_noacc = chord->topmost_y_noacc - ann_height - 2 * pad;
             
@@ -2501,6 +2515,7 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
             jfont_text_measure(jf_ann, buf, &ann_width, &ann_height);
             if (chord->topmost_y_noacc > staff_top_y)
                 chord->topmost_y_noacc = staff_top_y;
+            x_pos = al == -1 ? x_pos : (al == 0 ? x_pos - ann_width/2. : x_pos - ann_width); // handling alignment
             write_text_standard_account_for_vinset_singleline(r_ob, g, jf_ann, *color, buf_clearing_sym, x_pos, chord->topmost_y_noacc - pad - ann_height);
             chord->topmost_y_noacc = chord->topmost_y_noacc - ann_height - 2 * pad;
         }

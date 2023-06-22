@@ -2270,6 +2270,15 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Center",
         // but it might be improved in a future version.
 
+        CLASS_ATTR_CHAR(c,"annotationalignment",0, t_notation_obj, annotation_alignment);
+        CLASS_ATTR_STYLE_LABEL(c,"annotationalignment",0,"enumindex","Annotation Alignment");
+        CLASS_ATTR_ENUMINDEX(c,"annotationalignment", 0, "Auto Left Center Right");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationalignment", 0, "0");
+        CLASS_ATTR_ACCESSORS(c, "annotationalignment", (method)NULL, (method)notationobj_setattr_annotation_alignment);
+        // @exclude bach.slot
+        // @description Sets how the annotation must be aligned with respect to the note to which they refer.
+        // Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Left".
+
 
         CLASS_ATTR_CHAR(c,"dynamicsoutputmode",0, t_notation_obj, dynamics_output_mode);
         CLASS_ATTR_STYLE_LABEL(c,"dynamicsoutputmode",0,"enumindex","Dynamics Output Mode");
@@ -3911,6 +3920,16 @@ t_max_err notationobj_setattr_annotation_font_size(t_notation_obj *r_ob, t_objec
 t_max_err notationobj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->lyrics_alignment = atom_getlong(av);
+
+    implicitely_recalculate_all(r_ob, false);
+
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
+t_max_err notationobj_setattr_annotation_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && is_atom_number(av))
+        r_ob->annotation_alignment = atom_getlong(av);
 
     implicitely_recalculate_all(r_ob, false);
 

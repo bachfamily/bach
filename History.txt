@@ -32,6 +32,7 @@ VERSION NOTES:
     Now clefs and keys behave properly w.r. to undo, even if changed via messages
     Fixed bug causing non-refresh for keepselectioniflostfocus
     Now setdl works in lambda mode properly
+    New @annotationalignment attribute setting the text alignment for annotations
 
 - bach.roll:  Improved intelligent ruler
 

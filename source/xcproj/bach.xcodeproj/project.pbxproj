@@ -243,7 +243,7 @@
 		1E913CCD25CD41CE00A45D8C /* notation_markers.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E913CCC25CD41CD00A45D8C /* notation_markers.h */; };
 		1EA7B0112A1667FF000F66BF /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		1EA7B0122A1667FF000F66BF /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
-		1EA7B01A2A1668C2000F66BF /* pitchwheel.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA7B0192A1668C2000F66BF /* pitchwheel.c */; };
+		1EA7B01A2A1668C2000F66BF /* jiwheel.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA7B0192A1668C2000F66BF /* jiwheel.c */; };
 		1EB4D4691610C9740041ABFB /* roll.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4681610C9740041ABFB /* roll.h */; };
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
 		1EB4D4821610CB740041ABFB /* roll_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4801610CB740041ABFB /* roll_files.h */; };
@@ -2896,8 +2896,8 @@
 		1E9026EE150FC5380005B502 /* bach_doc_groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_doc_groups.h; sourceTree = "<group>"; };
 		1E913CCA25CD3A9800A45D8C /* notation_markers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_markers.c; sourceTree = "<group>"; };
 		1E913CCC25CD41CD00A45D8C /* notation_markers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_markers.h; sourceTree = "<group>"; };
-		1EA7B0172A1667FF000F66BF /* bach.pitchwheel.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.pitchwheel.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		1EA7B0192A1668C2000F66BF /* pitchwheel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pitchwheel.c; sourceTree = "<group>"; };
+		1EA7B0172A1667FF000F66BF /* bach.jiwheel.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.jiwheel.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		1EA7B0192A1668C2000F66BF /* jiwheel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jiwheel.c; sourceTree = "<group>"; };
 		1EAE5C1C2288532B005487F4 /* bach_ss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_ss.c; sourceTree = "<group>"; };
 		1EB4D4681610C9740041ABFB /* roll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll.h; sourceTree = "<group>"; };
 		1EB4D47F1610CB740041ABFB /* roll_files.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = roll_files.c; sourceTree = "<group>"; };
@@ -5133,7 +5133,7 @@
 				914A85432502A59D007975FC /* bach.mxo */,
 				0038AF8E2805934E0012316C /* bach.bell.in.mxo */,
 				0038AFA2280597160012316C /* bach.bell.out.mxo */,
-				1EA7B0172A1667FF000F66BF /* bach.pitchwheel.mxo */,
+				1EA7B0172A1667FF000F66BF /* bach.jiwheel.mxo */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5704,7 +5704,7 @@
 				1E5F437E152610C70085FA87 /* omtree2bachtree.c */,
 				9108DB6B145D65CB00C6289F /* n2mc.c */,
 				1ED51E301F73F5EA0021C2D5 /* p2mc.c */,
-				1EA7B0192A1668C2000F66BF /* pitchwheel.c */,
+				1EA7B0192A1668C2000F66BF /* jiwheel.c */,
 				91DA808A131B341400FCB316 /* primeform.c */,
 				916120411DD3D576003CEE3A /* playkeys.c */,
 				91C0A67512C5237000C31264 /* quantize.c */,
@@ -7545,9 +7545,9 @@
 			productReference = 1E784F9D20274BC400F11D75 /* bach.recurser.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
-		1EA7B0092A1667FF000F66BF /* bach.pitchwheel */ = {
+		1EA7B0092A1667FF000F66BF /* bach.jiwheel */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1EA7B0142A1667FF000F66BF /* Build configuration list for PBXNativeTarget "bach.pitchwheel" */;
+			buildConfigurationList = 1EA7B0142A1667FF000F66BF /* Build configuration list for PBXNativeTarget "bach.jiwheel" */;
 			buildPhases = (
 				1EA7B00C2A1667FF000F66BF /* Headers */,
 				1EA7B00D2A1667FF000F66BF /* Resources */,
@@ -7560,9 +7560,9 @@
 			dependencies = (
 				1EA7B00A2A1667FF000F66BF /* PBXTargetDependency */,
 			);
-			name = bach.pitchwheel;
+			name = bach.jiwheel;
 			productName = iterator;
-			productReference = 1EA7B0172A1667FF000F66BF /* bach.pitchwheel.mxo */;
+			productReference = 1EA7B0172A1667FF000F66BF /* bach.jiwheel.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
 		1ED42DAD1F8A9D17008EC1D9 /* bach.transcribe */ = {
@@ -10315,7 +10315,7 @@
 				91D7CBA51233E33C00D767D4 /* bach.perm */,
 				91E37306123651A200EC4752 /* bach.pick */,
 				9182E8B5145F086A00CDFBA9 /* bach.pipe */,
-				1EA7B0092A1667FF000F66BF /* bach.pitchwheel */,
+				1EA7B0092A1667FF000F66BF /* bach.jiwheel */,
 				916120421DD3D581003CEE3A /* bach.playkeys */,
 				91CF656C127896A300C44173 /* bach.portal */,
 				91E5622C19989CF90091EAFF /* bach.poset */,
@@ -12404,7 +12404,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1EA7B01A2A1668C2000F66BF /* pitchwheel.c in Sources */,
+				1EA7B01A2A1668C2000F66BF /* jiwheel.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13616,7 +13616,7 @@
 		};
 		1EA7B01C2A166FF9000F66BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1EA7B0092A1667FF000F66BF /* bach.pitchwheel */;
+			target = 1EA7B0092A1667FF000F66BF /* bach.jiwheel */;
 			targetProxy = 1EA7B01B2A166FF9000F66BF /* PBXContainerItemProxy */;
 		};
 		1ED42DAE1F8A9D17008EC1D9 /* PBXTargetDependency */ = {
@@ -20191,7 +20191,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;
 		};
-		1EA7B0142A1667FF000F66BF /* Build configuration list for PBXNativeTarget "bach.pitchwheel" */ = {
+		1EA7B0142A1667FF000F66BF /* Build configuration list for PBXNativeTarget "bach.jiwheel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1EA7B0152A1667FF000F66BF /* Development */,
