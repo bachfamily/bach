@@ -400,7 +400,7 @@ void build_commas()
         else
             commas[i] = comma;
         
-        post("prime %ld, comma: %ld/%ld (%.5f)", prime, comma.r_num, comma.r_den, MAX(comma.r_num, comma.r_den)*1./MIN(comma.r_num, comma.r_den));
+//        post("prime %ld, comma: %ld/%ld (%.5f)", prime, comma.r_num, comma.r_den, MAX(comma.r_num, comma.r_den)*1./MIN(comma.r_num, comma.r_den));
     }
     
 //    {genrat(81, 80), genrat(64, 63), genrat(32, 33), genrat(27, 26), genrat(2187, 2176), genrat(512, 513), genrat(729,736), genrat(256,261), genrat(32,31), genrat(36,37), genrat(81, 82), genrat(128,129), genrat(729,752)}
@@ -1616,7 +1616,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 
         CLASS_ATTR_CHAR(c, "alwayswhitekeys", 0, t_jiwheel, always_display_whitekeys);
         CLASS_ATTR_STYLE_LABEL(c,"alwayswhitekeys",0,"onoff","Always Display White-Keys Pitches");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"alwayswhitekeys",0,"0");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"alwayswhitekeys",0,"1");
         // @description If set, it always displays diatonic "white-keys" pitches with no accidentals (i.e. 'A' through 'G').
 
         CLASS_ATTR_CHAR(c, "intwheelpitchestofront", 0, t_jiwheel, always_show_coincidences_with_intwheel);
@@ -2925,10 +2925,10 @@ long sort_by_importance_modif(void *ptr, t_llllelem *a, t_llllelem *b)
         }
         
         if (x->always_show_coincidences_with_intwheel) {
-            if (a_p->coincides_with_intwheel && !b_p->coincides_with_intwheel)
+            if (a_p->coincides_with_intwheel && !b_p->coincides_with_intwheel && b_p->num_accidentals > 0)
                 return 1;
             
-            if (b_p->coincides_with_intwheel && !a_p->coincides_with_intwheel)
+            if (b_p->coincides_with_intwheel && !a_p->coincides_with_intwheel && a_p->num_accidentals > 0)
                 return 0;
         }
 
@@ -3059,10 +3059,16 @@ double jiwheel_paint_legend(t_jiwheel *x, t_jgraphics *g, t_rect rect, t_wheelpi
         long numoctaves = 0;
         char octavetxt[100];
         const char *intervalname = jiwheel_ratio_to_common_interval_name(p->ratio, &numoctaves);
-        snprintf_zero(octavetxt, 100, " %s%doct.", numoctaves >= 0 ? "+" : "−", abs(numoctaves));
-        snprintf_zero(buf, 1000, "Interval:%s%s%s", strlen(intervalname) > 0 ? " " : "", intervalname, (numoctaves == 0 || strlen(intervalname) == 0) ? "" : octavetxt);
-        jfont_text_measure(legendfont, buf, &width, &height);
-        write_text(g, legendfont, x->legend_color, buf, inset, v, writable_width, rect.height - inset, JGRAPHICS_TEXT_JUSTIFICATION_RIGHT|JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, true);
+        
+        write_text(g, legendfont, x->legend_color, "Interval:", inset, v, writable_width, rect.height - inset, JGRAPHICS_TEXT_JUSTIFICATION_RIGHT|JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, true);
+
+        if (strlen(intervalname) > 0) {
+            v += interlinea;
+            snprintf_zero(octavetxt, 100, " %s%doct.", numoctaves >= 0 ? "+" : "−", abs(numoctaves));
+            snprintf_zero(buf, 1000, "%s%s%s", strlen(intervalname) > 0 ? " " : "", intervalname, (numoctaves == 0 || strlen(intervalname) == 0) ? "" : octavetxt);
+            jfont_text_measure(legendfont, buf, &width, &height);
+            write_text(g, legendfont, x->legend_color, buf, inset, v, writable_width, rect.height - inset, JGRAPHICS_TEXT_JUSTIFICATION_RIGHT|JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, true);
+        }
     } else {
         // accidentals
         long len_utf = 0;

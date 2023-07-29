@@ -388,7 +388,7 @@
 #define CONST_DOT_DOT_USEPARATION 4.                            ///< Unscaled separation (in pixels) between a dot, and the next one
 #define CONST_DOT_UWIDTH 4                                        ///< Reserved width, during spacing calculation, for one dot
 #define CONST_UX_ACC_SEPARATION_FROM_ACC 0.8                    ///< Unscaled separation (in pixels) between two accidentals
-#define CONST_UX_ACC_SEPARATION_FROM_NOTE 3.0                    ///< Unscaled separation (in pixels) between a note and its accidental (if there's no other accidental horizontally in between)  
+#define CONST_UX_ACC_SEPARATION_FROM_NOTE 1.5 // was: 3                    ///< Unscaled separation (in pixels) between a note and its accidental (if there's no other accidental horizontally in between)
 #define CONST_SCORE_TIE_ADDITIONAL_USPACING 6                    ///< Unscaled horizontal additional spacing if note has a tie which starts on it
 
 #define CONST_FIGURE_IN_TUPLET_LEGEND_RATIO 0.55                ///< Rescaling factor of the small note in the tuplet ratio specification, as 'aq:b'
@@ -4790,6 +4790,11 @@ typedef struct _notation_obj
     char        show_dots;                      ///< Flag telling if we want to show the augmentation dots
     e_show_rests_preferences    show_rests;     ///< Flag telling if we want to show the rests
     
+    
+    // initial rule
+    char        show_initial_rule;              ///< Flag telling whether to show initial rule
+    char        show_accollatura;               ///< Flag telling if we show the brackets for staff ensemble
+    ///
     
     // slurs (SOME OF THESE ARE YET UNSUPPORTED)
     char        show_slurs;                 ///< Flag telling if we want to show the slurs
@@ -10492,6 +10497,7 @@ void paint_staff_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x
 
 // TBD
 void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color);
+void paint_initial_rule(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color);
 
 
 

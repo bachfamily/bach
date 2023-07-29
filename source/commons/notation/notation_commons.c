@@ -484,6 +484,12 @@ void do_paint_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x2, 
     }
 }
 
+void paint_initial_rule(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color)
+{
+    double top_y = get_staff_top_y(r_ob, voice_get_first_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+    double bottom_y = get_staff_bottom_y(r_ob, voice_get_last_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+    paint_line(g, color, r_ob->j_inset_x, top_y, r_ob->j_inset_x, bottom_y, 1);
+}
 
 void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color)
 {

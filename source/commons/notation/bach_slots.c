@@ -2637,7 +2637,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
         function_slot_has_labels(r_ob, i, &has_x_labels, &has_y_labels);
 
         
-        if (slot_is_temporal(r_ob, slotnum)) {
+        if (slot_is_temporal(r_ob, slotnum) || (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)) {
 			if (r_ob->obj_type != k_NOTATION_OBJECT_SCORE || nitem->type != k_NOTE || !((t_note *)nitem)->tie_to || !r_ob->slotinfo[slotnum].slot_singleslotfortiednotes)
 				slot_window_active_width = duration_line_length;
 			else {
@@ -2691,7 +2691,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 		if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS && slot && slot->firstitem && slot->firstitem->item){
 			t_jrgba slot_color = change_luminosity(r_ob->slotinfo[slotnum].slot_color, 0.9);
 			t_rect rect = build_rect(slot_window_active_x1, slot_window_active_y1,
-                                     slot_is_temporal(r_ob, slotnum) ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y,  slot_window_active_height);
+                                     slot_is_temporal(r_ob, slotnum) || (r_ob->obj_type == k_NOTATION_OBJECT_SLOT) ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y,  slot_window_active_height);
 
             if (slot_can_extend_beyond_note_tail(r_ob, slotnum))
                 rect.width = r_ob->width - rect.x - r_ob->j_inset_x;

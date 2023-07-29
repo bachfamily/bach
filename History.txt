@@ -10,6 +10,7 @@ VERSION NOTES:
    á now support slurs
    á now feature a new system of notification of interface actions that provides details on the elements being modified. See the new "notifywith" message.
    á Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
+   á @showpartbrackets, @showinitialrule: new attributes
 
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
 
@@ -17,6 +18,8 @@ VERSION NOTES:
     á fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
     á @outputnegativerests: new attribute. The new default should not break bw compatibility, but verify.
    
+- bach.slot:
+    á now background slots work (if you reduce the window opacity)
 - bell: bach.sum, bach.prod now work
 
 

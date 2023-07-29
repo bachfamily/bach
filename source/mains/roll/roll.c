@@ -12574,6 +12574,9 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
                     paint_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
                 
+                if (x->r_ob.show_initial_rule == 2 || (x->r_ob.show_initial_rule == 1 && voice_get_first_visible((t_notation_obj *)x) != voice_get_last_visible((t_notation_obj *)x)))
+                    paint_initial_rule((t_notation_obj *)x, g, clefcolor);
+
                 // paint key signature
                 for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
                     paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
@@ -12583,7 +12586,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                     paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
                 
                 // paint the accollatura
-                if (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)
+                if (x->r_ob.show_accollatura && voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)
                     for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
                         paint_accollatura((t_notation_obj *)x, g, staff_top_y, staff_bottom_y, mainstaffcolor);
                 
@@ -12780,6 +12783,9 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 			for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
 				paint_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
 			
+            if (x->r_ob.show_initial_rule == 2 || (x->r_ob.show_initial_rule == 1 && voice_get_first_visible((t_notation_obj *)x) != voice_get_last_visible((t_notation_obj *)x)))
+                paint_initial_rule((t_notation_obj *)x, g, clefcolor);
+            
 			// paint key signature
 			for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
 				paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
@@ -12789,7 +12795,7 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                 paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
 
             // paint the accollatura
-            if (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)
+            if (x->r_ob.show_accollatura && voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)
                 for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
                     paint_accollatura((t_notation_obj *)x, g, staff_top_y, staff_bottom_y, mainstaffcolor);
             

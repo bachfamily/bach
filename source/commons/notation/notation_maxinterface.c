@@ -3135,6 +3135,20 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showpartcolors",0,"0");
         // @exclude bach.slot
         // @description Toggles the display of different voice parts (see the <m>parts</m> attribute) with different colors.
+
+        CLASS_ATTR_CHAR(c,"showpartbrackets",0, t_notation_obj, show_accollatura);
+        CLASS_ATTR_STYLE_LABEL(c,"showpartbrackets",0,"onoff","Show Part Brackets");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showpartbrackets",0,"1");
+        // @exclude bach.slot
+        // @description Toggles the display of brackets in voice ensembles.
+
+        CLASS_ATTR_CHAR(c,"showinitialrule",0, t_notation_obj, show_initial_rule);
+        CLASS_ATTR_STYLE_LABEL(c,"showinitialrule",0,"enumindex","Show Initial Rule");
+        CLASS_ATTR_ENUMINDEX(c,"showinitialrule", 0, "Never Only With Multiple Voices Always");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showinitialrule",0,"0");
+        // @exclude bach.slot
+        // @description Toggles the display of the initial vertical line running through all the staves.
+
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
