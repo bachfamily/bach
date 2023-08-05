@@ -7694,7 +7694,7 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                             double note_bottom = note_get_accidental_bottom_uextension((t_notation_obj *)x, note);
                             if (!((n_uy - n_top < note_uy + note_bottom && n_uy + n_bottom < note_uy - note_top) ||
                                 (n_uy - n_top > note_uy + note_bottom && n_uy + n_bottom > note_uy - note_top))) {
-                                    acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + CONST_UX_ACC_SEPARATION_FROM_NOTE);
+                                acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + get_accidental_uwidth((t_notation_obj *)x, note_get_screen_accidental(n), false) - 1.5); // + CONST_UX_ACC_SEPARATION_FROM_ACC);
                             }
                         }
                     }
@@ -10544,14 +10544,13 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 
             if (x->r_ob.show_initial_rule == 2 || (x->r_ob.show_initial_rule == 1 && voice_get_first_visible((t_notation_obj *)x) != voice_get_last_visible((t_notation_obj *)x)))
                 paint_initial_rule((t_notation_obj *)x, g, clefcolor);
+            else
+                if (is_clef_multistaff((t_notation_obj *)x, clef)) // paint the vertical staff line
+                    paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
 
             // paint key signature
             for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
                 paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
-            
-            // paint the vertical staff line
-            if (is_clef_multistaff((t_notation_obj *)x, clef))
-                paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
             
             // paint the accollatura
             if (x->r_ob.show_accollatura && voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)

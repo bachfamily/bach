@@ -12576,14 +12576,14 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 
                 if (x->r_ob.show_initial_rule == 2 || (x->r_ob.show_initial_rule == 1 && voice_get_first_visible((t_notation_obj *)x) != voice_get_last_visible((t_notation_obj *)x)))
                     paint_initial_rule((t_notation_obj *)x, g, clefcolor);
+                else
+                    if (is_clef_multistaff((t_notation_obj *)x, clef)) // paint the vertical staff line
+                        paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
 
                 // paint key signature
                 for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
                     paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
                 
-                // paint the vertical staff line
-                if (is_clef_multistaff((t_notation_obj *)x, clef))
-                    paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
                 
                 // paint the accollatura
                 if (x->r_ob.show_accollatura && voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)
@@ -12785,14 +12785,13 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 			
             if (x->r_ob.show_initial_rule == 2 || (x->r_ob.show_initial_rule == 1 && voice_get_first_visible((t_notation_obj *)x) != voice_get_last_visible((t_notation_obj *)x)))
                 paint_initial_rule((t_notation_obj *)x, g, clefcolor);
-            
+            else
+                if (is_clef_multistaff((t_notation_obj *)x, clef)) // paint the vertical staff line
+                    paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
+
 			// paint key signature
 			for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
 				paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
-			
-            // paint the vertical staff line
-            if (is_clef_multistaff((t_notation_obj *)x, clef))
-                paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
 
             // paint the accollatura
             if (x->r_ob.show_accollatura && voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)

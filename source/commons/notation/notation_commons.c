@@ -486,9 +486,11 @@ void do_paint_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x2, 
 
 void paint_initial_rule(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color)
 {
-    double top_y = get_staff_top_y(r_ob, voice_get_first_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
-    double bottom_y = get_staff_bottom_y(r_ob, voice_get_last_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
-    paint_line(g, color, r_ob->j_inset_x, top_y, r_ob->j_inset_x, bottom_y, 1);
+    const double LINEWIDTH = 1; // doesn't change with zoom! not * r_ob->zoom_y;
+    double rule_x = r_ob->j_inset_x + r_ob->voice_names_uwidth * r_ob->zoom_y;
+    double top_y = get_staff_top_y(r_ob, voice_get_first_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
+    double bottom_y = get_staff_bottom_y(r_ob, voice_get_last_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
+    paint_line(g, color, rule_x, top_y, rule_x, bottom_y+1, LINEWIDTH);
 }
 
 void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color)
@@ -498,7 +500,7 @@ void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice
         double bottom_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
         const double LINEWIDTH = 1 * r_ob->zoom_y;
         
-        paint_line(g, color, x_pos, top_y, x_pos, bottom_y, LINEWIDTH);
+        paint_line(g, color, x_pos, top_y, x_pos, bottom_y+1, LINEWIDTH);
 }
 
 void paint_staff_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x2, double width, double middleC_y, long clef, t_jrgba main_staff_color, t_jrgba aux_staff_color, long num_staff_lines, char *staff_lines){
@@ -12154,8 +12156,9 @@ double rest_get_nonfloating_yposition(t_notation_obj *r_ob, t_chord *rest, doubl
                 break;
             }
         }
-        if ((rest->parent->voiceparent->v_ob.max_staff_line < 4 && rat_rat_cmp(rest->figure, genrat(1, 1)) >= 0) ||
-            (rest->parent->voiceparent->v_ob.max_staff_line < 3 && rat_rat_cmp(rest->figure, RAT_1OVER2) >= 0)) {
+        if (rest->parent->voiceparent->v_ob.max_staff_line >= rest->parent->voiceparent->v_ob.min_staff_line &&
+            ((rest->parent->voiceparent->v_ob.max_staff_line < 4 && rat_rat_cmp(rest->figure, genrat(1, 1)) >= 0) ||
+            (rest->parent->voiceparent->v_ob.max_staff_line < 3 && rat_rat_cmp(rest->figure, RAT_1OVER2) >= 0))) {
             long ds = midicents2diatonicstep(chosen_staff_middle_mc);
             long octave = floor(chosen_staff_middle_mc / 1200.);
             ds -= ((rat_rat_cmp(rest->figure, genrat(1, 1)) >= 0 ? 4 : 3) - rest->parent->voiceparent->v_ob.max_staff_line) * 2;
