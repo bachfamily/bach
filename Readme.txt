@@ -80,24 +80,46 @@ BUILDING FROM SOURCE
 
 As bach is an open source project as of v0.8.1, it is possible to download its complete source code and build the library from it.
 The source code of bach is hosted on Github, at the URL https://github.com/bachfamily/bach
-The repository is identical to the bach Max package, except that it does not contain the binaries (which you are supposed to be willing to build if you download it), but it contains a "source" folder with all the source code, third-party dependencies included (see below), except the Max SDK. You should install the bach folder downloaded from Github, or clone the repository, directly in your Max packages folder, instead of the bach package from the Package Manager.
+The repository is identical to the bach Max package, except that it does not contain the binaries (which you are supposed to be willing to build if you download it), but it rather contains a "source" folder with all the source code, third-party dependencies included (see below), except the Max SDK. You should install the bach folder downloaded from Github, or clone the repository, directly in your Max packages folder, instead of the bach package from the Package Manager.
+Generally speaking, the master branch contains the latest version of bach that has been published in the Package Manager. This is the branch you are recommended to check out.
 
 On a Mac, you need the following tools for building bach:
-- Xcode (version 9.4 or higher)
-- The Max SDK (version 7.3.3 or higher: the provided Xcode project looks for version 7.3.3, but it should not be difficult to upgrade it for a higher version), installed in the Max packages folder.
-- Flex (version 2.6.0 or higher) and Bison (version 2.3 or higher). Notice that you need to install manually Flex and Bison, as the versions provided with Xcode are not compatible with the grammars included in bach.
-The provided makefiles look for the correct versions of Flex and Bison respectively in /opt/homebrew/opt/bison/bin and /opt/homebrew/opt/flex/bin, which should be where homebrew installs them. You may want to make sure of that though, and possibly fix manually the makefiles. A cleaner way might actually be including a configure script in the distribution.
+- Xcode (a relatively new version, but we're not actually sure which is the minimum requirement). You also need to install the command line tools when required; or you can install them later on if you need to, by entering
+	xcode-select --install
+in the terminal.
+- A modified version of the Max SDK version 8.2.0, installed in the Max packages folder. See below for how to install our modified version.
+- Flex (version 2.6.0 or higher) and Bison (version 2.3 or higher). You need to install manually Flex and Bison (you can use Homebrew or Macports), as the versions provided with Xcode are not compatible with the grammars included in bach.
+The provided makefiles look for the correct versions of Flex and Bison respectively in /opt/homebrew/opt/bison/bin and /opt/homebrew/opt/flex/bin, which is where one version of Homebrew installs them. Macports, as well as other versions of Homebrew, installs them elsewhere. No big deal: just add an alias in the above folders, pointing to the correct location; or fix all the makefiles on your machine. The makefiles are located in each subfolder of bach/source/commons/parsers, and in bach/source/commons/bell/stringparsers. A cleaner way on our end might actually be including a configure script in the distribution, but I'm afraid we have other priorities.
 
-On Windows, you only need Visual Studio 2017 or higher.
+On Windows, you only need Visual Studio 2017 or higher, but there is a manipulation you should perform:
+The file bach\source\resources\bach_resources.rc, which contains references to cursors, fonts etc. for the compiler, references them through an absolute path on Andrea's machine. There may be a way to make the path relative, but we couldn't find it. So you should open the file with any text editor and change all the occurrences of C:\\Users\\aa\\blahblah... to C:\\Users\\<<<your home folder name>>>\\blahblah...
+
+THE MODIFIED MAX SDK
+
+The Max 8.2 SDK seems to have some issues of redefined symbols, so currently bach needs to use a slightly modified version of it. If you don't have the Max SDK yet, or you don't mind losing any modifications or additions you did and the externals you built, the easiest is running these command lines from the Max Package folder:
+
+	git clone https://github.com/bachfamily/max-sdk
+	cd max-sdk
+	git submodule update --init --recursive
+	cd source/max-sdk-base
+	git checkout bach
+
+If you don't want to lose everything you alredy did in the Max SDK package, then you should retrieve the relevant files from the modified version and substitute the original ones with them. The easiest is to run the above command line from just any other folder (it can as well be your Desktop or Downloads), drag the following files from the newly cloned SDK to your old one and throw away the new one:
+	max-sdk/source/max-sdk-base/c74support/c74_max.h
+	max-sdk/source/max-sdk-base/c74support/max-includes/common/jpatcher_syms.c
+	max-sdk/source/max-sdk-base/c74support/max-includes/ext_obex.h
+	max-sdk/source/max-sdk-base/script/max-pretarget.cmake
+
+A FURTHER NOTE ON PARSERS
 
 bach contains a number of Flex / Bison lexers and parsers tackling the llll textual representation, bach.expr expressions and bell programs. The bach repository contains both the Flex / Bison grammar files (.l and .y), with the makefiles invoking Flex and Bison, and the C code files they produce. This is somewhat unorthodox, but necessary because currently Flex and Bison are only invoked when bach is built on a Mac, whereas on Windows the .l, .y and makefiles are ignored, and bach is only built from the C code files. So, if you are a Windows user and you want to modify the grammars, you have to either find a compatible Flex / Bison distribution for Windows, install it and run it on your machine (and, why not, share some information about it with the bach dev community and us), or generate the lexers and parsers on a UNIX machine and transfer them to Windows. If you don't want to fiddle with the grammars instead, you can avoid installing Flex and Bison on a Mac as well, and modify the makefiles or the relevant build targets so as not to invoke them when the project is built (and perhaps adding an exclude file to your local repository, so that these customizations are preserved whenever you pull from the remote).
 
-Important: Max 8.2 SDK seems to have some issues of redefined symbols, so currently bach needs to use a slightly modified version of it. Do not use the original max-sdk, but rather
-1) pull it from the repository https://github.com/bachfamily/max-sdk.
-2) perform the manipulation shown here https://www.youtube.com/watch?v=il5WblTBUgs
-3) go inside the repository max-sdk/source/max-sdk-base and check out the "bach" branch:
-cd  ~/Documents/Max\ 8/Packages/max-sdk/source/max-sdk-base
-git checkout bach
+READY, SET, GO
+
+Once you have installed Xcode or Visual Studio; the bach source and the modified Max SDK; decided what you want to do with the parsers and acted accordingly; if you're on Windows, modified bach_resources,rc: once you've done all this, you can just open Xcode or Visual Studio and build the project or solution respectively. On Xcode you will be asked if you want to autocreate schemes: answer "Yes", and then choose the scheme "bach-everything". On Windows, you might end up with two objects in the "extensions" folder of the package, named respectively bach.mxe64 and bachB.mxe64. This is a mistake on our end, that will prevent bach from working. If this is the case, just erase bachB.mxe64. We shall fix this in a future version.
+
+Good luck!
+
 
 ===================================================
 DEPENDENCIES
