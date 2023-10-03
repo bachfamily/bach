@@ -376,8 +376,6 @@
 #define CONST_SECOND_BEAM_UY_SHIFT 6                    ///< Unscaled vertical shift of the beamings, towards the noteheads technical, only if the beams are at least 2. 
                                                         ///< (This is used to avoid the case where beamings get too "tall" even just for a sequence of 1/16 notes)
 #define CONST_VERTICAL_USEPARATION_RESTS_FROM_BEAM 5.    ///< Unscaled vertical additional separation between a rest and a beam inside which the rest lies
-#define CONST_FLOAT_STEP_PART_SHIFT 4                   ///< Shift in steps of rests due to different parts in the same voice ensemble. Must be EVEN otherwise we
-                                                        ///< mess up with 4/4 and 2/4 rests vertical positioning
 
 // score spacing constants
 #define CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_NO_TS 6        ///< Unscaled horizontal blank space (in pixels) after a measure barline, when no time signature in the measure is needed
@@ -3529,7 +3527,6 @@ typedef struct _notehead_preferences
     unicodeChar        unicode_character_whole;        ///< Unicode characters for "whole" notes
     unicodeChar        unicode_character_doublewhole;  ///< Unicode characters for "double whole" notes
     
-
     double            uwidth;                ///< Unscaled widths of the notehead symbols
     double            ux_shift;                ///< Unscaled horizontal shift of the notehead, with respect to a default reference position
     double            uy_shift;                ///< Unscaled vertical shift of the notehead, with respect to a default reference position (30 pixel up are already by default)
@@ -3541,6 +3538,7 @@ typedef struct _notehead_preferences
 
     double            durationline_start_ux_shift;    ///< Unscaled horizontal shift of the beginning of the duration line with respect to the full note width
     
+    char             opaque_bg;     ///< Opaque background
 } t_notehead_preferences;
 
 
@@ -4726,12 +4724,16 @@ typedef struct _notation_obj
     double      tempi_uy_pos;                           ///< Unscaled vertical shift for tempi
     char        show_tempi_interp;                          ///< Show/hide dashed rall/acc line, or text, or arrows
     
+    char        lyrics_have_single_dash;                ///< Single dash for lyrics
+    
     char        show_barlines;                            ///< Flag telling if we want to show barlines
     char        show_barline_locks;                        ///< Flag telling if we want to show the barline locks (appearing when barline width has been locked, fixed)
     char        draw_barlines_across_staves;            ///< Flag telling if we want to draw the barlines across all the staves, when possible
     double      barline_ushift_for_proportional_spacing;    ///< unscaled shift of barlines in proportional spacing display
     char        show_time_signatures;                    ///< Flag telline if we want to show the time signatures (0 = hide, 1 = classically, 2 = above staff)
     double      big_time_signatures_ratio;              ///< Expansion ratio for big time signatures
+    double      big_time_signatures_uy_adjust;              ///< Vertical adjustment for big timesignatures
+    char        big_time_signatures_above_tempo;            ///< Flag telling whether to place big time signatures above tempi or independently from them
     long        measure_number_offset;                    ///< Offset for the measure numbering (by default: 0)
     
 // changed from e_show_accidentals_preferences to char to avoid VC++ complaints
@@ -4821,6 +4823,7 @@ typedef struct _notation_obj
     // rulers & grids
     char        ruler;                    ///< Type of ruler to be shown: 0 = No ruler, 1 = Ruler Above, 2 = Ruler Below, 3 = Both
     char        ruler_mode;                ///< Ruler mode: 0 = Manual (user sets the <grid_step_ms> and the <grid_subdivisions>), 1 = Smart (automatical, depending on zoom)
+    char        ruler_before_zero;        ///< Ruler extends before zero?
     char        show_ruler_labels;        ///< Flag telling if we want to show the ruler labels, indicating time. Their positioning is automatically calculated (depending on tick density)
     char        show_grid;                ///< Flag telling if we want to show the grid
     double        grid_step_ms;            ///< Step interval in milliseconds for the main grid, i.e. interval between two "long" ticks
@@ -4986,6 +4989,8 @@ typedef struct _notation_obj
     char        take_rhythmic_tree_for_granted;        ///< (INTERNAL) Flag set only at undo time, meaning that the rhythmic tree must be kept "as-is" (and _essentially_ not reparsed) from the information given in the undo content
                                                     ///<  "Essentially" means that the parsing is always necessary, but will be done in a non-intrusive and non-destructive way.
     char        whole_rests_in_empty_measures;      ///< If 1 (default), allows to have centered whole rest notes in empty measures, or in measures having a single rest lasting for the whole measure
+    
+    long        rests_float_steps_part_shift;        ///< Shift in steps of rests due to different parts in the same voice ensemble. Must be EVEN otherwise we mess up with 4/4 and 2/4 rests vertical positioning
 
     // grace notes
     char        slash_grace_flags;                                ///< If 1, put a slash on any grace chord flag
@@ -6574,9 +6579,9 @@ unicodeChar get_notehead_unicode_character(t_notation_obj *r_ob, t_rational dura
 double notehead_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords);
 
 // TBD
-void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
-long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
-long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char avoid_returning_default, char ignore_custom_noteheads);
+void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char *opaque_bg);
+long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char *opaque_bg);
+long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char *opaque_bg, char avoid_returning_default, char ignore_custom_noteheads);
 
 
 /**    Get the default width for a portion of score. This function is used inside tuttipoint_calculate_spacing() in order to determine the

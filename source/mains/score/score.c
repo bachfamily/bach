@@ -173,6 +173,7 @@ void score_tail_to_grace(t_score *x, t_llll *args);
 // setters
 t_max_err score_setattr_nonantialiasedstaff(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_tonedivision(t_score *x, t_object *attr, long ac, t_atom *av);
+t_max_err score_setattr_restpartshiftsteps(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_accidentalsgraphic(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_accidentalspreferences(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_enharmonictable(t_score *x, t_object *attr, long ac, t_atom *av);
@@ -2288,9 +2289,18 @@ void score_sel_change_velocity(t_score *x, t_symbol *s, long argc, t_atom *argv)
         
         curr_it = lambda ? NULL : curr_it->next_selected;
     }
+
+    if (x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) {
+        set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+    }
+    
+    close_slot_window((t_notation_obj *)x); // if we were in slot view...
     unlock_general_mutex((t_notation_obj *)x);
 
-    if (new_velocity) 
+
+
+    if (new_velocity)
         llll_free(new_velocity);
     if (lexpr)
         lexpr_free(lexpr);
@@ -7240,6 +7250,15 @@ void C74_EXPORT ext_main(void *moduleRef){
 #endif
     // @description Sets the number of digits for tempo approximation. Defaults to 2 for 64-bit mode, to 1 for 32-bit mode.
 
+    CLASS_ATTR_LONG(c, "restpartshiftsteps", 0, t_notation_obj, rests_float_steps_part_shift);
+    CLASS_ATTR_STYLE_LABEL(c,"restpartshiftsteps",0,"text","Amount Of Vertical Shift Of Rests (In Steps) In Voice Ensembles");
+    CLASS_ATTR_ACCESSORS(c, "restpartshiftsteps", (method)NULL, (method)score_setattr_restpartshiftsteps);
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"restpartshiftsteps",0,"2");
+    // @description Sets the amount of shifting of rests in a voice ensemble in steps. This must be an even number, otherwise
+    // it's made even by default.
+
+
+    
     
     CLASS_ATTR_DOUBLE(c,"tempovadj",0, t_notation_obj, tempi_uy_pos);
     CLASS_ATTR_STYLE_LABEL(c,"tempovadj",0,"text","Tempi Vertical Adjustment");
@@ -7802,9 +7821,19 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DOUBLE(c,"bigtsratio",0, t_notation_obj, big_time_signatures_ratio);
     CLASS_ATTR_STYLE_LABEL(c,"bigtsratio",0,"text","Big Time Signatures Ratio");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bigtsratio",0,"2.");
-    CLASS_ATTR_BASIC(c,"bigtsratio",0);
     // @description Sets the expansion ratio for big time signatures
 
+    CLASS_ATTR_DOUBLE(c,"bigtsvadj",0, t_notation_obj, big_time_signatures_uy_adjust);
+    CLASS_ATTR_STYLE_LABEL(c,"bigtsvadj",0,"text","Big Time Signatures Vertical Adjustment");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bigtsvadj",0,"0.");
+    // @description Sets a vertical adjustment parameter for big time signatures.
+
+    CLASS_ATTR_CHAR(c,"bigtsabovetempi",0, t_notation_obj, big_time_signatures_above_tempo);
+    CLASS_ATTR_STYLE_LABEL(c,"bigtsabovetempi",0,"onoff","Big Time Signatures Above Tempi");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bigtsabovetempi",0,"1");
+    // @description Toggles the ability to automatically place big time signatures above tempi.
+    
+    
     CLASS_ATTR_DOUBLE(c,"zoom",0, t_notation_obj, horizontal_zoom);
     CLASS_ATTR_STYLE_LABEL(c,"zoom",0,"text","Horizontal Zoom %");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"zoom",0,"100.");
@@ -8086,6 +8115,15 @@ void C74_EXPORT ext_main(void *moduleRef){
     
     dev_post("bach.score compiled %s %s", __DATE__, __TIME__);
     return;
+}
+
+t_max_err score_setattr_restpartshiftsteps(t_score *x, t_object *attr, long ac, t_atom *av){
+    if (ac && av) {
+        long s = atom_getlong(av);
+        x->r_ob.rests_float_steps_part_shift = 2*(s/2); // we gotta make it even
+        recompute_all_and_redraw(x);
+    }
+    return MAX_ERR_NONE;
 }
 
 t_max_err score_setattr_tonedivision(t_score *x, t_object *attr, long ac, t_atom *av){
@@ -9436,7 +9474,7 @@ void score2roll(t_score *x, char markmeasures, char marktimesig, char marktempi,
                         llll_appendsym(note_llll, _llllobj_sym_note, 0, WHITENULL_llll);
                         llll_appendlong(note_llll, chord->parent->voiceparent->v_ob.number + 1, 0, WHITENULL_llll); // voices are 1-based
                         llll_appendlong(note_llll, chord->parent->voiceparent->v_ob.midichannel, 0, WHITENULL_llll);
-                        llll_appendllll(note_llll, get_single_scorenote_values_as_llll((t_notation_obj *) x, note, k_CONSIDER_FOR_PLAYING), 0, WHITENULL_llll);
+                        llll_appendllll(note_llll, get_single_scorenote_values_as_llll((t_notation_obj *) x, note, k_CONSIDER_FOR_SCORE2ROLL), 0, WHITENULL_llll);
                         llll_appendllll(voice_llll, note_llll, 0, WHITENULL_llll);
                     }
                     note = note->next;

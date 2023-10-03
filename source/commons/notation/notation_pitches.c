@@ -137,7 +137,6 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
         case k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE:
         case k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END:
         case k_CONSIDER_FOR_UNDO:
-        case k_CONSIDER_FOR_SCORE2ROLL:
         case k_CONSIDER_FOR_SUBDUMPING:
         case k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING:
             pitchmode = r_ob->output_pitches_gathered;
@@ -151,6 +150,10 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
             pitchmode = r_ob->output_pitches_playout;
             break;
             
+        case k_CONSIDER_FOR_SCORE2ROLL:
+            pitchmode = k_OUTPUT_PITCHES_WHEN_USER_DEFINED;
+            break;
+
         case k_CONSIDER_FOR_SELECTION_COPYING:
             pitchmode = k_OUTPUT_PITCHES_WHEN_USER_DEFINED;
             break;

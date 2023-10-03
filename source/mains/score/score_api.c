@@ -9813,6 +9813,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 						if (num_dash_needed == 0 && (this_left_ux - left_dashed_ux) > CONST_UX_MINIMUM_SPACE_FOR_DASH * 1.25)
 							num_dash_needed = 1;
 						
+                        if (x->r_ob.lyrics_have_single_dash && num_dash_needed > 1)
+                            num_dash_needed = 1;
+
 						if (num_dash_needed == 1) {
 							double ux_module = (this_left_ux - left_dashed_ux - CONST_UX_MINIMUM_SPACE_FOR_DASH)/2;
 							write_text_standard_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_module), pos_y);
@@ -10301,6 +10304,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         double this_left_ux = xposition_to_unscaled_xposition((t_notation_obj *) x, x->r_ob.j_inset_x + x->r_ob.inner_width);
         long num_dash_needed = MAX(0, round((this_left_ux - left_dashed_ux) * CONST_NUM_DASH_PER_UX * x->r_ob.zoom_x / x->r_ob.zoom_y)); 
         
+        if (x->r_ob.lyrics_have_single_dash && num_dash_needed > 1)
+            num_dash_needed = 1;
+
         if (num_dash_needed == 1) {
             double ux_module = (this_left_ux - left_dashed_ux)/2;
             write_text_standard_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_module), pos_y);

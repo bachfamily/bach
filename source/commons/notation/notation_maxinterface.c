@@ -2139,6 +2139,12 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // @description If <m>thinannotations</m> is set to 2 (Remove With Clearing Symbol), this attribute
         // sets the clearing symbol to remove the annotation label.
 
+        CLASS_ATTR_CHAR(c,"singlelyricsdash",0, t_notation_obj, lyrics_have_single_dash);
+        CLASS_ATTR_STYLE_LABEL(c,"singlelyricsdash",0,"onoff","Lyrics Always Connect With A Single Dash");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"singlelyricsdash", 0, "0");
+        // @description Toggles the ability to always connect lyrics with single dashes, and not with repeated dashes
+        // when the space between them is too large
+        
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
             CLASS_ATTR_CHAR(c,"finitestaff",0, t_notation_obj, end_staff_with_final_measure);
             CLASS_ATTR_STYLE_LABEL(c,"finitestaff",0,"onoff","End Staff With Last Measure");

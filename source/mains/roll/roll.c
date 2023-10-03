@@ -12050,6 +12050,9 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             if (num_dash_needed == 0 && (this_left_x - ldx) > CONST_UX_MINIMUM_SPACE_FOR_DASH * 1.25)
                 num_dash_needed = 1;
             
+            if (x->r_ob.lyrics_have_single_dash && num_dash_needed > 1)
+                num_dash_needed = 1;
+            
             if (num_dash_needed == 1) {
                 double x_module = (this_left_x - ldx - CONST_UX_MINIMUM_SPACE_FOR_DASH)/2;
                 write_text_standard_account_for_vinset_singleline((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", ldx + x_module, pos_y);
@@ -12121,6 +12124,9 @@ void roll_paint_last_dashed_lines(t_roll *x, t_jgraphics *g, t_jfont *jf_lyrics,
         double this_left_x = x->r_ob.j_inset_x + x->r_ob.inner_width;
         long num_dash_needed = MAX(0, round((this_left_x - left_dashed_x) * CONST_NUM_DASH_PER_UX));
         
+        if (x->r_ob.lyrics_have_single_dash && num_dash_needed > 1)
+            num_dash_needed = 1;
+
         if (num_dash_needed == 1) {
             double x_module = (this_left_x - left_dashed_x)/2;
             write_text_standard_account_for_vinset_singleline((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", left_dashed_x + x_module, pos_y);
