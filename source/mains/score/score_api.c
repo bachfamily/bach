@@ -5496,7 +5496,8 @@ void calculate_all_chords_remaining_onsets(t_score *x)
                 
                 if (chord->prev) {
                     chord->prev->duration_ms = chord->onset - chord->prev->onset; 
-                    chord->prev->duration_ms = chord->tuttipoint_onset_ms - chord->prev->tuttipoint_onset_ms;
+                    // DG: this should give us the actual duration that does not account for grace notes; but we want to account for grace notes, right?
+                    //                    chord->prev->duration_ms = chord->tuttipoint_onset_ms - chord->prev->tuttipoint_onset_ms;
                     
                     for (nt = chord->prev->firstnote; nt; nt = nt->next)
                         nt->duration = chord->prev->duration_ms;

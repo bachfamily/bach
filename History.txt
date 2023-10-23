@@ -15,10 +15,11 @@ VERSION NOTES:
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
 
 - bach.score:
+    á fixed bug causing wrong playback for grace notes!
     á fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
     á @outputnegativerests: new attribute. The new default should not break bw compatibility, but verify.
     á @bigtsvadj, @bigtsabovetempi: new attributes
-   
+  
 - bach.slot:
     á now background slots work (if you reduce the window opacity)
 - bell: bach.sum, bach.prod now work
