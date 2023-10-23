@@ -360,7 +360,7 @@ void build_commas()
         double threshold = pow(2, 1./18.); // set maximum comma size to 69c (1/3 of a tone)
         double invthreshold = 2/threshold;
         double curr_comma_dbl = DBL_MAX;
-        long curr_max_term = LONG_MAX;
+        long curr_max_term = ATOM_LONG_MAX;
         // "search no further than + or – 7 fifths to avoid reading the diminished fourth and other enharmonics which differ by a schisma from 5-limit"
         for (long m = 0; m <= 7; m++) {
             t_rational r;
@@ -1227,7 +1227,7 @@ const char *jiwheel_ratio_to_common_interval_name(t_rational r, long *num_octave
 
 t_jrgba jiwheel_long_to_color(t_jiwheel *x, long value)
 {
-    if (value == LONG_MAX) {
+    if (value == ATOM_LONG_MAX) {
         return x->j_textcolor;
     }
     
@@ -2222,7 +2222,7 @@ void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, long formalo
                         long li = num_to_prime_idx(l) - 2;
                         wp->purely_pythagorean = false;
                         if (li < 0 || li >= numcommas) {
-                            wp->pythagorean_index = LONG_MAX;
+                            wp->pythagorean_index = ATOM_LONG_MAX;
                             wp->accidentals_overflow = true;
                             break;
                         } else {
@@ -2517,7 +2517,7 @@ void rational_to_wheelpitch(t_rational r, char base_diatonic_pitch, long formalo
         }
 
     } else {
-        wp->pythagorean_index = wp->pyth_diatonic_step = LONG_MAX;
+        wp->pythagorean_index = wp->pyth_diatonic_step = ATOM_LONG_MAX;
     }
     
 
@@ -3045,7 +3045,7 @@ double jiwheel_paint_legend(t_jiwheel *x, t_jgraphics *g, t_rect rect, t_wheelpi
     
     double v = y_start;
     char base_diatonic_pitch = x->base_diatonic_pitch ? x->base_diatonic_pitch->s_name[0] : 'A';
-    char ch = p->pyth_diatonic_step < 0 || p->pyth_diatonic_step == LONG_MAX ? '?' : base_diatonic_pitch + p->pyth_diatonic_step;
+    char ch = p->pyth_diatonic_step < 0 || p->pyth_diatonic_step == ATOM_LONG_MAX ? '?' : base_diatonic_pitch + p->pyth_diatonic_step;
 
     snprintf_zero(buf, 1000, "Test");
     jfont_text_measure(legendfont, buf, &width, &height);

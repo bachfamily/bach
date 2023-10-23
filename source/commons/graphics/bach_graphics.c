@@ -1573,6 +1573,15 @@ t_jrgba change_alpha(t_jrgba color, double new_alpha){
     return new_color;
 }
 
+t_jrgba change_alpha_multiply(t_jrgba color, double factor){
+    t_jrgba new_color;
+    new_color.red = color.red;
+    new_color.green = color.green;
+    new_color.blue = color.blue;
+    new_color.alpha = color.alpha * factor;
+    return new_color;
+}
+
 t_jrgba color_alphablend(t_jrgba color1, t_jrgba color2){
     t_jrgba outcolor;
     outcolor.red = color1.red * color1.alpha + (1 - color1.alpha)*color2.alpha * color2.red; 

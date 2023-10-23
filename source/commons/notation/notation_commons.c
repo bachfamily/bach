@@ -372,8 +372,8 @@ void paint_loop_region(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect, t_jrgb
     r_ob->loop_region_pixel_start = start_x;
     r_ob->loop_region_pixel_end = end_x;
     if (loop_rect_width >= 0) {
-        paint_filledrectangle(g, r_ob->use_loop_region ? change_alpha(color, 0.2) : change_alpha(change_luminosity(color, 0.5), 0.05), MAX(0, start_x), playhead_y1, loop_rect_width, playhead_y2 - playhead_y1);
-        paint_stripedrectangle(g, change_alpha(color, 0.7), r_ob->use_loop_region ? color : change_alpha(change_luminosity(color, 0.5), 0.7), MAX(0, start_x), playhead_y2 - 7 * r_ob->zoom_y, loop_rect_width, 7 * r_ob->zoom_y, 8 * r_ob->zoom_y, 8 * r_ob->zoom_y);
+        paint_filledrectangle(g, r_ob->use_loop_region ? change_alpha_multiply(color, 0.2) : change_alpha_multiply(change_luminosity(color, 0.5), 0.05), MAX(0, start_x), playhead_y1, loop_rect_width, playhead_y2 - playhead_y1);
+        paint_stripedrectangle(g, change_alpha_multiply(color, 0.7), r_ob->use_loop_region ? color : change_alpha_multiply(change_luminosity(color, 0.5), 0.7), MAX(0, start_x), playhead_y2 - 7 * r_ob->zoom_y, loop_rect_width, 7 * r_ob->zoom_y, 8 * r_ob->zoom_y, 8 * r_ob->zoom_y);
         
         if (start_x > 0 && start_x < rect.width) {
             paint_line(g, color, start_x, playhead_y1, start_x, playhead_y2, width);
