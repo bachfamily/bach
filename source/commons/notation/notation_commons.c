@@ -39970,12 +39970,12 @@ t_llll *om_rhythmic_tree_to_bach_rhythmic_tree(t_llll *omtree, t_llll **measurei
                     t_rational total_meas_duration = long2rat(0);
                     if (ll && ll->l_head && ll->l_head->l_next && hatom_gettype(&ll->l_head->l_hatom) == H_LLLL && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_LLLL) {
                         t_llll *thisll = llll_clone(ll->l_head->l_hatom.h_w.w_llll);
-                        llll_wrap_once(&thisll);
                         if (thisll->l_head){
                             t_rational total_meas_duration1 = hatom_gettype(&thisll->l_head->l_hatom) == H_LLLL ? llll_sum_of_rat_llll(thisll->l_head->l_hatom.h_w.w_llll) : hatom_getrational(&thisll->l_head->l_hatom);
                             t_rational total_meas_duration2 = hatom_gettype(&thisll->l_tail->l_hatom) == H_LLLL ? llll_sum_of_rat_llll(thisll->l_tail->l_hatom.h_w.w_llll) : hatom_getrational(&thisll->l_tail->l_hatom);
                             total_meas_duration = rat_rat_div(total_meas_duration1, total_meas_duration2);
                         }
+                        llll_wrap_once(&thisll);
 
                         llll_appendllll(thisvoiceinfo, thisll, 0, WHITENULL_llll);
 

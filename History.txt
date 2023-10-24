@@ -14,6 +14,8 @@ VERSION NOTES:
 
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
 
+- bach.omtree2bachtree: fixed bug causing wrong input for non 4/4 meters
+
 - bach.score:
     á fixed bug causing wrong playback for grace notes!
     á fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
