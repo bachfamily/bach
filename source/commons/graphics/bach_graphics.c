@@ -1442,9 +1442,6 @@ void paint_arrow(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2,
     double S = arrow_height;
     double T = arrow_width * 0.5;
     
-    // line
-    paint_line(g, color, x1, y1, x2, y2, width);
-    
     // arrow
     if (x2 == x1)
         alpha = (y2 < y1) ? PIOVERTWO : PIOVERTWO * 3;
@@ -1454,11 +1451,17 @@ void paint_arrow(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2,
         if (x2 - x1 < 0)
             alpha += PI;
     }
+
+    double cos_alpha = cos(alpha);
+    double sin_alpha = sin(alpha);
     
-    pt1_x = x2 - S * cos(alpha) - T * sin(alpha);
-    pt2_x = pt1_x + 2 * T * sin(alpha);
-    pt1_y = y2 + S * sin(alpha) - T * cos(alpha);
-    pt2_y = pt1_y + 2 * T * cos(alpha);
+    // line
+    paint_line(g, color, x1, y1, x2 - (width * cos_alpha), y2 + (width * sin_alpha), width);
+
+    pt1_x = x2 - S * cos_alpha - T * sin_alpha;
+    pt2_x = pt1_x + 2 * T * sin_alpha;
+    pt1_y = y2 + S * sin_alpha - T * cos_alpha;
+    pt2_y = pt1_y + 2 * T * cos_alpha;
     jgraphics_set_source_jrgba(g, &color); 
     jgraphics_set_line_width(g, 0.);
     jgraphics_move_to(g, x2, y2);
@@ -1567,6 +1570,15 @@ t_jrgba change_alpha(t_jrgba color, double new_alpha){
     new_color.green = color.green;
     new_color.blue = color.blue;
     new_color.alpha = new_alpha;
+    return new_color;
+}
+
+t_jrgba change_alpha_multiply(t_jrgba color, double factor){
+    t_jrgba new_color;
+    new_color.red = color.red;
+    new_color.green = color.green;
+    new_color.blue = color.blue;
+    new_color.alpha = color.alpha * factor;
     return new_color;
 }
 
@@ -4412,7 +4424,6 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
     bach_freeptr(temp_pts);
     bach_freeptr(pts_in_modif);
     bach_freeptr(path_ids);
-    bach_freeptr(done);
     bach_freeptr(new_pts);
     bach_freeptr(pts);
     polygon_free(p);

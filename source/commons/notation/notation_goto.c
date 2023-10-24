@@ -999,7 +999,7 @@ e_goto_error set_selection_to_notation_item_with_index(t_notation_obj *r_ob, t_g
     switch (par->nitem_type) {
         case k_CHORD:
             for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
-                t_chord *ch = nth_chord_of_rollvoice(voice, n)
+                t_chord *ch = chord_get_nth_in_rollvoice(voice, n)
                 llll_append
             }
             break;
@@ -1561,7 +1561,7 @@ void notationobj_goto_parseargs(t_notation_obj *r_ob, t_llll *args)
     if (where_ll) {
         t_atom *new_av = NULL;
         long new_ac = llll_deparse(where_ll, &new_av, 0, LLLL_D_PARENS);
-        par.where = notation_obj_lexpr_new(new_ac, new_av);
+        par.where = notationobj_lexpr_new(new_ac, new_av);
         
         if (new_av)
             bach_freeptr(new_av);
@@ -1574,7 +1574,7 @@ void notationobj_goto_parseargs(t_notation_obj *r_ob, t_llll *args)
     if (until_ll) {
         t_atom *new_av = NULL;
         long new_ac = llll_deparse(until_ll, &new_av, 0, LLLL_D_PARENS);
-        par.until = notation_obj_lexpr_new(new_ac, new_av);
+        par.until = notationobj_lexpr_new(new_ac, new_av);
         
         if (new_av)
             bach_freeptr(new_av);

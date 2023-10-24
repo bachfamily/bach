@@ -1849,6 +1849,14 @@ t_llll *symbol_and_long_to_llll(t_symbol *sym, long n)
 	return this_ll;
 }
 
+t_llll *symbol_and_rational_to_llll(t_symbol *sym, t_rational r)
+{
+    t_llll *this_ll = llll_get();
+    llll_appendsym(this_ll, sym, 0, WHITENULL_llll);
+    llll_appendrat(this_ll, r, 0, WHITENULL_llll);
+    return this_ll;
+}
+
 t_llll *symbol_and_symbol_to_llll(t_symbol *sym1, t_symbol *sym2)
 {
     t_llll *this_ll = llll_get();

@@ -1076,13 +1076,23 @@ t_jrgba change_luminosity(t_jrgba color, double factor);
 t_jrgba add_luminosity(t_jrgba color, double add);
 
 
-/**    Change the alpha component of a color
+/**    Change the alpha component of a color by replacing it entirely
     @ingroup            colors
     @param    color        The starting color
     @param    new_alpha    The new alpha
     @return                The new color (having as alpha the new alpha)
  */ 
 t_jrgba change_alpha(t_jrgba color, double new_alpha);
+
+
+/**    Change the alpha component of a color by multiplying by a factor
+    @ingroup            colors
+    @param    color        The starting color
+    @param    factor      The factor
+    @return                The new color (having as alpha the new alpha)
+ */
+t_jrgba change_alpha_multiply(t_jrgba color, double factor);
+
 
 
 /**    Blend two colors via their alpha channel

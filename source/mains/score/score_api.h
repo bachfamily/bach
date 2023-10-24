@@ -43,6 +43,9 @@
 #include <locale.h>
 #include <time.h> 
 #include "notation/notation.h" // header with all the structures for the notation objects
+#include "notation/notation_undo.h"
+#include "notation/notation_markers.h"
+#include "notation/notation_slurs.h"
 
 typedef struct _score // [bach.score] structure
 {
@@ -100,6 +103,8 @@ void sync_loop_ms_with_loop_tp(t_score *x);
 
 t_max_err score_setattr_clefs(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_keys(t_score *x, t_object *attr, long ac, t_atom *av);
+t_max_err score_setattr_clefs_do(t_score *x, t_object *attr, long ac, t_atom *av);
+t_max_err score_setattr_keys_do(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_align(t_score *x, t_object *attr, long ac, t_atom *av);
 
 void scoreapi_set_tonedivision(t_score *x, long s);
@@ -114,6 +119,7 @@ void scoreapi_set_accidentals_font(t_score *x, t_symbol *font);
 void scoreapi_set_articulations_font(t_score *x, t_symbol *font);
 void scoreapi_set_autoretranscribe(t_score *x, long l);
 void scoreapi_set_outputtrees(t_score *x, long l);
+void scoreapi_set_outputnegativerests(t_score *x, long l);
 void scoreapi_set_showaccidentalstiepreferences(t_score *x, long l);
 void scoreapi_set_cautionaryaccidentals(t_score *x, long l);
 void scoreapi_set_cautionaryaccidentalsdecay(t_score *x, long l);
@@ -169,7 +175,8 @@ void remove_all_tuttipoints_flag_modified(t_score *x);
 char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas, char also_send_domain);
 
 
-t_scorevoice* nth_scorevoice(t_score *x, long n);
+
+t_scorevoice* scorevoice_get_nth(t_score *x, long n);
 t_llll *getdomain_from_uxstart(t_score *x, double ux_start, t_symbol *message_selector, t_symbol *label);
 t_llll *scoreapi_testdomain(t_score *x, t_llll *dom, t_symbol *label);
 t_llll *scoreapi_getdomain(t_score *x, t_symbol *label);
@@ -177,9 +184,8 @@ void scoreapi_getdomainpixels(t_score *x, double *start, double *end);
 t_max_err scoreapi_getpixelpos(t_score *x, t_llll *open_timepoint_syntax, double *pos, long flags);
 double scoreapi_getlength(t_score *x);
 double scoreapi_get_end_ux(t_score *x);
-void send_all_values_as_llll(t_score *x, long send_what_for_header, t_symbol *gatheredsyntax_router);
+void send_all_values_as_llll(t_score *x, e_header_elems send_what_for_header, t_symbol *gatheredsyntax_router);
 void clear_voice(t_score *x, t_scorevoice *voice);
-void clear_measure(t_score *x, t_measure *measure, char also_reset_all_attributes, char also_clear_ties_from, char also_clear_tempi); 
 void set_all_tstempo_values_from_llll(t_score *x, t_llll* measureinfo, long num_introduced_voices);
 void set_all_durations_values_from_llll(t_score *x, t_llll* durations, long num_introduced_voices);
 void set_all_cents_values_from_llll(t_score *x, t_llll* cents, char force_append_notes, long num_introduced_voices);
@@ -212,7 +218,6 @@ void set_keys_from_llll(t_score *x, t_llll* keys);
 void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll, char also_set_tempi,
                            char when_no_ts_given_use_previous_measure_ts, char *need_update_solos);
 void create_whole_score_undo_tick(t_score *x);
-void changed_bang(t_score *x, int change_type);
 void retranscribe_voice(t_score *x, t_scorevoice *voice);
 void score_retranscribe(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void clear_score_body(t_score *x, long voicenum, long min_num_voices_to_be_cleared = 0); // voicenum is 0-based; special values include: -1 meaning: all voices (up to the current voice number); -2 meaning: all voices up to the CONST_MAX_VOICES
@@ -224,7 +229,6 @@ char pop_tempo_over_chord(t_score *x, t_chord *chord, char in_all_voices);
 void verbose_print(t_score *x);
 void merge_chords_and_sum_durations(t_score *x, t_chord *chord1, t_chord *chord2);
 t_note* merge_chords(t_score *x, t_chord *chord1, t_chord *chord2, char flags, char transfer_mousedown, char assign_IDs);
-void insert_measure(t_score *x, t_scorevoice *voice, t_measure *measure_to_insert, t_measure *after_this_measure, unsigned long force_ID);
 void turn_chord_into_rest(t_score *x, t_chord *chord);
 void turn_chord_into_rest_or_into_note(t_score *x, t_chord *chord, double mc);
 t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord *after_this_chord, t_rational r_sym_duration, long ID, long num_notes, t_note *firstnote, t_note *lastnote, unsigned long force_ID);
@@ -233,7 +237,6 @@ void check_measure_autocompletion(t_score *x, t_measure *measure);
 char merge(t_score *x, t_rational threshold_sym, double threshold_cents, char gathering_policy_sym, char gathering_policy_cents, char selection_only);
 char chord_merge_mc(t_score *x, t_chord *chord, double threshold_cents, char gathering_policy_cents);
 long get_max_num_measures(t_score *x, long *voice);
-char delete_measure(t_score *x, t_measure *measure, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char *need_update_solos);
 char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char *need_check_solos, char add_undo_ticks);
 void turn_measure_into_single_rest(t_score *x, t_measure *measure);
 void voiceensemble_turn_measure_into_single_rest(t_score *x, t_measure *measure);
@@ -242,7 +245,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
 long score_oksize(t_score *x, t_rect *newrect);
 long get_global_num_notes(t_score *x);
 long get_global_num_notes_voice(t_scorevoice *voice);
-t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_rests);
+t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_rests, t_rational *proportions);
 char has_measure_attached_markers(t_score *x, t_measure *meas);
 
 void score_delete_voice(t_score *x, t_scorevoice *voice);
@@ -264,8 +267,6 @@ void force_notation_item_inscreen(t_score *x, t_notation_item *it, void *dummy);
 
 void scoreapi_initscore_step01(t_score *x);
 void scoreapi_initscore_step02(t_score *x);
-void delete_measure_tempi(t_score *x, t_measure *measure);
-void delete_voice_tempi(t_score *x, t_scorevoice *voice);
 void deletetuttipoint(t_score *x, t_tuttipoint *pt);
 void delete_all_tuttipoints(t_score *x, char also_clear_measure_tuttipoint_references);
 void scoreapi_destroyscore(t_score *x);
@@ -279,12 +280,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt);
 void tuttipoint_refine_spacing(t_score *x, t_tuttipoint *tpt);
 long get_num_chords(t_score *x);
 t_chord* ID_to_chord(t_score *x, long ID_to_find);
-void refresh_measure_numbers(t_score *x, t_scorevoice *voice);
 void reset_all_articulations_position(t_score *x);
-
-#ifdef BACH_SUPPORT_SLURS
-void reset_all_slurs_position(t_score *x);
-#endif
 
 
 char are_all_tempi_synchronous(t_score *x);
@@ -296,6 +292,7 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
 void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom, long beaming_calculation_flags);
 void check_tempi(t_score *x);
 t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router = NULL, bool selection_only = false);
+t_llll *get_score_values_as_llll_for_undo(t_score *x, e_header_elems dump_what, char also_lock_general_mutex);
 t_llll* get_subvoice_values_as_llll(t_score *x, t_scorevoice *voice, long start_meas, long end_meas, char tree, char also_get_level_information);
 t_llll* get_scorevoice_values_as_llll(t_score *x, t_scorevoice *voice, e_data_considering_types for_what, char tree, char also_get_level_information);
 t_llll* get_all_measuresinfo_values_as_llll(t_score *x);

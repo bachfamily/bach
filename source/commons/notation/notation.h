@@ -61,11 +61,11 @@
     #define rhythmic_tree_debug_post(...) ((void) 0)
     #define verbose_post_rhythmic_tree(...) ((void) 0)
     
-    #define USE_NEW_UNDO_SYSTEM                            true    ///< Use the new undo system? Should be always true, we kept it only to be sure that we can always revert to previous way
     #define PLAY_REDRAWS_AT_NOTES_END                    true    ///< Do the play method redraws the static layer at each note end?
-    #define    USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS    false    ///< Use bitmaps for standard noteheads – instead than glyphs
+    #define USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS    false    ///< Use bitmaps for standard noteheads – instead than glyphs
     #define BACH_NOTES_HAVE_ID                        ///< Do notes have IDs as well? Should always be defined, except for weird debug purposes
     #define BACH_MARKERS_HAVE_ID                    ///< Do markers have IDs as well? Should always be defined, except for weird debug purposes
+                                                    ///  Don't disable this or markers undo may potentially crash
 //    #define BACH_OUTPUT_SYMBOLIC_FLAGS              ///< Are notation item flags to be output as symbols, instead of integers?
 //    #define BACH_OUTPUT_SYMBOLIC_LEVELTYPES         ///< Are leveltypes to be output as symbols, instead of integers?
 
@@ -85,6 +85,7 @@
 
     #define BACH_NEW_LLLLSLOT_SYNTAX            ///< This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax 
 
+    #define BACH_SUPPORT_SLURS
 
     #ifdef CONFIGURATION_Development
 
@@ -141,19 +142,15 @@
 #define CONST_MAX_TEMPO 1000                                ///< A safety upper bound for each tempo value  
 #define CONST_MAX_VOICES 250                                ///< Maximum number of admitted voices (was 35 until bach 0.6.x)
 #define CONST_MAX_VOICES_PLUS_ONE 251
-#define CONST_MAX_VOICE_NAME_CHARS 200                        ///< Maximum number of characters for a voice name
+#define CONST_MAX_VOICE_NAME_CHARS 200                       ///< Maximum number of characters for a voice name
 #define CONST_MAX_TURN_ANGLE 100.                            ///< Maximum absolute value of an angle (in radiants) for a #t_spatpt in a #k_SLOT_TYPE_SPAT slot
 #define CONST_MAX_LEDGER_LINES 20                            ///< Maximum number of ledger lines per note
-#define CONST_MAX_UNDO_STEPS 30                                ///< (OBSOLETE) Old maximum number of undo steps allowed (until bach 0.6.x)
-#define CONST_MAX_BEAMS 10                                    ///< Maximum number of nested beams admitted (e.g. 4 would be up to the 1/64th, 5 would be up to 1/128th)
-#define CONST_MAX_ARTICULATIONS 100                         ///< Maximum number of articulations, including the standard ones (see #e_articulations) and the custom-defined ones.
-#define CONST_MAX_NOTEHEADS 100                             ///< Maximum number of noteheads, including the standard ones (see #e_noteheads) and the custom-defined ones.
-#define CONST_MAX_COMMANDS 5                                ///< Maximum number of used definable commands (should be upgraded to 30 at some point in the future)
+#define CONST_MAX_BEAMS 10                                   ///< Maximum number of nested beams admitted (e.g. 4 would be up to the 1/64th, 5 would be up to 1/128th)
+#define CONST_MAX_ARTICULATIONS 100                          ///< Maximum number of articulations, including the standard ones (see #e_articulations) and the custom-defined ones.
+#define CONST_MAX_NOTEHEADS 100                              ///< Maximum number of noteheads, including the standard ones (see #e_noteheads) and the custom-defined ones.
+#define CONST_MAX_COMMANDS 5                                 ///< Maximum number of used definable commands (should be upgraded to 30 at some point in the future)
 #define CONST_MAX_COMMAND_CHAR 30                            ///< Maximum number of characters for a command label
-#define CONST_MAX_ARTICULATIONS_PER_NOTE 4                  ///< (OBSOLETE, UNUSED) Maximum number of articulations per note and per chord (used to be 10 up to bach 0.7.1)
-#define CONST_MAX_SLURS_PER_NOTE 1                            ///< Maximum number of slurs starting or ending on a note (still not supported: used to be 20 up to bach 0.7.1)
-#define CONST_MAX_STAFF_LINES 50                            ///< Maximum number of staff lines per staff
-#define    CONST_MAX_TRANCHES 1000                                ///< (UNUSED) Maximum number of tuttipoint tranches per tuttipoint region (this is unused, and actually one can have any number of tranches per tuttipoint region.
+#define CONST_MAX_STAFF_LINES 50                             ///< Maximum number of staff lines per staff
 #define CONST_MAX_ENHARMONICITY_OPTIONS 3                    ///< Maximum number of enharmonicity options appearing in the contextual menu when right-clicking on a note
 #define CONST_MIN_OCTAVE -4                                    ///< Minimum possible octave number (used by notename2midicents conversions)
 #define CONST_MAX_OCTAVE 12                                    ///< Maximum possible octave number (used by notename2midicents conversions)
@@ -172,6 +169,9 @@
 
 #define    CONST_MAX_XML_NESTED_TUPLETS 10                        ///< Maximum nested tuplet insertion while speedy editing @ingroup import_export
 #define CONST_MAX_NOTATION_ITEM_NAMES 10                    ///< Maximum number of names a notation item may have (was 10 until bach 0.7.1) @ingroup names
+
+#define CONST_MAX_SLURS_PER_CHORD 3    ///< Maximum number of slurs starting or ending on a chord
+
 
 /** \addtogroup attributes 
  *  @{
@@ -206,8 +206,10 @@
 /** \addtogroup notation_graphics
  *  @{
  */
-// common graphic constants    
-#define CONST_MIDDLEC_UY 112                                    ///< Unscaled pixel y position of the middle C for a single voice having staff #k_CLEF_FFGG, 
+// common graphic constants
+#define CONST_MARKER_LINE_WIDTH 1.5                             ///< Width of a marker
+#define CONST_MARKER_REGION_TEXT_WHITENING 0.8                  ///< Proportion for whitening out the marker color to be painted on a region strip
+#define CONST_MIDDLEC_UY 112                                    ///< Unscaled pixel y position of the middle C for a single voice having staff #k_CLEF_FFGG,
 #define CONST_STEP_UY 3                                            ///< Unscaled height of a step (see #e_clefs to know more about steps), i.e. HALF of the unscaled distance between two staff lines
 #define CONST_X_SCALING 0.1                                        ///< Multiplicative factor to fix a default x-axis time-pixel relationship (relationship which will be affected by <zoom_x> and <zoom_y> also)  
                                                                 ///< At <zoom_x> = <zoom_y> = 1, Δpixels = CONST_X_SCALING * Δtime. Only used by [bach.roll]
@@ -374,8 +376,6 @@
 #define CONST_SECOND_BEAM_UY_SHIFT 6                    ///< Unscaled vertical shift of the beamings, towards the noteheads technical, only if the beams are at least 2. 
                                                         ///< (This is used to avoid the case where beamings get too "tall" even just for a sequence of 1/16 notes)
 #define CONST_VERTICAL_USEPARATION_RESTS_FROM_BEAM 5.    ///< Unscaled vertical additional separation between a rest and a beam inside which the rest lies
-#define CONST_FLOAT_STEP_PART_SHIFT 4                   ///< Shift in steps of rests due to different parts in the same voice ensemble. Must be EVEN otherwise we
-                                                        ///< mess up with 4/4 and 2/4 rests vertical positioning
 
 // score spacing constants
 #define CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_NO_TS 6        ///< Unscaled horizontal blank space (in pixels) after a measure barline, when no time signature in the measure is needed
@@ -386,7 +386,7 @@
 #define CONST_DOT_DOT_USEPARATION 4.                            ///< Unscaled separation (in pixels) between a dot, and the next one
 #define CONST_DOT_UWIDTH 4                                        ///< Reserved width, during spacing calculation, for one dot
 #define CONST_UX_ACC_SEPARATION_FROM_ACC 0.8                    ///< Unscaled separation (in pixels) between two accidentals
-#define CONST_UX_ACC_SEPARATION_FROM_NOTE 3.0                    ///< Unscaled separation (in pixels) between a note and its accidental (if there's no other accidental horizontally in between)  
+#define CONST_UX_ACC_SEPARATION_FROM_NOTE 1.5 // was: 3                    ///< Unscaled separation (in pixels) between a note and its accidental (if there's no other accidental horizontally in between)
 #define CONST_SCORE_TIE_ADDITIONAL_USPACING 6                    ///< Unscaled horizontal additional spacing if note has a tie which starts on it
 
 #define CONST_FIGURE_IN_TUPLET_LEGEND_RATIO 0.55                ///< Rescaling factor of the small note in the tuplet ratio specification, as 'aq:b'
@@ -568,7 +568,7 @@
  */
 typedef enum _element_types {
     k_ELEMENT_TYPES_UNDEFINED = -1,
-     k_NONE = 0,                                    ///< No element
+    k_NONE = 0,                                    ///< No element
     k_NOTE = 1,                                    ///< Note
     k_DURATION_LINE = 2,                        ///< (DEPRECATED) Duration line: black line representing the duration of the note
     k_DURATION_TAIL = 3,                        ///< (DEPRECATED) Duration tail: the end of the duration line
@@ -644,6 +644,7 @@ typedef enum _element_types {
     k_DYNAMICS_IN_SLOT = 78,                    ///< Some text shown inside a slot window for a dynamics slot
     k_DYNAMICS = 79,                            ///< Dynamics, shown below a given chord
     k_GATHERED_SYNTAX = 80,                     ///< Gathered syntax
+    k_MARKER_REGION_TAIL = 81,                         ///< End of a marker region
     k_NUM_ELEMENT_TYPES,
 } e_element_types;
 
@@ -760,29 +761,35 @@ typedef enum _play_offline_key {
 typedef long (*rebuild_fn)(void *notation_obj, t_llll *ll, char also_lock_general_mutex);
 
 
+/** Function getting the whole information for the notation object, for undo purposes
+    @ingroup interface
+ */
+typedef t_llll* (*getstate_for_undo_fn)(void *notation_obj, e_header_elems dump_what, char also_lock_general_mutex);
+
+
 /** Void function involving a notation object and a notation item.
     @ingroup notation
  */
-typedef void (*notation_obj_notation_item_fn)(void *notation_obj, void *item, void *data);
+typedef void (*notationobj_notation_item_fn)(void *notation_obj, void *item, void *data);
 
 
 /** Void function involving a notation object and a note.
     @ingroup notation
  */
-typedef void (*notation_obj_note_fn)(void *notation_obj, void *note, void *data);
+typedef void (*notationobj_note_fn)(void *notation_obj, void *note, void *data);
 
 
 /** Void function involving a notation object and a chord.
     @ingroup notation
  */
-typedef void (*notation_obj_chord_fn)(void *notation_obj, void *chord, void *data);
+typedef void (*notationobj_chord_fn)(void *notation_obj, void *chord, void *data);
 
 
 /** Void function involving a notation object only.
     Chiefly used for undo (whole object undo) and bach inspector.
     @ingroup notation
  */
-typedef void (*notation_obj_fn)(void *notation_obj);
+typedef void (*notationobj_fn)(void *notation_obj);
 
 
 /** Setter for a given bach attribute (works like Max setters). 
@@ -854,7 +861,7 @@ typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t
 
 
 //TBD
-typedef char (*notation_obj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to, char also_send_domain);
+typedef char (*notationobj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to, char also_send_domain);
 
 
 
@@ -1080,6 +1087,19 @@ typedef enum _bach_internal_notation_flags {
 
 #define k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER (k_FLAG_MODIF_UNDO | k_FLAG_MODIF_CHECK_ORDER_UNDO)    ///< We have stored element's undo information in the currently free ticks at the beginning of the undo llll (with or without the need to check chords' order) @ingroup notation
 
+#define k_FLAG_MODIF_UNDO_ANY (k_FLAG_MODIF_UNDO | k_FLAG_MODIF_FLAG_UNDO | k_FLAG_MODIF_CHECK_ORDER_UNDO | k_FLAG_MODIF_NAME_UNDO)
+
+// internal
+typedef enum _bach_undo_perform_flags {
+    k_UNDO_PERFORM_FLAG_NONE = 0,
+    k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_CHORDS = 1,
+    k_UNDO_PERFORM_FLAG_PERFORM_ANALYSIS_AND_CHANGE = 2,
+    k_UNDO_PERFORM_FLAG_RECOMPUTE_ALL_EXCEPT_FOR_BEAMINGS_AND_AUTOCOMPLETION = 4,
+    k_UNDO_PERFORM_FLAG_RECOMPUTE_TOTAL_LENGTH = 8,
+    k_UNDO_PERFORM_FLAG_NOTHING_DONE = 16,
+    k_UNDO_PERFORM_FLAG_CHECK_ORDER_FOR_MARKERS = 32,
+} e_bach_undo_perform_flags;
+
 
 /** Velocity handling. How do we want to represent the velocity of each note on the score? 
     @ingroup    notation
@@ -1186,6 +1206,16 @@ typedef enum _notation_objects {
     k_NOTATION_OBJECT_SLOT,            ///< A [bach.slot] object
     k_NOTATION_OBJECT_CUSTOM,        ///< A custom notation object
 } e_notation_objects;
+
+
+/** Notation object flags – very seldom used, to be honest, don't rely on them too much
+    @ingroup    notation
+ */
+typedef enum _notation_object_flags {
+    k_NOTATION_OBJECT_FLAG_NONE = 0,                            ///< None
+    k_NOTATION_OBJECT_FLAG_PERFORM_ANALYSIS_AND_CHANGE = 1,     ///< Must perform analysis and change
+    k_NOTATION_OBJECT_FLAG_SLUR_WARNED_AT_MOUSEDRAG = 2         ///< A warning about slurs has already been sent at mousedrag
+} e_notation_object_flags;
 
 
 
@@ -1319,15 +1349,15 @@ typedef enum _selection_modes {
 } e_selection_modes;
 
 
-/** Lyrics alignments.
+/** Text alignments.
     @ingroup    notation
  */
-typedef enum e_lyrics_alignments {
-    k_LYRICS_ALIGNMENT_AUTO = 0,        ///< Automatic alignment (currently equal to the #k_LYRICS_ALIGNMENT_CENTER alignment, but will be improved)
-    k_LYRICS_ALIGNMENT_LEFT = 1,        ///< Syllabes are left-aligned
-    k_LYRICS_ALIGNMENT_CENTER = 2,        ///< Syllabes are center-aligned
-    k_LYRICS_ALIGNMENT_RIGHT = 3        ///< Syllabes are right-aligned
-} e_lyrics_alignments;
+typedef enum _alignments {
+    k_ALIGNMENT_AUTO = 0,        ///< Automatic alignment (currently for lyrics this is equal to the #k_ALIGNMENT_CENTER alignment, while for annotations is #k_ALIGNMENT_LEFT)
+    k_ALIGNMENT_LEFT = 1,        ///< Text is left-aligned
+    k_ALIGNMENT_CENTER = 2,      ///< Text is center-aligned
+    k_ALIGNMENT_RIGHT = 3        ///< Text is right-aligned
+} e_alignments;
 
 
 /** Lambda spacing modes for [bach.roll]
@@ -1634,6 +1664,7 @@ typedef enum _data_considering_types
     k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE = 16,        ///< Verbosely output the partial note
     k_CONSIDER_FOR_SLOT_VALUES_ONLY = 17,                       ///< Only dump slot values and not slot names (only for single slot dump)
     k_CONSIDER_FOR_SLOT_LLLL_EDITOR = 18,                       ///< The retrieved llll will be displayed in a slot textual editor
+    k_CONSIDER_FOR_DUMPING_FIRST_OUTLET = 19,                   ///< Consider for dumping from the first outlet
 } e_data_considering_types;
 
 
@@ -1650,7 +1681,7 @@ typedef enum _clone_for_types
 
 
 
-/** Actions to perform when something has changed, given as argument for handle_change() or handle_change_if_there_are_free_undo_ticks().
+/** Actions to perform when something has changed, given as argument for handle_change() or handle_change_if_there_are_dangling_undo_ticks().
     See also the convenience combinations #k_CHANGED_DO_NOTHING, #k_CHANGED_STANDARD_SEND_BANG, #k_CHANGED_STANDARD_UNDO_MARKER and #k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG.
     @ingroup    interface
  */
@@ -1666,6 +1697,7 @@ typedef enum _actions_upon_change
     k_CHANGED_CREATE_UNDO_STEP_MARKER = 32,            ///< Create a new marker for an undo step, with the label which is passed as argument.
                                                     ///< An undo step markers ends a sequence of undo ticks, which have been placed previously by all the interface actions.
     k_CHANGED_PERFORM_ANALYSIS_AND_CHANGE = 64,        ///< Only used by score: means that score also have to call the #perform_analysis_and_change() routine explicitely
+    k_CHANGED_FORCE_CREATE_UNDO_STEP_MARKER = 128,   ///< As k_CHANGED_CREATE_UNDO_STEP_MARKER, but also forces the creation when the mouse is being dragged
 
     // convenience combinations
     k_CHANGED_STANDARD = k_CHANGED_REDRAW_STATIC_LAYER + k_CHANGED_CHECK_CORRECT_SCHEDULING + k_CHANGED_SEND_AUTOMESSAGE, // Redraw static layer, check correct play scheduling and send the automessage
@@ -1682,6 +1714,8 @@ typedef enum _actions_upon_change
 typedef enum _undo_operations
 {
     k_UNDO_OP_UNKNOWN = 0,        
+    k_UNDO_OP_GENERIC_CHANGE,
+    k_UNDO_OP_GENERIC_TRANSACTION,
     k_UNDO_OP_CHANGE_SCORE,
     k_UNDO_OP_CHANGE_ROLL,
     k_UNDO_OP_CHANGE_CHORD,
@@ -1703,6 +1737,11 @@ typedef enum _undo_operations
     k_UNDO_OP_CHANGE_CLEFS,
     k_UNDO_OP_CHANGE_KEYS,
     k_UNDO_OP_CHANGE_MARKERS,
+    k_UNDO_OP_CHANGE_MARKERS_ONSET,
+    k_UNDO_OP_MOVE_MARKER_REGION,
+    k_UNDO_OP_STRETCH_MARKER_REGION,
+    k_UNDO_OP_DUPLICATE_MARKERS,
+    k_UNDO_OP_DUPLICATE_ITEMS,
     k_UNDO_OP_CHANGE_SLOTINFO,
     k_UNDO_OP_CHANGE_COMMANDS,
     k_UNDO_OP_CHANGE_MIDICHANNELS,
@@ -1744,6 +1783,7 @@ typedef enum _undo_operations
     k_UNDO_OP_ASSIGN_DYNAMICS,
     k_UNDO_OP_ASSIGN_VELOCITIES,
     k_UNDO_OP_CLEAR_MARKERS,
+    k_UNDO_OP_CLEAR_SLURS,
     k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION,
     k_UNDO_OP_SNAP_ONSET_TO_GRID_FOR_SELECTION,
     k_UNDO_OP_SNAP_TAIL_TO_GRID_FOR_SELECTION,
@@ -1772,6 +1812,7 @@ typedef enum _undo_operations
     k_UNDO_OP_ADD_MARKER,
     k_UNDO_OP_DELETE_MARKER,
     k_UNDO_OP_CHANGE_MARKER_NAME,
+    k_UNDO_OP_CHANGE_REGION_DURATION,
     k_UNDO_OP_CHANGE_MARKER_ATTACHMENT,
     k_UNDO_OP_GLUE_CHORD,
     k_UNDO_OP_MERGE,
@@ -1786,7 +1827,9 @@ typedef enum _undo_operations
     k_UNDO_OP_CHANGE_NOTE,
     k_UNDO_OP_DELETE_PITCH_BREAKPOINT,
     k_UNDO_OP_ADD_PITCH_BREAKPOINT,
-    k_UNDO_OP_CHANGE_PITCH_BREAKPOINT,
+    k_UNDO_OP_CHANGE_PITCH_BREAKPOINTS,
+    k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_SLOPE,
+    k_UNDO_OP_CHANGE_PITCH_BREAKPOINT_VELOCITY,
     k_UNDO_OP_CHANGE_PITCH,
     k_UNDO_OP_MOUSEDRAG_CHANGE,
     k_UNDO_OP_CHANGE_VOICE_NAME,
@@ -1853,7 +1896,9 @@ typedef enum _undo_operations
     k_UNDO_OP_DUPLICATE_SELECTED_MEASURES,
     k_UNDO_OP_DELETE_SELECTED_TEMPI,
     k_UNDO_OP_TOGGLE_INTERPOLATION_FOR_SELECTED_TEMPI,
+    k_UNDO_OP_ADD_SLUR,
     k_UNDO_OP_DELETE_SLURS_FOR_SELECTION,
+    k_UNDO_OP_FLIP_SLURS_FOR_SELECTION,
     k_UNDO_OP_ADD_ARTICULATION_TO_SELECTION,
     k_UNDO_OP_CHANGE_ARTICULATION,
     k_UNDO_OP_TURN_SELECTION_INTO_RESTS,
@@ -1918,14 +1963,27 @@ typedef enum _undo_redo
  */
 typedef enum _undo_modification_types
 {
-    k_UNDO_MODIFICATION_NONE = 0,                    ///< No modification (thus nothing to undo)
-    k_UNDO_MODIFICATION_CHANGE = 1,                    ///< Change the parameters of the notation item
-    k_UNDO_MODIFICATION_DELETE = 2,                    ///< Erase the notation item
-    k_UNDO_MODIFICATION_ADD = 3,                    ///< Add the notation item
-    k_UNDO_MODIFICATION_CHANGE_FLAG = 4,            ///< Only change the notation item's solo/lock/mute flags
-    k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER = 5,        ///< Change the parameters of the notation item, and also check the order of the notation item within its parent
-    k_UNDO_MODIFICATION_CHANGE_NAME = 6,            ///< Only change the element's name
+    k_UNDO_MODIFICATION_TYPE_NONE = 0,                   ///< No modification (thus nothing to undo)
+    k_UNDO_MODIFICATION_TYPE_INSERT = 1,                    ///< Add the notation item
+    k_UNDO_MODIFICATION_TYPE_REMOVE = 2,                 ///< Erase the notation item
+    k_UNDO_MODIFICATION_TYPE_CHANGE = 3,                 ///< Change the parameters of the notation item
+    k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER = 4,     ///< Change the parameters of the notation item, and also check the order of the notation item within its parent
 } e_undo_modification_types;
+
+
+
+/** Types of notification for changes through last outlet
+ @ingroup    behavior
+ */
+typedef enum _notify_with
+{
+    k_NOTIFY_WITH_BANG = 0,         ///< Notify changes via a bang
+    k_NOTIFY_WITH_LABEL = 1,        ///< Notify changes via the operation label
+    k_NOTIFY_WITH_REDO_TRANSACTION = 2,   ///< Notify changes via a full redo transaction (order of chords/notes/markers is not updated between ticks)
+    k_NOTIFY_WITH_UNDO_TRANSACTION = 3,   ///< Notify changes via a full undo transaction (order of chords/notes/markers is not updated between ticks)
+    k_NOTIFY_WITH_REDO_TICKS = 4,   ///< Notify changes via operation label and a sequence of redo ticks
+    k_NOTIFY_WITH_UNDO_TICKS = 5,   ///< Notify changes via operation label and a sequence of undo ticks
+} e_notify_with;
 
 
 /** Types of slot access type.
@@ -2336,8 +2394,7 @@ typedef struct _scheduled_event
 
 /** The data structure representing an articulation. 
     In the old days, just like the #t_slot structure, each note already has a certain number of prepared space
-    to host its articulations (which can be up to #CONST_MAX_ARTICULATIONS_PER_NOTE). 
-    But differently from the slots, also chords have some prepared space for articulations,
+    to host its articulations. But differently from the slots, also chords have some prepared space for articulations,
     so articulations may be attached either to chords or to notes.
     All of this is old. Now the documented way to define articulations is via slots of type #k_SLOT_TYPE_ARTICULATIONS, which contain as 
     slotitems pointers to these (t_articulations *) structures
@@ -2384,23 +2441,29 @@ typedef struct _slur
 {
     t_notation_item    r_it;                        ///< Notation item
 
-    struct _note    *start_note;                ///< Pointer to the note where the starting of the slur is attached
-    struct _note    *end_note;                    ///< Pointer to the note where the ending of the slur is attached
+    struct _chord    *start_chord;                ///< Pointer to the chord where the starting of the slur is attached
+    struct _chord    *end_chord;                  ///< Pointer to the chord where the ending of the slur is attached
 
     char            direction;                    ///< Direction of the slur (1 = up, -1 = down)
-    char            end_is_before_start;        ///< Internal flag, telling if is the horizontal direction reversed (because the end note is before the start one)
+    char            end_is_before_start;          ///< Internal flag, telling if is the horizontal direction reversed
+                                                  /// (because the end note is before the start one)
 
+    t_llllelem      *elem;  ///< Corresponding element in the notation object "slurs" llll
+    
     // painting parameters
-    double            start_x;                    ///< x of the pixel of the slur starting point 
+    double            start_ux;                    ///< x of the pixel of the slur starting point
     double            start_y;                    ///< y of the pixel of the slur starting point
-    double            cp1_rel_x;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
+    double            cp1_ux;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp1_y;                        ///< y of the pixel of the slur first control point
-    double            cp2_rel_x;                    ///< relative x of the pixel of the slur second control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
+    double            cp2_ux;                    ///< relative x of the pixel of the slur second control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp2_y;                        ///< y of the pixel of the slur second control point
-    double            end_x;                        ///< x of the pixel of the slur end point    
+    double            end_ux;                        ///< x of the pixel of the slur end point    
     double            end_y;                        ///< y of the pixel of the slur end point
     
-    char            need_recompute_position;    ///< Flag telling if the painting parameters need to be recomputed. If this is 0 the painting parameters are up-to-date, otherwise they are recomputed in the paint cycle.
+    // internal
+    long              temporary_extension;        ///< Extension, stored temporarily
+    char              is_temporary;               ///< Is the slur temporarily put?
+    char              need_recompute_position;    ///< Flag telling if the painting parameters need to be recomputed. If this is 0 the painting parameters are up-to-date, otherwise they are recomputed in the paint cycle.
 } t_slur;
 
 
@@ -2459,16 +2522,9 @@ typedef struct _note
     char        solo;                    ///< Flag telling if the note is soloed
 
     // articulations, ***only for backward compatibility***
-    long                num_articulations;        ///< Number of articulations really attached to the note
+    long                  num_articulations;        ///< Number of articulations really attached to the note
     t_articulation        *articulation;            ///< The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
 
-#ifdef BACH_SUPPORT_SLURS
-    // slurs, only ***for future compatibility***
-    long            num_slurs_to;                            ///< Number of slurs starting on the note
-    long            num_slurs_from;                            ///< Number of slurs ending on the note 
-    t_slur            *slur_to[CONST_MAX_SLURS_PER_NOTE];        ///< The array containing the pointer to the slurs starting on the note (only num_slurs_to elements are meaningful)
-    t_slur            *slur_from[CONST_MAX_SLURS_PER_NOTE];    ///< The array containing the pointer to the slurs ending on the note (only num_slurs_from elements are meaningful)
-#endif
     
     // Fixed painting parameters (calculated at some point, and not recalculated if not needed)
 //    long            scaleposition;                                ///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
@@ -2480,7 +2536,9 @@ typedef struct _note
 
     
     // nonstandard noteheads
-    long            notehead_ID;                                ///< Notehead type, one of the #e_noteheads
+    long              notehead_ID;                                ///< Notehead type, one of the #e_noteheads
+
+    //TODO: can we remove this field and calculate it whenever needed?
     double            notehead_uwidth;                            ///< Unscaled width of the notehead
     
     double            accidental_stem_delta_ux;                    ///< Unscaled horizontal deplacement of the RIGHT boundary of the accidental text field, with respect to the stem position. Should be always negative.
@@ -2493,10 +2551,9 @@ typedef struct _note
                                                                 ///< See #accidental_top_uextension for more information.
 
     // Windowed painting parameters (in real pixels, and only calculated when the note is inside the window and painted)
-    t_pt            center;                                        ///< Center of the note (it is in real pixels, and not an unscaled ones)
-    double            center_stafftop_uy;                            ///< Unscaled distance of the y of the notehead center from the topmost staff point
-//    t_pt            notehead_textbox_left_corner;                ///< Left corner of the notehead textbox
-    
+    t_pt              center;                                        ///< Center of the note (it is in real pixels, and not an unscaled ones)
+    double            center_stafftop_uy;                           ///< Unscaled distance of the y of the notehead center from the topmost staff point
+    ///
     // double linked list
     struct _note    *next;                ///< Pointer to the next note
     struct _note    *prev;                ///< Pointer to the previous note
@@ -2792,7 +2849,7 @@ typedef struct _chord
     long            beams_depth;                ///< Number of beaming lines over the chord
     
     // articulations (for the moment, only implemented in [bach.score])
-    // These are deprecated: use the articulation-typed slots instead
+    // These are deprecated and will be removed at some point: use the articulation-typed slots instead
     long            num_articulations;        ///< (DEPRECATED) Number of articulations really attached to the note
     t_articulation    *articulation;            ///< (DEPRECATED) The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
     
@@ -2809,6 +2866,14 @@ typedef struct _chord
 #ifdef BACH_CHORDS_HAVE_SLOTS
     t_slot        slot[CONST_MAX_SLOTS];          ///< The array containing the slot content for the chord (for each slot)
                                                 ///< This is ONLY meaningful (and only used) when the chord is a REST, otherwise notes have their own slots, use them!
+#endif
+    
+#ifdef BACH_SUPPORT_SLURS
+    // slurs
+    long            num_slurs_to;                            ///< Number of slurs starting on the note
+    long            num_slurs_from;                            ///< Number of slurs ending on the note
+    t_slur          *slur_to[CONST_MAX_SLURS_PER_CHORD];        ///< The array containing the pointer to the slurs starting on the chord (only num_slurs_to elements are meaningful)
+    t_slur          *slur_from[CONST_MAX_SLURS_PER_CHORD];    ///< The array containing the pointer to the slurs ending on the chord (only num_slurs_from elements are meaningful)
 #endif
     
     // double linked list
@@ -2855,8 +2920,8 @@ typedef struct _timepoint
 
 
 // Private
-typedef double (*notation_obj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, long flags);
-typedef double (*notation_obj_undo_redo_fn)(void *notation_obj, char direction);
+typedef double (*notationobj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, long flags);
+typedef double (*notationobj_undo_redo_fn)(void *notation_obj, char direction);
 
 
 
@@ -3387,6 +3452,9 @@ typedef struct _marker
     e_marker_roles        role;                ///< One of the #e_marker_roles, defining the special role the marker might have in [bach.roll] (specifying, for instance, a tempo value when a midifile is imported, or a time signature value...) 
     t_llll                *content;            ///< If the role is #k_MARKER_ROLE_TEMPO or #k_MARKER_ROLE_TIME_SIGNATURE, here we'll have the content specifying the tempo, as (tempo_value) or (tempo_figure tempo_value), or the time signature, as (num den) or ((num1 num2...) den) 
     
+    double              duration_ms;        ///< Marker duration (> 0 if marker represents a region; == 0 if it's an instantaneous marker; whatever number < 0 means it's a region and goes till next marker)
+    t_rational          r_sym_duration;     ///< Symbolic duration of the marker
+    
     // utility
     char                name_painted_direction;                    ///< Field filled at painttime telling if a marker's name has been painted at the LEFT of the marker line (value -1) or at the right of the marker line (value 1). Value 0 means "still unset".
     long                name_line;                  ///< Filled at painttime telling on which "line" a markername is
@@ -3459,7 +3527,6 @@ typedef struct _notehead_preferences
     unicodeChar        unicode_character_whole;        ///< Unicode characters for "whole" notes
     unicodeChar        unicode_character_doublewhole;  ///< Unicode characters for "double whole" notes
     
-
     double            uwidth;                ///< Unscaled widths of the notehead symbols
     double            ux_shift;                ///< Unscaled horizontal shift of the notehead, with respect to a default reference position
     double            uy_shift;                ///< Unscaled vertical shift of the notehead, with respect to a default reference position (30 pixel up are already by default)
@@ -3471,6 +3538,7 @@ typedef struct _notehead_preferences
 
     double            durationline_start_ux_shift;    ///< Unscaled horizontal shift of the beginning of the duration line with respect to the full note width
     
+    char             opaque_bg;     ///< Opaque background
 } t_notehead_preferences;
 
 
@@ -3956,6 +4024,13 @@ typedef struct _realtime_attrs
 } t_realtime_attrs;
 
 
+
+typedef t_chord* (*addchordfromllll_fn)(void *notation_obj, t_llll* chord, t_rollvoice* voice, char also_lock_general_mutex, char also_recompute_total_length);
+
+typedef void (*setmeasurefromllll_fn)(void *notation_obj, t_measure *measure, t_llll *measelemllll, char also_set_tempi, char when_no_ts_given_use_previous_measure_ts, char *need_update_solos);
+
+
+
 /** A common structure for UI notation objects. 
     [bach.score], [bach.roll] and [bach.slot] will extend this structure, but most of the stuff is already inside here.
     Moreover, for convenience, some stuff which concerning a single object (such [bach.score]) is still in this structure, for
@@ -4004,23 +4079,23 @@ typedef struct _notation_obj
     t_symbol        **clefs_as_symlist;                ///< List of clefs as symbols (one for each voice).
                                                     ///< Functions clef_symbol_to_clef_number() and clef_number_to_clef_symbol() operate conversions 
                                                     ///< between symbols (such as "G", "F"...) and numbers (such as #k_CLEF_G, #k_CLEF_F...)
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     
     
     
     t_llll            *voicenames_as_llll;            ///< Voicenames represented in llll form (one llllelem for each voice)
     char            *hidevoices_as_charlist;        ///< List of 0's and 1's (one for each voice), depending if the voice is hidden (1) or not (0)
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     double            *voiceuspacing_as_floatlist;    ///< List of unscaled distances (in pixel) between voices. First element is the space before 
                                                     ///< first voice, last element is the space after last voice (and thus these values are #num_voices + 1
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
-                                                    ///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in notationobj_init() and freed by notationobj_free()
     t_symbol        **keys_as_symlist;                ///< List of key signatures as symbols (one symbol for each voice). 'M' = major, 'm' = minor, so "C#M" is C# major, and so on. 
                                                     ///< Latin and anglosaxon syntax accepted. Functions parse_sym_to_key_and_mode() and notename2midicents()
                                                     ///< operate parsing and conversions
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     long            *midichannels_as_longlist;        ///< List of midichannels (one for each voice). 
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
 
     // tuttipoints, for bach.score
     t_tuttipoint    *firsttuttipoint;               ///< First tuttipoint
@@ -4036,7 +4111,7 @@ typedef struct _notation_obj
 
     // measure numbers
     char            *show_measure_numbers;            ///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     double            measure_numbers_font_size;        ///< Font size for the measure numbers (for zoom_y = 1, will be scaled according to the zoom)
     char            show_measure_numbers_on_first_measure; ///< Whether to show also the very first measure number
     
@@ -4044,7 +4119,7 @@ typedef struct _notation_obj
     long        add_staff;                    ///< (PRIVATE) Flag which is 1 during the process of staff adding
     long        add_voice;                    ///< (PRIVATE) Flag which is 1 during the process of voice adding
     char        itsme;                        ///< (PRIVATE) General flag to handle calls
-    long        private_flag;                ///< (PRIVATE) Generic private long flag
+    long        private_flag;                ///< (PRIVATE) Generic private long flag (see #e_notation_object_flags)
     char        numvoices_handled_at_startup;    ///< (PRIVATE) Flag to tell if the numvoices attribute has already been handled at startup or not
     char        creatingnewobj;                ///< (PRIVATE) Flag which is 1 before the attr_dictionary_process() and 0 afterwards
     char        firsttime;                    ///< (PRIVATE) Flag which is 1 before the first paint method has been called
@@ -4067,6 +4142,7 @@ typedef struct _notation_obj
                                                 ///< This will coincide with <j_mousedrag_point>, unless the faster from keyboard combination 
                                                 ///< is pressed or Shift is pressed.
     char        j_isdragging;                    ///< Flag telling if the mouse is being dragged over the object
+    e_undo_operations   j_dragging_operation;   ///< Current operation being performed while dragging
     short        j_mouse_hasbeendragged;            ///< Flag telling (mostly at mouseup) if the mouse has been dragged (or just clicked)
     short        j_selection_hasbeendragged;        ///< Flag telling (mostly at mouse up) if the selection content has been dragged
     void        *j_mousedrag_copy_ptr;            ///< Pointer to the object which is being copied (when Alt+Click&dragging on it)
@@ -4120,7 +4196,7 @@ typedef struct _notation_obj
     
     // slots fields 
     t_slotinfo    *slotinfo;                    ///< Information about the structure of each slot)
-                                            ///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                            ///< It is an array with #CONST_MAX_SLOTS elements allocated in notationobj_init() and freed by notationobj_free()
     double        slot_minimum_window_uwidth;    ///< Unscaled minimum width (in pixels) for a slot window (only for non-temporal slots)
     
     long        active_slot_num;            ///< Number (0-based) of the slot whose slot window is being shown (-1 = normal view: no slot windows are show  n)
@@ -4167,11 +4243,11 @@ typedef struct _notation_obj
 
     long        num_background_slots;                ///< Number of slots to be kept drawn in background (also when slot window is closed)
     long        *background_slots;                    ///< List of the slot numbers (1-based!) which have to be kept in background, only the first <num_background_slots> elements are meaningful.
-                                                    ///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_SLOTS elements allocated in notationobj_init() and freed by notationobj_free()
     
     long        num_popup_menu_slots;                ///< Number of slots appearing in the contextual menu (when clicking on a note)
     long        *popup_menu_slots;                    ///< List of the slot numbers (1-based!) which have to be in the contextual menu, only the first <num_popup_menu_slots> elements are meaningful.
-                                                    ///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_SLOTS elements allocated in notationobj_init() and freed by notationobj_free()
     
     char        mouse_hover;                ///< Flag telling if we allow mouse hovering on the points of the #k_SLOT_TYPE_FUNCTION slots
     t_slotitem    *hovered_slotitem;            ///< Pointer to the currently hovered slot item (typically a #t_slotitem of a function slot) 
@@ -4246,7 +4322,7 @@ typedef struct _notation_obj
     // lyrics
     double        lyrics_font_size;                    ///< Font size for the lyrics (for zoom_y = 1)
     double        lyrics_uy_pos;                        ///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
-    char        lyrics_alignment;                    ///< Alignment type for the syllabes below chords, must be one of the #e_lyrics_alignments
+    char        lyrics_alignment;                    ///< Alignment type for the syllabes below chords, must be one of the #e_alignments
     char        show_lyrics;                        ///< Flag which tells if we need to show lyrics (1) or not (0)
     char        show_lyrics_word_extensions;        ///< Flag which tells if we need to show the word extensions for lyrics (1) or not (0).
                                                     ///< Word extensions are the ______ lines which continue a syllable over melismas, such as "true______"
@@ -4260,6 +4336,8 @@ typedef struct _notation_obj
                                                     ///< 1 = They only change chord position inside measures, but they don't affect measure width
                                                     ///< 2 = They also change measure width, but only if some dynamics are overlapping
                                                     ///< 3 = They also affect measure width, always
+
+    char        annotation_alignment;                    ///< Alignment type for the annotations, must be one of the #e_alignments
 
     // command fields, arrays (containing one element for each command)
     t_commandinfo commands[CONST_MAX_COMMANDS];
@@ -4345,7 +4423,7 @@ typedef struct _notation_obj
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
     t_symbol    **full_acc_repr;                    ///< List of accidental representation symbols (one for each voice).
-                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
                                                     ///< Each symbol specifies the full accidental representation for a voice.
                                                     ///< For a semitonal representation a sequence like "n # n # n n b n b n # n" is expected (12 elems)
                                                     ///< For a quartertonal representation a sequence like "n + # - n + # - n + n + b - n db b - n + # #+ n +" is expected (24 elems).
@@ -4367,6 +4445,8 @@ typedef struct _notation_obj
     char        need_send_changed_bang;                ///< When this is non-zero, the "changed bang" is sent at the end of the paint method 
     char        show_border;                        ///< Flag telling if we display the border
     char        show_focus;                            ///< Flag telling if we want to graphically show when the object has focus by adding a thicker border (by default: yes)
+    double      focus_border_width;                  ///< Border size for object having focus
+    double      border_width;                        ///< Border size for objects not having focus (or if @showfocus is off)
     
     char        catch_playhead;                     ///< Catch the playhead while playing
     char        play_mode;                            ///< Play mode (see e_play_modes 0 = chord-wise, 1 = note-wise, by default it is 1, which should RARELY be changed!)
@@ -4406,6 +4486,8 @@ typedef struct _notation_obj
     char        breakpoints_have_velocity;            ///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
     char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads
     
+    char        notify_with;                           ///< Notification type through last outlet (0 = bang, 1 = operation label, 2 = redo transaction, 3 = undo transaction, 4 = individual redo ticks, 5 = individual undo ticks)
+    char        last_operation_is;         ///< -1 = undo, 1 = redo, 0 = anything else
     char        notify_when_painted;                ///< Flag telling if we want notifications to be sent whenever the object is repainted
     char        notify_also_upon_messages;          ///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes
     
@@ -4436,7 +4518,7 @@ typedef struct _notation_obj
     char            need_snap_some_nonselected_items;   ///< Field which is set only when nonselected elements (flagged with #k_FLAG_TO_BE_SNAPPED) need to be snapped
     t_prevent_edit    prevent_edit;                        ///< Structure telling if a given element type can (0) or cannot (1) be edited via the interface
     t_atom            *prevent_editing_atom;                ///< Array with the symbols corresponding to the elements whose editing is denied (the number of such elements is #num_prevent_editing_elems
-                                                        ///< It is an array with #CONST_MAX_BACH_ELEMENT_TYPES + 10 elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                        ///< It is an array with #CONST_MAX_BACH_ELEMENT_TYPES + 10 elements allocated in notationobj_init() and freed by notationobj_free()
     long            num_prevent_editing_elems;            ///< Number of elements whose editing is to be prevented
     char            allow_linear_edit;                    ///< Allow usage of the linear editing system (for [bach.score] only)
     t_llll            *constraint_pitches_when_editing;    ///< llll containing possible information on how pitches must be constrained while editing them.
@@ -4599,11 +4681,6 @@ typedef struct _notation_obj
                                                     ///< so that user is certainly asked to save when he closes the patch.
     char        allow_undo;                            ///< Flag telling if we allow undo. 
     
-    t_llll        **old_undo_llll;                    ///< (OBSOLETE!) Array containing the #CONST_MAX_UNDO_STEPS undo steps (NULL if step is not defined)
-                                                    ///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in notation_obj_init() and freed by notation_obj_free()
-    t_llll        **old_redo_llll;                    ///< (OBSOLETE!) Array containing the #CONST_MAX_UNDO_STEPS redo steps (NULL if step is not defined) 
-                                                    ///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in notation_obj_init() and freed by notation_obj_free()
-    
     double        last_undo_time;                        ///< (UNUSED) Operating system's time (in milliseconds) of the last time when un undo step has been performed 
 
     char        inhibited_undo;                        ///< Flag which, if it is 1, will inhibit the creation of undo ticks and steps. Of course, by default it is 0.
@@ -4616,6 +4693,7 @@ typedef struct _notation_obj
     long        num_redo_steps;                        ///< Current number of redo steps stored in the redo llll (it corresponds to the number of redo markers inside it)
     char        verbose_undo_redo;                    ///< If this is 1, bach posts each undo/redo step in the Max window.
     t_llll        *undo_notation_items_under_tick;    ///< A llll containing as #H_OBJ the notation items whose undo information is currently being prepended to the undo list.
+    t_llll        *undo_information_whose_path_need_to_be_checked;    ///< A llll containing as #H_OBJ the undo/redo information whose afterpath needs to be checked at when the undo marker is put.
     long        undo_header_elements_under_tick;    ///< A #e_header_elems combination specifying which header elements are under tick
                                                     ///< Each undo tick on a notation item adds an element to this list. When the undo step marker is created (and thus the undo step is finalized), this list is emptied.
     long        whole_obj_under_tick;               ///< Tells if the whole notation object is under tick
@@ -4646,12 +4724,16 @@ typedef struct _notation_obj
     double      tempi_uy_pos;                           ///< Unscaled vertical shift for tempi
     char        show_tempi_interp;                          ///< Show/hide dashed rall/acc line, or text, or arrows
     
+    char        lyrics_have_single_dash;                ///< Single dash for lyrics
+    
     char        show_barlines;                            ///< Flag telling if we want to show barlines
     char        show_barline_locks;                        ///< Flag telling if we want to show the barline locks (appearing when barline width has been locked, fixed)
     char        draw_barlines_across_staves;            ///< Flag telling if we want to draw the barlines across all the staves, when possible
     double      barline_ushift_for_proportional_spacing;    ///< unscaled shift of barlines in proportional spacing display
     char        show_time_signatures;                    ///< Flag telline if we want to show the time signatures (0 = hide, 1 = classically, 2 = above staff)
     double      big_time_signatures_ratio;              ///< Expansion ratio for big time signatures
+    double      big_time_signatures_uy_adjust;              ///< Vertical adjustment for big timesignatures
+    char        big_time_signatures_above_tempo;            ///< Flag telling whether to place big time signatures above tempi or independently from them
     long        measure_number_offset;                    ///< Offset for the measure numbering (by default: 0)
     
 // changed from e_show_accidentals_preferences to char to avoid VC++ complaints
@@ -4711,11 +4793,17 @@ typedef struct _notation_obj
     e_show_rests_preferences    show_rests;     ///< Flag telling if we want to show the rests
     
     
-    // slurs (THESE ARE YET UNSUPPORTED)
-    char        show_slurs;                    ///< (UNSUPPORTED) Flag telling if we want to show the slurs
-    char        slurs_shown_chordwise;        ///< (UNSUPPORTED) Flag telling if slurs "act" as they were shown chord-wisely: in this case they may also get to the stem of a chord, and not to the note. 
-    char        slurs_avoid_accidentals;    ///< (UNSUPPORTED) Flag telling if slurs avoid the accidentals
-    char        slurs_always_symmetrical;    ///< (UNSUPPORTED) Flag telling if slurs are always symmetrical, i.e. the bezier bounding box is a perfecty symmetric trapece. 
+    // initial rule
+    char        show_initial_rule;              ///< Flag telling whether to show initial rule
+    char        show_accollatura;               ///< Flag telling if we show the brackets for staff ensemble
+    ///
+    
+    // slurs (SOME OF THESE ARE YET UNSUPPORTED)
+    char        show_slurs;                 ///< Flag telling if we want to show the slurs
+    char        slurs_avoid_chords;         ///<  Flag telling if slurs avoid the accidentals
+    char        slurs_avoid_accidentals;    ///< Flag telling if slurs avoid the accidentals
+    t_llll      *slurs;     ///< List of slurs as H_OBJs
+    t_llll      *slurs_to_be_processed;     ///< Temporary repository for slurs to be actually put inside the score later
 
     
     // markers
@@ -4735,6 +4823,7 @@ typedef struct _notation_obj
     // rulers & grids
     char        ruler;                    ///< Type of ruler to be shown: 0 = No ruler, 1 = Ruler Above, 2 = Ruler Below, 3 = Both
     char        ruler_mode;                ///< Ruler mode: 0 = Manual (user sets the <grid_step_ms> and the <grid_subdivisions>), 1 = Smart (automatical, depending on zoom)
+    char        ruler_before_zero;        ///< Ruler extends before zero?
     char        show_ruler_labels;        ///< Flag telling if we want to show the ruler labels, indicating time. Their positioning is automatically calculated (depending on tick density)
     char        show_grid;                ///< Flag telling if we want to show the grid
     double        grid_step_ms;            ///< Step interval in milliseconds for the main grid, i.e. interval between two "long" ticks
@@ -4790,7 +4879,7 @@ typedef struct _notation_obj
                                                     ///< Synchoronous chords exceeding this number will be played 'as soon as possible' in the next scheduler tick (scheduled immediately)
 
     t_chord        **chord_play_cursor;        ///< Multicursor (one element for each voice) containing the last played chords, or generally (when possible) the chords happening _before_ the already scheduled events. 
-                                            ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                            ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
                                             ///< The idea is that, to play the next chord, we start to look ahead from the ones we have already played, and
                                             ///< we keep track of this 'looking ahead' with this multicursor.
     t_tempo     **tempo_play_cursor;         ///< Cursor containing the last played tempo for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor)
@@ -4886,6 +4975,7 @@ typedef struct _notation_obj
     char        show_half_stem_for_beamed_rests;    ///< Do we want to show a half-stem for beamed rests?
     char        show_rhythmic_tree;                    ///< Graphically paints the beaming tree for each measure
     char        output_trees;                        ///< Output beaming trees while dumping?
+    char        output_negative_rests;              ///< Output negative rests? 
     char        write_trees;                        ///< Include tree information while saving via "write" or "writetxt"
     char        output_full_duration_tree;            ///< Flag telling if we want to output the full duration tree while dumping. This only make sense if #output_trees >= 2, and if 1, this means that
                                                     ///< in addition to all the levels, also the ties information is output as "t" if a chord is all tied
@@ -4899,6 +4989,8 @@ typedef struct _notation_obj
     char        take_rhythmic_tree_for_granted;        ///< (INTERNAL) Flag set only at undo time, meaning that the rhythmic tree must be kept "as-is" (and _essentially_ not reparsed) from the information given in the undo content
                                                     ///<  "Essentially" means that the parsing is always necessary, but will be done in a non-intrusive and non-destructive way.
     char        whole_rests_in_empty_measures;      ///< If 1 (default), allows to have centered whole rest notes in empty measures, or in measures having a single rest lasting for the whole measure
+    
+    long        rests_float_steps_part_shift;        ///< Shift in steps of rests due to different parts in the same voice ensemble. Must be EVEN otherwise we mess up with 4/4 and 2/4 rests vertical positioning
 
     // grace notes
     char        slash_grace_flags;                                ///< If 1, put a slash on any grace chord flag
@@ -4908,14 +5000,21 @@ typedef struct _notation_obj
     t_rational    grace_note_equivalent;                            ///< As #grace_note_equivalent_sym, but translated into a rational value
     double        max_percentage_of_chord_taken_by_grace_notes;    ///< Maximum percentage of the chord duration that can be taken by subsequent grace notes
     
+    
     // functions
     rebuild_fn                        rebuild_function;                ///< Pointer to the function setting the whole object from llll
-    notation_obj_fn                    whole_obj_undo_tick_function;    ///< Pointer to the function creating the undo tick for the whole object
-    notation_obj_notation_item_fn    force_notation_item_inscreen;    ///< Pointer to a function forcing a given notation item to be inside the screen
-    notation_obj_timepoint_to_ux_fn timepoint_to_unscaled_xposition;///< Pointer to a function (if any), converting a timepoint into an unscaled x position (makes sense for bach.score only)
-    notation_obj_undo_redo_fn       undo_redo_function;             ///< Function for undo/redo
+    notationobj_fn                    clearall_function;    ///< Pointer to the function creating the undo tick for the whole object
+    getstate_for_undo_fn              getstateforundo_function; ///< Pointer to the function getting the state for the undo system
+    notationobj_fn                    whole_obj_undo_tick_function;    ///< Pointer to the function creating the undo tick for the whole object
+    notationobj_notation_item_fn    force_notation_item_inscreen;    ///< Pointer to a function forcing a given notation item to be inside the screen
+    notationobj_timepoint_to_ux_fn timepoint_to_unscaled_xposition;///< Pointer to a function (if any), converting a timepoint into an unscaled x position (makes sense for bach.score only)
+    notationobj_undo_redo_fn       undo_redo_function;             ///< Function for undo/redo
     bach_paint_ext_fn               paint_ext_function;             ///< Pointer to the function painting the object (in extended bach mode)
-    notation_obj_inscreenmeas_fn    inscreenmeas_function;          ///< Pointer to the inscreenmeas function
+    notationobj_inscreenmeas_fn    inscreenmeas_function;          ///< Pointer to the inscreenmeas function
+    
+    //TBD
+    addchordfromllll_fn             addchordfromllll;
+    setmeasurefromllll_fn           setmeasurefromllll;
     
     // attributes
     t_bach_inspector_manager    m_inspector;                        ///< Inspector manager
@@ -4985,6 +5084,15 @@ typedef struct _bach_inspector_ui {
 } t_bach_inspector_ui;
 
 
+typedef struct _notation_item_path
+{
+    long    voice_num;
+    long    meas_num;
+    long    chord_num;
+    long    note_num;
+    long    slot_num;
+    long    item_num;
+} t_notation_item_path;
 
 /** Information about some operation that can be undone.
     With the new undo system (since bach 0.7), an undo step is computed BEFORE any interface modification is performed.
@@ -5003,9 +5111,15 @@ typedef struct _undo_information
     e_element_types                n_it_type;            ///< Type of the notation item whose information need to be stored (one of the #e_element_types).
                                                     ///< If the information concerns the whole object, then this should be #k_WHOLE_NOTATION_OBJECT, if it concerns the header, this should be #k_HEADER_DATA.
     e_undo_modification_types    modification_type;    ///< Type of possible modification of the object (one of the #e_undo_modification_types)
+                                                       ///< Essentially: "add", "delete", "change"
+    t_symbol                     *param;               ///< Parameter subject to change Options are, currently:
+                                                       ///< "state" (whole llll syntax), "flag" (flag only), "name" (name only), "onset" (onset only)
     
-    long    voice_num;            ///< Voice number of the element (if it is a #k_VOICE), or where the modified element is (this is only used if the modification is erasing the element) 
-    long    meas_num;            ///< Measure number of the element (if it is a #k_MEASURE), or where the modified element is (this is only used if the modification is erasing the element).
+    t_notation_item_path        n_it_path_before;      ///< Path of the modified item before the operation
+    t_notation_item_path        n_it_path_after;        ///< Path of the modified item after the operation
+    
+//    long    voice_num;            ///< Voice number of the element (if it is a #k_VOICE), or where the modified element is (this is only used if the modification is erasing the element)
+//    long    meas_num;            ///< Measure number of the element (if it is a #k_MEASURE), or where the modified element is (this is only used if the modification is erasing the element).
                                 ///< Of course, this is meaningless if the element is a #k_VOICE.
     e_header_elems    header_info;        ///< Header information to be undone (a combination of the #e_header_elems)
     
@@ -5530,13 +5644,14 @@ long clef_symbol_to_clef_number(t_notation_obj *r_ob, t_symbol *clef);
     @param    name_style        One of the #e_note_names_styles, to specify which convention you want to use for naming (latin or anglosaxon)
     @param  print_octave    If non-zero, adds the note octave number
     @param    outname            Pointer which will be initialized and filled with the resulting string
+    @param  use_capital_b_for_doubleflat    If true, uses "B" instead of "bb" for double flat
                             If *outname is NULL, it also allocates the memory.
     @remark                    For instance, if <middleC_octave> = 4, <screen_mc> = 6200, <screen_acc> = -1 (double flat),
                             <name_style> = k_NOTE_NAMES_LATIN, then outname will be "Rebb4".
     @see                    notename2midicents()
     @see                    ezmidicents2notename()
 */ 
-void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_acc, char name_style, char print_octave, char **outname);
+void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_acc, char name_style, char print_octave, char **outname, char use_capital_b_for_doubleflat = false);
 
 
 /**    Quick'n'dirty conversion of a midicent pitch into its note name. It is a wrapper of midicents2notename(), in which the screen midicents and
@@ -5548,9 +5663,10 @@ void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_a
     @param  print_octave    If non-zero, adds the note octave number
     @param    outname            Pointer which will be initialized and filled with the resulting string
     @param    tonedivision    The microtonal grid (2 = semitones, 4 = quartertones...)
+    @param  use_capital_b_for_doubleflat    If true, uses "B" instead of "bb" for double flat
     @see                    midicents2notename()
 */ 
-void ezmidicents2notename(long middleC_octave, double midicents, char name_style, char print_octave, char **outname, long tonedivision);
+void ezmidicents2notename(long middleC_octave, double midicents, char name_style, char print_octave, char **outname, long tonedivision, char use_capital_b_for_doubleflat = false);
 
 
 /**    Convert a note name into its screen midicents and accidental.
@@ -5723,6 +5839,14 @@ long elementtypesym2elementtypeid(t_symbol *sym);
     @return        The action as one of the #e_element_actions
  */
 long actiontypesym2actiontypeid(t_symbol *sym);
+
+
+/** Convert a symbol into one of the #e_header_elems.
+ @ingroup    conversions
+ @param        this_sym        The symbol of header object ("body", "header", "clefs", "markers", "groups", "midichannel", "commands", "keys", "slotinfo", "voicenames", "stafflines"...)
+ @return        The header object as one of the #e_header_elems).
+ */
+e_header_elems header_symbol_to_long(t_symbol *this_sym);
 
 
 /** Convert an llll containing the symbols of header objects into a combination of #e_header_elems.
@@ -6169,6 +6293,15 @@ double get_vscrollbar_width(t_notation_obj *r_ob);
 double get_max_vscrollbar_width_or_inset_x(t_notation_obj *r_ob);
 
 
+
+/**    Set the flag telling that graphical properties of the chords must be updated
+    @ingroup            notation_graphics
+ @param r_ob            The notation object
+    @param ch        The chord
+ */
+void chord_set_recompute_parameters_flag(t_notation_obj *r_ob, t_chord *ch);
+
+
 /**    Detect if a chord is inside the screen, or in the hidden left or right part (only used by [bach.score]).
     @ingroup            notation_graphics
     @param r_ob            The notation object
@@ -6268,11 +6401,10 @@ void auto_set_rectangle_size_do(t_notation_obj *r_ob);
 /** Obtain the top and bottom positions of the playhead line, in pixels.
     @ingroup notation_graphics
     @param    r_ob        The notation object
-    @param    rect        The drawing rectangle corresponding to the patcherview
     @param    y1            Pointer which will be filled with the y position of the top of the playhead line
     @param    y2            Pointer which will be filled with the y position of the bottom of the playhead line
 */
-void get_playhead_ypos(t_notation_obj *r_ob, t_rect rect, double *y1, double *y2);
+void get_playhead_ypos(t_notation_obj *r_ob, double *y1, double *y2);
 
 
 
@@ -6447,9 +6579,9 @@ unicodeChar get_notehead_unicode_character(t_notation_obj *r_ob, t_rational dura
 double notehead_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords);
 
 // TBD
-void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
-long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
-long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char avoid_returning_default, char ignore_custom_noteheads);
+void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char *opaque_bg);
+long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char *opaque_bg);
+long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char *opaque_bg, char avoid_returning_default, char ignore_custom_noteheads);
 
 
 /**    Get the default width for a portion of score. This function is used inside tuttipoint_calculate_spacing() in order to determine the
@@ -7058,9 +7190,11 @@ void initialize_rollvoice(t_notation_obj *r_ob, t_rollvoice *voice, long voice_n
     @param    whole_undo_tick    Pointer to the function creating an undo tick for the whole notation object. Must be implemented for each notation object.
     @param    force_notation_item_inscreen        Pointer to a function forcing a notation item to be inside the screen; leave NULL if unneeded.
     @param    undo_redo_fn                       Pointer to the undo/redo function; leave NULL if unneeded.
-    @param  bach_paint_ext_fn paint_extended    Pointer to the paint function (in extended bach mode, i.e. with a bach_paint_ext_fn signature)
+    @param  paint_extended    Pointer to the paint function (in extended bach mode, i.e. with a bach_paint_ext_fn signature)
+    @param  clearall_fn     Pointer to a function clearing everything.
+    @param getstateforundo  Pointer to a function getting the state for undo purposes.
 */
-void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, notation_obj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended);
+void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notationobj_fn whole_undo_tick, notationobj_notation_item_fn force_notation_item_inscreen, notationobj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended, notationobj_fn clearall_fn, getstate_for_undo_fn getstateforundo);
 
 
 /**    Initialize (or re-initialize) slot information with a default slotinfo 
@@ -7088,15 +7222,15 @@ void initialize_popup_menus(t_notation_obj *r_ob);
     @param        d        The dictionary
     @see        attr_dictionary_process()
  */
-void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_dictionary *d);
+void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_dictionary *d);
 
 
 
 // PRE-SCHEDULING
-void notation_obj_clear_prescheduled_events(t_notation_obj *r_ob);
-void notation_obj_preschedule_end(t_notation_obj *x, t_symbol *s, long argc, t_atom *argv);
-void notation_obj_preschedule_task(t_notation_obj *r_ob);
-void notation_obj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
+void notationobj_clear_prescheduled_events(t_notation_obj *r_ob);
+void notationobj_preschedule_end(t_notation_obj *x, t_symbol *s, long argc, t_atom *argv);
+void notationobj_preschedule_task(t_notation_obj *r_ob);
+void notationobj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
 
 
 
@@ -7110,7 +7244,7 @@ void notation_obj_append_prescheduled_event(t_notation_obj *r_ob, double time, t
     @ingroup        notation_free
     @param r_ob        The notation object
  */
-void notation_obj_free(t_notation_obj *r_ob);
+void notationobj_free(t_notation_obj *r_ob);
 
 
 /**    Free the memory of a notation item (created via build_notation_item())
@@ -7217,7 +7351,7 @@ void free_tuttipoint(t_notation_obj *r_ob, t_tuttipoint *tuttipoint);
     @param r_ob        The notation object
     @param marker        The marker
  */
-void free_marker(t_notation_obj *r_ob, t_marker *marker);
+void marker_free(t_notation_obj *r_ob, t_marker *marker);
 
 
 /**    Free memory of the notation object associated with slotinfo content.
@@ -7491,7 +7625,7 @@ t_tempo* clone_tempo(t_notation_obj *r_ob, t_tempo *tempo);
     @param n    The 0-based chord index
     @return        The n-th chord of measure <meas>
  */
-t_chord* nth_chord(t_measure *meas, long n);
+t_chord* chord_get_nth_in_measure(t_measure *meas, long n);
 
 
 /**    Get the n-th note of a given chord
@@ -7500,7 +7634,16 @@ t_chord* nth_chord(t_measure *meas, long n);
     @param n    The 0-based note index
     @return        The n-th note of chord <ch>
  */
-t_note* nth_note(t_chord *ch, long n);
+t_note* note_get_nth(t_chord *ch, long n);
+
+
+/**    Get the n-th marker in the score
+ @ingroup    notation
+ @param r_ob    The notation object
+ @param n    The 0-based note index
+ @return        The n-th marker
+ */
+t_marker *marker_get_nth(t_notation_obj *r_ob, long n);
 
 /**    Get the n-th breakpoint of a given note
     @ingroup    notation
@@ -7508,7 +7651,7 @@ t_note* nth_note(t_chord *ch, long n);
     @param n    The 0-based breakpoint index
     @return        The n-th breakpoint of note #nt
  */
-t_bpt* nth_breakpoint(t_note *nt, long n);
+t_bpt* breakpoint_get_nth(t_note *nt, long n);
 
 
 /**    Get the n-th slotitem of a given notation item slot
@@ -7519,7 +7662,7 @@ t_bpt* nth_breakpoint(t_note *nt, long n);
     @param n    The 0-based slotitem index
     @return        The n-th slotitem of slot #slotnum of note #nt
  */
-t_slotitem *nth_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long n);
+t_slotitem *slotitem_get_nth(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long n);
     
 
 /**    Get the nth measure of a given scorevoice
@@ -7527,7 +7670,7 @@ t_slotitem *nth_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slot
     @param    voice    The scorevoice
     @param    n        The 0-based index of the measure to retrieve
  */
-t_measure* nth_measure_of_scorevoice(t_scorevoice *voice, long n);
+t_measure* measure_get_nth(t_scorevoice *voice, long n);
 
 
 /**    Get the nth voice of a notation object
@@ -7535,7 +7678,8 @@ t_measure* nth_measure_of_scorevoice(t_scorevoice *voice, long n);
     @param    r_ob    The notation object
     @param    n        The 0-based index of the voice to retrieve
  */
-t_voice* nth_voice(t_notation_obj *r_ob, long n);
+t_voice* voice_get_nth(t_notation_obj *r_ob, long n);
+t_voice* voice_get_nth_safe(t_notation_obj *r_ob, long n);
 
 
 /**    Checks if the order of notes in a chord is "correct", and if incorrect, the function corrects the order.
@@ -7928,6 +8072,23 @@ long notation_item_get_voiceensemble(t_notation_obj *r_ob, t_notation_item *it);
 long notation_item_get_measurenumber(t_notation_obj *r_ob, t_notation_item *it);
 
 
+/** Obtain the 0-based path information for a given notation item (with -1 meaning: unapplicable).
+ @ingroup        notation
+ @param    r_ob    The notation object
+ @param    path        Pointer filled with the 0-based path information of the notation item
+ */
+void notation_item_get_path(t_notation_obj *r_ob, t_notation_item *it, t_notation_item_path *path);
+
+
+/** Obtain a notation item from its path
+ @ingroup        notation
+ @param    r_ob    The notation object
+ @param    path        Notation item path
+ @return    Pointer to the notation item if any, or NULL otherwise
+ */
+t_notation_item *notation_item_from_path(t_notation_obj *r_ob, e_element_types type, t_notation_item_path *path);
+
+
 /** Obtain the number of chords inside a notation item (or 0 if not applicable).
  @ingroup        notation
  @param    r_ob    The notation object
@@ -8087,7 +8248,7 @@ void transfer_tie_to(t_chord *from, t_chord *to);
     @ingroup    notation
     @param        r_ob        The notation object
 */ 
-void quick_notation_obj_recompute_all_chord_parameters(t_notation_obj *r_ob);
+void quick_notationobj_recompute_all_chord_parameters(t_notation_obj *r_ob);
 
 
 /** Tell if a tempo is really necessary, or if it could be deleted and nothing at all changes in the score timings.
@@ -8184,6 +8345,7 @@ t_measure *measure_get_from_path_as_llllelem_range(t_notation_obj *r_ob, t_lllle
     @return            The marker at the given path, or NULL if none
  */
 t_marker *get_marker_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllelem *start_llllelem);
+
 
 
 
@@ -8614,13 +8776,13 @@ t_notation_item *notation_item_to_notation_item_for_slot_win_opening(t_notation_
     @ingroup            slots
     @param r_ob            The notation object
 */
-void notation_obj_reset_slotinfo(t_notation_obj *r_ob);
+void notationobj_reset_slotinfo(t_notation_obj *r_ob);
 
 /**    Reinitialize the commands.
  @ingroup            commands
  @param r_ob            The notation object
  */
-void notation_obj_reset_commands(t_notation_obj *r_ob);
+void notationobj_reset_commands(t_notation_obj *r_ob);
 
 
 /**    Set or update the slotinfo in the notation object structure, starting from a slotinfo-llll
@@ -8757,12 +8919,12 @@ void notation_item_set_slots_from_llll(t_notation_obj *r_ob, t_notation_item *ni
 // Private
 void notation_item_check_slots(t_notation_obj *r_ob, t_notation_item *nitem);
 void notation_item_check(t_notation_obj *r_ob, t_notation_item *nitem);
-void notation_obj_check(t_notation_obj *r_ob);
+void notationobj_check(t_notation_obj *r_ob);
 void notation_item_check_against_tuttipoints(t_notation_obj *r_ob, t_notation_item *nitem);
-void notation_obj_check_against_tuttipoints(t_notation_obj *r_ob);
-void notation_obj_check_all_measure_tuttipoints(t_notation_obj *r_ob);
+void notationobj_check_against_tuttipoints(t_notation_obj *r_ob);
+void notationobj_check_all_measure_tuttipoints(t_notation_obj *r_ob);
 void clear_all_measure_tuttipoint_references(t_notation_obj *r_ob);
-void notation_obj_check_force(t_notation_obj *r_ob, char also_lock_mutext);
+void notationobj_check_force(t_notation_obj *r_ob, char also_lock_mutext);
 
 
 /**    Set a slot content (one of more slots) to all the selected notes in a notation object.
@@ -9356,7 +9518,7 @@ void open_slot_window(t_notation_obj *r_ob, long slot_num, t_notation_item *nite
     @param argc            The number of atoms in the A_GIMME signature
     @param argv            The atoms of the A_GIMME signature
  */
-void notation_obj_openslotwin(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_openslotwin(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 /**    End editing a slot window.
@@ -9734,10 +9896,10 @@ double get_next_step_depending_on_editing_ranges(t_notation_obj *r_ob, double mi
     @ingroup            voice_attributes
     @param    r_ob        The notation object
     @param    voicenames    The llll containing the voice names (each element, supposely an H_SYM, is a voice name)
-    @param    char also_update_notation_obj_voicenames_llll    If this is non-0 the t_notation_obj::voienames_as_llll field is also updated.
+    @param    char also_update_notationobj_voicenames_llll    If this is non-0 the t_notation_obj::voienames_as_llll field is also updated.
                                                             Set this to 0 if voicenames is exactly that llll, otherwise it'll hang!
  */ 
-void set_voicenames_from_llll(t_notation_obj *r_ob, t_llll* voicenames, char also_update_notation_obj_voicenames_llll);
+void set_voicenames_from_llll(t_notation_obj *r_ob, t_llll* voicenames, char also_update_notationobj_voicenames_llll);
 
 
 /**    Change the name of a specific voice.
@@ -9969,31 +10131,6 @@ int is_in_breakpoint_shape(t_notation_obj *r_ob, t_bpt *breakpoint, long point_x
 int is_in_articulation_shape(t_notation_obj *r_ob, t_articulation *art, long point_x, long point_y);
 
 
-/**    Tell if a point is on a given marker.
-    @ingroup            notation_graphic
-    @param     r_ob        The notation object
-    @param    marker      The marker
-    @param    point_x        The x coordinate of the point (pixel)
-    @param    point_y        The y coordinate of the point (pixel)
-    @return                1 if the point is over the marker, 0 otherwise.
- */
-int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, long point_y);
-
-
-/**    Tell if a point is on a given marker name.
-    @ingroup            notation_graphic
-    @param     r_ob        The notation object
-    @param    marker      The marker
-    @param    point_x        The x coordinate of the point (pixel)
-    @param    point_y        The y coordinate of the point (pixel)
-    @return                1 if the point is over the marker name, 0 otherwise.
-*/
-int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, long point_y);
-
-
-// TBD
-double notationobj_get_marker_voffset(t_notation_obj *r_ob, t_marker *mk);
-
 /**    Tell if a point is on the loop region (or on the loop region extremes).
     @ingroup            notation_graphic
     @param     r_ob        The notation object
@@ -10189,23 +10326,27 @@ void paint_keysigaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_a
 void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double width, char direction);
 
 
+
 /**    Paint a marker line and write the marker name
     @ingroup                    notation_paint
     @remark                        The marker name will be painted (if requested) on the direction choosen by the t_marker::name_painted_direction field.
     @param    r_ob                The notation object
      @param    g                    The graphic context
-    @param    color                The color of the marker line and name
+    @param    linecolor                The color of the marker line
+    @param    textcolor                The color of the marker name
     @param    jf                    The font for the markername
     @param    marker                The marker to be painted
     @param    marker_x            The x position (pixel) for the marker line
+    @param    marker_end_x        The ending of the marker region (if any, otherwise just put marker_x again)
     @param    marker_y1            The starting y (pixel) of the marker line
     @param    marker_y2            The ending y (pixel) of the marker line
+    @param    is_region           1 if the marker is a region marker
     @param    width                The width of the marker line
     @param    also_paint_name        This has to be 1 if we also need to paint the name of the marker, 0 otherwise 
     @param  namewidth           Pointer that will be filled with the width of the marker name (can be NULL)
  */ 
-void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* jf, t_marker *marker, 
-                    double marker_x, double marker_y1, double marker_y2, double linewidth, char also_paint_name, double *namewidth);
+void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *linecolor, t_jrgba *textcolor, t_jfont* jf, t_marker *marker, double marker_x, double marker_end_x, double marker_y1, double marker_y2, char is_region, double linewidth, char also_paint_name, double *namewidth,
+                  double *prev_marker_x, double *prev_marker_width, t_marker *prev_region_marker, double *prev_region_marker_x, double *prev_region_marker_width);
 
 /**    Paint the loop region.
     @ingroup                    notation_paint
@@ -10361,6 +10502,7 @@ void paint_staff_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x
 
 // TBD
 void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color);
+void paint_initial_rule(t_notation_obj *r_ob, t_jgraphics *g, t_jrgba color);
 
 
 
@@ -10472,14 +10614,10 @@ void notationobj_paint_colorgradient_curve(t_notation_obj *r_ob, t_jgraphics *g,
 
 
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-// EXPERIMENTAL, UNDOCUMENTED, DON'T USE IT YET
-void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slur, 
+void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slur,
                 char paint_control_points, t_jrgba linecolor, t_jrgba pointcolor, double point_radius, double line_width, double dash_length);
-
-void delete_slur(t_notation_obj *x, t_slur *slur);
-
-#endif
+void chord_paint_slurs_to(t_notation_obj *r_ob, t_jgraphics *g, t_chord *curr_ch);
+void chord_paint_slurs_from(t_notation_obj *r_ob, t_jgraphics *g, t_chord *curr_ch);
 
 /**    Paint a small note (or sequence of notes, if the duration is not drawable singularly)
     @ingroup                        notation_paint
@@ -10520,7 +10658,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
 
 // TBD
 void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                                double x_pos, long slot, t_jfont *jf_ann, double staff_top_y,
+                                long slot, t_jfont *jf_ann, double staff_top_y,
                                 char *last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
                                 double *annotation_line_y_pos);
 
@@ -10901,7 +11039,7 @@ void calculate_ms_on_a_line(t_notation_obj *r_ob);
     @param    size    The size of the new text
     @ingroup        editor
  */
-void notation_obj_edclose(t_notation_obj *r_ob, char **ht, long size);
+void notationobj_edclose(t_notation_obj *r_ob, char **ht, long size);
 
 
 
@@ -11274,7 +11412,7 @@ char add_articulation_to_selected_elements(t_notation_obj *r_ob, long articulati
     @remark                        The standard usage is within the _key() method, with something like this (<x> could be a t_score or a t_roll): 
                                 @code
                                 if (handle_keys_for_articulations((t_notation_obj *) x, patcherview, keycode, modifiers, textcharacter)) {
-                                    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Add Articulation To Selection")); 
+                                    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Add Articulation To Selection")); 
                                     return 1;
                                 }
                                 @endcode
@@ -11286,7 +11424,7 @@ char handle_keys_for_articulations(t_notation_obj *r_ob, t_object *patcherview, 
 // TBD
 void set_articulationinfo_from_llll(t_notation_obj *r_ob, t_articulations_typo_preferences *atp, t_llll* art_ll, char add_mode);
 t_llll *get_articulationinfo_as_llll(t_notation_obj *r_ob);
-void notation_obj_reset_articulationinfo(t_notation_obj *r_ob);
+void notationobj_reset_articulationinfo(t_notation_obj *r_ob);
 
 
 
@@ -11305,7 +11443,7 @@ char *notehead_to_text_buf(t_notation_obj *r_ob, long artic_ID, t_rational rdur)
 // TBD
 void set_noteheadinfo_from_llll(t_notation_obj *r_ob, t_llll* nh_ll, char add_mode);
 t_llll *get_noteheadinfo_as_llll(t_notation_obj *r_ob);
-void notation_obj_reset_noteheadinfo(t_notation_obj *r_ob);
+void notationobj_reset_noteheadinfo(t_notation_obj *r_ob);
 
 
 
@@ -11569,7 +11707,7 @@ char only_tails_are_selected(t_notation_obj *r_ob);
     the expression is reduced to "$x1 > 100" and then plugged into a lexpr to find the corresponding matches
     among the existing notation data.
     @ingroup            selection
-    @remark                This function is obsolete, use notation_obj_lexpr_new() instead
+    @remark                This function is obsolete, use notationobj_lexpr_new() instead
     @remark                The substitutions are as follows:
                         "onset" > $x1 
                         "cents" > $x2 
@@ -11608,7 +11746,7 @@ long substitute_symbols_for_lexpr_fn(void *data, t_hatom *a, const t_llll *addre
     "measure" > $x10
     "tie" > $x11
  */
-t_lexpr *notation_obj_lexpr_new(short ac, t_atom *av);
+t_lexpr *notationobj_lexpr_new(short ac, t_atom *av);
 
 
 
@@ -11845,7 +11983,7 @@ void send_loop_region_on_off(t_notation_obj *r_ob, long outlet);
     @param    outlet        The outlet through which the llll containing the information will be sent (usually the play outlet)
     @param   command_number The command number, if any (or leave -1 otherwise)
     @param  forced_router   If non-NULL, a router that will be forced to be put instead of the standard "marker" one
-    @see                get_single_marker_as_llll()
+    @see                marker_get_as_llll()
  */
 void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, long command_number = -1, t_llll *forced_router = NULL);
 
@@ -11999,6 +12137,16 @@ void measure_set_ts_and_tempo_from_llll(t_notation_obj *r_ob, t_measure *measure
                             and use _llllobj_sym_default to revert to default numbering), and a barline type (one of the #e_barline_modifier).
  */
 void set_measure_parameters(t_notation_obj *r_ob, t_measure *measure, t_llll *parameters);
+
+
+//TBD
+void delete_measure_tempi(t_notation_obj *r_ob, t_measure *measure);
+void delete_voice_tempi(t_notation_obj *r_ob, t_scorevoice *voice);
+void clear_measure(t_notation_obj *r_ob, t_measure *measure, char also_reset_all_attributes, char also_clear_ties_from, char also_clear_tempi);
+void refresh_measure_numbers(t_notation_obj *r_ob, t_scorevoice *voice);
+char delete_measure(t_notation_obj *r_ob, t_measure *measure, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char *need_check_solos);
+void insert_measure(t_notation_obj *r_ob, t_scorevoice *voice, t_measure *measure_to_insert, t_measure *after_this_measure, unsigned long force_ID);
+
 
 
 /**    Convert a notation item flag into a symbol.
@@ -12471,7 +12619,7 @@ t_llll *get_midichannels_as_llll(t_notation_obj *r_ob, char prepend_router);
     @param    selection_only    If non-zero, only selected markers are output
     @return                An llll containing all notation object's header
  */
-t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, char add_router_symbol, 
+t_llll *notationobj_get_header_as_llll(t_notation_obj *r_ob, long dump_what, char add_router_symbol,
                                         char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, e_data_considering_types for_what, bool selection_only);
 
 
@@ -12516,10 +12664,10 @@ void set_stafflines_to_voice_from_llllelem(t_notation_obj *r_ob, t_voice *voice,
     @param    r_ob        The notation object
     @param    stafflines    A llll containing all the stafflines information, one element for each voice.
                         Each llllelem has the syntax explained in get_voice_stafflines_as_llllelem().
-    @param    char also_update_notation_obj_stafflines_llll    If this is non-0 the t_notation_obj::stafflines_as_llll field is also updated.
+    @param    char also_update_notationobj_stafflines_llll    If this is non-0 the t_notation_obj::stafflines_as_llll field is also updated.
                                                             Set this to 0 if stafflines is exactly that llll, otherwise it'll hang!
  */
-void set_stafflines_from_llll(t_notation_obj *r_ob, t_llll* stafflines, char also_update_notation_obj_stafflines_llll);
+void set_stafflines_from_llll(t_notation_obj *r_ob, t_llll* stafflines, char also_update_notationobj_stafflines_llll);
 
 
 /**    Change the number of voices of a notation object. 
@@ -12785,7 +12933,6 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     @return                The selected notation item with smallest onset (or NULL if none) 
  */
 t_notation_item *get_leftmost_selected_notation_item(t_notation_obj *r_ob);
-t_note *get_leftmost_selected_note(t_notation_obj *r_ob);
 
 
 /** Obtain the selected notation item with greatest onset.
@@ -12794,6 +12941,10 @@ t_note *get_leftmost_selected_note(t_notation_obj *r_ob);
     @return                The selected notation item with greatest onset (or NULL if none) 
  */
 t_notation_item *get_rightmost_selected_notation_item(t_notation_obj *r_ob);
+
+// SAME FOR NOTES
+t_note *get_leftmost_selected_note(t_notation_obj *r_ob);
+t_note *get_rightmost_selected_note(t_notation_obj *r_ob);
 
 
 /** Obtain the unscaled horizontal pixel corresponding to the chord's alignment point (the point which is geometrically aligned
@@ -12821,6 +12972,7 @@ double chord_get_alignment_x(t_notation_obj *r_ob, t_chord *chord);
 
 // TBD
 double chord_get_stem_x(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_stem_ux(t_notation_obj *r_ob, t_chord *chord);
 double tail_get_alignment_x(t_notation_obj *r_ob, t_note *note);
 double tail_get_alignment_ux(t_notation_obj *r_ob, t_note *note);
 
@@ -13137,7 +13289,7 @@ void voiceensemble_create_from_selection(t_notation_obj *r_ob, char add_undo_tic
 
 void change_voiceensemble_key(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, t_symbol *new_key, char also_add_undo_tick);
 void change_voiceensemble_midichannel(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, long new_midichannel, char also_add_undo_tick);
-void change_voiceensemble_clef(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, long new_clef, char also_add_undo_tick);
+void change_voiceensemble_clef(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, long new_clef);
 
 t_llll *get_parts_as_llll(t_notation_obj *r_ob); // DEPRECATED
 t_llll *get_numparts_as_llll(t_notation_obj *r_ob);
@@ -13181,6 +13333,16 @@ t_timepoint build_timepoint_with_voice(long measure_num, t_rational point_in_mea
     @return                        The filled-in #t_timepoint structure (with dummy voice field).
  */
 t_timepoint build_timepoint(long measure_num, t_rational point_in_measure);
+
+
+/**    Shift a timepoint by another timepoint
+    @ingroup                score_operations
+    @param    r_ob          The notation object
+    @param    tp            Original timepoint
+    @param    delta         Timepoint difference
+    @return                 The shifted timepoint.
+ */
+t_timepoint timepoint_shift(t_notation_obj *r_ob, t_timepoint tp, t_timepoint delta);
 
 
 /**    Build a tempo (allocate and fill the memory).
@@ -13927,6 +14089,7 @@ char is_barline_tuttipoint(t_notation_obj *r_ob, t_measure_end_barline *barline)
 //TBD
 char is_barline_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_measure_end_barline *barline);
 char is_tuttipoint_with_same_ts(t_notation_obj *r_ob, t_tuttipoint *tpt);
+void fill_topmost_bottommost_fields(t_notation_obj *r_ob, t_chord *chord, double staff_top);
 
 
 /**    Obtain all the barlines falling together with a given barline.
@@ -14184,12 +14347,12 @@ t_rational get_tempo_trapece_sec(t_scorevoice *voice, t_rational tempo_L_value, 
 /** Get the header from a gathered-syntax representation of a roll or a score.
     @ingroup    notation_utilities
     @param    whole_content    The gathered syntax representation of the roll or score
-    @param    keep_notation_obj_router    Toggles the preservation of the "roll" or "score" symbol, or any other routing symbol
+    @param    keep_notationobj_router    Toggles the preservation of the "roll" or "score" symbol, or any other routing symbol
     @return        The header of the gathered syntax representation    
     @remark        This function clones the header, and hence does not destroy the header in the #ll, which remains untouched.
     @see    get_body()
 */
-t_llll *get_header(t_llll *whole_content, char keep_notation_obj_router);
+t_llll *get_header(t_llll *whole_content, char keep_notationobj_router);
 
 
 /** Get the body from a gathered-syntax representation of a roll or a score (all the representation, ignoring the header)
@@ -14643,9 +14806,10 @@ char trim_selection_end(t_notation_obj *r_ob, double delta_ms);
     @ingroup selection_changes
     @param    r_ob            The notation object
     @param    delta_ms        The time to be added to existing onsets, in milliseconds.
+    @param    check_chords_order_for_voice  Array (must be sized at least CONST_MAX_VOICES) that will contain 1's if a voice has to be checked for chord order
     @return                    1 if something has been changed, 0 otherwise.
  */
-char trim_selection_start(t_notation_obj *r_ob, double delta_ms);
+char trim_selection_start(t_notation_obj *r_ob, double delta_ms, char *check_chords_order_for_voice);
 
 
 /**    Change the key for a single given voice
@@ -15474,20 +15638,10 @@ void handle_rebuild_done(t_notation_obj *r_ob);
     @param    undo_op            One of the #e_undo_operations, if the change has to imply the creation of an undo marker (also see the Undo module), or 0 if no undo marker is required.
     @remark                    For instance, after some change in the slot has been performed (and all its undo ticks have been added), one should call:
     @code
-    handle_change(r_ob, k_UNDO_MODIFICATION_CHANGE, k_UNDO_OP_CHANGE_SLOT);
+    handle_change(r_ob, k_UNDO_MODIFICATION_TYPE_CHANGE, k_UNDO_OP_CHANGE_SLOT);
     @endcode
  */
 void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations undo_op);
-
-
-/** If one of the fields <need_send_changed_bang> and <need_send_automessage> of the notation object is non-zero, the corresponding action is performed (or also both, of course).
-    If <need_send_changed_bang> is nonzero, the usual bang will be sent - meaning that something has been changed via the interface.
-    If <need_send_automessage> is nonzero, the automessage, if any, will be sent to the object itself.
-    @ingroup                interface
-    @remark                    Both actions should be called after painting, so this function is typically called at the end of the paint methods 
-    @param    r_ob            The notation object
-*/
-void send_changed_bang_and_automessage_if_needed(t_notation_obj *r_ob);
 
 
 /** Send a notification about the current opened slot, in the form "openslot <number>", where the number is 1-based (as everything which goes out to the user or comes in from the user).
@@ -15520,294 +15674,11 @@ void handle_change_selection(t_notation_obj *r_ob);
     @see    handle_change()
     @remark    This is completely equivalent to
     @code
-    if (are_there_free_undo_ticks(r_ob, true))
+    if (undo_ticks_are_dangling(r_ob, true))
         handle_change(r_ob, change_type, undo_op);
     @endcode
  */
-void handle_change_if_there_are_free_undo_ticks(t_notation_obj *r_ob, int change_type, e_undo_operations undo_op);
-
-
-/** Tell if there are free undo ticks (see handle_change_if_there_are_free_undo_ticks() for more information)
-    @ingroup        undo
-    @param    r_ob    The notation object
-    @param    also_return_true_if_undo_is_empty    If this is non-zero, function returns 1 also if undo llll is empty
-    @return            1 if there are free undo ticks, 0 otherwise.
- */
-char are_there_free_undo_ticks(t_notation_obj *r_ob, char also_return_true_if_undo_is_empty);
-
-
-/** Delete and properly free all the free undo ticks (see handle_change_if_there_are_free_undo_ticks() for more information)
-    @ingroup        undo
-    @param    r_ob    The notation object
-    @param    also_clear_ticks_flags    Also clear the flag for the free ticks – this is strongly advised to be 1.
- */
-void remove_all_free_undo_ticks(t_notation_obj *r_ob, char also_clear_ticks_flags);
-
-
-/** Unset the #k_FLAG_MODIF_UNDO, #k_FLAG_MODIF_FLAG_UNDO, #k_FLAG_MODIF_CHECK_ORDER_UNDO and #k_FLAG_MODIF_NAME_UNDO flags from any element in the r_ob->undo_notation_items_under_tick
-    llll. This is automatically called by handle_change() when a new undo marker is added. Those flags are usually set by 
-    create_simple_selected_notation_item_undo_tick(), and are useful when dealing with selection to avoid saving the content of the same item multiple times.
-    @ingroup        undo
-    @param    r_ob    The notation object
- */
-void remove_modif_undo_flag_to_last_undo_ticks(t_notation_obj *r_ob);
-
-
-/** Convert the current selection into the set of notation items that describe it. This is thought for then adding undo ticks and steps to each item, and
-    it is minimal with respect to this perspective;    so for instance, if a measure appears among the returned items, no chord or notes inside the measure will appear. 
-    Moreover, if a note is selected, its chord will appear, and not the note itself, since currently the minimum undoable item is a chord.
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    undo_items    Pointer which will be filled with an array of (t_notation_item *), specifying the selected notation items whose information has to be saved for
-                        undo, if we want to save a change on the current selection.
-    @remark                The returned pointer must then be properly freed.
- */
-void selection_to_undo_notation_item(t_notation_obj *r_ob, t_notation_item **undo_items);
-
-
-/** Convert an interface operation, represented as a long (one of the #e_undo_operations), into a string characterizing the operation.
-    This string, for instance, is the one displayed in the Max window if the undo is verbose.
-    @ingroup    undo
-    @param        undo_op        One of the #e_undo_operations identifying the performed operation.
-    @return        A string containing the string describing the operation.
-    @remark        The returned pointer must then be properly freed.
- */
-char *undo_op_to_string(long undo_op); // convert an undo operation into the string for the max window, allocates memory
-
-
-/**    Set the flag fields to a notation item for some undo operation. If the item is of type chord, a list in the
-    form [chord_flag (note1_flag note2_flag...)] is expected, where all flags are #H_LONG elements, a combination of the
-    #e_notation_item_flags. In all other cases, a list containing a single #H_LONG is expected.
-    @ingroup        undo
-    @param    r_ob    The notation object
-    @param    ll        The llll containing the flag information in the form explained above.
-    @param    father_item        The notation item to which the flags must be assigned (if this is a chord, flags will be assigned to its notes as well).
-    @see get_multiple_flags_for_undo
- */
-void set_multiple_flags_from_llll_for_undo(t_notation_obj *r_ob, t_llll *ll, t_notation_item *father_item);
-
-
-/**    Get the flag fields to be stored for undo. If the item is of type chord, a list in the
-    form [chord_flag (note1_flag note2_flag...)] will be returned, where all flags are #H_LONG elements, a combination of the
-    #e_notation_item_flags. In all other cases, a list containing a single #H_LONG will be returned.
-    @ingroup        undo
-    @param    r_ob    The notation object
-    @param    father_item        The notation item of which we want to retrieve the flag in llll form (if this is a chord, we'll retrieve also all its notes' flags).
-    @return            A llll containing the flags, in the form explained above.
-    @see set_multiple_flags_from_llll_for_undo
- */
-t_llll *get_multiple_flags_for_undo(t_notation_obj *r_ob, t_notation_item *father_item);
-
-
-/**    Allocate the memory for a #t_undo_redo_information structure, representing some undo information linked with a specific notation item (or with the whole
-    notation object, or with some header content) and initialize it with the parameters given in input.
-    @ingroup            undo
-    @param    ID            The ID of the notation item whose information need to be saved, or 0 if header whole notation item are being saved.
-    @param    type        The type of the item whose information need to be saved (one of the #e_element_types)
-    @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
-                        We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
-                        adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_DELETE.
-    @param    voice_num    The voice number of the notation item (or 0 if irrelevant)
-    @param    meas_num    The measure number of the notation item (or 0 if irrelevant)
-    @param    header_info    The header information (as a combination of the #e_header_elems) that need to be saved, if type = #k_HEADER_DATA. 0 otherwise.
-    @param    content        An llll specifying the content of the notation item before the user-performed operation. Could be nil if irrelevant (e.g. when a chord was added, and
-                        thus modif_type = #k_UNDO_MODIFICATION_DELETE).
- */
-t_undo_redo_information *build_undo_redo_information(long ID, e_element_types type, e_undo_modification_types modif_type, long voice_num, long meas_num, e_header_elems header_info, t_llll *content);
-
-
-/**    Free the memory for a #t_undo_redo_information structure, correctly freeing also the llll possibily contained in the
-    t_undo_redo_information::n_it_content field.
-    @ingroup    undo
-    @param        operation    The undo/redo information to be freed.
- */
-void free_undo_redo_information(t_undo_redo_information *operation);
-
-
-/**    Create a undo/redo tick and properly prepend it to the undo or redo llll. 
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    what        One of the #e_undo_redo (k_UNDO or k_REDO) specifying if the operation is for an undo or a redo.
-    @param    from_what    Leave this to 0 if the tick is placed because some interface operation occurred; set this to 1 if the tick is placed because some
-                        undo or redo command has been performed (and thus the corresponding inverse redo or undo ticks are being created).
-    @param    operation    Pointer to an already allocated #t_undo_redo_information structure, which describes the tick and which will be prepended as an #H_OBJ to the undo or redo llll.
-    @param    lock_undo_mutex    If this is non-zero, the function also locks the undo mutex
-    @return                0 if the undo tick has properly been created, 1 if it could not be created, due to the fact that the undo is inactive or to a generic error.
-    @remark                VERY IMPORTANT: If for any reason the undo tick could not be created (and then 1 is returned), the #operation information is properly freed
-                        (along with its possible llll content field)
- */
-long create_undo_redo_tick(t_notation_obj *r_ob, char what, char from_what, t_undo_redo_information *operation, char lock_undo_mutex);
-
-
-/**    Create a undo/redo step marker ("closing" a sequence of undo ticks) and properly prepend it to the undo or redo llll. 
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    what        One of the #e_undo_redo (k_UNDO or k_REDO) specifying if the operation is for an undo or a redo.
-    @param    from_what    Leave this to 0 if the tick is placed because some interface operation occurred; set this to 1 if the tick is placed because some
-                        undo or redo command has been performed (and thus the corresponding inverse redo or undo ticks are being created).
-    @param    undo_op        The operation which was performed, as one of the #e_undo_operations.
-    @param    lock_undo_mutex    If this is non-zero, the function also locks the undo mutex
-    @return                Return the llllelem corresponding to the positioned step marker (or NULL if none)
- */
-t_llllelem *create_undo_redo_step_marker(t_notation_obj *r_ob, char what, char from_what, long undo_op, char lock_undo_mutex);
-
-
-/**    Create a undo tick associated with some header change. 
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    what        A combination of #e_header_elems, representing the header elements which have been changed
-*/
-void create_header_undo_tick(t_notation_obj *r_ob, e_header_elems what);
-
-
-/**    Clear the undo llll or the redo llll. This means that all the ticks (#H_OBJ elements) are properly freed, and their <content> llll field is properly freed as well. 
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    what        One of the #e_undo_redo (k_UNDO or k_REDO) specifying if the operation is for an undo or a redo.
-    @remark                To avoid memory leaks, never call llll_free() on the undo/redo lllls, but always use this function.
- */
-void clear_undo_redo_llll(t_notation_obj *r_ob, char what);
-
-
-/**    Create a simple undo tick, containing the information about the modification of a given notation item.
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    item        The notation item being modified
-    @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
-                        We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
-                        adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_DELETE.
-    @remark                This function has to be called BEFORE the item is modified (so that it can retrieve the correct content for undo), except if the
-                        notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_DELETE.
-    @see                create_undo_redo_tick()
- */
-void create_simple_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item *item, e_undo_modification_types modif_type);
-
-
-/**    Create undo ticks for a sequence of notation items.
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    num_items    The number of notation items for which ticks need to be created
-    @param    item        Pointer to the first element of the array of notation items (the algorithm expects #num_items items).
-    @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
-                        This must be common to all notation items in the array, otherwise single create_simple_notation_item_undo_tick() functions must be called for.
-    @remark                This function has to be called BEFORE the items are modified (so that it can retrieve the correct content for undo), except if the
-                        notation items have just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_DELETE.
-    @see                create_simple_notation_item_undo_tick()
-    @see                create_undo_redo_tick()
- */
-void create_multiple_notation_items_undo_ticks(t_notation_obj *r_ob, long num_items, t_notation_item **item, e_undo_modification_types modif_type, long *undo_op);
-
-
-/**    Works just like create_simple_notation_item_undo_tick(), but when the item is selected. This also accepts a #smallest_undoable_element specification,
-    specifying the minimum structure for which the undo information has to be store. For instance, if #item is a note, and #smallest_undoable_element is #k_MEASURE,
-    the undo tick will actually involve the whole measure containing the note. Also, this function has the advantage to automatically set 
-    the flags #k_FLAG_MODIF_FLAG_UNDO, #k_FLAG_MODIF_UNDO, #k_FLAG_MODIF_CHECK_ORDER_UNDO and #k_FLAG_MODIF_NAME_UNDO if needed. Those flags are assigned, respectively, when the flag information
-    of the item is already stored as an undo tick, when the whole information of the item is already stored as an undo tick, and when the whole information of the item
-    is stored as an undo tick and also this undo operation will require a new checking of the chords order. Those flags are set for selected item in order to avoid
-    repeatedly storing undo ticks on the same thing. For instance, once we've stored an undo tick for a chord, because one of its notes has changed while dragging, we don't need to add
-    a new tick if another note has changed.  
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    item        The notation item being modified
-    @param    smallest_undoable_element    One of the #e_element_types determining the smallest element of which we want to save the undo information. For instance,
-                                        usually in bach we don't save undo information for notes, so #smallest_undoable_element is usually #k_CHORD or #k_MEASURE.
-    @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
-                        We stress the fact that this operation is NOT the operation performed by the user, but rather the inverse operation. For instance, if the user
-                        adds a chord, the modification type stored here will be #k_UNDO_MODIFICATION_DELETE.
-    @remark                This function has to be called BEFORE the item is modified (so that it can retrieve the correct content for undo), except if the
-                        notation item has just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_DELETE.
-    @see                create_simple_notation_item_undo_tick()
- */
-void create_simple_selected_notation_item_undo_tick(t_notation_obj *r_ob, t_notation_item *item, e_element_types smallest_undoable_element, e_undo_modification_types modif_type);
-
-/**    (DEPRECATED) Create undo ticks for all selected items.
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    num_items    The number of notation items for which ticks need to be created
-    @param    item        Pointer to the first element of the array of notation items (the algorithm expects #num_items items).
-    @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
-                        This must be common to all notation items in the array, otherwise single create_simple_notation_item_undo_tick() functions must be called for.
-    @remark                This function has to be called BEFORE the items are modified (so that it can retrieve the correct content for undo), except if the
-                        notation items have just been created, in which case it should be called afterwards, with #modif_type = #k_UNDO_MODIFICATION_DELETE.
-    @remark                This function is DEPRECATED. The standard way to handle undo in bach is to add ticks individually to each it when it is modified. For instance
-                        if we're changing the velocity to the selection, instead of using this function, we should add single ticks at the points of the code where
-                        we actually change the velocity for each given chord (via create_simple_selected_notation_item_undo_tick()) and then add a marker directly with the
-                        handle_change() function when the operation is performed.
-    @see                create_simple_selected_notation_item_undo_tick()
- */
-long create_selection_notation_item_undo_tick(t_notation_obj *r_ob, e_element_types smallest_undoable_element, e_undo_modification_types modif_type);
-
-
-/**    Obtain, starting from a modification performed on a single notation item, the operation performed by the user as one of the #e_undo_operations.
-    @ingroup            undo
-    @param    r_ob        The notation object
-    @param    item        The notation item
-    @param    modif_type    The type of the modification (as one of the #e_undo_modification_types) that need to be performed, in order to revert the item state to the previous state.
-    @return                The operation performed by the user, as one of the #e_undo_operations.
-    @remark                For instance, if #item is a measure and #modif_type is #k_UNDO_MODIFICATION_DELETE, then the operation returned will be #k_UNDO_OP_ADD_MEASURE.
- */
-long notation_item_get_undo_op(t_notation_obj *r_ob, t_notation_item *item, char modif_type);
-
-
-/**    Obtain, starting from a combination of #e_header_elems, the name of the operation performed by the user when changing the specified header information.
-    @ingroup                undo
-    @param    header_types    The header elements being changed, as a combination of #e_header_elems
-    @return                    The operation, as one of the #e_undo_operations, performed by the user when changing the specified header elements.
-    @remark                    For instance, if #header_types = #k_HEADER_KEYS, then the operation returned will be #k_UNDO_OP_CHANGE_KEYS.
- */
-long header_types_to_undo_op(long header_types);
-
-
-/**    Get the inverse undo operation (e.g. from #k_UNDO_OP_ADD_MEASURE to #k_UNDO_OP_DELETE_MEASURE)
-    @ingroup                undo
-    @param    undo_operation    The given undo operation
-    @return                    The inverse undo operation
-    @remark                    This only works with adding/deleting operations on chords, measures, voices, markers.
- */
-long reverse_undo_op(long undo_operation);
-
-
-/**    Make an undo operation plural (e.g. from #k_UNDO_OP_CHANGE_MEASURE to #k_UNDO_OP_CHANGE_MEASURES)
-    @ingroup                undo
-    @param    undo_operation    The given undo operation
-    @return                    The plural undo operation
- */
-long make_undo_op_plural_for_undo(long undo_operation);
-
-
-/**    Post on the max window (verbosely) a given undo/redo tick. 
-    @ingroup                undo
-    @param    r_ob            The notation object
-    @param    what            One of the #e_undo_redo specifying if it is a #k_UNDO or a #k_REDO tick.
-    @param    info            The tick as a pointer to a #t_undo_redo_information structure.
- */
-void post_undo_redo_tick(t_notation_obj *r_ob, long what, t_undo_redo_information *info);
-
-
-/**    Prune the last undo step, by merging its undo ticks (undo information) into the previous undo step.
-    @ingroup                undo
-    @param    r_ob            The notation object
-    @param    lock_undo_mutex    Flag telling if the function has also to lock/unlock the #c_undo_mutex mutex of the #t_notation_obj.
- */
-void prune_last_undo_step(t_notation_obj *r_ob, char lock_undo_mutex);
-
-
-/**    Tell if a given notation item is under undo tick.
-    @ingroup                undo
-    @param    r_ob            The notation object
-    @param    item            The notation item
-    @return                 1 if the notation item is under undo tick, 0 otherwise
- */
-char notation_item_is_under_undo_tick(t_notation_obj *r_ob, t_notation_item *item);
-
-
-/**    Given a notation item, retrieve the corresponding element in the undo tick list (if any), or NULL if none.
-    @ingroup                undo
-    @param    r_ob            The notation object
-    @param    item            The notation item
-    @return                 The llllelem containing the item in the items under undo tick llll, or NULL if none
- */
-t_llllelem *notation_item_to_undo_tick(t_notation_obj *r_ob, t_notation_item *item);
+void handle_change_if_there_are_dangling_undo_ticks(t_notation_obj *r_ob, int change_type, e_undo_operations undo_op);
 
 
 
@@ -15922,7 +15793,7 @@ t_timesignature popup_menu_result_to_timesignature(t_notation_obj *r_ob, long re
     @param        note        The clicked note
     @param        modifiers    The key modifiers
     @param      clipboard_type  The current clipboard element type
-    @return                    One of the #e_actions_upon_change, determining the action to be passed to handle_change() or handle_change_if_there_are_free_undo_ticks(), or
+    @return                    One of the #e_actions_upon_change, determining the action to be passed to handle_change() or handle_change_if_there_are_dangling_undo_ticks(), or
                             the chosen item ID (only in case this is 473, 474, 475, and from 600 to 605), which are values linked
                             with object-specific actions, and thus need to be passed to the specific objects.
                             Specifically, these values correspond to:
@@ -15946,27 +15817,27 @@ t_timesignature popup_menu_result_to_timesignature(t_notation_obj *r_ob, long re
         res = k_CHANGED_DO_NOTHING; // undo ticks, undo markers and bang already done in roll_legato
      } else if (res == 600){
         rebeam_levels_of_selected_tree_nodes(x, false);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_KEEPING_EXISTING_TUPLETS);
      } else if (res == 601){
         fix_levels_of_selected_tree_nodes_as_original(x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_STICK_RHYTHMIC_TREE);
      } else if (res == 602){
         destroy_selected_tree_nodes(x, true, true, true);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE);
      } else if (res == 603){
         create_level_for_selected_tree_nodes(x);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_RHYTHMIC_TREE_LEVEL);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_RHYTHMIC_TREE_LEVEL);
      } else if (res == 604){
         splatter_selected_tree_nodes(x, true, true, true);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_LEVEL);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DESTROY_RHYTHMIC_TREE_LEVEL);
      } else if (res == 605){
         rebeam_levels_of_selected_tree_nodes(x, true);
-        handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS);
+        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS);
      } else if (res != k_CHANGED_DO_NOTHING)
         handle_change((t_notation_obj *)x, res, 0);
  @endcode
  @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_element_types clipboard_type = k_NONE);
 
@@ -15982,7 +15853,7 @@ long handle_durationline_popup(t_notation_obj *r_ob, t_duration_line *dl, long m
     @param        r_ob        The notation object
     @param        measure        The clicked measure
     @param        modifiers    The key modifiers
-    @return                    One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or to handle_change_if_there_are_free_undo_ticks(), or 
+    @return                    One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or to handle_change_if_there_are_dangling_undo_ticks(), or 
                             the chosen item ID (only in case this from 600 to 605), which are values linked
                             with object-specific actions, and thus need to be passed to the specific objects.
                             Specifically, these values correspond to:
@@ -15994,7 +15865,7 @@ long handle_durationline_popup(t_notation_obj *r_ob, t_duration_line *dl, long m
                             - 604: Destroy Level (in Rhythmic Tree, [bach.score] only)
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifiers);
 
@@ -16006,10 +15877,10 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
     @param        r_ob        The notation object
     @param        measure        The measure whose right barline has been clicked
     @param        modifiers    The key modifiers
-    @return                    One of the #e_actions_upon_change, determining the action to be passed to handle_change() or to handle_change_if_there_are_free_undo_ticks().
+    @return                    One of the #e_actions_upon_change, determining the action to be passed to handle_change() or to handle_change_if_there_are_dangling_undo_ticks().
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifiers);
 
@@ -16024,7 +15895,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
     @param        modifiers        The key modifiers
     @param        chosenelement    Pointer to an integer to be filled with the chosen element ID, actually meaningful only when
                                 k_CHANGED_DO_NOTHING is returned, in order to perform object-specific operations
-    @return                        One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_free_undo_ticks().
+    @return                        One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_dangling_undo_ticks().
     @see        handle_note_popup()
     @remark        Sample code should be like this:
                 @code
@@ -16039,7 +15910,7 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                     if (chosenclef != k_CLEF_WRONG) {
                         t_atom av[CONST_MAX_VOICES];
                         long i; t_scorevoice *tmpvoice;
-                        create_header_undo_tick((t_notation_obj *)x, k_HEADER_CLEFS);
+                        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_CLEFS);
                         for (i = 0, tmpvoice = x->firstvoice; i < x->r_ob.num_voices && tmpvoice; i++, tmpvoice = tmpvoice->next) {
                             if (tmpvoice == voice)
                                 atom_setsym(av+i, clef_number_to_clef_symbol((t_notation_obj *) x, chosenclef));
@@ -16047,15 +15918,14 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                                 atom_setsym(av+i, x->r_ob.clefs_as_symlist[i]);
                         }
                         score_setattr_clefs(x, NULL, x->r_ob.num_voices, av);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Clefs"));
-                    } 
+                    }
                     
                     // keys?
                     chosenkeysym = popup_menu_result_to_keysymbol((t_notation_obj *) x, chosenelem);
                     if (chosenkeysym) {
                         t_atom av[CONST_MAX_VOICES];
                         long i; t_scorevoice *tmpvoice;
-                        create_header_undo_tick((t_notation_obj *)x, k_HEADER_KEYS);
+                        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_KEYS);
                         for (i = 0, tmpvoice = x->firstvoice; i < x->r_ob.num_voices && tmpvoice; i++, tmpvoice = tmpvoice->next) {
                             if (tmpvoice == voice)
                                 atom_setsym(av+i, chosenkeysym);
@@ -16063,19 +15933,18 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                                 atom_setsym(av+i, x->r_ob.keys_as_symlist[i]);
                         }
                         score_setattr_keys(x, NULL, x->r_ob.num_voices, av);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Keys"));
                     }
                     
                     // midichannels?
                     if (chosenelem > 150 && chosenelem <= 166){
-                        create_header_undo_tick((t_notation_obj *)x, k_HEADER_MIDICHANNELS);
+                        undo_tick_create_for_header((t_notation_obj *)x, k_HEADER_MIDICHANNELS);
                         change_single_midichannel((t_notation_obj *) x, (t_voice *)voice, chosenelem - 150);
-                        handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Midichannels"));
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, gensym("Change Midichannels"));
                     } 
                 }
                 @endcode
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_voice_popup(t_notation_obj *r_ob, t_voice *voice, long modifiers, int *chosenelement);
 
@@ -16087,10 +15956,10 @@ long handle_voice_popup(t_notation_obj *r_ob, t_voice *voice, long modifiers, in
     @param        r_ob        The notation object
     @param        modifiers    The key modifiers
     @param      clipboard_type  The current clipboard element type
-    @return                    One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_free_undo_ticks().
+    @return                    One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_dangling_undo_ticks().
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_background_popup(t_notation_obj *r_ob, long modifiers, e_element_types clipboard_type = k_NONE);
 
@@ -16103,10 +15972,10 @@ long handle_background_popup(t_notation_obj *r_ob, long modifiers, e_element_typ
     @param        modifiers        The key modifiers
     @param        clicked_item    The slotitem in the window which was clicked (for slots of type #k_SLOT_TYPE_DYNFILTER)
                                 Leave it NULL for trivial (for #k_SLOT_TYPE_FILTER).
-    @return                        One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_free_undo_ticks().
+    @return                        One of the #e_actions_upon_change, determining the action to be passed to changed_bang() or handle_change_if_there_are_dangling_undo_ticks().
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_filters_popup(t_notation_obj *r_ob, long modifiers, t_slotitem *clicked_item);
 
@@ -16121,7 +15990,7 @@ long handle_filters_popup(t_notation_obj *r_ob, long modifiers, t_slotitem *clic
     @param        modifiers        The key modifiers
     @see        handle_note_popup()
     @see        handle_change()
-    @see        handle_change_if_there_are_free_undo_ticks()
+    @see        handle_change_if_there_are_dangling_undo_ticks()
  */
 long handle_articulations_popup(t_notation_obj *r_ob, t_articulation *art, long modifiers);
 
@@ -17553,6 +17422,14 @@ void notation_class_add_notation_attributes(t_class *c, char obj_type);
 void notation_class_add_behavior_attributes(t_class *c, char obj_type);
 
 
+/** Add to a class all the common attributes concerning notifications.
+ @ingroup    attributes
+ @param        c            The class
+ @param        obj_type    The object type (one of the #e_notation_objects)
+ */
+void notation_class_add_notification_attributes(t_class *c, char obj_type);
+
+
 /** Add to a class all the common attributes concerning object editing.
     @ingroup    attributes
     @param        c            The class
@@ -17617,173 +17494,79 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type);
 /** \addtogroup attributes 
  *  @{
  */
-t_max_err notation_obj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknotecolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadfonttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadadjusttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linknoteheadsizetoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkannotationtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showmeasurenumbers(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_backgroundslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_popupmenuslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_rightclickdirectlypopsoutslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long *must_recompute_all);
-t_max_err notation_obj_set_keys(t_notation_obj *r_ob, t_symbol **keys);
-t_max_err notation_obj_set_hidevoices(t_notation_obj *r_ob, char *hide);
-t_max_err notation_obj_set_voicespacing(t_notation_obj *r_ob, long ac, double *value);
-t_max_err notation_obj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notation_obj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
-t_max_err notation_obj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
-t_max_err notation_obj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
-t_max_err notation_obj_set_parts(t_notation_obj *r_ob, long *part);
-t_max_err notation_obj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_annotation_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknotecolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadfonttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadadjusttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linknoteheadsizetoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkannotationtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showmeasurenumbers(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_backgroundslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_popupmenuslots(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_rightclickdirectlypopsoutslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long *must_recompute_all);
+t_max_err notationobj_set_keys(t_notation_obj *r_ob, t_symbol **keys);
+t_max_err notationobj_set_hidevoices(t_notation_obj *r_ob, char *hide);
+t_max_err notationobj_set_voicespacing(t_notation_obj *r_ob, long ac, double *value);
+t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
+t_max_err notationobj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
+t_max_err notationobj_set_parts_from_llll(t_notation_obj *r_ob, t_llll *ll);
+t_max_err notationobj_set_parts(t_notation_obj *r_ob, long *part);
+t_max_err notationobj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 
 // GETTERS
 
-t_max_err notation_obj_getattr_voicenames(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
-t_max_err notation_obj_getattr_stafflines(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
-t_max_err notation_obj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av);
+t_max_err notationobj_getattr_voicenames(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
+t_max_err notationobj_getattr_stafflines(t_notation_obj *x, t_object *attrname, long *ac, t_atom **av);
+t_max_err notationobj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av);
 /** @}*/
 
-
-// -----------------------------------
-// MARKERS
-// -----------------------------------
-
-/** Build a new marker. This function allocate the memory and set fields to the correct values (depending from the arguments)
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The name(s) of the marker (as llll)
-    @param    ms        The position in milliseconds of the marker
-    @param    tp        The timepoint of the marker (only makes sense with [bach.score])
-    @param    attach_to    One of the #e_marker_attach, deciding to what the marker should be attached. By default, it should be #k_MARKER_ATTACH_TO_MS.
-    @param    role        One of the #e_marker_roles, possibly specifying the special role of the marker
-    @param    content        If the role is NOT #k_MARKER_ROLE_NONE, this is the content associated with the marker role (e.g. tempo or time signature). See the <content> field of the #t_marker structure.
-    @return            The newly built marker
- */
-t_marker *build_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoint tp, char attach_to, e_marker_roles role, t_llll *content);
-
-
-/** Clear all the markers in the score
-    @ingroup        markers
-    @param    r_ob    The notation object
- */
-void clear_all_markers(t_notation_obj *r_ob);
-
-
-/** Properly insert an already built marker in the score.
-    Markers are always kept ordered by the <position_ms> field. If you need to check ordering, use check_markers_order()
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    marker    The marker to insert
-    @param    force_ID    If this is > 0, it'll be the ID that the marker will be forced to have.
- */
-void insert_marker(t_notation_obj *r_ob, t_marker *marker, unsigned long force_ID);
-
-
-/** Convenience wrapper for build_marker and insert_marker. Builds and insert a marker inside the score.
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The name(s) of the marker (as llll)
-    @param    ms        The position in milliseconds of the marker
-    @param    tp        The timepoint of the marker (only makes sense with [bach.score])
-    @param    attach_to    One of the #e_marker_attach, deciding to what the marker should be attached. By default, it should be #k_MARKER_ATTACH_TO_MS.
-    @param    role        One of the #e_marker_roles, possibly specifying the special role of the marker
-    @param    content        If the role is NOT #k_MARKER_ROLE_NONE, this is the content associated with the marker role (e.g. tempo or time signature). See the <content> field of the #t_marker structure.
-    @param    force_ID    If this is > 0, it'll be the ID that the marker will be forced to have.
-    @return            The newly built marker
- */
-t_marker *add_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoint tp, char attach_to, e_marker_roles role, t_llll *content, unsigned long force_ID);
-
-
-/** Verify if the ordering of the markers is correct, with respect to the ascending <position_ms> fields.
-    If not, corrects the ordering.
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @return            1 if something has changed, 0 otherwise
- */
-char check_markers_order(t_notation_obj *r_ob);
-
-
-/** Delete a marker from the score (and properly free its memory).
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    marker    The marker to delete
- */
-void delete_marker(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Search for a marker having a given name (among its possible multiple names), and delete it from the score (and properly free its memory).
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The llll of names to be matched for the marker to delete
-    @remark            Only the first occurrence of the name is searched and deleted!
-    @return            1 if something has been deleted, 0 otherwise.
- */
-char delete_marker_by_name(t_notation_obj *r_ob, t_llll *names);
-
-
-/** Find the first marker having a set of given names (among its possible names)
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The llll of names to be matched for the marker
-    @return            The first marker having <name> as name; NULL if none.
- */
-t_marker *markername2marker(t_notation_obj *r_ob, t_llll *names);
-
-
-/** Select all the markers
-    @ingroup        markers
-    @ingroup        selection
-    @param    r_ob    The notation object
-    @param mode      The selection mode (one of the #e_selection_modes)
-    @param only_this_marker_role    One of the e_marker_roles, or -1 if ALL markers should be selected
- */
-void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode, long only_this_marker_role);
 
 
 /** Select all the voices
@@ -17841,209 +17624,6 @@ void select_all_measures(t_notation_obj *r_ob, e_selection_modes mode);
     @param voice_number     The voice number, or set a negative number (e.g. -1) for all voices.
  */
 char delete_all_breakpoints(t_notation_obj *r_ob, long voice_number);
-
-
-/** Change a marker name (and recompute also the <name_uwidth> flag accordingly).
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
-    @param    new_names    The new marker's name as an llll
-    @see                recalculate_marker_name_uwidth()
-    @return                1 if the new name is different from the old one, 0 otherwise
- */
-long change_marker_names(t_notation_obj *r_ob, t_marker *marker, t_llll *new_names);
-
-
-/** Properly fill the <name_uwidth> field of a marker, contaning the unscaled width of the marker name label
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
- */
-void recalculate_marker_name_uwidth(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Change a marker position in milliseconds.
-    @ingroup                    markers
-    @param    r_ob                The notation object
-    @param    marker                The marker
-    @param    new_ms                The new marker's position in ms
-    @param    delta_mode            If this is 1, the <new_ms> value will be added to the marker's milliseconds. Otherwise they'll be replaced.
-    @param    also_check_sorting    If this is 1, also the algorithm checks the correct ordering of all markers, increasing with respect to the <position_ms> field.
- */
-void change_marker_ms(t_notation_obj *r_ob, t_marker *marker, double new_ms, char delta_mode, char also_check_sorting);
-
-
-/** Change a marker role.
-    @ingroup                    markers
-    @param    r_ob                The notation object
-    @param    marker                The marker
-    @param    new_role            The new marker's role, as one of the #e_marker_roles
- */
-void change_marker_role(t_notation_obj *r_ob, t_marker *marker, e_marker_roles new_role);
-
-/** Interpret a symbol as a marker role (one of the #e_marker_roles).
-    For gensym("timesig") is interpreted as #k_MARKER_ROLE_TIME_SIGNATURE.
-    @ingroup            markers
-    @param    s            The symbol
-    @return                The element of #e_marker_roles corresponding to the symbol
- */
-e_marker_roles sym_to_marker_role(t_symbol *s);
-
-
-/** Convert a marker role into a symbol. 
-    For instance #k_MARKER_ROLE_TIME_SIGNATURE is translated into _llllobj_sym_tempo = gensym("timesig").
-    @ingroup            markers
-    @param    marker_role    One of the #e_marker_roles
-    @return                The symbol corresponding to the marker role.
- */
-t_symbol *marker_role_to_sym(e_marker_roles marker_role);
-
-
-/** (Internal) Shifts the selected markers depending on the current mousedown marker
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker_with_mousedown_ux    The ux position of the marker currently having the mousedown
-    @param    magnetic    If non-zero, snaps to the nearest chord
-    @param    delta_ms    If non-NULL, will be filled with the actual movement in milliseconds 
-    @return                1 if something has changed, 0 otherwise
- */
-char move_selected_ms_attached_markers(t_notation_obj *r_ob, double marker_with_mousedown_ux, char magnetic, double *delta_ms);
-
-
-/** Shift the selected markers by an amount (in milliseconds)
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    delta_ms    The amount of the shift (in milliseconds)
-    @param    magnetic    If non-zero, snaps to the nearest chord
-    @return                1 if something has changed, 0 otherwise
- */
-char move_selected_ms_attached_markers_delta(t_notation_obj *r_ob, double delta_ms);
-
-
-/** Find the first incremental numbered unused marker name similar to a given name.
-    For instance, if the given name is "foo", he'll try to search for "foo 1", "foo 2"... up to "foo 100000",
-    and if any of these is NOT used, it returns the corresponding atom array (usually with length 2, unless the introduced 
-    marker name was a long atom, in this case the output length will be 1, since the number will be tried to be incremented).
-    If no incremental free names could be found, the original name be copied. 
-    @ingroup                    markers
-    @param    r_ob                The notation object
-    @param    default_name        The base atom for building the incremental numbered sequence
-    @param    ignore_this_marker    A marker which can be ignored while searching for an unused name.
-                                For instance, when trying to make a given marker's name unique, one can ignore the marker itself. 
-                                Leave it to NULL for standard behavior.
-    @return                        The llll of unused incrementally numbered name found.
-    @remark                        To avoid confusions, you might want to be sure that the <default_name> has no numbers at the end.
-                                If you want to make a name unique, use make_marker_name_unique().
- */
-t_llll *find_unused_marker_names(t_notation_obj *r_ob, t_hatom *default_name, t_marker *ignore_this_marker);
-
-
-/** Make a marker name unique, by changing its numerical suffix.
-    For instance, it might change "foo2" to "foo5", if all "foo2", "foo3" and "foo4" are already taken
-    @ingroup        markers
-    @param    r_ob    The notation object
-    @param    names    The original names
-    @return            The first unused incrementally numered name found as llll.
-    @param    num_found_names        Pointer filled with the number of names found (length of #found_names)
- */
-t_llll *make_marker_name_unique(t_notation_obj *r_ob, t_llll *names);
-
-
-/** Change the name of the selected markers to a new name.
-    @ingroup            selection_changes
-    @param    r_ob        The notation object
-    @param    new_names    The new marker names as llll
-    @param    incremental    If this is 1, every name will be made unique by incrementing its numerical suffix
-    @return                1 if something has changed, 0 otherwise.
- */
-char change_selected_markers_name(t_notation_obj *r_ob, t_llll *new_names, char incremental);
-
-
-/** Get the unscaled x position of the marker.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker      The marker
-    @return                The unscaled x position of the marker
- */
-double get_marker_ux_position(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Get the marker onset in milliseconds.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker      The marker
-    @return                The marker onset in milliseconds
- */
-double get_marker_ms_position(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Obtain all the markers as an llll containing (<position_ms> <name>) for each marker.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    mode        If this is 1, the algorithm only returns the markers within a given "temporal window" (specified by the following paramters)
-                        If this is 0, all the markers are given.
-    @param    start_ms    If <mode> = 1, this is the starting position of the window in milliseconds (otherwise ignored)
-    @param    end_ms        If <mode> = 1, this is the ending position of the window in milliseconds (otherwise ignored)
-    @param    namefirst    If this is non-zero, the llll for each marker will be (<name> <position_ms>) 
-    @param    for_what    This should be usually one of #k_CONSIDER_FOR_DUMPING, #k_CONSIDER_FOR_SUBDUMPING, #k_CONSIDER_FOR_UNDO or #k_CONSIDER_FOR_SCORE2ROLL.
-    @param    start_meas_num    If <for_what> is #k_CONSIDER_FOR_SUBDUMPING and <r_ob> is a bach.score, this is the starting measure number for clipping (so that the dumped
-                            information will be with respect to this measure as the starting one).
-    @return                The markers' positions and names as llll.
-    @see                get_single_marker_as_llll()
- */
-t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms, char namefirst, char for_what, long start_meas_num);
-
-
-/** Get an llll containing the information about a specific marker (or about all the markers)
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker whose information has to be got, or NULL if you need the information about all markers
-    @param    command_number    Command number, if any (if no command is to be sent, use -1)
-    @param    namefirst    If this is 1, the usual (<position_ms> <name>) coupling is reversed for each marker, and becomes (<name> <position_ms>).
-                        If this is 0, the syntax is the usual (<position_ms> <name>).
-    @return                A list containing the information about a single marker or all markers.
-    @remark                Differntly from get_markers_as_llll(), the information we get can have names first and can concern a single marker
-                        (but cannot concern a temporal window).
-    @see                get_markers_as_llll()
- */
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, long command_number, char namefirst);
-
-
-/** Set all markers of a given notation objet from a list of markers in the usual syntax (<position_ms> <name>) (<position_ms> <name>) ...
-    @ingroup            markers
-    @remark                Beware: this function does NOT free the markers llll, but might DELETE some parts of it!!!
-    @param    r_ob        The notation object
-    @param    markers        The llll determining the markers, in the above explained syntax
-    @param    add_mode    If this is 1, the markers will be added to the existing ones, otherwise the existing ones will be removed
-    @param    select      If this is 1, the markers will be added to the current selection
-    @see                get_single_marker_as_llll()
- */
-void set_markers_from_llll(t_notation_obj *r_ob, t_llll* markers, char add_mode, char select);
-
-
-/** Retrieve the timepoint of a measure-attached-marker (for [bach.score]).
-    @remark                Indeed the marker structure only contains the ID of the measure to which it is attached, and the symbolic offset inside the measure,
-                        but it does not contain the precise timepoint.
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
-    @return                The timepoint of the marker
- */
-t_timepoint measure_attached_marker_to_timepoint(t_notation_obj *r_ob, t_marker *marker);
-
-
-/** Change the onset of a marker (and possibly its attachment type) either from a lexpr
-    containing the new milliseconds position or (if this latter is NULL), from a llllelem containing either the milliseconds position, or the new
-    timepoint (measure_number point_in_measure) or (measure_number point_in_measure voice_number) 
-    @remark                Does NOT check the correct markers order, need to do it later via check_markers_order()
-    @ingroup            markers
-    @param    r_ob        The notation object
-    @param    marker        The marker
-    @param    lexpr        The lexpr
-    @param    elem        The llllelem
- */
-void change_marker_onset_from_lexpr_or_llllelem(t_notation_obj *r_ob, t_marker *marker, t_lexpr *lexpr, t_llllelem *elem);
-
 
 
 
@@ -18245,7 +17825,7 @@ void bach_attribute_add_enumindex(t_bach_attribute *attr, long num_items, t_symb
     @ingroup    attributes
     @param    r_ob                The    notation object
  */
-void notation_obj_bach_attribute_declares(t_notation_obj *r_ob);
+void notationobj_bach_attribute_declares(t_notation_obj *r_ob);
 
 
 
@@ -18366,7 +17946,7 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
     @param    attr    The bach attribute
     @param    ac        The number of atoms in the A_GIMME signature
     @param    av        The atoms of the A_GIMME signature
-    @param    force_undo_step    If this is non-zero, the function handle_change_if_there_are_free_undo_ticks() is called in order to set the undo marker.
+    @param    force_undo_step    If this is non-zero, the function handle_change_if_there_are_dangling_undo_ticks() is called in order to set the undo marker.
                             This is usually set to 1 (we put the undo marker).
  */
 void set_bach_attr_and_process_from_ac_av(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr, long ac, t_atom *av, char force_undo_step);
@@ -18782,6 +18362,29 @@ void unlock_general_mutex(t_notation_obj *r_ob);
 long trylock_general_mutex(t_notation_obj *r_ob);
 
 
+/** Lock the notation object's undo mutex, corresponding to the field t_notation_obj::c_undo_mutex.
+    @ingroup    miscellanea
+    @param        r_ob            The notation object
+ */
+void lock_undo_mutex(t_notation_obj *r_ob);
+
+
+/** Unlock the notation object's undo mutex, corresponding to the field t_notation_obj::c_undo_mutex.
+    @ingroup    miscellanea
+    @param        r_ob            The notation object
+ */
+void unlock_undo_mutex(t_notation_obj *r_ob);
+
+
+/** Try to lock the notation object's undo mutex, corresponding to the field t_notation_obj::c_undo_mutex
+    Returns non-zero if cannot enter the code
+    @ingroup    miscellanea
+    @param        r_ob            The notation object
+    @return            Returns non-zero if there was a problem entering.
+ */
+long trylock_undo_mutex(t_notation_obj *r_ob);
+
+
 // Internal
 void lock_deparse_mutex(t_notation_obj *r_ob);
 void unlock_deparse_mutex(t_notation_obj *r_ob);
@@ -18837,12 +18440,12 @@ long notationobj_throw_issue(t_notation_obj *r_ob);
     @param        fn                    The function to be applied to each notation item (it might want to treat differently different types of notation items). 
                                     This function can change the notation items' parameters, but is NOT allowed to delete notation items.
     @param        data                Additional data to be passed to the function
-    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_CHANGE ticks.
+    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_TYPE_CHANGE ticks.
                                     So one is not allowed to delete structures.
     @param        smallest_undoable_element    Smallest element whose content will be stored in the undo tick. This is only used if #create_undo_ticks is non-zero.
     @return        1 if something has changed, 0 otherwise
  */
-char iterate_changes_on_selection(t_notation_obj *r_ob, notation_obj_notation_item_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem);
+char iterate_changes_on_selection(t_notation_obj *r_ob, notationobj_notation_item_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem);
 
 
 /** Apply the #fn function on all selected notes.
@@ -18851,12 +18454,12 @@ char iterate_changes_on_selection(t_notation_obj *r_ob, notation_obj_notation_it
     @param        fn                    The function to be applied to each note. 
                                     This function can change the note's parameters, but is NOT allowed to delete the note.
     @param        data                Additional data to be passed to the function
-    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_CHANGE ticks.
+    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_TYPE_CHANGE ticks.
                                     So one is not allowed to delete structures.
     @param        smallest_undoable_element    Smallest element whose content will be stored in the undo tick. This is only used if #create_undo_ticks is non-zero.
     @return        1 if something has changed, 0 otherwise
 */
-char iterate_notewise_changes_on_selection(t_notation_obj *r_ob, notation_obj_note_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem, char also_apply_on_notetails);
+char iterate_notewise_changes_on_selection(t_notation_obj *r_ob, notationobj_note_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem, char also_apply_on_notetails);
 
 
 /** Apply the #fn function on all selected chords. 
@@ -18866,7 +18469,7 @@ char iterate_notewise_changes_on_selection(t_notation_obj *r_ob, notation_obj_no
     @param        fn                    The function to be applied to each note. 
                                     This function can change the chord's parameters, but is NOT allowed to delete the note.
     @param        data                Additional data to be passed to the function
-    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_CHANGE ticks.
+    @param        create_undo_ticks    If non-0 also creates undo modification ticks. We stress that those ticks are k_UNDO_MODIFICATION_TYPE_CHANGE ticks.
                                     So one is not allowed to delete structures.
     @param        smallest_undoable_element    Smallest element whose content will be stored in the undo tick. This is only used if #create_undo_ticks is non-zero.
     @param        also_apply_if_single_note_selected    If this is non-zero, the function will be applied also if only a note of the chord is selected, and not the chord itself.
@@ -18874,7 +18477,7 @@ char iterate_notewise_changes_on_selection(t_notation_obj *r_ob, notation_obj_no
                                                     so you cannot trust the value of this flag before and after calling this function.)
     @return        1 if something has changed, 0 otherwise
  */
-char iterate_chordwise_changes_on_selection(t_notation_obj *r_ob, notation_obj_chord_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem, char also_apply_if_single_note_selected); 
+char iterate_chordwise_changes_on_selection(t_notation_obj *r_ob, notationobj_chord_fn fn, void *data, char create_undo_ticks, e_element_types smallest_undoable_elem, char also_apply_if_single_note_selected); 
 
 
 
@@ -18981,6 +18584,7 @@ void notation_item_find_and_set_names(t_notation_obj *r_ob, t_notation_item *it,
 
 // TBD
 void notation_item_find_and_set_flags(t_notation_obj *r_ob, t_notation_item *it, t_llll *llll);
+void chord_find_and_set_temporary_slurs(t_notation_obj *r_ob, t_chord *ch, t_llll *llll);
 
 
 /** Find the name specification from an llll (if any), which might (or might not) contain a sub-llll in the (name <name1> <name2>...) or 
@@ -19110,7 +18714,7 @@ t_llllelem *llll_append_notation_item_name(t_llll *ll, t_notation_item *it);
     @param    argc    The number of atoms of the A_GIMME signature
     @param    argv    The array of atoms of the A_GIMME signature
  */
-void notation_obj_name(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_name(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 /** General method to clear names of all selected items. GIMME signature is ignored.
@@ -19120,7 +18724,7 @@ void notation_obj_name(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *arg
     @param    argc    The number of atoms of the A_GIMME signature
     @param    argv    The array of atoms of the A_GIMME signature
  */
-void notation_obj_clearnames(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_clearnames(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 /** General method to append names to the selection of a notation object from a generic A_GIMME signature.
@@ -19131,13 +18735,13 @@ void notation_obj_clearnames(t_notation_obj *r_ob, t_symbol *s, long argc, t_ato
     @param    argc    The number of atoms of the A_GIMME signature
     @param    argv    The array of atoms of the A_GIMME signature
  */
-void notation_obj_nameappend(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_nameappend(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 // TBD
-void notation_obj_nametoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
-void notation_obj_slottoname(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
-void notation_obj_dltoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_nametoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_slottoname(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_dltoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 /** Clear the names of all notation items in the score
     @ingroup        names
@@ -19148,18 +18752,7 @@ void notation_obj_dltoslot(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom 
     @param    notes    If non-zero, clears all note names
     @param    markers    If non-zero, clears all marker names
  */
-void notation_obj_clear_names(t_notation_obj *r_ob, long voices, long measures, long chords, long notes, long markers);
-
-
-/** General method to change roles to the selection of a notation object from a generic A_GIMME signature.
-    This method parses the input A_GIMME signature and then properly calls change_selection_role().
-    @ingroup        names
-    @param    r_ob    The notation object
-    @param    s        The router symbol in the A_GIMME signature
-    @param    argc    The number of atoms of the A_GIMME signature
-    @param    argv    The array of atoms of the A_GIMME signature
- */
-void notation_obj_role(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+void notationobj_clear_names(t_notation_obj *r_ob, long voices, long measures, long chords, long notes, long markers);
 
 
 /** Parse and fill the t_notation_obj::m_label structure properly.
@@ -19334,6 +18927,8 @@ double notationobj_rescale_with_slope_and_get_derivative(t_notation_obj *r_ob, d
 double notationobj_rescale_with_slope_inv(t_notation_obj *r_ob, double value, double min, double max, double new_min, double new_max, double slope);
 
 
+void send_focus(t_notation_obj *r_ob, long outlet, t_symbol *label);
+
 
 // internal
 t_hatom *lexpr_eval_for_notation_item(t_notation_obj *r_ob, t_notation_item *it, t_lexpr *lexpr);
@@ -19353,19 +18948,21 @@ void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double heig
 t_chord *chord_get_first(t_notation_obj *r_ob, t_voice *voice);
 t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice);
 t_chord *chord_get_first_nongrace(t_notation_obj *r_ob, t_measure *meas);
+t_note *note_get_nearest(t_notation_obj *r_ob, double xpos, double ypos, long num_voice); // leave num_voice < 0 for auto find
+t_measure *measure_from_ux(t_notation_obj *r_ob, long num_voice, double ux, char always_return_something);
 
 t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms);
 t_llll *notationobj_get_interp_tempo(t_notation_obj *r_ob, t_timepoint tp);
 t_llll *notationobj_get_interp_timesig(t_notation_obj *r_ob, t_timepoint tp);
 t_llll *notationobj_get_sampling(t_notation_obj *r_ob, long num_points);
 t_llll *notationobj_get_sampling_ms(t_notation_obj *r_ob, double delta_ms);
-void notation_obj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);
-void notation_obj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);
-void notation_obj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long paste_to_this_slot, char also_paste_to_rests = true);
-void notation_obj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, t_clipboard *clipboard, char delete_intermediate_points);
+void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);
+void notationobj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut);
+void notationobj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long paste_to_this_slot, char also_paste_to_rests = true);
+void notationobj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, t_clipboard *clipboard, char delete_intermediate_points);
 
-void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut);
-void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard);
+void notationobj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut);
+void notationobj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard);
 
 void notationobj_parse_play_arguments(t_notation_obj *r_ob, long argc, t_atom *argv, char *selection, char *offline, char *preschedule, char *deferlow);
 

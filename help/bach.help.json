@@ -1593,6 +1593,20 @@
 				"tags" : [ "appearance", "domain", "screen", "portion", "fade", "transparency", "faded", "fadedomain", "graphic" ],
 				"title" : [ "Fade domain" ]
 			},
+			"B_focus" : {
+				"filename" : [ "bach.help.notation.appearance.39b_focus.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [  ],
+				"tags" : [ "appearance", "focus", "showfocus", "border", "size", "focusbordersize", "getfocus", "get", "query" ],
+				"title" : [ "Focus" ]
+			},
+			"C_border" : {
+				"filename" : [ "bach.help.notation.appearance.39c_border.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [  ],
+				"tags" : [ "appearance", "border", "bordersize", "focusbordersize", "color", "size", "bordercolor" ],
+				"title" : [ "Border" ]
+			},
 			"Slots" : {
 				"Backgroundslots" : {
 					"filename" : [ "bach.help.notation.appearance.40_slots.01_backgroundslots.maxpat" ],
@@ -2008,7 +2022,7 @@
 				"filename" : [ "bach.help.notation.editing.00b_changedbang.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 				"seealso" : [ "edit", "notification" ],
-				"tags" : [ "editing", "edit", "interface", "mouse", "keyboard", "change", "`bang", "undo", "undobang", "continuousbang", "continuously", "output", "changed", "modify", "notification", "notify" ],
+				"tags" : [ "editing", "edit", "interface", "mouse", "keyboard", "change", "`bang", "undo", "undobang", "continuousbang", "continuously", "output", "changed", "modify", "notification", "notify", "notifycontinuously", "notifywith" ],
 				"title" : [ "Editing notification" ]
 			},
 			"Addchordroll" : {
@@ -2607,6 +2621,13 @@
 					"title" : [ "Copy slotinfo" ]
 				}
 			},
+			"Slurs" : {
+				"filename" : [ "bach.help.notation.editing.42_slurs.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slur" ],
+				"tags" : [ "editing", "edit", "interface", "slur", "flip", "reverse", "up", "down" ],
+				"title" : [ "Slurs interface" ]
+			},
 			"Lyrics" : {
 				"filename" : [ "bach.help.notation.editing.45_lyrics.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -2804,6 +2825,34 @@
 				"seealso" : [ "query", "marker+role", "marker+content" ],
 				"tags" : [ "marker", "getmarker", "namefirst", "query", "retrieve", "search" ],
 				"title" : [ "Querying markers" ]
+			},
+			"Regions" : {
+				"filename" : [ "bach.help.notation.markers.30_regions.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "region" ],
+				"tags" : [ "marker", "region", "duration", "select", "selection" ],
+				"title" : [ "Markers and regions" ]
+			},
+			"Regionsyntax" : {
+				"filename" : [ "bach.help.notation.markers.31_regionsyntax.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "marker", "region" ],
+				"tags" : [ "marker", "region", "syntax", "tillnext" ],
+				"title" : [ "Region syntax" ]
+			},
+			"Regionsubroll" : {
+				"filename" : [ "bach.help.notation.markers.32_regionsubroll.maxpat" ],
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ "marker", "region", "subroll" ],
+				"tags" : [ "marker", "region", "output", "subroll", "dump", "single" ],
+				"title" : [ "Outputting single region via subroll" ]
+			},
+			"Regioninterface" : {
+				"filename" : [ "bach.help.notation.markers.35_regioninterface.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "marker", "region" ],
+				"tags" : [ "marker", "region", "interface", "duration" ],
+				"title" : [ "Region interface" ]
 			}
 		},
 		"Messages" : {
@@ -3751,7 +3800,7 @@
 			"Subroll" : {
 				"filename" : [ "bach.help.notation.messages.40_subroll.maxpat" ],
 				"objects" : [ "bach.roll" ],
-				"seealso" : [ "subroll+option" ],
+				"seealso" : [ "subroll+option", "marker+region" ],
 				"tags" : [ "message", "subroll", "extract", "portion", "roll", "dump", "voice", "single" ],
 				"title" : [ "Extract a portion of a bach.roll" ]
 			},
@@ -4465,6 +4514,13 @@
 				"seealso" : [ "jitmatrix" ],
 				"tags" : [ "query", "queries", "notify", "notification", "paint", "display", "refresh", "redraw", "draw", "jitter", "jit", "matrix", "mirror", "display", "notifypaint" ],
 				"title" : [ "Notify when display refreshes" ]
+			},
+			"Detailednotifications" : {
+				"filename" : [ "bach.help.notation.queries and notifications.50_detailednotifications.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "notify" ],
+				"tags" : [ "query", "queries", "notify", "notification", "verbose", "notifywith", "transaction", "undo", "redo" ],
+				"title" : [ "Detailed notifications" ]
 			}
 		},
 		"Rhythm and beams" : {
@@ -5494,6 +5550,29 @@
 				}
 			}
 		},
+		"Slurs" : {
+			"Intro" : {
+				"filename" : [ "bach.help.notation.slurs.01_intro.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "path" ],
+				"tags" : [ "slur", "clearslurs", "addslur", "selection", "add", "create", "insert" ],
+				"title" : [ "Slurs in bach" ]
+			},
+			"Direction" : {
+				"filename" : [ "bach.help.notation.slurs.04_direction.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slur+interface" ],
+				"tags" : [ "slur", "clearslurs", "addslur", "selection", "flip", "direction", "slur" ],
+				"title" : [ "Slur direction" ]
+			},
+			"Region" : {
+				"filename" : [ "bach.help.notation.slurs.10_region.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "sel", "unsel", "region" ],
+				"tags" : [ "slur", "select", "sel", "unsel", "select", "under", "across", "underpin", "region" ],
+				"title" : [ "Selecting chords under slurs" ]
+			}
+		},
 		"Syntax" : {
 			"Intro" : {
 				"filename" : [ "bach.help.notation.syntax.01_intro.maxpat" ],
@@ -5735,14 +5814,14 @@
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.04_rollchords.maxpat" ],
 					"objects" : [ "bach.roll" ],
 					"seealso" : [ "gathered+syntax", "gathered+syntax+note", "onset" ],
-					"tags" : [ "gathered", "syntax", "chord", "roll" ],
+					"tags" : [ "gathered", "syntax", "chord" ],
 					"title" : [ "Gathered syntax for chords in bach.roll" ]
 				},
 				"Scorechords" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.05_scorechords.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "gathered+syntax", "syntax+flag", "gathered+syntax+note", "duration" ],
-					"tags" : [ "gathered", "syntax", "chord", "score" ],
+					"tags" : [ "gathered", "syntax", "chord" ],
 					"title" : [ "Gathered syntax for chords in bach.score" ]
 				},
 				"Scorerests" : {
@@ -5828,6 +5907,13 @@
 					"seealso" : [ "lock", "mute", "solo", "lock+rhythmic+tree" ],
 					"tags" : [ "gathered", "syntax", "flag", "notation", "item", "lock", "mute", "solo", "rhythmic", "tree" ],
 					"title" : [ "Notation item flags" ]
+				},
+				"Slurs" : {
+					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.22_slurs.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "slur" ],
+					"tags" : [ "gathered", "syntax", "slur", "span", "name", "chord", "direction", "up", "down", "flip" ],
+					"title" : [ "Slur syntax" ]
 				},
 				"Extras" : {
 					"filename" : [ "bach.help.notation.syntax.20_gathered syntax.70_extras.maxpat" ],

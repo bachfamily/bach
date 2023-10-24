@@ -20,11 +20,13 @@
 
 #include "notation/notation.h"
 #include "notation/notation_attrs.h"
+#include "notation/notation_undo.h"
+#include "notation/notation_markers.h"
 
-DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, constraint_pitches_when_editing, notation_obj_getattr_pitcheditrange);
-DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, constraint_pitches_when_editing, notation_obj_setattr_pitcheditrange);
-DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, default_noteslots, notation_obj_getattr_defaultnoteslots)
-DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, default_noteslots, notation_obj_setattr_defaultnoteslots);
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_getattr_pitcheditrange);
+DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_setattr_pitcheditrange);
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, default_noteslots, notationobj_getattr_defaultnoteslots)
+DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, default_noteslots, notationobj_setattr_defaultnoteslots);
 
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(midichannels_as_longlist, num_voices)
 DEFINE_NOTATIONOBJ_ATOMPTR_GETTER(prevent_editing_atom, num_prevent_editing_elems)
@@ -570,11 +572,11 @@ t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure
 }
 
 
-void notation_obj_edclose(t_notation_obj *r_ob, char **ht, long size)
+void notationobj_edclose(t_notation_obj *r_ob, char **ht, long size)
 {
     // the editor is closed. Let's replug the slot content!
     if (!r_ob->freeing && ht && r_ob->active_slot_notationitem && r_ob->active_slot_num >= 0) {
-        create_simple_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_CHANGE);
+        undo_tick_create_for_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         t_llll *ll;
         if (r_ob->slotinfo[r_ob->active_slot_num].slot_type == k_SLOT_TYPE_TEXT) {
             ll = llll_get();
@@ -1296,16 +1298,16 @@ void destroy_popup_menus(t_notation_obj *r_ob){
 
 /// COMMON ATTRIBUTES
 
-void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_dictionary *d)
+void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_dictionary *d)
 {
     t_notation_obj *r_ob = (t_notation_obj *)x;
     long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
-    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0;
+    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0;
     t_atom_long dblclicksendsvalues = 0;
     double slotbgalpha = 0, backgroundslotfontsize = 0;
-    t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0;
+    t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0, continuousbang = -1;
     char brand_new_creation = 0;
 
 
@@ -1374,11 +1376,15 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     if ((has_showtempointerpline = dictionary_hasentry(d, gensym("showtempointerpline"))))
         dictionary_getlong(d, gensym("showtempointerpline"), &showtempointerpline);
     
-    
+    if ((has_continuousbang = dictionary_hasentry(d, gensym("continuousbang"))))
+        dictionary_getlong(d, gensym("continuousbang"), &continuousbang);
+    else if ((has_continuousbang = dictionary_hasentry(d, gensym("continuouslyoutputbangifchanged"))))
+        dictionary_getlong(d, gensym("continuouslyoutputbangifchanged"), &continuousbang);
+
     if (num_voices_from_argument > 0) {
         t_atom av;
         atom_setlong(&av, num_voices_from_argument);
-        notation_obj_setattr_numvoices(r_ob, NULL, 1, &av);
+        notationobj_setattr_numvoices(r_ob, NULL, 1, &av);
     }
 
     attr_dictionary_process(x, d);
@@ -1429,6 +1435,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     
     if (has_notificationsformessages)
         object_attr_setchar(x, gensym("notifymessages"), notificationsformessages);
+    
+    if (has_continuousbang)
+        object_attr_setchar(x, gensym("notifycontinuously"), continuousbang);
 
     if (dblclicksendsvalues) {
         r_ob->play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK] = 1;
@@ -1448,22 +1457,23 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
 
 void notation_class_add_notation_attributes(t_class *c, char obj_type){
 
-    // setting default textedit fields attribute invisible
-    // YET MAX 7 DOESN'T LOVE THESE 4 FOLLOWING LINES, SO WE DON' DO THIS FOR THE TIME BEING:
-    //    CLASS_ATTR_INVISIBLE(c, "textcolor", 0);
-    //    CLASS_ATTR_INVISIBLE(c, "fontface", 0);
-    //    CLASS_ATTR_INVISIBLE(c, "fontsize", 0);
-    //    CLASS_ATTR_INVISIBLE(c, "fontname", 0);
-
-    notation_class_add_behavior_attributes(c, obj_type);
-    notation_class_add_edit_attributes(c, obj_type);
-    notation_class_add_showhide_attributes(c, obj_type);
-    notation_class_add_font_attributes(c, obj_type);
-    notation_class_add_settings_attributes(c, obj_type);
-    notation_class_add_slots_attributes(c, obj_type);
-    notation_class_add_play_attributes(c, obj_type);
-    notation_class_add_color_attributes(c, obj_type);
-    notation_class_add_appearance_attributes(c, obj_type);
+// setting default textedit fields attribute invisible
+// YET MAX 7 DOESN'T LOVE THESE 4 FOLLOWING LINES, SO WE DON' DO THIS FOR THE TIME BEING:
+//	CLASS_ATTR_INVISIBLE(c, "textcolor", 0);
+//	CLASS_ATTR_INVISIBLE(c, "fontface", 0);
+//	CLASS_ATTR_INVISIBLE(c, "fontsize", 0);
+//	CLASS_ATTR_INVISIBLE(c, "fontname", 0);
+	
+	notation_class_add_behavior_attributes(c, obj_type);
+    notation_class_add_notification_attributes(c, obj_type);
+	notation_class_add_edit_attributes(c, obj_type);
+	notation_class_add_showhide_attributes(c, obj_type);
+	notation_class_add_font_attributes(c, obj_type);
+	notation_class_add_settings_attributes(c, obj_type);
+	notation_class_add_slots_attributes(c, obj_type);
+	notation_class_add_play_attributes(c, obj_type);
+	notation_class_add_color_attributes(c, obj_type);
+	notation_class_add_appearance_attributes(c, obj_type);
     notation_class_add_pitches_attributes(c, obj_type);
 
     CLASS_STICKY_ATTR(c,"category",0,"Notation");
@@ -1472,7 +1482,7 @@ void notation_class_add_notation_attributes(t_class *c, char obj_type){
     CLASS_ATTR_STYLE_LABEL(c,"showaccidentalspreferences",0,"enumindex","Display Accidentals");
     CLASS_ATTR_ENUMINDEX(c,"showaccidentalspreferences", 0, "Classically Always Altered Notes Altered Notes (No Repetition) Altered Note (No Naturals) Never");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showaccidentalspreferences", 0, "0");
-    CLASS_ATTR_ACCESSORS(c, "showaccidentalspreferences", (method)NULL, (method)notation_obj_setattr_showaccidentalspreferences);
+    CLASS_ATTR_ACCESSORS(c, "showaccidentalspreferences", (method)NULL, (method)notationobj_setattr_showaccidentalspreferences);
     // @description Handles the display of accidentals: <br />
     // - Classically (default): for <o>bach.score</o>: accidentals are displayed classically, i.e. on the first (altered) note requiring them,
     //  and them never for any other note inside the same measure (but cautionary accidentals are possible: see the attribute <m>cautionaryaccidentals</m>);
@@ -1500,14 +1510,14 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
     // @description Sets the percentage of transparency of the slot windows (0 being completely transparent, 100
     // being completely opaque.
 
-    CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "bgslots", 0, background_slots, CONST_MAX_SLOTS, notation_obj_setattr_backgroundslots);
+    CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "bgslots", 0, background_slots, CONST_MAX_SLOTS, notationobj_setattr_backgroundslots);
     CLASS_ATTR_STYLE_LABEL(c,"bgslots",0,"text","Slots In Background");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bgslots",0,"");
     // @description Sets the slots to be displayed on the background even when slots windows are not open.
     // The attribute expects a list of integers, each representing a slot number.
 
     // (just for bw compatibility)
-    CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "backgroundslots", 0, background_slots, CONST_MAX_SLOTS, notation_obj_setattr_backgroundslots);
+    CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "backgroundslots", 0, background_slots, CONST_MAX_SLOTS, notationobj_setattr_backgroundslots);
     CLASS_ATTR_PAINT(c,"backgroundslots",0);
     CLASS_ATTR_INVISIBLE(c, "backgroundslots", 0); // just for bw compatibility
                                                    // @exclude all
@@ -1545,7 +1555,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Sets the independent zoom factor relative to the slots displayed in background.
 
-        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "popupmenuslots", 0, popup_menu_slots, CONST_MAX_SLOTS, notation_obj_setattr_popupmenuslots);
+        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "popupmenuslots", 0, popup_menu_slots, CONST_MAX_SLOTS, notationobj_setattr_popupmenuslots);
         CLASS_ATTR_STYLE_LABEL(c,"popupmenuslots",0,"text","Slots In Popup Menu");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"popupmenuslots",0,"");
         // @exclude bach.slot
@@ -1556,7 +1566,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknotecolortoslot",0,"text","Link Note Color To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknotecolortoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknotecolortoslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "linknotecolortoslot", (method)NULL, (method)notation_obj_setattr_linknotecolortoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknotecolortoslot", (method)NULL, (method)notationobj_setattr_linknotecolortoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content must be linked to the note colors.
         // An int, float, floatlist or color slot is expected. Int slots are mapped on default colors,
@@ -1571,7 +1581,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linklyricstoslot",0,"text","Link Lyrics To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linklyricstoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linklyricstoslot",0,tempstr);
-        CLASS_ATTR_ACCESSORS(c, "linklyricstoslot", (method)NULL, (method)notation_obj_setattr_linklyricstoslot);
+        CLASS_ATTR_ACCESSORS(c, "linklyricstoslot", (method)NULL, (method)notationobj_setattr_linklyricstoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is to be displayed as lyrics.
         // A text slot is expected.
@@ -1582,7 +1592,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknoteheadtoslot",0,"text","Link Note Head To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknoteheadtoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknoteheadtoslot",0,tempstr);
-        CLASS_ATTR_ACCESSORS(c, "linknoteheadtoslot", (method)NULL, (method)notation_obj_setattr_linknoteheadtoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknoteheadtoslot", (method)NULL, (method)notationobj_setattr_linknoteheadtoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is to be associated with the notehead
         // characters of each note. A slot of type "notehead" (or, for backward compatibility, "int") is expected.
@@ -1592,7 +1602,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknoteheadfonttoslot",0,"text","Link Note Head Font To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknoteheadfonttoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknoteheadfonttoslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "linknoteheadfonttoslot", (method)NULL, (method)notation_obj_setattr_linknoteheadfonttoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknoteheadfonttoslot", (method)NULL, (method)notationobj_setattr_linknoteheadfonttoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is the name of the font with which
         // the note should be displayed. A text slot is expected.
@@ -1602,7 +1612,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknoteheadadjusttoslot",0,"text","Link Note Head Adjust To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknoteheadadjusttoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknoteheadadjusttoslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "linknoteheadadjusttoslot", (method)NULL, (method)notation_obj_setattr_linknoteheadadjusttoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknoteheadadjusttoslot", (method)NULL, (method)notationobj_setattr_linknoteheadadjusttoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is associated with noteheads
         // horizontal and vertical adjustments. An intlist or floatlist slot is expected.
@@ -1612,7 +1622,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linknotesizetoslot",0,"text","Link Note Size To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linknotesizetoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknotesizetoslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "linknotesizetoslot", (method)NULL, (method)notation_obj_setattr_linknoteheadsizetoslot);
+        CLASS_ATTR_ACCESSORS(c, "linknotesizetoslot", (method)NULL, (method)notationobj_setattr_linknoteheadsizetoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is linked with a note size factor,
         // as a percentage (100 being the usual size). A float slot is expected (to change both note
@@ -1620,12 +1630,13 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         // two factor are expected: one for the note size and one for the accidentals size.
         // 0 (default) means: none.
 
+
         sprintf(tempstr, "%d", BACH_DEFAULT_SLOT_ARTICULATIONS);
         CLASS_ATTR_LONG(c,"linkarticulationstoslot",0, t_notation_obj, link_articulations_to_slot);
         CLASS_ATTR_STYLE_LABEL(c,"linkarticulationstoslot",0,"text","Link Articulations To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linkarticulationstoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linkarticulationstoslot",0,tempstr);
-        CLASS_ATTR_ACCESSORS(c, "linkarticulationstoslot", (method)NULL, (method)notation_obj_setattr_linkarticulationstoslot);
+        CLASS_ATTR_ACCESSORS(c, "linkarticulationstoslot", (method)NULL, (method)notationobj_setattr_linkarticulationstoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot (of type "articulations") whose content is linked with the articulations display.
         // 0 means: none.
@@ -1635,7 +1646,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linkannotationtoslot",0,"text","Link Text Annotation To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linkannotationtoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linkannotationtoslot",0,tempstr);
-        CLASS_ATTR_ACCESSORS(c, "linkannotationtoslot", (method)NULL, (method)notation_obj_setattr_linkannotationtoslot);
+        CLASS_ATTR_ACCESSORS(c, "linkannotationtoslot", (method)NULL, (method)notationobj_setattr_linkannotationtoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is to be displayed as annotation over the staff.
         // 0 (default) means: none.
@@ -1645,7 +1656,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linkdynamicstoslot",0,"text","Link Dynamics To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linkdynamicstoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linkdynamicstoslot",0,tempstr);
-        CLASS_ATTR_ACCESSORS(c, "linkdynamicstoslot", (method)NULL, (method)notation_obj_setattr_linkdynamicstoslot);
+        CLASS_ATTR_ACCESSORS(c, "linkdynamicstoslot", (method)NULL, (method)notationobj_setattr_linkdynamicstoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is to be displayed as dynamics under the staff.
         // 0 means: none.
@@ -1654,7 +1665,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"linkdlcolortoslot",0,"text","Link Duration Line Color To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linkdlcolortoslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linkdlcolortoslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "linkdlcolortoslot", (method)NULL, (method)notation_obj_setattr_linkdlcolortoslot);
+        CLASS_ATTR_ACCESSORS(c, "linkdlcolortoslot", (method)NULL, (method)notationobj_setattr_linkdlcolortoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is to be associated with the color
         // of the corresponding duration line. An int, float, floatlist or color slot is expected. Int slots are mapped on default colors,
@@ -1673,7 +1684,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"rightclickslot",0,"text","Right Click Directly Pops Out Slot");
         CLASS_ATTR_FILTER_CLIP(c, "rightclickslot", 0, CONST_MAX_SLOTS);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rightclickslot",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "rightclickslot", (method)NULL, (method)notation_obj_setattr_rightclickdirectlypopsoutslot);
+        CLASS_ATTR_ACCESSORS(c, "rightclickslot", (method)NULL, (method)notationobj_setattr_rightclickdirectlypopsoutslot);
         // @exclude bach.slot
         // @description Sets the number of the slot whose window should automatically popup when a
         // right-click (or a two-fingers-tap) is performed on a notehead. 0 (default) means: none
@@ -1722,7 +1733,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DOUBLE(c, "samplingrate", 0, t_notation_obj, sampling_freq);
     CLASS_ATTR_STYLE_LABEL(c,"samplingrate",0,"text","Sampling Rate (For Filter Slots)");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"samplingrate",0,"44100");
-    CLASS_ATTR_ACCESSORS(c, "samplingrate", (method)NULL, (method)notation_obj_setattr_samplingrate);
+    CLASS_ATTR_ACCESSORS(c, "samplingrate", (method)NULL, (method)notationobj_setattr_samplingrate);
     // @description Sets the currentl sampling rate. "Manually" setting the sampling rate
     // is necessary for a proper handling of the filter slots. No object in the bach library is a
     // DSP objects, so this information should be set "by hand" (it could easily come from <o>dspstatus~</o>).
@@ -1738,14 +1749,15 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
 
 
 
-void notation_class_add_color_attributes(t_class *c, char obj_type){
+void notation_class_add_color_attributes(t_class *c, char obj_type)
+{
     CLASS_STICKY_ATTR(c,"category",0,"Color");
 
     CLASS_ATTR_RGBA_LEGACY(c, "bgcolor", "brgb", 0, t_notation_obj, j_background_rgba);
     CLASS_ATTR_ALIAS(c,"bgcolor", "brgba");
     CLASS_ATTR_STYLE_LABEL(c, "bgcolor", 0, "rgba", "Background Color");
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"bgcolor",0,"1. 1. 1. 1.");
-    CLASS_ATTR_ACCESSORS(c, "bgcolor", (method)NULL, (method)notation_obj_setattr_bgcolor);
+    CLASS_ATTR_ACCESSORS(c, "bgcolor", (method)NULL, (method)notationobj_setattr_bgcolor);
     CLASS_ATTR_BASIC(c,"bgcolor", 0);
     // @description Sets the color of the background in RGBA format.
 
@@ -1783,6 +1795,7 @@ void notation_class_add_color_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"staffcolor",0,"0. 0. 0. 1.");
         // @exclude bach.slot
         // @description Sets the color of the main staves (the ones always carring the clefs) in RGBA format.
+
 
         CLASS_ATTR_RGBA(c,"auxstaffcolor", 0, t_notation_obj, j_auxiliarystaves_rgba);
         CLASS_ATTR_STYLE_LABEL(c, "auxstaffcolor",0,"rgba","Auxiliary Staff Color");
@@ -1972,23 +1985,43 @@ void notation_class_add_color_attributes(t_class *c, char obj_type){
 
 
 void notation_class_add_appearance_attributes(t_class *c, char obj_type){
-    CLASS_STICKY_ATTR(c,"category",0,"Appearance");
+	CLASS_STICKY_ATTR(c,"category",0,"Appearance");
 
-    CLASS_ATTR_DOUBLE(c, "rounded", 0, t_notation_obj, corner_roundness);
-    CLASS_ATTR_STYLE_LABEL(c,"rounded",0,"text","Roundness of Box Corners");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rounded",0,"0."); // default SHOULD BE: "6.", but only when corner clipping will perfectly work!
-    CLASS_ATTR_INVISIBLE(c, "rounded", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // invisible attribute, as long as corner clipping doesn't perfectly work...
-                                                                           // @exclude all
+    CLASS_ATTR_CHAR(c,"slursavoidchords",0, t_notation_obj, slurs_avoid_chords);
+    CLASS_ATTR_STYLE_LABEL(c,"slursavoidchords",0,"onoff","Slurs Avoid Chords");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidchords",0,"1");
+    // @exclude bach.slot
 
-    CLASS_ATTR_CHAR(c,"showborder",0, t_notation_obj, show_border);
-    CLASS_ATTR_STYLE_LABEL(c,"showborder",0,"onoff","Show Border");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showborder",0,"1");
-    // @description Toggles the ability to display the object border.
+    CLASS_ATTR_CHAR(c,"slursavoidaccidentals",0, t_notation_obj, slurs_avoid_accidentals);
+    CLASS_ATTR_STYLE_LABEL(c,"slursavoidaccidentals",0,"onoff","Slurs Avoid Accidentals");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidaccidentals",0,"1");
+    // @exclude bach.slot
+    
+	CLASS_ATTR_DOUBLE(c, "rounded", 0, t_notation_obj, corner_roundness); 
+	CLASS_ATTR_STYLE_LABEL(c,"rounded",0,"text","Roundness of Box Corners");
+	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rounded",0,"0."); // default SHOULD BE: "6.", but only when corner clipping will perfectly work!
+	CLASS_ATTR_INVISIBLE(c, "rounded", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // invisible attribute, as long as corner clipping doesn't perfectly work...
+	// @exclude all
+
+	CLASS_ATTR_CHAR(c,"showborder",0, t_notation_obj, show_border);
+	CLASS_ATTR_STYLE_LABEL(c,"showborder",0,"onoff","Show Border");
+	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showborder",0,"1");
+	// @description Toggles the ability to display the object border.
+
+    CLASS_ATTR_DOUBLE(c,"bordersize",0, t_notation_obj, border_width);
+    CLASS_ATTR_STYLE_LABEL(c,"bordersize",0,"text","Border Width");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bordersize",0,"1");
+    // @description Sets the border width in pixels.
+
+    CLASS_ATTR_DOUBLE(c,"focusbordersize",0, t_notation_obj, focus_border_width);
+    CLASS_ATTR_STYLE_LABEL(c,"focusbordersize",0,"text","Border Width With Focus");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"focusbordersize",0,"2.5");
+    // @description Sets the border width in pixels when the object has focus.
 
     CLASS_ATTR_SYM(c,"jitmatrix",0, t_notation_obj, jit_destination_matrix);
     CLASS_ATTR_STYLE_LABEL(c,"jitmatrix",0,"text","Mirror To Jitter Matrix");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jitmatrix",0,"");
-    CLASS_ATTR_ACCESSORS(c, "jitmatrix", (method)NULL, (method)notation_obj_setattr_jitmatrix);
+    CLASS_ATTR_ACCESSORS(c, "jitmatrix", (method)NULL, (method)notationobj_setattr_jitmatrix);
     // @description Sets the name of a jitter matrix to which the canvas should be mirrored
 
 
@@ -2036,11 +2069,10 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // @description Toggle a neater display for stems, but this means at the same time that vertical alignment of
         // synchronous notes might be less precise.
 
-
         CLASS_ATTR_LONG(c,"inset",0, t_notation_obj, j_inset_x);
         CLASS_ATTR_STYLE_LABEL(c,"inset",0,"text","Border Inset");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"inset",0,"7");
-        CLASS_ATTR_ACCESSORS(c, "inset", (method)NULL, (method)notation_obj_setattr_inset);
+        CLASS_ATTR_ACCESSORS(c, "inset", (method)NULL, (method)notationobj_setattr_inset);
         // @exclude bach.slot
         // @description Sets the stafflines inset at left and right borders of notation object, in pixels (rescaled according to the
         // <m>vzoom</m>). Defaults to 7.
@@ -2054,6 +2086,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // width (corresponding to a velocity of 127), and will be rescaled according to the note (or breakpoint) velocity.
         // Defaults to 2.
 
+
         CLASS_ATTR_DOUBLE(c, "breakpointsize", 0, t_notation_obj, breakpoints_size);
         CLASS_ATTR_STYLE_LABEL(c,"breakpointsize",0,"text","Pitch Breakpoint Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointsize",0,"3.");
@@ -2063,7 +2096,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"nonantialiasedstafflines",0, t_notation_obj, force_non_antialiased_staff_lines);
         CLASS_ATTR_STYLE_LABEL(c,"nonantialiasedstafflines",0,"onoff","Only Non-Antialiased Staff");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"nonantialiasedstafflines",0,"1");
-        CLASS_ATTR_ACCESSORS(c, "nonantialiasedstafflines", (method)NULL, (method)notation_obj_setattr_nonantialiasedstaff);
+        CLASS_ATTR_ACCESSORS(c, "nonantialiasedstafflines", (method)NULL, (method)notationobj_setattr_nonantialiasedstaff);
         // @exclude bach.slot
         // @description Toggles the ability to force stafflines to precisely lie on pixels on the screen.
         // If this attribute is 1, the <m>vzoom</m> attribute will be snapped to the closest value allowing stafflines to be drawn
@@ -2106,6 +2139,12 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // @description If <m>thinannotations</m> is set to 2 (Remove With Clearing Symbol), this attribute
         // sets the clearing symbol to remove the annotation label.
 
+        CLASS_ATTR_CHAR(c,"singlelyricsdash",0, t_notation_obj, lyrics_have_single_dash);
+        CLASS_ATTR_STYLE_LABEL(c,"singlelyricsdash",0,"onoff","Lyrics Always Connect With A Single Dash");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"singlelyricsdash", 0, "0");
+        // @description Toggles the ability to always connect lyrics with single dashes, and not with repeated dashes
+        // when the space between them is too large
+        
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
             CLASS_ATTR_CHAR(c,"finitestaff",0, t_notation_obj, end_staff_with_final_measure);
             CLASS_ATTR_STYLE_LABEL(c,"finitestaff",0,"onoff","End Staff With Last Measure");
@@ -2135,12 +2174,11 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slopemapping", 0, "0");
     // @description Sets the function to be used for slope mapping: either bach (default) or Max.
 
-
     if (obj_type != k_NOTATION_OBJECT_SLOT) {
 
         CLASS_ATTR_LONG(c, "numvoices", 0, t_notation_obj, num_voices);
         CLASS_ATTR_STYLE_LABEL(c,"numvoices",0,"text","Number Of Voices");
-        CLASS_ATTR_ACCESSORS(c, "numvoices", (method)NULL, (method)notation_obj_setattr_numvoices);
+        CLASS_ATTR_ACCESSORS(c, "numvoices", (method)NULL, (method)notationobj_setattr_numvoices);
         CLASS_ATTR_SAVE(c, "numvoices", 0);
         CLASS_ATTR_BASIC(c,"numvoices", 0);
         // @exclude bach.slot
@@ -2154,7 +2192,7 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // notation object depending on the number of voice lllls given as input.
 
 
-        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "numparts", 0, voice_part, CONST_MAX_VOICES, notation_obj_setattr_numparts);
+        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "numparts", 0, voice_part, CONST_MAX_VOICES, notationobj_setattr_numparts);
         CLASS_ATTR_STYLE_LABEL(c,"numparts",0,"text","Number of Voices per Part");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"numparts",0,"1");
         // @exclude bach.slot
@@ -2182,9 +2220,9 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"middlecoctave",0,"text","Middle C Octave");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"middlecoctave", 0, "5");
         CLASS_ATTR_INVISIBLE(c, "middlecoctave", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // deprecated and unsupported
-                                                                                     // @exclude all
-                                                                                     // @description Sets the octave number of the middle C. By default this is 5 (meaning that C5 is the middle C);
-                                                                                     // values of 3 and 5 are also encountered.
+         // @exclude all
+         // @description Sets the octave number of the middle C. By default this is 5 (meaning that C5 is the middle C);
+         // values of 3 and 5 are also encountered.
 
         CLASS_ATTR_CHAR(c,"breakpointshavevelocity",0, t_notation_obj, breakpoints_have_velocity);
         CLASS_ATTR_STYLE_LABEL(c,"breakpointshavevelocity",0,"onoff","Breakpoints Have Velocity");
@@ -2192,7 +2230,7 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Toggles the ability, for pitch breakpoints, to have their own independent velocity.
 
-        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "midichannels", 0, midichannels_as_longlist, CONST_MAX_VOICES, notation_obj_setattr_midichannels);
+        CLASS_ATTR_NOTATIONOBJ_LONGPTR(c, "midichannels", 0, midichannels_as_longlist, CONST_MAX_VOICES, notationobj_setattr_midichannels);
         CLASS_ATTR_STYLE_LABEL(c,"midichannels",0,"text","MIDI Channels");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"midichannels",0,"1");
         // @exclude bach.slot
@@ -2232,11 +2270,21 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"lyricsalignment",0,"enumindex","Lyrics Alignment");
         CLASS_ATTR_ENUMINDEX(c,"lyricsalignment", 0, "Auto Left Center Right");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"lyricsalignment", 0, "0");
-        CLASS_ATTR_ACCESSORS(c, "lyricsalignment", (method)NULL, (method)notation_obj_setattr_lyrics_alignment);
+        CLASS_ATTR_ACCESSORS(c, "lyricsalignment", (method)NULL, (method)notationobj_setattr_lyrics_alignment);
         // @exclude bach.slot
         // @description Sets how the lyrics syllables must be aligned with respect to the chord to which they refer.
         // Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Center",
         // but it might be improved in a future version.
+
+        CLASS_ATTR_CHAR(c,"annotationalignment",0, t_notation_obj, annotation_alignment);
+        CLASS_ATTR_STYLE_LABEL(c,"annotationalignment",0,"enumindex","Annotation Alignment");
+        CLASS_ATTR_ENUMINDEX(c,"annotationalignment", 0, "Auto Left Center Right");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationalignment", 0, "0");
+        CLASS_ATTR_ACCESSORS(c, "annotationalignment", (method)NULL, (method)notationobj_setattr_annotation_alignment);
+        // @exclude bach.slot
+        // @description Sets how the annotation must be aligned with respect to the note to which they refer.
+        // Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Left".
+
 
         CLASS_ATTR_CHAR(c,"dynamicsoutputmode",0, t_notation_obj, dynamics_output_mode);
         CLASS_ATTR_STYLE_LABEL(c,"dynamicsoutputmode",0,"enumindex","Dynamics Output Mode");
@@ -2270,7 +2318,7 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
             CLASS_ATTR_DOUBLE(c,"onseteqthresh",0, t_notation_obj, onset_equality_threshold_ms);
             CLASS_ATTR_STYLE_LABEL(c,"onseteqthresh",0,"text","Onset Equality Threshold in Milliseconds");
             CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"onseteqthresh", 0, "0.001");
-            CLASS_ATTR_ACCESSORS(c, "onseteqthresh", (method)NULL, (method)notation_obj_setattr_onseteqthresh);
+            CLASS_ATTR_ACCESSORS(c, "onseteqthresh", (method)NULL, (method)notationobj_setattr_onseteqthresh);
             // @exclude bach.slot, bach.roll
             // @description Sets a threshold in milliseconds to determine whether two onsets coincide.
             // This is used to find synchronicities across voices with different tempi.
@@ -2355,7 +2403,7 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"highlightplay",0, t_notation_obj, highlight_played_notes);
         CLASS_ATTR_STYLE_LABEL(c,"highlightplay",0,"onoff","Highlight Played Notes");
         CLASS_ATTR_DEFAULT_SAVE(c,"highlightplay",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "highlightplay", (method)NULL, (method)notation_obj_setattr_highlightplay);
+        CLASS_ATTR_ACCESSORS(c, "highlightplay", (method)NULL, (method)notationobj_setattr_highlightplay);
         // @exclude bach.slot
         // @description Toggle the ability to highlight the played notes with the <m>playcolor</m>.
         // By default this is 0; if you turn it on be aware that it takes significant CPU time with scores with many notes.
@@ -2370,7 +2418,7 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"useloop",0, t_notation_obj, use_loop_region);
         CLASS_ATTR_STYLE_LABEL(c,"useloop",0,"onoff","Activate Loop Region (When Shown)");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"useloop", 0, "1");
-        CLASS_ATTR_ACCESSORS(c, "useloop", (method)NULL, (method)notation_obj_setattr_useloop);
+        CLASS_ATTR_ACCESSORS(c, "useloop", (method)NULL, (method)notationobj_setattr_useloop);
         // @exclude bach.slot
         // @description Toggle the ability to use the loop region during the playback, if such region is shown (see the
         // <m>showloop</m> attribute). If this is 1, and the loop region is shown, the playback will loop inside the region;
@@ -2423,6 +2471,69 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 }
 
 
+void notation_class_add_notification_attributes(t_class *c, char obj_type)
+{
+    CLASS_STICKY_ATTR(c,"category",0,"Notification");
+    
+    CLASS_ATTR_CHAR(c,"notifycontinuously",0, t_notation_obj, continuously_output_changed_bang);
+    CLASS_ATTR_STYLE_LABEL(c,"notifycontinuously",0,"onoff","Notify Continuously");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifycontinuously",0,"0");
+    // @description Toggles the ability to notify continuously via the last outlet
+    // while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously.
+    // This defaults to 0.
+    
+    CLASS_ATTR_CHAR(c,"notifymessages",0, t_notation_obj, notify_also_upon_messages);
+    CLASS_ATTR_STYLE_LABEL(c,"notifymessages",0,"onoff","Notifications When Changed Via Messages");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifymessages", 0, "0");
+    // @description Toggles the ability to send notifications caused by actions coming from messages, and not only from the interface.
+    // For instance, a <m>inscreenpos</m> message will toggle a <m>domain</m> notification, and so on.
+    // By default this is inactive.
+    
+    CLASS_ATTR_CHAR(c,"notifypaint",0, t_notation_obj, notify_when_painted);
+    CLASS_ATTR_STYLE_LABEL(c,"notifypaint",0,"onoff","Notifications When Display Is Refreshed");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifypaint", 0, "0");
+    // @description Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
+    // whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
+    
+    CLASS_ATTR_CHAR(c,"notifywith",0, t_notation_obj, notify_with);
+    CLASS_ATTR_STYLE_LABEL(c,"notifywith",0,"enumindex","Notify Interface Changes Via");
+    CLASS_ATTR_ENUMINDEX(c,"notifywith", 0, "bang Operation Redo Transaction Undo Transaction Redo Data Undo Data");
+    CLASS_ATTR_FILTER_CLIP(c, "notifywith", 0, 5);
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifywith", 0, "0");
+    // @description Chooses the notification type for interface changes: <br />
+    // - 0 (bang, default): the simplest and less CPU-consuming alternative, only notifies with a bang when anything changes; <br />
+    // - 1 (Operation): notify with an operation label; <br />
+    // - 2 (Redo Transaction): notify verbosely with the operation label plus a sequence of change messages ('ticks') encapsulated
+    // in a transaction (set of instructions across which orders are not refreshed).
+    // This is the message you can directly provide to another notation object in order to reproduce the same effect; <br />
+    // - 3 (Undo Data): same as the previous, but providing undo information instead.
+    // - 4 (Redo Data): same as "Redo Transaction" but without the encapsulation, so the notification is a sequence of individual ticks (with a
+    // starting operation label).
+    // The practical difference between "Redo Transaction" and "Redo Data" is not just the leading "transaction" symbol, but more crucially
+    // the path of the items, which in this last case does indeed account for any update of chords/markers/notes order between the change ticks; <br />
+    // - 5 (Undo Data): same as the previous, but providing undo information instead. <br />
+    
+    CLASS_ATTR_CHAR(c,"senddoneatstartup",0, t_notation_obj, send_rebuild_done_at_startup);
+    CLASS_ATTR_STYLE_LABEL(c,"senddoneatstartup",0,"onoff","Send 'Done' At Startup (If Data Was Saved)");
+    CLASS_ATTR_FILTER_CLIP(c, "senddoneatstartup", 0, 1);
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"senddoneatstartup", 0, "1");
+    // @description Toggles the ability to send a <m>done</m> notification through the playout (or the notification outlet
+    // for <o>bach.slot</o>) at the object instantiation, if content saved with the object is loaded.
+    
+    CLASS_ATTR_CHAR(c,"senddoneafterpaint",0, t_notation_obj, send_rebuild_done_only_after_paint_method);
+    CLASS_ATTR_STYLE_LABEL(c,"senddoneafterpaint",0,"onoff","Send 'Done' Only After Paint");
+    CLASS_ATTR_FILTER_CLIP(c, "senddoneafterpaint", 0, 1);
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"senddoneafterpaint", 0, "1");
+    // @description If this is 1, the <m>done</m> notification is not sent when the content has been loaded or built,
+    // but after the content has been painted (which, in general, is later: paint is done at low priority). This is handy
+    // if you need to retrieve appearance data (such as pixel position) which is computed inside the paint method, and not
+    // when the object is loaded. If this is 0, on the other hand, the notification is sent right after the content has been loaded
+    // or built, and you have no guarantee that the display data will be correct when the notification is sent.
+    // By default this is 1.
+
+    CLASS_STICKY_ATTR_CLEAR(c, "category");
+}
+
 void notation_class_add_behavior_attributes(t_class *c, char obj_type){
 
     CLASS_STICKY_ATTR(c,"category",0,"Behavior");
@@ -2449,14 +2560,6 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"mousehover",0,"1");
     // @description Toggles mouse hovering capabilities.
 
-    CLASS_ATTR_CHAR(c,"continuousbang",0, t_notation_obj, continuously_output_changed_bang);
-    CLASS_ATTR_STYLE_LABEL(c,"continuousbang",0,"onoff","Continuously Output Bang If Changed");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"continuousbang",0,"0");
-    CLASS_ATTR_ALIAS(c, "continuousbang", "continuouslyoutputbangifchanged");
-    // @description Toggles the ability to output continuously the bang through the last outlet
-    // while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously.
-    // This defaults to 0.
-
     if (obj_type != k_NOTATION_OBJECT_SLOT) {
         CLASS_ATTR_CHAR(c,"allowglissandi",0, t_notation_obj, allow_glissandi);
         CLASS_ATTR_STYLE_LABEL(c,"allowglissandi",0,"onoff","Allow Glissando Breakpoints");
@@ -2468,7 +2571,7 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
 
         CLASS_ATTR_ATOM_VARSIZE(c, "dumpplaycmd", 0, t_notation_obj, play_offline_via_av, play_offline_via_ac, 16);
         CLASS_ATTR_STYLE_LABEL(c,"dumpplaycmd",0,"text","Play Offline Commands");
-        CLASS_ATTR_ACCESSORS(c, "dumpplaycmd", (method)notation_obj_getattr_dumpplaycmd, (method)notation_obj_setattr_dumpplaycmd);
+        CLASS_ATTR_ACCESSORS(c, "dumpplaycmd", (method)notationobj_getattr_dumpplaycmd, (method)notationobj_setattr_dumpplaycmd);
         CLASS_ATTR_DEFAULT_SAVE(c,"dumpplaycmd",0,"v");
         // @exclude bach.slot
         // @description Determines which keys or command are enabled to send the offline play output (up to 16 choices).
@@ -2484,39 +2587,38 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
     // @description Toggles the ability to save the notation object content within the patch.
     // By default this is active.
 
-
     CLASS_ATTR_LONG(c,"bwcompatibility",0, t_notation_obj, bwcompatible);
     CLASS_ATTR_STYLE_LABEL(c,"bwcompatibility",0,"text","Backwards Compatible To");
     CLASS_ATTR_SAVE(c, "bwcompatibility", 0);
     CLASS_ATTR_INVISIBLE(c, "bwcompatibility", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // invisible attribute, undocumented for now
-                                                                                   // @exclude all
-                                                                                   // @description Toggles backwards compatibility for saving (whenever possible) till the indicated
-                                                                                   // version of bach. Versions x.y.z.w are to be inserted as the number xyzw0. For instance, 0.7.2 is
-                                                                                   // 7200, while 0.7.8.1 is 7810.
-
-
-    CLASS_ATTR_CHAR(c,"notifymessages",0, t_notation_obj, notify_also_upon_messages);
-    CLASS_ATTR_STYLE_LABEL(c,"notifymessages",0,"onoff","Notifications When Changed Via Messages");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifymessages", 0, "0");
-    // @description Toggles the ability to send notifications caused by actions coming from messages, and not only from the interface.
-    // For instance, a <m>inscreenpos</m> message will toggle a <m>domain</m> notification, and so on.
-    // By default this is inactive.
-
-    CLASS_ATTR_CHAR(c,"notifypaint",0, t_notation_obj, notify_when_painted);
-    CLASS_ATTR_STYLE_LABEL(c,"notifypaint",0,"onoff","Notifications When Display Is Refreshed");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifypaint", 0, "0");
-    // @description Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
-    // whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
-
-
-    if (obj_type != k_NOTATION_OBJECT_SLOT) {
-        CLASS_ATTR_CHAR(c,"keepselectioniflostfocus",0, t_notation_obj, keep_selection_if_lost_focus);
-        CLASS_ATTR_STYLE_LABEL(c,"keepselectioniflostfocus",0,"onoff","Keep Selection If Lost Focus");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"keepselectioniflostfocus",0,"1");
-        // @exclude bach.slot
-        // @description Toggles the ability to keep the current selection when the object lose the focus.
-        // This defaults to 1.
-    }
+    // @exclude all
+    // @description Toggles backwards compatibility for saving (whenever possible) till the indicated
+    // version of bach. Versions x.y.z.w are to be inserted as the number xyzw0. For instance, 0.7.2 is
+    // 7200, while 0.7.8.1 is 7810.
+    
+    
+	if (obj_type != k_NOTATION_OBJECT_SLOT) {
+		CLASS_ATTR_CHAR(c,"keepselectioniflostfocus",0, t_notation_obj, keep_selection_if_lost_focus);
+		CLASS_ATTR_STYLE_LABEL(c,"keepselectioniflostfocus",0,"onoff","Keep Selection If Lost Focus");
+		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"keepselectioniflostfocus",0,"1");
+		// @exclude bach.slot
+		// @description Toggles the ability to keep the current selection when the object lose the focus.
+		// This defaults to 1.
+	}
+	
+		
+	if (obj_type == k_NOTATION_OBJECT_ROLL) {
+		CLASS_ATTR_CHAR(c,"rulermode",0, t_notation_obj, ruler_mode);
+		CLASS_ATTR_ENUMINDEX(c,"rulermode", 0, "Fixed Smart");
+		CLASS_ATTR_STYLE_LABEL(c,"rulermode",0,"enumindex","Ruler/Grid Mode");
+		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rulermode",0,"1");
+		CLASS_ATTR_ACCESSORS(c, "rulermode", (method)NULL, (method)notationobj_setattr_rulermode);
+		// @description Sets the ruler mode: either a "fixed" mode, where division and subdivisions are fixed independently from 
+		// the horizontal zoom, or a "smart" mode, where divisions and subdivisions are automatically computed depending on the
+		// current level of horizontal zoom. 
+		// @exclude bach.slot, bach.score
+	}
+	
 
     CLASS_ATTR_CHAR(c,"senddoneatstartup",0, t_notation_obj, send_rebuild_done_at_startup);
     CLASS_ATTR_STYLE_LABEL(c,"senddoneatstartup",0,"onoff","Send 'Done' At Startup (If Data Was Saved)");
@@ -2541,7 +2643,7 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
         CLASS_ATTR_ENUMINDEX(c,"rulermode", 0, "Fixed Smart");
         CLASS_ATTR_STYLE_LABEL(c,"rulermode",0,"enumindex","Ruler/Grid Mode");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rulermode",0,"1");
-        CLASS_ATTR_ACCESSORS(c, "rulermode", (method)NULL, (method)notation_obj_setattr_rulermode);
+        CLASS_ATTR_ACCESSORS(c, "rulermode", (method)NULL, (method)notationobj_setattr_rulermode);
         // @description Sets the ruler mode: either a "fixed" mode, where division and subdivisions are fixed independently from
         // the horizontal zoom, or a "smart" mode, where divisions and subdivisions are automatically computed depending on the
         // current level of horizontal zoom.
@@ -2559,7 +2661,7 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
     CLASS_ATTR_ATOM(c,"maxundosteps",0, t_notation_obj, max_undo_steps);
     CLASS_ATTR_STYLE_LABEL(c,"maxundosteps",0,"text","Maximum Number Of Undo Steps");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"maxundosteps", 0, "50");
-    CLASS_ATTR_ACCESSORS(c, "maxundosteps", (method)NULL, (method)notation_obj_setattr_maxundosteps);
+    CLASS_ATTR_ACCESSORS(c, "maxundosteps", (method)NULL, (method)notationobj_setattr_maxundosteps);
     // @description Sets the maximum number of undo steps. 0 means that undo/redo system will be made inactive.
     // The "inf" symbol means unlimited undo steps.
     // Defaults to 50. You should change it to 0 if you perform heavy operations in real-time.
@@ -2575,7 +2677,7 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"undobang", 0, "1");
     // @description Toggles the ability of send the bang through the rightmost outlet when an undo/redo action is performed.
 
-    CLASS_ATTR_NOTATIONOBJ_ATOMPTR(c, "preventedit", 0, prevent_editing_atom, CONST_MAX_BACH_ELEMENT_TYPES + 10, notation_obj_setattr_preventedit);
+    CLASS_ATTR_NOTATIONOBJ_ATOMPTR(c, "preventedit", 0, prevent_editing_atom, CONST_MAX_BACH_ELEMENT_TYPES + 10, notationobj_setattr_preventedit);
     CLASS_ATTR_STYLE_LABEL(c,"preventedit",0,"text","Prevent Editing For");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"preventedit",0,"");
     // @description Prevents the interface editing of the specified elements, specified via an llll. Somehow, this is a lock specified globally for given notation items or features.
@@ -2595,7 +2697,7 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
     // prevent the modification of breakpoints onsets, but will, as an example, prevent the modification of breakpoints slopes. Use <b>preventedit [breakpoints onset modify]</b> to do both.
 
     if (obj_type != k_NOTATION_OBJECT_SLOT) {
-        CLASS_ATTR_LLLL(c, "pitcheditrange", 0, t_notation_obj, constraint_pitches_when_editing, notation_obj_getattr_pitcheditrange, notation_obj_setattr_pitcheditrange);
+        CLASS_ATTR_LLLL(c, "pitcheditrange", 0, t_notation_obj, constraint_pitches_when_editing, notationobj_getattr_pitcheditrange, notationobj_setattr_pitcheditrange);
         CLASS_ATTR_STYLE_LABEL(c,"pitcheditrange",0,"text_large","Constraint Pitches While Editing");
         CLASS_ATTR_SAVE(c, "pitcheditrange", 0);
         CLASS_ATTR_PAINT(c, "pitcheditrange", 0);
@@ -2704,7 +2806,7 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
         // Although names in bach can be general lllls, the default name must be a simple single symbol.
         // Marker will be then incrementally numbered starting from this default name.
 
-        CLASS_ATTR_LLLL(c, "defaultnoteslots", 0, t_notation_obj, default_noteslots, notation_obj_getattr_defaultnoteslots, notation_obj_setattr_defaultnoteslots);
+        CLASS_ATTR_LLLL(c, "defaultnoteslots", 0, t_notation_obj, default_noteslots, notationobj_getattr_defaultnoteslots, notationobj_setattr_defaultnoteslots);
         CLASS_ATTR_STYLE_LABEL(c,"defaultnoteslots",0,"text","Default Note Slots");
         CLASS_ATTR_SAVE(c, "defaultnoteslots", 0);
         CLASS_ATTR_PAINT(c, "defaultnoteslots", 0);
@@ -2768,51 +2870,57 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 }
 
-void notation_class_add_showhide_attributes(t_class *c, char obj_type){
-    CLASS_STICKY_ATTR(c,"category",0,"Show");
-
-    CLASS_ATTR_CHAR(c,"showfocus",0, t_notation_obj, show_focus);
-    CLASS_ATTR_STYLE_LABEL(c,"showfocus",0,"onoff","Show Object Focus");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showfocus", 0, "1");
-    // @description Toggles the display of a thicker border when the notation object has the focus.
-
-    if (obj_type != k_NOTATION_OBJECT_SLOT) {
-        CLASS_ATTR_CHAR(c, "showvelocity", 0, t_notation_obj, velocity_handling);
-        CLASS_ATTR_STYLE_LABEL(c,"showvelocity",0,"enumindex","Show Velocity");
-        CLASS_ATTR_ENUMINDEX(c,"showvelocity", 0, "None Colorscale Colorspectrum Alpha Duration Line Width Note Size");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showvelocity",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "showvelocity", (method)NULL, (method)notation_obj_setattr_showvelocity);
-        CLASS_ATTR_BASIC(c,"showvelocity", 0);
-        // @exclude bach.slot
-        // @description Chooses the way in which velocities should be displayed: <br />
-        // - None (default): velocities are simply not displayed in any way. <br />
-        // - Colorscale: velocities are mapped on a color scale ranging from almost white (velocity = 1) to the ordinary <m>notecolor</m> (velocity 127). <br />
-        // - Colorspectrum: velocities are mapped on a spectrum of colors ranging from red (velocity = 1) to blue (velocity = 127). <br />
-        // - Alpha: velocities are mapped on a the transparency (alpha) channel, from 0 (velocity = 1, fully transparent) to 1 (velocity = 127, fully opaque). <br />
-        // - Duration Line Width: velocities are mapped on the width of the duration line, from almost 0 (velocity = 1, extremely thin) to the width defined
-        // via the attribute <m>durationlinewidth</m> (velocity = 127, maximum thickness). <br />
-        // - Notehead Size: velocities are mapped on the size of the notehead and accidentals, from the smallest size (velocity = 1) to the ordinary size (velocity = 127).
-
-        CLASS_ATTR_CHAR(c,"showdurations",0, t_notation_obj, show_durations);
-        CLASS_ATTR_STYLE_LABEL(c,"showdurations",0,"onoff","Show Duration Lines");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showdurations",0, obj_type == k_NOTATION_OBJECT_ROLL ? "1" : "0");
+void notation_class_add_showhide_attributes(t_class *c, char obj_type)
+{
+	CLASS_STICKY_ATTR(c,"category",0,"Show");
+	
+	CLASS_ATTR_CHAR(c,"showfocus",0, t_notation_obj, show_focus);
+	CLASS_ATTR_STYLE_LABEL(c,"showfocus",0,"onoff","Show Object Focus");
+	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showfocus", 0, "1");
+	// @description Toggles the display of a thicker border when the notation object has the focus. 
+	
+	if (obj_type != k_NOTATION_OBJECT_SLOT) {
+		CLASS_ATTR_CHAR(c, "showvelocity", 0, t_notation_obj, velocity_handling);
+		CLASS_ATTR_STYLE_LABEL(c,"showvelocity",0,"enumindex","Show Velocity");
+		CLASS_ATTR_ENUMINDEX(c,"showvelocity", 0, "None Colorscale Colorspectrum Alpha Duration Line Width Note Size");
+		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showvelocity",0,"0");
+		CLASS_ATTR_ACCESSORS(c, "showvelocity", (method)NULL, (method)notationobj_setattr_showvelocity);
+		CLASS_ATTR_BASIC(c,"showvelocity", 0);
+		// @exclude bach.slot
+		// @description Chooses the way in which velocities should be displayed: <br />
+		// - None (default): velocities are simply not displayed in any way. <br />
+		// - Colorscale: velocities are mapped on a color scale ranging from almost white (velocity = 1) to the ordinary <m>notecolor</m> (velocity 127). <br />
+		// - Colorspectrum: velocities are mapped on a spectrum of colors ranging from red (velocity = 1) to blue (velocity = 127). <br />
+		// - Alpha: velocities are mapped on a the transparency (alpha) channel, from 0 (velocity = 1, fully transparent) to 1 (velocity = 127, fully opaque). <br />
+		// - Duration Line Width: velocities are mapped on the width of the duration line, from almost 0 (velocity = 1, extremely thin) to the width defined 
+		// via the attribute <m>durationlinewidth</m> (velocity = 127, maximum thickness). <br />
+		// - Notehead Size: velocities are mapped on the size of the notehead and accidentals, from the smallest size (velocity = 1) to the ordinary size (velocity = 127).
+		
+		CLASS_ATTR_CHAR(c,"showdurations",0, t_notation_obj, show_durations);
+		CLASS_ATTR_STYLE_LABEL(c,"showdurations",0,"onoff","Show Duration Lines");
+		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showdurations",0, obj_type == k_NOTATION_OBJECT_ROLL ? "1" : "0");
         CLASS_ATTR_BASIC(c,"showdurations", 0);
-        // @exclude bach.slot
-        // @description Toggles the display of the duration lines.
+		// @exclude bach.slot
+		// @description Toggles the display of the duration lines.
 
-        CLASS_ATTR_CHAR(c,"showtails",0, t_notation_obj, show_tails);
-        CLASS_ATTR_STYLE_LABEL(c,"showtails",0,"onoff","Show Note Tails");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtails",0, "1");
-        // @exclude bach.slot
-        // @description Toggles the display to display the note tails (this only works if <m>showdurations</m> is active.
-
-        CLASS_ATTR_CHAR(c,"showvoicenames",0, t_notation_obj, show_voice_names);
-        CLASS_ATTR_STYLE_LABEL(c,"showvoicenames",0,"onoff","Show Voice Names");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showvoicenames",0, "1");
-        CLASS_ATTR_ACCESSORS(c, "showvoicenames", (method)NULL, (method)notation_obj_setattr_show_voicenames);
-        // @exclude bach.slot
-        // @description Toggles the display of voice names.
-
+		CLASS_ATTR_CHAR(c,"showtails",0, t_notation_obj, show_tails);
+		CLASS_ATTR_STYLE_LABEL(c,"showtails",0,"onoff","Show Note Tails");
+		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtails",0, "1");
+		// @exclude bach.slot
+		// @description Toggles the display to display the note tails (this only works if <m>showdurations</m> is active.
+		
+		CLASS_ATTR_CHAR(c,"showvoicenames",0, t_notation_obj, show_voice_names);
+		CLASS_ATTR_STYLE_LABEL(c,"showvoicenames",0,"onoff","Show Voice Names");
+		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showvoicenames",0, "1");
+		CLASS_ATTR_ACCESSORS(c, "showvoicenames", (method)NULL, (method)notationobj_setattr_show_voicenames);
+		// @exclude bach.slot
+		// @description Toggles the display of voice names.
+		
+        CLASS_ATTR_CHAR(c,"showslurs",0, t_notation_obj, show_slurs);
+        CLASS_ATTR_STYLE_LABEL(c,"showslurs",0,"onoff","Show Slurs");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showslurs",0,"1");
+        // @description Toggles the display of slurs.
+        
         CLASS_ATTR_CHAR(c,"showclefs",0, t_notation_obj, show_clefs);
         CLASS_ATTR_STYLE_LABEL(c,"showclefs",0,"onoff","Show Clefs");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showclefs",0,"1");
@@ -2852,7 +2960,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"showlyrics",0, t_notation_obj, show_lyrics);
         CLASS_ATTR_STYLE_LABEL(c,"showlyrics",0,"onoff","Show Lyrics");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showlyrics", 0, "1");
-        CLASS_ATTR_ACCESSORS(c, "showlyrics", (method)NULL, (method)notation_obj_setattr_showlyrics);
+        CLASS_ATTR_ACCESSORS(c, "showlyrics", (method)NULL, (method)notationobj_setattr_showlyrics);
         // @exclude bach.slot
         // @description Toggles the display of lyrics.
 
@@ -2868,11 +2976,10 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Toggles the display of hairpins for dynamics.
 
-
         CLASS_ATTR_CHAR(c,"ruler",0, t_notation_obj, ruler);
         CLASS_ATTR_STYLE_LABEL(c,"ruler",0,"enumindex","Show Ruler");
         CLASS_ATTR_ENUMINDEX(c,"ruler", 0, "Never Above Below Both");
-        CLASS_ATTR_ACCESSORS(c, "ruler", (method)NULL, (method)notation_obj_setattr_ruler);
+        CLASS_ATTR_ACCESSORS(c, "ruler", (method)NULL, (method)notationobj_setattr_ruler);
         CLASS_ATTR_BASIC(c,"ruler", 0);
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"ruler",0,"0");
         // @exclude bach.slot
@@ -2905,7 +3012,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"showvscrollbar",0, t_notation_obj, show_vscrollbar);
         CLASS_ATTR_STYLE_LABEL(c,"showvscrollbar",0,"onoff","Show Vertical Scrollbar If Needed");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showvscrollbar", 0, "1");
-        CLASS_ATTR_ACCESSORS(c, "showvscrollbar", (method)NULL, (method)notation_obj_setattr_showvscrollbar);
+        CLASS_ATTR_ACCESSORS(c, "showvscrollbar", (method)NULL, (method)notationobj_setattr_showvscrollbar);
         // @exclude bach.slot
         // @description Toggles the display of the vertical scrollbar, if needed.
         // If unneeded, the scrollbar is not shown. By default this is 1: you should set it to 0 only
@@ -2915,7 +3022,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"showauxiliarystems",0,"onoff","Show Unisons Auxiliary Stems");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showauxiliarystems", 0, "1");
         CLASS_ATTR_INVISIBLE(c, "showauxiliarystems", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // invisible attribute,  no longer supported. Use showstems instead
-                                                                                          // @exclude all
+      // @exclude all
 
         CLASS_ATTR_CHAR(c,"shownotenames",0, t_notation_obj, show_note_names);
         CLASS_ATTR_STYLE_LABEL(c,"shownotenames",0,"onoff","Show Note Names In Selection Legend");
@@ -2941,7 +3048,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         CLASS_ATTR_STYLE_LABEL(c,"labelfamilies",0,"enumindex","Show Label Families");
         CLASS_ATTR_ENUMINDEX(c,"labelfamilies", 0, "None Singleton Bounding Box Venn");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"labelfamilies",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "labelfamilies", (method)NULL, (method)notation_obj_setattr_labelfamilies);
+        CLASS_ATTR_ACCESSORS(c, "labelfamilies", (method)NULL, (method)notationobj_setattr_labelfamilies);
         // @exclude bach.slot
         // @description Chooses the way in which elements bearing the same names should be visually tagged: <br />
         // - None (default): don't show label families. <br />
@@ -3005,7 +3112,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         CLASS_ATTR_CHAR(c,"showloop",0, t_notation_obj, show_loop_region);
         CLASS_ATTR_STYLE_LABEL(c,"showloop",0,"onoff","Show Loop Region");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showloop", 0, "0");
-        CLASS_ATTR_ACCESSORS(c, "showloop", (method)NULL, (method)notation_obj_setattr_showloop);
+        CLASS_ATTR_ACCESSORS(c, "showloop", (method)NULL, (method)notationobj_setattr_showloop);
         // @exclude bach.slot
         // @description Toggles the display of the loop region.
 
@@ -3034,6 +3141,20 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showpartcolors",0,"0");
         // @exclude bach.slot
         // @description Toggles the display of different voice parts (see the <m>parts</m> attribute) with different colors.
+
+        CLASS_ATTR_CHAR(c,"showpartbrackets",0, t_notation_obj, show_accollatura);
+        CLASS_ATTR_STYLE_LABEL(c,"showpartbrackets",0,"onoff","Show Part Brackets");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showpartbrackets",0,"1");
+        // @exclude bach.slot
+        // @description Toggles the display of brackets in voice ensembles.
+
+        CLASS_ATTR_CHAR(c,"showinitialrule",0, t_notation_obj, show_initial_rule);
+        CLASS_ATTR_STYLE_LABEL(c,"showinitialrule",0,"enumindex","Show Initial Rule");
+        CLASS_ATTR_ENUMINDEX(c,"showinitialrule", 0, "Never Only With Multiple Voices Always");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showinitialrule",0,"0");
+        // @exclude bach.slot
+        // @description Toggles the display of the initial vertical line running through all the staves.
+
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -3054,28 +3175,28 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_SYM(c,"voicenamesfont", 0, t_notation_obj, voice_names_font);
         CLASS_ATTR_STYLE_LABEL(c, "voicenamesfont", 0, "font", "Voice Names Font");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"voicenamesfont", 0, "Arial");
-        CLASS_ATTR_ACCESSORS(c, "voicenamesfont", (method)NULL, (method)notation_obj_setattr_voicenames_font);
+        CLASS_ATTR_ACCESSORS(c, "voicenamesfont", (method)NULL, (method)notationobj_setattr_voicenames_font);
         // @exclude bach.slot
         // @description Sets the font size of voice names
 
         CLASS_ATTR_DOUBLE(c,"voicenamesfontsize",0, t_notation_obj, voice_names_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"voicenamesfontsize",0,"text","Voice Names Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"voicenamesfontsize", 0, "11");
-        CLASS_ATTR_ACCESSORS(c, "voicenamesfontsize", (method)NULL, (method)notation_obj_setattr_voicenames_font_size);
+        CLASS_ATTR_ACCESSORS(c, "voicenamesfontsize", (method)NULL, (method)notationobj_setattr_voicenames_font_size);
         // @exclude bach.slot
         // @description Sets the font size of voice names (rescaled according to the <m>vzoom</m>).
-
+		
         CLASS_ATTR_SYM(c,"markersfont", 0, t_notation_obj, markers_font);
         CLASS_ATTR_STYLE_LABEL(c, "markersfont", 0, "font", "Markers Font");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markersfont", 0, "Arial");
-        CLASS_ATTR_ACCESSORS(c, "markersfont", (method)NULL, (method)notation_obj_setattr_markers_font);
+        CLASS_ATTR_ACCESSORS(c, "markersfont", (method)NULL, (method)notationobj_setattr_markers_font);
         // @exclude bach.slot
         // @description Sets the font size of markers
 
         CLASS_ATTR_DOUBLE(c,"markersfontsize",0, t_notation_obj, markers_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"markersfontsize",0,"text","Markers Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markersfontsize", 0, "9");
-        CLASS_ATTR_ACCESSORS(c, "markersfontsize", (method)NULL, (method)notation_obj_setattr_markers_font_size);
+        CLASS_ATTR_ACCESSORS(c, "markersfontsize", (method)NULL, (method)notationobj_setattr_markers_font_size);
         // @exclude bach.slot
         // @description Sets the font size of marker names (rescaled according to the <m>vzoom</m>).
 
@@ -3094,7 +3215,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DOUBLE(c,"lyricsfontsize",0, t_notation_obj, lyrics_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"lyricsfontsize",0,"text","Lyrics Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"lyricsfontsize", 0, "12");
-        CLASS_ATTR_ACCESSORS(c, "lyricsfontsize", (method)NULL, (method)notation_obj_setattr_lyrics_font_size);
+        CLASS_ATTR_ACCESSORS(c, "lyricsfontsize", (method)NULL, (method)notationobj_setattr_lyrics_font_size);
         // @exclude bach.slot
         // @description Sets the font size of lyrics (rescaled according to the <m>vzoom</m>).
         
@@ -3102,7 +3223,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
             CLASS_ATTR_DOUBLE(c,"temposize",0, t_notation_obj, tempo_size);
             CLASS_ATTR_STYLE_LABEL(c,"temposize",0,"text","Tempi Relative Size");
             CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"temposize", 0, "0.7");
-            CLASS_ATTR_ACCESSORS(c, "temposize", (method)NULL, (method)notation_obj_setattr_tempo_size);
+            CLASS_ATTR_ACCESSORS(c, "temposize", (method)NULL, (method)notationobj_setattr_tempo_size);
             // @exclude bach.slot, bach.roll
             // @description Sets the relative size of tempo markings with respect to standard notation.
         }
@@ -3110,14 +3231,14 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DOUBLE(c,"dynamicsfontsize",0, t_notation_obj, dynamics_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"dynamicsfontsize",0,"text","Dynamics Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsfontsize", 0, "24");
-        CLASS_ATTR_ACCESSORS(c, "dynamicsfontsize", (method)NULL, (method)notation_obj_setattr_dynamics_font_size);
+        CLASS_ATTR_ACCESSORS(c, "dynamicsfontsize", (method)NULL, (method)notationobj_setattr_dynamics_font_size);
         // @exclude bach.slot
         // @description Sets the font size of dynamics (rescaled according to the <m>vzoom</m>).
 
         CLASS_ATTR_DOUBLE(c,"dynamicsexprfontsize",0, t_notation_obj, dynamics_roman_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"dynamicsexprfontsize",0,"text","Dynamics Expressions Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsexprfontsize", 0, "12");
-        CLASS_ATTR_ACCESSORS(c, "dynamicsexprfontsize", (method)NULL, (method)notation_obj_setattr_dynamics_roman_font_size);
+        CLASS_ATTR_ACCESSORS(c, "dynamicsexprfontsize", (method)NULL, (method)notationobj_setattr_dynamics_roman_font_size);
         // @exclude bach.slot
         // @description Sets the font size of dynamic-like textual expressions (rescaled according to the <m>vzoom</m>).
 
@@ -3130,7 +3251,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DOUBLE(c,"annotationfontsize",0, t_notation_obj, annotation_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"annotationfontsize",0,"text","Annotation Font Size");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"annotationfontsize", 0, "10");
-        CLASS_ATTR_ACCESSORS(c, "annotationfontsize", (method)NULL, (method)notation_obj_setattr_annotation_font_size);
+        CLASS_ATTR_ACCESSORS(c, "annotationfontsize", (method)NULL, (method)notationobj_setattr_annotation_font_size);
         // @exclude bach.slot
         // @description Sets the font size for textual annotations over the staff (handled via slot linkage).
 
@@ -3177,18 +3298,18 @@ void notation_class_add_pitches_attributes(t_class *c, char obj_type){
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 }
 
-t_max_err notation_obj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_showvelocity(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         long prev_vel_handling = r_ob->velocity_handling;
         r_ob->velocity_handling = atom_getlong(av);
         if (r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE || prev_vel_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE)
-            quick_notation_obj_recompute_all_chord_parameters(r_ob);
+            quick_notationobj_recompute_all_chord_parameters(r_ob);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         long prev_label_families = r_ob->show_label_families;
         r_ob->show_label_families = atom_getlong(av);
@@ -3204,7 +3325,7 @@ t_max_err notation_obj_setattr_labelfamilies(t_notation_obj *r_ob, t_object *att
 }
 
 
-t_max_err notation_obj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_highlightplay(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         r_ob->highlight_played_notes = CLAMP(atom_getlong(av), 0, 1);
         llll_clear(r_ob->notes_being_played);
@@ -3213,7 +3334,7 @@ t_max_err notation_obj_setattr_highlightplay(t_notation_obj *r_ob, t_object *att
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         r_ob->use_loop_region = CLAMP(atom_getlong(av), 0, 1);
         if (r_ob->notify_also_upon_messages && !r_ob->creatingnewobj)
@@ -3224,7 +3345,7 @@ t_max_err notation_obj_setattr_useloop(t_notation_obj *r_ob, t_object *attr, lon
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         r_ob->show_loop_region = CLAMP(atom_getlong(av), 0, 1);
         if (r_ob->notify_also_upon_messages && !r_ob->creatingnewobj)
@@ -3236,7 +3357,7 @@ t_max_err notation_obj_setattr_showloop(t_notation_obj *r_ob, t_object *attr, lo
 }
 
 
-t_max_err notation_obj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     for (long i = 0; i < 128; i++)
         r_ob->play_offline_bitfield[i] = 0;
@@ -3273,7 +3394,7 @@ t_max_err notation_obj_setattr_dumpplaycmd(t_notation_obj *r_ob, t_object *attr,
 }
 
 
-t_max_err notation_obj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av)
+t_max_err notationobj_getattr_dumpplaycmd(t_notation_obj *x, t_object *attr, long *ac, t_atom **av)
 {
     if (*ac && *av) {
         object_error((t_object *)x, "Error in getattr!");
@@ -3489,140 +3610,113 @@ void set_prevent_editing(t_notation_obj *r_ob, e_element_types elem, e_element_a
     }
 }
 
-t_max_err notation_obj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
-    if (ac && av) {
-        t_atom old_num_steps = r_ob->max_undo_steps;
-        t_atom inf;
-        atom_setsym(&inf, _llllobj_sym_inf);
-        t_atom new_num_steps = atom_gettype(av) != A_LONG ? inf : *av;
 
-        if (atom_gettype(&new_num_steps) == A_LONG && atom_getlong(&new_num_steps) < 0)
-            atom_setlong(&new_num_steps, -atom_getlong(&new_num_steps));
+t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+	if (ac && av) {
+		t_atom old_num_steps = r_ob->max_undo_steps;
+		t_atom inf;
+		atom_setsym(&inf, _llllobj_sym_inf);
+		t_atom new_num_steps = atom_gettype(av) != A_LONG ? inf : *av;
 
-        if (atom_gettype(&old_num_steps) == A_LONG && atom_gettype(&new_num_steps) == A_LONG) {
-            if (atom_getlong(&new_num_steps) <= atom_getlong(&old_num_steps)) {
-                clear_undo_redo_llll(r_ob, k_UNDO);
-                clear_undo_redo_llll(r_ob, k_REDO);
-            }
-        } else if (atom_gettype(&new_num_steps) == A_LONG && atom_gettype(&old_num_steps) == A_SYM) {
-            clear_undo_redo_llll(r_ob, k_UNDO);
-            clear_undo_redo_llll(r_ob, k_REDO);
-        }
-        r_ob->max_undo_steps = new_num_steps;
-    }
-    return MAX_ERR_NONE;
-}
+		if (atom_gettype(&new_num_steps) == A_LONG && atom_getlong(&new_num_steps) < 0)
+			atom_setlong(&new_num_steps, -atom_getlong(&new_num_steps));
 
-t_max_err notation_obj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
-    long set_to_value = 1;
-    clear_prevent_edit(&r_ob->prevent_edit);
-
-    if (ac && av) {
-        r_ob->num_prevent_editing_elems = 0;
-        t_llll *parsed = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
-        if (parsed) {
-            t_llllelem *elem;
-            for (elem = parsed->l_head; elem; elem = elem->l_next) {
-                if (hatom_gettype(&elem->l_hatom) == H_SYM) {
-                    t_symbol *sym = hatom_getsym(&elem->l_hatom);
-                    if (sym == gensym("-") && !elem->l_prev) {
-                        set_all_prevent_edit_to_value(&r_ob->prevent_edit, 1);
-                        set_to_value = 0;
-                    } else {
-                        e_element_types elem_id = (e_element_types) elementtypesym2elementtypeid(sym);
-                        set_prevent_editing(r_ob, elem_id, k_ALL_ACTIONS, set_to_value);
-                    }
-                } else if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
-                    t_llll *ll = hatom_getllll(&elem->l_hatom);
-                    if (ll && ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
-                        t_symbol *router = hatom_getsym(&ll->l_head->l_hatom);
-                        e_element_types elem_id = (e_element_types) elementtypesym2elementtypeid(router);
-                        t_llllelem *act = ll->l_head->l_next, *nextact;
-                        while (act) {
-                            nextact = act->l_next;
-                            if (hatom_gettype(&act->l_hatom) == H_SYM) {
-                                t_symbol *action = hatom_getsym(&act->l_hatom);
-                                e_element_actions action_id = (e_element_actions) actiontypesym2actiontypeid(action);
-                                if (action_id >= 0)
-                                    set_prevent_editing(r_ob, elem_id, action_id, set_to_value);
-                                else
-                                    llll_destroyelem(act);
-                            }
-                            act = nextact;
-                        }
-                    }
-                }
-            }
-
-            if (parsed->l_size == 0)
-                r_ob->num_prevent_editing_elems = 0;
-            else {
-                t_atom *out = NULL;
-                long num_prevent_editing_elems = llll_deparse(parsed, &out, 0, 0);
-                long n = MIN(num_prevent_editing_elems, CONST_MAX_BACH_ELEMENT_TYPES + 10);
-                atom_setatom_array(n, r_ob->prevent_editing_atom, CONST_MAX_BACH_ELEMENT_TYPES + 10, out);
-                r_ob->num_prevent_editing_elems = n;
-
-                bach_freeptr(out);
-            }
-            llll_free(parsed);
-        }
-    }
-    return MAX_ERR_NONE;
-}
-
-
-t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
-    if (ac && av) {
-        long mode = atom_getlong(av);
-        r_ob->ruler_mode = mode;
-        object_attr_setdisabled((t_object *)r_ob, _llllobj_sym_gridperiodms, mode == 1);
-        object_attr_setdisabled((t_object *)r_ob, _llllobj_sym_numgridsubdivisions, mode == 1);
-    }
-
-    return MAX_ERR_NONE;
-}
-
-
-// use marker = NULL to get all markers
-t_llll *get_single_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, long command_number, char namefirst){
-	t_llll *outlist;
-	if (marker) {
-		outlist = llll_get();
-        llll_appendsym(outlist, (command_number < 0 || command_number >= CONST_MAX_COMMANDS) ? _llllobj_sym_marker : r_ob->commands[command_number].command_marker);
-//		llll_appendsym(outlist, _llllobj_sym_marker, 0, WHITENULL_llll); // the "marker" symbol in first place
-		if (marker->r_it.names->l_size == 0)
-			llll_appendsym(outlist, _llllobj_sym_none, 0, WHITENULL_llll);
-		else if (marker->r_it.names->l_size == 1 && marker->r_it.names->l_depth == 1)
-			llll_appendhatom(outlist, &marker->r_it.names->l_head->l_hatom, 0, WHITENULL_llll);
-		else
-			llll_appendllll(outlist, get_names_as_llll((t_notation_item *)marker, false), 0, WHITENULL_llll);
-		if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
-			t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-			t_llll *timepointll = get_timepoint_as_llll(r_ob, tp);
-			llll_appendllll(outlist, timepointll, 0, WHITENULL_llll);
-		} else
-			llll_appenddouble(outlist, marker->position_ms, 0, WHITENULL_llll);
-		llll_appendsym(outlist, marker_role_to_sym(marker->role), 0, WHITENULL_llll);
-		if (marker->role != k_MARKER_ROLE_NONE && marker->content)
-			llll_appendllll_clone(outlist, marker->content, 0, WHITENULL_llll, NULL);
-	} else {
-		outlist = get_markers_as_llll(r_ob, 0, 0, 0, namefirst, k_CONSIDER_FOR_DUMPING, 0);
+		if (atom_gettype(&old_num_steps) == A_LONG && atom_gettype(&new_num_steps) == A_LONG) {
+			if (atom_getlong(&new_num_steps) <= atom_getlong(&old_num_steps)) {
+				clear_undo_redo_llll(r_ob, k_UNDO);
+				clear_undo_redo_llll(r_ob, k_REDO);
+			}
+		} else if (atom_gettype(&new_num_steps) == A_LONG && atom_gettype(&old_num_steps) == A_SYM) {
+			clear_undo_redo_llll(r_ob, k_UNDO);
+			clear_undo_redo_llll(r_ob, k_REDO);
+		}
+		r_ob->max_undo_steps = new_num_steps;
 	}
-	return outlist;
+	return MAX_ERR_NONE;
 }
+
+t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+	long set_to_value = 1;
+	clear_prevent_edit(&r_ob->prevent_edit);
+	
+	if (ac && av) {
+		r_ob->num_prevent_editing_elems = 0;
+		t_llll *parsed = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
+		if (parsed) {
+			t_llllelem *elem;
+			for (elem = parsed->l_head; elem; elem = elem->l_next) {
+				if (hatom_gettype(&elem->l_hatom) == H_SYM) {
+					t_symbol *sym = hatom_getsym(&elem->l_hatom);
+					if (sym == gensym("-") && !elem->l_prev) { 
+						set_all_prevent_edit_to_value(&r_ob->prevent_edit, 1);
+						set_to_value = 0;
+					} else {
+						e_element_types elem_id = (e_element_types) elementtypesym2elementtypeid(sym);
+						set_prevent_editing(r_ob, elem_id, k_ALL_ACTIONS, set_to_value);
+					}
+				} else if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
+					t_llll *ll = hatom_getllll(&elem->l_hatom);
+					if (ll && ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
+						t_symbol *router = hatom_getsym(&ll->l_head->l_hatom);
+						e_element_types elem_id = (e_element_types) elementtypesym2elementtypeid(router);
+						t_llllelem *act = ll->l_head->l_next, *nextact;
+						while (act) {
+							nextact = act->l_next;
+							if (hatom_gettype(&act->l_hatom) == H_SYM) {
+								t_symbol *action = hatom_getsym(&act->l_hatom);
+								e_element_actions action_id = (e_element_actions) actiontypesym2actiontypeid(action);
+								if (action_id >= 0)
+									set_prevent_editing(r_ob, elem_id, action_id, set_to_value);
+								else
+									llll_destroyelem(act);
+							}
+							act = nextact;
+						}
+					}
+				}
+			}
+			
+			if (parsed->l_size == 0) 
+				r_ob->num_prevent_editing_elems = 0;
+			else {
+				t_atom *out = NULL;
+				long num_prevent_editing_elems = llll_deparse(parsed, &out, 0, 0);
+				long n = MIN(num_prevent_editing_elems, CONST_MAX_BACH_ELEMENT_TYPES + 10);
+				atom_setatom_array(n, r_ob->prevent_editing_atom, CONST_MAX_BACH_ELEMENT_TYPES + 10, out);
+				r_ob->num_prevent_editing_elems = n; 
+				
+				bach_freeptr(out);
+			}
+			llll_free(parsed);
+		}
+	}
+	return MAX_ERR_NONE;
+}
+
+
+t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+	if (ac && av) {
+		long mode = atom_getlong(av);
+		r_ob->ruler_mode = mode;
+		object_attr_setdisabled((t_object *)r_ob, _llllobj_sym_gridperiodms, mode == 1);
+		object_attr_setdisabled((t_object *)r_ob, _llllobj_sym_numgridsubdivisions, mode == 1);
+	}
+	
+	return MAX_ERR_NONE;
+}
+
 
 // use marker = NULL to send all markers
 void send_marker_as_llll(t_notation_obj *r_ob, t_marker *marker, char namefirst, long outlet, long command_number, t_llll *forced_routers)
 {
 	t_llll *llll;
 	lock_markers_mutex(r_ob);
-	llll = get_single_marker_as_llll(r_ob, marker, command_number, namefirst);
-
-    if (forced_routers && forced_routers->l_tail && hatom_gettype(&forced_routers->l_tail->l_hatom) == H_SYM &&
-        llll && llll->l_tail && hatom_getsym(&llll->l_tail->l_hatom) == _llllobj_sym_marker)
-        hatom_setsym(&llll->l_head->l_hatom, hatom_getsym(&forced_routers->l_tail->l_hatom));
-
+	llll = marker_get_as_llll(r_ob, marker, namefirst, true, k_CONSIDER_FOR_DUMPING);
+    
+    if (forced_routers && forced_routers->l_head && hatom_gettype(&forced_routers->l_head->l_hatom) == H_SYM &&
+        llll && llll->l_head && hatom_getsym(&llll->l_head->l_hatom) == _llllobj_sym_marker)
+        hatom_setsym(&llll->l_head->l_hatom, hatom_getsym(&forced_routers->l_head->l_hatom));
+        
 	unlock_markers_mutex(r_ob);
     setup_lambda_and_send_llll(r_ob, outlet, llll, (t_notation_item *)marker);
     llll_free(llll);
@@ -3662,28 +3756,29 @@ void send_rebuild_done(t_notation_obj *r_ob) {
 }
 
 
-t_max_err notation_obj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
-    if (ac && av) {
-        atoms_to_jrgba(ac, av, &r_ob->j_background_rgba);
-        notationobj_build_clef_gradient_surface(r_ob);
-        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-    }
-    return MAX_ERR_NONE;
+
+t_max_err notationobj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+	if (ac && av) {
+		atoms_to_jrgba(ac, av, &r_ob->j_background_rgba);
+		notationobj_build_clef_gradient_surface(r_ob);
+		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+	}
+	return MAX_ERR_NONE;
 }
 
 
-t_max_err notation_obj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
-    if (ac && av) {
-        long s = atom_getlong(av);
-        r_ob->j_inset_x = (s > 0) ? s : 0;
-        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-        recompute_total_length(r_ob);
-        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-    }
-    return MAX_ERR_NONE;
+t_max_err notationobj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+	if (ac && av) {
+		long s = atom_getlong(av); 
+		r_ob->j_inset_x = (s > 0) ? s : 0;
+		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+		recompute_total_length(r_ob);
+		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+	}
+	return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av && atom_gettype(av) == A_SYM) {
         t_symbol *s = atom_getsym(av);
@@ -3696,16 +3791,16 @@ t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, l
 
 
 
-t_max_err notation_obj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         r_ob->show_vscrollbar = CLAMP(atom_getlong(av), 0, 1);
-        quick_notation_obj_recompute_all_chord_parameters(r_ob);
+        quick_notationobj_recompute_all_chord_parameters(r_ob);
     }
     return MAX_ERR_NONE;
 }
 
 
-t_max_err notation_obj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     t_llll *midichannels_as_llll = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
     set_midichannels_from_llll(r_ob, midichannels_as_llll);
     llll_free(midichannels_as_llll);
@@ -3713,7 +3808,7 @@ t_max_err notation_obj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr
 }
 
 
-t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->show_voice_names = atom_getlong(av);
     recalculate_voicenames_width(r_ob);
@@ -3722,7 +3817,7 @@ t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *a
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && atom_gettype(av) == A_SYM)
         r_ob->voice_names_font = atom_getsym(av);
@@ -3732,7 +3827,7 @@ t_max_err notation_obj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *a
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->voice_names_font_size = atom_getfloat(av);
     recalculate_voicenames_width(r_ob);
@@ -3741,7 +3836,7 @@ t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_obje
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && atom_gettype(av) == A_SYM)
         r_ob->markers_font = atom_getsym(av);
@@ -3754,7 +3849,7 @@ t_max_err notation_obj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && is_atom_number(av))
         r_ob->markers_font_size = atom_getfloat(av);
@@ -3791,7 +3886,7 @@ void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beami
 }
 
 
-t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->lyrics_font_size = atom_getfloat(av);
 
@@ -3801,7 +3896,7 @@ t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->tempo_size = atom_getfloat(av);
 
@@ -3812,7 +3907,7 @@ t_max_err notation_obj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, 
 }
 
 
-t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->dynamics_font_size = atom_getfloat(av);
 
@@ -3822,7 +3917,7 @@ t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->dynamics_roman_font_size = atom_getfloat(av);
 
@@ -3832,7 +3927,7 @@ t_max_err notation_obj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->annotation_font_size = atom_getfloat(av);
 
@@ -3842,7 +3937,7 @@ t_max_err notation_obj_setattr_annotation_font_size(t_notation_obj *r_ob, t_obje
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->lyrics_alignment = atom_getlong(av);
 
@@ -3852,7 +3947,17 @@ t_max_err notation_obj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_annotation_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && is_atom_number(av))
+        r_ob->annotation_alignment = atom_getlong(av);
+
+    implicitely_recalculate_all(r_ob, false);
+
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
+t_max_err notationobj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         r_ob->onset_equality_threshold_ms = atom_getfloat(av);
 
@@ -3864,8 +3969,7 @@ t_max_err notation_obj_setattr_onseteqthresh(t_notation_obj *r_ob, t_object *att
 
 
 
-
-t_max_err notation_obj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     t_voice *voice;
     t_chord *chord;
     t_note *note;
@@ -3893,28 +3997,28 @@ t_max_err notation_obj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_LYRICS);
 
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_linknoteheadtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linknoteheadtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_NOTEHEAD);
 
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_linknotecolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linknotecolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_NOTE_COLOR);
 
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_DURATIONLINE_COLOR);
 
@@ -3922,7 +4026,7 @@ t_max_err notation_obj_setattr_linkdlcolortoslot(t_notation_obj *r_ob, t_object 
 }
 
 
-t_max_err notation_obj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_ARTICULATIONS);
 
@@ -3932,28 +4036,28 @@ t_max_err notation_obj_setattr_linkarticulationstoslot(t_notation_obj *r_ob, t_o
 
 
 
-t_max_err notation_obj_setattr_linknoteheadsizetoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linknoteheadsizetoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_NOTE_SIZE);
 
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_linknoteheadadjusttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linknoteheadadjusttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_NOTEHEAD_ADJUST);
 
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_linknoteheadfonttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linknoteheadfonttoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_NOTEHEAD_FONT);
 
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_linkannotationtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linkannotationtoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_ANNOTATION);
 
@@ -3961,7 +4065,7 @@ t_max_err notation_obj_setattr_linkannotationtoslot(t_notation_obj *r_ob, t_obje
 }
 
 
-t_max_err notation_obj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
         change_linkto_slot_flag(r_ob, atom_getlong(av) - 1, k_SLOT_LINKAGE_DYNAMICS);
 
@@ -3971,7 +4075,7 @@ t_max_err notation_obj_setattr_linkdynamicstoslot(t_notation_obj *r_ob, t_object
 
 
 
-t_max_err notation_obj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
         r_ob->force_non_antialiased_staff_lines = atom_getlong(av);
@@ -4155,52 +4259,52 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
     // enharmonicity
     if (chosenelem > 400 && chosenelem <= 400 + CONST_MAX_ENHARMONICITY_OPTIONS){
         long chosen_idx = chosenelem - 401;
-        create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_CHANGE);
+        undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         enharmonically_retranscribe_note(r_ob, note, false, r_ob->current_enharmonic_list_screenmc[chosen_idx], r_ob->current_enharmonic_list_screenacc[chosen_idx]);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE);
         return k_CHANGED_SEND_BANG;
     }
 
     if (chosenelem == 451) {
         res = lock_selection(r_ob, false);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 452) {
         res = unlock_selection(r_ob, false);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 453) {
         res = mute_selection(r_ob, false);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 454) {
         res = unmute_selection(r_ob, false);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 455) {
         res = solo_selection(r_ob, false);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 456) {
         res = unsolo_selection(r_ob, false);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 461) {
         res = no_solo(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 462) {
         res = no_muted(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 471) {
         res = snap_pitch_to_grid_for_selection(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 472) {
         res = reset_selection_enharmonicity(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 473 && r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         return chosenelem; // we pass it through, to perform changes in roll.c
@@ -4265,7 +4369,7 @@ long handle_filters_popup(t_notation_obj *r_ob, long modifiers, t_slotitem *clic
         chosenelem = jpopupmenu_popup(r_ob->popup_filters, screen, 0);
 
         if (chosenelem >= 2000 && chosenelem <= 2009 && !(active_filter && chosenelem - 2000 == active_filter->filter_type)) {
-            create_simple_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_for_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             if (!active_filter) {
                 t_slotitem *thisitem = build_slotitem(r_ob, get_activeitem_activeslot(r_ob));
                 active_filter = (t_biquad *)bach_newptr(sizeof(t_biquad));
@@ -4308,7 +4412,7 @@ t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *me
     if (!meas->prev) {
         // get all first measures
         for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
-            llll_appendobj(out, nth_measure_of_scorevoice((t_scorevoice *)voice, 0));
+            llll_appendobj(out, measure_get_nth((t_scorevoice *)voice, 0));
         }
     } else {
         t_measure_end_barline *barline[CONST_MAX_VOICES];
@@ -4399,17 +4503,17 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
             long i;
             get_all_tuttipoint_barlines(r_ob, measure->end_barline, barline_across);
             for (i = 0; i < r_ob->num_voices; i++) {
-                create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)barline_across[i]->owner, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)barline_across[i]->owner, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 barline_across[i]->barline_type = new_barline;
                 recompute_all_for_measure(r_ob, barline_across[i]->owner, false);
             }
         } else {
-            create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)measure, k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)measure, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             measure->end_barline->barline_type = new_barline;
             recompute_all_for_measure(r_ob, measure, false);
         }
 
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_BARLINE_TYPE);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_BARLINE_TYPE);
         return k_CHANGED_SEND_BANG;
     }
 
@@ -4450,16 +4554,16 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                 t_voice *last = voiceensemble_get_lastvoice(r_ob, voice);
 
                 if (first == last) {
-                    create_simple_selected_notation_item_undo_tick(r_ob, item, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                    undo_tick_create_for_selected_notation_item(r_ob, item, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                     measure_set_ts(r_ob, (t_measure *)item, &chosen_ts);
                     recompute_all_for_measure(r_ob, (t_measure *)item, false);
                 } else {
                     t_voice *temp;
                     long measure_num = ((t_measure *)item)->measure_number;
                     for (temp = first; temp && temp->number < r_ob->num_voices; temp = voice_get_next(r_ob, temp)) {
-                        t_measure *m = nth_measure_of_scorevoice((t_scorevoice *)temp, measure_num);
+                        t_measure *m = measure_get_nth((t_scorevoice *)temp, measure_num);
                         if (m) {
-                            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                            undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             measure_set_ts(r_ob, m, &chosen_ts);
                             recompute_all_for_measure(r_ob, m, false);
                         }
@@ -4470,39 +4574,39 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
             }
         }
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_TIME_SIGNATURE_FOR_SELECTED_MEASURES);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_TIME_SIGNATURE_FOR_SELECTED_MEASURES);
         return k_CHANGED_SEND_BANG + k_CHANGED_PERFORM_ANALYSIS_AND_CHANGE;
     } else if (chosenelem == 551){ //lock
         res = lock_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 552){ //unlock
         res = unlock_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 553){ // mute
         res = mute_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 554){ // unmute
         res = unmute_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 555){ // solo
         res = solo_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 556){ // unsolo
         res = unsolo_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 570){ // no solo
         res = no_solo(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 571){ // no mute
         res = no_muted(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem >= 600 && chosenelem <= 605) {
         return chosenelem; // we pass it through
@@ -4516,11 +4620,11 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
         return chosenelem; // we pass it through
     } else if (chosenelem == 610) {
         res = lock_rhythmic_trees_in_selection(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_RHYTHMIC_TREE_FOR_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_RHYTHMIC_TREE_FOR_SELECTION);
         return k_CHANGED_STANDARD_SEND_BANG;
     } else if (chosenelem == 611) {
         res = unlock_rhythmic_trees_in_selection(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_RHYTHMIC_TREE_FOR_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_RHYTHMIC_TREE_FOR_SELECTION);
         return k_CHANGED_STANDARD_SEND_BANG;
     }
 
@@ -4554,43 +4658,43 @@ long handle_voice_popup(t_notation_obj *r_ob, t_voice *voice, long modifiers, in
         return k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 181){ //lock
         res = lock_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 182){ //unlock
         res = unlock_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNLOCK_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 183){ // mute
         res = mute_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MUTE_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 184){ // unmute
         res = unmute_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNMUTE_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 185){
         res = solo_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SOLO_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 186){
         res = unsolo_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_UNSOLO_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 191){ // no solo
         res = no_solo(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 192){ // no mute
         res = no_muted(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 4001){ // break voice ensemble
         voiceensemble_break(r_ob, voice, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_BREAK_VOICE_ENSEMBLE);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_BREAK_VOICE_ENSEMBLE);
         return k_CHANGED_SEND_BANG;
     } else if (chosenelem == 4000){ // create voice ensemble
         voiceensemble_create_from_selection(r_ob, true);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CREATE_VOICE_ENSEMBLE);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CREATE_VOICE_ENSEMBLE);
         return k_CHANGED_SEND_BANG;
     }
 
@@ -4614,11 +4718,11 @@ long handle_background_popup(t_notation_obj *r_ob, long modifiers, e_element_typ
 
     if (chosenelem == 1001 && r_ob->allow_solo){ // no solo
         res = no_solo(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_SOLOS);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 1002 && r_ob->allow_mute){ // no mute
         res = no_muted(r_ob);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
     } else if (chosenelem == 1010) {
         t_atom arv;
@@ -4656,14 +4760,15 @@ long handle_articulations_popup(t_notation_obj *r_ob, t_articulation *art, long 
         t_chord *ch = NULL;
         if (art->owner)
             ch = art->owner->type == k_CHORD ? (t_chord *)art->owner : ((t_note *)art->owner)->parent;
-        create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+        undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 
         art->articulation_ID = chosenelem;
         art->need_recompute_position = true;
         if (ch)
             reset_articulation_position_for_chord(r_ob, ch);
 
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ARTICULATION);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ARTICULATION);
+
         return k_CHANGED_SEND_BANG;
     }
 
@@ -4820,34 +4925,39 @@ void start_editing_voicename(t_notation_obj *r_ob, t_object *patcherview, t_voic
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 }
 
-void start_editing_markername(t_notation_obj *r_ob, t_object *patcherview, t_marker *marker, double textfield_left_position){
-    t_object *textfield;
-    double top, left;
-    char buf[1000];
+void start_editing_markername(t_notation_obj *r_ob, t_object *patcherview, t_marker *marker, double textfield_left_position)
+    {
+	t_object *textfield;
+	double top, left;
+	char buf[1000];
+	
+	if (marker->role != k_MARKER_ROLE_NONE)
+		return;
+	
+	textfield = jbox_get_textfield((t_object *) r_ob); 
+	
+	object_attr_setlong(r_ob, gensym("fontface"), 1);
+	
+	r_ob->is_editing_type = k_MARKERNAME;
+	r_ob->is_editing_marker = marker;
 
-    if (marker->role != k_MARKER_ROLE_NONE)
-        return;
-
-    textfield = jbox_get_textfield((t_object *) r_ob);
-
-    object_attr_setlong(r_ob, gensym("fontface"), 1);
-
-    r_ob->is_editing_type = k_MARKERNAME;
-    r_ob->is_editing_marker = marker;
-    top = r_ob->j_inset_y + 10 * r_ob->zoom_y + notationobj_get_marker_voffset(r_ob, marker);
-    left = textfield_left_position;
-
-    textfield_set_wordwrap(textfield, 0);
-    textfield_set_autoscroll(textfield, 0);
-    textfield_set_textmargins(textfield, left, top, 0, 0);
-    textfield_set_textcolor(textfield, &r_ob->j_selection_rgba);
-
-    get_names_as_text(marker->r_it.names, buf, 1000);
-    notationobj_set_fontname_safe(r_ob, gensym("Arial"));
-    notationobj_set_fontsize_safe(r_ob, r_ob->markers_font_size * r_ob->zoom_y);
-    object_method(patcherview, gensym("insertboxtext"), r_ob, buf);
-
-    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    double playhead_y1, playhead_y2;
+    get_playhead_ypos(r_ob, &playhead_y1, &playhead_y2);
+	
+    top = playhead_y1 + marker_get_voffset(r_ob, marker);
+	left = textfield_left_position; 
+	
+	textfield_set_wordwrap(textfield, 0);
+	textfield_set_autoscroll(textfield, 0);
+	textfield_set_textmargins(textfield, left, top, 0, 0);
+	textfield_set_textcolor(textfield, &r_ob->j_selection_rgba);
+	
+	get_names_as_text(marker->r_it.names, buf, 1000);
+	jbox_set_fontname((t_object *) r_ob, gensym("Arial"));
+	jbox_set_fontsize((t_object *) r_ob, r_ob->markers_font_size * r_ob->zoom_y);
+	object_method(patcherview, gensym("insertboxtext"), r_ob, buf);
+	
+	notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 }
 
 
@@ -4926,7 +5036,7 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
 
     if (r_ob->is_editing_slot_number >= 0 && r_ob->is_editing_slot_number < CONST_MAX_SLOTS) {
         t_notation_item *it = notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, r_ob->is_editing_slot_number);
-        t_slotitem *slit = it ? nth_slotitem(r_ob, it, r_ob->is_editing_slot_number, 0) : NULL;
+        t_slotitem *slit = it ? slotitem_get_nth(r_ob, it, r_ob->is_editing_slot_number, 0) : NULL;
         if (slit && r_ob->slotinfo[r_ob->is_editing_slot_number].slot_type == k_SLOT_TYPE_DYNAMICS) {
             t_dynamics *dyn = (t_dynamics *)slit->item;
             object_method(patcherview, gensym("insertboxtext"), r_ob, dyn->text_deparsed ? dyn->text_deparsed->s_name : "");
@@ -5112,7 +5222,7 @@ void notation_item_free(t_notation_item *it)
 }
 
 
-void notation_obj_preschedule_task(t_notation_obj *r_ob)
+void notationobj_preschedule_task(t_notation_obj *r_ob)
 {
 
     long playout = r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? 6 : 7;
@@ -5127,7 +5237,7 @@ void notation_obj_preschedule_task(t_notation_obj *r_ob)
             llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
             llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, playout, end_llll);
             llll_free(end_llll);
-            defer((t_object *) r_ob, (method)notation_obj_preschedule_end, NULL, 0, NULL);
+            defer((t_object *) r_ob, (method)notationobj_preschedule_end, NULL, 0, NULL);
         } else {
 
             notationobj_redraw(r_ob);
@@ -5148,18 +5258,18 @@ void notation_obj_preschedule_task(t_notation_obj *r_ob)
     }
 }
 
-void notation_obj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end)
+void notationobj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end)
 {
     t_scheduled_event *ev = (t_scheduled_event *)bach_newptr(sizeof(t_scheduled_event));
     ev->time = time;
-    ev->clock = clock_new_debug((t_object *)r_ob, (method)notation_obj_preschedule_task);
+    ev->clock = clock_new_debug((t_object *)r_ob, (method)notationobj_preschedule_task);
     ev->content = content;
     ev->is_end = is_end;
     ev->is_notewise = is_notewise;
     llll_appendobj(r_ob->to_preschedule, ev);
 }
 
-void notation_obj_clear_prescheduled_events(t_notation_obj *r_ob)
+void notationobj_clear_prescheduled_events(t_notation_obj *r_ob)
 {
     for (t_llllelem *el = r_ob->to_preschedule->l_head; el; el = el->l_next) {
         t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&el->l_hatom);
@@ -5171,17 +5281,17 @@ void notation_obj_clear_prescheduled_events(t_notation_obj *r_ob)
     llll_clear(r_ob->to_preschedule);
 }
 
-void notation_obj_preschedule_end(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+void notationobj_preschedule_end(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
 {
     r_ob->preschedule_cursor = NULL;
     r_ob->playing = false;
-    notation_obj_clear_prescheduled_events(r_ob);
+    notationobj_clear_prescheduled_events(r_ob);
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 }
 
 
 
-void notation_obj_free(t_notation_obj *r_ob)
+void notationobj_free(t_notation_obj *r_ob)
 {
     long i;
 
@@ -5271,7 +5381,7 @@ void notation_obj_free(t_notation_obj *r_ob)
     llll_free(r_ob->redo_llll);
     llll_free(r_ob->undo_notation_items_under_tick);
 
-    notation_obj_clear_prescheduled_events(r_ob);
+    notationobj_clear_prescheduled_events(r_ob);
     llll_free(r_ob->to_preschedule);
 
     if (r_ob->notation_cursor.touched_measures)
@@ -5283,14 +5393,14 @@ void notation_obj_free(t_notation_obj *r_ob)
 
     // Obsolete stuff, kept for compatibility with old undo system
     // freeing old undo/redo lllls
-
+/*
     for (i = 0; i< CONST_MAX_UNDO_STEPS; i++) {
         llll_free(r_ob->old_undo_llll[i]);
         llll_free(r_ob->old_redo_llll[i]);
     }
     bach_freeptr(r_ob->old_undo_llll);
     bach_freeptr(r_ob->old_redo_llll);
-
+*/
 
 
     // **************************
@@ -5312,9 +5422,12 @@ void notation_obj_free(t_notation_obj *r_ob)
     if (r_ob->clef_gradient_surface)
         jgraphics_surface_destroy(r_ob->clef_gradient_surface);
 
+    llll_free(r_ob->slurs);
+
     // **************************
     // MISCELLANEA
     // **************************
+
 
     // freeing external editor
     object_free_debug(r_ob->m_editor);
@@ -5568,73 +5681,6 @@ t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double star
 
 
 
-double get_marker_ux_position(t_notation_obj *r_ob, t_marker *marker)
-{
-    if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-        return (r_ob->timepoint_to_unscaled_xposition)(r_ob, tp, CONST_MARKERS_ON_FIRST_MEASURE_CHORDS ? k_PARSETIMEPOINT_FLAG_ZEROPIMISFIRSTCHORD : k_PARSETIMEPOINT_FLAG_NONE);
-    } else {
-        return ms_to_unscaled_xposition(r_ob, marker->position_ms, 1);
-    }
-}
-
-
-double get_marker_ms_position(t_notation_obj *r_ob, t_marker *marker)
-{
-    if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE) {
-        return unscaled_xposition_to_ms(r_ob, get_marker_ux_position(r_ob, marker), 1);
-    } else {
-        return marker->position_ms;
-    }
-}
-
-
-
-// if mode == 1 it's clipped between start_ms and end_ms
-// if mode == 2 only selected markers are output
-// if mode == 3 both things are done
-// start_meas_num is used only if for_what = k_CONSIDER_FOR_SUBDUMPING, and bach.score is involved
-t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, double end_ms, char namefirst, char for_what, long start_meas_num){
-    t_llll *outlist = llll_get();
-    t_marker *marker = r_ob->firstmarker;
-    llll_appendsym(outlist, _llllobj_sym_markers, 0, WHITENULL_llll);
-    for (marker = r_ob->firstmarker; marker; marker = marker->next) {
-        if (mode >= 2 && !notation_item_is_selected(r_ob, (t_notation_item *)marker))
-            continue;
-
-        double ms = marker->position_ms;
-        if ((mode % 2 == 0) || (ms >= start_ms && ms <= end_ms)) {
-
-            t_llll *thisel = llll_get();
-
-            if (namefirst)
-                llll_append_notation_item_name(thisel, (t_notation_item *)marker);
-
-            if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE && for_what != k_CONSIDER_FOR_SCORE2ROLL){
-                t_timepoint tp = measure_attached_marker_to_timepoint(r_ob, marker);
-                if (for_what == k_CONSIDER_FOR_SUBDUMPING)
-                    tp.measure_num -= start_meas_num;
-                t_llll *tp_as_llll = get_timepoint_as_llll(r_ob, tp);
-                llll_appendllll(thisel, tp_as_llll, 0, WHITENULL_llll);
-            } else {
-                llll_appenddouble(thisel, for_what == k_CONSIDER_FOR_SUBDUMPING ? ms - start_ms : ms, 0, WHITENULL_llll);
-            }
-
-            if (!namefirst)
-                llll_append_notation_item_name(thisel, (t_notation_item *)marker);
-
-            llll_appendsym(thisel, marker_role_to_sym(marker->role), 0, WHITENULL_llll);
-            if (marker->role != k_MARKER_ROLE_NONE && marker->content)
-                llll_appendllll_clone(thisel, marker->content, 0, WHITENULL_llll, NULL);
-
-            if (for_what == k_CONSIDER_FOR_UNDO)
-                llll_appendllll(thisel, get_ID_as_llll((t_notation_item *)marker), 0, WHITENULL_llll);
-
-            llll_appendllll(outlist, thisel, 0, WHITENULL_llll);
-        }
-    }
-    return outlist;
-}
 
 // use command_number = -1 for standard dump
 char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_number, delete_item_fn delete_item_method, t_llll *forced_routers)
@@ -5685,12 +5731,12 @@ char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_num
         }
         unlock_general_mutex(r_ob);
 
-        if (changed) handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTION);
+        if (changed) handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_DELETE_SELECTION);
     }
     return changed;
 }
 
-t_max_err notation_obj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         long z = atom_getlong(av);
         r_ob->show_lyrics = CLAMP(z, 0, 1);
@@ -5702,7 +5748,7 @@ t_max_err notation_obj_setattr_showlyrics(t_notation_obj *r_ob, t_object *attr, 
     return MAX_ERR_NONE;
 }
 
-t_max_err notation_obj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_ruler(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && av) {
         long z = atom_getlong(av);
         r_ob->ruler = CLAMP(z, 0, 3);
@@ -5778,7 +5824,7 @@ void set_stafflines_to_voice_from_llllelem(t_notation_obj *r_ob, t_voice *voice,
 }
 
 
-t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     t_llll *inputlist = NULL;
 
     inputlist = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
@@ -6000,6 +6046,9 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
         }
 
         switch (hovered_elem_type) {
+            case k_MARKER_REGION_TAIL:
+                bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_TRIM_END);
+                break;
 
             case k_MARKER:
                 if (modifiers == eCommandKey && is_editable(r_ob, k_MARKER, k_DELETION))
@@ -6125,7 +6174,7 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                     double ux = xposition_to_unscaled_xposition(r_ob, pt.x);
                     if (ux >= 0) {
                         long voicenum = yposition_to_voicenumber(r_ob, pt.y, NULL, k_VOICEENSEMBLE_INTERFACE_FIRST);
-                        t_voice *voice = nth_voice(r_ob, voicenum);
+                        t_voice *voice = voice_get_nth_safe(r_ob, voicenum);
                         if (voice) {
                             double mc = yposition_to_mc(r_ob, pt.y, NULL, NULL);
                             long screen_mc;
@@ -6157,7 +6206,7 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
 
 
 
-void notation_obj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut)
+void notationobj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut)
 {
     if (clipboard->gathered_syntax)
         llll_free(clipboard->gathered_syntax);
@@ -6170,14 +6219,14 @@ void notation_obj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboa
         if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
             r_ob->whole_obj_undo_tick_function(r_ob);
         else
-            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         delete_all_selected_function_points(r_ob, slot_num);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
     }
 }
 
 
-void notation_obj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut)
+void notationobj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_notation_item *nitem, long slot_num, char cut)
 {
     if (clipboard->gathered_syntax)
         llll_free(clipboard->gathered_syntax);
@@ -6196,17 +6245,17 @@ void notation_obj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_nota
         if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
             r_ob->whole_obj_undo_tick_function(r_ob);
         else
-            create_simple_selected_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         notation_item_clear_slot(r_ob, nitem, slot_num);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
     }
 }
 
 // use paste_to_this_slot = -1 to paste to the original position
-void notation_obj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long paste_to_this_slot, char also_paste_to_rests) {
+void notationobj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long paste_to_this_slot, char also_paste_to_rests) {
     if (paste_to_this_slot < 0) {
         set_slots_to_selection(r_ob, clipboard->gathered_syntax, also_paste_to_rests);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
     } else {
         // gotta paste the (only) cached slot into the active slot (we don't check the type)
         t_llll *clonedslot;
@@ -6222,12 +6271,12 @@ void notation_obj_paste_slot(t_notation_obj *r_ob, t_clipboard *clipboard, long 
         } else
             set_slots_to_selection(r_ob, clonedslot, also_paste_to_rests);
         llll_free(clonedslot);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
     }
 }
 
 
-void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut)
+void notationobj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard, t_note *note, char cut)
 {
     if (note) {
         if (clipboard->gathered_syntax)
@@ -6242,20 +6291,20 @@ void notation_obj_copy_durationline(t_notation_obj *r_ob, t_clipboard *clipboard
             if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
                 r_ob->whole_obj_undo_tick_function(r_ob);
             else
-                create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             note_delete_breakpoints(r_ob, note);
-            handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_DURATION_LINE);
+            handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_DURATION_LINE);
         }
     }
 }
 
 
-void notation_obj_set_durationline(t_notation_obj *r_ob, t_llll *durationline_as_breakpoints) {
+void notationobj_set_durationline(t_notation_obj *r_ob, t_llll *durationline_as_breakpoints) {
     set_breakpoints_to_selection(r_ob, durationline_as_breakpoints);
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DURATION_LINES_FOR_SELECTION);
 }
 
-void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard) {
+void notationobj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboard) {
     // gotta paste the (only) cached slot into the active slot (we don't check the type)
     t_llll *clonedbpts;
     lock_general_mutex(r_ob);
@@ -6263,11 +6312,11 @@ void notation_obj_paste_durationline(t_notation_obj *r_ob, t_clipboard *clipboar
     unlock_general_mutex(r_ob);
     set_breakpoints_to_selection(r_ob, clonedbpts);
     llll_free(clonedbpts);
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_DURATION_LINE);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_DURATION_LINE);
 }
 
 
-void notation_obj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, t_clipboard *clipboard, char delete_intermediate_points)
+void notationobj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob, t_clipboard *clipboard, char delete_intermediate_points)
 {
     if (r_ob->active_slot_num >= 0) {
         double offset = r_ob->j_mouse_x - r_ob->slot_window_active_x1;
@@ -6295,9 +6344,9 @@ void notation_obj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob,
             offset -= pt.x - activeslotwin.x;
         }
 
-        create_simple_selected_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+        undo_tick_create_for_selected_notation_item(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         paste_slotitems(r_ob, r_ob->active_slot_notationitem, r_ob->active_slot_num, clipboard->gathered_syntax, activeslotwin, offset, delete_intermediate_points);
-        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_SLOT_CONTENT);
     }
 }
 

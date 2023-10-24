@@ -23,6 +23,7 @@
 
 #include "foundation/bach.h"
 #include "notation/notation.h" // header with all the structures for the notation objects
+#include "notation/notation_undo.h" 
 
 
 long dynamics_get_ending_hairpin(t_dynamics *dyn)
@@ -390,9 +391,9 @@ t_bpt *dynamics_mark_get_breakpoint(t_dynamics *dyn, t_dynamics_mark *mark)
     if (dyn->owner_item->type == k_NOTE) {
         t_note *nt = dyn->owner_item->type == k_NOTE ? (t_note *)dyn->owner_item : (dyn->owner_item->type == k_CHORD ? ((t_chord *)dyn->owner_item)->firstnote : NULL);
         if (mark->snap_to_breakpoint >= 0)
-            bpt = nth_breakpoint(nt, mark->snap_to_breakpoint);
+            bpt = breakpoint_get_nth(nt, mark->snap_to_breakpoint);
         else
-            bpt = nth_breakpoint(nt, nt->num_breakpoints + mark->snap_to_breakpoint);
+            bpt = breakpoint_get_nth(nt, nt->num_breakpoints + mark->snap_to_breakpoint);
     }
     return bpt;
 }
@@ -510,6 +511,7 @@ t_llll *dynamics_to_llll(t_notation_obj *r_ob, t_dynamics *dyn, e_data_consideri
     switch (mode) {
         case k_CONSIDER_FOR_UNDO:
         case k_CONSIDER_FOR_SAVING:
+        case k_CONSIDER_FOR_DUMPING_FIRST_OUTLET:
         case k_CONSIDER_FOR_SLOT_LLLL_EDITOR:
             return dynamics_to_llll_detailed(r_ob, dyn);
             break;
@@ -1806,7 +1808,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                         }
                         
                         if (fix_inconsistent && last_dyn && last_dyn->lastmark) {
-                            create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)last_chord, k_UNDO_MODIFICATION_CHANGE);
+                            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)last_chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             last_dyn->lastmark->hairpin_to_next = labs(last_hairpin) * cmp; // correcting the previous hairpin
                             last_dyn->text_deparsed = dynamics_to_symbol(r_ob, last_dyn);
 
@@ -1840,7 +1842,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                         }
                         if (fix_unnecessary) {
                             something_fixed = true;
-                            create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+                            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             dynamics_mark_delete(dyn, dyn->firstmark);
                             if (!dyn->firstmark) {
                                 chord_delete_dynamics(r_ob, ch, false);
@@ -1865,7 +1867,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                             }
                             if (fix_unnecessary) {
                                 something_fixed = true;
-                                create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+                                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                 dynamics_mark_delete(dyn, mark);
                             }
                         }
@@ -1887,7 +1889,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                             }
                             if (fix_inconsistent) {
                                 something_fixed = true;
-                                create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+                                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                 mark->prev->hairpin_to_next = labs(mark->prev->hairpin_to_next) * cmp; // correcting the hairpin
                             }
                         }
@@ -1920,7 +1922,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }
     
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_FIX_DYNAMICS);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_FIX_DYNAMICS);
     
     return 0;
 }
@@ -2284,7 +2286,7 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
         double ch_onset = notation_item_get_onset_ms(r_ob, (t_notation_item *)ch);
         
         if (add_undo_tick)
-            create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         
         long last_hairpin = left_dyn->lastmark->hairpin_to_next;
         
@@ -2532,7 +2534,7 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
         
     }
     
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ASSIGN_VELOCITIES);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ASSIGN_VELOCITIES);
     
     return 0;
 }
@@ -2555,7 +2557,7 @@ void dynamics_erase_for_chord(t_notation_obj *r_ob, t_chord *ch, long slot_num, 
     if (notation_item_get_slot_firstitem(r_ob, (t_notation_item *)ch, slot_num)) {
         if (add_undo_tick) {
             undo_tick_added = true;
-            create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         }
         notation_item_clear_slot(r_ob, (t_notation_item *)ch, slot_num);
     }
@@ -2564,7 +2566,7 @@ void dynamics_erase_for_chord(t_notation_obj *r_ob, t_chord *ch, long slot_num, 
         if (notation_item_get_slot_firstitem(r_ob, (t_notation_item *)nt, slot_num)) {
             if (add_undo_tick && !undo_tick_added) {
                 undo_tick_added = true;
-                create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+                undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             }
             notation_item_clear_slot(r_ob, (t_notation_item *)nt, slot_num);
         }
@@ -2582,7 +2584,7 @@ t_symbol *chord_assign_dynamics_from_velocities(t_notation_obj *r_ob, t_chord *c
     }
     
     if (add_undo_tick)
-        create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+        undo_tick_create_for_notation_item(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
     
     // Erasing existing dynamics
     chord_delete_dynamics(r_ob, ch, false);
@@ -2714,7 +2716,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
     unlock_general_mutex(r_ob);
     
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ASSIGN_DYNAMICS);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ASSIGN_DYNAMICS);
     
     return 0;
 }
@@ -2807,7 +2809,7 @@ double dynamics_change_sel_energy_delta(t_notation_obj *r_ob, long delta_energy,
                             // nothing to do, we only want to change the standard range
                         } else {
                             if (ch && !(ch->r_it.flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
-                                create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                                undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                             
                             changed = 1;
                             
@@ -2829,7 +2831,7 @@ double dynamics_change_sel_energy_delta(t_notation_obj *r_ob, long delta_energy,
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                     recompute_all_for_measure(r_ob, ch->parent, false);
                 else
-                    ch->need_recompute_parameters = true;
+                    chord_set_recompute_parameters_flag(r_ob, ch);
             }
             
         }
