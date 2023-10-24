@@ -47,7 +47,9 @@ VERSION NOTES:
 
 - bach.roll:  Improved intelligent ruler
 
-- bach.score: Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
+- bach.score:
+    á Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
+    á New feature: Uneven splitting of chords using proportions, e.g. "split @proportions 1 3 9"
 
 
 

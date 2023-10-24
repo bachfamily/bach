@@ -4550,7 +4550,7 @@ void check_measure_autocompletion(t_score *x, t_measure *measure)
                 char sign = (chord->r_sym_duration.r_num >= 0) ? 1 : -1;
                 t_rational left_dur = rat_long_prod(rat_rat_diff(meas_sym_dur, r_sym_onset), sign);
                 t_rational right_dur = rat_long_prod(rat_rat_diff(rat_rat_sum(r_sym_onset, rat_abs(chord->r_sym_duration)), meas_sym_dur), sign);
-                t_chord *newleftchord = split_chord(x, chord, 2, true);
+                t_chord *newleftchord = split_chord(x, chord, 2, true, NULL);
                 tie_chord(newleftchord);
                 newleftchord->r_sym_duration = left_dur;
                 newleftchord->next->r_sym_duration = right_dur;
@@ -4587,15 +4587,23 @@ void check_measure_autocompletion(t_score *x, t_measure *measure)
 }
 
 //returns the corresponding first chord in the series
-t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_rests)
+t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_rests, t_rational *proportions)
 {
     // splits a chord in <how_many> chords, preserving total r_sym_duration
     
+    t_rational sum_proportions = long2rat(0);
+    if (proportions) {
+        for (long i = 0; i < how_many; i++)
+            sum_proportions = rat_rat_sum(sum_proportions, rat_abs(proportions[i]));
+    }
+        
     if (!chord->parent) {
         object_error((t_object *) x, "Error!");
         return chord;
     }
     
+    // DG: Do we really need CONST_MIN_SYM_DURATION_FOR_CHORD? It seems that we're using it only sporadically and there are ways around it anyway
+    // perhaps we don't need it?
     if (rat_rat_cmp(rat_abs(rat_long_div(chord->r_sym_duration,how_many)), CONST_MIN_SYM_DURATION_FOR_CHORD) < 0) {
         object_warn((t_object *) x, "Warning: trying to create too small chords.");
         return chord;
@@ -4607,6 +4615,7 @@ t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_
         t_chord **split;
         t_rational orig_figure = chord->figure;
         long i;
+        t_rational orig_duration = chord->r_sym_duration;
         char is_chord_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)chord);
         
         if (is_chord_selected)
@@ -4615,7 +4624,10 @@ t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_
         meas = chord->parent;
         split = (t_chord **) bach_newptr(how_many * sizeof(t_chord *));
         split[0] = clone_chord((t_notation_obj *) x, chord, k_CLONE_FOR_ORIGINAL);
-        split[0]->r_sym_duration = rat_long_div(split[0]->r_sym_duration, how_many);
+        if (proportions)
+            split[0]->r_sym_duration = rat_rat_div(rat_rat_prod(orig_duration, rat_abs(proportions[0])), sum_proportions);
+        else
+            split[0]->r_sym_duration = rat_long_div(split[0]->r_sym_duration, how_many);
         split[0]->parent = chord->parent;
         split[0]->r_it.flags = (e_bach_internal_notation_flags) (split[0]->r_it.flags & ~k_FLAG_SPLIT);
         
@@ -4630,6 +4642,8 @@ t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_
         
         for (i = 1; i < how_many; i++) {
             split[i] = clone_chord_without_lyrics((t_notation_obj *) x, split[0], k_CLONE_FOR_SPLIT);
+            if (proportions)
+                split[i]->r_sym_duration = rat_rat_div(rat_rat_prod(orig_duration, rat_abs(proportions[i])), sum_proportions);
             split[i]->parent = chord->parent;
             split[i]->r_it.flags = (e_bach_internal_notation_flags) (split[i]->r_it.flags & ~k_FLAG_SPLIT);
             if (beam_llll)
@@ -4657,7 +4671,18 @@ t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_
         
         if (split[0]->rhythmic_tree_elem) {
             t_llll *ll = llll_wrap_element_range(split[0]->rhythmic_tree_elem, split[how_many-1]->rhythmic_tree_elem);    // will be ORIGINAL
-            if (perfect_log2(rat_long_div(orig_figure, how_many).r_den) < 0) { // forcing a tuplet. we need to force that since when we'll perform analysis and change we'll keep the levels for granted
+            bool must_force_tuplet = false;
+            if (proportions) {
+                for (long i = 0; i < how_many; i++) {
+                    if (perfect_log2(rat_rat_div(rat_rat_prod(orig_duration, rat_abs(proportions[i])), sum_proportions).r_den) < 0) {
+                        must_force_tuplet = true;
+                        break;
+                    }
+                }
+            } else {
+                must_force_tuplet = (perfect_log2(rat_long_div(orig_figure, how_many).r_den) < 0);
+            }
+            if (must_force_tuplet) { // forcing a tuplet. we need to force that since when we'll perform analysis and change we'll keep the levels for granted
                 ll->l_thing.w_obj = build_rhythm_level_properties();
                 ((t_rhythm_level_properties *)ll->l_thing.w_obj)->level_type |= k_RHYTHM_LEVEL_TUPLET;
             }

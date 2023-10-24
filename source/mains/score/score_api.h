@@ -245,7 +245,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
 long score_oksize(t_score *x, t_rect *newrect);
 long get_global_num_notes(t_score *x);
 long get_global_num_notes_voice(t_scorevoice *voice);
-t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_rests);
+t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_rests, t_rational *proportions);
 char has_measure_attached_markers(t_score *x, t_measure *meas);
 
 void score_delete_voice(t_score *x, t_scorevoice *voice);

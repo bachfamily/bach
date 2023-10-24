@@ -419,7 +419,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
 t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, char mode, char *old_chord_deleted, char allow_voice_change);
 void snap_pitch_to_grid_voice(t_score *x, t_scorevoice *voice);
 char quick_merge_selection(t_score *x);
-char split_selection(t_score *x, long how_many, char merge_alltied_chords_first);
+char split_selection(t_score *x, long how_many, char merge_alltied_chords_first, t_rational *proportions);
 char gather_all_selected_chords_with_merge_flag(t_score *x, t_chord *chord, char only_tied_ones, t_chord **reference, t_notation_item **next_sel_pointer);
 char chord_merge_mc(t_score *x, t_chord *chord, double threshold_cents, char gathering_policy_cents);
 void turn_chord_into_rest(t_score *x, t_chord *chord);
@@ -3593,9 +3593,46 @@ void score_inscreenpos(t_score *x, t_symbol *s, long argc, t_atom *argv){
 
 void score_split(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
-    if (argc && argv && is_atom_number(argv)) 
-        split_selection(x, atom_getlong(argv), argc > 1 ? false : true);
-    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SPLIT_SELECTION); 
+    t_llll *proportions_ll = NULL;
+    t_rational *proportions = NULL;
+    t_llll *ll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    llll_parseargs_and_attrs_destructive((t_object *) x, ll, "l", gensym("proportions"), &proportions_ll);
+    
+    long how_many = 0;
+    if (proportions_ll) {
+        if (proportions_ll && proportions_ll->l_size > 0) {
+            long c = 0;
+            how_many = 0;
+            proportions = (t_rational *)bach_newptr(proportions_ll->l_size * sizeof(t_rational));
+            for (c = 0; c < proportions_ll->l_size; c++)
+                proportions[c] = long2rat(1);
+            c = 0;
+            for (t_llllelem *el = proportions_ll->l_head; el; el = el->l_next) {
+                if (is_hatom_number(&el->l_hatom)) {
+                    proportions[c] = rat_abs(hatom_getrational(&el->l_hatom));
+                    c++;
+                    how_many++;
+                }
+            }
+        }
+    } else {
+        if (ll && ll->l_head && is_hatom_number(&ll->l_head->l_hatom)) {
+            how_many = hatom_getlong(&ll->l_head->l_hatom);
+        }
+    }
+    
+    if (how_many > 0) {
+        split_selection(x, how_many, ll->l_size > 1 ? false : true, proportions);
+    } else {
+        object_warn((t_object *)x, "Can't split in 0 parts!");
+    }
+    
+    if (proportions) {
+        bach_freeptr(proportions);
+    }
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SPLIT_SELECTION);
+
+    llll_free(ll);
 }
 
 void score_join(t_score *x)
@@ -10144,7 +10181,7 @@ t_chord *clear_region(t_score *x, t_scorevoice *voice, t_timepoint *from_here, t
                 // chord is LDR: split!
                 t_rational left_dur = rat_long_prod(rat_rat_diff(from_here->pt_in_measure, cur), sign);
                 t_rational right_dur = rat_long_prod(rat_rat_diff(next_cur, to_here->pt_in_measure), sign);
-                t_chord *newleftchord = split_chord(x, chord, 2, true);
+                t_chord *newleftchord = split_chord(x, chord, 2, true, NULL);
                 tie_chord(newleftchord);
                 newleftchord->r_sym_duration = left_dur;
                 newleftchord->next->r_sym_duration = right_dur;
@@ -11999,7 +12036,8 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
 
 
 
-char split_selection(t_score *x, long how_many, char merge_alltied_chords_first){ 
+char split_selection(t_score *x, long how_many, char merge_alltied_chords_first, t_rational *proportions)
+{
     char changed = 0;
     t_notation_item *temp_it;
     t_notation_item *curr_it = x->r_ob.firstselecteditem;
@@ -12080,7 +12118,7 @@ char split_selection(t_score *x, long how_many, char merge_alltied_chords_first)
         if ((curr_it->type == k_CHORD) && (((t_chord *)curr_it)->r_it.flags & k_FLAG_SPLIT)) {
             oldch = ((t_chord *)curr_it);
             oldch->r_it.flags = (e_bach_internal_notation_flags) (oldch->r_it.flags & ~k_FLAG_SPLIT);
-            split_chord(x, oldch, how_many, oldch->parent->lock_rhythmic_tree || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED);
+            split_chord(x, oldch, how_many, oldch->parent->lock_rhythmic_tree || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED, proportions);
             changed = 1;
         } else if (curr_it->type == k_MEASURE) {
             t_measure *meas = ((t_measure *)curr_it);
@@ -12090,7 +12128,7 @@ char split_selection(t_score *x, long how_many, char merge_alltied_chords_first)
                 tmp_ch = oldch->next;
                 if (oldch->r_it.flags & k_FLAG_SPLIT) {
                     oldch->r_it.flags = (e_bach_internal_notation_flags) (oldch->r_it.flags & ~k_FLAG_SPLIT);
-                    split_chord(x, oldch, how_many, oldch->parent->lock_rhythmic_tree || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED);
+                    split_chord(x, oldch, how_many, oldch->parent->lock_rhythmic_tree || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED, proportions);
                     changed = 1;
                 }
                 oldch = tmp_ch;
@@ -16586,7 +16624,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                         if (x->r_ob.notation_cursor.chord) {
                             lock_general_mutex((t_notation_obj *)x);
                             undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.measure, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                            split_chord(x, x->r_ob.notation_cursor.chord, keycode - 48, x->r_ob.notation_cursor.chord->parent->lock_rhythmic_tree || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED);
+                            split_chord(x, x->r_ob.notation_cursor.chord, keycode - 48, x->r_ob.notation_cursor.chord->parent->lock_rhythmic_tree || x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED, NULL);
                             perform_analysis_and_change(x, NULL, NULL, NULL, x->r_ob.tree_handling == k_RHYTHMIC_TREE_HANDLING_IGNORE ? k_BEAMING_CALCULATION_DO : k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS);
                             x->r_ob.need_recompute_chords_double_onset = true;
                             set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
@@ -17158,7 +17196,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             // change slot view
             // detect the selection type
             if (modifiers & eCommandKey && keycode > 48 && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_CREATION) && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)) {
-                split_selection(x, keycode - 48, !(modifiers & eAltKey));  // split selection - ALSO WORKS WITH TREES
+                split_selection(x, keycode - 48, !(modifiers & eAltKey), NULL);  // split selection - ALSO WORKS WITH TREES
                 if (!(modifiers & eShiftKey))
                     rebeam_levels_of_selected_tree_nodes(x, false, false, k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
                 handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SPLIT_SELECTION); 
