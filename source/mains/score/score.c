@@ -6581,10 +6581,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description The <m>split</m> message splits each selected chord into a number of pieces given as argument.
     // By default, sequences of completely tied chords are split as a whole (e.g. splitting a 1/4 chord tied to an 1/8 chord into 3 pieces, will yield 
     // three 1/8 chords); you can individually split each one of the chords instead by adding the "separate" symbol as second argument.
+    // If a "proportions" message argument is entered, this sets a list of proportions for the splitting.
     // @marg 0 @name num_parts @optional 0 @type int
     // @marg 1 @name separate @optional 1 @type symbol
+    // @mattr proportions @type llll @digest Splitting proportions
     // @example split 3 @caption split selected chords into 3 pieces each
     // @example split 3 separate @caption the same, separately splitting each chord in a tied sequence (if any)
+    // @example split @proportions 1 3 7 @caption split selected chords into 3 pieces with proportions 1:3:7
     // @seealso merge, join
     class_addmethod(c, (method) score_split, "split", A_GIMME, 0);
     
