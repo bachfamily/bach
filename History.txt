@@ -10,37 +10,39 @@ VERSION NOTES:
    á now support slurs
    á now feature a new system of notification of interface actions that provides details on the elements being modified. See the new "notifywith" message.
    á Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
-   á @showpartbrackets, @showinitialrule: new attributes
-
-- bach.quantize: removed puzzling innocuous errors for SmartMix mode
-
-- bach.omtree2bachtree: fixed bug causing wrong input for non 4/4 meters
 
 - bach.score:
     á fixed bug causing wrong playback for grace notes!
     á fixed bug causing wrong playback (missing notes) when some time-changing operations were performed on a score with measure-attached markers.
     á @outputnegativerests: new attribute. The new default should not break bw compatibility, but verify.
-    á @bigtsvadj, @bigtsabovetempi: new attributes
   
 - bach.slot:
     á now background slots work (if you reduce the window opacity)
-- bell: bach.sum, bach.prod now work
 
 
 ***********************
 *** VERSION CHANGES ***
 ***********************
 
+- bell: bach.sum, bach.prod now work
+
 - bach.roll, bach.score, bach.slot:
     @bordersize, @focusbordersize: new attributes
     getfocus: new message to query whether objects have focus
 
+- bach.omtree2bachtree:
+    á fixed bug causing wrong input for non 4/4 meters
+    á fixed bug causing wrong behavior with nested rhythms
+
+- bach.quantize: removed puzzling innocuous errors for SmartMix mode
+
 - bach.roll, bach.score:
-    Now clefs and keys behave properly w.r. to undo, even if changed via messages
-    Fixed bug causing non-refresh for keepselectioniflostfocus
-    Now setdl works in lambda mode properly
-    New @annotationalignment attribute setting the text alignment for annotations
-    Added "opaque" spec for custom noteheads, thus allowing a better implementation of tablatures
+    á Now clefs and keys behave properly w.r. to undo, even if changed via messages
+    á Fixed bug causing non-refresh for keepselectioniflostfocus
+    á Now setdl works in lambda mode properly
+    á New @annotationalignment attribute setting the text alignment for annotations
+    á Added "opaque" spec for custom noteheads, thus allowing a better implementation of tablatures
+    á @showpartbrackets, @showinitialrule: new attributes
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
@@ -50,6 +52,7 @@ VERSION NOTES:
 - bach.score:
     á Fixed bug causing crashes with wrong select syntax (e.g., unbalanced parentheses)
     á New feature: Uneven splitting of chords using proportions, e.g. "split @proportions 1 3 9"
+    á @bigtsvadj, @bigtsabovetempi: new attributes
 
 
 

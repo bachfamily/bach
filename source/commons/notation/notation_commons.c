@@ -39934,7 +39934,8 @@ void translate_rhythmic_level_om_to_bach(t_llll *box, t_rational box_duration){
     }
     
     
-    for (elem = box->l_head; elem; elem = elem->l_next){
+    for (elem = box->l_head; elem; ){
+        t_llllelem *nextelem = elem->l_next;
         if (hatom_gettype(&elem->l_hatom) == H_LLLL && elem->l_hatom.h_w.w_llll->l_head && is_hatom_number(&elem->l_hatom.h_w.w_llll->l_head->l_hatom)
             && elem->l_hatom.h_w.w_llll->l_head->l_next && hatom_gettype(&elem->l_hatom.h_w.w_llll->l_head->l_next->l_hatom) == H_LLLL) {
             t_rational weight = hatom_getrational(&elem->l_hatom.h_w.w_llll->l_head->l_hatom);
@@ -39949,6 +39950,7 @@ void translate_rhythmic_level_om_to_bach(t_llll *box, t_rational box_duration){
             weight = hatom_getrational(&elem->l_hatom);
             hatom_setrational(&elem->l_hatom, rat_rat_prod(box_duration, rat_rat_div(weight, sum)));
         }
+        elem = nextelem;
     }
 }
 
