@@ -341,6 +341,10 @@ void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *linecolor, t_jr
     
     paint_line(g, *linecolor, marker_x, marker_y1 + (is_region ? marker_get_voffset(r_ob, marker) - r_ob->zoom_y : 0), marker_x, marker_y2, linewidth);
     
+    if (is_region && r_ob->show_end_marker_for_regions) {
+        paint_dashed_y_line(g, *linecolor, marker_end_x, marker_y1 + (is_region ? marker_get_voffset(r_ob, marker) - r_ob->zoom_y : 0), marker_y2, linewidth*0.5, 3);
+    }
+    
     if (marker->role != k_MARKER_ROLE_NONE) {
         t_jfont *jf_special_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(6 * r_ob->zoom_y));  // text font for markers
         t_jrgba specialcolor = marker->role == k_MARKER_ROLE_TEMPO ? build_jrgba(0.6, 0.2, 0.2, 1) : (marker->role == k_MARKER_ROLE_TIME_SIGNATURE ? build_jrgba(0.2, 0.2, 0.6, 1) : (marker->role == k_MARKER_ROLE_MEASURE_BARLINE ? build_jrgba(0.2, 0.6, 0.6, 1) : (marker->role == k_MARKER_ROLE_MEASURE_DIVISION ? build_jrgba(0.6, 0.6, 0.2, 1) : build_jrgba(0.6, 0.2, 0.6, 1))));
@@ -718,6 +722,7 @@ void change_marker_onset_from_lexpr_or_llllelem(t_notation_obj *r_ob, t_marker *
 void marker_llllelem_to_onset_and_region_properties(t_notation_obj *r_ob, t_llllelem *el, double *onset_ms, double *dur_ms, t_timepoint *onset_timepoint, t_rational *symdur, char *attach_to)
 {
     *attach_to = k_MARKER_ATTACH_TO_MS;
+    *symdur = long2rat(0);
     if (el && is_hatom_number(&el->l_hatom)) {
         *onset_ms = hatom_getdouble(&el->l_hatom);
     } else if (el && hatom_gettype(&el->l_hatom) == H_LLLL) {

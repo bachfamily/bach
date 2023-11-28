@@ -2976,6 +2976,13 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the display of hairpins for dynamics.
 
+        CLASS_ATTR_CHAR(c,"showregionend",0, t_notation_obj, show_end_marker_for_regions);
+        CLASS_ATTR_STYLE_LABEL(c,"showregionend",0,"onoff","Show Region End");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showregionend", 0, "1");
+        // @exclude bach.slot
+        // @description Toggles the display of ending markers for regions
+
+
         CLASS_ATTR_CHAR(c,"ruler",0, t_notation_obj, ruler);
         CLASS_ATTR_STYLE_LABEL(c,"ruler",0,"enumindex","Show Ruler");
         CLASS_ATTR_ENUMINDEX(c,"ruler", 0, "Never Above Below Both");
@@ -3946,6 +3953,7 @@ t_max_err notationobj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *a
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return MAX_ERR_NONE;
 }
+
 
 t_max_err notationobj_setattr_annotation_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))

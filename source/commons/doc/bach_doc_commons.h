@@ -1732,9 +1732,10 @@
 	//
     // <br />
     // Marker regions
-    // • <m>doubleclick</m> on marker region strips: Select items in region <br />
+    // • <m>doubleclick</m> on marker region strips (but not on names), or <m>Shift+doubleclick</m> on marker region strips: Select items in region <br />
     // • <m>click+drag</m> on the end portion of a marker region strip: Extend the marker region <br />
     // • <m>doubleclick</m> on the end portion of a marker region strip: Extend the marker region till the next marker <br />
+    // • <m>Cmd+click</m> (mac) or <m>Ctrl+click</m> (win) on the end portion of a marker region strip: Turn region into a simple marker <br />
     //
 	// <br />
 	// Selection, zooming, scrollbar and dilation rectangle: <br />
@@ -1961,9 +1962,10 @@
 	//
     // <br />
     // Marker regions
-    // • <m>doubleclick</m> on marker region strips: Select items in region <br />
+    // • <m>doubleclick</m> on marker region strips (but not on names), or <m>Shift+doubleclick</m> on marker region strips: Select items in region <br />
     // • <m>click+drag</m> on the end portion of a marker region strip: Extend the marker region <br />
     // • <m>doubleclick</m> on the end portion of a marker region strip: Extend the marker region till the next marker <br />
+    // • <m>Cmd+click</m> (mac) or <m>Ctrl+click</m> (win) on the end portion of a marker region strip: Turn region into a simple marker <br />
     //
 	// <br />
 	// Selection, zooming, scrollbar and dilation rectangle: <br />

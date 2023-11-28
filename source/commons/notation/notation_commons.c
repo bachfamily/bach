@@ -34612,7 +34612,7 @@ double unscaled_xposition_snap_to_nearest_chord(t_notation_obj *r_ob, double ux,
                 if (snap_to_note_tails_also || snap_to_breakpoints_also) {
                     t_note *note;
                     for (note = chord->firstnote; note; note = note->next) {
-                        if (snap_to_breakpoints_also) {
+                        if (snap_to_note_tails_also) {
                             double note_ux = onset_to_unscaled_xposition(r_ob, chord->onset + note->duration);
                             double note_fabs = fabs(note_ux - ux);
                             if (!best_approx || note_fabs < best_approx_fabs) {
@@ -35755,6 +35755,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->voicenames_as_llll = get_nilnil();
     
     r_ob->rests_float_steps_part_shift = 4;
+    r_ob->show_end_marker_for_regions = true;
     
     if (obj_type == k_NOTATION_OBJECT_ROLL) {
         r_ob->loop_region.start.position_ms = 0;
@@ -43451,7 +43452,7 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
     // marker?
     if (r_ob->show_markers) {
         t_marker *marker;
-        for (marker = r_ob->lastmarker; marker; marker = marker->prev) {
+        for (marker = r_ob->firstmarker; marker; marker = marker->next) {
             if (is_in_marker_region_tail_shape(r_ob, marker, this_x, this_y, false)) {
                 *clicked_elem_ptr = marker;
                 *clicked_elem_type = k_MARKER_REGION_TAIL;

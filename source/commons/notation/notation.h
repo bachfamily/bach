@@ -4339,6 +4339,8 @@ typedef struct _notation_obj
 
     char        annotation_alignment;                    ///< Alignment type for the annotations, must be one of the #e_alignments
 
+    char        show_end_marker_for_regions;            ///< Display end marker for regions
+    ///
     // command fields, arrays (containing one element for each command)
     t_commandinfo commands[CONST_MAX_COMMANDS];
     
@@ -18950,6 +18952,8 @@ t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice);
 t_chord *chord_get_first_nongrace(t_notation_obj *r_ob, t_measure *meas);
 t_note *note_get_nearest(t_notation_obj *r_ob, double xpos, double ypos, long num_voice); // leave num_voice < 0 for auto find
 t_measure *measure_from_ux(t_notation_obj *r_ob, long num_voice, double ux, char always_return_something);
+
+double unscaled_xposition_snap_to_nearest_chord(t_notation_obj *r_ob, double ux, char snap_to_note_tails_also, char snap_to_breakpoints_also);
 
 t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms);
 t_llll *notationobj_get_interp_tempo(t_notation_obj *r_ob, t_timepoint tp);

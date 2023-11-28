@@ -13312,7 +13312,11 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         t_marker *mk = (t_marker *)x->r_ob.j_mousedown_ptr;
         if (true) {
             double this_ms = xposition_to_onset((t_notation_obj *) x, pt.x, yposition_to_systemnumber((t_notation_obj *) x, x->r_ob.j_mousedrag_point.y));
-
+            if (modifiers & eShiftKey) {
+                double ux_orig = ms_to_unscaled_xposition((t_notation_obj *)x, this_ms, 0);
+                double ux_new = unscaled_xposition_snap_to_nearest_chord((t_notation_obj *)x, ux_orig, true, true);
+                this_ms = unscaled_xposition_to_ms((t_notation_obj *)x, ux_new, 0);
+            }
             op = k_UNDO_OP_CHANGE_REGION_DURATION;
             undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             mk->duration_ms = MAX(0, this_ms - mk->position_ms);
@@ -16302,7 +16306,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
                     undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                     marker->duration_ms = -1;
                     handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_MARKERS);
-                } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) &&
+                } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) && !(modifiers & eShiftKey) &&
                            (!marker->next || !is_in_markername_shape((t_notation_obj *)x, marker->next, pt.x, pt.y))){
                     unlock_general_mutex((t_notation_obj *)x);    
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))
