@@ -9569,7 +9569,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         }
                         
                         // need to put accidentals?
-                        paint_noteaccidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt,
+                        paint_accidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt,
                                               get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x,
                                               &accidental_top_extension, &accidental_bottom_extension);
                         

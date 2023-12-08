@@ -1378,7 +1378,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     // notehead and accidentals
     foo->notehead_resize = 1.;
     paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, mc_to_yposition_in_scale_for_notes(r_ob, foo, voice, 0.7, false), system_shift, small_note_ratio);
-    paint_noteaccidentals(r_ob, g, jf_smallacc, jf_text_fractions, jf_smallaccbogus, &color, foo, 
+    paint_accidentals(r_ob, g, jf_smallacc, jf_text_fractions, jf_smallaccbogus, &color, foo, 
                           get_voice_clef(r_ob, voice), mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(foo), voice), notehead_left_x, NULL, NULL);
     free_chord(r_ob, ch);
     jfont_destroy_debug(jf_smallnote);
@@ -1939,14 +1939,16 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
         jfont_destroy_debug(jf_custom_noteheads);
 }
     
-void paint_noteaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jrgba *color, 
+void paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jrgba *color, 
                             t_note *curr_nt, long clef, double note_y_real, double stem_x, 
                             double *acc_top_uextension, double *acc_bottom_uextension){
     if (curr_nt->show_accidental)  { // Is there one or more accidentals to show??
         
         t_chord *curr_ch = curr_nt->parent;
         double grace_ratio = curr_ch->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.;
-        
+        double accidentals_resize = 1;
+        double acc_x = 0, acc_y = 0;
+
         if (r_ob->accidentals_display_type == k_ACCIDENTALS_CLASSICAL) { // classical accidental
             // updating top/bottom values if needed
             double acc_top, acc_bottom;
@@ -1956,8 +1958,8 @@ void paint_noteaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc
             long outlen;
             char *acccharacters_utf;
             char is_bogus;
-            double acc_x, acc_y;
-            double accidentals_resize = curr_nt->accidentals_resize * grace_ratio;
+            
+            accidentals_resize = curr_nt->accidentals_resize * grace_ratio;
 
             if (acc_top_uextension) 
                 *acc_top_uextension = get_accidental_top_uextension(r_ob, note_get_screen_accidental(curr_nt)) * r_ob->zoom_y * accidentals_resize;
@@ -2007,6 +2009,7 @@ void paint_noteaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc
                 jfont_destroy_debug(jf_custom_accidentals_bogus);
             }
             
+
         } else if (r_ob->accidentals_display_type == k_ACCIDENTALS_FRACTION || r_ob->accidentals_display_type == k_ACCIDENTALS_UNREDUCED_FRACTION) { // show fraction
             int num, den;
             char frac_text[20];    
@@ -2036,7 +2039,8 @@ void paint_noteaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc
             write_text(g, jf_custom_fractions, *color, frac_text, 
                                           r_ob->j_inset_x, r_ob->j_inset_y, left_bottom_corner_x - r_ob->j_inset_x, left_bottom_corner_y - r_ob->j_inset_y,
                                           JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMRIGHT, true, false);
-
+            acc_x = left_bottom_corner_x - width;
+            
             if (curr_ch->is_grace_chord)
                 jfont_destroy_debug(jf_custom_fractions);
             
@@ -2047,9 +2051,9 @@ void paint_noteaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc
             t_jfont *jf_custom_fractions = jf_text_fractions;
 
             if (floatacc >= 0) 
-                snprintf_zero(cents_text, 20, "+%dc", (int)floatacc); 
+                snprintf_zero(cents_text, 20, "+%d%s", (int)floatacc, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
             else 
-                snprintf_zero(cents_text, 20, "-%dc", (int)(-floatacc)); 
+                snprintf_zero(cents_text, 20, "-%d%s", (int)(-floatacc), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
             
             if (curr_ch->is_grace_chord) 
                 jf_custom_fractions = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_TEXT_FRACTIONS_PT * r_ob->zoom_y);
@@ -2063,10 +2067,29 @@ void paint_noteaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc
             write_text(g, jf_custom_fractions, *color, cents_text, 
                                           r_ob->j_inset_x, r_ob->j_inset_y, left_bottom_corner_x - r_ob->j_inset_x, left_bottom_corner_y - r_ob->j_inset_y, 
                                           JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMRIGHT, true, false);
-            
+            acc_x = left_bottom_corner_x - width;
+
             if (curr_ch->is_grace_chord)
                 jfont_destroy_debug(jf_custom_fractions);
         }
+        
+        if (r_ob->show_cents_differences && abs((long)round(curr_nt->midicents - (double)curr_nt->pitch_displayed.toMC())) > 1) {
+            t_jfont *jf_cents_difference = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(9 * r_ob->zoom_y) * accidentals_resize);
+            long diff_val = (long)round(curr_nt->midicents - (double)note_get_screen_midicents_with_accidental(curr_nt));
+            char diff_text[64];
+            double dwidth = 0, dheight = 0;
+            double middle_x = acc_x + get_accidental_uwidth(r_ob, note_get_screen_accidental(curr_nt), false)*0.5;
+//                paint_line(g, get_grey(0), acc_x, 0, acc_x, 100, 1);
+            double yy = note_y_real - get_accidental_top_uextension(r_ob, note_get_screen_accidental(curr_nt)) * r_ob->zoom_y * accidentals_resize - 1*r_ob->zoom_y;
+//                paint_line(g, get_grey(0), 0, acc_y, 100, acc_y, 1);
+            snprintf_zero(diff_text, 64, "%s%ld%s", diff_val > 0 ? "+" : "-", abs(diff_val), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+            jfont_text_measure(jf_cents_difference, diff_text, &dwidth, &dheight);
+            paint_filledrectangle(g, build_jrgba(1, 1, 1, 1), middle_x-dwidth/2., yy - dheight, dwidth, dheight);
+            write_text(g, jf_cents_difference, *color, diff_text, middle_x-dwidth/2., yy - dheight, dwidth*2, dheight*2, JGRAPHICS_TEXT_JUSTIFICATION_TOPLEFT, true, false);
+            
+            jfont_destroy(jf_cents_difference);
+        }
+        
     } // else: don't show accidental!
 }
 
@@ -12275,6 +12298,11 @@ void compute_note_approximations_for_chord(t_notation_obj *r_ob, t_chord *chord,
     }
 }
 
+bool note_has_significant_cents_difference_with_screen_representation(t_notation_obj *r_ob, t_note *nt){
+    return (abs((long)round(nt->midicents - (double)note_get_screen_midicents_with_accidental(nt))) > 0);
+}
+
+
 void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure) {
 // validates (= choose whether to show/to hide) the accidentals for the measure, depending on the choosen preferences (show/hide, accidental_tie_preferences...)
     t_chord *temp_ch; t_note *temp_nt;
@@ -12308,8 +12336,11 @@ void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure) 
                 
                 if (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) {
                     temp_nt->show_accidental = true;
-                    
-                } else if (ds < 0 || (ds>=0 && rat_rat_cmp(acc_pattern[ds], note_get_screen_accidental(temp_nt)) == 0)) { // the note IS in the scale
+                
+                } else if (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, temp_nt)) {
+                    temp_nt->show_accidental = true;
+
+                } else if (ds < 0 || (ds >= 0 && rat_rat_cmp(acc_pattern[ds], note_get_screen_accidental(temp_nt)) == 0)) { // the note IS in the scale
 
                     if (note_get_screen_accidental(temp_nt).r_num != 0 &&
                         (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS)) {
@@ -24612,7 +24643,11 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                 switch (r_ob->show_accidentals_preferences) {
                     case k_SHOW_ACC_CLASSICAL:
                     case k_SHOW_ACC_ALLALTERED_NONATURALS:
-                        curr_nt->show_accidental = show_accidental[i];
+                        if (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt)) {
+                            curr_nt->show_accidental = true;
+                        } else {
+                            curr_nt->show_accidental = show_accidental[i];
+                        }
                         break;
                         
                     case k_SHOW_ACC_ALL:
@@ -24626,6 +24661,8 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                     case k_SHOW_ACC_ALLALTERED:
                     {
                         if (show_accidental[i])
+                            curr_nt->show_accidental = true;
+                        else if (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt))
                             curr_nt->show_accidental = true;
                         else {
                             curr_nt->show_accidental = false;
@@ -24654,7 +24691,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                         
                     case k_SHOW_ACC_ALLALTERED_NOREPETITION:
                     {
-                        if (show_accidental[i]) {
+                        if (show_accidental[i] || (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt))) {
                             curr_nt->show_accidental = true;
 
                             // we look for a previous chord having the same note with the same "accidental"
@@ -24667,7 +24704,8 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                                 char must_break = false;
                                 for (temp_nt = temp_ch->firstnote; temp_nt; temp_nt = temp_nt->next) {
                                     if (note_get_screen_midicents(temp_nt) == note_get_screen_midicents(curr_nt)) {
-                                        if (rat_rat_cmp(note_get_screen_accidental(temp_nt), note_get_screen_accidental(curr_nt)) == 0)
+                                        if (rat_rat_cmp(note_get_screen_accidental(temp_nt), note_get_screen_accidental(curr_nt)) == 0 &&
+                                            (!r_ob->show_cents_differences || round(temp_nt->midicents) == round(curr_nt->midicents)))
                                             curr_nt->show_accidental = false;
                                         must_break = true;
                                         break;
@@ -35756,6 +35794,8 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     
     r_ob->rests_float_steps_part_shift = 4;
     r_ob->show_end_marker_for_regions = true;
+    r_ob->show_cents_differences = false;
+    r_ob->cents_symbol = gensym("¢");
     
     if (obj_type == k_NOTATION_OBJECT_ROLL) {
         r_ob->loop_region.start.position_ms = 0;

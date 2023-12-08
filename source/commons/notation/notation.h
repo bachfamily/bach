@@ -4258,6 +4258,7 @@ typedef struct _notation_obj
                                                         ///< By default this is 0 (when right clicking no slot is popped out, but the contextual menu!)
     
     char        show_slot_numbers;            ///< Do we want to show the slot number in transparence, in the slot window?
+    char        show_slot_names;               ///< Do we want to show the slot names in the slot window?
     char        show_slot_labels;            ///< Do we want to display automatically computated labels for function points in the slot windows of slots of type #k_SLOT_TYPE_FUNCTION, and the labels for the bars of the intlist and floatlist slots?
     char        show_slot_legend;            ///< Do we want to display the upper-right slot legend?
     char        dynfilter_interp_mode;        ///< Interpolation mode for the dynamic filters in a #k_SLOT_TYPE_DYNFILTER. 
@@ -4423,6 +4424,8 @@ typedef struct _notation_obj
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
     char        accidentals_display_type;    ///< Type of display for the accidentals; must be one of the #e_accidentals_display_type
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
+    char        show_cents_differences;           ///< Flag saying if we also display a cents difference w.r. to the displayed (screen) accidentals 
+    t_symbol    *cents_symbol;                    ///< Symbol used to represent cents or MIDIcents
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
     t_symbol    **full_acc_repr;                    ///< List of accidental representation symbols (one for each voice).
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
@@ -10429,7 +10432,7 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
     @param    acc_bottom_uextension    Pointer which will be filled with the unscaled bottom extension of the accidental (see #e_accidentals_typo_preferences). 
                                     Leave NULL if you don't care for the information.
  */ 
-void paint_noteaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, 
+void paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, 
                            t_jfont *jf_acc_bogus, t_jrgba *color, t_note *curr_nt, long clef, 
                            double note_y_real, double stem_x, 
                            double *acc_top_uextension, double *acc_bottom_uextension);
@@ -17553,6 +17556,7 @@ t_max_err notationobj_set_voicespacing(t_notation_obj *r_ob, long ac, double *va
 t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);

@@ -6962,7 +6962,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"enharmonictable",0,"default");
     // @description @copy BACH_DOC_ENHARMONICTABLE
 
-    CLASS_ATTR_DOUBLE(c, "minlength", 0, t_notation_obj, minimum_length); 
+    CLASS_ATTR_DOUBLE(c, "minlength", 0, t_notation_obj, minimum_length);
     CLASS_ATTR_STYLE_LABEL(c,"minlength",0,"text","Minimum Length In Milliseconds");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"minlength", 0,"0");
     CLASS_ATTR_ACCESSORS(c, "minlength", (method)NULL, (method)roll_setattr_minlength);
@@ -11927,7 +11927,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
 #endif
             
             // need to put accidentals?
-            paint_noteaccidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, NULL, NULL);
+            paint_accidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, NULL, NULL);
             
             
         }

@@ -1719,6 +1719,11 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showslotnumbers",0,"1");
     // @description Toggles the display of slot numbers in the slot windows.
 
+    CLASS_ATTR_CHAR(c, "showslotnames", 0, t_notation_obj, show_slot_names);
+    CLASS_ATTR_STYLE_LABEL(c,"showslotnames",0,"onoff","Show Slot Names In Slot Window");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showslotnames",0,"1");
+    // @description Toggles the display of slot names in the slot windows.
+
     CLASS_ATTR_CHAR(c, "showslotlabels", 0, t_notation_obj, show_slot_labels);
     CLASS_ATTR_STYLE_LABEL(c,"showslotlabels",0,"onoff","Show Slot Labels");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showslotlabels",0,"1");
@@ -2031,6 +2036,11 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"smartmarkernames",0,"1");
         // @exclude bach.slot
         // @description Toggles the ability to display the marker names on multiple lines to avoid collisions.
+
+        CLASS_ATTR_SYM(c,"centssymbol",0, t_notation_obj, cents_symbol);
+        CLASS_ATTR_STYLE_LABEL(c,"centssymbol",0,"text","Cents Symbol");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"centssymbol",0,"¢");
+        // @description Symbol used to represent cents (or MIDIcents).
 
         CLASS_ATTR_CHAR(c,"highlightdomain",0, t_notation_obj, highlight_domain);
         CLASS_ATTR_STYLE_LABEL(c,"highlightdomain",0,"onoff","Highlight Domain");
@@ -3162,6 +3172,12 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the display of the initial vertical line running through all the staves.
 
+        CLASS_ATTR_CHAR_UNSAFE(c, "showcentsdiff", 0, t_notation_obj, show_cents_differences);
+        CLASS_ATTR_STYLE_LABEL(c,"showcentsdiff",0,"onoff","Show Cents Differences");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showcentsdiff",0,"0");
+        CLASS_ATTR_ACCESSORS(c, "showcentsdiff", (method)NULL, (method)notationobj_setattr_showcentsdiff);
+        // @description Toggles the display of cents differences above the accidentals
+        
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");

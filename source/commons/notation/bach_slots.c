@@ -2344,15 +2344,17 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 	}
 
 	// paint color strip over the slot name
-	double slotname_w, slotname_h;
-	jfont_text_measure(jf_slot_name, r_ob->slotinfo[s].slot_name->s_name, &slotname_w, &slotname_h);
-	if (MIN(slotname_w, usable_width) > 5)
-		paint_rectangle(g, slot_color, slot_color, left_pos, r_ob->slot_window_y1, MIN(slotname_w, usable_width), 1.25 * r_ob->zoom_y * r_ob->slot_window_zoom / 100., 0);
-	
-	// write the slot name
-	write_text(g, jf_slot_name, slot_namecolor, r_ob->slotinfo[s].slot_name->s_name, left_pos, r_ob->j_inset_y + r_ob->slot_window_y1 + 2, 
-			   usable_width, slot_window_active_height, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, true);
-	
+    
+    if (r_ob->show_slot_names) {
+        double slotname_w, slotname_h;
+        jfont_text_measure(jf_slot_name, r_ob->slotinfo[s].slot_name->s_name, &slotname_w, &slotname_h);
+        if (MIN(slotname_w, usable_width) > 5)
+            paint_rectangle(g, slot_color, slot_color, left_pos, r_ob->slot_window_y1, MIN(slotname_w, usable_width), 1.25 * r_ob->zoom_y * r_ob->slot_window_zoom / 100., 0);
+        
+        // write the slot name
+        write_text(g, jf_slot_name, slot_namecolor, r_ob->slotinfo[s].slot_name->s_name, left_pos, r_ob->j_inset_y + r_ob->slot_window_y1 + 2,
+                   usable_width, slot_window_active_height, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, true);
+    }
 	
 	jfont_destroy_debug(jf_slot_name);
 	jfont_destroy_debug(jf_slot_values);
@@ -10079,6 +10081,16 @@ t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t
 {
     if (ac) {
         r_ob->show_accidentals_preferences = (e_show_accidentals_preferences)CLAMP(atom_getlong(av), 0, 5);
+        quick_notationobj_recompute_all_chord_parameters(r_ob);
+    }
+
+    return MAX_ERR_NONE;
+}
+
+t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac) {
+        r_ob->show_cents_differences = CLAMP(atom_getlong(av), 0, 1);
         quick_notationobj_recompute_all_chord_parameters(r_ob);
     }
 

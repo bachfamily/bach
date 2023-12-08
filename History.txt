@@ -29,6 +29,7 @@ VERSION NOTES:
 - bach.roll, bach.score, bach.slot:
     @bordersize, @focusbordersize: new attributes
     getfocus: new message to query whether objects have focus
+    @showslotnames: new attribute to toggle display of slot names in the slot windows
 
 - bach.omtree2bachtree:
     á fixed bug causing wrong input for non 4/4 meters
