@@ -13609,7 +13609,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                         if (modifiers & eShiftKey && modifiers & eCommandKey) 
                             delta_y *= CONST_FINER_FROM_KEYBOARD;
                         move_selection_breakpoint(x, 0., delta_y, 1.);
-                        if (x->r_ob.breakpoints_have_noteheads && x->r_ob.snap_pitch_to_grid_when_editing)
+                        if (x->r_ob.breakpoints_have_noteheads == 1 && x->r_ob.snap_pitch_to_grid_when_editing)
                             snap_pitch_to_grid_for_selection((t_notation_obj *)x);
                         changed = 1;
                     }

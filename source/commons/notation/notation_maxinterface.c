@@ -2123,11 +2123,13 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // voice names. Possibilities are: "Left", "Center", "Right".
 
         CLASS_ATTR_CHAR(c,"breakpointshavenoteheads",0, t_notation_obj, breakpoints_have_noteheads);
-        CLASS_ATTR_STYLE_LABEL(c,"breakpointshavenoteheads",0,"onoff","Breakpoints Have Noteheads");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointshavenoteheads",0,"0");
+        CLASS_ATTR_STYLE_LABEL(c,"breakpointshavenoteheads",0,"enumindex","Breakpoints Have Noteheads");
+        CLASS_ATTR_ENUMINDEX(c,"breakpointshavenoteheads", 0, "None All Internal Only");
+         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointshavenoteheads",0,"0");
         // @exclude bach.slot
         // @description Toggles the ability to display pitch breakpoints as real notes (possibly with accidentals).
-        // If this is not set, pitch breakpoints are displayed as small diamonds.
+        // The options are: no noteheads (0, default); all noteheads, tails included (1); noteheads only
+        // for internal breakpoints (2)
 
 
         CLASS_ATTR_CHAR(c, "thinannotations", 0, t_notation_obj, thinannotations);
@@ -3172,7 +3174,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the display of the initial vertical line running through all the staves.
 
-        CLASS_ATTR_CHAR_UNSAFE(c, "showcentsdiff", 0, t_notation_obj, show_cents_differences);
+        CLASS_ATTR_CHAR(c, "showcentsdiff", 0, t_notation_obj, show_cents_differences);
         CLASS_ATTR_STYLE_LABEL(c,"showcentsdiff",0,"onoff","Show Cents Differences");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showcentsdiff",0,"0");
         CLASS_ATTR_ACCESSORS(c, "showcentsdiff", (method)NULL, (method)notationobj_setattr_showcentsdiff);
@@ -3277,6 +3279,14 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_ACCESSORS(c, "annotationfontsize", (method)NULL, (method)notationobj_setattr_annotation_font_size);
         // @exclude bach.slot
         // @description Sets the font size for textual annotations over the staff (handled via slot linkage).
+
+        CLASS_ATTR_DOUBLE(c,"centsdifffontsize",0, t_notation_obj, cents_differences_font_size);
+        CLASS_ATTR_STYLE_LABEL(c,"centsdifffontsize",0,"text","Cents Differences Font Size");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"centsdifffontsize",0,"8");
+        CLASS_ATTR_FILTER_MIN(c, "rulerlabelsfontsize", 1.);
+        // @exclude bach.slot
+        // @description Sets the font size of cents differences display
+
 
     }
 

@@ -1487,7 +1487,7 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
             
             // draw main line/curve
             bpt_x = onset_to_xposition_roll(r_ob, curr_nt->parent->onset+temp->rel_x_pos * curr_nt->duration, &curr_system);
-            if (temp->rel_x_pos >= 1. && (r_ob->breakpoints_have_noteheads)) {
+            if (temp->rel_x_pos >= 1. && (r_ob->breakpoints_have_noteheads == 1)) {
                 if (!temp->prev || temp->delta_mc != temp->prev->delta_mc)
                     bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, curr_nt->midicents + round(temp->delta_mc), (t_voice *) voice);
                 else
@@ -1554,7 +1554,7 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                     paint_rhomboid(g, r_ob->j_background_rgba, bptcolor, bpt_x, bpt_y, r_ob->breakpoints_size * 0.6 * r_ob->zoom_y, r_ob->breakpoints_size * r_ob->zoom_y, 0.9);
                 }
             } else { //it's a tail
-                if (r_ob->breakpoints_have_noteheads && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
+                if (r_ob->breakpoints_have_noteheads == 1 && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
                     paint_default_small_notehead_with_accidentals(r_ob, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, end_pos, curr_nt, system_shift, (r_ob->breakpoints_have_velocity && r_ob->velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor(r_ob, temp->velocity) : CONST_GRACE_CHORD_SIZE);
                 } else { 
                     if (r_ob->show_tails) {
@@ -2074,13 +2074,14 @@ void paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_
         }
         
         if (r_ob->show_cents_differences && abs((long)round(curr_nt->midicents - (double)curr_nt->pitch_displayed.toMC())) > 1) {
-            t_jfont *jf_cents_difference = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(9 * r_ob->zoom_y) * accidentals_resize);
+            t_jfont *jf_cents_difference = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(r_ob->cents_differences_font_size * r_ob->zoom_y) * accidentals_resize);
             long diff_val = (long)round(curr_nt->midicents - (double)note_get_screen_midicents_with_accidental(curr_nt));
             char diff_text[64];
             double dwidth = 0, dheight = 0;
             double middle_x = acc_x + get_accidental_uwidth(r_ob, note_get_screen_accidental(curr_nt), false)*0.5;
 //                paint_line(g, get_grey(0), acc_x, 0, acc_x, 100, 1);
-            double yy = note_y_real - get_accidental_top_uextension(r_ob, note_get_screen_accidental(curr_nt)) * r_ob->zoom_y * accidentals_resize - 1*r_ob->zoom_y;
+            double tuext = get_accidental_top_uextension(r_ob, note_get_screen_accidental(curr_nt));
+            double yy = note_y_real - tuext * r_ob->zoom_y * accidentals_resize - 1*r_ob->zoom_y;
 //                paint_line(g, get_grey(0), 0, acc_y, 100, acc_y, 1);
             snprintf_zero(diff_text, 64, "%s%ld%s", diff_val > 0 ? "+" : "-", abs(diff_val), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
             jfont_text_measure(jf_cents_difference, diff_text, &dwidth, &dheight);
@@ -8387,7 +8388,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         //        fill_unicodeChar_array(r_ob->accidentals_typo_preferences.unicode_binary_character, 17, 61626, 0, 0, 0, 61538, 0, 0, 0, 110, 0, 0, 0, 61475, 0, 0, 0, 61660);
         fill_unicodeChar_array(r_ob->accidentals_typo_preferences.unicode_binary_character, 17, 'a', 'b', 'c', 'e', 'f', 'h', 'i', 'k', 'l', 'm', 'o', 'p', 'r', 's', 'u', 'v', 'w');
         fill_double_array(r_ob->accidentals_typo_preferences.binary_top_uextension, 17, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 
-                                                                                                8.5, 14.5, 8.3, 14.5, 8.5, 14.5, 9.3, 14.5, 3.5);
+                                                                                                8.5, 10.5, 8.3, 10.5, 8.5, 10.5, 9.3, 10.5, 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.binary_bottom_uextension, 17, 3.5, 12.5, 3.5, 12.5, 3.5, 12.5, 3.5, 14.5, 
                                                                                                 8.5, 8.5, 8.3, 8.3, 8.5, 8.5, 9.5, 9.5, 3.5);
 //        fill_double_array(r_ob->accidentals_typo_preferences.binary_top_uextension, 17, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5,
@@ -8415,7 +8416,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         // binary unicode characters
         fill_unicodeChar_array(r_ob->accidentals_typo_preferences.unicode_binary_character, 17, 57956, 57976, 57985, 57969, 57952, 57968, 57984, 57971, 57953, 57970, 57986, 57973, 57954, 57972, 57987, 57975, 57955);
         fill_double_array(r_ob->accidentals_typo_preferences.binary_top_uextension, 17, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5,
-                          8.5, 14.5, 8.3, 14.5, 8.5, 14.5, 9.3, 14.5, 3.5); // TO DO
+                          8.5, 12.5, 8.3, 12.5, 8.5, 12.5, 9.3, 12.5, 3.5); // TO DO
         fill_double_array(r_ob->accidentals_typo_preferences.binary_bottom_uextension, 17, 3.5, 12.5, 3.5, 12.5, 3.5, 12.5, 3.5, 14.5,
                           8.5, 8.5, 8.3, 8.3, 8.5, 8.5, 9.5, 9.5, 3.5); // TO DO
         fill_double_array(r_ob->accidentals_typo_preferences.binary_uwidth, 17, 11.4, 12.4, 12.4, 6.5, 6., 6.5, 6., 7., 7., 7., 5., 5., 7., 7., 9., 9., 7.); // TO DO
@@ -25175,8 +25176,8 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 
                 if (show_accidental[i] && !accidental_done[i]) { // if we show the accidental 
 
-                    long k_start = (scaleposition[i]-start_scalepos)*10 - floor(get_accidental_bottom_uextension(r_ob, accidental_copy[i]) * 10. * r_ob->zoom_y / r_ob->step_y);
-                    long k_end = (scaleposition[i]-start_scalepos)*10 + ceil(get_accidental_top_uextension(r_ob, accidental_copy[i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+                    long k_start = (scaleposition[i]-start_scalepos)*10 - floor(get_accidental_bottom_uextension(r_ob, accidental_copy[i]) * 10. * note_acc_resize[i] * r_ob->zoom_y / r_ob->step_y);
+                    long k_end = (scaleposition[i]-start_scalepos)*10 + ceil(get_accidental_top_uextension(r_ob, accidental_copy[i]) * 10. * note_acc_resize[i] * r_ob->zoom_y / r_ob->step_y);
                     long min_in_kstart_kend = array_fmin(scalepos_extension*10, k_start - 2, k_end + 2, left_limit);  // 2 (= 2/10 of r_ob->step) is a good threshold for avoiding vertical contacts
                     // the min_in_kstart_kend now contains the minimum position where the accidentals might be painted
                     
@@ -25227,8 +25228,8 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             // updating leftlimits
             new_left_limit = best_x_pos - acc_width - CONST_UX_ACC_SEPARATION_FROM_ACC;
 
-            k_start = (scaleposition[best_i]-start_scalepos)*10 - floor(get_accidental_bottom_uextension(r_ob, accidental_copy[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);
-            k_end = (scaleposition[best_i]-start_scalepos)*10 + ceil(get_accidental_top_uextension(r_ob, accidental_copy[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+            k_start = (scaleposition[best_i]-start_scalepos)*10 - floor(get_accidental_bottom_uextension(r_ob, accidental_copy[best_i]) * 10. * note_acc_resize[best_i] * r_ob->zoom_y / r_ob->step_y);
+            k_end = (scaleposition[best_i]-start_scalepos)*10 + ceil(get_accidental_top_uextension(r_ob, accidental_copy[best_i]) * 10. * note_acc_resize[best_i] * r_ob->zoom_y / r_ob->step_y);
 
             for (j = CLAMP(k_start, 0, scalepos_extension * 10 - 1); j <= k_end && j <= scalepos_extension * 10 - 1; j++)
                 left_limit[j] = new_left_limit;
@@ -26164,7 +26165,7 @@ void breakpoint_get_pt(t_notation_obj *r_ob, t_bpt *bpt, double *bpt_x_pix, doub
     } else
         bpt_x = start_pos + (end_pos - start_pos) * bpt->rel_x_pos;
     
-    if (r_ob->breakpoints_have_noteheads)
+    if (r_ob->breakpoints_have_noteheads == 1 || (!bpt->next && r_ob->breakpoints_have_noteheads == 2))
         bpt_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note->midicents + round(bpt->delta_mc), chord_get_voice(r_ob, chord));
     else
         bpt_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note) + round(bpt->delta_mc), chord_get_voice(r_ob, chord));
@@ -28789,12 +28790,14 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
             if (temp_item) {
                 double val = *((double *)temp_item->item);
                 
-                if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) && !only_get_selected_items) { // adding partial tempitems
-                    double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
-                    val += hot_point - notation_item_get_onset_ms(r_ob, nitem);
+                if (r_ob->slotinfo[j].trim_with_notehead) {
+                    if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) && !only_get_selected_items) { // adding partial tempitems
+                        double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
+                        val += hot_point - notation_item_get_onset_ms(r_ob, nitem);
+                    }
                 }
                 
-                    llll_appenddouble(inner4_llll, val);
+                llll_appenddouble(inner4_llll, val);
             }
             break; 
         }

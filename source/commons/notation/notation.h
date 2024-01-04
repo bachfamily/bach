@@ -4424,7 +4424,8 @@ typedef struct _notation_obj
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
     char        accidentals_display_type;    ///< Type of display for the accidentals; must be one of the #e_accidentals_display_type
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
-    char        show_cents_differences;           ///< Flag saying if we also display a cents difference w.r. to the displayed (screen) accidentals 
+    char        show_cents_differences;           ///< Flag saying if we also display a cents difference w.r. to the displayed (screen) accidentals
+    double      cents_differences_font_size;       ///< Font size for cents differences
     t_symbol    *cents_symbol;                    ///< Symbol used to represent cents or MIDIcents
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
     t_symbol    **full_acc_repr;                    ///< List of accidental representation symbols (one for each voice).
@@ -4489,7 +4490,7 @@ typedef struct _notation_obj
                                                         ///< This flag is updated each time the play is started.
     
     char        breakpoints_have_velocity;            ///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
-    char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads
+    char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads (0 = none,  1= all, 2 = only internal)
     
     char        notify_with;                           ///< Notification type through last outlet (0 = bang, 1 = operation label, 2 = redo transaction, 3 = undo transaction, 4 = individual redo ticks, 5 = individual undo ticks)
     char        last_operation_is;         ///< -1 = undo, 1 = redo, 0 = anything else

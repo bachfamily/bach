@@ -44,6 +44,9 @@ VERSION NOTES:
     á New @annotationalignment attribute setting the text alignment for annotations
     á Added "opaque" spec for custom noteheads, thus allowing a better implementation of tablatures
     á @showpartbrackets, @showinitialrule: new attributes
+    á New display of deviations in cents (@showcentsdiff, @centssymbol: new attributes)
+    á @breakpointshavenoteheads: new value "Internal Only" added to display noteheads only for internal breakpoints
+    á fixed bug causing wrong partial note float slot playback
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved
