@@ -28643,8 +28643,9 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         t_llll* inner5_llll = llll_get();
                         
                         double slope = ((t_pts *)temp_item->item)->slope;
+                        long sign = ((temp_item->prev && ((t_pts *)temp_item->item)->y < ((t_pts *)temp_item->prev->item)->y)) ? -1 : 1;
                         if (temp_item->prev && mode_is_playback_or_sortof && rangeslope != 0 && r_ob->combine_range_slope_during_playback)
-                            slope = combine_slopes(rangeslope, slope);
+                            slope = combine_slopes(sign*rangeslope, slope);
                         
                         llll_appenddouble(inner5_llll, (((t_pts *)temp_item->item)->x - new_x_pos)/(1-new_x_pos), 0, WHITENULL_llll); // x
                         llll_appenddouble(inner5_llll, ((t_pts *)temp_item->item)->y, 0, WHITENULL_llll); // y
@@ -28713,8 +28714,9 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         t_llll* inner5_llll = llll_get();
                         
                         double slope = ((t_pts3d *)temp_item->item)->slope;
+                        long sign = ((temp_item->prev && ((t_pts *)temp_item->item)->y < ((t_pts *)temp_item->prev->item)->y)) ? -1 : 1;
                         if (temp_item->prev && mode_is_playback_or_sortof && rangeslope != 0 && r_ob->combine_range_slope_during_playback)
-                            slope = combine_slopes(rangeslope, slope);
+                            slope = combine_slopes(sign*rangeslope, slope);
 
                         
                         llll_appenddouble(inner5_llll, (((t_pts3d *)temp_item->item)->x - new_x_pos)/(1-new_x_pos), 0, WHITENULL_llll); // x

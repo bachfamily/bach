@@ -30,6 +30,7 @@ VERSION NOTES:
     @bordersize, @focusbordersize: new attributes
     getfocus: new message to query whether objects have focus
     @showslotnames: new attribute to toggle display of slot names in the slot windows
+    Fixed bug causing wrong accounting of the "slope" in a slot during playback (downward movements).
 
 - bach.omtree2bachtree:
     á fixed bug causing wrong input for non 4/4 meters
