@@ -28643,9 +28643,13 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         t_llll* inner5_llll = llll_get();
                         
                         double slope = ((t_pts *)temp_item->item)->slope;
-                        long sign = ((temp_item->prev && ((t_pts *)temp_item->item)->y < ((t_pts *)temp_item->prev->item)->y)) ? -1 : 1;
-                        if (temp_item->prev && mode_is_playback_or_sortof && rangeslope != 0 && r_ob->combine_range_slope_during_playback)
-                            slope = combine_slopes(sign*rangeslope, slope);
+                        
+                        if (mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES || mode == k_CONSIDER_FOR_EVALUATION || mode == k_CONSIDER_FOR_SAMPLING) {
+                            // adjusting slope depending on range slope
+                            long sign = ((temp_item->prev && ((t_pts *)temp_item->item)->y < ((t_pts *)temp_item->prev->item)->y)) ? -1 : 1;
+                            if (temp_item->prev && mode_is_playback_or_sortof && rangeslope != 0 && r_ob->combine_range_slope_during_playback)
+                                slope = combine_slopes(sign*rangeslope, slope);
+                        }
                         
                         llll_appenddouble(inner5_llll, (((t_pts *)temp_item->item)->x - new_x_pos)/(1-new_x_pos), 0, WHITENULL_llll); // x
                         llll_appenddouble(inner5_llll, ((t_pts *)temp_item->item)->y, 0, WHITENULL_llll); // y
@@ -28714,9 +28718,13 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         t_llll* inner5_llll = llll_get();
                         
                         double slope = ((t_pts3d *)temp_item->item)->slope;
-                        long sign = ((temp_item->prev && ((t_pts *)temp_item->item)->y < ((t_pts *)temp_item->prev->item)->y)) ? -1 : 1;
-                        if (temp_item->prev && mode_is_playback_or_sortof && rangeslope != 0 && r_ob->combine_range_slope_during_playback)
+
+                        if (mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_AND_ALLOW_PARTIAL_LOOPED_NOTES || mode == k_CONSIDER_FOR_EVALUATION || mode == k_CONSIDER_FOR_SAMPLING) {
+                            // adjusting slope depending on range slope
+                            long sign = ((temp_item->prev && ((t_pts *)temp_item->item)->y < ((t_pts *)temp_item->prev->item)->y)) ? -1 : 1;
+                            if (temp_item->prev && mode_is_playback_or_sortof && rangeslope != 0 && r_ob->combine_range_slope_during_playback)
                             slope = combine_slopes(sign*rangeslope, slope);
+                        }
 
                         
                         llll_appenddouble(inner5_llll, (((t_pts3d *)temp_item->item)->x - new_x_pos)/(1-new_x_pos), 0, WHITENULL_llll); // x
@@ -31943,11 +31951,13 @@ void redraw_vscrollbar(t_notation_obj *r_ob, char from_pos){
 
 
 
-void change_zoom(t_notation_obj *r_ob, double new_zoom_0_to_100){
+void change_zoom(t_notation_obj *r_ob, double new_zoom_0_to_100, bool dontcheck){
     //zoom clip
-    if (new_zoom_0_to_100 < CONST_MIN_ZOOM) new_zoom_0_to_100 = CONST_MIN_ZOOM;
-    if (new_zoom_0_to_100 > CONST_MAX_ZOOM) new_zoom_0_to_100 = CONST_MAX_ZOOM;
-
+    if (!dontcheck) {
+        if (new_zoom_0_to_100 < CONST_MIN_ZOOM) new_zoom_0_to_100 = CONST_MIN_ZOOM;
+        if (new_zoom_0_to_100 > CONST_MAX_ZOOM) new_zoom_0_to_100 = CONST_MAX_ZOOM;
+    }
+    
     r_ob->horizontal_zoom = new_zoom_0_to_100;
     r_ob->zoom_x = r_ob->horizontal_zoom / 100.;
     
@@ -35801,6 +35811,9 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->show_end_marker_for_regions = true;
     r_ob->show_cents_differences = false;
     r_ob->cents_symbol = gensym("¢");
+    
+    r_ob->tuplets_font = gensym("Arial");
+    r_ob->tuplets_font_size = 10;
     
     if (obj_type == k_NOTATION_OBJECT_ROLL) {
         r_ob->loop_region.start.position_ms = 0;

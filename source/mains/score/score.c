@@ -7702,6 +7702,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_ACCESSORS(c, "lyricsfont", (method)NULL, (method)notationobj_setattr_lyrics_font);
     // @description @copy BACH_DOC_LYRICS_FONT
     
+    CLASS_ATTR_SYM(c,"tupletsfont", 0, t_notation_obj, tuplets_font);
+    CLASS_ATTR_STYLE_LABEL(c, "tupletsfont", 0, "font", "Tuplets Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"tupletsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "tupletsfont", (method)NULL, (method)notationobj_setattr_tuplets_font);
+    // @description @copy BACH_DOC_TUPLETS_FONT
+
+
     CLASS_ATTR_SYM(c,"annotationsfont", 0, t_notation_obj, annotations_font);
     CLASS_ATTR_STYLE_LABEL(c, "annotationsfont", 0, "font", "Annotations Font");
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"annotationsfont", 0, "Arial");

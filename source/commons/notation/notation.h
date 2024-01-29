@@ -393,7 +393,6 @@
 
 #define CONST_TEXT_FRACTIONS_PT 7.5                                ///< For <zoom_y> = 1, size (in pt) of the font used to write the fractions-like and cents-like accidentals (as '-1/5' or '+34c')
 #define CONST_WIDTH_ADD_FRACTIONS 2                                ///< Additional pad (in pixels) in fractions-like and cents-like accidentals, to better show the + and - signs
-#define CONST_TUPLET_BASE_PT 10                                    ///< For <zoom_y> = 1, size (in pt) of the font used to write the numbers for the tuplets
 
 // 8va and 15ma clefs graphic constants
 #define CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE 10        ///< Unscaled horizontal shift (in pixels) from the beginning of the staff of the middle textbox position to write the small octave number over the G clef
@@ -464,7 +463,7 @@
 
 // lyrics
 #define CONST_NUM_DASH_PER_UX 0.05                ///< Number of dash characters '-' per horizontal unscaled pixel, when two lyrics syllabes are joined by '- - - - - - - -'.
-#define CONST_UX_MINIMUM_SPACE_FOR_DASH 3.5        ///< Minimum unscaled horizontal width between syllables in order to be able to paint a " - - - " line. 
+#define CONST_UX_MINIMUM_SPACE_FOR_DASH 3.0        ///< Minimum unscaled horizontal width between syllables in order to be able to paint a " - - - " line. 
                                                 ///< If the separation is narrower, no dash is painted
 #define CONST_WORD_EXTENSIONS_UY_SHIFT 12        ///< Unscaled vertical shift of the word extensions, with respect to the top of the writing box for the lyrics. 
                                                 ///< Extensions are the "_____" situated after a syllable e.g. to account for a melisma: "be______" 
@@ -4319,7 +4318,7 @@ typedef struct _notation_obj
     
     // tempo
     double      tempo_size;                     ///< A multiplier for tempo size with respect to standard note size.
-    
+
     // lyrics
     double        lyrics_font_size;                    ///< Font size for the lyrics (for zoom_y = 1)
     double        lyrics_uy_pos;                        ///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
@@ -4566,12 +4565,14 @@ typedef struct _notation_obj
 
     
     // fonts
-    t_symbol    *noteheads_font;    ///< Name of the font (as symbol) used for the notation elements (all but accidentals and articulations)
-    t_symbol    *accidentals_font;    ///< Name of the font (as symbol) used for the accidentals
-    t_symbol    *articulations_font;///< Name of the font (as symbol) used for the articuations
-    t_symbol    *lyrics_font;///< Name of the font (as symbol) used for the articuations
-    t_symbol    *annotations_font;///< Name of the font (as symbol) used for the articuations
-    double        legend_font_size;    ///< Size in pt of the legend (fixed!)
+    t_symbol    *noteheads_font;        ///< Name of the font (as symbol) used for the notation elements (all but accidentals and articulations)
+    t_symbol    *accidentals_font;      ///< Name of the font (as symbol) used for the accidentals
+    t_symbol    *articulations_font;    ///< Name of the font (as symbol) used for the articuations
+    t_symbol    *lyrics_font;           ///< Name of the font (as symbol) used for the articulations
+    t_symbol    *tuplets_font;          ///< Name of the font (as symbol) used for the tuplets
+    t_symbol    *annotations_font;      ///< Name of the font (as symbol) used for the annotations
+    double        legend_font_size;     ///< Size in pt of the legend (fixed!)
+    double        tuplets_font_size;    ///< Font size for the tuplets (for zoom_y = 1)
 
     
     // typographical preferences
@@ -7140,9 +7141,10 @@ long getdomain(t_notation_obj *r_ob);
     @ingroup                    notation
     @param r_ob                    The notation object
     @param    new_zoom_100_based    The new zoom, 100 being the 100%.
-    @remark                Zoom values are clipped between 1 and #CONST_MAX_ZOOM.
+    @param      dontcheck           Flag preventing from clipping between #CONST_MIN_ZOOM and #CONST_MAX_ZOOM
+    @remark                Zoom values are clipped between #CONST_MIN_ZOOM and #CONST_MAX_ZOOM.
  */
-void change_zoom(t_notation_obj *r_ob, double new_zoom_100_based);
+void change_zoom(t_notation_obj *r_ob, double new_zoom_100_based, bool dontcheck=false);
 
 
 
@@ -17520,6 +17522,7 @@ t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *
 t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_tuplets_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -17559,6 +17562,7 @@ t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr,
 t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_tuplets_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);

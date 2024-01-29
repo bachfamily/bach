@@ -3245,6 +3245,13 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         // @description Sets the font size of lyrics (rescaled according to the <m>vzoom</m>).
         
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            CLASS_ATTR_DOUBLE(c,"tupletsfontsize",0, t_notation_obj, tuplets_font_size);
+            CLASS_ATTR_STYLE_LABEL(c,"tupletsfontsize",0,"text","Tuplets Font Size");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"tupletsfontsize", 0, "10");
+            CLASS_ATTR_ACCESSORS(c, "tupletsfontsize", (method)NULL, (method)notationobj_setattr_tuplets_font_size);
+            // @exclude bach.slot, bach.roll
+            // @description Sets the font size of tuplets (rescaled according to the <m>vzoom</m>).
+
             CLASS_ATTR_DOUBLE(c,"temposize",0, t_notation_obj, tempo_size);
             CLASS_ATTR_STYLE_LABEL(c,"temposize",0,"text","Tempi Relative Size");
             CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"temposize", 0, "0.7");
@@ -3928,6 +3935,17 @@ t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *a
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return MAX_ERR_NONE;
 }
+
+t_max_err notationobj_setattr_tuplets_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && is_atom_number(av))
+        r_ob->tuplets_font_size = atom_getfloat(av);
+
+    implicitely_recalculate_all(r_ob, false);
+
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
 
 t_max_err notationobj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
