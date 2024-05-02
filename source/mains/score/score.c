@@ -7702,12 +7702,29 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_ACCESSORS(c, "lyricsfont", (method)NULL, (method)notationobj_setattr_lyrics_font);
     // @description @copy BACH_DOC_LYRICS_FONT
     
-    CLASS_ATTR_SYM(c,"tupletsfont", 0, t_notation_obj, tuplets_font);
-    CLASS_ATTR_STYLE_LABEL(c, "tupletsfont", 0, "font", "Tuplets Font");
-    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"tupletsfont", 0, "Arial");
-    CLASS_ATTR_ACCESSORS(c, "tupletsfont", (method)NULL, (method)notationobj_setattr_tuplets_font);
-    // @description @copy BACH_DOC_TUPLETS_FONT
+    CLASS_ATTR_SYM(c,"rulerlabelsfont", 0, t_notation_obj, rulerlabels_font);
+    CLASS_ATTR_STYLE_LABEL(c, "rulerlabelsfont", 0, "font", "Ruler Labels Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"rulerlabelsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "rulerlabelsfont", (method)NULL, (method)notationobj_setattr_rulerlabels_font);
+    // @description @copy BACH_DOC_RULERLABELS_FONT
 
+    CLASS_ATTR_SYM(c,"tupletfont", 0, t_notation_obj, tuplets_font);
+    CLASS_ATTR_STYLE_LABEL(c, "tupletfont", 0, "font", "Tuplet Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"tupletfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "tupletfont", (method)NULL, (method)notationobj_setattr_tuplets_font);
+    // @description Sets the font used to display tuplets (default is Arial).
+
+    CLASS_ATTR_SYM(c,"tempofont", 0, t_notation_obj, tempo_font);
+    CLASS_ATTR_STYLE_LABEL(c, "tempofont", 0, "font", "Tempo Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"tempofont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "tempofont", (method)NULL, (method)notationobj_setattr_tempo_font);
+    // @description Sets the font used to display tempo (default is Arial).
+
+    CLASS_ATTR_SYM(c,"measurenumberfont", 0, t_notation_obj, measurenumber_font);
+    CLASS_ATTR_STYLE_LABEL(c, "measurenumberfont", 0, "font", "Measure Numbers Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measurenumberfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "measurenumberfont", (method)NULL, (method)notationobj_setattr_measurenumber_font);
+    // @description Sets the font used to display measure numbers (default is Arial).
 
     CLASS_ATTR_SYM(c,"annotationsfont", 0, t_notation_obj, annotations_font);
     CLASS_ATTR_STYLE_LABEL(c, "annotationsfont", 0, "font", "Annotations Font");

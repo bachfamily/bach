@@ -7081,7 +7081,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 }
             }
 
-            if (x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0) {
+            if (x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.dynamics_affect_spacing > 0) {
                 for (temp_al_pt = start_tranche; temp_al_pt; temp_al_pt = temp_al_pt->next) {
                     tranche_part_due_to_dynamics += temp_al_pt->left_uext_due_to_dynamics + temp_al_pt->right_uext_due_to_dynamics;
                     global_lyrics_uwidth += temp_al_pt->global_dynamics_uwidth;
@@ -10779,8 +10779,8 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
     jf_text_fractions = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_TEXT_FRACTIONS_PT * x->r_ob.zoom_y);
     jf_ts = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt_ts * x->r_ob.zoom_y);
     jf_ts_big = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt_ts * x->r_ob.zoom_y * x->r_ob.big_time_signatures_ratio);
-    jf_tempi = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.tempo_size * 12.5714285714 * x->r_ob.zoom_y));
-    jf_measure_num = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.measure_numbers_font_size * x->r_ob.zoom_y));
+    jf_tempi = jfont_create_debug(x->r_ob.tempo_font ? x->r_ob.tempo_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.tempo_size * 12.5714285714 * x->r_ob.zoom_y));
+    jf_measure_num = jfont_create_debug(x->r_ob.measurenumber_font ? x->r_ob.measurenumber_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.measure_numbers_font_size * x->r_ob.zoom_y));
 
 //    dev_post("val = %.3f", x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y);
     

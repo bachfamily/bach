@@ -2369,13 +2369,14 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
                 double top_y = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
                 double bottom_y = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
                 double this_y;
-                for (this_y = top_y - 2 * r_ob->step_y; this_y < bottom_y + 2 * r_ob->step_y; this_y += 2 * r_ob->step_y) {
+                for (this_y = top_y - 2 * r_ob->step_y; this_y < bottom_y; this_y += 2 * r_ob->step_y) {
+//                for (this_y = top_y - 2 * r_ob->step_y; this_y < bottom_y + 2 * r_ob->step_y; this_y += 2 * r_ob->step_y) {
                     if (left_y >= this_y && left_y <= this_y + 2 * r_ob->step_y) {
                         left_y = this_y + r_ob->step_y;
                         if (flipped && chord->bottommost_y_noacc > left_y - articulation_height/2.)
-                            left_y += 2* r_ob->step_y;
+                            left_y += 2 * r_ob->step_y;
                         if (!flipped && chord->topmost_y_noacc < left_y + articulation_height/2.)
-                            left_y -= 2* r_ob->step_y;
+                            left_y -= 2 * r_ob->step_y;
                         
                         break;
                     }
@@ -3416,7 +3417,7 @@ double paint_label_for_ruler(t_notation_obj *r_ob, t_jgraphics* g, double millis
     long mins = work_ms  /60000;
     long secs = (work_ms - mins * 60000) / 1000;
     long millisecs = work_ms - mins * 60000 - secs * 1000;
-    t_jfont *text_font = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, r_ob->ruler_labels_font_size * r_ob->zoom_y);
+    t_jfont *text_font = jfont_create_debug(r_ob->rulerlabels_font ? r_ob->rulerlabels_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, r_ob->ruler_labels_font_size * r_ob->zoom_y);
     if (millisecs == 0)
         snprintf_zero(text, 1000, (sign >= 0) ? "%ld'%02ld\"" : "-%ld'%02ld\"", mins, secs);
     else

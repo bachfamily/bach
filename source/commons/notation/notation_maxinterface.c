@@ -3245,10 +3245,10 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         // @description Sets the font size of lyrics (rescaled according to the <m>vzoom</m>).
         
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
-            CLASS_ATTR_DOUBLE(c,"tupletsfontsize",0, t_notation_obj, tuplets_font_size);
-            CLASS_ATTR_STYLE_LABEL(c,"tupletsfontsize",0,"text","Tuplets Font Size");
-            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"tupletsfontsize", 0, "10");
-            CLASS_ATTR_ACCESSORS(c, "tupletsfontsize", (method)NULL, (method)notationobj_setattr_tuplets_font_size);
+            CLASS_ATTR_DOUBLE(c,"tupletfontsize",0, t_notation_obj, tuplets_font_size);
+            CLASS_ATTR_STYLE_LABEL(c,"tupletfontsize",0,"text","Tuplets Font Size");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"tupletfontsize", 0, "10");
+            CLASS_ATTR_ACCESSORS(c, "tupletfontsize", (method)NULL, (method)notationobj_setattr_tuplets_font_size);
             // @exclude bach.slot, bach.roll
             // @description Sets the font size of tuplets (rescaled according to the <m>vzoom</m>).
 

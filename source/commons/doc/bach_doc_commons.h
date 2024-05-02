@@ -2330,8 +2330,8 @@
 #define BACH_DOC_LYRICS_FONT
     // @description Sets the font used to display lyrics (default is Arial).
 
-#define BACH_DOC_TUPLETS_FONT
-    // @description Sets the font used to display tuplets (default is Arial).
+#define BACH_DOC_RULERLABELS_FONT
+    // @description Sets the font used to display ruler labels (default is Arial).
 
 #define BACH_DOC_ANNOTATIONS_FONT
     // @description Sets the font used to display annotations (default is Arial).

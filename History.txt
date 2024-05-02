@@ -59,7 +59,7 @@ VERSION NOTES:
     á New feature: Uneven splitting of chords using proportions, e.g. "split @proportions 1 3 9"
     á @bigtsvadj, @bigtsabovetempi: new attributes
     á fixed bug causing wrong positioning of dashes in lyrics
-    á new @tupletsfont and @tupletsfontsize attributes
+    á new @tupletfont and @tupletfontsize attributes
 
 
 

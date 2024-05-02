@@ -10038,6 +10038,46 @@ void change_popupmenu_slot_flag(t_notation_obj *r_ob, long slot_num_0_based, cha
 
 
 
+t_max_err notationobj_setattr_measurenumber_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->measurenumber_font = font;
+            implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+
+t_max_err notationobj_setattr_tempo_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->tempo_font = font;
+            implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+
 t_max_err notationobj_setattr_tuplets_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
@@ -10050,6 +10090,24 @@ t_max_err notationobj_setattr_tuplets_font(t_notation_obj *r_ob, t_object *attr,
             t_symbol *font = gensym(text);
             r_ob->tuplets_font = font;
             implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+t_max_err notationobj_setattr_rulerlabels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->rulerlabels_font = font;
             notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
             bach_freeptr(text);
         }

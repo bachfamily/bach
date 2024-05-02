@@ -4568,8 +4568,11 @@ typedef struct _notation_obj
     t_symbol    *noteheads_font;        ///< Name of the font (as symbol) used for the notation elements (all but accidentals and articulations)
     t_symbol    *accidentals_font;      ///< Name of the font (as symbol) used for the accidentals
     t_symbol    *articulations_font;    ///< Name of the font (as symbol) used for the articuations
-    t_symbol    *lyrics_font;           ///< Name of the font (as symbol) used for the articulations
+    t_symbol    *lyrics_font;           ///< Name of the font (as symbol) used for the lyrics
+    t_symbol    *tempo_font;            ///< Name of the font (as symbol) used for the tempo
+    t_symbol    *measurenumber_font;    ///< Name of the font (as symbol) used for the measure numbers
     t_symbol    *tuplets_font;          ///< Name of the font (as symbol) used for the tuplets
+    t_symbol    *rulerlabels_font;      ///< Name of the font (as symbol) used for the ruler labels
     t_symbol    *annotations_font;      ///< Name of the font (as symbol) used for the annotations
     double        legend_font_size;     ///< Size in pt of the legend (fixed!)
     double        tuplets_font_size;    ///< Font size for the tuplets (for zoom_y = 1)
@@ -17562,7 +17565,10 @@ t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr,
 t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_rulerlabels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_tuplets_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_measurenumber_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_tempo_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
