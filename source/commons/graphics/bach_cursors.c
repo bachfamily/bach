@@ -59,6 +59,7 @@ void load_cursors(t_bach_resources *resources, void *moduleRef)
 	resources->s_icon_chord = jgraphics_image_surface_create_from_resource(moduleRef, "icon_chord");
 	resources->s_icon_note = jgraphics_image_surface_create_from_resource(moduleRef, "icon_note");
 	resources->s_icon_marker = jgraphics_image_surface_create_from_resource(moduleRef, "icon_marker");
+    resources->s_icon_slur = jgraphics_image_surface_create_from_resource(moduleRef, "icon_slur");
 	resources->s_icon_measure = jgraphics_image_surface_create_from_resource(moduleRef, "icon_measure");
 	resources->s_icon_voice = jgraphics_image_surface_create_from_resource(moduleRef, "icon_voice");
 	resources->s_icon_slotinfo = jgraphics_image_surface_create_from_resource(moduleRef, "icon_slotinfo");

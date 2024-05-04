@@ -127,6 +127,7 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
     char pitchmode;
     
     switch (mode) {
+        case k_CONSIDER_FOR_DUMPING_FIRST_OUTLET:
         case k_CONSIDER_FOR_SAVING:
         case k_CONSIDER_FOR_SAVING_WITH_BW_COMPATIBILITY:
         case k_CONSIDER_ALL_NOTES:
@@ -136,7 +137,6 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
         case k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE:
         case k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END:
         case k_CONSIDER_FOR_UNDO:
-        case k_CONSIDER_FOR_SCORE2ROLL:
         case k_CONSIDER_FOR_SUBDUMPING:
         case k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING:
             pitchmode = r_ob->output_pitches_gathered;
@@ -150,6 +150,10 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
             pitchmode = r_ob->output_pitches_playout;
             break;
             
+        case k_CONSIDER_FOR_SCORE2ROLL:
+            pitchmode = k_OUTPUT_PITCHES_WHEN_USER_DEFINED;
+            break;
+
         case k_CONSIDER_FOR_SELECTION_COPYING:
             pitchmode = k_OUTPUT_PITCHES_WHEN_USER_DEFINED;
             break;
@@ -611,7 +615,7 @@ void notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(t_notati
     
     note_set_user_enharmonicity(note, new_pitch, false);
     
-    note->parent->need_recompute_parameters = true;
+    chord_set_recompute_parameters_flag(r_ob, note->parent);
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         note->parent->parent->need_check_ties = true;
         validate_accidentals_for_measure(r_ob, note->parent->parent);
@@ -1697,5 +1701,5 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
     if (par.stdev_thresh)
         lexpr_free(par.stdev_thresh);
 
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESPELL);
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESPELL);
 }

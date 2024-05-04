@@ -6510,6 +6510,68 @@ t_llll *llll_factorize(long what)
     return factors;
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+t_llll *llll_factorize_rational(t_rational what)
+{
+    t_llll *factors = llll_get();
+    t_llll *this_factor;
+    t_atom_long exponent;
+    long *table_last = primes + LLLL_PRIMES_TABLE_SIZE - 1;
+    long *this_table = primes;
+    long this_prime;
+    
+    if (what < 0)
+        what *= -1;
+    rat_reduce(&what); // this is essential, what should already be reduced, but let's make sure of it
+    while (rat_long_cmp(what, 1) != 0 && this_table <= table_last) {
+        this_prime = *this_table;
+        if (what.r_num % this_prime == 0) {
+            this_factor = llll_get();
+            llll_appendlong(this_factor, this_prime);
+            exponent = 0;
+            do {
+                exponent++;
+                what.r_num /= this_prime;
+            } while (what.r_num != 0 && what.r_num % this_prime == 0);
+            llll_appendlong(this_factor, exponent);
+            llll_appendllll(factors, this_factor);
+        } else if (what.r_den % this_prime == 0) {
+            this_factor = llll_get();
+            llll_appendlong(this_factor, this_prime);
+            exponent = 0;
+            do {
+                exponent++;
+                what.r_den /= this_prime;
+            } while (what.r_den != 0 && what.r_den % this_prime == 0);
+            llll_appendlong(this_factor, -exponent);
+            llll_appendllll(factors, this_factor);
+        }
+        this_table++;
+    }
+/*
+ if the number is not reduced after all the factors < sqrt(MAXLONG) have been found,
+ then the remaining factor must be the only one, and a prime
+ because otherwise there would be two factors > sqrt(MAXLONG)
+ This is true both for numerator and for denominator
+ */
+    if (what.r_num > 1) {
+        this_factor = llll_get();
+        llll_appendlong(this_factor, what.r_num);
+        llll_appendlong(this_factor, 1);
+        llll_appendllll(factors, this_factor);
+    }
+    if (what.r_den > 1) {
+        this_factor = llll_get();
+        llll_appendlong(this_factor, what.r_den);
+        llll_appendlong(this_factor, -1);
+        llll_appendllll(factors, this_factor);
+    }
+    
+    pedantic_llll_check(factors);
+    return factors;
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 t_llll *llll_primeser(long min, long max, long maxcount)

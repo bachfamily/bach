@@ -385,7 +385,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     prepare_voices_to_write((t_notation_obj *) x, &voices_to_write);
     num_voices = voices_to_write->l_size;
     bach_assert_objerror_goto(x, ok = (num_voices > 0), "No valid voices for export", score_dowritemidi_error);
-    firstvoice = (t_scorevoice *) nth_voice((t_notation_obj *) x, hatom_getlong(&voices_to_write->l_head->l_hatom));
+    firstvoice = (t_scorevoice *) voice_get_nth_safe((t_notation_obj *) x, hatom_getlong(&voices_to_write->l_head->l_hatom));
     num_tracks = format == 0 ? 1 : num_voices + 1;
     
     // first, prepare our intermediary structure (guess what? it's an llll!)
@@ -427,7 +427,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
     // now, one voice after another, insert all the notes
     for (this_voicenum_elem = voices_to_write->l_head; this_voicenum_elem; this_voicenum_elem = this_voicenum_elem->l_next) {
         voice_num = hatom_getlong(&this_voicenum_elem->l_hatom);
-        this_scorevoice = (t_scorevoice *) nth_voice((t_notation_obj *) x, hatom_getlong(&this_voicenum_elem->l_hatom));
+        this_scorevoice = (t_scorevoice *) voice_get_nth_safe((t_notation_obj *) x, hatom_getlong(&this_voicenum_elem->l_hatom));
         t_measure *this_measure;
         t_chord *this_chord;
         long channel = this_scorevoice->v_ob.midichannel % 16 - 1;
@@ -638,7 +638,7 @@ t_rational normalize_timepoint(t_score *x, t_timepoint *tp)
     if (tp->pt_in_measure.r_num < 0) {
         if (tp->measure_num > 0) {
             tp->measure_num--;
-            tp->pt_in_measure = rat_rat_sum(measure_get_sym_duration(nth_measure_of_scorevoice(nth_scorevoice(x, tp->voice_num), tp->measure_num)), tp->pt_in_measure);
+            tp->pt_in_measure = rat_rat_sum(measure_get_sym_duration(measure_get_nth(scorevoice_get_nth(x, tp->voice_num), tp->measure_num)), tp->pt_in_measure);
             return long2rat(0);
         } else {
             t_rational remainder = rat_opp(tp->pt_in_measure);
@@ -1414,7 +1414,7 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
     sysfile_write(f, &count, "\t<<\r\n");
 
     for (elem = voices_to_write->l_head; elem; elem = elem->l_next) {
-        t_scorevoice *voice = (t_scorevoice *) nth_voice((t_notation_obj *) x, hatom_getlong(&elem->l_hatom));
+        t_scorevoice *voice = (t_scorevoice *) voice_get_nth_safe((t_notation_obj *) x, hatom_getlong(&elem->l_hatom));
 
         count = 16;
         sysfile_write(f, &count, "\t\t\\new Staff {\r\n");

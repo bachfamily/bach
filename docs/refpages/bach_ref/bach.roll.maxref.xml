@@ -659,11 +659,17 @@
 				   ↪ Add the <m>Shift+Ctrl</m> key to trim the tail, i.e. to keep the existing absolute pitch breakpoint positions. <br />
 				• <m>Ctrl+click+drag</m> on a notehead or on dynamic mark: change velocity or dynamic mark <br />
 				• <m>doubleclick</m> on voice names, marker names or lyrics: Edit names directly <br />
+				• <m>doubleclick</m> on clefs: Select all items in voice <br />
 				• <m>doubleclick</m> on selected items: Selection off-line play (as the <m>V</m> key), but only if <m>dblclicksendsvalues</m> is set to 1 <br />
 				• <m>Shift+click+drag</m> on a clef (at the beginning of the staff): Move voice vertically (along with all the next ones), i.e.: modify vertical space before clicked voice <br />
 				• <m>Shift+Alt+click+drag</m> on a clef (at the beginning of the staff): Move all following voices vertically (but not the clicked one), i.e.: modify vertical space after clicked voice <br />
 				• <m>right click</m> or <m>two-fingers-tap</m>: Open contextual popup menu. This can be opened by clicking on noteheads (note or selection popup menu), clefs
 				(voice popup menu) or on the background (backgroun popup menu). <br />
+				<br />
+				Marker regions
+				• <m>doubleclick</m> on marker region strips: Select items in region <br />
+				• <m>click+drag</m> on the end portion of a marker region strip: Extend the marker region <br />
+				• <m>doubleclick</m> on the end portion of a marker region strip: Extend the marker region till the next marker <br />
 				<br />
 				Selection, zooming, scrollbar and dilation rectangle: <br />
 				• <m>click</m> on any item: Select item <br />
@@ -1209,6 +1215,29 @@
 				<br />				See also:<m>deletemarker</m>,<m>clearmarkers</m><br />
 			</description>
 		</method>
+		<method name="addslur">
+			<arg name="selection" optional="1" type="symbol" />
+			<arg name="start_path" optional="1" type="llll" />
+			<arg name="end_path" optional="1" type="llll" />
+			<digest>
+				Add a slur
+			</digest>
+			<description>
+				Syntax: <b>addslur <m>[&lt;symbol: selection&gt;]</m> <m>[&lt;llll: start_path&gt;]</m> <m>[&lt;llll: end_path&gt;]</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>addslur [1 1 1] [1 3 2]</b>   <i>→ add a slur from the first chord to the second chord of the 3rd measure</i><br />
+				• <b>addslur [1 1 1] [1 3 2] @name john</b>   <i>→ the same, with a name</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@name</m> (llll, default: null): Name(s) of the slur<br />
+				<br />
+				The <m>addslur</m> message adds a new slur.
+				If "selection" is given as argument, then the selected items will be gathered under a slur.
+				Otherwise, two argument are expected, containing the paths of the starting and ending chord of the slur as wrapped lllls.
+				An optional message attribute "name" also sets the name(s) of the slur.
+				<br />				See also:<m>clearslur</m><br />
+			</description>
+		</method>
 		<method name="adjustadditionalstartpad">
 			<arglist />
 			<digest>
@@ -1317,6 +1346,19 @@
 				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
 				one cannot apply different equations to different notes inside the chord.
 				<br /> <br />
+			</description>
+		</method>
+		<method name="change">
+			<arglist />
+			<digest>
+				Change properties of an element
+			</digest>
+			<description>
+				Generic changes in a score can be obtained via the syntax <br />
+				<b>insert/remove/change <m>element_type</m> <m>element_path</m> <m>property_name</m> <m>content_as_llll</m></b> <br />
+				If the initial symbol is "remove", the last two fields are irrelevant; if the initial symbol is "
+				Properties are the ones displayed in the bach inspector for the specific element, plus the symbol "state", which
+				sets the whole state of the element from a gathered syntax llll. <br />
 			</description>
 		</method>
 		<method name="changeslotitem">
@@ -1484,7 +1526,7 @@
 				Delete all markers
 			</digest>
 			<description>
-				The <m>clearmarkers</m> simply delets all the markers in the notation object.
+				The <m>clearmarkers</m> message deletes all the markers in the notation object.
 				<br />				See also:<m>addmarker</m>,<m>deletemarker</m><br />
 			</description>
 		</method>
@@ -1521,6 +1563,16 @@
 				yielding a situation where no notation item is selected. If an integer is given as argument,
 				it specifies a voice number for which the selection should be cleared (and will be kept for all other voices)
 				<br />				See also:<m>sel</m>,<m>unsel</m>,<m>select</m><br />
+			</description>
+		</method>
+		<method name="clearslurs">
+			<arglist />
+			<digest>
+				Delete all slurs
+			</digest>
+			<description>
+				The <m>clearslurs</m> message delets all the slurs in the notation object.
+				<br />				See also:<m>addslur</m><br />
 			</description>
 		</method>
 		<method name="clock">
@@ -2914,6 +2966,25 @@
 				<br />				See also:<m>getdomain</m>,<m>domain</m><br />
 			</description>
 		</method>
+		<method name="getfocus">
+			<arg name="query_label" optional="1" type="llll" />
+			<digest>
+				Query whether the object has focus
+			</digest>
+			<description>
+				Syntax: <b>getfocus <m>[&lt;llll: query_label&gt;]</m> </b><br />				<br />
+				The <m>getfocus</m> message outputs a <b>focus 1</b> message from the playout if the object has focus, and <b>focus 0</b> otherwise.
+				Moreover, each query can have in bach as very first argument a label, kept inside the query answer,
+				which can be useful to retrieve queries separately (for instance to keep track of queries coming from different threads).
+				To assign a label to a query, you have to put as very first argument after the query message (before any other query argument) an llll in the form
+				<b>[label <m>label_name</m>]</b>, where <m>label_name</m> is a symbol you want to assign to the label.
+				When the answer of a labelled query is output from the playout, after the first router symbol, the label will appear, thus yielding a
+				general form <b><m>query_router_symbol</m> <m>label_name</m> <m>QUERY_ANSWER</m></b>. Just to make an example,
+				the answer of <b>pixeltotime [label john] 6000</b> might be something like <b>pixel john 300.</b>.
+				It works accordingly for any other query.
+				<br /> <br />
+			</description>
+		</method>
 		<method name="getlength">
 			<arg name="query_label" optional="1" type="llll" />
 			<digest>
@@ -3482,6 +3553,19 @@
 				point should be displayed (0 represents the screen beginning, 1 the screen end), and the position in milliseconds.
 				The millisecond position can be replaced by the element name or by one of the following symbols: "cursor", "end".
 				<br />				See also:<m>inscreen</m>,<m>scroll</m><br />
+			</description>
+		</method>
+		<method name="insert">
+			<arglist />
+			<digest>
+				Insert element
+			</digest>
+			<description>
+				Generic changes in a score can be obtained via the syntax <br />
+				<b>insert/remove/change <m>element_type</m> <m>element_path</m> <m>property_name</m> <m>content_as_llll</m></b> <br />
+				If the initial symbol is "remove", the last two fields are irrelevant; if the initial symbol is "
+				Properties are the ones displayed in the bach inspector for the specific element, plus the symbol "state", which
+				sets the whole state of the element from a gathered syntax llll. <br />
 			</description>
 		</method>
 		<method name="insertslotitem">
@@ -5135,6 +5219,29 @@
 				The <m>refresh</m> message forces the recomputation of all the features and forces the object box to be redrawn.
 			</description>
 		</method>
+		<method name="remove">
+			<arglist />
+			<digest>
+				Remove element
+			</digest>
+			<description>
+				Generic changes in a score can be obtained via the syntax <br />
+				<b>insert/remove/change <m>element_type</m> <m>element_path</m> <m>property_name</m> <m>content_as_llll</m></b> <br />
+				If the initial symbol is "remove", the last two fields are irrelevant; if the initial symbol is "
+				Properties are the ones displayed in the bach inspector for the specific element, plus the symbol "state", which
+				sets the whole state of the element from a gathered syntax llll. <br />
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the custom articulations definition to the default one
+			</digest>
+			<description>
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
+			</description>
+		</method>
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
@@ -5143,20 +5250,6 @@
 			<description>
 				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
 				all the user-defined noteheads.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
-				Reset the slotinfo to the default one
-			</digest>
-			<description>
-				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
-				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
-				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
-				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
-				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
-				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -5171,11 +5264,15 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom articulations definition to the default one
+				Reset the slotinfo to the default one
 			</digest>
 			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="respell">
@@ -5397,6 +5494,8 @@
 				For instance, <b>sel note 2 3</b> selects the third note of second chord [of first voice], while <b>sel note 4 2 3</b> does the same with the fourth voice.
 				Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
 				a sequence of wrapped lists of integers, for instance <b>sel note [5 2 4] [1 1 -1]</b>.<br />
+				- If the word <m>sel</m> is followed by the symbol <b>region</b> and then a name or list of names, the marker corresponding to the
+				input names is expected to be a region marker, and all the elements inside the region are selected.<br />
 				- If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>chord if</b>, <b>voice if</b>, <b>measure if</b>,
 				<b>marker if</b>, <b>breakpoint if</b> or <b>tail if</b> followed by a
 				condition to be verified, a conditional selection on notes,  markers or pitch breakpoints (respectively) is performed.
@@ -5850,6 +5949,7 @@
 				Examples:<br />
 				• <b>subroll [1 2 4] [1000 3000]</b>   <i>→ extract voices 1, 2 and 4 from 1s to 3s</i><br />
 				• <b>subroll [] [1000 3000]</b>   <i>→ extract all voices from 1s to 3s</i><br />
+				• <b>subroll [] MyRegion</b>   <i>→ crop the region marker MyRegion</i><br />
 				• <b>subroll [1 2] []</b>   <i>→ extract voices 1 and 2 for the whole duration</i><br />
 				• <b>subroll [1 3] [2000 -1]</b>   <i>→ extract voices 1 and 3 from 2s to the end</i><br />
 				• <b>subroll onset [1 3] [2000 -1]</b>   <i>→ only extract notes whose onset is after 2s (no partial notes)</i><br />
@@ -5866,7 +5966,9 @@
 				has to be output. Leave such list as <b>nil</b> or <b>[]</b> if you want this lapse to be all the length of the <o>bach.roll</o>.
 				Otherwise <m>start_ms</m> is the beginning of the portion of <o>bach.roll</o> to be output (in milliseconds), and
 				<m>end_ms</m> is the end of the portion of <o>bach.roll</o> to be output (in milliseconds); leave any negative value
-				for <m>end_ms</m> if you want the portion of <o>bach.roll</o> to be output to go till the end of the notation object. <br />
+				for <m>end_ms</m> if you want the portion of <o>bach.roll</o> to be output to go till the end of the notation object.
+				To infer the starting and ending point from a region marker, set <m>TIME_LAPSE</m> either as a single symbol
+				or as a wrapped list of symbols (names). <br />
 				The third llll, <m>optional:SELECTIVE_OPTIONS</m>, is optional, and if given might contain a symbol or list of symbols
 				which handle what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
 				the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>subroll [4 5] [1000 3000] [clefs markers body]</b>
@@ -5968,6 +6070,25 @@
 				It works accordingly for any other query.
 				<br /> <br />
 				<br />				See also:<m>pixeltotime</m><br />
+			</description>
+		</method>
+		<method name="transaction">
+			<arglist />
+			<digest>
+				Process multiple insert/remove/change messages
+			</digest>
+			<description>
+				A generic transaction is a sequence of generic messages executed seamlessly, without refreshing the order of chords, notes
+				and markers, and without refreshing the display in the middle. <br />
+				Transactions are obtained via the syntax
+				<b>transaction <m>transaction_name</m> [<m>change_message1</m> <m>change_message2</m> ...]</b> <br />
+				where <m>transaction_name</m> is a symbol associated with the transaction and each one of the <m>change_message</m>s has
+				the syntax of a generic change, described in the following paragraph. <br />
+				Generic changes in a score can be obtained via the syntax <br />
+				<b>insert/remove/change <m>element_type</m> <m>element_path</m> <m>property_name</m> <m>content_as_llll</m></b> <br />
+				If the initial symbol is "remove", the last two fields are irrelevant; if the initial symbol is "
+				Properties are the ones displayed in the bach inspector for the specific element, plus the symbol "state", which
+				sets the whole state of the element from a gathered syntax llll. <br />
 			</description>
 		</method>
 		<method name="undo">
@@ -6821,6 +6942,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
+		<attribute name="bordersize" get="1" set="1" type="float" size="1">
+			<digest>
+				Border Width
+			</digest>
+			<description>
+				Sets the border width in pixels.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Width" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="breakpointshavenoteheads" get="1" set="1" type="int" size="1">
 			<digest>
 				Breakpoints Have Noteheads
@@ -6929,24 +7066,6 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="continuousbang" get="1" set="1" type="int" size="1">
-			<digest>
-				Continuously Output Bang If Changed
-			</digest>
-			<description>
-				Toggles the ability to output continuously the bang through the last outlet
-				while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously.
-				This defaults to 0.
-			</description>
-			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Continuously Output Bang If Changed" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="customspacing" get="1" set="1" type="int" size="1">
@@ -7253,6 +7372,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="focusbordersize" get="1" set="1" type="float" size="1">
+			<digest>
+				Border Width With Focus
+			</digest>
+			<description>
+				Sets the border width in pixels when the object has focus.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="2.5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Width With Focus" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="fontface" get="1" set="1" type="" size="1">
@@ -8092,6 +8227,24 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
+		<attribute name="notifycontinuously" get="1" set="1" type="int" size="1">
+			<digest>
+				Notify Continuously
+			</digest>
+			<description>
+				Toggles the ability to notify continuously via the last outlet
+				while the mouse is down and dragging something. Also the <m>automessage</m>, if any, is sent continuously.
+				This defaults to 0.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify Continuously" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="notifymessages" get="1" set="1" type="int" size="1">
 			<digest>
 				Notifications When Changed Via Messages
@@ -8102,7 +8255,7 @@
 				By default this is inactive.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Changed Via Messages" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
@@ -8119,12 +8272,39 @@
 				whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
 			</description>
 			<attributelist>
-				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Display Is Refreshed" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="notifywith" get="1" set="1" type="int" size="1">
+			<digest>
+				Notify Interface Changes Via
+			</digest>
+			<description>
+				Chooses the notification type for interface changes: <br />
+				- 0 (bang, default): the simplest and less CPU-consuming alternative, only notifies with a bang when anything changes; <br />
+				- 1 (Operation): notify with an operation label; <br />
+				- 2 (Redo Transaction): notify verbosely with the operation label plus a sequence of change messages ('ticks') encapsulated
+				in a transaction (set of instructions across which orders are not refreshed).
+				This is the message you can directly provide to another notation object in order to reproduce the same effect; <br />
+				- 3 (Undo Data): same as the previous, but providing undo information instead.
+				- 4 (Redo Data): same as "Redo Transaction" but without the encapsulation, so the notification is a sequence of individual ticks (with a
+				starting operation label).
+				The practical difference between "Redo Transaction" and "Redo Data" is not just the leading "transaction" symbol, but more crucially
+				the path of the items, which in this last case does indeed account for any update of chords/markers/notes order between the change ticks; <br />
+				- 5 (Undo Data): same as the previous, but providing undo information instead. <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Notification" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notify Interface Changes Via" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
 		<attribute name="numgridsubdivisions" get="1" set="1" type="int" size="1">
@@ -9494,6 +9674,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="showslurs" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Slurs
+			</digest>
+			<description>
+				Toggles the display of slurs.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Slurs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="showsolocolor" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Solo Color
@@ -9686,6 +9882,36 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="slursavoidaccidentals" get="1" set="1" type="int" size="1">
+			<digest>
+				Slurs Avoid Accidentals
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slurs Avoid Accidentals" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="slursavoidchords" get="1" set="1" type="int" size="1">
+			<digest>
+				Slurs Avoid Chords
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slurs Avoid Chords" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="smartmarkernames" get="1" set="1" type="int" size="1">

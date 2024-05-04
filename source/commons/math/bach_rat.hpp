@@ -226,7 +226,8 @@ public:
     static T reduce(T &num, T &den);
     static T gcd(T a, T b);
     static T lcm(T a, T b);
-    
+    static t_rat<T> ipow(T num, long exp);
+
     static double cmpEpsilon;
 
 };
@@ -331,6 +332,26 @@ t_rat<T> & t_rat<T>::gcd(const t_rat<T> &b) const
     return t_rat<T>(
                     gcd(t_rat<T>::num, b.num()),
                     lcm(t_rat<T>::r_den, b.den()));
+}
+
+
+template <typename T>
+t_rat<T> t_rat<T>::ipow(T num, long exp)
+{
+    t_rat<T> temp = num;
+
+    if (exp == 0) {
+        temp.r_num = 1;
+        temp.r_den = 1;
+    } else if (exp > 0) {
+        for (long i = 0; i < exp; i++)
+            temp *= num;
+    } else {
+        for (long i = 0; i < -exp; i++)
+            temp *= num;
+    }
+
+    return temp;
 }
 
 template <typename T>
