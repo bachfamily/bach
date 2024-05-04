@@ -78,7 +78,7 @@ Of course, experimentation is always the core of understanding. As soon as you g
 BUILDING FROM SOURCE
 ===================================================
 
-As bach is an open source project as of v0.8.1, it is possible to download its complete source code and build the library from it.
+As bach is an open source project as of v0.8.1, it is possible to download its complete source code and build the package from it.
 The source code of bach is hosted on Github, at the URL https://github.com/bachfamily/bach
 The repository is identical to the bach Max package, except that it does not contain the binaries (which you are supposed to be willing to build if you download it), but it rather contains a "source" folder with all the source code, third-party dependencies included (see below), except the Max SDK. You should install the bach folder downloaded from Github, or clone the repository, directly in your Max packages folder, instead of the bach package from the Package Manager.
 Generally speaking, the master branch contains the latest version of bach that has been published in the Package Manager. This is the branch you are recommended to check out.
@@ -104,7 +104,7 @@ The Max 8.2 SDK seems to have some issues of redefined symbols, so currently bac
 	cd source/max-sdk-base
 	git checkout bach
 
-If you don't want to lose everything you alredy did in the Max SDK package, then you should retrieve the relevant files from the modified version and substitute the original ones with them. The easiest is to run the above command line from just any other folder (it can as well be your Desktop or Downloads), drag the following files from the newly cloned SDK to your old one and throw away the new one:
+If you don't want to lose everything you already did in the Max SDK package, then you should retrieve the relevant files from the modified version and substitute the original ones with them. The easiest is to run the above command line from just any other folder (it can as well be your Desktop or Downloads), drag the following files from the newly cloned SDK to your old one and throw away the new one:
 	max-sdk/source/max-sdk-base/c74support/c74_max.h
 	max-sdk/source/max-sdk-base/c74support/max-includes/common/jpatcher_syms.c
 	max-sdk/source/max-sdk-base/c74support/max-includes/ext_obex.h
