@@ -50,6 +50,7 @@ HINSTANCE hinst;
 #include "bell/ast.hpp"
 #include "bell/pvManager.hpp"
 
+
 long *bach_gen_primes(void);
 
 t_class *bach_class = NULL;

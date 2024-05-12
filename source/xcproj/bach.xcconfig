@@ -13,7 +13,7 @@ MAXSDK = $(SRCROOT)/../../../max-sdk
 C74SUPPORT = $(MAXSDK)/source/max-sdk-base/c74support
 MAINS_ROOT = $(SRCROOT)/../mains
 COMMONS_ROOT = $(SRCROOT)/../commons
-HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes" "$(COMMONS_ROOT)"
+HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes" "$(COMMONS_ROOT)" "$(COMMONS_ROOT)/libraries/antlr4-cpp-runtime-4-orig/runtime/src"
 FRAMEWORK_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
 
 // *** UNCOMMENT FOR MAX6 INSTALL
