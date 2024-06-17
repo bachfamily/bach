@@ -3188,6 +3188,27 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
 void notation_class_add_font_attributes(t_class *c, char obj_type){
     CLASS_STICKY_ATTR(c,"category",0,"Font");
 
+    
+    CLASS_ATTR_SYM(c,"slotlabelsfont", 0, t_notation_obj, slot_labels_font);
+    CLASS_ATTR_STYLE_LABEL(c, "slotlabelsfont", 0, "font", "Slot Labels Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"slotlabelsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "slotlabelsfont", (method)NULL, (method)notationobj_setattr_slot_labels_font);
+    // @description Sets the font for slot labels
+
+    CLASS_ATTR_CHAR(c,"slotlabelsfontface",0, t_notation_obj, slot_labels_font_face);
+    CLASS_ATTR_STYLE_LABEL(c,"slotlabelsfontface",0,"text","Slot Labels Font Style");
+    CLASS_ATTR_ENUMINDEX(c,"slotlabelsfontface", 0, "regular bold italic bold italic");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slotlabelsfontface", 0, "1");
+    // @description Sets the font style of slot labels
+
+    
+    CLASS_ATTR_DOUBLE(c,"slotlabelsfontsize",0, t_notation_obj, slot_labels_font_size);
+    CLASS_ATTR_STYLE_LABEL(c,"slotlabelsfontsize",0,"text","Slot Labels Font Size");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slotlabelsfontsize", 0, "5");
+    CLASS_ATTR_ACCESSORS(c, "slotlabelsfontsize", (method)NULL, (method)notationobj_setattr_slot_labels_font_size);
+    // @description Sets the font size of slot labels (rescaled according to the <m>vzoom</m>).
+
+    
     if (obj_type != k_NOTATION_OBJECT_SLOT) {
 
         CLASS_ATTR_DOUBLE(c,"rulerlabelsfontsize",0, t_notation_obj, ruler_labels_font_size);
@@ -3216,7 +3237,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markersfont", 0, "Arial");
         CLASS_ATTR_ACCESSORS(c, "markersfont", (method)NULL, (method)notationobj_setattr_markers_font);
         // @exclude bach.slot
-        // @description Sets the font size of markers
+        // @description Sets the font for markers
 
         CLASS_ATTR_DOUBLE(c,"markersfontsize",0, t_notation_obj, markers_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"markersfontsize",0,"text","Markers Font Size");
@@ -3901,6 +3922,24 @@ t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return MAX_ERR_NONE;
 }
+
+
+t_max_err notationobj_setattr_slot_labels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && atom_gettype(av) == A_SYM)
+        r_ob->slot_labels_font = atom_getsym(av);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
+t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && is_atom_number(av))
+        r_ob->slot_labels_font_size = atom_getfloat(av);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
 
 void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beamings){
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {

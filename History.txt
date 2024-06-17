@@ -19,6 +19,8 @@ VERSION NOTES:
 - bach.slot:
     á now background slots work (if you reduce the window opacity)
 
+- bach.stream: 
+    á fixed bug causing wrong output after clear
 
 ***********************
 *** VERSION CHANGES ***
@@ -31,6 +33,7 @@ VERSION NOTES:
     getfocus: new message to query whether objects have focus
     @showslotnames: new attribute to toggle display of slot names in the slot windows
     Fixed bug causing wrong accounting of the "slope" in a slot during playback (downward movements).
+    @slotlabelsfonts, @slotlabelsfontsize and @slotlabelsfontface: new attributes
 
 - bach.omtree2bachtree:
     á fixed bug causing wrong input for non 4/4 meters
@@ -61,7 +64,7 @@ VERSION NOTES:
     á fixed bug causing wrong positioning of dashes in lyrics
     á new @tupletfont and @tupletfontsize attributes
 
-
+- bach.urn: fixed behavior with @autoclear 1
 
 
 

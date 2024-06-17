@@ -4259,8 +4259,11 @@ typedef struct _notation_obj
     char        show_slot_numbers;            ///< Do we want to show the slot number in transparence, in the slot window?
     char        show_slot_names;               ///< Do we want to show the slot names in the slot window?
     char        show_slot_labels;            ///< Do we want to display automatically computated labels for function points in the slot windows of slots of type #k_SLOT_TYPE_FUNCTION, and the labels for the bars of the intlist and floatlist slots?
+    t_symbol      *slot_labels_font;        ///< Font used to display slot labels
+    double        slot_labels_font_size;    ///< Size in pt of the font for writing the slot labels (for <zoom_y> = 1)
+    char        slot_labels_font_face;       ///< Style of the font for writing slot labels (regular, bold, italic, bold italic)
     char        show_slot_legend;            ///< Do we want to display the upper-right slot legend?
-    char        dynfilter_interp_mode;        ///< Interpolation mode for the dynamic filters in a #k_SLOT_TYPE_DYNFILTER. 
+    char        dynfilter_interp_mode;        ///< Interpolation mode for the dynamic filters in a #k_SLOT_TYPE_DYNFILTER.
                                             ///< 0 = the interpolation happens through biquad coefficients, 
                                             ///< 1 = the interpolation happens through freq/gain/Q parameters (currently the only one used – and this is not user changable –, for this is the only one who makes sense)
 
@@ -17522,6 +17525,8 @@ t_max_err notationobj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr,
 t_max_err notationobj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_slot_labels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
