@@ -67,11 +67,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitExprTimes(bellParser::ExprTimesContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitExprPlus(bellParser::ExprPlusContext *ctx) override {
+  virtual std::any visitExprPlusMinus(bellParser::ExprPlusMinusContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -80,6 +76,10 @@ public:
   }
 
   virtual std::any visitExprUnary(bellParser::ExprUnaryContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitExprTimesDiv(bellParser::ExprTimesDivContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -95,11 +95,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitEexprTimes(bellParser::EexprTimesContext *ctx) override {
+  virtual std::any visitEexprTimesDiv(bellParser::EexprTimesDivContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitEexprPlus(bellParser::EexprPlusContext *ctx) override {
+  virtual std::any visitEexprPlusMinus(bellParser::EexprPlusMinusContext *ctx) override {
     return visitChildren(ctx);
   }
 

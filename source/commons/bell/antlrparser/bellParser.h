@@ -14,8 +14,9 @@ public:
   enum {
     NUMBER = 1, IF = 2, THEN = 3, ELSE = 4, FOR = 5, DO = 6, FUNCTION = 7, 
     VAR = 8, PUSH = 9, POP = 10, CLOSED = 11, NTH = 12, KEY = 13, NULLIFY = 14, 
-    ASSIGN = 15, EOL = 16, WHITESPACE = 17, POW = 18, TIMES = 19, PLUS = 20, 
-    UPLUS = 21, MINUS = 22, UMINUS = 23, OPEN = 24, PARAMS = 25
+    ASSIGN = 15, EOL = 16, WHITESPACE = 17, POW = 18, TIMES = 19, DIVDIV = 20, 
+    DIV = 21, PLUS = 22, UPLUS = 23, MINUS = 24, UMINUS = 25, OPEN = 26, 
+    PARAMS = 27
   };
 
   enum {
@@ -260,24 +261,14 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  ExprTimesContext : public ExprContext {
+  class  ExprPlusMinusContext : public ExprContext {
   public:
-    ExprTimesContext(ExprContext *ctx);
-
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
-    antlr4::tree::TerminalNode *TIMES();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ExprPlusContext : public ExprContext {
-  public:
-    ExprPlusContext(ExprContext *ctx);
+    ExprPlusMinusContext(ExprContext *ctx);
 
     std::vector<ExprContext *> expr();
     ExprContext* expr(size_t i);
     antlr4::tree::TerminalNode *PLUS();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -302,6 +293,19 @@ public:
     antlr4::tree::TerminalNode* UPLUS(size_t i);
     std::vector<antlr4::tree::TerminalNode *> UMINUS();
     antlr4::tree::TerminalNode* UMINUS(size_t i);
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ExprTimesDivContext : public ExprContext {
+  public:
+    ExprTimesDivContext(ExprContext *ctx);
+
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
+    antlr4::tree::TerminalNode *TIMES();
+    antlr4::tree::TerminalNode *DIV();
+    antlr4::tree::TerminalNode *DIVDIV();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -339,24 +343,15 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  EexprTimesContext : public EexprContext {
+  class  EexprTimesDivContext : public EexprContext {
   public:
-    EexprTimesContext(EexprContext *ctx);
+    EexprTimesDivContext(EexprContext *ctx);
 
     ExprContext *expr();
+    ListEndContext *listEnd();
     antlr4::tree::TerminalNode *TIMES();
-    ListEndContext *listEnd();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  EexprPlusContext : public EexprContext {
-  public:
-    EexprPlusContext(EexprContext *ctx);
-
-    ExprContext *expr();
-    antlr4::tree::TerminalNode *PLUS();
-    ListEndContext *listEnd();
+    antlr4::tree::TerminalNode *DIV();
+    antlr4::tree::TerminalNode *DIVDIV();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -366,6 +361,18 @@ public:
     EexprFakeLvalueContext(EexprContext *ctx);
 
     FakeLvalueContext *fakeLvalue();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  EexprPlusMinusContext : public EexprContext {
+  public:
+    EexprPlusMinusContext(EexprContext *ctx);
+
+    ExprContext *expr();
+    ListEndContext *listEnd();
+    antlr4::tree::TerminalNode *PLUS();
+    antlr4::tree::TerminalNode *MINUS();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

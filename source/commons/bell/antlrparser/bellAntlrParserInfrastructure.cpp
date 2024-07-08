@@ -140,23 +140,6 @@ public:
         return r;
     }
     
-    /*
-    antlrcpp::Any visitItemUPlus(bellParser::ItemUPlusContext *ctx) override {
-        push();
-        post("item: uPlus");
-        auto r = visit(ctx->item()).any_cast<intarray*>();
-        pop();
-        return r;
-    }
-    
-    antlrcpp::Any visitItemUMinus(bellParser::ItemUMinusContext *ctx) override {
-        visits++;
-        intarray *a = visit(ctx->item()).any_cast<intarray*>();
-        intarray_uminus(a);
-        return a;
-    }
-    */
-    
     antlrcpp::Any visitItemFuncall(bellParser::ItemFuncallContext *ctx) override {
         visits++;
         astNode* a = any_cast<astNode*>(visit(ctx->funcall()));
@@ -233,17 +216,31 @@ public:
         return r;
     };
     
-    antlrcpp::Any visitPlus(antlr4::ParserRuleContext *context) {
+    template<typename T>
+    antlrcpp::Any visitPlusMinus(T *context) {
         astNode *n1 = any_cast<astNode*>(visit(context->children[0]));
         astNode *n2 = any_cast<astNode*>(visit(context->children[2]));
-        astNode *r = new astOperatorPlus(n1, n2, params->owner);
+        astNode *r;
+        if (context->PLUS()) {
+            r = new astOperatorPlus(n1, n2, params->owner);
+        } else { // MINUS
+            r = new astOperatorMinus(n1, n2, params->owner);
+        }
         return r;
     };
     
-    antlrcpp::Any visitTimes(antlr4::ParserRuleContext *context) {
+    template<typename T>
+    antlrcpp::Any visitTimesDiv(T *context) {
         astNode *n1 = any_cast<astNode*>(visit(context->children[0]));
         astNode *n2 = any_cast<astNode*>(visit(context->children[2]));
-        astNode *r = new astOperatorTimes(n1, n2, params->owner);
+        astNode *r;
+        if (context->TIMES()) {
+            r = new astOperatorTimes(n1, n2, params->owner);
+        } else if (context->DIV()) {
+            r = new astOperatorDiv(n1, n2, params->owner);
+        } else { // DIVDIV
+            r = new astOperatorDivdiv(n1, n2, params->owner);
+        }
         return r;
     };
     
@@ -258,12 +255,12 @@ public:
         return n;
     }
 
-    antlrcpp::Any visitExprTimes(bellParser::ExprTimesContext *context) override {
-        return visitTimes(context);
+    antlrcpp::Any visitExprTimesDiv(bellParser::ExprTimesDivContext *context) override {
+        return visitTimesDiv<bellParser::ExprTimesDivContext>(context);
     }
 
-    antlrcpp::Any visitExprPlus(bellParser::ExprPlusContext *context) override {
-        return visitPlus(context);
+    antlrcpp::Any visitExprPlusMinus(bellParser::ExprPlusMinusContext *context) override {
+        return visitPlusMinus<bellParser::ExprPlusMinusContext>(context);
     }
     
     template <typename T>
@@ -304,12 +301,12 @@ public:
         return n;
     }
 
-    antlrcpp::Any visitEexprTimes(bellParser::EexprTimesContext *context) override {
-        return visitTimes(context);
+    antlrcpp::Any visitEexprTimesDiv(bellParser::EexprTimesDivContext *context) override {
+        return visitTimesDiv<bellParser::EexprTimesDivContext>(context);
     }
 
-    antlrcpp::Any visitEexprPlus(bellParser::EexprPlusContext *context) override {
-        return visitPlus(context);
+    antlrcpp::Any visitEexprPlusMinus(bellParser::EexprPlusMinusContext *context) override {
+        return visitPlusMinus<bellParser::EexprPlusMinusContext>(context);
     }
     
     antlrcpp::Any visitEexprLvalue(bellParser::EexprLvalueContext *context) override {

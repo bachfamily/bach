@@ -17,8 +17,9 @@ public:
   enum {
     NUMBER = 1, IF = 2, THEN = 3, ELSE = 4, FOR = 5, DO = 6, FUNCTION = 7, 
     VAR = 8, PUSH = 9, POP = 10, CLOSED = 11, NTH = 12, KEY = 13, NULLIFY = 14, 
-    ASSIGN = 15, EOL = 16, WHITESPACE = 17, POW = 18, TIMES = 19, PLUS = 20, 
-    UPLUS = 21, MINUS = 22, UMINUS = 23, OPEN = 24, PARAMS = 25
+    ASSIGN = 15, EOL = 16, WHITESPACE = 17, POW = 18, TIMES = 19, DIVDIV = 20, 
+    DIV = 21, PLUS = 22, UPLUS = 23, MINUS = 24, UMINUS = 25, OPEN = 26, 
+    PARAMS = 27
   };
 
   explicit bellLexer(antlr4::CharStream *input);
@@ -101,6 +102,8 @@ private:
   void WHITESPACEAction(antlr4::RuleContext *context, size_t actionIndex);
   void POWAction(antlr4::RuleContext *context, size_t actionIndex);
   void TIMESAction(antlr4::RuleContext *context, size_t actionIndex);
+  void DIVDIVAction(antlr4::RuleContext *context, size_t actionIndex);
+  void DIVAction(antlr4::RuleContext *context, size_t actionIndex);
   void PLUSAction(antlr4::RuleContext *context, size_t actionIndex);
   void UPLUSAction(antlr4::RuleContext *context, size_t actionIndex);
   void MINUSAction(antlr4::RuleContext *context, size_t actionIndex);

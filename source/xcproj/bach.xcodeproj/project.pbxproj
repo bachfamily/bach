@@ -5971,9 +5971,9 @@
 				00992D752C3491D300DA02CD /* bellParser.h */,
 				00992D772C3491D300DA02CD /* bellVisitor.cpp */,
 				00992D742C3491D300DA02CD /* bellVisitor.h */,
-				00992D572C2EF26800DA02CD /* makefile */,
 				00992D832C35BCF400DA02CD /* bellAntlrParserInfrastructure.cpp */,
 				00992D842C35BCF400DA02CD /* bellAntlrParserInfrastructure.hpp */,
+				00992D572C2EF26800DA02CD /* makefile */,
 			);
 			path = antlrparser;
 			sourceTree = "<group>";

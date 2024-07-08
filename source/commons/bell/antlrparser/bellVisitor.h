@@ -45,13 +45,13 @@ public:
 
     virtual std::any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *context) = 0;
 
-    virtual std::any visitExprTimes(bellParser::ExprTimesContext *context) = 0;
-
-    virtual std::any visitExprPlus(bellParser::ExprPlusContext *context) = 0;
+    virtual std::any visitExprPlusMinus(bellParser::ExprPlusMinusContext *context) = 0;
 
     virtual std::any visitExprPow(bellParser::ExprPowContext *context) = 0;
 
     virtual std::any visitExprUnary(bellParser::ExprUnaryContext *context) = 0;
+
+    virtual std::any visitExprTimesDiv(bellParser::ExprTimesDivContext *context) = 0;
 
     virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *context) = 0;
 
@@ -59,9 +59,9 @@ public:
 
     virtual std::any visitEexprUnary(bellParser::EexprUnaryContext *context) = 0;
 
-    virtual std::any visitEexprTimes(bellParser::EexprTimesContext *context) = 0;
+    virtual std::any visitEexprTimesDiv(bellParser::EexprTimesDivContext *context) = 0;
 
-    virtual std::any visitEexprPlus(bellParser::EexprPlusContext *context) = 0;
+    virtual std::any visitEexprPlusMinus(bellParser::EexprPlusMinusContext *context) = 0;
 
     virtual std::any visitEexprLvalue(bellParser::EexprLvalueContext *context) = 0;
 

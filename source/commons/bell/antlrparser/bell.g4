@@ -78,16 +78,16 @@ fakeLvalue: item lvalueSpecs
 
 expr: expr POW expr #exprPow 
 | (UPLUS|UMINUS)* item #exprUnary
-| expr TIMES expr #exprTimes
-| expr PLUS expr #exprPlus
+| expr (TIMES|DIV|DIVDIV) expr #exprTimesDiv
+| expr (PLUS|MINUS) expr #exprPlusMinus
 | {!ending}? lvalue #exprLvalue
 | {!ending}? fakeLvalue #exprFakeLvalue
 ;
 
 eexpr: expr POW listEnd #eexprPow 
 | (UPLUS|UMINUS)* listEnd #eexprUnary
-| expr TIMES listEnd #eexprTimes
-| expr PLUS listEnd #eexprPlus
+| expr (TIMES|DIV|DIVDIV) listEnd #eexprTimesDiv
+| expr (PLUS|MINUS) listEnd #eexprPlusMinus
 | {ending}? lvalue #eexprLvalue
 | {ending}? fakeLvalue #eexprFakeLvalue
 ;
@@ -150,6 +150,9 @@ WHITESPACE: [ \t\u0001] { noParams = true; noUnary = false; } -> channel(HIDDEN)
 POW: '**' { noParams = true; noUnary = false; };
 
 TIMES: '*' { noParams = true; noUnary = false; };
+
+DIVDIV: '//' { noParams = true; noUnary = false; };
+DIV: '/' { noParams = true; noUnary = false; };
 
 PLUS: { notUnary() }? '+' { post("plus!\n"); noParams = true; noUnary = false; };
 UPLUS: '+' { post("uplus!\n"); noParams = true; noUnary = false; };
