@@ -466,6 +466,49 @@ astFunctionCall::astFunctionCall(astNode *functionNode, countedList<astNode *> *
     }
 }
 
+astFunctionCall::astFunctionCall(astNode *functionNode, std::vector<astNode *> *argsByPositionList, std::vector<symNodePair *> *argsByNameList, t_codableobj *owner) : astNode(owner), functionNode(functionNode), OopStyleCall(false) {
+    
+    if (argsByPositionList) {
+        argsByPositionCount = argsByPositionList->size();
+        argsByPosition = new astNode* [argsByPositionCount + 1];
+        argsByPosition += 1;
+        int i = 0;
+        for (auto a : *argsByPositionList) {
+            argsByPosition[i] = a;
+            i++;
+        }
+    } else {
+        argsByPositionCount = 0;
+        argsByPosition = nullptr;
+    }
+    
+    if (argsByNameList) {
+        argsByNameCount = argsByNameList->size();
+        argsByName = new astNode* [argsByNameCount];
+        argsNames = new t_symbol* [argsByNameCount];
+        countedList<symNodePair *> *thisABNL;
+        int i = 0;
+        for (auto a : *argsByNameList) {
+            argsByName[i] = a->getNode();
+            argsNames[i] = a->getSym();
+            delete a;
+            i++;
+        }
+    } else {
+        argsByNameCount = 0;
+        argsByName = nullptr;
+        argsNames = nullptr;
+    }
+}
+
+astFunctionCall::astFunctionCall(astNode *functionNode, t_codableobj *owner) : astNode(owner), functionNode(functionNode), OopStyleCall(false) {
+    argsByPositionCount = 0;
+    argsByPosition = nullptr;
+    argsByNameCount = 0;
+    argsByName = nullptr;
+    argsNames = nullptr;
+}
+
 astFunctionCall::~astFunctionCall() {
     delete functionNode;
     for (int i = 0; i < argsByPositionCount; i++)

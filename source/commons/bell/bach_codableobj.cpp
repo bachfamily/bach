@@ -108,7 +108,12 @@ t_max_err codableobj_buildAst(t_codableobj *x,
     if (!x->c_text || !(*x->c_text))
         return 0;
     t_max_err err = MAX_ERR_NONE;
-    t_mainFunction *newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
+    t_mainFunction *newMain;
+    //if (x->c_bellversion == 2) {
+        newMain = codableobj_parse_buffer_antlr(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
+    //} else {
+    //    newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
+    //}
     if (newMain) {
         if (x->c_main)
             x->c_main->decrease();
@@ -977,6 +982,9 @@ void codableclass_add_standard_methods_and_attrs(t_class *c)
     CLASS_ATTR_SYM(c, "file", 0, t_codableobj, c_file);
     CLASS_ATTR_LABEL(c, "file", 0, "Code file to be read at initialization");
     CLASS_ATTR_ACCESSORS(c, "file", nullptr, codableobj_file_set);
+    
+    CLASS_ATTR_ATOM_LONG(c, "bellversion",    0,    t_codableobj, c_bellversion);
+
 }
 
 

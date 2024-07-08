@@ -2585,7 +2585,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 50: /* funcall: term STARTPARAMS CLOSEDROUND  */
                                {
-    ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), nullptr, nullptr, params->owner);
+    ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: function call with no args");
 }
     break;
@@ -3700,7 +3700,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   case 218: /* term: ARGCOUNT  */
            {
     auto fnConst = new astConst((*(params->bifs))["$argcount"], params->owner);
-    ((*yyvalp).n) = new astFunctionCall(fnConst, nullptr, nullptr, params->owner);
+    ((*yyvalp).n) = new astFunctionCall(fnConst, params->owner);
     code_dev_post("parse: ARGCOUNT");
 }
     break;

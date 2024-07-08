@@ -407,14 +407,20 @@ public:
 class astConcat : public astNode
 {
 protected:
-    astNode *n1;
-    astNode *n2;
+    std::vector<astNode*> *n;
 public:
-    astConcat(astNode *n1, astNode *n2, t_codableobj *owner) : astNode(owner), n1(n1), n2(n2) { }
+    astConcat(astNode *n1, astNode *n2, t_codableobj *owner) : astNode(owner) {
+        n = new std::vector<astNode*>(2, nullptr);
+        n->push_back(n1);
+        n->push_back(n2);
+    }
+    
+    astConcat(std::vector<astNode*> *n, t_codableobj *owner) : astNode(owner), n(n) { }
     
     ~astConcat() {
-        delete n1;
-        delete n2;
+        for (auto node: *n)
+            delete node;
+        delete n;
     }
     
     t_llll *eval(t_execEnv const &context);
@@ -471,6 +477,23 @@ public:
             return n2->eval(context);
         else
             return llll_get();
+    }
+};
+
+class astNullify : public astNode
+{
+protected:
+    astNode *n;
+public:
+    astNullify(astNode *n, t_codableobj *owner) : astNode(owner), n(n) { }
+
+    ~astNullify() {
+        delete n;
+    }
+    
+    t_llll *eval(t_execEnv const &context) {
+        bell_release_llll(n->eval(context));
+        return llll_get();
     }
 };
 
@@ -633,9 +656,10 @@ public:
 };
 
 
-class lvalueStep {
+class lvalueStep final {
 public:
     enum lvalueOpTypes {
+        E_LV_NONE,
         E_LV_NTH,
         E_LV_KEY
     };
@@ -644,13 +668,62 @@ public:
     astNode *value;
     
 public:
+    lvalueStep() : type(E_LV_NONE), value(nullptr) { };
+    
     lvalueStep(lvalueOpTypes type, astNode *value) : type(type), value(value) { };
-    virtual ~lvalueStep() {
+    
+    void setType(lvalueOpTypes t) { type = t; }
+    
+    void setNode(astNode *node) { value = node; }
+        
+    ~lvalueStep() {
         delete value;
     }
+
+    lvalueOpTypes getType() { return type; }
+    astNode* getValue() { return value; }
 };
 
 typedef countedList<lvalueStep*> lvalueStepList;
+
+
+class lvalueSpecs final {
+private:
+
+public:
+
+    std::vector<lvalueStep*> *steps;
+
+    lvalueSpecs() {
+        steps = new std::vector<lvalueStep*>;
+    };
+
+    ~lvalueSpecs() {
+        for (auto s: *steps)
+            delete s;
+    }
+    
+    void addStep(lvalueStep *s) {
+        steps->push_back(s);
+    }
+        
+    astNode *toReadNode(astNode *n, t_codableobj *owner) {
+        for (auto step : *steps) {
+            auto type = step->getType();
+            auto node = step->getValue();
+            switch(type) {
+                case lvalueStep::E_LV_NTH:
+                    n = new astNthOp(n, node, owner);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return n;
+    }
+    
+};
+
 
 template<typename firstType>
 class astTwoSided : public astNode
@@ -894,6 +967,23 @@ public:
             nLvSteps = 0;
     }
     
+    AstRichAccessNode(firstType *varNode,
+              astNode *valueNode,
+              lvalueSpecs *lvs,
+                  t_codableobj *owner)  : BASE(varNode, valueNode, owner)
+    {
+        if (lvs) {
+            auto steps = lvs->steps;
+            nLvSteps = steps->size();
+            lvStep = new lvalueStep* [nLvSteps + 1];
+            int i = 0;
+            for (auto s : *steps) {
+                lvStep[i++] = s;
+            }
+            lvStep[i] = nullptr;
+        } else
+            nLvSteps = 0;
+    }
     
     t_llll *eval(t_execEnv const &context) {
         
@@ -928,7 +1018,7 @@ public:
         }
         
         // last round with assignment
-        if (current /* && lookHere */) { // was it there for some good reason????
+        if (current /* && lookHere */) { // was it there for any good reason????
             switch(lvStep[i]->type) {
                 case lvalueStep::E_LV_KEY:
                     lastKey(lvStep + i, lookHere, current, origV, context);

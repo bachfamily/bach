@@ -78,6 +78,7 @@ typedef struct _codableobj
     t_bool c_allGVTrigger;
     long c_allGVPriority;
     
+    long c_bellversion;
     t_bool c_ready;
     
 } t_codableobj;
@@ -89,6 +90,13 @@ void codableclass_add_extended_methods_and_attrs(t_class *c);
 
 
 t_mainFunction *codableobj_parse_buffer(t_codableobj *x,
+                                        long *codeac,
+                                        t_atom_long *dataInlets = nullptr,
+                                        t_atom_long *dataOutlets = nullptr,
+                                        t_atom_long *directInlets = nullptr,
+                                        t_atom_long *directOutlets = nullptr);
+
+t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x,
                                         long *codeac,
                                         t_atom_long *dataInlets = nullptr,
                                         t_atom_long *dataOutlets = nullptr,

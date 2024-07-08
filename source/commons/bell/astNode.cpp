@@ -397,6 +397,15 @@ t_llll* astWrap::eval(t_execEnv const &context) {
 ////////////
 
 t_llll* astConcat::eval(t_execEnv const &context) {
+    t_llll *x = llll_get();
+    
+    for (auto node : *n) {
+        t_llll *l = node->eval(context);
+        llll_chain(x, llll_clone(l));
+        bell_release_llll(l);
+    }
+    
+    /*
     t_llll *v1 = n1->eval(context);
     t_llll *v2 = n2->eval(context);
     t_llll *x = llll_clone(v1);
@@ -404,6 +413,8 @@ t_llll* astConcat::eval(t_execEnv const &context) {
     llll_chain(x, giver);
     bell_release_llll(v1);
     bell_release_llll(v2);
+     */
+    
     return x;
 }
 

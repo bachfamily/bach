@@ -286,6 +286,10 @@ public:
 
     astFunctionCall(astNode *functionNode, countedList<astNode *> *argsByPositionList, countedList<symNodePair *> *argsByNameList, t_codableobj *owner);
     
+    astFunctionCall(astNode *functionNode, std::vector<astNode *> *argsByPositionList, std::vector<symNodePair *> *argsByNameList, t_codableobj *owner);
+    
+    astFunctionCall(astNode *functionNode, t_codableobj *owner);
+
     void addOopStyleArg(astNode *arg);
     
     void setOopStyleArgValue(t_llll *ll);

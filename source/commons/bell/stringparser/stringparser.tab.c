@@ -2683,7 +2683,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   case 50: /* funcall: term STARTPARAMS CLOSEDROUND  */
 #line 532 "stringparser.y"
                                {
-    ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), nullptr, nullptr, params->owner);
+    ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: function call with no args");
 }
 #line 2690 "stringparser.tab.c"
@@ -4112,7 +4112,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
 #line 1213 "stringparser.y"
            {
     auto fnConst = new astConst((*(params->bifs))["$argcount"], params->owner);
-    ((*yyvalp).n) = new astFunctionCall(fnConst, nullptr, nullptr, params->owner);
+    ((*yyvalp).n) = new astFunctionCall(fnConst, params->owner);
     code_dev_post("parse: ARGCOUNT");
 }
 #line 4119 "stringparser.tab.c"

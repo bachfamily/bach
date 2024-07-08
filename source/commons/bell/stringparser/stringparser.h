@@ -175,4 +175,6 @@ static t_tokenNames tokenNames[] = {
     "term", "var", "globalVar", "patcherVar", "localVar"*/
 };
 
+void addVariableToScope(t_parseParams *params, t_symbol *name);
+
 #endif /* stringparser_h */

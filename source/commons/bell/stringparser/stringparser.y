@@ -530,7 +530,7 @@ funcall : term STARTPARAMS argsByPositionList CLOSEDROUND {
     code_dev_post ("parse: function call with args by position and by name");
 }
 | term STARTPARAMS CLOSEDROUND {
-    $$ = new astFunctionCall($1, nullptr, nullptr, params->owner);
+    $$ = new astFunctionCall($1, params->owner);
     code_dev_post ("parse: function call with no args");
 }
 ;
@@ -1212,7 +1212,7 @@ term: LONG_LITERAL {
 }
 | ARGCOUNT {
     auto fnConst = new astConst((*(params->bifs))["$argcount"], params->owner);
-    $$ = new astFunctionCall(fnConst, nullptr, nullptr, params->owner);
+    $$ = new astFunctionCall(fnConst, params->owner);
     code_dev_post("parse: ARGCOUNT");
 }
 | BACHNIL {
