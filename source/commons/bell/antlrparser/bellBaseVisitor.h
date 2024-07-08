@@ -71,6 +71,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitExprVar(bellParser::ExprVarContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitExprPow(bellParser::ExprPowContext *ctx) override {
     return visitChildren(ctx);
   }

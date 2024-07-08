@@ -78,18 +78,19 @@ fakeLvalue: item lvalueSpecs
 
 expr: expr POW expr #exprPow 
 | (UPLUS|UMINUS)* item #exprUnary
+| (UPLUS|UMINUS)* var #exprVar
 | expr (TIMES|DIV|DIVDIV) expr #exprTimesDiv
 | expr (PLUS|MINUS) expr #exprPlusMinus
-| {!ending}? lvalue #exprLvalue
-| {!ending}? fakeLvalue #exprFakeLvalue
+| {!ending}? (UPLUS|UMINUS)* lvalue #exprLvalue
+| {!ending}? (UPLUS|UMINUS)* fakeLvalue #exprFakeLvalue
 ;
 
 eexpr: expr POW listEnd #eexprPow 
 | (UPLUS|UMINUS)* listEnd #eexprUnary
 | expr (TIMES|DIV|DIVDIV) listEnd #eexprTimesDiv
 | expr (PLUS|MINUS) listEnd #eexprPlusMinus
-| {ending}? lvalue #eexprLvalue
-| {ending}? fakeLvalue #eexprFakeLvalue
+| {ending}? (UPLUS|UMINUS)* lvalue #eexprLvalue
+| {ending}? (UPLUS|UMINUS)* fakeLvalue #eexprFakeLvalue
 ;
 
 assignment: lvalue ASSIGN list #trueAssignment

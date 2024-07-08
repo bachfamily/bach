@@ -255,6 +255,12 @@ public:
         return n;
     }
 
+    antlrcpp::Any visitExprVar(bellParser::ExprVarContext *context) override {
+        astNode *n = any_cast<astVar*>(visit(context->var()));
+        if (context->UMINUS().size() % 2)
+            n = new astOperatorUMinus(n, params->owner);
+        return n;
+    }
     antlrcpp::Any visitExprTimesDiv(bellParser::ExprTimesDivContext *context) override {
         return visitTimesDiv<bellParser::ExprTimesDivContext>(context);
     }
@@ -270,6 +276,8 @@ public:
         lvalueSpecs *s = v->getSpecs();
         if (s)
             n = s->toReadNode(n, params->owner);
+        if (context->UMINUS().size() % 2)
+            n = new astOperatorUMinus(n, params->owner);
         return n;
     }
     
@@ -279,6 +287,8 @@ public:
         astNode *n = v->getNode();
         lvalueSpecs *s = v->getSpecs();
         n = s->toReadNode(n, params->owner);
+        if (context->UMINUS().size() % 2)
+            n = new astOperatorUMinus(n, params->owner);
         return n;
     }
     

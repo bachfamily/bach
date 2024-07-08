@@ -257,6 +257,10 @@ public:
     ExprFakeLvalueContext(ExprContext *ctx);
 
     FakeLvalueContext *fakeLvalue();
+    std::vector<antlr4::tree::TerminalNode *> UPLUS();
+    antlr4::tree::TerminalNode* UPLUS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> UMINUS();
+    antlr4::tree::TerminalNode* UMINUS(size_t i);
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -269,6 +273,19 @@ public:
     ExprContext* expr(size_t i);
     antlr4::tree::TerminalNode *PLUS();
     antlr4::tree::TerminalNode *MINUS();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ExprVarContext : public ExprContext {
+  public:
+    ExprVarContext(ExprContext *ctx);
+
+    VarContext *var();
+    std::vector<antlr4::tree::TerminalNode *> UPLUS();
+    antlr4::tree::TerminalNode* UPLUS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> UMINUS();
+    antlr4::tree::TerminalNode* UMINUS(size_t i);
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -315,6 +332,10 @@ public:
     ExprLvalueContext(ExprContext *ctx);
 
     LvalueContext *lvalue();
+    std::vector<antlr4::tree::TerminalNode *> UPLUS();
+    antlr4::tree::TerminalNode* UPLUS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> UMINUS();
+    antlr4::tree::TerminalNode* UMINUS(size_t i);
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -339,6 +360,10 @@ public:
     EexprLvalueContext(EexprContext *ctx);
 
     LvalueContext *lvalue();
+    std::vector<antlr4::tree::TerminalNode *> UPLUS();
+    antlr4::tree::TerminalNode* UPLUS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> UMINUS();
+    antlr4::tree::TerminalNode* UMINUS(size_t i);
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -361,6 +386,10 @@ public:
     EexprFakeLvalueContext(EexprContext *ctx);
 
     FakeLvalueContext *fakeLvalue();
+    std::vector<antlr4::tree::TerminalNode *> UPLUS();
+    antlr4::tree::TerminalNode* UPLUS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> UMINUS();
+    antlr4::tree::TerminalNode* UMINUS(size_t i);
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

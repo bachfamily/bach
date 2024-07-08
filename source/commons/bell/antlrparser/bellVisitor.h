@@ -47,6 +47,8 @@ public:
 
     virtual std::any visitExprPlusMinus(bellParser::ExprPlusMinusContext *context) = 0;
 
+    virtual std::any visitExprVar(bellParser::ExprVarContext *context) = 0;
+
     virtual std::any visitExprPow(bellParser::ExprPowContext *context) = 0;
 
     virtual std::any visitExprUnary(bellParser::ExprUnaryContext *context) = 0;
