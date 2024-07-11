@@ -47,6 +47,24 @@ void addVariableToScope(t_parseParams *params, t_symbol *name)
 }
 */
 
+class bellErrorListener: public BaseErrorListener {
+public:
+
+    bellErrorListener(): BaseErrorListener() { }
+    virtual ~bellErrorListener() { }
+    
+    void syntaxError(Recognizer *recognizer, Token * offendingSymbol, size_t line, size_t charPositionInLine,
+                     const std::string &msg, std::exception_ptr e) {
+        antlr4::Parser *p = dynamic_cast<antlr4::Parser*>(recognizer);
+        auto v = p->getRuleInvocationStack();
+        for (auto s : v) {
+            post("%s\n", s.c_str());
+        }
+        post("at pos %ld:%ld %s:%s", line, charPositionInLine, offendingSymbol->getText().c_str(), msg.c_str());
+    }
+    
+};
+
 class programVisitor: public bellBaseVisitor {
 public:
     int visits;
@@ -84,7 +102,15 @@ public:
         post("sequence");
         auto v = new std::vector<astNode*>;
         for (auto child: ctx->children) {
-            v->push_back(std::any_cast<astNode*>(visit(child)));
+            astNode* n;
+            try {
+                n = std::any_cast<astNode*>(visit(child));
+            } catch (const std::bad_any_cast& e) {
+                delete v;
+                return nullptr;
+            }
+            v->push_back(n);
+
         }
         pop();
         astNode* n = new astConcat(v, params->owner);
@@ -111,18 +137,24 @@ public:
         return n;
     }
     
-    antlrcpp::Any visitItemNumber(bellParser::ItemNumberContext *context) override {
-        push();
-        post("item: number");
-        long v = stol(context->NUMBER()->getText());
+    antlrcpp::Any visitItemUint(bellParser::ItemUintContext *context) override {
+        long v = stol(context->UINT()->getText());
         astNode* r = new astConst(v, params->owner);
-        //auto a = intarray_new();
-        //a->n = 1;
-        //a->v[0] = v;
-        pop();
         return r;
     }
 
+    antlrcpp::Any visitItemUfloat(bellParser::ItemUfloatContext *context) override {
+        double v = stod(context->UFLOAT()->getText());
+        astNode* r = new astConst(v, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemInlet(bellParser::ItemInletContext *context) override {
+        int i = stoi(context->INLET()->getText().erase(0,2));
+        astNode* r = new astInlet(i, params->owner);
+        return r;
+    }
+    
     antlrcpp::Any visitItemSequence(bellParser::ItemSequenceContext *context) override {
         push();
         post("item: sequence");
@@ -146,13 +178,31 @@ public:
         return a;
     }
     
-    antlrcpp::Any visitVar(bellParser::VarContext *ctx) override {
+    antlrcpp::Any visitVarLocal(bellParser::VarLocalContext *ctx) override {
         visits++;
-        std::string name = ctx->VAR()->getText();
-        t_symbol *s = gensym(name.c_str());
-        astVar* n = new astLocalVar(s, params->owner);
+        std::string name = ctx->LOCALVAR()->getText();
+        t_symbol *s = gensym(name.erase(0, 1).c_str());
+        astVar* v = new astLocalVar(s, params->owner);
         addVariableToScope(params, s);
-        return n;
+        return static_cast<astNode*>(v);
+    }
+    
+    antlrcpp::Any visitVarPatcher(bellParser::VarPatcherContext *ctx) override {
+        visits++;
+        std::string name = ctx->PATCHERVAR()->getText();
+        t_symbol *s = gensym(name.erase(0, 1).c_str());
+        astVar* v = new astLocalVar(s, params->owner);
+        addVariableToScope(params, s);
+        return static_cast<astNode*>(v);
+    }
+    
+    antlrcpp::Any visitVarGlobal(bellParser::VarGlobalContext *ctx) override {
+        visits++;
+        std::string name = ctx->GLOBALVAR()->getText();
+        t_symbol *s = gensym(name.c_str());
+        astVar* v = new astLocalVar(s, params->owner);
+        addVariableToScope(params, s);
+        return static_cast<astNode*>(v);
     }
     
     antlrcpp::Any visitLvalueSpecs(bellParser::LvalueSpecsContext *ctx) override {
@@ -190,7 +240,7 @@ public:
     
     antlrcpp::Any visitLvalue(bellParser::LvalueContext *context) override {
         visits++;
-        auto v = any_cast<astVar*>(visit(context->var()));
+        astVar* v = dynamic_cast<astVar*>(any_cast<astNode*>(visit(context->var())));
         if (context->lvalueSpecs()) {
             auto s = any_cast<lvalueSpecs*>(visit(context->lvalueSpecs()));
             auto l = new lvalue(v, s);
@@ -221,10 +271,10 @@ public:
         astNode *n1 = any_cast<astNode*>(visit(context->children[0]));
         astNode *n2 = any_cast<astNode*>(visit(context->children[2]));
         astNode *r;
-        if (context->PLUS()) {
-            r = new astOperatorPlus(n1, n2, params->owner);
-        } else { // MINUS
-            r = new astOperatorMinus(n1, n2, params->owner);
+        switch(context->op->getType()) {
+            case bellParser::PLUS: r = new astOperatorPlus(n1, n2, params->owner); break;
+            case bellParser::MINUS: r = new astOperatorMinus(n1, n2, params->owner); break;
+            default: r = nullptr; break;
         }
         return r;
     };
@@ -234,12 +284,11 @@ public:
         astNode *n1 = any_cast<astNode*>(visit(context->children[0]));
         astNode *n2 = any_cast<astNode*>(visit(context->children[2]));
         astNode *r;
-        if (context->TIMES()) {
-            r = new astOperatorTimes(n1, n2, params->owner);
-        } else if (context->DIV()) {
-            r = new astOperatorDiv(n1, n2, params->owner);
-        } else { // DIVDIV
-            r = new astOperatorDivdiv(n1, n2, params->owner);
+        switch(context->op->getType()) {
+            case bellParser::TIMES: r = new astOperatorTimes(n1, n2, params->owner); break;
+            case bellParser::DIV: r = new astOperatorDiv(n1, n2, params->owner); break;
+            case bellParser::DIVDIV: r = new astOperatorDivdiv(n1, n2, params->owner); break;
+            default: r = nullptr; break;
         }
         return r;
     };
@@ -256,7 +305,7 @@ public:
     }
 
     antlrcpp::Any visitExprVar(bellParser::ExprVarContext *context) override {
-        astNode *n = any_cast<astVar*>(visit(context->var()));
+        astNode *n = any_cast<astNode*>(visit(context->var()));
         if (context->UMINUS().size() % 2)
             n = new astOperatorUMinus(n, params->owner);
         return n;
@@ -408,6 +457,8 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
     bellLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
     bellParser parser(&tokens);
+    parser.removeErrorListeners();
+    parser.addErrorListener(new bellErrorListener());
         
     bellParser::ProgramContext* tree = parser.program();
         

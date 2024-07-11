@@ -15,11 +15,11 @@
 class  bellLexer : public antlr4::Lexer {
 public:
   enum {
-    NUMBER = 1, IF = 2, THEN = 3, ELSE = 4, FOR = 5, DO = 6, FUNCTION = 7, 
-    VAR = 8, PUSH = 9, POP = 10, CLOSED = 11, NTH = 12, KEY = 13, NULLIFY = 14, 
-    ASSIGN = 15, EOL = 16, WHITESPACE = 17, POW = 18, TIMES = 19, DIVDIV = 20, 
-    DIV = 21, PLUS = 22, UPLUS = 23, MINUS = 24, UMINUS = 25, OPEN = 26, 
-    PARAMS = 27
+    UINT = 1, UFLOAT = 2, IF = 3, THEN = 4, ELSE = 5, FOR = 6, DO = 7, FUNCTION = 8, 
+    INLET = 9, GLOBALVAR = 10, PATCHERVAR = 11, LOCALVAR = 12, PUSH = 13, 
+    POP = 14, CLOSED = 15, NTH = 16, KEY = 17, NULLIFY = 18, ASSIGN = 19, 
+    EOL = 20, WHITESPACE = 21, POW = 22, TIMES = 23, DIVDIV = 24, DIV = 25, 
+    PLUS = 26, UPLUS = 27, MINUS = 28, UMINUS = 29, OPEN = 30, PARAMS = 31
   };
 
   explicit bellLexer(antlr4::CharStream *input);
@@ -35,7 +35,7 @@ public:
       
       bool followedBySpace() {
           int c = _input->LA(2);
-          post("\c", c);
+          post("%c", c);
           switch (c) {
               case ' ':
               case '\x01':
@@ -83,14 +83,18 @@ public:
 private:
 
   // Individual action functions triggered by action() above.
-  void NUMBERAction(antlr4::RuleContext *context, size_t actionIndex);
+  void UINTAction(antlr4::RuleContext *context, size_t actionIndex);
+  void UFLOATAction(antlr4::RuleContext *context, size_t actionIndex);
   void IFAction(antlr4::RuleContext *context, size_t actionIndex);
   void THENAction(antlr4::RuleContext *context, size_t actionIndex);
   void ELSEAction(antlr4::RuleContext *context, size_t actionIndex);
   void FORAction(antlr4::RuleContext *context, size_t actionIndex);
   void DOAction(antlr4::RuleContext *context, size_t actionIndex);
   void FUNCTIONAction(antlr4::RuleContext *context, size_t actionIndex);
-  void VARAction(antlr4::RuleContext *context, size_t actionIndex);
+  void INLETAction(antlr4::RuleContext *context, size_t actionIndex);
+  void GLOBALVARAction(antlr4::RuleContext *context, size_t actionIndex);
+  void PATCHERVARAction(antlr4::RuleContext *context, size_t actionIndex);
+  void LOCALVARAction(antlr4::RuleContext *context, size_t actionIndex);
   void PUSHAction(antlr4::RuleContext *context, size_t actionIndex);
   void POPAction(antlr4::RuleContext *context, size_t actionIndex);
   void CLOSEDAction(antlr4::RuleContext *context, size_t actionIndex);

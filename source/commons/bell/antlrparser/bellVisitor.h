@@ -27,7 +27,11 @@ public:
 
     virtual std::any visitFuncall(bellParser::FuncallContext *context) = 0;
 
-    virtual std::any visitItemNumber(bellParser::ItemNumberContext *context) = 0;
+    virtual std::any visitItemUint(bellParser::ItemUintContext *context) = 0;
+
+    virtual std::any visitItemUfloat(bellParser::ItemUfloatContext *context) = 0;
+
+    virtual std::any visitItemInlet(bellParser::ItemInletContext *context) = 0;
 
     virtual std::any visitItemSequence(bellParser::ItemSequenceContext *context) = 0;
 
@@ -35,7 +39,11 @@ public:
 
     virtual std::any visitItemFuncall(bellParser::ItemFuncallContext *context) = 0;
 
-    virtual std::any visitVar(bellParser::VarContext *context) = 0;
+    virtual std::any visitVarLocal(bellParser::VarLocalContext *context) = 0;
+
+    virtual std::any visitVarPatcher(bellParser::VarPatcherContext *context) = 0;
+
+    virtual std::any visitVarGlobal(bellParser::VarGlobalContext *context) = 0;
 
     virtual std::any visitLvalueSpecs(bellParser::LvalueSpecsContext *context) = 0;
 

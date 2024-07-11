@@ -31,7 +31,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemNumber(bellParser::ItemNumberContext *ctx) override {
+  virtual std::any visitItemUint(bellParser::ItemUintContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitItemUfloat(bellParser::ItemUfloatContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitItemInlet(bellParser::ItemInletContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -47,7 +55,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitVar(bellParser::VarContext *ctx) override {
+  virtual std::any visitVarLocal(bellParser::VarLocalContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitVarPatcher(bellParser::VarPatcherContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitVarGlobal(bellParser::VarGlobalContext *ctx) override {
     return visitChildren(ctx);
   }
 

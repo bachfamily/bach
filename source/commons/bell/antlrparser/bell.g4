@@ -13,7 +13,7 @@ grammar bell;
     
     bool followedBySpace() {
         int c = _input->LA(2);
-        post("\c", c);
+        post("%c", c);
         switch (c) {
             case ' ':
             case '\x01':
@@ -57,13 +57,17 @@ nullified: list NULLIFY+
 funcall: FUNCTION PARAMS sequence CLOSED
 ;
 
-item: NUMBER #itemNumber
+item: UINT #itemUint
+| UFLOAT #itemUfloat
+| INLET #itemInlet
 | OPEN sequence CLOSED #itemSequence
 | PUSH sequence POP #itemSublist
 | funcall #itemFuncall
 ;
 
-var: VAR
+var: LOCALVAR #varLocal
+| PATCHERVAR #varPatcher
+| GLOBALVAR #varGlobal
 ;
 
 lvalueSpecs: {ending = false;} (NTH (item|var))+
@@ -79,16 +83,16 @@ fakeLvalue: item lvalueSpecs
 expr: expr POW expr #exprPow 
 | (UPLUS|UMINUS)* item #exprUnary
 | (UPLUS|UMINUS)* var #exprVar
-| expr (TIMES|DIV|DIVDIV) expr #exprTimesDiv
-| expr (PLUS|MINUS) expr #exprPlusMinus
+| expr op=(TIMES|DIV|DIVDIV) expr #exprTimesDiv
+| expr op=(PLUS|MINUS) expr #exprPlusMinus
 | {!ending}? (UPLUS|UMINUS)* lvalue #exprLvalue
 | {!ending}? (UPLUS|UMINUS)* fakeLvalue #exprFakeLvalue
 ;
 
 eexpr: expr POW listEnd #eexprPow 
 | (UPLUS|UMINUS)* listEnd #eexprUnary
-| expr (TIMES|DIV|DIVDIV) listEnd #eexprTimesDiv
-| expr (PLUS|MINUS) listEnd #eexprPlusMinus
+| expr op=(TIMES|DIV|DIVDIV) listEnd #eexprTimesDiv
+| expr op=(PLUS|MINUS) listEnd #eexprPlusMinus
 | {ending}? (UPLUS|UMINUS)* lvalue #eexprLvalue
 | {ending}? (UPLUS|UMINUS)* fakeLvalue #eexprFakeLvalue
 ;
@@ -114,7 +118,12 @@ list: expr+
 
 // lexer rules
 
-NUMBER: [0-9]+ { std::cout << "number\n"; noParams = false; noUnary = true; };
+UINT: [0-9]+ { std::cout << "UINT\n"; noParams = false; noUnary = true; };
+
+UFLOAT: (((([0-9]* '.' [0-9]+) | ([0-9]+ '.')) 
+          (([eE]([-+]?)[0-9]+)?)) |
+         ([0-9]+[eE]([-+]?)[0-9]+)) 
+        { std::cout << "UFLOAT\n"; noParams = false; noUnary = true; };
 
 IF: 'if' { noParams = true; noUnary = false; };
 
@@ -128,7 +137,12 @@ DO: 'do' { noParams = true; noUnary = false; };
 
 FUNCTION: 'sin' | 'cos' | 'sqrt' { noParams = noUnary = false; };
 
-VAR: [a-z] { noParams = false; noUnary = true; };
+INLET: '$'[lx][0-9]+ { noParams = false; noUnary = true; };
+
+GLOBALVAR: [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])? { noParams = false; noUnary = true; };
+PATCHERVAR: '#'[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])? { noParams = false; noUnary = true; };
+LOCALVAR: '$'[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])? { noParams = false; noUnary = true; };
+
 
 PUSH: '[' { noParams = true; noUnary = false; };
 
