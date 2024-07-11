@@ -17,16 +17,6 @@
 using namespace std;
 using namespace antlr4;
 
-typedef struct {
-    int v[1000];
-    int n;
-} intarray;
-
-typedef struct {
-    intarray* a;
-    int pos;
-    bool nullified;
-} reference;
 /*
 void addVariableToScope(t_parseParams *params, t_symbol *name)
 {
@@ -47,6 +37,15 @@ void addVariableToScope(t_parseParams *params, t_symbol *name)
 }
 */
 
+template<typename T>
+T safeAnyCast(const std::any a) {
+    if (a.type() == typeid(T)) {
+        return any_cast<T>(a);
+    } else {
+        return nullptr;
+    }
+}
+
 class bellErrorListener: public BaseErrorListener {
 public:
 
@@ -66,6 +65,9 @@ public:
 };
 
 class programVisitor: public bellBaseVisitor {
+    
+private:
+
 public:
     int visits;
     t_parseParams *params;
@@ -92,7 +94,7 @@ public:
     antlrcpp::Any visitProgram(bellParser::ProgramContext *ctx) override {
         push();
         post("program");
-        auto r = any_cast<astNode*>(visit(ctx->sequence()));
+        auto r = safeAnyCast<astNode*>(visit(ctx->sequence()));
         pop();
         return r;
     }
@@ -102,15 +104,13 @@ public:
         post("sequence");
         auto v = new std::vector<astNode*>;
         for (auto child: ctx->children) {
-            astNode* n;
-            try {
-                n = std::any_cast<astNode*>(visit(child));
-            } catch (const std::bad_any_cast& e) {
+            astNode* n = safeAnyCast<astNode*>(visit(child));
+            if (n)
+                v->push_back(n);
+            else {
                 delete v;
                 return nullptr;
             }
-            v->push_back(n);
-
         }
         pop();
         astNode* n = new astConcat(v, params->owner);
@@ -120,7 +120,7 @@ public:
     antlrcpp::Any visitNullified(bellParser::NullifiedContext *ctx) override {
         push();
         post("sequence");
-        astNode* n = new astNullify(std::any_cast<astNode*>(visit(ctx->list())), params->owner);
+        astNode* n = new astNullify(safeAnyCast<astNode*>(visit(ctx->list())), params->owner);
         pop();
         return n;
     }
@@ -131,7 +131,7 @@ public:
         auto func = (*params->bifs)[name];
         auto fNode = new astConst(func, params->owner);
         auto abpl = new std::vector<astNode *>;
-        auto arg = any_cast<astNode *>(visit(ctx->sequence()));
+        auto arg = safeAnyCast<astNode *>(visit(ctx->sequence()));
         abpl->push_back(arg);
         astNode* n = new astFunctionCall(fNode, abpl, nullptr, params->owner);
         return n;
@@ -158,7 +158,7 @@ public:
     antlrcpp::Any visitItemSequence(bellParser::ItemSequenceContext *context) override {
         push();
         post("item: sequence");
-        astNode* r = any_cast<astNode*>(visit(context->sequence()));
+        astNode* r = safeAnyCast<astNode*>(visit(context->sequence()));
         pop();
         return r;
     }
@@ -166,7 +166,7 @@ public:
     antlrcpp::Any visitItemSublist(bellParser::ItemSublistContext *context) override {
         push();
         post("item: sublist");
-        astNode* s = any_cast<astNode*>(visit(context->sequence()));
+        astNode* s = safeAnyCast<astNode*>(visit(context->sequence()));
         astNode* r = new astWrap(s, params->owner);
         pop();
         return r;
@@ -174,7 +174,7 @@ public:
     
     antlrcpp::Any visitItemFuncall(bellParser::ItemFuncallContext *ctx) override {
         visits++;
-        astNode* a = any_cast<astNode*>(visit(ctx->funcall()));
+        astNode* a = safeAnyCast<astNode*>(visit(ctx->funcall()));
         return a;
     }
     
@@ -209,7 +209,7 @@ public:
         auto specs = new lvalueSpecs;
         for (auto i = ctx->children.begin(); i != ctx->children.end(); ) {
             char op = (*i++)->getText()[0];
-            astNode* n = any_cast<astNode*>(visit(*i++));
+            astNode* n = safeAnyCast<astNode*>(visit(*i++));
             auto step = new lvalueStep(op == ':' ? lvalueStep::E_LV_NTH : lvalueStep::E_LV_KEY, n);
             specs->addStep(step);
         }
@@ -240,9 +240,9 @@ public:
     
     antlrcpp::Any visitLvalue(bellParser::LvalueContext *context) override {
         visits++;
-        astVar* v = dynamic_cast<astVar*>(any_cast<astNode*>(visit(context->var())));
+        astVar* v = dynamic_cast<astVar*>(safeAnyCast<astNode*>(visit(context->var())));
         if (context->lvalueSpecs()) {
-            auto s = any_cast<lvalueSpecs*>(visit(context->lvalueSpecs()));
+            auto s = safeAnyCast<lvalueSpecs*>(visit(context->lvalueSpecs()));
             auto l = new lvalue(v, s);
             return l;
         } else {
@@ -253,23 +253,23 @@ public:
     
     antlrcpp::Any visitFakeLvalue(bellParser::FakeLvalueContext *context) override {
         visits++;
-        auto v = any_cast<astNode*>(visit(context->item()));
-        auto s = any_cast<lvalueSpecs*>(visit(context->lvalueSpecs()));
+        auto v = safeAnyCast<astNode*>(visit(context->item()));
+        auto s = safeAnyCast<lvalueSpecs*>(visit(context->lvalueSpecs()));
         auto l = new fakeLvalue(v, s);
         return l;
     }
 
     antlrcpp::Any visitPow(antlr4::ParserRuleContext *context) {
-        astNode *n1 = any_cast<astNode*>(visit(context->children[0]));
-        astNode *n2 = any_cast<astNode*>(visit(context->children[2]));
+        astNode *n1 = safeAnyCast<astNode*>(visit(context->children[0]));
+        astNode *n2 = safeAnyCast<astNode*>(visit(context->children[2]));
         astNode *r = new astOperatorPow(n1, n2, params->owner);
         return r;
     };
     
     template<typename T>
     antlrcpp::Any visitPlusMinus(T *context) {
-        astNode *n1 = any_cast<astNode*>(visit(context->children[0]));
-        astNode *n2 = any_cast<astNode*>(visit(context->children[2]));
+        astNode *n1 = safeAnyCast<astNode*>(visit(context->children[0]));
+        astNode *n2 = safeAnyCast<astNode*>(visit(context->children[2]));
         astNode *r;
         switch(context->op->getType()) {
             case bellParser::PLUS: r = new astOperatorPlus(n1, n2, params->owner); break;
@@ -281,8 +281,8 @@ public:
     
     template<typename T>
     antlrcpp::Any visitTimesDiv(T *context) {
-        astNode *n1 = any_cast<astNode*>(visit(context->children[0]));
-        astNode *n2 = any_cast<astNode*>(visit(context->children[2]));
+        astNode *n1 = safeAnyCast<astNode*>(visit(context->children[0]));
+        astNode *n2 = safeAnyCast<astNode*>(visit(context->children[2]));
         astNode *r;
         switch(context->op->getType()) {
             case bellParser::TIMES: r = new astOperatorTimes(n1, n2, params->owner); break;
@@ -298,14 +298,14 @@ public:
     }
     
     antlrcpp::Any visitExprUnary(bellParser::ExprUnaryContext *context) override {
-        astNode *n = any_cast<astNode*>(visit(context->item()));
+        astNode *n = safeAnyCast<astNode*>(visit(context->item()));
         if (context->UMINUS().size() % 2)
             n = new astOperatorUMinus(n, params->owner);
         return n;
     }
 
     antlrcpp::Any visitExprVar(bellParser::ExprVarContext *context) override {
-        astNode *n = any_cast<astNode*>(visit(context->var()));
+        astNode *n = safeAnyCast<astNode*>(visit(context->var()));
         if (context->UMINUS().size() % 2)
             n = new astOperatorUMinus(n, params->owner);
         return n;
@@ -320,7 +320,7 @@ public:
     
     template <typename T>
     antlrcpp::Any visitLvalue(T *context)  {
-        lvalue *v = any_cast<lvalue*>(visit(context->lvalue()));
+        lvalue *v = safeAnyCast<lvalue*>(visit(context->lvalue()));
         astNode *n = v->getVar();
         lvalueSpecs *s = v->getSpecs();
         if (s)
@@ -332,7 +332,7 @@ public:
     
     template <typename T>
     antlrcpp::Any visitFakeLvalue(T *context) {
-        fakeLvalue *v = any_cast<fakeLvalue*>(visit(context->fakeLvalue()));
+        fakeLvalue *v = safeAnyCast<fakeLvalue*>(visit(context->fakeLvalue()));
         astNode *n = v->getNode();
         lvalueSpecs *s = v->getSpecs();
         n = s->toReadNode(n, params->owner);
@@ -354,7 +354,7 @@ public:
     }
     
     antlrcpp::Any visitEexprUnary(bellParser::EexprUnaryContext *context) override {
-        astNode *n = any_cast<astNode*>(visit(context->listEnd()));
+        astNode *n = safeAnyCast<astNode*>(visit(context->listEnd()));
         if (context->UMINUS().size() % 2)
             n = new astOperatorUMinus(n, params->owner);
         return n;
@@ -377,8 +377,8 @@ public:
     }
         
     antlrcpp::Any visitTrueAssignment(bellParser::TrueAssignmentContext *context) override {
-        lvalue *lv = any_cast<lvalue*>(visit(context->lvalue()));
-        astNode *rv = any_cast<astNode*>(visit(context->list()));
+        lvalue *lv = safeAnyCast<lvalue*>(visit(context->lvalue()));
+        astNode *rv = safeAnyCast<astNode*>(visit(context->list()));
         if (auto s = lv->getSpecs(); s == nullptr) {
             astNode* n = new astAssign(lv->getVar(), rv, params->owner);
             return n;
@@ -389,25 +389,25 @@ public:
     }
     
     antlrcpp::Any visitFakeAssignment(bellParser::FakeAssignmentContext *context) override {
-        fakeLvalue *lv = any_cast<fakeLvalue*>(visit(context->fakeLvalue()));
-        astNode *rv = any_cast<astNode*>(visit(context->list()));
+        fakeLvalue *lv = safeAnyCast<fakeLvalue*>(visit(context->fakeLvalue()));
+        astNode *rv = safeAnyCast<astNode*>(visit(context->list()));
         astNode* n = new astRichEdit<E_RA_STANDARD>(lv->getNode(), rv, lv->getSpecs(), params->owner);
         return n;
     }
     
     antlrcpp::Any visitIfthen(bellParser::IfthenContext *ctx) override {
         visits++;
-        auto i = any_cast<astNode*>(visit(ctx->sequence()));
-        auto t = any_cast<astNode*>(visit(ctx->list()));
+        auto i = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        auto t = safeAnyCast<astNode*>(visit(ctx->list()));
         astNode* n = new astIfThenElse(i, t, nullptr, params->owner);
         return n;
     }
     
     antlrcpp::Any visitIfthenelse(bellParser::IfthenelseContext *ctx) override {
         visits++;
-        auto i = any_cast<astNode*>(visit(ctx->sequence(0)));
-        auto t = any_cast<astNode*>(visit(ctx->sequence(1)));
-        auto e = any_cast<astNode*>(visit(ctx->list()));
+        auto i = safeAnyCast<astNode*>(visit(ctx->sequence(0)));
+        auto t = safeAnyCast<astNode*>(visit(ctx->sequence(1)));
+        auto e = safeAnyCast<astNode*>(visit(ctx->list()));
         astNode* n = new astIfThenElse(i, t, e, params->owner);
         return n;
     }
@@ -419,7 +419,7 @@ public:
     antlrcpp::Any visitList(bellParser::ListContext *ctx) override {
         auto v = new std::vector<astNode*>;
         for (auto child : ctx->children) {
-            astNode* n = any_cast<astNode*>(visit(child));
+            astNode* n = safeAnyCast<astNode*>(visit(child));
             v->push_back(n);
         }
         astNode* r = new astConcat(v, params->owner);
@@ -463,7 +463,7 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
     bellParser::ProgramContext* tree = parser.program();
         
     programVisitor visitor(&params);
-    auto r = any_cast<astNode*>(visitor.visit(tree));
+    auto r = safeAnyCast<astNode*>(visitor.visit(tree));
     printf(" - with %d visits\n", visitor.visits);
     
     if (r) {
