@@ -31,6 +31,8 @@ public:
 
     virtual std::any visitItemUfloat(bellParser::ItemUfloatContext *context) = 0;
 
+    virtual std::any visitItemUpitch(bellParser::ItemUpitchContext *context) = 0;
+
     virtual std::any visitItemInlet(bellParser::ItemInletContext *context) = 0;
 
     virtual std::any visitItemSequence(bellParser::ItemSequenceContext *context) = 0;

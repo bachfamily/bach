@@ -72,7 +72,9 @@ public:
     int visits;
     t_parseParams *params;
     
+    
     programVisitor(t_parseParams *p) : visits(0), params(p) {
+
     } ;
     
 
@@ -149,6 +151,19 @@ public:
         return r;
     }
     
+    antlrcpp::Any visitItemUpitch(bellParser::ItemUpitchContext *context) override {
+        std::string ptxt = context->UPITCH()->getText();
+        ANTLRInputStream input(ptxt);
+        pitchLexer lexer(&input);
+        CommonTokenStream tokens(&lexer);
+        pitchParser parser(&tokens);
+        pitchParser::PchContext* tree = parser.pch();
+        pchListener visitor;
+        t_pitch p = std::any_cast<t_pitch>(visitor.visit(tree));
+        astNode *r = new astConst(p, params->owner);
+        return r;
+    }
+    
     antlrcpp::Any visitItemInlet(bellParser::ItemInletContext *context) override {
         int i = stoi(context->INLET()->getText().erase(0,2));
         astNode* r = new astInlet(i, params->owner);
@@ -171,7 +186,20 @@ public:
         pop();
         return r;
     }
-    
+/*
+    antlrcpp::Any visitItemT(bellParser::ItemTContext *context) override {
+        astNode* aNode = safeAnyCast<astNode*>(visit(context->item()));
+        auto fnMakepitch = new astConst((*(params->bifs))["makepitch"], params->owner);
+        auto dNode = new astConst(0L, params->owner);
+        auto oNode = new astConst(0L, params->owner);
+        auto v = new std::vector<astNode*>;
+        v->push_back(dNode);
+        v->push_back(aNode);
+        v->push_back(oNode);
+        astNode* r = new astFunctionCall(fnMakepitch, v, nullptr, params->owner);
+        return r;
+    }
+*/
     antlrcpp::Any visitItemFuncall(bellParser::ItemFuncallContext *ctx) override {
         visits++;
         astNode* a = safeAnyCast<astNode*>(visit(ctx->funcall()));

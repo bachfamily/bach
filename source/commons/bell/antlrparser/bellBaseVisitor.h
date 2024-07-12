@@ -39,6 +39,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitItemUpitch(bellParser::ItemUpitchContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitItemInlet(bellParser::ItemInletContext *ctx) override {
     return visitChildren(ctx);
   }

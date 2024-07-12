@@ -59,6 +59,7 @@ funcall: FUNCTION PARAMS sequence CLOSED
 
 item: UINT #itemUint
 | UFLOAT #itemUfloat
+| UPITCH #itemUpitch
 | INLET #itemInlet
 | OPEN sequence CLOSED #itemSequence
 | PUSH sequence POP #itemSublist
@@ -124,6 +125,13 @@ UFLOAT: (((([0-9]* '.' [0-9]+) | ([0-9]+ '.'))
           (([eE]([-+]?)[0-9]+)?)) |
          ([0-9]+[eE]([-+]?)[0-9]+)) 
         { std::cout << "UFLOAT\n"; noParams = false; noUnary = true; };
+
+UPITCH: NOTENAME ACCIDENTAL? [+-]* UINT ([+-]* (UINT|RAT) 't')?
+ { std::cout << "PITCH\n"; noParams = false; noUnary = true; };
+
+fragment NOTENAME: ([a-g]|[A-G]);
+fragment ACCIDENTAL: ([#bxdq^v]+);
+fragment RAT: UINT '/' [+-]* UINT;
 
 IF: 'if' { noParams = true; noUnary = false; };
 

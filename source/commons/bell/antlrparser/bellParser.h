@@ -12,11 +12,12 @@
 class  bellParser : public antlr4::Parser {
 public:
   enum {
-    UINT = 1, UFLOAT = 2, IF = 3, THEN = 4, ELSE = 5, FOR = 6, DO = 7, FUNCTION = 8, 
-    INLET = 9, GLOBALVAR = 10, PATCHERVAR = 11, LOCALVAR = 12, PUSH = 13, 
-    POP = 14, CLOSED = 15, NTH = 16, KEY = 17, NULLIFY = 18, ASSIGN = 19, 
-    EOL = 20, WHITESPACE = 21, POW = 22, TIMES = 23, DIVDIV = 24, DIV = 25, 
-    PLUS = 26, UPLUS = 27, MINUS = 28, UMINUS = 29, OPEN = 30, PARAMS = 31
+    UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, FOR = 7, 
+    DO = 8, FUNCTION = 9, INLET = 10, GLOBALVAR = 11, PATCHERVAR = 12, LOCALVAR = 13, 
+    PUSH = 14, POP = 15, CLOSED = 16, NTH = 17, KEY = 18, NULLIFY = 19, 
+    ASSIGN = 20, EOL = 21, WHITESPACE = 22, POW = 23, TIMES = 24, DIVDIV = 25, 
+    DIV = 26, PLUS = 27, UPLUS = 28, MINUS = 29, UMINUS = 30, OPEN = 31, 
+    PARAMS = 32
   };
 
   enum {
@@ -191,6 +192,15 @@ public:
     ItemFuncallContext(ItemContext *ctx);
 
     FuncallContext *funcall();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemUpitchContext : public ItemContext {
+  public:
+    ItemUpitchContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *UPITCH();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

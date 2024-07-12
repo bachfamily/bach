@@ -220,6 +220,16 @@
 		0038AF9C280597160012316C /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		0038AF9D280597160012316C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		0038AFA4280597B70012316C /* bell.out.c in Sources */ = {isa = PBXBuildFile; fileRef = 0038AF91280596FC0012316C /* bell.out.c */; };
+		007F94412C41939C007892C4 /* pitchAntlrParserInfrastructure.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 007F943F2C41939C007892C4 /* pitchAntlrParserInfrastructure.hpp */; };
+		007F94422C4193B2007892C4 /* pitchAntlrParserInfrastructure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 007F943E2C41939C007892C4 /* pitchAntlrParserInfrastructure.cpp */; };
+		007F945C2C41C04D007892C4 /* pitchBaseVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 007F94542C41C04B007892C4 /* pitchBaseVisitor.h */; };
+		007F945D2C41C04D007892C4 /* pitchVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 007F94552C41C04C007892C4 /* pitchVisitor.cpp */; };
+		007F945E2C41C04D007892C4 /* pitchVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 007F94562C41C04C007892C4 /* pitchVisitor.h */; };
+		007F945F2C41C04D007892C4 /* pitchLexer.h in Headers */ = {isa = PBXBuildFile; fileRef = 007F94572C41C04C007892C4 /* pitchLexer.h */; };
+		007F94602C41C04D007892C4 /* pitchBaseVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 007F94582C41C04C007892C4 /* pitchBaseVisitor.cpp */; };
+		007F94612C41C04D007892C4 /* pitchLexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 007F94592C41C04C007892C4 /* pitchLexer.cpp */; };
+		007F94622C41C04D007892C4 /* pitchParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 007F945A2C41C04C007892C4 /* pitchParser.cpp */; };
+		007F94632C41C04D007892C4 /* pitchParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 007F945B2C41C04C007892C4 /* pitchParser.h */; };
 		00992C182C2EE6CC00DA02CD /* ActionTransition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00992AD92C2EE6CC00DA02CD /* ActionTransition.cpp */; };
 		00992C192C2EE6CC00DA02CD /* ActionTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = 00992ADA2C2EE6CC00DA02CD /* ActionTransition.h */; };
 		00992C1A2C2EE6CC00DA02CD /* AmbiguityInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00992ADB2C2EE6CC00DA02CD /* AmbiguityInfo.cpp */; };
@@ -3162,6 +3172,17 @@
 		0038AF8E2805934E0012316C /* bach.bell.in.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.bell.in.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		0038AF91280596FC0012316C /* bell.out.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bell.out.c; sourceTree = "<group>"; };
 		0038AFA2280597160012316C /* bach.bell.out.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.bell.out.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		007F943E2C41939C007892C4 /* pitchAntlrParserInfrastructure.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pitchAntlrParserInfrastructure.cpp; sourceTree = "<group>"; };
+		007F943F2C41939C007892C4 /* pitchAntlrParserInfrastructure.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = pitchAntlrParserInfrastructure.hpp; sourceTree = "<group>"; };
+		007F94532C41A129007892C4 /* pitch.g4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = pitch.g4; sourceTree = "<group>"; };
+		007F94542C41C04B007892C4 /* pitchBaseVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pitchBaseVisitor.h; sourceTree = "<group>"; };
+		007F94552C41C04C007892C4 /* pitchVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pitchVisitor.cpp; sourceTree = "<group>"; };
+		007F94562C41C04C007892C4 /* pitchVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pitchVisitor.h; sourceTree = "<group>"; };
+		007F94572C41C04C007892C4 /* pitchLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pitchLexer.h; sourceTree = "<group>"; };
+		007F94582C41C04C007892C4 /* pitchBaseVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pitchBaseVisitor.cpp; sourceTree = "<group>"; };
+		007F94592C41C04C007892C4 /* pitchLexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pitchLexer.cpp; sourceTree = "<group>"; };
+		007F945A2C41C04C007892C4 /* pitchParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pitchParser.cpp; sourceTree = "<group>"; };
+		007F945B2C41C04C007892C4 /* pitchParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pitchParser.h; sourceTree = "<group>"; };
 		00812FAD27C8B9B400521C7D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		00992AD42C2EE6CC00DA02CD /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		00992AD52C2EE6CC00DA02CD /* misc.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = misc.xml; sourceTree = "<group>"; };
@@ -5963,6 +5984,7 @@
 			isa = PBXGroup;
 			children = (
 				00992D582C2EF26800DA02CD /* bell.g4 */,
+				007F94532C41A129007892C4 /* pitch.g4 */,
 				00992D7A2C3491D400DA02CD /* bellBaseVisitor.cpp */,
 				00992D762C3491D300DA02CD /* bellBaseVisitor.h */,
 				00992D782C3491D300DA02CD /* bellLexer.cpp */,
@@ -5971,8 +5993,18 @@
 				00992D752C3491D300DA02CD /* bellParser.h */,
 				00992D772C3491D300DA02CD /* bellVisitor.cpp */,
 				00992D742C3491D300DA02CD /* bellVisitor.h */,
+				007F94582C41C04C007892C4 /* pitchBaseVisitor.cpp */,
+				007F94542C41C04B007892C4 /* pitchBaseVisitor.h */,
+				007F94592C41C04C007892C4 /* pitchLexer.cpp */,
+				007F94572C41C04C007892C4 /* pitchLexer.h */,
+				007F945A2C41C04C007892C4 /* pitchParser.cpp */,
+				007F945B2C41C04C007892C4 /* pitchParser.h */,
+				007F94552C41C04C007892C4 /* pitchVisitor.cpp */,
+				007F94562C41C04C007892C4 /* pitchVisitor.h */,
 				00992D832C35BCF400DA02CD /* bellAntlrParserInfrastructure.cpp */,
 				00992D842C35BCF400DA02CD /* bellAntlrParserInfrastructure.hpp */,
+				007F943E2C41939C007892C4 /* pitchAntlrParserInfrastructure.cpp */,
+				007F943F2C41939C007892C4 /* pitchAntlrParserInfrastructure.hpp */,
 				00992D572C2EF26800DA02CD /* makefile */,
 			);
 			path = antlrparser;
@@ -7437,6 +7469,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1EBB9D2D237D95F600818B5C /* patrons.h in Headers */,
+				007F94412C41939C007892C4 /* pitchAntlrParserInfrastructure.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7655,6 +7688,7 @@
 				913D57C5232B972E00BC6B45 /* mathFunction.hpp in Headers */,
 				00992CB12C2EE6CC00DA02CD /* Casts.h in Headers */,
 				00992C4E2C2EE6CC00DA02CD /* LexerCustomAction.h in Headers */,
+				007F94632C41C04D007892C4 /* pitchParser.h in Headers */,
 				913D57A5232B972E00BC6B45 /* astNode.hpp in Headers */,
 				91040DA51FB1ABCD009E91CD /* bach_parser.hpp in Headers */,
 				91071DB22100DB5900452762 /* bach_codableobj.hpp in Headers */,
@@ -7714,6 +7748,7 @@
 				1EC5F4731BDFC21600669257 /* bach_graphics.h in Headers */,
 				00992C882C2EE6CC00DA02CD /* SerializedATNView.h in Headers */,
 				00992C7C2C2EE6CC00DA02CD /* PredictionMode.h in Headers */,
+				007F945F2C41C04D007892C4 /* pitchLexer.h in Headers */,
 				00992D062C2EE6CC00DA02CD /* CommonToken.h in Headers */,
 				913D57A6232B972E00BC6B45 /* fnMap.hpp in Headers */,
 				00992C5C2C2EE6CC00DA02CD /* LexerTypeAction.h in Headers */,
@@ -7759,6 +7794,7 @@
 				00992CDF2C2EE6CC00DA02CD /* ErrorNode.h in Headers */,
 				00992CE32C2EE6CC00DA02CD /* IterativeParseTreeWalker.h in Headers */,
 				91812AAC1611B29E00473F86 /* llll_linearalgebra.h in Headers */,
+				007F945E2C41C04D007892C4 /* pitchVisitor.h in Headers */,
 				00992C9D2C2EE6CC00DA02CD /* DFAState.h in Headers */,
 				913D57AB232B972E00BC6B45 /* builtInFunctionWithFindFn.hpp in Headers */,
 				00992CD12C2EE6CC00DA02CD /* XPathLexerErrorListener.h in Headers */,
@@ -7797,6 +7833,7 @@
 				00992CBF2C2EE6CC00DA02CD /* ParseTreePattern.h in Headers */,
 				00992D432C2EE6CD00DA02CD /* UnbufferedCharStream.h in Headers */,
 				91AF1C5017BCFA7E0071A497 /* bach_128bit.h in Headers */,
+				007F945C2C41C04D007892C4 /* pitchBaseVisitor.h in Headers */,
 				913D57BE232B972E00BC6B45 /* stringparser_lex_nolines.h in Headers */,
 				00992CF02C2EE6CC00DA02CD /* TerminalNodeImpl.h in Headers */,
 				00992C462C2EE6CC00DA02CD /* LexerActionType.h in Headers */,
@@ -13923,6 +13960,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				91812A6A1611B29E00473F86 /* kiss_fft.c in Sources */,
+				007F94422C4193B2007892C4 /* pitchAntlrParserInfrastructure.cpp in Sources */,
 				91812A6D1611B29E00473F86 /* fftutil.c in Sources */,
 				913D57BF232B972E00BC6B45 /* builtInFunctionWithFindFn.cpp in Sources */,
 				00992C712C2EE6CC00DA02CD /* PredicateTransition.cpp in Sources */,
@@ -14049,7 +14087,9 @@
 				00992CC62C2EE6CC00DA02CD /* TextChunk.cpp in Sources */,
 				91AF1C5117BCFA7E0071A497 /* bach_128bit.cpp in Sources */,
 				913D57AE232B972E00BC6B45 /* builtInFunction.cpp in Sources */,
+				007F94622C41C04D007892C4 /* pitchParser.cpp in Sources */,
 				00992D072C2EE6CC00DA02CD /* CommonTokenFactory.cpp in Sources */,
+				007F945D2C41C04D007892C4 /* pitchVisitor.cpp in Sources */,
 				91B62BB91F4FEBE200B9FC63 /* llll_hatom_change.c in Sources */,
 				91E7BFC41826AF0900AA6F56 /* bach_mem.c in Sources */,
 				00992C4B2C2EE6CC00DA02CD /* LexerChannelAction.cpp in Sources */,
@@ -14071,6 +14111,7 @@
 				00992D012C2EE6CC00DA02CD /* BufferedTokenStream.cpp in Sources */,
 				91C6044B18C0D9F50027BB79 /* SdifFPut.c in Sources */,
 				00992CC82C2EE6CC00DA02CD /* TokenTagToken.cpp in Sources */,
+				007F94612C41C04D007892C4 /* pitchLexer.cpp in Sources */,
 				00992D052C2EE6CC00DA02CD /* CommonToken.cpp in Sources */,
 				00992D2B2C2EE6CC00DA02CD /* ParserRuleContext.cpp in Sources */,
 				00992D402C2EE6CD00DA02CD /* TokenStreamRewriter.cpp in Sources */,
@@ -14155,6 +14196,7 @@
 				00992C1C2C2EE6CC00DA02CD /* ArrayPredictionContext.cpp in Sources */,
 				91C6046F18C0D9F50027BB79 /* SdifString.c in Sources */,
 				00992C262C2EE6CC00DA02CD /* ATNDeserializer.cpp in Sources */,
+				007F94602C41C04D007892C4 /* pitchBaseVisitor.cpp in Sources */,
 				91FDDC3D1FBE2DF90040D803 /* bach_alterparser.c in Sources */,
 				91C6047018C0D9F50027BB79 /* SdifTest.c in Sources */,
 				00992D352C2EE6CC00DA02CD /* RuleContextWithAltNum.cpp in Sources */,
