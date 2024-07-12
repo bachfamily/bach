@@ -15,16 +15,16 @@ public:
     UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, FOR = 7, 
     DO = 8, FUNCTION = 9, INLET = 10, GLOBALVAR = 11, PATCHERVAR = 12, LOCALVAR = 13, 
     PUSH = 14, POP = 15, CLOSED = 16, NTH = 17, KEY = 18, NULLIFY = 19, 
-    ASSIGN = 20, EOL = 21, WHITESPACE = 22, POW = 23, TIMES = 24, DIVDIV = 25, 
+    ASSIGN = 20, WHITESPACE = 21, NEWATOM = 22, POW = 23, TIMES = 24, DIVDIV = 25, 
     DIV = 26, PLUS = 27, UPLUS = 28, MINUS = 29, UMINUS = 30, OPEN = 31, 
     PARAMS = 32
   };
 
   enum {
-    RuleProgram = 0, RuleSequence = 1, RuleNullified = 2, RuleFuncall = 3, 
-    RuleItem = 4, RuleVar = 5, RuleLvalueSpecs = 6, RuleLvalue = 7, RuleFakeLvalue = 8, 
-    RuleExpr = 9, RuleEexpr = 10, RuleAssignment = 11, RuleConditional = 12, 
-    RuleListEnd = 13, RuleList = 14
+    RuleEverything = 0, RuleProgram = 1, RuleSequence = 2, RuleNullified = 3, 
+    RuleFuncall = 4, RuleItem = 5, RuleVar = 6, RuleLvalueSpecs = 7, RuleLvalue = 8, 
+    RuleFakeLvalue = 9, RuleExpr = 10, RuleEexpr = 11, RuleAssignment = 12, 
+    RuleConditional = 13, RuleListEnd = 14, RuleList = 15
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -49,6 +49,7 @@ public:
 
 
 
+  class EverythingContext;
   class ProgramContext;
   class SequenceContext;
   class NullifiedContext;
@@ -65,16 +66,49 @@ public:
   class ListEndContext;
   class ListContext; 
 
-  class  ProgramContext : public antlr4::ParserRuleContext {
+  class  EverythingContext : public antlr4::ParserRuleContext {
   public:
-    ProgramContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    EverythingContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    SequenceContext *sequence();
-    antlr4::tree::TerminalNode *EOF();
+    ProgramContext *program();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
+  };
+
+  EverythingContext* everything();
+
+  class  ProgramContext : public antlr4::ParserRuleContext {
+  public:
+    ProgramContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    ProgramContext() = default;
+    void copyFrom(ProgramContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  ProgramSequenceContext : public ProgramContext {
+  public:
+    ProgramSequenceContext(ProgramContext *ctx);
+
+    SequenceContext *sequence();
+    antlr4::tree::TerminalNode *EOF();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ProgramEOFContext : public ProgramContext {
+  public:
+    ProgramEOFContext(ProgramContext *ctx);
+
+    antlr4::tree::TerminalNode *EOF();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
   ProgramContext* program();

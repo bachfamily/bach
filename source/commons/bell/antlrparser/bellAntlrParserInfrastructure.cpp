@@ -64,7 +64,7 @@ public:
     
 };
 
-class programVisitor: public bellBaseVisitor {
+class everythingVisitor: public bellBaseVisitor {
     
 private:
 
@@ -73,9 +73,7 @@ public:
     t_parseParams *params;
     
     
-    programVisitor(t_parseParams *p) : visits(0), params(p) {
-
-    } ;
+    everythingVisitor(t_parseParams *p) : visits(0), params(p) { } ;
     
 
     
@@ -93,17 +91,24 @@ public:
         cout << ws << s << std::endl;
     }*/
     
-    antlrcpp::Any visitProgram(bellParser::ProgramContext *ctx) override {
-        push();
-        post("program");
+    antlrcpp::Any visitEverything(bellParser::EverythingContext *ctx) override {
+        auto r = safeAnyCast<astNode*>(visit(ctx->program()));
+        return r;
+    }
+    
+    antlrcpp::Any visitProgramEOF(bellParser::ProgramEOFContext *ctx) override {
+        *params->codeac = -1;
+        astNode* r = new astConst(llll_get(), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitProgramSequence(bellParser::ProgramSequenceContext *ctx) override {
+        *params->codeac = -1;
         auto r = safeAnyCast<astNode*>(visit(ctx->sequence()));
-        pop();
         return r;
     }
     
     antlrcpp::Any visitSequence(bellParser::SequenceContext *ctx) override {
-        push();
-        post("sequence");
         auto v = new std::vector<astNode*>;
         for (auto child: ctx->children) {
             astNode* n = safeAnyCast<astNode*>(visit(child));
@@ -114,7 +119,6 @@ public:
                 return nullptr;
             }
         }
-        pop();
         astNode* n = new astConcat(v, params->owner);
         return n;
     }
@@ -166,6 +170,8 @@ public:
     
     antlrcpp::Any visitItemInlet(bellParser::ItemInletContext *context) override {
         int i = stoi(context->INLET()->getText().erase(0,2));
+        if (params->dataInlets && params->fnDepth == 0 && i > *params->dataInlets)
+            *params->dataInlets = i;
         astNode* r = new astInlet(i, params->owner);
         return r;
     }
@@ -483,6 +489,7 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
     
     ANTLRInputStream input(x->c_text);
     bellLexer lexer(&input);
+    lexer.setCodeac(params.codeac);
     CommonTokenStream tokens(&lexer);
     bellParser parser(&tokens);
     parser.removeErrorListeners();
@@ -490,7 +497,7 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
         
     bellParser::ProgramContext* tree = parser.program();
         
-    programVisitor visitor(&params);
+    everythingVisitor visitor(&params);
     auto r = safeAnyCast<astNode*>(visitor.visit(tree));
     printf(" - with %d visits\n", visitor.visits);
     

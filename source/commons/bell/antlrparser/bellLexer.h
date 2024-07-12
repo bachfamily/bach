@@ -18,7 +18,7 @@ public:
     UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, FOR = 7, 
     DO = 8, FUNCTION = 9, INLET = 10, GLOBALVAR = 11, PATCHERVAR = 12, LOCALVAR = 13, 
     PUSH = 14, POP = 15, CLOSED = 16, NTH = 17, KEY = 18, NULLIFY = 19, 
-    ASSIGN = 20, EOL = 21, WHITESPACE = 22, POW = 23, TIMES = 24, DIVDIV = 25, 
+    ASSIGN = 20, WHITESPACE = 21, NEWATOM = 22, POW = 23, TIMES = 24, DIVDIV = 25, 
     DIV = 26, PLUS = 27, UPLUS = 28, MINUS = 29, UMINUS = 30, OPEN = 31, 
     PARAMS = 32
   };
@@ -33,7 +33,8 @@ public:
 
       bool noParams = true;
       bool noUnary = false;
-      
+      long *codeac = 0;
+
       bool followedBySpace() {
           int c = _input->LA(2);
           post("%c", c);
@@ -54,6 +55,8 @@ public:
           post("fbs %d\n", followedBySpace());
           return noUnary || followedBySpace();
       }
+
+      void setCodeac(long* c) { codeac = c; }
 
       //// MEMBERS END
 
@@ -104,8 +107,8 @@ private:
   void KEYAction(antlr4::RuleContext *context, size_t actionIndex);
   void NULLIFYAction(antlr4::RuleContext *context, size_t actionIndex);
   void ASSIGNAction(antlr4::RuleContext *context, size_t actionIndex);
-  void EOLAction(antlr4::RuleContext *context, size_t actionIndex);
   void WHITESPACEAction(antlr4::RuleContext *context, size_t actionIndex);
+  void NEWATOMAction(antlr4::RuleContext *context, size_t actionIndex);
   void POWAction(antlr4::RuleContext *context, size_t actionIndex);
   void TIMESAction(antlr4::RuleContext *context, size_t actionIndex);
   void DIVDIVAction(antlr4::RuleContext *context, size_t actionIndex);

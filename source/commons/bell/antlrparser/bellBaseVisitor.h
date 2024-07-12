@@ -15,7 +15,15 @@
 class  bellBaseVisitor : public bellVisitor {
 public:
 
-  virtual std::any visitProgram(bellParser::ProgramContext *ctx) override {
+  virtual std::any visitEverything(bellParser::EverythingContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProgramEOF(bellParser::ProgramEOFContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProgramSequence(bellParser::ProgramSequenceContext *ctx) override {
     return visitChildren(ctx);
   }
 

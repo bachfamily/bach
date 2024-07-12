@@ -19,7 +19,11 @@ public:
   /**
    * Visit parse trees produced by bellParser.
    */
-    virtual std::any visitProgram(bellParser::ProgramContext *context) = 0;
+    virtual std::any visitEverything(bellParser::EverythingContext *context) = 0;
+
+    virtual std::any visitProgramEOF(bellParser::ProgramEOFContext *context) = 0;
+
+    virtual std::any visitProgramSequence(bellParser::ProgramSequenceContext *context) = 0;
 
     virtual std::any visitSequence(bellParser::SequenceContext *context) = 0;
 

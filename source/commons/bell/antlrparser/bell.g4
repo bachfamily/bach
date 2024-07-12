@@ -10,7 +10,8 @@ grammar bell;
 
     bool noParams = true;
     bool noUnary = false;
-    
+    long *codeac = 0;
+
     bool followedBySpace() {
         int c = _input->LA(2);
         post("%c", c);
@@ -32,6 +33,8 @@ grammar bell;
         return noUnary || followedBySpace();
     }
 
+    void setCodeac(long* c) { codeac = c; }
+
     //// MEMBERS END
 }
 
@@ -44,7 +47,11 @@ grammar bell;
 
 // parser rules
 
-program: sequence EOF
+everything: program
+;
+
+program: EOF #programEOF
+| sequence EOF #programSequence
 ;
 
 sequence: list
@@ -166,9 +173,8 @@ NULLIFY: ';' { noParams = true; noUnary = false; };
 
 ASSIGN: '=' { noParams = true; noUnary = false; };
 
-EOL: '\n' { noParams = true; noUnary = false; };
-
-WHITESPACE: [ \t\u0001] { noParams = true; noUnary = false; } -> channel(HIDDEN);
+WHITESPACE: [ \t\r\n] { noParams = true; noUnary = false; } -> channel(HIDDEN);
+NEWATOM: [\u0001] { noParams = true; noUnary = false; (*codeac)++; } -> channel(HIDDEN);
 
 POW: '**' { noParams = true; noUnary = false; };
 
