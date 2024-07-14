@@ -108,6 +108,18 @@ public:
         return r;
     }
     
+    antlrcpp::Any visitProgramSequenceNamedparam (bellParser::ProgramSequenceNamedparamContext *ctx) override {
+        auto r = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        --*params->codeac;
+        return r;
+    }
+    
+    antlrcpp::Any visitProgramNamedparam (bellParser::ProgramNamedparamContext *ctx) override {
+        *params->codeac = 0;
+        astNode* r = new astConst(llll_get(), params->owner);
+        return r;
+    }
+    
     antlrcpp::Any visitSequence(bellParser::SequenceContext *ctx) override {
         auto v = new std::vector<astNode*>;
         for (auto child: ctx->children) {

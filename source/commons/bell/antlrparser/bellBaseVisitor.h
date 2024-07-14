@@ -27,6 +27,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitProgramSequenceNamedparam(bellParser::ProgramSequenceNamedparamContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitProgramNamedparam(bellParser::ProgramNamedparamContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitSequence(bellParser::SequenceContext *ctx) override {
     return visitChildren(ctx);
   }

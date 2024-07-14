@@ -25,6 +25,10 @@ public:
 
     virtual std::any visitProgramSequence(bellParser::ProgramSequenceContext *context) = 0;
 
+    virtual std::any visitProgramSequenceNamedparam(bellParser::ProgramSequenceNamedparamContext *context) = 0;
+
+    virtual std::any visitProgramNamedparam(bellParser::ProgramNamedparamContext *context) = 0;
+
     virtual std::any visitSequence(bellParser::SequenceContext *context) = 0;
 
     virtual std::any visitNullified(bellParser::NullifiedContext *context) = 0;

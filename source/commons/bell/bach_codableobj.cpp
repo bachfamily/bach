@@ -764,6 +764,18 @@ void codableobj_writefile(t_codableobj *x, char *filename, short path)
     sysmem_freehandle(h);
 }
 
+t_symbol *at_bellversion = gensym("@bellversion");
+
+void codableobj_fetch_bellversion(t_codableobj *x, long ac, t_atom *av)
+{
+    for (long i = ac - 1; i >= 0; i--) {
+        t_symbol *s = atom_getsym(av + i);
+        if (s == at_bellversion && i < ac - 1) {
+            x->c_bellversion = atom_getlong(av + i + 1);
+            break;
+        }
+    }
+}
 
 long codableobj_getCodeFromAtomsWithSeparators(t_codableobj *x, long ac, t_atom *av)
 {

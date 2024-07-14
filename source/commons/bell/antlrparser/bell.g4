@@ -52,6 +52,8 @@ everything: program
 
 program: EOF #programEOF
 | sequence EOF #programSequence
+| sequence NAMEDPARAM #programSequenceNamedparam
+| NAMEDPARAM #programNamedparam
 ;
 
 sequence: list
@@ -154,9 +156,12 @@ FUNCTION: 'sin' | 'cos' | 'sqrt' { noParams = noUnary = false; };
 
 INLET: '$'[lx][0-9]+ { noParams = false; noUnary = true; };
 
-GLOBALVAR: [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])? { noParams = false; noUnary = true; };
-PATCHERVAR: '#'[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])? { noParams = false; noUnary = true; };
-LOCALVAR: '$'[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])? { noParams = false; noUnary = true; };
+GLOBALVAR: ID { noParams = false; noUnary = true; };
+PATCHERVAR: '#' ID { noParams = false; noUnary = true; };
+LOCALVAR: '$' ID { noParams = false; noUnary = true; };
+NAMEDPARAM: '@' ID { noParams = true; noUnary = true; };
+
+fragment ID: [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?;
 
 
 PUSH: '[' { noParams = true; noUnary = false; };
@@ -191,3 +196,5 @@ UMINUS: '-' { post("uminus!\n"); noParams = true; noUnary = false; };
 
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };
+
+ANYTHING: .+?;

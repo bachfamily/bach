@@ -14,10 +14,10 @@ public:
   enum {
     UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, FOR = 7, 
     DO = 8, FUNCTION = 9, INLET = 10, GLOBALVAR = 11, PATCHERVAR = 12, LOCALVAR = 13, 
-    PUSH = 14, POP = 15, CLOSED = 16, NTH = 17, KEY = 18, NULLIFY = 19, 
-    ASSIGN = 20, WHITESPACE = 21, NEWATOM = 22, POW = 23, TIMES = 24, DIVDIV = 25, 
-    DIV = 26, PLUS = 27, UPLUS = 28, MINUS = 29, UMINUS = 30, OPEN = 31, 
-    PARAMS = 32
+    NAMEDPARAM = 14, PUSH = 15, POP = 16, CLOSED = 17, NTH = 18, KEY = 19, 
+    NULLIFY = 20, ASSIGN = 21, WHITESPACE = 22, NEWATOM = 23, POW = 24, 
+    TIMES = 25, DIVDIV = 26, DIV = 27, PLUS = 28, UPLUS = 29, MINUS = 30, 
+    UMINUS = 31, OPEN = 32, PARAMS = 33, ANYTHING = 34
   };
 
   enum {
@@ -102,11 +102,30 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  ProgramNamedparamContext : public ProgramContext {
+  public:
+    ProgramNamedparamContext(ProgramContext *ctx);
+
+    antlr4::tree::TerminalNode *NAMEDPARAM();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  ProgramEOFContext : public ProgramContext {
   public:
     ProgramEOFContext(ProgramContext *ctx);
 
     antlr4::tree::TerminalNode *EOF();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ProgramSequenceNamedparamContext : public ProgramContext {
+  public:
+    ProgramSequenceNamedparamContext(ProgramContext *ctx);
+
+    SequenceContext *sequence();
+    antlr4::tree::TerminalNode *NAMEDPARAM();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

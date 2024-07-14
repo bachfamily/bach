@@ -144,6 +144,8 @@ void codableobj_forcereadappend(t_codableobj *x, t_symbol *s);
 
 void codableobj_write(t_codableobj *x, t_symbol *s);
 
+void codableobj_fetch_bellversion(t_codableobj *x, long ac, t_atom *av);
+
 long codableobj_getCodeFromAtomsWithSeparators(t_codableobj *x, long ac, t_atom *av);
 long codableobj_getCodeFromAtoms(t_codableobj *x, long ac, t_atom *av);
 
