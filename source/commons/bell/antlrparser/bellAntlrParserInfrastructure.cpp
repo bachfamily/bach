@@ -136,15 +136,30 @@ public:
     }
     
     antlrcpp::Any visitNullified(bellParser::NullifiedContext *ctx) override {
-        push();
-        post("sequence");
         astNode* n = new astNullify(safeAnyCast<astNode*>(visit(ctx->list())), params->owner);
-        pop();
         return n;
     }
     
+    antlrcpp::Any visitWhileloop(bellParser::WhileloopContext *ctx) override {
+        astNode* s = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        if (!s)
+            return nullptr;
+        astNode* l = safeAnyCast<astNode*>(visit(ctx->list()));
+        if (!l) {
+            delete s;
+            return nullptr;
+        }
+        astNode *r;
+        switch(ctx->kind->getType()) {
+            case bellParser::DO: r = new astWhileLoop<E_LOOP_DO>(s, l, params->owner); break;
+            case bellParser::COLLECT: r = new astWhileLoop<E_LOOP_COLLECT>(s, l, params->owner); break;
+            default: r = nullptr; break;
+        }
+        return r;
+    }
+    
+    
     antlrcpp::Any visitFuncall(bellParser::FuncallContext *ctx) override {
-        visits++;
         std::string name = ctx->FUNCTION()->getText();
         auto func = (*params->bifs)[name];
         auto fNode = new astConst(func, params->owner);

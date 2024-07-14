@@ -12,19 +12,19 @@
 class  bellParser : public antlr4::Parser {
 public:
   enum {
-    UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, FOR = 7, 
-    DO = 8, FUNCTION = 9, INLET = 10, GLOBALVAR = 11, PATCHERVAR = 12, LOCALVAR = 13, 
-    NAMEDPARAM = 14, PUSH = 15, POP = 16, CLOSED = 17, NTH = 18, KEY = 19, 
-    NULLIFY = 20, ASSIGN = 21, WHITESPACE = 22, NEWATOM = 23, POW = 24, 
-    TIMES = 25, DIVDIV = 26, DIV = 27, PLUS = 28, UPLUS = 29, MINUS = 30, 
-    UMINUS = 31, OPEN = 32, PARAMS = 33, ANYTHING = 34
+    UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, WHILE = 7, 
+    FOR = 8, DO = 9, COLLECT = 10, FUNCTION = 11, INLET = 12, GLOBALVAR = 13, 
+    PATCHERVAR = 14, LOCALVAR = 15, NAMEDPARAM = 16, PUSH = 17, POP = 18, 
+    CLOSED = 19, NTH = 20, KEY = 21, NULLIFY = 22, ASSIGN = 23, WHITESPACE = 24, 
+    NEWATOM = 25, POW = 26, TIMES = 27, DIVDIV = 28, DIV = 29, PLUS = 30, 
+    UPLUS = 31, MINUS = 32, UMINUS = 33, OPEN = 34, PARAMS = 35, ANYTHING = 36
   };
 
   enum {
     RuleEverything = 0, RuleProgram = 1, RuleSequence = 2, RuleNullified = 3, 
-    RuleFuncall = 4, RuleItem = 5, RuleVar = 6, RuleLvalueSpecs = 7, RuleLvalue = 8, 
-    RuleFakeLvalue = 9, RuleExpr = 10, RuleEexpr = 11, RuleAssignment = 12, 
-    RuleConditional = 13, RuleListEnd = 14, RuleList = 15
+    RuleWhileloop = 4, RuleFuncall = 5, RuleItem = 6, RuleVar = 7, RuleLvalueSpecs = 8, 
+    RuleLvalue = 9, RuleFakeLvalue = 10, RuleExpr = 11, RuleEexpr = 12, 
+    RuleAssignment = 13, RuleConditional = 14, RuleListEnd = 15, RuleList = 16
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -53,6 +53,7 @@ public:
   class ProgramContext;
   class SequenceContext;
   class NullifiedContext;
+  class WhileloopContext;
   class FuncallContext;
   class ItemContext;
   class VarContext;
@@ -161,6 +162,24 @@ public:
   };
 
   NullifiedContext* nullified();
+
+  class  WhileloopContext : public antlr4::ParserRuleContext {
+  public:
+    antlr4::Token *kind = nullptr;
+    WhileloopContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *WHILE();
+    SequenceContext *sequence();
+    ListContext *list();
+    antlr4::tree::TerminalNode *DO();
+    antlr4::tree::TerminalNode *COLLECT();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  WhileloopContext* whileloop();
 
   class  FuncallContext : public antlr4::ParserRuleContext {
   public:
@@ -630,6 +649,7 @@ public:
     virtual size_t getRuleIndex() const override;
     ConditionalContext *conditional();
     AssignmentContext *assignment();
+    WhileloopContext *whileloop();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;

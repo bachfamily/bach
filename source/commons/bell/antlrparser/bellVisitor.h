@@ -33,6 +33,8 @@ public:
 
     virtual std::any visitNullified(bellParser::NullifiedContext *context) = 0;
 
+    virtual std::any visitWhileloop(bellParser::WhileloopContext *context) = 0;
+
     virtual std::any visitFuncall(bellParser::FuncallContext *context) = 0;
 
     virtual std::any visitItemUint(bellParser::ItemUintContext *context) = 0;

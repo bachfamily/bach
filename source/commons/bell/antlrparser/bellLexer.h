@@ -15,12 +15,12 @@
 class  bellLexer : public antlr4::Lexer {
 public:
   enum {
-    UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, FOR = 7, 
-    DO = 8, FUNCTION = 9, INLET = 10, GLOBALVAR = 11, PATCHERVAR = 12, LOCALVAR = 13, 
-    NAMEDPARAM = 14, PUSH = 15, POP = 16, CLOSED = 17, NTH = 18, KEY = 19, 
-    NULLIFY = 20, ASSIGN = 21, WHITESPACE = 22, NEWATOM = 23, POW = 24, 
-    TIMES = 25, DIVDIV = 26, DIV = 27, PLUS = 28, UPLUS = 29, MINUS = 30, 
-    UMINUS = 31, OPEN = 32, PARAMS = 33, ANYTHING = 34
+    UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, WHILE = 7, 
+    FOR = 8, DO = 9, COLLECT = 10, FUNCTION = 11, INLET = 12, GLOBALVAR = 13, 
+    PATCHERVAR = 14, LOCALVAR = 15, NAMEDPARAM = 16, PUSH = 17, POP = 18, 
+    CLOSED = 19, NTH = 20, KEY = 21, NULLIFY = 22, ASSIGN = 23, WHITESPACE = 24, 
+    NEWATOM = 25, POW = 26, TIMES = 27, DIVDIV = 28, DIV = 29, PLUS = 30, 
+    UPLUS = 31, MINUS = 32, UMINUS = 33, OPEN = 34, PARAMS = 35, ANYTHING = 36
   };
 
   explicit bellLexer(antlr4::CharStream *input);
@@ -51,8 +51,6 @@ public:
       }
 
       bool notUnary() {
-          post("noUnary %d\n", noUnary);
-          post("fbs %d\n", followedBySpace());
           return noUnary || followedBySpace();
       }
 
@@ -93,8 +91,10 @@ private:
   void IFAction(antlr4::RuleContext *context, size_t actionIndex);
   void THENAction(antlr4::RuleContext *context, size_t actionIndex);
   void ELSEAction(antlr4::RuleContext *context, size_t actionIndex);
+  void WHILEAction(antlr4::RuleContext *context, size_t actionIndex);
   void FORAction(antlr4::RuleContext *context, size_t actionIndex);
   void DOAction(antlr4::RuleContext *context, size_t actionIndex);
+  void COLLECTAction(antlr4::RuleContext *context, size_t actionIndex);
   void FUNCTIONAction(antlr4::RuleContext *context, size_t actionIndex);
   void INLETAction(antlr4::RuleContext *context, size_t actionIndex);
   void GLOBALVARAction(antlr4::RuleContext *context, size_t actionIndex);

@@ -43,6 +43,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitWhileloop(bellParser::WhileloopContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitFuncall(bellParser::FuncallContext *ctx) override {
     return visitChildren(ctx);
   }

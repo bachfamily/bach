@@ -28,8 +28,6 @@ grammar bell;
     }
 
     bool notUnary() {
-        post("noUnary %d\n", noUnary);
-        post("fbs %d\n", followedBySpace());
         return noUnary || followedBySpace();
     }
 
@@ -61,6 +59,9 @@ sequence: list
 ;
 
 nullified: list NULLIFY+
+;
+
+whileloop: WHILE sequence kind=(DO|COLLECT) list
 ;
 
 funcall: FUNCTION PARAMS sequence CLOSED
@@ -117,6 +118,7 @@ conditional: IF sequence THEN list #ifthen
 
 listEnd: conditional
 | assignment
+| whileloop
 ;
 
 list: expr+
@@ -128,15 +130,15 @@ list: expr+
 
 // lexer rules
 
-UINT: [0-9]+ { std::cout << "UINT\n"; noParams = false; noUnary = true; };
+UINT: [0-9]+ { noParams = false; noUnary = true; };
 
 UFLOAT: (((([0-9]* '.' [0-9]+) | ([0-9]+ '.')) 
           (([eE]([-+]?)[0-9]+)?)) |
          ([0-9]+[eE]([-+]?)[0-9]+)) 
-        { std::cout << "UFLOAT\n"; noParams = false; noUnary = true; };
+        { noParams = false; noUnary = true; };
 
 UPITCH: NOTENAME ACCIDENTAL? [+-]* UINT ([+-]* (UINT|RAT) 't')?
- { std::cout << "PITCH\n"; noParams = false; noUnary = true; };
+ { noParams = false; noUnary = true; };
 
 fragment NOTENAME: ([a-g]|[A-G]);
 fragment ACCIDENTAL: ([#bxdq^v]+);
@@ -148,9 +150,10 @@ THEN: 'then' { noParams = true; noUnary = false; };
 
 ELSE: 'else' { noParams = true; noUnary = false; };
 
+WHILE: 'while' { noParams = true; noUnary = false; };
 FOR: 'for' { noParams = true; noUnary = false; };
-
 DO: 'do' { noParams = true; noUnary = false; };
+COLLECT: 'collect' { noParams = true; noUnary = false; };
 
 FUNCTION: 'sin' | 'cos' | 'sqrt' { noParams = noUnary = false; };
 
@@ -188,11 +191,11 @@ TIMES: '*' { noParams = true; noUnary = false; };
 DIVDIV: '//' { noParams = true; noUnary = false; };
 DIV: '/' { noParams = true; noUnary = false; };
 
-PLUS: { notUnary() }? '+' { post("plus!\n"); noParams = true; noUnary = false; };
-UPLUS: '+' { post("uplus!\n"); noParams = true; noUnary = false; };
+PLUS: { notUnary() }? '+' { noParams = true; noUnary = false; };
+UPLUS: '+' { noParams = true; noUnary = false; };
 
-MINUS: { notUnary() }? '-' { post("minus!\n"); noParams = true; noUnary = false; };
-UMINUS: '-' { post("uminus!\n"); noParams = true; noUnary = false; };
+MINUS: { notUnary() }? '-' { noParams = true; noUnary = false; };
+UMINUS: '-' { noParams = true; noUnary = false; };
 
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };
