@@ -284,8 +284,28 @@ public:
         return l;
     }
     
-    template<typename T>
-    antlrcpp::Any visitBinary(T *context) {
+    antlrcpp::Any visitExprSimple(bellParser::ExprSimpleContext *context) override {
+        return visit(context->children[0]);
+    }
+    
+    antlrcpp::Any visitExprLvalue(bellParser::ExprLvalueContext *context) override {
+        lvalue *v = safeAnyCast<lvalue*>(visit(context->lvalue()));
+        astNode *n = v->getVar();
+        lvalueSpecs *s = v->getSpecs();
+        if (s)
+            n = s->toReadNode(n, params->owner);
+        return n;
+    }
+    
+    antlrcpp::Any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *context) override {
+        fakeLvalue *v = safeAnyCast<fakeLvalue*>(visit(context->fakeLvalue()));
+        astNode *n = v->getNode();
+        lvalueSpecs *s = v->getSpecs();
+        n = s->toReadNode(n, params->owner);
+        return n;
+    }
+    
+    antlrcpp::Any visitExprBinary(bellParser::ExprBinaryContext *context) override {
         astNode *n1 = safeAnyCast<astNode*>(visit(context->children[0]));
         if (!n1)
             return nullptr;
@@ -324,37 +344,16 @@ public:
             default: r = nullptr; break;
         }
         return r;
-    };
-    
-    template <typename T>
-    antlrcpp::Any visitLvalue(T *context)  {
-        lvalue *v = safeAnyCast<lvalue*>(visit(context->lvalue()));
-        astNode *n = v->getVar();
-        lvalueSpecs *s = v->getSpecs();
-        if (s)
-            n = s->toReadNode(n, params->owner);
-        return n;
     }
     
-    template <typename T>
-    antlrcpp::Any visitFakeLvalue(T *context) {
-        fakeLvalue *v = safeAnyCast<fakeLvalue*>(visit(context->fakeLvalue()));
-        astNode *n = v->getNode();
-        lvalueSpecs *s = v->getSpecs();
-        n = s->toReadNode(n, params->owner);
-        return n;
-    }
-    
-    template<typename T>
-    antlrcpp::Any visitUPlusMinus(T *context) {
+    antlrcpp::Any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *context) override {
         astNode *n = safeAnyCast<astNode*>(visit(context->children.back()));
         if (n && context->UMINUS().size() % 2)
             n = new astOperatorUMinus(n, params->owner);
         return n;
     }
-    
-    template<typename T>
-    antlrcpp::Any visitNot(T *context) {
+
+    antlrcpp::Any visitExprNot(bellParser::ExprNotContext *context) override {
         astNode *n = safeAnyCast<astNode*>(visit(context->children.back()));
         if (!n) {
             return nullptr;
@@ -365,54 +364,6 @@ public:
             case bellParser::BITNOT: r = new astOperatorBitNot(n, params->owner); break;
         }
         return r;
-    }
-    
-    antlrcpp::Any visitExprSimple(bellParser::ExprSimpleContext *context) override {
-        return visit(context->children[0]);
-    }
-    
-    antlrcpp::Any visitExprLvalue(bellParser::ExprLvalueContext *context) override {
-        return visitLvalue<bellParser::ExprLvalueContext>(context);
-    }
-    
-    antlrcpp::Any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *context) override {
-        return visitFakeLvalue<bellParser::ExprFakeLvalueContext>(context);
-    }
-    
-    antlrcpp::Any visitExprBinary(bellParser::ExprBinaryContext *context) override {
-        return visitBinary<bellParser::ExprBinaryContext>(context);
-    }
-    
-    antlrcpp::Any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *context) override {
-        return visitUPlusMinus<bellParser::ExprUPlusMinusContext>(context);
-    }
-
-    antlrcpp::Any visitExprNot(bellParser::ExprNotContext *context) override {
-        return visitNot<bellParser::ExprNotContext>(context);
-    }
-    
-    antlrcpp::Any visitEexprSimple(bellParser::EexprSimpleContext *context) override {
-        return visit(context->listEnd());
-    }
-    
-    antlrcpp::Any visitEexprLvalue(bellParser::EexprLvalueContext *context) override {
-        return visitLvalue<bellParser::EexprLvalueContext>(context);
-    }
-    
-    antlrcpp::Any visitEexprFakeLvalue(bellParser::EexprFakeLvalueContext *context) override {
-        return visitFakeLvalue<bellParser::EexprFakeLvalueContext>(context);
-    }
-  
-    antlrcpp::Any visitEexprBinary(bellParser::EexprBinaryContext *context) override {
-        return visitBinary<bellParser::EexprBinaryContext>(context);
-    }
-    
-    antlrcpp::Any visitEexprUPlusMinus(bellParser::EexprUPlusMinusContext *context) override {
-        return visitUPlusMinus<bellParser::EexprUPlusMinusContext>(context);
-    }
-    
-    antlrcpp::Any visitEexprNot(bellParser::EexprNotContext *context) override {
-        return visitNot<bellParser::EexprNotContext>(context);
     }
     
     antlrcpp::Any visitTrueAssignment(bellParser::TrueAssignmentContext *context) override {

@@ -27,8 +27,8 @@ public:
   enum {
     RuleEverything = 0, RuleProgram = 1, RuleSequence = 2, RuleNullified = 3, 
     RuleWhileloop = 4, RuleFuncall = 5, RuleItem = 6, RuleVar = 7, RuleLvalueSpecs = 8, 
-    RuleLvalue = 9, RuleFakeLvalue = 10, RuleEexpr = 11, RuleExpr = 12, 
-    RuleAssignment = 13, RuleConditional = 14, RuleListEnd = 15, RuleList = 16
+    RuleLvalue = 9, RuleFakeLvalue = 10, RuleExpr = 11, RuleAssignment = 12, 
+    RuleConditional = 13, RuleListEnd = 14, RuleList = 15
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -64,7 +64,6 @@ public:
   class LvalueSpecsContext;
   class LvalueContext;
   class FakeLvalueContext;
-  class EexprContext;
   class ExprContext;
   class AssignmentContext;
   class ConditionalContext;
@@ -372,108 +371,6 @@ public:
 
   FakeLvalueContext* fakeLvalue();
 
-  class  EexprContext : public antlr4::ParserRuleContext {
-  public:
-    EexprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    EexprContext() = default;
-    void copyFrom(EexprContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  EexprLvalueContext : public EexprContext {
-  public:
-    EexprLvalueContext(EexprContext *ctx);
-
-    LvalueContext *lvalue();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  EexprSimpleContext : public EexprContext {
-  public:
-    EexprSimpleContext(EexprContext *ctx);
-
-    ListEndContext *listEnd();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  EexprBinaryContext : public EexprContext {
-  public:
-    EexprBinaryContext(EexprContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    ExprContext *expr();
-    ListEndContext *listEnd();
-    antlr4::tree::TerminalNode *POW();
-    antlr4::tree::TerminalNode *TIMES();
-    antlr4::tree::TerminalNode *DIV();
-    antlr4::tree::TerminalNode *DIVDIV();
-    antlr4::tree::TerminalNode *PLUS();
-    antlr4::tree::TerminalNode *MINUS();
-    antlr4::tree::TerminalNode *LSHIFT();
-    antlr4::tree::TerminalNode *RSHIFT();
-    antlr4::tree::TerminalNode *RANGE();
-    antlr4::tree::TerminalNode *REPEAT();
-    antlr4::tree::TerminalNode *EQUAL();
-    antlr4::tree::TerminalNode *NEQ();
-    antlr4::tree::TerminalNode *LT();
-    antlr4::tree::TerminalNode *GT();
-    antlr4::tree::TerminalNode *LEQ();
-    antlr4::tree::TerminalNode *GEQ();
-    antlr4::tree::TerminalNode *BITAND();
-    antlr4::tree::TerminalNode *BITXOR();
-    antlr4::tree::TerminalNode *BITOR();
-    antlr4::tree::TerminalNode *LOGAND();
-    antlr4::tree::TerminalNode *LOGANDEXT();
-    antlr4::tree::TerminalNode *LOGXOR();
-    antlr4::tree::TerminalNode *LOGOR();
-    antlr4::tree::TerminalNode *LOGOREXT();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  EexprNotContext : public EexprContext {
-  public:
-    EexprNotContext(EexprContext *ctx);
-
-    antlr4::Token *op = nullptr;
-    EexprContext *eexpr();
-    antlr4::tree::TerminalNode *LOGNOT();
-    antlr4::tree::TerminalNode *BITNOT();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  EexprFakeLvalueContext : public EexprContext {
-  public:
-    EexprFakeLvalueContext(EexprContext *ctx);
-
-    FakeLvalueContext *fakeLvalue();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  EexprUPlusMinusContext : public EexprContext {
-  public:
-    EexprUPlusMinusContext(EexprContext *ctx);
-
-    EexprContext *eexpr();
-    std::vector<antlr4::tree::TerminalNode *> UPLUS();
-    antlr4::tree::TerminalNode* UPLUS(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> UMINUS();
-    antlr4::tree::TerminalNode* UMINUS(size_t i);
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  EexprContext* eexpr();
-
   class  ExprContext : public antlr4::ParserRuleContext {
   public:
     ExprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -501,6 +398,7 @@ public:
     ExprUPlusMinusContext(ExprContext *ctx);
 
     ExprContext *expr();
+    ListEndContext *listEnd();
     std::vector<antlr4::tree::TerminalNode *> UPLUS();
     antlr4::tree::TerminalNode* UPLUS(size_t i);
     std::vector<antlr4::tree::TerminalNode *> UMINUS();
@@ -515,6 +413,7 @@ public:
 
     ItemContext *item();
     VarContext *var();
+    ListEndContext *listEnd();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -524,9 +423,10 @@ public:
     ExprNotContext(ExprContext *ctx);
 
     antlr4::Token *op = nullptr;
-    ExprContext *expr();
     antlr4::tree::TerminalNode *LOGNOT();
     antlr4::tree::TerminalNode *BITNOT();
+    ExprContext *expr();
+    ListEndContext *listEnd();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -539,6 +439,7 @@ public:
     std::vector<ExprContext *> expr();
     ExprContext* expr(size_t i);
     antlr4::tree::TerminalNode *PICK();
+    ListEndContext *listEnd();
     antlr4::tree::TerminalNode *POW();
     antlr4::tree::TerminalNode *TIMES();
     antlr4::tree::TerminalNode *DIV();
@@ -678,7 +579,6 @@ public:
     virtual size_t getRuleIndex() const override;
     std::vector<ExprContext *> expr();
     ExprContext* expr(size_t i);
-    EexprContext *eexpr();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -690,7 +590,6 @@ public:
 
   bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
 
-  bool eexprSempred(EexprContext *_localctx, size_t predicateIndex);
   bool exprSempred(ExprContext *_localctx, size_t predicateIndex);
 
   // By default the static state used to implement the parser is lazily initialized during the first

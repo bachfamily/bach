@@ -91,47 +91,26 @@ lvalue: var lvalueSpecs?
 fakeLvalue: item lvalueSpecs
 ;
 
-eexpr: listEnd #eexprSimple
-| {ending}? lvalue #eexprLvalue
-| {ending}? fakeLvalue #eexprFakeLvalue
-| expr op=POW listEnd #eexprBinary 
-| (UPLUS|UMINUS)+ eexpr #eexprUPlusMinus
-| expr op=(TIMES|DIV|DIVDIV) listEnd #eexprBinary
-| expr op=(PLUS|MINUS) listEnd #eexprBinary
-| expr op=(LSHIFT|RSHIFT) listEnd #eexprBinary
-| expr op=RANGE listEnd #eexprBinary
-| expr op=REPEAT listEnd #eexprBinary
-| expr op=(EQUAL|NEQ) listEnd #eexprBinary
-| expr op=(LT|GT|LEQ|GEQ) listEnd #eexprBinary
-| expr op=BITAND listEnd #eexprBinary
-| expr op=BITXOR listEnd #eexprBinary
-| expr op=BITOR listEnd #eexprBinary
-| expr op=(LOGAND|LOGANDEXT) listEnd #eexprBinary
-| expr op=LOGXOR listEnd #eexprBinary
-| expr op=(LOGOR|LOGOREXT) listEnd #eexprBinary
-| op=(LOGNOT|BITNOT) eexpr #eexprNot
-;
-
-expr: (item|var) #exprSimple
-| {!ending}? lvalue #exprLvalue
-| {!ending}? fakeLvalue #exprFakeLvalue
-| expr PICK expr #exprBinary
-| <assoc=right> expr op=POW expr #exprBinary 
-| (UPLUS|UMINUS)+ expr #exprUPlusMinus
-| expr op=(TIMES|DIV|DIVDIV|REM) expr #exprBinary
-| expr op=(PLUS|MINUS) expr #exprBinary
-| expr op=(LSHIFT|RSHIFT) expr #exprBinary
-| expr op=RANGE expr #exprBinary
-| expr op=REPEAT expr #exprBinary
-| expr op=(EQUAL|NEQ) expr #exprBinary
-| expr op=(LT|GT|LEQ|GEQ) expr #exprBinary
-| expr op=BITAND expr #exprBinary
-| expr op=BITXOR expr #exprBinary
-| expr op=BITOR expr #exprBinary
-| expr op=(LOGAND|LOGANDEXT) expr #exprBinary
-| expr op=LOGXOR expr #exprBinary
-| expr op=(LOGOR|LOGOREXT) expr #exprBinary
-| op=(LOGNOT|BITNOT) expr #exprNot
+expr: (item|var|listEnd) #exprSimple
+| lvalue #exprLvalue
+| fakeLvalue #exprFakeLvalue
+| expr PICK (expr|listEnd) #exprBinary
+| <assoc=right> expr op=POW (expr|listEnd) #exprBinary 
+| (UPLUS|UMINUS)+ (expr|listEnd) #exprUPlusMinus
+| expr op=(TIMES|DIV|DIVDIV|REM) (expr|listEnd) #exprBinary
+| expr op=(PLUS|MINUS) (expr|listEnd) #exprBinary
+| expr op=(LSHIFT|RSHIFT) (expr|listEnd) #exprBinary
+| expr op=RANGE (expr|listEnd) #exprBinary
+| expr op=REPEAT (expr|listEnd) #exprBinary
+| expr op=(EQUAL|NEQ) (expr|listEnd) #exprBinary
+| expr op=(LT|GT|LEQ|GEQ) (expr|listEnd) #exprBinary
+| expr op=BITAND (expr|listEnd) #exprBinary
+| expr op=BITXOR (expr|listEnd) #exprBinary
+| expr op=BITOR (expr|listEnd) #exprBinary
+| expr op=(LOGAND|LOGANDEXT) (expr|listEnd) #exprBinary
+| expr op=LOGXOR (expr|listEnd) #exprBinary
+| expr op=(LOGOR|LOGOREXT) (expr|listEnd) #exprBinary
+| op=(LOGNOT|BITNOT) (expr|listEnd) #exprNot
 ;
 
 assignment: lvalue ASSIGN list #trueAssignment
@@ -148,7 +127,6 @@ listEnd: conditional
 ;
 
 list: expr+
-| expr* eexpr
 ;
 
 
