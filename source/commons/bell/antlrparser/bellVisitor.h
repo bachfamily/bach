@@ -65,29 +65,25 @@ public:
 
     virtual std::any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *context) = 0;
 
-    virtual std::any visitExprPlusMinus(bellParser::ExprPlusMinusContext *context) = 0;
+    virtual std::any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *context) = 0;
 
-    virtual std::any visitExprVar(bellParser::ExprVarContext *context) = 0;
+    virtual std::any visitExprSimple(bellParser::ExprSimpleContext *context) = 0;
 
-    virtual std::any visitExprPow(bellParser::ExprPowContext *context) = 0;
+    virtual std::any visitExprNot(bellParser::ExprNotContext *context) = 0;
 
-    virtual std::any visitExprUnary(bellParser::ExprUnaryContext *context) = 0;
-
-    virtual std::any visitExprTimesDiv(bellParser::ExprTimesDivContext *context) = 0;
+    virtual std::any visitExprBinary(bellParser::ExprBinaryContext *context) = 0;
 
     virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *context) = 0;
-
-    virtual std::any visitEexprPow(bellParser::EexprPowContext *context) = 0;
-
-    virtual std::any visitEexprUnary(bellParser::EexprUnaryContext *context) = 0;
-
-    virtual std::any visitEexprTimesDiv(bellParser::EexprTimesDivContext *context) = 0;
-
-    virtual std::any visitEexprPlusMinus(bellParser::EexprPlusMinusContext *context) = 0;
 
     virtual std::any visitEexprLvalue(bellParser::EexprLvalueContext *context) = 0;
 
     virtual std::any visitEexprFakeLvalue(bellParser::EexprFakeLvalueContext *context) = 0;
+
+    virtual std::any visitEexprBinary(bellParser::EexprBinaryContext *context) = 0;
+
+    virtual std::any visitEexprUPlusMinus(bellParser::EexprUPlusMinusContext *context) = 0;
+
+    virtual std::any visitEexprNot(bellParser::EexprNotContext *context) = 0;
 
     virtual std::any visitTrueAssignment(bellParser::TrueAssignmentContext *context) = 0;
 

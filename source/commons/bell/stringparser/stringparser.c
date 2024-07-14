@@ -2596,7 +2596,7 @@ YY_RULE_SETUP
 case 27:
 YY_RULE_SETUP
 {
-    code_dev_post("lex: OPERATOR !\n");
+    code_dev_post("lex: OPERATOR ~\n");
     BEGIN lexparams->setState(UNARY_NOARGS);
     return BITNOT;
 }

@@ -91,21 +91,46 @@ lvalue: var lvalueSpecs?
 fakeLvalue: item lvalueSpecs
 ;
 
-expr: expr POW expr #exprPow 
-| (UPLUS|UMINUS)* item #exprUnary
-| (UPLUS|UMINUS)* var #exprVar
-| expr op=(TIMES|DIV|DIVDIV) expr #exprTimesDiv
-| expr op=(PLUS|MINUS) expr #exprPlusMinus
-| {!ending}? (UPLUS|UMINUS)* lvalue #exprLvalue
-| {!ending}? (UPLUS|UMINUS)* fakeLvalue #exprFakeLvalue
+expr: (item|var) #exprSimple
+| {!ending}? lvalue #exprLvalue
+| {!ending}? fakeLvalue #exprFakeLvalue
+| expr PICK expr #exprBinary
+| <assoc=right> expr op=POW expr #exprBinary 
+| (UPLUS|UMINUS)+ expr #exprUPlusMinus
+| expr op=(TIMES|DIV|DIVDIV|REM) expr #exprBinary
+| expr op=(PLUS|MINUS) expr #exprBinary
+| expr op=(LSHIFT|RSHIFT) expr #exprBinary
+| expr op=RANGE expr #exprBinary
+| expr op=REPEAT expr #exprBinary
+| expr op=(EQUAL|NEQ) expr #exprBinary
+| expr op=(LT|GT|LEQ|GEQ) expr #exprBinary
+| expr op=BITAND expr #exprBinary
+| expr op=BITXOR expr #exprBinary
+| expr op=BITOR expr #exprBinary
+| expr op=(LOGAND|LOGANDEXT) expr #exprBinary
+| expr op=LOGXOR expr #exprBinary
+| expr op=(LOGOR|LOGOREXT) expr #exprBinary
+| op=(LOGNOT|BITNOT) expr #exprNot
 ;
 
-eexpr: expr POW listEnd #eexprPow 
-| (UPLUS|UMINUS)* listEnd #eexprUnary
-| expr op=(TIMES|DIV|DIVDIV) listEnd #eexprTimesDiv
-| expr op=(PLUS|MINUS) listEnd #eexprPlusMinus
-| {ending}? (UPLUS|UMINUS)* lvalue #eexprLvalue
-| {ending}? (UPLUS|UMINUS)* fakeLvalue #eexprFakeLvalue
+eexpr: {ending}? lvalue #eexprLvalue
+| {ending}? fakeLvalue #eexprFakeLvalue
+| expr op=POW listEnd #eexprBinary 
+| (UPLUS|UMINUS)+ eexpr #eexprUPlusMinus
+| expr op=(TIMES|DIV|DIVDIV) listEnd #eexprBinary
+| expr op=(PLUS|MINUS) listEnd #eexprBinary
+| expr op=(LSHIFT|RSHIFT) listEnd #eexprBinary
+| expr op=RANGE listEnd #eexprBinary
+| expr op=REPEAT listEnd #eexprBinary
+| expr op=(EQUAL|NEQ) listEnd #eexprBinary
+| expr op=(LT|GT|LEQ|GEQ) listEnd #eexprBinary
+| expr op=BITAND listEnd #eexprBinary
+| expr op=BITXOR listEnd #eexprBinary
+| expr op=BITOR listEnd #eexprBinary
+| expr op=(LOGAND|LOGANDEXT) listEnd #eexprBinary
+| expr op=LOGXOR listEnd #eexprBinary
+| expr op=(LOGOR|LOGOREXT) listEnd #eexprBinary
+| op=(LOGNOT|BITNOT) eexpr #eexprNot
 ;
 
 assignment: lvalue ASSIGN list #trueAssignment
@@ -174,7 +199,7 @@ POP: ']' { noParams = false; noUnary = true; };
 CLOSED: ')' { noParams = false; noUnary = true; };
 
 NTH: ':' { noParams = true; noUnary = false; };
-
+PICK: '::' { noParams = true; noUnary = false; };
 KEY: '.' { noParams = true; noUnary = false; };
 
 NULLIFY: ';' { noParams = true; noUnary = false; };
@@ -196,6 +221,48 @@ UPLUS: '+' { noParams = true; noUnary = false; };
 
 MINUS: { notUnary() }? '-' { noParams = true; noUnary = false; };
 UMINUS: '-' { noParams = true; noUnary = false; };
+
+REM: '%' { noParams = true; noUnary = false; };
+
+EQUAL: '==' { noParams = true; noUnary = false; };
+
+NEQ: '!=' { noParams = true; noUnary = false; };
+
+LOGNOT: '!' { noParams = true; noUnary = false; };
+
+BITNOT: '~' { noParams = true; noUnary = false; };
+
+LT: '<' { noParams = true; noUnary = false; };
+
+GT: '>' { noParams = true; noUnary = false; };
+
+LEQ: '<=' { noParams = true; noUnary = false; };
+
+GEQ: '>=' { noParams = true; noUnary = false; };
+
+BITAND: '&' { noParams = true; noUnary = false; };
+
+BITXOR: '^' { noParams = true; noUnary = false; };
+
+BITOR: '|' { noParams = true; noUnary = false; };
+
+LOGAND: '&&' { noParams = true; noUnary = false; };
+
+LOGANDEXT: '&&&' { noParams = true; noUnary = false; };
+
+LOGXOR: '^^' { noParams = true; noUnary = false; };
+
+LOGOR: '||' { noParams = true; noUnary = false; };
+
+LOGOREXT: '|||' { noParams = true; noUnary = false; };
+
+LSHIFT: '<<' { noParams = true; noUnary = false; };
+
+RSHIFT: '>>' { noParams = true; noUnary = false; };
+
+RANGE: '...' { noParams = true; noUnary = false; };
+
+REPEAT: ':*' { noParams = true; noUnary = false; };
 
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };

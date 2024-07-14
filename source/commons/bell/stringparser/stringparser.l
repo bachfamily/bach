@@ -287,7 +287,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 }
 
 "~" {
-    code_dev_post("lex: OPERATOR !\n");
+    code_dev_post("lex: OPERATOR ~\n");
     BEGIN lexparams->setState(UNARY_NOARGS);
     return BITNOT;
 }

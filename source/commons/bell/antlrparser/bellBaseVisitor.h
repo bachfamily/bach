@@ -107,43 +107,23 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitExprPlusMinus(bellParser::ExprPlusMinusContext *ctx) override {
+  virtual std::any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitExprVar(bellParser::ExprVarContext *ctx) override {
+  virtual std::any visitExprSimple(bellParser::ExprSimpleContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitExprPow(bellParser::ExprPowContext *ctx) override {
+  virtual std::any visitExprNot(bellParser::ExprNotContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitExprUnary(bellParser::ExprUnaryContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitExprTimesDiv(bellParser::ExprTimesDivContext *ctx) override {
+  virtual std::any visitExprBinary(bellParser::ExprBinaryContext *ctx) override {
     return visitChildren(ctx);
   }
 
   virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEexprPow(bellParser::EexprPowContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEexprUnary(bellParser::EexprUnaryContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEexprTimesDiv(bellParser::EexprTimesDivContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEexprPlusMinus(bellParser::EexprPlusMinusContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -152,6 +132,18 @@ public:
   }
 
   virtual std::any visitEexprFakeLvalue(bellParser::EexprFakeLvalueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEexprBinary(bellParser::EexprBinaryContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEexprUPlusMinus(bellParser::EexprUPlusMinusContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEexprNot(bellParser::EexprNotContext *ctx) override {
     return visitChildren(ctx);
   }
 
