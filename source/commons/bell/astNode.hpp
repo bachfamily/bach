@@ -1098,6 +1098,11 @@ public:
                           lvalueStepList *lvalueStepList,
                           t_codableobj *owner)  : BASE(lNode, rNode, lvalueStepList, owner) { }
 
+    astRichAccessConcatOp(typename BASE::firstType *lNode,
+                          astNode *rNode,
+                          lvalueSpecs *lvalueSpecs,
+                          t_codableobj *owner)  : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astRichAccessConcatOp() { }
 
 private:
@@ -1120,6 +1125,11 @@ public:
                           lvalueStepList *lvalueStepList,
                           t_codableobj *owner)  : BASE(lNode, rNode, lvalueStepList, owner) { }
     
+    astRichAccessRConcatOp(typename BASE::firstType *lNode,
+                          astNode *rNode,
+                          lvalueSpecs *lvalueSpecs,
+                          t_codableobj *owner)  : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astRichAccessRConcatOp() { };
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
@@ -1131,5 +1141,9 @@ private:
     }
 };
 
+typedef astRichAccessConcatOp<astRichAssignment<E_RA_STANDARD>> astRAConcat;
+typedef astRichAccessRConcatOp<astRichAssignment<E_RA_STANDARD>> astRARConcat;
+typedef astRichAccessConcatOp<astRichEdit<E_RA_STANDARD>> astREConcat;
+typedef astRichAccessRConcatOp<astRichEdit<E_RA_STANDARD>> astRERConcat;
 
 #endif /* ast_hpp */

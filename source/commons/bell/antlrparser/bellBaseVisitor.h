@@ -67,6 +67,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitItemNull(bellParser::ItemNullContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitItemNil(bellParser::ItemNilContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitItemSequence(bellParser::ItemSequenceContext *ctx) override {
     return visitChildren(ctx);
   }

@@ -70,6 +70,8 @@ item: UINT #itemUint
 | UFLOAT #itemUfloat
 | UPITCH #itemUpitch
 | INLET #itemInlet
+| BACHNULL #itemNull
+| BACHNIL #itemNil
 | OPEN sequence CLOSED #itemSequence
 | PUSH sequence POP #itemSublist
 | funcall #itemFuncall
@@ -112,8 +114,8 @@ expr: (item|var|listEnd) #exprSimple
 | op=(LOGNOT|BITNOT) (expr|listEnd) #exprNot
 ;
 
-assignment: lvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV|ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT|ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR|ABITOR|ALSHIFT|ARSHIFT) list #trueAssignment
-| fakeLvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV|ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT|ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR|ABITOR|ALSHIFT|ARSHIFT) list #fakeAssignment
+assignment: lvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV|ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT|ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR|ABITOR|ALSHIFT|ARSHIFT|ACONCAT|ARCONCAT|ANTH) list #trueAssignment
+| fakeLvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV|ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT|ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR|ABITOR|ALSHIFT|ACONCAT|ARCONCAT|ARSHIFT) list #fakeAssignment
 ;
 
 conditional: IF sequence THEN list #ifthen
@@ -145,6 +147,9 @@ UPITCH: NOTENAME ACCIDENTAL? [+-]* UINT ([+-]* (UINT|RAT) 't')?
 fragment NOTENAME: ([a-g]|[A-G]);
 fragment ACCIDENTAL: ([#bxdq^v]+);
 fragment RAT: UINT '/' [+-]* UINT;
+
+BACHNULL: 'null' { noParams = false; noUnary = false; };
+BACHNIL: 'nil' { noParams = false; noUnary = false; };
 
 IF: 'if' { noParams = true; noUnary = false; };
 
@@ -180,7 +185,6 @@ PICK: '::' { noParams = true; noUnary = false; };
 KEY: '.' { noParams = true; noUnary = false; };
 ANTH: ':=' { noParams = true; noUnary = false; };
 APICK: '::=' { noParams = true; noUnary = false; };
-AKEY: '.=' { noParams = true; noUnary = false; };
 
 NULLIFY: ';' { noParams = true; noUnary = false; };
 
@@ -260,6 +264,10 @@ RANGE: '...' { noParams = true; noUnary = false; };
 
 REPEAT: ':*' { noParams = true; noUnary = false; };
 AREPEAT: ':*=' { noParams = true; noUnary = false; };
+
+AAPPLY: '.=' { noParams = true; noUnary = false; };
+ACONCAT: '_=' { noParams = true; noUnary = false; };
+ARCONCAT: '!_=' { noParams = true; noUnary = false; };
 
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };

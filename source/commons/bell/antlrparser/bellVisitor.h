@@ -45,6 +45,10 @@ public:
 
     virtual std::any visitItemInlet(bellParser::ItemInletContext *context) = 0;
 
+    virtual std::any visitItemNull(bellParser::ItemNullContext *context) = 0;
+
+    virtual std::any visitItemNil(bellParser::ItemNilContext *context) = 0;
+
     virtual std::any visitItemSequence(bellParser::ItemSequenceContext *context) = 0;
 
     virtual std::any visitItemSublist(bellParser::ItemSublistContext *context) = 0;

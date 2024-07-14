@@ -69,10 +69,9 @@ class everythingVisitor: public bellBaseVisitor {
 private:
 
 public:
-    int visits;
     t_parseParams *params;
     
-    everythingVisitor(t_parseParams *p) : visits(0), params(p) { } ;
+    everythingVisitor(t_parseParams *p) : params(p) { } ;
     
     antlrcpp::Any visitEverything(bellParser::EverythingContext *ctx) override {
         auto r = safeAnyCast<astNode*>(visit(ctx->program()));
@@ -141,7 +140,6 @@ public:
         return r;
     }
     
-    
     antlrcpp::Any visitFuncall(bellParser::FuncallContext *ctx) override {
         std::string name = ctx->FUNCTION()->getText();
         auto func = (*params->bifs)[name];
@@ -186,6 +184,18 @@ public:
         return r;
     }
     
+    antlrcpp::Any visitItemNull(bellParser::ItemNullContext *context) override {
+        astNode *r = new astConst(llll_get(), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemNil(bellParser::ItemNilContext *context) override {
+        t_llll *ll = llll_get();
+        llll_appendllll(ll, llll_get());
+        astNode *r = new astConst(ll, params->owner);
+        return r;
+    }
+    
     antlrcpp::Any visitItemSequence(bellParser::ItemSequenceContext *context) override {
         astNode* r = safeAnyCast<astNode*>(visit(context->sequence()));
         return r;
@@ -198,13 +208,11 @@ public:
     }
 
     antlrcpp::Any visitItemFuncall(bellParser::ItemFuncallContext *ctx) override {
-        visits++;
         astNode* a = safeAnyCast<astNode*>(visit(ctx->funcall()));
         return a;
     }
     
     antlrcpp::Any visitVarLocal(bellParser::VarLocalContext *ctx) override {
-        visits++;
         std::string name = ctx->LOCALVAR()->getText();
         t_symbol *s = gensym(name.erase(0, 1).c_str());
         astVar* v = new astLocalVar(s, params->owner);
@@ -213,7 +221,6 @@ public:
     }
     
     antlrcpp::Any visitVarPatcher(bellParser::VarPatcherContext *ctx) override {
-        visits++;
         std::string name = ctx->PATCHERVAR()->getText();
         t_symbol *s = gensym(name.erase(0, 1).c_str());
         astVar* v = new astLocalVar(s, params->owner);
@@ -222,7 +229,6 @@ public:
     }
     
     antlrcpp::Any visitVarGlobal(bellParser::VarGlobalContext *ctx) override {
-        visits++;
         std::string name = ctx->GLOBALVAR()->getText();
         t_symbol *s = gensym(name.c_str());
         astGlobalVar *v = new astGlobalVar(params->gvt, s, params->owner);
@@ -264,7 +270,6 @@ public:
     };
     
     antlrcpp::Any visitLvalue(bellParser::LvalueContext *context) override {
-        visits++;
         astVar* v = dynamic_cast<astVar*>(safeAnyCast<astNode*>(visit(context->var())));
         if (context->lvalueSpecs()) {
             auto s = safeAnyCast<lvalueSpecs*>(visit(context->lvalueSpecs()));
@@ -277,7 +282,6 @@ public:
     }
     
     antlrcpp::Any visitFakeLvalue(bellParser::FakeLvalueContext *context) override {
-        visits++;
         auto v = safeAnyCast<astNode*>(visit(context->item()));
         auto s = safeAnyCast<lvalueSpecs*>(visit(context->lvalueSpecs()));
         auto l = new fakeLvalue(v, s);
@@ -391,6 +395,7 @@ public:
                 case bellParser::ALSHIFT: n = new astOperatorALShift(lv->getVar(), rv, params->owner); break;
                 case bellParser::ARSHIFT: n = new astOperatorARShift(lv->getVar(), rv, params->owner); break;
                 case bellParser::ANTH: n = new astNthAssignOp(lv->getVar(), rv, params->owner); break;
+                case bellParser::ACONCAT: n = new astConcatAssignOp(lv->getVar(), rv, params->owner); break;
                 default: n = nullptr; break;
             }
             return n;
@@ -415,6 +420,9 @@ public:
                 case bellParser::ABITOR: n = new astOperatorRABitOr(lv->getVar(), rv, s, params->owner); break;
                 case bellParser::ALSHIFT: n = new astOperatorRALShift(lv->getVar(), rv, s, params->owner); break;
                 case bellParser::ARSHIFT: n = new astOperatorRARShift(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ACONCAT: n = new astRAConcat(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ARCONCAT: n = new astRARConcat(lv->getVar(), rv, s, params->owner); break;
+
             }
             return n;
         }
@@ -443,12 +451,14 @@ public:
             case bellParser::ABITXOR: n = new astOperatorREBitXor(lv->getNode(), rv, s, params->owner); break;
             case bellParser::ABITOR: n = new astOperatorREBitOr(lv->getNode(), rv, s, params->owner); break;
             case bellParser::ALSHIFT: n = new astOperatorRELShift(lv->getNode(), rv, s, params->owner); break;
-            case bellParser::ARSHIFT: n = new astOperatorRERShift(lv->getNode(), rv, s, params->owner); break;        }
+            case bellParser::ARSHIFT: n = new astOperatorRERShift(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ACONCAT: n = new astREConcat(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ARCONCAT: n = new astRERConcat(lv->getNode(), rv, s, params->owner); break;
+        }
         return n;
     }
     
     antlrcpp::Any visitIfthen(bellParser::IfthenContext *ctx) override {
-        visits++;
         auto i = safeAnyCast<astNode*>(visit(ctx->sequence()));
         auto t = safeAnyCast<astNode*>(visit(ctx->list()));
         astNode* n = new astIfThenElse(i, t, nullptr, params->owner);
@@ -456,7 +466,6 @@ public:
     }
     
     antlrcpp::Any visitIfthenelse(bellParser::IfthenelseContext *ctx) override {
-        visits++;
         auto i = safeAnyCast<astNode*>(visit(ctx->sequence(0)));
         auto t = safeAnyCast<astNode*>(visit(ctx->sequence(1)));
         auto e = safeAnyCast<astNode*>(visit(ctx->list()));
@@ -517,7 +526,6 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
         
     everythingVisitor visitor(&params);
     auto r = safeAnyCast<astNode*>(visitor.visit(tree));
-    printf(" - with %d visits\n", visitor.visits);
     
     if (r) {
         t_mainFunction *mainFunction = new t_mainFunction(

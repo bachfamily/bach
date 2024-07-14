@@ -12,20 +12,20 @@
 class  bellParser : public antlr4::Parser {
 public:
   enum {
-    UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, WHILE = 7, 
-    FOR = 8, DO = 9, COLLECT = 10, FUNCTION = 11, INLET = 12, GLOBALVAR = 13, 
-    PATCHERVAR = 14, LOCALVAR = 15, NAMEDPARAM = 16, PUSH = 17, POP = 18, 
-    CLOSED = 19, NTH = 20, PICK = 21, KEY = 22, ANTH = 23, APICK = 24, AKEY = 25, 
-    NULLIFY = 26, ASSIGN = 27, WHITESPACE = 28, NEWATOM = 29, POW = 30, 
-    APOW = 31, TIMES = 32, ATIMES = 33, DIVDIV = 34, ADIVDIV = 35, DIV = 36, 
-    ADIV = 37, REM = 38, AREM = 39, PLUS = 40, APLUS = 41, UPLUS = 42, MINUS = 43, 
-    AMINUS = 44, UMINUS = 45, EQUAL = 46, NEQ = 47, LOGNOT = 48, BITNOT = 49, 
-    LT = 50, GT = 51, LEQ = 52, GEQ = 53, BITAND = 54, ABITAND = 55, BITXOR = 56, 
-    ABITXOR = 57, BITOR = 58, ABITOR = 59, LOGAND = 60, LOGANDEXT = 61, 
-    ALOGAND = 62, ALOGANDEXT = 63, LOGXOR = 64, ALOGXOR = 65, LOGOR = 66, 
-    ALOGOR = 67, LOGOREXT = 68, ALOGOREXT = 69, LSHIFT = 70, ALSHIFT = 71, 
-    RSHIFT = 72, ARSHIFT = 73, RANGE = 74, REPEAT = 75, AREPEAT = 76, OPEN = 77, 
-    PARAMS = 78, ANYTHING = 79
+    UINT = 1, UFLOAT = 2, UPITCH = 3, BACHNULL = 4, BACHNIL = 5, IF = 6, 
+    THEN = 7, ELSE = 8, WHILE = 9, FOR = 10, DO = 11, COLLECT = 12, FUNCTION = 13, 
+    INLET = 14, GLOBALVAR = 15, PATCHERVAR = 16, LOCALVAR = 17, NAMEDPARAM = 18, 
+    PUSH = 19, POP = 20, CLOSED = 21, NTH = 22, PICK = 23, KEY = 24, ANTH = 25, 
+    APICK = 26, NULLIFY = 27, ASSIGN = 28, WHITESPACE = 29, NEWATOM = 30, 
+    POW = 31, APOW = 32, TIMES = 33, ATIMES = 34, DIVDIV = 35, ADIVDIV = 36, 
+    DIV = 37, ADIV = 38, REM = 39, AREM = 40, PLUS = 41, APLUS = 42, UPLUS = 43, 
+    MINUS = 44, AMINUS = 45, UMINUS = 46, EQUAL = 47, NEQ = 48, LOGNOT = 49, 
+    BITNOT = 50, LT = 51, GT = 52, LEQ = 53, GEQ = 54, BITAND = 55, ABITAND = 56, 
+    BITXOR = 57, ABITXOR = 58, BITOR = 59, ABITOR = 60, LOGAND = 61, LOGANDEXT = 62, 
+    ALOGAND = 63, ALOGANDEXT = 64, LOGXOR = 65, ALOGXOR = 66, LOGOR = 67, 
+    ALOGOR = 68, LOGOREXT = 69, ALOGOREXT = 70, LSHIFT = 71, ALSHIFT = 72, 
+    RSHIFT = 73, ARSHIFT = 74, RANGE = 75, REPEAT = 76, AREPEAT = 77, AAPPLY = 78, 
+    ACONCAT = 79, ARCONCAT = 80, OPEN = 81, PARAMS = 82, ANYTHING = 83
   };
 
   enum {
@@ -266,6 +266,15 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  ItemNullContext : public ItemContext {
+  public:
+    ItemNullContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *BACHNULL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  ItemFuncallContext : public ItemContext {
   public:
     ItemFuncallContext(ItemContext *ctx);
@@ -280,6 +289,15 @@ public:
     ItemUpitchContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *UPITCH();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemNilContext : public ItemContext {
+  public:
+    ItemNilContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *BACHNIL();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -521,6 +539,8 @@ public:
     antlr4::tree::TerminalNode *ABITXOR();
     antlr4::tree::TerminalNode *ABITOR();
     antlr4::tree::TerminalNode *ALSHIFT();
+    antlr4::tree::TerminalNode *ACONCAT();
+    antlr4::tree::TerminalNode *ARCONCAT();
     antlr4::tree::TerminalNode *ARSHIFT();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -551,6 +571,9 @@ public:
     antlr4::tree::TerminalNode *ABITOR();
     antlr4::tree::TerminalNode *ALSHIFT();
     antlr4::tree::TerminalNode *ARSHIFT();
+    antlr4::tree::TerminalNode *ACONCAT();
+    antlr4::tree::TerminalNode *ARCONCAT();
+    antlr4::tree::TerminalNode *ANTH();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
