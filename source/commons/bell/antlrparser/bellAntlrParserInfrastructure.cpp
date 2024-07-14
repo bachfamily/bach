@@ -391,6 +391,10 @@ public:
         return visitNot<bellParser::ExprNotContext>(context);
     }
     
+    antlrcpp::Any visitEexprSimple(bellParser::EexprSimpleContext *context) override {
+        return visit(context->listEnd());
+    }
+    
     antlrcpp::Any visitEexprLvalue(bellParser::EexprLvalueContext *context) override {
         return visitLvalue<bellParser::EexprLvalueContext>(context);
     }

@@ -91,6 +91,27 @@ lvalue: var lvalueSpecs?
 fakeLvalue: item lvalueSpecs
 ;
 
+eexpr: listEnd #eexprSimple
+| {ending}? lvalue #eexprLvalue
+| {ending}? fakeLvalue #eexprFakeLvalue
+| expr op=POW listEnd #eexprBinary 
+| (UPLUS|UMINUS)+ eexpr #eexprUPlusMinus
+| expr op=(TIMES|DIV|DIVDIV) listEnd #eexprBinary
+| expr op=(PLUS|MINUS) listEnd #eexprBinary
+| expr op=(LSHIFT|RSHIFT) listEnd #eexprBinary
+| expr op=RANGE listEnd #eexprBinary
+| expr op=REPEAT listEnd #eexprBinary
+| expr op=(EQUAL|NEQ) listEnd #eexprBinary
+| expr op=(LT|GT|LEQ|GEQ) listEnd #eexprBinary
+| expr op=BITAND listEnd #eexprBinary
+| expr op=BITXOR listEnd #eexprBinary
+| expr op=BITOR listEnd #eexprBinary
+| expr op=(LOGAND|LOGANDEXT) listEnd #eexprBinary
+| expr op=LOGXOR listEnd #eexprBinary
+| expr op=(LOGOR|LOGOREXT) listEnd #eexprBinary
+| op=(LOGNOT|BITNOT) eexpr #eexprNot
+;
+
 expr: (item|var) #exprSimple
 | {!ending}? lvalue #exprLvalue
 | {!ending}? fakeLvalue #exprFakeLvalue
@@ -113,26 +134,6 @@ expr: (item|var) #exprSimple
 | op=(LOGNOT|BITNOT) expr #exprNot
 ;
 
-eexpr: {ending}? lvalue #eexprLvalue
-| {ending}? fakeLvalue #eexprFakeLvalue
-| expr op=POW listEnd #eexprBinary 
-| (UPLUS|UMINUS)+ eexpr #eexprUPlusMinus
-| expr op=(TIMES|DIV|DIVDIV) listEnd #eexprBinary
-| expr op=(PLUS|MINUS) listEnd #eexprBinary
-| expr op=(LSHIFT|RSHIFT) listEnd #eexprBinary
-| expr op=RANGE listEnd #eexprBinary
-| expr op=REPEAT listEnd #eexprBinary
-| expr op=(EQUAL|NEQ) listEnd #eexprBinary
-| expr op=(LT|GT|LEQ|GEQ) listEnd #eexprBinary
-| expr op=BITAND listEnd #eexprBinary
-| expr op=BITXOR listEnd #eexprBinary
-| expr op=BITOR listEnd #eexprBinary
-| expr op=(LOGAND|LOGANDEXT) listEnd #eexprBinary
-| expr op=LOGXOR listEnd #eexprBinary
-| expr op=(LOGOR|LOGOREXT) listEnd #eexprBinary
-| op=(LOGNOT|BITNOT) eexpr #eexprNot
-;
-
 assignment: lvalue ASSIGN list #trueAssignment
 | fakeLvalue ASSIGN list #fakeAssignment
 ;
@@ -148,7 +149,6 @@ listEnd: conditional
 
 list: expr+
 | expr* eexpr
-| expr* listEnd
 ;
 
 

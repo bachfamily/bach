@@ -103,6 +103,30 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitEexprSimple(bellParser::EexprSimpleContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEexprLvalue(bellParser::EexprLvalueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEexprFakeLvalue(bellParser::EexprFakeLvalueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEexprBinary(bellParser::EexprBinaryContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEexprUPlusMinus(bellParser::EexprUPlusMinusContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitEexprNot(bellParser::EexprNotContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -124,26 +148,6 @@ public:
   }
 
   virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEexprLvalue(bellParser::EexprLvalueContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEexprFakeLvalue(bellParser::EexprFakeLvalueContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEexprBinary(bellParser::EexprBinaryContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEexprUPlusMinus(bellParser::EexprUPlusMinusContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitEexprNot(bellParser::EexprNotContext *ctx) override {
     return visitChildren(ctx);
   }
 
