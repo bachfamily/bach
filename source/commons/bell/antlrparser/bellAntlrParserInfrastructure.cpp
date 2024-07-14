@@ -225,8 +225,8 @@ public:
         visits++;
         std::string name = ctx->GLOBALVAR()->getText();
         t_symbol *s = gensym(name.c_str());
-        astVar* v = new astLocalVar(s, params->owner);
-        addVariableToScope(params, s);
+        astGlobalVar *v = new astGlobalVar(params->gvt, s, params->owner);
+        params->globalVariables->insert(v->getVar());
         return static_cast<astNode*>(v);
     }
     
