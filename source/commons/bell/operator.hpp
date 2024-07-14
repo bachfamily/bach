@@ -144,6 +144,13 @@ public:
         BASE(lNode, rNode, lvalueStepList, owner),
         llllIterator<2>((method) FN) { };
     
+    astRichAccessOperator(typename BASE::firstType *lNode,
+                             astNode *rNode,
+                             lvalueSpecs *lvalueSpecs,
+                             t_codableobj *owner) :
+        BASE(lNode, rNode, lvalueSpecs, owner),
+        llllIterator<2>((method) FN) { };
+    
     ~astRichAccessOperator() { };
     
 private:

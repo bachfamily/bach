@@ -15,13 +15,17 @@ public:
     UINT = 1, UFLOAT = 2, UPITCH = 3, IF = 4, THEN = 5, ELSE = 6, WHILE = 7, 
     FOR = 8, DO = 9, COLLECT = 10, FUNCTION = 11, INLET = 12, GLOBALVAR = 13, 
     PATCHERVAR = 14, LOCALVAR = 15, NAMEDPARAM = 16, PUSH = 17, POP = 18, 
-    CLOSED = 19, NTH = 20, PICK = 21, KEY = 22, NULLIFY = 23, ASSIGN = 24, 
-    WHITESPACE = 25, NEWATOM = 26, POW = 27, TIMES = 28, DIVDIV = 29, DIV = 30, 
-    PLUS = 31, UPLUS = 32, MINUS = 33, UMINUS = 34, REM = 35, EQUAL = 36, 
-    NEQ = 37, LOGNOT = 38, BITNOT = 39, LT = 40, GT = 41, LEQ = 42, GEQ = 43, 
-    BITAND = 44, BITXOR = 45, BITOR = 46, LOGAND = 47, LOGANDEXT = 48, LOGXOR = 49, 
-    LOGOR = 50, LOGOREXT = 51, LSHIFT = 52, RSHIFT = 53, RANGE = 54, REPEAT = 55, 
-    OPEN = 56, PARAMS = 57, ANYTHING = 58
+    CLOSED = 19, NTH = 20, PICK = 21, KEY = 22, ANTH = 23, APICK = 24, AKEY = 25, 
+    NULLIFY = 26, ASSIGN = 27, WHITESPACE = 28, NEWATOM = 29, POW = 30, 
+    APOW = 31, TIMES = 32, ATIMES = 33, DIVDIV = 34, ADIVDIV = 35, DIV = 36, 
+    ADIV = 37, REM = 38, AREM = 39, PLUS = 40, APLUS = 41, UPLUS = 42, MINUS = 43, 
+    AMINUS = 44, UMINUS = 45, EQUAL = 46, NEQ = 47, LOGNOT = 48, BITNOT = 49, 
+    LT = 50, GT = 51, LEQ = 52, GEQ = 53, BITAND = 54, ABITAND = 55, BITXOR = 56, 
+    ABITXOR = 57, BITOR = 58, ABITOR = 59, LOGAND = 60, LOGANDEXT = 61, 
+    ALOGAND = 62, ALOGANDEXT = 63, LOGXOR = 64, ALOGXOR = 65, LOGOR = 66, 
+    ALOGOR = 67, LOGOREXT = 68, ALOGOREXT = 69, LSHIFT = 70, ALSHIFT = 71, 
+    RSHIFT = 72, ARSHIFT = 73, RANGE = 74, REPEAT = 75, AREPEAT = 76, OPEN = 77, 
+    PARAMS = 78, ANYTHING = 79
   };
 
   enum {
@@ -497,9 +501,27 @@ public:
   public:
     FakeAssignmentContext(AssignmentContext *ctx);
 
+    antlr4::Token *op = nullptr;
     FakeLvalueContext *fakeLvalue();
-    antlr4::tree::TerminalNode *ASSIGN();
     ListContext *list();
+    antlr4::tree::TerminalNode *ASSIGN();
+    antlr4::tree::TerminalNode *APOW();
+    antlr4::tree::TerminalNode *ATIMES();
+    antlr4::tree::TerminalNode *ADIVDIV();
+    antlr4::tree::TerminalNode *ADIV();
+    antlr4::tree::TerminalNode *AREM();
+    antlr4::tree::TerminalNode *APLUS();
+    antlr4::tree::TerminalNode *AMINUS();
+    antlr4::tree::TerminalNode *ALOGAND();
+    antlr4::tree::TerminalNode *ALOGANDEXT();
+    antlr4::tree::TerminalNode *ALOGXOR();
+    antlr4::tree::TerminalNode *ALOGOR();
+    antlr4::tree::TerminalNode *ALOGOREXT();
+    antlr4::tree::TerminalNode *ABITAND();
+    antlr4::tree::TerminalNode *ABITXOR();
+    antlr4::tree::TerminalNode *ABITOR();
+    antlr4::tree::TerminalNode *ALSHIFT();
+    antlr4::tree::TerminalNode *ARSHIFT();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -508,9 +530,27 @@ public:
   public:
     TrueAssignmentContext(AssignmentContext *ctx);
 
+    antlr4::Token *op = nullptr;
     LvalueContext *lvalue();
-    antlr4::tree::TerminalNode *ASSIGN();
     ListContext *list();
+    antlr4::tree::TerminalNode *ASSIGN();
+    antlr4::tree::TerminalNode *APOW();
+    antlr4::tree::TerminalNode *ATIMES();
+    antlr4::tree::TerminalNode *ADIVDIV();
+    antlr4::tree::TerminalNode *ADIV();
+    antlr4::tree::TerminalNode *AREM();
+    antlr4::tree::TerminalNode *APLUS();
+    antlr4::tree::TerminalNode *AMINUS();
+    antlr4::tree::TerminalNode *ALOGAND();
+    antlr4::tree::TerminalNode *ALOGANDEXT();
+    antlr4::tree::TerminalNode *ALOGXOR();
+    antlr4::tree::TerminalNode *ALOGOR();
+    antlr4::tree::TerminalNode *ALOGOREXT();
+    antlr4::tree::TerminalNode *ABITAND();
+    antlr4::tree::TerminalNode *ABITXOR();
+    antlr4::tree::TerminalNode *ABITOR();
+    antlr4::tree::TerminalNode *ALSHIFT();
+    antlr4::tree::TerminalNode *ARSHIFT();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

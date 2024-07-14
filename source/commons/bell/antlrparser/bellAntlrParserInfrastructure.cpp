@@ -370,10 +370,52 @@ public:
         lvalue *lv = safeAnyCast<lvalue*>(visit(context->lvalue()));
         astNode *rv = safeAnyCast<astNode*>(visit(context->list()));
         if (auto s = lv->getSpecs(); s == nullptr) {
-            astNode* n = new astAssign(lv->getVar(), rv, params->owner);
+            astNode *n;
+            switch(context->op->getType()) {
+                case bellParser::ASSIGN: n = new astAssign(lv->getVar(), rv, params->owner); break;
+                case bellParser::APOW: n = new astOperatorAPow(lv->getVar(), rv, params->owner); break;
+                case bellParser::ATIMES: n = new astOperatorATimes(lv->getVar(), rv, params->owner); break;
+                case bellParser::ADIVDIV: n = new astOperatorADivdiv(lv->getVar(), rv, params->owner); break;
+                case bellParser::ADIV: n = new astOperatorADiv(lv->getVar(), rv, params->owner); break;
+                case bellParser::AREM: n = new astOperatorARemainder(lv->getVar(), rv, params->owner); break;
+                case bellParser::APLUS: n = new astOperatorAPlus(lv->getVar(), rv, params->owner); break;
+                case bellParser::AMINUS: n = new astOperatorAMinus(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGAND: n = new astSCAAnd(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGANDEXT: n = new astSCAAndExt(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGXOR: n = new astLogAXor(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGOR: n = new astSCAOr(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALOGOREXT: n = new astSCAOrExt(lv->getVar(), rv, params->owner); break;
+                case bellParser::ABITAND: n = new astOperatorABitAnd(lv->getVar(), rv, params->owner); break;
+                case bellParser::ABITXOR: n = new astOperatorABitXor(lv->getVar(), rv, params->owner); break;
+                case bellParser::ABITOR: n = new astOperatorABitOr(lv->getVar(), rv, params->owner); break;
+                case bellParser::ALSHIFT: n = new astOperatorALShift(lv->getVar(), rv, params->owner); break;
+                case bellParser::ARSHIFT: n = new astOperatorARShift(lv->getVar(), rv, params->owner); break;
+                case bellParser::ANTH: n = new astNthAssignOp(lv->getVar(), rv, params->owner); break;
+                default: n = nullptr; break;
+            }
             return n;
         } else {
-            astNode* n = new astRichAssignment<E_RA_STANDARD>(lv->getVar(), rv, s, params->owner);
+            astNode *n;
+            switch(context->op->getType()) {
+                case bellParser::ASSIGN: n = new astRichAssignment<E_RA_STANDARD>(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ATIMES: n = new astOperatorRATimes(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::APOW: n = new astOperatorRAPow(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ADIVDIV: n = new astOperatorRADivdiv(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ADIV: n = new astOperatorRADiv(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::AREM: n = new astOperatorRARemainder(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::APLUS: n = new astOperatorRAPlus(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::AMINUS: n = new astOperatorRAMinus(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGAND: n = new astLogRASCAnd(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGANDEXT: n = new astLogRASCAndExt(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGXOR: n = new astLogRAXor(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGOR: n = new astLogRASCAnd(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALOGOREXT: n = new astLogRASCOrExt(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ABITAND: n = new astOperatorRABitAnd(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ABITXOR: n = new astOperatorRABitXor(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ABITOR: n = new astOperatorRABitOr(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ALSHIFT: n = new astOperatorRALShift(lv->getVar(), rv, s, params->owner); break;
+                case bellParser::ARSHIFT: n = new astOperatorRARShift(lv->getVar(), rv, s, params->owner); break;
+            }
             return n;
         }
     }
@@ -381,7 +423,27 @@ public:
     antlrcpp::Any visitFakeAssignment(bellParser::FakeAssignmentContext *context) override {
         fakeLvalue *lv = safeAnyCast<fakeLvalue*>(visit(context->fakeLvalue()));
         astNode *rv = safeAnyCast<astNode*>(visit(context->list()));
-        astNode* n = new astRichEdit<E_RA_STANDARD>(lv->getNode(), rv, lv->getSpecs(), params->owner);
+        auto s = lv->getSpecs();
+        astNode* n;
+        switch(context->op->getType()) {
+            case bellParser::ASSIGN: n = new astRichEdit<E_RA_STANDARD>(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ATIMES: n = new astOperatorRETimes(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::APOW: n = new astOperatorREPow(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ADIVDIV: n = new astOperatorREDivdiv(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ADIV: n = new astOperatorREDiv(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::AREM: n = new astOperatorRERemainder(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::APLUS: n = new astOperatorREPlus(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::AMINUS: n = new astOperatorREMinus(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGAND: n = new astLogRESCAnd(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGANDEXT: n = new astLogRESCAndExt(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGXOR: n = new astLogREXor(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGOR: n = new astLogRESCAnd(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALOGOREXT: n = new astLogRESCOrExt(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ABITAND: n = new astOperatorREBitAnd(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ABITXOR: n = new astOperatorREBitXor(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ABITOR: n = new astOperatorREBitOr(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ALSHIFT: n = new astOperatorRELShift(lv->getNode(), rv, s, params->owner); break;
+            case bellParser::ARSHIFT: n = new astOperatorRERShift(lv->getNode(), rv, s, params->owner); break;        }
         return n;
     }
     

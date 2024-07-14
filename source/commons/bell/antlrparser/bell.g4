@@ -14,7 +14,6 @@ grammar bell;
 
     bool followedBySpace() {
         int c = _input->LA(2);
-        post("%c", c);
         switch (c) {
             case ' ':
             case '\x01':
@@ -113,8 +112,8 @@ expr: (item|var|listEnd) #exprSimple
 | op=(LOGNOT|BITNOT) (expr|listEnd) #exprNot
 ;
 
-assignment: lvalue ASSIGN list #trueAssignment
-| fakeLvalue ASSIGN list #fakeAssignment
+assignment: lvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV|ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT|ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR|ABITOR|ALSHIFT|ARSHIFT) list #trueAssignment
+| fakeLvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV|ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT|ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR|ABITOR|ALSHIFT|ARSHIFT) list #fakeAssignment
 ;
 
 conditional: IF sequence THEN list #ifthen
@@ -179,6 +178,9 @@ CLOSED: ')' { noParams = false; noUnary = true; };
 NTH: ':' { noParams = true; noUnary = false; };
 PICK: '::' { noParams = true; noUnary = false; };
 KEY: '.' { noParams = true; noUnary = false; };
+ANTH: ':=' { noParams = true; noUnary = false; };
+APICK: '::=' { noParams = true; noUnary = false; };
+AKEY: '.=' { noParams = true; noUnary = false; };
 
 NULLIFY: ';' { noParams = true; noUnary = false; };
 
@@ -188,19 +190,26 @@ WHITESPACE: [ \t\r\n] { noParams = true; noUnary = false; } -> channel(HIDDEN);
 NEWATOM: [\u0001] { noParams = true; noUnary = false; (*codeac)++; } -> channel(HIDDEN);
 
 POW: '**' { noParams = true; noUnary = false; };
+APOW: '**=' { noParams = true; noUnary = false; };
 
 TIMES: '*' { noParams = true; noUnary = false; };
+ATIMES: '*=' { noParams = true; noUnary = false; };
 
 DIVDIV: '//' { noParams = true; noUnary = false; };
+ADIVDIV: '//=' { noParams = true; noUnary = false; };
 DIV: '/' { noParams = true; noUnary = false; };
+ADIV: '/=' { noParams = true; noUnary = false; };
+
+REM: '%' { noParams = true; noUnary = false; };
+AREM: '%' { noParams = true; noUnary = false; };
 
 PLUS: { notUnary() }? '+' { noParams = true; noUnary = false; };
+APLUS: '+=' { noParams = true; noUnary = false; };
 UPLUS: '+' { noParams = true; noUnary = false; };
 
 MINUS: { notUnary() }? '-' { noParams = true; noUnary = false; };
+AMINUS: '-=' { noParams = true; noUnary = false; };
 UMINUS: '-' { noParams = true; noUnary = false; };
-
-REM: '%' { noParams = true; noUnary = false; };
 
 EQUAL: '==' { noParams = true; noUnary = false; };
 
@@ -219,28 +228,38 @@ LEQ: '<=' { noParams = true; noUnary = false; };
 GEQ: '>=' { noParams = true; noUnary = false; };
 
 BITAND: '&' { noParams = true; noUnary = false; };
+ABITAND: '&=' { noParams = true; noUnary = false; };
 
 BITXOR: '^' { noParams = true; noUnary = false; };
+ABITXOR: '^=' { noParams = true; noUnary = false; };
 
 BITOR: '|' { noParams = true; noUnary = false; };
+ABITOR: '|=' { noParams = true; noUnary = false; };
 
 LOGAND: '&&' { noParams = true; noUnary = false; };
-
 LOGANDEXT: '&&&' { noParams = true; noUnary = false; };
+ALOGAND: '&&=' { noParams = true; noUnary = false; };
+ALOGANDEXT: '&&&=' { noParams = true; noUnary = false; };
 
 LOGXOR: '^^' { noParams = true; noUnary = false; };
+ALOGXOR: '^^=' { noParams = true; noUnary = false; };
 
 LOGOR: '||' { noParams = true; noUnary = false; };
+ALOGOR: '||=' { noParams = true; noUnary = false; };
 
 LOGOREXT: '|||' { noParams = true; noUnary = false; };
+ALOGOREXT: '|||=' { noParams = true; noUnary = false; };
 
 LSHIFT: '<<' { noParams = true; noUnary = false; };
+ALSHIFT: '<<=' { noParams = true; noUnary = false; };
 
 RSHIFT: '>>' { noParams = true; noUnary = false; };
+ARSHIFT: '>>=' { noParams = true; noUnary = false; };
 
 RANGE: '...' { noParams = true; noUnary = false; };
 
 REPEAT: ':*' { noParams = true; noUnary = false; };
+AREPEAT: ':*=' { noParams = true; noUnary = false; };
 
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };

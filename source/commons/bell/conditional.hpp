@@ -139,6 +139,11 @@ public:
                        lvalueStepList *lvalueStepList,
                          t_codableobj *owner) : BASE(lNode, rNode, lvalueStepList, owner) { }
     
+    astSCLogRichAccessOp(typename BASE::firstType *lNode,
+                       astNode *rNode,
+                       lvalueSpecs *lvalueSpecs,
+                         t_codableobj *owner) : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astSCLogRichAccessOp() { }
     
 private:
@@ -166,6 +171,8 @@ typedef astSCLogRichAccessOp<astRichAssignment<E_RA_SHORTCIRCUIT>, astSCOr_core,
 typedef astSCLogRichAccessOp<astRichAssignment<E_RA_SHORTCIRCUIT>, astSCAnd_core, astSCAnd_hatom> astLogRASCAnd;
 
 
+
+
 typedef astSCLogRichAccessOp<astRichEdit<E_RA_SHORTCIRCUIT>, astLogXor_core, astLogXor_hatom> astLogREXor;
 typedef astSCLogRichAccessOp<astRichEdit<E_RA_SHORTCIRCUIT>, astSCOr_core, astSCOr_hatom> astLogRESCOr;
 typedef astSCLogRichAccessOp<astRichEdit<E_RA_SHORTCIRCUIT>, astSCAnd_core, astSCAnd_hatom> astLogRESCAnd;
@@ -179,6 +186,11 @@ public:
                          lvalueStepList *lvalueStepList,
                          t_codableobj *owner)  : BASE(lNode, rNode, lvalueStepList, owner) { }
 
+    astSCRichAccessOrExt(typename BASE::firstType *lNode,
+                         astNode *rNode,
+                         lvalueSpecs *lvalueSpecs,
+                         t_codableobj *owner)  : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astSCRichAccessOrExt() { };
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
@@ -227,6 +239,11 @@ public:
                          lvalueStepList *lvalueStepList,
                          t_codableobj *owner)  : BASE(lNode, rNode, lvalueStepList, owner) { }
     
+    astSCRichAccessAndExt(typename BASE::firstType *lNode,
+                         astNode *rNode,
+                         lvalueSpecs *lvalueSpecs,
+                         t_codableobj *owner)  : BASE(lNode, rNode, lvalueSpecs, owner) { }
+    
     ~astSCRichAccessAndExt() { };
 private:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
@@ -268,7 +285,11 @@ private:
 };
 
 
+typedef astSCRichAccessAndExt<astRichAssignment<E_RA_SHORTCIRCUIT>> astLogRASCAndExt;
+typedef astSCRichAccessAndExt<astRichEdit<E_RA_SHORTCIRCUIT>> astLogRESCAndExt;
 
+typedef astSCRichAccessOrExt<astRichAssignment<E_RA_SHORTCIRCUIT>> astLogRASCOrExt;
+typedef astSCRichAccessOrExt<astRichEdit<E_RA_SHORTCIRCUIT>> astLogRESCOrExt;
 
 
 //////////////////
