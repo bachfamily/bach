@@ -177,10 +177,32 @@ public:
     }
     
     antlrcpp::Any visitItemInlet(bellParser::ItemInletContext *context) override {
-        int i = stoi(context->INLET()->getText().erase(0,2));
+        auto txt = context->INLET()->getText();
+        int i = stoi(txt.erase(0, txt[0] == '\\' ? 3 : 2));
         if (params->dataInlets && params->fnDepth == 0 && i > *params->dataInlets)
             *params->dataInlets = i;
-        astNode* r = new astInlet(i, params->owner);
+        astNode* r;
+        switch(context->type->getType()) {
+            case bellParser::INLET: r = new astInlet(i, params->owner); break;
+            case bellParser::INTINLET: r = new astConvInlet<hatom_fn_int>(i, params->owner); break;
+            case bellParser::FLOATINLET: r = new astConvInlet<hatom_fn_float>(i, params->owner); break;
+            case bellParser::RATINLET: r = new astConvInlet<hatom_fn_rat>(i, params->owner); break;
+            case bellParser::PITCHINLET: r = new astConvInlet<hatom_fn_pitch>(i, params->owner); break;
+            default: r = nullptr;
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitItemDirInlet(bellParser::ItemDirInletContext *context) override {
+        auto txt = context->DIRINLET()->getText();
+        long i = stol(txt.erase(0, txt[0] == '\\' ? 4 : 3));
+        if (params->directInlets && params->fnDepth == 0 && i > *params->directInlets)
+            *params->directInlets = i;
+        auto fnConst = new astConst((*(params->ofTable))["directin"], params->owner);
+        auto numConst = new astConst(i, params->owner);
+        auto v = new std::vector<astNode*>;
+        v->push_back(numConst);
+        astNode *r = new astFunctionCall(fnConst, v, nullptr, params->owner);
         return r;
     }
     
@@ -214,7 +236,7 @@ public:
     
     antlrcpp::Any visitVarLocal(bellParser::VarLocalContext *ctx) override {
         std::string name = ctx->LOCALVAR()->getText();
-        t_symbol *s = gensym(name.erase(0, 1).c_str());
+        t_symbol *s = gensym(name.erase(0, name[0] == '\\' ? 2 : 1).c_str());
         astVar* v = new astLocalVar(s, params->owner);
         addVariableToScope(params, s);
         return static_cast<astNode*>(v);
@@ -222,7 +244,7 @@ public:
     
     antlrcpp::Any visitVarPatcher(bellParser::VarPatcherContext *ctx) override {
         std::string name = ctx->PATCHERVAR()->getText();
-        t_symbol *s = gensym(name.erase(0, 1).c_str());
+        t_symbol *s = gensym(name.erase(0, name[0] == '\\' ? 2 : 1).c_str());
         astVar* v = new astLocalVar(s, params->owner);
         addVariableToScope(params, s);
         return static_cast<astNode*>(v);
@@ -458,6 +480,40 @@ public:
         return n;
     }
     
+    antlrcpp::Any visitOutletAssignment(bellParser::OutletAssignmentContext *ctx) override {
+        auto l = safeAnyCast<astNode*>(visit(ctx->list()));
+        if (!l)
+            return nullptr;
+        auto txt = ctx->OUTLET()->getText();
+        long i = stol(txt.erase(0, txt[0] == '\\' ? 3 : 2));
+        if (params->dataOutlets && i > *(params->dataOutlets))
+            *(params->dataOutlets) = i;
+        auto fnConst = new astConst((*(params->bifs))["outlet"], params->owner);
+        auto numConst = new astConst(i, params->owner);
+        auto v = new std::vector<astNode*>;
+        v->push_back(numConst);
+        v->push_back(l);
+        astNode *r = new astFunctionCall(fnConst, v, nullptr, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitDirOutletAssignment(bellParser::DirOutletAssignmentContext *ctx) override {
+        auto l = safeAnyCast<astNode*>(visit(ctx->list()));
+        if (!l)
+            return nullptr;
+        auto txt = ctx->DIROUTLET()->getText();
+        long i = stol(txt.erase(0, txt[0] == '\\' ? 4 : 3));
+        if (params->directOutlets && i > *(params->directOutlets))
+            *(params->directOutlets) = i;
+        auto fnConst = new astConst((*(params->ofTable))["directout"], params->owner);
+        auto numConst = new astConst(i, params->owner);
+        auto v = new std::vector<astNode*>;
+        v->push_back(numConst);
+        v->push_back(l);
+        astNode *r = new astFunctionCall(fnConst, v, nullptr, params->owner);
+        return r;
+    }
+
     antlrcpp::Any visitIfthen(bellParser::IfthenContext *ctx) override {
         auto i = safeAnyCast<astNode*>(visit(ctx->sequence()));
         auto t = safeAnyCast<astNode*>(visit(ctx->list()));

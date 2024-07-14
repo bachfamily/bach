@@ -14,18 +14,20 @@ public:
   enum {
     UINT = 1, UFLOAT = 2, UPITCH = 3, BACHNULL = 4, BACHNIL = 5, IF = 6, 
     THEN = 7, ELSE = 8, WHILE = 9, FOR = 10, DO = 11, COLLECT = 12, FUNCTION = 13, 
-    INLET = 14, GLOBALVAR = 15, PATCHERVAR = 16, LOCALVAR = 17, NAMEDPARAM = 18, 
-    PUSH = 19, POP = 20, CLOSED = 21, NTH = 22, PICK = 23, KEY = 24, ANTH = 25, 
-    APICK = 26, NULLIFY = 27, ASSIGN = 28, WHITESPACE = 29, NEWATOM = 30, 
-    POW = 31, APOW = 32, TIMES = 33, ATIMES = 34, DIVDIV = 35, ADIVDIV = 36, 
-    DIV = 37, ADIV = 38, REM = 39, AREM = 40, PLUS = 41, APLUS = 42, UPLUS = 43, 
-    MINUS = 44, AMINUS = 45, UMINUS = 46, EQUAL = 47, NEQ = 48, LOGNOT = 49, 
-    BITNOT = 50, LT = 51, GT = 52, LEQ = 53, GEQ = 54, BITAND = 55, ABITAND = 56, 
-    BITXOR = 57, ABITXOR = 58, BITOR = 59, ABITOR = 60, LOGAND = 61, LOGANDEXT = 62, 
-    ALOGAND = 63, ALOGANDEXT = 64, LOGXOR = 65, ALOGXOR = 66, LOGOR = 67, 
-    ALOGOR = 68, LOGOREXT = 69, ALOGOREXT = 70, LSHIFT = 71, ALSHIFT = 72, 
-    RSHIFT = 73, ARSHIFT = 74, RANGE = 75, REPEAT = 76, AREPEAT = 77, AAPPLY = 78, 
-    ACONCAT = 79, ARCONCAT = 80, OPEN = 81, PARAMS = 82, ANYTHING = 83
+    INLET = 14, INTINLET = 15, RATINLET = 16, FLOATINLET = 17, PITCHINLET = 18, 
+    OUTLET = 19, DIRINLET = 20, DIROUTLET = 21, GLOBALVAR = 22, PATCHERVAR = 23, 
+    LOCALVAR = 24, NAMEDPARAM = 25, PUSH = 26, POP = 27, CLOSED = 28, NTH = 29, 
+    PICK = 30, KEY = 31, ANTH = 32, APICK = 33, NULLIFY = 34, ASSIGN = 35, 
+    WHITESPACE = 36, NEWATOM = 37, POW = 38, APOW = 39, TIMES = 40, ATIMES = 41, 
+    DIVDIV = 42, ADIVDIV = 43, DIV = 44, ADIV = 45, REM = 46, AREM = 47, 
+    PLUS = 48, APLUS = 49, UPLUS = 50, MINUS = 51, AMINUS = 52, UMINUS = 53, 
+    EQUAL = 54, NEQ = 55, LOGNOT = 56, BITNOT = 57, LT = 58, GT = 59, LEQ = 60, 
+    GEQ = 61, BITAND = 62, ABITAND = 63, BITXOR = 64, ABITXOR = 65, BITOR = 66, 
+    ABITOR = 67, LOGAND = 68, LOGANDEXT = 69, ALOGAND = 70, ALOGANDEXT = 71, 
+    LOGXOR = 72, ALOGXOR = 73, LOGOR = 74, ALOGOR = 75, LOGOREXT = 76, ALOGOREXT = 77, 
+    LSHIFT = 78, ALSHIFT = 79, RSHIFT = 80, ARSHIFT = 81, RANGE = 82, REPEAT = 83, 
+    AREPEAT = 84, AAPPLY = 85, ACONCAT = 86, ARCONCAT = 87, OPEN = 88, PARAMS = 89, 
+    ANYTHING = 90
   };
 
   enum {
@@ -261,7 +263,21 @@ public:
   public:
     ItemInletContext(ItemContext *ctx);
 
+    antlr4::Token *type = nullptr;
     antlr4::tree::TerminalNode *INLET();
+    antlr4::tree::TerminalNode *INTINLET();
+    antlr4::tree::TerminalNode *FLOATINLET();
+    antlr4::tree::TerminalNode *RATINLET();
+    antlr4::tree::TerminalNode *PITCHINLET();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemDirInletContext : public ItemContext {
+  public:
+    ItemDirInletContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *DIRINLET();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -546,6 +562,17 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  DirOutletAssignmentContext : public AssignmentContext {
+  public:
+    DirOutletAssignmentContext(AssignmentContext *ctx);
+
+    antlr4::tree::TerminalNode *DIROUTLET();
+    antlr4::tree::TerminalNode *ASSIGN();
+    ListContext *list();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  TrueAssignmentContext : public AssignmentContext {
   public:
     TrueAssignmentContext(AssignmentContext *ctx);
@@ -574,6 +601,17 @@ public:
     antlr4::tree::TerminalNode *ACONCAT();
     antlr4::tree::TerminalNode *ARCONCAT();
     antlr4::tree::TerminalNode *ANTH();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  OutletAssignmentContext : public AssignmentContext {
+  public:
+    OutletAssignmentContext(AssignmentContext *ctx);
+
+    antlr4::tree::TerminalNode *OUTLET();
+    antlr4::tree::TerminalNode *ASSIGN();
+    ListContext *list();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

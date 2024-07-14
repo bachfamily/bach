@@ -67,6 +67,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitItemDirInlet(bellParser::ItemDirInletContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitItemNull(bellParser::ItemNullContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -140,6 +144,14 @@ public:
   }
 
   virtual std::any visitFakeAssignment(bellParser::FakeAssignmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitOutletAssignment(bellParser::OutletAssignmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitDirOutletAssignment(bellParser::DirOutletAssignmentContext *ctx) override {
     return visitChildren(ctx);
   }
 

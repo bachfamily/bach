@@ -45,6 +45,8 @@ public:
 
     virtual std::any visitItemInlet(bellParser::ItemInletContext *context) = 0;
 
+    virtual std::any visitItemDirInlet(bellParser::ItemDirInletContext *context) = 0;
+
     virtual std::any visitItemNull(bellParser::ItemNullContext *context) = 0;
 
     virtual std::any visitItemNil(bellParser::ItemNilContext *context) = 0;
@@ -82,6 +84,10 @@ public:
     virtual std::any visitTrueAssignment(bellParser::TrueAssignmentContext *context) = 0;
 
     virtual std::any visitFakeAssignment(bellParser::FakeAssignmentContext *context) = 0;
+
+    virtual std::any visitOutletAssignment(bellParser::OutletAssignmentContext *context) = 0;
+
+    virtual std::any visitDirOutletAssignment(bellParser::DirOutletAssignmentContext *context) = 0;
 
     virtual std::any visitIfthen(bellParser::IfthenContext *context) = 0;
 

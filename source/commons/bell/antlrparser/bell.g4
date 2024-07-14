@@ -69,7 +69,8 @@ funcall: FUNCTION PARAMS sequence CLOSED
 item: UINT #itemUint
 | UFLOAT #itemUfloat
 | UPITCH #itemUpitch
-| INLET #itemInlet
+| type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
+| DIRINLET #itemDirInlet
 | BACHNULL #itemNull
 | BACHNIL #itemNil
 | OPEN sequence CLOSED #itemSequence
@@ -114,8 +115,17 @@ expr: (item|var|listEnd) #exprSimple
 | op=(LOGNOT|BITNOT) (expr|listEnd) #exprNot
 ;
 
-assignment: lvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV|ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT|ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR|ABITOR|ALSHIFT|ARSHIFT|ACONCAT|ARCONCAT|ANTH) list #trueAssignment
-| fakeLvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV|ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT|ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR|ABITOR|ALSHIFT|ACONCAT|ARCONCAT|ARSHIFT) list #fakeAssignment
+assignment: lvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV
+    |ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT
+    |ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR
+    |ABITOR|ALSHIFT|ARSHIFT|ACONCAT|ARCONCAT|ANTH) list #trueAssignment
+| fakeLvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV
+    |ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT
+    |ALOGXOR|ALOGOR|ALOGOREXT|ABITAND
+    |ABITXOR|ABITOR|ALSHIFT|ACONCAT
+    |ARCONCAT|ARSHIFT) list #fakeAssignment
+| OUTLET ASSIGN list #outletAssignment
+| DIROUTLET ASSIGN list #dirOutletAssignment
 ;
 
 conditional: IF sequence THEN list #ifthen
@@ -164,12 +174,22 @@ COLLECT: 'collect' { noParams = true; noUnary = false; };
 
 FUNCTION: 'sin' | 'cos' | 'sqrt' { noParams = noUnary = false; };
 
-INLET: '$'[lx][0-9]+ { noParams = false; noUnary = true; };
+INLET: '\\'? '$'[lx][0-9]+ { noParams = false; noUnary = true; };
+INTINLET: '\\'? '$i'[0-9]+ { noParams = false; noUnary = true; };
+RATINLET: '\\'? '$r'[0-9]+ { noParams = false; noUnary = true; };
+FLOATINLET: '\\'? '$f'[0-9]+ { noParams = false; noUnary = true; };
+PITCHINLET: '\\'? '$p'[0-9]+ { noParams = false; noUnary = true; };
+
+OUTLET: '\\'? '$o'[0-9]+ { noParams = false; noUnary = true; };
+
+DIRINLET: '\\'? '$dx'[0-9]+ { noParams = false; noUnary = true; };
+DIROUTLET: '\\'? '$do'[0-9]+ { noParams = false; noUnary = true; };
+
 
 GLOBALVAR: ID { noParams = false; noUnary = true; };
 PATCHERVAR: '#' ID { noParams = false; noUnary = true; };
-LOCALVAR: '$' ID { noParams = false; noUnary = true; };
-NAMEDPARAM: '@' ID { noParams = true; noUnary = true; };
+LOCALVAR: '\\'? '$' ID { noParams = false; noUnary = true; };
+NAMEDPARAM: '\\'? '@' ID { noParams = true; noUnary = true; };
 
 fragment ID: [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?;
 
