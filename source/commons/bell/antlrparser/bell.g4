@@ -158,6 +158,10 @@ fragment NOTENAME: ([a-g]|[A-G]);
 fragment ACCIDENTAL: ([#bxdq^v]+);
 fragment RAT: UINT '/' [+-]* UINT;
 
+BTSYMBOL: '`' ~[ \t\r\n]+ { noParams = true; noUnary = true; };
+DQSYMBOL: '"' ( '\\"' | ~["] )* ~'\\' '"' { noParams = true; noUnary = true; };
+SQSYMBOL: '\'' ( '\\\'' | ~['] )* ~[\\] '\'' { noParams = true; noUnary = true; };
+
 BACHNULL: 'null' { noParams = false; noUnary = false; };
 BACHNIL: 'nil' { noParams = false; noUnary = false; };
 
@@ -173,6 +177,8 @@ DO: 'do' { noParams = true; noUnary = false; };
 COLLECT: 'collect' { noParams = true; noUnary = false; };
 
 FUNCTION: 'sin' | 'cos' | 'sqrt' { noParams = noUnary = false; };
+
+
 
 INLET: '\\'? '$'[lx][0-9]+ { noParams = false; noUnary = true; };
 INTINLET: '\\'? '$i'[0-9]+ { noParams = false; noUnary = true; };

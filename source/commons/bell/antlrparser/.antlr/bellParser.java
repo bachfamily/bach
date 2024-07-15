@@ -16,19 +16,20 @@ public class bellParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		UINT=1, UFLOAT=2, UPITCH=3, BACHNULL=4, BACHNIL=5, IF=6, THEN=7, ELSE=8, 
-		WHILE=9, FOR=10, DO=11, COLLECT=12, FUNCTION=13, INLET=14, INTINLET=15, 
-		RATINLET=16, FLOATINLET=17, PITCHINLET=18, OUTLET=19, DIRINLET=20, DIROUTLET=21, 
-		GLOBALVAR=22, PATCHERVAR=23, LOCALVAR=24, NAMEDPARAM=25, PUSH=26, POP=27, 
-		CLOSED=28, NTH=29, PICK=30, KEY=31, ANTH=32, APICK=33, NULLIFY=34, ASSIGN=35, 
-		WHITESPACE=36, NEWATOM=37, POW=38, APOW=39, TIMES=40, ATIMES=41, DIVDIV=42, 
-		ADIVDIV=43, DIV=44, ADIV=45, REM=46, AREM=47, PLUS=48, APLUS=49, UPLUS=50, 
-		MINUS=51, AMINUS=52, UMINUS=53, EQUAL=54, NEQ=55, LOGNOT=56, BITNOT=57, 
-		LT=58, GT=59, LEQ=60, GEQ=61, BITAND=62, ABITAND=63, BITXOR=64, ABITXOR=65, 
-		BITOR=66, ABITOR=67, LOGAND=68, LOGANDEXT=69, ALOGAND=70, ALOGANDEXT=71, 
-		LOGXOR=72, ALOGXOR=73, LOGOR=74, ALOGOR=75, LOGOREXT=76, ALOGOREXT=77, 
-		LSHIFT=78, ALSHIFT=79, RSHIFT=80, ARSHIFT=81, RANGE=82, REPEAT=83, AREPEAT=84, 
-		AAPPLY=85, ACONCAT=86, ARCONCAT=87, OPEN=88, PARAMS=89, ANYTHING=90;
+		UINT=1, UFLOAT=2, UPITCH=3, BTSYMBOL=4, DQSYMBOL=5, SQSYMBOL=6, BACHNULL=7, 
+		BACHNIL=8, IF=9, THEN=10, ELSE=11, WHILE=12, FOR=13, DO=14, COLLECT=15, 
+		FUNCTION=16, INLET=17, INTINLET=18, RATINLET=19, FLOATINLET=20, PITCHINLET=21, 
+		OUTLET=22, DIRINLET=23, DIROUTLET=24, GLOBALVAR=25, PATCHERVAR=26, LOCALVAR=27, 
+		NAMEDPARAM=28, PUSH=29, POP=30, CLOSED=31, NTH=32, PICK=33, KEY=34, ANTH=35, 
+		APICK=36, NULLIFY=37, ASSIGN=38, WHITESPACE=39, NEWATOM=40, POW=41, APOW=42, 
+		TIMES=43, ATIMES=44, DIVDIV=45, ADIVDIV=46, DIV=47, ADIV=48, REM=49, AREM=50, 
+		PLUS=51, APLUS=52, UPLUS=53, MINUS=54, AMINUS=55, UMINUS=56, EQUAL=57, 
+		NEQ=58, LOGNOT=59, BITNOT=60, LT=61, GT=62, LEQ=63, GEQ=64, BITAND=65, 
+		ABITAND=66, BITXOR=67, ABITXOR=68, BITOR=69, ABITOR=70, LOGAND=71, LOGANDEXT=72, 
+		ALOGAND=73, ALOGANDEXT=74, LOGXOR=75, ALOGXOR=76, LOGOR=77, ALOGOR=78, 
+		LOGOREXT=79, ALOGOREXT=80, LSHIFT=81, ALSHIFT=82, RSHIFT=83, ARSHIFT=84, 
+		RANGE=85, REPEAT=86, AREPEAT=87, AAPPLY=88, ACONCAT=89, ARCONCAT=90, OPEN=91, 
+		PARAMS=92, ANYTHING=93;
 	public static final int
 		RULE_everything = 0, RULE_program = 1, RULE_sequence = 2, RULE_nullified = 3, 
 		RULE_whileloop = 4, RULE_funcall = 5, RULE_item = 6, RULE_var = 7, RULE_lvalueSpecs = 8, 
@@ -45,33 +46,34 @@ public class bellParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, null, null, null, "'null'", "'nil'", "'if'", "'then'", "'else'", 
-			"'while'", "'for'", "'do'", "'collect'", null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, "'['", "']'", "')'", 
-			"':'", "'::'", "'.'", "':='", "'::='", "';'", "'='", null, null, "'**'", 
-			"'**='", "'*'", "'*='", "'//'", "'//='", "'/'", "'/='", null, null, null, 
-			"'+='", "'+'", null, "'-='", "'-'", "'=='", "'!='", "'!'", "'~'", "'<'", 
-			"'>'", "'<='", "'>='", "'&'", "'&='", "'^'", "'^='", "'|'", "'|='", "'&&'", 
-			"'&&&'", "'&&='", "'&&&='", "'^^'", "'^^='", "'||'", "'||='", "'|||'", 
-			"'|||='", "'<<'", "'<<='", "'>>'", "'>>='", "'...'", "':*'", "':*='", 
-			"'.='", "'_='", "'!_='"
+			null, null, null, null, null, null, null, "'null'", "'nil'", "'if'", 
+			"'then'", "'else'", "'while'", "'for'", "'do'", "'collect'", null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, "'['", 
+			"']'", "')'", "':'", "'::'", "'.'", "':='", "'::='", "';'", "'='", null, 
+			null, "'**'", "'**='", "'*'", "'*='", "'//'", "'//='", "'/'", "'/='", 
+			null, null, null, "'+='", "'+'", null, "'-='", "'-'", "'=='", "'!='", 
+			"'!'", "'~'", "'<'", "'>'", "'<='", "'>='", "'&'", "'&='", "'^'", "'^='", 
+			"'|'", "'|='", "'&&'", "'&&&'", "'&&='", "'&&&='", "'^^'", "'^^='", "'||'", 
+			"'||='", "'|||'", "'|||='", "'<<'", "'<<='", "'>>'", "'>>='", "'...'", 
+			"':*'", "':*='", "'.='", "'_='", "'!_='"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "UINT", "UFLOAT", "UPITCH", "BACHNULL", "BACHNIL", "IF", "THEN", 
-			"ELSE", "WHILE", "FOR", "DO", "COLLECT", "FUNCTION", "INLET", "INTINLET", 
-			"RATINLET", "FLOATINLET", "PITCHINLET", "OUTLET", "DIRINLET", "DIROUTLET", 
-			"GLOBALVAR", "PATCHERVAR", "LOCALVAR", "NAMEDPARAM", "PUSH", "POP", "CLOSED", 
-			"NTH", "PICK", "KEY", "ANTH", "APICK", "NULLIFY", "ASSIGN", "WHITESPACE", 
-			"NEWATOM", "POW", "APOW", "TIMES", "ATIMES", "DIVDIV", "ADIVDIV", "DIV", 
-			"ADIV", "REM", "AREM", "PLUS", "APLUS", "UPLUS", "MINUS", "AMINUS", "UMINUS", 
-			"EQUAL", "NEQ", "LOGNOT", "BITNOT", "LT", "GT", "LEQ", "GEQ", "BITAND", 
-			"ABITAND", "BITXOR", "ABITXOR", "BITOR", "ABITOR", "LOGAND", "LOGANDEXT", 
-			"ALOGAND", "ALOGANDEXT", "LOGXOR", "ALOGXOR", "LOGOR", "ALOGOR", "LOGOREXT", 
-			"ALOGOREXT", "LSHIFT", "ALSHIFT", "RSHIFT", "ARSHIFT", "RANGE", "REPEAT", 
-			"AREPEAT", "AAPPLY", "ACONCAT", "ARCONCAT", "OPEN", "PARAMS", "ANYTHING"
+			null, "UINT", "UFLOAT", "UPITCH", "BTSYMBOL", "DQSYMBOL", "SQSYMBOL", 
+			"BACHNULL", "BACHNIL", "IF", "THEN", "ELSE", "WHILE", "FOR", "DO", "COLLECT", 
+			"FUNCTION", "INLET", "INTINLET", "RATINLET", "FLOATINLET", "PITCHINLET", 
+			"OUTLET", "DIRINLET", "DIROUTLET", "GLOBALVAR", "PATCHERVAR", "LOCALVAR", 
+			"NAMEDPARAM", "PUSH", "POP", "CLOSED", "NTH", "PICK", "KEY", "ANTH", 
+			"APICK", "NULLIFY", "ASSIGN", "WHITESPACE", "NEWATOM", "POW", "APOW", 
+			"TIMES", "ATIMES", "DIVDIV", "ADIVDIV", "DIV", "ADIV", "REM", "AREM", 
+			"PLUS", "APLUS", "UPLUS", "MINUS", "AMINUS", "UMINUS", "EQUAL", "NEQ", 
+			"LOGNOT", "BITNOT", "LT", "GT", "LEQ", "GEQ", "BITAND", "ABITAND", "BITXOR", 
+			"ABITXOR", "BITOR", "ABITOR", "LOGAND", "LOGANDEXT", "ALOGAND", "ALOGANDEXT", 
+			"LOGXOR", "ALOGXOR", "LOGOR", "ALOGOR", "LOGOREXT", "ALOGOREXT", "LSHIFT", 
+			"ALSHIFT", "RSHIFT", "ARSHIFT", "RANGE", "REPEAT", "AREPEAT", "AAPPLY", 
+			"ACONCAT", "ARCONCAT", "OPEN", "PARAMS", "ANYTHING"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -316,7 +318,7 @@ public class bellParser extends Parser {
 				setState(51);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 226305881376023166L) != 0) || _la==OPEN) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 1810447051008185230L) != 0) || _la==OPEN) {
 					{
 					setState(50);
 					list();
@@ -606,7 +608,7 @@ public class bellParser extends Parser {
 				setState(74);
 				((ItemInletContext)_localctx).type = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 507904L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 4063232L) != 0)) ) {
 					((ItemInletContext)_localctx).type = (Token)_errHandler.recoverInline(this);
 				}
 				else {
@@ -1350,7 +1352,7 @@ public class bellParser extends Parser {
 						setState(163);
 						((ExprBinaryContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 93458488360960L) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 747667906887680L) != 0)) ) {
 							((ExprBinaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -1542,7 +1544,7 @@ public class bellParser extends Parser {
 						setState(199);
 						((ExprBinaryContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 4323455642275676160L) != 0)) ) {
+						if ( !(((((_la - 61)) & ~0x3f) == 0 && ((1L << (_la - 61)) & 15L) != 0)) ) {
 							((ExprBinaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -1875,7 +1877,7 @@ public class bellParser extends Parser {
 				setState(246);
 				((TrueAssignmentContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(((((_la - 32)) & ~0x3f) == 0 && ((1L << (_la - 32)) & 54793932190689929L) != 0)) ) {
+				if ( !(((((_la - 35)) & ~0x3f) == 0 && ((1L << (_la - 35)) & 54793932190689929L) != 0)) ) {
 					((TrueAssignmentContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				else {
@@ -1909,7 +1911,7 @@ public class bellParser extends Parser {
 				setState(250);
 				((FakeAssignmentContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(((((_la - 35)) & ~0x3f) == 0 && ((1L << (_la - 35)) & 6849241523836241L) != 0)) ) {
+				if ( !(((((_la - 38)) & ~0x3f) == 0 && ((1L << (_la - 38)) & 6849241523836241L) != 0)) ) {
 					((FakeAssignmentContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				else {
@@ -2229,7 +2231,7 @@ public class bellParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001Z\u011e\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001]\u011e\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
@@ -2274,11 +2276,11 @@ public class bellParser extends Parser {
 		"\u0003\u000e\u0117\b\u000e\u0001\u000f\u0004\u000f\u011a\b\u000f\u000b"+
 		"\u000f\f\u000f\u011b\u0001\u000f\u0000\u0001\u0016\u0010\u0000\u0002\u0004"+
 		"\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018\u001a\u001c\u001e\u0000"+
-		"\r\u0001\u0000\u000b\f\u0001\u0000\u000e\u0012\u0002\u00002255\u0001\u0000"+
-		"89\u0004\u0000((**,,..\u0002\u00000033\u0002\u0000NNPP\u0001\u000067\u0001"+
-		"\u0000:=\u0001\u0000DE\u0002\u0000JJLL\u0013\u0000  ##\'\'))++--//114"+
-		"4??AACCFGIIKKMMOOQQVW\u0012\u0000##\'\'))++--//1144??AACCFGIIKKMMOOQQ"+
-		"VW\u0153\u0000 \u0001\u0000\u0000\u0000\u0002*\u0001\u0000\u0000\u0000"+
+		"\r\u0001\u0000\u000e\u000f\u0001\u0000\u0011\u0015\u0002\u00005588\u0001"+
+		"\u0000;<\u0004\u0000++--//11\u0002\u00003366\u0002\u0000QQSS\u0001\u0000"+
+		"9:\u0001\u0000=@\u0001\u0000GH\u0002\u0000MMOO\u0013\u0000##&&**,,..0"+
+		"0224477BBDDFFIJLLNNPPRRTTYZ\u0012\u0000&&**,,..00224477BBDDFFIJLLNNPP"+
+		"RRTTYZ\u0153\u0000 \u0001\u0000\u0000\u0000\u0002*\u0001\u0000\u0000\u0000"+
 		"\u00045\u0001\u0000\u0000\u0000\u00067\u0001\u0000\u0000\u0000\b=\u0001"+
 		"\u0000\u0000\u0000\nB\u0001\u0000\u0000\u0000\fW\u0001\u0000\u0000\u0000"+
 		"\u000e\\\u0001\u0000\u0000\u0000\u0010u\u0001\u0000\u0000\u0000\u0012"+
@@ -2288,7 +2290,7 @@ public class bellParser extends Parser {
 		"\u0000\u0000\u0000 !\u0003\u0002\u0001\u0000!\u0001\u0001\u0000\u0000"+
 		"\u0000\"+\u0005\u0000\u0000\u0001#$\u0003\u0004\u0002\u0000$%\u0005\u0000"+
 		"\u0000\u0001%+\u0001\u0000\u0000\u0000&\'\u0003\u0004\u0002\u0000\'(\u0005"+
-		"\u0019\u0000\u0000(+\u0001\u0000\u0000\u0000)+\u0005\u0019\u0000\u0000"+
+		"\u001c\u0000\u0000(+\u0001\u0000\u0000\u0000)+\u0005\u001c\u0000\u0000"+
 		"*\"\u0001\u0000\u0000\u0000*#\u0001\u0000\u0000\u0000*&\u0001\u0000\u0000"+
 		"\u0000*)\u0001\u0000\u0000\u0000+\u0003\u0001\u0000\u0000\u0000,6\u0003"+
 		"\u001e\u000f\u0000-/\u0003\u0006\u0003\u0000.-\u0001\u0000\u0000\u0000"+
@@ -2296,59 +2298,59 @@ public class bellParser extends Parser {
 		"\u000013\u0001\u0000\u0000\u000024\u0003\u001e\u000f\u000032\u0001\u0000"+
 		"\u0000\u000034\u0001\u0000\u0000\u000046\u0001\u0000\u0000\u00005,\u0001"+
 		"\u0000\u0000\u00005.\u0001\u0000\u0000\u00006\u0005\u0001\u0000\u0000"+
-		"\u000079\u0003\u001e\u000f\u00008:\u0005\"\u0000\u000098\u0001\u0000\u0000"+
+		"\u000079\u0003\u001e\u000f\u00008:\u0005%\u0000\u000098\u0001\u0000\u0000"+
 		"\u0000:;\u0001\u0000\u0000\u0000;9\u0001\u0000\u0000\u0000;<\u0001\u0000"+
-		"\u0000\u0000<\u0007\u0001\u0000\u0000\u0000=>\u0005\t\u0000\u0000>?\u0003"+
+		"\u0000\u0000<\u0007\u0001\u0000\u0000\u0000=>\u0005\f\u0000\u0000>?\u0003"+
 		"\u0004\u0002\u0000?@\u0007\u0000\u0000\u0000@A\u0003\u001e\u000f\u0000"+
-		"A\t\u0001\u0000\u0000\u0000BC\u0005\r\u0000\u0000CD\u0005Y\u0000\u0000"+
-		"DE\u0003\u0004\u0002\u0000EF\u0005\u001c\u0000\u0000F\u000b\u0001\u0000"+
-		"\u0000\u0000GX\u0005\u0001\u0000\u0000HX\u0005\u0002\u0000\u0000IX\u0005"+
-		"\u0003\u0000\u0000JX\u0007\u0001\u0000\u0000KX\u0005\u0014\u0000\u0000"+
-		"LX\u0005\u0004\u0000\u0000MX\u0005\u0005\u0000\u0000NO\u0005X\u0000\u0000"+
-		"OP\u0003\u0004\u0002\u0000PQ\u0005\u001c\u0000\u0000QX\u0001\u0000\u0000"+
-		"\u0000RS\u0005\u001a\u0000\u0000ST\u0003\u0004\u0002\u0000TU\u0005\u001b"+
-		"\u0000\u0000UX\u0001\u0000\u0000\u0000VX\u0003\n\u0005\u0000WG\u0001\u0000"+
-		"\u0000\u0000WH\u0001\u0000\u0000\u0000WI\u0001\u0000\u0000\u0000WJ\u0001"+
-		"\u0000\u0000\u0000WK\u0001\u0000\u0000\u0000WL\u0001\u0000\u0000\u0000"+
-		"WM\u0001\u0000\u0000\u0000WN\u0001\u0000\u0000\u0000WR\u0001\u0000\u0000"+
-		"\u0000WV\u0001\u0000\u0000\u0000X\r\u0001\u0000\u0000\u0000Y]\u0005\u0018"+
-		"\u0000\u0000Z]\u0005\u0017\u0000\u0000[]\u0005\u0016\u0000\u0000\\Y\u0001"+
-		"\u0000\u0000\u0000\\Z\u0001\u0000\u0000\u0000\\[\u0001\u0000\u0000\u0000"+
-		"]\u000f\u0001\u0000\u0000\u0000^d\u0006\b\uffff\uffff\u0000_b\u0005\u001d"+
-		"\u0000\u0000`c\u0003\f\u0006\u0000ac\u0003\u000e\u0007\u0000b`\u0001\u0000"+
-		"\u0000\u0000ba\u0001\u0000\u0000\u0000ce\u0001\u0000\u0000\u0000d_\u0001"+
-		"\u0000\u0000\u0000ef\u0001\u0000\u0000\u0000fd\u0001\u0000\u0000\u0000"+
-		"fg\u0001\u0000\u0000\u0000gv\u0001\u0000\u0000\u0000hp\u0006\b\uffff\uffff"+
-		"\u0000il\u0005\u001d\u0000\u0000jm\u0003\f\u0006\u0000km\u0003\u000e\u0007"+
-		"\u0000lj\u0001\u0000\u0000\u0000lk\u0001\u0000\u0000\u0000mo\u0001\u0000"+
-		"\u0000\u0000ni\u0001\u0000\u0000\u0000or\u0001\u0000\u0000\u0000pn\u0001"+
-		"\u0000\u0000\u0000pq\u0001\u0000\u0000\u0000qs\u0001\u0000\u0000\u0000"+
-		"rp\u0001\u0000\u0000\u0000st\u0005\u001d\u0000\u0000tv\u0003\u001a\r\u0000"+
-		"u^\u0001\u0000\u0000\u0000uh\u0001\u0000\u0000\u0000v\u0011\u0001\u0000"+
-		"\u0000\u0000wy\u0003\u000e\u0007\u0000xz\u0003\u0010\b\u0000yx\u0001\u0000"+
-		"\u0000\u0000yz\u0001\u0000\u0000\u0000z\u0013\u0001\u0000\u0000\u0000"+
-		"{|\u0003\f\u0006\u0000|}\u0003\u0010\b\u0000}\u0015\u0001\u0000\u0000"+
-		"\u0000~\u0082\u0006\u000b\uffff\uffff\u0000\u007f\u0083\u0003\f\u0006"+
-		"\u0000\u0080\u0083\u0003\u000e\u0007\u0000\u0081\u0083\u0003\u001c\u000e"+
-		"\u0000\u0082\u007f\u0001\u0000\u0000\u0000\u0082\u0080\u0001\u0000\u0000"+
-		"\u0000\u0082\u0081\u0001\u0000\u0000\u0000\u0083\u0095\u0001\u0000\u0000"+
-		"\u0000\u0084\u0095\u0003\u0012\t\u0000\u0085\u0095\u0003\u0014\n\u0000"+
-		"\u0086\u0088\u0007\u0002\u0000\u0000\u0087\u0086\u0001\u0000\u0000\u0000"+
-		"\u0088\u0089\u0001\u0000\u0000\u0000\u0089\u0087\u0001\u0000\u0000\u0000"+
-		"\u0089\u008a\u0001\u0000\u0000\u0000\u008a\u008d\u0001\u0000\u0000\u0000"+
-		"\u008b\u008e\u0003\u0016\u000b\u0000\u008c\u008e\u0003\u001c\u000e\u0000"+
-		"\u008d\u008b\u0001\u0000\u0000\u0000\u008d\u008c\u0001\u0000\u0000\u0000"+
-		"\u008e\u0095\u0001\u0000\u0000\u0000\u008f\u0092\u0007\u0003\u0000\u0000"+
-		"\u0090\u0093\u0003\u0016\u000b\u0000\u0091\u0093\u0003\u001c\u000e\u0000"+
-		"\u0092\u0090\u0001\u0000\u0000\u0000\u0092\u0091\u0001\u0000\u0000\u0000"+
-		"\u0093\u0095\u0001\u0000\u0000\u0000\u0094~\u0001\u0000\u0000\u0000\u0094"+
-		"\u0084\u0001\u0000\u0000\u0000\u0094\u0085\u0001\u0000\u0000\u0000\u0094"+
-		"\u0087\u0001\u0000\u0000\u0000\u0094\u008f\u0001\u0000\u0000\u0000\u0095"+
-		"\u00f2\u0001\u0000\u0000\u0000\u0096\u0097\n\u0011\u0000\u0000\u0097\u009a"+
-		"\u0005\u001e\u0000\u0000\u0098\u009b\u0003\u0016\u000b\u0000\u0099\u009b"+
+		"A\t\u0001\u0000\u0000\u0000BC\u0005\u0010\u0000\u0000CD\u0005\\\u0000"+
+		"\u0000DE\u0003\u0004\u0002\u0000EF\u0005\u001f\u0000\u0000F\u000b\u0001"+
+		"\u0000\u0000\u0000GX\u0005\u0001\u0000\u0000HX\u0005\u0002\u0000\u0000"+
+		"IX\u0005\u0003\u0000\u0000JX\u0007\u0001\u0000\u0000KX\u0005\u0017\u0000"+
+		"\u0000LX\u0005\u0007\u0000\u0000MX\u0005\b\u0000\u0000NO\u0005[\u0000"+
+		"\u0000OP\u0003\u0004\u0002\u0000PQ\u0005\u001f\u0000\u0000QX\u0001\u0000"+
+		"\u0000\u0000RS\u0005\u001d\u0000\u0000ST\u0003\u0004\u0002\u0000TU\u0005"+
+		"\u001e\u0000\u0000UX\u0001\u0000\u0000\u0000VX\u0003\n\u0005\u0000WG\u0001"+
+		"\u0000\u0000\u0000WH\u0001\u0000\u0000\u0000WI\u0001\u0000\u0000\u0000"+
+		"WJ\u0001\u0000\u0000\u0000WK\u0001\u0000\u0000\u0000WL\u0001\u0000\u0000"+
+		"\u0000WM\u0001\u0000\u0000\u0000WN\u0001\u0000\u0000\u0000WR\u0001\u0000"+
+		"\u0000\u0000WV\u0001\u0000\u0000\u0000X\r\u0001\u0000\u0000\u0000Y]\u0005"+
+		"\u001b\u0000\u0000Z]\u0005\u001a\u0000\u0000[]\u0005\u0019\u0000\u0000"+
+		"\\Y\u0001\u0000\u0000\u0000\\Z\u0001\u0000\u0000\u0000\\[\u0001\u0000"+
+		"\u0000\u0000]\u000f\u0001\u0000\u0000\u0000^d\u0006\b\uffff\uffff\u0000"+
+		"_b\u0005 \u0000\u0000`c\u0003\f\u0006\u0000ac\u0003\u000e\u0007\u0000"+
+		"b`\u0001\u0000\u0000\u0000ba\u0001\u0000\u0000\u0000ce\u0001\u0000\u0000"+
+		"\u0000d_\u0001\u0000\u0000\u0000ef\u0001\u0000\u0000\u0000fd\u0001\u0000"+
+		"\u0000\u0000fg\u0001\u0000\u0000\u0000gv\u0001\u0000\u0000\u0000hp\u0006"+
+		"\b\uffff\uffff\u0000il\u0005 \u0000\u0000jm\u0003\f\u0006\u0000km\u0003"+
+		"\u000e\u0007\u0000lj\u0001\u0000\u0000\u0000lk\u0001\u0000\u0000\u0000"+
+		"mo\u0001\u0000\u0000\u0000ni\u0001\u0000\u0000\u0000or\u0001\u0000\u0000"+
+		"\u0000pn\u0001\u0000\u0000\u0000pq\u0001\u0000\u0000\u0000qs\u0001\u0000"+
+		"\u0000\u0000rp\u0001\u0000\u0000\u0000st\u0005 \u0000\u0000tv\u0003\u001a"+
+		"\r\u0000u^\u0001\u0000\u0000\u0000uh\u0001\u0000\u0000\u0000v\u0011\u0001"+
+		"\u0000\u0000\u0000wy\u0003\u000e\u0007\u0000xz\u0003\u0010\b\u0000yx\u0001"+
+		"\u0000\u0000\u0000yz\u0001\u0000\u0000\u0000z\u0013\u0001\u0000\u0000"+
+		"\u0000{|\u0003\f\u0006\u0000|}\u0003\u0010\b\u0000}\u0015\u0001\u0000"+
+		"\u0000\u0000~\u0082\u0006\u000b\uffff\uffff\u0000\u007f\u0083\u0003\f"+
+		"\u0006\u0000\u0080\u0083\u0003\u000e\u0007\u0000\u0081\u0083\u0003\u001c"+
+		"\u000e\u0000\u0082\u007f\u0001\u0000\u0000\u0000\u0082\u0080\u0001\u0000"+
+		"\u0000\u0000\u0082\u0081\u0001\u0000\u0000\u0000\u0083\u0095\u0001\u0000"+
+		"\u0000\u0000\u0084\u0095\u0003\u0012\t\u0000\u0085\u0095\u0003\u0014\n"+
+		"\u0000\u0086\u0088\u0007\u0002\u0000\u0000\u0087\u0086\u0001\u0000\u0000"+
+		"\u0000\u0088\u0089\u0001\u0000\u0000\u0000\u0089\u0087\u0001\u0000\u0000"+
+		"\u0000\u0089\u008a\u0001\u0000\u0000\u0000\u008a\u008d\u0001\u0000\u0000"+
+		"\u0000\u008b\u008e\u0003\u0016\u000b\u0000\u008c\u008e\u0003\u001c\u000e"+
+		"\u0000\u008d\u008b\u0001\u0000\u0000\u0000\u008d\u008c\u0001\u0000\u0000"+
+		"\u0000\u008e\u0095\u0001\u0000\u0000\u0000\u008f\u0092\u0007\u0003\u0000"+
+		"\u0000\u0090\u0093\u0003\u0016\u000b\u0000\u0091\u0093\u0003\u001c\u000e"+
+		"\u0000\u0092\u0090\u0001\u0000\u0000\u0000\u0092\u0091\u0001\u0000\u0000"+
+		"\u0000\u0093\u0095\u0001\u0000\u0000\u0000\u0094~\u0001\u0000\u0000\u0000"+
+		"\u0094\u0084\u0001\u0000\u0000\u0000\u0094\u0085\u0001\u0000\u0000\u0000"+
+		"\u0094\u0087\u0001\u0000\u0000\u0000\u0094\u008f\u0001\u0000\u0000\u0000"+
+		"\u0095\u00f2\u0001\u0000\u0000\u0000\u0096\u0097\n\u0011\u0000\u0000\u0097"+
+		"\u009a\u0005!\u0000\u0000\u0098\u009b\u0003\u0016\u000b\u0000\u0099\u009b"+
 		"\u0003\u001c\u000e\u0000\u009a\u0098\u0001\u0000\u0000\u0000\u009a\u0099"+
 		"\u0001\u0000\u0000\u0000\u009b\u00f1\u0001\u0000\u0000\u0000\u009c\u009d"+
-		"\n\u0010\u0000\u0000\u009d\u00a0\u0005&\u0000\u0000\u009e\u00a1\u0003"+
+		"\n\u0010\u0000\u0000\u009d\u00a0\u0005)\u0000\u0000\u009e\u00a1\u0003"+
 		"\u0016\u000b\u0000\u009f\u00a1\u0003\u001c\u000e\u0000\u00a0\u009e\u0001"+
 		"\u0000\u0000\u0000\u00a0\u009f\u0001\u0000\u0000\u0000\u00a1\u00f1\u0001"+
 		"\u0000\u0000\u0000\u00a2\u00a3\n\u000e\u0000\u0000\u00a3\u00a6\u0007\u0004"+
@@ -2362,10 +2364,10 @@ public class bellParser extends Parser {
 		"\u00b0\u00b3\u0003\u0016\u000b\u0000\u00b1\u00b3\u0003\u001c\u000e\u0000"+
 		"\u00b2\u00b0\u0001\u0000\u0000\u0000\u00b2\u00b1\u0001\u0000\u0000\u0000"+
 		"\u00b3\u00f1\u0001\u0000\u0000\u0000\u00b4\u00b5\n\u000b\u0000\u0000\u00b5"+
-		"\u00b8\u0005R\u0000\u0000\u00b6\u00b9\u0003\u0016\u000b\u0000\u00b7\u00b9"+
+		"\u00b8\u0005U\u0000\u0000\u00b6\u00b9\u0003\u0016\u000b\u0000\u00b7\u00b9"+
 		"\u0003\u001c\u000e\u0000\u00b8\u00b6\u0001\u0000\u0000\u0000\u00b8\u00b7"+
 		"\u0001\u0000\u0000\u0000\u00b9\u00f1\u0001\u0000\u0000\u0000\u00ba\u00bb"+
-		"\n\n\u0000\u0000\u00bb\u00be\u0005S\u0000\u0000\u00bc\u00bf\u0003\u0016"+
+		"\n\n\u0000\u0000\u00bb\u00be\u0005V\u0000\u0000\u00bc\u00bf\u0003\u0016"+
 		"\u000b\u0000\u00bd\u00bf\u0003\u001c\u000e\u0000\u00be\u00bc\u0001\u0000"+
 		"\u0000\u0000\u00be\u00bd\u0001\u0000\u0000\u0000\u00bf\u00f1\u0001\u0000"+
 		"\u0000\u0000\u00c0\u00c1\n\t\u0000\u0000\u00c1\u00c4\u0007\u0007\u0000"+
@@ -2375,21 +2377,21 @@ public class bellParser extends Parser {
 		"\u00c7\u00ca\u0007\b\u0000\u0000\u00c8\u00cb\u0003\u0016\u000b\u0000\u00c9"+
 		"\u00cb\u0003\u001c\u000e\u0000\u00ca\u00c8\u0001\u0000\u0000\u0000\u00ca"+
 		"\u00c9\u0001\u0000\u0000\u0000\u00cb\u00f1\u0001\u0000\u0000\u0000\u00cc"+
-		"\u00cd\n\u0007\u0000\u0000\u00cd\u00d0\u0005>\u0000\u0000\u00ce\u00d1"+
+		"\u00cd\n\u0007\u0000\u0000\u00cd\u00d0\u0005A\u0000\u0000\u00ce\u00d1"+
 		"\u0003\u0016\u000b\u0000\u00cf\u00d1\u0003\u001c\u000e\u0000\u00d0\u00ce"+
 		"\u0001\u0000\u0000\u0000\u00d0\u00cf\u0001\u0000\u0000\u0000\u00d1\u00f1"+
 		"\u0001\u0000\u0000\u0000\u00d2\u00d3\n\u0006\u0000\u0000\u00d3\u00d6\u0005"+
-		"@\u0000\u0000\u00d4\u00d7\u0003\u0016\u000b\u0000\u00d5\u00d7\u0003\u001c"+
+		"C\u0000\u0000\u00d4\u00d7\u0003\u0016\u000b\u0000\u00d5\u00d7\u0003\u001c"+
 		"\u000e\u0000\u00d6\u00d4\u0001\u0000\u0000\u0000\u00d6\u00d5\u0001\u0000"+
 		"\u0000\u0000\u00d7\u00f1\u0001\u0000\u0000\u0000\u00d8\u00d9\n\u0005\u0000"+
-		"\u0000\u00d9\u00dc\u0005B\u0000\u0000\u00da\u00dd\u0003\u0016\u000b\u0000"+
+		"\u0000\u00d9\u00dc\u0005E\u0000\u0000\u00da\u00dd\u0003\u0016\u000b\u0000"+
 		"\u00db\u00dd\u0003\u001c\u000e\u0000\u00dc\u00da\u0001\u0000\u0000\u0000"+
 		"\u00dc\u00db\u0001\u0000\u0000\u0000\u00dd\u00f1\u0001\u0000\u0000\u0000"+
 		"\u00de\u00df\n\u0004\u0000\u0000\u00df\u00e2\u0007\t\u0000\u0000\u00e0"+
 		"\u00e3\u0003\u0016\u000b\u0000\u00e1\u00e3\u0003\u001c\u000e\u0000\u00e2"+
 		"\u00e0\u0001\u0000\u0000\u0000\u00e2\u00e1\u0001\u0000\u0000\u0000\u00e3"+
 		"\u00f1\u0001\u0000\u0000\u0000\u00e4\u00e5\n\u0003\u0000\u0000\u00e5\u00e8"+
-		"\u0005H\u0000\u0000\u00e6\u00e9\u0003\u0016\u000b\u0000\u00e7\u00e9\u0003"+
+		"\u0005K\u0000\u0000\u00e6\u00e9\u0003\u0016\u000b\u0000\u00e7\u00e9\u0003"+
 		"\u001c\u000e\u0000\u00e8\u00e6\u0001\u0000\u0000\u0000\u00e8\u00e7\u0001"+
 		"\u0000\u0000\u0000\u00e9\u00f1\u0001\u0000\u0000\u0000\u00ea\u00eb\n\u0002"+
 		"\u0000\u0000\u00eb\u00ee\u0007\n\u0000\u0000\u00ec\u00ef\u0003\u0016\u000b"+
@@ -2409,28 +2411,28 @@ public class bellParser extends Parser {
 		"\u00f7\u00f8\u0003\u001e\u000f\u0000\u00f8\u0104\u0001\u0000\u0000\u0000"+
 		"\u00f9\u00fa\u0003\u0014\n\u0000\u00fa\u00fb\u0007\f\u0000\u0000\u00fb"+
 		"\u00fc\u0003\u001e\u000f\u0000\u00fc\u0104\u0001\u0000\u0000\u0000\u00fd"+
-		"\u00fe\u0005\u0013\u0000\u0000\u00fe\u00ff\u0005#\u0000\u0000\u00ff\u0104"+
-		"\u0003\u001e\u000f\u0000\u0100\u0101\u0005\u0015\u0000\u0000\u0101\u0102"+
-		"\u0005#\u0000\u0000\u0102\u0104\u0003\u001e\u000f\u0000\u0103\u00f5\u0001"+
+		"\u00fe\u0005\u0016\u0000\u0000\u00fe\u00ff\u0005&\u0000\u0000\u00ff\u0104"+
+		"\u0003\u001e\u000f\u0000\u0100\u0101\u0005\u0018\u0000\u0000\u0101\u0102"+
+		"\u0005&\u0000\u0000\u0102\u0104\u0003\u001e\u000f\u0000\u0103\u00f5\u0001"+
 		"\u0000\u0000\u0000\u0103\u00f9\u0001\u0000\u0000\u0000\u0103\u00fd\u0001"+
 		"\u0000\u0000\u0000\u0103\u0100\u0001\u0000\u0000\u0000\u0104\u0019\u0001"+
-		"\u0000\u0000\u0000\u0105\u0106\u0005\u0006\u0000\u0000\u0106\u0107\u0003"+
-		"\u0004\u0002\u0000\u0107\u0108\u0005\u0007\u0000\u0000\u0108\u0109\u0003"+
-		"\u001e\u000f\u0000\u0109\u0112\u0001\u0000\u0000\u0000\u010a\u010b\u0005"+
-		"\u0006\u0000\u0000\u010b\u010c\u0003\u0004\u0002\u0000\u010c\u010d\u0005"+
-		"\u0007\u0000\u0000\u010d\u010e\u0003\u0004\u0002\u0000\u010e\u010f\u0005"+
-		"\b\u0000\u0000\u010f\u0110\u0003\u001e\u000f\u0000\u0110\u0112\u0001\u0000"+
-		"\u0000\u0000\u0111\u0105\u0001\u0000\u0000\u0000\u0111\u010a\u0001\u0000"+
-		"\u0000\u0000\u0112\u001b\u0001\u0000\u0000\u0000\u0113\u0117\u0003\u001a"+
-		"\r\u0000\u0114\u0117\u0003\u0018\f\u0000\u0115\u0117\u0003\b\u0004\u0000"+
-		"\u0116\u0113\u0001\u0000\u0000\u0000\u0116\u0114\u0001\u0000\u0000\u0000"+
-		"\u0116\u0115\u0001\u0000\u0000\u0000\u0117\u001d\u0001\u0000\u0000\u0000"+
-		"\u0118\u011a\u0003\u0016\u000b\u0000\u0119\u0118\u0001\u0000\u0000\u0000"+
-		"\u011a\u011b\u0001\u0000\u0000\u0000\u011b\u0119\u0001\u0000\u0000\u0000"+
-		"\u011b\u011c\u0001\u0000\u0000\u0000\u011c\u001f\u0001\u0000\u0000\u0000"+
-		"\'*035;W\\bflpuy\u0082\u0089\u008d\u0092\u0094\u009a\u00a0\u00a6\u00ac"+
-		"\u00b2\u00b8\u00be\u00c4\u00ca\u00d0\u00d6\u00dc\u00e2\u00e8\u00ee\u00f0"+
-		"\u00f2\u0103\u0111\u0116\u011b";
+		"\u0000\u0000\u0000\u0105\u0106\u0005\t\u0000\u0000\u0106\u0107\u0003\u0004"+
+		"\u0002\u0000\u0107\u0108\u0005\n\u0000\u0000\u0108\u0109\u0003\u001e\u000f"+
+		"\u0000\u0109\u0112\u0001\u0000\u0000\u0000\u010a\u010b\u0005\t\u0000\u0000"+
+		"\u010b\u010c\u0003\u0004\u0002\u0000\u010c\u010d\u0005\n\u0000\u0000\u010d"+
+		"\u010e\u0003\u0004\u0002\u0000\u010e\u010f\u0005\u000b\u0000\u0000\u010f"+
+		"\u0110\u0003\u001e\u000f\u0000\u0110\u0112\u0001\u0000\u0000\u0000\u0111"+
+		"\u0105\u0001\u0000\u0000\u0000\u0111\u010a\u0001\u0000\u0000\u0000\u0112"+
+		"\u001b\u0001\u0000\u0000\u0000\u0113\u0117\u0003\u001a\r\u0000\u0114\u0117"+
+		"\u0003\u0018\f\u0000\u0115\u0117\u0003\b\u0004\u0000\u0116\u0113\u0001"+
+		"\u0000\u0000\u0000\u0116\u0114\u0001\u0000\u0000\u0000\u0116\u0115\u0001"+
+		"\u0000\u0000\u0000\u0117\u001d\u0001\u0000\u0000\u0000\u0118\u011a\u0003"+
+		"\u0016\u000b\u0000\u0119\u0118\u0001\u0000\u0000\u0000\u011a\u011b\u0001"+
+		"\u0000\u0000\u0000\u011b\u0119\u0001\u0000\u0000\u0000\u011b\u011c\u0001"+
+		"\u0000\u0000\u0000\u011c\u001f\u0001\u0000\u0000\u0000\'*035;W\\bflpu"+
+		"y\u0082\u0089\u008d\u0092\u0094\u009a\u00a0\u00a6\u00ac\u00b2\u00b8\u00be"+
+		"\u00c4\u00ca\u00d0\u00d6\u00dc\u00e2\u00e8\u00ee\u00f0\u00f2\u0103\u0111"+
+		"\u0116\u011b";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
