@@ -176,9 +176,42 @@ public:
         return r;
     }
     
+    antlrcpp::Any visitItemBtSymbol(bellParser::ItemBtSymbolContext *context) override {
+        auto txt = context->BTSYMBOL()->getText();
+        const char *cstr = txt.c_str() + 1;
+        astNode* r = new astConst(gensym(cstr), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemQSymbol(bellParser::ItemQSymbolContext *context) override {
+        auto txt = context->children[0]->getText();
+        char cstr[MAX_SYM_LENGTH];
+        const char *inPtr = txt.c_str() + 1;
+        char *outPtr = cstr;
+        int n = 0;
+        while (*inPtr && n < MAX_SYM_LENGTH) {
+            switch (*inPtr) {
+                case 1:
+                    *outPtr++ = ' ';
+                    inPtr++;
+                    break;
+                case '\\':
+                    inPtr++;
+                default:
+                    *outPtr++ = *inPtr++;
+                    break;
+            }
+            n++;
+        }
+        *(outPtr - 1) = 0;
+        astNode *r = new astConst(gensym(cstr), params->owner);
+        return r;
+    }
+    
     antlrcpp::Any visitItemInlet(bellParser::ItemInletContext *context) override {
         auto txt = context->INLET()->getText();
-        int i = stoi(txt.erase(0, txt[0] == '\\' ? 3 : 2));
+        const char *cstr = txt.c_str();
+        int i = atoi(cstr + (txt[0] == '\\' ? 3 : 2));
         if (params->dataInlets && params->fnDepth == 0 && i > *params->dataInlets)
             *params->dataInlets = i;
         astNode* r;
@@ -195,7 +228,8 @@ public:
     
     antlrcpp::Any visitItemDirInlet(bellParser::ItemDirInletContext *context) override {
         auto txt = context->DIRINLET()->getText();
-        long i = stol(txt.erase(0, txt[0] == '\\' ? 4 : 3));
+        const char *cstr = txt.c_str();
+        long i = atol(cstr + (txt[0] == '\\' ? 4 : 3));
         if (params->directInlets && params->fnDepth == 0 && i > *params->directInlets)
             *params->directInlets = i;
         auto fnConst = new astConst((*(params->ofTable))["directin"], params->owner);
@@ -485,7 +519,8 @@ public:
         if (!l)
             return nullptr;
         auto txt = ctx->OUTLET()->getText();
-        long i = stol(txt.erase(0, txt[0] == '\\' ? 3 : 2));
+        const char *cstr = txt.c_str();
+        long i = atol(cstr + (txt[0] == '\\' ? 3 : 2));
         if (params->dataOutlets && i > *(params->dataOutlets))
             *(params->dataOutlets) = i;
         auto fnConst = new astConst((*(params->bifs))["outlet"], params->owner);
@@ -502,7 +537,8 @@ public:
         if (!l)
             return nullptr;
         auto txt = ctx->DIROUTLET()->getText();
-        long i = stol(txt.erase(0, txt[0] == '\\' ? 4 : 3));
+        const char *cstr = txt.c_str();
+        long i = atol(cstr + (txt[0] == '\\' ? 4 : 3));
         if (params->directOutlets && i > *(params->directOutlets))
             *(params->directOutlets) = i;
         auto fnConst = new astConst((*(params->ofTable))["directout"], params->owner);

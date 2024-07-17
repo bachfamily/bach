@@ -63,6 +63,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitItemBtSymbol(bellParser::ItemBtSymbolContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitItemQSymbol(bellParser::ItemQSymbolContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitItemInlet(bellParser::ItemInletContext *ctx) override {
     return visitChildren(ctx);
   }

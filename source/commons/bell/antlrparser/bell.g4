@@ -69,6 +69,8 @@ funcall: FUNCTION PARAMS sequence CLOSED
 item: UINT #itemUint
 | UFLOAT #itemUfloat
 | UPITCH #itemUpitch
+| BTSYMBOL #itemBtSymbol
+| (DQSYMBOL|SQSYMBOL) #itemQSymbol
 | type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
 | DIRINLET #itemDirInlet
 | BACHNULL #itemNull

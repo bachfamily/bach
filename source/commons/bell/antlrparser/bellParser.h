@@ -259,6 +259,15 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  ItemBtSymbolContext : public ItemContext {
+  public:
+    ItemBtSymbolContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *BTSYMBOL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  ItemInletContext : public ItemContext {
   public:
     ItemInletContext(ItemContext *ctx);
@@ -314,6 +323,16 @@ public:
     ItemNilContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *BACHNIL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemQSymbolContext : public ItemContext {
+  public:
+    ItemQSymbolContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *DQSYMBOL();
+    antlr4::tree::TerminalNode *SQSYMBOL();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

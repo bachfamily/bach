@@ -43,6 +43,10 @@ public:
 
     virtual std::any visitItemUpitch(bellParser::ItemUpitchContext *context) = 0;
 
+    virtual std::any visitItemBtSymbol(bellParser::ItemBtSymbolContext *context) = 0;
+
+    virtual std::any visitItemQSymbol(bellParser::ItemQSymbolContext *context) = 0;
+
     virtual std::any visitItemInlet(bellParser::ItemInletContext *context) = 0;
 
     virtual std::any visitItemDirInlet(bellParser::ItemDirInletContext *context) = 0;
