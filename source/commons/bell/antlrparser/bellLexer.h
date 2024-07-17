@@ -15,22 +15,22 @@
 class  bellLexer : public antlr4::Lexer {
 public:
   enum {
-    UINT = 1, UFLOAT = 2, UPITCH = 3, BTSYMBOL = 4, DQSYMBOL = 5, SQSYMBOL = 6, 
-    BACHNULL = 7, BACHNIL = 8, IF = 9, THEN = 10, ELSE = 11, WHILE = 12, 
-    FOR = 13, DO = 14, COLLECT = 15, FUNCTION = 16, INLET = 17, INTINLET = 18, 
-    RATINLET = 19, FLOATINLET = 20, PITCHINLET = 21, OUTLET = 22, DIRINLET = 23, 
-    DIROUTLET = 24, GLOBALVAR = 25, PATCHERVAR = 26, LOCALVAR = 27, NAMEDPARAM = 28, 
-    PUSH = 29, POP = 30, CLOSED = 31, NTH = 32, PICK = 33, KEY = 34, ANTH = 35, 
-    APICK = 36, NULLIFY = 37, ASSIGN = 38, WHITESPACE = 39, NEWATOM = 40, 
-    POW = 41, APOW = 42, TIMES = 43, ATIMES = 44, DIVDIV = 45, ADIVDIV = 46, 
-    DIV = 47, ADIV = 48, REM = 49, AREM = 50, PLUS = 51, APLUS = 52, UPLUS = 53, 
-    MINUS = 54, AMINUS = 55, UMINUS = 56, EQUAL = 57, NEQ = 58, LOGNOT = 59, 
-    BITNOT = 60, LT = 61, GT = 62, LEQ = 63, GEQ = 64, BITAND = 65, ABITAND = 66, 
-    BITXOR = 67, ABITXOR = 68, BITOR = 69, ABITOR = 70, LOGAND = 71, LOGANDEXT = 72, 
-    ALOGAND = 73, ALOGANDEXT = 74, LOGXOR = 75, ALOGXOR = 76, LOGOR = 77, 
-    ALOGOR = 78, LOGOREXT = 79, ALOGOREXT = 80, LSHIFT = 81, ALSHIFT = 82, 
-    RSHIFT = 83, ARSHIFT = 84, RANGE = 85, REPEAT = 86, AREPEAT = 87, AAPPLY = 88, 
-    ACONCAT = 89, ARCONCAT = 90, OPEN = 91, PARAMS = 92, ANYTHING = 93
+    RANGE = 1, UINT = 2, UFLOAT = 3, UPITCH = 4, BTSYMBOL = 5, DQSYMBOL = 6, 
+    SQSYMBOL = 7, BACHNULL = 8, BACHNIL = 9, IF = 10, THEN = 11, ELSE = 12, 
+    WHILE = 13, FOR = 14, DO = 15, COLLECT = 16, FUNCTION = 17, INLET = 18, 
+    INTINLET = 19, RATINLET = 20, FLOATINLET = 21, PITCHINLET = 22, OUTLET = 23, 
+    DIRINLET = 24, DIROUTLET = 25, GLOBALVAR = 26, PATCHERVAR = 27, LOCALVAR = 28, 
+    NAMEDPARAM = 29, PUSH = 30, POP = 31, CLOSED = 32, NTH = 33, PICK = 34, 
+    KEY = 35, ANTH = 36, APICK = 37, NULLIFY = 38, ASSIGN = 39, WHITESPACE = 40, 
+    NEWATOM = 41, POW = 42, APOW = 43, TIMES = 44, ATIMES = 45, DIVDIV = 46, 
+    ADIVDIV = 47, DIV = 48, ADIV = 49, REM = 50, AREM = 51, PLUS = 52, APLUS = 53, 
+    UPLUS = 54, MINUS = 55, AMINUS = 56, UMINUS = 57, EQUAL = 58, NEQ = 59, 
+    LOGNOT = 60, BITNOT = 61, LT = 62, GT = 63, LEQ = 64, GEQ = 65, BITAND = 66, 
+    ABITAND = 67, BITXOR = 68, ABITXOR = 69, BITOR = 70, ABITOR = 71, LOGAND = 72, 
+    LOGANDEXT = 73, ALOGAND = 74, ALOGANDEXT = 75, LOGXOR = 76, ALOGXOR = 77, 
+    LOGOR = 78, ALOGOR = 79, LOGOREXT = 80, ALOGOREXT = 81, LSHIFT = 82, 
+    ALSHIFT = 83, RSHIFT = 84, ARSHIFT = 85, REPEAT = 86, AREPEAT = 87, 
+    AAPPLY = 88, ACONCAT = 89, ARCONCAT = 90, OPEN = 91, PARAMS = 92, ANYTHING = 93
   };
 
   explicit bellLexer(antlr4::CharStream *input);
@@ -94,6 +94,7 @@ public:
 private:
 
   // Individual action functions triggered by action() above.
+  void RANGEAction(antlr4::RuleContext *context, size_t actionIndex);
   void UINTAction(antlr4::RuleContext *context, size_t actionIndex);
   void UFLOATAction(antlr4::RuleContext *context, size_t actionIndex);
   void UPITCHAction(antlr4::RuleContext *context, size_t actionIndex);
@@ -178,7 +179,6 @@ private:
   void ALSHIFTAction(antlr4::RuleContext *context, size_t actionIndex);
   void RSHIFTAction(antlr4::RuleContext *context, size_t actionIndex);
   void ARSHIFTAction(antlr4::RuleContext *context, size_t actionIndex);
-  void RANGEAction(antlr4::RuleContext *context, size_t actionIndex);
   void REPEATAction(antlr4::RuleContext *context, size_t actionIndex);
   void AREPEATAction(antlr4::RuleContext *context, size_t actionIndex);
   void AAPPLYAction(antlr4::RuleContext *context, size_t actionIndex);

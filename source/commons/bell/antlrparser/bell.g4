@@ -98,23 +98,23 @@ fakeLvalue: item lvalueSpecs
 expr: (item|var|listEnd) #exprSimple
 | lvalue #exprLvalue
 | fakeLvalue #exprFakeLvalue
-| expr PICK (expr|listEnd) #exprBinary
-| <assoc=right> expr op=POW (expr|listEnd) #exprBinary 
-| (UPLUS|UMINUS)+ (expr|listEnd) #exprUPlusMinus
-| expr op=(TIMES|DIV|DIVDIV|REM) (expr|listEnd) #exprBinary
-| expr op=(PLUS|MINUS) (expr|listEnd) #exprBinary
-| expr op=(LSHIFT|RSHIFT) (expr|listEnd) #exprBinary
-| expr op=RANGE (expr|listEnd) #exprBinary
-| expr op=REPEAT (expr|listEnd) #exprBinary
-| expr op=(EQUAL|NEQ) (expr|listEnd) #exprBinary
-| expr op=(LT|GT|LEQ|GEQ) (expr|listEnd) #exprBinary
-| expr op=BITAND (expr|listEnd) #exprBinary
-| expr op=BITXOR (expr|listEnd) #exprBinary
-| expr op=BITOR (expr|listEnd) #exprBinary
-| expr op=(LOGAND|LOGANDEXT) (expr|listEnd) #exprBinary
-| expr op=LOGXOR (expr|listEnd) #exprBinary
-| expr op=(LOGOR|LOGOREXT) (expr|listEnd) #exprBinary
-| op=(LOGNOT|BITNOT) (expr|listEnd) #exprNot
+| expr PICK expr #exprBinary
+| <assoc=right> expr op=POW expr #exprBinary 
+| (UPLUS|UMINUS)+ expr #exprUPlusMinus
+| expr op=(TIMES|DIV|DIVDIV|REM) expr #exprBinary
+| expr op=(PLUS|MINUS) expr #exprBinary
+| expr op=(LSHIFT|RSHIFT) expr #exprBinary
+| expr op=RANGE expr #exprBinary
+| expr op=REPEAT expr #exprBinary
+| expr op=(EQUAL|NEQ) expr #exprBinary
+| expr op=(LT|GT|LEQ|GEQ) expr #exprBinary
+| expr op=BITAND expr #exprBinary
+| expr op=BITXOR expr #exprBinary
+| expr op=BITOR expr #exprBinary
+| expr op=(LOGAND|LOGANDEXT) expr #exprBinary
+| expr op=LOGXOR expr #exprBinary
+| expr op=(LOGOR|LOGOREXT) expr #exprBinary
+| op=(LOGNOT|BITNOT) expr #exprNot
 ;
 
 assignment: lvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV
@@ -145,6 +145,8 @@ list: expr+
 
 
 // lexer rules
+
+RANGE: '...' { noParams = true; noUnary = false; };
 
 UINT: [0-9]+ { noParams = false; noUnary = true; };
 
@@ -287,8 +289,6 @@ ALSHIFT: '<<=' { noParams = true; noUnary = false; };
 
 RSHIFT: '>>' { noParams = true; noUnary = false; };
 ARSHIFT: '>>=' { noParams = true; noUnary = false; };
-
-RANGE: '...' { noParams = true; noUnary = false; };
 
 REPEAT: ':*' { noParams = true; noUnary = false; };
 AREPEAT: ':*=' { noParams = true; noUnary = false; };

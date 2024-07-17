@@ -48,19 +48,19 @@ void bellParserInitialize() {
       "conditional", "listEnd", "list"
     },
     std::vector<std::string>{
-      "", "", "", "", "", "", "", "'null'", "'nil'", "'if'", "'then'", "'else'", 
-      "'while'", "'for'", "'do'", "'collect'", "", "", "", "", "", "", "", 
-      "", "", "", "", "", "", "'['", "']'", "')'", "':'", "'::'", "'.'", 
-      "':='", "'::='", "';'", "'='", "", "", "'**'", "'**='", "'*'", "'*='", 
-      "'//'", "'//='", "'/'", "'/='", "", "", "", "'+='", "'+'", "", "'-='", 
-      "'-'", "'=='", "'!='", "'!'", "'~'", "'<'", "'>'", "'<='", "'>='", 
-      "'&'", "'&='", "'^'", "'^='", "'|'", "'|='", "'&&'", "'&&&'", "'&&='", 
-      "'&&&='", "'^^'", "'^^='", "'||'", "'||='", "'|||'", "'|||='", "'<<'", 
-      "'<<='", "'>>'", "'>>='", "'...'", "':*'", "':*='", "'.='", "'_='", 
+      "", "'...'", "", "", "", "", "", "", "'null'", "'nil'", "'if'", "'then'", 
+      "'else'", "'while'", "'for'", "'do'", "'collect'", "", "", "", "", 
+      "", "", "", "", "", "", "", "", "", "'['", "']'", "')'", "':'", "'::'", 
+      "'.'", "':='", "'::='", "';'", "'='", "", "", "'**'", "'**='", "'*'", 
+      "'*='", "'//'", "'//='", "'/'", "'/='", "", "", "", "'+='", "'+'", 
+      "", "'-='", "'-'", "'=='", "'!='", "'!'", "'~'", "'<'", "'>'", "'<='", 
+      "'>='", "'&'", "'&='", "'^'", "'^='", "'|'", "'|='", "'&&'", "'&&&'", 
+      "'&&='", "'&&&='", "'^^'", "'^^='", "'||'", "'||='", "'|||'", "'|||='", 
+      "'<<'", "'<<='", "'>>'", "'>>='", "':*'", "':*='", "'.='", "'_='", 
       "'!_='"
     },
     std::vector<std::string>{
-      "", "UINT", "UFLOAT", "UPITCH", "BTSYMBOL", "DQSYMBOL", "SQSYMBOL", 
+      "", "RANGE", "UINT", "UFLOAT", "UPITCH", "BTSYMBOL", "DQSYMBOL", "SQSYMBOL", 
       "BACHNULL", "BACHNIL", "IF", "THEN", "ELSE", "WHILE", "FOR", "DO", 
       "COLLECT", "FUNCTION", "INLET", "INTINLET", "RATINLET", "FLOATINLET", 
       "PITCHINLET", "OUTLET", "DIRINLET", "DIROUTLET", "GLOBALVAR", "PATCHERVAR", 
@@ -71,12 +71,12 @@ void bellParserInitialize() {
       "EQUAL", "NEQ", "LOGNOT", "BITNOT", "LT", "GT", "LEQ", "GEQ", "BITAND", 
       "ABITAND", "BITXOR", "ABITXOR", "BITOR", "ABITOR", "LOGAND", "LOGANDEXT", 
       "ALOGAND", "ALOGANDEXT", "LOGXOR", "ALOGXOR", "LOGOR", "ALOGOR", "LOGOREXT", 
-      "ALOGOREXT", "LSHIFT", "ALSHIFT", "RSHIFT", "ARSHIFT", "RANGE", "REPEAT", 
-      "AREPEAT", "AAPPLY", "ACONCAT", "ARCONCAT", "OPEN", "PARAMS", "ANYTHING"
+      "ALOGOREXT", "LSHIFT", "ALSHIFT", "RSHIFT", "ARSHIFT", "REPEAT", "AREPEAT", 
+      "AAPPLY", "ACONCAT", "ARCONCAT", "OPEN", "PARAMS", "ANYTHING"
     }
   );
   static const int32_t serializedATNSegment[] = {
-  	4,1,93,288,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+  	4,1,93,237,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
   	7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,
   	14,2,15,7,15,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,43,8,1,1,2,1,
   	2,4,2,47,8,2,11,2,12,2,48,1,2,3,2,52,8,2,3,2,54,8,2,1,3,1,3,4,3,58,8,
@@ -86,105 +86,83 @@ void bellParserInitialize() {
   	8,104,1,8,1,8,1,8,1,8,3,8,111,8,8,5,8,113,8,8,10,8,12,8,116,9,8,1,8,1,
   	8,3,8,120,8,8,1,9,1,9,3,9,124,8,9,1,10,1,10,1,10,1,11,1,11,1,11,1,11,
   	3,11,133,8,11,1,11,1,11,1,11,4,11,138,8,11,11,11,12,11,139,1,11,1,11,
-  	3,11,144,8,11,1,11,1,11,1,11,3,11,149,8,11,3,11,151,8,11,1,11,1,11,1,
-  	11,1,11,3,11,157,8,11,1,11,1,11,1,11,1,11,3,11,163,8,11,1,11,1,11,1,11,
-  	1,11,3,11,169,8,11,1,11,1,11,1,11,1,11,3,11,175,8,11,1,11,1,11,1,11,1,
-  	11,3,11,181,8,11,1,11,1,11,1,11,1,11,3,11,187,8,11,1,11,1,11,1,11,1,11,
-  	3,11,193,8,11,1,11,1,11,1,11,1,11,3,11,199,8,11,1,11,1,11,1,11,1,11,3,
-  	11,205,8,11,1,11,1,11,1,11,1,11,3,11,211,8,11,1,11,1,11,1,11,1,11,3,11,
-  	217,8,11,1,11,1,11,1,11,1,11,3,11,223,8,11,1,11,1,11,1,11,1,11,3,11,229,
-  	8,11,1,11,1,11,1,11,1,11,3,11,235,8,11,1,11,1,11,1,11,1,11,3,11,241,8,
-  	11,5,11,243,8,11,10,11,12,11,246,9,11,1,12,1,12,1,12,1,12,1,12,1,12,1,
-  	12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,3,12,262,8,12,1,13,1,13,1,13,1,
-  	13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,3,13,276,8,13,1,14,1,14,1,
-  	14,3,14,281,8,14,1,15,4,15,284,8,15,11,15,12,15,285,1,15,0,1,22,16,0,
-  	2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,0,14,1,0,14,15,1,0,5,6,1,0,17,
-  	21,2,0,53,53,56,56,1,0,59,60,4,0,43,43,45,45,47,47,49,49,2,0,51,51,54,
-  	54,2,0,81,81,83,83,1,0,57,58,1,0,61,64,1,0,71,72,2,0,77,77,79,79,19,0,
-  	35,35,38,38,42,42,44,44,46,46,48,48,50,50,52,52,55,55,66,66,68,68,70,
-  	70,73,74,76,76,78,78,80,80,82,82,84,84,89,90,18,0,38,38,42,42,44,44,46,
-  	46,48,48,50,50,52,52,55,55,66,66,68,68,70,70,73,74,76,76,78,78,80,80,
-  	82,82,84,84,89,90,343,0,32,1,0,0,0,2,42,1,0,0,0,4,53,1,0,0,0,6,55,1,0,
-  	0,0,8,61,1,0,0,0,10,66,1,0,0,0,12,89,1,0,0,0,14,94,1,0,0,0,16,119,1,0,
-  	0,0,18,121,1,0,0,0,20,125,1,0,0,0,22,150,1,0,0,0,24,261,1,0,0,0,26,275,
-  	1,0,0,0,28,280,1,0,0,0,30,283,1,0,0,0,32,33,3,2,1,0,33,1,1,0,0,0,34,43,
-  	5,0,0,1,35,36,3,4,2,0,36,37,5,0,0,1,37,43,1,0,0,0,38,39,3,4,2,0,39,40,
-  	5,28,0,0,40,43,1,0,0,0,41,43,5,28,0,0,42,34,1,0,0,0,42,35,1,0,0,0,42,
-  	38,1,0,0,0,42,41,1,0,0,0,43,3,1,0,0,0,44,54,3,30,15,0,45,47,3,6,3,0,46,
-  	45,1,0,0,0,47,48,1,0,0,0,48,46,1,0,0,0,48,49,1,0,0,0,49,51,1,0,0,0,50,
-  	52,3,30,15,0,51,50,1,0,0,0,51,52,1,0,0,0,52,54,1,0,0,0,53,44,1,0,0,0,
-  	53,46,1,0,0,0,54,5,1,0,0,0,55,57,3,30,15,0,56,58,5,37,0,0,57,56,1,0,0,
-  	0,58,59,1,0,0,0,59,57,1,0,0,0,59,60,1,0,0,0,60,7,1,0,0,0,61,62,5,12,0,
-  	0,62,63,3,4,2,0,63,64,7,0,0,0,64,65,3,30,15,0,65,9,1,0,0,0,66,67,5,16,
-  	0,0,67,68,5,92,0,0,68,69,3,4,2,0,69,70,5,31,0,0,70,11,1,0,0,0,71,90,5,
-  	1,0,0,72,90,5,2,0,0,73,90,5,3,0,0,74,90,5,4,0,0,75,90,7,1,0,0,76,90,7,
-  	2,0,0,77,90,5,23,0,0,78,90,5,7,0,0,79,90,5,8,0,0,80,81,5,91,0,0,81,82,
-  	3,4,2,0,82,83,5,31,0,0,83,90,1,0,0,0,84,85,5,29,0,0,85,86,3,4,2,0,86,
-  	87,5,30,0,0,87,90,1,0,0,0,88,90,3,10,5,0,89,71,1,0,0,0,89,72,1,0,0,0,
-  	89,73,1,0,0,0,89,74,1,0,0,0,89,75,1,0,0,0,89,76,1,0,0,0,89,77,1,0,0,0,
-  	89,78,1,0,0,0,89,79,1,0,0,0,89,80,1,0,0,0,89,84,1,0,0,0,89,88,1,0,0,0,
-  	90,13,1,0,0,0,91,95,5,27,0,0,92,95,5,26,0,0,93,95,5,25,0,0,94,91,1,0,
-  	0,0,94,92,1,0,0,0,94,93,1,0,0,0,95,15,1,0,0,0,96,102,6,8,-1,0,97,100,
-  	5,32,0,0,98,101,3,12,6,0,99,101,3,14,7,0,100,98,1,0,0,0,100,99,1,0,0,
-  	0,101,103,1,0,0,0,102,97,1,0,0,0,103,104,1,0,0,0,104,102,1,0,0,0,104,
-  	105,1,0,0,0,105,120,1,0,0,0,106,114,6,8,-1,0,107,110,5,32,0,0,108,111,
-  	3,12,6,0,109,111,3,14,7,0,110,108,1,0,0,0,110,109,1,0,0,0,111,113,1,0,
-  	0,0,112,107,1,0,0,0,113,116,1,0,0,0,114,112,1,0,0,0,114,115,1,0,0,0,115,
-  	117,1,0,0,0,116,114,1,0,0,0,117,118,5,32,0,0,118,120,3,26,13,0,119,96,
-  	1,0,0,0,119,106,1,0,0,0,120,17,1,0,0,0,121,123,3,14,7,0,122,124,3,16,
-  	8,0,123,122,1,0,0,0,123,124,1,0,0,0,124,19,1,0,0,0,125,126,3,12,6,0,126,
-  	127,3,16,8,0,127,21,1,0,0,0,128,132,6,11,-1,0,129,133,3,12,6,0,130,133,
-  	3,14,7,0,131,133,3,28,14,0,132,129,1,0,0,0,132,130,1,0,0,0,132,131,1,
-  	0,0,0,133,151,1,0,0,0,134,151,3,18,9,0,135,151,3,20,10,0,136,138,7,3,
-  	0,0,137,136,1,0,0,0,138,139,1,0,0,0,139,137,1,0,0,0,139,140,1,0,0,0,140,
-  	143,1,0,0,0,141,144,3,22,11,0,142,144,3,28,14,0,143,141,1,0,0,0,143,142,
-  	1,0,0,0,144,151,1,0,0,0,145,148,7,4,0,0,146,149,3,22,11,0,147,149,3,28,
-  	14,0,148,146,1,0,0,0,148,147,1,0,0,0,149,151,1,0,0,0,150,128,1,0,0,0,
-  	150,134,1,0,0,0,150,135,1,0,0,0,150,137,1,0,0,0,150,145,1,0,0,0,151,244,
-  	1,0,0,0,152,153,10,17,0,0,153,156,5,33,0,0,154,157,3,22,11,0,155,157,
-  	3,28,14,0,156,154,1,0,0,0,156,155,1,0,0,0,157,243,1,0,0,0,158,159,10,
-  	16,0,0,159,162,5,41,0,0,160,163,3,22,11,0,161,163,3,28,14,0,162,160,1,
-  	0,0,0,162,161,1,0,0,0,163,243,1,0,0,0,164,165,10,14,0,0,165,168,7,5,0,
-  	0,166,169,3,22,11,0,167,169,3,28,14,0,168,166,1,0,0,0,168,167,1,0,0,0,
-  	169,243,1,0,0,0,170,171,10,13,0,0,171,174,7,6,0,0,172,175,3,22,11,0,173,
-  	175,3,28,14,0,174,172,1,0,0,0,174,173,1,0,0,0,175,243,1,0,0,0,176,177,
-  	10,12,0,0,177,180,7,7,0,0,178,181,3,22,11,0,179,181,3,28,14,0,180,178,
-  	1,0,0,0,180,179,1,0,0,0,181,243,1,0,0,0,182,183,10,11,0,0,183,186,5,85,
-  	0,0,184,187,3,22,11,0,185,187,3,28,14,0,186,184,1,0,0,0,186,185,1,0,0,
-  	0,187,243,1,0,0,0,188,189,10,10,0,0,189,192,5,86,0,0,190,193,3,22,11,
-  	0,191,193,3,28,14,0,192,190,1,0,0,0,192,191,1,0,0,0,193,243,1,0,0,0,194,
-  	195,10,9,0,0,195,198,7,8,0,0,196,199,3,22,11,0,197,199,3,28,14,0,198,
-  	196,1,0,0,0,198,197,1,0,0,0,199,243,1,0,0,0,200,201,10,8,0,0,201,204,
-  	7,9,0,0,202,205,3,22,11,0,203,205,3,28,14,0,204,202,1,0,0,0,204,203,1,
-  	0,0,0,205,243,1,0,0,0,206,207,10,7,0,0,207,210,5,65,0,0,208,211,3,22,
-  	11,0,209,211,3,28,14,0,210,208,1,0,0,0,210,209,1,0,0,0,211,243,1,0,0,
-  	0,212,213,10,6,0,0,213,216,5,67,0,0,214,217,3,22,11,0,215,217,3,28,14,
-  	0,216,214,1,0,0,0,216,215,1,0,0,0,217,243,1,0,0,0,218,219,10,5,0,0,219,
-  	222,5,69,0,0,220,223,3,22,11,0,221,223,3,28,14,0,222,220,1,0,0,0,222,
-  	221,1,0,0,0,223,243,1,0,0,0,224,225,10,4,0,0,225,228,7,10,0,0,226,229,
-  	3,22,11,0,227,229,3,28,14,0,228,226,1,0,0,0,228,227,1,0,0,0,229,243,1,
-  	0,0,0,230,231,10,3,0,0,231,234,5,75,0,0,232,235,3,22,11,0,233,235,3,28,
-  	14,0,234,232,1,0,0,0,234,233,1,0,0,0,235,243,1,0,0,0,236,237,10,2,0,0,
-  	237,240,7,11,0,0,238,241,3,22,11,0,239,241,3,28,14,0,240,238,1,0,0,0,
-  	240,239,1,0,0,0,241,243,1,0,0,0,242,152,1,0,0,0,242,158,1,0,0,0,242,164,
-  	1,0,0,0,242,170,1,0,0,0,242,176,1,0,0,0,242,182,1,0,0,0,242,188,1,0,0,
-  	0,242,194,1,0,0,0,242,200,1,0,0,0,242,206,1,0,0,0,242,212,1,0,0,0,242,
-  	218,1,0,0,0,242,224,1,0,0,0,242,230,1,0,0,0,242,236,1,0,0,0,243,246,1,
-  	0,0,0,244,242,1,0,0,0,244,245,1,0,0,0,245,23,1,0,0,0,246,244,1,0,0,0,
-  	247,248,3,18,9,0,248,249,7,12,0,0,249,250,3,30,15,0,250,262,1,0,0,0,251,
-  	252,3,20,10,0,252,253,7,13,0,0,253,254,3,30,15,0,254,262,1,0,0,0,255,
-  	256,5,22,0,0,256,257,5,38,0,0,257,262,3,30,15,0,258,259,5,24,0,0,259,
-  	260,5,38,0,0,260,262,3,30,15,0,261,247,1,0,0,0,261,251,1,0,0,0,261,255,
-  	1,0,0,0,261,258,1,0,0,0,262,25,1,0,0,0,263,264,5,9,0,0,264,265,3,4,2,
-  	0,265,266,5,10,0,0,266,267,3,30,15,0,267,276,1,0,0,0,268,269,5,9,0,0,
-  	269,270,3,4,2,0,270,271,5,10,0,0,271,272,3,4,2,0,272,273,5,11,0,0,273,
-  	274,3,30,15,0,274,276,1,0,0,0,275,263,1,0,0,0,275,268,1,0,0,0,276,27,
-  	1,0,0,0,277,281,3,26,13,0,278,281,3,24,12,0,279,281,3,8,4,0,280,277,1,
-  	0,0,0,280,278,1,0,0,0,280,279,1,0,0,0,281,29,1,0,0,0,282,284,3,22,11,
-  	0,283,282,1,0,0,0,284,285,1,0,0,0,285,283,1,0,0,0,285,286,1,0,0,0,286,
-  	31,1,0,0,0,39,42,48,51,53,59,89,94,100,104,110,114,119,123,132,139,143,
-  	148,150,156,162,168,174,180,186,192,198,204,210,216,222,228,234,240,242,
-  	244,261,275,280,285
+  	1,11,3,11,145,8,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,
+  	1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,
+  	1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,
+  	1,11,1,11,1,11,1,11,1,11,1,11,1,11,5,11,192,8,11,10,11,12,11,195,9,11,
+  	1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,
+  	3,12,211,8,12,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,
+  	1,13,3,13,225,8,13,1,14,1,14,1,14,3,14,230,8,14,1,15,4,15,233,8,15,11,
+  	15,12,15,234,1,15,0,1,22,16,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,
+  	0,14,1,0,15,16,1,0,6,7,1,0,18,22,2,0,54,54,57,57,1,0,60,61,4,0,44,44,
+  	46,46,48,48,50,50,2,0,52,52,55,55,2,0,82,82,84,84,1,0,58,59,1,0,62,65,
+  	1,0,72,73,2,0,78,78,80,80,19,0,36,36,39,39,43,43,45,45,47,47,49,49,51,
+  	51,53,53,56,56,67,67,69,69,71,71,74,75,77,77,79,79,81,81,83,83,85,85,
+  	89,90,18,0,39,39,43,43,45,45,47,47,49,49,51,51,53,53,56,56,67,67,69,69,
+  	71,71,74,75,77,77,79,79,81,81,83,83,85,85,89,90,275,0,32,1,0,0,0,2,42,
+  	1,0,0,0,4,53,1,0,0,0,6,55,1,0,0,0,8,61,1,0,0,0,10,66,1,0,0,0,12,89,1,
+  	0,0,0,14,94,1,0,0,0,16,119,1,0,0,0,18,121,1,0,0,0,20,125,1,0,0,0,22,144,
+  	1,0,0,0,24,210,1,0,0,0,26,224,1,0,0,0,28,229,1,0,0,0,30,232,1,0,0,0,32,
+  	33,3,2,1,0,33,1,1,0,0,0,34,43,5,0,0,1,35,36,3,4,2,0,36,37,5,0,0,1,37,
+  	43,1,0,0,0,38,39,3,4,2,0,39,40,5,29,0,0,40,43,1,0,0,0,41,43,5,29,0,0,
+  	42,34,1,0,0,0,42,35,1,0,0,0,42,38,1,0,0,0,42,41,1,0,0,0,43,3,1,0,0,0,
+  	44,54,3,30,15,0,45,47,3,6,3,0,46,45,1,0,0,0,47,48,1,0,0,0,48,46,1,0,0,
+  	0,48,49,1,0,0,0,49,51,1,0,0,0,50,52,3,30,15,0,51,50,1,0,0,0,51,52,1,0,
+  	0,0,52,54,1,0,0,0,53,44,1,0,0,0,53,46,1,0,0,0,54,5,1,0,0,0,55,57,3,30,
+  	15,0,56,58,5,38,0,0,57,56,1,0,0,0,58,59,1,0,0,0,59,57,1,0,0,0,59,60,1,
+  	0,0,0,60,7,1,0,0,0,61,62,5,13,0,0,62,63,3,4,2,0,63,64,7,0,0,0,64,65,3,
+  	30,15,0,65,9,1,0,0,0,66,67,5,17,0,0,67,68,5,92,0,0,68,69,3,4,2,0,69,70,
+  	5,32,0,0,70,11,1,0,0,0,71,90,5,2,0,0,72,90,5,3,0,0,73,90,5,4,0,0,74,90,
+  	5,5,0,0,75,90,7,1,0,0,76,90,7,2,0,0,77,90,5,24,0,0,78,90,5,8,0,0,79,90,
+  	5,9,0,0,80,81,5,91,0,0,81,82,3,4,2,0,82,83,5,32,0,0,83,90,1,0,0,0,84,
+  	85,5,30,0,0,85,86,3,4,2,0,86,87,5,31,0,0,87,90,1,0,0,0,88,90,3,10,5,0,
+  	89,71,1,0,0,0,89,72,1,0,0,0,89,73,1,0,0,0,89,74,1,0,0,0,89,75,1,0,0,0,
+  	89,76,1,0,0,0,89,77,1,0,0,0,89,78,1,0,0,0,89,79,1,0,0,0,89,80,1,0,0,0,
+  	89,84,1,0,0,0,89,88,1,0,0,0,90,13,1,0,0,0,91,95,5,28,0,0,92,95,5,27,0,
+  	0,93,95,5,26,0,0,94,91,1,0,0,0,94,92,1,0,0,0,94,93,1,0,0,0,95,15,1,0,
+  	0,0,96,102,6,8,-1,0,97,100,5,33,0,0,98,101,3,12,6,0,99,101,3,14,7,0,100,
+  	98,1,0,0,0,100,99,1,0,0,0,101,103,1,0,0,0,102,97,1,0,0,0,103,104,1,0,
+  	0,0,104,102,1,0,0,0,104,105,1,0,0,0,105,120,1,0,0,0,106,114,6,8,-1,0,
+  	107,110,5,33,0,0,108,111,3,12,6,0,109,111,3,14,7,0,110,108,1,0,0,0,110,
+  	109,1,0,0,0,111,113,1,0,0,0,112,107,1,0,0,0,113,116,1,0,0,0,114,112,1,
+  	0,0,0,114,115,1,0,0,0,115,117,1,0,0,0,116,114,1,0,0,0,117,118,5,33,0,
+  	0,118,120,3,26,13,0,119,96,1,0,0,0,119,106,1,0,0,0,120,17,1,0,0,0,121,
+  	123,3,14,7,0,122,124,3,16,8,0,123,122,1,0,0,0,123,124,1,0,0,0,124,19,
+  	1,0,0,0,125,126,3,12,6,0,126,127,3,16,8,0,127,21,1,0,0,0,128,132,6,11,
+  	-1,0,129,133,3,12,6,0,130,133,3,14,7,0,131,133,3,28,14,0,132,129,1,0,
+  	0,0,132,130,1,0,0,0,132,131,1,0,0,0,133,145,1,0,0,0,134,145,3,18,9,0,
+  	135,145,3,20,10,0,136,138,7,3,0,0,137,136,1,0,0,0,138,139,1,0,0,0,139,
+  	137,1,0,0,0,139,140,1,0,0,0,140,141,1,0,0,0,141,145,3,22,11,15,142,143,
+  	7,4,0,0,143,145,3,22,11,1,144,128,1,0,0,0,144,134,1,0,0,0,144,135,1,0,
+  	0,0,144,137,1,0,0,0,144,142,1,0,0,0,145,193,1,0,0,0,146,147,10,17,0,0,
+  	147,148,5,34,0,0,148,192,3,22,11,18,149,150,10,16,0,0,150,151,5,42,0,
+  	0,151,192,3,22,11,16,152,153,10,14,0,0,153,154,7,5,0,0,154,192,3,22,11,
+  	15,155,156,10,13,0,0,156,157,7,6,0,0,157,192,3,22,11,14,158,159,10,12,
+  	0,0,159,160,7,7,0,0,160,192,3,22,11,13,161,162,10,11,0,0,162,163,5,1,
+  	0,0,163,192,3,22,11,12,164,165,10,10,0,0,165,166,5,86,0,0,166,192,3,22,
+  	11,11,167,168,10,9,0,0,168,169,7,8,0,0,169,192,3,22,11,10,170,171,10,
+  	8,0,0,171,172,7,9,0,0,172,192,3,22,11,9,173,174,10,7,0,0,174,175,5,66,
+  	0,0,175,192,3,22,11,8,176,177,10,6,0,0,177,178,5,68,0,0,178,192,3,22,
+  	11,7,179,180,10,5,0,0,180,181,5,70,0,0,181,192,3,22,11,6,182,183,10,4,
+  	0,0,183,184,7,10,0,0,184,192,3,22,11,5,185,186,10,3,0,0,186,187,5,76,
+  	0,0,187,192,3,22,11,4,188,189,10,2,0,0,189,190,7,11,0,0,190,192,3,22,
+  	11,3,191,146,1,0,0,0,191,149,1,0,0,0,191,152,1,0,0,0,191,155,1,0,0,0,
+  	191,158,1,0,0,0,191,161,1,0,0,0,191,164,1,0,0,0,191,167,1,0,0,0,191,170,
+  	1,0,0,0,191,173,1,0,0,0,191,176,1,0,0,0,191,179,1,0,0,0,191,182,1,0,0,
+  	0,191,185,1,0,0,0,191,188,1,0,0,0,192,195,1,0,0,0,193,191,1,0,0,0,193,
+  	194,1,0,0,0,194,23,1,0,0,0,195,193,1,0,0,0,196,197,3,18,9,0,197,198,7,
+  	12,0,0,198,199,3,30,15,0,199,211,1,0,0,0,200,201,3,20,10,0,201,202,7,
+  	13,0,0,202,203,3,30,15,0,203,211,1,0,0,0,204,205,5,23,0,0,205,206,5,39,
+  	0,0,206,211,3,30,15,0,207,208,5,25,0,0,208,209,5,39,0,0,209,211,3,30,
+  	15,0,210,196,1,0,0,0,210,200,1,0,0,0,210,204,1,0,0,0,210,207,1,0,0,0,
+  	211,25,1,0,0,0,212,213,5,10,0,0,213,214,3,4,2,0,214,215,5,11,0,0,215,
+  	216,3,30,15,0,216,225,1,0,0,0,217,218,5,10,0,0,218,219,3,4,2,0,219,220,
+  	5,11,0,0,220,221,3,4,2,0,221,222,5,12,0,0,222,223,3,30,15,0,223,225,1,
+  	0,0,0,224,212,1,0,0,0,224,217,1,0,0,0,225,27,1,0,0,0,226,230,3,26,13,
+  	0,227,230,3,24,12,0,228,230,3,8,4,0,229,226,1,0,0,0,229,227,1,0,0,0,229,
+  	228,1,0,0,0,230,29,1,0,0,0,231,233,3,22,11,0,232,231,1,0,0,0,233,234,
+  	1,0,0,0,234,232,1,0,0,0,234,235,1,0,0,0,235,31,1,0,0,0,22,42,48,51,53,
+  	59,89,94,100,104,110,114,119,123,132,139,144,191,193,210,224,229,234
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -1633,10 +1611,6 @@ bellParser::ExprContext* bellParser::ExprUPlusMinusContext::expr() {
   return getRuleContext<bellParser::ExprContext>(0);
 }
 
-bellParser::ListEndContext* bellParser::ExprUPlusMinusContext::listEnd() {
-  return getRuleContext<bellParser::ListEndContext>(0);
-}
-
 std::vector<tree::TerminalNode *> bellParser::ExprUPlusMinusContext::UPLUS() {
   return getTokens(bellParser::UPLUS);
 }
@@ -1687,20 +1661,16 @@ std::any bellParser::ExprSimpleContext::accept(tree::ParseTreeVisitor *visitor) 
 }
 //----------------- ExprNotContext ------------------------------------------------------------------
 
+bellParser::ExprContext* bellParser::ExprNotContext::expr() {
+  return getRuleContext<bellParser::ExprContext>(0);
+}
+
 tree::TerminalNode* bellParser::ExprNotContext::LOGNOT() {
   return getToken(bellParser::LOGNOT, 0);
 }
 
 tree::TerminalNode* bellParser::ExprNotContext::BITNOT() {
   return getToken(bellParser::BITNOT, 0);
-}
-
-bellParser::ExprContext* bellParser::ExprNotContext::expr() {
-  return getRuleContext<bellParser::ExprContext>(0);
-}
-
-bellParser::ListEndContext* bellParser::ExprNotContext::listEnd() {
-  return getRuleContext<bellParser::ListEndContext>(0);
 }
 
 bellParser::ExprNotContext::ExprNotContext(ExprContext *ctx) { copyFrom(ctx); }
@@ -1724,10 +1694,6 @@ bellParser::ExprContext* bellParser::ExprBinaryContext::expr(size_t i) {
 
 tree::TerminalNode* bellParser::ExprBinaryContext::PICK() {
   return getToken(bellParser::PICK, 0);
-}
-
-bellParser::ListEndContext* bellParser::ExprBinaryContext::listEnd() {
-  return getRuleContext<bellParser::ListEndContext>(0);
 }
 
 tree::TerminalNode* bellParser::ExprBinaryContext::POW() {
@@ -1880,9 +1846,9 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(150);
+    setState(144);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 17, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 15, _ctx)) {
     case 1: {
       _localctx = _tracker.createInstance<ExprSimpleContext>(_localctx);
       _ctx = _localctx;
@@ -1964,24 +1930,8 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
         _errHandler->sync(this);
         alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 14, _ctx);
       } while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER);
-      setState(143);
-      _errHandler->sync(this);
-      switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 15, _ctx)) {
-      case 1: {
-        setState(141);
-        expr(0);
-        break;
-      }
-
-      case 2: {
-        setState(142);
-        listEnd();
-        break;
-      }
-
-      default:
-        break;
-      }
+      setState(141);
+      expr(15);
       break;
     }
 
@@ -1989,7 +1939,7 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
       _localctx = _tracker.createInstance<ExprNotContext>(_localctx);
       _ctx = _localctx;
       previousContext = _localctx;
-      setState(145);
+      setState(142);
       antlrcpp::downCast<ExprNotContext *>(_localctx)->op = _input->LT(1);
       _la = _input->LA(1);
       if (!(_la == bellParser::LOGNOT
@@ -2001,24 +1951,8 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
         _errHandler->reportMatch(this);
         consume();
       }
-      setState(148);
-      _errHandler->sync(this);
-      switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 16, _ctx)) {
-      case 1: {
-        setState(146);
-        expr(0);
-        break;
-      }
-
-      case 2: {
-        setState(147);
-        listEnd();
-        break;
-      }
-
-      default:
-        break;
-      }
+      setState(143);
+      expr(1);
       break;
     }
 
@@ -2026,44 +1960,28 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
       break;
     }
     _ctx->stop = _input->LT(-1);
-    setState(244);
+    setState(193);
     _errHandler->sync(this);
-    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 34, _ctx);
+    alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 17, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
       if (alt == 1) {
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(242);
+        setState(191);
         _errHandler->sync(this);
-        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 33, _ctx)) {
+        switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 16, _ctx)) {
         case 1: {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(152);
+          setState(146);
 
           if (!(precpred(_ctx, 17))) throw FailedPredicateException(this, "precpred(_ctx, 17)");
-          setState(153);
+          setState(147);
           match(bellParser::PICK);
-          setState(156);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 18, _ctx)) {
-          case 1: {
-            setState(154);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(155);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(148);
+          expr(18);
           break;
         }
 
@@ -2071,29 +1989,13 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(158);
+          setState(149);
 
           if (!(precpred(_ctx, 16))) throw FailedPredicateException(this, "precpred(_ctx, 16)");
-          setState(159);
+          setState(150);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = match(bellParser::POW);
-          setState(162);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 19, _ctx)) {
-          case 1: {
-            setState(160);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(161);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(151);
+          expr(16);
           break;
         }
 
@@ -2101,10 +2003,10 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(164);
+          setState(152);
 
           if (!(precpred(_ctx, 14))) throw FailedPredicateException(this, "precpred(_ctx, 14)");
-          setState(165);
+          setState(153);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!((((_la & ~ 0x3fULL) == 0) &&
@@ -2118,24 +2020,8 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(168);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 20, _ctx)) {
-          case 1: {
-            setState(166);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(167);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(154);
+          expr(15);
           break;
         }
 
@@ -2143,10 +2029,10 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(170);
+          setState(155);
 
           if (!(precpred(_ctx, 13))) throw FailedPredicateException(this, "precpred(_ctx, 13)");
-          setState(171);
+          setState(156);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == bellParser::PLUS
@@ -2158,24 +2044,8 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(174);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx)) {
-          case 1: {
-            setState(172);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(173);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(157);
+          expr(14);
           break;
         }
 
@@ -2183,10 +2053,10 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(176);
+          setState(158);
 
           if (!(precpred(_ctx, 12))) throw FailedPredicateException(this, "precpred(_ctx, 12)");
-          setState(177);
+          setState(159);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == bellParser::LSHIFT
@@ -2198,24 +2068,8 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(180);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 22, _ctx)) {
-          case 1: {
-            setState(178);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(179);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(160);
+          expr(13);
           break;
         }
 
@@ -2223,29 +2077,13 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(182);
+          setState(161);
 
           if (!(precpred(_ctx, 11))) throw FailedPredicateException(this, "precpred(_ctx, 11)");
-          setState(183);
+          setState(162);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = match(bellParser::RANGE);
-          setState(186);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 23, _ctx)) {
-          case 1: {
-            setState(184);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(185);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(163);
+          expr(12);
           break;
         }
 
@@ -2253,29 +2091,13 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(188);
+          setState(164);
 
           if (!(precpred(_ctx, 10))) throw FailedPredicateException(this, "precpred(_ctx, 10)");
-          setState(189);
+          setState(165);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = match(bellParser::REPEAT);
-          setState(192);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 24, _ctx)) {
-          case 1: {
-            setState(190);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(191);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(166);
+          expr(11);
           break;
         }
 
@@ -2283,10 +2105,10 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(194);
+          setState(167);
 
           if (!(precpred(_ctx, 9))) throw FailedPredicateException(this, "precpred(_ctx, 9)");
-          setState(195);
+          setState(168);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == bellParser::EQUAL
@@ -2298,24 +2120,8 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(198);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 25, _ctx)) {
-          case 1: {
-            setState(196);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(197);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(169);
+          expr(10);
           break;
         }
 
@@ -2323,41 +2129,25 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(200);
+          setState(170);
 
           if (!(precpred(_ctx, 8))) throw FailedPredicateException(this, "precpred(_ctx, 8)");
-          setState(201);
+          setState(171);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
-          if (!(((((_la - 61) & ~ 0x3fULL) == 0) &&
-            ((1ULL << (_la - 61)) & ((1ULL << (bellParser::LT - 61))
-            | (1ULL << (bellParser::GT - 61))
-            | (1ULL << (bellParser::LEQ - 61))
-            | (1ULL << (bellParser::GEQ - 61)))) != 0))) {
+          if (!(((((_la - 62) & ~ 0x3fULL) == 0) &&
+            ((1ULL << (_la - 62)) & ((1ULL << (bellParser::LT - 62))
+            | (1ULL << (bellParser::GT - 62))
+            | (1ULL << (bellParser::LEQ - 62))
+            | (1ULL << (bellParser::GEQ - 62)))) != 0))) {
             antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = _errHandler->recoverInline(this);
           }
           else {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(204);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 26, _ctx)) {
-          case 1: {
-            setState(202);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(203);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(172);
+          expr(9);
           break;
         }
 
@@ -2365,29 +2155,13 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(206);
+          setState(173);
 
           if (!(precpred(_ctx, 7))) throw FailedPredicateException(this, "precpred(_ctx, 7)");
-          setState(207);
+          setState(174);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = match(bellParser::BITAND);
-          setState(210);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 27, _ctx)) {
-          case 1: {
-            setState(208);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(209);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(175);
+          expr(8);
           break;
         }
 
@@ -2395,29 +2169,13 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(212);
+          setState(176);
 
           if (!(precpred(_ctx, 6))) throw FailedPredicateException(this, "precpred(_ctx, 6)");
-          setState(213);
+          setState(177);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = match(bellParser::BITXOR);
-          setState(216);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 28, _ctx)) {
-          case 1: {
-            setState(214);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(215);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(178);
+          expr(7);
           break;
         }
 
@@ -2425,29 +2183,13 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(218);
+          setState(179);
 
           if (!(precpred(_ctx, 5))) throw FailedPredicateException(this, "precpred(_ctx, 5)");
-          setState(219);
+          setState(180);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = match(bellParser::BITOR);
-          setState(222);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 29, _ctx)) {
-          case 1: {
-            setState(220);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(221);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(181);
+          expr(6);
           break;
         }
 
@@ -2455,10 +2197,10 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(224);
+          setState(182);
 
           if (!(precpred(_ctx, 4))) throw FailedPredicateException(this, "precpred(_ctx, 4)");
-          setState(225);
+          setState(183);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == bellParser::LOGAND
@@ -2470,24 +2212,8 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(228);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 30, _ctx)) {
-          case 1: {
-            setState(226);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(227);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(184);
+          expr(5);
           break;
         }
 
@@ -2495,29 +2221,13 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(230);
+          setState(185);
 
           if (!(precpred(_ctx, 3))) throw FailedPredicateException(this, "precpred(_ctx, 3)");
-          setState(231);
+          setState(186);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = match(bellParser::LOGXOR);
-          setState(234);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 31, _ctx)) {
-          case 1: {
-            setState(232);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(233);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(187);
+          expr(4);
           break;
         }
 
@@ -2525,10 +2235,10 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           auto newContext = _tracker.createInstance<ExprBinaryContext>(_tracker.createInstance<ExprContext>(parentContext, parentState));
           _localctx = newContext;
           pushNewRecursionContext(newContext, startState, RuleExpr);
-          setState(236);
+          setState(188);
 
           if (!(precpred(_ctx, 2))) throw FailedPredicateException(this, "precpred(_ctx, 2)");
-          setState(237);
+          setState(189);
           antlrcpp::downCast<ExprBinaryContext *>(_localctx)->op = _input->LT(1);
           _la = _input->LA(1);
           if (!(_la == bellParser::LOGOR
@@ -2540,24 +2250,8 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
             _errHandler->reportMatch(this);
             consume();
           }
-          setState(240);
-          _errHandler->sync(this);
-          switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 32, _ctx)) {
-          case 1: {
-            setState(238);
-            expr(0);
-            break;
-          }
-
-          case 2: {
-            setState(239);
-            listEnd();
-            break;
-          }
-
-          default:
-            break;
-          }
+          setState(190);
+          expr(3);
           break;
         }
 
@@ -2565,9 +2259,9 @@ bellParser::ExprContext* bellParser::expr(int precedence) {
           break;
         } 
       }
-      setState(246);
+      setState(195);
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 34, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 17, _ctx);
     }
   }
   catch (RecognitionException &e) {
@@ -2854,7 +2548,7 @@ bellParser::AssignmentContext* bellParser::assignment() {
     exitRule();
   });
   try {
-    setState(261);
+    setState(210);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case bellParser::GLOBALVAR:
@@ -2862,40 +2556,40 @@ bellParser::AssignmentContext* bellParser::assignment() {
       case bellParser::LOCALVAR: {
         _localctx = _tracker.createInstance<bellParser::TrueAssignmentContext>(_localctx);
         enterOuterAlt(_localctx, 1);
-        setState(247);
+        setState(196);
         lvalue();
-        setState(248);
+        setState(197);
         antlrcpp::downCast<TrueAssignmentContext *>(_localctx)->op = _input->LT(1);
         _la = _input->LA(1);
-        if (!(((((_la - 35) & ~ 0x3fULL) == 0) &&
-          ((1ULL << (_la - 35)) & ((1ULL << (bellParser::ANTH - 35))
-          | (1ULL << (bellParser::ASSIGN - 35))
-          | (1ULL << (bellParser::APOW - 35))
-          | (1ULL << (bellParser::ATIMES - 35))
-          | (1ULL << (bellParser::ADIVDIV - 35))
-          | (1ULL << (bellParser::ADIV - 35))
-          | (1ULL << (bellParser::AREM - 35))
-          | (1ULL << (bellParser::APLUS - 35))
-          | (1ULL << (bellParser::AMINUS - 35))
-          | (1ULL << (bellParser::ABITAND - 35))
-          | (1ULL << (bellParser::ABITXOR - 35))
-          | (1ULL << (bellParser::ABITOR - 35))
-          | (1ULL << (bellParser::ALOGAND - 35))
-          | (1ULL << (bellParser::ALOGANDEXT - 35))
-          | (1ULL << (bellParser::ALOGXOR - 35))
-          | (1ULL << (bellParser::ALOGOR - 35))
-          | (1ULL << (bellParser::ALOGOREXT - 35))
-          | (1ULL << (bellParser::ALSHIFT - 35))
-          | (1ULL << (bellParser::ARSHIFT - 35))
-          | (1ULL << (bellParser::ACONCAT - 35))
-          | (1ULL << (bellParser::ARCONCAT - 35)))) != 0))) {
+        if (!(((((_la - 36) & ~ 0x3fULL) == 0) &&
+          ((1ULL << (_la - 36)) & ((1ULL << (bellParser::ANTH - 36))
+          | (1ULL << (bellParser::ASSIGN - 36))
+          | (1ULL << (bellParser::APOW - 36))
+          | (1ULL << (bellParser::ATIMES - 36))
+          | (1ULL << (bellParser::ADIVDIV - 36))
+          | (1ULL << (bellParser::ADIV - 36))
+          | (1ULL << (bellParser::AREM - 36))
+          | (1ULL << (bellParser::APLUS - 36))
+          | (1ULL << (bellParser::AMINUS - 36))
+          | (1ULL << (bellParser::ABITAND - 36))
+          | (1ULL << (bellParser::ABITXOR - 36))
+          | (1ULL << (bellParser::ABITOR - 36))
+          | (1ULL << (bellParser::ALOGAND - 36))
+          | (1ULL << (bellParser::ALOGANDEXT - 36))
+          | (1ULL << (bellParser::ALOGXOR - 36))
+          | (1ULL << (bellParser::ALOGOR - 36))
+          | (1ULL << (bellParser::ALOGOREXT - 36))
+          | (1ULL << (bellParser::ALSHIFT - 36))
+          | (1ULL << (bellParser::ARSHIFT - 36))
+          | (1ULL << (bellParser::ACONCAT - 36))
+          | (1ULL << (bellParser::ARCONCAT - 36)))) != 0))) {
           antlrcpp::downCast<TrueAssignmentContext *>(_localctx)->op = _errHandler->recoverInline(this);
         }
         else {
           _errHandler->reportMatch(this);
           consume();
         }
-        setState(249);
+        setState(198);
         list();
         break;
       }
@@ -2919,39 +2613,39 @@ bellParser::AssignmentContext* bellParser::assignment() {
       case bellParser::OPEN: {
         _localctx = _tracker.createInstance<bellParser::FakeAssignmentContext>(_localctx);
         enterOuterAlt(_localctx, 2);
-        setState(251);
+        setState(200);
         fakeLvalue();
-        setState(252);
+        setState(201);
         antlrcpp::downCast<FakeAssignmentContext *>(_localctx)->op = _input->LT(1);
         _la = _input->LA(1);
-        if (!(((((_la - 38) & ~ 0x3fULL) == 0) &&
-          ((1ULL << (_la - 38)) & ((1ULL << (bellParser::ASSIGN - 38))
-          | (1ULL << (bellParser::APOW - 38))
-          | (1ULL << (bellParser::ATIMES - 38))
-          | (1ULL << (bellParser::ADIVDIV - 38))
-          | (1ULL << (bellParser::ADIV - 38))
-          | (1ULL << (bellParser::AREM - 38))
-          | (1ULL << (bellParser::APLUS - 38))
-          | (1ULL << (bellParser::AMINUS - 38))
-          | (1ULL << (bellParser::ABITAND - 38))
-          | (1ULL << (bellParser::ABITXOR - 38))
-          | (1ULL << (bellParser::ABITOR - 38))
-          | (1ULL << (bellParser::ALOGAND - 38))
-          | (1ULL << (bellParser::ALOGANDEXT - 38))
-          | (1ULL << (bellParser::ALOGXOR - 38))
-          | (1ULL << (bellParser::ALOGOR - 38))
-          | (1ULL << (bellParser::ALOGOREXT - 38))
-          | (1ULL << (bellParser::ALSHIFT - 38))
-          | (1ULL << (bellParser::ARSHIFT - 38))
-          | (1ULL << (bellParser::ACONCAT - 38))
-          | (1ULL << (bellParser::ARCONCAT - 38)))) != 0))) {
+        if (!(((((_la - 39) & ~ 0x3fULL) == 0) &&
+          ((1ULL << (_la - 39)) & ((1ULL << (bellParser::ASSIGN - 39))
+          | (1ULL << (bellParser::APOW - 39))
+          | (1ULL << (bellParser::ATIMES - 39))
+          | (1ULL << (bellParser::ADIVDIV - 39))
+          | (1ULL << (bellParser::ADIV - 39))
+          | (1ULL << (bellParser::AREM - 39))
+          | (1ULL << (bellParser::APLUS - 39))
+          | (1ULL << (bellParser::AMINUS - 39))
+          | (1ULL << (bellParser::ABITAND - 39))
+          | (1ULL << (bellParser::ABITXOR - 39))
+          | (1ULL << (bellParser::ABITOR - 39))
+          | (1ULL << (bellParser::ALOGAND - 39))
+          | (1ULL << (bellParser::ALOGANDEXT - 39))
+          | (1ULL << (bellParser::ALOGXOR - 39))
+          | (1ULL << (bellParser::ALOGOR - 39))
+          | (1ULL << (bellParser::ALOGOREXT - 39))
+          | (1ULL << (bellParser::ALSHIFT - 39))
+          | (1ULL << (bellParser::ARSHIFT - 39))
+          | (1ULL << (bellParser::ACONCAT - 39))
+          | (1ULL << (bellParser::ARCONCAT - 39)))) != 0))) {
           antlrcpp::downCast<FakeAssignmentContext *>(_localctx)->op = _errHandler->recoverInline(this);
         }
         else {
           _errHandler->reportMatch(this);
           consume();
         }
-        setState(253);
+        setState(202);
         list();
         break;
       }
@@ -2959,11 +2653,11 @@ bellParser::AssignmentContext* bellParser::assignment() {
       case bellParser::OUTLET: {
         _localctx = _tracker.createInstance<bellParser::OutletAssignmentContext>(_localctx);
         enterOuterAlt(_localctx, 3);
-        setState(255);
+        setState(204);
         match(bellParser::OUTLET);
-        setState(256);
+        setState(205);
         match(bellParser::ASSIGN);
-        setState(257);
+        setState(206);
         list();
         break;
       }
@@ -2971,11 +2665,11 @@ bellParser::AssignmentContext* bellParser::assignment() {
       case bellParser::DIROUTLET: {
         _localctx = _tracker.createInstance<bellParser::DirOutletAssignmentContext>(_localctx);
         enterOuterAlt(_localctx, 4);
-        setState(258);
+        setState(207);
         match(bellParser::DIROUTLET);
-        setState(259);
+        setState(208);
         match(bellParser::ASSIGN);
-        setState(260);
+        setState(209);
         list();
         break;
       }
@@ -3083,19 +2777,19 @@ bellParser::ConditionalContext* bellParser::conditional() {
     exitRule();
   });
   try {
-    setState(275);
+    setState(224);
     _errHandler->sync(this);
-    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 36, _ctx)) {
+    switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 19, _ctx)) {
     case 1: {
       _localctx = _tracker.createInstance<bellParser::IfthenContext>(_localctx);
       enterOuterAlt(_localctx, 1);
-      setState(263);
+      setState(212);
       match(bellParser::IF);
-      setState(264);
+      setState(213);
       sequence();
-      setState(265);
+      setState(214);
       match(bellParser::THEN);
-      setState(266);
+      setState(215);
       list();
       break;
     }
@@ -3103,17 +2797,17 @@ bellParser::ConditionalContext* bellParser::conditional() {
     case 2: {
       _localctx = _tracker.createInstance<bellParser::IfthenelseContext>(_localctx);
       enterOuterAlt(_localctx, 2);
-      setState(268);
+      setState(217);
       match(bellParser::IF);
-      setState(269);
+      setState(218);
       sequence();
-      setState(270);
+      setState(219);
       match(bellParser::THEN);
-      setState(271);
+      setState(220);
       sequence();
-      setState(272);
+      setState(221);
       match(bellParser::ELSE);
-      setState(273);
+      setState(222);
       list();
       break;
     }
@@ -3175,12 +2869,12 @@ bellParser::ListEndContext* bellParser::listEnd() {
     exitRule();
   });
   try {
-    setState(280);
+    setState(229);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case bellParser::IF: {
         enterOuterAlt(_localctx, 1);
-        setState(277);
+        setState(226);
         conditional();
         break;
       }
@@ -3208,14 +2902,14 @@ bellParser::ListEndContext* bellParser::listEnd() {
       case bellParser::PUSH:
       case bellParser::OPEN: {
         enterOuterAlt(_localctx, 2);
-        setState(278);
+        setState(227);
         assignment();
         break;
       }
 
       case bellParser::WHILE: {
         enterOuterAlt(_localctx, 3);
-        setState(279);
+        setState(228);
         whileloop();
         break;
       }
@@ -3275,13 +2969,13 @@ bellParser::ListContext* bellParser::list() {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(283); 
+    setState(232); 
     _errHandler->sync(this);
     alt = 1;
     do {
       switch (alt) {
         case 1: {
-              setState(282);
+              setState(231);
               expr(0);
               break;
             }
@@ -3289,9 +2983,9 @@ bellParser::ListContext* bellParser::list() {
       default:
         throw NoViableAltException(this);
       }
-      setState(285); 
+      setState(234); 
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 38, _ctx);
+      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 21, _ctx);
     } while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER);
    
   }
