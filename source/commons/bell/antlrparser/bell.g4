@@ -13,7 +13,7 @@ grammar bell;
     long *codeac = 0;
 
     bool followedBySpace() {
-        int c = _input->LA(2);
+        size_t c = _input->LA(2);
         switch (c) {
             case ' ':
             case '\x01':
@@ -24,6 +24,23 @@ grammar bell;
             default:
                 return false;
         }
+    }
+
+    bool notUintRange() {
+        int i = 2;
+        size_t c;
+
+        do {
+            c = _input->LA(i);
+              if ((c < '0' || c > '9') && c != '.')
+                return true;
+            i++;
+        } while (c != '.');
+
+        if (_input->LA(i) == '.' && _input->LA(i+1) == '.' && _input->LA(i+2) != '.')
+            return false;
+        else
+            return true;
     }
 
     bool notUnary() {
@@ -150,7 +167,7 @@ RANGE: '...' { noParams = true; noUnary = false; };
 
 UINT: [0-9]+ { noParams = false; noUnary = true; };
 
-UFLOAT: (((([0-9]* '.' [0-9]+) | ([0-9]+ '.')) 
+UFLOAT: { notUintRange()}? (((([0-9]* '.' [0-9]+) | ([0-9]+ '.')) 
           (([eE]([-+]?)[0-9]+)?)) |
          ([0-9]+[eE]([-+]?)[0-9]+)) 
         { noParams = false; noUnary = true; };

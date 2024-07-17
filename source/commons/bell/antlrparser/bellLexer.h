@@ -46,7 +46,7 @@ public:
       long *codeac = 0;
 
       bool followedBySpace() {
-          int c = _input->LA(2);
+          size_t c = _input->LA(2);
           switch (c) {
               case ' ':
               case '\x01':
@@ -57,6 +57,23 @@ public:
               default:
                   return false;
           }
+      }
+
+      bool notUintRange() {
+          int i = 2;
+          size_t c;
+
+          do {
+              c = _input->LA(i);
+                if ((c < '0' || c > '9') && c != '.')
+                  return true;
+              i++;
+          } while (c != '.');
+
+          if (_input->LA(i) == '.' && _input->LA(i+1) == '.' && _input->LA(i+2) != '.')
+              return false;
+          else
+              return true;
       }
 
       bool notUnary() {
@@ -188,6 +205,7 @@ private:
   void PARAMSAction(antlr4::RuleContext *context, size_t actionIndex);
 
   // Individual semantic predicate functions triggered by sempred() above.
+  bool UFLOATSempred(antlr4::RuleContext *_localctx, size_t predicateIndex);
   bool PLUSSempred(antlr4::RuleContext *_localctx, size_t predicateIndex);
   bool MINUSSempred(antlr4::RuleContext *_localctx, size_t predicateIndex);
   bool OPENSempred(antlr4::RuleContext *_localctx, size_t predicateIndex);
