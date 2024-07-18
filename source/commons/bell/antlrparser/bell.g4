@@ -111,8 +111,8 @@ var: LOCALVAR #varLocal
 | GLOBALVAR #varGlobal
 ;
 
-lvalueSpecs: {ending = false;} (NTH (item|var))+
-| {ending = true;} (NTH (item|var))* (NTH (conditional))
+lvalueSpecs: {ending = false;} ((NTH|KEY) (item|var))+
+| {ending = true;} ((NTH|KEY) (item|var))* ((NTH|KEY) (conditional))
 ;
 
 lvalue: var lvalueSpecs?
@@ -188,7 +188,7 @@ fragment NOTENAME: ([a-g]|[A-G]);
 fragment ACCIDENTAL: ([#bxdq^v]+);
 fragment RAT: UINT '/' [+-]* UINT;
 
-BTSYMBOL: '`' ~[ \t\r\n]+ { noParams = true; noUnary = true; };
+BTSYMBOL: '`' (~[ \t\r\n\u0001])+ { noParams = true; noUnary = true; };
 DQSYMBOL: '"' ( '\\"' | ~["] )* ~'\\' '"' { noParams = true; noUnary = true; };
 SQSYMBOL: '\'' ( '\\\'' | ~['] )* ~[\\] '\'' { noParams = true; noUnary = true; };
 

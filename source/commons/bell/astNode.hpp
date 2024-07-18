@@ -715,6 +715,9 @@ public:
                 case lvalueStep::E_LV_NTH:
                     n = new astNthOp(n, node, owner);
                     break;
+                case lvalueStep::E_LV_KEY:
+                    n = new astKeyOp<e_keyOpStandard>(n, node, owner);
+                    break;
                 default:
                     break;
             }

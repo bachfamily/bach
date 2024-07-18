@@ -431,6 +431,8 @@ public:
     virtual size_t getRuleIndex() const override;
     std::vector<antlr4::tree::TerminalNode *> NTH();
     antlr4::tree::TerminalNode* NTH(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> KEY();
+    antlr4::tree::TerminalNode* KEY(size_t i);
     std::vector<ItemContext *> item();
     ItemContext* item(size_t i);
     std::vector<VarContext *> var();
