@@ -80,7 +80,15 @@ nullified: list NULLIFY+
 whileloop: WHILE sequence kind=(DO|COLLECT) list
 ;
 
-funcall: FUNCTION PARAMS sequence CLOSED
+argsByNameList: NAMEDPARAM sequence (','? NAMEDPARAM sequence)*
+;
+
+argsByPositionList: sequence (',' sequence)*
+;
+
+funcall: item PARAMS argsByPositionList CLOSED
+| item PARAMS argsByNameList CLOSED
+| item PARAMS argsByPositionList ','? argsByNameList CLOSED
 ;
 
 item: UINT #itemUint
@@ -88,13 +96,14 @@ item: UINT #itemUint
 | UPITCH #itemUpitch
 | BTSYMBOL #itemBtSymbol
 | (DQSYMBOL|SQSYMBOL) #itemQSymbol
+| BIF #itemBIF
+| OF #itemOF
 | type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
 | DIRINLET #itemDirInlet
 | BACHNULL #itemNull
 | BACHNIL #itemNil
 | OPEN sequence CLOSED #itemSequence
 | PUSH sequence POP #itemSublist
-| funcall #itemFuncall
 ;
 
 var: LOCALVAR #varLocal
@@ -112,7 +121,7 @@ lvalue: var lvalueSpecs?
 fakeLvalue: item lvalueSpecs
 ;
 
-expr: (item|var|listEnd) #exprSimple
+expr: (item|var|funcall|listEnd) #exprSimple
 | lvalue #exprLvalue
 | fakeLvalue #exprFakeLvalue
 | expr PICK expr #exprBinary
@@ -212,6 +221,14 @@ OUTLET: '\\'? '$o'[0-9]+ { noParams = false; noUnary = true; };
 DIRINLET: '\\'? '$dx'[0-9]+ { noParams = false; noUnary = true; };
 DIROUTLET: '\\'? '$do'[0-9]+ { noParams = false; noUnary = true; };
 
+BIF: (
+    'length'|'depth'|'is'|'nth'|'sort'|'contains'|'rev'|'rot'|'trans'|'flat'|'slice'|'left'|'right'|'subs'|'insert'|'find'|'finditems'|'findaddrs'|'scramble'|'minmax'|'perm'|'comb'|'cartesianprod'|'wrap'|'group'|'delace'|'thin'|'classify'|'union'|'intersection'|'symdiff'|'diff'|'primeser'|'arithmser'|'geomser'|'map'|'reduce'|'apply'
+    |'cos'|'sin'|'tan'|'exp'|'log'|'acos'|'asin'|'atan'|'cosh'|'sinh'|'tanh'|'exp2'|'log2'|'sqrt'|'ceil'|'acosh'|'asinh'|'atanh'|'log10'|'floor'|'round'|'trunc'|'fmod'|'atan2'|'hypot'|'pow'|'int'|'rat'|'num'|'den'|'abs'|'sgn'|'float'|'pitch'|'degree'|'octave'|'alter'|'cents'|'pow'|'mod'|'min'|'max'|'random'|'bessel'|'approx'|'enharm'|'makepitch'|'makepitchsc'|'mc2f'|'f2mc'|'minimum'|'maximum'|'sum'|'prod'
+    |'outlet'|'inlet'
+    |'#+'|'#-'|'#u-'|'#*'|'#/'|'#//'|'#%'|'#=='|'#!='|'#<'|'#>'|'#<='|'#>='|'#&'|'#^'|'#|'|'#&&'|'#^^'|'#||'|'#&&&'|'#|||'|'#<<'|'#>>'
+) { noParams = false; noUnary = true; };
+
+OF: ('directout'|'directin'|'print') { noParams = false; noUnary = true; };
 
 GLOBALVAR: ID { noParams = false; noUnary = true; };
 PATCHERVAR: '#' ID { noParams = false; noUnary = true; };

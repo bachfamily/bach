@@ -12,29 +12,31 @@
 class  bellParser : public antlr4::Parser {
 public:
   enum {
-    RANGE = 1, UINT = 2, UFLOAT = 3, UPITCH = 4, BTSYMBOL = 5, DQSYMBOL = 6, 
-    SQSYMBOL = 7, BACHNULL = 8, BACHNIL = 9, IF = 10, THEN = 11, ELSE = 12, 
-    WHILE = 13, FOR = 14, DO = 15, COLLECT = 16, FUNCTION = 17, INLET = 18, 
-    INTINLET = 19, RATINLET = 20, FLOATINLET = 21, PITCHINLET = 22, OUTLET = 23, 
-    DIRINLET = 24, DIROUTLET = 25, GLOBALVAR = 26, PATCHERVAR = 27, LOCALVAR = 28, 
-    NAMEDPARAM = 29, PUSH = 30, POP = 31, CLOSED = 32, NTH = 33, PICK = 34, 
-    KEY = 35, ANTH = 36, APICK = 37, NULLIFY = 38, ASSIGN = 39, WHITESPACE = 40, 
-    NEWATOM = 41, POW = 42, APOW = 43, TIMES = 44, ATIMES = 45, DIVDIV = 46, 
-    ADIVDIV = 47, DIV = 48, ADIV = 49, REM = 50, AREM = 51, PLUS = 52, APLUS = 53, 
-    UPLUS = 54, MINUS = 55, AMINUS = 56, UMINUS = 57, EQUAL = 58, NEQ = 59, 
-    LOGNOT = 60, BITNOT = 61, LT = 62, GT = 63, LEQ = 64, GEQ = 65, BITAND = 66, 
-    ABITAND = 67, BITXOR = 68, ABITXOR = 69, BITOR = 70, ABITOR = 71, LOGAND = 72, 
-    LOGANDEXT = 73, ALOGAND = 74, ALOGANDEXT = 75, LOGXOR = 76, ALOGXOR = 77, 
-    LOGOR = 78, ALOGOR = 79, LOGOREXT = 80, ALOGOREXT = 81, LSHIFT = 82, 
-    ALSHIFT = 83, RSHIFT = 84, ARSHIFT = 85, REPEAT = 86, AREPEAT = 87, 
-    AAPPLY = 88, ACONCAT = 89, ARCONCAT = 90, OPEN = 91, PARAMS = 92, ANYTHING = 93
+    T__0 = 1, RANGE = 2, UINT = 3, UFLOAT = 4, UPITCH = 5, BTSYMBOL = 6, 
+    DQSYMBOL = 7, SQSYMBOL = 8, BACHNULL = 9, BACHNIL = 10, IF = 11, THEN = 12, 
+    ELSE = 13, WHILE = 14, FOR = 15, DO = 16, COLLECT = 17, FUNCTION = 18, 
+    INLET = 19, INTINLET = 20, RATINLET = 21, FLOATINLET = 22, PITCHINLET = 23, 
+    OUTLET = 24, DIRINLET = 25, DIROUTLET = 26, BIF = 27, OF = 28, GLOBALVAR = 29, 
+    PATCHERVAR = 30, LOCALVAR = 31, NAMEDPARAM = 32, PUSH = 33, POP = 34, 
+    CLOSED = 35, NTH = 36, PICK = 37, KEY = 38, ANTH = 39, APICK = 40, NULLIFY = 41, 
+    ASSIGN = 42, WHITESPACE = 43, NEWATOM = 44, POW = 45, APOW = 46, TIMES = 47, 
+    ATIMES = 48, DIVDIV = 49, ADIVDIV = 50, DIV = 51, ADIV = 52, REM = 53, 
+    AREM = 54, PLUS = 55, APLUS = 56, UPLUS = 57, MINUS = 58, AMINUS = 59, 
+    UMINUS = 60, EQUAL = 61, NEQ = 62, LOGNOT = 63, BITNOT = 64, LT = 65, 
+    GT = 66, LEQ = 67, GEQ = 68, BITAND = 69, ABITAND = 70, BITXOR = 71, 
+    ABITXOR = 72, BITOR = 73, ABITOR = 74, LOGAND = 75, LOGANDEXT = 76, 
+    ALOGAND = 77, ALOGANDEXT = 78, LOGXOR = 79, ALOGXOR = 80, LOGOR = 81, 
+    ALOGOR = 82, LOGOREXT = 83, ALOGOREXT = 84, LSHIFT = 85, ALSHIFT = 86, 
+    RSHIFT = 87, ARSHIFT = 88, REPEAT = 89, AREPEAT = 90, AAPPLY = 91, ACONCAT = 92, 
+    ARCONCAT = 93, OPEN = 94, PARAMS = 95, ANYTHING = 96
   };
 
   enum {
     RuleEverything = 0, RuleProgram = 1, RuleSequence = 2, RuleNullified = 3, 
-    RuleWhileloop = 4, RuleFuncall = 5, RuleItem = 6, RuleVar = 7, RuleLvalueSpecs = 8, 
-    RuleLvalue = 9, RuleFakeLvalue = 10, RuleExpr = 11, RuleAssignment = 12, 
-    RuleConditional = 13, RuleListEnd = 14, RuleList = 15
+    RuleWhileloop = 4, RuleArgsByNameList = 5, RuleArgsByPositionList = 6, 
+    RuleFuncall = 7, RuleItem = 8, RuleVar = 9, RuleLvalueSpecs = 10, RuleLvalue = 11, 
+    RuleFakeLvalue = 12, RuleExpr = 13, RuleAssignment = 14, RuleConditional = 15, 
+    RuleListEnd = 16, RuleList = 17
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -64,6 +66,8 @@ public:
   class SequenceContext;
   class NullifiedContext;
   class WhileloopContext;
+  class ArgsByNameListContext;
+  class ArgsByPositionListContext;
   class FuncallContext;
   class ItemContext;
   class VarContext;
@@ -190,14 +194,45 @@ public:
 
   WhileloopContext* whileloop();
 
+  class  ArgsByNameListContext : public antlr4::ParserRuleContext {
+  public:
+    ArgsByNameListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<antlr4::tree::TerminalNode *> NAMEDPARAM();
+    antlr4::tree::TerminalNode* NAMEDPARAM(size_t i);
+    std::vector<SequenceContext *> sequence();
+    SequenceContext* sequence(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ArgsByNameListContext* argsByNameList();
+
+  class  ArgsByPositionListContext : public antlr4::ParserRuleContext {
+  public:
+    ArgsByPositionListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<SequenceContext *> sequence();
+    SequenceContext* sequence(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ArgsByPositionListContext* argsByPositionList();
+
   class  FuncallContext : public antlr4::ParserRuleContext {
   public:
     FuncallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *FUNCTION();
+    ItemContext *item();
     antlr4::tree::TerminalNode *PARAMS();
-    SequenceContext *sequence();
+    ArgsByPositionListContext *argsByPositionList();
     antlr4::tree::TerminalNode *CLOSED();
+    ArgsByNameListContext *argsByNameList();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -228,33 +263,11 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  ItemSequenceContext : public ItemContext {
-  public:
-    ItemSequenceContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *OPEN();
-    SequenceContext *sequence();
-    antlr4::tree::TerminalNode *CLOSED();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
   class  ItemUintContext : public ItemContext {
   public:
     ItemUintContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *UINT();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemSublistContext : public ItemContext {
-  public:
-    ItemSublistContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *PUSH();
-    SequenceContext *sequence();
-    antlr4::tree::TerminalNode *POP();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -291,20 +304,51 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  ItemBIFContext : public ItemContext {
+  public:
+    ItemBIFContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *BIF();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemSequenceContext : public ItemContext {
+  public:
+    ItemSequenceContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *OPEN();
+    SequenceContext *sequence();
+    antlr4::tree::TerminalNode *CLOSED();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemSublistContext : public ItemContext {
+  public:
+    ItemSublistContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *PUSH();
+    SequenceContext *sequence();
+    antlr4::tree::TerminalNode *POP();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemOFContext : public ItemContext {
+  public:
+    ItemOFContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *OF();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  ItemNullContext : public ItemContext {
   public:
     ItemNullContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *BACHNULL();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemFuncallContext : public ItemContext {
-  public:
-    ItemFuncallContext(ItemContext *ctx);
-
-    FuncallContext *funcall();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -469,6 +513,7 @@ public:
 
     ItemContext *item();
     VarContext *var();
+    FuncallContext *funcall();
     ListEndContext *listEnd();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;

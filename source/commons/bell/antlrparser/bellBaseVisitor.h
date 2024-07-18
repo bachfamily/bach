@@ -47,6 +47,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitArgsByNameList(bellParser::ArgsByNameListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitArgsByPositionList(bellParser::ArgsByPositionListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitFuncall(bellParser::FuncallContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -71,6 +79,14 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitItemBIF(bellParser::ItemBIFContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitItemOF(bellParser::ItemOFContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitItemInlet(bellParser::ItemInletContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -92,10 +108,6 @@ public:
   }
 
   virtual std::any visitItemSublist(bellParser::ItemSublistContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitItemFuncall(bellParser::ItemFuncallContext *ctx) override {
     return visitChildren(ctx);
   }
 

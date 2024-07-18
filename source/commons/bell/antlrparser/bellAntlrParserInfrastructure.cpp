@@ -122,6 +122,43 @@ public:
         return n;
     }
     
+    antlrcpp::Any visitArgsByNameList(bellParser::ArgsByNameListContext *ctx) override {
+        size_t c = ctx->sequence().size();
+        auto r = new std::vector<symNodePair*>;
+        for (size_t i = 0; i < c; i++) {
+            std::string txt = ctx->NAMEDPARAM(i)->getText();
+            auto s = gensym(txt.c_str() + 1);
+            auto n = safeAnyCast<astNode*>(visit(ctx->sequence(i)));
+            if (!n) {
+                for (size_t j = 0; j <= i; j++) {
+                    delete (*r)[j]->getNode();
+                }
+                delete r;
+                return nullptr;
+            }
+            auto p = new symNodePair(s, n);
+            r->push_back(p);
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitArgsByPositionList(bellParser::ArgsByPositionListContext *ctx) override {
+        size_t c = ctx->sequence().size();
+        auto r = new std::vector<astNode*>;
+        for (size_t i = 0; i < c; i++) {
+            auto n = safeAnyCast<astNode*>(visit(ctx->sequence(i)));
+            if (!n) {
+                for (size_t j = 0; j <= i; j++) {
+                    delete (*r)[j];
+                }
+                delete r;
+                return nullptr;
+            }
+            r->push_back(n);
+        }
+        return r;
+    }
+    
     antlrcpp::Any visitWhileloop(bellParser::WhileloopContext *ctx) override {
         astNode* s = safeAnyCast<astNode*>(visit(ctx->sequence()));
         if (!s)
@@ -141,13 +178,16 @@ public:
     }
     
     antlrcpp::Any visitFuncall(bellParser::FuncallContext *ctx) override {
-        std::string name = ctx->FUNCTION()->getText();
-        auto func = (*params->bifs)[name];
-        auto fNode = new astConst(func, params->owner);
-        auto abpl = new std::vector<astNode *>;
-        auto arg = safeAnyCast<astNode *>(visit(ctx->sequence()));
-        abpl->push_back(arg);
-        astNode* n = new astFunctionCall(fNode, abpl, nullptr, params->owner);
+        auto *fn = safeAnyCast<astNode*>(visit(ctx->item()));
+        if (!fn)
+            return nullptr;
+        std::vector<astNode*>* abpl = nullptr;
+        std::vector<symNodePair*>* abnl = nullptr;
+        if (ctx->argsByPositionList())
+            abpl = safeAnyCast<std::vector<astNode*>*>(visit(ctx->argsByPositionList()));
+        if (ctx->argsByNameList())
+            abnl = safeAnyCast<std::vector<symNodePair*>*>(visit(ctx->argsByNameList()));
+        astNode* n = new astFunctionCall(fn, abpl, abnl, params->owner);
         return n;
     }
     
@@ -226,6 +266,20 @@ public:
         return r;
     }
     
+    antlrcpp::Any visitItemBIF(bellParser::ItemBIFContext *context) override {
+        std::string name = context->BIF()->getText();
+        t_function *fn = (*params->bifs)[name];
+        astNode *r = new astConst(fn, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemOF(bellParser::ItemOFContext *context) override {
+        std::string name = context->OF()->getText();
+        t_function *fn = (*params->ofTable)[name];
+        astNode *r = new astConst(fn, params->owner);
+        return r;
+    }
+    
     antlrcpp::Any visitItemDirInlet(bellParser::ItemDirInletContext *context) override {
         auto txt = context->DIRINLET()->getText();
         const char *cstr = txt.c_str();
@@ -261,11 +315,6 @@ public:
         astNode* s = safeAnyCast<astNode*>(visit(context->sequence()));
         astNode* r = new astWrap(s, params->owner);
         return r;
-    }
-
-    antlrcpp::Any visitItemFuncall(bellParser::ItemFuncallContext *ctx) override {
-        astNode* a = safeAnyCast<astNode*>(visit(ctx->funcall()));
-        return a;
     }
     
     antlrcpp::Any visitVarLocal(bellParser::VarLocalContext *ctx) override {

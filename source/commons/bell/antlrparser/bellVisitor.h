@@ -35,6 +35,10 @@ public:
 
     virtual std::any visitWhileloop(bellParser::WhileloopContext *context) = 0;
 
+    virtual std::any visitArgsByNameList(bellParser::ArgsByNameListContext *context) = 0;
+
+    virtual std::any visitArgsByPositionList(bellParser::ArgsByPositionListContext *context) = 0;
+
     virtual std::any visitFuncall(bellParser::FuncallContext *context) = 0;
 
     virtual std::any visitItemUint(bellParser::ItemUintContext *context) = 0;
@@ -47,6 +51,10 @@ public:
 
     virtual std::any visitItemQSymbol(bellParser::ItemQSymbolContext *context) = 0;
 
+    virtual std::any visitItemBIF(bellParser::ItemBIFContext *context) = 0;
+
+    virtual std::any visitItemOF(bellParser::ItemOFContext *context) = 0;
+
     virtual std::any visitItemInlet(bellParser::ItemInletContext *context) = 0;
 
     virtual std::any visitItemDirInlet(bellParser::ItemDirInletContext *context) = 0;
@@ -58,8 +66,6 @@ public:
     virtual std::any visitItemSequence(bellParser::ItemSequenceContext *context) = 0;
 
     virtual std::any visitItemSublist(bellParser::ItemSublistContext *context) = 0;
-
-    virtual std::any visitItemFuncall(bellParser::ItemFuncallContext *context) = 0;
 
     virtual std::any visitVarLocal(bellParser::VarLocalContext *context) = 0;
 
