@@ -502,7 +502,7 @@ liftedargList : LIFT LOCALVAR {
 functionApplication : funcall %dprec 2
 | exp APPLY funcall
 {
-    $3->addOopStyleArg($1);
+    $3->addDataflowStyleArg($1);
     code_dev_post ("parse: term APPLY funcall");
     $$ = $3;
 } %dprec 1
@@ -784,24 +784,24 @@ assign : var ASSIGN list {
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
 | localVar AAPPLY funcall {
-    $3->addOopStyleArg($1);
+    $3->addDataflowStyleArg($1);
     $$ = new astAssign(new astLocalVar($1), $3, params->owner);
     code_dev_post ("parse: localVar AAPPLY funcall");
 }
 | patcherVar AAPPLY funcall {
-    $3->addOopStyleArg($1);
+    $3->addDataflowStyleArg($1);
     astPatcherVar *v = new astPatcherVar($1);
     (*params->name2patcherVars)[v->getName()].insert(v);
     $$ = new astAssign(v, $3, params->owner);
     code_dev_post ("parse: patcherVar AAPPLY funcall");
 }
 | globalVar AAPPLY funcall {
-    $3->addOopStyleArg($1);
+    $3->addDataflowStyleArg($1);
     $$ = new astAssign(new astGlobalVar($1), $3, params->owner);
     code_dev_post ("parse: globalVar AAPPLY funcall");
 }
 | var lvalueStepList AAPPLY funcall {
-    $4->addOopStyleArg(new astConst(params->owner));
+    $4->addDataflowStyleArg(new astConst(params->owner));
     $$ = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
@@ -1180,7 +1180,7 @@ exp: term %dprec 2
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
 | term lvalueStepList AAPPLY funcall %dprec 2 {
-    $4->addOopStyleArg(new astConst(params->owner));
+    $4->addDataflowStyleArg(new astConst(params->owner));
     $$ = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }

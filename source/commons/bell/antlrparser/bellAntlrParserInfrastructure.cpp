@@ -177,7 +177,7 @@ public:
         return r;
     }
     
-    antlrcpp::Any visitFuncall(bellParser::FuncallContext *ctx) override {
+    antlrcpp::Any visitSimpleFuncall(bellParser::SimpleFuncallContext *ctx) override {
         auto *fn = safeAnyCast<astNode*>(visit(ctx->item()));
         if (!fn)
             return nullptr;
@@ -189,6 +189,21 @@ public:
             abnl = safeAnyCast<std::vector<symNodePair*>*>(visit(ctx->argsByNameList()));
         astNode* n = new astFunctionCall(fn, abpl, abnl, params->owner);
         return n;
+    }
+    
+    
+    antlrcpp::Any visitFuncall(bellParser::FuncallContext *context) override {
+        if (!context->item()) {
+            return visit(context->simpleFuncall(0));
+        }
+        auto x = safeAnyCast<astNode*>(visit(context->item()));
+        astFunctionCall* y;
+        for (auto p: context->simpleFuncall()) {
+            y = dynamic_cast<astFunctionCall*>(safeAnyCast<astNode*>(visit(p)));
+            y->addDataflowStyleArg(x);
+            x = y;
+        }
+        return static_cast<astNode*>(y);
     }
     
     antlrcpp::Any visitItemUint(bellParser::ItemUintContext *context) override {

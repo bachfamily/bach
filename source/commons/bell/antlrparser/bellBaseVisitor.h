@@ -55,6 +55,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitSimpleFuncall(bellParser::SimpleFuncallContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitFuncall(bellParser::FuncallContext *ctx) override {
     return visitChildren(ctx);
   }

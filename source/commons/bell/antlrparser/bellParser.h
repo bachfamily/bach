@@ -34,9 +34,9 @@ public:
   enum {
     RuleEverything = 0, RuleProgram = 1, RuleSequence = 2, RuleNullified = 3, 
     RuleWhileloop = 4, RuleArgsByNameList = 5, RuleArgsByPositionList = 6, 
-    RuleFuncall = 7, RuleItem = 8, RuleVar = 9, RuleLvalueSpecs = 10, RuleLvalue = 11, 
-    RuleFakeLvalue = 12, RuleExpr = 13, RuleAssignment = 14, RuleConditional = 15, 
-    RuleListEnd = 16, RuleList = 17
+    RuleSimpleFuncall = 7, RuleFuncall = 8, RuleItem = 9, RuleVar = 10, 
+    RuleLvalueSpecs = 11, RuleLvalue = 12, RuleFakeLvalue = 13, RuleExpr = 14, 
+    RuleAssignment = 15, RuleConditional = 16, RuleListEnd = 17, RuleList = 18
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -68,6 +68,7 @@ public:
   class WhileloopContext;
   class ArgsByNameListContext;
   class ArgsByPositionListContext;
+  class SimpleFuncallContext;
   class FuncallContext;
   class ItemContext;
   class VarContext;
@@ -224,15 +225,32 @@ public:
 
   ArgsByPositionListContext* argsByPositionList();
 
+  class  SimpleFuncallContext : public antlr4::ParserRuleContext {
+  public:
+    SimpleFuncallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ItemContext *item();
+    antlr4::tree::TerminalNode *PARAMS();
+    antlr4::tree::TerminalNode *CLOSED();
+    ArgsByPositionListContext *argsByPositionList();
+    ArgsByNameListContext *argsByNameList();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  SimpleFuncallContext* simpleFuncall();
+
   class  FuncallContext : public antlr4::ParserRuleContext {
   public:
     FuncallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    std::vector<SimpleFuncallContext *> simpleFuncall();
+    SimpleFuncallContext* simpleFuncall(size_t i);
     ItemContext *item();
-    antlr4::tree::TerminalNode *PARAMS();
-    ArgsByPositionListContext *argsByPositionList();
-    antlr4::tree::TerminalNode *CLOSED();
-    ArgsByNameListContext *argsByNameList();
+    std::vector<antlr4::tree::TerminalNode *> KEY();
+    antlr4::tree::TerminalNode* KEY(size_t i);
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;

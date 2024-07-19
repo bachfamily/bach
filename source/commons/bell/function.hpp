@@ -272,7 +272,7 @@ private:
     astNode *functionNode;
     long argsByPositionCount;
     astNode **argsByPosition;
-    t_bool OopStyleCall;
+    t_bool DataflowStyleCall;
     long argsByNameCount;
     astNode **argsByName;
     t_symbol **argsNames;
@@ -290,11 +290,11 @@ public:
     
     astFunctionCall(astNode *functionNode, t_codableobj *owner);
 
-    void addOopStyleArg(astNode *arg);
+    void addDataflowStyleArg(astNode *arg);
     
-    void setOopStyleArgValue(t_llll *ll);
+    void setDataflowStyleArgValue(t_llll *ll);
     
-    void setOopStyleArg(t_llll *ll);
+    void setDataflowStyleArg(t_llll *ll);
     
     ~astFunctionCall();
     
@@ -322,7 +322,7 @@ public:
     void lastNthDo(t_llll *current, t_llllelem* &lookHere, t_llll* origV, t_bool created, t_execEnv const &context) {
         t_llll *hereV = llll_get();
         llll_appendhatom_clone(hereV, &lookHere->l_hatom);
-        functionCall->setOopStyleArgValue(hereV);
+        functionCall->setDataflowStyleArgValue(hereV);
         t_llll *res = functionCall->eval(context);
         llll_replacewith<false>(current, lookHere, res);
     }
@@ -330,7 +330,7 @@ public:
     void lastKeyDo(t_llll *subll, t_llll *origV, t_execEnv const &context) {
         t_llll *v = llll_clone(subll);
         llll_destroyelem(v->l_head);
-        functionCall->setOopStyleArgValue(v);
+        functionCall->setDataflowStyleArgValue(v);
         t_llll *res = functionCall->eval(context);
         llll_destroy_everything_but_head(subll);
         llll_chain(subll, res);

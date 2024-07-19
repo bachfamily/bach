@@ -431,7 +431,7 @@ void t_mainFunction::removeFromGlobalVarsClients() {
 ///////////////////////
 
 
-astFunctionCall::astFunctionCall(astNode *functionNode, countedList<astNode *> *argsByPositionList, countedList<symNodePair *> *argsByNameList, t_codableobj *owner) : astNode(owner), functionNode(functionNode), OopStyleCall(false) {
+astFunctionCall::astFunctionCall(astNode *functionNode, countedList<astNode *> *argsByPositionList, countedList<symNodePair *> *argsByNameList, t_codableobj *owner) : astNode(owner), functionNode(functionNode), DataflowStyleCall(false) {
     
     if (argsByPositionList) {
         argsByPositionCount = argsByPositionList->getCount();
@@ -466,7 +466,7 @@ astFunctionCall::astFunctionCall(astNode *functionNode, countedList<astNode *> *
     }
 }
 
-astFunctionCall::astFunctionCall(astNode *functionNode, std::vector<astNode *> *argsByPositionList, std::vector<symNodePair *> *argsByNameList, t_codableobj *owner) : astNode(owner), functionNode(functionNode), OopStyleCall(false) {
+astFunctionCall::astFunctionCall(astNode *functionNode, std::vector<astNode *> *argsByPositionList, std::vector<symNodePair *> *argsByNameList, t_codableobj *owner) : astNode(owner), functionNode(functionNode), DataflowStyleCall(false) {
     
     if (argsByPositionList) {
         argsByPositionCount = argsByPositionList->size();
@@ -501,7 +501,7 @@ astFunctionCall::astFunctionCall(astNode *functionNode, std::vector<astNode *> *
     }
 }
 
-astFunctionCall::astFunctionCall(astNode *functionNode, t_codableobj *owner) : astNode(owner), functionNode(functionNode), OopStyleCall(false) {
+astFunctionCall::astFunctionCall(astNode *functionNode, t_codableobj *owner) : astNode(owner), functionNode(functionNode), DataflowStyleCall(false) {
     argsByPositionCount = 0;
     argsByPosition = nullptr;
     argsByNameCount = 0;
@@ -514,16 +514,16 @@ astFunctionCall::~astFunctionCall() {
     for (int i = 0; i < argsByPositionCount; i++)
         delete argsByPosition[i];
     if (argsByPosition)
-        delete (OopStyleCall ? argsByPosition : argsByPosition - 1);
+        delete (DataflowStyleCall ? argsByPosition : argsByPosition - 1);
     for (int i = 0; i < argsByNameCount; i++)
         delete argsByName[i];
     delete argsByName;
     delete argsNames;
 }
 
-void astFunctionCall::addOopStyleArg(astNode *arg) {
-    if (!OopStyleCall) {
-        OopStyleCall = true;
+void astFunctionCall::addDataflowStyleArg(astNode *arg) {
+    if (!DataflowStyleCall) {
+        DataflowStyleCall = true;
         argsByPositionCount++;
         if (!argsByPosition) {
             argsByPosition = new astNode* [1];
@@ -640,7 +640,7 @@ t_llll* astFunctionCall::eval(t_execEnv const &context)
     return resultLl;
 }
 
-void astFunctionCall::setOopStyleArgValue(t_llll *ll) {
+void astFunctionCall::setDataflowStyleArgValue(t_llll *ll) {
     astConst* k = dynamic_cast<astConst*>(argsByPosition[0]);
     k->set(ll);
 }

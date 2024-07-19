@@ -86,9 +86,13 @@ argsByNameList: NAMEDPARAM sequence (','? NAMEDPARAM sequence)*
 argsByPositionList: sequence (',' sequence)*
 ;
 
-funcall: item PARAMS argsByPositionList CLOSED
+simpleFuncall: item PARAMS CLOSED
+| item PARAMS argsByPositionList CLOSED
 | item PARAMS argsByNameList CLOSED
 | item PARAMS argsByPositionList ','? argsByNameList CLOSED
+;
+
+funcall: (item '.' (simpleFuncall '.')*)? simpleFuncall
 ;
 
 item: UINT #itemUint
