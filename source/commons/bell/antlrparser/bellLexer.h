@@ -20,18 +20,19 @@ public:
     ELSE = 13, WHILE = 14, FOR = 15, DO = 16, COLLECT = 17, INLET = 18, 
     INTINLET = 19, RATINLET = 20, FLOATINLET = 21, PITCHINLET = 22, OUTLET = 23, 
     DIRINLET = 24, DIROUTLET = 25, BIF = 26, OF = 27, GLOBALVAR = 28, PATCHERVAR = 29, 
-    LOCALVAR = 30, NAMEDPARAM = 31, PUSH = 32, POP = 33, CLOSED = 34, NTH = 35, 
-    PICK = 36, KEY = 37, ANTH = 38, APICK = 39, NULLIFY = 40, ASSIGN = 41, 
-    WHITESPACE = 42, NEWATOM = 43, POW = 44, APOW = 45, TIMES = 46, ATIMES = 47, 
-    DIVDIV = 48, ADIVDIV = 49, DIV = 50, ADIV = 51, REM = 52, AREM = 53, 
-    PLUS = 54, APLUS = 55, UPLUS = 56, MINUS = 57, AMINUS = 58, UMINUS = 59, 
-    EQUAL = 60, NEQ = 61, LOGNOT = 62, BITNOT = 63, LT = 64, GT = 65, LEQ = 66, 
-    GEQ = 67, BITAND = 68, ABITAND = 69, BITXOR = 70, ABITXOR = 71, BITOR = 72, 
-    ABITOR = 73, LOGAND = 74, LOGANDEXT = 75, ALOGAND = 76, ALOGANDEXT = 77, 
-    LOGXOR = 78, ALOGXOR = 79, LOGOR = 80, ALOGOR = 81, LOGOREXT = 82, ALOGOREXT = 83, 
-    LSHIFT = 84, ALSHIFT = 85, RSHIFT = 86, ARSHIFT = 87, REPEAT = 88, AREPEAT = 89, 
-    AAPPLY = 90, ACONCAT = 91, ARCONCAT = 92, OPEN = 93, PARAMS = 94, FUNDEF = 95, 
-    LIFT = 96, ELLIPSIS = 97, ANYTHING = 98
+    LOCALVAR = 30, NAMEDPARAM = 31, KEEP = 32, UNKEEP = 33, INIT = 34, ARGCOUNT = 35, 
+    PUSH = 36, POP = 37, CLOSED = 38, NTH = 39, PICK = 40, KEY = 41, ANTH = 42, 
+    APICK = 43, NULLIFY = 44, ASSIGN = 45, WHITESPACE = 46, NEWATOM = 47, 
+    POW = 48, APOW = 49, TIMES = 50, ATIMES = 51, DIVDIV = 52, ADIVDIV = 53, 
+    DIV = 54, ADIV = 55, REM = 56, AREM = 57, PLUS = 58, APLUS = 59, UPLUS = 60, 
+    MINUS = 61, AMINUS = 62, UMINUS = 63, EQUAL = 64, NEQ = 65, LOGNOT = 66, 
+    BITNOT = 67, LT = 68, GT = 69, LEQ = 70, GEQ = 71, BITAND = 72, ABITAND = 73, 
+    BITXOR = 74, ABITXOR = 75, BITOR = 76, ABITOR = 77, LOGAND = 78, LOGANDEXT = 79, 
+    ALOGAND = 80, ALOGANDEXT = 81, LOGXOR = 82, ALOGXOR = 83, LOGOR = 84, 
+    ALOGOR = 85, LOGOREXT = 86, ALOGOREXT = 87, LSHIFT = 88, ALSHIFT = 89, 
+    RSHIFT = 90, ARSHIFT = 91, REPEAT = 92, AREPEAT = 93, AAPPLY = 94, ACONCAT = 95, 
+    ARCONCAT = 96, OPEN = 97, PARAMS = 98, FUNDEF = 99, LIFT = 100, ELLIPSIS = 101, 
+    ANYTHING = 102
   };
 
   explicit bellLexer(antlr4::CharStream *input);
@@ -142,6 +143,10 @@ private:
   void PATCHERVARAction(antlr4::RuleContext *context, size_t actionIndex);
   void LOCALVARAction(antlr4::RuleContext *context, size_t actionIndex);
   void NAMEDPARAMAction(antlr4::RuleContext *context, size_t actionIndex);
+  void KEEPAction(antlr4::RuleContext *context, size_t actionIndex);
+  void UNKEEPAction(antlr4::RuleContext *context, size_t actionIndex);
+  void INITAction(antlr4::RuleContext *context, size_t actionIndex);
+  void ARGCOUNTAction(antlr4::RuleContext *context, size_t actionIndex);
   void PUSHAction(antlr4::RuleContext *context, size_t actionIndex);
   void POPAction(antlr4::RuleContext *context, size_t actionIndex);
   void CLOSEDAction(antlr4::RuleContext *context, size_t actionIndex);

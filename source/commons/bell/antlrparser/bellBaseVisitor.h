@@ -123,6 +123,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitItemArgcount(bellParser::ItemArgcountContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitItemNull(bellParser::ItemNullContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -188,6 +192,10 @@ public:
   }
 
   virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitInitAssignment(bellParser::InitAssignmentContext *ctx) override {
     return visitChildren(ctx);
   }
 

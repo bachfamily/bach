@@ -390,6 +390,12 @@ public:
         return r;
     }
     
+    antlrcpp::Any visitItemArgcount(bellParser::ItemArgcountContext *context) override {
+        auto fnConst = new astConst((*(params->bifs))["$argcount"], params->owner);
+        astNode* r = new astFunctionCall(fnConst, params->owner);
+        return r;
+    }
+
     antlrcpp::Any visitItemNull(bellParser::ItemNullContext *context) override {
         astNode *r = new astConst(llll_get(), params->owner);
         return r;
@@ -415,8 +421,14 @@ public:
     
     antlrcpp::Any visitVarLocal(bellParser::VarLocalContext *ctx) override {
         std::string name = ctx->LOCALVAR()->getText();
-        t_symbol *s = gensym(name.erase(0, name[0] == '\\' ? 2 : 1).c_str());
-        astVar* v = new astLocalVar(s, params->owner);
+        t_symbol *s = gensym(name.c_str() + (name[0] == '\\' ? 2 : 1));
+        astVar* v;
+        if (ctx->KEEP())
+            v = new astKeep(s, params->owner);
+        else if (ctx->UNKEEP())
+            v = new astUnkeep(s, params->owner);
+        else
+            v = new astLocalVar(s, params->owner);
         addVariableToScope<e_antlr4>(params, s);
         return static_cast<astNode*>(v);
     }
@@ -568,6 +580,15 @@ public:
             case bellParser::LOGNOT: r = new astLogNot(n, params->owner); break;
             case bellParser::BITNOT: r = new astOperatorBitNot(n, params->owner); break;
         }
+        return r;
+    }
+    
+    antlrcpp::Any visitInitAssignment(bellParser::InitAssignmentContext *context) override {
+        std::string name = context->LOCALVAR()->getText();
+        t_symbol *s = gensym(name.c_str() + (name[0] == '\\' ? 2 : 1));
+        addVariableToScope<e_antlr4>(params, s);
+        astNode *rv = safeAnyCast<astNode*>(visit(context->list()));
+        astNode *r = new astInit(s, rv, params->owner);
         return r;
     }
     

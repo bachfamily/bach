@@ -125,13 +125,14 @@ item: UINT #itemUint
 | OF #itemOF
 | type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
 | DIRINLET #itemDirInlet
+| ARGCOUNT #itemArgcount
 | BACHNULL #itemNull
 | BACHNIL #itemNil
 | OPEN sequence CLOSED #itemSequence
 | PUSH sequence POP #itemSublist
 ;
 
-var: LOCALVAR #varLocal
+var: (KEEP|UNKEEP)? LOCALVAR #varLocal
 | PATCHERVAR #varPatcher
 | GLOBALVAR #varGlobal
 ;
@@ -174,7 +175,8 @@ expr: (item|var|funcall|listEnd) #exprSimple
 | op=(LOGNOT|BITNOT) expr #exprNot
 ;
 
-assignment: lvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV
+assignment: INIT LOCALVAR ASSIGN list #initAssignment
+| lvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV
     |ADIV|AREM|APLUS|AMINUS|ALOGAND|ALOGANDEXT
     |ALOGXOR|ALOGOR|ALOGOREXT|ABITAND|ABITXOR
     |ABITOR|ALSHIFT|ARSHIFT|ACONCAT|ARCONCAT|ANTH) list #trueAssignment
@@ -247,7 +249,8 @@ BIF:
     ('length'|'depth'|'is'|'nth'|'sort'|'contains'|'rev'|'rot'|'trans'|'flat'|'slice'|'left'|'right'|'subs'|'insert'|'find'|'finditems'|'findaddrs'|'scramble'|'minmax'|'perm'|'comb'|'cartesianprod'|'wrap'|'group'|'delace'|'thin'|'classify'|'union'|'intersection'|'symdiff'|'diff'|'primeser'|'arithmser'|'geomser'|'map'|'reduce'|'apply'
     |'cos'|'sin'|'tan'|'exp'|'log'|'acos'|'asin'|'atan'|'cosh'|'sinh'|'tanh'|'exp2'|'log2'|'sqrt'|'ceil'|'acosh'|'asinh'|'atanh'|'log10'|'floor'|'round'|'trunc'|'fmod'|'atan2'|'hypot'|'pow'|'int'|'rat'|'num'|'den'|'abs'|'sgn'|'float'|'pitch'|'degree'|'octave'|'alter'|'cents'|'mod'|'min'|'max'|'random'|'bessel'|'approx'|'enharm'|'makepitch'|'makepitchsc'|'mc2f'|'f2mc'|'minimum'|'maximum'|'sum'|'prod'
     |'outlet'|'inlet'
-    |'#+'|'#-'|'#u-'|'#*'|'#/'|'#//'|'#%'|'#=='|'#!='|'#<'|'#>'|'#<='|'#>='|'#&'|'#^'|'#|'|'#&&'|'#^^'|'#||'|'#&&&'|'#|||'|'#<<'|'#>>') { noParams = false; noUnary = true; };
+    |'#+'|'#-'|'#u-'|'#*'|'#/'|'#//'|'#%'|'#=='|'#!='|'#<'|'#>'|'#<='|'#>='|'#&'|'#^'|'#|'|'#&&'|'#^^'|'#||'|'#&&&'|'#|||'|'#<<'|'#>>'
+    |'$args') { noParams = false; noUnary = true; };
 
 OF: ('directout'|'directin'|'print') { noParams = false; noUnary = true; };
 
@@ -255,6 +258,12 @@ GLOBALVAR: ID { noParams = false; noUnary = true; };
 PATCHERVAR: '#' ID { noParams = false; noUnary = true; };
 LOCALVAR: '\\'? '$' ID { post("localvar"); noParams = false; noUnary = true; };
 NAMEDPARAM: '\\'? '@' ID { noParams = true; noUnary = true; };
+
+KEEP: 'keep' { noParams = true; noUnary = true; };
+UNKEEP: 'unkeep' { noParams = true; noUnary = true; };
+INIT: 'init' { noParams = true; noUnary = true; };
+
+ARGCOUNT: '$argcount' { noParams = false; noUnary = true; };
 
 fragment ID: [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?;
 

@@ -73,6 +73,8 @@ public:
 
     virtual std::any visitItemDirInlet(bellParser::ItemDirInletContext *context) = 0;
 
+    virtual std::any visitItemArgcount(bellParser::ItemArgcountContext *context) = 0;
+
     virtual std::any visitItemNull(bellParser::ItemNullContext *context) = 0;
 
     virtual std::any visitItemNil(bellParser::ItemNilContext *context) = 0;
@@ -106,6 +108,8 @@ public:
     virtual std::any visitExprBinary(bellParser::ExprBinaryContext *context) = 0;
 
     virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *context) = 0;
+
+    virtual std::any visitInitAssignment(bellParser::InitAssignmentContext *context) = 0;
 
     virtual std::any visitTrueAssignment(bellParser::TrueAssignmentContext *context) = 0;
 
