@@ -35,6 +35,26 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitFunargVar(bellParser::FunargVarContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFunargEllipsis(bellParser::FunargEllipsisContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFunargList(bellParser::FunargListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLiftedargList(bellParser::LiftedargListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFundef(bellParser::FundefContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitSequence(bellParser::SequenceContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -64,26 +84,6 @@ public:
   }
 
   virtual std::any visitFuncall(bellParser::FuncallContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitFunargVar(bellParser::FunargVarContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitFunargEllipsis(bellParser::FunargEllipsisContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitFunargList(bellParser::FunargListContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitLiftedargList(bellParser::LiftedargListContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitFundef(bellParser::FundefContext *ctx) override {
     return visitChildren(ctx);
   }
 

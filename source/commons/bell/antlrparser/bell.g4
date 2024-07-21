@@ -70,6 +70,19 @@ program: EOF #programEOF
 | NAMEDPARAM #programNamedparam
 ;
 
+funarg: LOCALVAR (ASSIGN list)? #funargVar
+| ELLIPSIS #funargEllipsis
+;
+
+funargList: funarg (',' funarg)*
+;
+
+liftedargList: LIFT (LOCALVAR ',')* LOCALVAR
+;
+
+fundef: funargList liftedargList? FUNDEF list
+;
+
 sequence: list
 | nullified+ list? 
 ;
@@ -102,21 +115,6 @@ dataFlowItem: item|var|simpleFuncall
 funcall: simpleFuncall
 | dataFlowItem ('.' simpleFuncall)+
 ;
-
-
-funarg: LOCALVAR (ASSIGN list)? #funargVar
-| ELLIPSIS #funargEllipsis
-;
-
-funargList: funarg (',' funarg)*
-;
-
-liftedargList: LIFT (LOCALVAR ',')* LOCALVAR
-;
-
-fundef: funargList liftedargList? FUNDEF list
-;
-
 
 item: UINT #itemUint
 | UFLOAT #itemUfloat

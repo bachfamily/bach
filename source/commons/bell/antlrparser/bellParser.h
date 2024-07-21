@@ -32,10 +32,10 @@ public:
   };
 
   enum {
-    RuleEverything = 0, RuleProgram = 1, RuleSequence = 2, RuleNullified = 3, 
-    RuleWhileloop = 4, RuleArgsByNameList = 5, RuleArgsByPositionList = 6, 
-    RuleSimpleFuncall = 7, RuleDataFlowItem = 8, RuleFuncall = 9, RuleFunarg = 10, 
-    RuleFunargList = 11, RuleLiftedargList = 12, RuleFundef = 13, RuleItem = 14, 
+    RuleEverything = 0, RuleProgram = 1, RuleFunarg = 2, RuleFunargList = 3, 
+    RuleLiftedargList = 4, RuleFundef = 5, RuleSequence = 6, RuleNullified = 7, 
+    RuleWhileloop = 8, RuleArgsByNameList = 9, RuleArgsByPositionList = 10, 
+    RuleSimpleFuncall = 11, RuleDataFlowItem = 12, RuleFuncall = 13, RuleItem = 14, 
     RuleVar = 15, RuleLvalueSpecs = 16, RuleLvalue = 17, RuleFakeLvalue = 18, 
     RuleListEnd = 19, RuleExpr = 20, RuleAssignment = 21, RuleConditional = 22, 
     RuleList = 23
@@ -65,6 +65,10 @@ public:
 
   class EverythingContext;
   class ProgramContext;
+  class FunargContext;
+  class FunargListContext;
+  class LiftedargListContext;
+  class FundefContext;
   class SequenceContext;
   class NullifiedContext;
   class WhileloopContext;
@@ -73,10 +77,6 @@ public:
   class SimpleFuncallContext;
   class DataFlowItemContext;
   class FuncallContext;
-  class FunargContext;
-  class FunargListContext;
-  class LiftedargListContext;
-  class FundefContext;
   class ItemContext;
   class VarContext;
   class LvalueSpecsContext;
@@ -153,6 +153,86 @@ public:
   };
 
   ProgramContext* program();
+
+  class  FunargContext : public antlr4::ParserRuleContext {
+  public:
+    FunargContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    FunargContext() = default;
+    void copyFrom(FunargContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  FunargVarContext : public FunargContext {
+  public:
+    FunargVarContext(FunargContext *ctx);
+
+    antlr4::tree::TerminalNode *LOCALVAR();
+    antlr4::tree::TerminalNode *ASSIGN();
+    ListContext *list();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  FunargEllipsisContext : public FunargContext {
+  public:
+    FunargEllipsisContext(FunargContext *ctx);
+
+    antlr4::tree::TerminalNode *ELLIPSIS();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  FunargContext* funarg();
+
+  class  FunargListContext : public antlr4::ParserRuleContext {
+  public:
+    FunargListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<FunargContext *> funarg();
+    FunargContext* funarg(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  FunargListContext* funargList();
+
+  class  LiftedargListContext : public antlr4::ParserRuleContext {
+  public:
+    LiftedargListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *LIFT();
+    std::vector<antlr4::tree::TerminalNode *> LOCALVAR();
+    antlr4::tree::TerminalNode* LOCALVAR(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  LiftedargListContext* liftedargList();
+
+  class  FundefContext : public antlr4::ParserRuleContext {
+  public:
+    FundefContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    FunargListContext *funargList();
+    antlr4::tree::TerminalNode *FUNDEF();
+    ListContext *list();
+    LiftedargListContext *liftedargList();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  FundefContext* fundef();
 
   class  SequenceContext : public antlr4::ParserRuleContext {
   public:
@@ -282,86 +362,6 @@ public:
   };
 
   FuncallContext* funcall();
-
-  class  FunargContext : public antlr4::ParserRuleContext {
-  public:
-    FunargContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    FunargContext() = default;
-    void copyFrom(FunargContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  FunargVarContext : public FunargContext {
-  public:
-    FunargVarContext(FunargContext *ctx);
-
-    antlr4::tree::TerminalNode *LOCALVAR();
-    antlr4::tree::TerminalNode *ASSIGN();
-    ListContext *list();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  FunargEllipsisContext : public FunargContext {
-  public:
-    FunargEllipsisContext(FunargContext *ctx);
-
-    antlr4::tree::TerminalNode *ELLIPSIS();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  FunargContext* funarg();
-
-  class  FunargListContext : public antlr4::ParserRuleContext {
-  public:
-    FunargListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<FunargContext *> funarg();
-    FunargContext* funarg(size_t i);
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  FunargListContext* funargList();
-
-  class  LiftedargListContext : public antlr4::ParserRuleContext {
-  public:
-    LiftedargListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *LIFT();
-    std::vector<antlr4::tree::TerminalNode *> LOCALVAR();
-    antlr4::tree::TerminalNode* LOCALVAR(size_t i);
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  LiftedargListContext* liftedargList();
-
-  class  FundefContext : public antlr4::ParserRuleContext {
-  public:
-    FundefContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    FunargListContext *funargList();
-    antlr4::tree::TerminalNode *FUNDEF();
-    ListContext *list();
-    LiftedargListContext *liftedargList();
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  FundefContext* fundef();
 
   class  ItemContext : public antlr4::ParserRuleContext {
   public:

@@ -2,6 +2,21 @@ VERSION NOTES:
 
 v0.8.4
 
+*****************
+*** IMPORTANT ***
+*****************
+
+*** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
+
+- bell: the new parser written in antlr4 breaks compatibility in a few, hopefully rare cases:
+        . an integer as the first term of a dataflow-style function call is not recognized;
+          rather, the dot is considered as the decimal point.
+          e.g., 100.sqrt() was equivalent to sqrt(100), now it is equivalent to 100. sqrt()
+        . function definitions must have at least one argument.
+          e.g., (-> 1) is not a valid function definition anymore. A dummy argument must be provided, as in ($x -> 1). Nonetheless, all arguments are optional in function calls, so $f = ($x -> 1); $f() is still perfectly valid and functional.
+
+
+
 ***********************
 *** VERSION CHANGES ***
 ***********************
@@ -13,6 +28,7 @@ v0.8.4
 - bach.roll: exportmidi: added "defaulttempo" message attribute
 
 - bell: bach.sum, bach.prod now work
+        lists of . and : operations do not cause "out of memory" errors anymore
 
 v0.8.3
 
