@@ -445,7 +445,7 @@ public:
         
         // put all the local variables in the array of local variable names (for faster access at loop call)
         if (localVariableNamesList) {
-            localVariableNamesList->copyIntoNullTerminatedArray(&localVariableNames);
+            copyIntoNullTerminatedArray<t_symbol*>(localVariableNamesList, &localVariableNames);
             delete localVariableNamesList->getHead();
         } else {
             localVariableNames = new t_symbol* [1] { };

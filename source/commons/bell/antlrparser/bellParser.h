@@ -14,29 +14,31 @@ public:
   enum {
     T__0 = 1, RANGE = 2, UINT = 3, UFLOAT = 4, UPITCH = 5, BTSYMBOL = 6, 
     DQSYMBOL = 7, SQSYMBOL = 8, BACHNULL = 9, BACHNIL = 10, IF = 11, THEN = 12, 
-    ELSE = 13, WHILE = 14, FOR = 15, DO = 16, COLLECT = 17, FUNCTION = 18, 
-    INLET = 19, INTINLET = 20, RATINLET = 21, FLOATINLET = 22, PITCHINLET = 23, 
-    OUTLET = 24, DIRINLET = 25, DIROUTLET = 26, BIF = 27, OF = 28, GLOBALVAR = 29, 
-    PATCHERVAR = 30, LOCALVAR = 31, NAMEDPARAM = 32, PUSH = 33, POP = 34, 
-    CLOSED = 35, NTH = 36, PICK = 37, KEY = 38, ANTH = 39, APICK = 40, NULLIFY = 41, 
-    ASSIGN = 42, WHITESPACE = 43, NEWATOM = 44, POW = 45, APOW = 46, TIMES = 47, 
-    ATIMES = 48, DIVDIV = 49, ADIVDIV = 50, DIV = 51, ADIV = 52, REM = 53, 
-    AREM = 54, PLUS = 55, APLUS = 56, UPLUS = 57, MINUS = 58, AMINUS = 59, 
-    UMINUS = 60, EQUAL = 61, NEQ = 62, LOGNOT = 63, BITNOT = 64, LT = 65, 
-    GT = 66, LEQ = 67, GEQ = 68, BITAND = 69, ABITAND = 70, BITXOR = 71, 
-    ABITXOR = 72, BITOR = 73, ABITOR = 74, LOGAND = 75, LOGANDEXT = 76, 
-    ALOGAND = 77, ALOGANDEXT = 78, LOGXOR = 79, ALOGXOR = 80, LOGOR = 81, 
-    ALOGOR = 82, LOGOREXT = 83, ALOGOREXT = 84, LSHIFT = 85, ALSHIFT = 86, 
-    RSHIFT = 87, ARSHIFT = 88, REPEAT = 89, AREPEAT = 90, AAPPLY = 91, ACONCAT = 92, 
-    ARCONCAT = 93, OPEN = 94, PARAMS = 95, ANYTHING = 96
+    ELSE = 13, WHILE = 14, FOR = 15, DO = 16, COLLECT = 17, INLET = 18, 
+    INTINLET = 19, RATINLET = 20, FLOATINLET = 21, PITCHINLET = 22, OUTLET = 23, 
+    DIRINLET = 24, DIROUTLET = 25, BIF = 26, OF = 27, GLOBALVAR = 28, PATCHERVAR = 29, 
+    LOCALVAR = 30, NAMEDPARAM = 31, PUSH = 32, POP = 33, CLOSED = 34, NTH = 35, 
+    PICK = 36, KEY = 37, ANTH = 38, APICK = 39, NULLIFY = 40, ASSIGN = 41, 
+    WHITESPACE = 42, NEWATOM = 43, POW = 44, APOW = 45, TIMES = 46, ATIMES = 47, 
+    DIVDIV = 48, ADIVDIV = 49, DIV = 50, ADIV = 51, REM = 52, AREM = 53, 
+    PLUS = 54, APLUS = 55, UPLUS = 56, MINUS = 57, AMINUS = 58, UMINUS = 59, 
+    EQUAL = 60, NEQ = 61, LOGNOT = 62, BITNOT = 63, LT = 64, GT = 65, LEQ = 66, 
+    GEQ = 67, BITAND = 68, ABITAND = 69, BITXOR = 70, ABITXOR = 71, BITOR = 72, 
+    ABITOR = 73, LOGAND = 74, LOGANDEXT = 75, ALOGAND = 76, ALOGANDEXT = 77, 
+    LOGXOR = 78, ALOGXOR = 79, LOGOR = 80, ALOGOR = 81, LOGOREXT = 82, ALOGOREXT = 83, 
+    LSHIFT = 84, ALSHIFT = 85, RSHIFT = 86, ARSHIFT = 87, REPEAT = 88, AREPEAT = 89, 
+    AAPPLY = 90, ACONCAT = 91, ARCONCAT = 92, OPEN = 93, PARAMS = 94, FUNDEF = 95, 
+    LIFT = 96, ELLIPSIS = 97, ANYTHING = 98
   };
 
   enum {
     RuleEverything = 0, RuleProgram = 1, RuleSequence = 2, RuleNullified = 3, 
     RuleWhileloop = 4, RuleArgsByNameList = 5, RuleArgsByPositionList = 6, 
-    RuleSimpleFuncall = 7, RuleFuncall = 8, RuleItem = 9, RuleVar = 10, 
-    RuleLvalueSpecs = 11, RuleLvalue = 12, RuleFakeLvalue = 13, RuleExpr = 14, 
-    RuleAssignment = 15, RuleConditional = 16, RuleListEnd = 17, RuleList = 18
+    RuleSimpleFuncall = 7, RuleDataFlowItem = 8, RuleFuncall = 9, RuleFunarg = 10, 
+    RuleFunargList = 11, RuleLiftedargList = 12, RuleFundef = 13, RuleItem = 14, 
+    RuleVar = 15, RuleLvalueSpecs = 16, RuleLvalue = 17, RuleFakeLvalue = 18, 
+    RuleListEnd = 19, RuleExpr = 20, RuleAssignment = 21, RuleConditional = 22, 
+    RuleList = 23
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -69,16 +71,21 @@ public:
   class ArgsByNameListContext;
   class ArgsByPositionListContext;
   class SimpleFuncallContext;
+  class DataFlowItemContext;
   class FuncallContext;
+  class FunargContext;
+  class FunargListContext;
+  class LiftedargListContext;
+  class FundefContext;
   class ItemContext;
   class VarContext;
   class LvalueSpecsContext;
   class LvalueContext;
   class FakeLvalueContext;
+  class ListEndContext;
   class ExprContext;
   class AssignmentContext;
   class ConditionalContext;
-  class ListEndContext;
   class ListContext; 
 
   class  EverythingContext : public antlr4::ParserRuleContext {
@@ -229,11 +236,13 @@ public:
   public:
     SimpleFuncallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ItemContext *item();
     antlr4::tree::TerminalNode *PARAMS();
     antlr4::tree::TerminalNode *CLOSED();
+    ItemContext *item();
+    VarContext *var();
     ArgsByPositionListContext *argsByPositionList();
     ArgsByNameListContext *argsByNameList();
+    SimpleFuncallContext *simpleFuncall();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -241,6 +250,21 @@ public:
   };
 
   SimpleFuncallContext* simpleFuncall();
+  SimpleFuncallContext* simpleFuncall(int precedence);
+  class  DataFlowItemContext : public antlr4::ParserRuleContext {
+  public:
+    DataFlowItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ItemContext *item();
+    VarContext *var();
+    SimpleFuncallContext *simpleFuncall();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  DataFlowItemContext* dataFlowItem();
 
   class  FuncallContext : public antlr4::ParserRuleContext {
   public:
@@ -248,7 +272,7 @@ public:
     virtual size_t getRuleIndex() const override;
     std::vector<SimpleFuncallContext *> simpleFuncall();
     SimpleFuncallContext* simpleFuncall(size_t i);
-    ItemContext *item();
+    DataFlowItemContext *dataFlowItem();
     std::vector<antlr4::tree::TerminalNode *> KEY();
     antlr4::tree::TerminalNode* KEY(size_t i);
 
@@ -258,6 +282,86 @@ public:
   };
 
   FuncallContext* funcall();
+
+  class  FunargContext : public antlr4::ParserRuleContext {
+  public:
+    FunargContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    FunargContext() = default;
+    void copyFrom(FunargContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  FunargVarContext : public FunargContext {
+  public:
+    FunargVarContext(FunargContext *ctx);
+
+    antlr4::tree::TerminalNode *LOCALVAR();
+    antlr4::tree::TerminalNode *ASSIGN();
+    ListContext *list();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  FunargEllipsisContext : public FunargContext {
+  public:
+    FunargEllipsisContext(FunargContext *ctx);
+
+    antlr4::tree::TerminalNode *ELLIPSIS();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  FunargContext* funarg();
+
+  class  FunargListContext : public antlr4::ParserRuleContext {
+  public:
+    FunargListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<FunargContext *> funarg();
+    FunargContext* funarg(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  FunargListContext* funargList();
+
+  class  LiftedargListContext : public antlr4::ParserRuleContext {
+  public:
+    LiftedargListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *LIFT();
+    std::vector<antlr4::tree::TerminalNode *> LOCALVAR();
+    antlr4::tree::TerminalNode* LOCALVAR(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  LiftedargListContext* liftedargList();
+
+  class  FundefContext : public antlr4::ParserRuleContext {
+  public:
+    FundefContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    FunargListContext *funargList();
+    antlr4::tree::TerminalNode *FUNDEF();
+    ListContext *list();
+    LiftedargListContext *liftedargList();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  FundefContext* fundef();
 
   class  ItemContext : public antlr4::ParserRuleContext {
   public:
@@ -491,6 +595,22 @@ public:
   };
 
   FakeLvalueContext* fakeLvalue();
+
+  class  ListEndContext : public antlr4::ParserRuleContext {
+  public:
+    ListEndContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ConditionalContext *conditional();
+    AssignmentContext *assignment();
+    WhileloopContext *whileloop();
+    FundefContext *fundef();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ListEndContext* listEnd();
 
   class  ExprContext : public antlr4::ParserRuleContext {
   public:
@@ -740,21 +860,6 @@ public:
 
   ConditionalContext* conditional();
 
-  class  ListEndContext : public antlr4::ParserRuleContext {
-  public:
-    ListEndContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    ConditionalContext *conditional();
-    AssignmentContext *assignment();
-    WhileloopContext *whileloop();
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ListEndContext* listEnd();
-
   class  ListContext : public antlr4::ParserRuleContext {
   public:
     ListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -772,6 +877,7 @@ public:
 
   bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
 
+  bool simpleFuncallSempred(SimpleFuncallContext *_localctx, size_t predicateIndex);
   bool exprSempred(ExprContext *_localctx, size_t predicateIndex);
 
   // By default the static state used to implement the parser is lazily initialized during the first

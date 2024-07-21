@@ -168,30 +168,8 @@
     
     YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf);
     void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
-    
-    void addVariableToScope(t_parseParams *params, t_symbol *name)
-    {
-        auto known = (*(params->localVariablesAuxMapStack))->find(name);
-        if (known == (*(params->localVariablesAuxMapStack))->end()) { // yet unknown
-            (**(params->localVariablesAuxMapStack))[name] = 1;
-            
-            if (params->liftedVariablesStack == params->liftedVariablesStackBase) {
-                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, true), *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
-            } else {
-                t_bool lifted = (*(params->liftedVariablesStack))->find(name) != (*(params->liftedVariablesStack))->end();
-                
-                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, lifted), *(params->localVariablesStack));
 
-                /*
-                if (lifted == (*(params->liftedVariablesStack))->end()) { // not lifted
-                    *(params->argumentsStack) = new countedList<funArg *>(new funArg(name), *(params->argumentsStack));
-                } else { // old behavior: lifted
-                    *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack));
-                }
-                 */
-            }
-        }
-    }
+
 %}
 
 %parse-param {void *scanner}
@@ -342,12 +320,12 @@ forargList : forarg {
 
 forarg : LOCALVAR IN_KW sequence {
     $$ = new forArg($1, nullptr, $3);
-    addVariableToScope(params, $1);
+    addVariableToScope<e_flexBison>(params, $1);
     code_dev_post ("parse: for iterator with index");
 }
 | LOCALVAR LOCALVAR IN_KW sequence {
-    addVariableToScope(params, $1);
-    addVariableToScope(params, $2);
+    addVariableToScope<e_flexBison>(params, $1);
+    addVariableToScope<e_flexBison>(params, $2);
     $$ = new forArg($1, $2, $4);
     code_dev_post ("parse: for iterator with index and address");
 }
@@ -615,7 +593,7 @@ assign : var ASSIGN list {
     code_dev_post("parse: var ASSIGN list");
 }
 | INIT LOCALVAR ASSIGN list {
-    addVariableToScope(params, $2);
+    addVariableToScope<e_flexBison>(params, $2);
     $$ = new astInit($2, $4, params->owner);
     code_dev_post("parse: INIT LOCALVAR ASSIGN list");
 }
@@ -1320,17 +1298,17 @@ patcherVar: PATCHERVAR {
 
 localVar: LOCALVAR {
     $$ = new astLocalVar($1, params->owner);
-    addVariableToScope(params, $1);
+    addVariableToScope<e_flexBison>(params, $1);
     code_dev_post ("parse: Local variable %s", $1->s_name);
 }
 | KEEP LOCALVAR {
     $$ = new astKeep($2, params->owner);
-    addVariableToScope(params, $2);
+    addVariableToScope<e_flexBison>(params, $2);
     code_dev_post ("parse: Keep local variable %s", $2->s_name);
 }
 | UNKEEP LOCALVAR {
     $$ = new astUnkeep($2, params->owner);
-    addVariableToScope(params, $2);
+    addVariableToScope<e_flexBison>(params, $2);
     code_dev_post ("parse: Unkeep local variable %s", $2->s_name);
 }
 ;
@@ -1352,10 +1330,14 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.ast = NULL;
     params.fnDepth = 0;
     params.localVariablesStack = params.localVariablesStackBase;
+    params.localVariablesStackV[0] = nullptr;
+    params.localVariablesStackV = params.localVariablesStackBaseV;
     params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
     params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
     params.liftedVariablesStack = params.liftedVariablesStackBase;
     params.argumentsStack = params.argumentsStackBase;
+    params.argumentsStackV[0] = nullptr;
+    params.argumentsStackV = params.argumentsStackBaseV;
     params.gvt = bach->b_gvt;
     params.bifs = bach->b_bifTable;
     params.codeac = codeac;

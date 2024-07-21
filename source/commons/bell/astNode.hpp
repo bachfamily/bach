@@ -52,6 +52,8 @@ public:
     t_bool isLifted() { return lifted; }
 };
 
+
+
 template <typename T>
 class countedList {
 private:
@@ -128,19 +130,6 @@ public:
     T getItem() { return item; }
     countedList<T>* getNext() { return next; }
     countedList<T>* getHead() { return head; }
-    
-    void copyIntoNullTerminatedArray(T** array)
-    {
-        *array = new T [*count + 1];
-        countedList<T> *item;
-        long idx;
-        for (item = getHead(), idx = 0;
-             item;
-             item = item->getNext(), idx++) {
-            (*array)[idx] = item->getItem();
-        }
-        (*array)[idx] = nullptr;
-    };
 
 /*
     countedList<T>* prune(t_bool (*check)(T* toCheck, void *data), void *data) {
@@ -164,6 +153,31 @@ public:
  */
 };
 
+
+template <typename T>
+void copyIntoNullTerminatedArray(countedList<T>* c, T** array)
+{
+    *array = new T [c->getCount() + 1];
+    countedList<T> *item;
+    long idx;
+    for (item = c->getHead(), idx = 0;
+         item;
+         item = item->getNext(), idx++) {
+        (*array)[idx] = item->getItem();
+    }
+    (*array)[idx] = nullptr;
+};
+
+template <typename T>
+void copyIntoNullTerminatedArray(std::vector<T>* v, T** array)
+{
+    *array = new T [v->size() + 1];
+    long idx = 0;
+    for (auto i : *v) {
+        (*array)[idx++] = i;
+    }
+    (*array)[idx] = nullptr;
+};
 
 class t_userFunction;
 class t_mainFunction;
@@ -965,7 +979,7 @@ public:
     {
         if (lvalueStepList) {
             nLvSteps = lvalueStepList->getCount();
-            lvalueStepList->copyIntoNullTerminatedArray(&lvStep);
+            copyIntoNullTerminatedArray(lvalueStepList, &lvStep);
         } else
             nLvSteps = 0;
     }

@@ -178,7 +178,7 @@ public:
     }
     
     antlrcpp::Any visitSimpleFuncall(bellParser::SimpleFuncallContext *ctx) override {
-        auto *fn = safeAnyCast<astNode*>(visit(ctx->item()));
+        auto *fn = safeAnyCast<astNode*>(visit(ctx->children[0]));
         if (!fn)
             return nullptr;
         std::vector<astNode*>* abpl = nullptr;
@@ -191,12 +191,15 @@ public:
         return n;
     }
     
+    antlrcpp::Any visitDataFlowItem(bellParser::DataFlowItemContext *ctx) override {
+        return visit(ctx->children[0]);
+    }
     
     antlrcpp::Any visitFuncall(bellParser::FuncallContext *context) override {
-        if (!context->item()) {
+        if (!context->dataFlowItem()) {
             return visit(context->simpleFuncall(0));
         }
-        auto x = safeAnyCast<astNode*>(visit(context->item()));
+        auto x = safeAnyCast<astNode*>(visit(context->dataFlowItem()));
         astFunctionCall* y;
         for (auto p: context->simpleFuncall()) {
             y = dynamic_cast<astFunctionCall*>(safeAnyCast<astNode*>(visit(p)));
@@ -204,6 +207,84 @@ public:
             x = y;
         }
         return static_cast<astNode*>(y);
+    }
+
+    antlrcpp::Any visitFunargVar(bellParser::FunargVarContext *context) override {
+        auto txt = context->LOCALVAR()->getText();
+        auto s = gensym(txt.c_str() + 1);
+        (**(params->localVariablesAuxMapStack))[s] = 1;
+        funArg *r;
+        if (context->list()) {
+            auto l = safeAnyCast<astNode*>(visit(context->list()));
+            ++(params->localVariablesStack);
+            *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
+            r = new funArg(s, l, *(params->localVariablesStack));
+            delete *(params->localVariablesAuxMapStack);
+            *(params->localVariablesAuxMapStack--) = nullptr;
+            *(params->localVariablesStack--) = nullptr;
+        } else {
+            r = new funArg(s);
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitFunargEllipsis(bellParser::FunargEllipsisContext *context) override {
+        return new funArg(gensym("<...>"));
+    }
+    
+    antlrcpp::Any visitFunargList(bellParser::FunargListContext *context) override {
+        *++(params->localVariablesStackV) = new std::vector<t_localVar>;
+        *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
+        auto v = new std::vector<funArg*>;
+        for (auto p : context->funarg()) {
+            auto a = safeAnyCast<funArg*>(visit(p));
+            v->push_back(a);
+        }
+        return v;
+    }
+    
+    antlrcpp::Any visitLiftedargList(bellParser::LiftedargListContext *context) override {
+        auto v = new std::vector<t_localVar*>;
+        for (auto p : context->LOCALVAR()) {
+            auto t = p->getText();
+            auto s = gensym(t.c_str() + 1);
+            auto l = new t_localVar(s);
+            v->push_back(l);
+        }
+        return v;
+    }
+    
+    antlrcpp::Any visitFundef(bellParser::FundefContext *context) override {
+        params->fnDepth++;
+        *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
+        
+        if (context->liftedargList()) {
+            auto lal = safeAnyCast<std::vector<t_localVar*>*>(visit(context->liftedargList()));
+            for (auto v : *lal) {
+                (*(params->liftedVariablesStack))->insert(v->getName());
+            }
+        }
+        
+        std::vector<funArg*>* fal = nullptr;
+        if (context->funargList()) {
+            fal = safeAnyCast<std::vector<funArg*>*>(visit(context->funargList()));
+            *++(params->argumentsStackV) = fal;
+        }
+        
+        auto l = safeAnyCast<astNode*>(visit(context->list()));
+        auto fn = new t_userFunction(*(params->argumentsStackV),
+                                       *(params->localVariablesStackV),
+                                       l, params->owner);
+        params->funcs->insert(fn);
+        astNode* r = new astConst(fn, params->owner);
+        *(params->localVariablesStackV--) = nullptr;
+        --(params->fnDepth);
+        delete *(params->localVariablesAuxMapStack);
+        *(params->localVariablesAuxMapStack--) = nullptr;
+        delete *(params->liftedVariablesStack);
+        *(params->liftedVariablesStack--) = nullptr;
+        --(params->argumentsStackV);
+        return r;
     }
     
     antlrcpp::Any visitItemUint(bellParser::ItemUintContext *context) override {
@@ -336,7 +417,7 @@ public:
         std::string name = ctx->LOCALVAR()->getText();
         t_symbol *s = gensym(name.erase(0, name[0] == '\\' ? 2 : 1).c_str());
         astVar* v = new astLocalVar(s, params->owner);
-        addVariableToScope(params, s);
+        addVariableToScope<e_antlr4>(params, s);
         return static_cast<astNode*>(v);
     }
     
@@ -344,7 +425,7 @@ public:
         std::string name = ctx->PATCHERVAR()->getText();
         t_symbol *s = gensym(name.erase(0, name[0] == '\\' ? 2 : 1).c_str());
         astVar* v = new astLocalVar(s, params->owner);
-        addVariableToScope(params, s);
+        addVariableToScope<e_antlr4>(params, s);
         return static_cast<astNode*>(v);
     }
     
@@ -652,10 +733,16 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
     params.ast = NULL;
     params.fnDepth = 0;
     params.localVariablesStack = params.localVariablesStackBase;
+    params.localVariablesStackBase[0] = nullptr;
+    params.localVariablesStackBaseV[0] = new std::vector<t_localVar>;
+    params.localVariablesStackV = params.localVariablesStackBaseV;
     params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
     params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
     params.liftedVariablesStack = params.liftedVariablesStackBase;
     params.argumentsStack = params.argumentsStackBase;
+    params.argumentsStackBase[0] = nullptr;
+    params.argumentsStackBaseV[0] = new std::vector<funArg*>;
+    params.argumentsStackV = params.argumentsStackBaseV;
     params.gvt = bach->b_gvt;
     params.bifs = bach->b_bifTable;
     params.codeac = codeac;
@@ -686,7 +773,7 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
     if (r) {
         t_mainFunction *mainFunction = new t_mainFunction(
             r,
-            params.localVariablesStackBase[0],
+            params.localVariablesStackBaseV[0],
             params.globalVariables,
             params.name2patcherVars,
             params.funcs,

@@ -309,30 +309,8 @@ static YYSTYPE yyval_default;
     
     YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf);
     void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
-    
-    void addVariableToScope(t_parseParams *params, t_symbol *name)
-    {
-        auto known = (*(params->localVariablesAuxMapStack))->find(name);
-        if (known == (*(params->localVariablesAuxMapStack))->end()) { // yet unknown
-            (**(params->localVariablesAuxMapStack))[name] = 1;
-            
-            if (params->liftedVariablesStack == params->liftedVariablesStackBase) {
-                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, true), *(params->localVariablesStack)); // if we're at the main function level, then everything is lifted (as it can be set from the outside)
-            } else {
-                t_bool lifted = (*(params->liftedVariablesStack))->find(name) != (*(params->liftedVariablesStack))->end();
-                
-                *(params->localVariablesStack) = new countedList<t_localVar> (t_localVar(name, lifted), *(params->localVariablesStack));
 
-                /*
-                if (lifted == (*(params->liftedVariablesStack))->end()) { // not lifted
-                    *(params->argumentsStack) = new countedList<funArg *>(new funArg(name), *(params->argumentsStack));
-                } else { // old behavior: lifted
-                    *(params->localVariablesStack) = new countedList<t_symbol *> (name, *(params->localVariablesStack));
-                }
-                 */
-            }
-        }
-    }
+
 
 
 
@@ -659,31 +637,31 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   213,   213,   218,   224,   230,   238,   239,   245,   249,
-     271,   275,   281,   286,   291,   296,   301,   306,   311,   316,
-     321,   326,   333,   337,   343,   348,   356,   356,   373,   373,
-     392,   392,   414,   414,   440,   447,   453,   453,   470,   475,
-     479,   479,   492,   496,   502,   503,   510,   515,   520,   526,
-     532,   538,   542,   548,   552,   556,   562,   567,   568,   569,
-     575,   576,   577,   578,   579,   582,   583,   589,   590,   602,
-     613,   617,   622,   626,   630,   634,   638,   642,   646,   650,
-     654,   658,   662,   666,   670,   674,   678,   682,   686,   690,
-     694,   698,   702,   706,   710,   714,   718,   722,   726,   730,
-     734,   738,   742,   746,   750,   754,   758,   762,   766,   770,
-     774,   778,   782,   786,   791,   798,   803,   811,   815,   819,
-     823,   830,   831,   837,   838,   839,   843,   847,   851,   855,
-     859,   863,   867,   871,   875,   879,   883,   887,   891,   895,
-     899,   903,   907,   911,   915,   919,   923,   927,   931,   935,
-     939,   943,   947,   951,   955,   959,   963,   968,   969,   973,
-     977,   981,   985,   989,   993,   997,  1001,  1005,  1009,  1013,
-    1017,  1021,  1025,  1029,  1033,  1037,  1041,  1045,  1049,  1053,
-    1057,  1061,  1065,  1069,  1073,  1077,  1081,  1085,  1089,  1093,
-    1098,  1102,  1106,  1110,  1114,  1118,  1122,  1126,  1130,  1134,
-    1138,  1142,  1146,  1150,  1154,  1158,  1162,  1166,  1170,  1174,
-    1178,  1182,  1189,  1193,  1197,  1201,  1205,  1209,  1213,  1218,
-    1224,  1230,  1236,  1242,  1248,  1254,  1263,  1267,  1270,  1274,
-    1280,  1285,  1290,  1296,  1297,  1300,  1301,  1302,  1305,  1313,
-    1321,  1326,  1331
+       0,   191,   191,   196,   202,   208,   216,   217,   223,   227,
+     249,   253,   259,   264,   269,   274,   279,   284,   289,   294,
+     299,   304,   311,   315,   321,   326,   334,   334,   351,   351,
+     370,   370,   392,   392,   418,   425,   431,   431,   448,   453,
+     457,   457,   470,   474,   480,   481,   488,   493,   498,   504,
+     510,   516,   520,   526,   530,   534,   540,   545,   546,   547,
+     553,   554,   555,   556,   557,   560,   561,   567,   568,   580,
+     591,   595,   600,   604,   608,   612,   616,   620,   624,   628,
+     632,   636,   640,   644,   648,   652,   656,   660,   664,   668,
+     672,   676,   680,   684,   688,   692,   696,   700,   704,   708,
+     712,   716,   720,   724,   728,   732,   736,   740,   744,   748,
+     752,   756,   760,   764,   769,   776,   781,   789,   793,   797,
+     801,   808,   809,   815,   816,   817,   821,   825,   829,   833,
+     837,   841,   845,   849,   853,   857,   861,   865,   869,   873,
+     877,   881,   885,   889,   893,   897,   901,   905,   909,   913,
+     917,   921,   925,   929,   933,   937,   941,   946,   947,   951,
+     955,   959,   963,   967,   971,   975,   979,   983,   987,   991,
+     995,   999,  1003,  1007,  1011,  1015,  1019,  1023,  1027,  1031,
+    1035,  1039,  1043,  1047,  1051,  1055,  1059,  1063,  1067,  1071,
+    1076,  1080,  1084,  1088,  1092,  1096,  1100,  1104,  1108,  1112,
+    1116,  1120,  1124,  1128,  1132,  1136,  1140,  1144,  1148,  1152,
+    1156,  1160,  1167,  1171,  1175,  1179,  1183,  1187,  1191,  1196,
+    1202,  1208,  1214,  1220,  1226,  1232,  1241,  1245,  1248,  1252,
+    1258,  1263,  1268,  1274,  1275,  1278,  1279,  1280,  1283,  1291,
+    1299,  1304,  1309
 };
 #endif
 
@@ -2327,15 +2305,15 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   case 24: /* forarg: LOCALVAR IN_KW sequence  */
                                  {
     ((*yyvalp).forarg) = new forArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n));
-    addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym));
+    addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym));
     code_dev_post ("parse: for iterator with index");
 }
     break;
 
   case 25: /* forarg: LOCALVAR LOCALVAR IN_KW sequence  */
                                    {
-    addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.sym));
-    addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym));
+    addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.sym));
+    addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym));
     ((*yyvalp).forarg) = new forArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n));
     code_dev_post ("parse: for iterator with index and address");
 }
@@ -2682,7 +2660,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 71: /* assign: INIT LOCALVAR ASSIGN list  */
                             {
-    addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym));
+    addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym));
     ((*yyvalp).n) = new astInit((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: INIT LOCALVAR ASSIGN list");
 }
@@ -3846,7 +3824,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   case 240: /* localVar: LOCALVAR  */
                    {
     ((*yyvalp).lv) = new astLocalVar((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), params->owner);
-    addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
+    addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
     code_dev_post ("parse: Local variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
     break;
@@ -3854,7 +3832,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   case 241: /* localVar: KEEP LOCALVAR  */
                 {
     ((*yyvalp).lv) = new astKeep((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), params->owner);
-    addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
+    addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
     code_dev_post ("parse: Keep local variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
     break;
@@ -3862,7 +3840,7 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   case 242: /* localVar: UNKEEP LOCALVAR  */
                   {
     ((*yyvalp).lv) = new astUnkeep((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), params->owner);
-    addVariableToScope(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
+    addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
     code_dev_post ("parse: Unkeep local variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
     break;
@@ -5584,10 +5562,14 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.ast = NULL;
     params.fnDepth = 0;
     params.localVariablesStack = params.localVariablesStackBase;
+    params.localVariablesStackV[0] = nullptr;
+    params.localVariablesStackV = params.localVariablesStackBaseV;
     params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
     params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
     params.liftedVariablesStack = params.liftedVariablesStackBase;
     params.argumentsStack = params.argumentsStackBase;
+    params.argumentsStackV[0] = nullptr;
+    params.argumentsStackV = params.argumentsStackBaseV;
     params.gvt = bach->b_gvt;
     params.bifs = bach->b_bifTable;
     params.codeac = codeac;

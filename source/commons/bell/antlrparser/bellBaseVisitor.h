@@ -59,7 +59,31 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitDataFlowItem(bellParser::DataFlowItemContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitFuncall(bellParser::FuncallContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFunargVar(bellParser::FunargVarContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFunargEllipsis(bellParser::FunargEllipsisContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFunargList(bellParser::FunargListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLiftedargList(bellParser::LiftedargListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFundef(bellParser::FundefContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -139,6 +163,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitListEnd(bellParser::ListEndContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -184,10 +212,6 @@ public:
   }
 
   virtual std::any visitIfthenelse(bellParser::IfthenelseContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitListEnd(bellParser::ListEndContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -41,7 +41,19 @@ public:
 
     virtual std::any visitSimpleFuncall(bellParser::SimpleFuncallContext *context) = 0;
 
+    virtual std::any visitDataFlowItem(bellParser::DataFlowItemContext *context) = 0;
+
     virtual std::any visitFuncall(bellParser::FuncallContext *context) = 0;
+
+    virtual std::any visitFunargVar(bellParser::FunargVarContext *context) = 0;
+
+    virtual std::any visitFunargEllipsis(bellParser::FunargEllipsisContext *context) = 0;
+
+    virtual std::any visitFunargList(bellParser::FunargListContext *context) = 0;
+
+    virtual std::any visitLiftedargList(bellParser::LiftedargListContext *context) = 0;
+
+    virtual std::any visitFundef(bellParser::FundefContext *context) = 0;
 
     virtual std::any visitItemUint(bellParser::ItemUintContext *context) = 0;
 
@@ -81,6 +93,8 @@ public:
 
     virtual std::any visitFakeLvalue(bellParser::FakeLvalueContext *context) = 0;
 
+    virtual std::any visitListEnd(bellParser::ListEndContext *context) = 0;
+
     virtual std::any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *context) = 0;
 
     virtual std::any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *context) = 0;
@@ -104,8 +118,6 @@ public:
     virtual std::any visitIfthen(bellParser::IfthenContext *context) = 0;
 
     virtual std::any visitIfthenelse(bellParser::IfthenelseContext *context) = 0;
-
-    virtual std::any visitListEnd(bellParser::ListEndContext *context) = 0;
 
     virtual std::any visitList(bellParser::ListContext *context) = 0;
 

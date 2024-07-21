@@ -143,7 +143,7 @@ t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList
     
     // put all the local variables in the array of local variable names (for faster access at function call)
     if (localVariablesList) {
-        localVariablesList->copyIntoNullTerminatedArray(&localVariables);
+        copyIntoNullTerminatedArray<t_localVar>(localVariablesList, &localVariables);
         delete localVariablesList->getHead();
     } else {
         localVariables = new t_localVar [1] { (nullptr) };
@@ -185,6 +185,54 @@ t_userFunction::t_userFunction(countedList<funArg *> *argumentsList, countedList
 
     delete argumentsList;
 }
+
+t_userFunction::t_userFunction(std::vector<funArg *> *argumentsList, std::vector<t_localVar> *localVariablesList, astNode *ast, t_codableobj *culprit) : ast(ast)
+{
+    
+    // put all the local variables in the array of local variable names (for faster access at function call)
+    if (localVariablesList) {
+        copyIntoNullTerminatedArray<t_localVar>(localVariablesList, &localVariables);
+        delete localVariablesList;
+    } else {
+        localVariables = new t_localVar [1] { (nullptr) };
+    }
+    
+    variadic = false;
+    //namedArgumentsCount = namedArgumentsCountAfterEllipsis = 0;
+    // fill the double table of argument names and defaults
+    if (argumentsList) {
+        for (auto item: *argumentsList) {
+            t_symbol *name = item->getSym();
+            if (name == gensym("<...>")) {
+                if (variadic) {
+                    object_error((t_object *) culprit, "<...> can only appear once in a function definition");
+                } else {
+                    variadic = true;
+                }
+            } else if (argName2idx.find(name) == argName2idx.end()) {
+                item->conform();
+                if (!variadic) {
+                    idx2argNameAndDefault[++namedArgumentsCount] = item;
+                    argName2idx[name] = namedArgumentsCount;
+                } else {
+                    idx2argNameAndDefault[--namedArgumentsCountAfterEllipsis] = item;
+                    argName2idx[name] = namedArgumentsCountAfterEllipsis;
+                }
+            } else {
+                delete item;
+                object_error((t_object *) culprit, "Duplicate argument name");
+
+            }
+        }
+        //idx2argNameAndDefault[namedArgumentsCount + 1] = nullptr;
+        //idx2argNameAndDefault[namedArgumentsCountAfterEllipsis - 1] = nullptr;
+    }
+    
+    //idx2argNameAndDefault[0] = nullptr;
+
+    delete argumentsList;
+}
+
 
 t_llll* t_userFunction::call(const t_execEnv &context) {
     t_llll *result = ast->eval(context);
@@ -327,6 +375,36 @@ inlet(0), name2astVars(name2astVars), globalVars(globalVariables), functions(fun
         }
         localVariables[i] = t_localVar();
         delete localVariablesList->getHead();
+    } else {
+        localVariables = new t_localVar[1] { };
+    }
+    
+    variadic = true;
+    
+    namedArgumentsCount = 0;
+    name = gensym("main");
+    outlets = 0;
+}
+
+t_mainFunction::t_mainFunction(astNode *mainAst,
+                               std::vector<t_localVar> *localVariablesList,
+                               std::unordered_set<t_globalVariable*> *globalVariables,
+                               pvMap *name2astVars,
+                               std::unordered_set<t_function*> *funcs,
+                               t_codableobj *caller) :
+inlet(0), name2astVars(name2astVars), globalVars(globalVariables), functions(funcs), owner(caller)
+{
+    ast = mainAst;
+    if (!ast)
+        return;
+    if (localVariablesList) {
+        localVariables = new t_localVar[localVariablesList->size() + 1];
+        int i = 0;
+        for (auto v : *localVariablesList) {
+            localVariables[i++] = v;
+        }
+        localVariables[i] = t_localVar();
+        delete localVariablesList;
     } else {
         localVariables = new t_localVar[1] { };
     }

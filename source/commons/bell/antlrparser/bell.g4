@@ -86,14 +86,37 @@ argsByNameList: NAMEDPARAM sequence (','? NAMEDPARAM sequence)*
 argsByPositionList: sequence (',' sequence)*
 ;
 
-simpleFuncall: item PARAMS CLOSED
-| item PARAMS argsByPositionList CLOSED
-| item PARAMS argsByNameList CLOSED
-| item PARAMS argsByPositionList ','? argsByNameList CLOSED
+simpleFuncall: (item|var) PARAMS CLOSED
+| (item|var) PARAMS argsByPositionList CLOSED
+| (item|var) PARAMS argsByNameList CLOSED
+| (item|var) PARAMS argsByPositionList ','? argsByNameList CLOSED
+| simpleFuncall PARAMS CLOSED
+| simpleFuncall PARAMS argsByPositionList CLOSED
+| simpleFuncall PARAMS argsByNameList CLOSED
+| simpleFuncall PARAMS argsByPositionList ','? argsByNameList CLOSED
 ;
 
-funcall: (item '.' (simpleFuncall '.')*)? simpleFuncall
+dataFlowItem: item|var|simpleFuncall
 ;
+
+funcall: simpleFuncall
+| dataFlowItem ('.' simpleFuncall)+
+;
+
+
+funarg: LOCALVAR (ASSIGN list)? #funargVar
+| ELLIPSIS #funargEllipsis
+;
+
+funargList: funarg (',' funarg)*
+;
+
+liftedargList: LIFT (LOCALVAR ',')* LOCALVAR
+;
+
+fundef: funargList liftedargList? FUNDEF list
+;
+
 
 item: UINT #itemUint
 | UFLOAT #itemUfloat
@@ -123,6 +146,12 @@ lvalue: var lvalueSpecs?
 ;
 
 fakeLvalue: item lvalueSpecs
+;
+
+listEnd: conditional
+| assignment
+| whileloop
+| fundef
 ;
 
 expr: (item|var|funcall|listEnd) #exprSimple
@@ -162,11 +191,6 @@ assignment: lvalue op=(ASSIGN|APOW|ATIMES|ADIVDIV
 
 conditional: IF sequence THEN list #ifthen
 | IF sequence THEN sequence ELSE list #ifthenelse
-;
-
-listEnd: conditional
-| assignment
-| whileloop
 ;
 
 list: expr+
@@ -210,10 +234,6 @@ FOR: 'for' { noParams = true; noUnary = false; };
 DO: 'do' { noParams = true; noUnary = false; };
 COLLECT: 'collect' { noParams = true; noUnary = false; };
 
-FUNCTION: 'sin' | 'cos' | 'sqrt' { noParams = noUnary = false; };
-
-
-
 INLET: '\\'? '$'[lx][0-9]+ { noParams = false; noUnary = true; };
 INTINLET: '\\'? '$i'[0-9]+ { noParams = false; noUnary = true; };
 RATINLET: '\\'? '$r'[0-9]+ { noParams = false; noUnary = true; };
@@ -225,18 +245,17 @@ OUTLET: '\\'? '$o'[0-9]+ { noParams = false; noUnary = true; };
 DIRINLET: '\\'? '$dx'[0-9]+ { noParams = false; noUnary = true; };
 DIROUTLET: '\\'? '$do'[0-9]+ { noParams = false; noUnary = true; };
 
-BIF: (
-    'length'|'depth'|'is'|'nth'|'sort'|'contains'|'rev'|'rot'|'trans'|'flat'|'slice'|'left'|'right'|'subs'|'insert'|'find'|'finditems'|'findaddrs'|'scramble'|'minmax'|'perm'|'comb'|'cartesianprod'|'wrap'|'group'|'delace'|'thin'|'classify'|'union'|'intersection'|'symdiff'|'diff'|'primeser'|'arithmser'|'geomser'|'map'|'reduce'|'apply'
-    |'cos'|'sin'|'tan'|'exp'|'log'|'acos'|'asin'|'atan'|'cosh'|'sinh'|'tanh'|'exp2'|'log2'|'sqrt'|'ceil'|'acosh'|'asinh'|'atanh'|'log10'|'floor'|'round'|'trunc'|'fmod'|'atan2'|'hypot'|'pow'|'int'|'rat'|'num'|'den'|'abs'|'sgn'|'float'|'pitch'|'degree'|'octave'|'alter'|'cents'|'pow'|'mod'|'min'|'max'|'random'|'bessel'|'approx'|'enharm'|'makepitch'|'makepitchsc'|'mc2f'|'f2mc'|'minimum'|'maximum'|'sum'|'prod'
+BIF: 
+    ('length'|'depth'|'is'|'nth'|'sort'|'contains'|'rev'|'rot'|'trans'|'flat'|'slice'|'left'|'right'|'subs'|'insert'|'find'|'finditems'|'findaddrs'|'scramble'|'minmax'|'perm'|'comb'|'cartesianprod'|'wrap'|'group'|'delace'|'thin'|'classify'|'union'|'intersection'|'symdiff'|'diff'|'primeser'|'arithmser'|'geomser'|'map'|'reduce'|'apply'
+    |'cos'|'sin'|'tan'|'exp'|'log'|'acos'|'asin'|'atan'|'cosh'|'sinh'|'tanh'|'exp2'|'log2'|'sqrt'|'ceil'|'acosh'|'asinh'|'atanh'|'log10'|'floor'|'round'|'trunc'|'fmod'|'atan2'|'hypot'|'pow'|'int'|'rat'|'num'|'den'|'abs'|'sgn'|'float'|'pitch'|'degree'|'octave'|'alter'|'cents'|'mod'|'min'|'max'|'random'|'bessel'|'approx'|'enharm'|'makepitch'|'makepitchsc'|'mc2f'|'f2mc'|'minimum'|'maximum'|'sum'|'prod'
     |'outlet'|'inlet'
-    |'#+'|'#-'|'#u-'|'#*'|'#/'|'#//'|'#%'|'#=='|'#!='|'#<'|'#>'|'#<='|'#>='|'#&'|'#^'|'#|'|'#&&'|'#^^'|'#||'|'#&&&'|'#|||'|'#<<'|'#>>'
-) { noParams = false; noUnary = true; };
+    |'#+'|'#-'|'#u-'|'#*'|'#/'|'#//'|'#%'|'#=='|'#!='|'#<'|'#>'|'#<='|'#>='|'#&'|'#^'|'#|'|'#&&'|'#^^'|'#||'|'#&&&'|'#|||'|'#<<'|'#>>') { noParams = false; noUnary = true; };
 
 OF: ('directout'|'directin'|'print') { noParams = false; noUnary = true; };
 
 GLOBALVAR: ID { noParams = false; noUnary = true; };
 PATCHERVAR: '#' ID { noParams = false; noUnary = true; };
-LOCALVAR: '\\'? '$' ID { noParams = false; noUnary = true; };
+LOCALVAR: '\\'? '$' ID { post("localvar"); noParams = false; noUnary = true; };
 NAMEDPARAM: '\\'? '@' ID { noParams = true; noUnary = true; };
 
 fragment ID: [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?;
@@ -337,5 +356,9 @@ ARCONCAT: '!_=' { noParams = true; noUnary = false; };
 
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };
+
+FUNDEF: '->' { post("fundef"); noParams = true; noUnary = false; };
+LIFT: '-^' { noParams = true; noUnary = false; };
+ELLIPSIS: '<...>' { noParams = true; noUnary = false; };
 
 ANYTHING: .+?;

@@ -50,7 +50,7 @@ public:
     
     void conform() {
         if (varsList) {
-            varsList->copyIntoNullTerminatedArray(&vars);
+            copyIntoNullTerminatedArray<t_localVar>(varsList, &vars);
             delete varsList;
             varsList = nullptr;
         }
@@ -179,8 +179,14 @@ protected:
     
     virtual ~t_userFunction();
 
+private:
+    template <typename argumentsT, typename localVariablesT>
+    void setup(argumentsT argumentsList, localVariablesT localVariablesList, astNode *ast, t_codableobj *culprit);
+    
 public:
-    t_userFunction(countedList<funArg *> *argumentsList, countedList<t_localVar> *localVariablesList, astNode *ast, t_codableobj *culprit);
+    t_userFunction(countedList<funArg *> *arguments, countedList<t_localVar> *localVariables, astNode *ast, t_codableobj *culprit);
+    
+    t_userFunction(std::vector<funArg *> *arguments, std::vector<t_localVar> *localVariables, astNode *ast, t_codableobj *culprit);
     
     virtual t_llll* call(const t_execEnv &context);
     virtual t_localVar* getLocalVariables() { return localVariables; };
@@ -205,7 +211,7 @@ private:
     t_codableobj *owner;
     
     void removePatcherVars();
-    
+
 protected:
     virtual ~t_mainFunction();
     
@@ -216,6 +222,13 @@ public:
                    pvMap *name2astVars,
                    std::unordered_set<t_function*> *funcs,
                    t_codableobj *caller);
+    
+    t_mainFunction(astNode *mainAst,
+                                   std::vector<t_localVar> *localVariablesList,
+                                   std::unordered_set<t_globalVariable*> *globalVariables,
+                                   pvMap *name2astVars,
+                                   std::unordered_set<t_function*> *funcs,
+                                   t_codableobj *caller);
     
     virtual t_llll* call(t_execEnv const &context);
 
