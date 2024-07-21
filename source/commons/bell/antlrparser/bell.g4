@@ -93,6 +93,17 @@ nullified: list NULLIFY+
 whileloop: WHILE sequence kind=(DO|COLLECT) list
 ;
 
+forarg: LOCALVAR (LOCALVAR?) IN sequence
+;
+
+forargList: forarg (',' forarg)*
+;
+
+forloop: FOR forargList kind=(DO|COLLECT) list
+| FOR forargList AS sequence (WITH argsByNameList)? kind=(DO|COLLECT) list
+| FOR forargList WITH argsByNameList (AS sequence)? kind=(DO|COLLECT) list
+;
+
 argsByNameList: NAMEDPARAM sequence (','? NAMEDPARAM sequence)*
 ;
 
@@ -150,6 +161,7 @@ fakeLvalue: item lvalueSpecs
 listEnd: conditional
 | assignment
 | whileloop
+| forloop
 | fundef
 ;
 
@@ -231,6 +243,9 @@ ELSE: 'else' { noParams = true; noUnary = false; };
 
 WHILE: 'while' { noParams = true; noUnary = false; };
 FOR: 'for' { noParams = true; noUnary = false; };
+IN: 'in' { noParams = true; noUnary = false; };
+AS: 'as' { noParams = true; noUnary = false; };
+WITH: 'with' { noParams = true; noUnary = false; };
 DO: 'do' { noParams = true; noUnary = false; };
 COLLECT: 'collect' { noParams = true; noUnary = false; };
 

@@ -17,22 +17,23 @@ public:
   enum {
     T__0 = 1, RANGE = 2, UINT = 3, UFLOAT = 4, UPITCH = 5, BTSYMBOL = 6, 
     DQSYMBOL = 7, SQSYMBOL = 8, BACHNULL = 9, BACHNIL = 10, IF = 11, THEN = 12, 
-    ELSE = 13, WHILE = 14, FOR = 15, DO = 16, COLLECT = 17, INLET = 18, 
-    INTINLET = 19, RATINLET = 20, FLOATINLET = 21, PITCHINLET = 22, OUTLET = 23, 
-    DIRINLET = 24, DIROUTLET = 25, BIF = 26, OF = 27, GLOBALVAR = 28, PATCHERVAR = 29, 
-    LOCALVAR = 30, NAMEDPARAM = 31, KEEP = 32, UNKEEP = 33, INIT = 34, ARGCOUNT = 35, 
-    PUSH = 36, POP = 37, CLOSED = 38, NTH = 39, PICK = 40, KEY = 41, ANTH = 42, 
-    APICK = 43, NULLIFY = 44, ASSIGN = 45, WHITESPACE = 46, NEWATOM = 47, 
-    POW = 48, APOW = 49, TIMES = 50, ATIMES = 51, DIVDIV = 52, ADIVDIV = 53, 
-    DIV = 54, ADIV = 55, REM = 56, AREM = 57, PLUS = 58, APLUS = 59, UPLUS = 60, 
-    MINUS = 61, AMINUS = 62, UMINUS = 63, EQUAL = 64, NEQ = 65, LOGNOT = 66, 
-    BITNOT = 67, LT = 68, GT = 69, LEQ = 70, GEQ = 71, BITAND = 72, ABITAND = 73, 
-    BITXOR = 74, ABITXOR = 75, BITOR = 76, ABITOR = 77, LOGAND = 78, LOGANDEXT = 79, 
-    ALOGAND = 80, ALOGANDEXT = 81, LOGXOR = 82, ALOGXOR = 83, LOGOR = 84, 
-    ALOGOR = 85, LOGOREXT = 86, ALOGOREXT = 87, LSHIFT = 88, ALSHIFT = 89, 
-    RSHIFT = 90, ARSHIFT = 91, REPEAT = 92, AREPEAT = 93, AAPPLY = 94, ACONCAT = 95, 
-    ARCONCAT = 96, OPEN = 97, PARAMS = 98, FUNDEF = 99, LIFT = 100, ELLIPSIS = 101, 
-    ANYTHING = 102
+    ELSE = 13, WHILE = 14, FOR = 15, IN = 16, AS = 17, WITH = 18, DO = 19, 
+    COLLECT = 20, INLET = 21, INTINLET = 22, RATINLET = 23, FLOATINLET = 24, 
+    PITCHINLET = 25, OUTLET = 26, DIRINLET = 27, DIROUTLET = 28, BIF = 29, 
+    OF = 30, GLOBALVAR = 31, PATCHERVAR = 32, LOCALVAR = 33, NAMEDPARAM = 34, 
+    KEEP = 35, UNKEEP = 36, INIT = 37, ARGCOUNT = 38, PUSH = 39, POP = 40, 
+    CLOSED = 41, NTH = 42, PICK = 43, KEY = 44, ANTH = 45, APICK = 46, NULLIFY = 47, 
+    ASSIGN = 48, WHITESPACE = 49, NEWATOM = 50, POW = 51, APOW = 52, TIMES = 53, 
+    ATIMES = 54, DIVDIV = 55, ADIVDIV = 56, DIV = 57, ADIV = 58, REM = 59, 
+    AREM = 60, PLUS = 61, APLUS = 62, UPLUS = 63, MINUS = 64, AMINUS = 65, 
+    UMINUS = 66, EQUAL = 67, NEQ = 68, LOGNOT = 69, BITNOT = 70, LT = 71, 
+    GT = 72, LEQ = 73, GEQ = 74, BITAND = 75, ABITAND = 76, BITXOR = 77, 
+    ABITXOR = 78, BITOR = 79, ABITOR = 80, LOGAND = 81, LOGANDEXT = 82, 
+    ALOGAND = 83, ALOGANDEXT = 84, LOGXOR = 85, ALOGXOR = 86, LOGOR = 87, 
+    ALOGOR = 88, LOGOREXT = 89, ALOGOREXT = 90, LSHIFT = 91, ALSHIFT = 92, 
+    RSHIFT = 93, ARSHIFT = 94, REPEAT = 95, AREPEAT = 96, AAPPLY = 97, ACONCAT = 98, 
+    ARCONCAT = 99, OPEN = 100, PARAMS = 101, FUNDEF = 102, LIFT = 103, ELLIPSIS = 104, 
+    ANYTHING = 105
   };
 
   explicit bellLexer(antlr4::CharStream *input);
@@ -127,6 +128,9 @@ private:
   void ELSEAction(antlr4::RuleContext *context, size_t actionIndex);
   void WHILEAction(antlr4::RuleContext *context, size_t actionIndex);
   void FORAction(antlr4::RuleContext *context, size_t actionIndex);
+  void INAction(antlr4::RuleContext *context, size_t actionIndex);
+  void ASAction(antlr4::RuleContext *context, size_t actionIndex);
+  void WITHAction(antlr4::RuleContext *context, size_t actionIndex);
   void DOAction(antlr4::RuleContext *context, size_t actionIndex);
   void COLLECTAction(antlr4::RuleContext *context, size_t actionIndex);
   void INLETAction(antlr4::RuleContext *context, size_t actionIndex);

@@ -177,6 +177,50 @@ public:
         return r;
     }
     
+    antlrcpp::Any visitForarg(bellParser::ForargContext *ctx) override {
+        auto seq = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        std::string n1 = ctx->LOCALVAR(0)->getText();
+        t_symbol *s1 = gensym(n1.c_str() + (n1[0] == '\\' ? 2 : 1));
+        forArg* r;
+        if (ctx->LOCALVAR(1)) {
+            std::string n2 = ctx->LOCALVAR(0)->getText();
+            t_symbol *s2 = gensym(n1.c_str() + (n1[0] == '\\' ? 2 : 1));
+            r = new forArg(s1, s2, seq);
+        } else {
+            r = new forArg(s1, nullptr, seq);
+        }
+        return r;
+    }
+    
+    antlrcpp::Any visitForargList(bellParser::ForargListContext *ctx) override {
+        auto v = new std::vector<forArg*>;
+        for (auto c : ctx->forarg()) {
+            auto f = safeAnyCast<forArg*>(visit(c));
+            v->push_back(f);
+        }
+        return v;
+    }
+    
+    antlrcpp::Any visitForloop(bellParser::ForloopContext *ctx) override {
+        auto fal = safeAnyCast<std::vector<forArg*>*>(visit(ctx->forargList()));
+        auto l = safeAnyCast<astNode*>(visit(ctx->list()));
+        astNode *as = nullptr;
+        if (ctx->AS()) {
+            as = safeAnyCast<astNode*>(visit(ctx->sequence()));
+        }
+        std::vector<symNodePair*>* abnl = nullptr;
+        if (ctx->argsByNameList()) {
+            abnl = safeAnyCast<std::vector<symNodePair*>*>(visit(ctx->argsByNameList()));
+        }
+        astNode *r;
+        switch(ctx->kind->getType()) {
+            case bellParser::DO: r = new astForLoop<E_LOOP_DO>(fal, nullptr, as, abnl, l, params->owner); break;
+            case bellParser::COLLECT: r = new astForLoop<E_LOOP_COLLECT>(fal, nullptr, as, abnl, l, params->owner); break;
+            default: r = nullptr; break;
+        }
+        return r;
+    }
+    
     antlrcpp::Any visitSimpleFuncall(bellParser::SimpleFuncallContext *ctx) override {
         auto *fn = safeAnyCast<astNode*>(visit(ctx->children[0]));
         if (!fn)

@@ -67,6 +67,18 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitForarg(bellParser::ForargContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitForargList(bellParser::ForargListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitForloop(bellParser::ForloopContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitArgsByNameList(bellParser::ArgsByNameListContext *ctx) override {
     return visitChildren(ctx);
   }

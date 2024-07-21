@@ -45,6 +45,12 @@ public:
 
     virtual std::any visitWhileloop(bellParser::WhileloopContext *context) = 0;
 
+    virtual std::any visitForarg(bellParser::ForargContext *context) = 0;
+
+    virtual std::any visitForargList(bellParser::ForargListContext *context) = 0;
+
+    virtual std::any visitForloop(bellParser::ForloopContext *context) = 0;
+
     virtual std::any visitArgsByNameList(bellParser::ArgsByNameListContext *context) = 0;
 
     virtual std::any visitArgsByPositionList(bellParser::ArgsByPositionListContext *context) = 0;
