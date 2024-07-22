@@ -481,7 +481,10 @@ public:
                std::vector<symNodePair *> *attributes,
                astNode *body,
                t_codableobj *owner) :
-    astNode(owner), attrs(*attributes), whileClause(whileClause), body(body) {
+    astNode(owner), whileClause(whileClause), body(body) {
+        if (attributes)
+            attrs = *attributes;
+        
         count = lists->size();
         
         // put all the local variables in the array of local variable names (for faster access at loop call)

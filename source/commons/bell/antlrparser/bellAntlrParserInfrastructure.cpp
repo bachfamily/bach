@@ -235,15 +235,26 @@ public:
         return n;
     }
     
-    antlrcpp::Any visitDataFlowItem(bellParser::DataFlowItemContext *ctx) override {
+    antlrcpp::Any visitDataFlowAndLvalueSpecsUItem(bellParser::DataFlowAndLvalueSpecsUItemContext *ctx) override {
         return visit(ctx->children[0]);
     }
     
+    antlrcpp::Any visitDataFlowAndLvalueSpecsItem(bellParser::DataFlowAndLvalueSpecsItemContext *ctx) override {
+        if (ctx->UMINUS().size() % 2 == 0) {
+            return visit(ctx->dataFlowAndLvalueSpecsUItem());
+        } else {
+            auto u = safeAnyCast<astNode*>(visit(ctx->dataFlowAndLvalueSpecsUItem()));
+            astNode* r = new astOperatorUMinus(u, params->owner);
+            return r;
+        }
+        
+    }
+
     antlrcpp::Any visitFuncall(bellParser::FuncallContext *context) override {
-        if (!context->dataFlowItem()) {
+        if (!context->dataFlowAndLvalueSpecsItem()) {
             return visit(context->simpleFuncall(0));
         }
-        auto x = safeAnyCast<astNode*>(visit(context->dataFlowItem()));
+        auto x = safeAnyCast<astNode*>(visit(context->dataFlowAndLvalueSpecsItem()));
         astFunctionCall* y;
         for (auto p: context->simpleFuncall()) {
             y = dynamic_cast<astFunctionCall*>(safeAnyCast<astNode*>(visit(p)));

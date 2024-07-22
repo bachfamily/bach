@@ -57,9 +57,41 @@ public:
 
     virtual std::any visitSimpleFuncall(bellParser::SimpleFuncallContext *context) = 0;
 
-    virtual std::any visitDataFlowItem(bellParser::DataFlowItemContext *context) = 0;
+    virtual std::any visitDataFlowAndLvalueSpecsUItem(bellParser::DataFlowAndLvalueSpecsUItemContext *context) = 0;
+
+    virtual std::any visitDataFlowAndLvalueSpecsItem(bellParser::DataFlowAndLvalueSpecsItemContext *context) = 0;
 
     virtual std::any visitFuncall(bellParser::FuncallContext *context) = 0;
+
+    virtual std::any visitVarLocal(bellParser::VarLocalContext *context) = 0;
+
+    virtual std::any visitVarPatcher(bellParser::VarPatcherContext *context) = 0;
+
+    virtual std::any visitVarGlobal(bellParser::VarGlobalContext *context) = 0;
+
+    virtual std::any visitLvalueSpecsUFinal(bellParser::LvalueSpecsUFinalContext *context) = 0;
+
+    virtual std::any visitLvalueSpecsFinal(bellParser::LvalueSpecsFinalContext *context) = 0;
+
+    virtual std::any visitLvalueSpecs(bellParser::LvalueSpecsContext *context) = 0;
+
+    virtual std::any visitLvalue(bellParser::LvalueContext *context) = 0;
+
+    virtual std::any visitFakeLvalue(bellParser::FakeLvalueContext *context) = 0;
+
+    virtual std::any visitListEnd(bellParser::ListEndContext *context) = 0;
+
+    virtual std::any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *context) = 0;
+
+    virtual std::any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *context) = 0;
+
+    virtual std::any visitExprSimple(bellParser::ExprSimpleContext *context) = 0;
+
+    virtual std::any visitExprNot(bellParser::ExprNotContext *context) = 0;
+
+    virtual std::any visitExprBinary(bellParser::ExprBinaryContext *context) = 0;
+
+    virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *context) = 0;
 
     virtual std::any visitItemUint(bellParser::ItemUintContext *context) = 0;
 
@@ -88,32 +120,6 @@ public:
     virtual std::any visitItemSequence(bellParser::ItemSequenceContext *context) = 0;
 
     virtual std::any visitItemSublist(bellParser::ItemSublistContext *context) = 0;
-
-    virtual std::any visitVarLocal(bellParser::VarLocalContext *context) = 0;
-
-    virtual std::any visitVarPatcher(bellParser::VarPatcherContext *context) = 0;
-
-    virtual std::any visitVarGlobal(bellParser::VarGlobalContext *context) = 0;
-
-    virtual std::any visitLvalueSpecs(bellParser::LvalueSpecsContext *context) = 0;
-
-    virtual std::any visitLvalue(bellParser::LvalueContext *context) = 0;
-
-    virtual std::any visitFakeLvalue(bellParser::FakeLvalueContext *context) = 0;
-
-    virtual std::any visitListEnd(bellParser::ListEndContext *context) = 0;
-
-    virtual std::any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *context) = 0;
-
-    virtual std::any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *context) = 0;
-
-    virtual std::any visitExprSimple(bellParser::ExprSimpleContext *context) = 0;
-
-    virtual std::any visitExprNot(bellParser::ExprNotContext *context) = 0;
-
-    virtual std::any visitExprBinary(bellParser::ExprBinaryContext *context) = 0;
-
-    virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *context) = 0;
 
     virtual std::any visitInitAssignment(bellParser::InitAssignmentContext *context) = 0;
 

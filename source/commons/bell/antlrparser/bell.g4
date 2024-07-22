@@ -120,27 +120,14 @@ simpleFuncall: (item|var) PARAMS CLOSED
 | simpleFuncall PARAMS argsByPositionList ','? argsByNameList CLOSED
 ;
 
-dataFlowItem: item|var|simpleFuncall
+dataFlowAndLvalueSpecsUItem: item|var|simpleFuncall
+;
+
+dataFlowAndLvalueSpecsItem: (UPLUS|UMINUS)* dataFlowAndLvalueSpecsUItem
 ;
 
 funcall: simpleFuncall
-| dataFlowItem ('.' simpleFuncall)+
-;
-
-item: UINT #itemUint
-| UFLOAT #itemUfloat
-| UPITCH #itemUpitch
-| BTSYMBOL #itemBtSymbol
-| (DQSYMBOL|SQSYMBOL) #itemQSymbol
-| BIF #itemBIF
-| OF #itemOF
-| type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
-| DIRINLET #itemDirInlet
-| ARGCOUNT #itemArgcount
-| BACHNULL #itemNull
-| BACHNIL #itemNil
-| OPEN sequence CLOSED #itemSequence
-| PUSH sequence POP #itemSublist
+| dataFlowAndLvalueSpecsItem ('.' simpleFuncall)+
 ;
 
 var: (KEEP|UNKEEP)? LOCALVAR #varLocal
@@ -148,8 +135,17 @@ var: (KEEP|UNKEEP)? LOCALVAR #varLocal
 | GLOBALVAR #varGlobal
 ;
 
-lvalueSpecs: {ending = false;} ((NTH|KEY) (item|var))+
-| {ending = true;} ((NTH|KEY) (item|var))* ((NTH|KEY) (conditional))
+lvalueSpecsUFinal: conditional
+| whileloop
+| forloop
+| fundef
+;
+
+lvalueSpecsFinal: (UPLUS|UMINUS)* lvalueSpecsUFinal
+;
+
+lvalueSpecs: {ending = false;} ((NTH|KEY) dataFlowAndLvalueSpecsItem)+
+| {ending = true;} ((NTH|KEY) dataFlowAndLvalueSpecsItem)* ((NTH|KEY) lvalueSpecsFinal)
 ;
 
 lvalue: var lvalueSpecs?
@@ -185,6 +181,22 @@ expr: (item|var|funcall|listEnd) #exprSimple
 | expr op=LOGXOR expr #exprBinary
 | expr op=(LOGOR|LOGOREXT) expr #exprBinary
 | op=(LOGNOT|BITNOT) expr #exprNot
+;
+
+item: UINT #itemUint
+| UFLOAT #itemUfloat
+| UPITCH #itemUpitch
+| BTSYMBOL #itemBtSymbol
+| (DQSYMBOL|SQSYMBOL) #itemQSymbol
+| BIF #itemBIF
+| OF #itemOF
+| type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
+| DIRINLET #itemDirInlet
+| ARGCOUNT #itemArgcount
+| BACHNULL #itemNull
+| BACHNIL #itemNil
+| OPEN sequence CLOSED #itemSequence
+| PUSH sequence POP #itemSublist
 ;
 
 assignment: INIT LOCALVAR ASSIGN list #initAssignment

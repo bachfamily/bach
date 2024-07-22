@@ -91,11 +91,75 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitDataFlowItem(bellParser::DataFlowItemContext *ctx) override {
+  virtual std::any visitDataFlowAndLvalueSpecsUItem(bellParser::DataFlowAndLvalueSpecsUItemContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitDataFlowAndLvalueSpecsItem(bellParser::DataFlowAndLvalueSpecsItemContext *ctx) override {
     return visitChildren(ctx);
   }
 
   virtual std::any visitFuncall(bellParser::FuncallContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitVarLocal(bellParser::VarLocalContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitVarPatcher(bellParser::VarPatcherContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitVarGlobal(bellParser::VarGlobalContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLvalueSpecsUFinal(bellParser::LvalueSpecsUFinalContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLvalueSpecsFinal(bellParser::LvalueSpecsFinalContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLvalueSpecs(bellParser::LvalueSpecsContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLvalue(bellParser::LvalueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFakeLvalue(bellParser::FakeLvalueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitListEnd(bellParser::ListEndContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitExprSimple(bellParser::ExprSimpleContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitExprNot(bellParser::ExprNotContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitExprBinary(bellParser::ExprBinaryContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -152,58 +216,6 @@ public:
   }
 
   virtual std::any visitItemSublist(bellParser::ItemSublistContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitVarLocal(bellParser::VarLocalContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitVarPatcher(bellParser::VarPatcherContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitVarGlobal(bellParser::VarGlobalContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitLvalueSpecs(bellParser::LvalueSpecsContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitLvalue(bellParser::LvalueContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitFakeLvalue(bellParser::FakeLvalueContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitListEnd(bellParser::ListEndContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitExprFakeLvalue(bellParser::ExprFakeLvalueContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitExprSimple(bellParser::ExprSimpleContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitExprNot(bellParser::ExprNotContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitExprBinary(bellParser::ExprBinaryContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *ctx) override {
     return visitChildren(ctx);
   }
 

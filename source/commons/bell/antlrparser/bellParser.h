@@ -38,9 +38,11 @@ public:
     RuleLiftedargList = 4, RuleFundef = 5, RuleSequence = 6, RuleNullified = 7, 
     RuleWhileloop = 8, RuleForarg = 9, RuleForargList = 10, RuleForloop = 11, 
     RuleArgsByNameList = 12, RuleArgsByPositionList = 13, RuleSimpleFuncall = 14, 
-    RuleDataFlowItem = 15, RuleFuncall = 16, RuleItem = 17, RuleVar = 18, 
-    RuleLvalueSpecs = 19, RuleLvalue = 20, RuleFakeLvalue = 21, RuleListEnd = 22, 
-    RuleExpr = 23, RuleAssignment = 24, RuleConditional = 25, RuleList = 26
+    RuleDataFlowAndLvalueSpecsUItem = 15, RuleDataFlowAndLvalueSpecsItem = 16, 
+    RuleFuncall = 17, RuleVar = 18, RuleLvalueSpecsUFinal = 19, RuleLvalueSpecsFinal = 20, 
+    RuleLvalueSpecs = 21, RuleLvalue = 22, RuleFakeLvalue = 23, RuleListEnd = 24, 
+    RuleExpr = 25, RuleItem = 26, RuleAssignment = 27, RuleConditional = 28, 
+    RuleList = 29
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -80,15 +82,18 @@ public:
   class ArgsByNameListContext;
   class ArgsByPositionListContext;
   class SimpleFuncallContext;
-  class DataFlowItemContext;
+  class DataFlowAndLvalueSpecsUItemContext;
+  class DataFlowAndLvalueSpecsItemContext;
   class FuncallContext;
-  class ItemContext;
   class VarContext;
+  class LvalueSpecsUFinalContext;
+  class LvalueSpecsFinalContext;
   class LvalueSpecsContext;
   class LvalueContext;
   class FakeLvalueContext;
   class ListEndContext;
   class ExprContext;
+  class ItemContext;
   class AssignmentContext;
   class ConditionalContext;
   class ListContext; 
@@ -388,9 +393,9 @@ public:
 
   SimpleFuncallContext* simpleFuncall();
   SimpleFuncallContext* simpleFuncall(int precedence);
-  class  DataFlowItemContext : public antlr4::ParserRuleContext {
+  class  DataFlowAndLvalueSpecsUItemContext : public antlr4::ParserRuleContext {
   public:
-    DataFlowItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    DataFlowAndLvalueSpecsUItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ItemContext *item();
     VarContext *var();
@@ -401,7 +406,24 @@ public:
    
   };
 
-  DataFlowItemContext* dataFlowItem();
+  DataFlowAndLvalueSpecsUItemContext* dataFlowAndLvalueSpecsUItem();
+
+  class  DataFlowAndLvalueSpecsItemContext : public antlr4::ParserRuleContext {
+  public:
+    DataFlowAndLvalueSpecsItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    DataFlowAndLvalueSpecsUItemContext *dataFlowAndLvalueSpecsUItem();
+    std::vector<antlr4::tree::TerminalNode *> UPLUS();
+    antlr4::tree::TerminalNode* UPLUS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> UMINUS();
+    antlr4::tree::TerminalNode* UMINUS(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  DataFlowAndLvalueSpecsItemContext* dataFlowAndLvalueSpecsItem();
 
   class  FuncallContext : public antlr4::ParserRuleContext {
   public:
@@ -409,7 +431,7 @@ public:
     virtual size_t getRuleIndex() const override;
     std::vector<SimpleFuncallContext *> simpleFuncall();
     SimpleFuncallContext* simpleFuncall(size_t i);
-    DataFlowItemContext *dataFlowItem();
+    DataFlowAndLvalueSpecsItemContext *dataFlowAndLvalueSpecsItem();
     std::vector<antlr4::tree::TerminalNode *> KEY();
     antlr4::tree::TerminalNode* KEY(size_t i);
 
@@ -419,157 +441,6 @@ public:
   };
 
   FuncallContext* funcall();
-
-  class  ItemContext : public antlr4::ParserRuleContext {
-  public:
-    ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-   
-    ItemContext() = default;
-    void copyFrom(ItemContext *context);
-    using antlr4::ParserRuleContext::copyFrom;
-
-    virtual size_t getRuleIndex() const override;
-
-   
-  };
-
-  class  ItemUfloatContext : public ItemContext {
-  public:
-    ItemUfloatContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *UFLOAT();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemUintContext : public ItemContext {
-  public:
-    ItemUintContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *UINT();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemBtSymbolContext : public ItemContext {
-  public:
-    ItemBtSymbolContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *BTSYMBOL();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemInletContext : public ItemContext {
-  public:
-    ItemInletContext(ItemContext *ctx);
-
-    antlr4::Token *type = nullptr;
-    antlr4::tree::TerminalNode *INLET();
-    antlr4::tree::TerminalNode *INTINLET();
-    antlr4::tree::TerminalNode *FLOATINLET();
-    antlr4::tree::TerminalNode *RATINLET();
-    antlr4::tree::TerminalNode *PITCHINLET();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemDirInletContext : public ItemContext {
-  public:
-    ItemDirInletContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *DIRINLET();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemBIFContext : public ItemContext {
-  public:
-    ItemBIFContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *BIF();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemSequenceContext : public ItemContext {
-  public:
-    ItemSequenceContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *OPEN();
-    SequenceContext *sequence();
-    antlr4::tree::TerminalNode *CLOSED();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemSublistContext : public ItemContext {
-  public:
-    ItemSublistContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *PUSH();
-    SequenceContext *sequence();
-    antlr4::tree::TerminalNode *POP();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemOFContext : public ItemContext {
-  public:
-    ItemOFContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *OF();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemNullContext : public ItemContext {
-  public:
-    ItemNullContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *BACHNULL();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemUpitchContext : public ItemContext {
-  public:
-    ItemUpitchContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *UPITCH();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemArgcountContext : public ItemContext {
-  public:
-    ItemArgcountContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *ARGCOUNT();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemNilContext : public ItemContext {
-  public:
-    ItemNilContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *BACHNIL();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemQSymbolContext : public ItemContext {
-  public:
-    ItemQSymbolContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *DQSYMBOL();
-    antlr4::tree::TerminalNode *SQSYMBOL();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  ItemContext* item();
 
   class  VarContext : public antlr4::ParserRuleContext {
   public:
@@ -615,19 +486,50 @@ public:
 
   VarContext* var();
 
+  class  LvalueSpecsUFinalContext : public antlr4::ParserRuleContext {
+  public:
+    LvalueSpecsUFinalContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ConditionalContext *conditional();
+    WhileloopContext *whileloop();
+    ForloopContext *forloop();
+    FundefContext *fundef();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  LvalueSpecsUFinalContext* lvalueSpecsUFinal();
+
+  class  LvalueSpecsFinalContext : public antlr4::ParserRuleContext {
+  public:
+    LvalueSpecsFinalContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    LvalueSpecsUFinalContext *lvalueSpecsUFinal();
+    std::vector<antlr4::tree::TerminalNode *> UPLUS();
+    antlr4::tree::TerminalNode* UPLUS(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> UMINUS();
+    antlr4::tree::TerminalNode* UMINUS(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  LvalueSpecsFinalContext* lvalueSpecsFinal();
+
   class  LvalueSpecsContext : public antlr4::ParserRuleContext {
   public:
     LvalueSpecsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    std::vector<DataFlowAndLvalueSpecsItemContext *> dataFlowAndLvalueSpecsItem();
+    DataFlowAndLvalueSpecsItemContext* dataFlowAndLvalueSpecsItem(size_t i);
     std::vector<antlr4::tree::TerminalNode *> NTH();
     antlr4::tree::TerminalNode* NTH(size_t i);
     std::vector<antlr4::tree::TerminalNode *> KEY();
     antlr4::tree::TerminalNode* KEY(size_t i);
-    std::vector<ItemContext *> item();
-    ItemContext* item(size_t i);
-    std::vector<VarContext *> var();
-    VarContext* var(size_t i);
-    ConditionalContext *conditional();
+    LvalueSpecsFinalContext *lvalueSpecsFinal();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -788,6 +690,157 @@ public:
 
   ExprContext* expr();
   ExprContext* expr(int precedence);
+  class  ItemContext : public antlr4::ParserRuleContext {
+  public:
+    ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    ItemContext() = default;
+    void copyFrom(ItemContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  ItemUfloatContext : public ItemContext {
+  public:
+    ItemUfloatContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *UFLOAT();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemUintContext : public ItemContext {
+  public:
+    ItemUintContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *UINT();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemBtSymbolContext : public ItemContext {
+  public:
+    ItemBtSymbolContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *BTSYMBOL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemInletContext : public ItemContext {
+  public:
+    ItemInletContext(ItemContext *ctx);
+
+    antlr4::Token *type = nullptr;
+    antlr4::tree::TerminalNode *INLET();
+    antlr4::tree::TerminalNode *INTINLET();
+    antlr4::tree::TerminalNode *FLOATINLET();
+    antlr4::tree::TerminalNode *RATINLET();
+    antlr4::tree::TerminalNode *PITCHINLET();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemDirInletContext : public ItemContext {
+  public:
+    ItemDirInletContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *DIRINLET();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemBIFContext : public ItemContext {
+  public:
+    ItemBIFContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *BIF();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemSequenceContext : public ItemContext {
+  public:
+    ItemSequenceContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *OPEN();
+    SequenceContext *sequence();
+    antlr4::tree::TerminalNode *CLOSED();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemSublistContext : public ItemContext {
+  public:
+    ItemSublistContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *PUSH();
+    SequenceContext *sequence();
+    antlr4::tree::TerminalNode *POP();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemOFContext : public ItemContext {
+  public:
+    ItemOFContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *OF();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemNullContext : public ItemContext {
+  public:
+    ItemNullContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *BACHNULL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemUpitchContext : public ItemContext {
+  public:
+    ItemUpitchContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *UPITCH();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemArgcountContext : public ItemContext {
+  public:
+    ItemArgcountContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *ARGCOUNT();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemNilContext : public ItemContext {
+  public:
+    ItemNilContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *BACHNIL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemQSymbolContext : public ItemContext {
+  public:
+    ItemQSymbolContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *DQSYMBOL();
+    antlr4::tree::TerminalNode *SQSYMBOL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  ItemContext* item();
+
   class  AssignmentContext : public antlr4::ParserRuleContext {
   public:
     AssignmentContext(antlr4::ParserRuleContext *parent, size_t invokingState);
