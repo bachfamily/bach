@@ -3,7 +3,7 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 5,
+			"minor" : 6,
 			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
@@ -52,14 +52,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 71.0, 126.0, 949.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -155,7 +155,7 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 5,
+											"minor" : 6,
 											"revision" : 3,
 											"architecture" : "x64",
 											"modernui" : 1
@@ -231,11 +231,12 @@
 													"id" : "obj-2",
 													"maxclass" : "newobj",
 													"numinlets" : 2,
-													"numoutlets" : 4,
-													"outlettype" : [ "dictionary", "", "", "" ],
+													"numoutlets" : 5,
+													"outlettype" : [ "dictionary", "", "", "", "" ],
 													"patching_rect" : [ 137.0, 232.0, 100.0, 22.0 ],
 													"saved_object_attributes" : 													{
 														"embed" : 0,
+														"legacy" : 1,
 														"parameter_enable" : 0,
 														"parameter_mappable" : 0
 													}
@@ -819,7 +820,7 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
@@ -1007,7 +1008,7 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 5,
+											"minor" : 6,
 											"revision" : 3,
 											"architecture" : "x64",
 											"modernui" : 1
@@ -1438,7 +1439,7 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
@@ -1995,14 +1996,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
+						"rect" : [ 71.0, 126.0, 949.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -2133,7 +2134,7 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 5,
+											"minor" : 6,
 											"revision" : 3,
 											"architecture" : "x64",
 											"modernui" : 1
@@ -2188,7 +2189,7 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 5,
+															"minor" : 6,
 															"revision" : 3,
 															"architecture" : "x64",
 															"modernui" : 1
@@ -2378,7 +2379,7 @@
 													"numinlets" : 1,
 													"numoutlets" : 0,
 													"patching_rect" : [ 18.0, 395.5, 416.0, 94.0 ],
-													"text" : "Each of the two bpatchers contains a bach.pv object named watchOut.\nAs you can see if you input a value in either of them and bang the other, they share the same variable. This happens because the bach.eval object in this patch has #watchOut among its triggers: in fact, the two \"loneWolf\" bach.pv objects are independent, as there is nothing linking their respective patcher hierarchies.",
+													"text" : "Each of the two bpatchers contains a bach.pv object named swarm.\nAs you can see if you input a value in either of them and bang the other, they share the same variable. This happens because the bach.eval object in this patch has #watchOut among its triggers: in fact, the two \"loneWolf\" bach.pv objects are independent, as there is nothing linking their respective patcher hierarchies.",
 													"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 												}
 
@@ -2414,7 +2415,7 @@
 														"fileversion" : 1,
 														"appversion" : 														{
 															"major" : 8,
-															"minor" : 5,
+															"minor" : 6,
 															"revision" : 3,
 															"architecture" : "x64",
 															"modernui" : 1
@@ -3027,7 +3028,7 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
@@ -3817,7 +3818,7 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
@@ -4212,7 +4213,7 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
@@ -4612,7 +4613,7 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
@@ -4769,7 +4770,7 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
@@ -5205,7 +5206,7 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
+							"minor" : 6,
 							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1

@@ -490,9 +490,9 @@ public:
     
     antlrcpp::Any visitVarPatcher(bellParser::VarPatcherContext *ctx) override {
         std::string name = ctx->PATCHERVAR()->getText();
-        t_symbol *s = gensym(name.erase(0, name[0] == '\\' ? 2 : 1).c_str());
-        astVar* v = new astLocalVar(s, params->owner);
-        addVariableToScope<e_antlr4>(params, s);
+        t_symbol *s = gensym(name.c_str() + (name[0] == '\\' ? 2 : 1));
+        astPatcherVar* v = new astPatcherVar(s, params->owner);
+        (*params->name2patcherVars)[s].insert(v);
         return static_cast<astNode*>(v);
     }
     
