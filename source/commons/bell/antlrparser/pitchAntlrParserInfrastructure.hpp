@@ -26,18 +26,20 @@ public:
         
         t_shortRational a = {0, 1};
 
-        for (char atxt : ctx->ACCIDENTAL()->getText()) {
-            switch (atxt) {
-                case 'x':    a += t_pitch::dblsharp;    break;
-                case '#':    a += t_pitch::sharp;       break;
-                    
-                case 'b':    a += t_pitch::flat;        break;
-                
-                case 'q':    a += t_pitch::qrtrsharp;   break;
-                case 'd':    a += t_pitch::qrtrflat;    break;
-                
-                case '^':    a += t_pitch::eighthsharp; break;
-                case 'v':    a += t_pitch::eighthflat;  break;
+        if (ctx->ACCIDENTAL()) {
+            for (char atxt : ctx->ACCIDENTAL()->getText()) {
+                switch (atxt) {
+                    case 'x':    a += t_pitch::dblsharp;    break;
+                    case '#':    a += t_pitch::sharp;       break;
+                        
+                    case 'b':    a += t_pitch::flat;        break;
+                        
+                    case 'q':    a += t_pitch::qrtrsharp;   break;
+                    case 'd':    a += t_pitch::qrtrflat;    break;
+                        
+                    case '^':    a += t_pitch::eighthsharp; break;
+                    case 'v':    a += t_pitch::eighthflat;  break;
+                }
             }
         }
         
