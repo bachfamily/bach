@@ -12,25 +12,25 @@
 class  bellParser : public antlr4::Parser {
 public:
   enum {
-    T__0 = 1, RANGE = 2, UINT = 3, UFLOAT = 4, UPITCH = 5, BTSYMBOL = 6, 
-    DQSYMBOL = 7, SQSYMBOL = 8, EMPTYSYMBOL = 9, BACHNULL = 10, BACHNIL = 11, 
-    IF = 12, THEN = 13, ELSE = 14, WHILE = 15, FOR = 16, IN = 17, AS = 18, 
-    WITH = 19, DO = 20, COLLECT = 21, INLET = 22, INTINLET = 23, RATINLET = 24, 
-    FLOATINLET = 25, PITCHINLET = 26, OUTLET = 27, DIRINLET = 28, DIROUTLET = 29, 
-    BIF = 30, OF = 31, GLOBALVAR = 32, PATCHERVAR = 33, LOCALVAR = 34, NAMEDPARAM = 35, 
-    KEEP = 36, UNKEEP = 37, INIT = 38, ARGCOUNT = 39, PUSH = 40, POP = 41, 
-    CLOSED = 42, NTH = 43, PICK = 44, KEY = 45, ANTH = 46, APICK = 47, NULLIFY = 48, 
-    ASSIGN = 49, WHITESPACE = 50, NEWATOM = 51, POW = 52, APOW = 53, TIMES = 54, 
-    ATIMES = 55, DIVDIV = 56, ADIVDIV = 57, DIV = 58, ADIV = 59, REM = 60, 
-    AREM = 61, PLUS = 62, APLUS = 63, UPLUS = 64, MINUS = 65, AMINUS = 66, 
-    UMINUS = 67, EQUAL = 68, NEQ = 69, LOGNOT = 70, BITNOT = 71, LT = 72, 
-    GT = 73, LEQ = 74, GEQ = 75, BITAND = 76, ABITAND = 77, BITXOR = 78, 
-    ABITXOR = 79, BITOR = 80, ABITOR = 81, LOGAND = 82, LOGANDEXT = 83, 
-    ALOGAND = 84, ALOGANDEXT = 85, LOGXOR = 86, ALOGXOR = 87, LOGOR = 88, 
-    ALOGOR = 89, LOGOREXT = 90, ALOGOREXT = 91, LSHIFT = 92, ALSHIFT = 93, 
-    RSHIFT = 94, ARSHIFT = 95, REPEAT = 96, AREPEAT = 97, AAPPLY = 98, ACONCAT = 99, 
-    ARCONCAT = 100, OPEN = 101, PARAMS = 102, FUNDEF = 103, LIFT = 104, 
-    ELLIPSIS = 105, BLOCKCOMMENT = 106, LINECOMMENT = 107, ANYTHING = 108
+    T__0 = 1, RANGE = 2, UINT = 3, UFLOAT = 4, UPITCH = 5, K_PI = 6, BTSYMBOL = 7, 
+    DQSYMBOL = 8, SQSYMBOL = 9, EMPTYSYMBOL = 10, BACHNULL = 11, BACHNIL = 12, 
+    IF = 13, THEN = 14, ELSE = 15, WHILE = 16, FOR = 17, IN = 18, AS = 19, 
+    WITH = 20, DO = 21, COLLECT = 22, INLET = 23, INTINLET = 24, RATINLET = 25, 
+    FLOATINLET = 26, PITCHINLET = 27, OUTLET = 28, DIRINLET = 29, DIROUTLET = 30, 
+    BIF = 31, OF = 32, GLOBALVAR = 33, PATCHERVAR = 34, LOCALVAR = 35, NAMEDPARAM = 36, 
+    KEEP = 37, UNKEEP = 38, INIT = 39, ARGCOUNT = 40, PUSH = 41, POP = 42, 
+    CLOSED = 43, NTH = 44, PICK = 45, KEY = 46, ANTH = 47, APICK = 48, NULLIFY = 49, 
+    ASSIGN = 50, WHITESPACE = 51, NEWATOM = 52, POW = 53, APOW = 54, TIMES = 55, 
+    ATIMES = 56, DIVDIV = 57, ADIVDIV = 58, DIV = 59, ADIV = 60, REM = 61, 
+    AREM = 62, PLUS = 63, APLUS = 64, UPLUS = 65, MINUS = 66, AMINUS = 67, 
+    UMINUS = 68, EQUAL = 69, NEQ = 70, LOGNOT = 71, BITNOT = 72, LT = 73, 
+    GT = 74, LEQ = 75, GEQ = 76, BITAND = 77, ABITAND = 78, BITXOR = 79, 
+    ABITXOR = 80, BITOR = 81, ABITOR = 82, LOGAND = 83, LOGANDEXT = 84, 
+    ALOGAND = 85, ALOGANDEXT = 86, LOGXOR = 87, ALOGXOR = 88, LOGOR = 89, 
+    ALOGOR = 90, LOGOREXT = 91, ALOGOREXT = 92, LSHIFT = 93, ALSHIFT = 94, 
+    RSHIFT = 95, ARSHIFT = 96, REPEAT = 97, AREPEAT = 98, AAPPLY = 99, ACONCAT = 100, 
+    ARCONCAT = 101, OPEN = 102, PARAMS = 103, FUNDEF = 104, LIFT = 105, 
+    ELLIPSIS = 106, BLOCKCOMMENT = 107, LINECOMMENT = 108, ANYTHING = 109
   };
 
   enum {
@@ -773,6 +773,15 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  ItemPiContext : public ItemContext {
+  public:
+    ItemPiContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *K_PI();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  ItemSublistContext : public ItemContext {
   public:
     ItemSublistContext(ItemContext *ctx);
@@ -871,6 +880,28 @@ public:
     antlr4::tree::TerminalNode *LOCALVAR();
     antlr4::tree::TerminalNode *ASSIGN();
     ListContext *list();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  FakeAApplyContext : public AssignmentContext {
+  public:
+    FakeAApplyContext(AssignmentContext *ctx);
+
+    FakeLvalueContext *fakeLvalue();
+    antlr4::tree::TerminalNode *AAPPLY();
+    FuncallContext *funcall();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  TrueAApplyContext : public AssignmentContext {
+  public:
+    TrueAApplyContext(AssignmentContext *ctx);
+
+    LvalueContext *lvalue();
+    antlr4::tree::TerminalNode *AAPPLY();
+    FuncallContext *funcall();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

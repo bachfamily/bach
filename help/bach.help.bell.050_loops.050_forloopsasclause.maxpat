@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 6,
+			"minor" : 6,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -48,7 +49,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 222.0, 330.5, 320.0, 83.0 ],
-					"text" : "Another way to do the same thing. Here $sum is updated in the \"do\" clause, thus requiring a little more stuff inside the loop, but avoiding the need for subtracting $x after the loop has ended. \nIt is just a matter of taste..."
+					"text" : "Another way to do the same thing. Here $sum is updated in the \"collect\" clause, thus requiring a little more stuff inside the loop, but avoiding the need for subtracting $x after the loop has ended. \nIt is just a matter of taste..."
 				}
 
 			}
@@ -342,11 +343,11 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "bach.eval.mxo",
+				"name" : "bach.arithmser.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.arithmser.mxo",
+				"name" : "bach.eval.mxo",
 				"type" : "iLaX"
 			}
  ],

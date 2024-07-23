@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 1,
-			"revision" : 2,
+			"minor" : 6,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,22 +37,8 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-1",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 117.0, 431.0, 469.0, 36.0 ],
-					"text" : "Because of a known bug, it is generally necessary to wrap in parentheses each access to the . operator, if more than one are present in the same program.",
-					"textcolor" : [ 0.996078431372549, 0.0, 0.0, 1.0 ]
-				}
-
-			}
-, 			{
 				"box" : 				{
 					"bubble" : 1,
 					"fontname" : "Arial",
@@ -62,7 +48,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 341.5, 391.5, 190.0, 40.0 ],
+					"patching_rect" : [ 320.0, 391.5, 190.0, 40.0 ],
 					"text" : "Can you figure out what this one does before trying it?"
 				}
 
@@ -104,19 +90,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "($x2.((($x2.$x1).'wrote'):-1)).`wears ",
+					"code" : "$x2.($x2.$x1.'wrote':-1).`wears ",
 					"id" : "obj-24",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 17.0, 400.0, 320.0, 23.0 ],
+					"patching_rect" : [ 17.0, 400.0, 294.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80101
+						"versionnumber" : 80300
 					}
 ,
-					"text" : "bach.eval ($x2.((($x2.$x1).'wrote'):-1)).`wears @out m"
+					"text" : "bach.eval $x2.($x2.$x1.'wrote':-1).`wears @out m"
 				}
 
 			}

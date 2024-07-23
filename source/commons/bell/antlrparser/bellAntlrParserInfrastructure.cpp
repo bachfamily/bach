@@ -17,6 +17,10 @@
 #include "ast.hpp"
 #include "stringparser.h"
 
+#include <algorithm>
+#include <string>
+#include <functional>
+
 using namespace std;
 using namespace antlr4;
 
@@ -62,7 +66,14 @@ public:
         for (auto s : v) {
             post("%s\n", s.c_str());
         }
-        post("at pos %ld:%ld %s:%s", line, charPositionInLine, offendingSymbol->getText().c_str(), msg.c_str());
+        
+        auto os = offendingSymbol->getText();
+        std::replace(os.begin(), os.end(), (char) 1, (char) ' ');
+        
+        std::string m = msg;
+        std::replace(m.begin(), m.end(), (char) 1, (char) ' ');
+        
+        post("at pos %ld:%ld %s:%s", line, charPositionInLine, offendingSymbol->getText().c_str(), m.c_str());
     }
     
 };
@@ -186,8 +197,8 @@ public:
         t_symbol *s1 = gensym(n1.c_str() + (n1[0] == '\\' ? 2 : 1));
         forArg* r;
         if (ctx->LOCALVAR(1)) {
-            std::string n2 = ctx->LOCALVAR(0)->getText();
-            t_symbol *s2 = gensym(n1.c_str() + (n1[0] == '\\' ? 2 : 1));
+            std::string n2 = ctx->LOCALVAR(1)->getText();
+            t_symbol *s2 = gensym(n2.c_str() + (n2[0] == '\\' ? 2 : 1));
             r = new forArg(s1, s2, seq);
         } else {
             r = new forArg(s1, nullptr, seq);
@@ -369,6 +380,12 @@ public:
         astNode *r = new astConst(p, params->owner);
         return r;
     }
+    
+    antlrcpp::Any visitItemPi(bellParser::ItemPiContext *context) override {
+        astNode *r = new astConst(M_PI, params->owner);
+        return r;
+    }
+    
     
     antlrcpp::Any visitItemBtSymbol(bellParser::ItemBtSymbolContext *context) override {
         auto txt = context->BTSYMBOL()->getText();
@@ -598,6 +615,7 @@ public:
             case bellParser::TIMES: r = new astOperatorTimes(n1, n2, params->owner); break;
             case bellParser::DIV: r = new astOperatorDiv(n1, n2, params->owner); break;
             case bellParser::DIVDIV: r = new astOperatorDivdiv(n1, n2, params->owner); break;
+            case bellParser::REM: r = new astOperatorRemainder(n1, n2, params->owner); break;
             case bellParser::LSHIFT: r = new astOperatorLShift(n1, n2, params->owner); break;
             case bellParser::RSHIFT: r = new astOperatorDiv(n1, n2, params->owner); break;
             case bellParser::RANGE: r = new astRangeOp(n1, n2, params->owner); break;
@@ -676,6 +694,7 @@ public:
                 case bellParser::ARSHIFT: n = new astOperatorARShift(lv->getVar(), rv, params->owner); break;
                 case bellParser::ANTH: n = new astNthAssignOp(lv->getVar(), rv, params->owner); break;
                 case bellParser::ACONCAT: n = new astConcatAssignOp(lv->getVar(), rv, params->owner); break;
+                case bellParser::ARCONCAT: n = new astRevConcatAssignOp(lv->getVar(), rv, params->owner); break;
                 default: n = nullptr; break;
             }
             return n;
@@ -736,6 +755,31 @@ public:
             case bellParser::ARCONCAT: n = new astRERConcat(lv->getNode(), rv, s, params->owner); break;
         }
         return n;
+    }
+    
+    antlrcpp::Any visitTrueAApply(bellParser::TrueAApplyContext *ctx) override {
+        auto lv = safeAnyCast<lvalue*>(visit(ctx->lvalue()));
+        auto v = lv->getVar();
+        astFunctionCall *rv = dynamic_cast<astFunctionCall*>(safeAnyCast<astNode*>(visit(ctx->funcall())));
+        if (auto s = lv->getSpecs(); s == nullptr) {
+            rv->addDataflowStyleArg(v);
+            astNode *r = new astAssign(v, rv, params->owner);
+            return r;
+        } else {
+            rv->addDataflowStyleArg(new astConst(params->owner));
+            astNode *r = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>(v, rv, s, params->owner);
+            return r;
+        }
+    }
+    
+    antlrcpp::Any visitFakeAApply(bellParser::FakeAApplyContext *ctx) override {
+        auto lv = safeAnyCast<fakeLvalue*>(visit(ctx->fakeLvalue()));
+        auto n = lv->getNode();
+        astFunctionCall *rv = dynamic_cast<astFunctionCall*>(safeAnyCast<astNode*>(visit(ctx->funcall())));
+        auto s = lv->getSpecs();
+        rv->addDataflowStyleArg(new astConst(params->owner));
+        astNode *r = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>(n, rv, s, params->owner);
+        return r;
     }
     
     antlrcpp::Any visitOutletAssignment(bellParser::OutletAssignmentContext *ctx) override {
@@ -860,7 +904,7 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
         
         code = pp.output;
         included = pp.included;
-        post(code.c_str());
+        //post(code.c_str());
     } while (included);
     
     ANTLRInputStream input(code);

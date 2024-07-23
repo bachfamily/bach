@@ -175,6 +175,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitItemPi(bellParser::ItemPiContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitItemBtSymbol(bellParser::ItemBtSymbolContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -232,6 +236,14 @@ public:
   }
 
   virtual std::any visitFakeAssignment(bellParser::FakeAssignmentContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitTrueAApply(bellParser::TrueAApplyContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFakeAApply(bellParser::FakeAApplyContext *ctx) override {
     return visitChildren(ctx);
   }
 

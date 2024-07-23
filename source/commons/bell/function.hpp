@@ -328,6 +328,13 @@ public:
     BASE(lNode, nullptr, lvalueStepList, owner),
     functionCall(functionCall) { }
     
+    astRichAccessApplyOp(typename BASE::firstType *lNode,
+                 astFunctionCall *functionCall,
+                 lvalueSpecs *lvalueSpecs,
+                         t_codableobj *owner)  :
+    BASE(lNode, nullptr, lvalueSpecs, owner),
+    functionCall(functionCall) { }
+    
     ~astRichAccessApplyOp() {
         delete functionCall;
     }

@@ -164,7 +164,7 @@ listEnd: conditional
 expr: (item|var|funcall|listEnd) #exprSimple
 | lvalue #exprLvalue
 | fakeLvalue #exprFakeLvalue
-| expr PICK expr #exprBinary
+| expr op=PICK expr #exprBinary
 | <assoc=right> expr op=POW expr #exprBinary 
 | (UPLUS|UMINUS)+ expr #exprUPlusMinus
 | expr op=(TIMES|DIV|DIVDIV|REM) expr #exprBinary
@@ -186,6 +186,7 @@ expr: (item|var|funcall|listEnd) #exprSimple
 item: UINT #itemUint
 | UFLOAT #itemUfloat
 | UPITCH #itemUpitch
+| K_PI #itemPi
 | BTSYMBOL #itemBtSymbol
 | (DQSYMBOL|SQSYMBOL) #itemQSymbol
 | EMPTYSYMBOL #itemEmptySymbol
@@ -210,6 +211,8 @@ assignment: INIT LOCALVAR ASSIGN list #initAssignment
     |ALOGXOR|ALOGOR|ALOGOREXT|ABITAND
     |ABITXOR|ABITOR|ALSHIFT|ACONCAT
     |ARCONCAT|ARSHIFT) list #fakeAssignment
+| lvalue AAPPLY funcall #trueAApply
+| fakeLvalue AAPPLY funcall #fakeAApply
 | OUTLET ASSIGN list #outletAssignment
 | DIROUTLET ASSIGN list #dirOutletAssignment
 ;
@@ -236,6 +239,8 @@ UFLOAT: { notUintRange()}? (((([0-9]* '.' [0-9]+) | ([0-9]+ '.'))
 
 UPITCH: NOTENAME ACCIDENTAL? [+-]* UINT ([+-]* (UINT|RAT) 't')?
  { noParams = false; noUnary = true; };
+
+K_PI: 'pi' { noParams = false; noUnary = true; };
 
 fragment NOTENAME: ([a-g]|[A-G]);
 fragment ACCIDENTAL: ([#bxdq^v]+);
@@ -285,7 +290,7 @@ OF: ('directout'|'directin'|'print') { noParams = false; noUnary = true; };
 
 GLOBALVAR: ID { noParams = false; noUnary = true; };
 PATCHERVAR: '#' ID { noParams = false; noUnary = true; };
-LOCALVAR: '\\'? '$' ID { post("localvar"); noParams = false; noUnary = true; };
+LOCALVAR: '\\'? '$' ID { noParams = false; noUnary = true; };
 NAMEDPARAM: '\\'? '@' ID { noParams = true; noUnary = true; };
 
 KEEP: 'keep' { noParams = true; noUnary = true; };
@@ -328,7 +333,7 @@ DIV: '/' { noParams = true; noUnary = false; };
 ADIV: '/=' { noParams = true; noUnary = false; };
 
 REM: '%' { noParams = true; noUnary = false; };
-AREM: '%' { noParams = true; noUnary = false; };
+AREM: '%=' { noParams = true; noUnary = false; };
 
 PLUS: { notUnary() }? '+' { noParams = true; noUnary = false; };
 APLUS: '+=' { noParams = true; noUnary = false; };
@@ -393,7 +398,7 @@ ARCONCAT: '!_=' { noParams = true; noUnary = false; };
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };
 
-FUNDEF: '->' { post("fundef"); noParams = true; noUnary = false; };
+FUNDEF: '->' { noParams = true; noUnary = false; };
 LIFT: '-^' { noParams = true; noUnary = false; };
 ELLIPSIS: '<...>' { noParams = true; noUnary = false; };
 

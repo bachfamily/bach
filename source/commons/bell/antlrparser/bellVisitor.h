@@ -99,6 +99,8 @@ public:
 
     virtual std::any visitItemUpitch(bellParser::ItemUpitchContext *context) = 0;
 
+    virtual std::any visitItemPi(bellParser::ItemPiContext *context) = 0;
+
     virtual std::any visitItemBtSymbol(bellParser::ItemBtSymbolContext *context) = 0;
 
     virtual std::any visitItemQSymbol(bellParser::ItemQSymbolContext *context) = 0;
@@ -128,6 +130,10 @@ public:
     virtual std::any visitTrueAssignment(bellParser::TrueAssignmentContext *context) = 0;
 
     virtual std::any visitFakeAssignment(bellParser::FakeAssignmentContext *context) = 0;
+
+    virtual std::any visitTrueAApply(bellParser::TrueAApplyContext *context) = 0;
+
+    virtual std::any visitFakeAApply(bellParser::FakeAApplyContext *context) = 0;
 
     virtual std::any visitOutletAssignment(bellParser::OutletAssignmentContext *context) = 0;
 
