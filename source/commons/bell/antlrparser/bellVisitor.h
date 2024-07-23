@@ -103,6 +103,8 @@ public:
 
     virtual std::any visitItemQSymbol(bellParser::ItemQSymbolContext *context) = 0;
 
+    virtual std::any visitItemEmptySymbol(bellParser::ItemEmptySymbolContext *context) = 0;
+
     virtual std::any visitItemBIF(bellParser::ItemBIFContext *context) = 0;
 
     virtual std::any visitItemOF(bellParser::ItemOFContext *context) = 0;

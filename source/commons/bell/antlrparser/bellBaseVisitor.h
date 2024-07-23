@@ -183,6 +183,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitItemEmptySymbol(bellParser::ItemEmptySymbolContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitItemBIF(bellParser::ItemBIFContext *ctx) override {
     return visitChildren(ctx);
   }

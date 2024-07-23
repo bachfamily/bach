@@ -214,6 +214,14 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		001E0EA52C4EC37D00B2B3C9 /* preprocVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 001E0E9D2C4EC37C00B2B3C9 /* preprocVisitor.cpp */; };
+		001E0EA62C4EC37D00B2B3C9 /* preprocVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 001E0E9E2C4EC37C00B2B3C9 /* preprocVisitor.h */; };
+		001E0EA72C4EC37D00B2B3C9 /* preprocBaseVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 001E0E9F2C4EC37C00B2B3C9 /* preprocBaseVisitor.cpp */; };
+		001E0EA82C4EC37D00B2B3C9 /* preproc.h in Headers */ = {isa = PBXBuildFile; fileRef = 001E0EA02C4EC37C00B2B3C9 /* preproc.h */; };
+		001E0EA92C4EC37D00B2B3C9 /* preprocLexer.h in Headers */ = {isa = PBXBuildFile; fileRef = 001E0EA12C4EC37D00B2B3C9 /* preprocLexer.h */; };
+		001E0EAA2C4EC37D00B2B3C9 /* preprocBaseVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 001E0EA22C4EC37D00B2B3C9 /* preprocBaseVisitor.h */; };
+		001E0EAB2C4EC37D00B2B3C9 /* preproc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 001E0EA32C4EC37D00B2B3C9 /* preproc.cpp */; };
+		001E0EAC2C4EC37D00B2B3C9 /* preprocLexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 001E0EA42C4EC37D00B2B3C9 /* preprocLexer.cpp */; };
 		0038AF882805934E0012316C /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		0038AF892805934E0012316C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		0038AF922805970F0012316C /* bell.in.c in Sources */ = {isa = PBXBuildFile; fileRef = 0038AF7F2805931C0012316C /* bell.in.c */; };
@@ -3168,6 +3176,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		001E0E9B2C4EC27C00B2B3C9 /* preproc.g4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = preproc.g4; sourceTree = "<group>"; };
+		001E0E9C2C4EC27D00B2B3C9 /* preprocLexer.g4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = preprocLexer.g4; sourceTree = "<group>"; };
+		001E0E9D2C4EC37C00B2B3C9 /* preprocVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = preprocVisitor.cpp; sourceTree = "<group>"; };
+		001E0E9E2C4EC37C00B2B3C9 /* preprocVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = preprocVisitor.h; sourceTree = "<group>"; };
+		001E0E9F2C4EC37C00B2B3C9 /* preprocBaseVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = preprocBaseVisitor.cpp; sourceTree = "<group>"; };
+		001E0EA02C4EC37C00B2B3C9 /* preproc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = preproc.h; sourceTree = "<group>"; };
+		001E0EA12C4EC37D00B2B3C9 /* preprocLexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = preprocLexer.h; sourceTree = "<group>"; };
+		001E0EA22C4EC37D00B2B3C9 /* preprocBaseVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = preprocBaseVisitor.h; sourceTree = "<group>"; };
+		001E0EA32C4EC37D00B2B3C9 /* preproc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = preproc.cpp; sourceTree = "<group>"; };
+		001E0EA42C4EC37D00B2B3C9 /* preprocLexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = preprocLexer.cpp; sourceTree = "<group>"; };
 		0038AF7F2805931C0012316C /* bell.in.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bell.in.c; sourceTree = "<group>"; };
 		0038AF8E2805934E0012316C /* bach.bell.in.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.bell.in.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		0038AF91280596FC0012316C /* bell.out.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bell.out.c; sourceTree = "<group>"; };
@@ -5985,6 +6003,8 @@
 			children = (
 				00992D582C2EF26800DA02CD /* bell.g4 */,
 				007F94532C41A129007892C4 /* pitch.g4 */,
+				001E0E9B2C4EC27C00B2B3C9 /* preproc.g4 */,
+				001E0E9C2C4EC27D00B2B3C9 /* preprocLexer.g4 */,
 				00992D7A2C3491D400DA02CD /* bellBaseVisitor.cpp */,
 				00992D762C3491D300DA02CD /* bellBaseVisitor.h */,
 				00992D782C3491D300DA02CD /* bellLexer.cpp */,
@@ -6001,6 +6021,14 @@
 				007F945B2C41C04C007892C4 /* pitchParser.h */,
 				007F94552C41C04C007892C4 /* pitchVisitor.cpp */,
 				007F94562C41C04C007892C4 /* pitchVisitor.h */,
+				001E0EA32C4EC37D00B2B3C9 /* preproc.cpp */,
+				001E0EA02C4EC37C00B2B3C9 /* preproc.h */,
+				001E0E9F2C4EC37C00B2B3C9 /* preprocBaseVisitor.cpp */,
+				001E0EA22C4EC37D00B2B3C9 /* preprocBaseVisitor.h */,
+				001E0EA42C4EC37D00B2B3C9 /* preprocLexer.cpp */,
+				001E0EA12C4EC37D00B2B3C9 /* preprocLexer.h */,
+				001E0E9D2C4EC37C00B2B3C9 /* preprocVisitor.cpp */,
+				001E0E9E2C4EC37C00B2B3C9 /* preprocVisitor.h */,
 				00992D832C35BCF400DA02CD /* bellAntlrParserInfrastructure.cpp */,
 				00992D842C35BCF400DA02CD /* bellAntlrParserInfrastructure.hpp */,
 				007F943E2C41939C007892C4 /* pitchAntlrParserInfrastructure.cpp */,
@@ -7726,6 +7754,7 @@
 				00992C332C2EE6CC00DA02CD /* BlockEndState.h in Headers */,
 				00992D2E2C2EE6CC00DA02CD /* ProxyErrorListener.h in Headers */,
 				91812A831611B29E00473F86 /* mxml.h in Headers */,
+				001E0EA62C4EC37D00B2B3C9 /* preprocVisitor.h in Headers */,
 				00992CE52C2EE6CC00DA02CD /* ParseTree.h in Headers */,
 				91812A841611B29E00473F86 /* bach_doc_groups.h in Headers */,
 				91812A851611B29E00473F86 /* bach.h in Headers */,
@@ -7776,6 +7805,7 @@
 				00992D262C2EE6CC00DA02CD /* NoViableAltException.h in Headers */,
 				00992D222C2EE6CC00DA02CD /* LexerNoViableAltException.h in Headers */,
 				00992D102C2EE6CC00DA02CD /* DiagnosticErrorListener.h in Headers */,
+				001E0EAA2C4EC37D00B2B3C9 /* preprocBaseVisitor.h in Headers */,
 				00992CB72C2EE6CC00DA02CD /* Unicode.h in Headers */,
 				00992C822C2EE6CC00DA02CD /* RuleStopState.h in Headers */,
 				00992CA92C2EE6CC00DA02CD /* MurmurHash.h in Headers */,
@@ -7787,6 +7817,7 @@
 				00992D242C2EE6CC00DA02CD /* ListTokenSource.h in Headers */,
 				00992CE92C2EE6CC00DA02CD /* ParseTreeType.h in Headers */,
 				00992C4A2C2EE6CC00DA02CD /* LexerATNSimulator.h in Headers */,
+				001E0EA92C4EC37D00B2B3C9 /* preprocLexer.h in Headers */,
 				00992C482C2EE6CC00DA02CD /* LexerATNConfig.h in Headers */,
 				00992CF22C2EE6CC00DA02CD /* Trees.h in Headers */,
 				00992C362C2EE6CC00DA02CD /* ContextSensitivityInfo.h in Headers */,
@@ -7816,6 +7847,7 @@
 				00992D362C2EE6CD00DA02CD /* RuleContextWithAltNum.h in Headers */,
 				00992CDD2C2EE6CC00DA02CD /* XPathWildcardElement.h in Headers */,
 				00992D412C2EE6CD00DA02CD /* TokenStreamRewriter.h in Headers */,
+				001E0EA82C4EC37D00B2B3C9 /* preproc.h in Headers */,
 				91B420D5165E84AB00410C2C /* bach_threads.h in Headers */,
 				00992C5E2C2EE6CC00DA02CD /* LL1Analyzer.h in Headers */,
 				00992CBD2C2EE6CC00DA02CD /* ParseTreeMatch.h in Headers */,
@@ -14033,6 +14065,7 @@
 				00992CA82C2EE6CC00DA02CD /* MurmurHash.cpp in Sources */,
 				91812A8E1611B29E00473F86 /* llll_files.c in Sources */,
 				91812A8F1611B29E00473F86 /* llll_math.c in Sources */,
+				001E0EA52C4EC37D00B2B3C9 /* preprocVisitor.cpp in Sources */,
 				91812A901611B29E00473F86 /* llll_modifiers.c in Sources */,
 				00992D112C2EE6CC00DA02CD /* Exceptions.cpp in Sources */,
 				00992CD62C2EE6CC00DA02CD /* XPathTokenAnywhereElement.cpp in Sources */,
@@ -14101,6 +14134,7 @@
 				91C6044418C0D9F50027BB79 /* SdifErrMess.c in Sources */,
 				00992C492C2EE6CC00DA02CD /* LexerATNSimulator.cpp in Sources */,
 				00992D812C3491D400DA02CD /* bellParser.cpp in Sources */,
+				001E0EAB2C4EC37D00B2B3C9 /* preproc.cpp in Sources */,
 				91C6044618C0D9F50027BB79 /* SdifFGet.c in Sources */,
 				00992C6D2C2EE6CC00DA02CD /* PrecedencePredicateTransition.cpp in Sources */,
 				91C3F863230C4C58002BA999 /* bach_maxutils.c in Sources */,
@@ -14151,7 +14185,9 @@
 				00992C352C2EE6CC00DA02CD /* ContextSensitivityInfo.cpp in Sources */,
 				00992CFF2C2EE6CC00DA02CD /* BaseErrorListener.cpp in Sources */,
 				00992CAC2C2EE6CC00DA02CD /* Any.cpp in Sources */,
+				001E0EA72C4EC37D00B2B3C9 /* preprocBaseVisitor.cpp in Sources */,
 				91FDDC351FBE2BC90040D803 /* bach_symparser_tab.c in Sources */,
+				001E0EAC2C4EC37D00B2B3C9 /* preprocLexer.cpp in Sources */,
 				1EC5F4741BDFC21600669257 /* bach_graphics.c in Sources */,
 				00992D822C3491D400DA02CD /* bellBaseVisitor.cpp in Sources */,
 				00992D132C2EE6CC00DA02CD /* FailedPredicateException.cpp in Sources */,

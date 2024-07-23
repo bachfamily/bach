@@ -188,6 +188,7 @@ item: UINT #itemUint
 | UPITCH #itemUpitch
 | BTSYMBOL #itemBtSymbol
 | (DQSYMBOL|SQSYMBOL) #itemQSymbol
+| EMPTYSYMBOL #itemEmptySymbol
 | BIF #itemBIF
 | OF #itemOF
 | type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
@@ -243,6 +244,7 @@ fragment RAT: UINT '/' [+-]* UINT;
 BTSYMBOL: '`' (~[ \t\r\n\u0001])+ { noParams = true; noUnary = true; };
 DQSYMBOL: '"' ( '\\"' | ~["] )* ~'\\' '"' { noParams = true; noUnary = true; };
 SQSYMBOL: '\'' ( '\\\'' | ~['] )* ~[\\] '\'' { noParams = true; noUnary = true; };
+EMPTYSYMBOL: ('""' | '\'\''){ noParams = true; noUnary = true; };
 
 BACHNULL: 'null' { noParams = false; noUnary = false; };
 BACHNIL: 'nil' { noParams = false; noUnary = false; };
@@ -394,5 +396,8 @@ PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };
 FUNDEF: '->' { post("fundef"); noParams = true; noUnary = false; };
 LIFT: '-^' { noParams = true; noUnary = false; };
 ELLIPSIS: '<...>' { noParams = true; noUnary = false; };
+
+BLOCKCOMMENT: '#(' .*? ')#' -> skip;
+LINECOMMENT: ('##'|'#!') .*? ('\n'|EOF) -> skip;
 
 ANYTHING: .+?;

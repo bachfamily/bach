@@ -11,6 +11,9 @@
 #include "bellLexer.h"
 #include "bellParser.h"
 #include "bellBaseVisitor.h"
+#include "preprocLexer.h"
+#include "preproc.h"
+#include "preprocBaseVisitor.h"
 #include "ast.hpp"
 #include "stringparser.h"
 
@@ -802,6 +805,14 @@ public:
     
 };
 
+
+class codeVisitor: public preprocBaseVisitor {
+        
+public:
+    //std::string output;
+
+};
+
 t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *directInlets, t_atom_long *directOutlets) {
     std::string pgm;
     
@@ -833,7 +844,26 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
     params.globalVariables = new std::unordered_set<t_globalVariable*>;
     params.funcs = new std::unordered_set<t_function*>;
     
-    ANTLRInputStream input(x->c_text);
+    std::string code = x->c_text;
+    bool included = false;
+    
+    do {
+        ANTLRInputStream preprocInput(code);
+        preprocLexer pplexer(&preprocInput);
+        CommonTokenStream preprocTokens(&pplexer);
+        preproc pp(&preprocTokens);
+        //preprocParser.removeErrorListeners();
+        //parser.addErrorListener(new bellErrorListener());
+        preproc::CodeContext* pptree = pp.code();
+        codeVisitor ppvisitor;
+        ppvisitor.visit(pptree);
+        
+        code = pp.output;
+        included = pp.included;
+        post(code.c_str());
+    } while (included);
+    
+    ANTLRInputStream input(code);
     bellLexer lexer(&input);
     lexer.setCodeac(params.codeac);
     CommonTokenStream tokens(&lexer);

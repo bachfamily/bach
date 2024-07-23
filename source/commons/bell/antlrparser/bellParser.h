@@ -13,24 +13,24 @@ class  bellParser : public antlr4::Parser {
 public:
   enum {
     T__0 = 1, RANGE = 2, UINT = 3, UFLOAT = 4, UPITCH = 5, BTSYMBOL = 6, 
-    DQSYMBOL = 7, SQSYMBOL = 8, BACHNULL = 9, BACHNIL = 10, IF = 11, THEN = 12, 
-    ELSE = 13, WHILE = 14, FOR = 15, IN = 16, AS = 17, WITH = 18, DO = 19, 
-    COLLECT = 20, INLET = 21, INTINLET = 22, RATINLET = 23, FLOATINLET = 24, 
-    PITCHINLET = 25, OUTLET = 26, DIRINLET = 27, DIROUTLET = 28, BIF = 29, 
-    OF = 30, GLOBALVAR = 31, PATCHERVAR = 32, LOCALVAR = 33, NAMEDPARAM = 34, 
-    KEEP = 35, UNKEEP = 36, INIT = 37, ARGCOUNT = 38, PUSH = 39, POP = 40, 
-    CLOSED = 41, NTH = 42, PICK = 43, KEY = 44, ANTH = 45, APICK = 46, NULLIFY = 47, 
-    ASSIGN = 48, WHITESPACE = 49, NEWATOM = 50, POW = 51, APOW = 52, TIMES = 53, 
-    ATIMES = 54, DIVDIV = 55, ADIVDIV = 56, DIV = 57, ADIV = 58, REM = 59, 
-    AREM = 60, PLUS = 61, APLUS = 62, UPLUS = 63, MINUS = 64, AMINUS = 65, 
-    UMINUS = 66, EQUAL = 67, NEQ = 68, LOGNOT = 69, BITNOT = 70, LT = 71, 
-    GT = 72, LEQ = 73, GEQ = 74, BITAND = 75, ABITAND = 76, BITXOR = 77, 
-    ABITXOR = 78, BITOR = 79, ABITOR = 80, LOGAND = 81, LOGANDEXT = 82, 
-    ALOGAND = 83, ALOGANDEXT = 84, LOGXOR = 85, ALOGXOR = 86, LOGOR = 87, 
-    ALOGOR = 88, LOGOREXT = 89, ALOGOREXT = 90, LSHIFT = 91, ALSHIFT = 92, 
-    RSHIFT = 93, ARSHIFT = 94, REPEAT = 95, AREPEAT = 96, AAPPLY = 97, ACONCAT = 98, 
-    ARCONCAT = 99, OPEN = 100, PARAMS = 101, FUNDEF = 102, LIFT = 103, ELLIPSIS = 104, 
-    ANYTHING = 105
+    DQSYMBOL = 7, SQSYMBOL = 8, EMPTYSYMBOL = 9, BACHNULL = 10, BACHNIL = 11, 
+    IF = 12, THEN = 13, ELSE = 14, WHILE = 15, FOR = 16, IN = 17, AS = 18, 
+    WITH = 19, DO = 20, COLLECT = 21, INLET = 22, INTINLET = 23, RATINLET = 24, 
+    FLOATINLET = 25, PITCHINLET = 26, OUTLET = 27, DIRINLET = 28, DIROUTLET = 29, 
+    BIF = 30, OF = 31, GLOBALVAR = 32, PATCHERVAR = 33, LOCALVAR = 34, NAMEDPARAM = 35, 
+    KEEP = 36, UNKEEP = 37, INIT = 38, ARGCOUNT = 39, PUSH = 40, POP = 41, 
+    CLOSED = 42, NTH = 43, PICK = 44, KEY = 45, ANTH = 46, APICK = 47, NULLIFY = 48, 
+    ASSIGN = 49, WHITESPACE = 50, NEWATOM = 51, POW = 52, APOW = 53, TIMES = 54, 
+    ATIMES = 55, DIVDIV = 56, ADIVDIV = 57, DIV = 58, ADIV = 59, REM = 60, 
+    AREM = 61, PLUS = 62, APLUS = 63, UPLUS = 64, MINUS = 65, AMINUS = 66, 
+    UMINUS = 67, EQUAL = 68, NEQ = 69, LOGNOT = 70, BITNOT = 71, LT = 72, 
+    GT = 73, LEQ = 74, GEQ = 75, BITAND = 76, ABITAND = 77, BITXOR = 78, 
+    ABITXOR = 79, BITOR = 80, ABITOR = 81, LOGAND = 82, LOGANDEXT = 83, 
+    ALOGAND = 84, ALOGANDEXT = 85, LOGXOR = 86, ALOGXOR = 87, LOGOR = 88, 
+    ALOGOR = 89, LOGOREXT = 90, ALOGOREXT = 91, LSHIFT = 92, ALSHIFT = 93, 
+    RSHIFT = 94, ARSHIFT = 95, REPEAT = 96, AREPEAT = 97, AAPPLY = 98, ACONCAT = 99, 
+    ARCONCAT = 100, OPEN = 101, PARAMS = 102, FUNDEF = 103, LIFT = 104, 
+    ELLIPSIS = 105, BLOCKCOMMENT = 106, LINECOMMENT = 107, ANYTHING = 108
   };
 
   enum {
@@ -798,6 +798,15 @@ public:
     ItemNullContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *BACHNULL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemEmptySymbolContext : public ItemContext {
+  public:
+    ItemEmptySymbolContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *EMPTYSYMBOL();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
