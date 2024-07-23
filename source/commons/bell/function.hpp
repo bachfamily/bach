@@ -29,21 +29,29 @@ protected:
     t_symbol *sym;
     astNode *node;
     countedList<t_localVar> *varsList;
+    std::vector<t_localVar> *varsVector;
     t_localVar *vars;
     
 public:
-    funArg(t_symbol *sym, astNode *node = nullptr) : sym(sym), node(node), varsList(nullptr), vars(nullptr) { };
+    funArg(t_symbol *sym, astNode *node = nullptr) : sym(sym), node(node), varsList(nullptr), varsVector(nullptr), vars(nullptr) { };
     
     funArg(t_symbol *sym, astNode *node, countedList<t_localVar> *v) : funArg(sym, node) {
         if (v) {
             varsList = new countedList<t_localVar>(v);
-        } else
-            varsList = nullptr;
+        }
+    }
+    
+    funArg(t_symbol *sym, astNode *node, std::vector<t_localVar> *v) : funArg(sym, node) {
+        if (v) {
+            varsVector = new std::vector<t_localVar>(*v);
+        }
     };
     
     virtual ~funArg() {
         if (varsList)
             delete varsList;
+        if (varsVector)
+            delete varsVector;
         if (vars)
             delete[] vars;
     }
@@ -53,12 +61,15 @@ public:
             copyIntoNullTerminatedArray<t_localVar>(varsList, &vars);
             delete varsList;
             varsList = nullptr;
+        } else if (varsVector) {
+            copyIntoNullTerminatedArray<t_localVar>(varsVector, &vars);
+            delete varsVector;
+            varsVector = nullptr;
         }
     };
     
     t_symbol* getSym() { return sym; };
     astNode* getNode() { return node; };
-    countedList<t_localVar> *getVarsList() { return varsList; };
     t_localVar *getVars() { return vars; };
 };
 

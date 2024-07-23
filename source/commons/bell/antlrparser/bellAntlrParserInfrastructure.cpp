@@ -195,10 +195,12 @@ public:
         auto seq = safeAnyCast<astNode*>(visit(ctx->sequence()));
         std::string n1 = ctx->LOCALVAR(0)->getText();
         t_symbol *s1 = gensym(n1.c_str() + (n1[0] == '\\' ? 2 : 1));
+        addVariableToScope<e_antlr4>(params, s1);
         forArg* r;
         if (ctx->LOCALVAR(1)) {
             std::string n2 = ctx->LOCALVAR(1)->getText();
             t_symbol *s2 = gensym(n2.c_str() + (n2[0] == '\\' ? 2 : 1));
+            addVariableToScope<e_antlr4>(params, s2);
             r = new forArg(s1, s2, seq);
         } else {
             r = new forArg(s1, nullptr, seq);
@@ -284,13 +286,14 @@ public:
         (**(params->localVariablesAuxMapStack))[s] = 1;
         funArg *r;
         if (context->list()) {
-            auto l = safeAnyCast<astNode*>(visit(context->list()));
-            ++(params->localVariablesStack);
+            *++(params->localVariablesStackV) = new std::vector<t_localVar>;
             *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
-            r = new funArg(s, l, *(params->localVariablesStack));
+            auto l = safeAnyCast<astNode*>(visit(context->list()));
+            r = new funArg(s, l, *(params->localVariablesStackV));
             delete *(params->localVariablesAuxMapStack);
             *(params->localVariablesAuxMapStack--) = nullptr;
-            *(params->localVariablesStack--) = nullptr;
+            delete *(params->localVariablesStackV);
+            *(params->localVariablesStackV--) = nullptr;
         } else {
             r = new funArg(s);
         }
@@ -324,9 +327,14 @@ public:
     }
     
     antlrcpp::Any visitFundef(bellParser::FundefContext *context) override {
+        std::vector<funArg*>* fal = nullptr;
+        if (context->funargList()) {
+            fal = safeAnyCast<std::vector<funArg*>*>(visit(context->funargList()));
+        }
+        
         params->fnDepth++;
         *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-        
+
         if (context->liftedargList()) {
             auto lal = safeAnyCast<std::vector<t_localVar*>*>(visit(context->liftedargList()));
             for (auto v : *lal) {
@@ -334,12 +342,8 @@ public:
             }
         }
         
-        std::vector<funArg*>* fal = nullptr;
-        if (context->funargList()) {
-            fal = safeAnyCast<std::vector<funArg*>*>(visit(context->funargList()));
-            *++(params->argumentsStackV) = fal;
-        }
-        
+        *++(params->argumentsStackV) = fal;
+
         auto l = safeAnyCast<astNode*>(visit(context->list()));
         auto fn = new t_userFunction(*(params->argumentsStackV),
                                        *(params->localVariablesStackV),
@@ -352,7 +356,7 @@ public:
         *(params->localVariablesAuxMapStack--) = nullptr;
         delete *(params->liftedVariablesStack);
         *(params->liftedVariablesStack--) = nullptr;
-        --(params->argumentsStackV);
+        //--(params->argumentsStackV);
         return r;
     }
     
