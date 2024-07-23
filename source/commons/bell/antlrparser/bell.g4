@@ -288,14 +288,14 @@ BIF:
 
 OF: ('directout'|'directin'|'print') { noParams = false; noUnary = true; };
 
+KEEP: 'keep' { noParams = true; noUnary = true; };
+UNKEEP: 'unkeep' { noParams = true; noUnary = true; };
+INIT: 'init' { noParams = true; noUnary = true; };
+
 GLOBALVAR: ID { noParams = false; noUnary = true; };
 PATCHERVAR: '#' ID { noParams = false; noUnary = true; };
 LOCALVAR: '\\'? '$' ID { noParams = false; noUnary = true; };
 NAMEDPARAM: '\\'? '@' ID { noParams = true; noUnary = true; };
-
-KEEP: 'keep' { noParams = true; noUnary = true; };
-UNKEEP: 'unkeep' { noParams = true; noUnary = true; };
-INIT: 'init' { noParams = true; noUnary = true; };
 
 ARGCOUNT: '$argcount' { noParams = false; noUnary = true; };
 

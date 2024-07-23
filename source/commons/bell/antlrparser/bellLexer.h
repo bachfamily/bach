@@ -20,14 +20,14 @@ public:
     IF = 13, THEN = 14, ELSE = 15, WHILE = 16, FOR = 17, IN = 18, AS = 19, 
     WITH = 20, DO = 21, COLLECT = 22, INLET = 23, INTINLET = 24, RATINLET = 25, 
     FLOATINLET = 26, PITCHINLET = 27, OUTLET = 28, DIRINLET = 29, DIROUTLET = 30, 
-    BIF = 31, OF = 32, GLOBALVAR = 33, PATCHERVAR = 34, LOCALVAR = 35, NAMEDPARAM = 36, 
-    KEEP = 37, UNKEEP = 38, INIT = 39, ARGCOUNT = 40, PUSH = 41, POP = 42, 
-    CLOSED = 43, NTH = 44, PICK = 45, KEY = 46, ANTH = 47, APICK = 48, NULLIFY = 49, 
-    ASSIGN = 50, WHITESPACE = 51, NEWATOM = 52, POW = 53, APOW = 54, TIMES = 55, 
-    ATIMES = 56, DIVDIV = 57, ADIVDIV = 58, DIV = 59, ADIV = 60, REM = 61, 
-    AREM = 62, PLUS = 63, APLUS = 64, UPLUS = 65, MINUS = 66, AMINUS = 67, 
-    UMINUS = 68, EQUAL = 69, NEQ = 70, LOGNOT = 71, BITNOT = 72, LT = 73, 
-    GT = 74, LEQ = 75, GEQ = 76, BITAND = 77, ABITAND = 78, BITXOR = 79, 
+    BIF = 31, OF = 32, KEEP = 33, UNKEEP = 34, INIT = 35, GLOBALVAR = 36, 
+    PATCHERVAR = 37, LOCALVAR = 38, NAMEDPARAM = 39, ARGCOUNT = 40, PUSH = 41, 
+    POP = 42, CLOSED = 43, NTH = 44, PICK = 45, KEY = 46, ANTH = 47, APICK = 48, 
+    NULLIFY = 49, ASSIGN = 50, WHITESPACE = 51, NEWATOM = 52, POW = 53, 
+    APOW = 54, TIMES = 55, ATIMES = 56, DIVDIV = 57, ADIVDIV = 58, DIV = 59, 
+    ADIV = 60, REM = 61, AREM = 62, PLUS = 63, APLUS = 64, UPLUS = 65, MINUS = 66, 
+    AMINUS = 67, UMINUS = 68, EQUAL = 69, NEQ = 70, LOGNOT = 71, BITNOT = 72, 
+    LT = 73, GT = 74, LEQ = 75, GEQ = 76, BITAND = 77, ABITAND = 78, BITXOR = 79, 
     ABITXOR = 80, BITOR = 81, ABITOR = 82, LOGAND = 83, LOGANDEXT = 84, 
     ALOGAND = 85, ALOGANDEXT = 86, LOGXOR = 87, ALOGXOR = 88, LOGOR = 89, 
     ALOGOR = 90, LOGOREXT = 91, ALOGOREXT = 92, LSHIFT = 93, ALSHIFT = 94, 
@@ -145,13 +145,13 @@ private:
   void DIROUTLETAction(antlr4::RuleContext *context, size_t actionIndex);
   void BIFAction(antlr4::RuleContext *context, size_t actionIndex);
   void OFAction(antlr4::RuleContext *context, size_t actionIndex);
+  void KEEPAction(antlr4::RuleContext *context, size_t actionIndex);
+  void UNKEEPAction(antlr4::RuleContext *context, size_t actionIndex);
+  void INITAction(antlr4::RuleContext *context, size_t actionIndex);
   void GLOBALVARAction(antlr4::RuleContext *context, size_t actionIndex);
   void PATCHERVARAction(antlr4::RuleContext *context, size_t actionIndex);
   void LOCALVARAction(antlr4::RuleContext *context, size_t actionIndex);
   void NAMEDPARAMAction(antlr4::RuleContext *context, size_t actionIndex);
-  void KEEPAction(antlr4::RuleContext *context, size_t actionIndex);
-  void UNKEEPAction(antlr4::RuleContext *context, size_t actionIndex);
-  void INITAction(antlr4::RuleContext *context, size_t actionIndex);
   void ARGCOUNTAction(antlr4::RuleContext *context, size_t actionIndex);
   void PUSHAction(antlr4::RuleContext *context, size_t actionIndex);
   void POPAction(antlr4::RuleContext *context, size_t actionIndex);

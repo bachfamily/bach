@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 1,
-			"revision" : 0,
+			"minor" : 6,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"id" : "obj-28",
@@ -118,7 +119,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 202.0, 399.0, 370.0, 54.0 ],
-					"presentation_linecount" : 3,
 					"text" : "An even more concise way. All the assignment operators and the rich assignment syntax work as expected with the keep keyword."
 				}
 
@@ -159,7 +159,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 19.0, 288.0, 170.0, 52.0 ],
+					"patching_rect" : [ 19.0, 288.0, 173.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80007
@@ -204,7 +204,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 196.0, 288.0, 367.0, 54.0 ],
-					"presentation_linecount" : 5,
 					"text" : "A more concise way to do it: you can keep a variable assignment as well. In this case, the assignment is performed, then the value is kept and finally it is returned."
 				}
 
@@ -304,7 +303,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 36.0, 585.0, 94.0 ],
-					"text" : "Local variables generally have their values reset at each call. Through the \"keep\" keyword, though, it is possible to declare that the variable must retain its value on the next call.\nFor this mechanism to work, we need a general mechanism to set a value only if there is no value kept: this is accomplished through the \"init\" keyword.\nAll this works for the main function as well, that is, the \"main\" piece of code, residing all the explicit function definitions (yes, under the hood that's a function, too).",
+					"text" : "Local variables generally have their values reset at each call. Through the \"keep\" keyword, though, it is possible to declare that the variable must retain its value on the next call.\nFor this mechanism to work, we need a general mechanism to set a value only if there is no value kept: this is accomplished through the \"init\" keyword.\nAll this works for the main function as well, that is, the \"main\" piece of code, where all the explicit function definitions reside (yes, under the hood that's a function, too).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

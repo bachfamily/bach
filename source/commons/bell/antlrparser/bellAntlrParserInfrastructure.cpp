@@ -623,7 +623,7 @@ public:
             case bellParser::EQUAL: r = new astComparatorEq(n1, n2, params->owner); break;
             case bellParser::NEQ: r = new astComparatorNeq(n1, n2, params->owner); break;
             case bellParser::LT: r = new astComparatorLt(n1, n2, params->owner); break;
-            case bellParser::LEQ: r = new astComparatorLt(n1, n2, params->owner); break;
+            case bellParser::LEQ: r = new astComparatorLeq(n1, n2, params->owner); break;
             case bellParser::GT: r = new astComparatorGt(n1, n2, params->owner); break;
             case bellParser::GEQ: r = new astComparatorGeq(n1, n2, params->owner); break;
             case bellParser::BITAND: r = new astOperatorBitAnd(n1, n2, params->owner); break;

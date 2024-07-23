@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 6,
+			"minor" : 6,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -37,6 +37,7 @@
 		"tags" : "",
 		"style" : "",
 		"subpatcher_template" : "",
+		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -57,12 +58,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-18",
-					"linecount" : 6,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 301.0, 359.0, 196.0, 98.0 ],
-					"text" : "Another fun, but hardly useful, fact: functions can return functions.\nBy the way, here's how we define and call functions with no arguments."
+					"patching_rect" : [ 359.0, 367.0, 251.0, 83.0 ],
+					"text" : "Another fun, but hardly useful, fact: functions can return functions.\nBy the way, in bell v2 you can't define a function with no parameters, but you can always provide a dummy one!"
 				}
 
 			}
@@ -91,7 +92,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$funfun = ( -> (cos sin):random(1, 2)) ; $funfun()($x1) ",
+					"code" : "$funfun = ( $dummy -> (cos sin):random(1, 2)) ; $funfun()($x1) ",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
 					"linecount" : 2,
@@ -99,13 +100,13 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 389.5, 292.0, 38.0 ],
+					"patching_rect" : [ 6.0, 389.5, 348.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80005
+						"versionnumber" : 80300
 					}
 ,
-					"text" : "bach.eval $funfun = ( -> (cos sin):random(1\\, 2)) \\; $funfun()($x1) @out m"
+					"text" : "bach.eval $funfun = ( $dummy -> (cos sin):random(1\\, 2)) \\; $funfun()($x1) @out m"
 				}
 
 			}
