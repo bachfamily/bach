@@ -6017,14 +6017,14 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.ast = NULL;
     params.fnDepth = 0;
     params.localVariablesStack = params.localVariablesStackBase;
-    params.localVariablesStackV[0] = nullptr;
     params.localVariablesStackV = params.localVariablesStackBaseV;
+    params.localVariablesStackV[0] = nullptr;
     params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
     params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
     params.liftedVariablesStack = params.liftedVariablesStackBase;
     params.argumentsStack = params.argumentsStackBase;
-    params.argumentsStackV[0] = nullptr;
     params.argumentsStackV = params.argumentsStackBaseV;
+    params.argumentsStackV[0] = nullptr;
     params.gvt = bach->b_gvt;
     params.bifs = bach->b_bifTable;
     params.codeac = codeac;
