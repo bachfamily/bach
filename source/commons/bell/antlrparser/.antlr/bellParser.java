@@ -464,8 +464,8 @@ public class bellParser extends Parser {
 			return getRuleContext(FunargListContext.class,0);
 		}
 		public TerminalNode FUNDEF() { return getToken(bellParser.FUNDEF, 0); }
-		public SequenceContext sequence() {
-			return getRuleContext(SequenceContext.class,0);
+		public ListContext list() {
+			return getRuleContext(ListContext.class,0);
 		}
 		public LiftedargListContext liftedargList() {
 			return getRuleContext(LiftedargListContext.class,0);
@@ -498,7 +498,7 @@ public class bellParser extends Parser {
 			setState(102);
 			match(FUNDEF);
 			setState(103);
-			sequence();
+			list();
 			}
 		}
 		catch (RecognitionException re) {
@@ -532,6 +532,7 @@ public class bellParser extends Parser {
 	public final SequenceContext sequence() throws RecognitionException {
 		SequenceContext _localctx = new SequenceContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_sequence);
+		int _la;
 		try {
 			int _alt;
 			setState(114);
@@ -569,14 +570,14 @@ public class bellParser extends Parser {
 				} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
 				setState(112);
 				_errHandler.sync(this);
-				switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
-				case 1:
+				_la = _input.LA(1);
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3298526707704L) != 0) || ((((_la - 65)) & ~0x3f) == 0 && ((1L << (_la - 65)) & 2336462209225L) != 0)) {
 					{
 					setState(111);
 					list();
 					}
-					break;
 				}
+
 				}
 				break;
 			}
@@ -610,32 +611,26 @@ public class bellParser extends Parser {
 	public final NullifiedContext nullified() throws RecognitionException {
 		NullifiedContext _localctx = new NullifiedContext(_ctx, getState());
 		enterRule(_localctx, 14, RULE_nullified);
+		int _la;
 		try {
-			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(116);
 			list();
 			setState(118); 
 			_errHandler.sync(this);
-			_alt = 1;
+			_la = _input.LA(1);
 			do {
-				switch (_alt) {
-				case 1:
-					{
-					{
-					setState(117);
-					match(NULLIFY);
-					}
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
+				{
+				{
+				setState(117);
+				match(NULLIFY);
+				}
 				}
 				setState(120); 
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
-			} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
+				_la = _input.LA(1);
+			} while ( _la==NULLIFY );
 			}
 		}
 		catch (RecognitionException re) {
@@ -3527,7 +3522,7 @@ public class bellParser extends Parser {
 		"_]\u0001\u0000\u0000\u0000`a\u0005\'\u0000\u0000a\t\u0001\u0000\u0000"+
 		"\u0000bd\u0003\u0006\u0003\u0000ce\u0003\b\u0004\u0000dc\u0001\u0000\u0000"+
 		"\u0000de\u0001\u0000\u0000\u0000ef\u0001\u0000\u0000\u0000fg\u0005h\u0000"+
-		"\u0000gh\u0003\f\u0006\u0000h\u000b\u0001\u0000\u0000\u0000is\u0003:\u001d"+
+		"\u0000gh\u0003:\u001d\u0000h\u000b\u0001\u0000\u0000\u0000is\u0003:\u001d"+
 		"\u0000jl\u0003\u000e\u0007\u0000kj\u0001\u0000\u0000\u0000lm\u0001\u0000"+
 		"\u0000\u0000mk\u0001\u0000\u0000\u0000mn\u0001\u0000\u0000\u0000np\u0001"+
 		"\u0000\u0000\u0000oq\u0003:\u001d\u0000po\u0001\u0000\u0000\u0000pq\u0001"+

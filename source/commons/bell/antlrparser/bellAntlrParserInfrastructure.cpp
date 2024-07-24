@@ -344,7 +344,7 @@ public:
         
         *++(params->argumentsStackV) = fal;
 
-        auto l = safeAnyCast<astNode*>(visit(context->sequence()));
+        auto l = safeAnyCast<astNode*>(visit(context->list()));
         auto fn = new t_userFunction(*(params->argumentsStackV),
                                        *(params->localVariablesStackV),
                                        l, params->owner);

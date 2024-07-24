@@ -80,7 +80,7 @@ funargList: funarg (',' funarg)*
 liftedargList: LIFT (LOCALVAR ',')* LOCALVAR
 ;
 
-fundef: funargList liftedargList? FUNDEF sequence
+fundef: funargList liftedargList? FUNDEF list
 ;
 
 sequence: list

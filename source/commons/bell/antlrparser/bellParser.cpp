@@ -145,30 +145,30 @@ void bellParserInitialize() {
   	5,39,0,0,90,92,5,1,0,0,91,89,1,0,0,0,92,95,1,0,0,0,93,91,1,0,0,0,93,94,
   	1,0,0,0,94,96,1,0,0,0,95,93,1,0,0,0,96,97,5,39,0,0,97,9,1,0,0,0,98,100,
   	3,6,3,0,99,101,3,8,4,0,100,99,1,0,0,0,100,101,1,0,0,0,101,102,1,0,0,0,
-  	102,103,5,104,0,0,103,104,3,12,6,0,104,11,1,0,0,0,105,115,3,58,29,0,106,
-  	108,3,14,7,0,107,106,1,0,0,0,108,109,1,0,0,0,109,107,1,0,0,0,109,110,
-  	1,0,0,0,110,112,1,0,0,0,111,113,3,58,29,0,112,111,1,0,0,0,112,113,1,0,
-  	0,0,113,115,1,0,0,0,114,105,1,0,0,0,114,107,1,0,0,0,115,13,1,0,0,0,116,
-  	118,3,58,29,0,117,119,5,49,0,0,118,117,1,0,0,0,119,120,1,0,0,0,120,118,
-  	1,0,0,0,120,121,1,0,0,0,121,15,1,0,0,0,122,123,5,16,0,0,123,124,3,12,
-  	6,0,124,125,7,0,0,0,125,126,3,58,29,0,126,17,1,0,0,0,127,129,5,39,0,0,
-  	128,130,5,39,0,0,129,128,1,0,0,0,129,130,1,0,0,0,130,131,1,0,0,0,131,
-  	132,5,18,0,0,132,133,3,12,6,0,133,19,1,0,0,0,134,139,3,18,9,0,135,136,
-  	5,1,0,0,136,138,3,18,9,0,137,135,1,0,0,0,138,141,1,0,0,0,139,137,1,0,
-  	0,0,139,140,1,0,0,0,140,21,1,0,0,0,141,139,1,0,0,0,142,143,5,17,0,0,143,
-  	144,3,20,10,0,144,145,7,0,0,0,145,146,3,58,29,0,146,170,1,0,0,0,147,148,
-  	5,17,0,0,148,149,3,20,10,0,149,150,5,19,0,0,150,153,3,12,6,0,151,152,
-  	5,20,0,0,152,154,3,24,12,0,153,151,1,0,0,0,153,154,1,0,0,0,154,155,1,
-  	0,0,0,155,156,7,0,0,0,156,157,3,58,29,0,157,170,1,0,0,0,158,159,5,17,
-  	0,0,159,160,3,20,10,0,160,161,5,20,0,0,161,164,3,24,12,0,162,163,5,19,
-  	0,0,163,165,3,12,6,0,164,162,1,0,0,0,164,165,1,0,0,0,165,166,1,0,0,0,
-  	166,167,7,0,0,0,167,168,3,58,29,0,168,170,1,0,0,0,169,142,1,0,0,0,169,
-  	147,1,0,0,0,169,158,1,0,0,0,170,23,1,0,0,0,171,172,5,40,0,0,172,180,3,
-  	12,6,0,173,175,5,1,0,0,174,173,1,0,0,0,174,175,1,0,0,0,175,176,1,0,0,
-  	0,176,177,5,40,0,0,177,179,3,12,6,0,178,174,1,0,0,0,179,182,1,0,0,0,180,
-  	178,1,0,0,0,180,181,1,0,0,0,181,25,1,0,0,0,182,180,1,0,0,0,183,188,3,
-  	12,6,0,184,185,5,1,0,0,185,187,3,12,6,0,186,184,1,0,0,0,187,190,1,0,0,
-  	0,188,186,1,0,0,0,188,189,1,0,0,0,189,27,1,0,0,0,190,188,1,0,0,0,191,
+  	102,103,5,104,0,0,103,104,3,58,29,0,104,11,1,0,0,0,105,115,3,58,29,0,
+  	106,108,3,14,7,0,107,106,1,0,0,0,108,109,1,0,0,0,109,107,1,0,0,0,109,
+  	110,1,0,0,0,110,112,1,0,0,0,111,113,3,58,29,0,112,111,1,0,0,0,112,113,
+  	1,0,0,0,113,115,1,0,0,0,114,105,1,0,0,0,114,107,1,0,0,0,115,13,1,0,0,
+  	0,116,118,3,58,29,0,117,119,5,49,0,0,118,117,1,0,0,0,119,120,1,0,0,0,
+  	120,118,1,0,0,0,120,121,1,0,0,0,121,15,1,0,0,0,122,123,5,16,0,0,123,124,
+  	3,12,6,0,124,125,7,0,0,0,125,126,3,58,29,0,126,17,1,0,0,0,127,129,5,39,
+  	0,0,128,130,5,39,0,0,129,128,1,0,0,0,129,130,1,0,0,0,130,131,1,0,0,0,
+  	131,132,5,18,0,0,132,133,3,12,6,0,133,19,1,0,0,0,134,139,3,18,9,0,135,
+  	136,5,1,0,0,136,138,3,18,9,0,137,135,1,0,0,0,138,141,1,0,0,0,139,137,
+  	1,0,0,0,139,140,1,0,0,0,140,21,1,0,0,0,141,139,1,0,0,0,142,143,5,17,0,
+  	0,143,144,3,20,10,0,144,145,7,0,0,0,145,146,3,58,29,0,146,170,1,0,0,0,
+  	147,148,5,17,0,0,148,149,3,20,10,0,149,150,5,19,0,0,150,153,3,12,6,0,
+  	151,152,5,20,0,0,152,154,3,24,12,0,153,151,1,0,0,0,153,154,1,0,0,0,154,
+  	155,1,0,0,0,155,156,7,0,0,0,156,157,3,58,29,0,157,170,1,0,0,0,158,159,
+  	5,17,0,0,159,160,3,20,10,0,160,161,5,20,0,0,161,164,3,24,12,0,162,163,
+  	5,19,0,0,163,165,3,12,6,0,164,162,1,0,0,0,164,165,1,0,0,0,165,166,1,0,
+  	0,0,166,167,7,0,0,0,167,168,3,58,29,0,168,170,1,0,0,0,169,142,1,0,0,0,
+  	169,147,1,0,0,0,169,158,1,0,0,0,170,23,1,0,0,0,171,172,5,40,0,0,172,180,
+  	3,12,6,0,173,175,5,1,0,0,174,173,1,0,0,0,174,175,1,0,0,0,175,176,1,0,
+  	0,0,176,177,5,40,0,0,177,179,3,12,6,0,178,174,1,0,0,0,179,182,1,0,0,0,
+  	180,178,1,0,0,0,180,181,1,0,0,0,181,25,1,0,0,0,182,180,1,0,0,0,183,188,
+  	3,12,6,0,184,185,5,1,0,0,185,187,3,12,6,0,186,184,1,0,0,0,187,190,1,0,
+  	0,0,188,186,1,0,0,0,188,189,1,0,0,0,189,27,1,0,0,0,190,188,1,0,0,0,191,
   	194,6,14,-1,0,192,195,3,52,26,0,193,195,3,36,18,0,194,192,1,0,0,0,194,
   	193,1,0,0,0,195,196,1,0,0,0,196,197,5,103,0,0,197,198,5,43,0,0,198,228,
   	1,0,0,0,199,202,3,52,26,0,200,202,3,36,18,0,201,199,1,0,0,0,201,200,1,
@@ -766,8 +766,8 @@ tree::TerminalNode* bellParser::FundefContext::FUNDEF() {
   return getToken(bellParser::FUNDEF, 0);
 }
 
-bellParser::SequenceContext* bellParser::FundefContext::sequence() {
-  return getRuleContext<bellParser::SequenceContext>(0);
+bellParser::ListContext* bellParser::FundefContext::list() {
+  return getRuleContext<bellParser::ListContext>(0);
 }
 
 bellParser::LiftedargListContext* bellParser::FundefContext::liftedargList() {
@@ -814,7 +814,7 @@ bellParser::FundefContext* bellParser::fundef() {
     setState(102);
     match(bellParser::FUNDEF);
     setState(103);
-    sequence();
+    list();
    
   }
   catch (RecognitionException &e) {
@@ -860,6 +860,7 @@ std::any bellParser::SequenceContext::accept(tree::ParseTreeVisitor *visitor) {
 bellParser::SequenceContext* bellParser::sequence() {
   SequenceContext *_localctx = _tracker.createInstance<SequenceContext>(_ctx, getState());
   enterRule(_localctx, 12, bellParser::RuleSequence);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -903,15 +904,47 @@ bellParser::SequenceContext* bellParser::sequence() {
       setState(112);
       _errHandler->sync(this);
 
-      switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 7, _ctx)) {
-      case 1: {
+      _la = _input->LA(1);
+      if ((((_la & ~ 0x3fULL) == 0) &&
+        ((1ULL << _la) & ((1ULL << bellParser::UINT)
+        | (1ULL << bellParser::UFLOAT)
+        | (1ULL << bellParser::UPITCH)
+        | (1ULL << bellParser::K_PI)
+        | (1ULL << bellParser::BTSYMBOL)
+        | (1ULL << bellParser::DQSYMBOL)
+        | (1ULL << bellParser::SQSYMBOL)
+        | (1ULL << bellParser::EMPTYSYMBOL)
+        | (1ULL << bellParser::BACHNULL)
+        | (1ULL << bellParser::BACHNIL)
+        | (1ULL << bellParser::IF)
+        | (1ULL << bellParser::WHILE)
+        | (1ULL << bellParser::FOR)
+        | (1ULL << bellParser::INLET)
+        | (1ULL << bellParser::INTINLET)
+        | (1ULL << bellParser::RATINLET)
+        | (1ULL << bellParser::FLOATINLET)
+        | (1ULL << bellParser::PITCHINLET)
+        | (1ULL << bellParser::OUTLET)
+        | (1ULL << bellParser::DIRINLET)
+        | (1ULL << bellParser::DIROUTLET)
+        | (1ULL << bellParser::BIF)
+        | (1ULL << bellParser::OF)
+        | (1ULL << bellParser::ARGCOUNT)
+        | (1ULL << bellParser::KEEP)
+        | (1ULL << bellParser::UNKEEP)
+        | (1ULL << bellParser::INIT)
+        | (1ULL << bellParser::GLOBALVAR)
+        | (1ULL << bellParser::PATCHERVAR)
+        | (1ULL << bellParser::LOCALVAR)
+        | (1ULL << bellParser::PUSH))) != 0) || ((((_la - 65) & ~ 0x3fULL) == 0) &&
+        ((1ULL << (_la - 65)) & ((1ULL << (bellParser::UPLUS - 65))
+        | (1ULL << (bellParser::UMINUS - 65))
+        | (1ULL << (bellParser::LOGNOT - 65))
+        | (1ULL << (bellParser::BITNOT - 65))
+        | (1ULL << (bellParser::OPEN - 65))
+        | (1ULL << (bellParser::ELLIPSIS - 65)))) != 0)) {
         setState(111);
         list();
-        break;
-      }
-
-      default:
-        break;
       }
       break;
     }
@@ -964,6 +997,7 @@ std::any bellParser::NullifiedContext::accept(tree::ParseTreeVisitor *visitor) {
 bellParser::NullifiedContext* bellParser::nullified() {
   NullifiedContext *_localctx = _tracker.createInstance<NullifiedContext>(_ctx, getState());
   enterRule(_localctx, 14, bellParser::RuleNullified);
+  size_t _la = 0;
 
 #if __cplusplus > 201703L
   auto onExit = finally([=, this] {
@@ -973,28 +1007,19 @@ bellParser::NullifiedContext* bellParser::nullified() {
     exitRule();
   });
   try {
-    size_t alt;
     enterOuterAlt(_localctx, 1);
     setState(116);
     list();
     setState(118); 
     _errHandler->sync(this);
-    alt = 1;
+    _la = _input->LA(1);
     do {
-      switch (alt) {
-        case 1: {
-              setState(117);
-              match(bellParser::NULLIFY);
-              break;
-            }
-
-      default:
-        throw NoViableAltException(this);
-      }
+      setState(117);
+      match(bellParser::NULLIFY);
       setState(120); 
       _errHandler->sync(this);
-      alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 9, _ctx);
-    } while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER);
+      _la = _input->LA(1);
+    } while (_la == bellParser::NULLIFY);
    
   }
   catch (RecognitionException &e) {

@@ -234,7 +234,7 @@ public:
     virtual size_t getRuleIndex() const override;
     FunargListContext *funargList();
     antlr4::tree::TerminalNode *FUNDEF();
-    SequenceContext *sequence();
+    ListContext *list();
     LiftedargListContext *liftedargList();
 
 
