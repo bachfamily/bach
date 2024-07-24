@@ -344,7 +344,7 @@ public:
         
         *++(params->argumentsStackV) = fal;
 
-        auto l = safeAnyCast<astNode*>(visit(context->list()));
+        auto l = safeAnyCast<astNode*>(visit(context->sequence()));
         auto fn = new t_userFunction(*(params->argumentsStackV),
                                        *(params->localVariablesStackV),
                                        l, params->owner);
@@ -424,7 +424,7 @@ public:
     }
     
     antlrcpp::Any visitItemInlet(bellParser::ItemInletContext *context) override {
-        auto txt = context->INLET()->getText();
+        auto txt = context->children[0]->getText();
         const char *cstr = txt.c_str();
         int i = atoi(cstr + (txt[0] == '\\' ? 3 : 2));
         if (params->dataInlets && params->fnDepth == 0 && i > *params->dataInlets)

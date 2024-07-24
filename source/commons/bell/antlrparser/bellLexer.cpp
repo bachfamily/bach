@@ -55,8 +55,8 @@ void belllexerLexerInitialize() {
       "RAT", "BTSYMBOL", "DQSYMBOL", "SQSYMBOL", "EMPTYSYMBOL", "BACHNULL", 
       "BACHNIL", "IF", "THEN", "ELSE", "WHILE", "FOR", "IN", "AS", "WITH", 
       "DO", "COLLECT", "INLET", "INTINLET", "RATINLET", "FLOATINLET", "PITCHINLET", 
-      "OUTLET", "DIRINLET", "DIROUTLET", "BIF", "OF", "KEEP", "UNKEEP", 
-      "INIT", "GLOBALVAR", "PATCHERVAR", "LOCALVAR", "NAMEDPARAM", "ARGCOUNT", 
+      "OUTLET", "DIRINLET", "DIROUTLET", "BIF", "OF", "ARGCOUNT", "KEEP", 
+      "UNKEEP", "INIT", "GLOBALVAR", "PATCHERVAR", "LOCALVAR", "NAMEDPARAM", 
       "ID", "PUSH", "POP", "CLOSED", "NTH", "PICK", "KEY", "ANTH", "APICK", 
       "NULLIFY", "ASSIGN", "WHITESPACE", "NEWATOM", "POW", "APOW", "TIMES", 
       "ATIMES", "DIVDIV", "ADIVDIV", "DIV", "ADIV", "REM", "AREM", "PLUS", 
@@ -78,7 +78,7 @@ void belllexerLexerInitialize() {
       "", "','", "'...'", "", "", "", "'pi'", "", "", "", "", "'null'", 
       "'nil'", "'if'", "'then'", "'else'", "'while'", "'for'", "'in'", "'as'", 
       "'with'", "'do'", "'collect'", "", "", "", "", "", "", "", "", "", 
-      "", "'keep'", "'unkeep'", "'init'", "", "", "", "", "'$argcount'", 
+      "", "'$argcount'", "'keep'", "'unkeep'", "'init'", "", "", "", "", 
       "'['", "']'", "')'", "':'", "'::'", "'.'", "':='", "'::='", "';'", 
       "'='", "", "", "'**'", "'**='", "'*'", "'*='", "'//'", "'//='", "'/'", 
       "'/='", "'%'", "'%='", "", "'+='", "'+'", "", "'-='", "'-'", "'=='", 
@@ -93,18 +93,17 @@ void belllexerLexerInitialize() {
       "SQSYMBOL", "EMPTYSYMBOL", "BACHNULL", "BACHNIL", "IF", "THEN", "ELSE", 
       "WHILE", "FOR", "IN", "AS", "WITH", "DO", "COLLECT", "INLET", "INTINLET", 
       "RATINLET", "FLOATINLET", "PITCHINLET", "OUTLET", "DIRINLET", "DIROUTLET", 
-      "BIF", "OF", "KEEP", "UNKEEP", "INIT", "GLOBALVAR", "PATCHERVAR", 
-      "LOCALVAR", "NAMEDPARAM", "ARGCOUNT", "PUSH", "POP", "CLOSED", "NTH", 
-      "PICK", "KEY", "ANTH", "APICK", "NULLIFY", "ASSIGN", "WHITESPACE", 
-      "NEWATOM", "POW", "APOW", "TIMES", "ATIMES", "DIVDIV", "ADIVDIV", 
-      "DIV", "ADIV", "REM", "AREM", "PLUS", "APLUS", "UPLUS", "MINUS", "AMINUS", 
-      "UMINUS", "EQUAL", "NEQ", "LOGNOT", "BITNOT", "LT", "GT", "LEQ", "GEQ", 
-      "BITAND", "ABITAND", "BITXOR", "ABITXOR", "BITOR", "ABITOR", "LOGAND", 
-      "LOGANDEXT", "ALOGAND", "ALOGANDEXT", "LOGXOR", "ALOGXOR", "LOGOR", 
-      "ALOGOR", "LOGOREXT", "ALOGOREXT", "LSHIFT", "ALSHIFT", "RSHIFT", 
-      "ARSHIFT", "REPEAT", "AREPEAT", "AAPPLY", "ACONCAT", "ARCONCAT", "OPEN", 
-      "PARAMS", "FUNDEF", "LIFT", "ELLIPSIS", "BLOCKCOMMENT", "LINECOMMENT", 
-      "ANYTHING"
+      "BIF", "OF", "ARGCOUNT", "KEEP", "UNKEEP", "INIT", "GLOBALVAR", "PATCHERVAR", 
+      "LOCALVAR", "NAMEDPARAM", "PUSH", "POP", "CLOSED", "NTH", "PICK", 
+      "KEY", "ANTH", "APICK", "NULLIFY", "ASSIGN", "WHITESPACE", "NEWATOM", 
+      "POW", "APOW", "TIMES", "ATIMES", "DIVDIV", "ADIVDIV", "DIV", "ADIV", 
+      "REM", "AREM", "PLUS", "APLUS", "UPLUS", "MINUS", "AMINUS", "UMINUS", 
+      "EQUAL", "NEQ", "LOGNOT", "BITNOT", "LT", "GT", "LEQ", "GEQ", "BITAND", 
+      "ABITAND", "BITXOR", "ABITXOR", "BITOR", "ABITOR", "LOGAND", "LOGANDEXT", 
+      "ALOGAND", "ALOGANDEXT", "LOGXOR", "ALOGXOR", "LOGOR", "ALOGOR", "LOGOREXT", 
+      "ALOGOREXT", "LSHIFT", "ALSHIFT", "RSHIFT", "ARSHIFT", "REPEAT", "AREPEAT", 
+      "AAPPLY", "ACONCAT", "ARCONCAT", "OPEN", "PARAMS", "FUNDEF", "LIFT", 
+      "ELLIPSIS", "BLOCKCOMMENT", "LINECOMMENT", "ANYTHING"
     }
   );
   static const int32_t serializedATNSegment[] = {
@@ -192,10 +191,10 @@ void belllexerLexerInitialize() {
   	1,33,1,33,1,33,1,33,3,33,1101,8,33,1,33,1,33,1,34,1,34,1,34,1,34,1,34,
   	1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,
   	1,34,1,34,1,34,3,34,1127,8,34,1,34,1,34,1,35,1,35,1,35,1,35,1,35,1,35,
-  	1,35,1,36,1,36,1,36,1,36,1,36,1,36,1,36,1,36,1,36,1,37,1,37,1,37,1,37,
-  	1,37,1,37,1,37,1,38,1,38,1,38,1,39,1,39,1,39,1,39,1,40,3,40,1162,8,40,
-  	1,40,1,40,1,40,1,40,1,41,3,41,1169,8,41,1,41,1,41,1,41,1,41,1,42,1,42,
-  	1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,42,1,43,1,43,5,43,1189,
+  	1,35,1,35,1,35,1,35,1,35,1,35,1,36,1,36,1,36,1,36,1,36,1,36,1,36,1,37,
+  	1,37,1,37,1,37,1,37,1,37,1,37,1,37,1,37,1,38,1,38,1,38,1,38,1,38,1,38,
+  	1,38,1,39,1,39,1,39,1,40,1,40,1,40,1,40,1,41,3,41,1174,8,41,1,41,1,41,
+  	1,41,1,41,1,42,3,42,1181,8,42,1,42,1,42,1,42,1,42,1,43,1,43,5,43,1189,
   	8,43,10,43,12,43,1192,9,43,1,43,3,43,1195,8,43,1,44,1,44,1,44,1,45,1,
   	45,1,45,1,46,1,46,1,46,1,47,1,47,1,47,1,48,1,48,1,48,1,48,1,48,1,49,1,
   	49,1,49,1,50,1,50,1,50,1,50,1,50,1,51,1,51,1,51,1,51,1,51,1,51,1,52,1,
@@ -267,8 +266,8 @@ void belllexerLexerInitialize() {
   	0,45,440,1,0,0,0,47,447,1,0,0,0,49,452,1,0,0,0,51,463,1,0,0,0,53,475,
   	1,0,0,0,55,488,1,0,0,0,57,501,1,0,0,0,59,514,1,0,0,0,61,527,1,0,0,0,63,
   	540,1,0,0,0,65,554,1,0,0,0,67,1100,1,0,0,0,69,1126,1,0,0,0,71,1130,1,
-  	0,0,0,73,1137,1,0,0,0,75,1146,1,0,0,0,77,1153,1,0,0,0,79,1156,1,0,0,0,
-  	81,1161,1,0,0,0,83,1168,1,0,0,0,85,1174,1,0,0,0,87,1186,1,0,0,0,89,1196,
+  	0,0,0,73,1142,1,0,0,0,75,1149,1,0,0,0,77,1158,1,0,0,0,79,1165,1,0,0,0,
+  	81,1168,1,0,0,0,83,1173,1,0,0,0,85,1180,1,0,0,0,87,1186,1,0,0,0,89,1196,
   	1,0,0,0,91,1199,1,0,0,0,93,1202,1,0,0,0,95,1205,1,0,0,0,97,1208,1,0,0,
   	0,99,1213,1,0,0,0,101,1216,1,0,0,0,103,1221,1,0,0,0,105,1227,1,0,0,0,
   	107,1230,1,0,0,0,109,1233,1,0,0,0,111,1238,1,0,0,0,113,1243,1,0,0,0,115,
@@ -549,22 +548,22 @@ void belllexerLexerInitialize() {
   	5,116,0,0,1119,1120,5,105,0,0,1120,1127,5,110,0,0,1121,1122,5,112,0,0,
   	1122,1123,5,114,0,0,1123,1124,5,105,0,0,1124,1125,5,110,0,0,1125,1127,
   	5,116,0,0,1126,1104,1,0,0,0,1126,1113,1,0,0,0,1126,1121,1,0,0,0,1127,
-  	1128,1,0,0,0,1128,1129,6,34,30,0,1129,70,1,0,0,0,1130,1131,5,107,0,0,
-  	1131,1132,5,101,0,0,1132,1133,5,101,0,0,1133,1134,5,112,0,0,1134,1135,
-  	1,0,0,0,1135,1136,6,35,31,0,1136,72,1,0,0,0,1137,1138,5,117,0,0,1138,
-  	1139,5,110,0,0,1139,1140,5,107,0,0,1140,1141,5,101,0,0,1141,1142,5,101,
-  	0,0,1142,1143,5,112,0,0,1143,1144,1,0,0,0,1144,1145,6,36,32,0,1145,74,
-  	1,0,0,0,1146,1147,5,105,0,0,1147,1148,5,110,0,0,1148,1149,5,105,0,0,1149,
-  	1150,5,116,0,0,1150,1151,1,0,0,0,1151,1152,6,37,33,0,1152,76,1,0,0,0,
-  	1153,1154,3,87,43,0,1154,1155,6,38,34,0,1155,78,1,0,0,0,1156,1157,5,35,
-  	0,0,1157,1158,3,87,43,0,1158,1159,6,39,35,0,1159,80,1,0,0,0,1160,1162,
-  	5,92,0,0,1161,1160,1,0,0,0,1161,1162,1,0,0,0,1162,1163,1,0,0,0,1163,1164,
-  	5,36,0,0,1164,1165,3,87,43,0,1165,1166,6,40,36,0,1166,82,1,0,0,0,1167,
-  	1169,5,92,0,0,1168,1167,1,0,0,0,1168,1169,1,0,0,0,1169,1170,1,0,0,0,1170,
-  	1171,5,64,0,0,1171,1172,3,87,43,0,1172,1173,6,41,37,0,1173,84,1,0,0,0,
-  	1174,1175,5,36,0,0,1175,1176,5,97,0,0,1176,1177,5,114,0,0,1177,1178,5,
-  	103,0,0,1178,1179,5,99,0,0,1179,1180,5,111,0,0,1180,1181,5,117,0,0,1181,
-  	1182,5,110,0,0,1182,1183,5,116,0,0,1183,1184,1,0,0,0,1184,1185,6,42,38,
+  	1128,1,0,0,0,1128,1129,6,34,30,0,1129,70,1,0,0,0,1130,1131,5,36,0,0,1131,
+  	1132,5,97,0,0,1132,1133,5,114,0,0,1133,1134,5,103,0,0,1134,1135,5,99,
+  	0,0,1135,1136,5,111,0,0,1136,1137,5,117,0,0,1137,1138,5,110,0,0,1138,
+  	1139,5,116,0,0,1139,1140,1,0,0,0,1140,1141,6,35,31,0,1141,72,1,0,0,0,
+  	1142,1143,5,107,0,0,1143,1144,5,101,0,0,1144,1145,5,101,0,0,1145,1146,
+  	5,112,0,0,1146,1147,1,0,0,0,1147,1148,6,36,32,0,1148,74,1,0,0,0,1149,
+  	1150,5,117,0,0,1150,1151,5,110,0,0,1151,1152,5,107,0,0,1152,1153,5,101,
+  	0,0,1153,1154,5,101,0,0,1154,1155,5,112,0,0,1155,1156,1,0,0,0,1156,1157,
+  	6,37,33,0,1157,76,1,0,0,0,1158,1159,5,105,0,0,1159,1160,5,110,0,0,1160,
+  	1161,5,105,0,0,1161,1162,5,116,0,0,1162,1163,1,0,0,0,1163,1164,6,38,34,
+  	0,1164,78,1,0,0,0,1165,1166,3,87,43,0,1166,1167,6,39,35,0,1167,80,1,0,
+  	0,0,1168,1169,5,35,0,0,1169,1170,3,87,43,0,1170,1171,6,40,36,0,1171,82,
+  	1,0,0,0,1172,1174,5,92,0,0,1173,1172,1,0,0,0,1173,1174,1,0,0,0,1174,1175,
+  	1,0,0,0,1175,1176,5,36,0,0,1176,1177,3,87,43,0,1177,1178,6,41,37,0,1178,
+  	84,1,0,0,0,1179,1181,5,92,0,0,1180,1179,1,0,0,0,1180,1181,1,0,0,0,1181,
+  	1182,1,0,0,0,1182,1183,5,64,0,0,1183,1184,3,87,43,0,1184,1185,6,42,38,
   	0,1185,86,1,0,0,0,1186,1194,7,10,0,0,1187,1189,7,11,0,0,1188,1187,1,0,
   	0,0,1189,1192,1,0,0,0,1190,1188,1,0,0,0,1190,1191,1,0,0,0,1191,1193,1,
   	0,0,0,1192,1190,1,0,0,0,1193,1195,7,12,0,0,1194,1190,1,0,0,0,1194,1195,
@@ -663,7 +662,7 @@ void belllexerLexerInitialize() {
   	1538,1,0,0,0,1537,1535,1,0,0,0,1538,226,1,0,0,0,54,0,238,246,253,258,
   	261,265,270,272,277,281,286,288,294,299,306,311,315,325,330,337,346,354,
   	356,367,369,380,463,470,475,483,488,496,501,509,514,522,527,535,540,549,
-  	554,563,1100,1126,1161,1168,1190,1194,1509,1521,1526,1530,1537,107,1,
+  	554,563,1100,1126,1173,1180,1190,1194,1509,1521,1526,1530,1537,107,1,
   	1,0,1,2,1,1,3,2,1,4,3,1,5,4,1,9,5,1,10,6,1,11,7,1,12,8,1,13,9,1,14,10,
   	1,15,11,1,16,12,1,17,13,1,18,14,1,19,15,1,20,16,1,21,17,1,22,18,1,23,
   	19,1,24,20,1,25,21,1,26,22,1,27,23,1,28,24,1,29,25,1,30,26,1,31,27,1,
@@ -764,14 +763,14 @@ void bellLexer::action(RuleContext *context, size_t ruleIndex, size_t actionInde
     case 32: DIROUTLETAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
     case 33: BIFAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
     case 34: OFAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
-    case 35: KEEPAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
-    case 36: UNKEEPAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
-    case 37: INITAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
-    case 38: GLOBALVARAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
-    case 39: PATCHERVARAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
-    case 40: LOCALVARAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
-    case 41: NAMEDPARAMAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
-    case 42: ARGCOUNTAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 35: ARGCOUNTAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 36: KEEPAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 37: UNKEEPAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 38: INITAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 39: GLOBALVARAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 40: PATCHERVARAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 41: LOCALVARAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
+    case 42: NAMEDPARAMAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
     case 44: PUSHAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
     case 45: POPAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
     case 46: CLOSEDAction(antlrcpp::downCast<antlr4::RuleContext *>(context), actionIndex); break;
@@ -1137,16 +1136,16 @@ void bellLexer::OFAction(antlr4::RuleContext *context, size_t actionIndex) {
   }
 }
 
-void bellLexer::KEEPAction(antlr4::RuleContext *context, size_t actionIndex) {
+void bellLexer::ARGCOUNTAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
-    case 31:  noParams = true; noUnary = true;  break;
+    case 31:  noParams = false; noUnary = true;  break;
 
   default:
     break;
   }
 }
 
-void bellLexer::UNKEEPAction(antlr4::RuleContext *context, size_t actionIndex) {
+void bellLexer::KEEPAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
     case 32:  noParams = true; noUnary = true;  break;
 
@@ -1155,7 +1154,7 @@ void bellLexer::UNKEEPAction(antlr4::RuleContext *context, size_t actionIndex) {
   }
 }
 
-void bellLexer::INITAction(antlr4::RuleContext *context, size_t actionIndex) {
+void bellLexer::UNKEEPAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
     case 33:  noParams = true; noUnary = true;  break;
 
@@ -1164,16 +1163,16 @@ void bellLexer::INITAction(antlr4::RuleContext *context, size_t actionIndex) {
   }
 }
 
-void bellLexer::GLOBALVARAction(antlr4::RuleContext *context, size_t actionIndex) {
+void bellLexer::INITAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
-    case 34:  noParams = false; noUnary = true;  break;
+    case 34:  noParams = true; noUnary = true;  break;
 
   default:
     break;
   }
 }
 
-void bellLexer::PATCHERVARAction(antlr4::RuleContext *context, size_t actionIndex) {
+void bellLexer::GLOBALVARAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
     case 35:  noParams = false; noUnary = true;  break;
 
@@ -1182,7 +1181,7 @@ void bellLexer::PATCHERVARAction(antlr4::RuleContext *context, size_t actionInde
   }
 }
 
-void bellLexer::LOCALVARAction(antlr4::RuleContext *context, size_t actionIndex) {
+void bellLexer::PATCHERVARAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
     case 36:  noParams = false; noUnary = true;  break;
 
@@ -1191,18 +1190,18 @@ void bellLexer::LOCALVARAction(antlr4::RuleContext *context, size_t actionIndex)
   }
 }
 
-void bellLexer::NAMEDPARAMAction(antlr4::RuleContext *context, size_t actionIndex) {
+void bellLexer::LOCALVARAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
-    case 37:  noParams = true; noUnary = true;  break;
+    case 37:  noParams = false; noUnary = true;  break;
 
   default:
     break;
   }
 }
 
-void bellLexer::ARGCOUNTAction(antlr4::RuleContext *context, size_t actionIndex) {
+void bellLexer::NAMEDPARAMAction(antlr4::RuleContext *context, size_t actionIndex) {
   switch (actionIndex) {
-    case 38:  noParams = false; noUnary = true;  break;
+    case 38:  noParams = true; noUnary = true;  break;
 
   default:
     break;

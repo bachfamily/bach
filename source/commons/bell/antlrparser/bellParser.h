@@ -17,8 +17,8 @@ public:
     IF = 13, THEN = 14, ELSE = 15, WHILE = 16, FOR = 17, IN = 18, AS = 19, 
     WITH = 20, DO = 21, COLLECT = 22, INLET = 23, INTINLET = 24, RATINLET = 25, 
     FLOATINLET = 26, PITCHINLET = 27, OUTLET = 28, DIRINLET = 29, DIROUTLET = 30, 
-    BIF = 31, OF = 32, KEEP = 33, UNKEEP = 34, INIT = 35, GLOBALVAR = 36, 
-    PATCHERVAR = 37, LOCALVAR = 38, NAMEDPARAM = 39, ARGCOUNT = 40, PUSH = 41, 
+    BIF = 31, OF = 32, ARGCOUNT = 33, KEEP = 34, UNKEEP = 35, INIT = 36, 
+    GLOBALVAR = 37, PATCHERVAR = 38, LOCALVAR = 39, NAMEDPARAM = 40, PUSH = 41, 
     POP = 42, CLOSED = 43, NTH = 44, PICK = 45, KEY = 46, ANTH = 47, APICK = 48, 
     NULLIFY = 49, ASSIGN = 50, WHITESPACE = 51, NEWATOM = 52, POW = 53, 
     APOW = 54, TIMES = 55, ATIMES = 56, DIVDIV = 57, ADIVDIV = 58, DIV = 59, 
@@ -234,7 +234,7 @@ public:
     virtual size_t getRuleIndex() const override;
     FunargListContext *funargList();
     antlr4::tree::TerminalNode *FUNDEF();
-    ListContext *list();
+    SequenceContext *sequence();
     LiftedargListContext *liftedargList();
 
 
