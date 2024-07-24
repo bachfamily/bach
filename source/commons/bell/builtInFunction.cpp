@@ -817,6 +817,7 @@ t_llll* t_fnProd::call(const t_execEnv &context)
     if (prod_hatom.h_type == H_NOTHING)
         hatom_setlong(&prod_hatom, 0);
     llll_release(ll);
+    llll_appendhatom(prod_ll, &prod_hatom);
     return prod_ll;
 }
 
