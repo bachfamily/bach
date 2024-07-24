@@ -116,19 +116,20 @@ t_llll* t_fnReduce::lambdaFunction(t_fnData *lambdaData, t_llll *accum, const t_
     t_execEnv *context = &lambdaData->context;
     long numargs = context->argc;
     t_llll **lists = context->argv;
-    context->resetFnNamedArgs(fn, numargs);
     lists[1] = accum;
     t_llll *res;
     switch (numargs) {
         case 3:
             llll_appendlong(lists[3] = llll_get(), address);
             llll_appendhatom_clone(lists[2] = llll_get(), h);
+            context->resetFnNamedArgs(fn, numargs);
             res = fn->call(*context);
             bell_release_llll(lists[3]);
             lists[3] = nullptr;
             break;
         default:
             llll_appendhatom_clone(lists[2] = llll_get(), h);
+            context->resetFnNamedArgs(fn, numargs);
             res = fn->call(*context);
             break;
     }
