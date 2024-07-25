@@ -192,11 +192,12 @@ item: UINT #itemUint
 | EMPTYSYMBOL #itemEmptySymbol
 | BIF #itemBIF
 | OF #itemOF
+| MAXFUNCTION #itemMaxFunction
 | type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
 | DIRINLET #itemDirInlet
 | ARGCOUNT #itemArgcount
-| BACHNULL #itemNull
-| BACHNIL #itemNil
+| (BACHNULL | (OPEN CLOSED)) #itemNull
+| (BACHNIL | (PUSH POP)) #itemNil
 | OPEN sequence CLOSED #itemSequence
 | PUSH sequence POP #itemSublist
 ;
@@ -280,10 +281,18 @@ DIRINLET: '\\'? '$dx'[0-9]+ { noParams = false; noUnary = true; };
 DIROUTLET: '\\'? '$do'[0-9]+ { noParams = false; noUnary = true; };
 
 BIF: 
-    ('length'|'depth'|'is'|'nth'|'sort'|'contains'|'rev'|'rot'|'trans'|'flat'|'slice'|'left'|'right'|'subs'|'insert'|'find'|'finditems'|'findaddrs'|'scramble'|'minmax'|'perm'|'comb'|'cartesianprod'|'wrap'|'group'|'delace'|'thin'|'classify'|'union'|'intersection'|'symdiff'|'diff'|'primeser'|'arithmser'|'geomser'|'map'|'reduce'|'apply'
-    |'cos'|'sin'|'tan'|'exp'|'log'|'acos'|'asin'|'atan'|'cosh'|'sinh'|'tanh'|'exp2'|'log2'|'sqrt'|'ceil'|'acosh'|'asinh'|'atanh'|'log10'|'floor'|'round'|'trunc'|'fmod'|'atan2'|'hypot'|'pow'|'int'|'rat'|'num'|'den'|'abs'|'sgn'|'float'|'pitch'|'degree'|'octave'|'alter'|'cents'|'mod'|'min'|'max'|'random'|'bessel'|'approx'|'enharm'|'makepitch'|'makepitchsc'|'mc2f'|'f2mc'|'minimum'|'maximum'|'sum'|'prod'
+    ('length'|'depth'|'is'|'nth'|'sort'|'contains'|'rev'|'rot'|'trans'|'flat'|'slice'|'left'
+    |'right'|'subs'|'insert'|'find'|'finditems'|'findaddrs'|'scramble'|'minmax'|'perm'|'comb'
+    |'cartesianprod'|'wrap'|'group'|'delace'|'thin'|'classify'|'union'|'intersection'|'symdiff'|'diff'
+    |'primeser'|'arithmser'|'geomser'|'map'|'reduce'|'apply'
+    |'cos'|'sin'|'tan'|'exp'|'log'|'acos'|'asin'|'atan'|'cosh'|'sinh'|'tanh'
+    |'exp2'|'log2'|'sqrt'|'ceil'|'acosh'|'asinh'|'atanh'|'log10'|'floor'|'round'|'trunc'
+    |'fmod'|'atan2'|'hypot'|'pow'|'int'|'rat'|'num'|'den'|'abs'|'sgn'
+    |'float'|'pitch'|'degree'|'octave'|'alter'|'cents'|'mod'|'min'|'max'|'random'
+    |'bessel'|'approx'|'enharm'|'makepitch'|'makepitchsc'|'mc2f'|'f2mc'|'minimum'|'maximum'|'sum'|'prod'
     |'outlet'|'inlet'
-    |'#+'|'#-'|'#u-'|'#*'|'#/'|'#//'|'#%'|'#=='|'#!='|'#<'|'#>'|'#<='|'#>='|'#&'|'#^'|'#|'|'#&&'|'#^^'|'#||'|'#&&&'|'#|||'|'#<<'|'#>>'
+    |'#+'|'#-'|'#u-'|'#*'|'#/'|'#//'|'#%'|'#=='|'#!='|'#<'|'#>'|'#<='|'#>='
+    |'#&'|'#^'|'#|'|'#&&'|'#^^'|'#||'|'#&&&'|'#|||'|'#<<'|'#>>'
     |'$args') { noParams = false; noUnary = true; };
 
 OF: ('directout'|'directin'|'print') { noParams = false; noUnary = true; };
@@ -397,6 +406,8 @@ ARCONCAT: '!_=' { noParams = true; noUnary = false; };
 
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };
+
+MAXFUNCTION: '{' .+? '}' { noParams = false; noUnary = true; };
 
 FUNDEF: '->' { noParams = true; noUnary = false; };
 LIFT: '-^' { noParams = true; noUnary = false; };

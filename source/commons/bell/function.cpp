@@ -330,14 +330,14 @@ t_llll* t_maxFunction::call(t_execEnv const &context) {
         object_attr_setsym(in_obj, _llllobj_sym_out, out);
     }
     if (order->l_size == 0) {
-        for (int i = context.argc; i > 0; i--) {
+        for (long i = context.argc; i > 0; i--) {
             object_method(in_obj, gensym("pass"), i - 1, context.argv[i]);
         }
     } else {
         t_llllelem *el;
         int i;
         for (el = order->l_tail, i = order->l_size; el; el = el->l_prev, i--) {
-            int n = hatom_getlong(&el->l_hatom);
+            long n = hatom_getlong(&el->l_hatom);
             if (n > 0 && n <= nInlets) {
                 if (t_llll *passed = context.argv[i]; passed) {
                     object_method(in_obj, gensym("pass"), n - 1, passed);

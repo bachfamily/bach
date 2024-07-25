@@ -498,7 +498,7 @@ public:
         dataPseudovariables = new t_symbol*[count+1];
         addressPseudovariables = new t_symbol*[count+1];
         inClauses = new astNode*[count+1];
-        countedList<forArg *> *thisList;
+        //countedList<forArg *> *thisList;
         int i = 0;
         for (auto l : *lists) {
             dataPseudovariables[i] = l->getIndex();
@@ -538,7 +538,7 @@ public:
         t_atom_long spikemode = 0;
         t_atom_long unwrap = 0;
         
-        countedList<symNodePair *> *thisAttributes;
+        //countedList<symNodePair *> *thisAttributes;
         
         for (auto a : attrs) {
             llll_getAttributeValue(a, context, gensym("maxdepth"), &maxdepth) ||

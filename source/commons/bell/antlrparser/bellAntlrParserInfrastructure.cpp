@@ -117,6 +117,9 @@ public:
     }
     
     antlrcpp::Any visitSequence(bellParser::SequenceContext *ctx) override {
+        if (ctx->children.size() == 1)
+            return visit(ctx->children[0]);
+        
         auto v = new std::vector<astNode*>;
         for (auto child: ctx->children) {
             astNode* n = safeAnyCast<astNode*>(visit(child));
@@ -451,6 +454,16 @@ public:
     antlrcpp::Any visitItemOF(bellParser::ItemOFContext *context) override {
         std::string name = context->OF()->getText();
         t_function *fn = (*params->ofTable)[name];
+        astNode *r = new astConst(fn, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *context) override {
+        auto t = context->MAXFUNCTION()->getText();
+        t.erase(0, 1);
+        t.pop_back();
+        auto *fn = new t_maxFunction(t);
+        params->funcs->insert(fn);
         astNode *r = new astConst(fn, params->owner);
         return r;
     }
@@ -842,6 +855,8 @@ public:
     }
     
     antlrcpp::Any visitList(bellParser::ListContext *ctx) override {
+        if (ctx->children.size() == 1)
+            return visit(ctx->children[0]);
         auto v = new std::vector<astNode*>;
         for (auto child : ctx->children) {
             astNode* n = safeAnyCast<astNode*>(visit(child));

@@ -29,8 +29,8 @@ public:
     ALOGAND = 85, ALOGANDEXT = 86, LOGXOR = 87, ALOGXOR = 88, LOGOR = 89, 
     ALOGOR = 90, LOGOREXT = 91, ALOGOREXT = 92, LSHIFT = 93, ALSHIFT = 94, 
     RSHIFT = 95, ARSHIFT = 96, REPEAT = 97, AREPEAT = 98, AAPPLY = 99, ACONCAT = 100, 
-    ARCONCAT = 101, OPEN = 102, PARAMS = 103, FUNDEF = 104, LIFT = 105, 
-    ELLIPSIS = 106, BLOCKCOMMENT = 107, LINECOMMENT = 108, ANYTHING = 109
+    ARCONCAT = 101, OPEN = 102, PARAMS = 103, MAXFUNCTION = 104, FUNDEF = 105, 
+    LIFT = 106, ELLIPSIS = 107, BLOCKCOMMENT = 108, LINECOMMENT = 109, ANYTHING = 110
   };
 
   enum {
@@ -753,6 +753,15 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  ItemMaxFunctionContext : public ItemContext {
+  public:
+    ItemMaxFunctionContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *MAXFUNCTION();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  ItemBIFContext : public ItemContext {
   public:
     ItemBIFContext(ItemContext *ctx);
@@ -807,6 +816,8 @@ public:
     ItemNullContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *BACHNULL();
+    antlr4::tree::TerminalNode *OPEN();
+    antlr4::tree::TerminalNode *CLOSED();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -843,6 +854,8 @@ public:
     ItemNilContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *BACHNIL();
+    antlr4::tree::TerminalNode *PUSH();
+    antlr4::tree::TerminalNode *POP();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
