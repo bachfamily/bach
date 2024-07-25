@@ -2097,7 +2097,6 @@ t_jiwheel* jiwheel_new(t_symbol *s, long argc, t_atom *argv)
 
 void jiwheel_free(t_jiwheel *x){
     long i;
-    bach_freeptr(commas);
 
     if (x->curr_pitches)
         bach_freeptr(x->curr_pitches);
@@ -3873,7 +3872,6 @@ void jiwheel_mousemove(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifi
 
 void jiwheel_mousedoubleclick(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifiers)
 {
-    build_commas();
     jiwheel_mousedown(x, patcherview, pt, modifiers | eAltKey);
 }
 
@@ -4010,8 +4008,10 @@ void jiwheel_mousedrag(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifi
         }
     }
     systhread_mutex_unlock(x->c_mutex);
-
-   jbox_redraw((t_jbox *)x);
+    
+    jiwheel_output_selection(x);
+    
+    jbox_redraw((t_jbox *)x);
     
     x->mousedrag_pt = pt;
 }

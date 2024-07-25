@@ -1449,7 +1449,9 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
     jf_slot_file = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(7.0 * zoom_y));
     jf_slot_file_bold = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(7.0 * zoom_y));
     jf_slot_file_italic = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(7.0 * zoom_y));
-    jf_slot_function_point_labels = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(5 * zoom_y));
+    jf_slot_function_point_labels = jfont_create_debug(r_ob->slot_labels_font ? r_ob->slot_labels_font->s_name : "Arial", 
+                                                       r_ob->slot_labels_font_face >= 2 ? JGRAPHICS_FONT_SLANT_ITALIC : JGRAPHICS_FONT_SLANT_NORMAL,
+                                                       r_ob->slot_labels_font_face % 2 == 1 ? JGRAPHICS_FONT_WEIGHT_BOLD : JGRAPHICS_FONT_WEIGHT_NORMAL, round(r_ob->slot_labels_font_size * zoom_y));
     jf_slot_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(18 * zoom_y));
     jf_slot_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(9 * zoom_y));
     if (has_x_labels || has_y_labels)
@@ -2344,15 +2346,17 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 	}
 
 	// paint color strip over the slot name
-	double slotname_w, slotname_h;
-	jfont_text_measure(jf_slot_name, r_ob->slotinfo[s].slot_name->s_name, &slotname_w, &slotname_h);
-	if (MIN(slotname_w, usable_width) > 5)
-		paint_rectangle(g, slot_color, slot_color, left_pos, r_ob->slot_window_y1, MIN(slotname_w, usable_width), 1.25 * r_ob->zoom_y * r_ob->slot_window_zoom / 100., 0);
-	
-	// write the slot name
-	write_text(g, jf_slot_name, slot_namecolor, r_ob->slotinfo[s].slot_name->s_name, left_pos, r_ob->j_inset_y + r_ob->slot_window_y1 + 2, 
-			   usable_width, slot_window_active_height, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, true);
-	
+    
+    if (r_ob->show_slot_names) {
+        double slotname_w, slotname_h;
+        jfont_text_measure(jf_slot_name, r_ob->slotinfo[s].slot_name->s_name, &slotname_w, &slotname_h);
+        if (MIN(slotname_w, usable_width) > 5)
+            paint_rectangle(g, slot_color, slot_color, left_pos, r_ob->slot_window_y1, MIN(slotname_w, usable_width), 1.25 * r_ob->zoom_y * r_ob->slot_window_zoom / 100., 0);
+        
+        // write the slot name
+        write_text(g, jf_slot_name, slot_namecolor, r_ob->slotinfo[s].slot_name->s_name, left_pos, r_ob->j_inset_y + r_ob->slot_window_y1 + 2,
+                   usable_width, slot_window_active_height, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, true);
+    }
 	
 	jfont_destroy_debug(jf_slot_name);
 	jfont_destroy_debug(jf_slot_values);
@@ -10036,6 +10040,83 @@ void change_popupmenu_slot_flag(t_notation_obj *r_ob, long slot_num_0_based, cha
 
 
 
+t_max_err notationobj_setattr_measurenumber_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->measurenumber_font = font;
+            implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+
+t_max_err notationobj_setattr_tempo_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->tempo_font = font;
+            implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+
+t_max_err notationobj_setattr_tuplets_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->tuplets_font = font;
+            implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+t_max_err notationobj_setattr_rulerlabels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->rulerlabels_font = font;
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
 t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
@@ -10079,6 +10160,16 @@ t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t
 {
     if (ac) {
         r_ob->show_accidentals_preferences = (e_show_accidentals_preferences)CLAMP(atom_getlong(av), 0, 5);
+        quick_notationobj_recompute_all_chord_parameters(r_ob);
+    }
+
+    return MAX_ERR_NONE;
+}
+
+t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac) {
+        r_ob->show_cents_differences = CLAMP(atom_getlong(av), 0, 1);
         quick_notationobj_recompute_all_chord_parameters(r_ob);
     }
 

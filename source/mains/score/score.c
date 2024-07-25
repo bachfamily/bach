@@ -2955,7 +2955,7 @@ void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *params = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     if (params->l_size >= 2) { // position, name
         double pos_ms = 0, dur_ms = 0;
-        t_rational sym_dur;
+        t_rational sym_dur = long2rat(0);
         e_marker_roles markerrole = k_MARKER_ROLE_NONE;
         t_timepoint tp = build_timepoint_with_voice(0, long2rat(0), 0);
         char attach_to = k_MARKER_ATTACH_TO_MS;
@@ -6581,10 +6581,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @description The <m>split</m> message splits each selected chord into a number of pieces given as argument.
     // By default, sequences of completely tied chords are split as a whole (e.g. splitting a 1/4 chord tied to an 1/8 chord into 3 pieces, will yield 
     // three 1/8 chords); you can individually split each one of the chords instead by adding the "separate" symbol as second argument.
+    // If a "proportions" message argument is entered, this sets a list of proportions for the splitting.
     // @marg 0 @name num_parts @optional 0 @type int
     // @marg 1 @name separate @optional 1 @type symbol
+    // @mattr proportions @type llll @digest Splitting proportions
     // @example split 3 @caption split selected chords into 3 pieces each
     // @example split 3 separate @caption the same, separately splitting each chord in a tied sequence (if any)
+    // @example split @proportions 1 3 7 @caption split selected chords into 3 pieces with proportions 1:3:7
     // @seealso merge, join
     class_addmethod(c, (method) score_split, "split", A_GIMME, 0);
     
@@ -7699,6 +7702,30 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_ACCESSORS(c, "lyricsfont", (method)NULL, (method)notationobj_setattr_lyrics_font);
     // @description @copy BACH_DOC_LYRICS_FONT
     
+    CLASS_ATTR_SYM(c,"rulerlabelsfont", 0, t_notation_obj, rulerlabels_font);
+    CLASS_ATTR_STYLE_LABEL(c, "rulerlabelsfont", 0, "font", "Ruler Labels Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"rulerlabelsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "rulerlabelsfont", (method)NULL, (method)notationobj_setattr_rulerlabels_font);
+    // @description @copy BACH_DOC_RULERLABELS_FONT
+
+    CLASS_ATTR_SYM(c,"tupletfont", 0, t_notation_obj, tuplets_font);
+    CLASS_ATTR_STYLE_LABEL(c, "tupletfont", 0, "font", "Tuplet Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"tupletfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "tupletfont", (method)NULL, (method)notationobj_setattr_tuplets_font);
+    // @description Sets the font used to display tuplets (default is Arial).
+
+    CLASS_ATTR_SYM(c,"tempofont", 0, t_notation_obj, tempo_font);
+    CLASS_ATTR_STYLE_LABEL(c, "tempofont", 0, "font", "Tempo Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"tempofont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "tempofont", (method)NULL, (method)notationobj_setattr_tempo_font);
+    // @description Sets the font used to display tempo (default is Arial).
+
+    CLASS_ATTR_SYM(c,"measurenumberfont", 0, t_notation_obj, measurenumber_font);
+    CLASS_ATTR_STYLE_LABEL(c, "measurenumberfont", 0, "font", "Measure Numbers Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measurenumberfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "measurenumberfont", (method)NULL, (method)notationobj_setattr_measurenumber_font);
+    // @description Sets the font used to display measure numbers (default is Arial).
+
     CLASS_ATTR_SYM(c,"annotationsfont", 0, t_notation_obj, annotations_font);
     CLASS_ATTR_STYLE_LABEL(c, "annotationsfont", 0, "font", "Annotations Font");
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"annotationsfont", 0, "Arial");
@@ -10884,8 +10911,9 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             t_timepoint start_tp = marker_region_get_start_timepoint((t_notation_obj *) x, mk);
             t_timepoint end_tp = marker_region_get_end_timepoint((t_notation_obj *) x, mk);
             double ms = xposition_to_ms((t_notation_obj *) x, pt.x, 1);
-            t_timepoint new_end_tp = ms_to_timepoint((t_notation_obj *)x, ms, end_tp.voice_num, magnetic ? k_MS_TO_TP_RETURN_NEAREST : k_MS_TO_TP_RETURN_INTERPOLATION);
             
+            t_timepoint new_end_tp = ms_to_timepoint_autochoose_voice((t_notation_obj *)x, ms, magnetic ? k_MS_TO_TP_RETURN_NEAREST : k_MS_TO_TP_RETURN_INTERPOLATION, &end_tp.voice_num);
+
 //            dev_post("ms: %.2f, Timepoint - voice: %ld, meas: %ld, pim: %ld/%ld", ms, new_tp.voice_num, new_tp.measure_num, new_tp.pt_in_measure.r_num, new_tp.pt_in_measure.r_den);
             
             op = k_UNDO_OP_CHANGE_REGION_DURATION;
@@ -11342,7 +11370,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         delta_y *= CONST_FINER_FROM_KEYBOARD;
                     move_selection_breakpoint(x, 0., delta_y, 1.);
 
-                    if (x->r_ob.breakpoints_have_noteheads && x->r_ob.snap_pitch_to_grid_when_editing)
+                    if (x->r_ob.breakpoints_have_noteheads == 1 && x->r_ob.snap_pitch_to_grid_when_editing)
                         snap_pitch_to_grid_for_selection((t_notation_obj *)x);
 
                     changed = 1;
@@ -13753,6 +13781,14 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             if (is_in_marker_region_tail_shape((t_notation_obj *)x, marker, this_x, this_y, false)) {
                 clicked_ptr = marker;
                 clicked_obj = k_MARKER_REGION_TAIL;
+                if (modifiers == eCommandKey) {
+                    if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_DURATION)) {
+                        undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                        marker->r_sym_duration = long2rat(0);
+                        x->r_ob.item_changed_at_mousedown = 1;
+                        changed = true;
+                    }
+                }
                 break;
             } else if (is_in_marker_shape((t_notation_obj *)x, marker, this_x, this_y) ||
                        (is_in_markername_shape((t_notation_obj *)x, marker, this_x, this_y) &&
@@ -15197,8 +15233,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
                         marker->r_sym_duration = long2rat(-1);
                     else
                         marker->duration_ms = -1;
-                } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) ||
-                           (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) &&
+                } else if ((is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) && !(modifiers & eShiftKey) &&
                             (!marker->next || !is_in_markername_shape((t_notation_obj *)x, marker->next, pt.x, pt.y)))){
                     unlock_general_mutex((t_notation_obj *)x);    
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))

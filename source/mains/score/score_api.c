@@ -7081,7 +7081,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                 }
             }
 
-            if (x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0) {
+            if (x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.dynamics_affect_spacing > 0) {
                 for (temp_al_pt = start_tranche; temp_al_pt; temp_al_pt = temp_al_pt->next) {
                     tranche_part_due_to_dynamics += temp_al_pt->left_uext_due_to_dynamics + temp_al_pt->right_uext_due_to_dynamics;
                     global_lyrics_uwidth += temp_al_pt->global_dynamics_uwidth;
@@ -8933,7 +8933,12 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     if (x->r_ob.end_staff_with_final_measure) {
         if (voice->lastmeasure && voice->lastmeasure->tuttipoint_reference) {
             // tuttipoint_ux + curr_meas->start_barline_offset_ux + curr_meas->width_ux
-            double x_end = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, voice->lastmeasure->tuttipoint_reference->offset_ux + voice->lastmeasure->start_barline_offset_ux + voice->lastmeasure->width_ux)) + x->r_ob.zoom_y * measure_get_barline_ux_width((t_notation_obj *)x, voice->lastmeasure) - 0.5;
+            double last_barline_x = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, voice->lastmeasure->tuttipoint_reference->offset_ux + voice->lastmeasure->start_barline_offset_ux + voice->lastmeasure->width_ux));
+            double x_end = last_barline_x + 0.5;
+            char barline_type = voice->lastmeasure->end_barline->barline_type;
+            if (barline_type != k_BARLINE_NORMAL) {
+                x_end = last_barline_x + x->r_ob.zoom_y * measure_get_barline_ux_width((t_notation_obj *)x, voice->lastmeasure) - 0.5;
+            }
             
             if (x->r_ob.spacing_type == k_SPACING_PROPORTIONAL) {
                 x_end += x->r_ob.barline_ushift_for_proportional_spacing * x->r_ob.zoom_y; // barline_ushift_for_proportional_spacing is not exposed, so it's constantly 0
@@ -9408,7 +9413,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                     double bpt_x = (temp->rel_x_pos < 1.) ? chord_alignment_point_x + (note_end_pos - chord_alignment_point_x) * temp->rel_x_pos : note_end_pos;
                                     double bpt_y;
                                     
-                                    if (temp->rel_x_pos >= 1. && (x->r_ob.breakpoints_have_noteheads)) {
+                                    if (temp->rel_x_pos >= 1. && (x->r_ob.breakpoints_have_noteheads == 1)) {
                                         if (!temp->prev || temp->delta_mc != temp->prev->delta_mc)
                                             bpt_y = mc_to_ypos((t_notation_obj *)x, curr_nt->midicents + round(temp->delta_mc), (t_voice *) voice);
                                         else
@@ -9462,7 +9467,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                             paint_rhomboid(g, x->r_ob.j_background_rgba, bptcolor, bpt_x, bpt_y, x->r_ob.breakpoints_size * 0.6 * x->r_ob.zoom_y * grace_ratio, x->r_ob.breakpoints_size * x->r_ob.zoom_y * grace_ratio, 0.9);
                                         }
                                     } else { //tail
-                                        if (x->r_ob.breakpoints_have_noteheads && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
+                                        if (x->r_ob.breakpoints_have_noteheads == 1 && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
                                             paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, note_end_pos, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor((t_notation_obj *) x, temp->velocity) : CONST_GRACE_CHORD_SIZE);
                                         } else { 
                                             if (x->r_ob.show_tails) {
@@ -9569,7 +9574,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         }
                         
                         // need to put accidentals?
-                        paint_noteaccidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt,
+                        paint_accidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt,
                                               get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x,
                                               &accidental_top_extension, &accidental_bottom_extension);
                         
@@ -9823,9 +9828,10 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 				// lyrics?
 				if (curr_ch->lyrics && curr_ch->lyrics->label && strlen(curr_ch->lyrics->label) > 0 && x->r_ob.show_lyrics) {
 					double pos_y = staff_bottom - x->r_ob.lyrics_uy_pos * x->r_ob.zoom_y;
+                    double pos_x = curr_ch->stem_x + (curr_ch->direction == 1 ? -0.5 : 0.5) * chord_get_mainside_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_ch) + curr_ch->lyrics->lyrics_ux_shift * x->r_ob.zoom_y;
+                    double pos_ux = xposition_to_unscaled_xposition((t_notation_obj *)x, pos_x);
 					double lyrics_end_ux;
 					if (!(x->r_ob.is_editing_type == k_LYRICS && x->r_ob.is_editing_chord == curr_ch)){
-						double pos_x = curr_ch->stem_x + (curr_ch->direction == 1 ? -0.5 : 0.5) * chord_get_mainside_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_ch) + curr_ch->lyrics->lyrics_ux_shift * x->r_ob.zoom_y;
 						char is_lyrics_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->lyrics);
                         t_jrgba lyrics_color = x->r_ob.j_lyrics_rgba;
                         change_color_depending_on_playlockmute((t_notation_obj *) x, &lyrics_color, is_lyrics_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
@@ -9833,8 +9839,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 					}
 					
 					if (lyrics_dashed_going_on) {
-						double this_left_ux = chord_get_alignment_ux((t_notation_obj *) x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift;
-						long num_dash_needed = MAX(0, round((this_left_ux - left_dashed_ux) * CONST_NUM_DASH_PER_UX * x->r_ob.zoom_x / x->r_ob.zoom_y)); 
+//						double this_left_ux = chord_get_alignment_ux((t_notation_obj *) x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift;
+                        double this_left_ux = pos_ux;
+						long num_dash_needed = MAX(0, round((this_left_ux - left_dashed_ux) * CONST_NUM_DASH_PER_UX * x->r_ob.zoom_x / x->r_ob.zoom_y));
 						
 						if (num_dash_needed == 0 && (this_left_ux - left_dashed_ux) > CONST_UX_MINIMUM_SPACE_FOR_DASH * 1.25)
 							num_dash_needed = 1;
@@ -9843,8 +9850,14 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             num_dash_needed = 1;
 
 						if (num_dash_needed == 1) {
-							double ux_module = (this_left_ux - left_dashed_ux - CONST_UX_MINIMUM_SPACE_FOR_DASH)/2;
-							write_text_standard_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_module), pos_y);
+                            double dashwidth = 0, dashheight = 0;
+                            jfont_text_measure(jf_lyrics, "-", &dashwidth, &dashheight);
+                            double ux_shift = (this_left_ux - left_dashed_ux - deltaxpixels_to_deltauxpixels((t_notation_obj *)x, dashwidth))/2;
+//                            double ux_module = (this_left_ux - left_dashed_ux - CONST_UX_MINIMUM_SPACE_FOR_DASH)/2;
+//                            paint_line(g, build_jrgba(1, 0, 0, 1), unscaled_xposition_to_xposition((t_notation_obj *) x, this_left_ux), 0, unscaled_xposition_to_xposition((t_notation_obj *) x, this_left_ux), 300, 1);
+//                            paint_line(g, build_jrgba(0, 1, 0, 1), unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux), 0, unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux), 300, 1);
+//                            paint_line(g, build_jrgba(0, 0, 1, 1), unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_shift), 0, unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_shift), 300, 1);
+							write_text_standard_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_shift), pos_y);
 						} else if (num_dash_needed > 1) {
 							double ux_module = (this_left_ux - left_dashed_ux)/num_dash_needed;
 							for (i = 0; i < num_dash_needed; i++){
@@ -9855,7 +9868,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 					}
 					
 					lyrics_dashed_going_on = curr_ch->lyrics->lyrics_dashed_extension;
-					lyrics_end_ux = chord_get_alignment_ux((t_notation_obj *) x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift + curr_ch->lyrics->lyrics_uwidth;
+//					lyrics_end_ux = chord_get_alignment_ux((t_notation_obj *) x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift + curr_ch->lyrics->lyrics_uwidth;
+                    lyrics_end_ux = pos_ux + curr_ch->lyrics->lyrics_uwidth;
 					if (lyrics_dashed_going_on)
 						left_dashed_ux = lyrics_end_ux;
 					
@@ -10043,13 +10057,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     t_measure *temp = tpt->measure[i];
                     while (temp && temp->next && temp->next->tuttipoint_reference == tpt)
                         temp = temp->next;
-#ifdef CONFIGURATION_Development
-                    if (!temp) {
-                        long foo = 7;
-                        foo++;
-                        bach_breakpoint(0);
-                    }
-#endif
                     if (temp && notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)temp->end_barline)){
                         barline_selected = true;
                         break;
@@ -10373,7 +10380,8 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
         jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.markers_font_size * x->r_ob.zoom_y));  // text font for markers
         jf_tempi_italic = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_ITALIC , JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.tempo_size * 12.5714285714 * x->r_ob.zoom_y));
         jf_tempi_figure = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.tempo_size * x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y);
-        jf_tuplets = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(CONST_TUPLET_BASE_PT * x->r_ob.zoom_y));
+        jf_tuplets = jfont_create_debug(x->r_ob.tuplets_font ? x->r_ob.tuplets_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.tuplets_font_size * x->r_ob.zoom_y);
+//        jf_tuplets = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(CONST_TUPLET_BASE_PT * x->r_ob.zoom_y));
         jf_lyrics = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size * x->r_ob.zoom_y);
         jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
         jf_ann = jfont_create_debug(x->r_ob.annotations_font ? x->r_ob.annotations_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.annotation_font_size * x->r_ob.zoom_y);
@@ -10771,8 +10779,8 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
     jf_text_fractions = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_TEXT_FRACTIONS_PT * x->r_ob.zoom_y);
     jf_ts = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt_ts * x->r_ob.zoom_y);
     jf_ts_big = jfont_create_debug(x->r_ob.noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.notation_typo_preferences.base_pt_ts * x->r_ob.zoom_y * x->r_ob.big_time_signatures_ratio);
-    jf_tempi = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.tempo_size * 12.5714285714 * x->r_ob.zoom_y));
-    jf_measure_num = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.measure_numbers_font_size * x->r_ob.zoom_y));
+    jf_tempi = jfont_create_debug(x->r_ob.tempo_font ? x->r_ob.tempo_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.tempo_size * 12.5714285714 * x->r_ob.zoom_y));
+    jf_measure_num = jfont_create_debug(x->r_ob.measurenumber_font ? x->r_ob.measurenumber_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.measure_numbers_font_size * x->r_ob.zoom_y));
 
 //    dev_post("val = %.3f", x->r_ob.notation_typo_preferences.base_pt * x->r_ob.zoom_y);
     
