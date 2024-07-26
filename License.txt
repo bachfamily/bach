@@ -11,16 +11,16 @@ bach includes:
 - A modified version of The Mini-XML library version 2.7 (https://www.msweet.org/mxml/index.html), released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)
 - The Kiss FFT library (https://github.com/mborgerding/kissfft), released under the terms of the BSD License.
 - A modified version of the IRCAM SDIF library (http://sdif.sourceforge.net/extern/alpha-main.html), released under the terms of the GNU Lesser General Public License version 2 (LGPL-v2.0)
-
+- A slightly modified version of the Antlr4 cpp runtime (https://github.com/antlr/antlr4-cpp), licensed under the terms of the BSD license.
 
 The licenses for bach, the “November for bach” font and each of the libraries listed above follow.
+
 
 
 
 =====================================================
 License for bach
 =====================================================
-
 
 GNU GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
@@ -144,6 +144,9 @@ The hypothetical commands `show w' and `show c' should show the appropriate part
 You should also get your employer (if you work as a programmer) or school, if any, to sign a “copyright disclaimer” for the program, if necessary. For more information on this, and how to apply and follow the GNU GPL, see <https://www.gnu.org/licenses/>.
 The GNU General Public License does not permit incorporating your program into proprietary programs. If your program is a subroutine library, you may consider it more useful to permit linking proprietary applications with the library. If this is what you want to do, use the GNU Lesser General Public License instead of this License. But first, please read <https://www.gnu.org/licenses/why-not-lgpl.html>.
 
+
+
+
 ============================================================
 License for the November for bach font
 ============================================================
@@ -236,10 +239,12 @@ DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
 
+
+
+
 =====================================================
 License for the Kiss FFT library
 =====================================================
-
 
 Copyright (c) 2003-2010 Mark Borgerding
 
@@ -766,6 +771,9 @@ library `Frob' (a library for tweaking knobs) written by James Random Hacker.
 Ty Coon, President of Vice
 
 That's all there is to it!
+
+
+
 ========================================================
 License for the IRCAM SDIF library
 ========================================================
@@ -1272,3 +1280,37 @@ library `Frob' (a library for tweaking knobs) written by James Random Hacker.
 Ty Coon, President of Vice
 
 That's all there is to it!
+
+
+
+
+========================================
+License for the Antlr4 cpp runtime
+========================================
+
+[The "BSD license"]
+Copyright (c) 2015 Terence Parr, Sam Harwell
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. The name of the author may not be used to endorse or promote products
+    derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
