@@ -34,6 +34,10 @@
 BEGIN_CHECK_LINKAGE
 #endif
 
+
+
+#define DBL_SMALLEST (-DBL_MAX)
+
 typedef enum {
     k_SLOPE_MAPPING_BACH    = 0,    // bach slope function: y = x^((1+s)/(1-s)) for positive s and mirrored backwards for negative s
     k_SLOPE_MAPPING_MAX     = 1,    // Max slope function

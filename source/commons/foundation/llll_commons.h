@@ -1049,6 +1049,9 @@ long llll_prime(long what);
 // eg 12 = 2^2 * 3^1, so (2 2) (3 1) will be returned
 t_llll *llll_factorize(long what);
 
+// Factorization of a rational number
+// e.g. 15/28 = 3*5/(7*2^2) so (2 -2) (3 1) (5 1) (7 -1) will be returned
+t_llll *llll_factorize_rational(t_rational what);
 
 // return the series of primes from min to max, up to a maximum size of maxcount (0 = no maximum)
 t_llll *llll_primeser(long min, long max, long maxcount);

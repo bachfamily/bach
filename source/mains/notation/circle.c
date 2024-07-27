@@ -1193,6 +1193,8 @@ void circle_paint(t_circle *x, t_object *view)
     jgraphics_set_line_width(g, (x->show_focus && x->j_has_focus) ? 2.5 : 1.);
     jgraphics_stroke(g);
 #endif
+    
+    jfont_destroy_debug(jf_text);
 }
 
 

@@ -1405,7 +1405,17 @@
 
 
 #define BACH_DOC_MESSAGE_CLEARMARKERS
-	// The <m>clearmarkers</m> simply delets all the markers in the notation object.
+	// The <m>clearmarkers</m> message deletes all the markers in the notation object.
+
+
+#define BACH_DOC_MESSAGE_CLEARSLURS
+    // The <m>clearslurs</m> message delets all the slurs in the notation object.
+
+#define BACH_DOC_MESSAGE_ADDSLUR
+    // The <m>addslur</m> message adds a new slur.
+    // If "selection" is given as argument, then the selected items will be gathered under a slur.
+    // Otherwise, two argument are expected, containing the paths of the starting and ending chord of the slur as wrapped lllls.
+    // An optional message attribute "name" also sets the name(s) of the slur.
 
 	
 #define BACH_DOC_MESSAGE_OPENSLOTWINS
@@ -1713,12 +1723,19 @@
 	//    ↪ Add the <m>Shift+Ctrl</m> key to trim the tail, i.e. to keep the existing absolute pitch breakpoint positions. <br />
     // • <m>Ctrl+click+drag</m> on a notehead or on dynamic mark: change velocity or dynamic mark <br />
 	// • <m>doubleclick</m> on voice names, marker names or lyrics: Edit names directly <br />
+    // • <m>doubleclick</m> on clefs: Select all items in voice <br />
 	// • <m>doubleclick</m> on selected items: Selection off-line play (as the <m>V</m> key), but only if <m>dblclicksendsvalues</m> is set to 1 <br />
 	// • <m>Shift+click+drag</m> on a clef (at the beginning of the staff): Move voice vertically (along with all the next ones), i.e.: modify vertical space before clicked voice <br />
 	// • <m>Shift+Alt+click+drag</m> on a clef (at the beginning of the staff): Move all following voices vertically (but not the clicked one), i.e.: modify vertical space after clicked voice <br />
 	// • <m>right click</m> or <m>two-fingers-tap</m>: Open contextual popup menu. This can be opened by clicking on noteheads (note or selection popup menu), clefs 
 	// (voice popup menu) or on the background (backgroun popup menu). <br />
 	//
+    // <br />
+    // Marker regions
+    // • <m>doubleclick</m> on marker region strips: Select items in region <br />
+    // • <m>click+drag</m> on the end portion of a marker region strip: Extend the marker region <br />
+    // • <m>doubleclick</m> on the end portion of a marker region strip: Extend the marker region till the next marker <br />
+    //
 	// <br />
 	// Selection, zooming, scrollbar and dilation rectangle: <br />
 	// • <m>click</m> on any item: Select item <br />
@@ -1935,12 +1952,19 @@
 	//    ↪ Add the <m>Alt</m> key to keep the existing absolute pitch breakpoint positions <br />
     // • <m>Ctrl+click+drag</m> on a notehead or on dynamic mark: change velocity or dynamic mark <br />
 	// • <m>doubleclick</m> on voice names, marker names or lyrics: Edit names directly <br />
+    // • <m>doubleclick</m> on clefs: Select all items in voice <br />
 	// • <m>doubleclick</m> on selected items: Selection off-line play (as the <m>V</m> key), but only if <m>dblclicksendsvalues</m> is set to 1 <br />
 	// • <m>Shift+click+drag</m> on a clef (at the beginning of the staff): Move voice vertically (along with all the next ones), i.e.: modify vertical space before clicked voice <br />
 	// • <m>Shift+Alt+click+drag</m> on a clef (at the beginning of the staff): Move all following voices vertically (but not the clicked one), i.e.: modify vertical space after clicked voice <br />
 	// • <m>right click</m> or <m>two-fingers-tap</m>: Open contextual popup menu. This can be opened by clicking on noteheads (note or selection popup menu), clefs 
 	// (voice popup menu), measure (measure popup menu), measure barlines (barline popup menu) or on the background (backgroun popup menu). <br />
 	//
+    // <br />
+    // Marker regions
+    // • <m>doubleclick</m> on marker region strips: Select items in region <br />
+    // • <m>click+drag</m> on the end portion of a marker region strip: Extend the marker region <br />
+    // • <m>doubleclick</m> on the end portion of a marker region strip: Extend the marker region till the next marker <br />
+    //
 	// <br />
 	// Selection, zooming, scrollbar and dilation rectangle: <br />
 	// • <m>click</m> on any item: Select item <br />
@@ -2585,6 +2609,21 @@
 // - <b>filename</b> (default: not set): the name of the file to be written.
 // If set, this specification overrides the file name set as the first message argument.
 
+#define BACH_DOC_GENERIC_CHANGE_MESSAGES
+// Generic changes in a score can be obtained via the syntax <br />
+// <b>insert/remove/change <m>element_type</m> <m>element_path</m> <m>property_name</m> <m>content_as_llll</m></b> <br />
+// If the initial symbol is "remove", the last two fields are irrelevant; if the initial symbol is "
+// Properties are the ones displayed in the bach inspector for the specific element, plus the symbol "state", which
+// sets the whole state of the element from a gathered syntax llll. <br />
 
+
+#define BACH_DOC_GENERIC_TRANSACTION
+// A generic transaction is a sequence of generic messages executed seamlessly, without refreshing the order of chords, notes
+// and markers, and without refreshing the display in the middle. <br />
+// Transactions are obtained via the syntax
+// <b>transaction <m>transaction_name</m> [<m>change_message1</m> <m>change_message2</m> ...]</b> <br />
+// where <m>transaction_name</m> is a symbol associated with the transaction and each one of the <m>change_message</m>s has
+// the syntax of a generic change, described in the following paragraph. <br />
+// @copy BACH_DOC_GENERIC_CHANGE_MESSAGES
 
 

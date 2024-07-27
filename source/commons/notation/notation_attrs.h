@@ -24,7 +24,7 @@
 #include "notation/notation.h"
 
 #define DEFINE_NOTATIONOBJ_LONGPTR_GETTER(DATA_FIELD, COUNT_FIELD) \
-t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
+t_max_err notationobj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
 { \
 	long i; \
     char alloc; \
@@ -38,7 +38,7 @@ t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr,
 }
 
 #define DEFINE_NOTATIONOBJ_DBLPTR_GETTER(DATA_FIELD, COUNT_FIELD) \
-t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
+t_max_err notationobj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
 { \
 	long i; \
     char alloc; \
@@ -52,7 +52,7 @@ t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr,
 }
 
 #define DEFINE_NOTATIONOBJ_SYMPTR_GETTER(DATA_FIELD, COUNT_FIELD) \
-t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
+t_max_err notationobj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
 { \
 	long i; \
     char alloc; \
@@ -66,7 +66,7 @@ t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr,
 }
 
 #define DEFINE_NOTATIONOBJ_CHARPTR_GETTER(DATA_FIELD, COUNT_FIELD) \
-t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
+t_max_err notationobj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
 { \
 	long i; \
     char alloc; \
@@ -84,7 +84,7 @@ t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr,
 */
 
 #define DEFINE_NOTATIONOBJ_ATOMPTR_GETTER(DATA_FIELD, COUNT_FIELD) \
-t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
+t_max_err notationobj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
 { \
 	long i; \
     char alloc; \
@@ -99,36 +99,36 @@ t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr,
 
 /*
 #define CLASS_ATTR_NOTATIONOBJ_LONGPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_new(attrname, USESYM(long), (flags), (method)notation_obj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_new(attrname, USESYM(long), (flags), (method)notationobj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
 
 #define CLASS_ATTR_NOTATIONOBJ_DBLPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_new(attrname, USESYM(float64), (flags), (method)notation_obj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_new(attrname, USESYM(float64), (flags), (method)notationobj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
 
 #define CLASS_ATTR_NOTATIONOBJ_SYMPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_new(attrname, USESYM(symbol), (flags), (method)notation_obj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_new(attrname, USESYM(symbol), (flags), (method)notationobj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
 
 #define CLASS_ATTR_NOTATIONOBJ_CHARPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_new(attrname, USESYM(char), (flags), (method)notation_obj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_new(attrname, USESYM(char), (flags), (method)notationobj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
 
 #define CLASS_ATTR_NOTATIONOBJ_ATOMPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_new(attrname, USESYM(atom), (flags), (method)notation_obj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_new(attrname, USESYM(atom), (flags), (method)notationobj_##structmember##_getattr, (method)setter, calcoffset(t_notation_obj, structmember)))
 */
  
 
 #define CLASS_ATTR_NOTATIONOBJ_LONGPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_array_new(attrname, USESYM(long), maxcount, (flags), (method)notation_obj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_array_new(attrname, USESYM(long), maxcount, (flags), (method)notationobj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
 
 #define CLASS_ATTR_NOTATIONOBJ_DBLPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_array_new(attrname, USESYM(float64), maxcount, (flags), (method)notation_obj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_array_new(attrname, USESYM(float64), maxcount, (flags), (method)notationobj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
 
 #define CLASS_ATTR_NOTATIONOBJ_SYMPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_array_new(attrname, USESYM(symbol), maxcount, (flags), (method)notation_obj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_array_new(attrname, USESYM(symbol), maxcount, (flags), (method)notationobj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
 
 #define CLASS_ATTR_NOTATIONOBJ_CHARPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_array_new(attrname, USESYM(char), maxcount, (flags), (method)notation_obj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_array_new(attrname, USESYM(char), maxcount, (flags), (method)notationobj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
 
 #define CLASS_ATTR_NOTATIONOBJ_ATOMPTR(c,attrname,flags,structmember,maxcount,setter) \
-class_addattr((c), attr_offset_array_new(attrname, USESYM(atom), maxcount, (flags), (method)notation_obj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
+class_addattr((c), attr_offset_array_new(attrname, USESYM(atom), maxcount, (flags), (method)notationobj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
 
 
 #endif // _NOTATION_ATTRS_H_

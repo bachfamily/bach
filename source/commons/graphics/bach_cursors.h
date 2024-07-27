@@ -107,6 +107,7 @@ typedef struct _bach_cursor_resources
 	
 	// additional icons
 	t_jsurface *s_icon_marker;
+    t_jsurface *s_icon_slur;
 	t_jsurface *s_icon_note;
 	t_jsurface *s_icon_chord;
 	t_jsurface *s_icon_measure;
