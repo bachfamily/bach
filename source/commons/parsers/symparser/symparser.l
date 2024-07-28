@@ -97,6 +97,19 @@ ACCIDENTAL ([#bxdq\^v]+)
 }
 
 <INITIAL,NO_L,NO_b,NO_Lb,NO_e,NO_Le,NO_be,NO_Lbe,NO_l,NO_Ll,NO_bl,NO_Lbl,NO_el,NO_Lel,NO_bel,NO_Lbel,NO_r,NO_Lr,NO_br,NO_Lbr,NO_er,NO_Ler,NO_ber,NO_Lber,NO_lr,NO_Llr,NO_blr,NO_Lblr,NO_elr,NO_Lelr,NO_belr,NO_Lbelr,NO_s,NO_Ls,NO_bs,NO_Lbs,NO_es,NO_Les,NO_bes,NO_Lbes,NO_ls,NO_Lls,NO_bls,NO_Lbls,NO_els,NO_Lels,NO_bels,NO_Lbels,NO_rs,NO_Lrs,NO_brs,NO_Lbrs,NO_ers,NO_Lers,NO_bers,NO_Lbers,NO_lrs,NO_Llrs,NO_blrs,NO_Lblrs,NO_elrs,NO_Lelrs,NO_belrs,NO_Lbelrs>{
+
+
+[-+]?{NOTENAME}(({ACCIDENTAL}?{INTEGER})|({INTEGER}{ACCIDENTAL}))({INTEGER}([/]{INTEGER}t))?([+-]?{NOTENAME}[#b]*\{(({INTEGER}:)*{INTEGER})?\}({INTEGER}([/]{INTEGER}r)))? {
+    yylval->p = t_parser::eatPitchWithET(yytext);
+    return BACH_PITCH;
+}
+
+[+-]?{NOTENAME}[#b]*\{(({INTEGER}:)*{INTEGER})?\}({INTEGER}([/]{INTEGER}r)) {
+    yylval->p = t_parser::eatPitchPureJI(yytext);
+    return BACH_PITCH;
+}
+
+
     [-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER} {
         yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
         parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());

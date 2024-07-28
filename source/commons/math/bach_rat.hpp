@@ -43,6 +43,9 @@ template <> struct TwiceAsBigInt<t_int16> {
     typedef t_int32 data;
 };
 
+template <> struct TwiceAsBigInt<t_int8> {
+    typedef t_int16 data;
+};
 
 
 template <typename U, typename V> struct TwiceAsBigInt2 {
@@ -71,7 +74,15 @@ template <> struct TwiceAsBigInt2<t_int16, t_int32> {
     typedef t_int64 data;
 };
 
+template <> struct TwiceAsBigInt2<t_int8, t_int32> {
+    typedef t_int64 data;
+};
+
 template <> struct TwiceAsBigInt2<t_int32, t_int16> {
+    typedef t_int64 data;
+};
+
+template <> struct TwiceAsBigInt2<t_int32, t_int8> {
     typedef t_int64 data;
 };
 
@@ -79,9 +90,17 @@ template <> struct TwiceAsBigInt2<t_int16, t_int16> {
     typedef t_int32 data;
 };
 
+template <> struct TwiceAsBigInt2<t_int16, t_int8> {
+    typedef t_int32 data;
+};
 
+template <> struct TwiceAsBigInt2<t_int8, t_int16> {
+    typedef t_int32 data;
+};
 
-
+template <> struct TwiceAsBigInt2<t_int8, t_int8> {
+    typedef t_int16 data;
+};
 
 template <typename T>
 class t_rat : public t_urrat<T>

@@ -8716,7 +8716,7 @@
 			buildPhases = (
 			);
 			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "$(SRCROOT)/../commons/parsers/strparser";
+			buildWorkingDirectory = "$(SRCROOT)/../commons/parsers/symparser";
 			dependencies = (
 			);
 			name = bach_symparser;

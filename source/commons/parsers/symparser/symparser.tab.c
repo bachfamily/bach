@@ -73,11 +73,12 @@
 #define yynerrs         symparser_nerrs
 
 /* First part of user prologue.  */
+#line 1 "symparser.y"
 
     /*
      *  symparser.y
      *
-     * Copyright (C) 2010-2020 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -92,6 +93,7 @@
      * If not, see <https://www.gnu.org/licenses/>.
      *
      */
+#line 47 "symparser.y"
 
 	//#define BACH_MAX
 	#ifdef BACH_MAX
@@ -105,6 +107,7 @@
     #define YY_NO_UNISTD_H
 
 
+#line 111 "symparser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -152,6 +155,7 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 
 /* Second part of user prologue.  */
+#line 70 "symparser.y"
 
     #include "parsers/symparser/bach_symparser_tab.h"
     #include "parsers/symparser/bach_symparser_lex.h"
@@ -161,6 +165,7 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
     YY_BUFFER_STATE symparser_scan_string(yyscan_t myscanner, char *buf);
     void symparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
 
+#line 169 "symparser.tab.c"
 
 
 #ifdef short
@@ -1123,55 +1128,70 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* term: BACH_LONG  */
+#line 94 "symparser.y"
                 {
 	llll_appendlong(*ll, (yyvsp[0].l));
 	parserpost("parse: BACH_LONG %ld", (yyvsp[0].l));
 }
+#line 1137 "symparser.tab.c"
     break;
 
   case 5: /* term: BACH_DOUBLE  */
+#line 97 "symparser.y"
                 {
 	llll_appenddouble(*ll, (yyvsp[0].d));
 	parserpost("parse: BACH_DOUBLE %lf", (yyvsp[0].d));
 }
+#line 1146 "symparser.tab.c"
     break;
 
   case 6: /* term: BACH_RAT  */
+#line 100 "symparser.y"
              {
 	llll_appendrat(*ll, (yyvsp[0].r));
 	parserpost("parse: BACH_RAT %ld/%ld", (yyvsp[0].r).num(), (yyvsp[0].r).den());
 }
+#line 1155 "symparser.tab.c"
     break;
 
   case 7: /* term: BACH_PITCH  */
+#line 103 "symparser.y"
                {
 	llll_appendpitch(*ll, (yyvsp[0].p));
 	parserpost("parse: degree: %c%d+%d/%d", 
 		t_pitch::degree2name[(yyvsp[0].p).degree()], (yyvsp[0].p).octave(), (yyvsp[0].p).alter().num(), (yyvsp[0].p).alter().den());
 }
+#line 1165 "symparser.tab.c"
     break;
 
   case 8: /* term: BACH_SYMBOL  */
+#line 107 "symparser.y"
                 {
 	llll_appendsym(*ll, (yyvsp[0].sym));
 	parserpost("parse: BACH_SYMBOL %s", (yyvsp[0].sym)->s_name);
 }
+#line 1174 "symparser.tab.c"
     break;
 
   case 9: /* term: BACH_NULL  */
+#line 110 "symparser.y"
               {
     parserpost("parse: NULL");
 }
+#line 1182 "symparser.tab.c"
     break;
 
   case 10: /* term: BACH_NIL  */
+#line 112 "symparser.y"
              {
 	llll_appendllll(*ll, llll_get());
     parserpost("parse: NIL");
 }
+#line 1191 "symparser.tab.c"
     break;
 
   case 11: /* term: BACH_PUSH  */
+#line 115 "symparser.y"
               {
 	(*depth)++;
 	t_llll *newll = llll_get();
@@ -1180,9 +1200,11 @@ yyreduce:
 	*ll = newll;
 	parserpost("parse: BACH_PUSH");
 }
+#line 1204 "symparser.tab.c"
     break;
 
   case 12: /* term: BACH_POP  */
+#line 122 "symparser.y"
              {
 	(*depth)--;
 	if (*depth > 0) {
@@ -1194,9 +1216,11 @@ yyreduce:
 		YYERROR;
 	parserpost("parse: BACH_POPPE");
 }
+#line 1220 "symparser.tab.c"
     break;
 
 
+#line 1224 "symparser.tab.c"
 
       default: break;
     }
@@ -1389,6 +1413,7 @@ yyreturnlab:
   return yyresult;
 }
 
+#line 134 "symparser.y"
 
 
 void t_symParser::parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)

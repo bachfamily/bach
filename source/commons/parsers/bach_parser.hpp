@@ -155,6 +155,70 @@ public:
         return p;
     }
     
+    static t_pitch eatPitchWithET(char *pos) {
+        char *next = pos;
+        t_atom_short sign = eatSign(&next);
+        t_atom_short degree = t_pitch::text2degree(*next++);
+        long octave;
+        t_shortRational alter;
+        if (isdigit(*next)) {
+            octave = strtol(next, &next, 10);
+            alter = t_pitch::text2alter(&next);
+        } else {
+            alter = t_pitch::text2alter(&next);
+            octave = strtol(next, &next, 10);
+        }
+        t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
+        if (!*next)
+            return p;
+        t_atom_short tSign = eatSign(&next);
+        t_atom_short tNum = (t_atom_short) strtol(next, &next, 10);
+        if (*next != '/') {
+            p.p_alter += tNum;
+        } else {
+            t_atom_short tDen = (t_atom_short) strtol(++next, &next, 10);
+            p.p_alter += t_shortRational(tNum, tDen);
+        }
+        if (!*next)
+            return p;
+        t_pitch JIpart = eatPitchPureJI(pos);
+        return p + JIpart;
+    }
+    
+    static t_pitch eatPitchPureJI(char *pos) {
+        char *next = pos;
+        t_atom_short sign = eatSign(&next);
+        t_atom_short plof = t_pitch::text2wkplof(*next++);
+        t_atom_short sharps = t_pitch::text2JIsharps(&next);
+        plof += sharps * 4;
+        next++; // {
+        std::vector<const int8_t> monzo;
+        if (*next != '}') { // monzo
+            while (1) {
+                int8_t comma = (int8_t) strtol(++next, &next, 10);
+                monzo.push_back(comma);
+                if (*next == '}')
+                    break;
+                else
+                    next++;
+            }
+        }
+        ++next; // }
+        t_uint8 octave = (t_uint8) strtol(next, &next, 10);
+        t_pitch p = adjustPitchSign(t_pitch(plof, monzo, octave), sign);
+
+        if (!*next)
+            return p;
+        t_atom_short rSign = eatSign(&next);
+        t_atom_short rNum = (t_atom_short) strtol(next, &next, 10);
+        if (*next != '/') {
+            p.adjustRatios(t_shortRational(rNum, 1));
+        } else {
+            t_atom_short rDen = (t_atom_short) strtol(++next, &next, 10);
+            p.adjustRatios(t_shortRational(rNum, rDen));
+        }
+        return p;
+    }
     
     static void fatalError(const char *msg)
     {

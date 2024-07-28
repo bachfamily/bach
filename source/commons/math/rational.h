@@ -154,6 +154,7 @@ typedef t_uint16 t_atom_ushort;
 } t_rational;*/
 typedef t_rat<t_atom_long> t_rational;
 typedef t_rat<t_atom_short> t_shortRational;
+typedef t_rat<t_int16> t_tinyRational;
 
 
 

@@ -19,6 +19,7 @@
 
 #include "math/bach_pitch.hpp"
 #include "foundation/bach_mem.h"
+#include <string>
 
 
 inline long divdiv_floor(long a, long b) {
@@ -49,6 +50,8 @@ const t_atom_short t_pitch::degree2MC[] = {0, 200, 400, 500, 700, 900, 1100};
 const t_atom_short t_pitch::degree2PC[] = {0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23};
 const t_atom_short t_pitch::PC2degree[] = {0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6};
 const char t_pitch::degree2name[] = { 'C', 'D', 'E', 'F', 'G', 'A', 'B' };
+
+const t_rational t_pitch::primes_inv[15] = {{1, 2}, {1, 3}, {1, 5}, {1, 7}, {1, 11}, {1, 13}, {1, 17}, {1, 19}, {1, 23}, {1, 29}, {1, 31}, {1, 37}, {1, 41}, {1, 47}, {1, 53}};
 
 t_pitchMatrices& t_pitch::pm = t_pitchMatrices::getInstance();
 
@@ -110,59 +113,260 @@ t_bool t_pitch::operator>(const t_pitch &b)
 
 #endif // othercomparison
 
-t_bool t_pitch::operator<(const t_pitch &b)
-{
-    if (p_octave != b.p_octave)
-        return p_octave < b.p_octave;
-    else if (p_degree != b.p_degree)
-        return p_degree < b.p_degree;
-    else
-        return toMC() < b.toMC();
+void t_pitch::expVector::clear() {
+    memset(data, 0, 11);
 }
 
-t_bool t_pitch::operator>(const t_pitch &b)
-{
-    if (p_octave != b.p_octave)
-        return p_octave > b.p_octave;
-    else if (p_degree != b.p_degree)
-        return p_degree > b.p_degree;
-    else
-        return toMC() > b.toMC();
+void t_pitch::expVector::set(const std::vector<const int8_t> &v) {
+    clear();
+    size_t s = v.size();
+    const int8_t* d = v.data();
+    int i;
+    
+    if (s < 8) {
+        for (i = 0; i < s && i < 7; i++) {
+            data[i] = d[i];
+        }
+        return;
+    }
+    
+    *(reinterpret_cast<int64_t*>(data)) = *(reinterpret_cast<const int64_t*>(d)); // copy 8 bytes in one shot. is it worth it?
+    data[7] = (d[8] & 0x0f) | ((d[7] & 0x0f) << 4); // ...the 8th byte is discarded though...
+    
+    switch(s) {
+        case 11:    data[10] = (d[14] & 0x0f) | ((d[13] & 0x0f) << 4);
+        case 10:    data[9] = (d[12] & 0x0f) | ((d[11] & 0x0f) << 4);
+        case 9:     data[8] = (d[10] & 0x0f) | ((d[9] & 0x0f) << 4);
+    }
 }
 
-t_bool t_pitch::operator<=(const t_pitch &b)
-{
-    if (*this == b)
-        return true;
-    return *this < b;
+void t_pitch::expVector::set(const int idx, const int8_t v) {
+    if (idx >= 0 && idx <= 6) {
+        data[idx] = v;
+        return;
+    }
+    if (idx >= 7 && idx <= 14) {
+        if (idx & 1) {
+            data[(idx - 8) / 2 + 7] &= (v & 0x0f) << 4;
+        } else {
+            data[(idx - 7) / 2 + 7] &= (v & 0x0f) << 4;
+        }
+        return;
+    }
 }
 
-t_bool t_pitch::operator>=(const t_pitch &b)
-{
-    if (*this == b)
-        return true;
-    return *this > b;
+std::vector<int8_t> t_pitch::expVector::get() const {
+    std::vector<int8_t> v(15);
+    int8_t* d = v.data();
+    *(reinterpret_cast<int64_t*>(d)) = *(reinterpret_cast<const int64_t*>(data));
+    v[7] = getLNibble(data[7]);
+    v[8] = getRNibble(data[7]);
+    v[9] = getLNibble(data[8]);
+    v[10] = getRNibble(data[8]);
+    v[11] = getLNibble(data[9]);
+    v[12] = getRNibble(data[9]);
+    v[13] = getLNibble(data[10]);
+    v[14] = getRNibble(data[10]);
+    return v;
 }
 
+int8_t t_pitch::expVector::get(const int idx) const {
+    if (idx >= 0 && idx <= 6) {
+        return data[idx];
+    }
+    if (idx >= 7 && idx <= 14) {
+        if (idx & 1) {
+            return getRNibble(data[idx]);
+        } else {
+            return getLNibble(data[idx]);
+        }
+    }
+    return 0;
+}
+
+bool t_pitch::expVector::operator==(const t_pitch::expVector& b) const
+{
+    return *(reinterpret_cast<const int64_t*>(data)) == *(reinterpret_cast<const int64_t*>(b.data)) && *(reinterpret_cast<const int16_t*>(data + 8)) == *(reinterpret_cast<const int16_t*>(b.data + 8)) && *(reinterpret_cast<const int8_t*>(data + 10)) == *(reinterpret_cast<const int8_t*>(b.data + 10));
+}
+
+t_pitch::expVector t_pitch::expVector::operator+(const t_pitch::expVector& b) const
+{
+    expVector r;
+    int i;
+    for (i = 0; i < 7; i++)
+        r.data[i] = data[i] + b.data[i];
+    for ( ; i < 11; i++)
+        r.data[i] = (((getLNibble(data[i]) + getLNibble(b.data[i])) & 0xf0) << 4) + ((getRNibble(data[i]) + getRNibble(b.data[i])) & 0x0f);
+    return r;
+}
+
+t_pitch::expVector t_pitch::expVector::operator-(const t_pitch::expVector& b) const
+{
+    expVector r;
+    int i;
+    for (i = 0; i < 7; i++)
+        r.data[i] = data[i] - b.data[i];
+    for ( ; i < 11; i++)
+        r.data[i] = (((getLNibble(data[i]) - getLNibble(b.data[i])) & 0xf0) << 4) | ((getRNibble(data[i]) - getRNibble(b.data[i])) & 0x0f);
+    return r;
+}
+
+t_pitch::expVector t_pitch::expVector::operator*(const t_pitch::expVector& b) const
+{
+    expVector r;
+    int i;
+    for (i = 0; i < 7; i++)
+        r.data[i] = data[i] * b.data[i];
+    for ( ; i < 11; i++)
+        r.data[i] = (((getLNibble(data[i]) * getLNibble(b.data[i])) & 0xf0) << 4) + ((getRNibble(data[i]) * getRNibble(b.data[i])) & 0x0f);
+    return r;
+}
+
+t_pitch::expVector t_pitch::expVector::operator*(t_atom_long b) const
+{
+    expVector r;
+    int i;
+    for (i = 0; i < 7; i++)
+        r.data[i] = data[i] * b;
+    for ( ; i < 11; i++)
+        r.data[i] = (((getLNibble(data[i]) * b) & 0xf0) << 4) + ((getRNibble(data[i]) * b) & 0x0f);
+    return r;
+}
+
+t_pitch::expVector t_pitch::expVector::operator-() const
+{
+    expVector r;
+    int i;
+    for (i = 0; i < 7; i++)
+        r.data[i] = -data[i];
+    for ( ; i < 11; i++)
+        r.data[i] = (((-getLNibble(data[i])) & 0xf0) << 4) + ((-getRNibble(data[i])) & 0x0f);
+    return r;
+}
+
+t_rational t_pitch::expVector::getRatio() const {
+    t_rational r({1, 1});
+    int i;
+    for (i = 0; i < 7; i++) {
+        if (data[i] != 0)
+            r *= rat_long_pow(primes_inv[i], data[i]);
+    }
+    for ( ; i < 15; i++) {
+        long n;
+        if ((n = get(i)) != 0)
+            r *= rat_long_pow(primes_inv[(i - 7) / 2 + 7], n);
+    }
+    return r;
+};
+
+double t_pitch::expVector::getDoubleRatio() const {
+    double r = 1.;
+    int i;
+    for (i = 0; i < 7; i++) {
+        if (data[i] != 0)
+            r *= pow(primes_inv_double[i], data[i]);
+    }
+    for ( ; i < 15; i++) {
+        long n;
+        if ((n = get(i)) != 0)
+            r *= pow(primes_inv_double[(i - 7) / 2 + 7], n);
+    }
+    return r;
+};
+
+bool t_pitch::expVector::allZeros() const {
+    return *reinterpret_cast<const t_int64*>(data) == 0 && *reinterpret_cast<const t_int16*>(data + 8) == 0 && *(data + 10) == 0;
+}
+
+bool t_pitch::expVector::allZerosFromTritave() const {
+    return *reinterpret_cast<const t_int64*>(data + 1) == 0 && *reinterpret_cast<const t_int16*>(data + 9) == 0;
+}
+
+
+// /////////////////////////////
+
+double t_pitch::JIComponentToFreq() const {
+    return C0freq * p_JIratio.getDoubleRatio();
+}
+
+t_rational t_pitch::ETComponentToMCrat() const {
+    t_atom_short mcBase = degree2MC_safe();
+    t_rational mc = mcBase + p_alter * 200;
+    return mc;
+}
+
+double t_pitch::ETComponentToMCdouble() const {
+    t_atom_short mcBase = degree2MC_safe();
+    double mc = mcBase + p_alter * 200;
+    return mc;
+}
+
+double t_pitch::toMCdouble() const {
+    return ETComponentToMCdouble() + JIComponentToMC();
+}
+
+// TODODG: rivedere approssimazione
+t_rational t_pitch::toMCrat() const {
+    t_rational etmc = ETComponentToMCrat();
+    double jimc = JIComponentToMC();
+    t_rational jimcR = approx_double_with_rat_fixed_den(jimc, 1000000000, 0, nullptr);
+    return etmc + jimcR;
+}
+
+
+t_bool t_pitch::operator==(const t_pitch &b) const
+{
+    return p_degreeET == b.p_degreeET && p_alter == b.p_alter && p_JIratio == b.p_JIratio;
+}
+
+t_bool t_pitch::operator<(const t_pitch &b) const
+{
+    if (isPureJI())
+        return p_JIratio < b.p_JIratio;
+    if (isPureET()) {
+        if (getOctave() != b.getOctave())
+            return getOctave() != b.getOctave();
+        else if (p_degreeET != b.p_degreeET)
+            return p_degreeET < b.p_degreeET;
+        else
+            return ETComponentToMCdouble() < b.ETComponentToMCdouble();
+    }
+    return toMCdouble() < b.toMCdouble();
+}
+
+t_bool t_pitch::operator>(const t_pitch &b) const
+{
+    if (isPureJI())
+        return p_JIratio > b.p_JIratio;
+    if (isPureET()) {
+        if (getOctave() != b.getOctave())
+            return getOctave() != b.getOctave();
+        else if (p_degreeET != b.p_degreeET)
+            return p_degreeET > b.p_degreeET;
+        else
+            return ETComponentToMCdouble() > b.ETComponentToMCdouble();
+    }
+    return toMCdouble() > b.toMCdouble();
+}
 
 t_pitch t_pitch::operator-() const
 {
-    return t_pitch(0) - *this;
+    return t_pitch() - *this;
 }
 
 t_pitch t_pitch::operator+(const t_pitch &b) const
 {
-    t_pitch sum = t_pitchMatrices::getSum(p_degree, b.p_degree);
-    sum.p_octave += p_octave + b.p_octave;
+    t_pitch sum = t_pitchMatrices::getSum(p_degreeET, b.p_degreeET);
     sum.p_alter += p_alter + b.p_alter;
+    sum.p_JIratio = p_JIratio + b.p_JIratio;
     return sum;
 }
 
 t_pitch t_pitch::operator-(const t_pitch &b) const
 {
-    t_pitch diff = t_pitchMatrices::getDiff(p_degree, b.p_degree);
-    diff.p_octave += p_octave - b.p_octave;
-    diff.p_alter += p_alter - b.p_alter;
+    t_pitch diff = t_pitchMatrices::getDiff(p_degreeET, b.p_degreeET);
+    diff.p_alter += p_alter + b.p_alter;
+    diff.p_JIratio = p_JIratio + b.p_JIratio;
     return diff;
 }
 
@@ -171,17 +375,22 @@ t_pitch t_pitch::operator*(t_atom_long b) const
     t_stepsAndMC sat = toStepsAndMC();
     sat.steps *= b;
     sat.mc *= b;
-    return t_pitch(sat);
+    t_pitch r = sat;
+    r.p_JIratio = p_JIratio * b;
 }
 
 t_pitch t_pitch::operator*(const t_rational &b) const
 {
-    t_rat<long> inv = b.inv();
-
-    if (inv.r_num == 0 || inv.r_den == 0)
-        return t_pitch::NaP;
-
-    return *this / b.inv();
+    if (b.num() == 0)
+        return C0;
+    if (b.den() == 0)
+        return NaP;
+    if (isPureET()) {
+        t_rat<long> inv = b.inv();
+        return *this / b.inv();
+    }
+    // non pure ET: TODODG
+    return C0;
 }
 
 t_pitch t_pitch::operator/(const t_atom_long b) const
@@ -208,7 +417,7 @@ t_pitch t_pitch::operator/(const t_rational &b) const
 
 t_pitch t_pitch::operator%(const t_pitch &b) const
 {
-    if (b.toMC() == 0)
+    if (b.toMCdouble() == 0)
         return t_pitch::NaP;
 
     t_atom_long quotient = t_atom_long((*this).divdiv(b));
@@ -225,17 +434,127 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
     return *this - b * temp;
 }
 
+std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const
+{
+    std::string s;
+    t_int8 octave;
+    t_pitch p;
+    bool mirror;
+    if (p_alter.den() == 0) {
+        s = "NaP";
+    } else {
+        octave = getOctave();
+        if (octave < 0 && !always_positive) {
+            mirror = true;
+            p = -*this;
+        } else {
+            mirror = false;
+            p = *this;
+        }
+        t_int8 plof = p.getPlof();
+
+        if (!p.isPureJI() || p.isPureET()) {
+            // not pure JI or both pure JI and pureET (that is, it's a C with no alteration or deviation)
+            if (mirror)
+                s = '-';
+            s += degree2name[p.p_degreeET];
+            t_shortRational remainder = p.p_alter;
+            if (remainder > natural) { // sharps
+                while (remainder >= eighthsharp) {
+                    if (remainder >= dblsharp) {
+                        s += 'x';
+                        remainder -= dblsharp;
+                    } else if (remainder >= sharp) {
+                        s += '#';
+                        remainder -= sharp;
+                    } else if (remainder >= qrtrsharp) {
+                        s += 'q';
+                        remainder -= qrtrsharp;
+                    } else if (remainder >= eighthsharp) {
+                        s += '^';
+                        remainder -= eighthsharp;
+                    }
+                }
+            } else if (remainder < natural) { // flats
+                while (remainder <= eighthflat) {
+                    if (remainder <= flat) {
+                        s += 'b';
+                        remainder -= flat;
+                    } else if (remainder <= qrtrflat) {
+                        s += 'd';
+                        remainder -= qrtrflat;
+                    } else if (remainder <= eighthflat) {
+                        s += 'v';
+                        remainder -= eighthflat;
+                    }
+                }
+            }
+            if (include_octave)
+                s += std::to_string(mirror ? -octave : octave);
+            
+            if (remainder > natural)
+                s += "+" + std::to_string(remainder.num()) + "/" + std::to_string(remainder.den()) + "t";
+            else if (remainder < natural)
+                s += std::to_string(remainder.num()) + "/" + std::to_string(remainder.den()) + "t";
+        } else {
+            // pure JI but not pureET (that is, it's not a pure C)
+            if (mirror)
+                s += '-';
+            else if (!p.isPureJI())
+                s += '+';
+            t_int8 sharps = p.getSharps();
+            if (plof >= 0) {
+                s += (plof * 4 + 2) % 7 + 'A';
+            } else {
+                s += (-plof * 3 + 2) % 7 + 'A';
+            }
+            if (sharps > 0) {
+                s += std::string(sharps, '#');
+            } else if (sharps < 0) {
+                s += std::string(-sharps, 'b');
+            }
+            std::vector<int8_t> commas = p.getCommas();
+            if (commas.size()) {
+                s += "{";
+                for (auto c: commas) {
+                    s += std::to_string(c) + ":";
+                }
+                s.back() = '}';
+            } else {
+                s += "{}";
+            }
+            if (p.isPureJI()) {
+                s += std::to_string(mirror ? -octave : octave);
+            } else {
+                s += "0";
+            }
+        }
+    }
+
+    if (addTrailingSpace)
+        s += ' ';
+    return s;
+}
+
+
+
+
+#ifdef ___oldToTextBuf
+
 long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const
 {
     long count = 0;
     if (!buf || bufSize == 0)
         return -1;
-    if (p_alter == illegal) {
+    if (p_alter.den() == 0) {
         if (addTrailingSpace)
             return snprintf_zero(buf, bufSize, "NaP ");
         else
-            return snprintf_zero(buf, bufSize, "NaP ");
+            return snprintf_zero(buf, bufSize, "NaP");
     } else if (p_octave >= 0 || always_positive) {
+        
+        
+        
         if (++count == bufSize) { *buf = 0; return count - 1; }
         *(buf++) = degree2name[p_degree];
         t_shortRational remainder = p_alter;
@@ -253,6 +572,10 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
              s += std::string("^", t_atom_long(remainder / eighthsharp));
              remainder %= eighthsharp;
              */
+            
+            
+            
+            
             
             while (remainder >= eighthsharp) {
                 if (++count == bufSize) { *buf = 0; return count - 1; }
@@ -386,6 +709,10 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
     return count + 1;
 }
 
+#endif // ___oldToTextBuf
+
+
+
 
 long mod_positive(long num, long mod)
 {
@@ -400,6 +727,7 @@ long floor_div_by_7(long num)
     return num / 7 - (num % 7 < 0);
 }
 
+// TODODG
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)
 {
     long original_tone_division = tone_division;
