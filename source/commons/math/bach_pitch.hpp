@@ -99,6 +99,36 @@ private:
             set(v);
         }
         
+        void setFromRatio(t_shortRational r) {
+            t_shortRational what = r;
+            int8_t exponent;
+            std::vector<int8_t> v(15); // TODO: are we sure that these are all 0's?
+            long i = 0;
+            
+            if (what < 0)
+                what *= -1;
+            // TODO: shortrat_reduce(&what) ? // this is essential, it should already be reduced, can we make sure of it
+            while (rat_long_cmp(what, 1) != 0 && i < 15) {
+                long this_prime = primes[i];
+                if (what.r_num % this_prime == 0) {
+                    exponent = 0;
+                    do {
+                        exponent++;
+                        what.r_num /= this_prime;
+                    } while (what.r_num != 0 && what.r_num % this_prime == 0);
+                    v[i] = exponent;
+                } else if (what.r_den % this_prime == 0) {
+                    exponent = 0;
+                    do {
+                        exponent++;
+                        what.r_den /= this_prime;
+                    } while (what.r_den != 0 && what.r_den % this_prime == 0);
+                    v[i] = -exponent;
+                }
+                i++;
+            }
+        }
+        
         void clear();
         void set(const std::vector<const int8_t> &v);
         void set(const int idx, const int8_t v);
@@ -165,7 +195,7 @@ public:
     
 private:
     static t_pitchMatrices &pm;
-    static constexpr double C0freq = 261.62556541047064229133;
+    static constexpr double C0freq = 8.1757989156437073336828122976032719176391;
 ;
     
     expVector p_JIratio;
@@ -203,13 +233,20 @@ public:
             p_JIratio.set(0, octave);
         }
     
-    t_pitch(const std::vector<const t_int8> &ratios) : p_JIratio(ratios), p_degreeET(0), p_alter(0) { }
+    t_pitch(const std::vector<const t_int8> &exponents) : p_JIratio(exponents), p_degreeET(0), p_alter(0) { }
 
     // TODODG
-    t_pitch(const t_uint8 plof, const std::vector<const t_int8> monzo, const t_uint8 octave) : t_pitch() { }
+    t_pitch(const t_uint8 plof, const std::vector<const t_int8> commas, const t_uint8 octave) : t_pitch() {
+        
+        
+        
+        
+    }
     
-    // TODODG
-    void adjustRatios(const t_shortRational r) { }
+    void setExponentsFromRatios(const t_shortRational r) {
+        p_JIratio.setFromRatio(r);
+        // TODO: what about p_degreeET?
+    }
     
     static double f2mc(double f) { return log2(f/C0freq) * 1200.; }
     
