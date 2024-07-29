@@ -61,16 +61,37 @@ public:
 };
 
 
+#define BACH_PRIMES_JI_SIZE 15
+
 class t_pitch
 {
 public:
-    static int constexpr primes[15] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 47, 53};
-    static const t_rational primes_inv[15];
-    static double constexpr primes_inv_double[15] = {1./2., 1./3., 1./5., 1./7., 1./11., 1./13., 1./17., 1./19., 1./23., 1./29, 1./31., 1./37., 1./41., 1./47., 1./53.};
+    static int constexpr primes[BACH_PRIMES_JI_SIZE] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 37};
+    static const t_rational primes_inv[BACH_PRIMES_JI_SIZE];
+    static double constexpr primes_inv_double[BACH_PRIMES_JI_SIZE] = {1./2., 1./3., 1./5., 1./7., 1./11., 1./13., 1./17., 1./19., 1./23., 1./29, 1./31., 1./37., 1./41., 1./43., 1./47.};
+    
+    static t_atom_short constexpr numFifthsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {0,1,4,-2,-1,3,7,-3,6,-2,0,2,4,-1,6}; // a major third contributes to 4 diatonic fifths, etc.
+    static t_atom_short constexpr numDiatonicStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,29,30,31,34,35,36,37,38,38}; // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 3/1 is 16, a 4/1 is 20, and so on.
+
+    static int constexpr HEJIcommasExponents[BACH_PRIMES_JI_SIZE-2][BACH_PRIMES_JI_SIZE] =
+            {{-4, 4, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // these start from the 5-limit!
+            {6, -2, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // 7-limit
+            {5, -1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // 11-limit
+            {-1, 3, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {-7, 7, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0},
+            {9, -3, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0},
+            {-5, 6, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0},
+            {8, -2, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+            {5, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0},
+            {2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0},
+            {-1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0},
+            {7, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0},
+            {-4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1}};
+    
     
 private:
     class expVector {
-        //static t_rational constexpr primes_inv[] = {{1, 2}, {1, 3}, {1, 5}, {1, 7}, {1, 11}, {1, 13}, {1, 17}, {1, 19}, {1, 23}, {1, 29}, {1, 31}, {1, 37}, {1, 41}, {1, 47}, {1, 53}};
+        //static t_rational constexpr primes_inv[] = {{1, 2}, {1, 3}, {1, 5}, {1, 7}, {1, 11}, {1, 13}, {1, 17}, {1, 19}, {1, 23}, {1, 29}, {1, 31}, {1, 37}, {1, 41}, {1, 43}, {1, 47}};
         
     private:
         Byte data[11]; // containing a "vector" of respectively 8 8 8 8 8 8 8 4 4 4 4 4 4 4 4 -bit signed integers
@@ -102,13 +123,13 @@ private:
         void setFromRatio(t_shortRational r) {
             t_shortRational what = r;
             int8_t exponent;
-            std::vector<int8_t> v(15); // TODO: are we sure that these are all 0's?
+            std::vector<int8_t> v(BACH_PRIMES_JI_SIZE); // TODO: are we sure that these are all 0's?
             long i = 0;
             
             if (what < 0)
                 what *= -1;
             // TODO: shortrat_reduce(&what) ? // this is essential, it should already be reduced, can we make sure of it
-            while (rat_long_cmp(what, 1) != 0 && i < 15) {
+            while (rat_long_cmp(what, 1) != 0 && i < BACH_PRIMES_JI_SIZE) {
                 long this_prime = primes[i];
                 if (what.r_num % this_prime == 0) {
                     exponent = 0;
@@ -135,6 +156,27 @@ private:
         
         std::vector<int8_t> get() const;
         int8_t get(const int idx) const;
+
+        int8_t getPlof() {
+            return get(1);
+        }
+
+        int8_t getWhiteKey() {
+            int8_t sum = 0;
+            for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
+                sum += get(i) * numFifthsPerPrimeFactor[i];
+            }
+            return sum + getPlof(); //positive_mod(() * 4),7);
+            // DG: this thing above doesn't look right any longer
+        }
+        
+        int8_t getOctave() {
+            int8_t steps = 0;
+            for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
+                steps += get(i) * numDiatonicStepsPerPrimeFactor[i];
+            }
+            return (positive_mod(getPlof() * 4, 7) + steps)/7;
+        }
         
         bool operator==(const expVector& b) const;
         bool operator!=(const expVector& b) const { return !(*this == b); };
@@ -161,7 +203,7 @@ private:
     
     class pco {
     public:
-        t_uint8 commas[15];
+        t_uint8 commas[BACH_PRIMES_JI_SIZE];
         t_uint8 ncommas;
         t_uint8 plof;
         t_uint8 octave;
@@ -199,7 +241,10 @@ private:
 ;
     
     expVector p_JIratio;
-    t_uint8 p_degreeET;
+    t_uint8 p_whiteKey;
+    t_uint8 p_octave; // TODO: @Andrea: can you make sure that p_octave is OK and that the size of the other stuff is changed accordingly?
+                      // either: 8 8 8 8 8 4 4 4 4 4 4 4 4 4 4
+                      // or:     8 8 8 6 6 6 6 4 4 4 4 4 4 4 4 if you realize that 6 isn't that difficult to pull off
 public: // because solves a lot of small issues... for now...
     t_tinyRational p_alter;
 private:
@@ -210,12 +255,12 @@ private:
     double JIComponentToMC() const;
     
     t_pitch(t_stepsAndMC sat) : p_JIratio(expVector()) {
-        p_degreeET = sat.steps % 7;
-        if (p_degreeET < 0)
-            p_degreeET += 7;
+        p_whiteKey = sat.steps % 7;
+        if (p_whiteKey < 0)
+            p_whiteKey += 7;
         t_int8 octave = (t_int8) integer_div_round_down(sat.steps, 7);
         setOctave(octave);
-        p_alter = (sat.mc - octave * 1200 - degree2MC[p_degreeET]) / 200;
+        p_alter = (sat.mc - octave * 1200 - degree2MC[p_whiteKey]) / 200;
     }
     
 protected:
@@ -223,29 +268,103 @@ protected:
 public:
     t_pitch() = default;
     
-    t_pitch(const t_atom_short degree) : p_JIratio(expVector()), p_degreeET(degree), p_alter(0) {}
+    t_pitch(const t_atom_short degree) : p_JIratio(expVector()), p_whiteKey(degree), p_alter(0) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational& alter) :
-        p_JIratio(expVector()), p_degreeET(), p_alter(alter) {}
+        p_JIratio(expVector()), p_whiteKey(), p_alter(alter) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational &alter, const t_int8 octave) :
         t_pitch(degree, alter) {
             p_JIratio.set(0, octave);
         }
     
-    t_pitch(const std::vector<const t_int8> &exponents) : p_JIratio(exponents), p_degreeET(0), p_alter(0) { }
+    t_pitch(const std::vector<const t_int8> &exponents) : p_JIratio(exponents), p_whiteKey(0), p_alter(0) { }
 
-    // TODODG
-    t_pitch(const t_uint8 plof, const std::vector<const t_int8> commas, const t_uint8 octave) : t_pitch() {
+    // TODO: ANDREA, CHECK & and *
+    void plofUnpack(const t_uint8 plof, t_uint8 *exp2, t_uint8 *exp3, t_uint8 *whiteKey) {
+        // Pythagorean line of fifths position to exponents (of 2 and 3 primes) and whiteKey (diatonic C major degree)
+        *exp2 = 0;
+        *exp3 = 0;
+        *whiteKey = 0;
+        short abs_plof = (plof >= 0 ? plof : -plof);
+        char sign = (plof >= 0 ? 1 : -1);
+        t_shortRational mul = t_shortRational(sign >= 0 ? 3 : 2, sign >= 0 ? 2 : 3);
+        for (short i = 0; i < abs_plof; i++) {
+            if (sign >= 0) {
+                *exp3 += 1;
+                *exp2 -= 1;
+            } else {
+                *exp3 -= 1;
+                *exp2 += 1;
+            }
+            *whiteKey = *whiteKey + 4 * sign;
+            if (*whiteKey < 0 || *whiteKey >= 7) {
+                *whiteKey = positive_mod(*whiteKey, 7);
+                if (sign >= 0)
+                    *exp2 -= 1;
+                else
+                    *exp2 += 1;
+            }
+        }
+    }
+    
+    // TODO: CHECK ANDREA
+    t_pitch(const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) {
+        t_uint8 expof2, expof3, whiteKey;
+        plofUnpack(plof, &expof2, &expof3, &whiteKey);
+        p_whiteKey = whiteKey;
         
-        
-        
+        std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE); // TODO: are we sure that these are zeros?
+        exponents[0] = expof2;
+        exponents[1] = expof3;
+        for (long i = 0; i < BACH_PRIMES_JI_SIZE-2; i++) { // HEJIcommas start from 5-limit
+            for (long j = 0; j < BACH_PRIMES_JI_SIZE; j++) {
+                exponents[j] += HEJIcommasExponents[i][j];
+            }
+        }
+
+        p_JIratio.set(exponents); // TODO: @Andrea, there's some const stuff missing, but I cannot initialize with const...
+
+        long sum = 0, steps = 0;
+        for (long i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
+            sum += exponents[i] * numFifthsPerPrimeFactor[i];
+            steps += exponents[i] * numDiatonicStepsPerPrimeFactor[i];
+        }
+
+        p_whiteKey = sum + plof; //positive_mod(() * 4),7);
+        p_octave = (octave * 7 + positive_mod(plof * 4, 7) + steps)/7;
+        long delta_octave = p_octave - (octave * 7 + positive_mod(plof * 4, 7))/7;
+
+        /* // DG: I'm not sure what this was for and if we still need it
+        t_shortRational comma = freqRatio;
+        t_shortRational threeovertwo(3,2);
+        long sum_abs = (sum >= 0 ? sum : -sum);
+        long sum_sign = (sum >= 0 ? 1 : -1);
+        for (long i = 0; i < sum_abs; i++) {
+            if (sum_sign > 0)
+                comma = comma / threeovertwo;
+            else
+                comma = comma * threeovertwo;
+        }
+        long num_octaves_removed = (sum*4)/7;
+        if (num_octaves_removed > 0)
+            comma *= ipow(2, num_octaves_removed);
+        else if (num_octaves_removed < 0)
+            comma /= ipow(2, -num_octaves_removed);
+         */
+        // refining commas removing factors of 2
+/*        if (delta_octave > 0) {
+            comma *= ipow(2, delta_octave);
+        } else if (delta_octave < 0) {
+            comma /= ipow(2, -delta_octave);
+        } */
+//        p_alter = comma;
         
     }
     
     void setExponentsFromRatios(const t_shortRational r) {
         p_JIratio.setFromRatio(r);
-        // TODO: what about p_degreeET?
+        // TODO: what about p_whiteKey?
     }
     
     static double f2mc(double f) { return log2(f/C0freq) * 1200.; }
@@ -256,49 +375,52 @@ public:
     // only ET part
     t_stepsAndMC toStepsAndMC() const {
         t_stepsAndMC sat;
-        sat.steps = p_degreeET + getOctave() * 7;
+        sat.steps = p_whiteKey + getOctave() * 7;
         sat.mc = toMCrat();
         return sat;
     }
     
+    // TODO: OCCHIO, queste sono sbagliate. L'ottava non è l'esponente di 2, dipende anche dalla quinta. (DG)
     void setOctave(t_int8 oct) { p_JIratio.set(0, oct); }
     
     // TODODG: e gli altri coefficienti?
     t_int8 getOctave() const { return p_JIratio.get(0); }
 
+    t_int8 getPlof() const { return p_JIratio.get(1); } // this is OK
+
     t_atom_short degree2MC_safe() const
     {
-        if (p_degreeET >= 0 && p_degreeET < 7)
-            return degree2MC[p_degreeET];
+        if (p_whiteKey >= 0 && p_whiteKey < 7)
+            return degree2MC[p_whiteKey];
         else
             return 0;
     }
     
     bool isPureET() const { return p_JIratio.allZerosFromTritave(); }
-    bool isPureJI() const { return p_degreeET == 0 && p_alter.num() == 0; }
+    bool isPureJI() const { return p_whiteKey == 0 && p_alter.num() == 0; }
 
     
     
-    void set(const t_atom_short degree) {
-        p_degreeET = degree;
+    void set(const t_atom_short whiteKey) {
+        p_whiteKey = whiteKey;
         p_alter.set(0);
         p_JIratio.clear();
     }
     
-    void set(const t_atom_short degree, const t_shortRational &alter) {
-        p_degreeET = degree;
+    void set(const t_atom_short whiteKey, const t_shortRational &alter) {
+        p_whiteKey = whiteKey;
         p_alter = alter;
         p_JIratio.clear();
     }
     
-    void set(const t_atom_short degree, const t_shortRational &alter, const t_atom_short octave) {
-        p_degreeET = degree;
+    void set(const t_atom_short whiteKey, const t_shortRational &alter, const t_atom_short octave) {
+        p_whiteKey = whiteKey;
         p_alter = alter;
         p_JIratio.clear();
         setOctave(octave);
     }
     
-    t_atom_short degreeET() const { return p_degreeET; }
+    t_atom_short degreeET() const { return p_whiteKey; }
     t_int8 getPlof() const { return p_JIratio.get(1); }
     t_int8 getSharps() const { return getPlof() / 6; }
     std::vector<int8_t> getCommas() const { return std::vector<int8_t>(); } // TODODG
@@ -306,7 +428,7 @@ public:
     
     
     // TODODG
-    t_atom_long toSteps() const { return getOctave() * 7 + p_degreeET; }
+    t_atom_long toSteps() const { return getOctave() * 7 + p_whiteKey; }
 
     t_atom_long toStepsFromMiddleC() const { return toSteps() - 7*5; }
 

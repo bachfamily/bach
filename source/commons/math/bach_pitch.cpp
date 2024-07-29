@@ -316,7 +316,7 @@ t_rational t_pitch::toMCrat() const {
 
 t_bool t_pitch::operator==(const t_pitch &b) const
 {
-    return p_degreeET == b.p_degreeET && p_alter == b.p_alter && p_JIratio == b.p_JIratio;
+    return p_whiteKey == b.p_whiteKey && p_alter == b.p_alter && p_JIratio == b.p_JIratio;
 }
 
 t_bool t_pitch::operator<(const t_pitch &b) const
@@ -326,8 +326,8 @@ t_bool t_pitch::operator<(const t_pitch &b) const
     if (isPureET()) {
         if (getOctave() != b.getOctave())
             return getOctave() != b.getOctave();
-        else if (p_degreeET != b.p_degreeET)
-            return p_degreeET < b.p_degreeET;
+        else if (p_whiteKey != b.p_whiteKey)
+            return p_whiteKey < b.p_whiteKey;
         else
             return ETComponentToMCdouble() < b.ETComponentToMCdouble();
     }
@@ -341,8 +341,8 @@ t_bool t_pitch::operator>(const t_pitch &b) const
     if (isPureET()) {
         if (getOctave() != b.getOctave())
             return getOctave() != b.getOctave();
-        else if (p_degreeET != b.p_degreeET)
-            return p_degreeET > b.p_degreeET;
+        else if (p_whiteKey != b.p_whiteKey)
+            return p_whiteKey > b.p_whiteKey;
         else
             return ETComponentToMCdouble() > b.ETComponentToMCdouble();
     }
@@ -356,7 +356,7 @@ t_pitch t_pitch::operator-() const
 
 t_pitch t_pitch::operator+(const t_pitch &b) const
 {
-    t_pitch sum = t_pitchMatrices::getSum(p_degreeET, b.p_degreeET);
+    t_pitch sum = t_pitchMatrices::getSum(p_whiteKey, b.p_whiteKey);
     sum.p_alter += p_alter + b.p_alter;
     sum.p_JIratio = p_JIratio + b.p_JIratio;
     return sum;
@@ -364,7 +364,7 @@ t_pitch t_pitch::operator+(const t_pitch &b) const
 
 t_pitch t_pitch::operator-(const t_pitch &b) const
 {
-    t_pitch diff = t_pitchMatrices::getDiff(p_degreeET, b.p_degreeET);
+    t_pitch diff = t_pitchMatrices::getDiff(p_whiteKey, b.p_whiteKey);
     diff.p_alter += p_alter + b.p_alter;
     diff.p_JIratio = p_JIratio + b.p_JIratio;
     return diff;
@@ -457,7 +457,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
             // not pure JI or both pure JI and pureET (that is, it's a C with no alteration or deviation)
             if (mirror)
                 s = '-';
-            s += degree2name[p.p_degreeET];
+            s += degree2name[p.p_whiteKey];
             t_shortRational remainder = p.p_alter;
             if (remainder > natural) { // sharps
                 while (remainder >= eighthsharp) {
