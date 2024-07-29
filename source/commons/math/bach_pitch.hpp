@@ -74,7 +74,7 @@ public:
     static t_atom_short constexpr numDiatonicStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,29,30,31,34,35,36,37,38,38}; // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 3/1 is 16, a 4/1 is 20, and so on.
 
     static const t_rational HEJIcommasRatios[BACH_PRIMES_JI_SIZE-2];
-
+/*
     static int constexpr HEJIcommasExponents[BACH_PRIMES_JI_SIZE-2][BACH_PRIMES_JI_SIZE] =
             {{-4, 4, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 81/80  these start from the 5-limit!
             {6, -2, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // 64/63      7-limit
@@ -89,11 +89,11 @@ public:
             {-1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0},  // 81/82
             {7, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0},  // 128/129
             {-4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1}}; // 729/752
+ */
     
 // this is a more efficient representation: every limit has -1 as its exponent, and the only exponent that matter are 2^ and 3^
     static int constexpr HEJIcommasExponents2[BACH_PRIMES_JI_SIZE-2] = {-4, 6, 5, -1, -7, 9, -5, 8, 5, 2, -1, 7, -4};
     static int constexpr HEJIcommasExponents3[BACH_PRIMES_JI_SIZE-2] = {4, -2, -1, 3, 7, -3, 6, -2, 0, 2, 4, -1, 6};
-
 
     static char constexpr HEJIcommasExponentsDirection[BACH_PRIMES_JI_SIZE-2] = {1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, -1}; // is numerator > denominator in the HEJI commas
 
@@ -166,11 +166,11 @@ private:
         std::vector<int8_t> get() const;
         int8_t get(const int idx) const;
 
-        int8_t getPlof() {
+        int8_t getPlof() const {
             return get(1);
         }
 
-        int8_t getWhiteKey() {
+        int8_t getWhiteKeyJI() const {
             int8_t sum = 0;
             for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
                 sum += get(i) * numFifthsPerPrimeFactor[i];
@@ -180,18 +180,22 @@ private:
             // DG: this thing above doesn't look right any longer
         }
         
-        int8_t getOctave() {
-            int8_t steps = 0;
-            for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
-                steps += get(i) * numDiatonicStepsPerPrimeFactor[i];
+        int8_t getOctave() const {
+            if (allZerosButOctaves()) {
+                return get(0);
+            } else {
+                int8_t steps = 0;
+                for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
+                    steps += get(i) * numDiatonicStepsPerPrimeFactor[i];
+                }
+                return steps / 7;
             }
-            return steps / 7;
             // was:
 //            return (positive_mod(getPlof() * 4, 7) + steps)/7;
             // but not sure why I'd need that
         }
         
-        void setOctave (int8_t o) {
+        void setOctave(int8_t o) {
             int8_t curr_octave = getOctave();
             int8_t delta = o - curr_octave;
             set(0, get(0) + delta);
@@ -260,12 +264,9 @@ private:
 ;
     
     expVector p_JIratio;
-    t_uint8 p_whiteKey;
-    t_uint8 p_octave; // TODO: @Andrea: can you make sure that p_octave is OK and that the size of the other stuff is changed accordingly?
-                      // either: 8 8 8 8 8 4 4 4 4 4 4 4 4 4 4
-                      // or:     8 8 8 6 6 6 6 4 4 4 4 4 4 4 4 if you realize that 6 isn't that difficult to pull off
+    t_uint8 p_whiteKeyET;
 public: // because solves a lot of small issues... for now...
-    t_tinyRational p_alter;
+    t_tinyRational p_alterET;
 private:
     double JIComponentToFreq() const;
     
@@ -274,12 +275,12 @@ private:
     double JIComponentToMC() const;
     
     t_pitch(t_stepsAndMC sat) : p_JIratio(expVector()) {
-        p_whiteKey = sat.steps % 7;
-        if (p_whiteKey < 0)
-            p_whiteKey += 7;
+        p_whiteKeyET = sat.steps % 7;
+        if (p_whiteKeyET < 0)
+            p_whiteKeyET += 7;
         t_int8 octave = (t_int8) integer_div_round_down(sat.steps, 7);
         setOctave(octave);
-        p_alter = (sat.mc - octave * 1200 - whiteKey2MC[p_whiteKey]) / 200;
+        p_alterET = (sat.mc - octave * 1200 - whiteKey2MC[p_whiteKeyET]) / 200;
     }
     
 protected:
@@ -287,17 +288,17 @@ protected:
 public:
     t_pitch() = default;
     
-    t_pitch(const t_atom_short degree) : p_JIratio(expVector()), p_whiteKey(degree), p_alter(0) {}
+    t_pitch(const t_atom_short degree) : p_JIratio(expVector()), p_whiteKeyET(degree), p_alterET(0) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational& alter) :
-        p_JIratio(expVector()), p_whiteKey(), p_alter(alter) {}
+        p_JIratio(expVector()), p_whiteKeyET(), p_alterET(alter) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational &alter, const t_int8 octave) :
         t_pitch(degree, alter) {
             p_JIratio.set(0, octave);
         }
     
-    t_pitch(const std::vector<const t_int8> &exponents) : p_JIratio(exponents), p_whiteKey(0), p_alter(0) { }
+    t_pitch(const std::vector<const t_int8> &exponents) : p_JIratio(exponents), p_whiteKeyET(0), p_alterET(0) { }
 
     // TODO: ANDREA, CHECK & and *
     void plofUnpack(const t_uint8 plof, t_uint8 *exp2, t_uint8 *exp3, t_uint8 *whiteKey) {
@@ -331,7 +332,7 @@ public:
     t_pitch(const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) {
         t_uint8 expof2, expof3, whiteKey;
         plofUnpack(plof, &expof2, &expof3, &whiteKey);
-        p_whiteKey = whiteKey;
+        p_whiteKeyET = whiteKey;
         
         std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE); // TODO: are we sure that these are initialized as zeros?
         exponents[0] = expof2;
@@ -344,14 +345,10 @@ public:
         }
 
         p_JIratio.set(exponents); // TODO: @Andrea, there's some const stuff missing, but I cannot initialize with const...
-        p_whiteKey = p_JIratio.getWhiteKey();
-        p_octave = p_JIratio.getOctave();
     }
     
-    void setExponentsFromRatios(const t_shortRational r) {
+    void set(const t_shortRational r) {
         p_JIratio.setFromRatio(r);
-        p_whiteKey = p_JIratio.getWhiteKey();
-        p_octave = p_JIratio.getOctave();
     }
     
     static double f2mc(double f) { return log2(f/C0freq) * 1200.; }
@@ -362,7 +359,7 @@ public:
     // only ET part
     t_stepsAndMC toStepsAndMC() const {
         t_stepsAndMC sat;
-        sat.steps = p_whiteKey + getOctave() * 7;
+        sat.steps = p_whiteKeyET + getOctave() * 7;
         sat.mc = toMCrat();
         return sat;
     }
@@ -376,38 +373,43 @@ public:
 
     t_atom_short whiteKey2MC_safe() const
     {
-        if (p_whiteKey >= 0 && p_whiteKey < 7)
-            return whiteKey2MC[p_whiteKey];
+        if (p_whiteKeyET >= 0 && p_whiteKeyET < 7)
+            return whiteKey2MC[p_whiteKeyET];
         else
             return 0;
     }
     
     bool isPureET() const { return p_JIratio.allZerosButOctaves(); }
-    bool isPureJI() const { return p_whiteKey == 0 && p_alter.num() == 0; }
+    bool isPureJI() const { return p_whiteKeyET == 0 && p_alterET.num() == 0; }
 
     
     
     void set(const t_atom_short whiteKey) {
-        p_whiteKey = whiteKey;
-        p_alter.set(0);
+        p_whiteKeyET = whiteKey;
+        p_alterET.set(0);
         p_JIratio.clear();
     }
     
     void set(const t_atom_short whiteKey, const t_shortRational &alter) {
-        p_whiteKey = whiteKey;
-        p_alter = alter;
+        p_whiteKeyET = whiteKey;
+        p_alterET = alter;
         p_JIratio.clear();
     }
     
     void set(const t_atom_short whiteKey, const t_shortRational &alter, const t_atom_short octave) {
-        p_whiteKey = whiteKey;
-        p_alter = alter;
+        p_whiteKeyET = whiteKey;
+        p_alterET = alter;
         p_JIratio.clear();
         setOctave(octave);
     }
     
-    t_atom_short getWhiteKey() const { return p_whiteKey; }
-    
+    void setFromRatio(t_rational r) { p_JIratio.setFromRatio(r); }
+
+    t_rational getRatio() const { return p_JIratio.getRatio(); }
+
+    t_atom_short getWhiteKeyET() const { return p_whiteKeyET; }
+    t_atom_short getWhiteKeyJI() const { return p_JIratio.getWhiteKeyJI(); }
+
     t_int8 getPlof() const { return p_JIratio.get(1); }
     
     t_int8 getSharps() const { return (getPlof()+1)/7; };
@@ -425,11 +427,19 @@ public:
         }
         return HEJIcommas;
     }
+
+    t_shortRational getAlterET() const { return p_alterET; }
+    t_shortRational getAlterJI() const { return p_alterJI; }
+
+    t_pitch getDisplayPitch() const {
+        // TODO: come somma di pitch ET (approssimato ai semitoni) e pitch JI
+        t_uint8 plof_ET = ..... ;
         
-    t_shortRational alter() const { return p_alter; }
+        p_whiteKeyET =
+    }
+
     
-    
-    t_atom_long toSteps() const { return p_octave * 7 + p_whiteKey; }
+    t_atom_long toSteps() const { return getOctave() * 7 + p_whiteKeyET; }
 
     t_atom_long toStepsFromMiddleC() const { return toSteps() - 7*5; }
 
@@ -450,7 +460,6 @@ public:
     t_pitch operator/(const t_atom_long b) const;
     t_pitch operator/(const t_rational &b) const;
     
-    // TODODG
     t_rational operator/(const t_pitch &b) const {
         t_rational b_toMCrat = b.toMCrat();
         if (b_toMCrat.r_num == 0)
@@ -489,8 +498,6 @@ public:
         else return -*this;
     }
 
-    // TODODG
-    // TODO: @Andrea: how do I distinguish pureET, pureJI, and what do you want to do with combinations?
     template <typename T> t_pitch mod(const T b) const {
         if (toMCdouble() > 0) return *this % b;
         else return -(*this % b);
@@ -520,12 +527,13 @@ public:
         T absolutepitch = mc - res.p_octave * 1200;
         t_atom_short pc = t_atom_long(absolutepitch) / 100;
         res.p_degree = t_pitch::PC2degree[pc];
-        res.p_alter = t_shortRational(absolutepitch - whiteKey2MC[res.p_degree] / 200);
+        res.p_alterET = t_shortRational(absolutepitch - whiteKey2MC[res.p_degree] / 200);
         return res;
     } */
     
-    // TODODG: what to do with this??
     // TODO: this shouldn't be needed for JI?
+    // potresti darmi il MC_wo_accidental del pitch_displayed()
+    // TODOAA
     t_atom_long toMC_wo_accidental() const {
         t_atom_long base = whiteKey2MC_safe() + getOctave() * 1200;
         return base;
@@ -538,8 +546,7 @@ public:
         return t_pitch(smc);
     }
     
-    // TODODG
-    // TODO: @Andrea: how do I distinguish pureET, pureJI, and what do you want to do with combinations?
+    // TODOAA: verificare che autoenharm dia sempre pure ET
     t_pitch autoenharm(long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr) const {
         return fromMC(this->toMCrat(), tone_division, accidentals_preferences, key_acc_pattern, full_repr);
     }
@@ -551,8 +558,8 @@ public:
     t_pitch autoenharm() const {
         long tone_division = 2;
         // inferring minimal tone division from accidental
-        if (this->alter().r_den > tone_division)
-            tone_division = lcm(2, this->alter().r_den);
+        if (this->getAlterET().r_den > tone_division)
+            tone_division = lcm(2, this->getAlterET().r_den);
         return this->autoenharm(tone_division, k_ACC_AUTO, NULL, NULL);
     }
     
@@ -568,31 +575,46 @@ public:
         setOctave(octave);
     }
      */
-    // TODO: ApproxJI to some limit?
-    // TODO: ApproxJI with continued fraction?
     
-    // TODODG
+    // TODO: ApproxJI to some limit?
+    t_pitch approxJI_limit() {
+        // TODO: approssima il ratio a un limite
+        t_rational r = p_JIratio.getRatio();
+        // fai qualcosa con r
+        // TODODG
+        p_JIratio.setFromRatio(r);
+    }
+
+    // TODO: approx con frazioni continue?
+    t_pitch approxJI() {
+        t_rational r = p_JIratio.getRatio();
+        // fai qualcosa con r
+        // BOH!!!!!!!
+        // TODODG
+        p_JIratio.setFromRatio(r);
+    }
+
+    
+    
     // TODO: @Andrea: can you do this? I suppose that approx(tone_division) MUST give an ET pitch, right?
     t_pitch approx(t_atom_long tone_division)
     {
         if (tone_division <= 0)
             return *this;
-        t_shortRational temp = p_alter * tone_division;
+        t_shortRational temp = p_alterET * tone_division;
         t_shortRational new_alter_down(temp.r_num / temp.r_den, static_cast<t_atom_short>(tone_division));
         t_shortRational new_alter_up((temp.r_num / temp.r_den) + 1, static_cast<t_atom_short>(tone_division));
-        return t_pitch(p_degree, (new_alter_up - p_alter < p_alter - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
+        return t_pitch(p_degree, (new_alter_up - p_alterET < p_alterET - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
     }
 
-    // TODODG
-    // TODO: @Andrea: can you do this? I suppose that approx(tone_division) MUST give an ET pitch, right?
     t_pitch approx(t_shortRational tone_division)
     {
         if (tone_division <= 0)
             return *this;
-        t_shortRational temp = p_alter * tone_division;
+        t_shortRational temp = p_alterET * tone_division;
         t_shortRational new_alter_down = (temp.r_num / temp.r_den) / tone_division;
         t_shortRational new_alter_up = ((temp.r_num / temp.r_den) + 1) / tone_division;
-        return t_pitch(p_degree, (new_alter_up - p_alter < p_alter - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
+        return t_pitch(p_degree, (new_alter_up - p_alterET < p_alterET - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
     }
     
     static t_rational approx(t_rational p, t_rational tone_division)
@@ -623,7 +645,7 @@ public:
     }
     
     t_bool isNaP() const {
-        return (p_alter.r_den == 0);
+        return (p_alterET.r_den == 0);
     }
     
     std::string toString(t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false) const;

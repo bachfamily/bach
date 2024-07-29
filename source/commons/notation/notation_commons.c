@@ -11717,7 +11717,7 @@ double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental
 double note_get_accidental_top_uextension(t_notation_obj *r_ob, t_note *note)
 {
     if (note->num_accidentals > 0)
-        return get_accidental_top_uextension(r_ob, note->pitch_displayed.p_alter) * (note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.);
+        return get_accidental_top_uextension(r_ob, note->pitch_displayed.p_alterET) * (note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.);
     else
         return 0;
 }
@@ -11778,7 +11778,7 @@ double get_accidental_bottom_uextension(t_notation_obj *r_ob, t_rational acciden
 double note_get_accidental_bottom_uextension(t_notation_obj *r_ob, t_note *note)
 {
     if (note->num_accidentals > 0)
-        return get_accidental_bottom_uextension(r_ob, note->pitch_displayed.p_alter) * (note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.);
+        return get_accidental_bottom_uextension(r_ob, note->pitch_displayed.p_alterET) * (note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.);
     else
         return 0;
 }

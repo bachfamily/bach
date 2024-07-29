@@ -100,7 +100,7 @@ t_bool t_pitch::operator<(const t_pitch &b)
         return thisMC < bMC;
     if (p_octave != b.p_octave)
         return p_octave < b.p_octave;
-    return p_alter < b.p_alter;
+    return p_alterET < b.p_alterET;
 }
 
 t_bool t_pitch::operator>(const t_pitch &b)
@@ -111,7 +111,7 @@ t_bool t_pitch::operator>(const t_pitch &b)
         return thisMC > bMC;
     if (p_octave != b.p_octave)
         return p_octave > b.p_octave;
-    return p_alter > b.p_alter;
+    return p_alterET > b.p_alterET;
 }
 
 #endif // othercomparison
@@ -294,13 +294,13 @@ double t_pitch::JIComponentToFreq() const {
 
 t_rational t_pitch::ETComponentToMCrat() const {
     t_atom_short mcBase = whiteKey2MC_safe();
-    t_rational mc = mcBase + p_alter * 200;
+    t_rational mc = mcBase + p_alterET * 200;
     return mc;
 }
 
 double t_pitch::ETComponentToMCdouble() const {
     t_atom_short mcBase = whiteKey2MC_safe();
-    double mc = mcBase + p_alter * 200;
+    double mc = mcBase + p_alterET * 200;
     return mc;
 }
 
@@ -308,18 +308,18 @@ double t_pitch::toMCdouble() const {
     return ETComponentToMCdouble() + JIComponentToMC();
 }
 
-// TODODG: rivedere approssimazione
+// TODO: Rivedere approssimazione al denominatore?
 t_rational t_pitch::toMCrat() const {
     t_rational etmc = ETComponentToMCrat();
     double jimc = JIComponentToMC();
-    t_rational jimcR = approx_double_with_rat_fixed_den(jimc, 1000000000, 0, nullptr);
+    t_rational jimcR = approx_double_with_rat_fixed_den(jimc, 10000, 0, nullptr);
     return etmc + jimcR;
 }
 
 
 t_bool t_pitch::operator==(const t_pitch &b) const
 {
-    return p_whiteKey == b.p_whiteKey && p_alter == b.p_alter && p_JIratio == b.p_JIratio;
+    return p_whiteKeyET == b.p_whiteKeyET && p_alterET == b.p_alterET && p_JIratio == b.p_JIratio;
 }
 
 t_bool t_pitch::operator<(const t_pitch &b) const
@@ -329,8 +329,8 @@ t_bool t_pitch::operator<(const t_pitch &b) const
     if (isPureET()) {
         if (getOctave() != b.getOctave())
             return getOctave() != b.getOctave();
-        else if (p_whiteKey != b.p_whiteKey)
-            return p_whiteKey < b.p_whiteKey;
+        else if (p_whiteKeyET != b.p_whiteKeyET)
+            return p_whiteKeyET < b.p_whiteKeyET;
         else
             return ETComponentToMCdouble() < b.ETComponentToMCdouble();
     }
@@ -344,8 +344,8 @@ t_bool t_pitch::operator>(const t_pitch &b) const
     if (isPureET()) {
         if (getOctave() != b.getOctave())
             return getOctave() != b.getOctave();
-        else if (p_whiteKey != b.p_whiteKey)
-            return p_whiteKey > b.p_whiteKey;
+        else if (p_whiteKeyET != b.p_whiteKeyET)
+            return p_whiteKeyET > b.p_whiteKeyET;
         else
             return ETComponentToMCdouble() > b.ETComponentToMCdouble();
     }
@@ -359,16 +359,16 @@ t_pitch t_pitch::operator-() const
 
 t_pitch t_pitch::operator+(const t_pitch &b) const
 {
-    t_pitch sum = t_pitchMatrices::getSum(p_whiteKey, b.p_whiteKey);
-    sum.p_alter += p_alter + b.p_alter;
+    t_pitch sum = t_pitchMatrices::getSum(p_whiteKeyET, b.p_whiteKeyET);
+    sum.p_alterET += p_alterET + b.p_alterET;
     sum.p_JIratio = p_JIratio + b.p_JIratio;
     return sum;
 }
 
 t_pitch t_pitch::operator-(const t_pitch &b) const
 {
-    t_pitch diff = t_pitchMatrices::getDiff(p_whiteKey, b.p_whiteKey);
-    diff.p_alter += p_alter + b.p_alter;
+    t_pitch diff = t_pitchMatrices::getDiff(p_whiteKeyET, b.p_whiteKeyET);
+    diff.p_alterET += p_alterET + b.p_alterET;
     diff.p_JIratio = p_JIratio + b.p_JIratio;
     return diff;
 }
@@ -388,9 +388,17 @@ t_pitch t_pitch::operator*(const t_rational &b) const
         return C0;
     if (b.den() == 0)
         return NaP;
+    // TODOAA cast a ET??
     if (isPureET()) {
         t_rat<long> inv = b.inv();
         return *this / b.inv();
+    } else if (isPureJI()) {
+        // fattorizzare b e ottenere il vettore di esponenti di b
+        // dividere elemento a elemento il vettore di esponenti?
+        expVector vec_b;
+        vec_b.setFromRatio(b);
+        expVector orig = this->p_JIratio;
+        return orig / vec_b;
     }
     // non pure ET: TODODG
     // TODO: @Andrea: I have no idea what it means to multiply by a rational.
@@ -422,12 +430,28 @@ t_pitch t_pitch::operator/(const t_rational &b) const
 
 t_pitch t_pitch::operator%(const t_pitch &b) const
 {
-    if (b.toMCdouble() == 0)
-        return t_pitch::NaP;
+    if (isPureJI()) {
+        t_rational r = getRatio();
+        t_rational r2 = b.getRatio();
 
-    t_atom_long quotient = t_atom_long((*this).divdiv(b));
-    t_pitch t = b * quotient;
-    return *this - t;
+        while (rat_rat_cmp(r, r2) > 0) {
+            r /= b;
+        }
+        while (rat_rat_cmp(r, long2rat(1)) < 0) {
+            r *= b;
+        }
+        
+        // TODO: @ANDREA non so perché dà errore la riga qui sotto
+        setFromRatio(r);
+        
+    } else {
+        if (b.toMCdouble() == 0)
+            return t_pitch::NaP;
+        
+        t_atom_long quotient = t_atom_long((*this).divdiv(b));
+        t_pitch t = b * quotient;
+        return *this - t;
+    }
 }
 
 t_pitch t_pitch::operator%(const t_atom_long b) const
@@ -445,7 +469,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
     t_int8 octave;
     t_pitch p;
     bool mirror;
-    if (p_alter.den() == 0) {
+    if (p_alterET.den() == 0) {
         s = "NaP";
     } else {
         octave = getOctave();
@@ -462,8 +486,8 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
             // not pure JI or both pure JI and pureET (that is, it's a C with no alteration or deviation)
             if (mirror)
                 s = '-';
-            s += degree2name[p.p_whiteKey];
-            t_shortRational remainder = p.p_alter;
+            s += degree2name[p.p_whiteKeyET];
+            t_shortRational remainder = p.p_alterET;
             if (remainder > natural) { // sharps
                 while (remainder >= eighthsharp) {
                     if (remainder >= dblsharp) {
@@ -551,7 +575,7 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
     long count = 0;
     if (!buf || bufSize == 0)
         return -1;
-    if (p_alter.den() == 0) {
+    if (p_alterET.den() == 0) {
         if (addTrailingSpace)
             return snprintf_zero(buf, bufSize, "NaP ");
         else
@@ -562,7 +586,7 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
         
         if (++count == bufSize) { *buf = 0; return count - 1; }
         *(buf++) = degree2name[p_degree];
-        t_shortRational remainder = p_alter;
+        t_shortRational remainder = p_alterET;
         if (remainder > natural) { // sharps
             /* // this is probably not convenient, as it complicates simple cases
              s += std::string("x", t_atom_long(remainder / dblsharp));
@@ -637,7 +661,7 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
         *(buf++) = '-';
         if (++count == bufSize) { *buf = 0; return count - 1; }
         *(buf++) = degree2name[mirrored.p_degree];
-        t_shortRational remainder = mirrored.p_alter;
+        t_shortRational remainder = mirrored.p_alterET;
         if (remainder > natural) { // sharps
             /* // this is probably not convenient, as it complicates simple cases
              s += std::string("x", t_atom_long(remainder / dblsharp));
@@ -732,7 +756,8 @@ long floor_div_by_7(long num)
     return num / 7 - (num % 7 < 0);
 }
 
-// TODODG
+// TODOAA
+// fromMC dovrebbe diventare costruttore?
 // TODO: @Andrea: Why TODO DG? if it's fromMC it's clearly a purely ET pitch, isn't it?
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)
 {

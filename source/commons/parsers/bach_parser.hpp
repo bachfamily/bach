@@ -137,7 +137,7 @@ public:
         t_shortRational alter = t_pitch::text2alter(&next);
         t_atom_short octave = static_cast<t_atom_short>(strtol(next, &next, 10));
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
-        p.p_alter += t_shortRational(static_cast<t_atom_short>(strtol(next, NULL, 10)),
+        p.p_alterET += t_shortRational(static_cast<t_atom_short>(strtol(next, NULL, 10)),
                                      1);
         return p;
     }
@@ -150,7 +150,7 @@ public:
         t_shortRational alter = t_pitch::text2alter(&next);
         long octave = strtol(next, &next, 10);
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
-        p.p_alter += t_shortRational(static_cast<t_atom_short>(strtol(next, &next, 10)),
+        p.p_alterET += t_shortRational(static_cast<t_atom_short>(strtol(next, &next, 10)),
                                      static_cast<t_atom_short>(strtol(next + 1, NULL, 10)));
         return p;
     }
@@ -174,10 +174,10 @@ public:
         t_atom_short tSign = eatSign(&next);
         t_atom_short tNum = (t_atom_short) strtol(next, &next, 10);
         if (*next != '/') {
-            p.p_alter += tNum;
+            p.p_alterET += tNum;
         } else {
             t_atom_short tDen = (t_atom_short) strtol(++next, &next, 10);
-            p.p_alter += t_shortRational(tNum, tDen);
+            p.p_alterET += t_shortRational(tNum, tDen);
         }
         if (!*next)
             return p;
