@@ -73,28 +73,37 @@ public:
     static t_atom_short constexpr numFifthsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {0,1,4,-2,-1,3,7,-3,6,-2,0,2,4,-1,6}; // a major third contributes to 4 diatonic fifths, etc.
     static t_atom_short constexpr numDiatonicStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,29,30,31,34,35,36,37,38,38}; // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 3/1 is 16, a 4/1 is 20, and so on.
 
+    static const t_rational HEJIcommasRatios[BACH_PRIMES_JI_SIZE-2];
+
     static int constexpr HEJIcommasExponents[BACH_PRIMES_JI_SIZE-2][BACH_PRIMES_JI_SIZE] =
-            {{-4, 4, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // these start from the 5-limit!
-            {6, -2, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // 7-limit
-            {5, -1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // 11-limit
-            {-1, 3, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {-7, 7, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0},
-            {9, -3, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0},
-            {-5, 6, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0},
-            {8, -2, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
-            {5, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0},
-            {2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0},
-            {-1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0},
-            {7, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0},
-            {-4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1}};
+            {{-4, 4, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 81/80  these start from the 5-limit!
+            {6, -2, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // 64/63      7-limit
+            {5, -1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // 32/33      11-limit
+            {-1, 3, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0},  // 27/26      13-limit
+            {-7, 7, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0},  // 2187/2176  ....
+            {9, -3, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0},  // 512/513
+            {-5, 6, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0},  // 729/736
+            {8, -2, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},  // 256/261
+            {5, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0},   // 32/31
+            {2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0},   // 36/37
+            {-1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0},  // 81/82
+            {7, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0},  // 128/129
+            {-4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1}}; // 729/752
     
+// this is a more efficient representation: every limit has -1 as its exponent, and the only exponent that matter are 2^ and 3^
+    static int constexpr HEJIcommasExponents2[BACH_PRIMES_JI_SIZE-2] = {-4, 6, 5, -1, -7, 9, -5, 8, 5, 2, -1, 7, -4};
+    static int constexpr HEJIcommasExponents3[BACH_PRIMES_JI_SIZE-2] = {4, -2, -1, 3, 7, -3, 6, -2, 0, 2, 4, -1, 6};
+
+
+    static char constexpr HEJIcommasExponentsDirection[BACH_PRIMES_JI_SIZE-2] = {1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, -1}; // is numerator > denominator in the HEJI commas
+
     
 private:
     class expVector {
         //static t_rational constexpr primes_inv[] = {{1, 2}, {1, 3}, {1, 5}, {1, 7}, {1, 11}, {1, 13}, {1, 17}, {1, 19}, {1, 23}, {1, 29}, {1, 31}, {1, 37}, {1, 41}, {1, 43}, {1, 47}};
         
     private:
-        Byte data[11]; // containing a "vector" of respectively 8 8 8 8 8 8 8 4 4 4 4 4 4 4 4 -bit signed integers
+        Byte data[11]; // containing a "vector" of respectively 8 8 8 8 8 8 8 4 4 4 4 4 4 4 4 -bit signed integers // TODO: @Andrea: check/change given that I've added the p_octave
         
         static inline int8_t getLNibble(const Byte b) {
             int8_t r = (b & 0xf0) >> 4;
@@ -166,7 +175,8 @@ private:
             for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
                 sum += get(i) * numFifthsPerPrimeFactor[i];
             }
-            return sum + getPlof(); //positive_mod(() * 4),7);
+            return sum;
+//      was:            return sum + getPlof(); //positive_mod(() * 4),7);
             // DG: this thing above doesn't look right any longer
         }
         
@@ -175,14 +185,23 @@ private:
             for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
                 steps += get(i) * numDiatonicStepsPerPrimeFactor[i];
             }
-            return (positive_mod(getPlof() * 4, 7) + steps)/7;
+            return steps / 7;
+            // was:
+//            return (positive_mod(getPlof() * 4, 7) + steps)/7;
+            // but not sure why I'd need that
+        }
+        
+        void setOctave (int8_t o) {
+            int8_t curr_octave = getOctave();
+            int8_t delta = o - curr_octave;
+            set(0, get(0) + delta);
         }
         
         bool operator==(const expVector& b) const;
         bool operator!=(const expVector& b) const { return !(*this == b); };
-        bool operator<(const expVector& b) const { return getDoubleRatio() < b.getDoubleRatio(); }
+        bool operator<(const expVector& b) const { return getRatioAsDouble() < b.getRatioAsDouble(); }
         bool operator<=(const expVector& b) const { return !(*this > b); }
-        bool operator>(const expVector& b) const { return getDoubleRatio() > b.getDoubleRatio(); }
+        bool operator>(const expVector& b) const { return getRatioAsDouble() > b.getRatioAsDouble(); }
         bool operator>=(const expVector& b) const { return !(*this < b); }
 
         expVector operator+(const expVector& b) const;
@@ -196,9 +215,9 @@ private:
         expVector operator*=(t_atom_long b) { return *this = *this * b; }
         
         t_rational getRatio() const;
-        double getDoubleRatio() const;
+        double getRatioAsDouble() const;
         bool allZeros() const;
-        bool allZerosFromTritave() const;
+        bool allZerosButOctaves() const;
     };
     
     class pco {
@@ -213,7 +232,7 @@ public:
     static const t_pitch NaP; // not a pitch
     static const t_pitch middleC; // middle C
     static const t_pitch C0; // C0
-    static const t_atom_short degree2MC[];
+    static const t_atom_short whiteKey2MC[];
     static const t_atom_short degree2PC[];
     static const t_atom_short PC2degree[];
     static const char degree2name[];
@@ -260,7 +279,7 @@ private:
             p_whiteKey += 7;
         t_int8 octave = (t_int8) integer_div_round_down(sat.steps, 7);
         setOctave(octave);
-        p_alter = (sat.mc - octave * 1200 - degree2MC[p_whiteKey]) / 200;
+        p_alter = (sat.mc - octave * 1200 - whiteKey2MC[p_whiteKey]) / 200;
     }
     
 protected:
@@ -314,57 +333,25 @@ public:
         plofUnpack(plof, &expof2, &expof3, &whiteKey);
         p_whiteKey = whiteKey;
         
-        std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE); // TODO: are we sure that these are zeros?
+        std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE); // TODO: are we sure that these are initialized as zeros?
         exponents[0] = expof2;
         exponents[1] = expof3;
         for (long i = 0; i < BACH_PRIMES_JI_SIZE-2; i++) { // HEJIcommas start from 5-limit
-            for (long j = 0; j < BACH_PRIMES_JI_SIZE; j++) {
-                exponents[j] += HEJIcommasExponents[i][j];
-            }
+            char dir = HEJIcommasExponentsDirection[i];
+            exponents[0] += dir * HEJIcommasExponents2[i];
+            exponents[1] += dir * HEJIcommasExponents3[i];
+            exponents[i+2] += dir * (-1);
         }
 
         p_JIratio.set(exponents); // TODO: @Andrea, there's some const stuff missing, but I cannot initialize with const...
-
-        long sum = 0, steps = 0;
-        for (long i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
-            sum += exponents[i] * numFifthsPerPrimeFactor[i];
-            steps += exponents[i] * numDiatonicStepsPerPrimeFactor[i];
-        }
-
-        p_whiteKey = sum + plof; //positive_mod(() * 4),7);
-        p_octave = (octave * 7 + positive_mod(plof * 4, 7) + steps)/7;
-        long delta_octave = p_octave - (octave * 7 + positive_mod(plof * 4, 7))/7;
-
-        /* // DG: I'm not sure what this was for and if we still need it
-        t_shortRational comma = freqRatio;
-        t_shortRational threeovertwo(3,2);
-        long sum_abs = (sum >= 0 ? sum : -sum);
-        long sum_sign = (sum >= 0 ? 1 : -1);
-        for (long i = 0; i < sum_abs; i++) {
-            if (sum_sign > 0)
-                comma = comma / threeovertwo;
-            else
-                comma = comma * threeovertwo;
-        }
-        long num_octaves_removed = (sum*4)/7;
-        if (num_octaves_removed > 0)
-            comma *= ipow(2, num_octaves_removed);
-        else if (num_octaves_removed < 0)
-            comma /= ipow(2, -num_octaves_removed);
-         */
-        // refining commas removing factors of 2
-/*        if (delta_octave > 0) {
-            comma *= ipow(2, delta_octave);
-        } else if (delta_octave < 0) {
-            comma /= ipow(2, -delta_octave);
-        } */
-//        p_alter = comma;
-        
+        p_whiteKey = p_JIratio.getWhiteKey();
+        p_octave = p_JIratio.getOctave();
     }
     
     void setExponentsFromRatios(const t_shortRational r) {
         p_JIratio.setFromRatio(r);
-        // TODO: what about p_whiteKey?
+        p_whiteKey = p_JIratio.getWhiteKey();
+        p_octave = p_JIratio.getOctave();
     }
     
     static double f2mc(double f) { return log2(f/C0freq) * 1200.; }
@@ -380,23 +367,22 @@ public:
         return sat;
     }
     
-    // TODO: OCCHIO, queste sono sbagliate. L'ottava non è l'esponente di 2, dipende anche dalla quinta. (DG)
-    void setOctave(t_int8 oct) { p_JIratio.set(0, oct); }
+    void setOctave(t_int8 oct) {
+        p_JIratio.setOctave(oct);
+        p_octave = oct;
+    }
     
-    // TODODG: e gli altri coefficienti?
-    t_int8 getOctave() const { return p_JIratio.get(0); }
+    t_int8 getOctave() const { return p_octave; }
 
-    t_int8 getPlof() const { return p_JIratio.get(1); } // this is OK
-
-    t_atom_short degree2MC_safe() const
+    t_atom_short whiteKey2MC_safe() const
     {
         if (p_whiteKey >= 0 && p_whiteKey < 7)
-            return degree2MC[p_whiteKey];
+            return whiteKey2MC[p_whiteKey];
         else
             return 0;
     }
     
-    bool isPureET() const { return p_JIratio.allZerosFromTritave(); }
+    bool isPureET() const { return p_JIratio.allZerosButOctaves(); }
     bool isPureJI() const { return p_whiteKey == 0 && p_alter.num() == 0; }
 
     
@@ -420,15 +406,30 @@ public:
         setOctave(octave);
     }
     
-    t_atom_short degreeET() const { return p_whiteKey; }
+    t_atom_short getWhiteKey() const { return p_whiteKey; }
+    
     t_int8 getPlof() const { return p_JIratio.get(1); }
-    t_int8 getSharps() const { return getPlof() / 6; }
-    std::vector<int8_t> getCommas() const { return std::vector<int8_t>(); } // TODODG
+    
+    t_int8 getSharps() const { return (getPlof()+1)/7; };
+    
+    std::vector<int8_t> getHEJICommas() const {
+        std::vector<int8_t> v = p_JIratio; // TODO: @Andrea: how do I copy the vector?
+        std::vector<int8_t> HEJIcommas(BACH_PRIMES_JI_SIZE - 2);
+        for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE - 2; i++) { // HEJI commas are from 5-limit on
+            int8_t this_comma = v[i+2];
+            char dir = HEJIcommasExponentsDirection[i];
+            HEJIcommas[i] = dir * this_comma; // TODO: or the opposite? Is there a minus sign missing? check
+            v[0] -= this_comma * HEJIcommasExponents2[i];
+            v[1] -= this_comma * HEJIcommasExponents3[i];
+            v[i+2] -= this_comma;
+        }
+        return HEJIcommas;
+    }
+        
     t_shortRational alter() const { return p_alter; }
     
     
-    // TODODG
-    t_atom_long toSteps() const { return getOctave() * 7 + p_whiteKey; }
+    t_atom_long toSteps() const { return p_octave * 7 + p_whiteKey; }
 
     t_atom_long toStepsFromMiddleC() const { return toSteps() - 7*5; }
 
@@ -489,6 +490,7 @@ public:
     }
 
     // TODODG
+    // TODO: @Andrea: how do I distinguish pureET, pureJI, and what do you want to do with combinations?
     template <typename T> t_pitch mod(const T b) const {
         if (toMCdouble() > 0) return *this % b;
         else return -(*this % b);
@@ -518,13 +520,14 @@ public:
         T absolutepitch = mc - res.p_octave * 1200;
         t_atom_short pc = t_atom_long(absolutepitch) / 100;
         res.p_degree = t_pitch::PC2degree[pc];
-        res.p_alter = t_shortRational(absolutepitch - degree2MC[res.p_degree] / 200);
+        res.p_alter = t_shortRational(absolutepitch - whiteKey2MC[res.p_degree] / 200);
         return res;
     } */
     
     // TODODG: what to do with this??
+    // TODO: this shouldn't be needed for JI?
     t_atom_long toMC_wo_accidental() const {
-        t_atom_long base = degree2MC_safe() + getOctave() * 1200;
+        t_atom_long base = whiteKey2MC_safe() + getOctave() * 1200;
         return base;
     }
     
@@ -536,6 +539,7 @@ public:
     }
     
     // TODODG
+    // TODO: @Andrea: how do I distinguish pureET, pureJI, and what do you want to do with combinations?
     t_pitch autoenharm(long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr) const {
         return fromMC(this->toMCrat(), tone_division, accidentals_preferences, key_acc_pattern, full_repr);
     }
@@ -552,7 +556,23 @@ public:
         return this->autoenharm(tone_division, k_ACC_AUTO, NULL, NULL);
     }
     
+    /*
+    t_pitch approxJI_maxden(t_atom_long max_num, t_atom_long max_den) // Approximate a pitch within some limit
+    {
+        t_shortRational r = p_JIratio.getRatio();
+        t_uint8 octave = getOctave();
+        
+        t_rational r_approx = approx_rat_with_rat(r, max_num, max_den);
+        
+        p_JIratio.setFromRatio(r);
+        setOctave(octave);
+    }
+     */
+    // TODO: ApproxJI to some limit?
+    // TODO: ApproxJI with continued fraction?
+    
     // TODODG
+    // TODO: @Andrea: can you do this? I suppose that approx(tone_division) MUST give an ET pitch, right?
     t_pitch approx(t_atom_long tone_division)
     {
         if (tone_division <= 0)
@@ -564,6 +584,7 @@ public:
     }
 
     // TODODG
+    // TODO: @Andrea: can you do this? I suppose that approx(tone_division) MUST give an ET pitch, right?
     t_pitch approx(t_shortRational tone_division)
     {
         if (tone_division <= 0)

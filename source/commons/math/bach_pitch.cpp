@@ -46,12 +46,15 @@ const t_pitch t_pitch::NaP = t_pitch(0, illegal, 0); // not a pitch
 const t_pitch t_pitch::middleC = t_pitch(0, natural, 5); // middle C
 const t_pitch t_pitch::C0 = t_pitch(0, natural, 0); // C0
 
-const t_atom_short t_pitch::degree2MC[] = {0, 200, 400, 500, 700, 900, 1100};
+const t_atom_short t_pitch::whiteKey2MC[] = {0, 200, 400, 500, 700, 900, 1100};
 const t_atom_short t_pitch::degree2PC[] = {0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23};
 const t_atom_short t_pitch::PC2degree[] = {0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6};
 const char t_pitch::degree2name[] = { 'C', 'D', 'E', 'F', 'G', 'A', 'B' };
 
 const t_rational t_pitch::primes_inv[15] = {{1, 2}, {1, 3}, {1, 5}, {1, 7}, {1, 11}, {1, 13}, {1, 17}, {1, 19}, {1, 23}, {1, 29}, {1, 31}, {1, 37}, {1, 41}, {1, 47}, {1, 53}};
+
+const t_rational t_pitch::HEJIcommasRatios[15] = {{81,80}, {64,63}, {32,33}, {27,26}, {2187,2176}, {512,513}, {729,736}, {256,261}, {32,31}, {36,37}, {81,82}, {128,129}, {729,752}};
+
 
 t_pitchMatrices& t_pitch::pm = t_pitchMatrices::getInstance();
 
@@ -259,7 +262,7 @@ t_rational t_pitch::expVector::getRatio() const {
     return r;
 };
 
-double t_pitch::expVector::getDoubleRatio() const {
+double t_pitch::expVector::getRatioAsDouble() const {
     double r = 1.;
     int i;
     for (i = 0; i < 7; i++) {
@@ -278,7 +281,7 @@ bool t_pitch::expVector::allZeros() const {
     return *reinterpret_cast<const t_int64*>(data) == 0 && *reinterpret_cast<const t_int16*>(data + 8) == 0 && *(data + 10) == 0;
 }
 
-bool t_pitch::expVector::allZerosFromTritave() const {
+bool t_pitch::expVector::allZerosButOctaves() const {
     return *reinterpret_cast<const t_int64*>(data + 1) == 0 && *reinterpret_cast<const t_int16*>(data + 9) == 0;
 }
 
@@ -286,17 +289,17 @@ bool t_pitch::expVector::allZerosFromTritave() const {
 // /////////////////////////////
 
 double t_pitch::JIComponentToFreq() const {
-    return C0freq * p_JIratio.getDoubleRatio();
+    return C0freq * p_JIratio.getRatioAsDouble();
 }
 
 t_rational t_pitch::ETComponentToMCrat() const {
-    t_atom_short mcBase = degree2MC_safe();
+    t_atom_short mcBase = whiteKey2MC_safe();
     t_rational mc = mcBase + p_alter * 200;
     return mc;
 }
 
 double t_pitch::ETComponentToMCdouble() const {
-    t_atom_short mcBase = degree2MC_safe();
+    t_atom_short mcBase = whiteKey2MC_safe();
     double mc = mcBase + p_alter * 200;
     return mc;
 }
@@ -390,6 +393,8 @@ t_pitch t_pitch::operator*(const t_rational &b) const
         return *this / b.inv();
     }
     // non pure ET: TODODG
+    // TODO: @Andrea: I have no idea what it means to multiply by a rational.
+    // You can multiply by integers if you want, and this just amounts to multipling the exponents
     return C0;
 }
 
@@ -728,6 +733,7 @@ long floor_div_by_7(long num)
 }
 
 // TODODG
+// TODO: @Andrea: Why TODO DG? if it's fromMC it's clearly a purely ET pitch, isn't it?
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)
 {
     long original_tone_division = tone_division;
