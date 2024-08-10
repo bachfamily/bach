@@ -215,6 +215,8 @@ private:
         expVector operator-(const expVector& b) const;
         expVector operator*(const expVector& b) const;
         expVector operator*(t_atom_long b) const;
+        expVector operator/(const expVector& b) const;
+        expVector operator/(t_atom_long b) const;
         expVector operator-() const;
         
         expVector operator+=(const expVector &b) { return *this = *this + b; }
@@ -260,7 +262,7 @@ private:
     static constexpr double C0freq = 8.1757989156437073336828122976032719176391;
 ;
     
-    expVector p_JIratio;
+    expVector p_JIexpVector;
     t_uint8 p_whiteKeyET;
 public: // because solves a lot of small issues... for now...
     t_tinyRational p_alterET;
@@ -274,7 +276,7 @@ private:
     t_rational ETComponentToMCratWithOctave() const;
     double ETComponentToMCdoubleWithOctave() const;
     
-    t_pitch(t_stepsAndMC sat) : p_JIratio(expVector()) {
+    t_pitch(t_stepsAndMC sat) : p_JIexpVector(expVector()) {
         p_whiteKeyET = sat.steps % 7;
         if (p_whiteKeyET < 0)
             p_whiteKeyET += 7;
@@ -288,18 +290,21 @@ protected:
 public:
     t_pitch() = default;
     
-    t_pitch(const t_atom_short degree) : p_JIratio(expVector()), p_whiteKeyET(degree), p_alterET(0) {}
+    t_pitch(const t_atom_short degree) : p_JIexpVector(expVector()), p_whiteKeyET(degree), p_alterET(0) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational& alter) :
-        p_JIratio(expVector()), p_whiteKeyET(), p_alterET(alter) {}
+        p_JIexpVector(expVector()), p_whiteKeyET(), p_alterET(alter) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational &alter, const t_int8 octave) :
         t_pitch(degree, alter) {
-            p_JIratio.setOctave(octave);
+            p_JIexpVector.setOctave(octave);
         }
     
-    t_pitch(const std::vector<t_int8> &exponents) : p_JIratio(exponents), p_whiteKeyET(0), p_alterET(0) { }
+    t_pitch(const std::vector<t_int8> &exponents) : p_JIexpVector(exponents), p_whiteKeyET(0), p_alterET(0) { }
     
+    t_pitch(expVector exponents) : p_JIexpVector(exponents), p_whiteKeyET(0), p_alterET(0) { }
+
+
     t_pitch(const t_shortRational &r) {
         setJI(r);
     }
@@ -355,12 +360,12 @@ public:
             exponents[i+2] += dir * HEJIcommas[i] * (-1);
         }
 
-        p_JIratio.set(exponents); // TODO: @Andrea, there's some const stuff missing, but I cannot initialize with const... -- SOLVED
+        p_JIexpVector.set(exponents); // TODO: @Andrea, there's some const stuff missing, but I cannot initialize with const... -- SOLVED
         setOctave(octave);
     }
     
     void setJI(const std::vector<t_int8> &exponents) {
-        p_JIratio.set(exponents);
+        p_JIexpVector.set(exponents);
         p_whiteKeyET = 0;
         p_alterET = {0, 1};
     }
@@ -370,12 +375,12 @@ public:
         p_alterET = alter;
     }
     
-    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const std::vector<t_int8> &exponents, const t_uint8 addOctave = 0) : p_JIratio(exponents), p_whiteKeyET(degree), p_alterET(alter) {
-        p_JIratio.addOctave(addOctave);
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const std::vector<t_int8> &exponents, const t_uint8 addOctave = 0) : p_JIexpVector(exponents), p_whiteKeyET(degree), p_alterET(alter) {
+        p_JIexpVector.addOctave(addOctave);
     }
     
     void setJI(const t_shortRational r) {
-        p_JIratio.setFromRatio(r);
+        p_JIexpVector.setFromRatio(r);
         p_whiteKeyET = 0;
         p_alterET = {0, 1};
     }
@@ -383,19 +388,19 @@ public:
     void setET(const t_atom_short whiteKey) {
         p_whiteKeyET = whiteKey;
         p_alterET.set(0);
-        p_JIratio.clear();
+        p_JIexpVector.clear();
     }
     
     void setET(const t_atom_short whiteKey, const t_tinyRational &alter) {
         p_whiteKeyET = whiteKey;
         p_alterET = alter;
-        p_JIratio.clear();
+        p_JIexpVector.clear();
     }
     
     void setET(const t_atom_short whiteKey, const t_tinyRational &alter, const t_atom_short octave) {
         p_whiteKeyET = whiteKey;
         p_alterET = alter;
-        p_JIratio.clear();
+        p_JIexpVector.clear();
         setOctave(octave);
     }
         
@@ -413,11 +418,11 @@ private:
     
 public:
     void setOctave(t_int8 oct) {
-        p_JIratio.setOctave(oct);
+        p_JIexpVector.setOctave(oct);
     }
     
     t_int8 getOctave() const {
-        return p_JIratio.getOctave();
+        return p_JIexpVector.getOctave();
     }
 
     t_atom_short whiteKey2MC_safe() const
@@ -428,45 +433,45 @@ public:
             return 0;
     }
     
-    bool isPureET() const { return p_JIratio.allZerosButOctaves(); }
+    bool isPureET() const { return p_JIexpVector.allZerosButOctaves(); }
     bool isPureJI() const { return p_whiteKeyET == 0 && p_alterET.num() == 0; }
 
     void set(const t_atom_short whiteKey) {
         p_whiteKeyET = whiteKey;
         p_alterET.set(0);
-        p_JIratio.clear();
+        p_JIexpVector.clear();
     }
     
     void set(const t_atom_short whiteKey, const t_shortRational &alter) {
         p_whiteKeyET = whiteKey;
         p_alterET = alter;
-        p_JIratio.clear();
+        p_JIexpVector.clear();
     }
     
     void set(const t_atom_short whiteKey, const t_shortRational &alter, const t_atom_short octave) {
         p_whiteKeyET = whiteKey;
         p_alterET = alter;
-        p_JIratio.clear();
+        p_JIexpVector.clear();
         setOctave(octave);
     }
     
     void setJI(t_rational r) {
         p_whiteKeyET = 0;
         p_alterET.set(0);
-        p_JIratio.setFromRatio(r);
+        p_JIexpVector.setFromRatio(r);
     }
 
-    t_rational getRatio() const { return p_JIratio.getRatio(); }
+    t_rational getRatio() const { return p_JIexpVector.getRatio(); }
 
     t_atom_short getWhiteKeyET() const { return p_whiteKeyET; }
-    t_atom_short getWhiteKeyJI() const { return p_JIratio.getWhiteKeyJI(); }
+    t_atom_short getWhiteKeyJI() const { return p_JIexpVector.getWhiteKeyJI(); }
 
-    t_int8 getPlof() const { return p_JIratio.getPlof(); }
+    t_int8 getPlof() const { return p_JIexpVector.getPlof(); }
     
     t_int8 getSharps() const { return (getPlof()+1)/7; };
     
     std::vector<int8_t> getHEJICommas() const {
-        std::vector<int8_t> v = p_JIratio.get(); // TODO: @Andrea: how do I copy the vector? -- SOLVED
+        std::vector<int8_t> v = p_JIexpVector.get(); // TODO: @Andrea: how do I copy the vector? -- SOLVED
         std::vector<int8_t> HEJIcommas(BACH_PRIMES_JI_SIZE - 2);
         for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE - 2; i++) { // HEJI commas are from 5-limit on
             int8_t this_comma = v[i+2];
@@ -536,11 +541,16 @@ public:
     t_pitch operator/(const t_atom_long b) const;
     t_pitch operator/(const t_rational &b) const;
     
-    t_rational operator/(const t_pitch &b) const {
-        t_rational b_toMCrat = b.toMCrat();
-        if (b_toMCrat.r_num == 0)
-            error("Illegal division by C0 (or one of its enharmonic pitches) detected.");
-        return toMCrat() / b_toMCrat;
+    t_hatom operator/(const t_pitch &b) const {
+        if (isPureET()) {
+            t_hatom h;
+            t_rational b_toMCrat = b.toMCrat();
+            if (b_toMCrat.r_num == 0)
+                error("Illegal division by C0 (or one of its enharmonic pitches) detected.");
+            hatom_setrational(&h, toMCrat() / b_toMCrat);
+            return h;
+        }
+        // TODO: stessa cosa con i double per gli altri casi
     };
     
     t_pitch operator%(const t_atom_long b) const;
@@ -655,19 +665,19 @@ public:
     // TODO: ApproxJI to some limit?
     t_pitch approxJI_limit() {
         // TODO: approssima il ratio a un limite
-        t_rational r = p_JIratio.getRatio();
+        t_rational r = p_JIexpVector.getRatio();
         // fai qualcosa con r
         // TODODG
-        p_JIratio.setFromRatio(r);
+        p_JIexpVector.setFromRatio(r);
     }
 
     // TODO: approx con frazioni continue?
     t_pitch approxJI() {
-        t_rational r = p_JIratio.getRatio();
+        t_rational r = p_JIexpVector.getRatio();
         // fai qualcosa con r
         // BOH!!!!!!!
         // TODODG
-        p_JIratio.setFromRatio(r);
+        p_JIexpVector.setFromRatio(r);
     }
 
     
