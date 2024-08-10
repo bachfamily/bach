@@ -179,15 +179,6 @@ private:
             return positive_mod((getPlof() * 4), 7);
         }
         
-        // TODO: check this, ma ho dubbi (vedi commento a numFifthsPerPrimeFactor[])
-        int8_t getJIComponentOnLineOfFifths() const {
-            int8_t sum = 0;
-            for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
-                sum += get(i) * numFifthsPerPrimeFactor[i];
-            }
-            return sum;
-        }
-        
         int8_t getOctave() const {
             if (allZerosButOctaves()) {
                 return get(0);
@@ -198,9 +189,6 @@ private:
                 }
                 return steps / 7;
             }
-            // was:
-//            return (positive_mod(getPlof() * 4, 7) + steps)/7;
-            // but not sure why I'd need that
         }
         
         void setOctave(int8_t o) {
@@ -211,9 +199,9 @@ private:
         
         bool operator==(const expVector& b) const;
         bool operator!=(const expVector& b) const { return !(*this == b); };
-        bool operator<(const expVector& b) const { return getRatioAsDouble() < b.getRatioAsDouble(); }
+        bool operator<(const expVector& b) const { return getRatioAsDouble() < b.getRatioAsDouble(); } // TODO: decide if use diatonic comparison
         bool operator<=(const expVector& b) const { return !(*this > b); }
-        bool operator>(const expVector& b) const { return getRatioAsDouble() > b.getRatioAsDouble(); }
+        bool operator>(const expVector& b) const { return getRatioAsDouble() > b.getRatioAsDouble(); } // TODO: see above
         bool operator>=(const expVector& b) const { return !(*this < b); }
 
         expVector operator+(const expVector& b) const;
@@ -232,14 +220,6 @@ private:
         double getRatioExceptOctavesAndPlofAsDouble() const;
         bool allZeros() const;
         bool allZerosButOctaves() const;
-    };
-    
-    class pco {
-    public:
-        t_uint8 commas[BACH_PRIMES_JI_SIZE];
-        t_uint8 ncommas;
-        t_uint8 plof;
-        t_uint8 octave;
     };
     
 public:
@@ -279,10 +259,13 @@ public: // because solves a lot of small issues... for now...
     t_tinyRational p_alterET;
 private:
     double JIComponentToFreq() const;
-    
-    t_rational ETComponentToMCrat() const;
-    double ETComponentToMCdouble() const;
     double JIComponentToMC() const;
+
+    t_rational ETComponentToMCratNoOctave() const;
+    double ETComponentToMCdoubleNoOctave() const;
+    
+    t_rational ETComponentToMCratWithOctave() const;
+    double ETComponentToMCdoubleWithOctave() const;
     
     t_pitch(t_stepsAndMC sat) : p_JIratio(expVector()) {
         p_whiteKeyET = sat.steps % 7;
@@ -305,13 +288,11 @@ public:
     
     t_pitch(const t_atom_short degree, const t_shortRational &alter, const t_int8 octave) :
         t_pitch(degree, alter) {
-            p_JIratio.set(0, octave);
+            p_JIratio.setOctave(octave);
         }
     
     t_pitch(const std::vector<t_int8> &exponents) : p_JIratio(exponents), p_whiteKeyET(0), p_alterET(0) { }
 
-    // TODO: ANDREA, CHECK & and *
-    // ... what do you mean?
     void plofUnpack(const t_uint8 plof, t_uint8 *exp2, t_uint8 *exp3, t_uint8 *whiteKey) {
         // Pythagorean line of fifths position to exponents (of 2 and 3 primes) and whiteKey (diatonic C major degree)
         *exp2 = 0;

@@ -19,6 +19,7 @@
 
 #include "math/bach_pitch.hpp"
 #include "foundation/bach_mem.h"
+#include "math/bach_math_utilities.h"
 #include <string>
 
 
@@ -51,9 +52,9 @@ const t_atom_short t_pitch::degree2PC[] = {0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17,
 const t_atom_short t_pitch::PC2degree[] = {0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6};
 const char t_pitch::degree2name[] = { 'C', 'D', 'E', 'F', 'G', 'A', 'B' };
 
-const t_rational t_pitch::primes_inv[15] = {{1, 2}, {1, 3}, {1, 5}, {1, 7}, {1, 11}, {1, 13}, {1, 17}, {1, 19}, {1, 23}, {1, 29}, {1, 31}, {1, 37}, {1, 41}, {1, 47}, {1, 53}};
+const t_rational t_pitch::primes_inv[BACH_PRIMES_JI_SIZE] = {{1, 2}, {1, 3}, {1, 5}, {1, 7}, {1, 11}, {1, 13}, {1, 17}, {1, 19}, {1, 23}, {1, 29}, {1, 31}, {1, 37}, {1, 41}, {1, 47}, {1, 53}};
 
-const t_rational t_pitch::HEJIcommasRatios[15] = {{81,80}, {64,63}, {32,33}, {27,26}, {2187,2176}, {512,513}, {729,736}, {256,261}, {32,31}, {36,37}, {81,82}, {128,129}, {729,752}};
+const t_rational t_pitch::HEJIcommasRatios[BACH_PRIMES_JI_SIZE-2] = {{81,80}, {64,63}, {32,33}, {27,26}, {2187,2176}, {512,513}, {729,736}, {256,261}, {32,31}, {36,37}, {81,82}, {128,129}, {729,752}};
 
 
 t_pitchMatrices& t_pitch::pm = t_pitchMatrices::getInstance();
@@ -120,7 +121,7 @@ void t_pitch::expVector::clear() {
     memset(data, 0, 11);
 }
 
-void t_pitch::expVector::set(const std::vector<const int8_t> &v) {
+void t_pitch::expVector::set(const std::vector<int8_t> &v) {
     clear();
     size_t s = v.size();
     const int8_t* d = v.data();
@@ -293,33 +294,44 @@ double t_pitch::JIComponentToFreq() const {
 }
 
 double t_pitch::JIComponentToMC() const {
-    return log2(JIComponentToFreq() / 440.) * 1200. + 6900.;
+    return mc2f(JIComponentToFreq());
 }
 
-t_rational t_pitch::ETComponentToMCrat() const {
+t_rational t_pitch::ETComponentToMCratNoOctave() const {
     t_atom_short mcBase = whiteKey2MC_safe();
     t_rational mc = mcBase + p_alterET * 200;
     return mc;
 }
 
-double t_pitch::ETComponentToMCdouble() const {
+t_rational t_pitch::ETComponentToMCratWithOctave() const {
+    return ETComponentToMCratNoOctave() + getOctave() * 1200;
+}
+
+double t_pitch::ETComponentToMCdoubleNoOctave() const {
     t_atom_short mcBase = whiteKey2MC_safe();
     double mc = mcBase + p_alterET * 200;
     return mc;
 }
 
+double t_pitch::ETComponentToMCdoubleWithOctave() const {
+    return ETComponentToMCdoubleNoOctave() + getOctave() * 1200;
+
+}
+
 double t_pitch::toMCdouble() const {
-    return ETComponentToMCdouble() + JIComponentToMC();
+    return ETComponentToMCdoubleNoOctave() + JIComponentToMC();
 }
 
-// TODO: Rivedere approssimazione al denominatore?
 t_rational t_pitch::toMCrat() const {
-    t_rational etmc = ETComponentToMCrat();
-    double jimc = JIComponentToMC();
-    t_rational jimcR = approx_double_with_rat_fixed_den(jimc, 10000, 0, nullptr);
-    return etmc + jimcR;
+    t_rational etmc = ETComponentToMCratNoOctave();
+    if (isPureET()) {
+        return etmc;
+    } else {
+        double jimc = JIComponentToMC();
+        t_rational jimcR = approx_double_with_rat_fixed_den(jimc, 10000, 0, nullptr); // TODO: Rivedere approssimazione al denominatore?
+        return etmc + jimcR;
+    }
 }
-
 
 t_bool t_pitch::operator==(const t_pitch &b) const
 {

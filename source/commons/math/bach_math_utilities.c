@@ -550,11 +550,11 @@ double array_fmax_and_idx(long num_elem, long start, long end, double *array, lo
 
 
 
-double mc2f(double mc, double reference_freq){
+double mc2f(const double mc, const double reference_freq){
 	return pow(2, ((mc/100. - 69.) / 12)) * reference_freq;
 }
 
-double f2mc(double freq, double reference_freq){
+double f2mc(const double freq, const double reference_freq){
 	return (12 * log2(freq / reference_freq) + 69) * 100.;
 }
 
@@ -664,12 +664,12 @@ double random_double_in_range(double a, double b) {
 }
 
 
-double mc2f(double mc, double basefreq, double basepitch)
+double mc2f(const double mc, const double basefreq, const double basepitch)
 {
     return basefreq * pow(2, (mc - basepitch) / 1200.);
 }
 
-double f2mc(double f, double basefreq, double basepitch)
+double f2mc(const double f, const double basefreq, const double basepitch)
 {
     return basepitch + log2(f / basefreq) * 1200;
 }
