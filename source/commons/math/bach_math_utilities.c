@@ -742,6 +742,8 @@ t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch)
 
 t_lexpr_token get_times_operator(){
     // defining times operator
+    t_hatom h;
+    
     t_lexpr_token times;
     times.t_type = TT_OP;
     times.t_operands = 2;
@@ -753,6 +755,8 @@ t_lexpr_token get_times_operator(){
 
 t_lexpr_token get_div_operator(){
     // defining times operator
+    t_hatom h;
+    
     t_lexpr_token div;
     div.t_type = TT_OP;
     div.t_operands = 2;
