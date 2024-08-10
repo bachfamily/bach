@@ -197,6 +197,13 @@ private:
             set(0, get(0) + delta);
         }
         
+        void addOctave(int8_t o) {
+            if (o != 0) {
+                const t_int8 r = get(0) + o;
+                set(0, r);
+            }
+        }
+        
         bool operator==(const expVector& b) const;
         bool operator!=(const expVector& b) const { return !(*this == b); };
         bool operator<(const expVector& b) const { return getRatioAsDouble() < b.getRatioAsDouble(); } // TODO: decide if use diatonic comparison
@@ -292,6 +299,14 @@ public:
         }
     
     t_pitch(const std::vector<t_int8> &exponents) : p_JIratio(exponents), p_whiteKeyET(0), p_alterET(0) { }
+    
+    t_pitch(const t_shortRational &r) {
+        setJI(r);
+    }
+    
+    t_pitch(const t_rational &r) {
+        setJI(r);
+    }
 
     void plofUnpack(const t_uint8 plof, t_uint8 *exp2, t_uint8 *exp3, t_uint8 *whiteKey) {
         // Pythagorean line of fifths position to exponents (of 2 and 3 primes) and whiteKey (diatonic C major degree)
@@ -322,44 +337,83 @@ public:
     
     // TODO: CHECK ANDREA
     // --what do I have to check?
-    t_pitch(const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) {
+    t_pitch(const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) : p_whiteKeyET(0), p_alterET(0) {
+        setJI(plof, HEJIcommas, octave);
+    }
+    
+    void setJI(const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) {
         t_uint8 expof2, expof3, whiteKey;
         plofUnpack(plof, &expof2, &expof3, &whiteKey);
-        p_whiteKeyET = whiteKey;
         
         std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE, 0); // TODO: are we sure that these are initialized as zeros? -- SOLVED
         exponents[0] = expof2;
         exponents[1] = expof3;
         for (long i = 0; i < BACH_PRIMES_JI_SIZE-2; i++) { // HEJIcommas start from 5-limit
-            char dir = HEJIcommasExponentsDirection[i];
-            exponents[0] += dir * HEJIcommasExponents2[i];
-            exponents[1] += dir * HEJIcommasExponents3[i];
-            exponents[i+2] += dir * (-1);
+            const char dir = HEJIcommasExponentsDirection[i];
+            exponents[0] += dir * HEJIcommas[i] * HEJIcommasExponents2[i];
+            exponents[1] += dir * HEJIcommas[i] * HEJIcommasExponents3[i];
+            exponents[i+2] += dir * HEJIcommas[i] * (-1);
         }
 
         p_JIratio.set(exponents); // TODO: @Andrea, there's some const stuff missing, but I cannot initialize with const... -- SOLVED
+        setOctave(octave);
     }
     
-    void set(const t_shortRational r) {
+    void setJI(const std::vector<t_int8> &exponents) {
+        p_JIratio.set(exponents);
+        p_whiteKeyET = 0;
+        p_alterET = {0, 1};
+    }
+    
+    t_pitch(const t_atom_short degree, const t_shortRational &alter, const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) : t_pitch(plof, HEJIcommas, octave) {
+        p_whiteKeyET = degree;
+        p_alterET = alter;
+    }
+    
+    t_pitch(const t_atom_short degree, const t_shortRational &alter, const std::vector<t_int8> &exponents, const t_uint8 addOctave = 0) : p_JIratio(exponents), p_whiteKeyET(degree), p_alterET(alter) {
+        p_JIratio.addOctave(addOctave);
+    }
+    
+    void setJI(const t_shortRational r) {
         p_JIratio.setFromRatio(r);
+        p_whiteKeyET = 0;
+        p_alterET = {0, 1};
     }
     
-    static double f2mc(double f) { return log2(f/C0freq) * 1200.; }
+    void setET(const t_atom_short whiteKey) {
+        p_whiteKeyET = whiteKey;
+        p_alterET.set(0);
+        p_JIratio.clear();
+    }
     
+    void setET(const t_atom_short whiteKey, const t_shortRational &alter) {
+        p_whiteKeyET = whiteKey;
+        p_alterET = alter;
+        p_JIratio.clear();
+    }
+    
+    void setET(const t_atom_short whiteKey, const t_shortRational &alter, const t_atom_short octave) {
+        p_whiteKeyET = whiteKey;
+        p_alterET = alter;
+        p_JIratio.clear();
+        setOctave(octave);
+    }
+        
     double toMCdouble() const;
     t_rational toMCrat() const;
     
+private:
     // only ET part
-    t_stepsAndMC toStepsAndMC() const {
+    t_stepsAndMC toETStepsAndMC() const {
         t_stepsAndMC sat;
         sat.steps = p_whiteKeyET + getOctave() * 7;
         sat.mc = toMCrat();
         return sat;
     }
     
+public:
     void setOctave(t_int8 oct) {
         p_JIratio.setOctave(oct);
-        //p_octave = oct; // @DG: is this correct?
     }
     
     t_int8 getOctave() const {
@@ -377,8 +431,6 @@ public:
     bool isPureET() const { return p_JIratio.allZerosButOctaves(); }
     bool isPureJI() const { return p_whiteKeyET == 0 && p_alterET.num() == 0; }
 
-    
-    
     void set(const t_atom_short whiteKey) {
         p_whiteKeyET = whiteKey;
         p_alterET.set(0);
@@ -398,14 +450,18 @@ public:
         setOctave(octave);
     }
     
-    void setFromRatio(t_rational r) { p_JIratio.setFromRatio(r); }
+    void setJI(t_rational r) {
+        p_whiteKeyET = 0;
+        p_alterET.set(0);
+        p_JIratio.setFromRatio(r);
+    }
 
     t_rational getRatio() const { return p_JIratio.getRatio(); }
 
     t_atom_short getWhiteKeyET() const { return p_whiteKeyET; }
     t_atom_short getWhiteKeyJI() const { return p_JIratio.getWhiteKeyJI(); }
 
-    t_int8 getPlof() const { return p_JIratio.get(1); }
+    t_int8 getPlof() const { return p_JIratio.getPlof(); }
     
     t_int8 getSharps() const { return (getPlof()+1)/7; };
     
