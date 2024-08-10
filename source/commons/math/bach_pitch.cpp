@@ -292,6 +292,10 @@ double t_pitch::JIComponentToFreq() const {
     return C0freq * p_JIratio.getRatioAsDouble();
 }
 
+double t_pitch::JIComponentToMC() const {
+    return log2(JIComponentToFreq() / 440.) * 1200. + 6900.;
+}
+
 t_rational t_pitch::ETComponentToMCrat() const {
     t_atom_short mcBase = whiteKey2MC_safe();
     t_rational mc = mcBase + p_alterET * 200;

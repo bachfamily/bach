@@ -70,9 +70,13 @@ public:
     static const t_rational primes_inv[BACH_PRIMES_JI_SIZE];
     static double constexpr primes_inv_double[BACH_PRIMES_JI_SIZE] = {1./2., 1./3., 1./5., 1./7., 1./11., 1./13., 1./17., 1./19., 1./23., 1./29, 1./31., 1./37., 1./41., 1./43., 1./47.};
     
-    static t_atom_short constexpr numFifthsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {0,1,4,-2,-1,3,7,-3,6,-2,0,2,4,-1,6}; // a major third contributes to 4 diatonic fifths, etc.
-    static t_atom_short constexpr numDiatonicStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,29,30,31,34,35,36,37,38,38}; // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 3/1 is 16, a 4/1 is 20, and so on.
-
+    static t_atom_short constexpr numFifthsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {0,1,4,-2,-1,3,7,-3,6,-2,0,2,4,-1,6}; // a major third contributes 4 diatonic fifths, etc.
+    
+    // TODO: check comment
+    static t_atom_short constexpr numDiatonicStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,29,30,31,34,35,36,37,38,38}; // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 5/1 is 16, a 7/1 is 20, and so on.
+    // comment was:
+    // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 3/1 is 16, a 4/1 is 20, and so on.
+    
     static const t_rational HEJIcommasRatios[BACH_PRIMES_JI_SIZE-2];
 /*
     static int constexpr HEJIcommasExponents[BACH_PRIMES_JI_SIZE-2][BACH_PRIMES_JI_SIZE] =
@@ -125,20 +129,19 @@ private:
             clear();
         }
         
-        expVector(const std::vector<const int8_t> &v) {
+        expVector(const std::vector<int8_t> &v) {
             set(v);
         }
         
-        void setFromRatio(t_shortRational r) {
+        void setFromRatio(const t_shortRational r) {
             t_shortRational what = r;
             int8_t exponent;
-            std::vector<int8_t> v(BACH_PRIMES_JI_SIZE); // TODO: are we sure that these are all 0's?
-            long i = 0;
+            int i = 0;
             
             if (what < 0)
                 what *= -1;
-            // TODO: shortrat_reduce(&what) ? // this is essential, it should already be reduced, can we make sure of it
-            while (rat_long_cmp(what, 1) != 0 && i < BACH_PRIMES_JI_SIZE) {
+            what.reduce();
+            while (what != 1 && i < BACH_PRIMES_JI_SIZE) {
                 long this_prime = primes[i];
                 if (what.r_num % this_prime == 0) {
                     exponent = 0;
@@ -146,21 +149,21 @@ private:
                         exponent++;
                         what.r_num /= this_prime;
                     } while (what.r_num != 0 && what.r_num % this_prime == 0);
-                    v[i] = exponent;
+                    set(i, exponent);
                 } else if (what.r_den % this_prime == 0) {
                     exponent = 0;
                     do {
                         exponent++;
                         what.r_den /= this_prime;
                     } while (what.r_den != 0 && what.r_den % this_prime == 0);
-                    v[i] = -exponent;
+                    set(i, -exponent);
                 }
                 i++;
             }
         }
         
         void clear();
-        void set(const std::vector<const int8_t> &v);
+        void set(const std::vector<int8_t> &v);
         void set(const int idx, const int8_t v);
         
         std::vector<int8_t> get() const;
@@ -175,9 +178,16 @@ private:
             for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
                 sum += get(i) * numFifthsPerPrimeFactor[i];
             }
+            return positive_mod((sum * 4), 7);
+        }
+        
+        // TODO: check this, ma ho dubbi (vedi commento a numFifthsPerPrimeFactor[])
+        int8_t getJIComponentOnLineOfFifths() const {
+            int8_t sum = 0;
+            for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
+                sum += get(i) * numFifthsPerPrimeFactor[i];
+            }
             return sum;
-//      was:            return sum + getPlof(); //positive_mod(() * 4),7);
-            // DG: this thing above doesn't look right any longer
         }
         
         int8_t getOctave() const {
@@ -219,7 +229,9 @@ private:
         expVector operator*=(t_atom_long b) { return *this = *this * b; }
         
         t_rational getRatio() const;
+        t_rational getRatioExceptOctavesAndPlof() const;
         double getRatioAsDouble() const;
+        double getRatioExceptOctavesAndPlofAsDouble() const;
         bool allZeros() const;
         bool allZerosButOctaves() const;
     };
@@ -298,9 +310,10 @@ public:
             p_JIratio.set(0, octave);
         }
     
-    t_pitch(const std::vector<const t_int8> &exponents) : p_JIratio(exponents), p_whiteKeyET(0), p_alterET(0) { }
+    t_pitch(const std::vector<t_int8> &exponents) : p_JIratio(exponents), p_whiteKeyET(0), p_alterET(0) { }
 
     // TODO: ANDREA, CHECK & and *
+    // ... what do you mean?
     void plofUnpack(const t_uint8 plof, t_uint8 *exp2, t_uint8 *exp3, t_uint8 *whiteKey) {
         // Pythagorean line of fifths position to exponents (of 2 and 3 primes) and whiteKey (diatonic C major degree)
         *exp2 = 0;
@@ -329,12 +342,13 @@ public:
     }
     
     // TODO: CHECK ANDREA
+    // --what do I have to check?
     t_pitch(const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) {
         t_uint8 expof2, expof3, whiteKey;
         plofUnpack(plof, &expof2, &expof3, &whiteKey);
         p_whiteKeyET = whiteKey;
         
-        std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE); // TODO: are we sure that these are initialized as zeros?
+        std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE, 0); // TODO: are we sure that these are initialized as zeros? -- SOLVED
         exponents[0] = expof2;
         exponents[1] = expof3;
         for (long i = 0; i < BACH_PRIMES_JI_SIZE-2; i++) { // HEJIcommas start from 5-limit
@@ -344,7 +358,7 @@ public:
             exponents[i+2] += dir * (-1);
         }
 
-        p_JIratio.set(exponents); // TODO: @Andrea, there's some const stuff missing, but I cannot initialize with const...
+        p_JIratio.set(exponents); // TODO: @Andrea, there's some const stuff missing, but I cannot initialize with const... -- SOLVED
     }
     
     void set(const t_shortRational r) {
@@ -366,10 +380,12 @@ public:
     
     void setOctave(t_int8 oct) {
         p_JIratio.setOctave(oct);
-        p_octave = oct;
+        //p_octave = oct; // @DG: is this correct?
     }
     
-    t_int8 getOctave() const { return p_octave; }
+    t_int8 getOctave() const {
+        return p_JIratio.getOctave();
+    }
 
     t_atom_short whiteKey2MC_safe() const
     {
@@ -415,7 +431,7 @@ public:
     t_int8 getSharps() const { return (getPlof()+1)/7; };
     
     std::vector<int8_t> getHEJICommas() const {
-        std::vector<int8_t> v = p_JIratio; // TODO: @Andrea: how do I copy the vector?
+        std::vector<int8_t> v = p_JIratio.get(); // TODO: @Andrea: how do I copy the vector? -- SOLVED
         std::vector<int8_t> HEJIcommas(BACH_PRIMES_JI_SIZE - 2);
         for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE - 2; i++) { // HEJI commas are from 5-limit on
             int8_t this_comma = v[i+2];
@@ -429,13 +445,58 @@ public:
     }
 
     t_shortRational getAlterET() const { return p_alterET; }
-    t_shortRational getAlterJI() const { return p_alterJI; }
-
+    
+    // @DG: what is alterJI?
+    // TODO: DG: check this
+    t_rational getAlterJI() const { return p_JIratio.getRatioExceptOctavesAndPlof(); }
+    
+    int8_t getPitchClassJI() const {
+        return int8_t(JIComponentToMC() / 100. + 0.5) % 12;
+    }
+    
     t_pitch getDisplayPitch() const {
         // TODO: come somma di pitch ET (approssimato ai semitoni) e pitch JI
+        
+        const t_int8 plof = p_JIratio.getPlof();
+        const t_int8 octave = p_JIratio.getOctave();
+        
+        const t_int8 normalizedFifths = p_JIratio.getJIComponentOnLineOfFifths();
+        
+        t_int8 JIdegree;
+        t_shortRational JIWrittenAlter;
+
+        if (normalizedFifths >= 0) {
+            JIdegree = (normalizedFifths * 4) % 7;
+            JIWrittenAlter = t_shortRational((normalizedFifths + 1) / 7, 2);
+        } else {
+            JIdegree = (-normalizedFifths * 3) % 7;
+            JIWrittenAlter = t_shortRational((normalizedFifths - 5) / 7, 2);
+        }
+        t_pitch JIcomp = t_pitch(JIdegree, JIWrittenAlter, 0);
+        
+        
+        
+        // do sol re la mi si
+        // fa# do# sol# re# la# mi# si#
+        // fax dox ...
+
+        // fa
+        // sib mib lab reb solb dob fab
+        // sibb mibb labb ...
+
+        
+        
+        t_pitch sum = t_pitchMatrices::getSum(p_whiteKeyET, p_JIratio.getWhiteKeyJI());
+        
+        sum.p_alterET += p_alterET + b.p_alterET;
+        sum.p_JIratio = p_JIratio + b.p_JIratio;
+        return sum;
+        
+        /*
         t_uint8 plof_ET = ..... ;
         
         p_whiteKeyET =
+         */
     }
 
     
