@@ -584,7 +584,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
             } else if (sharps < 0) {
                 s += std::string(-sharps, 'b');
             }
-            std::vector<int8_t> commas = p.getCommas();
+            std::vector<int8_t> commas = p.getHEJICommas();
             if (commas.size()) {
                 s += "{";
                 for (auto c: commas) {
@@ -806,7 +806,7 @@ t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences
     long add_one_octave = (gridstep >= numsteps); // if the grid step is numsteps, we need to add 1 octave
     long add_another_octave = 0;
     double gridstep_12norm;
-    double natural_steps[8];
+    static double constexpr natural_steps[] = {0., 2., 4., 5., 7., 9., 11., 12.};
     long natural_approx_diatstep = -1, natural_approx_step = -1, i;
     t_rational natural_ratio, grid_ratio;
     const double PERFECT_MATCH_THRESHOLD = 0.0005;
@@ -820,16 +820,7 @@ t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences
     
     
     // now we have to find the 12-degree natural approximation {0, 2, 4, 5, 7, 9, 11} that suits our gridstep_12norm
-    
-    natural_steps[0] = 0.;
-    natural_steps[1] = 2.;
-    natural_steps[2] = 4.;
-    natural_steps[3] = 5.;
-    natural_steps[4] = 7.;
-    natural_steps[5] = 9.;
-    natural_steps[6] = 11.;
-    natural_steps[7] = 12.;
-    
+
     // test the full_repr, if any
     if (natural_approx_step < 0 && full_repr && (tone_division == 2 || tone_division == 4 || tone_division == 8)) {
         double gridstep_48norm = gridstep * 48. / numsteps;
@@ -953,7 +944,7 @@ t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences
     if (original_tone_division == 0) {
         // obtaining the most precise alteration possible
         t_pitch p1 = t_pitch(positive_mod(steps, 7), long2rat(0), floor_div_by_7(steps));
-        t_rational mc1 = p1.toMC();
+        t_rational mc1 = p1.ETComponentToMCratWithOctave();
         t_rational mc_orig = approx_double_with_rat_fixed_den(mc, 100, 0, NULL);
         accidental = (mc_orig - mc1)/200;
     }

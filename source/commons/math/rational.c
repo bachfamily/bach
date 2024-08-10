@@ -43,6 +43,21 @@ long positive_mod(long num, long mod)
     return ((num % mod) + mod) % mod;
 }
 
+t_atom_short positive_mod(t_atom_short num, t_atom_short mod)
+{
+    if (num >= 0)
+        return num % mod;
+    
+    return ((num % mod) + mod) % mod;
+}
+
+t_int8 positive_mod(t_int8 num, t_int8 mod)
+{
+    if (num >= 0)
+        return num % mod;
+    
+    return ((num % mod) + mod) % mod;
+}
 
 t_rational urrat2rat(t_urrational urrat)
 {

@@ -541,16 +541,22 @@ public:
     t_pitch operator/(const t_atom_long b) const;
     t_pitch operator/(const t_rational &b) const;
     
-    t_hatom operator/(const t_pitch &b) const {
-        if (isPureET()) {
-            t_hatom h;
-            t_rational b_toMCrat = b.toMCrat();
-            if (b_toMCrat.r_num == 0)
-                error("Illegal division by C0 (or one of its enharmonic pitches) detected.");
-            hatom_setrational(&h, toMCrat() / b_toMCrat);
-            return h;
+    t_rational divET(const t_pitch &b) const {
+        const t_rational b_toMCrat = b.toMCrat();
+        if (b_toMCrat.r_num == 0) {
+            error("Illegal division by C0 (or one of its enharmonic pitches) detected.");
+            return {0, 0};
         }
-        // TODO: stessa cosa con i double per gli altri casi
+        return toMCrat() / b_toMCrat;
+    };
+    
+    double divGeneral(const t_pitch &b) const {
+        double b_toMCdouble = b.toMCdouble();
+        if (b_toMCdouble == 0) {
+            error("Illegal division by 0 detected.");
+            return 0;
+        }
+        return toMCdouble() / b_toMCdouble;
     };
     
     t_pitch operator%(const t_atom_long b) const;
@@ -558,7 +564,7 @@ public:
     
 
     t_atom_long divdiv(const t_pitch &b) const {
-        return static_cast<t_atom_long>((*this) / b);
+        return static_cast<t_atom_long>(divGeneral(b));
     };
     
     friend t_pitch operator*(const t_atom_long a, const t_pitch b) { return b * a; }
@@ -627,7 +633,7 @@ public:
     
     
     t_pitch enharm(long delta_steps) const {
-        t_stepsAndMC smc = this->toStepsAndMC();
+        t_stepsAndMC smc = this->toETStepsAndMC();
         smc.steps += delta_steps;
         return t_pitch(smc);
     }
@@ -662,6 +668,7 @@ public:
     }
      */
     
+
     // TODO: ApproxJI to some limit?
     t_pitch approxJI_limit() {
         // TODO: approssima il ratio a un limite
@@ -687,9 +694,9 @@ public:
     {
         if (tone_division <= 0)
             return *this;
-        t_shortRational temp = p_alterET * tone_division;
-        t_shortRational new_alter_down(temp.r_num / temp.r_den, static_cast<t_atom_short>(tone_division));
-        t_shortRational new_alter_up((temp.r_num / temp.r_den) + 1, static_cast<t_atom_short>(tone_division));
+        t_tinyRational temp = p_alterET * tone_division;
+        t_tinyRational new_alter_down(temp.r_num / temp.r_den, static_cast<t_atom_short>(tone_division));
+        t_tinyRational new_alter_up((temp.r_num / temp.r_den) + 1, static_cast<t_atom_short>(tone_division));
         return t_pitch(p_degree, (new_alter_up - p_alterET < p_alterET - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
     }
 
