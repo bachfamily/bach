@@ -74,8 +74,6 @@ public:
     
     // TODO: check comment
     static t_atom_short constexpr numDiatonicStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,29,30,31,34,35,36,37,38,38}; // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 5/1 is 16, a 7/1 is 20, and so on.
-    // comment was:
-    // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 3/1 is 16, a 4/1 is 20, and so on.
     
     static const t_rational HEJIcommasRatios[BACH_PRIMES_JI_SIZE-2];
 /*
@@ -170,15 +168,15 @@ private:
         int8_t get(const int idx) const;
 
         int8_t getPlof() const {
-            return get(1);
-        }
-
-        int8_t getWhiteKeyJI() const {
             int8_t sum = 0;
             for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
                 sum += get(i) * numFifthsPerPrimeFactor[i];
             }
-            return positive_mod((sum * 4), 7);
+            return sum;
+        }
+
+        int8_t getWhiteKeyJI() const {
+            return positive_mod((getPlof() * 4), 7);
         }
         
         // TODO: check this, ma ho dubbi (vedi commento a numFifthsPerPrimeFactor[])
