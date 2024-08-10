@@ -378,7 +378,17 @@ public:
     t_pitch(const t_atom_short degree, const t_tinyRational &alter, const std::vector<t_int8> &exponents, const t_uint8 addOctave = 0) : p_JIexpVector(exponents), p_whiteKeyET(degree), p_alterET(alter) {
         p_JIexpVector.addOctave(addOctave);
     }
-    
+
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_shortRational &r, const t_uint8 addOctave = 0) : p_whiteKeyET(degree), p_alterET(alter) {
+        setJI(r);
+        p_JIexpVector.addOctave(addOctave);
+    }
+
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_rational &r, const t_uint8 addOctave = 0) : p_whiteKeyET(degree), p_alterET(alter) {
+        setJI(r);
+        p_JIexpVector.addOctave(addOctave);
+    }
+
     void setJI(const t_shortRational r) {
         p_JIexpVector.setFromRatio(r);
         p_whiteKeyET = 0;
@@ -402,6 +412,13 @@ public:
         p_alterET = alter;
         p_JIexpVector.clear();
         setOctave(octave);
+    }
+    
+    void set(const t_atom_short degree, const t_tinyRational &alter, const t_shortRational &r, const t_uint8 addOctave = 0) {
+        p_whiteKeyET = degree;
+        p_alterET = alter;
+        setJI(r);
+        p_JIexpVector.addOctave(addOctave);
     }
         
     double toMCdouble() const;
@@ -436,6 +453,8 @@ public:
     bool isPureET() const { return p_JIexpVector.allZerosButOctaves(); }
     bool isPureJI() const { return p_whiteKeyET == 0 && p_alterET.num() == 0; }
 
+    // TODO: @Andrea perché alcune si chiamano set e altre setJI? forse allora setET e setJI?
+    // E ce ne sono uguali sopra, vedi void setET(const t_atom_short whiteKey) sopra, forse queste vanno eliminate?
     void set(const t_atom_short whiteKey) {
         p_whiteKeyET = whiteKey;
         p_alterET.set(0);
@@ -655,39 +674,58 @@ public:
         return this->autoenharm(tone_division, k_ACC_AUTO, NULL, NULL);
     }
     
-    /*
-    t_pitch approxJI_maxden(t_atom_long max_num, t_atom_long max_den) // Approximate a pitch within some limit
+    
+    // A few functions providing JI approximations. The ones with JIcomp only approximate the just intonation component.
+    void approxJI_JIcomp_up_to_maxden(t_atom_long max_den, char direction = 0) // Approximate only the JI part of the pitch
     {
-        t_shortRational r = p_JIratio.getRatio();
-        t_uint8 octave = getOctave();
-        
-        t_rational r_approx = approx_rat_with_rat(r, max_num, max_den);
-        
-        p_JIratio.setFromRatio(r);
-        setOctave(octave);
+        t_shortRational r = getRatio();
+        double error = 0.;
+        if (r.r_den > max_den) {
+            r = approx_double_with_rat_up_to_maxden(rat2double(r), max_den, direction, &error);
+        }
+        set(p_whiteKeyET, p_alterET, r);
     }
-     */
+
+    // direction = 0: any; 1 or -1 sets the directino of approximation
+    double approxJI_up_to_maxden(t_atom_long max_den, char direction = 0) // Approximate a the whole pitch, return the error
+    {
+        double mc = toMCdouble();
+        double error = 0.;
+        double r = mc2f(mc)/C0freq; // ratio // TODO: @Andrea: mc2f non compila perché vuole 2 arwgomenti, ma mi sembrava avessi messo un default... non tocco nulla ma il default non lo vedo...
+        t_rational ratio = approx_double_with_rat_up_to_maxden(r, max_den, direction, &error);
+        setJI(ratio);
+        return error;
+    }
     
-
-    // TODO: ApproxJI to some limit?
-    t_pitch approxJI_limit() {
-        // TODO: approssima il ratio a un limite
-        t_rational r = p_JIexpVector.getRatio();
-        // fai qualcosa con r
-        // TODODG
-        p_JIexpVector.setFromRatio(r);
+    // these two function provide a list of "best" approximation that can be proposed in the interface (e.g. contextual menu)
+    std::vector<t_rational> getJIconvergents_JIcomp(long howmany) {
+        t_shortRational r = getRatio();
+        return get_convergents((double)r, howmany);
     }
 
-    // TODO: approx con frazioni continue?
-    t_pitch approxJI() {
-        t_rational r = p_JIexpVector.getRatio();
-        // fai qualcosa con r
-        // BOH!!!!!!!
-        // TODODG
-        p_JIexpVector.setFromRatio(r);
+    std::vector<t_rational> getJIconvergents(long howmany) {
+        double mc = toMCdouble();
+        double error = 0.;
+        double r = mc2f(mc)/C0freq; // ratio // TODO: @Andrea: mc2f non compila perché vuole 2 arwgomenti, ma mi sembrava avessi messo un default... non tocco nulla ma il default non lo vedo...
+        return get_convergents(r, howmany);
+    }
+
+
+    // TODO: @daniele: ApproxJI to some harmonic
+    t_pitch approxJI_JIcomp_primelimit(long primelimit) {
+        // This is more complicated: it approximates the ratio only with primes <= primelimit
+        t_rational r = getRatio();
+        // TO DO, non trivial!
+    }
+
+    t_pitch approxJI_primelimit(long primelimit) {
+        // see above
+        // TO DO, non trivial!
     }
 
     
+    
+    // TODO: @Andrea: questi approx qui sotto dovrebbero essere approxET, no? Pensavo li avessimo già cambiati TBH, mi chiedo se non ci sia stato un problema di sync
     
     // TODO: @Andrea: can you do this? I suppose that approx(tone_division) MUST give an ET pitch, right?
     t_pitch approx(t_atom_long tone_division)

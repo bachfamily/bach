@@ -271,7 +271,7 @@ long approx_single_num_fn(void *data, t_hatom *a, const t_llll *address){
 				approx_res = approx_double_with_rat_up_to_tolerance(num, x->tolerance, x->max_den, direction, x->tolerance_is_ratio, &this_error, &found);
 				break;
 			case k_FLOAT2RAT_ALGORITHM_BEST_MATCH:
-				approx_res = approx_double_with_rat_best_match(num, x->max_den, direction, &this_error);
+				approx_res = approx_double_with_rat_up_to_maxden(num, x->max_den, direction, &this_error);
 				break;
 			case k_FLOAT2RAT_ALGORITHM_SMART_PERMANENCE:
 				approx_res = approx_double_with_rat_smart_permanence(num, x->tolerance, x->max_den, direction, x->tolerance_is_ratio, &this_error, &found);

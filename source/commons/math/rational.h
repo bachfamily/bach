@@ -653,12 +653,13 @@ char rat_rat_cmp_account_for_approximations(t_rational *rat1, t_rational *rat2, 
 						0 if you just want to choose the closest approximation (either above or below the original number).
 	@param	error		A pointer to a double *, to be filled with the difference between the (double) number and the rational approximation (num - rat).
 						Leave NULL if you don't need it.
+    @param  log_error       If true, the error is logarithmic (computed as the cents equivalent of incoming ratios)
 	@return				A rational approximating the double number.
 	@ingroup			rational
  */
-t_rational approx_double_with_rat_fixed_den(double num, t_atom_long fixed_den, char direction, double *error);
+t_rational approx_double_with_rat_fixed_den(double num, t_atom_long fixed_den, char direction, double *error, bool log_error = false);
 
-t_urrational approx_double_with_rat_fixed_den_no_reduce(double num, t_atom_long fixed_den, char direction, double *error);
+t_urrational approx_double_with_rat_fixed_den_no_reduce(double num, t_atom_long fixed_den, char direction, double *error, bool log_error = false);
 
 
 /**	Approximate a double precision floating number with a rational having at most a given denominator, and also computes the error. 
@@ -669,19 +670,23 @@ t_urrational approx_double_with_rat_fixed_den_no_reduce(double num, t_atom_long 
 						0 if you just want to choose the closest approximation (either above or below the original number).
 	@param	error		A pointer to a double *, to be filled with the difference between the (double) number and the rational approximation (num - rat).
 						Leave NULL if you don't need it.
+    @param  log_error       If true, the error is logarithmic (computed as the cents equivalent of incoming ratios)
 	@return				A rational approximating the double number.
 	@remark				This function is way slower than approx_double_with_rat_fixed_den(), since it tries all the possible denominators
 						up to #max_den. You might want to use approx_double_with_rat_fixed_den() for fast purposes.
 	@see				approx_double_with_rat_fixed_den()
 	@ingroup			rational
  */
-t_rational approx_double_with_rat_best_match(double num, t_atom_long max_den, char direction, double *error);
+t_rational approx_double_with_rat_up_to_maxden(double num, t_atom_long max_den, char direction, double *error, bool log_error = false);
 
 
-t_rational approx_double_with_rat_up_to_tolerance(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio, double *error, char *found);
+t_rational approx_double_with_rat_up_to_tolerance(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio, double *error, char *found, bool log_error = false);
 
-t_rational approx_double_with_rat_smart_permanence(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio, double *error, char *found);
+t_rational approx_double_with_rat_smart_permanence(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio, double *error, char *found, bool log_error = false);
 
+
+// Get continued fraction convergents for number num
+std::vector<t_rational> get_convergents(double num, long howmany);
 
 
 /**	Approximate a rational with another one having a specific denominator. 

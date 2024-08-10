@@ -26,6 +26,8 @@ VERSION NOTES:
     á now background slots work (if you reduce the window opacity)
 - bell: bach.sum, bach.prod now work
 
+- bach.float2rat, and rational approximations:
+    á the error has switched sign, as is more reasonable. When the approximation is above the original, the error is now positive.
 
 *****************
 *** IMPORTANT ***

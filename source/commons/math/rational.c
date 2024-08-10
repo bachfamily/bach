@@ -554,11 +554,114 @@ t_rational rat_rat_diff_integer_and_remainders(t_atom_long int1, t_rational rem1
 	return rat_long_sum(diff_rem, diff_int);
 }
 
+/*
+// leave maxnum == 0 for not-applicable, maxden must be > 0 for the moment
+t_rational approx_rat_with_rat_maxnum_maxden(t_rational number, t_atom_long maxnum, t_atom_long maxden, bool log_error = false)
+{
+    if ((maxden == 0 || number.r_den <= maxden) && (maxnum == 0 || abs(number.r_num) <= maxnum)) {
+        return number;
+    } else {
+        int sign = number.r_num >= 0 ? 1 : -1;
+        double r = rat2double(rat_abs(number));
+        
+        double err_best = 0;
+        long d_best = 0;
+        for (long d = 1; d < maxden; d++) {
+            long n = (long)round(r * d);
+            double err = log_error ? fabs(log(n/d) - log(r)) : fabs(n/d - r);
+            if (maxnum == 0 || n < maxnum) {
+                if (d_best == 0 || err < err_best) {
+                    err_best = err;
+                    d_best = d;
+                }
+            }
+        }
+        
+        if (d_best == 0) {
+            return genrat(0, 1);
+        } else {
+            return genrat(sign * (long)round(r*d_best), d_best);
+        }
+    }
+}
+
+// leave maxnum == 0 for not-applicable, maxden must be > 0 for the moment
+t_rational approx_double_with_rat_maxnum_maxden(double number, t_atom_long maxnum, t_atom_long maxden, bool log_error = false)
+{
+    int sign = number >= 0 ? 1 : -1;
+    double r = fabs(number);
+    
+    double err_best = 0;
+    long d_best = 0;
+    for (long d = 1; d < maxden; d++) {
+        long n = (long)round(r * d);
+        double err = log_error ? fabs(log(n/d) - log(r)) : fabs(n/d - r);
+        if (maxnum == 0 || n < maxnum) {
+            if (d_best == 0 || err < err_best) {
+                err_best = err;
+                d_best = d;
+            }
+        }
+    }
+    
+    if (d_best == 0) {
+        return genrat(0, 1);
+    } else {
+        return genrat(sign * (long)round(r*d_best), d_best);
+    }
+}
+ */
+
+// assumes num > 0
+std::vector<t_rational> get_convergents(double num, long howmany)
+{
+    std::vector<t_rational> conv;
+    long a0 = (long)floor(num);
+    
+    long p0 = a0;
+    long q0 = 1;
+    long p1 = a0 * (long)floor(1. / (num - a0)) + 1;
+    long q1 = (long)floor(1 / (num - a0));
+    
+    if (howmany >= 1)
+        conv.push_back(genrat(p0, q0));
+
+    if (howmany >= 2)
+        conv.push_back(genrat(p1, q1));
+
+    double x = 1. / (num - a0);
+    long a1 = (long)floor(x);
+    x = 1. / (x - a1);
+
+    for (long i = 2; i < howmany; i++) {
+        long an = (long)floor(x);
+        x = 1. / (x - an);
+
+        // cfr: https://www.math.ru.nl/~bosma/Students/CF.pdf
+        //        pn/qn = (an * pn-1 + pn-2) / (an * qn-1 + qn-2)
+        long p = an * p1 + p0;
+        long q = an * q1 + q0;
+                
+        conv.push_back(genrat(p, q));
+
+        p0 = p1;
+        p1 = p;
+        
+        q0 = q1;
+        q1 = q;
+
+        if (x == 0)  // Exact approximation
+            break;
+    }
+    
+    return conv;
+}
+
 
 // leave direction = 0 and error = NULL for default approximation
 // if direction = 1, it ceils, if direction = -1 it floors. 
 // if (error), it puts into *error the error.
-t_urrational approx_double_with_rat_fixed_den_no_reduce(double number, t_atom_long den, char direction, double *error) {
+t_urrational approx_double_with_rat_fixed_den_no_reduce(double number, t_atom_long den, char direction, double *error, bool log_error) {
 //	number \approx num/den; easy-bisy version...
 	t_urrational outrat;
 	outrat.r_den = den;
@@ -569,23 +672,28 @@ t_urrational approx_double_with_rat_fixed_den_no_reduce(double number, t_atom_lo
 	else 
 		outrat.r_num =  (t_atom_long) round(number * den);
 	
-	if (error)
-		*error = number - urrat2double(outrat);
+    if (error) {
+        if (log_error) {
+            *error = 1200 * log2(urrat2double(outrat)/number); // error in cents
+        } else {
+            *error = urrat2double(outrat) - number;
+        }
+    }
 	
 	return outrat;
 }
 
-t_rational approx_double_with_rat_fixed_den(double number, t_atom_long den, char direction, double *error) {
-	t_urrational urrat = approx_double_with_rat_fixed_den_no_reduce(number, den, direction, error);
+t_rational approx_double_with_rat_fixed_den(double number, t_atom_long den, char direction, double *error, bool log_error) {
+	t_urrational urrat = approx_double_with_rat_fixed_den_no_reduce(number, den, direction, error, log_error);
 	return urrat2rat(urrat);
 }
 
-t_rational approx_double_with_rat_best_match(double number, t_atom_long max_den, char direction, double *error) {
+t_rational approx_double_with_rat_up_to_maxden(double number, t_atom_long max_den, char direction, double *error, bool log_error) {
 	t_atom_long i;
 	double local_error = 1., global_error = 1., abs_global_error = 1.;
 	t_urrational global_candidate = rat2urrat(long2rat(1));
 	for (i = 1; i <= max_den; i++) {
-		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error);
+		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error, log_error);
 		double fabs_local_error = fabs(local_error);
 		if (fabs_local_error < abs_global_error) {
 			global_error = local_error;
@@ -601,7 +709,7 @@ t_rational approx_double_with_rat_best_match(double number, t_atom_long max_den,
 }
 
 t_rational approx_double_with_rat_up_to_tolerance(double number, double tolerance, t_atom_long max_den, char direction, char tolerance_is_ratio,
-												  double *error, char *found) {
+												  double *error, char *found, bool log_error) {
 	t_atom_long i = 1;
 	double local_error = 1., global_error = 1.;
 	t_urrational global_candidate = rat2urrat(long2rat(1));
@@ -615,7 +723,7 @@ t_rational approx_double_with_rat_up_to_tolerance(double number, double toleranc
 			local_tolerance = MAX(local_tolerance, CONST_EPSILON_FOR_DOUBLE2RAT_APPROXIMATION);
 		}
 		
-		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error);
+		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error, log_error);
 		double fabs_local_error = fabs(local_error);
 		if (fabs_local_error < fabs_global_error) {
 			global_error = local_error;
@@ -725,7 +833,7 @@ t_rational approx_double_with_rat_smart_permanence(double number, double max_err
 
 
 t_rational approx_double_with_rat_smart_permanence(double number, double tolerance, t_atom_long max_den, 
-												   char direction, char tolerance_is_ratio, double *error, char *found) {
+												   char direction, char tolerance_is_ratio, double *error, char *found, bool log_error) {
 	t_atom_long i;
 	t_atom_long prev_i = 0;
 	double local_error = 1., global_error = 1., fabs_global_error = 1.;
@@ -739,7 +847,7 @@ t_rational approx_double_with_rat_smart_permanence(double number, double toleran
 		*found = false;
 
 	for (i = 1; i <= max_den; i++) {
-		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error);
+		t_urrational local_candidate = approx_double_with_rat_fixed_den_no_reduce(number, i, direction, &local_error, log_error);
 		double fabs_local_error = fabs(local_error);
 		if (fabs_local_error < fabs_global_error) {
 			// checking previous permanence denominator
@@ -794,11 +902,11 @@ t_rational approx_double_with_rat_smart_permanence(double number, double toleran
 			local_tolerance = MAX(local_tolerance, CONST_EPSILON_FOR_DOUBLE2RAT_APPROXIMATION);
 		}
 		
-		dev_post("Approximation %ld/%ld, with error %.5f", global_candidate.r_num, global_candidate.r_den, global_error);
+//		dev_post("Approximation %ld/%ld, with error %.5f", global_candidate.r_num, global_candidate.r_den, global_error);
 		if (fabs_global_error <= local_tolerance) {
 			double this_weight = log((double)max_den + 1 - prev_i)/log((double)prev_i); // weight calculation
-			dev_post("   Within tolerance! With permanence %ld and weight %.4f", 
-				 global_candidate.r_num, global_candidate.r_den, global_error, max_den + 1 - prev_i, this_weight);
+//			dev_post("   Within tolerance! With permanence %ld and weight %.4f",
+//				 global_candidate.r_num, global_candidate.r_den, global_error, max_den + 1 - prev_i, this_weight);
 			if (this_weight > best_weight) {
 				
 				best_weight = this_weight;
@@ -870,12 +978,14 @@ void rat_dx2x(long num_rationals, t_rational *rationals, t_rational start_ration
 	}
 }
 
-// rational "approximation"
+// rational "approximation": legacy algorithm not that good
 t_rational approx_rat_with_rat(t_rational rat, t_atom_long max_num, t_atom_long max_den){
 	return approx_rat_with_rat_notify(rat, max_num, max_den, NULL);
 }
 
-t_rational approx_rat_with_rat_notify(t_rational rat, t_atom_long max_num, t_atom_long max_den, char *changed){
+// rational "approximation": legacy algorithm not that good
+t_rational approx_rat_with_rat_notify(t_rational rat, t_atom_long max_num, t_atom_long max_den, char *changed)
+{
 	// not the best algorithm at all. to be changed
 
 	t_rational rat_out;
