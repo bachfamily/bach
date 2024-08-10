@@ -437,6 +437,15 @@ double rat2double(t_rational rat) // conversion rational->double
 	return ((double)rat.r_num) / rat.r_den;
 }
 
+double rat2double(t_shortRational rat) // conversion rational->double
+{
+    return ((double)rat.r_num) / rat.r_den;
+}
+
+double rat2double(t_tinyRational rat) // conversion rational->double
+{
+    return ((double)rat.r_num) / rat.r_den;
+}
 
 double urrat2double(t_urrational urrat) // conversion unreduced rational->double
 {
@@ -881,13 +890,34 @@ t_rational approx_rat_with_rat_notify(t_rational rat, t_atom_long max_num, t_ato
 
 }
 
-t_rational approx_rat_with_rat_fixed_den(t_rational rat, t_atom_long den){
+t_rational approx_rat_with_rat_fixed_den(t_rational rat, t_atom_long den)
+{
 	t_rational rat_out;
 
 	rat_out.r_den = den;
 	rat_out.r_num =  (t_atom_long) round(rat2double(rat) * den);
 	
 	return rat_out;
+}
+
+t_shortRational approx_rat_with_rat_fixed_den(t_shortRational rat, t_atom_short den)
+{
+    t_shortRational rat_out;
+
+    rat_out.r_den = den;
+    rat_out.r_num =  (t_atom_short) round(rat2double(rat) * den);
+    
+    return rat_out;
+}
+
+t_tinyRational approx_rat_with_rat_fixed_den(t_tinyRational rat, t_atom_short den)
+{
+    t_tinyRational rat_out;
+
+    rat_out.r_den = den;
+    rat_out.r_num =  (t_int8) round(rat2double(rat) * den);
+    
+    return rat_out;
 }
 
 t_rational ceil_rat_with_rat_fixed_den(t_rational rat, t_atom_long den){

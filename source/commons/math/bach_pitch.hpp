@@ -337,11 +337,11 @@ public:
     
     // TODO: CHECK ANDREA
     // --what do I have to check?
-    t_pitch(const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) : p_whiteKeyET(0), p_alterET(0) {
+    t_pitch(const t_uint8 plof, const std::vector<t_int8> HEJIcommas, const t_uint8 octave) : p_whiteKeyET(0), p_alterET(0) {
         setJI(plof, HEJIcommas, octave);
     }
     
-    void setJI(const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) {
+    void setJI(const t_uint8 plof, const std::vector<t_int8> HEJIcommas, const t_uint8 octave) {
         t_uint8 expof2, expof3, whiteKey;
         plofUnpack(plof, &expof2, &expof3, &whiteKey);
         
@@ -365,12 +365,12 @@ public:
         p_alterET = {0, 1};
     }
     
-    t_pitch(const t_atom_short degree, const t_shortRational &alter, const t_uint8 plof, const std::vector<const t_int8> HEJIcommas, const t_uint8 octave) : t_pitch(plof, HEJIcommas, octave) {
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_uint8 plof, const std::vector<t_int8> HEJIcommas, const t_uint8 octave) : t_pitch(plof, HEJIcommas, octave) {
         p_whiteKeyET = degree;
         p_alterET = alter;
     }
     
-    t_pitch(const t_atom_short degree, const t_shortRational &alter, const std::vector<t_int8> &exponents, const t_uint8 addOctave = 0) : p_JIratio(exponents), p_whiteKeyET(degree), p_alterET(alter) {
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const std::vector<t_int8> &exponents, const t_uint8 addOctave = 0) : p_JIratio(exponents), p_whiteKeyET(degree), p_alterET(alter) {
         p_JIratio.addOctave(addOctave);
     }
     
@@ -386,13 +386,13 @@ public:
         p_JIratio.clear();
     }
     
-    void setET(const t_atom_short whiteKey, const t_shortRational &alter) {
+    void setET(const t_atom_short whiteKey, const t_tinyRational &alter) {
         p_whiteKeyET = whiteKey;
         p_alterET = alter;
         p_JIratio.clear();
     }
     
-    void setET(const t_atom_short whiteKey, const t_shortRational &alter, const t_atom_short octave) {
+    void setET(const t_atom_short whiteKey, const t_tinyRational &alter, const t_atom_short octave) {
         p_whiteKeyET = whiteKey;
         p_alterET = alter;
         p_JIratio.clear();
@@ -481,63 +481,43 @@ public:
 
     t_shortRational getAlterET() const { return p_alterET; }
     
-    // @DG: what is alterJI?
-    // TODO: DG: check this
-    t_rational getAlterJI() const { return p_JIratio.getRatioExceptOctavesAndPlof(); }
-    
-    int8_t getPitchClassJI() const {
-        return int8_t(JIComponentToMC() / 100. + 0.5) % 12;
-    }
-    
-    t_pitch getDisplayPitch() const {
+    /*
+     ottenere un pitch ET da plof e octave: getWhiteKey() e getSharps()
+     
+     */
+     
+    t_pitch getDisplayPitchAsET() const {
         // TODO: come somma di pitch ET (approssimato ai semitoni) e pitch JI
-        
-        const t_int8 plof = p_JIratio.getPlof();
-        const t_int8 octave = p_JIratio.getOctave();
-        
-        const t_int8 normalizedFifths = p_JIratio.getJIComponentOnLineOfFifths();
-        
-        t_int8 JIdegree;
-        t_shortRational JIWrittenAlter;
 
-        if (normalizedFifths >= 0) {
-            JIdegree = (normalizedFifths * 4) % 7;
-            JIWrittenAlter = t_shortRational((normalizedFifths + 1) / 7, 2);
-        } else {
-            JIdegree = (-normalizedFifths * 3) % 7;
-            JIWrittenAlter = t_shortRational((normalizedFifths - 5) / 7, 2);
-        }
-        t_pitch JIcomp = t_pitch(JIdegree, JIWrittenAlter, 0);
+        t_pitch pythPitch(getWhiteKeyJI(), t_shortRational(getSharps(), 2), getOctave());
+        t_pitch ETpitchNoOct(getWhiteKeyET(), getAlterET());
         
-        
-        
-        // do sol re la mi si
-        // fa# do# sol# re# la# mi# si#
-        // fax dox ...
-
-        // fa
-        // sib mib lab reb solb dob fab
-        // sibb mibb labb ...
-
-        
-        
-        t_pitch sum = t_pitchMatrices::getSum(p_whiteKeyET, p_JIratio.getWhiteKeyJI());
-        
-        sum.p_alterET += p_alterET + b.p_alterET;
-        sum.p_JIratio = p_JIratio + b.p_JIratio;
-        return sum;
-        
-        /*
-        t_uint8 plof_ET = ..... ;
-        
-        p_whiteKeyET =
-         */
+        return pythPitch + ETpitchNoOct;
     }
 
+    t_int8 approxPlofFromET(t_tinyRational *err = nullptr) const {
+        static t_int8 constexpr wk2plof[] = { 0, 2, 4, -1, 1, 3, 5 };
+        t_tinyRational alterApprox = approx_rat_with_rat_fixed_den(p_alterET, 2);
+        if (err)
+            *err = p_alterET - alterApprox;
+        t_int8 sharps = (alterApprox * 2).num();
+        return wk2plof[positive_mod(p_whiteKeyET, 7)] + sharps * 7;
+    }
     
-    t_atom_long toSteps() const { return getOctave() * 7 + p_whiteKeyET; }
+    t_pitch getDisplayPitchAsJI() const {
+        t_tinyRational err;
+        t_int8 plofET = approxPlofFromET(&err);
+        t_int8 plofJI = getPlof();
+        t_int8 plofETwk = (plofET * 4) % 7;
+        t_int8 plofJIwk = (plofJI * 4) % 7;
+        t_int8 octave = getOctave() + (plofETwk + plofJIwk > 6);
+        std::vector<t_int8> commas = getHEJICommas();
+        return t_pitch(0, err, plofET + plofJI, commas, octave);
+    }
+    
+    t_atom_long toStepsET() const { return getOctave() * 7 + p_whiteKeyET; }
 
-    t_atom_long toStepsFromMiddleC() const { return toSteps() - 7*5; }
+    t_atom_long toStepsETFromMiddleC() const { return toStepsET() - 7*5; }
 
     t_bool operator==(const t_pitch &b) const;
     t_bool operator!=(const t_pitch &b) const { return !(*this == b); }
