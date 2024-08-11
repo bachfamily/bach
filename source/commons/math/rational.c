@@ -613,36 +613,71 @@ t_rational approx_double_with_rat_maxnum_maxden(double number, t_atom_long maxnu
  */
 
 // assumes num > 0
-std::vector<t_rational> get_convergents(double num, long howmany)
+bool check_error_convergent(long num, long den, double target, bool remove_zero, double err_thresh, bool log_error)
 {
-    std::vector<t_rational> conv;
+    if (remove_zero && num == 0)
+        return false;
+    
+    if (err_thresh > 0) {
+        double err = 0;
+        if (log_error) {
+            err = fabs(log2((num*1./den)/target)*1200.);
+        } else {
+            err = fabs(num*1./den - target);
+        }
+//        printf("%ld/%ld: err = %.5f\n", num, den, err);
+        if (err > err_thresh)
+            return false;
+    }
+    return true;
+}
+
+std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool check_for_exact_den_equality = false, long den_stop = 0)
+{
     long a0 = (long)floor(num);
+    std::vector<t_rational> convs;
     
     long p0 = a0;
     long q0 = 1;
     long p1 = a0 * (long)floor(1. / (num - a0)) + 1;
     long q1 = (long)floor(1 / (num - a0));
     
-    if (howmany >= 1)
-        conv.push_back(genrat(p0, q0));
+    if (convs.size() < howmany && check_error_convergent(p0, q0, num, remove_zero, err_thresh, log_error)) {
+//        printf("convergent 1: %ld/%ld\n", p0, q0);
+        convs.push_back(genrat(p0, q0));
+    }
+    
+    if (check_for_exact_den_equality && q0 == den_stop)
+        return convs;
 
-    if (howmany >= 2)
-        conv.push_back(genrat(p1, q1));
+    if (convs.size() < howmany && check_error_convergent(p1, q1, num, remove_zero, err_thresh, log_error)) {
+//        printf("convergent 2: %ld/%ld\n", p1, q1);
+        convs.push_back(genrat(p1, q1));
+    }
+
+    if (check_for_exact_den_equality && q1 == den_stop)
+        return convs;
 
     double x = 1. / (num - a0);
     long a1 = (long)floor(x);
     x = 1. / (x - a1);
 
-    for (long i = 2; i < howmany; i++) {
+//    long i = 3;
+    while (convs.size() < howmany) {
         long an = (long)floor(x);
-        x = 1. / (x - an);
 
         // cfr: https://www.math.ru.nl/~bosma/Students/CF.pdf
         //        pn/qn = (an * pn-1 + pn-2) / (an * qn-1 + qn-2)
         long p = an * p1 + p0;
         long q = an * q1 + q0;
                 
-        conv.push_back(genrat(p, q));
+        if (check_error_convergent(p, q, num, remove_zero, err_thresh, log_error)) {
+//            printf("convergent %ld: %ld/%ld\n", i, p, q);
+            convs.push_back(genrat(p, q));
+        }
+
+        if ((check_for_exact_den_equality && q == den_stop) || (!check_for_exact_den_equality && x == an))  // Exact approximation
+            break;
 
         p0 = p1;
         p1 = p;
@@ -650,12 +685,35 @@ std::vector<t_rational> get_convergents(double num, long howmany)
         q0 = q1;
         q1 = q;
 
-        if (x == 0)  // Exact approximation
-            break;
+        x = 1. / (x - an);
+
+//        i++;
     }
     
-    return conv;
+    return convs;
 }
+
+
+std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0)
+{
+    return get_convergents_ext(num, howmany, remove_zero, err_thresh, log_error, false, 0);
+}
+
+std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0)
+{
+    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den);
+}
+
+std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0)
+{
+    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den);
+}
+
+std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0)
+{
+    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den);
+}
+
 
 
 // leave direction = 0 and error = NULL for default approximation

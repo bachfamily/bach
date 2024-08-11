@@ -697,17 +697,32 @@ public:
         return error;
     }
     
-    // these two function provide a list of "best" approximation that can be proposed in the interface (e.g. contextual menu)
-    std::vector<t_rational> getJIconvergents_JIcomp(long howmany) {
+    void cleanup_convergents(std::vector<t_rational> &conv, bool remove_zeros, double targetRatio, double threshMC) {
+        long start_i = conv.size();
+        for (long i = 0; i < conv.size(); i++) {
+            if ((!remove_zeros || conv[i].r_num != 0) && fabs(1200.*log2(((double)conv[i])/targetRatio)) <= threshMC) {
+                start_i = i;
+                break;
+            }
+        }
+        if (start_i > 0)
+            conv.erase(conv.begin(), conv.begin()+start_i);
+    }
+    
+    // these two function provide a list of "best" approximations that can be proposed in the interface (e.g. contextual menu)
+    // they are based on continued fraction representations.
+    std::vector<t_rational> getJIconvergents_JIcomp(long howmany, double threshMC) {
         t_shortRational r = getRatio();
-        return get_convergents((double)r, howmany);
+        std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true);
+        return conv;
     }
 
-    std::vector<t_rational> getJIconvergents(long howmany) {
+    std::vector<t_rational> getJIconvergents(long howmany, double threshMC) {
         double mc = toMCdouble();
         double error = 0.;
         double r = mc2f(mc)/C0freq; // ratio // TODO: @Andrea: mc2f non compila perché vuole 2 arwgomenti, ma mi sembrava avessi messo un default... non tocco nulla ma il default non lo vedo...
-        return get_convergents(r, howmany);
+        std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true);
+        return conv;
     }
 
 

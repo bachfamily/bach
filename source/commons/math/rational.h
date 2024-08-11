@@ -686,7 +686,10 @@ t_rational approx_double_with_rat_smart_permanence(double number, double toleran
 
 
 // Get continued fraction convergents for number num
-std::vector<t_rational> get_convergents(double num, long howmany);
+std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0);
+std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0);
+std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0);
+std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0);
 
 
 /**	Approximate a rational with another one having a specific denominator. 
