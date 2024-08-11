@@ -137,7 +137,7 @@ public:
         t_shortRational alter = t_pitch::text2alter(&next);
         t_atom_short octave = static_cast<t_atom_short>(strtol(next, &next, 10));
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
-        p.p_alterET += t_shortRational(static_cast<t_atom_short>(strtol(next, NULL, 10)),
+        p.p_alterET += t_tinyRational(static_cast<t_atom_short>(strtol(next, NULL, 10)),
                                      1);
         return p;
     }
@@ -150,8 +150,8 @@ public:
         t_shortRational alter = t_pitch::text2alter(&next);
         long octave = strtol(next, &next, 10);
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
-        p.p_alterET += t_shortRational(static_cast<t_atom_short>(strtol(next, &next, 10)),
-                                     static_cast<t_atom_short>(strtol(next + 1, NULL, 10)));
+        p.p_alterET += t_tinyRational(static_cast<t_int16>(strtol(next, &next, 10)),
+                                     static_cast<t_int16>(strtol(next + 1, NULL, 10)));
         return p;
     }
     
@@ -172,12 +172,12 @@ public:
         if (!*next)
             return p;
         t_atom_short tSign = eatSign(&next);
-        t_atom_short tNum = (t_atom_short) strtol(next, &next, 10);
+        t_atom_short tNum = (t_atom_short) strtol(next, &next, 10) * tSign;
         if (*next != '/') {
             p.p_alterET += tNum;
         } else {
-            t_atom_short tDen = (t_atom_short) strtol(++next, &next, 10);
-            p.p_alterET += t_shortRational(tNum, tDen);
+            t_int16 tDen = (t_int16) strtol(++next, &next, 10);
+            p.p_alterET += t_tinyRational(tNum, tDen);
         }
         if (!*next)
             return p;
@@ -192,7 +192,7 @@ public:
         t_atom_short sharps = t_pitch::text2JIsharps(&next);
         plof += sharps * 4;
         next++; // {
-        std::vector<const int8_t> monzo;
+        std::vector<int8_t> monzo;
         if (*next != '}') { // monzo
             while (1) {
                 int8_t comma = (int8_t) strtol(++next, &next, 10);
@@ -212,10 +212,10 @@ public:
         t_atom_short rSign = eatSign(&next);
         t_atom_short rNum = (t_atom_short) strtol(next, &next, 10);
         if (*next != '/') {
-            p.adjustRatios(t_shortRational(rNum, 1));
+            p.addJIratio(t_shortRational(rNum, 1));
         } else {
             t_atom_short rDen = (t_atom_short) strtol(++next, &next, 10);
-            p.adjustRatios(t_shortRational(rNum, rDen));
+            p.addJIratio(t_shortRational(rNum, rDen));
         }
         return p;
     }

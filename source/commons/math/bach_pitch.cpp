@@ -505,6 +505,56 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
     return *this - b * temp;
 }
 
+// A few functions providing JI approximations. The ones with JIcomp only approximate the just intonation component.
+void t_pitch::approxJI_JIcomp_up_to_maxden(t_atom_long max_den, char direction) // Approximate only the JI part of the pitch
+{
+    t_shortRational r = getRatio();
+    double error = 0.;
+    if (r.r_den > max_den) {
+        r = approx_double_with_rat_up_to_maxden(rat2double(r), max_den, direction, &error);
+    }
+    set(p_whiteKeyET, p_alterET, r);
+}
+
+// direction = 0: any; 1 or -1 sets the directino of approximation
+double t_pitch::approxJI_up_to_maxden(t_atom_long max_den, char direction) // Approximate a the whole pitch, return the error
+{
+    double mc = toMCdouble();
+    double error = 0.;
+    double r = mc2f(mc)/C0freq; // ratio
+    t_rational ratio = approx_double_with_rat_up_to_maxden(r, max_den, direction, &error);
+    setJI(ratio);
+    return error;
+}
+
+void t_pitch::cleanup_convergents(std::vector<t_rational> &conv, bool remove_zeros, double targetRatio, double threshMC) {
+    long start_i = conv.size();
+    for (long i = 0; i < conv.size(); i++) {
+        if ((!remove_zeros || conv[i].r_num != 0) && fabs(1200.*log2(((double)conv[i])/targetRatio)) <= threshMC) {
+            start_i = i;
+            break;
+        }
+    }
+    if (start_i > 0)
+        conv.erase(conv.begin(), conv.begin()+start_i);
+}
+
+// these two function provide a list of "best" approximations that can be proposed in the interface (e.g. contextual menu)
+// they are based on continued fraction representations.
+std::vector<t_rational> t_pitch::getJIconvergents_JIcomp(long howmany, double threshMC) {
+    t_shortRational r = getRatio();
+    std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true);
+    return conv;
+}
+
+std::vector<t_rational> t_pitch::getJIconvergents(long howmany, double threshMC) {
+    double mc = toMCdouble();
+    double error = 0.;
+    double r = mc2f(mc)/C0freq; // ratio 
+    std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true);
+    return conv;
+}
+
 std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const
 {
     std::string s;

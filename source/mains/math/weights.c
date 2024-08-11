@@ -179,7 +179,7 @@ void bach_weights_float(t_weights *x, double v)
 
 void bach_weights_anything(t_weights *x, t_symbol *msg, long ac, t_atom *av)
 {
-	long inlet = proxy_getinlet((t_object *) x);
+    long inlet = proxy_getinlet((t_object *) x);
 	long i;
 	
 	if (msg != _sym_bang) 

@@ -148,6 +148,8 @@ typedef union _hword
 #else
     t_uint64 w_whole;                // only used to hackily access the whole 64-bit field; probably deprecable
 #endif
+    
+    constexpr _hword() {}; // fix needed for an apparent bug in clang: https://stackoverflow.com/questions/70428563/unions-default-constructor-is-implicitly-deleted
 } t_hword;
 
 

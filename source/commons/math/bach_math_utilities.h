@@ -222,7 +222,7 @@ t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch);
 	@param		reference_freq	Frequence (in Hz) of the diapason A (e.g. 440)
 	@return						The frequence value in Hz
  */
-double mc2f(double mc, double reference_freq);
+double mc2f(double mc, double reference_freq = 440.);
 double mc2f(double mc, double basefreq, double basepitch);
 t_llll *llll_mc2f(t_llll *ll, double basefreq, double basepitch);
 
