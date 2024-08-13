@@ -123,7 +123,9 @@ private:
         
     public:
         
-        expVector() {
+        expVector() = default;
+        
+        expVector(int dummy) {
             clear();
         }
         
@@ -305,24 +307,15 @@ private:
     t_rational ETComponentToMCratWithOctave() const;
     double ETComponentToMCdoubleWithOctave() const;
     
-    t_pitch(t_stepsAndMC sat) : p_JIexpVector(expVector()) {
-        p_whiteKeyET = sat.steps % 7;
-        if (p_whiteKeyET < 0)
-            p_whiteKeyET += 7;
-        t_int8 octave = (t_int8) integer_div_round_down(sat.steps, 7);
-        setOctave(octave);
-        p_alterET = (sat.mc - octave * 1200 - whiteKey2MC[p_whiteKeyET]) / 200;
-    }
-    
 protected:
     
 public:
     t_pitch() = default;
     
-    t_pitch(const t_atom_short degree) : p_JIexpVector(expVector()), p_whiteKeyET(degree), p_alterET(0) {}
+    t_pitch(const t_atom_short degree) : p_JIexpVector(expVector(0)), p_whiteKeyET(degree), p_alterET(0) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational& alter) :
-    p_JIexpVector(expVector()), p_whiteKeyET(), p_alterET(alter) {}
+    p_JIexpVector(expVector(0)), p_whiteKeyET(), p_alterET(alter) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational &alter, const t_int8 octave) :
     t_pitch(degree, alter) {
@@ -340,6 +333,15 @@ public:
     
     t_pitch(const t_rational &r) {
         setJI(r);
+    }
+    
+    t_pitch(t_stepsAndMC sat) : p_JIexpVector(expVector(0)) {
+        p_whiteKeyET = sat.steps % 7;
+        if (p_whiteKeyET < 0)
+            p_whiteKeyET += 7;
+        t_int8 octave = (t_int8) integer_div_round_down(sat.steps, 7);
+        setOctave(octave);
+        p_alterET = (sat.mc - octave * 1200 - whiteKey2MC[p_whiteKeyET]) / 200;
     }
     
     void plofUnpack(const t_uint8 plof, t_uint8 *exp2, t_uint8 *exp3, t_uint8 *whiteKey) {

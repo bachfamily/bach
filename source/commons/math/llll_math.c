@@ -177,12 +177,12 @@ void hatom_fn_octave(t_hatom *a1, t_hatom *res)
 {
     switch (a1->h_type) {
         case H_PITCH:
-            hatom_setlong(res, a1->h_w.w_pitch.octave());
+            hatom_setlong(res, a1->h_w.w_pitch.getOctave());
             break;
         case H_LONG:
         case H_RAT:
         case H_DOUBLE:
-            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).octave());
+            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).getOctave());
             break;
         default:
             hatom_setlong(res, 0);
@@ -235,7 +235,7 @@ void hatom_fn_makepitchsc(t_hatom *a1, t_hatom *a2, t_hatom *res)
 void hatom_fn_cents(t_hatom *a1, t_hatom *res)
 {
     if (hatom_gettype(a1) == H_PITCH) {
-        hatom_setlong(res, a1->h_w.w_pitch.toMC());
+        hatom_setlong(res, a1->h_w.w_pitch.toMCdouble());
     } else {
         *res = *a1;
     }
