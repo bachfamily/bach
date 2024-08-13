@@ -356,7 +356,7 @@ t_pitch tonnetz_get_pitch_from_diatonic_and_chromatic_steps(t_tonnetz *x, long d
     
     t_rational mc = chro * genrat(1200,x->modulo);
     t_pitch temp = t_pitch(positive_mod(diat, 7), long2rat(0), integer_div_round_down(diat, 7));
-    t_rational temp_mc = temp.toMC();
+    t_rational temp_mc = temp.toMCrat();
     return t_pitch(positive_mod(diat, 7), genrat(mc - temp_mc, 200), integer_div_round_down(diat, 7));
 }
 
@@ -364,7 +364,7 @@ t_tonnetz_diatonic_interval tonnetz_get_diatonic_interval_from_pitch(t_tonnetz *
 {
     t_tonnetz_diatonic_interval dinterval;
     dinterval.diatonic_steps = pitch.toSteps();
-    dinterval.chromatic_steps = round((double)(pitch.toMC()/genrat(1200, x->modulo)));
+    dinterval.chromatic_steps = round(pitch.toMCdouble()/((double)genrat(1200, x->modulo)));
     dinterval.frequency_ratio = long2rat(1);
     dinterval.user_defined_ratio = 0;
     return dinterval;
@@ -1925,7 +1925,7 @@ t_llll *get_coordinates_from_pitch(t_tonnetz *x, t_pitch pitch, long also_set_ve
                                       char only_return_lattice_elems_with_nonnegative_velocity)
 {
     long screen_mc = pitch.toMC_wo_accidental();
-    t_rational screen_acc = pitch.alter();
+    t_rational screen_acc = pitch.getAlterET();
     
     t_llll *res;
     if (x->mode == 2) {
@@ -2415,7 +2415,7 @@ void tonnetz_free(t_tonnetz *x){
 double purely_diatonic_interval_to_midicents(t_tonnetz *x, t_tonnetz_diatonic_interval purely_diatonic_interval)
 {
     long screen_midicents = x->pitch_center.toMC_wo_accidental();
-    t_rational screen_acc = x->pitch_center.alter();
+    t_rational screen_acc = x->pitch_center.getAlterET();
 	double mc = screen_midicents + rat2double(rat_long_prod(screen_acc, 200));
 	long interval_modulo = positive_mod(purely_diatonic_interval.diatonic_steps, (long)x->purely_diatonic_scale_intervals->l_size);
 	long interval_base = (purely_diatonic_interval.diatonic_steps - interval_modulo) / ((long)x->purely_diatonic_scale_intervals->l_size);

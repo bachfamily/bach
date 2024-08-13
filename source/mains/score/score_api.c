@@ -53,7 +53,7 @@ void verbose_print(t_score *x)
                     count2 = 0;
                     while (curr_nt) {
                         count2++;
-                        post("       . Note #%ld. Address: %lx. Parent: %lx. Prev: %lx, Next: %lx. Dur: %.1f, mc: %.1f, vel: %.d, acc: %ld/%ld, def_acc: %d. notecenter_stem_delta_ux: %f", count2, curr_nt, curr_nt->parent, curr_nt->prev, curr_nt->next, curr_nt->duration, curr_nt->midicents, curr_nt->velocity, curr_nt->pitch_original.alter().r_num, curr_nt->pitch_original.alter().r_den, note_is_enharmonicity_userdefined(curr_nt), curr_nt->notecenter_stem_delta_ux);
+                        post("       . Note #%ld. Address: %lx. Parent: %lx. Prev: %lx, Next: %lx. Dur: %.1f, mc: %.1f, vel: %.d, pitch: %s. notecenter_stem_delta_ux: %f", count2, curr_nt, curr_nt->parent, curr_nt->prev, curr_nt->next, curr_nt->duration, curr_nt->midicents, curr_nt->velocity, curr_nt->pitch_original.toString().c_str(), curr_nt->notecenter_stem_delta_ux);
                         post("                    First Breakpoint: %lx, Last Breakpoint: %lx. Tie_to: %lx, Tie_from : %lx", curr_nt->firstbreakpoint, curr_nt->lastbreakpoint, curr_nt->tie_to, curr_nt->tie_from);
                         curr_nt = curr_nt->next;
                     }
@@ -448,7 +448,7 @@ void scoreapi_set_tonedivision(t_score *x, long s)
             for (temp_meas = temp_vc->firstmeasure; temp_meas && (!(there_are_user_accidentals)); temp_meas = temp_meas->next) 
                 for (temp_ch = temp_meas->firstchord; temp_ch && (!(there_are_user_accidentals)); temp_ch = temp_ch->next) 
                     for (temp_nt = temp_ch->firstnote; temp_nt && (!(there_are_user_accidentals)); temp_nt = temp_nt->next) 
-                        if (note_is_enharmonicity_userdefined(temp_nt))
+                        if (note_is_original_pitch_userdefined(temp_nt))
                             there_are_user_accidentals = 1;
         if (there_are_user_accidentals)
             object_warn((t_object *) x, "Warning: loosening tone division has made automatic accidentals of user-defined accidentals.");
@@ -1541,7 +1541,7 @@ void set_measure_cents_values_from_llll(t_score *x, t_llll* measure_midicents, t
                                 set_pitch = 1;
                             } else if (subtype == H_PITCH) {
                                 pitch_in = hatom_getpitch(&subelem->l_hatom);
-                                cents = pitch_in.toMC();
+                                cents = pitch_in.toMCdouble();
                                 set_pitch = 1;
                             } else if (chord->is_grace_chord) {
                                 turn_chord_into_rest(x, chord);
@@ -1599,7 +1599,7 @@ void set_measure_cents_values_from_llll(t_score *x, t_llll* measure_midicents, t
                                 modify_cents_if_nan_or_inf_and_warn((t_notation_obj *)x, &(argv[i+1]));
                             } else if (subtype == H_PITCH) {
                                 pitch_in[h] = hatom_getpitch(&subelem->l_hatom);
-                                argv[i+1] = pitch_in[h].toMC();
+                                argv[i+1] = pitch_in[h].toMCdouble();
                             } else {
                                 argv[i+1] = CONST_DEFAULT_NEW_NOTE_CENTS;
                             }
@@ -1640,7 +1640,7 @@ void set_measure_cents_values_from_llll(t_score *x, t_llll* measure_midicents, t
                 set_pitch = 1;
             } else if (type == H_PITCH) {
                 pitch_in = hatom_getpitch(&elem->l_hatom);
-                cents = pitch_in.toMC();
+                cents = pitch_in.toMCdouble();
                 set_pitch = 1;
             }
             
@@ -3579,7 +3579,7 @@ void snap_pitch_to_grid_voice(t_score *x, t_scorevoice *voice)
         while(curr_ch){ // cycle on the chords
             t_note *curr_nt = curr_ch->firstnote; 
             while(curr_nt){ // cycle on the chords
-                snap_pitch_to_grid_for_note((t_notation_obj *) x, curr_nt);
+                snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, curr_nt);
                 curr_nt = curr_nt->next;
             }
             chord_set_recompute_parameters_flag((t_notation_obj *)x, curr_ch);

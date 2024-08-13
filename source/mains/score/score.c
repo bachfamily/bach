@@ -11635,8 +11635,8 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         ((note->midicents - prev_mc) * (note_new_voice - note->parent->parent->voiceparent->v_ob.number) >= 0)) { // ...or if the voice movement is not in phase with the mc movement (e.g. i'm dragging upwards a very low note on a staff: i don't want it to go to the lower staff!)
         // we keep the same voice
         if (octave_jump) {
-            note->pitch_original.p_octave += num_octaves_jump;
-            note->pitch_displayed.p_octave += num_octaves_jump;
+            note->pitch_original.addOctaves(num_octaves_jump);
+            note->pitch_displayed.addOctaves(num_octaves_jump);
         } else {
             note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
         }
@@ -11843,7 +11843,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                     if (nt->r_it.flags & k_FLAG_SHIFT) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_grid_for_note((t_notation_obj *) x, nt);
+                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
                     }
                 }
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
@@ -11855,7 +11855,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
             } else {
                 note_compute_approximation((t_notation_obj *) x, note);
                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                    snap_pitch_to_grid_for_note((t_notation_obj *) x, note);
+                    snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, note);
             }
                 
             if (true) { // !old_chord_deleted) {
@@ -11903,7 +11903,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                                 if (nt->r_it.flags & k_FLAG_SHIFT) {
                                     note_compute_approximation((t_notation_obj *) x, nt);
                                     if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                        snap_pitch_to_grid_for_note((t_notation_obj *) x, nt);
+                                        snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
                                 }
                             }
                             validate_accidentals_for_measure((t_notation_obj *) x, newch->parent);
@@ -11926,7 +11926,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                             note_compute_approximation((t_notation_obj *) x, nt);
                             if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                snap_pitch_to_grid_for_note((t_notation_obj *) x, nt);
+                                snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
                         }
                     }
                     validate_accidentals_for_measure((t_notation_obj *) x, oldch->parent);
@@ -11974,7 +11974,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                                     if (nt->r_it.flags & k_FLAG_SHIFT) {
                                         note_compute_approximation((t_notation_obj *) x, nt);
                                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                            snap_pitch_to_grid_for_note((t_notation_obj *) x, nt);
+                                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
                                     }
                                 } 
                             }
@@ -11995,7 +11995,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                     for (nt = oldch->firstnote; nt; nt = nt->next) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_grid_for_note((t_notation_obj *) x, nt);
+                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
                     }
                     validate_accidentals_for_measure((t_notation_obj *) x, oldch->parent);
                     chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
@@ -13180,7 +13180,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)curr_ch);
                                     note_compute_approximation((t_notation_obj *) x, newnote);
                                     if (x->r_ob.snap_pitch_to_grid_when_editing) 
-                                        snap_pitch_to_grid_for_note((t_notation_obj *) x, newnote);
+                                        snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, newnote);
                                     constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &newnote->midicents, curr_ch->parent->voiceparent->v_ob.number);
                             
                                     recompute_all_for_measure((t_notation_obj *)x, curr_ch->parent, true);
@@ -15473,7 +15473,7 @@ t_chord *make_chord_or_note_sharp_or_flat_on_linear_edit(t_score *x, char direct
                     nt->midicents = nt->midicents + step * direction;
                     constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &nt->midicents, chord->parent->voiceparent->v_ob.number); 
                     
-                    t_pitch p = t_pitch(nt->pitch_displayed.degree(), rat_rat_sum(nt->pitch_displayed.alter(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.octave());
+                    t_pitch p = t_pitch(nt->pitch_displayed.getWhiteKeyET(), rat_rat_sum(nt->pitch_displayed.getAlterET(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.getOctave());
                     note_set_user_enharmonicity(nt, p);
                     note_set_displayed_user_enharmonicity(nt, p);
 

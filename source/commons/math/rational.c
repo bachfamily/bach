@@ -612,8 +612,19 @@ t_rational approx_double_with_rat_maxnum_maxden(double number, t_atom_long maxnu
 }
  */
 
+
+bool check_if_number_only_has_selected_primes(long n, const std::vector<int> &primes)
+{
+    for (auto piter = primes.begin(); piter != primes.end(); ++piter) {
+        int p = *piter; // current prime
+        while (n % p == 0)
+            n /= p;
+    }
+    return n != 1 ? false : true;
+}
+
 // assumes num > 0
-bool check_error_convergent(long num, long den, double target, bool remove_zero, double err_thresh, bool log_error)
+bool check_approximation(long num, long den, double target, bool remove_zero, double err_thresh, bool log_error, const std::vector<int> &allowed_primes)
 {
     if (remove_zero && num == 0)
         return false;
@@ -629,10 +640,15 @@ bool check_error_convergent(long num, long den, double target, bool remove_zero,
         if (err > err_thresh)
             return false;
     }
+    
+    if (allowed_primes.size() > 0 && 
+        (!check_if_number_only_has_selected_primes(num, allowed_primes) || !check_if_number_only_has_selected_primes(den, allowed_primes)))
+        return false;
+
     return true;
 }
 
-std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool check_for_exact_den_equality = false, long den_stop = 0)
+std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool check_for_exact_den_equality = false, long den_stop = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {})
 {
     long a0 = (long)floor(num);
     std::vector<t_rational> convs;
@@ -642,7 +658,7 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
     long p1 = a0 * (long)floor(1. / (num - a0)) + 1;
     long q1 = (long)floor(1 / (num - a0));
     
-    if (convs.size() < howmany && check_error_convergent(p0, q0, num, remove_zero, err_thresh, log_error)) {
+    if (convs.size() < howmany && check_approximation(p0, q0, num, remove_zero, err_thresh, log_error, allowed_primes)) {
 //        printf("convergent 1: %ld/%ld\n", p0, q0);
         convs.push_back(genrat(p0, q0));
     }
@@ -650,7 +666,22 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
     if (check_for_exact_den_equality && q0 == den_stop)
         return convs;
 
-    if (convs.size() < howmany && check_error_convergent(p1, q1, num, remove_zero, err_thresh, log_error)) {
+    double x = 1. / (num - a0);
+    long a1 = (long)floor(x);
+
+    if (includeSemiconvergents) {
+        for (long j = 1; j < a1; j++) {
+            long p = j * p0 + 1;
+            long q = j * q0 + 0;
+            if (check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+                convs.push_back(genrat(p, q));
+                if (convs.size() >= howmany)
+                    break;
+            }
+        }
+    }
+    
+    if (convs.size() < howmany && check_approximation(p1, q1, num, remove_zero, err_thresh, log_error, allowed_primes)) {
 //        printf("convergent 2: %ld/%ld\n", p1, q1);
         convs.push_back(genrat(p1, q1));
     }
@@ -658,25 +689,37 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
     if (check_for_exact_den_equality && q1 == den_stop)
         return convs;
 
-    double x = 1. / (num - a0);
-    long a1 = (long)floor(x);
     x = 1. / (x - a1);
 
 //    long i = 3;
     while (convs.size() < howmany) {
         long an = (long)floor(x);
+        
+        if (includeSemiconvergents) {
+            for (long j = 1; j < an; j++) {
+                long p = j * p1 + p0;
+                long q = j * q1 + q0;
+                if (check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+                    convs.push_back(genrat(p, q));
+                    if (convs.size() >= howmany)
+                        break;
+                }
+            }
+        }
 
         // cfr: https://www.math.ru.nl/~bosma/Students/CF.pdf
         //        pn/qn = (an * pn-1 + pn-2) / (an * qn-1 + qn-2)
         long p = an * p1 + p0;
         long q = an * q1 + q0;
                 
-        if (check_error_convergent(p, q, num, remove_zero, err_thresh, log_error)) {
+        if (convs.size() < howmany && check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
 //            printf("convergent %ld: %ld/%ld\n", i, p, q);
             convs.push_back(genrat(p, q));
         }
 
-        if ((check_for_exact_den_equality && q == den_stop) || (!check_for_exact_den_equality && x == an))  // Exact approximation
+        if ((check_for_exact_den_equality && q == den_stop) || 
+            (!check_for_exact_den_equality && p*1./q == num))  // Exact approximation
+//            (!check_for_exact_den_equality && x == an))  // Exact approximation
             break;
 
         p0 = p1;
@@ -694,24 +737,159 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
 }
 
 
-std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0)
+std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool includeSemiconvergents, const std::vector<int> &allowed_primes)
 {
-    return get_convergents_ext(num, howmany, remove_zero, err_thresh, log_error, false, 0);
+    return get_convergents_ext(num, howmany, remove_zero, err_thresh, log_error, false, 0, includeSemiconvergents, allowed_primes);
 }
 
-std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0)
+std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool includeSemiconvergents, const std::vector<int> &allowed_primes)
 {
-    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den);
+    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den, includeSemiconvergents, allowed_primes);
 }
 
-std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0)
+std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool includeSemiconvergents, const std::vector<int> &allowed_primes)
 {
-    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den);
+    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den, includeSemiconvergents, allowed_primes);
 }
 
-std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0)
+std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool includeSemiconvergents, const std::vector<int> &allowed_primes)
 {
-    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den);
+    return get_convergents_ext((double)num, howmany, remove_zero, err_thresh, log_error, true, num.r_den, includeSemiconvergents, allowed_primes);
+}
+
+
+bool sortByDenominator(t_rational i1, t_rational i2)
+{
+    return (i1.den() <= i2.den());
+}
+
+// naive way, but it was faster than the smarter ones I had found
+long approximate_long_with_combination_of_primes3(long l, const std::vector<int> &primes)
+{
+    long cand1 = 0, cand2 = 0;
+    
+    long n = l;
+    while (true) {
+        if (check_if_number_only_has_selected_primes(n, primes)) {
+            cand1 = n;
+            break;
+        }
+        n++;
+    }
+    
+    n = l;
+    while (n >= 0) {
+        if (check_if_number_only_has_selected_primes(n, primes)) {
+            cand2 = n;
+            break;
+        }
+        n--;
+    }
+    
+    if (cand1 == 0)
+        return cand2;
+    
+    if (cand2 == 0)
+        return cand1;
+
+    return (abs(cand1-l) < abs(cand2-l) ? cand1 : cand2);
+}
+
+std::vector<t_rational> rational_approximation_with_primes(double v, const std::vector<int> &allowed_primes,
+                                                           double err_thresh, bool log_error, long maxden,
+                                                           const double bestErrorRelativeTolerance, // keep the ones < bestErrorRelativeTolerance * best_error_so_far,
+                                                           const double tenneyHeightFactor,
+                                                           const double tenneyHeightExp // keep the ones whose error is < tenneyHeightFactor * exp(-tenneyHeightExp * tenneyHeight)
+                                                           )
+{
+    std::vector<t_rational> appr;
+    std::vector<int> maxexp;
+    long N = allowed_primes.size();
+    for (auto piter = allowed_primes.begin(); piter != allowed_primes.end(); ++piter) {
+        int p = *piter; // current prime
+        maxexp.push_back((int)(log(maxden)/log(p)));
+    }
+    
+    std::vector<int> currexp(allowed_primes.size(), 0);
+    long c = N-1;
+    while (true) {
+        long den = 1;
+        long overflow_culprit = N; // means no overflow
+        for (long i = 0; i < N; i++) {
+            for (long j = 0; j < currexp[i]; j++)
+                den *= allowed_primes[i];
+            if (den > maxden) {
+                if (i < overflow_culprit)
+                    overflow_culprit = i;
+                break;
+            }
+        }
+        
+        if (overflow_culprit == N) { // no overflow
+            std::vector<int> allowed_primes_wk;
+            for (auto& p: allowed_primes) {
+                if (den % p != 0)
+                    allowed_primes_wk.push_back(p);
+            }
+            
+            if (allowed_primes_wk.size() > 0) {
+                //            long num = (long) round(v * den);
+                long num = approximate_long_with_combination_of_primes3((long)(double)round(v * den), allowed_primes_wk);
+                if (num != 0 && check_approximation(num, den, v, true, err_thresh, log_error, {})) {
+                    appr.push_back(genrat(num, den));
+                }
+            }
+        } else {
+            c = overflow_culprit-1;
+        }
+        
+    
+        currexp[c] += 1;
+        while (currexp[c] > maxexp[c]) {
+            c--;
+            if (c < 0)
+                goto end;
+            currexp[c] += 1;
+        }
+        for (long d = c+1; d < N; d++)
+            currexp[d] = 0;
+        c = N-1;
+    }
+    
+end:
+    
+    // sort by denominator
+    sort(appr.begin(), appr.end(), sortByDenominator);
+    
+    // only keep some of them
+    
+    double best_error = -1;
+    std::vector<t_rational>::iterator iter;
+    for (iter = appr.begin(); iter != appr.end(); ) {
+        auto curr_pair = *iter;
+        double error = 1200 * fabs(log2((curr_pair.num() * 1. / curr_pair.den()) / v));
+        double tenneyHeight = log2(curr_pair.num() * curr_pair.den());
+        bool keep = false;
+        if (best_error == -1) {
+            keep = true;
+        } else if (error < best_error * bestErrorRelativeTolerance) {
+            keep = true;
+        } else if (error < tenneyHeightFactor*exp(-tenneyHeightExp * tenneyHeight)) {
+            keep = true;
+        }
+
+        if (best_error < 0 || error < best_error) {
+            best_error = error;
+        }
+
+        if (keep) {
+            ++iter;
+        } else {
+            iter = appr.erase(iter);
+        }
+    }
+    
+    return appr;
 }
 
 

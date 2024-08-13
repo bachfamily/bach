@@ -5573,13 +5573,13 @@ void mc_to_screen_approximations(t_notation_obj *r_ob, double mc, long *screen_n
     mc_to_screen_approximations_do(r_ob->tone_division, r_ob->accidentals_preferences, mc, screen_note, screen_accidental, key_acc_pattern, full_repr);
 }
 
-void mc_to_screen_approximations_do(long tone_division, char accidentals_preferences, double mc, long *screen_note, t_rational *screen_accidental, 
-                                    t_rational *key_acc_pattern, t_rational *full_repr){
+void mc_to_screen_approximations_do(long tone_division, char accidentals_preferences, double mc, long *screen_note, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr){
     
+    // will create an ET pitch
     t_pitch pitch = t_pitch::fromMC(mc, tone_division, (e_accidentals_preferences)accidentals_preferences, key_acc_pattern, full_repr);
     
     *screen_note = pitch.toMC_wo_accidental();
-    *screen_accidental = pitch.alter();
+    *screen_accidental = pitch.getAlterET();
     return;
 /*
     
@@ -14295,7 +14295,7 @@ void tie_note_from(t_note *note)
         if (prev) {
             t_note *nt;
             for (nt = prev->firstnote; nt; nt = nt->next) {
-                if (rat_rat_cmp(note_get_screen_midicents_with_accidental(nt), note_get_screen_midicents_with_accidental(note)) == 0) {
+                if (note_get_screen_midicents_with_accidental(nt) == note_get_screen_midicents_with_accidental(note)) {
                     tie_note(nt);
                     note->tie_from = (t_note *)WHITENULL;
                     break;
@@ -25499,9 +25499,9 @@ long get_bits_from_figure(t_rational figure){
     return beambits;
 }
 
-void snap_pitch_to_grid_for_note(t_notation_obj *r_ob, t_note *note) {
+void snap_pitch_to_displayed_pitch_for_note(t_notation_obj *r_ob, t_note *note) {
     //    note_set_auto_enharmonicity(note); // dg: 2019/01/26, why did I put this? this should not be here
-    note->midicents = note->pitch_displayed.toMC();
+    note->midicents = note->pitch_displayed.toMCdouble();
 }
 
 double snap_to_microtonal_grid_do(double pitch, long tone_division){
@@ -25567,7 +25567,7 @@ t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note)
 
 void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h)
 {
-    if (note_is_enharmonicity_userdefined(note))
+    if (note_is_original_pitch_userdefined(note))
         hatom_setpitch(h, note_get_pitch(r_ob, note));
     else
         hatom_setdouble(h, note->midicents);
@@ -25583,7 +25583,7 @@ void note_set_velocity(t_notation_obj *r_ob, t_note *note, long velocity)
 void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
 {
     note->pitch_original = pitch;
-    note->midicents = pitch.toMC();
+    note->midicents = pitch.toMCdouble();
     
     chord_set_recompute_parameters_flag(r_ob,  note->parent);
     if (note->parent->is_score_chord) { // only for score!
@@ -25595,11 +25595,11 @@ void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
     note_compute_approximation(r_ob, note);
 }
 
-// DEPRECATED, OLD!!
+// DEPRECATED, OLD -- UNUSED
 void note_set_pitch_from_notename(t_notation_obj *r_ob, t_note *note, t_symbol *note_name, char dont_change_cents_for_enharmonic_changes)
 {
     long screen_mc = 6000, old_screen_mc = note_get_screen_midicents(note);
-    t_rational screen_acc = long2rat(0), old_screen_acc = note->pitch_original.alter();
+    t_rational screen_acc = long2rat(0), old_screen_acc = note->pitch_original.getAlterET();
     notename2midicents(r_ob->middleC_octave, &r_ob->last_used_octave, note_name->s_name, &screen_mc, &screen_acc);
     note_set_user_enharmonicity_from_screen_representation(note, screen_mc, screen_acc);
 
@@ -29054,7 +29054,7 @@ t_llll* notation_item_get_multiple_slots_values_as_llll(t_notation_obj *r_ob, t_
 t_llll* note_get_graphic_values_no_router_as_llll(t_notation_obj *r_ob, t_note *note){
     // see if we need graphic extra
     t_llll *outllll;
-    if (note_is_enharmonicity_userdefined(note)) {
+    if (note_is_original_pitch_userdefined(note)) {
         outllll = note_get_graphic_values_as_llll(r_ob, note);
         llll_behead(outllll);
     } else {
@@ -29108,8 +29108,8 @@ t_llll* note_get_slots_values_no_header_as_llll(t_notation_obj *r_ob, t_note *no
 
 char should_output_note_graphics(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode)
 {
-    if (note_is_enharmonicity_userdefined(note) && mode != k_CONSIDER_FOR_SAMPLING &&
-        !note->pitch_displayed.isNaP() && note->pitch_displayed.toMC() != note->midicents)
+    if (note_is_original_pitch_userdefined(note) && mode != k_CONSIDER_FOR_SAMPLING &&
+        !note->pitch_displayed.isNaP() && note->pitch_displayed.toMCdouble() != note->midicents)
         return 1;
     
     return 0;
@@ -30415,7 +30415,7 @@ void set_graphic_values_to_note(t_notation_obj *r_ob, t_note *note, long screen_
     if (llllobj_get_version_number((t_object *)r_ob, LLLL_OBJ_UI) <= 70910) {
         // backward compatibility, graphics sets the pitch and the midicents
         note_set_user_enharmonicity_from_screen_representation(note, screen_midicents, accidental);
-        note->midicents = note->pitch_original.toMC();
+        note->midicents = note->pitch_original.toMCdouble();
     } else {
         // graphics only set the displayed pitch
         note_set_displayed_user_enharmonicity_from_screen_representation(note, screen_midicents, accidental);
@@ -31313,7 +31313,7 @@ void set_rollnote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* n
                 modify_cents_if_nan_or_inf_and_warn(r_ob, &note->midicents);
             } else if (centstype == H_PITCH) {
                 pitch_in = hatom_getpitch(&notevalues->l_head->l_hatom);
-                note->midicents = pitch_in.toMC();
+                note->midicents = pitch_in.toMCdouble();
             } else
                 note->midicents = CONST_DEFAULT_NEW_NOTE_CENTS;
 
@@ -32775,7 +32775,7 @@ void set_scorenote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* 
                 modify_cents_if_nan_or_inf_and_warn(r_ob, &note->midicents);
             } else if (centstype == H_PITCH) {
                 pitch_in = hatom_getpitch(&notevalues->l_head->l_hatom);
-                note->midicents = pitch_in.toMC();
+                note->midicents = pitch_in.toMCdouble();
             } else
                 note->midicents = CONST_DEFAULT_NEW_NOTE_CENTS;
 
@@ -32816,7 +32816,7 @@ void set_scorenote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* 
             
             
             // now the extras. first: we erase the slots, the graphic and the breakpoints
-            note->pitch_displayed.set(0, long2rat(0), 0);
+            note->pitch_displayed.setET(0, long2rat(0), 0);
             note_set_enharmonicity(note, pitch_in);
 
             note_delete_breakpoints(r_ob, note);
@@ -32992,7 +32992,7 @@ void change_pitch_to_note_from_diatonic_step_fn(t_notation_obj *r_ob, t_note *no
     undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
     
     note_set_user_enharmonicity_from_screen_representation(note, mc, long2rat(0));
-    note->midicents = note->pitch_original.toMC();
+    note->midicents = note->pitch_original.toMCdouble();
     
     note_set_auto_enharmonicity(note);
     note_compute_approximation(r_ob, note);
@@ -33052,7 +33052,7 @@ char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob){
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                snap_pitch_to_grid_for_note(r_ob, nt);
+                snap_pitch_to_displayed_pitch_for_note(r_ob, nt);
                 changed = 1;
             }
         } else if (curr_it->type == k_CHORD) {
@@ -33060,7 +33060,7 @@ char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob){
             while (temp_nt) {
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                     undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                    snap_pitch_to_grid_for_note(r_ob, temp_nt);
+                    snap_pitch_to_displayed_pitch_for_note(r_ob, temp_nt);
                     changed = 1;
                 }
                 temp_nt = temp_nt->next;
@@ -33072,7 +33072,7 @@ char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob){
                 while (temp_nt) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                         undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                        snap_pitch_to_grid_for_note(r_ob, temp_nt);
+                        snap_pitch_to_displayed_pitch_for_note(r_ob, temp_nt);
                         changed = 1;
                     }
                     temp_nt = temp_nt->next;
@@ -33292,7 +33292,7 @@ void recompute_all_for_tuttipoint_region(t_notation_obj *r_ob, t_tuttipoint *tpt
 }
 
 char reset_note_enharmonicity(t_notation_obj *r_ob, t_note *note){
-    char changed = (note_is_enharmonicity_userdefined(note)) ? 1 : 0;
+    char changed = (note_is_original_pitch_userdefined(note)) ? 1 : 0;
 
 //    t_voice *voice = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)note->parent->voiceparent : (t_voice *)note->parent->parent->voiceparent);
 
@@ -40041,7 +40041,7 @@ void bach2pwgl_measure_level(t_notation_obj *r_ob, t_llll *box, char *need_set_d
                     
                     for (nt = ch->firstnote; nt; nt = nt->next) {
                         t_llll* this_note_llll = llll_get();
-                        double mc_as_double = rat2double(note_get_screen_midicents_with_accidental(nt))/100.;
+                        double mc_as_double = note_get_screen_midicents_with_accidental(nt)/100.;
                         if (((double)mc_as_double) == round(mc_as_double))
                             llll_appendlong(this_note_llll, round(mc_as_double), 0, WHITENULL_llll);
                         else
@@ -42131,7 +42131,7 @@ double get_midicents_from_double_elem_or_notename(t_notation_obj *r_ob, t_llllel
     else if (is_hatom_number(&elem->l_hatom))
         return hatom_getdouble(&elem->l_hatom);
     else if (hatom_gettype(&elem->l_hatom) == H_PITCH)
-        return hatom_getpitch(&elem->l_hatom).toMC();
+        return hatom_getpitch(&elem->l_hatom).toMCdouble();
     else
         return 0;
 }

@@ -320,7 +320,7 @@ double t_pitch::JIComponentToMC() const {
 }
 
 t_rational t_pitch::ETComponentToMCratNoOctave() const {
-    t_atom_short mcBase = whiteKey2MC_safe();
+    t_atom_short mcBase = whiteKey2MC_safe(p_whiteKeyET);
     t_rational mc = mcBase + p_alterET * 200;
     return mc;
 }
@@ -330,7 +330,7 @@ t_rational t_pitch::ETComponentToMCratWithOctave() const {
 }
 
 double t_pitch::ETComponentToMCdoubleNoOctave() const {
-    t_atom_short mcBase = whiteKey2MC_safe();
+    t_atom_short mcBase = whiteKey2MC_safe(p_whiteKeyET);
     double mc = mcBase + p_alterET * 200;
     return mc;
 }
@@ -354,6 +354,7 @@ t_rational t_pitch::toMCrat() const {
         return etmc + jimcR;
     }
 }
+
 
 t_bool t_pitch::operator==(const t_pitch &b) const
 {
@@ -401,7 +402,7 @@ t_pitch t_pitch::operator+(const t_pitch &b) const
     t_int8 oct = sum.getOctave();
     sum.p_alterET += p_alterET + b.p_alterET;
     sum.p_JIexpVector = p_JIexpVector + b.p_JIexpVector;
-    sum.p_JIexpVector.addOctave(oct);
+    sum.p_JIexpVector.addOctaves(oct);
     return sum;
 }
 
@@ -411,7 +412,7 @@ t_pitch t_pitch::operator-(const t_pitch &b) const
     t_int8 oct = diff.getOctave();
     diff.p_alterET += p_alterET + b.p_alterET;
     diff.p_JIexpVector = p_JIexpVector + b.p_JIexpVector;
-    diff.p_JIexpVector.addOctave(oct);
+    diff.p_JIexpVector.addOctaves(oct);
     return diff;
 }
 
@@ -527,31 +528,21 @@ double t_pitch::approxJI_up_to_maxden(t_atom_long max_den, char direction) // Ap
     return error;
 }
 
-void t_pitch::cleanup_convergents(std::vector<t_rational> &conv, bool remove_zeros, double targetRatio, double threshMC) {
-    long start_i = conv.size();
-    for (long i = 0; i < conv.size(); i++) {
-        if ((!remove_zeros || conv[i].r_num != 0) && fabs(1200.*log2(((double)conv[i])/targetRatio)) <= threshMC) {
-            start_i = i;
-            break;
-        }
-    }
-    if (start_i > 0)
-        conv.erase(conv.begin(), conv.begin()+start_i);
-}
+
 
 // these two function provide a list of "best" approximations that can be proposed in the interface (e.g. contextual menu)
 // they are based on continued fraction representations.
-std::vector<t_rational> t_pitch::getJIconvergents_JIcomp(long howmany, double threshMC) {
+std::vector<t_rational> t_pitch::getJIconvergents_JIcomp(long howmany, double threshMC, bool includeSemiconvergents, const std::vector<int> &allowed_primes) {
     t_shortRational r = getRatio();
-    std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true);
+    std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true, includeSemiconvergents, allowed_primes);
     return conv;
 }
 
-std::vector<t_rational> t_pitch::getJIconvergents(long howmany, double threshMC) {
+std::vector<t_rational> t_pitch::getJIconvergents(long howmany, double threshMC, bool includeSemiconvergents, const std::vector<int> &allowed_primes) {
     double mc = toMCdouble();
     double error = 0.;
     double r = mc2f(mc)/C0freq; // ratio 
-    std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true);
+    std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true, includeSemiconvergents, allowed_primes);
     return conv;
 }
 
@@ -572,7 +563,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
             mirror = false;
             p = *this;
         }
-        t_int8 plof = p.getPlof();
+        t_int8 plof = p.getPlofJI();
 
         if (!p.isPureJI() || p.isPureET()) {
             // not pure JI or both pure JI and pureET (that is, it's a C with no alteration or deviation)
@@ -623,7 +614,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
                 s += '-';
             else if (!p.isPureJI())
                 s += '+';
-            t_int8 sharps = p.getSharps();
+            t_int8 sharps = p.getSharpsJI();
             if (plof >= 0) {
                 s += (plof * 4 + 2) % 7 + 'A';
             } else {

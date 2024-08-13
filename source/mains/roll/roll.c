@@ -529,7 +529,7 @@ t_llll* get_roll_values_as_llll_for_pwgl(t_roll *x){
             temp_note = temp_chord->firstnote;
             while (temp_note) {
                 t_llll* this_note_llll = llll_get();
-                double mc_as_double = rat2double(note_get_screen_midicents_with_accidental(temp_note))/100.;
+                double mc_as_double = note_get_screen_midicents_with_accidental(temp_note)/100.;
 
                 if (((double)mc_as_double) == round(mc_as_double))
                     llll_appendlong(this_note_llll, round(mc_as_double), 0, WHITENULL_llll);
@@ -7144,7 +7144,7 @@ t_max_err roll_setattr_tonedivision(t_roll *x, t_object *attr, long ac, t_atom *
             for (temp_vc = x->firstvoice; temp_vc && (temp_vc->v_ob.number < x->r_ob.num_voices) && (!(there_are_user_accidentals)); temp_vc = temp_vc->next) 
                 for (temp_ch = temp_vc->firstchord; temp_ch && (!(there_are_user_accidentals)); temp_ch = temp_ch->next) 
                     for (temp_nt = temp_ch->firstnote; temp_nt && (!(there_are_user_accidentals)); temp_nt = temp_nt->next) 
-                        if (note_is_enharmonicity_userdefined(temp_nt))
+                        if (note_is_original_pitch_userdefined(temp_nt))
                             there_are_user_accidentals = 1;
             if (there_are_user_accidentals)
                 object_warn((t_object *) x, "Warning: loosening tone division has made automatic accidentals of user-defined accidentals.");
@@ -8629,7 +8629,7 @@ void set_voice_cents_values_from_llll(t_roll *x, t_llll* midicents, t_rollvoice 
                             set_pitch = 1;
                         } else if (subtype == H_PITCH) {
                             pitch_in = hatom_getpitch(&subelem->l_hatom);
-                            cents = pitch_in.toMC();
+                            cents = pitch_in.toMCdouble();
                             set_pitch = 1;
                         }
                         
@@ -8676,7 +8676,7 @@ void set_voice_cents_values_from_llll(t_roll *x, t_llll* midicents, t_rollvoice 
                         pitch_in[h] = t_pitch::NaP;
                     } else if (subtype == H_PITCH) {
                         pitch_in[h] = hatom_getpitch(&subelem->l_hatom);
-                        argv[i+1] = pitch_in[h].toMC();
+                        argv[i+1] = pitch_in[h].toMCdouble();
                     } else {
                         pitch_in[h] = t_pitch::NaP;
                         argv[i+1] = CONST_DEFAULT_NEW_NOTE_CENTS;
@@ -8706,7 +8706,7 @@ void set_voice_cents_values_from_llll(t_roll *x, t_llll* midicents, t_rollvoice 
                 set_pitch = 1;
             } else if (type == H_PITCH) {
                 pitch_in = hatom_getpitch(&elem->l_hatom);
-                cents = pitch_in.toMC();
+                cents = pitch_in.toMCdouble();
                 set_pitch = 1;
             }
 
@@ -9433,7 +9433,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
                     if (note_llll->l_size >= 2 && (is_hatom_number(&note_llll->l_head->l_hatom) || first_element_type == H_SYM) 
                         && is_hatom_number(&note_llll->l_head->l_next->l_hatom)) {
                         
-                        double cents = (first_element_type == H_PITCH) ? hatom_getpitch(&note_llll->l_head->l_hatom).toMC() : hatom_getdouble(&note_llll->l_head->l_hatom);
+                        double cents = (first_element_type == H_PITCH) ? hatom_getpitch(&note_llll->l_head->l_hatom).toMCdouble() : hatom_getdouble(&note_llll->l_head->l_hatom);
                         double duration = hatom_getdouble(&note_llll->l_head->l_next->l_hatom);
                         double velocity = note_llll->l_size >= 3 ? hatom_getlong(&note_llll->l_head->l_next->l_next->l_hatom) : -1;
                         t_llll *breakpoints = find_sublist_with_router((t_notation_obj *)x, note_llll, _llllobj_sym_breakpoints);
@@ -10017,7 +10017,7 @@ void snap_pitch_to_grid_voice(t_roll *x, t_rollvoice *voice) {
     while(curr_ch){ // cycle on the chords
         t_note *curr_nt = curr_ch->firstnote; 
         while(curr_nt){ // cycle on the chords
-            snap_pitch_to_grid_for_note((t_notation_obj *) x, curr_nt);
+            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, curr_nt);
             curr_nt = curr_nt->next;
         }
         chord_set_recompute_parameters_flag((t_notation_obj *)x, curr_ch);
@@ -10119,7 +10119,7 @@ void verbose_print(t_roll *x){
                 count2 = 0;
                 while (curr_nt) {
                     count2++;
-                    post("     . Note #%ld. Address: %lx. Parent: %lx. Prev: %lx, Next: %lx. Dur: %.1f, mc: %.1f, vel: %.d, acc: %ld/%ld, def_acc: %d. notecenter_stem_delta_ux: %f", count2, curr_nt, curr_nt->parent, curr_nt->prev, curr_nt->next, curr_nt->duration, curr_nt->midicents, curr_nt->velocity, curr_nt->pitch_original.alter().r_num, curr_nt->pitch_original.alter().r_den, note_is_enharmonicity_userdefined(curr_nt), curr_nt->notecenter_stem_delta_ux);
+                    post("     . Note #%ld. Address: %lx. Parent: %lx. Prev: %lx, Next: %lx. Dur: %.1f, mc: %.1f, vel: %.d, pitch: %s, notecenter_stem_delta_ux: %f", count2, curr_nt, curr_nt->parent, curr_nt->prev, curr_nt->next, curr_nt->duration, curr_nt->midicents, curr_nt->velocity, curr_nt->pitch_original.toString().c_str(),  note_is_original_pitch_userdefined(curr_nt), curr_nt->notecenter_stem_delta_ux);
                     curr_nt = curr_nt->next;
                 }
                 curr_ch = curr_ch->next;
@@ -14118,8 +14118,8 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         ((note->midicents - prev_mc) * (note_new_voice - note->parent->voiceparent->v_ob.number + x->r_ob.num_voices * (note_new_system - note_old_system)) >= 0)) { // ...or if the voice movement is not in phase with the mc movement (e.g. i'm dragging upwards a very low note on a staff: i don't want it to go to the lower staff!)
         
         if (octave_jump) {
-            note->pitch_original.p_octave += num_octaves_jump;
-            note->pitch_displayed.p_octave += num_octaves_jump;
+            note->pitch_original.addOctaves(num_octaves_jump);
+            note->pitch_displayed.addOctaves(num_octaves_jump);
         } else {
             note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
         }
@@ -14296,14 +14296,14 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
                     if (nt->r_it.flags & k_FLAG_SHIFT) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_grid_for_note((t_notation_obj *) x, nt);
+                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
                     }
                 }
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
             } else {
                 note_compute_approximation((t_notation_obj *) x, note);
                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                    snap_pitch_to_grid_for_note((t_notation_obj *) x, note);
+                    snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, note);
             }
 
             if (!old_chord_deleted) {
@@ -14339,7 +14339,7 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
                             if (true){ //(nt->flags & k_FLAG_SHIFT) {
                                 note_compute_approximation((t_notation_obj *) x, nt);
                                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                    snap_pitch_to_grid_for_note((t_notation_obj *) x, nt);
+                                    snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
                             }
                         }
                         chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
@@ -14353,7 +14353,7 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
                     if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_grid_for_note((t_notation_obj *) x, nt);
+                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
                     }
                 }
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
@@ -15381,7 +15381,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     t_note *nt;
                     for (nt = temp->firstnote; nt; nt = nt->next){
                         note_compute_approximation((t_notation_obj *) x, nt);
-                        snap_pitch_to_grid_for_note((t_notation_obj *) x, nt);
+                        snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
                     }
                 }
                 if (x->r_ob.snap_onset_to_grid_when_editing)
@@ -16637,7 +16637,7 @@ t_chord *roll_make_chord_or_note_sharp_or_flat_on_linear_edit(t_roll *x, char di
                 nt->midicents = nt->midicents + step * direction;
                 constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &nt->midicents, chord->voiceparent->v_ob.number);
 
-                note_set_user_enharmonicity(nt, t_pitch(nt->pitch_displayed.degree(), rat_rat_sum(nt->pitch_displayed.alter(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.octave()));
+                note_set_user_enharmonicity(nt, t_pitch(nt->pitch_displayed.getWhiteKeyET(), rat_rat_sum(nt->pitch_displayed.getAlterET(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.getOctave()));
                 
                 calculate_chord_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->voiceparent), true);
             }

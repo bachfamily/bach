@@ -5505,7 +5505,7 @@ t_shortRational note_get_screen_accidental(t_note *nt);
     @param note             The note
     @return                    The midicents of the displayed note
  */
-t_rational note_get_screen_midicents_with_accidental(t_note *nt);
+double note_get_screen_midicents_with_accidental(t_note *nt);
 
 
 /**    Flag telling if the note pitch is user defined or not.
@@ -5513,7 +5513,7 @@ t_rational note_get_screen_midicents_with_accidental(t_note *nt);
     @param note             The note
     @return                    1 if pitch is user-defined, 0 otherwise
  */
-char note_is_enharmonicity_userdefined(t_note *nt);
+char note_is_original_pitch_userdefined(t_note *nt);
 
 
 /**    Flags the note as not having a user-defined pitch (automatic enharmonicity)
@@ -9626,7 +9626,7 @@ void set_matrix_parameters_from_slotinfo(t_notation_obj *r_ob, long slot_num);
     @param    note    The note
     @see            snap_pitch_to_grid_for_selection()
  */ 
-void snap_pitch_to_grid_for_note(t_notation_obj *r_ob, t_note *note);
+void snap_pitch_to_displayed_pitch_for_note(t_notation_obj *r_ob, t_note *note);
 
 
 /**    Snap the pitch of all the selected notes to the microtonal grid (works exactly as snap_pitch_to_grid_for_note(), but for all the notes in 

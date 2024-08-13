@@ -23,6 +23,7 @@
 */
 
 #include "foundation/bach.h"
+#include <vector>
 
 #ifdef BACH_JUCE
 #include "bach_jucewrapper.h"
@@ -686,13 +687,20 @@ t_rational approx_double_with_rat_smart_permanence(double number, double toleran
 
 
 // Get continued fraction convergents for number num
-std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0);
-std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0);
-std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0);
-std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0);
+std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {});
+std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {});
+std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {});
+std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {});
+
+std::vector<t_rational> rational_approximation_with_primes(double v, const std::vector<int> &allowed_primes,
+                                                           double err_thresh, bool log_error, long maxden,
+                                                           // three parameters to thin the list
+                                                           const double bestErrorRelativeTolerance = 1.2,
+                                                           const double tenneyHeightFactor = 50,
+                                                           const double tenneyHeightExp =0.2);
 
 
-/**	Approximate a rational with another one having a specific denominator. 
+/**	Approximate a rational with another one having a specific denominator.
 	@param	rat		The rational number to approximate.
 	@param	den		The denominator of the approximation.
 	@return			The approximated rational.

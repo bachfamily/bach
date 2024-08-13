@@ -226,7 +226,7 @@ private:
             set(0, get(0) + delta);
         }
         
-        void addOctave(int8_t o) {
+        void addOctaves(int8_t o) {
             if (o != 0) {
                 const t_int8 r = get(0) + o;
                 set(0, r);
@@ -369,8 +369,6 @@ public:
         }
     }
     
-    // TODO: CHECK ANDREA
-    // --what do I have to check?
     t_pitch(const t_uint8 plof, const std::vector<t_int8> HEJIcommas, const t_uint8 octave) : p_whiteKeyET(0), p_alterET(0) {
         setJI(plof, HEJIcommas, octave);
     }
@@ -379,7 +377,7 @@ public:
         t_uint8 expof2, expof3, whiteKey;
         plofUnpack(plof, &expof2, &expof3, &whiteKey);
         
-        std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE, 0); // TODO: are we sure that these are initialized as zeros? -- SOLVED
+        std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE, 0);
         exponents[0] = expof2;
         exponents[1] = expof3;
         for (long i = 0; i < BACH_PRIMES_JI_SIZE-2; i++) { // HEJIcommas start from 5-limit
@@ -389,7 +387,7 @@ public:
             exponents[i+2] += dir * HEJIcommas[i] * (-1);
         }
         
-        p_JIexpVector.set(exponents); // TODO: @Andrea, there's some const stuff missing, but I cannot initialize with const... -- SOLVED
+        p_JIexpVector.set(exponents);
         setOctave(octave);
     }
     
@@ -405,17 +403,17 @@ public:
     }
     
     t_pitch(const t_atom_short degree, const t_tinyRational &alter, const std::vector<t_int8> &exponents, const t_uint8 addOctave = 0) : p_JIexpVector(exponents), p_whiteKeyET(degree), p_alterET(alter) {
-        p_JIexpVector.addOctave(addOctave);
+        p_JIexpVector.addOctaves(addOctave);
     }
     
     t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_shortRational &r, const t_uint8 addOctave = 0) : p_whiteKeyET(degree), p_alterET(alter) {
         setJI(r);
-        p_JIexpVector.addOctave(addOctave);
+        p_JIexpVector.addOctaves(addOctave);
     }
     
     t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_rational &r, const t_uint8 addOctave = 0) : p_whiteKeyET(degree), p_alterET(alter) {
         setJI(r);
-        p_JIexpVector.addOctave(addOctave);
+        p_JIexpVector.addOctaves(addOctave);
     }
     
     void setJI(const t_shortRational r) {
@@ -447,7 +445,7 @@ public:
         p_whiteKeyET = degree;
         p_alterET = alter;
         setJI(r);
-        p_JIexpVector.addOctave(addOctave);
+        p_JIexpVector.addOctaves(addOctave);
     }
     
     double toMCdouble() const;
@@ -462,46 +460,31 @@ private:
         return sat;
     }
     
-public:
-    void setOctave(t_int8 oct) {
-        p_JIexpVector.setOctave(oct);
-    }
-    
-    t_int8 getOctave() const {
-        return p_JIexpVector.getOctave();
-    }
-    
-    t_atom_short whiteKey2MC_safe() const
+    t_atom_short whiteKey2MC_safe(t_uint8 whiteKey) const
     {
-        if (p_whiteKeyET >= 0 && p_whiteKeyET < 7)
-            return whiteKey2MC[p_whiteKeyET];
+        if (whiteKey >= 0 && whiteKey < 7)
+            return whiteKey2MC[whiteKey];
         else
             return 0;
     }
     
+public:
+    void setOctave(t_int8 oct) {
+        p_JIexpVector.setOctave(oct);
+    }
+
+    t_int8 getOctave() const {
+        return p_JIexpVector.getOctave();
+    }
+    
+    void addOctaves(t_int8 oct) {
+        p_JIexpVector.addOctaves(oct);
+    }
+
     bool isPureET() const { return p_JIexpVector.allZerosButOctaves(); }
     bool isPureJI() const { return p_whiteKeyET == 0 && p_alterET.num() == 0; }
     
-    // TODO: @Andrea perché alcune si chiamano set e altre setJI? forse allora setET e setJI?
-    // E ce ne sono uguali sopra, vedi void setET(const t_atom_short whiteKey) sopra, forse queste vanno eliminate?
-    void set(const t_atom_short whiteKey) {
-        p_whiteKeyET = whiteKey;
-        p_alterET.set(0);
-        p_JIexpVector.clear();
-    }
-    
-    void set(const t_atom_short whiteKey, const t_shortRational &alter) {
-        p_whiteKeyET = whiteKey;
-        p_alterET = alter;
-        p_JIexpVector.clear();
-    }
-    
-    void set(const t_atom_short whiteKey, const t_shortRational &alter, const t_atom_short octave) {
-        p_whiteKeyET = whiteKey;
-        p_alterET = alter;
-        p_JIexpVector.clear();
-        setOctave(octave);
-    }
+
     
     void setJI(const t_rational r) {
         p_whiteKeyET = 0;
@@ -518,9 +501,9 @@ public:
     t_atom_short getWhiteKeyET() const { return p_whiteKeyET; }
     t_atom_short getWhiteKeyJI() const { return p_JIexpVector.getWhiteKeyJI(); }
 
-    t_int8 getPlof() const { return p_JIexpVector.getPlof(); }
+    t_int8 getPlofJI() const { return p_JIexpVector.getPlof(); }
     
-    t_int8 getSharps() const { return (getPlof()+1)/7; };
+    t_int8 getSharpsJI() const { return (getPlofJI()+1)/7; };
     
     std::vector<int8_t> getHEJICommas() const {
         std::vector<int8_t> v = p_JIexpVector.get(); // TODO: @Andrea: how do I copy the vector? -- SOLVED
@@ -546,7 +529,7 @@ public:
     t_pitch getDisplayPitchAsET() const {
         // TODO: come somma di pitch ET (approssimato ai semitoni) e pitch JI
 
-        t_pitch pythPitch(getWhiteKeyJI(), t_shortRational(getSharps(), 2), getOctave());
+        t_pitch pythPitch(getWhiteKeyJI(), t_shortRational(getSharpsJI(), 2), getOctave());
         t_pitch ETpitchNoOct(getWhiteKeyET(), getAlterET());
         
         return pythPitch + ETpitchNoOct;
@@ -564,7 +547,7 @@ public:
     t_pitch getDisplayPitchAsJI() const {
         t_tinyRational err;
         t_int8 plofET = approxPlofFromET(&err);
-        t_int8 plofJI = getPlof();
+        t_int8 plofJI = getPlofJI();
         t_int8 plofETwk = (plofET * 4) % 7;
         t_int8 plofJIwk = (plofJI * 4) % 7;
         t_int8 octave = getOctave() + (plofETwk + plofJIwk > 6);
@@ -572,9 +555,15 @@ public:
         return t_pitch(0, err, plofET + plofJI, commas, octave);
     }
     
-    t_atom_long toStepsET() const { return getOctave() * 7 + p_whiteKeyET; }
-
+    t_atom_long toStepsET() const { return getOctave() * 7 + getWhiteKeyET(); }
     t_atom_long toStepsETFromMiddleC() const { return toStepsET() - 7*5; }
+    t_atom_long toStepsJI() const { return getOctave() * 7 + getWhiteKeyJI(); }
+    t_atom_long toStepsJIFromMiddleC() const { return toStepsJI() - 7*5; }
+    t_atom_long toSteps() const {
+        t_pitch p = getDisplayPitchAsJI();
+        return p.toStepsJI() - 7*5;
+    }
+    t_atom_long toStepsFromMiddleC() const { return toSteps() - 7*5; }
 
     t_bool operator==(const t_pitch &b) const;
     t_bool operator!=(const t_pitch &b) const { return !(*this == b); }
@@ -675,12 +664,15 @@ public:
         return res;
     } */
     
-    // TODO: this shouldn't be needed for JI?
-    // potresti darmi il MC_wo_accidental del pitch_displayed()
-    // TODOAA
     t_atom_long toMC_wo_accidental() const {
-        t_atom_long base = whiteKey2MC_safe() + getOctave() * 1200;
-        return base;
+        if (isPureET()) {
+            return whiteKey2MC_safe(p_whiteKeyET) + getOctave() * 1200;
+        } else if (isPureJI()) {
+            return whiteKey2MC_safe(getWhiteKeyJI()) + getOctave() * 1200;
+        } else {
+            t_pitch jipitch = getDisplayPitchAsJI();
+            return whiteKey2MC_safe(jipitch.getWhiteKeyJI()) + getOctave() * 1200; //TODO: check
+        }
     }
     
     
@@ -715,13 +707,11 @@ public:
     double approxJI_up_to_maxden(t_atom_long max_den, char direction = 0); // Approximate a the whole pitch, return the error
  
     
-    void cleanup_convergents(std::vector<t_rational> &conv, bool remove_zeros, double targetRatio, double threshMC);
-    
     // these two function provide a list of "best" approximations that can be proposed in the interface (e.g. contextual menu)
     // they are based on continued fraction representations.
-    std::vector<t_rational> getJIconvergents_JIcomp(long howmany, double threshMC);
+    std::vector<t_rational> getJIconvergents_JIcomp(long howmany, double threshMC, bool includeSemiconvergents, const std::vector<int> &allowed_primes = {});
 
-    std::vector<t_rational> getJIconvergents(long howmany, double threshMC);
+    std::vector<t_rational> getJIconvergents(long howmany, double threshMC, bool includeSemiconvergents, const std::vector<int> &allowed_primes = {});
 
 
     // TODO: @daniele: ApproxJI to some harmonic

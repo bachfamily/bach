@@ -36,12 +36,15 @@ long note_get_screen_midicents(t_note *nt)
 
 t_shortRational note_get_screen_accidental(t_note *nt)
 {
-    return nt->pitch_displayed.alter();
+    // TODO: questo è proprio sbagliato.
+    dev_post("Daniele, please change me!");
+    return nt->pitch_displayed.getAlterET();
+    //    return nt->pitch_displayed.alter();
 }
 
-t_rational note_get_screen_midicents_with_accidental(t_note *nt)
+double note_get_screen_midicents_with_accidental(t_note *nt)
 {
-    return nt->pitch_displayed.toMC();
+    return nt->pitch_displayed.toMCdouble();
 }
 
 char note_is_enharmonicity_userdefined(t_note *nt)
@@ -59,14 +62,14 @@ void note_set_user_enharmonicity_from_screen_representation(t_note *nt, double s
     long steps = midicents_to_diatsteps_from_C0(NULL, screen_mc);
     nt->pitch_original = t_pitch(steps % 7, screen_acc, steps / 7);
     if (also_assign_mc)
-        nt->midicents = nt->pitch_original.toMC();
+        nt->midicents = nt->pitch_original.toMCdouble();
 }
 
 void note_set_user_enharmonicity(t_note *nt, t_pitch pitch, char also_assign_mc)
 {
     nt->pitch_original = pitch;
     if (also_assign_mc)
-        nt->midicents = pitch.toMC();
+        nt->midicents = pitch.toMCdouble();
 }
 
 void note_set_enharmonicity(t_note *nt, t_pitch pitch)
@@ -95,14 +98,14 @@ void note_appendpitch_to_llll(t_notation_obj *r_ob, t_llll *ll, t_note *note, lo
 {
     switch (pitchmode) {
         case k_OUTPUT_PITCHES_ALWAYS:
-            if (note_is_enharmonicity_userdefined(note))
+            if (note_is_original_pitch_userdefined(note))
                 llll_appendpitch(ll, note->pitch_original);
             else
                 llll_appendpitch(ll, note->pitch_displayed);
             break;
             
         case k_OUTPUT_PITCHES_WHEN_USER_DEFINED:
-            if (note_is_enharmonicity_userdefined(note))
+            if (note_is_original_pitch_userdefined(note))
                 llll_appendpitch(ll, note->pitch_original);
             else
                 llll_appenddouble(ll, note->midicents);
@@ -177,28 +180,30 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
     t_voice *voice = (nt->parent && nt->parent->is_score_chord) ? (t_voice *)nt->parent->parent->voiceparent : (t_voice *)nt->parent->voiceparent;
     long auto_screen_mc;
     t_rational auto_screen_acc;
-    if (note_is_enharmonicity_userdefined(nt)) { // there _are_ accidentals user-defined!!!
+    if (note_is_original_pitch_userdefined(nt)) { // the pitch is explicitly defined by the user (either enharmonicity or JI)
         mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
         
         if (!(is_natural_note(note_get_screen_midicents(nt)))) {
             object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
             long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
-            nt->pitch_displayed.set(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
+            nt->pitch_displayed.setET((int)positive_mod(steps, 7), auto_screen_acc, (int)integer_div_round_down(steps, 7));
             note_set_auto_enharmonicity(nt);
         } else {
             nt->pitch_displayed = nt->pitch_original;
             
-            t_rational auto_mc = auto_screen_acc * 200 + auto_screen_mc;
-            if (nt->pitch_original.toMC() != auto_mc) {
-                object_warn((t_object *)r_ob, "Warning: mismatch with current microtonal approximation settings, input accidental might not be displayed.");
-                
-                nt->pitch_displayed.set(nt->pitch_displayed.degree(), (auto_mc - scaleposition_to_midicents(nt->pitch_displayed.toSteps() - 5 * 7))/200, nt->pitch_displayed.octave());
+            if (nt->pitch_original.isPureET()) {
+                t_rational auto_mc = auto_screen_acc * 200 + auto_screen_mc;
+                if (nt->pitch_original.toMCrat() != auto_mc) {
+                    object_warn((t_object *)r_ob, "Warning: mismatch with current microtonal approximation settings, input accidental might not be displayed.");
+                    
+                    nt->pitch_displayed.setET(nt->pitch_displayed.getWhiteKeyET(), (auto_mc - scaleposition_to_midicents(nt->pitch_displayed.toStepsET() - 5 * 7))/200, nt->pitch_displayed.getOctave());
+                }
             }
         }
-    } else { // use default accidentals!
+    } else { // use default ET approximation
         mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
         long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
-        nt->pitch_displayed.set(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
+        nt->pitch_displayed.setET(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
     }
 }
 
@@ -275,18 +280,18 @@ void notationobj_autospell_trivial(t_notation_obj *r_ob, t_autospell_params *par
 
 
 //// CHEW AND CHEN ALGORITHM from Chew and Chen (2003, 2005)
-
+// it's only for ET pitches
 t_pitch pitch_snap_alteration_to_semitones(t_pitch p)
 {
     // floor(alter /(1/2))
-    long d = rat_rat_divdiv(p.alter(), RAT_1OVER2, false);
-    return t_pitch(p.degree(), rat_long_prod(RAT_1OVER2, d), p.octave());
+    long d = rat_rat_divdiv(p.getAlterET(), RAT_1OVER2, false);
+    return t_pitch(p.getWhiteKeyET(), rat_long_prod(RAT_1OVER2, d), p.getOctave());
 }
 
 t_pitch pitch_rematch_alteration_from_semitones(t_pitch p, t_pitch orig_pitch)
 {
-    t_rational module = rat_rat_mod(orig_pitch.alter(), RAT_1OVER2, false);
-    return t_pitch(p.degree(), rat_rat_sum(p.alter(), module), p.octave());
+    t_rational module = rat_rat_mod(orig_pitch.getAlterET(), RAT_1OVER2, false);
+    return t_pitch(p.getWhiteKeyET(), rat_rat_sum(p.getAlterET(), module), p.getOctave());
 }
 
 t_pitch position_on_line_of_fifths_to_pitch(long pos)
@@ -297,14 +302,16 @@ t_pitch position_on_line_of_fifths_to_pitch(long pos)
 
 long pitch_to_position_on_line_of_fifths(t_pitch p)
 {
+    // TODO: this should be embedded within the pitch class
+    
     t_pitch snapped_p = pitch_snap_alteration_to_semitones(p);
-    t_pitch temp = t_pitch(p.degree(), snapped_p.alter(), 0);
+    t_pitch temp = t_pitch(p.getWhiteKeyET(), snapped_p.getAlterET(), 0);
     t_pitch lowG = t_pitch(4);
     t_pitch octave = t_pitch(0, long2rat(0), 1);
     const long MAX_TRY = 128;
     
-    if (temp.alter() == 0) {
-        switch (p.degree()) {
+    if (temp.getAlterET() == 0) {
+        switch (p.getWhiteKeyET()) {
             case 0: return 0;
             case 1: return 2;
             case 2: return 4;
@@ -315,25 +322,25 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
         }
     }
     
-    if (temp.alter() > 0) {
+    if (temp.getAlterET() > 0) {
         long count = 0;
         while (temp % lowG != 0 && count < MAX_TRY) {
             temp += octave;
             count++;
         }
         if (temp % lowG == 0)
-            return round((double)(temp.toMC() / lowG.toMC()));
+            return round((temp.toMCdouble() / lowG.toMCdouble()));
         return ATOM_LONG_MAX;
     }
 
-    if (temp.alter() < 0) {
+    if (temp.getAlterET() < 0) {
         long count = 0;
         while (temp % lowG != 0 && count < MAX_TRY) {
             temp -= octave;
             count++;
         }
         if (temp % lowG == 0)
-            return round((double)(temp.toMC() / lowG.toMC()));
+            return round((temp.toMCdouble() / lowG.toMCdouble()));
         return ATOM_LONG_MAX;
     }
     
@@ -601,11 +608,11 @@ long llll_sort_by_distance_to_LCE(void *spell_parameters, t_llllelem *a, t_lllle
 t_pitch notationobj_autospell_match_pitch_with_position_on_line_of_fifths(t_notation_obj *r_ob, t_autospell_params *par, t_pitch orig_pitch, long pos)
 {
     t_pitch new_pitch = position_on_line_of_fifths_to_pitch(pos);
-    new_pitch.set(new_pitch.degree(), new_pitch.alter(), orig_pitch.octave());
+    new_pitch.setET(new_pitch.getWhiteKeyET(), new_pitch.getAlterET(), orig_pitch.getOctave());
     new_pitch = pitch_rematch_alteration_from_semitones(new_pitch, orig_pitch);
-    long new_pitch_octave = orig_pitch.octave() + floor((double)((orig_pitch.toMC() - new_pitch.toMC())/1200));
+    long new_pitch_octave = orig_pitch.getOctave() + floor(((orig_pitch.toMCdouble() - new_pitch.toMCdouble())/1200));
     
-    return t_pitch(new_pitch.degree(), new_pitch.alter(), new_pitch_octave);
+    return t_pitch(new_pitch.getWhiteKeyET(), new_pitch.getAlterET(), new_pitch_octave);
 }
 
 // set a note pitch to a position on the line of fifths
@@ -1368,7 +1375,7 @@ char autospell_dg_respell_is_acceptable(t_notation_obj *r_ob, t_autospell_params
         for (t_llllelem *el = positions->l_head; el && el->l_next; el = el->l_next) {
             t_pitch p1 = position_on_line_of_fifths_to_pitch(hatom_getlong(&el->l_hatom));
             t_pitch p2 = position_on_line_of_fifths_to_pitch(hatom_getlong(&el->l_next->l_hatom));
-            if (p1.degree() == p2.degree() && p1.alter() != p2.alter())
+            if (p1.getWhiteKeyET() == p2.getWhiteKeyET() && p1.getWhiteKeyET() != p2.getWhiteKeyET())
                 return 0;
         }
     }
