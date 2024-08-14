@@ -7168,9 +7168,9 @@ t_max_err roll_setattr_tonedivision(t_roll *x, t_object *attr, long ac, t_atom *
         if (x->r_ob.accidentals_display_type == k_ACCIDENTALS_CLASSICAL) { // classical graphic
             if ((x->r_ob.tone_division != 2) && (x->r_ob.tone_division != 4) && (x->r_ob.tone_division != 8))
                 object_warn((t_object *)x, "bach.roll does not support graphical accidentals for the %d-tone division. Use fraction- or cents-representation instead.", s);
-            else if (((x->r_ob.tone_division == 8) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 8)) || 
-                     ((x->r_ob.tone_division == 4) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 4)) ||
-                     ((x->r_ob.tone_division == 2) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 2)))
+            else if (((x->r_ob.tone_division == 8) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 8)) || 
+                     ((x->r_ob.tone_division == 4) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 4)) ||
+                     ((x->r_ob.tone_division == 2) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 2)))
                 object_warn((t_object *)x, "The active accidental font does not support the %d-tone division. Use fraction- or cents-representation instead, or change font.", s);
         }
 
@@ -7191,9 +7191,9 @@ t_max_err roll_setattr_accidentalsgraphic(t_roll *x, t_object *attr, long ac, t_
         if (s == 1) { // classical graphic
             if ((x->r_ob.tone_division != 2) && (x->r_ob.tone_division != 4) && (x->r_ob.tone_division != 8))
                 object_warn((t_object *)x, "bach.roll does not support graphical accidentals for the %d-tone division. Use fraction- or cents-representation instead.", x->r_ob.tone_division);
-            else if (((x->r_ob.tone_division == 8) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 8)) || 
-                     ((x->r_ob.tone_division == 4) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 4)) ||
-                     ((x->r_ob.tone_division == 2) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 2)))
+            else if (((x->r_ob.tone_division == 8) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 8)) || 
+                     ((x->r_ob.tone_division == 4) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 4)) ||
+                     ((x->r_ob.tone_division == 2) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 2)))
                 object_warn((t_object *)x, "The active accidental font does not support the %d-tone division. Use fraction- or cents-representation instead, or change font.", x->r_ob.tone_division);
         }
         
@@ -11927,7 +11927,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
 #endif
             
             // need to put accidentals?
-            paint_noteaccidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, NULL, NULL);
+            note_paint_accidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, NULL, NULL);
             
             
         }
@@ -15808,7 +15808,7 @@ t_llll* get_voice_pixel_values_as_llll(t_roll *x, t_rollvoice *voice){
         for (temp_note = temp_chord->firstnote; temp_note; temp_note = temp_note->next) { // pixel duration
             llll_appenddouble(notes_pixel_durations_llll, onset_to_xposition_roll((t_notation_obj *) x, temp_chord->onset + temp_note->duration, &system) - this_chord_pixel_start, 0, WHITENULL_llll);    
             llll_appenddouble(notes_y_pixel_pos, mc_to_yposition((t_notation_obj *) x, note_get_screen_midicents(temp_note), (t_voice *) voice), 0, WHITENULL_llll);
-            if (note_get_screen_accidental(temp_note).r_num != 0)
+            if (note_has_accidentals(temp_note))
                 llll_appenddouble(accidentals_x_pixel_pos, this_chord_pixel_start + temp_note->accidental_stem_delta_ux * x->r_ob.zoom_y + 
                               x->r_ob.accidentals_typo_preferences.ux_shift * x->r_ob.zoom_y - 
                               get_accidental_uwidth((t_notation_obj *) x, note_get_screen_accidental(temp_note), false) * x->r_ob.zoom_y, 0, WHITENULL_llll);

@@ -14696,7 +14696,7 @@ t_llll* get_score_values_for_xml_as_llll(t_score *x){
                     t_llll* note_llll = llll_get();
                     
                     llll_appendlong(note_llll, note_get_screen_midicents(temp_note), 0, WHITENULL_llll); // step midicents
-                    llll_appendrat(note_llll, note_get_screen_accidental(temp_note), 0, WHITENULL_llll); // screen accidental
+                    llll_appendrat(note_llll, note_get_screen_accidental_ordinary(temp_note), 0, WHITENULL_llll); // screen accidental
                     llll_appendlong(note_llll, temp_note->show_accidental, 0, WHITENULL_llll); // is accidental shown?
                     llll_appendlong(note_llll, temp_note->velocity, 0, WHITENULL_llll); // velocity
                     llll_appendlong(note_llll, (temp_note->tie_to) ? 1 : 0, 0, WHITENULL_llll); // start_tie?                    

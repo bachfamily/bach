@@ -23,17 +23,7 @@
 #include <string>
 #include <vector>
 #include "math/rational.h"
-
-
-/** Accidental preferences.
-    @ingroup    pitch
- */
-typedef enum _accidentals_preferences {
-    k_ACC_AUTO = 0,    ///< Automatic choice of accidentals
-    k_ACC_SHARPS,    ///< Prefer the use of sharps
-    k_ACC_FLATS,    ///< Prefer the use of flats
-    k_ACC_CUSTOM,    ///< Accidental are explicitely defined via the "enharmonictable" attribute, and thus the t_notation_obj::full_acc_repr symbol
-} e_accidentals_preferences;
+#include "notation/bach_accidentals.hpp"
 
 
 
@@ -260,6 +250,7 @@ private:
         double getRatioExceptOctavesAndPlofAsDouble() const;
         bool allZeros() const;
         bool allZerosButOctaves() const;
+        bool allZerosButOctavesAndTwelfths() const;
     };
     
 public:
@@ -485,7 +476,14 @@ public:
 
     bool isPureET() const { return p_JIexpVector.allZerosButOctaves(); }
     bool isPureJI() const { return p_whiteKeyET == 0 && p_alterET.num() == 0; }
-    
+    bool isPurePythagorean() const {
+        if (isPureJI()) {
+            return p_JIexpVector.allZerosButOctavesAndTwelfths();
+        } else {
+            return false;
+        }
+    }
+
 
     
     void setJI(const t_rational r) {
@@ -520,6 +518,8 @@ public:
         }
         return HEJIcommas;
     }
+
+    t_rational getHEJICommasAsRational() const;
 
     t_shortRational getAlterET() const { return p_alterET; }
     

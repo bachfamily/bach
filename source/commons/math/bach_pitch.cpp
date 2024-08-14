@@ -308,6 +308,10 @@ bool t_pitch::expVector::allZerosButOctaves() const {
     return *reinterpret_cast<const t_int64*>(data + 1) == 0 && *reinterpret_cast<const t_int16*>(data + 9) == 0;
 }
 
+bool t_pitch::expVector::allZerosButOctavesAndTwelfths() const {
+    return *reinterpret_cast<const t_int64*>(data + 2) == 0 && *reinterpret_cast<const t_int8*>(data + 10) == 0;
+}
+
 
 // /////////////////////////////
 
@@ -544,6 +548,16 @@ std::vector<t_rational> t_pitch::getJIconvergents(long howmany, double threshMC,
     double r = mc2f(mc)/C0freq; // ratio 
     std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true, includeSemiconvergents, allowed_primes);
     return conv;
+}
+
+t_rational t_pitch::getHEJICommasAsRational() const {
+    std::vector<int8_t> commas = getHEJICommas();
+    long s = commas.size();
+    t_rational r = genrat(1, 1);
+    for (long i = 0; i < s; i++) {
+        r *= HEJIcommasRatios[i]; // TODO: check, test
+    }
+    return r;
 }
 
 std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const

@@ -2529,9 +2529,10 @@ typedef struct _note
     // Fixed painting parameters (calculated at some point, and not recalculated if not needed)
 //    long            scaleposition;                                ///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
                                                                 ///< E.g. for the F# above the middle C, this is 3 (C->D->E->F). For the B just below the middle C, this is -1.
-    char            num_accidentals;                            ///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
     char            need_auxiliary_stem;                        ///< Flag telling if the notehead is attached to the stem (0) or not (1, and thus needs the auxiliary stem)
-    unicodeChar        accidental_text[CONST_MAX_ACCIDENTALS + 1]; ///< Unicode chararcters for the text of the accidental
+    char            num_accidentals;                            ///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
+    t_int8          accidentals[CONST_MAX_ACCIDENTALS + 1];     ///< List of numbers from #e_bach_accidentals
+//    unicodeChar        accidental_text[CONST_MAX_ACCIDENTALS + 1]; ///< Unicode chararcters for the text of the accidental
     double            notecenter_stem_delta_ux;                    ///< Unscaled horizontal deplacement of the x of the notehead center pixel, with respect to the stem position
 
     
@@ -2543,12 +2544,12 @@ typedef struct _note
     
     double            accidental_stem_delta_ux;                    ///< Unscaled horizontal deplacement of the RIGHT boundary of the accidental text field, with respect to the stem position. Should be always negative.
 //    double            accidental_uwidth;                          ///< Unscaled width of the accidental (or 0 if none).
-//    double            accidental_top_uextension;                    ///< Unscaled vertical extension of the accidental, from its align vertical center to its topmost point.
+//    double            accidental_uascent;                    ///< Unscaled vertical extension of the accidental, from its align vertical center to its topmost point.
                                                                 ///< The align vertical center is the vertical y position of the center of the notehead to which it is referred. 
                                                                 ///< Notice that the align vertical center of the accidental usually does not coincide with the center of the accidental bounding rectangle. 
                                                                 ///< For instance, for a flat, the align vertical center is much lower than the center of the bounding rectangle.
-//    double            accidental_bottom_uextension;                ///< Unscaled vertical extension of the accidental, from its align center to its bottommost point.
-                                                                ///< See #accidental_top_uextension for more information.
+//    double            accidental_udescent;                ///< Unscaled vertical extension of the accidental, from its align center to its bottommost point.
+                                                                ///< See #accidental_uascent for more information.
 
     // Windowed painting parameters (in real pixels, and only calculated when the note is inside the window and painted)
     t_pt              center;                                        ///< Center of the note (it is in real pixels, and not an unscaled ones)
@@ -3697,39 +3698,17 @@ typedef struct _accidentals_typo_preferences
                                                         ///< (This is usually much bigger than 0, depending on the font!)
     
     // binary accidentals
-    char            binary_characters_depth;            ///< Depth of the binary character mapping. 
-                                                        ///< Depending on the font, this is a number telling how deep in the binary semitone subdivision we can go, still having accidental symbols 
-                                                        ///< mapped to be used as accidentals for the specified subdivision.
-                                                        ///< Common values are: 2 = the font has only semitones alteration; 4 = has also quartertonal alterations; 8 = has also octotonal alterations 
-                                                        ///< Values greater than 8 are not supported.
-    unicodeChar        unicode_binary_character[17];        ///< Unicode characters for the eight-tone sequence of accidentals. The sequence namely is:
-                                                        ///< -1 tone (double flat), -7/8 tone, -3/4 (tribemol), -5/8, -1/2 (flat), -3/8, -1/4 (mobemol), -1/8,
-                                                        ///< 0 (natural), +1/8, +1/4 (monesis), +3/4, +1/2 (sharp), +5/8, +3/4 (triesis), +7/8, +1 tone (double sharp)
-                                                        ///< This sequence is the sequence to which also the fields <binary_top_uextension>, <binary_bottom_uextension> and <binary_uwidth> refer to.
-    double            binary_top_uextension[17];            ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the topmost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
-    double            binary_bottom_uextension[17];        ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the bottommost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
-    double            binary_uwidth[17];                    ///< Unscaled width (in pixels) of the accidental. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
+    short             et_dyadic_depth; ///< Depth of the equal-temperament dyadic character mapping.
+                                    ///< Depending on the font, this is a number telling how deep in the binary semitone subdivision we can go, still having accidental symbols
+                                    ///< mapped to be used as accidentals for the specified subdivision.
+                                    ///< Common values are: 2 = the font has only semitones alteration; 4 = has also quartertonal alterations; 8 = has also octotonal alterations
+                                    ///< Values greater than 8 are not supported.
+    bool              supports_ji;
     
-    // ternary accidentals: STILL UNSUPPORTED (and we don't know if it will ever be supported)
-    char            ternary_characters_depth;            ///< UNSUPPORTED. 
-                                                        ///< It should be the same thing as #binary_characters_depth, but for ternary subdivision. Yet it's not supported
-    unicodeChar        unicode_ternary_character[13];        ///< UNSUPPORTED. 
-                                                        ///< It should be the sequence of unicode symbols for the accidentals: 
-                                                        ///< -1 tone, -5/6 tone, -2/3, -1/2, -1/3, -1/6, 0 (natural), +1/6, +1/3, +1/2, +2/3, +5/6, +1 tone
-    double            ternary_top_extension[13];            ///< UNSUPPORTED. 
-                                                        ///< It should be the unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the topmost accidental point. Sequence is the previously exposed sixth-tonal sequence, from -1tone to +1tone.
-    double            ternary_bottom_extension[13];        ///< UNSUPPORTED. 
-                                                        ///< It should be the unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the bottommost accidental point. Sequence is the previously exposed sixth-tonal sequence, from -1tone to +1tone.
-    double            ternary_width[13];                    ///< UNSUPPORTED. 
-                                                        ///< It should be the unscaled width (in pixels) of the accidental. Sequence is the previously exposed sixth-tonal sequence, from -1tone to +1tone.
-
-    // bogus character
-    unicodeChar        unicode_bogus_character;            ///< Unicode character of the 'bogus' character. The 'bogus' character is shown, instead of accidentals, 
-                                                        ///< when the user chooses to show with classical accidental graphics some accidentals which don't have any
-                                                        ///< corresponding character inside the chosen font. Usually the bogus character is a circle, such as 'o'.
-    double            bogus_top_uextension;                ///< Unscaled extension (in pixels) of the bogus character, from the vertical pitch reference position to the topmost bogus character point.
-    double            bogus_bottom_uextension;            ///< Unscaled extension (in pixels) of the bogus character from the vertical pitch reference position to the bottommost bogus character point
-    double            bogus_uwidth;                        ///< Unscaled width (in pixels) of the bogus character.
+    unicodeChar       unicode_characters[BACH_NUM_ACCIDENTALS];        ///< Unicode characters: one for each #e_bach_accidental
+    double            uascent[BACH_NUM_ACCIDENTALS];            ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the topmost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
+    double            udescent[BACH_NUM_ACCIDENTALS];        ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the bottommost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
+    double            uwidth[BACH_NUM_ACCIDENTALS];                    ///< Unscaled width (in pixels) of the accidental. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
 } t_accidentals_typo_preferences;
 
 
@@ -5497,7 +5476,13 @@ long note_get_screen_midicents(t_note *nt);
     @param note             The note
     @return                    The accidental of the displayed note
  */
-t_shortRational note_get_screen_accidental(t_note *nt);
+//t_shortRational note_get_screen_accidental(t_note *nt);
+
+t_shortRational note_get_screen_accidental_ordinary(t_note *nt);
+t_rational note_get_screen_accidental_JIcommas(t_note *nt);
+double note_get_screen_accidental_cents(t_note *nt);
+bool pitch_has_accidentals(t_pitch *p);
+bool note_has_accidentals(t_note *nt);
 
 
 /**    Obtain the midicents of the displayed note (accidentals are also accounted for).
@@ -6412,13 +6397,13 @@ void get_playhead_ypos(t_notation_obj *r_ob, double *y1, double *y2);
 // TYPOGRAPHICAL
 // -----------------------------------
 
-/**    Returns the Unicode character for an accidental, given the current <accidentals_typo_preferences> of the notation object.
-    @ingroup            typographical
+/**    Returns the equal-tempered accidental from a t_rational.
+    @ingroup            accidentals
     @param r_ob            The notation object
     @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
-    @return                Unicode character for the accidental
+    @return                Accidental as e_bach_accidental
  */
-unicodeChar get_accidental_character(t_notation_obj *r_ob, t_rational accidental);
+e_bach_accidental get_accidental_ET(t_notation_obj *r_ob, t_rational accidental);
 
 
 /**    Returns the unscaled top extension of an accidental, given the current <accidentals_typo_preferences> of the notation object.
@@ -6428,7 +6413,7 @@ unicodeChar get_accidental_character(t_notation_obj *r_ob, t_rational accidental
     @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
     @return                Unscaled top exension of the accidental
  */
-double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental); 
+double get_accidental_uascent(t_notation_obj *r_ob, t_rational accidental); 
 
 
 /**    Returns the unscaled bottom extension of an accidental, given the current <accidentals_typo_preferences> of the notation object.
@@ -6438,12 +6423,12 @@ double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental
     @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
     @return                Unscaled bottom exension of the accidental
  */
-double get_accidental_bottom_uextension(t_notation_obj *r_ob, t_rational accidental);
+double get_accidental_udescent(t_notation_obj *r_ob, t_rational accidental);
 
 
 //TBD
-double note_get_accidental_top_uextension(t_notation_obj *r_ob, t_note *note);
-double note_get_accidental_bottom_uextension(t_notation_obj *r_ob, t_note *note);
+double note_get_accidental_uascent(t_notation_obj *r_ob, t_note *note);
+double note_get_accidental_udescent(t_notation_obj *r_ob, t_note *note);
 
 
 /**    Returns the unscaled width of an accidental, given the current <accidentals_typo_preferences> of the notation object.
@@ -7757,9 +7742,8 @@ int get_middle_scaleposition(int clef);
         at the left and right of the stem line, needed to paint the chord)
     - the <notecenter_stem_delta_ux> field for each note (the position of each notehead with respect to the stem) 
     - the <need_auxiliary_stem> field for each note (does the note need an auxiliary stem?) 
-    - all the fields concerning accidentals for the note, and their positioning. The function calculates the <num_accidentals>, the <accidental_text> (text sequence 
-        of all accidentals, e.g. "bbbb"), the <accidental_stem_delta_ux> (position of accidental text box with respect to the stem), <accidental_top_uextension> and
-        <accidental_bottom_uextension> (upper/lower extension of accidentals)
+    - all the fields concerning accidentals for the note, and their positioning. The function calculates the <num_accidentals>, the <accidentals> (sequence of all accidentals), the <accidental_stem_delta_ux> (position of accidental text box with respect to the stem), <accidental_uascent> and
+        <accidental_udescent> (upper/lower extension of accidentals)
     - the default <notehead_unicode_character>, but only for [bach.score] chords
     @ingroup                                notation
     @param    r_ob                            The notation object
@@ -10422,15 +10406,15 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
     @param    clef                    The clef or clef combination of the note's voice (one of the #e_clefs)
     @param    note_y_real                The y pixel of the center of the notehead 
     @param    stem_x                    The x pixel of the chord stem
-    @param    acc_top_uextension        Pointer which will be filled with the unscaled top extension of the accidental (see #e_accidentals_typo_preferences) 
+    @param    acc_uascent        Pointer which will be filled with the unscaled top extension of the accidental (see #e_accidentals_typo_preferences) 
                                     Leave NULL if you don't care for the information.
-    @param    acc_bottom_uextension    Pointer which will be filled with the unscaled bottom extension of the accidental (see #e_accidentals_typo_preferences). 
+    @param    acc_udescent    Pointer which will be filled with the unscaled bottom extension of the accidental (see #e_accidentals_typo_preferences). 
                                     Leave NULL if you don't care for the information.
  */ 
-void paint_noteaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, 
+void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, 
                            t_jfont *jf_acc_bogus, t_jrgba *color, t_note *curr_nt, long clef, 
                            double note_y_real, double stem_x, 
-                           double *acc_top_uextension, double *acc_bottom_uextension);
+                           double *acc_uascent, double *acc_udescent);
 
 
 /**    Paint an articulation

@@ -34,6 +34,56 @@ long note_get_screen_midicents(t_note *nt)
     return nt->pitch_displayed.toMC_wo_accidental();
 }
 
+t_shortRational note_get_screen_accidental_ordinary(t_note *nt)
+{
+    if (nt->pitch_displayed.isPureET()) {
+        return nt->pitch_displayed.getAlterET();
+    } else if (nt->pitch_displayed.isPureJI()) {
+        return genrat(nt->pitch_displayed.getSharpsJI(), 2);
+    } else {
+        return genrat(nt->pitch_displayed.getDisplayPitchAsJI().getSharpsJI(), 2);
+    }
+}
+
+t_rational note_get_screen_accidental_JIcommas(t_note *nt)
+{
+    if (nt->pitch_displayed.isPureET()) {
+        return genrat(1, 1);
+    } else if (nt->pitch_displayed.isPureJI()) {
+        return nt->pitch_displayed.getHEJICommasAsRational();
+    } else {
+        return nt->pitch_displayed.getDisplayPitchAsJI().getHEJICommasAsRational();
+    }
+}
+
+double note_get_screen_accidental_cents(t_note *nt)
+{
+    if (nt->pitch_displayed.isPureET()) {
+        return nt->pitch_displayed.getAlterET() * 200.;
+    } else if (nt->pitch_displayed.isPureJI()) {
+        return log2((double)nt->pitch_displayed.getHEJICommasAsRational())*1200.;
+    } else {
+        return nt->pitch_displayed.getAlterET() * 200. + log2((double)nt->pitch_displayed.getHEJICommasAsRational())*1200.;
+    }
+}
+
+bool pitch_has_accidentals(t_pitch *p)
+{
+    if (p->isPureET()) {
+        return !(p->getAlterET() == 0);
+    } else if (p->isPureJI()) {
+        return !(p->isPurePythagorean() && p->getSharpsJI() == 0);
+    } else {
+        t_pitch q = p->getDisplayPitchAsJI();
+        return !(q.getAlterET() == 0 && p->isPurePythagorean() && q.getSharpsJI() == 0);
+    }
+}
+
+bool note_has_accidentals(t_note *nt)
+{
+    return pitch_has_accidentals(&nt->pitch_displayed);
+}
+
 t_shortRational note_get_screen_accidental(t_note *nt)
 {
     // TODO: questo è proprio sbagliato.

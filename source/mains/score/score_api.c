@@ -475,9 +475,9 @@ void scoreapi_set_tonedivision(t_score *x, long s)
     if (x->r_ob.accidentals_display_type == k_ACCIDENTALS_CLASSICAL) { // classical graphic
         if ((x->r_ob.tone_division != 2) && (x->r_ob.tone_division != 4) && (x->r_ob.tone_division != 8))
             object_warn((t_object *) x, "bach.score does not support graphical accidentals for the %ld-tone division. Use fraction- or cents-representation instead.", s);
-        else if (((x->r_ob.tone_division == 8) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 8)) || 
-                 ((x->r_ob.tone_division == 4) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 4)) ||
-                   ((x->r_ob.tone_division == 2) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 2)))
+        else if (((x->r_ob.tone_division == 8) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 8)) || 
+                 ((x->r_ob.tone_division == 4) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 4)) ||
+                   ((x->r_ob.tone_division == 2) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 2)))
             object_warn((t_object *) x, "The active accidental font does not support the %ld-tone division. Use fraction- or cents-representation instead, or change font.", s);
     }
     
@@ -496,9 +496,9 @@ void scoreapi_set_accidentalsgraphic(t_score *x, long s)
     if (s == 1) { // classical graphic
         if ((x->r_ob.tone_division != 2) && (x->r_ob.tone_division != 4) && (x->r_ob.tone_division != 8))
             object_warn((t_object *) x, "bach.score does not support graphical accidentals for the %d-tone division. Use fraction- or cents-representation instead.", x->r_ob.tone_division);
-        else if (((x->r_ob.tone_division == 8) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 8)) || 
-                 ((x->r_ob.tone_division == 4) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 4)) ||
-                 ((x->r_ob.tone_division == 2) && (x->r_ob.accidentals_typo_preferences.binary_characters_depth < 2)))
+        else if (((x->r_ob.tone_division == 8) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 8)) || 
+                 ((x->r_ob.tone_division == 4) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 4)) ||
+                 ((x->r_ob.tone_division == 2) && (x->r_ob.accidentals_typo_preferences.et_dyadic_depth < 2)))
             object_warn((t_object *) x, "The active accidental font does not support the %d-tone division. Use fraction- or cents-representation instead, or change font.", x->r_ob.tone_division);
     }
     
@@ -7714,10 +7714,10 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                         acc_shift_for_note = shift;
                         if (n->show_accidental && note->show_accidental) {
                             double n_uy = scaleposition_to_uyposition((t_notation_obj *)x, n_steps, v);
-                            double n_top = note_get_accidental_top_uextension((t_notation_obj *)x, n);
-                            double n_bottom = note_get_accidental_bottom_uextension((t_notation_obj *)x, n);
-                            double note_top = note_get_accidental_top_uextension((t_notation_obj *)x, note);
-                            double note_bottom = note_get_accidental_bottom_uextension((t_notation_obj *)x, note);
+                            double n_top = note_get_accidental_uascent((t_notation_obj *)x, n);
+                            double n_bottom = note_get_accidental_udescent((t_notation_obj *)x, n);
+                            double note_top = note_get_accidental_uascent((t_notation_obj *)x, note);
+                            double note_bottom = note_get_accidental_udescent((t_notation_obj *)x, note);
                             if (!((n_uy - n_top < note_uy + note_bottom && n_uy + n_bottom < note_uy - note_top) ||
                                 (n_uy - n_top > note_uy + note_bottom && n_uy + n_bottom > note_uy - note_top))) {
                                 acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + get_accidental_uwidth((t_notation_obj *)x, note_get_screen_accidental(n), false) - 1.5); // + CONST_UX_ACC_SEPARATION_FROM_ACC);
@@ -9569,7 +9569,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         }
                         
                         // need to put accidentals?
-                        paint_noteaccidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt,
+                        note_paint_accidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt,
                                               get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x,
                                               &accidental_top_extension, &accidental_bottom_extension);
                         

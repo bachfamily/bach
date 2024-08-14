@@ -598,6 +598,7 @@
 		1ED51E241F73F5B40021C2D5 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		1ED51E311F73F5EA0021C2D5 /* mc2p.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ED51E2F1F73F5EA0021C2D5 /* mc2p.c */; };
 		1ED51E341F73F5EA0021C2D5 /* p2mc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ED51E301F73F5EA0021C2D5 /* p2mc.c */; };
+		1EDA0D1F2C6BC5B000319759 /* bach_accidentals.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 1EDA0D1E2C6BC5B000319759 /* bach_accidentals.hpp */; };
 		91040DA51FB1ABCD009E91CD /* bach_parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91040DA31FB1ABCD009E91CD /* bach_parser.hpp */; };
 		91071DB12100DB5900452762 /* bach_codableobj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91071DAF2100DB5900452762 /* bach_codableobj.cpp */; };
 		91071DB22100DB5900452762 /* bach_codableobj.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91071DB02100DB5900452762 /* bach_codableobj.hpp */; };
@@ -3619,6 +3620,7 @@
 		1ED51E291F73F5B40021C2D5 /* bach.p2mc.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.p2mc.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ED51E2F1F73F5EA0021C2D5 /* mc2p.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mc2p.c; sourceTree = "<group>"; };
 		1ED51E301F73F5EA0021C2D5 /* p2mc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p2mc.c; sourceTree = "<group>"; };
+		1EDA0D1E2C6BC5B000319759 /* bach_accidentals.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bach_accidentals.hpp; sourceTree = "<group>"; };
 		1EE928E3153B13FF00341C71 /* bach_inspector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_inspector.c; sourceTree = "<group>"; };
 		22CF10220EE984600054F513 /* bach.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = bach.xcconfig; sourceTree = "<group>"; };
 		91040DA31FB1ABCD009E91CD /* bach_parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bach_parser.hpp; sourceTree = "<group>"; };
@@ -6882,6 +6884,7 @@
 		9157F5A7232F6D2D00A4ADAB /* notation */ = {
 			isa = PBXGroup;
 			children = (
+				1EDA0D1E2C6BC5B000319759 /* bach_accidentals.hpp */,
 				1EE928E3153B13FF00341C71 /* bach_inspector.c */,
 				91B0EA8A150BD29B0069A206 /* bach_slots.c */,
 				1EB4D4831610CB930041ABFB /* notation_files.h */,
@@ -8025,6 +8028,7 @@
 				00992CAB2C2EE6CC00DA02CD /* Predicate.h in Headers */,
 				91C6046B18C0D9F50027BB79 /* SdifSelect.h in Headers */,
 				00992C3C2C2EE6CC00DA02CD /* DecisionState.h in Headers */,
+				1EDA0D1F2C6BC5B000319759 /* bach_accidentals.hpp in Headers */,
 				00992C612C2EE6CC00DA02CD /* LoopEndState.h in Headers */,
 				00992CD52C2EE6CC00DA02CD /* XPathRuleElement.h in Headers */,
 				00992D0A2C2EE6CC00DA02CD /* CommonTokenStream.h in Headers */,
