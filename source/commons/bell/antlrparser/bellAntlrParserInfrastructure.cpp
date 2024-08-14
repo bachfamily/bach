@@ -363,19 +363,21 @@ public:
         return r;
     }
     
-    antlrcpp::Any visitItemUint(bellParser::ItemUintContext *context) override {
+    antlrcpp::Any visitLiteralUint(bellParser::LiteralUintContext *context) override {
         long v = stol(context->UINT()->getText());
-        astNode* r = new astConst(v, params->owner);
-        return r;
+        auto h = new t_hatom;
+        hatom_setlong(h, v);
+        return h;
     }
 
-    antlrcpp::Any visitItemUfloat(bellParser::ItemUfloatContext *context) override {
+    antlrcpp::Any visitLiteralUfloat(bellParser::LiteralUfloatContext *context) override {
         double v = stod(context->UFLOAT()->getText());
-        astNode* r = new astConst(v, params->owner);
-        return r;
+        auto h = new t_hatom;
+        hatom_setdouble(h, v);
+        return h;
     }
     
-    antlrcpp::Any visitItemUpitch(bellParser::ItemUpitchContext *context) override {
+    antlrcpp::Any visitLiteralUpitch(bellParser::LiteralUpitchContext *context) override {
         std::string ptxt = context->UPITCH()->getText();
         ANTLRInputStream input(ptxt);
         pitchLexer lexer(&input);
@@ -384,24 +386,27 @@ public:
         pitchParser::PchContext* tree = parser.pch();
         pchListener visitor;
         t_pitch p = std::any_cast<t_pitch>(visitor.visit(tree));
-        astNode *r = new astConst(p, params->owner);
-        return r;
+        auto h = new t_hatom;
+        hatom_setpitch(h, p);
+        return h;
     }
     
-    antlrcpp::Any visitItemPi(bellParser::ItemPiContext *context) override {
-        astNode *r = new astConst(M_PI, params->owner);
-        return r;
+    antlrcpp::Any visitLiteralPi(bellParser::LiteralPiContext *context) override {
+        auto h = new t_hatom;
+        hatom_setdouble(h, M_PI);
+        return h;
     }
     
     
-    antlrcpp::Any visitItemBtSymbol(bellParser::ItemBtSymbolContext *context) override {
+    antlrcpp::Any visitLiteralBtSymbol(bellParser::LiteralBtSymbolContext *context) override {
         auto txt = context->BTSYMBOL()->getText();
         const char *cstr = txt.c_str() + 1;
-        astNode* r = new astConst(gensym(cstr), params->owner);
-        return r;
+        auto h = new t_hatom;
+        hatom_setsym(h, gensym(cstr));
+        return h;
     }
     
-    antlrcpp::Any visitItemQSymbol(bellParser::ItemQSymbolContext *context) override {
+    antlrcpp::Any visitLiteralQSymbol(bellParser::LiteralQSymbolContext *context) override {
         auto txt = context->children[0]->getText();
         char cstr[MAX_SYM_LENGTH];
         const char *inPtr = txt.c_str() + 1;
@@ -422,7 +427,59 @@ public:
             n++;
         }
         *(outPtr - 1) = 0;
-        astNode *r = new astConst(gensym(cstr), params->owner);
+        auto h = new t_hatom;
+        hatom_setsym(h, gensym(cstr));
+        return h;
+    }
+    
+    antlrcpp::Any visitLiteralBIF(bellParser::LiteralBIFContext *context) override {
+        std::string name = context->BIF()->getText();
+        t_function *fn = (*params->bifs)[name];
+        auto h = new t_hatom;
+        hatom_setfunc(h, fn);
+        return h;
+    }
+    
+    antlrcpp::Any visitLiteralOF(bellParser::LiteralOFContext *context) override {
+        std::string name = context->OF()->getText();
+        t_function *fn = (*params->ofTable)[name];
+        auto h = new t_hatom;
+        hatom_setfunc(h, fn);
+        return h;
+    }
+    
+    antlrcpp::Any visitLiteralMaxFunction(bellParser::LiteralMaxFunctionContext *context) override {
+        auto t = context->MAXFUNCTION()->getText();
+        t.erase(0, 1);
+        t.pop_back();
+        auto *fn = new t_maxFunction(t);
+        params->funcs->insert(fn);
+        auto h = new t_hatom;
+        hatom_setfunc(h, fn);
+        return h;
+    }
+    
+    antlrcpp::Any visitLiteralNull(bellParser::LiteralNullContext *context) override {
+        auto h = new t_hatom;
+        hatom_setllll(h, llll_get());
+        return h;
+    }
+    
+    antlrcpp::Any visitLiteralNil(bellParser::LiteralNilContext *context) override {
+        t_llll *ll = llll_get();
+        llll_appendllll(ll, llll_get());
+        auto h = new t_hatom;
+        hatom_setllll(h, ll);
+        return h;
+    }
+    
+    antlrcpp::Any visitLlll(bellParser::LlllContext *context) override {
+        t_llll *ll = llll_get();
+        for (auto l: context->literal()) {
+            auto h = safeAnyCast<t_hatom*>(visit(l));
+            llll_appendhatom(ll, h);
+        }
+        astNode* r = new astConst(ll, params->owner);
         return r;
     }
     
@@ -443,28 +500,12 @@ public:
         }
         return r;
     }
-    
-    antlrcpp::Any visitItemBIF(bellParser::ItemBIFContext *context) override {
-        std::string name = context->BIF()->getText();
-        t_function *fn = (*params->bifs)[name];
-        astNode *r = new astConst(fn, params->owner);
-        return r;
-    }
-    
-    antlrcpp::Any visitItemOF(bellParser::ItemOFContext *context) override {
-        std::string name = context->OF()->getText();
-        t_function *fn = (*params->ofTable)[name];
-        astNode *r = new astConst(fn, params->owner);
-        return r;
-    }
-    
-    antlrcpp::Any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *context) override {
-        auto t = context->MAXFUNCTION()->getText();
-        t.erase(0, 1);
-        t.pop_back();
-        auto *fn = new t_maxFunction(t);
-        params->funcs->insert(fn);
-        astNode *r = new astConst(fn, params->owner);
+ 
+    antlrcpp::Any visitItemLiteral(bellParser::ItemLiteralContext *context) override {
+        auto h = safeAnyCast<t_hatom*>(visit(context->literal()));
+        t_llll *ll = llll_get();
+        llll_appendhatom(ll, h);
+        astNode *r = new astConst(ll, params->owner);
         return r;
     }
     
@@ -488,18 +529,6 @@ public:
         return r;
     }
 
-    antlrcpp::Any visitItemNull(bellParser::ItemNullContext *context) override {
-        astNode *r = new astConst(llll_get(), params->owner);
-        return r;
-    }
-    
-    antlrcpp::Any visitItemNil(bellParser::ItemNilContext *context) override {
-        t_llll *ll = llll_get();
-        llll_appendllll(ll, llll_get());
-        astNode *r = new astConst(ll, params->owner);
-        return r;
-    }
-    
     antlrcpp::Any visitItemSequence(bellParser::ItemSequenceContext *context) override {
         astNode* r = safeAnyCast<astNode*>(visit(context->sequence()));
         return r;

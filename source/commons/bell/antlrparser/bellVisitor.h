@@ -93,35 +93,39 @@ public:
 
     virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *context) = 0;
 
-    virtual std::any visitItemUint(bellParser::ItemUintContext *context) = 0;
+    virtual std::any visitLiteralUint(bellParser::LiteralUintContext *context) = 0;
 
-    virtual std::any visitItemUfloat(bellParser::ItemUfloatContext *context) = 0;
+    virtual std::any visitLiteralUfloat(bellParser::LiteralUfloatContext *context) = 0;
 
-    virtual std::any visitItemUpitch(bellParser::ItemUpitchContext *context) = 0;
+    virtual std::any visitLiteralUpitch(bellParser::LiteralUpitchContext *context) = 0;
 
-    virtual std::any visitItemPi(bellParser::ItemPiContext *context) = 0;
+    virtual std::any visitLiteralPi(bellParser::LiteralPiContext *context) = 0;
 
-    virtual std::any visitItemBtSymbol(bellParser::ItemBtSymbolContext *context) = 0;
+    virtual std::any visitLiteralBtSymbol(bellParser::LiteralBtSymbolContext *context) = 0;
 
-    virtual std::any visitItemQSymbol(bellParser::ItemQSymbolContext *context) = 0;
+    virtual std::any visitLiteralQSymbol(bellParser::LiteralQSymbolContext *context) = 0;
 
-    virtual std::any visitItemEmptySymbol(bellParser::ItemEmptySymbolContext *context) = 0;
+    virtual std::any visitLiteralEmptySymbol(bellParser::LiteralEmptySymbolContext *context) = 0;
 
-    virtual std::any visitItemBIF(bellParser::ItemBIFContext *context) = 0;
+    virtual std::any visitLiteralBIF(bellParser::LiteralBIFContext *context) = 0;
 
-    virtual std::any visitItemOF(bellParser::ItemOFContext *context) = 0;
+    virtual std::any visitLiteralOF(bellParser::LiteralOFContext *context) = 0;
 
-    virtual std::any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *context) = 0;
+    virtual std::any visitLiteralMaxFunction(bellParser::LiteralMaxFunctionContext *context) = 0;
+
+    virtual std::any visitLiteralNull(bellParser::LiteralNullContext *context) = 0;
+
+    virtual std::any visitLiteralNil(bellParser::LiteralNilContext *context) = 0;
+
+    virtual std::any visitLlll(bellParser::LlllContext *context) = 0;
+
+    virtual std::any visitItemLiteral(bellParser::ItemLiteralContext *context) = 0;
 
     virtual std::any visitItemInlet(bellParser::ItemInletContext *context) = 0;
 
     virtual std::any visitItemDirInlet(bellParser::ItemDirInletContext *context) = 0;
 
     virtual std::any visitItemArgcount(bellParser::ItemArgcountContext *context) = 0;
-
-    virtual std::any visitItemNull(bellParser::ItemNullContext *context) = 0;
-
-    virtual std::any visitItemNil(bellParser::ItemNilContext *context) = 0;
 
     virtual std::any visitItemSequence(bellParser::ItemSequenceContext *context) = 0;
 

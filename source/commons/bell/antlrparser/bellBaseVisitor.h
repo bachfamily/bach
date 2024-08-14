@@ -163,43 +163,59 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemUint(bellParser::ItemUintContext *ctx) override {
+  virtual std::any visitLiteralUint(bellParser::LiteralUintContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemUfloat(bellParser::ItemUfloatContext *ctx) override {
+  virtual std::any visitLiteralUfloat(bellParser::LiteralUfloatContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemUpitch(bellParser::ItemUpitchContext *ctx) override {
+  virtual std::any visitLiteralUpitch(bellParser::LiteralUpitchContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemPi(bellParser::ItemPiContext *ctx) override {
+  virtual std::any visitLiteralPi(bellParser::LiteralPiContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemBtSymbol(bellParser::ItemBtSymbolContext *ctx) override {
+  virtual std::any visitLiteralBtSymbol(bellParser::LiteralBtSymbolContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemQSymbol(bellParser::ItemQSymbolContext *ctx) override {
+  virtual std::any visitLiteralQSymbol(bellParser::LiteralQSymbolContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemEmptySymbol(bellParser::ItemEmptySymbolContext *ctx) override {
+  virtual std::any visitLiteralEmptySymbol(bellParser::LiteralEmptySymbolContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemBIF(bellParser::ItemBIFContext *ctx) override {
+  virtual std::any visitLiteralBIF(bellParser::LiteralBIFContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemOF(bellParser::ItemOFContext *ctx) override {
+  virtual std::any visitLiteralOF(bellParser::LiteralOFContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *ctx) override {
+  virtual std::any visitLiteralMaxFunction(bellParser::LiteralMaxFunctionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLiteralNull(bellParser::LiteralNullContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLiteralNil(bellParser::LiteralNilContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLlll(bellParser::LlllContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitItemLiteral(bellParser::ItemLiteralContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -212,14 +228,6 @@ public:
   }
 
   virtual std::any visitItemArgcount(bellParser::ItemArgcountContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitItemNull(bellParser::ItemNullContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitItemNil(bellParser::ItemNilContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -41,8 +41,8 @@ public:
     RuleDataFlowAndLvalueSpecsUItem = 15, RuleDataFlowAndLvalueSpecsItem = 16, 
     RuleFuncall = 17, RuleVar = 18, RuleLvalueSpecsUFinal = 19, RuleLvalueSpecsFinal = 20, 
     RuleLvalueSpecs = 21, RuleLvalue = 22, RuleFakeLvalue = 23, RuleListEnd = 24, 
-    RuleExpr = 25, RuleItem = 26, RuleAssignment = 27, RuleConditional = 28, 
-    RuleList = 29
+    RuleExpr = 25, RuleLiteral = 26, RuleLlll = 27, RuleItem = 28, RuleAssignment = 29, 
+    RuleConditional = 30, RuleList = 31
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -93,6 +93,8 @@ public:
   class FakeLvalueContext;
   class ListEndContext;
   class ExprContext;
+  class LiteralContext;
+  class LlllContext;
   class ItemContext;
   class AssignmentContext;
   class ConditionalContext;
@@ -690,6 +692,148 @@ public:
 
   ExprContext* expr();
   ExprContext* expr(int precedence);
+  class  LiteralContext : public antlr4::ParserRuleContext {
+  public:
+    LiteralContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    LiteralContext() = default;
+    void copyFrom(LiteralContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  LiteralUfloatContext : public LiteralContext {
+  public:
+    LiteralUfloatContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *UFLOAT();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralNullContext : public LiteralContext {
+  public:
+    LiteralNullContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *BACHNULL();
+    antlr4::tree::TerminalNode *OPEN();
+    antlr4::tree::TerminalNode *CLOSED();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralPiContext : public LiteralContext {
+  public:
+    LiteralPiContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *K_PI();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralUintContext : public LiteralContext {
+  public:
+    LiteralUintContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *UINT();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralUpitchContext : public LiteralContext {
+  public:
+    LiteralUpitchContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *UPITCH();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralEmptySymbolContext : public LiteralContext {
+  public:
+    LiteralEmptySymbolContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *EMPTYSYMBOL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralQSymbolContext : public LiteralContext {
+  public:
+    LiteralQSymbolContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *DQSYMBOL();
+    antlr4::tree::TerminalNode *SQSYMBOL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralMaxFunctionContext : public LiteralContext {
+  public:
+    LiteralMaxFunctionContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *MAXFUNCTION();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralBIFContext : public LiteralContext {
+  public:
+    LiteralBIFContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *BIF();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralOFContext : public LiteralContext {
+  public:
+    LiteralOFContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *OF();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralNilContext : public LiteralContext {
+  public:
+    LiteralNilContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *BACHNIL();
+    antlr4::tree::TerminalNode *PUSH();
+    antlr4::tree::TerminalNode *POP();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  LiteralBtSymbolContext : public LiteralContext {
+  public:
+    LiteralBtSymbolContext(LiteralContext *ctx);
+
+    antlr4::tree::TerminalNode *BTSYMBOL();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  LiteralContext* literal();
+
+  class  LlllContext : public antlr4::ParserRuleContext {
+  public:
+    LlllContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<LiteralContext *> literal();
+    LiteralContext* literal(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  LlllContext* llll();
+
   class  ItemContext : public antlr4::ParserRuleContext {
   public:
     ItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -703,29 +847,33 @@ public:
    
   };
 
-  class  ItemUfloatContext : public ItemContext {
+  class  ItemLiteralContext : public ItemContext {
   public:
-    ItemUfloatContext(ItemContext *ctx);
+    ItemLiteralContext(ItemContext *ctx);
 
-    antlr4::tree::TerminalNode *UFLOAT();
+    LiteralContext *literal();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  ItemUintContext : public ItemContext {
+  class  ItemSequenceContext : public ItemContext {
   public:
-    ItemUintContext(ItemContext *ctx);
+    ItemSequenceContext(ItemContext *ctx);
 
-    antlr4::tree::TerminalNode *UINT();
+    antlr4::tree::TerminalNode *OPEN();
+    SequenceContext *sequence();
+    antlr4::tree::TerminalNode *CLOSED();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  ItemBtSymbolContext : public ItemContext {
+  class  ItemSublistContext : public ItemContext {
   public:
-    ItemBtSymbolContext(ItemContext *ctx);
+    ItemSublistContext(ItemContext *ctx);
 
-    antlr4::tree::TerminalNode *BTSYMBOL();
+    antlr4::tree::TerminalNode *PUSH();
+    SequenceContext *sequence();
+    antlr4::tree::TerminalNode *POP();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -753,119 +901,11 @@ public:
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  ItemMaxFunctionContext : public ItemContext {
-  public:
-    ItemMaxFunctionContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *MAXFUNCTION();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemBIFContext : public ItemContext {
-  public:
-    ItemBIFContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *BIF();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemSequenceContext : public ItemContext {
-  public:
-    ItemSequenceContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *OPEN();
-    SequenceContext *sequence();
-    antlr4::tree::TerminalNode *CLOSED();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemPiContext : public ItemContext {
-  public:
-    ItemPiContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *K_PI();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemSublistContext : public ItemContext {
-  public:
-    ItemSublistContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *PUSH();
-    SequenceContext *sequence();
-    antlr4::tree::TerminalNode *POP();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemOFContext : public ItemContext {
-  public:
-    ItemOFContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *OF();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemNullContext : public ItemContext {
-  public:
-    ItemNullContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *BACHNULL();
-    antlr4::tree::TerminalNode *OPEN();
-    antlr4::tree::TerminalNode *CLOSED();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemEmptySymbolContext : public ItemContext {
-  public:
-    ItemEmptySymbolContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *EMPTYSYMBOL();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemUpitchContext : public ItemContext {
-  public:
-    ItemUpitchContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *UPITCH();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
   class  ItemArgcountContext : public ItemContext {
   public:
     ItemArgcountContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *ARGCOUNT();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemNilContext : public ItemContext {
-  public:
-    ItemNilContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *BACHNIL();
-    antlr4::tree::TerminalNode *PUSH();
-    antlr4::tree::TerminalNode *POP();
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  ItemQSymbolContext : public ItemContext {
-  public:
-    ItemQSymbolContext(ItemContext *ctx);
-
-    antlr4::tree::TerminalNode *DQSYMBOL();
-    antlr4::tree::TerminalNode *SQSYMBOL();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
@@ -1051,6 +1091,8 @@ public:
   public:
     ListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    std::vector<LlllContext *> llll();
+    LlllContext* llll(size_t i);
     std::vector<ExprContext *> expr();
     ExprContext* expr(size_t i);
 

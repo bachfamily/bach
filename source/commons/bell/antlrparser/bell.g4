@@ -183,21 +183,27 @@ expr: (item|var|funcall|listEnd) #exprSimple
 | op=(LOGNOT|BITNOT) expr #exprNot
 ;
 
-item: UINT #itemUint
-| UFLOAT #itemUfloat
-| UPITCH #itemUpitch
-| K_PI #itemPi
-| BTSYMBOL #itemBtSymbol
-| (DQSYMBOL|SQSYMBOL) #itemQSymbol
-| EMPTYSYMBOL #itemEmptySymbol
-| BIF #itemBIF
-| OF #itemOF
-| MAXFUNCTION #itemMaxFunction
+literal: UINT #literalUint
+| UFLOAT #literalUfloat
+| UPITCH #literalUpitch
+| K_PI #literalPi
+| BTSYMBOL #literalBtSymbol
+| (DQSYMBOL|SQSYMBOL) #literalQSymbol
+| EMPTYSYMBOL #literalEmptySymbol
+| BIF #literalBIF
+| OF #literalOF
+| MAXFUNCTION #literalMaxFunction
+| (BACHNULL | (OPEN CLOSED)) #literalNull
+| (BACHNIL | (PUSH POP)) #literalNil
+;
+
+llll: literal (literal)+ // at least two
+;
+
+item: literal #itemLiteral
 | type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
 | DIRINLET #itemDirInlet
 | ARGCOUNT #itemArgcount
-| (BACHNULL | (OPEN CLOSED)) #itemNull
-| (BACHNIL | (PUSH POP)) #itemNil
 | OPEN sequence CLOSED #itemSequence
 | PUSH sequence POP #itemSublist
 ;
@@ -222,7 +228,7 @@ conditional: IF sequence THEN list #ifthen
 | IF sequence THEN sequence ELSE list #ifthenelse
 ;
 
-list: expr+
+list: (llll | expr)+
 ;
 
 
