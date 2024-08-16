@@ -320,7 +320,7 @@ double t_pitch::JIComponentToFreq() const {
 }
 
 double t_pitch::JIComponentToMC() const {
-    return mc2f(JIComponentToFreq());
+    return f2mc(JIComponentToFreq());
 }
 
 t_rational t_pitch::ETComponentToMCratNoOctave() const {
@@ -345,7 +345,12 @@ double t_pitch::ETComponentToMCdoubleWithOctave() const {
 }
 
 double t_pitch::toMCdouble() const {
-    return ETComponentToMCdoubleNoOctave() + JIComponentToMC();
+    if (isPureET())
+        return ETComponentToMCdoubleWithOctave();
+    else if (isPureJI())
+        return JIComponentToMC();
+    else
+        return ETComponentToMCdoubleNoOctave() + JIComponentToMC();
 }
 
 t_rational t_pitch::toMCrat() const {
@@ -663,7 +668,13 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
 }
 
 
-
+// TODO: @Andrea: questa funzione mancava ed era chiesta da un sacco di oggetti. Io intanto l'ho fatta così, ma verifica
+long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const
+{
+    std::string str = toString(include_octave, always_positive, addTrailingSpace);
+    snprintf_zero(buf, bufSize, "%s", str.c_str());
+    return MIN(str.length(), bufSize-1);
+}
 
 #ifdef ___oldToTextBuf
 

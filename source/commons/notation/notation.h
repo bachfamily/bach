@@ -13614,7 +13614,7 @@ char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *
     @param    also_put_show_accidental_to_false    If this is 1, all the t_note::show_accidental flag are set to false.
                                                 in which case, you usually might want to call validate_accidentals_for_measure() after this
  */
-void compute_note_approximations_for_chord(t_notation_obj *r_ob, t_chord *chord, char also_put_show_accidental_to_false);
+void chord_compute_note_approximations(t_notation_obj *r_ob, t_chord *chord, char also_put_show_accidental_to_false);
 
 
 /**    Calls the note_compute_approximation() function on all the notes of a measure.
@@ -13633,7 +13633,7 @@ void compute_note_approximations_for_measure(t_notation_obj *r_ob, t_measure *me
     @param    r_ob    The notation object
     @param    measure    The measure
  */
-void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure);
+void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure);
 
 
 

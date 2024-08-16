@@ -212,7 +212,7 @@ char double_double_cmp_with_threshold(double num1, double num2, double threshold
 	@param		reference_freq	Frequence (in Hz) of the diapason A (e.g. 440)
 	@return						The midicents value
  */
-double f2mc(double freq, double reference_freq);
+double f2mc(double freq, double reference_freq = 440.);
 double f2mc(double f, double basefreq, double basepitch);
 t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch);
 

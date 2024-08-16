@@ -9396,7 +9396,7 @@ t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice* voice, char a
             newchord = addchord_from_values(x, voice->v_ob.number, num_notes, onset, -1, 2 * num_notes, argv, NULL, NULL, 0, NULL, false, forced_chord_ID, forced_note_IDs, false);
             if (newchord) {
                 set_rollchord_values_from_llll((t_notation_obj *) x, newchord, chord, 0., true, also_recompute_total_length, true);
-                compute_note_approximations_for_chord((t_notation_obj *)x, newchord, false);
+                chord_compute_note_approximations((t_notation_obj *)x, newchord, false);
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, newchord);
             }
             
@@ -9633,7 +9633,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
             if (get_num_llll_no_first_attribute_sym_in_llll(chord) > 0) { // if there are still some notes
                 t_chord *ch = addchord_from_llll(x, chord, voice, true, true); 
                 if (ch) {
-                    compute_note_approximations_for_chord((t_notation_obj *)x, ch, false);
+                    chord_compute_note_approximations((t_notation_obj *)x, ch, false);
                     if (also_select && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)ch))
                         notation_item_add_to_selection((t_notation_obj *)x, (t_notation_item *)ch);
                     undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_REMOVE, _llllobj_sym_state);
@@ -14225,8 +14225,8 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
 //        note = note_in_new_voice;
     }
 
-    verbose_print(x);    
-    return newch;        
+//    verbose_print(x);
+    return newch;
 }
 
 void clear_notes_flag_SHIFT(t_roll *x) {

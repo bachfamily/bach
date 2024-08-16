@@ -40,7 +40,7 @@ double note_get_display_midicents_with_accidental(t_note *nt)
     return nt->pitch_displayed.toMCdouble();
 }
 
-char note_is_enharmonicity_userdefined(t_note *nt)
+char note_is_original_pitch_userdefined(t_note *nt)
 {
     return (nt->pitch_original.isNaP() ? 0 : 1);
 }
@@ -618,7 +618,7 @@ void notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(t_notati
     chord_set_recompute_parameters_flag(r_ob, note->parent);
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         note->parent->parent->need_check_ties = true;
-        validate_accidentals_for_measure(r_ob, note->parent->parent);
+        measure_validate_accidentals(r_ob, note->parent->parent);
         note->parent->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
         set_need_perform_analysis_and_change_flag(r_ob);
     }

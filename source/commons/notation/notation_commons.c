@@ -12214,7 +12214,7 @@ void compute_note_approximations_for_measure(t_notation_obj *r_ob, t_measure *me
         }
 }
 
-void compute_note_approximations_for_chord(t_notation_obj *r_ob, t_chord *chord, char also_put_show_accidental_to_false){
+void chord_compute_note_approximations(t_notation_obj *r_ob, t_chord *chord, char also_put_show_accidental_to_false){
     t_note *temp_nt;
     for (temp_nt = chord->firstnote; temp_nt; temp_nt = temp_nt->next) {
         note_compute_approximation(r_ob, temp_nt);
@@ -12223,7 +12223,7 @@ void compute_note_approximations_for_chord(t_notation_obj *r_ob, t_chord *chord,
     }
 }
 
-void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure) {
+void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
 // validates (= choose whether to show/to hide) the accidentals for the measure, depending on the choosen preferences (show/hide, accidental_tie_preferences...)
     t_chord *temp_ch; t_note *temp_nt;
     char key = measure->voiceparent->v_ob.key;
@@ -19455,7 +19455,7 @@ void process_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure, long beamin
     
 //    notationobj_check_force(r_ob, false);  // THIS ONE CRASHES
 
-    validate_accidentals_for_measure(r_ob, measure); // after the syncopations accidentals might have changed
+    measure_validate_accidentals(r_ob, measure); // after the syncopations accidentals might have changed
     
     verbose_post_rhythmic_tree(r_ob, measure, gensym("step5b"), 2);
 
@@ -24491,7 +24491,6 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         char *accidental_done;
         double *accidental_x_real;
         double *accidental_width;
-        int *note_num_accidentals;
         long mem_i;
         long min_scaleposition, max_scaleposition;
         char is_ok = false, has_been_reordered = false;
@@ -24509,7 +24508,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         show_accidentals = (char *) bach_newptr(num_notes * sizeof(char));
         accidentals = (t_uint8 **) bach_newptr(num_notes * sizeof(t_uint8 *));
         for (long t = 0; t < num_notes; t++)
-            accidentals[i] = (t_uint8 *)bach_newptr((CONST_MAX_ACCIDENTALS+1) * sizeof(t_uint8));
+            accidentals[t] = (t_uint8 *)bach_newptr((CONST_MAX_ACCIDENTALS+1) * sizeof(t_uint8));
         reordered = (long *) bach_newptr(num_notes * sizeof(long));
         noteheads_uwidths = (double *) bach_newptr(num_notes * sizeof(double)); // uwidth of each notehead
         note_acc_resize = (double *) bach_newptr(num_notes * sizeof(double)); // resize factor for the accidental of each note
@@ -24561,7 +24560,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             else { // roll (we calculate the show/hide here!)
                 t_voice *voice = (t_voice *)chord->voiceparent;
                 if (voice->key == 0)
-                    show_accidentals[i] = !note_has_no_accidentals_or_has_natural(curr_nt);
+                    show_accidentals[i] = !(accidentals[i][0] == BACH_ACCIDENTAL_NONE || (accidentals[i][0] == BACH_ACCIDENTAL_NATURAL && accidentals[i][1] == BACH_ACCIDENTAL_NONE));
                 else {
                     long ds = midicents2diatonicstep(note_get_display_midicents(curr_nt));
                     if (ds >= 0 && note_accidental_equals_alter_ET(r_ob, curr_nt, voice->acc_pattern[ds]))
@@ -25072,15 +25071,13 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         accidental_done = (char *) bach_newptr(num_notes * sizeof(char));
         accidental_x_real = (double *) bach_newptr(num_notes * sizeof(double));
         accidental_width = (double *) bach_newptr(num_notes * sizeof(double));
-        note_num_accidentals = (int *) bach_newptr(num_notes * sizeof(int));
 
         for (i = 0; i < num_notes; i++) {
-            note_num_accidentals[i] = 0;
             accidental_done[i] = 0;
         }
-        for (i = 0; i < num_notes; i++) {
-            sysmem_copyptr(accidentals[i], accidentals_copy[i], (CONST_MAX_ACCIDENTALS + 1) * sizeof(t_uint8));
-        }
+//        for (i = 0; i < num_notes; i++) {
+//            sysmem_copyptr(accidentals[i], accidentals_copy[i], (CONST_MAX_ACCIDENTALS + 1) * sizeof(t_uint8));
+//        }
 
         // iterating on the accidentals to paint
         while (num_chord_accidentals > 0) {
@@ -25172,10 +25169,18 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             //        post("note_x_real: %f, this_stem_x: %f", note_x_real[0], this_stem_x);
             curr_nt->notecenter_stem_delta_ux = (note_x_real[reordered_i] - this_stem_x) * ratio;
             curr_nt->need_auxiliary_stem = note_need_aux_stem[reordered_i];
-            for (j=0; j<CONST_MAX_ACCIDENTALS; j++)
+            long num_accidentals = 0;
+            curr_nt->num_accidentals = CONST_MAX_ACCIDENTALS;
+            for (j=0; j<CONST_MAX_ACCIDENTALS; j++) {
                 curr_nt->accidentals[j] = accidentals[reordered_i][j];
+                if (accidentals[reordered_i][j] == BACH_ACCIDENTAL_NONE) {
+                    curr_nt->num_accidentals = num_accidentals;
+                    break;
+                } else {
+                    num_accidentals++;
+                }
+            }
             curr_nt->accidentals[j] = BACH_ACCIDENTAL_NONE; // <accidental_text> is sized CONST_MAX_ACCIDENTALS+1
-            curr_nt->num_accidentals = note_num_accidentals[reordered_i];
             curr_nt->accidental_stem_delta_ux = (curr_nt->num_accidentals > 0) ? (accidental_x_real[reordered_i] - this_stem_x) * ratio : this_stem_x;
 //            curr_nt->accidental_uwidth = (curr_nt->num_accidentals > 0) ? accidental_width[reordered_i] * ratio : 0;
 //            curr_nt->accidental_uascent = (curr_nt->num_accidentals > 0) ? get_accidental_uascent(r_ob, accidental[reordered_i]) * ratio : 0.;
@@ -25242,13 +25247,12 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         bach_freeptr(left_limit);
         bach_freeptr(notehead_rightlim);
         bach_freeptr(notehead_leftlim);
-        for (long t = 0; t < num_notes; t++)
-            bach_freeptr(accidentals_copy[t]);
-        bach_freeptr(accidentals_copy);
+//        for (long t = 0; t < num_notes; t++)
+//            bach_freeptr(accidentals_copy[t]);
+//        bach_freeptr(accidentals_copy);
         bach_freeptr(accidental_done);
         bach_freeptr(accidental_x_real);
         bach_freeptr(accidental_width);
-        bach_freeptr(note_num_accidentals);
     }
     
     if (reset_graphical_position_values) {
@@ -25538,7 +25542,7 @@ void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
     chord_set_recompute_parameters_flag(r_ob,  note->parent);
     if (note->parent->is_score_chord) { // only for score!
         note->parent->parent->need_check_ties = true;
-        validate_accidentals_for_measure(r_ob, note->parent->parent);
+        measure_validate_accidentals(r_ob, note->parent->parent);
         note->parent->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
         set_need_perform_analysis_and_change_flag(r_ob);
     }
@@ -25559,7 +25563,7 @@ void note_set_pitch_from_notename(t_notation_obj *r_ob, t_note *note, t_symbol *
     chord_set_recompute_parameters_flag(r_ob,  note->parent);
     if (note->parent->is_score_chord) { // only for score!
         note->parent->parent->need_check_ties = true;
-        validate_accidentals_for_measure(r_ob, note->parent->parent);
+        measure_validate_accidentals(r_ob, note->parent->parent);
         note->parent->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
         set_need_perform_analysis_and_change_flag(r_ob);
     }
@@ -25590,7 +25594,7 @@ void note_retranscribe_enharmonically_ET(t_notation_obj *r_ob, t_note *note, cha
     note_compute_approximation(r_ob, note);
     if (note->parent->is_score_chord) { // only for score!
         note->parent->parent->need_check_ties = true;
-        validate_accidentals_for_measure(r_ob, note->parent->parent);
+        measure_validate_accidentals(r_ob, note->parent->parent);
         recompute_all_measure_chord_parameters(r_ob, note->parent->parent);
         note->parent->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
         set_need_perform_analysis_and_change_flag(r_ob);

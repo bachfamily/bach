@@ -235,7 +235,7 @@ void hatom_setpitch(t_hatom *h, const t_pitch &p)
     h->h_w.w_pitch = p;
 }
 
-void hatom_setpitch_from_elems(t_hatom *h, const t_atom_short degree, const t_tinyRational &alter, const t_shortRational &r, const t_atom_short octave)
+void hatom_setpitch_from_elems(t_hatom *h, const t_atom_short degree, const t_shortRational &alter, const t_shortRational &r, const t_atom_short octave)
 {
     h->h_type = H_PITCH;
     h->h_w.w_pitch.set(degree, alter, r, octave);

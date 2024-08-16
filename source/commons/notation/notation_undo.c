@@ -1732,7 +1732,7 @@ long undo_redo_information_apply(t_notation_obj *r_ob, t_undo_redo_information *
             if (modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE || modif_type == k_UNDO_MODIFICATION_TYPE_CHANGE_CHECK_ORDER) {
                 if (obj_is_score) {
                     set_scorechord_values_from_llll(r_ob, (t_chord *)item, content, true, false);
-                    compute_note_approximations_for_chord(r_ob, (t_chord *)item, true);
+                    chord_compute_note_approximations(r_ob, (t_chord *)item, true);
                     if (is_solo_with_progeny(r_ob, item)) update_solos(r_ob);
                     recompute_all_for_measure(r_ob, ((t_chord *)item)->parent, false);
                 } else {

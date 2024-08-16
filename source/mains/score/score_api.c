@@ -7843,7 +7843,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
             
             if (tmp_meas->need_check_ties) { 
                 // we validate the accidentals, choosing the ones to be shown, and the ones to be hidden
-                validate_accidentals_for_measure((t_notation_obj *) x, tmp_meas);
+                measure_validate_accidentals((t_notation_obj *) x, tmp_meas);
                 
                 // we check the ties in the measure, by substituting to all WHITENULL-ed <tie_to> note fields, the proper note to which the note is tied.
                 check_measure_ties((t_notation_obj *) x, tmp_meas, x->r_ob.tie_assign_pitch, 1);
@@ -7855,7 +7855,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
             if (recomputed_beamings) {
                 
                 // We check the show/hide accidentals options. We have to compute the note screen values (inside, via note_compute_approximation()).
-                validate_accidentals_for_measure((t_notation_obj *)x, tmp_meas);
+                measure_validate_accidentals((t_notation_obj *)x, tmp_meas);
                 
                 llll_check(tmp_meas->rhythmic_tree);
                 
@@ -7865,7 +7865,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
 
                 // We re-compute the approximation for each note (rhythmic trees might have created/destroyed chords)
                 compute_note_approximations_for_measure((t_notation_obj *)x, tmp_meas, true);
-                validate_accidentals_for_measure((t_notation_obj *)x, tmp_meas);
+                measure_validate_accidentals((t_notation_obj *)x, tmp_meas);
                 
                 // we don't unset the need_recompute_beamings flag, since we have the actual beaming building task to perform!
                 
@@ -7878,7 +7878,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                 
                 llll_funall(tmp_meas->rhythmic_tree, decide_tuplet_direction_for_level_fn, &is_in_voiceensemble, 1, -2, FUNALL_SKIP_ATOMS);
                 
-                validate_accidentals_for_measure((t_notation_obj *)x, tmp_meas);
+                measure_validate_accidentals((t_notation_obj *)x, tmp_meas);
                 
                 calculate_chords_and_tempi_measure_onsets((t_notation_obj *)x, tmp_meas);
                 
@@ -7910,7 +7910,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                 check_measure_ties((t_notation_obj *) x, tmp_meas, x->r_ob.tie_assign_pitch, 1);
                 
                 // and we validate accidentals again (ties might have changed something)
-                validate_accidentals_for_measure((t_notation_obj *) x, tmp_meas);
+                measure_validate_accidentals((t_notation_obj *) x, tmp_meas);
                 tmp_meas->need_check_ties = false;
             } 
         }

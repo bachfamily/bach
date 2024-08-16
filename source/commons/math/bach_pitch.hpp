@@ -306,7 +306,7 @@ public:
     t_pitch(const t_atom_short degree) : p_JIexpVector(expVector(0)), p_whiteKeyET(degree), p_alterET(0) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational& alter) :
-    p_JIexpVector(expVector(0)), p_whiteKeyET(), p_alterET(alter) {}
+    p_JIexpVector(expVector(0)), p_whiteKeyET(degree), p_alterET(alter) {}
     
     t_pitch(const t_atom_short degree, const t_shortRational &alter, const t_int8 octave) :
     t_pitch(degree, alter) {
@@ -562,8 +562,14 @@ public:
     t_atom_long toStepsJI() const { return getOctave() * 7 + getWhiteKeyJI(); }
     t_atom_long toStepsJIFromMiddleC() const { return toStepsJI() - 7*5; }
     t_atom_long toSteps() const {
-        t_pitch p = getDisplayPitchAsJI();
-        return p.toStepsJI() - 7*5;
+        if (isPureET()) {
+            return toStepsET();
+        } else if (isPureJI()) {
+            return toStepsJI();
+        } else {
+            t_pitch p = getDisplayPitchAsJI();
+            return p.toStepsJI();
+        }
     }
     t_atom_long toStepsFromMiddleC() const { return toSteps() - 7*5; }
 

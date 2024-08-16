@@ -398,7 +398,8 @@ void get_accidental_characters_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *acci
                 alter += ((alter > 0) ? -1 : 1);
         }
     }
-    *numAccidentals = j;
+    if (numAccidentals)
+        *numAccidentals = j;
     accidentals[j] = BACH_ACCIDENTAL_NONE;
 }
 
