@@ -2152,7 +2152,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 					long screen_note = 0; 
 					t_rational screen_acc = long2rat(0);
 					char *outname = NULL;
-					mc_to_screen_approximations(r_ob, mc, &screen_note, &screen_acc, NULL, NULL);
+					mc_to_display_approximation_ET(r_ob, mc, &screen_note, &screen_acc, NULL, NULL);
 					midicents2notename(r_ob->middleC_octave, screen_note, screen_acc, r_ob->note_names_style, true, &outname);
 					snprintf_zero(legend, CONST_SLOT_MAX_LEGEND_CHARS, "%ldmc (%s)  %.1fQ  %.1fdB", (long)round(mc), outname, biquad->Q, biquad->gain_dB);
 					bach_freeptr(outname);
@@ -2185,7 +2185,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 						long screen_note = 0; 
 						t_rational screen_acc = long2rat(0);
 						char *outname = NULL;
-						mc_to_screen_approximations(r_ob, mc, &screen_note, &screen_acc, NULL, NULL);
+						mc_to_display_approximation_ET(r_ob, mc, &screen_note, &screen_acc, NULL, NULL);
 						midicents2notename(r_ob->middleC_octave, screen_note, screen_acc, r_ob->note_names_style, true, &outname);
 						snprintf_zero(legend, 100, "%ldmc (%s)  %.1fQ  %.1fdB", (long)round(mc), outname, biquad->Q, biquad->gain_dB);
 						bach_freeptr(outname);

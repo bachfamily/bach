@@ -13528,7 +13528,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     x->r_ob.notation_cursor.measure = meas;
                     x->r_ob.notation_cursor.chord = nearest_chord;
                     x->r_ob.notation_cursor.midicents = round(mc/100) * 100;
-                    mc_to_screen_approximations((t_notation_obj *) x, x->r_ob.notation_cursor.midicents, &screen_nt, &screen_acc, voice->v_ob.acc_pattern, voice->v_ob.full_repr);
+                    mc_to_display_approximation_ET((t_notation_obj *) x, x->r_ob.notation_cursor.midicents, &screen_nt, &screen_acc, voice->v_ob.acc_pattern, voice->v_ob.full_repr);
                     x->r_ob.notation_cursor.midicents = screen_nt;
                     x->r_ob.notation_cursor.step = midicents_to_diatsteps_from_middleC((t_notation_obj *) x, screen_nt);
                     move_linear_edit_cursor_depending_on_edit_ranges((t_notation_obj *)x, 0, 0);
@@ -14695,9 +14695,9 @@ t_llll* get_score_values_for_xml_as_llll(t_score *x){
                 
                     t_llll* note_llll = llll_get();
                     
-                    llll_appendlong(note_llll, note_get_screen_midicents(temp_note), 0, WHITENULL_llll); // step midicents
+                    llll_appendlong(note_llll, note_get_display_midicents(temp_note), 0, WHITENULL_llll); // step midicents
                     llll_appendrat(note_llll, note_get_screen_accidental_ordinary(temp_note), 0, WHITENULL_llll); // screen accidental
-                    llll_appendlong(note_llll, temp_note->show_accidental, 0, WHITENULL_llll); // is accidental shown?
+                    llll_appendlong(note_llll, temp_note->show_accidentals, 0, WHITENULL_llll); // is accidental shown?
                     llll_appendlong(note_llll, temp_note->velocity, 0, WHITENULL_llll); // velocity
                     llll_appendlong(note_llll, (temp_note->tie_to) ? 1 : 0, 0, WHITENULL_llll); // start_tie?                    
                     
@@ -15416,7 +15416,7 @@ t_chord *tie_untie_notes_on_linear_edit(t_score *x){
         undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)chord->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         
         for (nt = chord->firstnote; nt; nt = nt->next) {
-            if (note_get_screen_midicents(nt) == x->r_ob.notation_cursor.midicents) {
+            if (note_get_display_midicents(nt) == x->r_ob.notation_cursor.midicents) {
                 cursor_nt = nt;
                 break;
             }
@@ -15462,7 +15462,7 @@ t_chord *make_chord_or_note_sharp_or_flat_on_linear_edit(t_score *x, char direct
             undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)temp, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 
             for (nt = temp->firstnote; nt; nt = nt->next) {
-                if (note_get_screen_midicents(nt) == x->r_ob.notation_cursor.midicents) {
+                if (note_get_display_midicents(nt) == x->r_ob.notation_cursor.midicents) {
                     cursor_nt = nt;
                     break;
                 }
@@ -15520,7 +15520,7 @@ t_chord *change_pitch_from_linear_edit(t_score *x, long diatonic_step)
             undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)temp, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
 
             for (nt = temp->firstnote; nt; nt = nt->next) {
-                if (note_get_screen_midicents(nt) == x->r_ob.notation_cursor.midicents) {
+                if (note_get_display_midicents(nt) == x->r_ob.notation_cursor.midicents) {
                     cursor_nt = nt;
                     break;
                 }
@@ -15529,7 +15529,7 @@ t_chord *change_pitch_from_linear_edit(t_score *x, long diatonic_step)
 
             for (nt = temp->firstnote; nt; nt = nt->next) {
                 if (!cursor_nt || cursor_nt == nt) {
-                    note_set_user_enharmonicity_from_screen_representation(nt, mc, long2rat(0), true);
+                    note_set_user_enharmonicity_from_display_representation(nt, mc, long2rat(0), true);
                     note_compute_approximation((t_notation_obj *)x, nt);
                     calculate_chord_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->parent->voiceparent), true);
                 }
@@ -15573,7 +15573,7 @@ void add_note_to_chord_from_linear_edit(t_score *x, long force_diatonic_step){
         
         x->r_ob.notation_cursor.chord->r_sym_duration = rat_abs(x->r_ob.notation_cursor.chord->r_sym_duration);
 
-        note_set_user_enharmonicity_from_screen_representation(this_nt, argv[1], long2rat(0), true);
+        note_set_user_enharmonicity_from_display_representation(this_nt, argv[1], long2rat(0), true);
         note_insert((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
         note_compute_approximation((t_notation_obj *) x, this_nt);
         calculate_chord_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->parent->voiceparent), false);
@@ -16541,7 +16541,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                             t_note *nt;
                             char found = false;
                             for (nt = ch->firstnote; nt; nt = nt->next) {
-                                if (note_get_screen_midicents(nt) == x->r_ob.notation_cursor.midicents) {
+                                if (note_get_display_midicents(nt) == x->r_ob.notation_cursor.midicents) {
                                     char num_notes = ch->num_notes;
                                     undo_tick_create_for_notation_item((t_notation_obj *) x, num_notes > 1 ? (t_notation_item *)ch : (t_notation_item *)ch->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     note_delete((t_notation_obj *)x, nt, false);

@@ -7675,7 +7675,7 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
     double acc_shift_for_note = 0, acc_shift_for_acc = 0;
     
     for (note = chord->firstnote; note; note = note->next) {
-        long note_steps = midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_screen_midicents(note));
+        long note_steps = midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_display_midicents(note));
         double note_uy = scaleposition_to_uyposition((t_notation_obj *)x, note_steps, voice);
         double note_stem_ux = get_stem_x_from_alignment_point_x((t_notation_obj *)x, chord, unscaled_xposition_to_xposition((t_notation_obj *)x, chord->alignment_ux))/x->r_ob.zoom_y;
         
@@ -7705,14 +7705,14 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                 long cmp = rat_rat_cmp(c->r_sym_onset, chord->r_sym_onset);
                 if (cmp == 0) {
                     for (n = c->firstnote; n; n = n->next) {
-                        long n_steps = midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_screen_midicents(n));
+                        long n_steps = midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_display_midicents(n));
 
                         if (n_steps == note_steps + 1 || n_steps == note_steps || n_steps == note_steps - 1) {
                             shift = MAX(shift, notehead_get_uwidth((t_notation_obj *)x, c->r_sym_duration, n, true));
                         }
                         
                         acc_shift_for_note = shift;
-                        if (n->show_accidental && note->show_accidental) {
+                        if (n->show_accidentals && note->show_accidentals) {
                             double n_uy = scaleposition_to_uyposition((t_notation_obj *)x, n_steps, v);
                             double n_top = note_get_accidental_uascent((t_notation_obj *)x, n);
                             double n_bottom = note_get_accidental_udescent((t_notation_obj *)x, n);
@@ -7720,7 +7720,7 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                             double note_bottom = note_get_accidental_udescent((t_notation_obj *)x, note);
                             if (!((n_uy - n_top < note_uy + note_bottom && n_uy + n_bottom < note_uy - note_top) ||
                                 (n_uy - n_top > note_uy + note_bottom && n_uy + n_bottom > note_uy - note_top))) {
-                                acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + get_accidental_uwidth((t_notation_obj *)x, note_get_screen_accidental(n), false) - 1.5); // + CONST_UX_ACC_SEPARATION_FROM_ACC);
+                                acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + note_get_accidental_uwidth((t_notation_obj *)x, n, false) - 1.5); // + CONST_UX_ACC_SEPARATION_FROM_ACC);
                             }
                         }
                     }
@@ -8624,12 +8624,12 @@ t_llll* measure_get_pixel_values_as_llll(t_score *x, t_scorevoice *voice, t_meas
             llll_appenddouble(chord_llll, next_chord_pixel_start - this_chord_pixel_start, 0, WHITENULL_llll);
         }
         for (temp_note = temp_chord->firstnote; temp_note; temp_note = temp_note->next) { // y pixel position
-            llll_appenddouble(notes_y_pixel_pos, mc_to_yposition((t_notation_obj *) x, note_get_screen_midicents(temp_note), (t_voice *) voice), 0, WHITENULL_llll);
-            if (note_get_screen_accidental(temp_note).r_num != 0)
-                llll_appenddouble(accidentals_x_pixel_pos, this_chord_pixel_start + temp_note->accidental_stem_delta_ux * x->r_ob.zoom_y + 
+            llll_appenddouble(notes_y_pixel_pos, mc_to_yposition((t_notation_obj *) x, note_get_display_midicents(temp_note), (t_voice *) voice), 0, WHITENULL_llll);
+            if (note_has_accidentals(temp_note))
+                llll_appenddouble(accidentals_x_pixel_pos, this_chord_pixel_start + temp_note->accidental_stem_delta_ux * x->r_ob.zoom_y +
                                   x->r_ob.accidentals_typo_preferences.ux_shift * x->r_ob.zoom_y - 
-                                  get_accidental_uwidth((t_notation_obj *) x, note_get_screen_accidental(temp_note), false) * x->r_ob.zoom_y, 0, WHITENULL_llll);
-            else 
+                                  note_get_accidental_uwidth((t_notation_obj *) x, temp_note, false) * x->r_ob.zoom_y, 0, WHITENULL_llll);
+            else
                 llll_appenddouble(accidentals_x_pixel_pos, this_chord_pixel_start + 
                                   get_notehead_ux_shift((t_notation_obj *) x, temp_note) * x->r_ob.zoom_y + temp_note->notecenter_stem_delta_ux * x->r_ob.zoom_y -
                                   ((temp_note->notehead_uwidth / 2.) * x->r_ob.zoom_y), 0, WHITENULL_llll); 
@@ -9165,8 +9165,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 
                 if (curr_ch->r_sym_duration.r_num >= 0 && curr_ch->firstnote) { // non-rest
                     // chord values useful later:
-                    first_note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_ch->firstnote), (t_voice *) voice);
-                    last_note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_ch->lastnote), (t_voice *) voice);
+                    first_note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_display_midicents(curr_ch->firstnote), (t_voice *) voice);
+                    last_note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_display_midicents(curr_ch->lastnote), (t_voice *) voice);
 //                    curr_ch->firstnote_y_real = first_note_y_real;
 //                    curr_ch->lastnote_y_real = last_note_y_real;
                     
@@ -9362,7 +9362,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 						
 						// finding y positions
 						note_y = mc_to_yposition_in_scale_for_notes((t_notation_obj *) x,curr_nt, (t_voice *) voice, 1, false);
-						note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice);
+						note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_display_midicents(curr_nt), (t_voice *) voice);
 						curr_nt->center.y = note_y_real;
 						
 						// finding x positions
@@ -9398,9 +9398,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         if (x->r_ob.show_durations && (x->r_ob.dl_spans_ties == 0 || !curr_nt->tie_from)) {
                             if (x->r_ob.allow_glissandi) {
                                 double (*mc_to_ypos)(t_notation_obj *, double, t_voice *) = x->r_ob.breakpoints_have_noteheads ? mc_to_yposition_quantized : mc_to_yposition;
-                                double mc_or_screen_mc = x->r_ob.breakpoints_have_noteheads ? curr_nt->midicents : note_get_screen_midicents(curr_nt);
+                                double mc_or_screen_mc = x->r_ob.breakpoints_have_noteheads ? curr_nt->midicents : note_get_display_midicents(curr_nt);
                                 t_bpt *temp = curr_nt->firstbreakpoint->next;
-                                double prev_bpt_y = mc_to_ypos((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice);
+                                double prev_bpt_y = mc_to_ypos((t_notation_obj *) x, note_get_display_midicents(curr_nt), (t_voice *) voice);
                                 double prev_bpt_x = note_x_real + notehead_uwidth * x->r_ob.zoom_y * 0.41;
                                 // first: draw all the lines
                                 while (temp) {
@@ -9412,7 +9412,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                         if (!temp->prev || temp->delta_mc != temp->prev->delta_mc)
                                             bpt_y = mc_to_ypos((t_notation_obj *)x, curr_nt->midicents + round(temp->delta_mc), (t_voice *) voice);
                                         else
-                                            bpt_y = mc_to_ypos((t_notation_obj *)x, note_get_screen_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
+                                            bpt_y = mc_to_ypos((t_notation_obj *)x, note_get_display_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
                                     } else
                                         bpt_y = mc_to_ypos((t_notation_obj *) x, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
                                     
@@ -9466,7 +9466,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                             paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, note_end_pos, curr_nt, 0, (x->r_ob.breakpoints_have_velocity && x->r_ob.velocity_handling == k_VELOCITY_HANDLING_NOTEHEADSIZE) ? velocity_to_notesize_factor((t_notation_obj *) x, temp->velocity) : CONST_GRACE_CHORD_SIZE);
                                         } else { 
                                             if (x->r_ob.show_tails) {
-                                                double bpt_y = mc_to_ypos((t_notation_obj *) x, note_get_screen_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
+                                                double bpt_y = mc_to_ypos((t_notation_obj *) x, note_get_display_midicents(curr_nt) + round(temp->delta_mc), (t_voice *) voice);
                                                 paint_line(g, tailcolor, note_end_pos, bpt_y - x->r_ob.breakpoints_size * 0.666 * x->r_ob.zoom_y, note_end_pos, bpt_y + x->r_ob.breakpoints_size * 0.666 * x->r_ob.zoom_y * grace_ratio, x->r_ob.durations_line_width * x->r_ob.zoom_y * grace_ratio);
                                             }
                                         }
@@ -9477,7 +9477,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                     selected_breakpoint = curr_nt->lastbreakpoint;
                                 
                             } else {
-                                double line_y = mc_to_yposition((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice); 
+                                double line_y = mc_to_yposition((t_notation_obj *) x, note_get_display_midicents(curr_nt), (t_voice *) voice); 
                                 paint_line(g, durationlinecolor, note_x_real, line_y, note_end_pos, line_y, x->r_ob.durations_line_width * x->r_ob.zoom_y * grace_ratio);
                                 paint_line(g, tailcolor, note_end_pos, line_y - 2. * x->r_ob.zoom_y, note_end_pos, line_y + 2. * x->r_ob.zoom_y, x->r_ob.durations_line_width * x->r_ob.zoom_y * grace_ratio);
                             }
@@ -9544,12 +9544,12 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             double start_y = note_y_real + ((tie_direction == 1)? -3 * x->r_ob.zoom_y : 3 * x->r_ob.zoom_y);
                             double end_x, end_y;
                             if (curr_nt->tie_to != (t_note *) WHITENULL) {
-                                end_x = (curr_nt->tie_to->show_accidental) ?
+                                end_x = (curr_nt->tie_to->show_accidentals) ?
                                 unscaled_xposition_to_xposition((t_notation_obj *)x, curr_nt->tie_to->parent->parent->tuttipoint_reference->offset_ux +
                                                                 curr_nt->tie_to->parent->stem_offset_ux) - curr_nt->notehead_uwidth * x->r_ob.zoom_y * CONST_SCORE_TIE_POSITION + curr_nt->tie_to->accidental_stem_delta_ux * x->r_ob.zoom_y :
                                 unscaled_xposition_to_xposition((t_notation_obj *)x, curr_nt->tie_to->parent->parent->tuttipoint_reference->offset_ux +
                                                                 curr_nt->tie_to->parent->stem_offset_ux) - curr_nt->notehead_uwidth * x->r_ob.zoom_y * CONST_SCORE_TIE_POSITION + curr_nt->tie_to->notecenter_stem_delta_ux * x->r_ob.zoom_y;
-                                end_y = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_nt->tie_to), (t_voice *) voice) + ((tie_direction == 1)? -3 * x->r_ob.zoom_y : 3 * x->r_ob.zoom_y);
+                                end_y = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_display_midicents(curr_nt->tie_to), (t_voice *) voice) + ((tie_direction == 1)? -3 * x->r_ob.zoom_y : 3 * x->r_ob.zoom_y);
                             } else {
                                 if (curr_nt->parent->next)
                                 end_x = unscaled_xposition_to_xposition((t_notation_obj *)x, curr_nt->parent->next->parent->tuttipoint_reference->offset_ux + curr_nt->parent->next->stem_offset_ux - curr_nt->parent->next->left_uextension - 2);

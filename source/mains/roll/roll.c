@@ -529,7 +529,7 @@ t_llll* get_roll_values_as_llll_for_pwgl(t_roll *x){
             temp_note = temp_chord->firstnote;
             while (temp_note) {
                 t_llll* this_note_llll = llll_get();
-                double mc_as_double = note_get_screen_midicents_with_accidental(temp_note)/100.;
+                double mc_as_double = note_get_display_midicents_with_accidental(temp_note)/100.;
 
                 if (((double)mc_as_double) == round(mc_as_double))
                     llll_appendlong(this_note_llll, round(mc_as_double), 0, WHITENULL_llll);
@@ -11792,8 +11792,8 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     
     t_note *note_1 = note_get_nth(curr_ch, 0);
     t_note *note_2 = note_get_nth(curr_ch, num_notes - 1);
-    first_note_y_real = note_1 ? system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(note_1), (t_voice *) voice) : 0;
-    last_note_y_real = note_2 ? system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(note_2), (t_voice *) voice) : 0;
+    first_note_y_real = note_1 ? system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_display_midicents(note_1), (t_voice *) voice) : 0;
+    last_note_y_real = note_2 ? system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_display_midicents(note_2), (t_voice *) voice) : 0;
     
     // draw stem
     stemcolor = stem_get_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
@@ -11865,7 +11865,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             tailcolor = tail_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected || is_tail_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? curr_nt->lastbreakpoint->velocity : curr_nt->velocity);
             
             // finding y positions
-            note_y_real = system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice);
+            note_y_real = system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_display_midicents(curr_nt), (t_voice *) voice);
             curr_nt->center.y = note_y_real;
             
             // finding x positions
@@ -12168,7 +12168,7 @@ void roll_preprocess_group_beamings(t_roll *x)
                         highest_y = this_y;
                     if (this_y > lowest_y)
                         lowest_y = this_y;
-                    average_scaleposition += midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_screen_midicents(nt));
+                    average_scaleposition += midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_display_midicents(nt));
                     countnotes ++;
                 }
             }
@@ -15153,7 +15153,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             x->r_ob.notation_cursor.measure = NULL;
             x->r_ob.notation_cursor.voice = (t_voice *)voice;
             x->r_ob.notation_cursor.midicents = round(mc/100) * 100;
-            mc_to_screen_approximations((t_notation_obj *) x, x->r_ob.notation_cursor.midicents, &screen_nt, &screen_acc, voice->v_ob.acc_pattern, voice->v_ob.full_repr);
+            mc_to_display_approximation_ET((t_notation_obj *) x, x->r_ob.notation_cursor.midicents, &screen_nt, &screen_acc, voice->v_ob.acc_pattern, voice->v_ob.full_repr);
             x->r_ob.notation_cursor.midicents = screen_nt;
             x->r_ob.notation_cursor.step = midicents_to_diatsteps_from_middleC((t_notation_obj *) x, screen_nt);
             if (x->r_ob.show_grid && x->r_ob.snap_linear_edit_to_grid_when_editing)
@@ -15807,7 +15807,7 @@ t_llll* get_voice_pixel_values_as_llll(t_roll *x, t_rollvoice *voice){
         llll_appenddouble(chord_llll, this_chord_pixel_start, 0, WHITENULL_llll); // pixel start
         for (temp_note = temp_chord->firstnote; temp_note; temp_note = temp_note->next) { // pixel duration
             llll_appenddouble(notes_pixel_durations_llll, onset_to_xposition_roll((t_notation_obj *) x, temp_chord->onset + temp_note->duration, &system) - this_chord_pixel_start, 0, WHITENULL_llll);    
-            llll_appenddouble(notes_y_pixel_pos, mc_to_yposition((t_notation_obj *) x, note_get_screen_midicents(temp_note), (t_voice *) voice), 0, WHITENULL_llll);
+            llll_appenddouble(notes_y_pixel_pos, mc_to_yposition((t_notation_obj *) x, note_get_display_midicents(temp_note), (t_voice *) voice), 0, WHITENULL_llll);
             if (note_has_accidentals(temp_note))
                 llll_appenddouble(accidentals_x_pixel_pos, this_chord_pixel_start + temp_note->accidental_stem_delta_ux * x->r_ob.zoom_y + 
                               x->r_ob.accidentals_typo_preferences.ux_shift * x->r_ob.zoom_y - 
@@ -16626,7 +16626,7 @@ t_chord *roll_make_chord_or_note_sharp_or_flat_on_linear_edit(t_roll *x, char di
         undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         
         for (nt = chord->firstnote; nt; nt = nt->next) {
-            if (note_get_screen_midicents(nt) == x->r_ob.notation_cursor.midicents) {
+            if (note_get_display_midicents(nt) == x->r_ob.notation_cursor.midicents) {
                 cursor_nt = nt;
                 break;
             }
@@ -16704,7 +16704,7 @@ t_chord *roll_change_pitch_from_linear_edit(t_roll *x, long diatonic_step)
         undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         
         for (nt = chord->firstnote; nt; nt = nt->next) {
-            if (note_get_screen_midicents(nt) == x->r_ob.notation_cursor.midicents) {
+            if (note_get_display_midicents(nt) == x->r_ob.notation_cursor.midicents) {
                 cursor_nt = nt;
                 break;
             }
@@ -16713,7 +16713,7 @@ t_chord *roll_change_pitch_from_linear_edit(t_roll *x, long diatonic_step)
         
         for (nt = chord->firstnote; nt; nt = nt->next) {
             if (!cursor_nt || cursor_nt == nt) {
-                note_set_user_enharmonicity_from_screen_representation(nt, mc, long2rat(0), true);
+                note_set_user_enharmonicity_from_display_representation(nt, mc, long2rat(0), true);
                 note_compute_approximation((t_notation_obj *)x, nt);
                 calculate_chord_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->voiceparent), true);
             }
@@ -16807,7 +16807,7 @@ void roll_add_note_to_chord_from_linear_edit(t_roll *x, long number, long force_
         if (add_undo_tick)
             undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.chord, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
         
-        note_set_user_enharmonicity_from_screen_representation(this_nt, argv[1], long2rat(0), true);
+        note_set_user_enharmonicity_from_display_representation(this_nt, argv[1], long2rat(0), true);
         note_insert((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
         note_compute_approximation((t_notation_obj *) x, this_nt);
         calculate_chord_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->voiceparent), false);
@@ -17109,7 +17109,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                         
                         lock_general_mutex((t_notation_obj *)x);
                         for (nt = ch->firstnote; nt; nt = nt->next) {
-                            if (note_get_screen_midicents(nt) == x->r_ob.notation_cursor.midicents) {
+                            if (note_get_display_midicents(nt) == x->r_ob.notation_cursor.midicents) {
                                 char num_notes = ch->num_notes;
                                 if (num_notes == 1) { // delete chord
                                     undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_TYPE_INSERT, _llllobj_sym_state);

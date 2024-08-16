@@ -29,70 +29,13 @@ const long subs_count = 2;
 
 
 //Midicents of the screen diatonic note, ignoring accidental. For example, for the Eb above the middle C, this will be 6400 (the midicents of the E)
-long note_get_screen_midicents(t_note *nt)
+long note_get_display_midicents(t_note *nt)
 {
     return nt->pitch_displayed.toMC_wo_accidental();
 }
 
-t_shortRational note_get_screen_accidental_ordinary(t_note *nt)
-{
-    if (nt->pitch_displayed.isPureET()) {
-        return nt->pitch_displayed.getAlterET();
-    } else if (nt->pitch_displayed.isPureJI()) {
-        return genrat(nt->pitch_displayed.getSharpsJI(), 2);
-    } else {
-        return genrat(nt->pitch_displayed.getDisplayPitchAsJI().getSharpsJI(), 2);
-    }
-}
 
-t_rational note_get_screen_accidental_JIcommas(t_note *nt)
-{
-    if (nt->pitch_displayed.isPureET()) {
-        return genrat(1, 1);
-    } else if (nt->pitch_displayed.isPureJI()) {
-        return nt->pitch_displayed.getHEJICommasAsRational();
-    } else {
-        return nt->pitch_displayed.getDisplayPitchAsJI().getHEJICommasAsRational();
-    }
-}
-
-double note_get_screen_accidental_cents(t_note *nt)
-{
-    if (nt->pitch_displayed.isPureET()) {
-        return nt->pitch_displayed.getAlterET() * 200.;
-    } else if (nt->pitch_displayed.isPureJI()) {
-        return log2((double)nt->pitch_displayed.getHEJICommasAsRational())*1200.;
-    } else {
-        return nt->pitch_displayed.getAlterET() * 200. + log2((double)nt->pitch_displayed.getHEJICommasAsRational())*1200.;
-    }
-}
-
-bool pitch_has_accidentals(t_pitch *p)
-{
-    if (p->isPureET()) {
-        return !(p->getAlterET() == 0);
-    } else if (p->isPureJI()) {
-        return !(p->isPurePythagorean() && p->getSharpsJI() == 0);
-    } else {
-        t_pitch q = p->getDisplayPitchAsJI();
-        return !(q.getAlterET() == 0 && p->isPurePythagorean() && q.getSharpsJI() == 0);
-    }
-}
-
-bool note_has_accidentals(t_note *nt)
-{
-    return pitch_has_accidentals(&nt->pitch_displayed);
-}
-
-t_shortRational note_get_screen_accidental(t_note *nt)
-{
-    // TODO: questo è proprio sbagliato.
-    dev_post("Daniele, please change me!");
-    return nt->pitch_displayed.getAlterET();
-    //    return nt->pitch_displayed.alter();
-}
-
-double note_get_screen_midicents_with_accidental(t_note *nt)
+double note_get_display_midicents_with_accidental(t_note *nt)
 {
     return nt->pitch_displayed.toMCdouble();
 }
@@ -107,7 +50,7 @@ void note_set_auto_enharmonicity(t_note *nt)
     nt->pitch_original = t_pitch::NaP;
 }
 
-void note_set_user_enharmonicity_from_screen_representation(t_note *nt, double screen_mc, t_rational screen_acc, char also_assign_mc)
+void note_set_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc, char also_assign_mc)
 {
     long steps = midicents_to_diatsteps_from_C0(NULL, screen_mc);
     nt->pitch_original = t_pitch(steps % 7, screen_acc, steps / 7);
@@ -132,7 +75,7 @@ void note_set_enharmonicity(t_note *nt, t_pitch pitch)
 
 
 
-void note_set_displayed_user_enharmonicity_from_screen_representation(t_note *nt, double screen_mc, t_rational screen_acc)
+void note_set_displayed_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc)
 {
     long steps = midicents_to_diatsteps_from_C0(NULL, screen_mc);
     nt->pitch_displayed = t_pitch(steps % 7, screen_acc, steps / 7);
@@ -231,9 +174,9 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
     long auto_screen_mc;
     t_rational auto_screen_acc;
     if (note_is_original_pitch_userdefined(nt)) { // the pitch is explicitly defined by the user (either enharmonicity or JI)
-        mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
+        mc_to_display_approximation_ET(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
         
-        if (!(is_natural_note(note_get_screen_midicents(nt)))) {
+        if (!(is_natural_note(note_get_display_midicents(nt)))) {
             object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
             long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
             nt->pitch_displayed.setET((int)positive_mod(steps, 7), auto_screen_acc, (int)integer_div_round_down(steps, 7));
@@ -251,7 +194,7 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
             }
         }
     } else { // use default ET approximation
-        mc_to_screen_approximations(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
+        mc_to_display_approximation_ET(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
         long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
         nt->pitch_displayed.setET(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
     }

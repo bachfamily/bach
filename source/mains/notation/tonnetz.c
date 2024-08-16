@@ -759,7 +759,7 @@ t_max_err tonnetz_setattr_generators(t_tonnetz *x, t_object *attr, long ac, t_at
                     } else {
                         long screen_mc;
                         t_rational screen_acc;
-                        mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, 6000 + hatom_getdouble(&ll->l_head->l_hatom), &screen_mc, &screen_acc, NULL, NULL);
+                        mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, 6000 + hatom_getdouble(&ll->l_head->l_hatom), &screen_mc, &screen_acc, NULL, NULL);
                         x->generators[0] = screen_midicents_and_accidental_to_diatonic_interval(screen_mc, screen_acc, x->modulo);
                         
                     }
@@ -775,7 +775,7 @@ t_max_err tonnetz_setattr_generators(t_tonnetz *x, t_object *attr, long ac, t_at
                     } else {
                         long screen_mc;
                         t_rational screen_acc;
-                        mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, 6000 + hatom_getdouble(&ll->l_head->l_next->l_hatom), &screen_mc, &screen_acc, NULL, NULL);
+                        mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, 6000 + hatom_getdouble(&ll->l_head->l_next->l_hatom), &screen_mc, &screen_acc, NULL, NULL);
                         x->generators[1] = screen_midicents_and_accidental_to_diatonic_interval(screen_mc, screen_acc, x->modulo);
                     }
                 }
@@ -2456,7 +2456,7 @@ void purely_diatonic_interval_to_notename(t_tonnetz *x, t_tonnetz_diatonic_inter
 	if (!also_put_octave)
 		mc = 6000 + fmod(mc, 1200);
 
-	mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_mc, &screen_acc, NULL, NULL);
+	mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_mc, &screen_acc, NULL, NULL);
 	midicents2notename(x->middleC_octave, screen_mc, screen_acc, x->note_names_style, true, buf);
 
 	if (!also_put_octave && strlen(*buf) > 1)
@@ -2469,7 +2469,7 @@ void diatonic_interval_to_notename(t_tonnetz *x, t_tonnetz_diatonic_interval int
 	t_rational screen_acc = long2rat(0);
 	if (x->purely_diatonic) {
 		double mc = purely_diatonic_interval_to_midicents(x, interval);
-		mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_midicents, &screen_acc, NULL, NULL);
+		mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_midicents, &screen_acc, NULL, NULL);
 	} else
 		diatonic_interval_to_screen_midicents_and_accidental(interval, &screen_midicents, &screen_acc, x->modulo);
 	
@@ -2558,7 +2558,7 @@ void build_tonnetz_point(t_tonnetz *x, double center_x, double center_y, t_tonne
 			t_rational screen_acc = long2rat(0);
 			if (x->purely_diatonic) {
 				double mc = purely_diatonic_interval_to_midicents(x, interval);
-				mc_to_screen_approximations_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_midicents, &screen_acc, NULL, NULL);
+				mc_to_display_approximation_ET_do(x->modulo / 6, k_ACCIDENTALS_AUTO, mc, &screen_midicents, &screen_acc, NULL, NULL);
 			} else
 				diatonic_interval_to_screen_midicents_and_accidental(interval_plus_center, &screen_midicents, &screen_acc, x->modulo);
 			midicents = screen_midicents + rat2double(screen_acc) * 200;

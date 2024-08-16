@@ -716,7 +716,7 @@ char *note_and_acc_to_lilypond_buf(t_notation_obj *r_ob, t_note *note)
 {
     char *buf = (char *)bach_newptr((4 + 4 * note->num_accidentals + 20) * sizeof(char));
     long cur = 0;
-    long step = midicents2diatonicstep(note_get_screen_midicents(note));
+    long step = midicents2diatonicstep(note_get_display_midicents(note));
     
     // note
     switch (step) {
@@ -786,7 +786,7 @@ char *note_and_acc_to_lilypond_buf(t_notation_obj *r_ob, t_note *note)
     }
     
     // octaviation
-    long temp = note_get_screen_midicents(note) / 1200 - 4;
+    long temp = note_get_display_midicents(note) / 1200 - 4;
     if (temp > 0) {
         for (i = 1; i <= temp; i++)
             buf[cur++] = '\'';

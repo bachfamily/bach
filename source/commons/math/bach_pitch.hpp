@@ -729,28 +729,13 @@ public:
     }
 
     
-    
-    // TODO: @Andrea: questi approx qui sotto dovrebbero essere approxET, no? Pensavo li avessimo già cambiati TBH, mi chiedo se non ci sia stato un problema di sync
-    
-    // TODO: @Andrea: can you do this? I suppose that approx(tone_division) MUST give an ET pitch, right?
-    // TODO: check with Daniele
-    t_pitch approxETcomp(t_atom_long tone_division)
+    t_pitch approxET(t_atom_long tone_division) // approximates the alteration
     {
         if (tone_division <= 0)
             return *this;
         t_tinyRational temp = p_alterET * tone_division;
-        t_tinyRational new_alter_down(temp.r_num / temp.r_den, static_cast<t_atom_short>(tone_division));
-        t_tinyRational new_alter_up((temp.r_num / temp.r_den) + 1, static_cast<t_atom_short>(tone_division));
-        return t_pitch(p_whiteKeyET, (new_alter_up - p_alterET < p_alterET - new_alter_down) ? new_alter_up : new_alter_down, getOctave());
-    }
-
-    t_pitch approxET(t_tinyRational tone_division)
-    {
-        if (tone_division <= 0)
-            return *this;
-        t_tinyRational temp = p_alterET * tone_division;
-        t_tinyRational new_alter_down = (temp.r_num / temp.r_den) / tone_division;
-        t_tinyRational new_alter_up = ((temp.r_num / temp.r_den) + 1) / tone_division;
+        t_tinyRational new_alter_down = (temp.r_num / temp.r_den) / (t_tinyRational)tone_division;
+        t_tinyRational new_alter_up = ((temp.r_num / temp.r_den) + 1) / (t_tinyRational)tone_division;
         return t_pitch(p_whiteKeyET, (new_alter_up - p_alterET < p_alterET - new_alter_down) ? new_alter_up : new_alter_down, getOctave());
     }
     

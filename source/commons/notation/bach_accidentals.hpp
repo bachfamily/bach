@@ -38,7 +38,7 @@ typedef enum _accidentals_preferences {
 
 
 typedef enum {
-    BACH_ACCIDENTAL_NONE = 0,
+    BACH_ACCIDENTAL_NONE = 0, // used also as a terminator for accidental sequences
     // equal-tempered accidentals
     BACH_ACCIDENTAL_DOUBLEFLAT_ARROW_DOWN = 1,
     BACH_ACCIDENTAL_DOUBLEFLAT = 2,
@@ -131,7 +131,6 @@ typedef enum {
     BACH_ACCIDENTAL_JI_COMMA_47_UP = 87,
     BACH_ACCIDENTAL_JI_COMMA_47_DOWN = 88,
     
-    //TODO: ADD ET ONES
     BACH_ACCIDENTAL_JI_DOUBLEFLAT_ET = 89,
     BACH_ACCIDENTAL_JI_FLAT_ET = 90,
     BACH_ACCIDENTAL_JI_NATURAL_ET = 91,

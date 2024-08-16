@@ -158,14 +158,14 @@ void hatom_fn_pitch(t_hatom *arg, t_hatom *res)
 
 void hatom_fn_degree(t_hatom *a1, t_hatom *res)
 {
-    switch (a1->h_type) {
+    switch (a1->h_type) { // TODO: @Andrea, check if p.getWhiteKeyET() is OK (was: p.degree())
         case H_PITCH:
-            hatom_setlong(res, a1->h_w.w_pitch.degree());
+            hatom_setlong(res, a1->h_w.w_pitch.getWhiteKeyET());
             break;
         case H_LONG:
         case H_RAT:
         case H_DOUBLE:
-            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).degree());
+            hatom_setlong(res, t_pitch::fromMC(hatom_getdouble(a1)).getWhiteKeyET());
             break;
         default:
             hatom_setlong(res, 0);
@@ -193,13 +193,13 @@ void hatom_fn_octave(t_hatom *a1, t_hatom *res)
 void hatom_fn_alter(t_hatom *a1, t_hatom *res)
 {
     switch (a1->h_type) {
-        case H_PITCH:
-            hatom_setrational(res, a1->h_w.w_pitch.alter());
+        case H_PITCH: // TODO: @Andrea, check if getAlterET() is OK, was: alter()
+            hatom_setrational(res, a1->h_w.w_pitch.getAlterET());
             break;
         case H_LONG:
         case H_RAT:
         case H_DOUBLE:
-            hatom_setrational(res, t_pitch::fromMC(hatom_getdouble(a1)).alter());
+            hatom_setrational(res, t_pitch::fromMC(hatom_getdouble(a1)).getAlterET());
             break;
         default:
             hatom_setlong(res, 0);
@@ -476,10 +476,10 @@ void hatom_fn_approx(t_hatom *a1, t_hatom *a2, t_hatom *res)
     switch (hatom_gettype(a1)) {
         case H_PITCH: {
             t_pitch p = hatom_getpitch(a1);
-            if (hatom_gettype(a2) == H_LONG)
-                hatom_setpitch(res, p.approx(hatom_getlong(a2)));
+            if (hatom_gettype(a2) == H_LONG) // TODO: @Andrea, check if p.approxET() is OK (was: p.approx())
+                hatom_setpitch(res, p.approxET(hatom_getlong(a2)));
             else
-                hatom_setpitch(res, p.approx(t_shortRational(hatom_getrational(a2))));
+                hatom_setpitch(res, p.approxET(t_shortRational(hatom_getrational(a2))));
             break;
         }
         case H_DOUBLE:

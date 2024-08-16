@@ -1165,7 +1165,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         mxml_node_t *stepxml = mxmlNewElement(pitchxml, "step");
                         mxml_node_t *alterxml = mxmlNewElement(pitchxml, "alter");
                         mxml_node_t *octavexml = mxmlNewElement(pitchxml, "octave");
-                        screen_midicents = note_get_screen_midicents(note);
+                        screen_midicents = note_get_display_midicents(note);
                         switch (screen_midicents % 1200) {
                             case 0:        mxmlNewText(stepxml, 0, "C");    break;
                             case 200:    mxmlNewText(stepxml, 0, "D");    break;
@@ -1193,7 +1193,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                             mxmlNewReal(alterxml, alter);
                         
                         // octave
-                        long octave = note_get_screen_midicents(note) / 1200 - 1;
+                        long octave = note_get_display_midicents(note) / 1200 - 1;
                         if (octave < 0)
                             object_warn((t_object *) x, "Octave lower than 1 in voice %ld, measure %ld doesn't comply with the MusicXML standard", voiceidx, measureidx);
                         
@@ -1230,7 +1230,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     for (i = 0; i < num_dots; i++)
                         mxmlNewElement(notexml, "dot");
                     
-                    if (note && note->show_accidental) {
+                    if (note && note->show_accidentals) {
                         mxml_node_t *accidental = bach_mxmlNewTextElement(notexml, "accidental", 0, acc_name);
                         if (add_par_qrtrtone)
                             mxmlElementSetAttr(accidental, "parentheses", "yes");

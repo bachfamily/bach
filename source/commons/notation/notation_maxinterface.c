@@ -917,16 +917,16 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
     jpopupmenu_addseperator(r_ob->popup_note);
 
     // enharmonicity (400)
-    if (note) {
-        note_get_enharmonic_possibilities(r_ob, note, &curr_idx);
+    if (note && note->pitch_displayed.isPureET()) {
+        note_get_ET_enharmonic_possibilities(r_ob, note, &curr_idx);
         for (i = 0; i < CONST_MAX_ENHARMONICITY_OPTIONS; i++) {
             char *outname = NULL;
-            midicents2notename(r_ob->middleC_octave, r_ob->current_enharmonic_list_screenmc[i], r_ob->current_enharmonic_list_screenacc[i], r_ob->note_names_style, true, &outname);
+            midicents2notename(r_ob->middleC_octave, r_ob->current_enharmonic_list_display_mc[i], r_ob->current_enharmonic_list_display_alter_ET[i], r_ob->note_names_style, true, &outname);
             jpopupmenu_additem(r_ob->popup_note_enharmonicity, 400 + i + 1, outname, NULL, i == curr_idx, 0, NULL);
             bach_freeptr(outname);
         }
     }
-    jpopupmenu_addsubmenu(r_ob->popup_note, "Enharmonicity", r_ob->popup_note_enharmonicity, 0);
+    jpopupmenu_addsubmenu(r_ob->popup_note, "Enharmonicity", r_ob->popup_note_enharmonicity, !note->pitch_displayed.isPureET());
 
 
     // slots (300)
@@ -4260,7 +4260,7 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
     if (chosenelem > 400 && chosenelem <= 400 + CONST_MAX_ENHARMONICITY_OPTIONS){
         long chosen_idx = chosenelem - 401;
         undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-        enharmonically_retranscribe_note(r_ob, note, false, r_ob->current_enharmonic_list_screenmc[chosen_idx], r_ob->current_enharmonic_list_screenacc[chosen_idx]);
+        note_retranscribe_enharmonically_ET(r_ob, note, false, r_ob->current_enharmonic_list_display_mc[chosen_idx], r_ob->current_enharmonic_list_display_alter_ET[chosen_idx]);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE);
         return k_CHANGED_SEND_BANG;
@@ -6180,7 +6180,7 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                             long screen_mc;
                             t_rational screen_acc;
                             constraint_midicents_depending_on_editing_ranges(r_ob, &mc, voice->number);
-                            mc_to_screen_approximations(r_ob, mc, &screen_mc, &screen_acc, voice->acc_pattern, voice->full_repr);
+                            mc_to_display_approximation_ET(r_ob, mc, &screen_mc, &screen_acc, voice->acc_pattern, voice->full_repr);
                             if (screen_acc.r_num > 0) cursor = BACH_CURSOR_NOTE_SHARP;
                             else if (screen_acc.r_num < 0) cursor = BACH_CURSOR_NOTE_FLAT;
 

@@ -579,6 +579,7 @@
 		1EA7B0112A1667FF000F66BF /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		1EA7B0122A1667FF000F66BF /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		1EA7B01A2A1668C2000F66BF /* jiwheel.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA7B0192A1668C2000F66BF /* jiwheel.c */; };
+		1EAD55BA2C6DE20300ECBDBD /* notation_accidentals.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EAD55B92C6DE20300ECBDBD /* notation_accidentals.c */; };
 		1EB4D4691610C9740041ABFB /* roll.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4681610C9740041ABFB /* roll.h */; };
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
 		1EB4D4821610CB740041ABFB /* roll_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4801610CB740041ABFB /* roll_files.h */; };
@@ -3588,6 +3589,7 @@
 		1E913CCC25CD41CD00A45D8C /* notation_markers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_markers.h; sourceTree = "<group>"; };
 		1EA7B0172A1667FF000F66BF /* bach.jiwheel.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.jiwheel.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EA7B0192A1668C2000F66BF /* jiwheel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jiwheel.c; sourceTree = "<group>"; };
+		1EAD55B92C6DE20300ECBDBD /* notation_accidentals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_accidentals.c; sourceTree = "<group>"; };
 		1EAE5C1C2288532B005487F4 /* bach_ss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_ss.c; sourceTree = "<group>"; };
 		1EB4D4681610C9740041ABFB /* roll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll.h; sourceTree = "<group>"; };
 		1EB4D47F1610CB740041ABFB /* roll_files.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = roll_files.c; sourceTree = "<group>"; };
@@ -6897,6 +6899,7 @@
 				1ECD814025E2B7E900CDE78E /* notation_slurs.h */,
 				1E21AC9A25C4A08000CE6783 /* notation_undo.h */,
 				1E21AC9825C4A00200CE6783 /* notation_undo.c */,
+				1EAD55B92C6DE20300ECBDBD /* notation_accidentals.c */,
 				91EED59D1237C06B003C05FC /* notation_commons.c */,
 				91CA0C5D1DF9374D0068B29D /* notation_dynamics.c */,
 				1E7A1D4420FCEB020051B9E8 /* notation_export.c */,
@@ -14279,6 +14282,7 @@
 				00992D0B2C2EE6CC00DA02CD /* ConsoleErrorListener.cpp in Sources */,
 				00992D1B2C2EE6CC00DA02CD /* IntStream.cpp in Sources */,
 				91FDDC2C1FBE2B2F0040D803 /* bach_exprparser.c in Sources */,
+				1EAD55BA2C6DE20300ECBDBD /* notation_accidentals.c in Sources */,
 				00992C592C2EE6CC00DA02CD /* LexerSkipAction.cpp in Sources */,
 				91FDDC391FBE2D060040D803 /* bach_pitchparser.c in Sources */,
 				91C6045118C0D9F50027BB79 /* SdifFRead.c in Sources */,

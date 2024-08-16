@@ -2493,7 +2493,7 @@ typedef struct _note
     struct _note    *tie_from;            ///< Pointer to the previous tied note. If the note has no tie ending on it, this is NULL
     char            tie_direction;        ///< Direction of the *starting* tie, if any. 1 = tie is over, -1 = ties is under, 0 = tie direction is undefined (or not yet defined)
     
-    char            show_accidental;                    ///< Flag saying if we show the accidental or not, depending on the key signature, on previous score content, on cautionary accidentals handling, and so on.
+    char            show_accidentals;                    ///< Flag saying if we show the accidental or not, depending on the key signature, on previous score content, on cautionary accidentals handling, and so on.
     ///< For instance, a natural accidental is obtained by setting #screen_accidental to 0, and #show_accidental to 1.
     
     
@@ -2531,7 +2531,7 @@ typedef struct _note
                                                                 ///< E.g. for the F# above the middle C, this is 3 (C->D->E->F). For the B just below the middle C, this is -1.
     char            need_auxiliary_stem;                        ///< Flag telling if the notehead is attached to the stem (0) or not (1, and thus needs the auxiliary stem)
     char            num_accidentals;                            ///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
-    t_int8          accidentals[CONST_MAX_ACCIDENTALS + 1];     ///< List of numbers from #e_bach_accidentals
+    t_uint8         accidentals[CONST_MAX_ACCIDENTALS + 1];     ///< List of numbers from #e_bach_accidentals
 //    unicodeChar        accidental_text[CONST_MAX_ACCIDENTALS + 1]; ///< Unicode chararcters for the text of the accidental
     double            notecenter_stem_delta_ux;                    ///< Unscaled horizontal deplacement of the x of the notehead center pixel, with respect to the stem position
 
@@ -3201,6 +3201,20 @@ typedef struct _measure
 } t_measure;
 
 
+
+/** List of possible display styles for notes in a voice
+ @ingroup    dynamics
+ */
+typedef enum _voice_notation_style
+{
+    k_VOICE_NOTATION_STYLE_ET = 0,          ///< Equal tempered
+    k_VOICE_NOTATION_STYLE_JI = 1,          ///< Just intonation
+    k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH = 2,       ///< Continuous linear pitch space
+    k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ = 3,       ///< Continuous linear frequential space
+} e_voice_notation_style;
+
+
+
 /** The data structure representing a voice.
     A #t_voice is a common entity which will be furtherly specified in a #t_rollvoice (containing a list of chords) 
     and a #t_scorevoice (containing a list of measures).
@@ -3263,6 +3277,7 @@ typedef struct _voice
 
     double        vertical_uspacing;    ///< Unscaled vertical spacing AFTER the voice (before the next one, or before the end of the object) 
 
+    long        notation_style;          ///< One of the e_voice_notation_style
 } t_voice;
 
 
@@ -3703,6 +3718,7 @@ typedef struct _accidentals_typo_preferences
                                     ///< mapped to be used as accidentals for the specified subdivision.
                                     ///< Common values are: 2 = the font has only semitones alteration; 4 = has also quartertonal alterations; 8 = has also octotonal alterations
                                     ///< Values greater than 8 are not supported.
+    short             et_triadic_depth; ///< Depth of the equal-temperament triadic character mapping (only support is for 6).
     bool              supports_ji;
     
     unicodeChar       unicode_characters[BACH_NUM_ACCIDENTALS];        ///< Unicode characters: one for each #e_bach_accidental
@@ -4896,9 +4912,9 @@ typedef struct _notation_obj
     t_jpopupmenu *popup_filters;                ///< Contextual menu when clicking on a slotwindow of a #k_SLOT_TYPE_FILTER type of slot
     t_jpopupmenu *popup_articulations;            ///< Contextual menu when clicking on an articulation
 
-    long        current_enharmonic_list_screenmc[5];    ///< The enharmonic possibilities which pops up when using contextual menus, are saved in these two fields.
+    long        current_enharmonic_list_display_mc[5];    ///< The enharmonic possibilities which pops up when using contextual menus, are saved in these two fields.
                                                         ///< This first one keeps the 5 possibilities for the screen midicents (diatonic pitch shown on screen, ignoring accidentals)
-    t_rational    current_enharmonic_list_screenacc[5];    ///< This second one keeps the 5 possibilities for the accidentals (related to the 5 screen midicents possibilities)
+    t_rational    current_enharmonic_list_display_alter_ET[5];    ///< This second one keeps the 5 possibilities for the accidentals (related to the 5 screen midicents possibilities)
 
     t_jfont *popup_main_font;                    ///< Font name (as symbol) for the main contextual menus
     t_jfont *popup_secondary_font;                ///< Font name (as symbol) for the contextual submenus
@@ -5326,7 +5342,7 @@ double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_
     @remark                        For instance, if <mc> = 6610, in a C major situation, the algorithm will fill <screen_note> = 6500 (F), <screen_accidental> = 1/2. 
     @remark                        This is an easy wrapper of the mc_to_screen_approximations_do() function.
  */
-void mc_to_screen_approximations(t_notation_obj *r_ob, double mc, long *screen_note, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr);
+void mc_to_display_approximation_ET(t_notation_obj *r_ob, double mc, long *screen_note, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr);
 
 
 /**    Convert midicents into graphical pitch data: i.e. the midicents of the displayed diatonic note and the displayed accidental (without needing a #t_notation_obj).
@@ -5343,7 +5359,7 @@ void mc_to_screen_approximations(t_notation_obj *r_ob, double mc, long *screen_n
 
     @remark                            If works exactly like mc_to_screen_approximations() but it doesn't neead an r_ob. For instance, it is used by [bach.mc2n].
  */
-void mc_to_screen_approximations_do(long tone_division, char accidentals_preferences, double mc, long *screen_midicents, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr);
+void mc_to_display_approximation_ET_do(long tone_division, char accidentals_preferences, double mc, long *screen_midicents, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr);
 
 
 /**    Convert midicents into the number of (diatonic) steps from the middle C. 
@@ -5468,7 +5484,7 @@ double xposition_to_ms(t_notation_obj *r_ob, double xposition, char mode);
     @param note             The note
     @return                    The midicents of the displayed note, without accidental
  */
-long note_get_screen_midicents(t_note *nt);
+long note_get_display_midicents(t_note *nt);
 
 
 /**    Obtain the accidental of the displayed note.
@@ -5490,7 +5506,7 @@ bool note_has_accidentals(t_note *nt);
     @param note             The note
     @return                    The midicents of the displayed note
  */
-double note_get_screen_midicents_with_accidental(t_note *nt);
+double note_get_display_midicents_with_accidental(t_note *nt);
 
 
 /**    Flag telling if the note pitch is user defined or not.
@@ -5515,10 +5531,10 @@ void note_set_auto_enharmonicity(t_note *nt);
     @param screen_acc       The accidental of the note
     @param also_assign_mc       Also assign midicents depending on the diatonic note values
  */
-void note_set_user_enharmonicity_from_screen_representation(t_note *nt, double screen_mc, t_rational screen_acc, char also_assign_mc = true);
+void note_set_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc, char also_assign_mc = true);
 void note_set_user_enharmonicity(t_note *nt, t_pitch pitch, char also_assign_mc = true);
 void note_set_enharmonicity(t_note *nt, t_pitch pitch); // if pitch is NaP it'll be auto, otherwise user
-void note_set_displayed_user_enharmonicity_from_screen_representation(t_note *nt, double screen_mc, t_rational screen_acc);
+void note_set_displayed_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc);
 void note_set_displayed_user_enharmonicity(t_note *nt, t_pitch pitch);
 
 void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode);
@@ -5928,16 +5944,16 @@ char is_diatonic_step_after_degree_semitone(long degree);
 double get_midicents_from_double_elem_or_notename(t_notation_obj *r_ob, t_llllelem *elem);
 
 
-/**    Retrieve some standard enharmonic possibilities for the graphical representation of a note.
-    These possibilities are stored in the #current_enharmonic_list_screenmc and #current_enharmonic_list_screenacc fields of the #t_notation_obj structure.
+/**    Retrieve some standard equal-tempered enharmonic possibilities for the graphical representation of a note.
+    These possibilities are stored in the #current_enharmonic_list_display_mc and #current_enharmonic_list_display_alter_ET fields of the #t_notation_obj structure.
     The algorithm also fills the #curr_idx pointer with the index, within the lists, of the current note representation.
     @ingroup            notation_utilities
     @param    r_ob        The notation object
     @param    note        The note
-    @param    curr_idx    Pointer which will be filled with the index of the current representation (the index is referred to the #current_enharmonic_list_screenmc and #current_enharmonic_list_screenacc arrays).
+    @param    curr_idx    Pointer which will be filled with the index of the current representation (the index is referred to the #current_enharmonic_list_display_mc and #current_enharmonic_list_display_alter_ET arrays).
                         This will be filled with -1 if the note enharmonical representation is not in the arrays. 
 */ 
-void note_get_enharmonic_possibilities(t_notation_obj *r_ob, t_note *note, long *curr_idx);
+void note_get_ET_enharmonic_possibilities(t_notation_obj *r_ob, t_note *note, long *curr_idx);
 
 
 /**    Fills a full-representation array (array of 48 #t_rational containing accidental representation for each eighttonal step) 
@@ -6394,41 +6410,29 @@ void get_playhead_ypos(t_notation_obj *r_ob, double *y1, double *y2);
 
 
 // -----------------------------------
-// TYPOGRAPHICAL
+// ACCIDENTALS
 // -----------------------------------
 
-/**    Returns the equal-tempered accidental from a t_rational.
-    @ingroup            accidentals
-    @param r_ob            The notation object
-    @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
-    @return                Accidental as e_bach_accidental
- */
-e_bach_accidental get_accidental_ET(t_notation_obj *r_ob, t_rational accidental);
-
-
-/**    Returns the unscaled top extension of an accidental, given the current <accidentals_typo_preferences> of the notation object.
-    See #e_accidentals_typo_preferences for more informatino about what the unscaled top extension is.
-    @ingroup            typographical
-    @param r_ob            The notation object
-    @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
-    @return                Unscaled top exension of the accidental
- */
-double get_accidental_uascent(t_notation_obj *r_ob, t_rational accidental); 
-
-
-/**    Returns the unscaled bottom extension of an accidental, given the current <accidentals_typo_preferences> of the notation object.
-    See #e_accidentals_typo_preferences for more informatino about what the unscaled bottom extension is.
-    @ingroup            typographical
-    @param r_ob            The notation object
-    @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
-    @return                Unscaled bottom exension of the accidental
- */
-double get_accidental_udescent(t_notation_obj *r_ob, t_rational accidental);
-
-
-//TBD
 double note_get_accidental_uascent(t_notation_obj *r_ob, t_note *note);
 double note_get_accidental_udescent(t_notation_obj *r_ob, t_note *note);
+double note_get_accidental_uwidth(t_notation_obj *r_ob, t_note *nt, char always_classical_display);
+double accidentals_get_udescent(t_notation_obj *r_ob, t_uint8 *accidentals);
+double accidentals_get_uascent(t_notation_obj *r_ob, t_uint8 *accidentals);
+double accidentals_get_uwidth(t_notation_obj *r_ob, t_uint8 *accidentals);
+void get_accidental_characters_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals);
+void note_get_accidental_as_cents(t_notation_obj *r_ob, t_note *nt, char *buf);
+void note_get_accidental_as_fraction(t_notation_obj *r_ob, t_note *nt, char *buf);
+void note_get_accidentals_unicode_chars(t_notation_obj *r_ob, t_note *nt, unicodeChar *accidental_text);
+bool note_has_accidentals(t_note *nt);
+bool note_has_no_accidentals_or_has_natural(t_note *nt);
+
+e_bach_accidental get_accidental_ET(t_notation_obj *r_ob, t_rational accidental);
+void get_accidental_characters_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals);
+void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *accidentals, int *numAccidentals);
+bool note_accidental_equals_alter_ET(t_notation_obj *r_ob, t_note *nt, t_shortRational alterET);
+
+bool accidentals_eq(t_uint8 *accidentals1, t_uint8 *accidentals2);
+void note_get_display_accidentals(t_note *nt, t_uint8 *accidentals);
 
 
 /**    Returns the unscaled width of an accidental, given the current <accidentals_typo_preferences> of the notation object.
@@ -6443,7 +6447,13 @@ double note_get_accidental_udescent(t_notation_obj *r_ob, t_note *note);
 double get_accidental_uwidth(t_notation_obj *r_ob, t_rational accidental, char always_classical_display);
 
 
-/**    Convert a number into a sequence of unicode characters. 
+// -----------------------------------
+// OTHER TYPOGRAPHICAL
+// -----------------------------------
+
+
+
+/**    Convert a number into a sequence of unicode characters.
     @ingroup                typographical
     @param r_ob                The notation object
     @param number            The number to be converted
@@ -9672,7 +9682,7 @@ char snap_tail_to_grid_for_selection(t_notation_obj *r_ob);
     @param    new_screen_midicents    The screen midicents of the note (see the <screen_midicents> field of #t_note), only used if <auto_mode> = 0 
     @param    new_screen_accidental    The screen accidental of the note (see the <screen_accidental> field of #t_note), only used if <auto_mode> = 0 
  */ 
-void enharmonically_retranscribe_note(t_notation_obj *r_ob, t_note *note, char auto_mode, long new_screen_midicents, t_rational new_screen_accidental);
+void note_retranscribe_enharmonically_ET(t_notation_obj *r_ob, t_note *note, char auto_mode, long new_screen_midicents, t_rational new_screen_accidental);
 
 
 /**    Enharmonically retranscribe the pitch of all the selected note (works exactly as enharmonically_retranscribe_note(), but for all the notes in 

@@ -1368,7 +1368,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     // ledger lines
     double ledger_lines_y[CONST_MAX_LEDGER_LINES]; 
     int num_ledger_lines = 0, i;
-    get_ledger_lines(r_ob, voice, midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(foo)), &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
+    get_ledger_lines(r_ob, voice, midicents_to_diatsteps_from_middleC(r_ob, note_get_display_midicents(foo)), &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
     for (i = 0; i < num_ledger_lines; i++)
         paint_line(g, r_ob->j_mainstaves_rgba, notehead_center_x - CONST_LEDGER_LINES_HALF_UWIDTH * small_note_ratio * r_ob->zoom_y, ledger_lines_y[i], 
                    notehead_center_x + CONST_LEDGER_LINES_HALF_UWIDTH * small_note_ratio * r_ob->zoom_y, ledger_lines_y[i], 1.);
@@ -1379,7 +1379,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     foo->notehead_resize = 1.;
     paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, mc_to_yposition_in_scale_for_notes(r_ob, foo, voice, 0.7, false), system_shift, small_note_ratio);
     note_paint_accidentals(r_ob, g, jf_smallacc, jf_text_fractions, jf_smallaccbogus, &color, foo, 
-                          get_voice_clef(r_ob, voice), mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(foo), voice), notehead_left_x, NULL, NULL);
+                          get_voice_clef(r_ob, voice), mc_to_yposition_in_scale(r_ob, note_get_display_midicents(foo), voice), notehead_left_x, NULL, NULL);
     free_chord(r_ob, ch);
     jfont_destroy_debug(jf_smallnote);
     jfont_destroy_debug(jf_smallacc);
@@ -1439,12 +1439,12 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
         *selected_breakpoint = NULL;
     
     double (*mc_to_ypos)(t_notation_obj *, double, t_voice *) = r_ob->breakpoints_have_noteheads ? mc_to_yposition_quantized : mc_to_yposition;
-    double mc_or_screen_mc = r_ob->breakpoints_have_noteheads ? curr_nt->midicents : note_get_screen_midicents(curr_nt);
+    double mc_or_screen_mc = r_ob->breakpoints_have_noteheads ? curr_nt->midicents : note_get_display_midicents(curr_nt);
         
     double start_x = curr_nt->center.x + (curr_nt->notehead_uwidth / 2. + get_notehead_durationline_start_ux_shift(r_ob, curr_nt)) * r_ob->zoom_y;
     if (r_ob->show_durations && r_ob->allow_glissandi) { // there are nontrivial breakpoints (trivial bpts are head and tail)
         t_bpt *temp = curr_nt->firstbreakpoint->next;
-        double prev_bpt_y = system_shift + mc_to_yposition(r_ob, note_get_screen_midicents(curr_nt), voice);
+        double prev_bpt_y = system_shift + mc_to_yposition(r_ob, note_get_display_midicents(curr_nt), voice);
         double prev_bpt_x = start_x;
         long end_system = -1;
         long curr_system = curr_nt->parent->system_index;
@@ -1570,7 +1570,7 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
             *selected_breakpoint = curr_nt->lastbreakpoint;
 
     } else if (r_ob->show_durations){
-        double line_y = system_shift + mc_to_yposition(r_ob, note_get_screen_midicents(curr_nt), (t_voice *) voice);
+        double line_y = system_shift + mc_to_yposition(r_ob, note_get_display_midicents(curr_nt), (t_voice *) voice);
         paint_line(g, notecolor, start_x, line_y, end_pos, line_y, r_ob->durations_line_width * r_ob->zoom_y);
         paint_line(g, tailcolor, end_pos, line_y - 2. * r_ob->zoom_y, end_pos, line_y + 2. * r_ob->zoom_y, r_ob->durations_line_width * r_ob->zoom_y);
     }
@@ -1939,23 +1939,12 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
         jfont_destroy_debug(jf_custom_noteheads);
 }
     
-// *unicodeChar accidental_text must be initialized with size CONST_MAX_ACCIDENTALS+1
-void note_get_accidentals_unicode_chars(t_notation_obj *r_ob, t_note *nt, unicodeChar *accidental_text)
-{
-    long i = 0;
-    for (; i < nt->num_accidentals && i < CONST_MAX_ACCIDENTALS; i++) {
-        if (nt->accidentals[i] >= 0 && nt->accidentals[i] < BACH_NUM_ACCIDENTALS)
-            accidental_text[i] = r_ob->accidentals_typo_preferences.unicode_characters[nt->accidentals[i]];
-        else
-            accidental_text[i] = 0;
-    }
-    accidental_text[i] = 0; // terminating 0
-}
+
 
 void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jrgba *color,
                             t_note *curr_nt, long clef, double note_y_real, double stem_x, 
                             double *acc_uascent, double *acc_udescent){
-    if (curr_nt->show_accidental)  { // Is there one or more accidentals to show??
+    if (curr_nt->show_accidentals)  { // Is there one or more accidentals to show??
         
         t_chord *curr_ch = curr_nt->parent;
         double grace_ratio = curr_ch->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.;
@@ -1973,9 +1962,9 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
             double accidentals_resize = curr_nt->accidentals_resize * grace_ratio;
 
             if (acc_uascent) 
-                *acc_uascent = get_accidental_uascent(r_ob, note_get_screen_accidental(curr_nt)) * r_ob->zoom_y * accidentals_resize;
-            if (acc_udescent) 
-                *acc_udescent = get_accidental_udescent(r_ob, note_get_screen_accidental(curr_nt)) * r_ob->zoom_y * accidentals_resize;
+                *acc_uascent = note_get_accidental_uascent(r_ob, curr_nt) * r_ob->zoom_y * accidentals_resize;
+            if (acc_udescent)
+                *acc_udescent = note_get_accidental_udescent(r_ob, curr_nt) * r_ob->zoom_y * accidentals_resize;
             if (acc_uascent) {
                 acc_top = note_y_real - 0.7 * *acc_uascent;
                 if (acc_top < curr_ch->topmost_y) 
@@ -2023,31 +2012,11 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
             }
             
         } else if (r_ob->accidentals_display_type == k_ACCIDENTALS_FRACTION || r_ob->accidentals_display_type == k_ACCIDENTALS_UNREDUCED_FRACTION) { // show fraction
-            int num, den;
-            char frac_text[20];    
-            double width, height, left_bottom_corner_x, left_bottom_corner_y;
             t_jfont *jf_custom_fractions = jf_text_fractions;
-            
-            if (curr_nt->pitch_displayed.isPureET()) {
-                num = rat_num(note_get_screen_accidental_ordinary(curr_nt));
-                den = rat_den(note_get_screen_accidental_ordinary(curr_nt));
-                if (r_ob->accidentals_display_type == k_ACCIDENTALS_UNREDUCED_FRACTION && den < r_ob->tone_division) {
-                    int factor = r_ob->tone_division / den;
-                    den *= factor;
-                    num *= factor;
-                }
-                if (num >= 0)
-                    snprintf_zero(frac_text, 20, "+%d/%d", num, den);
-                else
-                    snprintf_zero(frac_text, 20, "-%d/%d", -num, den);
-            } else if (curr_nt->pitch_displayed.isPureJI()) {
-                t_rational comma = curr_nt->pitch_displayed.getHEJICommasAsRational();
-                snprintf_zero(frac_text, 20, "%d/%d", comma.r_num, comma.r_den);
-            } else {
-                t_rational comma = curr_nt->pitch_displayed.getHEJICommasAsRational();
-                t_rational alterET = curr_nt->pitch_displayed.getAlterET();
-                snprintf_zero(frac_text, 20, "%d/%d%s%d/%dst", comma.r_num, comma.r_den, alterET > 0 ? "+" : "-", abs(alterET.r_num), alterET.r_den); // TODO: improve!
-            }
+            double width, height, left_bottom_corner_x, left_bottom_corner_y;
+            char frac_text[20];
+
+            note_get_accidental_as_fraction(r_ob, curr_nt, frac_text);
             
             if (curr_ch->is_grace_chord) 
                 jf_custom_fractions = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_TEXT_FRACTIONS_PT * r_ob->zoom_y);
@@ -2070,10 +2039,7 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
             double width, height, left_bottom_corner_x, left_bottom_corner_y;
             t_jfont *jf_custom_fractions = jf_text_fractions;
 
-            if (floatacc >= 0) 
-                snprintf_zero(cents_text, 20, "+%dc", (int)floatacc); 
-            else 
-                snprintf_zero(cents_text, 20, "-%dc", (int)(-floatacc)); 
+            note_get_accidental_as_cents(r_ob, curr_nt, cents_text);
             
             if (curr_ch->is_grace_chord) 
                 jf_custom_fractions = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_TEXT_FRACTIONS_PT * r_ob->zoom_y);
@@ -3721,7 +3687,7 @@ void update_all_accidentals_for_voice_if_needed(t_notation_obj *r_ob, t_voice *v
                 for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
                     char changed = false;
                     for (note = chord->firstnote; note; note = note->next) {
-                        note->show_accidental = true;
+                        note->show_accidentals = true;
                         changed = true;
                     }
                     chord->need_recompute_parameters |= changed;
@@ -5477,7 +5443,7 @@ double scaleposition_to_uyposition(t_notation_obj *r_ob, long scaleposition, t_v
 // *note is only needed if notehead is custom
 double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize, char ignore_custom_noteheads)
 { // discretized to the possible locations of the notehead ON the staff line or BETWEEN two staff lines
-    return mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), v_ob) + notehead_resize * (-30. - get_notehead_uy_shift(r_ob, note, ignore_custom_noteheads)) * r_ob->zoom_y;
+    return mc_to_yposition_in_scale(r_ob, note_get_display_midicents(note), v_ob) + notehead_resize * (-30. - get_notehead_uy_shift(r_ob, note, ignore_custom_noteheads)) * r_ob->zoom_y;
 }
 
 
@@ -5514,7 +5480,7 @@ double mc_to_yposition_quantized(t_notation_obj *r_ob, double mc, t_voice *v_ob)
 {
     long screen_mc;
     t_rational screen_acc;
-    mc_to_screen_approximations(r_ob, mc, &screen_mc, &screen_acc, v_ob->acc_pattern, v_ob->full_repr);    // automatic approximation
+    mc_to_display_approximation_ET(r_ob, mc, &screen_mc, &screen_acc, v_ob->acc_pattern, v_ob->full_repr);    // automatic approximation
     return mc_to_yposition_in_scale(r_ob, screen_mc, v_ob);
 }
 
@@ -5593,11 +5559,11 @@ void parse_fullaccpattern_to_voices(t_notation_obj *r_ob)
 }
 
 
-void mc_to_screen_approximations(t_notation_obj *r_ob, double mc, long *screen_note, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr){
-    mc_to_screen_approximations_do(r_ob->tone_division, r_ob->accidentals_preferences, mc, screen_note, screen_accidental, key_acc_pattern, full_repr);
+void mc_to_display_approximation_ET(t_notation_obj *r_ob, double mc, long *screen_note, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr){
+    mc_to_display_approximation_ET_do(r_ob->tone_division, r_ob->accidentals_preferences, mc, screen_note, screen_accidental, key_acc_pattern, full_repr);
 }
 
-void mc_to_screen_approximations_do(long tone_division, char accidentals_preferences, double mc, long *screen_note, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr){
+void mc_to_display_approximation_ET_do(long tone_division, char accidentals_preferences, double mc, long *screen_note, t_rational *screen_accidental, t_rational *key_acc_pattern, t_rational *full_repr){
     
     // will create an ET pitch
     t_pitch pitch = t_pitch::fromMC(mc, tone_division, (e_accidentals_preferences)accidentals_preferences, key_acc_pattern, full_repr);
@@ -10597,14 +10563,14 @@ t_note *build_note_from_ac_av(t_notation_obj *r_ob, long argc, double *argv){
     note->draggingvelocity = this_velocity;
     
     if (this_def_accidental == k_ACCIDENTALS_USER) {
-        note_set_user_enharmonicity_from_screen_representation(note, this_midicents - this_accidental * 200, this_accidental);
+        note_set_user_enharmonicity_from_display_representation(note, this_midicents - this_accidental * 200, this_accidental);
     } else {
         note->pitch_original = t_pitch::NaP;
         note_set_auto_enharmonicity(note);
     }
     note->pitch_displayed = note->pitch_original; // just for now
     
-    note->show_accidental = true;
+    note->show_accidentals = true;
     note->tie_to = NULL;
     note->tie_from = NULL;
     note->tie_direction = 0;
@@ -11837,318 +11803,8 @@ long midicents_to_diatsteps_from_C0(t_notation_obj *r_ob, long midicents)
 }
 
 
-e_bach_accidental get_accidental_ET(t_notation_obj *r_ob, t_rational accidental)
-{
-    if (rat_long_cmp(accidental, -1) <= 0)
-        return BACH_ACCIDENTAL_DOUBLEFLAT;
-    else if (rat_long_cmp(accidental, 1) >= 0)
-        return BACH_ACCIDENTAL_DOUBLESHARP;
-    else {
-        if ((r_ob->tone_division == 2) && (r_ob->accidentals_typo_preferences.et_dyadic_depth >= 2)) { // semitone division
-            t_rational div = rat_long_prod(accidental,2);
-            if (div.r_den == 1) {
-                switch (div.r_num) {
-                    case -2: return BACH_ACCIDENTAL_DOUBLEFLAT;
-                    case -1: return BACH_ACCIDENTAL_FLAT;
-                    case 0: return BACH_ACCIDENTAL_NATURAL;
-                    case 1: return BACH_ACCIDENTAL_SHARP;
-                    case 2: return BACH_ACCIDENTAL_DOUBLESHARP;
-                    default: return BACH_ACCIDENTAL_BOGUS;
-                }
-            } else
-                return BACH_ACCIDENTAL_BOGUS; // will be  mapped to bogus character!
-        } else if ((r_ob->tone_division == 4) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=4)) { // quartertone division
-            t_rational div = rat_long_prod(accidental,4);
-            if (div.r_den == 1) {
-                switch (div.r_num) {
-                    case -4: return BACH_ACCIDENTAL_DOUBLEFLAT;
-                    case -3: return BACH_ACCIDENTAL_THREEQUARTERFLAT;
-                    case -2: return BACH_ACCIDENTAL_FLAT;
-                    case -1: return BACH_ACCIDENTAL_QUARTERFLAT;
-                    case 0: return BACH_ACCIDENTAL_NATURAL;
-                    case 1: return BACH_ACCIDENTAL_QUARTERSHARP;
-                    case 2: return BACH_ACCIDENTAL_SHARP;
-                    case 3: return BACH_ACCIDENTAL_THREEQUARTERSHARP;
-                    case 4: return BACH_ACCIDENTAL_DOUBLESHARP;
-                    default: return BACH_ACCIDENTAL_BOGUS;
-                }
-            } else
-                return BACH_ACCIDENTAL_BOGUS;
-        } else if ((r_ob->tone_division == 8) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=8)) { // eighttone division
-            t_rational div = rat_long_prod(accidental,8);
-            if (div.r_den == 1) {
-                switch (div.r_num) {
-                    case -8: return BACH_ACCIDENTAL_DOUBLEFLAT;
-                    case -7: return BACH_ACCIDENTAL_THREEQUARTERFLAT_ARROW_DOWN;
-                    case -6: return BACH_ACCIDENTAL_THREEQUARTERFLAT;
-                    case -5: return BACH_ACCIDENTAL_FLAT_ARROW_DOWN;
-                    case -4: return BACH_ACCIDENTAL_FLAT;
-                    case -3: return BACH_ACCIDENTAL_QUARTERFLAT_ARROW_DOWN;
-                    case -2: return BACH_ACCIDENTAL_QUARTERFLAT;
-                    case -1: return BACH_ACCIDENTAL_NATURAL_ARROW_DOWN;
-                    case 0: return BACH_ACCIDENTAL_NATURAL;
-                    case 1: return BACH_ACCIDENTAL_NATURAL_ARROW_UP;
-                    case 2: return BACH_ACCIDENTAL_QUARTERSHARP;
-                    case 3: return BACH_ACCIDENTAL_QUARTERSHARP_ARROW_UP;
-                    case 4: return BACH_ACCIDENTAL_SHARP;
-                    case 5: return BACH_ACCIDENTAL_SHARP_ARROW_UP;
-                    case 6: return BACH_ACCIDENTAL_THREEQUARTERSHARP;
-                    case 7: return BACH_ACCIDENTAL_THREEQUARTERSHARP_ARROW_UP;
-                    case 8: return BACH_ACCIDENTAL_DOUBLESHARP;
-                    default: return BACH_ACCIDENTAL_BOGUS;
-                }
-            } else
-                return BACH_ACCIDENTAL_BOGUS;
-        } else
-            return BACH_ACCIDENTAL_BOGUS;
-    }
-}
-
-/*
-unicodeChar get_accidental_character(t_notation_obj *r_ob, t_rational accidental)
-{
-    if (rat_long_cmp(accidental, -1) <= 0) 
-        return r_ob->accidentals_typo_preferences.unicode_binary_character[0];
-    else if (rat_long_cmp(accidental, 1) >= 0) 
-        return r_ob->accidentals_typo_preferences.unicode_binary_character[16];
-    else {
-        if ((r_ob->tone_division == 2) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=2)) { // semitone division
-            t_rational div = rat_long_prod(accidental,2);
-            if (div.r_den == 1)
-                return r_ob->accidentals_typo_preferences.unicode_binary_character[8 + 4 * div.r_num];
-            else
-                return 0; // will be  mapped to bogus character!
-        } else if ((r_ob->tone_division == 4) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=4)) { // quartertone division
-            t_rational div = rat_long_prod(accidental,4);
-            if (div.r_den == 1)
-                return r_ob->accidentals_typo_preferences.unicode_binary_character[8 + 2 * div.r_num];
-            else
-                return 0;
-        } else if ((r_ob->tone_division == 8) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=8)) { // eighttone division
-            t_rational div = rat_long_prod(accidental,8);
-            if (div.r_den == 1)
-                return r_ob->accidentals_typo_preferences.unicode_binary_character[8 + div.r_num];
-            else
-                return 0;
-        } else 
-            return 0;
-    }
-}
-*/
 
 
-double get_accidental_uascent(t_notation_obj *r_ob, e_bach_accidental acc)
-{
-//returns the accidental_uascent in the BASE CASE (i.e. for the base_pt, e.g. Maestro 24, Sonora 40, ...)
-
-    if (r_ob->accidentals_display_type == k_ACCIDENTALS_NO_DISPLAY)
-        return 0;
-    else if (r_ob->accidentals_display_type == k_ACCIDENTALS_CLASSICAL) { // classical
-        return r_ob->accidentals_typo_preferences.uascent[acc];
-/*        // if the accidental is x, it's very tiny, so the top extension would be the top extension of a monesis or sharp or triesis
-        if (rat_long_cmp(accidental, 1) >= 0) {
-            t_rational ratmod = rat_long_mod(accidental, 1, true);
-            if (rat_long_cmp(ratmod, 0) == 0)
-                accidental = long2rat(1);
-            else
-                accidental = ratmod; 
-        }
-        // E converso, if the accidental is bb, that doesn't bother us that much, since its top extension would always be the same as d, or b, or db
-        
-        if (rat_long_cmp(accidental, -1) <= 0)
-            return r_ob->accidentals_typo_preferences.binary_uascent[0];
-        else if (rat_long_cmp(accidental, 1) >= 0)    
-            return r_ob->accidentals_typo_preferences.binary_uascent[16];
-        else {
-            if ((r_ob->tone_division == 2) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=2)) { // semitone division
-                t_rational div = rat_long_prod(accidental,2);
-                if (div.r_den == 1)
-                    return r_ob->accidentals_typo_preferences.binary_uascent[8 + 4 * div.r_num];
-                else
-                    return r_ob->accidentals_typo_preferences.bogus_uascent;
-            } else if ((r_ob->tone_division == 4) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=4)) { // quartertone division
-                t_rational div = rat_long_prod(accidental,4);
-                if (div.r_den == 1)
-                    return r_ob->accidentals_typo_preferences.binary_uascent[8 + 2 * div.r_num];
-                else
-                    return r_ob->accidentals_typo_preferences.bogus_uascent;
-            } else if ((r_ob->tone_division == 8) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=8)) { // eighttone division
-                t_rational div = rat_long_prod(accidental,8);
-                if (div.r_den == 1)
-                    return r_ob->accidentals_typo_preferences.binary_uascent[8 + div.r_num];
-                else
-                    return r_ob->accidentals_typo_preferences.bogus_uascent;
-            } else
-                return r_ob->accidentals_typo_preferences.bogus_uascent;
-        }
-*/
-    } else if (r_ob->accidentals_display_type == k_ACCIDENTALS_FRACTION || r_ob->accidentals_display_type == k_ACCIDENTALS_UNREDUCED_FRACTION) // fractions
-        return 2.5;
-    else if (r_ob->accidentals_display_type == k_ACCIDENTALS_CENTS) // cents
-        return 2.5;
-    else
-        return 0;
-}
-
-double note_get_accidental_uascent(t_notation_obj *r_ob, t_note *note)
-{
-    double maxuascent = 0;
-    for (long i = 0; i < note->num_accidentals; i++) {
-        double uascent = get_accidental_uascent(r_ob, note->pitch_displayed.p_alterET);
-        if (uascent > maxuascent)
-            maxuascent = uascent;
-    }
-    return maxuascent * (note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.);
-}
-
-double get_accidental_udescent(t_notation_obj *r_ob, e_bach_accidental acc)
-{
-//returns the accidental_udescent in the BASE CASE (i.e. for the base_pt, e.g. Maestro 24, Sonora 40, ...)
-
-    if (r_ob->accidentals_display_type == k_ACCIDENTALS_NO_DISPLAY)
-        return 0;
-    else if (r_ob->accidentals_display_type == k_ACCIDENTALS_CLASSICAL) { // classical
-        return r_ob->accidentals_typo_preferences.udescent[acc];
-/*        // if the accidental is x, it's very tiny, so the top extension would be the top extension of a monesis or sharp or triesis
-        if (rat_long_cmp(accidental, 1) >= 0) {
-            t_rational ratmod = rat_long_mod(accidental, 1, true);
-            if (rat_long_cmp(ratmod, 0) == 0)
-                accidental = long2rat(1);
-            else
-                accidental = ratmod; 
-        }
-        // E converso, if the accidental is bb, that doesn't bother us that much, since its top extension would always be the same as d, or b, or db
-        
-        if (rat_long_cmp(accidental, -1) <= 0)
-            return r_ob->accidentals_typo_preferences.binary_udescent[0];
-        else if (rat_long_cmp(accidental, 1) >= 0)    
-            return r_ob->accidentals_typo_preferences.binary_udescent[16];
-        else {
-            if ((r_ob->tone_division == 2) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=2)) { // semitone division
-                t_rational div = rat_long_prod(accidental,2);
-                if (div.r_den == 1)
-                    return r_ob->accidentals_typo_preferences.binary_udescent[8 + 4 * div.r_num];
-                else
-                    return r_ob->accidentals_typo_preferences.bogus_udescent;
-            } else if ((r_ob->tone_division == 4) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=4)) { // quartertone division
-                t_rational div = rat_long_prod(accidental,4);
-                if (div.r_den == 1)
-                    return r_ob->accidentals_typo_preferences.binary_udescent[8 + 2 * div.r_num];
-                else
-                    return r_ob->accidentals_typo_preferences.bogus_udescent;
-            } else if ((r_ob->tone_division == 8) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=8)) { // eighttone division
-                t_rational div = rat_long_prod(accidental,8);
-                if (div.r_den == 1)
-                    return r_ob->accidentals_typo_preferences.binary_udescent[8 + div.r_num];
-                else
-                    return r_ob->accidentals_typo_preferences.bogus_udescent;
-            } else
-                return r_ob->accidentals_typo_preferences.bogus_udescent;
-        }
-*/
-    } else if (r_ob->accidentals_display_type == k_ACCIDENTALS_FRACTION || r_ob->accidentals_display_type == k_ACCIDENTALS_UNREDUCED_FRACTION) // fractions
-        return 3.5;
-    else if (r_ob->accidentals_display_type == k_ACCIDENTALS_CENTS) // cents
-        return 3.5;
-    else
-        return 0;
-}
-
-
-double note_get_accidental_udescent(t_notation_obj *r_ob, t_note *note)
-{
-    double maxudescent = 0;
-    for (long i = 0; i < note->num_accidentals; i++) {
-        double udescent = get_accidental_udescent(r_ob, note->pitch_displayed.p_alterET);
-        if (udescent > maxudescent)
-            maxudescent = udescent;
-    }
-    return maxudescent * (note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.);
-}
-
-double get_accidental_uwidth(t_notation_obj *r_ob, e_bach_accidental acc, char always_classical_display){
-//returns the accidental unscaled width in the BASE CASE (i.e. for the base_pt, e.g. Maestro 24, Sonora 40, ...)
-    char accidentals_display_type = always_classical_display ? k_ACCIDENTALS_CLASSICAL : r_ob->accidentals_display_type;
-    
-    if (accidentals_display_type == k_ACCIDENTALS_NO_DISPLAY)
-        return 0;
-    else if (accidentals_display_type == k_ACCIDENTALS_CLASSICAL) { // classical
-        return r_ob->accidentals_typo_preferences.uwidth[acc];
-/*        // if the accidental is x, it's very tiny, so the top extension would be the top extension of a monesis or sharp or triesis
-        if (rat_long_cmp(accidental, 1) >= 0) {
-            t_rational ratmod = rat_long_mod(accidental, 1, true);
-            if (rat_long_cmp(ratmod, 0) == 0)
-                accidental = long2rat(1);
-            else
-                accidental = ratmod; 
-        }
-        // E converso, if the accidental is bb, that doesn't bother us that much, since its top extension would always be the same as d, or b, or db
-        
-        if (rat_long_cmp(accidental, -1) <= 0)
-            return r_ob->accidentals_typo_preferences.binary_uwidth[0];
-        else if (rat_long_cmp(accidental, 1) >= 0)    
-            return r_ob->accidentals_typo_preferences.binary_uwidth[16];
-        else {
-            if ((r_ob->tone_division == 2) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=2)) { // semitone division
-                t_rational div = rat_long_prod(accidental,2);
-                if (div.r_den == 1)
-                    return r_ob->accidentals_typo_preferences.binary_uwidth[8 + 4 * div.r_num];
-                else
-                    return r_ob->accidentals_typo_preferences.bogus_uwidth;
-            } else if ((r_ob->tone_division == 4) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=4)) { // quartertone division
-                t_rational div = rat_long_prod(accidental,4);
-                if (div.r_den == 1)
-                    return r_ob->accidentals_typo_preferences.binary_uwidth[8 + 2 * div.r_num];
-                else
-                    return r_ob->accidentals_typo_preferences.bogus_uwidth;
-            } else if ((r_ob->tone_division == 8) && (r_ob->accidentals_typo_preferences.et_dyadic_depth>=8)) { // eighttone division
-                t_rational div = rat_long_prod(accidental,8);
-                if (div.r_den == 1)
-                    return r_ob->accidentals_typo_preferences.binary_uwidth[8 + div.r_num];
-                else
-                    return r_ob->accidentals_typo_preferences.bogus_uwidth;
-            } else
-                return r_ob->accidentals_typo_preferences.bogus_uwidth;
-        }*/
-
-    } else if ((accidentals_display_type == k_ACCIDENTALS_FRACTION) || (accidentals_display_type == k_ACCIDENTALS_UNREDUCED_FRACTION)) { // fractions
-        t_jfont *jf_text_fractions;
-        int num, den;
-        char frac_text[20];
-        double width, height;
-        jf_text_fractions = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_TEXT_FRACTIONS_PT);
-        num = rat_num(accidental);
-        den = rat_den(accidental);
-        if ((r_ob->accidentals_display_type == k_ACCIDENTALS_UNREDUCED_FRACTION) && (den < r_ob->tone_division)) {
-            int factor = r_ob->tone_division / den;
-            den *= factor; 
-            num *= factor;
-        }     
-        if (num > 0) 
-            snprintf_zero(frac_text, 20, "+%d/%d", num, den);
-        else
-            snprintf_zero(frac_text, 20, "-%d/%d", -num, den);
-        jfont_text_measure(jf_text_fractions, frac_text, &width, &height); // we get how much space do we need
-        jfont_destroy_debug(jf_text_fractions);
-        return width + CONST_WIDTH_ADD_FRACTIONS;
-    } else if (accidentals_display_type == k_ACCIDENTALS_CENTS) { // cents
-        double floatacc, width, height;
-        char cents_text[20];    
-        t_jfont *jf_text_fractions;
-        jf_text_fractions = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_TEXT_FRACTIONS_PT);
-        floatacc = 200. * rat2double(accidental);
-        
-        if (floatacc > 0) 
-            snprintf_zero(cents_text, 20, "+%dc", (int)floatacc); 
-        else 
-            snprintf_zero(cents_text, 20, "-%dc", (int)(-floatacc)); 
-        
-        jfont_text_measure(jf_text_fractions, cents_text, &width, &height); // we get how much space do we need
-        jfont_destroy_debug(jf_text_fractions);
-        return width + CONST_WIDTH_ADD_FRACTIONS;
-    } else
-        return 0;
-}
 
 
 void recompute_measure_r_onsets(t_notation_obj *r_ob, t_measure *measure) {
@@ -12363,7 +12019,7 @@ double rest_get_nonfloating_yposition(t_notation_obj *r_ob, t_chord *rest, doubl
         t_note *tmp_nt; long count = 0;
         long chosen_staff_middle_mc;
         for (tmp_nt = chord_which_gives_the_position->firstnote; tmp_nt; tmp_nt = tmp_nt->next) {
-            screen_note_average_mc += note_get_screen_midicents(tmp_nt);
+            screen_note_average_mc += note_get_display_midicents(tmp_nt);
             count++;
         }
         if (count > 0) 
@@ -12546,7 +12202,7 @@ void compute_note_approximations_for_measure(t_notation_obj *r_ob, t_measure *me
         for (temp_nt = temp_ch->firstnote; temp_nt; temp_nt = temp_nt->next) {
             note_compute_approximation(r_ob, temp_nt);
             if (also_put_show_accidental_to_false)
-                temp_nt->show_accidental = false;
+                temp_nt->show_accidentals = false;
         }
 }
 
@@ -12555,7 +12211,7 @@ void compute_note_approximations_for_chord(t_notation_obj *r_ob, t_chord *chord,
     for (temp_nt = chord->firstnote; temp_nt; temp_nt = temp_nt->next) {
         note_compute_approximation(r_ob, temp_nt);
         if (also_put_show_accidental_to_false)
-            temp_nt->show_accidental = false;
+            temp_nt->show_accidentals = false;
     }
 }
 
@@ -12565,7 +12221,6 @@ void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure) 
     char key = measure->voiceparent->v_ob.key;
     t_rational *acc_pattern = measure->voiceparent->v_ob.acc_pattern;
     long curr_midicents, ds; 
-    t_rational curr_accidental = long2rat(0); 
     t_chord *curr_parent = NULL;
     long clef = get_voice_clef(r_ob, (t_voice *)measure->voiceparent);
     
@@ -12586,23 +12241,23 @@ void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure) 
                 long count_for_octave_cautionary_acc = 0; 
                 char already_done_octave_cautionary_accidental = false;
                 char already_postponed_accidental_on_next_untied_note = true;
-                curr_midicents = note_get_screen_midicents(temp_nt);
+                curr_midicents = note_get_display_midicents(temp_nt);
                 ds = midicents2diatonicstep(curr_midicents);
                 // validating this note (first note within the position)
                 
                 if (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) {
-                    temp_nt->show_accidental = true;
+                    temp_nt->show_accidentals = true;
                     
-                } else if (ds < 0 || (ds >= 0 && rat_rat_cmp(acc_pattern[ds], note_get_screen_accidental(temp_nt)) == 0)) { // the note IS in the scale
+                } else if (ds < 0 || (ds >= 0 && note_accidental_equals_alter_ET(r_ob, temp_nt, acc_pattern[ds]))) { // the note IS in the scale
 
                     if (note_has_accidentals(temp_nt) &&
                         (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS)) {
                         // we did say ALWAYS to accidentals show
 
-                        temp_nt->show_accidental = true;
+                        temp_nt->show_accidentals = true;
                     
                     } else {
-                        temp_nt->show_accidental = false;
+                        temp_nt->show_accidentals = false;
                         
                         if (r_ob->cautionary_accidentals > 0 && !temp_nt->tie_from) { // cautionary accidentals?
                             long j; t_chord *ch = temp_nt->parent;
@@ -12613,35 +12268,36 @@ void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure) 
                                 if (ch) {
                                     t_note *nt = ch->firstnote;
                                     for (nt = ch->firstnote; nt; nt = nt->next){
-                                        long ntds = midicents2diatonicstep(note_get_screen_midicents(nt));
-                                        if (ntds >=0 && rat_rat_cmp(acc_pattern[ntds], note_get_screen_accidental(nt)) != 0) {
-                                            if ((r_ob->cautionary_accidentals == 1 && note_get_screen_midicents(nt) == note_get_screen_midicents(temp_nt)) ||
-                                                (r_ob->cautionary_accidentals == 2 && (note_get_screen_midicents(nt) - note_get_screen_midicents(temp_nt)) % 1200 == 0)){
+                                        long ntds = midicents2diatonicstep(note_get_display_midicents(nt));
+                                        if (ntds >=0 && !note_accidental_equals_alter_ET(r_ob, nt, acc_pattern[ntds])) {
+                                            if ((r_ob->cautionary_accidentals == 1 && note_get_display_midicents(nt) == note_get_display_midicents(temp_nt)) ||
+                                                (r_ob->cautionary_accidentals == 2 && (note_get_display_midicents(nt) - note_get_display_midicents(temp_nt)) % 1200 == 0)){
                                                 
-                                                temp_nt->show_accidental = true;
+                                                temp_nt->show_accidentals = true;
                                                 break;
                                             }
                                         }
                                     }
-                                    if (temp_nt->show_accidental) break;
+                                    if (temp_nt->show_accidentals) break;
                                 }
                             }
                         }
-                        if (temp_nt->show_accidental == true && (r_ob->show_accidentals_preferences == k_SHOW_ACC_NONE || // never show
+                        if (temp_nt->show_accidentals == true && (r_ob->show_accidentals_preferences == k_SHOW_ACC_NONE || // never show
                                                                  (temp_nt->tie_from && r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_NEVER) ||  // tied note (and we don't show accidentals upon ties)
                                                                  (temp_nt->tie_from && temp_nt->parent->prev && r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING)))  // tied note inside the measure (and we only show accidentals upon ties at the beginning of the measure)
-                            temp_nt->show_accidental = false;
+                            temp_nt->show_accidentals = false;
                     }
                     
                 } else if ((temp_nt->tie_from && r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_NEVER) || // tied note (and we don't show accidentals upon ties)
                            (temp_nt->tie_from && temp_nt->parent->prev && r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING)) { // tied note inside the measure (and we only show accidentals upon ties at the beginning of the measure): fairly unlikely, however, for the first note!!!
-                    temp_nt->show_accidental = false;
+                    temp_nt->show_accidentals = false;
                     already_postponed_accidental_on_next_untied_note = false;
 
                 } else if (r_ob->show_accidentals_preferences != k_SHOW_ACC_NONE) { // if we didn't say "never" to show accidentals
-                    temp_nt->show_accidental = true;
+                    temp_nt->show_accidentals = true;
                 }
-                curr_accidental = note_get_screen_accidental(temp_nt);
+                t_uint8 curr_accidentals[CONST_MAX_ACCIDENTALS+1];
+                note_get_display_accidentals(temp_nt, curr_accidentals);
                 curr_parent = temp_nt->parent;
                 repeat_base = curr_parent;
                 temp_nt->r_it.flags = (e_bach_internal_notation_flags) (temp_nt->r_it.flags & ~k_FLAG_VALIDATEACCIDENTALS);
@@ -12649,68 +12305,69 @@ void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure) 
                 temp_ch2 = temp_ch;
                 while (temp_ch2){
                     temp_nt2 = (temp_ch2 == temp_ch) ? temp_nt->next : temp_ch2->firstnote;
+                    bool temp_nt2_has_no_acc_or_has_natural = note_has_no_accidentals_or_has_natural(temp_nt2);
                     while (temp_nt2) {
-                        char cmp = rat_rat_cmp(curr_accidental, note_get_screen_accidental(temp_nt2));
-                        if ((temp_nt2->r_it.flags & k_FLAG_VALIDATEACCIDENTALS) && (note_get_screen_midicents(temp_nt2) == curr_midicents)) {
+                        bool cmp = accidentals_eq(curr_accidentals, temp_nt2->accidentals);
+                        if ((temp_nt2->r_it.flags & k_FLAG_VALIDATEACCIDENTALS) && (note_get_display_midicents(temp_nt2) == curr_midicents)) {
                             already_done_octave_cautionary_accidental = false;
                             if (((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL)) ||
-                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (cmp != 0 || note_get_screen_accidental(temp_nt2).r_num != 0)) || // untied, need to show all accidentals, there's an accidental
-                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && (note_get_screen_accidental(temp_nt2).r_num != 0)) || // untied, need to show all accidentals (no annulations), there's an accidental
+                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (!cmp || !temp_nt2_has_no_acc_or_has_natural)) || // untied, need to show all accidentals, there's an accidental
+                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && !temp_nt2_has_no_acc_or_has_natural) || // untied, need to show all accidentals (no annulations), there's an accidental
 //                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION) && curr_parent && (temp_nt2->parent != curr_parent->next) && (note_get_screen_accidental(temp_nt2).r_num != 0)) || // untied, need to show all accidentals (no repetition), chords are not near, there's an accidental
-                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION) && (note_get_screen_accidental(temp_nt2).r_num != 0) && (cmp != 0 || repeat_base != temp_nt2->parent->prev)) || // untied, need to show all accidentals (no repetition), chords are not near, there's an accidental
-                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (cmp != 0) && (note_get_screen_accidental(temp_nt2).r_num == 0)) || // untied, need to show all accidentals, there's a return to the natural
-                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION) && (cmp != 0) && (note_get_screen_accidental(temp_nt2).r_num == 0)) || // untied, need to show all accidentals (no repetition), chords are not near, there's a return to the natural
-                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_CLASSICAL) && (cmp != 0)) || // untied, classical accidentals, accidental has changed (no matter how)
+                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION) && !temp_nt2_has_no_acc_or_has_natural && (!cmp || repeat_base != temp_nt2->parent->prev)) || // untied, need to show all accidentals (no repetition), chords are not near, there's an accidental
+                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && !cmp && temp_nt2_has_no_acc_or_has_natural) || // untied, need to show all accidentals, there's a return to the natural
+                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION) && (cmp != 0) && temp_nt2_has_no_acc_or_has_natural) || // untied, need to show all accidentals (no repetition), chords are not near, there's a return to the natural
+                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_CLASSICAL) && !cmp) || // untied, classical accidentals, accidental has changed (no matter how)
                                 ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_CLASSICAL) && !already_postponed_accidental_on_next_untied_note &&
-                                    !(cmp == 0 && key != 0 && ds >= 0 && rat_rat_cmp(acc_pattern[ds], note_get_screen_accidental(temp_nt)) == 0))) { // prev note was tied so we gotta put the accidental
-                                temp_nt2->show_accidental = true;
+                                    !(cmp && key != 0 && ds >= 0 && note_accidental_equals_alter_ET(r_ob, temp_nt, acc_pattern[ds])))) { // prev note was tied so we gotta put the accidental
+                                temp_nt2->show_accidentals = true;
                                 already_done_octave_cautionary_accidental = false;
                                 count_for_octave_cautionary_acc = 0;
                                 temp_nt2->r_it.flags = (e_bach_internal_notation_flags) (temp_nt2->r_it.flags & ~k_FLAG_VALIDATEACCIDENTALS);
-                                curr_accidental = note_get_screen_accidental(temp_nt2);
+                                note_get_display_accidentals(temp_nt2, curr_accidentals);
                                 curr_parent = temp_nt2->parent;
                                 if (!already_postponed_accidental_on_next_untied_note) already_postponed_accidental_on_next_untied_note = true;
-                            } else if  (((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && (note_get_screen_accidental(temp_nt2).r_num != 0)) || // tied, need to show all accidentals
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && (note_get_screen_accidental(temp_nt2).r_num != 0)) ||
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && (note_get_screen_accidental(temp_nt2).r_num != 0)) ||
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && (note_get_screen_accidental(temp_nt2).r_num != 0)) || // these three should NEVER be the case (beginning of the measure?!? that's not the first position-note!)
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && (note_get_screen_accidental(temp_nt2).r_num != 0)) ||
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && (note_get_screen_accidental(temp_nt2).r_num != 0)) ||
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_CLASSICAL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && (note_get_screen_accidental(temp_nt2).r_num != 0))) {
-                                temp_nt2->show_accidental = true;
+                            } else if  (((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && !temp_nt2_has_no_acc_or_has_natural) || // tied, need to show all accidentals
+                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && !temp_nt2_has_no_acc_or_has_natural) ||
+                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && !temp_nt2_has_no_acc_or_has_natural) ||
+                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural) || // these three should NEVER be the case (beginning of the measure?!? that's not the first position-note!)
+                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural) ||
+                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural) ||
+                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_CLASSICAL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural)) {
+                                temp_nt2->show_accidentals = true;
                                 already_done_octave_cautionary_accidental = false;
                                 count_for_octave_cautionary_acc = 0;
                                 temp_nt2->r_it.flags = (e_bach_internal_notation_flags) (temp_nt2->r_it.flags & ~k_FLAG_VALIDATEACCIDENTALS);
-                                curr_accidental = note_get_screen_accidental(temp_nt2);
+                                note_get_display_accidentals(temp_nt2, curr_accidentals);
                                 curr_parent = temp_nt2->parent;
                             } else {
                                 temp_nt2->r_it.flags = (e_bach_internal_notation_flags) (temp_nt2->r_it.flags & ~k_FLAG_VALIDATEACCIDENTALS);
-                                temp_nt2->show_accidental = false;
+                                temp_nt2->show_accidentals = false;
                             }
                             repeat_base = temp_nt2->parent;
                         }
 
                         // need to reset things for cautionary accidentals?
-                        if ((r_ob->cautionary_accidentals == 2) && ((note_get_screen_midicents(temp_nt2) - curr_midicents) % 1200 == 0) &&
-                            (note_get_screen_accidental(temp_nt2).r_num == 0) && (curr_accidental.r_num != 0) && (count_for_octave_cautionary_acc < r_ob->cautionary_accidentals_decay)
+                        if ((r_ob->cautionary_accidentals == 2) && ((note_get_display_midicents(temp_nt2) - curr_midicents) % 1200 == 0) &&
+                            temp_nt2_has_no_acc_or_has_natural && !(curr_accidentals[0] == BACH_ACCIDENTAL_NATURAL || curr_accidentals[0] == BACH_ACCIDENTAL_NONE) && (count_for_octave_cautionary_acc < r_ob->cautionary_accidentals_decay)
                             && (!already_done_octave_cautionary_accidental) && (temp_nt2->r_it.flags & ~k_FLAG_VALIDATEACCIDENTALS))
                             already_done_octave_cautionary_accidental = true;
-                        else if ((r_ob->cautionary_accidentals >= 1) && (note_get_screen_midicents(temp_nt2) == curr_midicents) &&
-                            (note_get_screen_accidental(temp_nt2).r_num != 0) && (cmp == 0) &&
+                        else if ((r_ob->cautionary_accidentals >= 1) && (note_get_display_midicents(temp_nt2) == curr_midicents) &&
+                            !temp_nt2_has_no_acc_or_has_natural && cmp &&
                             (count_for_remind_cautionary_acc <= r_ob->cautionary_accidentals_remind))
                             count_for_remind_cautionary_acc = 0; 
-                        else if ((r_ob->cautionary_accidentals >= 1) && (note_get_screen_midicents(temp_nt2) == curr_midicents) && (cmp != 0))
+                        else if ((r_ob->cautionary_accidentals >= 1) && (note_get_display_midicents(temp_nt2) == curr_midicents) && !cmp)
                             count_for_remind_cautionary_acc = 0; // accidental has changed: reset count to 0!
                             
                         // cautionary accidentals?
-                        if ((r_ob->cautionary_accidentals == 2) && ((note_get_screen_midicents(temp_nt2) - curr_midicents) % 1200 == 0) &&
-                            (note_get_screen_accidental(temp_nt2).r_num == 0) && (curr_accidental.r_num != 0) && (count_for_octave_cautionary_acc < r_ob->cautionary_accidentals_decay)
+                        if ((r_ob->cautionary_accidentals == 2) && ((note_get_display_midicents(temp_nt2) - curr_midicents) % 1200 == 0) &&
+                            temp_nt2_has_no_acc_or_has_natural && !(curr_accidentals[0] == BACH_ACCIDENTAL_NATURAL || curr_accidentals[0] == BACH_ACCIDENTAL_NONE) && (count_for_octave_cautionary_acc < r_ob->cautionary_accidentals_decay)
                             && (!already_done_octave_cautionary_accidental)) { // cautionary naturals for octave jumps?
-                            temp_nt2->show_accidental = true;
+                            temp_nt2->show_accidentals = true;
                             already_done_octave_cautionary_accidental = true;
-                        } else if ((r_ob->cautionary_accidentals >= 1) && (note_get_screen_midicents(temp_nt2) == curr_midicents) &&
-                            (note_get_screen_accidental(temp_nt2).r_num != 0) && (cmp == 0) && (count_for_remind_cautionary_acc > r_ob->cautionary_accidentals_remind)) { // cautionary accidental remind after a little while?
-                            temp_nt2->show_accidental = true;
+                        } else if ((r_ob->cautionary_accidentals >= 1) && (note_get_display_midicents(temp_nt2) == curr_midicents) &&
+                            !temp_nt2_has_no_acc_or_has_natural && cmp && (count_for_remind_cautionary_acc > r_ob->cautionary_accidentals_remind)) { // cautionary accidental remind after a little while?
+                            temp_nt2->show_accidentals = true;
                             count_for_remind_cautionary_acc = 0;
                         }
 
@@ -14579,7 +14236,7 @@ void tie_note_from(t_note *note)
         if (prev) {
             t_note *nt;
             for (nt = prev->firstnote; nt; nt = nt->next) {
-                if (note_get_screen_midicents_with_accidental(nt) == note_get_screen_midicents_with_accidental(note)) {
+                if (note_get_display_midicents_with_accidental(nt) == note_get_display_midicents_with_accidental(note)) {
                     tie_note(nt);
                     note->tie_from = (t_note *)WHITENULL;
                     break;
@@ -14809,7 +14466,8 @@ void check_measure_ties(t_notation_obj *r_ob, t_measure *measure, long ties_assi
             note->tie_direction = 0;
             if (note->tie_from && need_nullify_ties) {
                 if (note->tie_from == WHITENULL || !note->tie_from->tie_to || 
-                    !((note_get_screen_midicents(note->tie_from) == note_get_screen_midicents(note)) && (rat_rat_cmp(note_get_screen_accidental(note->tie_from), note_get_screen_accidental(note)) == 0))) {
+                    !((note_get_display_midicents(note->tie_from) == note_get_display_midicents(note)) &&
+                      accidentals_eq(note->tie_from->accidentals, note->accidentals))) {
                     note->tie_from = NULL;
                 }
             }
@@ -14820,9 +14478,9 @@ void check_measure_ties(t_notation_obj *r_ob, t_measure *measure, long ties_assi
                     if (need_nullify_ties)
                         note->tie_to = NULL;
                     while (note2) {
-                        if ((note_get_screen_midicents(note2) == note_get_screen_midicents(note)) &&
-                            (rat_rat_cmp(note_get_screen_accidental(note2), note_get_screen_accidental(note)) == 0) &&
-                            !(note2->r_it.flags & k_FLAG_MODIFIED)) {    
+                        if ((note_get_display_midicents(note2) == note_get_display_midicents(note)) &&
+                            accidentals_eq(note2->accidentals, note->accidentals) &&
+                            !(note2->r_it.flags & k_FLAG_MODIFIED)) {
                             note->tie_to = note2;
                             note2->tie_from = note;
                             note2->r_it.flags = (e_bach_internal_notation_flags) (note2->r_it.flags | k_FLAG_MODIFIED);
@@ -19122,7 +18780,7 @@ long get_average_scaleposition_point_for_level_fn(void *data, t_hatom *a, const 
             t_note *temp_note;
             for (temp_note = this_chord->firstnote; temp_note; temp_note = temp_note->next) {
                 note_compute_approximation(r_ob, temp_note);
-                *curr_val += midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(temp_note));
+                *curr_val += midicents_to_diatsteps_from_middleC(r_ob, note_get_display_midicents(temp_note));
                 (*curr_count)++;
             }
         }
@@ -19165,7 +18823,7 @@ char chord_get_default_stem_direction(t_notation_obj *r_ob, t_chord *ch)
         return ch->parent->voiceparent->v_ob.part_index % 2 == 0 ? 1 : -1;
     
     for (avg = 0, count = 0, note = ch->firstnote; note; note = note->next, count++)
-        avg += midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(note));
+        avg += midicents_to_diatsteps_from_middleC(r_ob, note_get_display_midicents(note));
     avg /= count;
     
     if (avg >= get_middle_scaleposition(r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? get_voice_clef(r_ob, (t_voice *)ch->parent->voiceparent) : get_voice_clef(r_ob, (t_voice *)ch->voiceparent)))
@@ -20029,20 +19687,18 @@ long build_lower_beams_for_level_fn(void *data, t_hatom *a, const t_llll *addres
 }
 
 
-char all_chords_in_range_have_the_same_lowest_screen_representation(t_chord *start, t_chord *end){
+char all_chords_in_range_have_the_same_lowest_display_pitch(t_chord *start, t_chord *end){
     t_chord *ch;
     char still_undefined = true;
-    double mc = 0;
-    t_rational acc = long2rat(0);
+    t_pitch p;
     for (ch = start; ch; ch = ch->next){
 //        if (!ch->firstnote)
 //            bach_breakpoint(0);
         if (ch->r_sym_duration.r_num > 0 && ch->firstnote) {
             if (still_undefined) {
-                mc = note_get_screen_midicents(ch->firstnote);
-                acc = note_get_screen_accidental(ch->firstnote);
+                p = ch->firstnote->pitch_displayed;
                 still_undefined = false;
-            } else if (note_get_screen_midicents(ch->firstnote) != mc || rat_rat_cmp(note_get_screen_accidental(ch->lastnote), acc) != 0)
+            } else if (ch->firstnote->pitch_displayed != p)
                 return 0;
         }
         if (ch == end)
@@ -20052,18 +19708,16 @@ char all_chords_in_range_have_the_same_lowest_screen_representation(t_chord *sta
     return !still_undefined;
 }
 
-char all_chords_in_range_have_the_same_highest_screen_representation(t_chord *start, t_chord *end){
+char all_chords_in_range_have_the_same_highest_display_pitch(t_chord *start, t_chord *end){
     t_chord *ch;
     char still_undefined = true;
-    double mc = 0;
-    t_rational acc = long2rat(0);
+    t_pitch p;
     for (ch = start; ch; ch = ch->next){
         if (ch->r_sym_duration.r_num > 0 && ch->lastnote) {
             if (still_undefined) {
-                mc = note_get_screen_midicents(ch->lastnote);
-                acc = note_get_screen_accidental(ch->lastnote);
+                p = ch->lastnote->pitch_displayed;
                 still_undefined = false;
-            } else if (note_get_screen_midicents(ch->lastnote) != mc || rat_rat_cmp(note_get_screen_accidental(ch->lastnote), acc) != 0)
+            } else if (ch->lastnote->pitch_displayed != p)
                 return 0;
         }
         if (ch == end)
@@ -20117,7 +19771,7 @@ void correct_straight_line_positioning_for_middle_chords(t_notation_obj *r_ob, t
             } else
                 ch_beams_depth = temp_ch->beams_depth;
             
-            temp_nt_uy_real = ((reference_nt ? mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(reference_nt), voice) : rest_get_floating_yposition(r_ob, temp_ch, NULL, NULL)) - staff_top)/r_ob->zoom_y;
+            temp_nt_uy_real = ((reference_nt ? mc_to_yposition_in_scale(r_ob, note_get_display_midicents(reference_nt), voice) : rest_get_floating_yposition(r_ob, temp_ch, NULL, NULL)) - staff_top)/r_ob->zoom_y;
             
             // uy position of the first beaming over the current chord, under (or over) which we CANNOT go!  
             if (reference_nt) { 
@@ -20342,10 +19996,10 @@ void correct_straight_line_positioning_for_middle_chords(t_notation_obj *r_ob, t
                  end_ch->r_sym_duration.r_num > 0 &&  end_ch->firstnote && start_ch->firstnote && end_ch->firstnote->midicents <= start_ch->firstnote->midicents)
             last_uy_pos = first_uy_pos;
         else if (beaming_direction == 1 && used_for_beamings && 
-                 all_chords_in_range_have_the_same_lowest_screen_representation(start_ch, end_ch))
+                 all_chords_in_range_have_the_same_lowest_display_pitch(start_ch, end_ch))
             last_uy_pos = first_uy_pos = MAX(last_uy_pos, first_uy_pos);
         else if (beaming_direction == -1 && used_for_beamings && 
-                 all_chords_in_range_have_the_same_highest_screen_representation(start_ch, end_ch))
+                 all_chords_in_range_have_the_same_highest_display_pitch(start_ch, end_ch))
             last_uy_pos = first_uy_pos = MAX(last_uy_pos, first_uy_pos);
     }
     
@@ -20416,10 +20070,10 @@ long build_measure_beams_for_level_fn(void *data, t_hatom *a, const t_llll *addr
                         double slope = 0; // we need to decide the beam slope
                         double first_ux_pos = start_ch_no_rest->stem_offset_ux, end_ux_pos = end_ch_no_rest->stem_offset_ux;
                         double first_uy_pos, last_uy_pos, original_first_uy_pos, original_last_uy_pos;
-                        double start_ch_firstnote_mc = start_ch->firstnote ? note_get_screen_midicents(start_ch->firstnote) : rest_get_dummy_mc(r_ob, start_ch);
-                        double start_ch_lastnote_mc = start_ch->lastnote ? note_get_screen_midicents(start_ch->lastnote) : rest_get_dummy_mc(r_ob, start_ch);
-                        double end_ch_firstnote_mc = end_ch->firstnote ? note_get_screen_midicents(end_ch->firstnote) : rest_get_dummy_mc(r_ob, end_ch);
-                        double end_ch_lastnote_mc = end_ch->lastnote ? note_get_screen_midicents(end_ch->lastnote) : rest_get_dummy_mc(r_ob, end_ch);
+                        double start_ch_firstnote_mc = start_ch->firstnote ? note_get_display_midicents(start_ch->firstnote) : rest_get_dummy_mc(r_ob, start_ch);
+                        double start_ch_lastnote_mc = start_ch->lastnote ? note_get_display_midicents(start_ch->lastnote) : rest_get_dummy_mc(r_ob, start_ch);
+                        double end_ch_firstnote_mc = end_ch->firstnote ? note_get_display_midicents(end_ch->firstnote) : rest_get_dummy_mc(r_ob, end_ch);
+                        double end_ch_lastnote_mc = end_ch->lastnote ? note_get_display_midicents(end_ch->lastnote) : rest_get_dummy_mc(r_ob, end_ch);
                         
                         // todo: check that the topmost/bottommost_uy stuff take into account accidentals as well
                         
@@ -20988,7 +20642,7 @@ void correct_floating_steps_for_voiceensembles(t_notation_obj *r_ob, t_measure *
 //                if (!c->is_grace_chord && rat_rat_cmp(c->r_sym_onset, chord->r_sym_onset) == 0) {
                     if (c->firstnote) {
                         if (voice->part_index % 2 == 0) {
-                            long notehead_steps = midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(c->lastnote));
+                            long notehead_steps = midicents_to_diatsteps_from_middleC(r_ob, note_get_display_midicents(c->lastnote));
                             if (rest_steps - bottom_ext < notehead_steps + pad) {
                                 chord->float_steps += (notehead_steps + bottom_ext + pad - rest_steps);
                                 if (chord->float_steps % 2 && (rat_rat_cmp(chord->figure, RAT_1OVER2) == 0 || rat_long_cmp(chord->figure, 1) == 0))
@@ -20996,7 +20650,7 @@ void correct_floating_steps_for_voiceensembles(t_notation_obj *r_ob, t_measure *
                                 rest_get_floating_yposition(r_ob, chord, NULL, &rest_steps);
                             }
                         } else {
-                            long notehead_steps = midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(c->lastnote));
+                            long notehead_steps = midicents_to_diatsteps_from_middleC(r_ob, note_get_display_midicents(c->lastnote));
                             if (rest_steps + top_ext > notehead_steps - pad) {
                                 chord->float_steps -= (rest_steps + top_ext - notehead_steps + pad);
                                 if (chord->float_steps % 2 && (rat_rat_cmp(chord->figure, RAT_1OVER2) == 0 || rat_long_cmp(chord->figure, 1) == 0))
@@ -21905,7 +21559,7 @@ char chord_is_all_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_meas
             t_note *tmp;
             char found = false;
             for (tmp = next_chord->firstnote; tmp; tmp = tmp->next)
-                if (!(tmp->r_it.flags & k_FLAG_MODIFIED) && note_get_screen_midicents(tmp) == note_get_screen_midicents(note)) {
+                if (!(tmp->r_it.flags & k_FLAG_MODIFIED) && note_get_display_midicents(tmp) == note_get_display_midicents(note)) {
                     found = true;
                     tmp->r_it.flags = (e_bach_internal_notation_flags) (tmp->r_it.flags | k_FLAG_MODIFIED);
                     if (r_ob && r_ob->tie_assign_pitch)
@@ -21946,7 +21600,7 @@ char chord_is_all_tied_from(t_chord *chord, char within_measure) {
                 t_note *tmp;
                 char found = false;
                 for (tmp = prev->firstnote; tmp; tmp = tmp->next) 
-                    if (tmp->tie_to == WHITENULL && note_get_screen_midicents(tmp) == note_get_screen_midicents(note)) {
+                    if (tmp->tie_to == WHITENULL && note_get_display_midicents(tmp) == note_get_display_midicents(note)) {
                         found = true;
                         break;
                     }
@@ -24810,8 +24464,8 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         double *left_limit;    
 
         long *midicents;
-        char *show_accidental;
-        t_rational *accidental;
+        char *show_accidentals;
+        t_uint8 **accidentals;
         long num_notes = chord->num_notes;
         // building arrays of midicents and accidentals:
         long i, j; 
@@ -24824,13 +24478,12 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         long scalepositionsum = 0; 
         double left_uext = 0.; double right_uext = 0.; // left and right space (with respect to the chord stem) needed to paint the chord.
         long start_scalepos, rel_scalepos;
-        long num_accidentals = 0;
-        t_rational *accidental_copy;
+        long num_chord_accidentals = 0;
+        t_uint8 **accidentals_copy;
         char *accidental_done;
         double *accidental_x_real;
         double *accidental_width;
         int *note_num_accidentals;
-        unsigned short **accidental_text;
         long mem_i;
         long min_scaleposition, max_scaleposition;
         char is_ok = false, has_been_reordered = false;
@@ -24845,8 +24498,10 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         }
 
         midicents = (long *) bach_newptr(num_notes * sizeof(long));
-        show_accidental = (char *) bach_newptr(num_notes * sizeof(char));
-        accidental = (t_rational *) bach_newptr(num_notes * sizeof(t_rational));
+        show_accidentals = (char *) bach_newptr(num_notes * sizeof(char));
+        accidentals = (t_uint8 **) bach_newptr(num_notes * sizeof(t_uint8 *));
+        for (long t = 0; t < num_notes; t++)
+            accidentals[i] = (t_uint8 *)bach_newptr((CONST_MAX_ACCIDENTALS+1) * sizeof(t_uint8));
         reordered = (long *) bach_newptr(num_notes * sizeof(long));
         noteheads_uwidths = (double *) bach_newptr(num_notes * sizeof(double)); // uwidth of each notehead
         note_acc_resize = (double *) bach_newptr(num_notes * sizeof(double)); // resize factor for the accidental of each note
@@ -24874,45 +24529,59 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             curr_nt->notehead_uwidth = noteheads_uwidths[i];
             curr_nt->notehead_ID = get_notehead_specs_from_note(r_ob, curr_nt, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false);
             
-            midicents[i] = note_get_screen_midicents(curr_nt);
-            accidental[i] = note_get_screen_accidental(curr_nt);
+            midicents[i] = note_get_display_midicents(curr_nt);
+            switch (voice->notation_style) {
+                case k_VOICE_NOTATION_STYLE_ET:
+                    get_accidental_characters_ET(r_ob, curr_nt->pitch_displayed, accidentals[i], NULL);
+                    break;
+
+                case k_VOICE_NOTATION_STYLE_JI:
+                    get_accidental_characters_JI(r_ob, curr_nt->pitch_displayed, accidentals[i], NULL);
+                    break;
+
+                default:
+                    accidentals[i][0] = BACH_ACCIDENTAL_NONE;
+                    break;
+            }
+
+            
             reordered[i] = i; // default mapping
             
             // deciding whether to show the accidental
             if (chord->is_score_chord) // score
-                show_accidental[i] = curr_nt->show_accidental;
+                show_accidentals[i] = curr_nt->show_accidentals;
             else { // roll (we calculate the show/hide here!)
                 t_voice *voice = (t_voice *)chord->voiceparent;
                 if (voice->key == 0)
-                    show_accidental[i] = (note_get_screen_accidental(curr_nt).r_num == 0) ? false : true;
+                    show_accidentals[i] = !note_has_no_accidentals_or_has_natural(curr_nt);
                 else {
-                    long ds = midicents2diatonicstep(note_get_screen_midicents(curr_nt));
-                    if (ds >= 0 && rat_rat_cmp(voice->acc_pattern[ds], note_get_screen_accidental(curr_nt)) == 0)
-                        show_accidental[i] = false;
+                    long ds = midicents2diatonicstep(note_get_display_midicents(curr_nt));
+                    if (ds >= 0 && note_accidental_equals_alter_ET(r_ob, curr_nt, voice->acc_pattern[ds]))
+                        show_accidentals[i] = false;
                     else
-                        show_accidental[i] = true;
+                        show_accidentals[i] = true;
                 }
 
                 switch (r_ob->show_accidentals_preferences) {
                     case k_SHOW_ACC_CLASSICAL:
                     case k_SHOW_ACC_ALLALTERED_NONATURALS:
-                        curr_nt->show_accidental = show_accidental[i];
+                        curr_nt->show_accidentals = show_accidentals[i];
                         break;
                         
                     case k_SHOW_ACC_ALL:
-                        curr_nt->show_accidental = true;
+                        curr_nt->show_accidentals = true;
                         break;
 
                     case k_SHOW_ACC_NONE:
-                        curr_nt->show_accidental = false;
+                        curr_nt->show_accidentals = false;
                         break;
 
                     case k_SHOW_ACC_ALLALTERED:
                     {
-                        if (show_accidental[i])
-                            curr_nt->show_accidental = true;
+                        if (show_accidentals[i])
+                            curr_nt->show_accidentals = true;
                         else {
-                            curr_nt->show_accidental = false;
+                            curr_nt->show_accidentals = false;
                             
                             // we look for a previous chord having the same note but "accidentalized"
                             t_note *temp_nt;
@@ -24923,9 +24592,9 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                                 }
                                 char must_break = false;
                                 for (temp_nt = temp_ch->firstnote; temp_nt; temp_nt = temp_nt->next) {
-                                    if (note_get_screen_midicents(temp_nt) == note_get_screen_midicents(curr_nt)) {
-                                        if (note_get_screen_accidental(temp_nt).r_num != 0)
-                                            curr_nt->show_accidental = true;
+                                    if (note_get_display_midicents(temp_nt) == note_get_display_midicents(curr_nt)) {
+                                        if (!note_has_no_accidentals_or_has_natural(temp_nt))
+                                            curr_nt->show_accidentals = true;
                                         must_break = true;
                                         break;
                                     }
@@ -24938,8 +24607,8 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                         
                     case k_SHOW_ACC_ALLALTERED_NOREPETITION:
                     {
-                        if (show_accidental[i]) {
-                            curr_nt->show_accidental = true;
+                        if (show_accidentals[i]) {
+                            curr_nt->show_accidentals = true;
 
                             // we look for a previous chord having the same note with the same "accidental"
                             t_note *temp_nt;
@@ -24950,9 +24619,9 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                                 }
                                 char must_break = false;
                                 for (temp_nt = temp_ch->firstnote; temp_nt; temp_nt = temp_nt->next) {
-                                    if (note_get_screen_midicents(temp_nt) == note_get_screen_midicents(curr_nt)) {
-                                        if (rat_rat_cmp(note_get_screen_accidental(temp_nt), note_get_screen_accidental(curr_nt)) == 0)
-                                            curr_nt->show_accidental = false;
+                                    if (note_get_display_midicents(temp_nt) == note_get_display_midicents(curr_nt)) {
+                                        if (accidentals_eq(temp_nt->accidentals, accidentals[i]))
+                                            curr_nt->show_accidentals = false;
                                         must_break = true;
                                         break;
                                     }
@@ -24960,7 +24629,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                                 if (must_break) break;
                             }
                         } else {
-                            curr_nt->show_accidental = false;
+                            curr_nt->show_accidentals = false;
                             
                             // we look for a previous chord having the same note but "accidentalized"
                             t_note *temp_nt;
@@ -24971,9 +24640,9 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                                 }
                                 char must_break = false;
                                 for (temp_nt = temp_ch->firstnote; temp_nt; temp_nt = temp_nt->next) {
-                                    if (note_get_screen_midicents(temp_nt) == note_get_screen_midicents(curr_nt)) {
-                                        if (note_get_screen_accidental(temp_nt).r_num != 0)
-                                            curr_nt->show_accidental = true;
+                                    if (note_get_display_midicents(temp_nt) == note_get_display_midicents(curr_nt)) {
+                                        if (!note_has_no_accidentals_or_has_natural(temp_nt))
+                                            curr_nt->show_accidentals = true;
                                         must_break = true;
                                         break;
                                     }
@@ -24988,7 +24657,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                         break;
                 }
                 
-                show_accidental[i] = curr_nt->show_accidental;
+                show_accidentals[i] = curr_nt->show_accidentals;
             }
             
             i++;
@@ -25007,7 +24676,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                 if (midicents[i] > midicents[i+1]){ //midicents[0] midicents[1]
                     // wrong sequence!
                     long temp; 
-                    t_rational temp2; 
+                    t_uint8 temp2;
                     char temp3;
                     double temp4;
                     
@@ -25017,13 +24686,15 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                     midicents[i] = midicents[i+1];
                     midicents[i+1] = temp;
                     
-                    temp2 = accidental[i];
-                    accidental[i] = accidental[i+1];
-                    accidental[i+1] = temp2;
+                    for (long t = 0; t < CONST_MAX_ACCIDENTALS + 1; t++) {
+                        temp2 = accidentals[i][t];
+                        accidentals[i][t] = accidentals[i+1][t];
+                        accidentals[i+1][t] = temp2;
+                    }
 
-                    temp3 = show_accidental[i];
-                    show_accidental[i] = show_accidental[i+1];
-                    show_accidental[i+1] = temp3;
+                    temp3 = show_accidentals[i];
+                    show_accidentals[i] = show_accidentals[i+1];
+                    show_accidentals[i+1] = temp3;
 
                     temp4 = noteheads_uwidths[i];
                     noteheads_uwidths[i] = noteheads_uwidths[i+1];
@@ -25382,30 +25053,30 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 
         // find the number of accidentals
         for (i = 0; i < num_notes; i++)
-            if (show_accidental[i])
-                num_accidentals++;
+            if (show_accidentals[i])
+                num_chord_accidentals++;
         
         // copy the array of accidentals, so we can operate with it
-        accidental_copy = (t_rational *) bach_newptr(num_notes * sizeof(t_rational));
+/*        accidentals_copy = (t_uint8 **) bach_newptr(num_notes * sizeof(t_uint8 *));
+        for (long t = 0; t < num_notes; t++) {
+            accidentals_copy[t] = (t_uint8 *) bach_newptr((CONST_MAX_ACCIDENTALS + 1) * sizeof(t_uint8));
+        } */
         accidental_done = (char *) bach_newptr(num_notes * sizeof(char));
         accidental_x_real = (double *) bach_newptr(num_notes * sizeof(double));
         accidental_width = (double *) bach_newptr(num_notes * sizeof(double));
         note_num_accidentals = (int *) bach_newptr(num_notes * sizeof(int));
-        accidental_text = (unsigned short **) bach_newptr(num_notes * sizeof(unsigned short *));
-        for (mem_i = 0; mem_i < num_notes; mem_i++)
-            accidental_text[mem_i] = (unsigned short *) bach_newptr(CONST_MAX_ACCIDENTALS * sizeof (unsigned short));
 
         for (i = 0; i < num_notes; i++) {
             note_num_accidentals[i] = 0;
             accidental_done[i] = 0;
         }
-        for (i = 0; i < num_notes; i++) 
-            accidental_copy[i] = accidental[i];
+        for (i = 0; i < num_notes; i++) {
+            sysmem_copyptr(accidentals[i], accidentals_copy[i], (CONST_MAX_ACCIDENTALS + 1) * sizeof(t_uint8));
+        }
 
         // iterating on the accidentals to paint
-        while (num_accidentals > 0) {
+        while (num_chord_accidentals > 0) {
             t_rational this_acc;
-            long accidentals[CONST_MAX_ACCIDENTALS+1];
             double acc_width = 0.;
             double delta;
             double new_left_limit;
@@ -25419,10 +25090,12 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                 // we map "strangely" the j to a i, in order to give priority to a "triangle-shaped" accidental chain. So first, we analize i=0, then i= num_notes, then i=1, then i= num_notes-1, and so on
                 i = (j % 2 == 0 ? j/2 : (num_notes - (j-1)/2 - 1));
 
-                if (show_accidental[i] && !accidental_done[i]) { // if we show the accidental 
+                if (show_accidentals[i] && !accidental_done[i]) { // if we show the accidental 
 
-                    long k_start = (scaleposition[i]-start_scalepos)*10 - floor(get_accidental_udescent(r_ob, accidental_copy[i]) * 10. * r_ob->zoom_y / r_ob->step_y);
-                    long k_end = (scaleposition[i]-start_scalepos)*10 + ceil(get_accidental_uascent(r_ob, accidental_copy[i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+//                    long k_start = (scaleposition[i]-start_scalepos)*10 - floor(accidentals_get_udescent(r_ob, accidentals_copy[i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+//                    long k_end = (scaleposition[i]-start_scalepos)*10 + ceil(accidentals_get_uascent(r_ob, accidentals_copy[i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+                    long k_start = (scaleposition[i]-start_scalepos)*10 - floor(accidentals_get_udescent(r_ob, accidentals[i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+                    long k_end = (scaleposition[i]-start_scalepos)*10 + ceil(accidentals_get_uascent(r_ob, accidentals[i]) * 10. * r_ob->zoom_y / r_ob->step_y);
                     long min_in_kstart_kend = array_fmin(scalepos_extension*10, k_start - 2, k_end + 2, left_limit);  // 2 (= 2/10 of r_ob->step) is a good threshold for avoiding vertical contacts
                     // the min_in_kstart_kend now contains the minimum position where the accidentals might be painted
                     
@@ -25438,56 +25111,32 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                 break; // error: this should never happen (only if num_accidentals == 0, but then we would be outside this loop)
             }
             
-            // find the best_i accidental string, and, at the same time, determine the width of the accidental
-            this_acc = accidental_copy[best_i];
-            for (j = 0; j < CONST_MAX_ACCIDENTALS; j++) 
-                accidentals[j]=0;
             
-            if (pitch_original[best_i].tuningSystem() == BACH_TUNINGSYSTEM_JI) {
-                get_accidental_characters_JI(r_ob, pitch_original[best_i], accidentals, &note_num_accidentals[best_i]);
-            } else {
-                j = 0;
-                if (this_acc.r_num ==0) {
-                    accidentals[j] = get_accidental(r_ob, this_acc);
-                    acc_width = get_accidental_uwidth(r_ob, this_acc, false) * note_acc_resize[best_i];
-                    j = 1;
-                } else {
-                    while (j < CONST_MAX_ACCIDENTALS && this_acc.r_num != 0){
-                        acc_text[j] = get_accidental_character(r_ob, this_acc);
-                        acc_width += get_accidental_uwidth(r_ob, this_acc, false) * note_acc_resize[best_i];
-                        j++;
-                        if ((rat_long_cmp(this_acc,1) <= 0) && (rat_long_cmp(this_acc,-1) >= 0))
-                            this_acc.r_num = 0;
-                        else
-                            this_acc = rat_long_sum(this_acc, ((this_acc.r_num * this_acc.r_den > 0) ? -1 : 1));
-                    }
-                }
-                note_num_accidentals[best_i] = j;
-            }
+            acc_width = accidentals_get_uwidth(r_ob, accidentals[best_i]) * note_acc_resize[best_i];
+            accidental_width[best_i] = acc_width;
 
+            
             accidental_x_real[best_i] = best_x_pos;
             delta = this_stem_x - (accidental_x_real[best_i] - acc_width); 
             if (delta > left_uext)
                     left_uext = delta;
-
-            for (j = 0; j < CONST_MAX_ACCIDENTALS; j++)
-                accidental_text[best_i][j] = acc_text[j];
-
-            accidental_width[best_i] = acc_width;
             
             // updating leftlimits
             new_left_limit = best_x_pos - acc_width - CONST_UX_ACC_SEPARATION_FROM_ACC;
 
-            k_start = (scaleposition[best_i]-start_scalepos)*10 - floor(get_accidental_udescent(r_ob, accidental_copy[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);
-            k_end = (scaleposition[best_i]-start_scalepos)*10 + ceil(get_accidental_uascent(r_ob, accidental_copy[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+//            k_start = (scaleposition[best_i]-start_scalepos)*10 - floor(get_accidental_udescent(r_ob, accidentals_copy[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+//            k_end = (scaleposition[best_i]-start_scalepos)*10 + ceil(get_accidental_uascent(r_ob, accidentals_copy[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+
+            k_start = (scaleposition[best_i]-start_scalepos)*10 - floor(accidentals_get_udescent(r_ob, accidentals[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);
+            k_end = (scaleposition[best_i]-start_scalepos)*10 + ceil(accidentals_get_uascent(r_ob, accidentals[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);
 
             for (j = CLAMP(k_start, 0, scalepos_extension * 10 - 1); j <= k_end && j <= scalepos_extension * 10 - 1; j++)
                 left_limit[j] = new_left_limit;
                     
             // decrease the number of accidentals to put
-            accidental_copy[best_i] = long2rat(0);
+//            accidentals_copy[best_i] = long2rat(0);
             accidental_done[best_i] = true;
-            num_accidentals--;
+            num_chord_accidentals--;
         }
 
         
@@ -25516,8 +25165,8 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             curr_nt->notecenter_stem_delta_ux = (note_x_real[reordered_i] - this_stem_x) * ratio;
             curr_nt->need_auxiliary_stem = note_need_aux_stem[reordered_i];
             for (j=0; j<CONST_MAX_ACCIDENTALS; j++)
-                curr_nt->accidental_text[j] = accidental_text[reordered_i][j];
-            curr_nt->accidental_text[j] = 0; // <accidental_text> is sized CONST_MAX_ACCIDENTALS+1
+                curr_nt->accidentals[j] = accidentals[reordered_i][j];
+            curr_nt->accidentals[j] = BACH_ACCIDENTAL_NONE; // <accidental_text> is sized CONST_MAX_ACCIDENTALS+1
             curr_nt->num_accidentals = note_num_accidentals[reordered_i];
             curr_nt->accidental_stem_delta_ux = (curr_nt->num_accidentals > 0) ? (accidental_x_real[reordered_i] - this_stem_x) * ratio : this_stem_x;
 //            curr_nt->accidental_uwidth = (curr_nt->num_accidentals > 0) ? accidental_width[reordered_i] * ratio : 0;
@@ -25525,7 +25174,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 //            curr_nt->accidental_udescent = (curr_nt->num_accidentals > 0) ? get_accidental_udescent(r_ob, accidental[reordered_i]) * ratio : 0.;
 //            curr_nt->scaleposition = scaleposition[reordered_i];
             
-            note_y = mc_to_yposition(r_ob, note_get_screen_midicents(curr_nt), voice);
+            note_y = mc_to_yposition(r_ob, note_get_display_midicents(curr_nt), voice);
             
             double curr_nt_center_stafftop_uy = (note_y - staff_top_y)/r_ob->zoom_y;
             curr_nt->center_stafftop_uy = curr_nt_center_stafftop_uy;
@@ -25566,11 +25215,13 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 //        dev_post("chord->topmostnote_stafftop_uy: %.2f", chord->topmostnote_stafftop_uy);
 
         bach_freeptr(midicents);
-        bach_freeptr(show_accidental);
+        bach_freeptr(show_accidentals);
         bach_freeptr(reordered);
         bach_freeptr(noteheads_uwidths);
         bach_freeptr(note_need_aux_stem);
-        bach_freeptr(accidental);
+        for (long t = 0; t < num_notes; t++)
+            bach_freeptr(accidentals[t]);
+        bach_freeptr(accidentals);
         bach_freeptr(note_head_resize);
         bach_freeptr(note_acc_resize);
         bach_freeptr(notehead_ux_shift);
@@ -25583,14 +25234,13 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         bach_freeptr(left_limit);
         bach_freeptr(notehead_rightlim);
         bach_freeptr(notehead_leftlim);
-        bach_freeptr(accidental_copy);
+        for (long t = 0; t < num_notes; t++)
+            bach_freeptr(accidentals_copy[t]);
+        bach_freeptr(accidentals_copy);
         bach_freeptr(accidental_done);
         bach_freeptr(accidental_x_real);
         bach_freeptr(accidental_width);
         bach_freeptr(note_num_accidentals);
-        for (mem_i = 0; mem_i < num_notes; mem_i++)
-            bach_freeptr(accidental_text[mem_i]);
-        bach_freeptr(accidental_text);
     }
     
     if (reset_graphical_position_values) {
@@ -25811,37 +25461,40 @@ void snap_pitch_to_grid_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt) {
 }
 
 // screen_midicents and accidentals have to be sized AT LEAST CONST_MAX_ENHARMONICITY_OPTIONS to be safe!!
-// fills the current_enharmonic_list_screenmc and current_enharmonic_list_screenacc fields of the notationobj structure, and fills the last pointer
+// fills the current_enharmonic_list_display_mc and current_enharmonic_list_display_alter_ET fields of the notationobj structure, and fills the last pointer
 // which tells us which form the note currently has
-void note_get_enharmonic_possibilities(t_notation_obj *r_ob, t_note *note, long *curr_idx){
-    
+// we assume that note is EQUAL TEMPERED
+void note_get_ET_enharmonic_possibilities(t_notation_obj *r_ob, t_note *note, long *curr_idx)
+{
     // get automatic 
     long screen_midicents_default; 
     t_rational screen_accidental_default;
     long step_between_screen_midicents_and_next_natural_note, step_between_screen_midicents_and_previous_natural_note;
     t_voice *voice = note->parent->is_score_chord ? (t_voice *)note->parent->parent->voiceparent : (t_voice *)note->parent->voiceparent;
     
-    mc_to_screen_approximations(r_ob, note->midicents, &screen_midicents_default, &screen_accidental_default, voice->acc_pattern, voice->full_repr);
+    mc_to_display_approximation_ET(r_ob, note->midicents, &screen_midicents_default, &screen_accidental_default, voice->acc_pattern, voice->full_repr);
     *curr_idx = -1;
     
     // current possibility
-    r_ob->current_enharmonic_list_screenmc[0] = screen_midicents_default;
-    r_ob->current_enharmonic_list_screenacc[0] = screen_accidental_default;
-    if (note_get_screen_midicents(note) == screen_midicents_default && rat_rat_cmp(note_get_screen_accidental(note), screen_accidental_default) == 0)
+    r_ob->current_enharmonic_list_display_mc[0] = screen_midicents_default;
+    r_ob->current_enharmonic_list_display_alter_ET[0] = screen_accidental_default;
+    if (note_get_display_midicents(note) == screen_midicents_default && note->pitch_displayed.getAlterET() == (t_shortRational)screen_accidental_default)
         *curr_idx = 0;
     
     // above
     step_between_screen_midicents_and_next_natural_note = is_natural_note(screen_midicents_default + 100) ? 100 : 200;
-    r_ob->current_enharmonic_list_screenmc[1] = screen_midicents_default + step_between_screen_midicents_and_next_natural_note;
-    r_ob->current_enharmonic_list_screenacc[1] = rat_rat_diff(screen_accidental_default, genrat(step_between_screen_midicents_and_next_natural_note, 200));
-    if (note_get_screen_midicents(note) == r_ob->current_enharmonic_list_screenmc[1] && rat_rat_cmp(note_get_screen_accidental(note), r_ob->current_enharmonic_list_screenacc[1]) == 0)
+    r_ob->current_enharmonic_list_display_mc[1] = screen_midicents_default + step_between_screen_midicents_and_next_natural_note;
+    r_ob->current_enharmonic_list_display_alter_ET[1] = rat_rat_diff(screen_accidental_default, genrat(step_between_screen_midicents_and_next_natural_note, 200));
+    if (note_get_display_midicents(note) == r_ob->current_enharmonic_list_display_mc[1] && 
+        note->pitch_displayed.getAlterET() == (t_shortRational)r_ob->current_enharmonic_list_display_alter_ET[1])
         *curr_idx = 1;
 
     // below
     step_between_screen_midicents_and_previous_natural_note = is_natural_note(screen_midicents_default - 100) ? -100 : -200;
-    r_ob->current_enharmonic_list_screenmc[2] = screen_midicents_default + step_between_screen_midicents_and_previous_natural_note;
-    r_ob->current_enharmonic_list_screenacc[2] = rat_rat_sum(genrat(-step_between_screen_midicents_and_previous_natural_note, 200), screen_accidental_default);
-    if (note_get_screen_midicents(note) == r_ob->current_enharmonic_list_screenmc[2] && rat_rat_cmp(note_get_screen_accidental(note), r_ob->current_enharmonic_list_screenacc[2]) == 0)
+    r_ob->current_enharmonic_list_display_mc[2] = screen_midicents_default + step_between_screen_midicents_and_previous_natural_note;
+    r_ob->current_enharmonic_list_display_alter_ET[2] = rat_rat_sum(genrat(-step_between_screen_midicents_and_previous_natural_note, 200), screen_accidental_default);
+    if (note_get_display_midicents(note) == r_ob->current_enharmonic_list_display_mc[2] && 
+        note->pitch_displayed.getAlterET() == (t_shortRational)r_ob->current_enharmonic_list_display_alter_ET[2])
         *curr_idx = 2;
 }
 
@@ -25887,10 +25540,10 @@ void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
 // DEPRECATED, OLD -- UNUSED
 void note_set_pitch_from_notename(t_notation_obj *r_ob, t_note *note, t_symbol *note_name, char dont_change_cents_for_enharmonic_changes)
 {
-    long screen_mc = 6000, old_screen_mc = note_get_screen_midicents(note);
+    long screen_mc = 6000, old_screen_mc = note_get_display_midicents(note);
     t_rational screen_acc = long2rat(0), old_screen_acc = note->pitch_original.getAlterET();
     notename2midicents(r_ob->middleC_octave, &r_ob->last_used_octave, note_name->s_name, &screen_mc, &screen_acc);
-    note_set_user_enharmonicity_from_screen_representation(note, screen_mc, screen_acc);
+    note_set_user_enharmonicity_from_display_representation(note, screen_mc, screen_acc);
 
     if (rat_rat_cmp(rat_long_sum(rat_long_prod(old_screen_acc, 200), old_screen_mc), rat_long_sum(rat_long_prod(screen_acc, 200), screen_mc)) != 0)
         note->midicents = screen_mc + rat2double(rat_long_prod(screen_acc, 200));
@@ -25905,9 +25558,9 @@ void note_set_pitch_from_notename(t_notation_obj *r_ob, t_note *note, t_symbol *
     note_compute_approximation(r_ob, note);
 }
 
-void enharmonically_retranscribe_note(t_notation_obj *r_ob, t_note *note, char auto_mode, long new_screen_midicents, t_rational new_screen_accidental) {
-    long screen_mc = note_get_screen_midicents(note);
-    t_rational screen_acc = note_get_screen_accidental(note);
+void note_retranscribe_enharmonically_ET(t_notation_obj *r_ob, t_note *note, char auto_mode, long new_screen_midicents, t_rational new_screen_accidental) {
+    long screen_mc = note_get_display_midicents(note);
+    t_rational screen_acc = note->pitch_displayed.getAlterET();
     if (auto_mode) {
         if (screen_acc.r_num >= 0) {
             long step_between_natural_notes = is_natural_note(screen_mc + 100) ? 100 : 200;
@@ -25922,7 +25575,7 @@ void enharmonically_retranscribe_note(t_notation_obj *r_ob, t_note *note, char a
         screen_mc = new_screen_midicents;
         screen_acc = new_screen_accidental;
     }
-    note_set_user_enharmonicity_from_screen_representation(note, screen_mc, screen_acc);
+    note_set_user_enharmonicity_from_display_representation(note, screen_mc, screen_acc);
 
     
     chord_set_recompute_parameters_flag(r_ob,  note->parent);
@@ -26315,11 +25968,11 @@ int is_in_note_shape(t_notation_obj *r_ob, t_note *note, long point_x, long poin
     double note_x, note_y, dist;
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         note_x = unscaled_xposition_to_xposition(r_ob, note->parent->parent->tuttipoint_reference->offset_ux + note->parent->stem_offset_ux) + note->notecenter_stem_delta_ux * r_ob->zoom_y;
-        note_y = mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), (t_voice *)note->parent->parent->voiceparent);
+        note_y = mc_to_yposition_in_scale(r_ob, note_get_display_midicents(note), (t_voice *)note->parent->parent->voiceparent);
     } else {
         system_num = -1;  // for auto calculation
         note_x = note->notecenter_stem_delta_ux * r_ob->zoom_y + get_stem_x_from_alignment_point_x(r_ob, note->parent, onset_to_xposition_roll(r_ob,note->parent->onset, &system_num));
-        note_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), (t_voice *)note->parent->voiceparent);
+        note_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note_get_display_midicents(note), (t_voice *)note->parent->voiceparent);
     }
     
     dist = ((point_x-note_x)*(point_x-note_x) + (point_y-note_y)*(point_y-note_y));
@@ -26361,7 +26014,7 @@ int is_in_tail_shape(t_notation_obj *r_ob, t_note *note, long point_x, long poin
         tail_y = r_ob->system_jump * system_num + mc_to_yposition(r_ob, note->midicents + note->lastbreakpoint->delta_mc + tail_correction,  chord_get_voice(r_ob, chord));
     } else {
         tail_correction = round(note->lastbreakpoint->delta_mc);
-        tail_y = r_ob->system_jump * system_num + mc_to_yposition(r_ob, note_get_screen_midicents(note) + tail_correction, chord_get_voice(r_ob, chord));
+        tail_y = r_ob->system_jump * system_num + mc_to_yposition(r_ob, note_get_display_midicents(note) + tail_correction, chord_get_voice(r_ob, chord));
     }
     //    double note_y = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(note));
     if ((fabs(point_x - tail_x) < ((r_ob->durations_line_width * (CONST_NOTETAIL_UWIDTH - 0.1) * r_ob->zoom_y) / 2.)) && (fabs(tail_y - point_y) < (r_ob->breakpoints_size * 0.666 + 1) * r_ob->zoom_y))
@@ -26418,7 +26071,7 @@ void breakpoint_get_pt(t_notation_obj *r_ob, t_bpt *bpt, double *bpt_x_pix, doub
     if (r_ob->breakpoints_have_noteheads)
         bpt_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note->midicents + round(bpt->delta_mc), chord_get_voice(r_ob, chord));
     else
-        bpt_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note) + round(bpt->delta_mc), chord_get_voice(r_ob, chord));
+        bpt_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note_get_display_midicents(note) + round(bpt->delta_mc), chord_get_voice(r_ob, chord));
     
     *bpt_x_pix = bpt_x;
     *bpt_y_pix = bpt_y;
@@ -26448,7 +26101,7 @@ int is_in_durationline_shape(t_notation_obj *r_ob, t_note *note, long point_x, l
     
     t_bpt *temp = note->firstbreakpoint->next;
     double prev_bpt_x = start_pos;
-    double prev_bpt_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), chord_get_voice(r_ob, chord));
+    double prev_bpt_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note_get_display_midicents(note), chord_get_voice(r_ob, chord));
     double line_tol = ((r_ob->durations_line_width * r_ob->zoom_y) / 2.);
     while (temp) {
         double bpt_x, bpt_y;
@@ -30703,11 +30356,11 @@ void set_graphic_values_to_note(t_notation_obj *r_ob, t_note *note, long screen_
 {
     if (llllobj_get_version_number((t_object *)r_ob, LLLL_OBJ_UI) <= 70910) {
         // backward compatibility, graphics sets the pitch and the midicents
-        note_set_user_enharmonicity_from_screen_representation(note, screen_midicents, accidental);
+        note_set_user_enharmonicity_from_display_representation(note, screen_midicents, accidental);
         note->midicents = note->pitch_original.toMCdouble();
     } else {
         // graphics only set the displayed pitch
-        note_set_displayed_user_enharmonicity_from_screen_representation(note, screen_midicents, accidental);
+        note_set_displayed_user_enharmonicity_from_display_representation(note, screen_midicents, accidental);
     }
 }
 
@@ -32278,7 +31931,7 @@ void midicents2notename(long middleC_octave, long screen_mc, t_rational screen_a
 void ezmidicents2notename(long middleC_octave, double midicents, char name_style, char print_octave, char **outname, long tonedivision, char use_capital_B_for_doubleflat){
     long screen_mc = 6000;
     t_rational screen_acc = genrat(0, 1);
-    mc_to_screen_approximations_do(tonedivision, k_ACC_AUTO, midicents, &screen_mc, &screen_acc, NULL, NULL);
+    mc_to_display_approximation_ET_do(tonedivision, k_ACC_AUTO, midicents, &screen_mc, &screen_acc, NULL, NULL);
     midicents2notename(middleC_octave, screen_mc, screen_acc, name_style, print_octave, outname, use_capital_B_for_doubleflat);
 }
 
@@ -33280,7 +32933,7 @@ void change_pitch_to_note_from_diatonic_step_fn(t_notation_obj *r_ob, t_note *no
     
     undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
     
-    note_set_user_enharmonicity_from_screen_representation(note, mc, long2rat(0));
+    note_set_user_enharmonicity_from_display_representation(note, mc, long2rat(0));
     note->midicents = note->pitch_original.toMCdouble();
     
     note_set_auto_enharmonicity(note);
@@ -33393,7 +33046,7 @@ char enharmonically_respell_selection(t_notation_obj *r_ob){
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                enharmonically_retranscribe_note(r_ob, nt, true, 0, long2rat(0));
+                note_retranscribe_enharmonically_ET(r_ob, nt, true, 0, long2rat(0));
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                     nt->parent->parent->need_recompute_beams_positions = true;
                 changed = 1;
@@ -33403,7 +33056,7 @@ char enharmonically_respell_selection(t_notation_obj *r_ob){
             while (temp_nt) {
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                     undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                    enharmonically_retranscribe_note(r_ob, temp_nt, true, 0, long2rat(0));
+                    note_retranscribe_enharmonically_ET(r_ob, temp_nt, true, 0, long2rat(0));
                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                         ((t_chord *)curr_it)->parent->need_recompute_beams_positions = true;
                     changed = 1;
@@ -33417,7 +33070,7 @@ char enharmonically_respell_selection(t_notation_obj *r_ob){
                 while (temp_nt) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                         undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                        enharmonically_retranscribe_note(r_ob, temp_nt, true, 0, long2rat(0));
+                        note_retranscribe_enharmonically_ET(r_ob, temp_nt, true, 0, long2rat(0));
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                             ((t_measure *)curr_it)->need_recompute_beams_positions = true;
                         changed = 1;
@@ -33714,6 +33367,7 @@ void initialize_voice_by_default(t_notation_obj *r_ob, t_voice *v_ob, long numbe
     
     v_ob->are_staff_lines_standard = true;
     v_ob->num_staff_lines = 5;
+    v_ob->notation_style = k_VOICE_NOTATION_STYLE_ET;
     v_ob->staff_lines[0] = 1;
     v_ob->staff_lines[1] = 2;
     v_ob->staff_lines[2] = 3;
@@ -36333,7 +35987,7 @@ double notation_item_get_center_y(t_notation_obj *r_ob, t_notation_item *it)
 {
     switch (it->type) {
 //        case k_NOTE: return ((t_note *)it)->center.y;
-        case k_NOTE: return mc_to_yposition(r_ob, note_get_screen_midicents((t_note *)it), notation_item_get_voice(r_ob, it));
+        case k_NOTE: return mc_to_yposition(r_ob, note_get_display_midicents((t_note *)it), notation_item_get_voice(r_ob, it));
         case k_CHORD:
         {
             t_chord *ch = (t_chord *)it;
@@ -37691,7 +37345,7 @@ double note_get_center_ux(t_notation_obj *r_ob, t_note *nt)
 t_pt note_to_family_contour_pt(t_notation_obj *r_ob, t_note *nt, double *leftmost_in, double *rightmost_in, long *topmost_voice, long *bottommost_voice)
 {
     t_pt center = build_pt(note_get_center_ux(r_ob, nt),
-                      mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), chord_get_voice(r_ob, nt->parent)));
+                      mc_to_yposition_in_scale(r_ob, note_get_display_midicents(nt), chord_get_voice(r_ob, nt->parent)));
  
     if (leftmost_in && (center.x < *leftmost_in || *leftmost_in == -100000))
         *leftmost_in = center.x;
@@ -37711,7 +37365,7 @@ t_pt note_to_family_contour_pt(t_notation_obj *r_ob, t_note *nt, double *leftmos
 t_llll *note_to_family_contour_pts(t_notation_obj *r_ob, t_note *nt)
 {
     t_pt center = build_pt(note_get_center_ux(r_ob, nt),
-                      mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), chord_get_voice(r_ob, nt->parent)));
+                      mc_to_yposition_in_scale(r_ob, note_get_display_midicents(nt), chord_get_voice(r_ob, nt->parent)));
 
     t_pt left = center, right = center, top = center, bottom = center;
 
@@ -40330,7 +39984,7 @@ void bach2pwgl_measure_level(t_notation_obj *r_ob, t_llll *box, char *need_set_d
                     
                     for (nt = ch->firstnote; nt; nt = nt->next) {
                         t_llll* this_note_llll = llll_get();
-                        double mc_as_double = note_get_screen_midicents_with_accidental(nt)/100.;
+                        double mc_as_double = note_get_display_midicents_with_accidental(nt)/100.;
                         if (((double)mc_as_double) == round(mc_as_double))
                             llll_appendlong(this_note_llll, round(mc_as_double), 0, WHITENULL_llll);
                         else
@@ -43998,7 +43652,7 @@ void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char
     } else {
         t_rational screen_acc;
         long screen_midicents = (long)this_midicents;
-        mc_to_screen_approximations(r_ob, this_midicents, &screen_midicents, &screen_acc, NULL, NULL);
+        mc_to_display_approximation_ET(r_ob, this_midicents, &screen_midicents, &screen_acc, NULL, NULL);
         r_ob->notation_cursor.step = midicents_to_diatsteps_from_middleC(r_ob, screen_midicents);
     }
 }
