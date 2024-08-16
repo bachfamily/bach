@@ -218,7 +218,7 @@ t_llllelem *llll_appendpitch_from_elems(t_llll *where, const t_atom_short degree
     if (!where)
         return NULL;
     outelem = llllelem_get();
-    hatom_setpitch_from_elems(&outelem->l_hatom, degree, r, alter, octave);
+    hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, r, octave);
     //hatom_setrational_from_elems(&outelem->l_hatom, what_num, what_den);
     outelem->l_flags = flags;
     llll_append(where, outelem, adopter);

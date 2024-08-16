@@ -2675,13 +2675,13 @@ t_llll *score_readxmlbuffer(t_score *x,
                             } else {
                                 // this could be a quarter-tone with an implicit accidental,
                                 // as in the sequence C+ C(+)
-                                for (long i = numpitches - 1; i >= 0; i--) {
-                                    if (allpitches[i].degree() == degree &&
-                                        allpitches[i].octave() == octave &&
+                                for (long i = numpitches - 1; i >= 0; i--) { // TODO: @Andrea: I assume XML is ET only... but should we approximate non ET-stuff?
+                                    if (allpitches[i].getWhiteKeyET() == degree &&
+                                        allpitches[i].getOctave() == octave &&
                                         allpitches[i].onset < currOnset &&
                                         ((!accidentalXML && alter == 0) ||
-                                         allpitches[i].alter() == alter - t_pitch::qrtrsharp)) {
-                                            alter = allpitches[i].alter();
+                                         allpitches[i].getAlterET() == alter - t_pitch::qrtrsharp)) {
+                                            alter = allpitches[i].getAlterET();
                                             break;
                                         }
                                 }

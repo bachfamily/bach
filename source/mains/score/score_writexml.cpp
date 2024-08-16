@@ -1175,8 +1175,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                             case 900:    mxmlNewText(stepxml, 0, "A");    break;
                             case 1100:    mxmlNewText(stepxml, 0, "B");    break;
                         }
+                        
                         // alter
-                        screen_accidental = note_get_screen_accidental(note);
+                        screen_accidental = note_get_screen_accidental_ordinary(note);
                         if (parenthesized_quartertones && screen_accidental.r_den > 2) {
                             if (parenthesized_quartertones == 30061984) { // yeah, that's bad and private :-) It's however a very bad convention, but I needed it now.
                                 screen_accidental = screen_accidental > 0 ? screen_accidental + genrat(1, 4) : screen_accidental - genrat(1, 4);

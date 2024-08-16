@@ -6435,18 +6435,6 @@ bool accidentals_eq(t_uint8 *accidentals1, t_uint8 *accidentals2);
 void note_get_display_accidentals(t_note *nt, t_uint8 *accidentals);
 
 
-/**    Returns the unscaled width of an accidental, given the current <accidentals_typo_preferences> of the notation object.
-    @ingroup            typographical
-    @param r_ob            The notation object
-    @param accidental    Accidental (in rational form, e.g. -1/2 = flat...)
-    @param always_classical_display    If this flag is non-zero, the accidentals are always assumed to be displayed classically,
-                                    via #k_ACCIDENTALS_CLASSICAL. This is handy when painting the key signatures, which 
-                                    is always painted with classical accidentals. Leave this to 0 otherwise.
-    @return                Unscaled width of the accidental
- */
-double get_accidental_uwidth(t_notation_obj *r_ob, t_rational accidental, char always_classical_display);
-
-
 // -----------------------------------
 // OTHER TYPOGRAPHICAL
 // -----------------------------------

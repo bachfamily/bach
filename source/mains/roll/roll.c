@@ -15811,7 +15811,7 @@ t_llll* get_voice_pixel_values_as_llll(t_roll *x, t_rollvoice *voice){
             if (note_has_accidentals(temp_note))
                 llll_appenddouble(accidentals_x_pixel_pos, this_chord_pixel_start + temp_note->accidental_stem_delta_ux * x->r_ob.zoom_y + 
                               x->r_ob.accidentals_typo_preferences.ux_shift * x->r_ob.zoom_y - 
-                              get_accidental_uwidth((t_notation_obj *) x, note_get_screen_accidental(temp_note), false) * x->r_ob.zoom_y, 0, WHITENULL_llll);
+                              note_get_accidental_uwidth((t_notation_obj *) x, temp_note, false) * x->r_ob.zoom_y, 0, WHITENULL_llll);
             else 
                 llll_appenddouble(accidentals_x_pixel_pos, this_chord_pixel_start + 
                                   get_notehead_ux_shift((t_notation_obj *) x, temp_note) * x->r_ob.zoom_y + temp_note->notecenter_stem_delta_ux * x->r_ob.zoom_y -

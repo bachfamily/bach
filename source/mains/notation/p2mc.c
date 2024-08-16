@@ -146,7 +146,7 @@ void p2mc_float(t_p2mc *x, double num){
 
 long substitute_pitches_with_mc_fn(void *data, t_hatom *a, const t_llll *address){
     if (hatom_gettype(a) == H_PITCH)
-        hatom_setrational(a, hatom_getpitch(a).toMC());
+        hatom_setdouble(a, hatom_getpitch(a).toMCdouble());
     return 0;
 }
 

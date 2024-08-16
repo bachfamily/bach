@@ -702,18 +702,21 @@ void paint_keysigaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_a
                 acc_text[0] = r_ob->accidentals_typo_preferences.unicode_characters[BACH_ACCIDENTAL_BOGUS];
             } else
                 font = jf_acc;
-            {
-                long outlen; 
-                char *acccharacters_utf;
-                char acccharacters[15];
-                acccharacters_utf = charset_unicodetoutf8_debug(acc_text, 1, &outlen);
-                strncpy(acccharacters, acccharacters_utf, 14);
-                write_text(g, font, color, acccharacters, 
-                                              pos_x, r_ob->j_inset_y, pos_x * r_ob->zoom_y, pos_y + r_ob->accidentals_typo_preferences.uy_shift * r_ob->zoom_y - r_ob->j_inset_y, 
-                                              JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMLEFT, true, false);
-                bach_freeptr(acccharacters_utf);
-            }
-            pos_x += (get_accidental_uwidth(r_ob, this_acc, true) + CONST_KEYSIGNATURE_USPACE_BETWEEN_ACC) * r_ob->zoom_y;
+
+            long outlen;
+            char *acccharacters_utf;
+            char acccharacters[15];
+            acccharacters_utf = charset_unicodetoutf8_debug(acc_text, 1, &outlen);
+            strncpy(acccharacters, acccharacters_utf, 14);
+            write_text(g, font, color, acccharacters,
+                       pos_x, r_ob->j_inset_y, pos_x * r_ob->zoom_y, pos_y + r_ob->accidentals_typo_preferences.uy_shift * r_ob->zoom_y - r_ob->j_inset_y,
+                       JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMLEFT, true, false);
+            bach_freeptr(acccharacters_utf);
+
+            t_uint8 temp[2];
+            temp[0] = acc;
+            temp[1] = BACH_ACCIDENTAL_NONE;
+            pos_x += (accidentals_get_uwidth(r_ob, temp) + CONST_KEYSIGNATURE_USPACE_BETWEEN_ACC) * r_ob->zoom_y;
         }
     }
 }
@@ -5180,9 +5183,14 @@ void parse_sym_to_key_and_mode(t_notation_obj *r_ob, t_symbol *sym, char *key, c
 
 double get_key_uwidth(t_notation_obj *r_ob, t_voice *voice) { // returns un unscaled x width
     long i; double width = 0.;
+    t_uint8 temp[2];
+    temp[0] = BACH_ACCIDENTAL_NONE;
+    temp[1] = BACH_ACCIDENTAL_NONE;
     for (i = 0; i < 7; i++)
-        if (voice->acc_pattern[i].r_num != 0)
-            width += (get_accidental_uwidth(r_ob, voice->acc_pattern[i], true) + CONST_KEYSIGNATURE_USPACE_BETWEEN_ACC);
+        if (voice->acc_pattern[i].r_num != 0) {
+            temp[0] = get_accidental_ET(r_ob, voice->acc_pattern[i]);
+            width += (accidentals_get_uwidth(r_ob, temp) + CONST_KEYSIGNATURE_USPACE_BETWEEN_ACC);
+        }
     return width;
 }
 
