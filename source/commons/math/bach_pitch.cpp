@@ -483,10 +483,10 @@ t_pitch t_pitch::operator%(const t_pitch &b) const
         t_rational r2 = b.getRatio();
 
         while (rat_rat_cmp(r, r2) > 0) {
-            r /= b;
+            r /= r2;
         }
         while (rat_rat_cmp(r, long2rat(1)) < 0) {
-            r *= b;
+            r *= r2;
         }
         
         return t_pitch(r);

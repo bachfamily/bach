@@ -3726,7 +3726,7 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(sum, sum->h_w.w_long + a->h_w.w_double);
                     break;
                 case H_PITCH:
-                    sum->h_w.w_long += t_atom_long(a->h_w.w_pitch.toMC());
+                    sum->h_w.w_long += t_atom_long(a->h_w.w_pitch.toMCdouble());
                     break;
                 default:
                     break;
@@ -3744,7 +3744,7 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(sum, hatom_getdouble(sum) + a->h_w.w_double);
                     break;
                 case H_PITCH:
-                    sum->h_w.w_rat += a->h_w.w_pitch.toMC();
+                    sum->h_w.w_rat += a->h_w.w_pitch.toMCrat();
                 default:
                     break;
             }
@@ -3761,7 +3761,7 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
                     sum->h_w.w_double += a->h_w.w_double;
                     break;
                 case H_PITCH:
-                    sum->h_w.w_double += double(a->h_w.w_pitch.toMC());
+                    sum->h_w.w_double += double(a->h_w.w_pitch.toMCdouble());
                 default:
                     break;
             }
@@ -3769,13 +3769,13 @@ void llll_sum_one(t_hatom *sum, const t_hatom *a, const t_llll *address)
         case H_PITCH:
             switch (a->h_type) {
                 case H_LONG:
-                    hatom_setlong(sum, a->h_w.w_long + t_atom_long(sum->h_w.w_pitch.toMC()));
+                    hatom_setlong(sum, a->h_w.w_long + t_atom_long(sum->h_w.w_pitch.toMCdouble()));
                     break;
                 case H_RAT:
-                    hatom_setrational(sum, a->h_w.w_rat + sum->h_w.w_pitch.toMC());
+                    hatom_setrational(sum, a->h_w.w_rat + sum->h_w.w_pitch.toMCrat());
                     break;
                 case H_DOUBLE:
-                    hatom_setdouble(sum, a->h_w.w_double + double(sum->h_w.w_pitch.toMC()));
+                    hatom_setdouble(sum, a->h_w.w_double + double(sum->h_w.w_pitch.toMCdouble()));
                     break;
                 case H_PITCH:
                     sum->h_w.w_pitch += a->h_w.w_pitch;
@@ -3817,7 +3817,7 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(prod, prod->h_w.w_long * a->h_w.w_double);
                     break;
                 case H_PITCH:
-                    prod->h_w.w_long *= t_atom_long(a->h_w.w_pitch.toMC());
+                    prod->h_w.w_long *= t_atom_long(a->h_w.w_pitch.toMCdouble());
                     break;
                 default:
                     break;
@@ -3835,7 +3835,7 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
                     hatom_setdouble(prod, hatom_getdouble(prod) * a->h_w.w_double);
                     break;
                 case H_PITCH:
-                    prod->h_w.w_rat *= a->h_w.w_pitch.toMC();
+                    prod->h_w.w_rat *= a->h_w.w_pitch.toMCrat();
                 default:
                     break;
             }
@@ -3852,7 +3852,7 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
                     prod->h_w.w_double *= a->h_w.w_double;
                     break;
                 case H_PITCH:
-                    prod->h_w.w_double *= double(a->h_w.w_pitch.toMC());
+                    prod->h_w.w_double *= double(a->h_w.w_pitch.toMCdouble());
                 default:
                     break;
             }
@@ -3860,17 +3860,17 @@ void llll_prod_one(t_hatom *prod, const t_hatom *a, const t_llll *address)
         case H_PITCH:
             switch (a->h_type) {
                 case H_LONG:
-                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMCdouble()));
                     break;
                 case H_RAT:
-                    hatom_setrational(prod, a->h_w.w_rat * prod->h_w.w_pitch.toMC());
+                    hatom_setrational(prod, a->h_w.w_rat * prod->h_w.w_pitch.toMCrat());
                     break;
                 case H_DOUBLE:
-                    hatom_setdouble(prod, a->h_w.w_double * double(prod->h_w.w_pitch.toMC()));
+                    hatom_setdouble(prod, a->h_w.w_double * double(prod->h_w.w_pitch.toMCdouble()));
                     break;
                 case H_PITCH:
 //                    hatom_setlong(prod, a->h_w.w_long * t_atom_long(prod->h_w.w_pitch.toMC()));
-                    hatom_setdouble(prod, double(a->h_w.w_pitch.toMC()) * t_atom_long(prod->h_w.w_pitch.toMC()));
+                    hatom_setdouble(prod, a->h_w.w_pitch.toMCdouble() * prod->h_w.w_pitch.toMCdouble());
                     break;
             }
         case H_NOTHING:
@@ -6847,7 +6847,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         return outll;
         
     } else { // pitches
-        t_pitch start, end, step, v;
+        t_pitch start, end, step;
         t_atom_long count;
         step = hatom_getpitch(&step_hatom);
         
@@ -6900,8 +6900,10 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         } else if (maxcount <= 0)
             maxcount = ATOM_LONG_MAX;
         
-        if ((step.degree() != 0 || step.octave() != 0) &&
-            (start.degree() != end.degree() || start.octave() != end.octave())) {
+        if ((step.isPureET() && start.isPureET() && end.isPureET()) &&
+            ((step.getWhiteKeyET() != 0 || step.getOctave() != 0) &&
+             (start.getWhiteKeyET() != end.getWhiteKeyET() || start.getOctave() != end.getOctave()))) {
+            t_pitch v;
             if (step > t_pitch::C0) {
                 for (v = start, count = 0; v <= end && count < maxcount; v += step, count++)
                     llll_appendpitch(outll, v, 0, WHITENULL_llll);
@@ -6909,13 +6911,27 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
                 for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
                     llll_appendpitch(outll, v, 0, WHITENULL_llll);
             }
-        } else {
-            object_warn((t_object *) culprit, "Also considering midicents");
-            if (step > t_pitch::C0) {
-                for (v = start, count = 0; v <= end && v.toMC() < end.toMC() && count < maxcount; v += step, count++)
+        } else if ((step.isPureJI() && start.isPureJI() && end.isPureJI())) {
+            t_rational stepRatio = step.getRatio();
+            t_rational startRatio = start.getRatio();
+            t_rational endRatio = end.getRatio();
+            t_rational v;
+            if (stepRatio.r_num > 0) {
+                for (v = startRatio, count = 0; v <= endRatio && count < maxcount; v += stepRatio, count++)
                     llll_appendpitch(outll, v, 0, WHITENULL_llll);
             } else {
-                for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
+                for (v = startRatio, count = 0; v >= endRatio && count < maxcount; v += stepRatio, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            }
+            
+        } else {
+            object_warn((t_object *) culprit, "Also considering midicents");
+            t_pitch v;
+            if (step > t_pitch::C0) {
+                for (v = start, count = 0; v.toMCdouble() <= end.toMCdouble() && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            } else {
+                for (v = start, count = 0; v.toMCdouble() >= end.toMCdouble() && count < maxcount; v += step, count++)
                     llll_appendpitch(outll, v, 0, WHITENULL_llll);
             }
         }

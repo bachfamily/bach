@@ -787,7 +787,7 @@ long lexpr_invert(t_lexpr_token *verb, t_lexpr_token *arg2)
                     arg2->t_contents.c_hatom.h_w.w_double = 1. / arg2->t_contents.c_hatom.h_w.w_double;
                     break;
                 case H_PITCH:
-                    hatom_setrational(&arg2->t_contents.c_hatom, arg2->t_contents.c_hatom.h_w.w_pitch.toMC().inv());
+                    hatom_setdouble(&arg2->t_contents.c_hatom, 1. / arg2->t_contents.c_hatom.h_w.w_pitch.toMCdouble());
             }
             break;	
     }
