@@ -404,13 +404,55 @@ void get_accidental_characters_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *acci
 }
 
 
+void swap_et_accidentals_for_ji_et(t_uint8 *accidentals, int numAccidentals)
+{
+    for (long i = 0; i < numAccidentals; i++) {
+        switch (accidentals[i]) {
+            case BACH_ACCIDENTAL_NATURAL:
+                accidentals[i] = BACH_ACCIDENTAL_JI_NATURAL_ET;
+                break;
+                
+            case BACH_ACCIDENTAL_SHARP:
+                accidentals[i] = BACH_ACCIDENTAL_JI_SHARP_ET;
+                break;
+                
+            case BACH_ACCIDENTAL_FLAT:
+                accidentals[i] = BACH_ACCIDENTAL_JI_FLAT_ET;
+                break;
+                
+            case BACH_ACCIDENTAL_DOUBLESHARP:
+                accidentals[i] = BACH_ACCIDENTAL_JI_DOUBLESHARP_ET;
+                break;
+
+            case BACH_ACCIDENTAL_DOUBLEFLAT:
+                accidentals[i] = BACH_ACCIDENTAL_JI_DOUBLEFLAT_ET;
+                break;
+
+            case BACH_ACCIDENTAL_QUARTERFLAT:
+                accidentals[i] = BACH_ACCIDENTAL_JI_QUARTERFLAT_ET;
+                break;
+
+            case BACH_ACCIDENTAL_QUARTERSHARP:
+                accidentals[i] = BACH_ACCIDENTAL_JI_QUARTERSHARP_ET;
+                break;
+
+            default:
+                break;
+        }
+    }
+}
+
 // accidentals must be allocated with MAX_NUM_ACCIDENTALS+1 size
 void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *accidentals, int *numAccidentals)
 {
     if (pitch.isPureET()) {
-        // use JI ET characters
-        
-        // TODO: dg
+        // use JI ET characters, the ones with the lines above (but approximate to half tones, though!
+        t_pitch q = pitch.approxET(2);
+        int n;
+        get_accidental_characters_ET(r_ob, q, accidentals, &n);
+        swap_et_accidentals_for_ji_et(accidentals, n);
+        if (numAccidentals)
+            *numAccidentals = n;
     } else {
         
         std::vector<int8_t> hejicommas = pitch.getHEJICommas();

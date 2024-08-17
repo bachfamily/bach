@@ -694,7 +694,8 @@ typedef enum _header_elems {
     k_HEADER_LOOP = 8192,          ///< Loop position
     k_HEADER_VOICESPACING = 16384,        ///< Voice spacing information
     k_HEADER_HIDEVOICES = 32768,        ///< Voice hiding information
-    k_HEADER_ALL = 0xFFFFFFFF,        ///< All the other #e_header_elems together
+    k_HEADER_NOTATIONSTYLES = 65536,        ///< Notation style
+    k_HEADER_ALL = 0xFFFFFFFF,        ///< All the #e_header_elems together
 } e_header_elems;
 
 
@@ -2754,8 +2755,8 @@ typedef struct _chord
     
     // flags
     char        is_score_chord;                    ///< Flag telling if the chord is a [bach.score] chord (1) or a [bach.roll] chord (0)
-    char        imposed_direction;                ///< Internal flag, private use, to impose a direction to the chord stem (then calculate_chord_parameters() will set the direction flag), as before 1 = stem up, -1 = stem down.
-    char        need_recompute_parameters;        ///< Flag telling if we need to recompute the chord parameters. If yes, as soon as needed, some functions are run: assign_chord_lyrics(), chord_assign_dynamics() and calculate_chord_parameters(),
+    char        imposed_direction;                ///< Internal flag, private use, to impose a direction to the chord stem (then chord_calculate_parameters() will set the direction flag), as before 1 = stem up, -1 = stem down.
+    char        need_recompute_parameters;        ///< Flag telling if we need to recompute the chord parameters. If yes, as soon as needed, some functions are run: assign_chord_lyrics(), chord_assign_dynamics() and chord_calculate_parameters(),
                                                 ///< which sets the chord lyrics from the slot content (if any) andall the chord parameters such as direction, left_uextension, right_uextension... 
     char        need_recalculate_onset;            ///< Internal flag, privat use, telling if we need to recalculate the onset of the chord. Only used by score, where the
     
@@ -4090,6 +4091,8 @@ typedef struct _notation_obj
                                                     ///< operate parsing and conversions
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
     long            *midichannels_as_longlist;        ///< List of midichannels (one for each voice). 
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
+    t_symbol        **notationstyles_as_symlist;     ///< List of notation styles (one for each voice) as symbols
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
 
     // tuttipoints, for bach.score
@@ -7735,7 +7738,7 @@ int get_middle_scaleposition(int clef);
     - the <scaleposition> field for all notes
     - the <show_accidental> fields (only for [bach.roll]: for [bach.score] this is done in validate_accidentals_for_measure())
     - the <direction> field (chord direction), you can impose it by setting the <imposed_direction> field different from 0, before calling 
-        for calculate_chord_parameters(); leave it to 0 for automatic calculatio - if we're in [bach.roll] and we don't show stems, by default the stem will be upward
+        for chord_calculate_parameters(); leave it to 0 for automatic calculatio - if we're in [bach.roll] and we don't show stems, by default the stem will be upward
     - the <left_uextension> and <right_uextension>, <lyrics_portion_of_left_uextension> fields of the chord (representing the unscaled amount of pixels, 
         at the left and right of the stem line, needed to paint the chord)
     - the <notecenter_stem_delta_ux> field for each note (the position of each notehead with respect to the stem) 
@@ -7751,7 +7754,7 @@ int get_middle_scaleposition(int clef);
     @param    reset_graphical_position_values    Set this to 1 if you also want to reset the graphical position values. Namely this resets the <topmost_y>, <bottommost_y>, 
                                             <beam_y>, <topmost_y_noacc>, <bottommost_y_noacc> fields, and then call for reset_articulation_position_for_chord()
  */
-void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, char reset_graphical_position_values);
+void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, char reset_graphical_position_values);
 
 
 /**    Fill the <notehead_resize> and <accidentals_resize> fields for a given note, depening if the note size is linked to some slot, or
@@ -7759,7 +7762,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
     @ingroup        notation
     @param    r_ob    The notation object
     @param    note    The note
-    @remark            This is used in calculate_chord_parameters().
+    @remark            This is used in chord_calculate_parameters().
 */ 
 void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note);
 double velocity_to_notesize_factor(t_notation_obj *r_ob, long velocity);
@@ -9936,7 +9939,7 @@ void assign_chord_lyrics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_lyric
 
 
 /**    Delete the lyrics associated to a chord. More precisely: erase the chord slot linked with the lyrics content (if any), and then
-    sets the <need_recompute_parameters> field, which will oblige to call for assign_chord_lyrics() and calculate_chord_parameters().
+    sets the <need_recompute_parameters> field, which will oblige to call for assign_chord_lyrics() and chord_calculate_parameters().
     The first function will be such that (since there's no more slot content), also the <lyrics> field of the chord will be erased.
      @ingroup        lyrics
     @param    r_ob    The notation object
@@ -11126,6 +11129,8 @@ void end_editing_textfield(t_notation_obj *r_ob);
  */
 void set_midichannels_from_llll(t_notation_obj *r_ob, t_llll* midichannels);
 
+void set_notationstyles_from_llll(t_notation_obj *r_ob, t_llll* notationstyles);
+
 
 /**    Change the midichannel of a specific voice
     @ingroup                midichannels
@@ -11135,6 +11140,9 @@ void set_midichannels_from_llll(t_notation_obj *r_ob, t_llll* midichannels);
     @param    also_add_undo_tick    Also adds an undo tick before changing
  */
 void change_single_midichannel(t_notation_obj *r_ob, t_voice *voice, long new_midichannel, char also_add_undo_tick);
+
+
+void change_single_notationstyle(t_notation_obj *r_ob, t_voice* voice, t_symbol *new_notationstyle, char also_add_undo_tick);
 
 
 
@@ -12583,6 +12591,19 @@ t_llll *get_keys_as_llll(t_notation_obj *r_ob, char prepend_router);
     @return                An llll containing all midichannels (and possibly a "midichannels" symbol at the beginning)
  */
 t_llll *get_midichannels_as_llll(t_notation_obj *r_ob, char prepend_router);
+
+
+/**    Obtain an llll containing all notation styles as symbols (plus possibly a "notationstyles" router at the beginning)
+    @ingroup            notation_data
+    @param    r_ob        The notation object
+    @param    prepend_router    If this is non-zero a "notationstyles" symbol at the beginning is prepended
+    @return                An llll containing all notation styles (and possibly a "notationstyles" symbol at the beginning)
+ */
+t_llll *get_notationstyles_as_llll(t_notation_obj *r_ob, char prepend_router);
+
+t_symbol *notationstyle_to_symbol(e_voice_notation_style s);
+long notationstyle_from_symbol(t_symbol *s);
+
 
 
 /**    Obtain the header of a notation object
@@ -17489,6 +17510,7 @@ t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, lo
 t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_notationstyles(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -17807,7 +17829,7 @@ void bach_attribute_add_enumindex(t_bach_attribute *attr, long num_items, t_symb
     @ingroup    attributes
     @param    r_ob                The    notation object
  */
-void notationobj_bach_attribute_declares(t_notation_obj *r_ob);
+void notationobj_declare_bach_attributes(t_notation_obj *r_ob);
 
 
 

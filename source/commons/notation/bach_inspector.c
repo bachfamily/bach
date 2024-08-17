@@ -365,7 +365,7 @@ void get_access_types_as_sym_list(t_notation_obj *r_ob, t_symbol **list){
 }
 
 
-void notationobj_bach_attribute_declares(t_notation_obj *r_ob)
+void notationobj_declare_bach_attributes(t_notation_obj *r_ob)
 {
 	// SLOTINFO ATTRIBUTES
 	t_symbol *slottypes[k_NUM_SLOT_TYPES];
@@ -461,6 +461,13 @@ void notationobj_bach_attribute_declares(t_notation_obj *r_ob)
 	get_clefs_as_sym_list(r_ob, clefs);
 	bach_attribute_add_enumindex(bach_attribute_get(man, k_VOICE, _llllobj_sym_clef), 23, clefs);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_stafflines, "Staff Lines", k_VOICE, t_voice, staff_lines_dummy, k_BACH_ATTR_SYM, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_notationstyle, "Notation Style", k_VOICE, t_voice, notation_style, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
+    t_symbol *notationstyles[4];
+    notationstyles[0] = gensym("Equal Temperament");
+    notationstyles[1] = gensym("Just Intonation");
+    notationstyles[2] = gensym("Linear Pitch");
+    notationstyles[3] = gensym("Linear Frequency");
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_VOICE, _llllobj_sym_notationstyle), 4, notationstyles);
 
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_VOICE, t_voice, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_VOICE, t_voice, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
@@ -1022,6 +1029,8 @@ void bach_default_preprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute *
 			undo_tick_create_for_header(r_ob, k_HEADER_KEYS);
 		else if (attr->name == _llllobj_sym_midichannel)
 			undo_tick_create_for_header(r_ob, k_HEADER_MIDICHANNELS);
+        else if (attr->name == _llllobj_sym_notationstyle)
+            undo_tick_create_for_header(r_ob, k_HEADER_NOTATIONSTYLES);
 		else if (attr->name == _llllobj_sym_stafflines)
 			undo_tick_create_for_header(r_ob, k_HEADER_STAFFLINES);
 		else
@@ -1491,6 +1500,9 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 		} else if (attr->name == _llllobj_sym_name) {
 			change_single_voicename_from_ac_av(r_ob, (t_voice *)obj, ac, av, true);
 			return;
+        } else if (attr->name == _llllobj_sym_notationstyle) {
+            change_single_notationstyle(r_ob, (t_voice *)obj, notationstyle_to_symbol((e_voice_notation_style) atom_getlong(av)), true);
+            return;
 		} else if (attr->name == _llllobj_sym_stafflines) {
             t_llll *parsed = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
             if (parsed) {
@@ -1737,12 +1749,18 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 			*av = (t_atom *)bach_newptr(sizeof(t_atom));
 			atom_setlong(*av, mode == k_MODE_MAJOR ? 0 : (mode == k_MODE_MINOR ? 1 : 2));
 			return;
-		} else if (attr->name == _llllobj_sym_key) {
-			*ac = 1;
-			*av = (t_atom *)bach_newptr(sizeof(t_atom));
-			atom_setsym(*av, r_ob->keys_as_symlist[((t_voice *)obj)->number]);
-
-			return;
+        } else if (attr->name == _llllobj_sym_key) {
+            *ac = 1;
+            *av = (t_atom *)bach_newptr(sizeof(t_atom));
+            atom_setsym(*av, r_ob->keys_as_symlist[((t_voice *)obj)->number]);
+            
+            return;
+        } else if (attr->name == _llllobj_sym_notationstyle) {
+            long styleidx = (*((long *)field));
+            *ac = 1;
+            *av = (t_atom *)bach_newptr(sizeof(t_atom));
+            atom_setsymbol(*av, notationstyle_to_symbol((e_voice_notation_style) styleidx));
+            return;
 		} else if (attr->name == _llllobj_sym_stafflines) {
 			t_voice *voice = (t_voice *)obj;
 			if (voice->are_staff_lines_standard) {

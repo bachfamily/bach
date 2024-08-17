@@ -385,6 +385,12 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_voice = gensym("voice");
     x->s_pim = gensym("pim");
     x->s_stafflines = gensym("stafflines");
+    x->s_notationstyle = gensym("notationstyle");
+    x->s_notationstyles = gensym("notationstyles");
+    x->s_et = gensym("et");
+    x->s_ji = gensym("ji");
+    x->s_linpitch = gensym("linpitch");
+    x->s_linfreq = gensym("linfreq");
     x->s_timesig = gensym("timesig");
     x->s_role = gensym("role");
     x->s_loop = gensym("loop");

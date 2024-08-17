@@ -29,6 +29,7 @@ DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, default_noteslots, notationobj_g
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, default_noteslots, notationobj_setattr_defaultnoteslots);
 
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(midichannels_as_longlist, num_voices)
+DEFINE_NOTATIONOBJ_SYMPTR_GETTER(notationstyles_as_symlist, num_voices)
 DEFINE_NOTATIONOBJ_ATOMPTR_GETTER(prevent_editing_atom, num_prevent_editing_elems)
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(background_slots, num_background_slots)
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(popup_menu_slots, num_popup_menu_slots)
@@ -2236,6 +2237,16 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Sets the MIDI channels, which are a property of voices: a list with one integer for each voice is expected.
 
+        CLASS_ATTR_NOTATIONOBJ_SYMPTR(c, "notationstyles", 0, notationstyles_as_symlist, CONST_MAX_VOICES, notationobj_setattr_notationstyles);
+        CLASS_ATTR_STYLE_LABEL(c,"notationstyles",0,"text","Notation Styles");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notationstyles",0,"et");
+        // @exclude bach.slot
+        // @description Sets the notation styles, which are a property of voices: a list with one symbol per voice is expected.
+        // Symbols can be one of the following: "et" (equal temperament), "ji" (just intonation, displayed via the
+        // Helmholtz-Ellis Just Intonation system, version 2.0), "linpitch" (continuous linear pitch),
+        // "linfreq" (continuous linear frequency).
+
+        
         CLASS_ATTR_DOUBLE(c,"gridperiodms",0, t_notation_obj, grid_step_ms);
         CLASS_ATTR_STYLE_LABEL(c,"gridperiodms",0,"text","Ruler/Grid Period (ms)");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"gridperiodms",0,"1000");
@@ -3807,6 +3818,13 @@ t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr,
     return MAX_ERR_NONE;
 }
 
+t_max_err notationobj_setattr_notationstyles(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    t_llll *notationstyles_as_llll = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
+    set_notationstyles_from_llll(r_ob, notationstyles_as_llll);
+    llll_free(notationstyles_as_llll);
+    return MAX_ERR_NONE;
+}
+
 
 t_max_err notationobj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
@@ -5309,6 +5327,7 @@ void notationobj_free(t_notation_obj *r_ob)
     bach_freeptr(r_ob->keys_as_symlist);
     bach_freeptr(r_ob->hidevoices_as_charlist);
     bach_freeptr(r_ob->midichannels_as_longlist);
+    bach_freeptr(r_ob->notationstyles_as_symlist);
     bach_freeptr(r_ob->voiceuspacing_as_floatlist);
     bach_freeptr(r_ob->show_measure_numbers);
     bach_freeptr(r_ob->full_acc_repr);
@@ -5888,14 +5907,14 @@ t_llll *get_clefs_as_llll(t_notation_obj *r_ob, char prepend_router){
         llll_appendsym(outlist, r_ob->clefs_as_symlist[v], 0, WHITENULL_llll);
     return outlist;
 }
-
+    
 t_llll *get_keys_as_llll(t_notation_obj *r_ob, char prepend_router){
     t_llll *outlist = llll_get();
     long v;
     if (prepend_router)
-        llll_appendsym(outlist, _llllobj_sym_keys, 0, WHITENULL_llll);
+        llll_appendsym(outlist, _llllobj_sym_keys);
     for (v = 0; v < r_ob->num_voices; v++)
-        llll_appendsym(outlist, r_ob->keys_as_symlist[v], 0, WHITENULL_llll);
+        llll_appendsym(outlist, r_ob->keys_as_symlist[v]);
     return outlist;
 }
 
@@ -5905,10 +5924,62 @@ t_llll *get_midichannels_as_llll(t_notation_obj *r_ob, char prepend_router)
     long v = 0;
     t_voice *voice;
     if (prepend_router)
-        llll_appendsym(outlist, _llllobj_sym_midichannels, 0, WHITENULL_llll);
+        llll_appendsym(outlist, _llllobj_sym_midichannels);
     voice = r_ob->firstvoice;
     for (v = 0; v < r_ob->num_voices; v++) {
-        llll_appendlong(outlist, voice->midichannel, 0, WHITENULL_llll);
+        llll_appendlong(outlist, voice->midichannel);
+        voice = voice_get_next(r_ob, voice);
+    }
+    return outlist;
+}
+
+long notationstyle_from_symbol(t_symbol *s)
+{
+    if (s == gensym("ji") || s == gensym("just") || s == gensym("justintonation") || s == gensym("just intonation") || s == gensym("Just Intonation"))
+        return k_VOICE_NOTATION_STYLE_JI;
+    else if (s == gensym("continuous") || s == gensym("linear") || s == gensym("linpitch") || s == gensym("continuous linear pitch") || s == gensym("Continuous Linear Pitch"))
+        return k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH;
+    else if (s == gensym("linfreq") || s == gensym("continuous linear frequency") || s == gensym("Continuous Linear Frequency"))
+        return k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ;
+    else
+        return k_VOICE_NOTATION_STYLE_ET;
+}
+
+t_symbol *notationstyle_to_symbol(e_voice_notation_style s)
+{
+    switch (s) {
+        case k_VOICE_NOTATION_STYLE_ET:
+            return _llllobj_sym_et;
+            break;
+
+        case k_VOICE_NOTATION_STYLE_JI:
+            return _llllobj_sym_ji;
+            break;
+
+        case k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH:
+            return _llllobj_sym_linpitch;
+            break;
+
+        case k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ:
+            return _llllobj_sym_linfreq;
+            break;
+
+        default:
+            return _llllobj_sym_unknown;
+            break;
+    }
+}
+
+t_llll *get_notationstyles_as_llll(t_notation_obj *r_ob, char prepend_router)
+{
+    t_llll *outlist = llll_get();
+    long v = 0;
+    t_voice *voice;
+    if (prepend_router)
+        llll_appendsym(outlist, _llllobj_sym_notationstyles);
+    voice = r_ob->firstvoice;
+    for (v = 0; v < r_ob->num_voices; v++) {
+        llll_appendsym(outlist, notationstyle_to_symbol((e_voice_notation_style)voice->notation_style));
         voice = voice_get_next(r_ob, voice);
     }
     return outlist;

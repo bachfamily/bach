@@ -354,10 +354,10 @@ double t_pitch::toMCdouble() const {
 }
 
 t_rational t_pitch::toMCrat() const {
-    t_rational etmc = ETComponentToMCratNoOctave();
     if (isPureET()) {
-        return etmc;
+        return ETComponentToMCratWithOctave();
     } else {
+        t_rational etmc = ETComponentToMCratNoOctave();
         double jimc = JIComponentToMC();
         t_rational jimcR = approx_double_with_rat_fixed_den(jimc, 10000, 0, nullptr); // TODO: Rivedere approssimazione al denominatore?
         return etmc + jimcR;

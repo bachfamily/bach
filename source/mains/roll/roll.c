@@ -295,7 +295,7 @@ char force_inscreenpos_ms(t_roll *x, double position, double inscreen_ms, char s
 char force_inscreen_ms_to_boundary(t_roll *x, double inscreen_ms, char clip_to_length, char send_domain_if_changed, char also_check_scheduling, char also_move_mousedown_pt);
 char force_inscreen_ms_rolling(t_roll *x, double inscreen_ms, char clip_to_length, char send_domain_if_changed, char also_check_scheduling, char also_move_mousedown_pt);
 
-void roll_bach_attribute_declares(t_roll *x);
+void roll_declare_bach_attributes(t_roll *x);
 
 void roll_delete_voice(t_roll *x, t_rollvoice *voice);
 void roll_delete_voiceensemble(t_roll *x, t_voice *any_voice_in_voice_ensemble);
@@ -8636,7 +8636,7 @@ void set_voice_cents_values_from_llll(t_roll *x, t_llll* midicents, t_rollvoice 
                         if (set_pitch) {
                             if (note) { // there's already a note: we change its cents
                                 note->midicents = cents;
-                                // note_compute_approximation((t_notation_obj *) x, note); // done by calculate_chord_parameters
+                                // note_compute_approximation((t_notation_obj *) x, note); // done by chord_calculate_parameters
                                 note_set_enharmonicity(note, pitch_in);
                                 note = note->next;
                             } else { // we create a note within the same chord!
@@ -8715,7 +8715,7 @@ void set_voice_cents_values_from_llll(t_roll *x, t_llll* midicents, t_rollvoice 
                     t_note *note = chord->firstnote;
                     while (note) {
                         note->midicents = cents;
-                        // note_compute_approximation((t_notation_obj *) x, note); // done by calculate_chord_parameters
+                        // note_compute_approximation((t_notation_obj *) x, note); // done by chord_calculate_parameters
                         note_set_enharmonicity(note, pitch_in);
                         note = note->next;
                     }
@@ -9795,6 +9795,10 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
                             llll_destroyelem(pivot);
                             if (firstllll && firstllll->l_head)
                                 set_midichannels_from_llll((t_notation_obj *)x, firstllll);
+                        } else if (pivotsym == _llllobj_sym_notationstyles) {
+                            llll_destroyelem(pivot);
+                            if (firstllll && firstllll->l_head)
+                                set_notationstyles_from_llll((t_notation_obj *)x, firstllll);
                         } else if (pivotsym == _llllobj_sym_stafflines) {
                             llll_destroyelem(pivot);
                             if (firstllll && firstllll->l_head)
@@ -9999,7 +10003,7 @@ void process_chord_parameters_calculation_NOW(t_roll *x){
                 assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
                 chord_assign_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom, jf_dynamics_roman_nozoom);
                 compute_middleC_position_for_all_voices((t_notation_obj *) x);
-                calculate_chord_parameters((t_notation_obj *) x, curr_ch, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), true);
+                chord_calculate_parameters((t_notation_obj *) x, curr_ch, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), true);
                 curr_ch->need_recompute_parameters = false;
             }
         }
@@ -11249,7 +11253,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
 
     x->r_ob.addchordfromllll = (addchordfromllll_fn)addchord_from_llll;
 
-    roll_bach_attribute_declares(x);
+    roll_declare_bach_attributes(x);
 
     x->r_ob.width = 526;
     x->r_ob.height = 120;
@@ -11486,7 +11490,7 @@ void check_all_chords_and_notes_order(t_roll *x){
 
 // This is a bubble sort
 // functions to check the order of the elements in the linked list. Returns 0 if the order was already correct, 1 if changed.
-// check_notes_order is performed inside calculate_chord_parameters. check_chords_order_for_voice is performed each time a chord is moved.
+// check_notes_order is performed inside chord_calculate_parameters. check_chords_order_for_voice is performed each time a chord is moved.
 char check_chords_order_for_voice(t_roll *x, t_rollvoice *voice){
     char changed = false;
     t_chord *curr_ch = voice->firstchord;
@@ -11774,7 +11778,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     if (curr_ch->need_recompute_parameters) { // we have to recalculate chord parameters
         assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
         chord_assign_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom, jf_dynamics_roman_nozoom);
-        calculate_chord_parameters((t_notation_obj *) x, curr_ch, clef, true);
+        chord_calculate_parameters((t_notation_obj *) x, curr_ch, clef, true);
         curr_ch->need_recompute_parameters = false;
     }
     
@@ -16639,7 +16643,7 @@ t_chord *roll_make_chord_or_note_sharp_or_flat_on_linear_edit(t_roll *x, char di
 
                 note_set_user_enharmonicity(nt, t_pitch(nt->pitch_displayed.getWhiteKeyET(), rat_rat_sum(nt->pitch_displayed.getAlterET(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.getOctave()));
                 
-                calculate_chord_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->voiceparent), true);
+                chord_calculate_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->voiceparent), true);
             }
         }
     }
@@ -16715,7 +16719,7 @@ t_chord *roll_change_pitch_from_linear_edit(t_roll *x, long diatonic_step)
             if (!cursor_nt || cursor_nt == nt) {
                 note_set_user_enharmonicity_from_display_representation(nt, mc, long2rat(0), true);
                 note_compute_approximation((t_notation_obj *)x, nt);
-                calculate_chord_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->voiceparent), true);
+                chord_calculate_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->voiceparent), true);
             }
         }
         
@@ -16810,7 +16814,7 @@ void roll_add_note_to_chord_from_linear_edit(t_roll *x, long number, long force_
         note_set_user_enharmonicity_from_display_representation(this_nt, argv[1], long2rat(0), true);
         note_insert((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
         note_compute_approximation((t_notation_obj *) x, this_nt);
-        calculate_chord_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->voiceparent), false);
+        chord_calculate_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->voiceparent), false);
     }
 }
 
@@ -16823,7 +16827,7 @@ t_chord *roll_add_new_chord_from_linear_edit(t_roll *x, char number, long force_
         t_chord *new_chord = addchord_from_notes(x, x->r_ob.notation_cursor.voice->number, x->r_ob.notation_cursor.onset, 0, 0, NULL, NULL, false, 0);
         x->r_ob.notation_cursor.chord = new_chord;
         roll_add_note_to_chord_from_linear_edit(x, number, force_diatonic_step, false);
-        calculate_chord_parameters((t_notation_obj *) x, new_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)new_chord->voiceparent), true);
+        chord_calculate_parameters((t_notation_obj *) x, new_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)new_chord->voiceparent), true);
         return new_chord;
     }
     return NULL;
@@ -18845,7 +18849,7 @@ void roll_redo(t_roll *x)
     roll_undo_redo(x, k_REDO);
 }
 
-void roll_bach_attribute_declares(t_roll *x){
+void roll_declare_bach_attributes(t_roll *x){
     // CHORD ATTRIBUTES
     t_bach_attr_manager *man = x->r_ob.m_inspector.attr_manager;
     DECLARE_BACH_ATTR(man, 1, _llllobj_sym_onset, (char *)"Onset (ms)", k_CHORD, t_chord, onset, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);

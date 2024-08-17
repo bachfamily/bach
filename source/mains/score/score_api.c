@@ -3992,7 +3992,7 @@ void turn_chord_into_rest_or_into_note(t_score *x, t_chord *chord, double mc) {
         chord->r_sym_duration = rat_abs(chord->r_sym_duration);
         note_insert((t_notation_obj *) x, chord, nt, 0);
         note_compute_approximation((t_notation_obj *) x, nt);
-        calculate_chord_parameters((t_notation_obj *) x, chord, get_voice_clef((t_notation_obj *)x, (t_voice *)chord->parent->voiceparent), true);
+        chord_calculate_parameters((t_notation_obj *) x, chord, get_voice_clef((t_notation_obj *)x, (t_voice *)chord->parent->voiceparent), true);
         
         set_tuplet_levels_as_keep_levels(chord->parent->rhythmic_tree);
         set_level_type_flag_for_level(chord->parent->rhythmic_tree, k_RHYTHM_LEVEL_IGNORE);
@@ -5225,7 +5225,7 @@ void scoreapi_initscore_step01(t_score *x)
     long v;
     t_scorevoice *voiceprec = NULL;
     
-    score_bach_attribute_declares(x);
+    score_declare_bach_attributes(x);
     
     x->r_ob.num_systems = 1;
     x->must_append_measures = false;
@@ -7900,7 +7900,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                     chord_assign_dynamics((t_notation_obj *) x, tmp_chord, jf_dynamics_nozoom_ok, jf_dynamics_roman_nozoom_ok);
 
                     // we recalculate the chord parameters
-                    calculate_chord_parameters((t_notation_obj *) x, tmp_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)tmp_voice), true);
+                    chord_calculate_parameters((t_notation_obj *) x, tmp_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)tmp_voice), true);
                     tmp_chord->need_recompute_parameters = false;
                 }
             }
@@ -11038,7 +11038,7 @@ void recompute_all_and_redraw_fn(t_bach_inspector_manager *man, void *obj, t_bac
 }
 
 
-void score_bach_attribute_declares(t_score *x){
+void score_declare_bach_attributes(t_score *x){
     t_bach_attr_manager *man = x->r_ob.m_inspector.attr_manager;
 
     // CHORD ATTRIBUTES

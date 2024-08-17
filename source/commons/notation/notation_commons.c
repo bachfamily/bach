@@ -1366,7 +1366,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     ch->imposed_direction = -1;
     foo->midicents = midicents;
     note_compute_approximation(r_ob, foo);
-    calculate_chord_parameters(r_ob, ch, get_voice_clef(r_ob, voice), false);
+    chord_calculate_parameters(r_ob, ch, get_voice_clef(r_ob, voice), false);
     
     // ledger lines
     double ledger_lines_y[CONST_MAX_LEDGER_LINES]; 
@@ -1981,7 +1981,7 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
             
             // drawing accidental
             if (curr_nt->num_accidentals == 0)  // Weird: if (curr_nt->show_accidental) there's an accidental to show: let's check; otherwise it is bogus
-                calculate_chord_parameters(r_ob, curr_nt->parent, clef, false);
+                chord_calculate_parameters(r_ob, curr_nt->parent, clef, false);
             
             is_bogus = (curr_nt->num_accidentals == 0 || (curr_nt->num_accidentals == 1 && curr_nt->accidentals[0] == BACH_ACCIDENTAL_BOGUS));
             
@@ -8554,6 +8554,8 @@ void fill_accidental_characters_SMuFL(t_notation_obj *r_ob)
     r_ob->accidentals_typo_preferences.supports_ji = true;
 }
 
+// this only works well for widths: ascents and descents are global for the font and quite off...
+// there's a measurefonts.py script in the tools folder that helps out for ascents and descents
 void measure_accidentals(t_notation_obj *r_ob, t_symbol *font)
 {
     t_jfont *jfont = jfont_create_debug(font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->accidentals_typo_preferences.base_pt);
@@ -8572,9 +8574,27 @@ void measure_accidentals(t_notation_obj *r_ob, t_symbol *font)
             bach_freeptr(acccharacters_utf);
         }
     }
+   
+    /*
+    std::string str;
+    for (long i = 0; i < BACH_NUM_ACCIDENTALS; i++) {
+        str += std::to_string(r_ob->accidentals_typo_preferences.unicode_characters[i]);
+        str += ", ";
+    }
+    cpost(str.c_str());
+    */
+    
     jfont_destroy_debug(jfont);
 }
 
+void extend_accidental_measures(t_notation_obj *r_ob, double uwidth_add, double uascent_add, double udescent_add, bool also_bogus)
+{
+    for (long i = 1; i < BACH_NUM_ACCIDENTALS - (also_bogus ? 0 : 1); i++) {
+        r_ob->accidentals_typo_preferences.uwidth[i] += uwidth_add;
+        r_ob->accidentals_typo_preferences.uascent[i] += uascent_add;
+        r_ob->accidentals_typo_preferences.udescent[i] += udescent_add;
+    }
+}
 
 void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 {
@@ -8629,6 +8649,10 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->accidentals_typo_preferences.et_dyadic_depth = 8; // TO DO
         fill_accidental_characters_SMuFL(r_ob);
         measure_accidentals(r_ob, font);
+        // calculated via a python script (measurefonts.py)
+        fill_double_array(r_ob->accidentals_typo_preferences.uascent, 96, 0.0, 11.0, 11.0, 16.0, 11.0, 11.0, 13.0, 11.0, 11.0, 14.0, 11.0, 11.0, 16.0, 9.0, 9.0, 13.0, 8.0, 7.0, 14.0, 9.0, 9.0, 13.0, 9.0, 9.0, 15.0, 3.0, 3.0, 9.0, 11.0, 11.0, 9.0, 9.0, 3.0, 13.0, 13.0, 11.0, 12.0, 8.0, 11.0, 11.0, 9.0, 9.0, 3.0, 16.0, 16.0, 13.0, 15.0, 11.0, 11.0, 11.0, 8.0, 9.0, 3.0, 18.0, 18.0, 16.0, 18.0, 14.0, 11.0, 11.0, 8.0, 9.0, 3.0, 3.0, 11.0, 8.0, 10.0, 9.0, 11.0, 10.0, 11.0, 5.0, 5.0, 2.0, 2.0, 8.0, 3.0, 7.0, 15.0, 15.0, 10.0, 17.0, 15.0, 6.0, 2.0, 8.0, 8.0, 12.0, 15.0, 11.0, 11.0, 9.0, 11.0, 6.0, 8.0, 11.0);
+        fill_double_array(r_ob->accidentals_typo_preferences.udescent, 96, 0.0, 10.0, 4.0, 4.0, 13.0, 4.0, 5.0, 11.0, 4.0, 5.0, 12.0, 4.0, 4.0, 13.0, 8.0, 9.0, 13.0, 9.0, 8.0, 13.0, 8.0, 9.0, 15.0, 9.0, 8.0, 9.0, 3.0, 3.0, 4.0, 4.0, 8.0, 8.0, 3.0, 5.0, 5.0, 8.0, 9.0, 3.0, 9.0, 9.0, 10.0, 12.0, 8.0, 5.0, 5.0, 8.0, 9.0, 3.0, 12.0, 12.0, 13.0, 15.0, 11.0, 5.0, 5.0, 8.0, 8.0, 3.0, 15.0, 15.0, 16.0, 18.0, 14.0, 10.0, 2.0, 10.0, 7.0, 8.0, 5.0, 8.0, 5.0, 4.0, 4.0, 3.0, 3.0, 3.0, 8.0, 8.0, 0.0, 7.0, 11.0, 8.0, 10.0, 3.0, 0.0, 0.0, 0.0, 8.0, 5.0, 5.0, 5.0, 8.0, 9.0, 3.0, 9.0, 5.0);
+//        extend_accidental_measures(r_ob, 0., 0., 0., false); // extend
         
         // binary unicode characters
 /*        legacy_fill_unicode_binary_character_array(r_ob, 57956, 57976, 57985, 57969, 57952, 57968, 57984, 57971, 57953, 57970, 57986, 57973, 57954, 57972, 57987, 57975, 57955);
@@ -18876,7 +18900,7 @@ long decide_beaming_direction_for_level_fn(void *data, t_hatom *a, const t_llll 
                     ((t_rhythm_level_properties *) box->l_thing.w_obj)->direction = (in_voiceensemble ? beaming_direction : -beaming_direction);
                     return 0;
                 } else {
-                    // imposing direction to all chords (so that the future calculate_chord_parameters() will take it into account)
+                    // imposing direction to all chords (so that the future chord_calculate_parameters() will take it into account)
                     llll_funall(box, impose_chord_direction_for_level_fn, &beaming_direction, 1, -1, 0);
                     
                     // setting new direction information
@@ -22629,6 +22653,8 @@ e_header_elems header_symbol_to_long(t_symbol *this_sym)
         return k_HEADER_NUMPARTS;
     else if (this_sym == _llllobj_sym_loop)
         return k_HEADER_LOOP;
+    else if (this_sym == _llllobj_sym_notationstyles)
+        return k_HEADER_NOTATIONSTYLES;
     else if (this_sym == _llllobj_sym_header)
         return (e_header_elems)(k_HEADER_ALL & (~(k_HEADER_BODY)));
     return k_HEADER_NONE;
@@ -24456,7 +24482,7 @@ void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note){
     }
 }
 
-void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, char reset_graphical_position_values) {
+void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, char reset_graphical_position_values) {
 // calculates all the parameters of a chord (such as notehead positions, accidental positions, width...) in order to simplify the drawing process 
 // direction = 0: auto; 1: upwards, -1: downwards; 
 // clef: a clef indicated by its MiddleC scaleposition with respect to the first staff line (e.g.: Gclef = -2, Fclef = 10, SopranoClef = 0, and so on)   
@@ -24487,7 +24513,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         double left_uext = 0.; double right_uext = 0.; // left and right space (with respect to the chord stem) needed to paint the chord.
         long start_scalepos, rel_scalepos;
         long num_chord_accidentals = 0;
-        t_uint8 **accidentals_copy;
+//        t_uint8 **accidentals_copy;
         char *accidental_done;
         double *accidental_x_real;
         double *accidental_width;
@@ -35763,6 +35789,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->keys_as_symlist = (t_symbol **)bach_newptrclear(CONST_MAX_VOICES * sizeof(t_symbol *));
     r_ob->hidevoices_as_charlist = (char *)bach_newptrclear(CONST_MAX_VOICES * sizeof(char));
     r_ob->midichannels_as_longlist = (long *)bach_newptrclear(CONST_MAX_VOICES * sizeof(long));
+    r_ob->notationstyles_as_symlist = (t_symbol **)bach_newptrclear(CONST_MAX_VOICES * sizeof(t_symbol *));
     r_ob->voiceuspacing_as_floatlist = (double *)bach_newptrclear((CONST_MAX_VOICES + 1) * sizeof(double));
     r_ob->show_measure_numbers = (char *)bach_newptrclear(CONST_MAX_VOICES * sizeof(char));
     r_ob->full_acc_repr = (t_symbol **)bach_newptrclear(CONST_MAX_VOICES * sizeof(t_symbol *));
@@ -35845,7 +35872,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->m_inspector.active_bach_inspector_item = NULL;
     r_ob->m_inspector.active_bach_inspector_obj_type = k_NONE;
     r_ob->m_inspector.active_bach_inspector_item = NULL;
-    notationobj_bach_attribute_declares(r_ob);
+    notationobj_declare_bach_attributes(r_ob);
     r_ob->m_inspector.bach_inspector_scrollbar_pos = 0;
     r_ob->m_inspector.bach_inspector_scrollbar_delta_y = 0;
     r_ob->m_inspector.active_inspector_enumindex = NULL;
@@ -37953,6 +37980,16 @@ void change_single_midichannel(t_notation_obj *r_ob, t_voice* voice, long new_mi
     r_ob->midichannels_as_longlist[voice->number] = new_midichannel;
 }
 
+
+void change_single_notationstyle(t_notation_obj *r_ob, t_voice* voice, t_symbol *new_notationstyle, char also_add_undo_tick)
+{
+    if (also_add_undo_tick)
+        undo_tick_create_for_header(r_ob, k_HEADER_NOTATIONSTYLES);
+    voice->notation_style = notationstyle_from_symbol(new_notationstyle);
+    r_ob->notationstyles_as_symlist[voice->number] = notationstyle_to_symbol((e_voice_notation_style) voice->notation_style);
+}
+
+
 void change_voiceensemble_key(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, t_symbol *new_key, char also_add_undo_tick)
 {
     if (also_add_undo_tick)
@@ -38018,6 +38055,24 @@ void set_midichannels_from_llll(t_notation_obj *r_ob, t_llll* midichannels){
             }
             voice = voice_get_next(r_ob, (t_voice *) voice);
         }
+    }
+}
+
+void set_notationstyles_from_llll(t_notation_obj *r_ob, t_llll* notationstyles){
+    if (notationstyles) {
+        t_llllelem *elem;
+        void *voice = r_ob->firstvoice;
+        for (elem = notationstyles->l_head; elem && voice && ((t_voice *)voice)->number < r_ob->num_voices; elem = elem->l_next) {
+            long type = hatom_gettype(&elem->l_hatom);
+            if (type == H_SYM) {
+                ((t_voice *)voice)->notation_style = (e_voice_notation_style)notationstyle_from_symbol(hatom_getsym(&elem->l_hatom));
+            } else {
+                ((t_voice *)voice)->notation_style = k_VOICE_NOTATION_STYLE_ET;
+            }
+            r_ob->notationstyles_as_symlist[((t_voice *)voice)->number] = notationstyle_to_symbol((e_voice_notation_style)((t_voice *)voice)->notation_style);
+            voice = voice_get_next(r_ob, (t_voice *) voice);
+        }
+        implicitely_recalculate_all(r_ob, false);
     }
 }
 
@@ -38442,7 +38497,7 @@ t_max_err notationobj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long 
     parse_fullaccpattern_to_voices(r_ob);
 
     // THIS IS NEEDED HERE, cause the function compute_chord_parameters needs some data from here, especially when it calls
-    // the mc_to_yposition() function. THis is not the best ergonomy however, the calculate_chord_parameters() function
+    // the mc_to_yposition() function. THis is not the best ergonomy however, the chord_calculate_parameters() function
     // should do that differently.
     for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) 
         compute_middleC_position_for_voice(r_ob, voice);
@@ -40213,33 +40268,36 @@ t_llll *notationobj_get_header_as_llll(t_notation_obj *r_ob, long dump_what, cha
             llll_appendllll(out_llll, get_commands_values_as_llll(r_ob, for_what == k_CONSIDER_FOR_SAVING_WITH_BW_COMPATIBILITY), 0, WHITENULL_llll); // command
         
         if (dump_what & k_HEADER_CLEFS)
-            llll_appendllll(out_llll, get_clefs_as_llll(r_ob, true), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_clefs_as_llll(r_ob, true));
         
         if (dump_what & k_HEADER_KEYS)
-            llll_appendllll(out_llll, get_keys_as_llll(r_ob, true), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_keys_as_llll(r_ob, true));
         
         if (dump_what & k_HEADER_VOICENAMES)
-            llll_appendllll(out_llll, get_voicenames_as_llll(r_ob, true), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_voicenames_as_llll(r_ob, true));
 
         if (dump_what & k_HEADER_VOICESPACING)
-            llll_appendllll(out_llll, get_voicespacing_as_llll(r_ob, true), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_voicespacing_as_llll(r_ob, true));
 
         if (dump_what & k_HEADER_HIDEVOICES)
-            llll_appendllll(out_llll, get_hidevoices_as_llll(r_ob, true), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_hidevoices_as_llll(r_ob, true));
 
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
             if (dump_what & k_HEADER_GROUPS) 
-                llll_appendllll(out_llll, get_groups_for_dump_as_llll(r_ob, 0, 0, 0), 0, WHITENULL_llll);
+                llll_appendllll(out_llll, get_groups_for_dump_as_llll(r_ob, 0, 0, 0));
         }
 
         if (dump_what & k_HEADER_MARKERS)
-            llll_appendllll(out_llll, get_markers_as_llll(r_ob, selection_only ? 2 : 0, 0, 0, false, for_what, 0, 0), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_markers_as_llll(r_ob, selection_only ? 2 : 0, 0, 0, false, for_what, 0, 0));
 
         if (dump_what & k_HEADER_STAFFLINES)
-            llll_appendllll(out_llll, get_stafflines_as_llll(r_ob, true), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_stafflines_as_llll(r_ob, true));
 
         if (dump_what & k_HEADER_MIDICHANNELS)
-            llll_appendllll(out_llll, get_midichannels_as_llll(r_ob, true), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_midichannels_as_llll(r_ob, true));
+
+        if (dump_what & k_HEADER_NOTATIONSTYLES)
+            llll_appendllll(out_llll, get_notationstyles_as_llll(r_ob, true));
 
         if (dump_what & k_HEADER_ARTICULATIONINFO)
             llll_appendllll(out_llll, get_articulationinfo_as_llll(r_ob));
@@ -40251,7 +40309,7 @@ t_llll *notationobj_get_header_as_llll(t_notation_obj *r_ob, long dump_what, cha
             llll_appendllll(out_llll, get_numparts_as_llll(r_ob));
 
         if (dump_what & k_HEADER_LOOP)
-            llll_appendllll(out_llll, get_loop_region_as_llll(r_ob, true), 0, WHITENULL_llll);
+            llll_appendllll(out_llll, get_loop_region_as_llll(r_ob, true));
 
 
     }
@@ -40400,6 +40458,7 @@ void shift_voicewise_arrays(t_notation_obj *r_ob, long from_idx, long to_idx, lo
     sysmem_copyptr(&r_ob->voiceuspacing_as_floatlist[from_idx], &r_ob->voiceuspacing_as_floatlist[to_idx], num_elems_to_shift * sizeof(double));
     sysmem_copyptr(&r_ob->show_measure_numbers[from_idx], &r_ob->show_measure_numbers[to_idx], num_elems_to_shift * sizeof(char));
     sysmem_copyptr(&r_ob->midichannels_as_longlist[from_idx], &r_ob->midichannels_as_longlist[to_idx], num_elems_to_shift * sizeof(long));
+    sysmem_copyptr(&r_ob->notationstyles_as_symlist[from_idx], &r_ob->notationstyles_as_symlist[to_idx], num_elems_to_shift * sizeof(t_symbol *));
     sysmem_copyptr(&r_ob->voice_part[from_idx], &r_ob->voice_part[to_idx], num_elems_to_shift * sizeof(long));
 }
 
@@ -40428,6 +40487,10 @@ void swapelem_voicewise_arrays(t_notation_obj *r_ob, long idx1, long idx2){
     long temp_long = r_ob->midichannels_as_longlist[idx2];
     r_ob->midichannels_as_longlist[idx2] = r_ob->midichannels_as_longlist[idx1];
     r_ob->midichannels_as_longlist[idx1] = temp_long;
+
+    temp = r_ob->notationstyles_as_symlist[idx2];
+    r_ob->notationstyles_as_symlist[idx2] = r_ob->notationstyles_as_symlist[idx1];
+    r_ob->notationstyles_as_symlist[idx1] = temp;
 
     temp_long = r_ob->voice_part[idx2];
     r_ob->voice_part[idx2] = r_ob->voice_part[idx1];

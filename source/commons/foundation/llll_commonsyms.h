@@ -364,6 +364,12 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_voice;
 	t_symbol	*s_pim;
 	t_symbol	*s_stafflines;
+    t_symbol    *s_notationstyle;
+    t_symbol    *s_notationstyles;
+    t_symbol    *s_et;
+    t_symbol    *s_ji;
+    t_symbol    *s_linpitch;
+    t_symbol    *s_linfreq;
 	t_symbol	*s_timesig;
 	t_symbol	*s_role;
 	t_symbol	*s_loop;
@@ -780,6 +786,12 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_voice			(_llllobj_common_symbols->s_voice)
 #define _llllobj_sym_pim			(_llllobj_common_symbols->s_pim)
 #define _llllobj_sym_stafflines		(_llllobj_common_symbols->s_stafflines)
+#define _llllobj_sym_notationstyle  (_llllobj_common_symbols->s_notationstyle)
+#define _llllobj_sym_notationstyles  (_llllobj_common_symbols->s_notationstyles)
+#define _llllobj_sym_et             (_llllobj_common_symbols->s_et)
+#define _llllobj_sym_ji             (_llllobj_common_symbols->s_ji)
+#define _llllobj_sym_linpitch       (_llllobj_common_symbols->s_linpitch)
+#define _llllobj_sym_linfreq        (_llllobj_common_symbols->s_linfreq)
 #define _llllobj_sym_timesig		(_llllobj_common_symbols->s_timesig)
 #define _llllobj_sym_role			(_llllobj_common_symbols->s_role)
 #define _llllobj_sym_loop			(_llllobj_common_symbols->s_loop)
