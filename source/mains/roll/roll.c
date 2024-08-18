@@ -6899,7 +6899,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"lyricsfont", 0, "Arial");
     CLASS_ATTR_ACCESSORS(c, "lyricsfont", (method)NULL, (method)notationobj_setattr_lyrics_font);
     // @description @copy BACH_DOC_LYRICS_FONT
-    
+
+    CLASS_ATTR_SYM(c,"rulerlabelsfont", 0, t_notation_obj, rulerlabels_font);
+    CLASS_ATTR_STYLE_LABEL(c, "rulerlabelsfont", 0, "font", "Ruler Labels Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"rulerlabelsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "rulerlabelsfont", (method)NULL, (method)notationobj_setattr_rulerlabels_font);
+    // @description @copy BACH_DOC_RULERLABELS_FONT
+
     CLASS_ATTR_SYM(c,"annotationsfont", 0, t_notation_obj, annotations_font);
     CLASS_ATTR_STYLE_LABEL(c, "annotationsfont", 0, "font", "Annotations Font");
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"annotationsfont", 0, "Arial");
@@ -6962,7 +6968,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"enharmonictable",0,"default");
     // @description @copy BACH_DOC_ENHARMONICTABLE
 
-    CLASS_ATTR_DOUBLE(c, "minlength", 0, t_notation_obj, minimum_length); 
+    CLASS_ATTR_DOUBLE(c, "minlength", 0, t_notation_obj, minimum_length);
     CLASS_ATTR_STYLE_LABEL(c,"minlength",0,"text","Minimum Length In Milliseconds");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"minlength", 0,"0");
     CLASS_ATTR_ACCESSORS(c, "minlength", (method)NULL, (method)roll_setattr_minlength);
@@ -7866,17 +7872,22 @@ void roll_domain(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         double domain_end = atom_getfloat(argv+1);
         double domain = domain_end - domain_start;
         double this_domain;
-
-        if (argc >= 3)
-            domain += xposition_to_onset((t_notation_obj *) x, atom_getfloat(argv+2) * x->r_ob.zoom_y, 0) - xposition_to_onset((t_notation_obj *) x, 0, 0); 
-
+        bool dontcareaboutminmaxzoom = false;
+        
+        if (argc >= 3) {
+            if (atom_gettype(argv+2) == A_SYM && atom_getsym(argv+2) == gensym("force"))
+                dontcareaboutminmaxzoom = true;
+            else
+                domain += xposition_to_onset((t_notation_obj *) x, atom_getfloat(argv+2) * x->r_ob.zoom_y, 0) - xposition_to_onset((t_notation_obj *) x, 0, 0);
+        }
+        
         getdomain((t_notation_obj *) x);
         
         this_domain = x->r_ob.domain;
         if (domain>0){
             double old_zoom = x->r_ob.horizontal_zoom;
             double new_zoom = old_zoom * ((double) this_domain)/((double) domain);
-            change_zoom((t_notation_obj *) x, new_zoom);
+            change_zoom((t_notation_obj *) x, new_zoom, dontcareaboutminmaxzoom);
 
             getdomain((t_notation_obj *) x);
             x->r_ob.hscrollbar_pos = ((double)domain_start)/(x->r_ob.length_ms - x->r_ob.domain);
@@ -12234,7 +12245,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 		t_rollvoice *voice;
 		double system_jump = x->r_ob.system_jump;
 		double octave_stem_length = 7 * x->r_ob.step_y;
-        double end_x_to_repaint = (22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+        double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
         double predomain_width = get_predomain_width_pixels((t_notation_obj *)x);
 
         // some constant that will be useful later for the "retouches" left to do, in order to have things working properly
@@ -12430,7 +12441,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
         if (g) {
             t_rollvoice *voice;
             double system_jump = x->r_ob.system_jump;
-            double end_x_to_repaint = (22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+            double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
             
             // some constant that will be useful later for the "retouches" left to do, in order to have things working properly
             // e.g.: if some notes have been drawn over these parts, we cover the notes with the keys/background/staves...
@@ -12538,8 +12549,8 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
             /*        double nu_end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start) - CONST_X_LEFT_START_DELETE_UX_ROLL - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
              double nu_fadestart_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start) - CONST_X_LEFT_START_FADE_UX_ROLL - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
              */
-            double end_x_to_repaint = (22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
-            double fadestart = (15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+            double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+            double fadestart = ((x->r_ob.show_clefs > 0) * 15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
             
             if (!x->r_ob.fade_predomain)
                 end_x_to_repaint = fadestart = get_predomain_width_pixels((t_notation_obj *)x);
@@ -12739,8 +12750,8 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 /*        double nu_end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start) - CONST_X_LEFT_START_DELETE_UX_ROLL - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
         double nu_fadestart_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start) - CONST_X_LEFT_START_FADE_UX_ROLL - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
   */
-        double end_x_to_repaint = (22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
-        double fadestart = (15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+        double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+        double fadestart = ((x->r_ob.show_clefs > 0) * 15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
 
 /*        double old_fadestart_no_inset = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_FADE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
         double old_end_x_to_repaint_no_inset = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_DELETE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
@@ -13316,7 +13327,11 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         t_marker *mk = (t_marker *)x->r_ob.j_mousedown_ptr;
         if (true) {
             double this_ms = xposition_to_onset((t_notation_obj *) x, pt.x, yposition_to_systemnumber((t_notation_obj *) x, x->r_ob.j_mousedrag_point.y));
-
+            if (modifiers & eShiftKey) {
+                double ux_orig = ms_to_unscaled_xposition((t_notation_obj *)x, this_ms, 0);
+                double ux_new = unscaled_xposition_snap_to_nearest_chord((t_notation_obj *)x, ux_orig, true, true);
+                this_ms = unscaled_xposition_to_ms((t_notation_obj *)x, ux_new, 0);
+            }
             op = k_UNDO_OP_CHANGE_REGION_DURATION;
             undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)mk, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             mk->duration_ms = MAX(0, this_ms - mk->position_ms);
@@ -13609,7 +13624,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                         if (modifiers & eShiftKey && modifiers & eCommandKey) 
                             delta_y *= CONST_FINER_FROM_KEYBOARD;
                         move_selection_breakpoint(x, 0., delta_y, 1.);
-                        if (x->r_ob.breakpoints_have_noteheads && x->r_ob.snap_pitch_to_grid_when_editing)
+                        if (x->r_ob.breakpoints_have_noteheads == 1 && x->r_ob.snap_pitch_to_grid_when_editing)
                             snap_pitch_to_grid_for_selection((t_notation_obj *)x);
                         changed = 1;
                     }
@@ -16306,7 +16321,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
                     undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)marker, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                     marker->duration_ms = -1;
                     handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_MARKERS);
-                } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) &&
+                } else if (is_in_markername_shape((t_notation_obj *)x, marker, pt.x, pt.y) && !(modifiers & eShiftKey) &&
                            (!marker->next || !is_in_markername_shape((t_notation_obj *)x, marker->next, pt.x, pt.y))){
                     unlock_general_mutex((t_notation_obj *)x);    
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))

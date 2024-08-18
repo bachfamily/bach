@@ -1761,6 +1761,11 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showslotnumbers",0,"1");
     // @description Toggles the display of slot numbers in the slot windows.
 
+    CLASS_ATTR_CHAR(c, "showslotnames", 0, t_notation_obj, show_slot_names);
+    CLASS_ATTR_STYLE_LABEL(c,"showslotnames",0,"onoff","Show Slot Names In Slot Window");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showslotnames",0,"1");
+    // @description Toggles the display of slot names in the slot windows.
+
     CLASS_ATTR_CHAR(c, "showslotlabels", 0, t_notation_obj, show_slot_labels);
     CLASS_ATTR_STYLE_LABEL(c,"showslotlabels",0,"onoff","Show Slot Labels");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showslotlabels",0,"1");
@@ -2074,6 +2079,11 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Toggles the ability to display the marker names on multiple lines to avoid collisions.
 
+        CLASS_ATTR_SYM(c,"centssymbol",0, t_notation_obj, cents_symbol);
+        CLASS_ATTR_STYLE_LABEL(c,"centssymbol",0,"text","Cents Symbol");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"centssymbol",0,"¢");
+        // @description Symbol used to represent cents (or MIDIcents).
+
         CLASS_ATTR_CHAR(c,"highlightdomain",0, t_notation_obj, highlight_domain);
         CLASS_ATTR_STYLE_LABEL(c,"highlightdomain",0,"onoff","Highlight Domain");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"highlightdomain",0,"0");
@@ -2155,11 +2165,13 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // voice names. Possibilities are: "Left", "Center", "Right".
 
         CLASS_ATTR_CHAR(c,"breakpointshavenoteheads",0, t_notation_obj, breakpoints_have_noteheads);
-        CLASS_ATTR_STYLE_LABEL(c,"breakpointshavenoteheads",0,"onoff","Breakpoints Have Noteheads");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointshavenoteheads",0,"0");
+        CLASS_ATTR_STYLE_LABEL(c,"breakpointshavenoteheads",0,"enumindex","Breakpoints Have Noteheads");
+        CLASS_ATTR_ENUMINDEX(c,"breakpointshavenoteheads", 0, "None All Internal Only");
+         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"breakpointshavenoteheads",0,"0");
         // @exclude bach.slot
         // @description Toggles the ability to display pitch breakpoints as real notes (possibly with accidentals).
-        // If this is not set, pitch breakpoints are displayed as small diamonds.
+        // The options are: no noteheads (0, default); all noteheads, tails included (1); noteheads only
+        // for internal breakpoints (2)
 
 
         CLASS_ATTR_CHAR(c, "thinannotations", 0, t_notation_obj, thinannotations);
@@ -3028,6 +3040,13 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the display of hairpins for dynamics.
 
+        CLASS_ATTR_CHAR(c,"showregionend",0, t_notation_obj, show_end_marker_for_regions);
+        CLASS_ATTR_STYLE_LABEL(c,"showregionend",0,"onoff","Show Region End");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showregionend", 0, "1");
+        // @exclude bach.slot
+        // @description Toggles the display of ending markers for regions
+
+
         CLASS_ATTR_CHAR(c,"ruler",0, t_notation_obj, ruler);
         CLASS_ATTR_STYLE_LABEL(c,"ruler",0,"enumindex","Show Ruler");
         CLASS_ATTR_ENUMINDEX(c,"ruler", 0, "Never Above Below Both");
@@ -3207,6 +3226,12 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the display of the initial vertical line running through all the staves.
 
+        CLASS_ATTR_CHAR(c, "showcentsdiff", 0, t_notation_obj, show_cents_differences);
+        CLASS_ATTR_STYLE_LABEL(c,"showcentsdiff",0,"onoff","Show Cents Differences");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showcentsdiff",0,"0");
+        CLASS_ATTR_ACCESSORS(c, "showcentsdiff", (method)NULL, (method)notationobj_setattr_showcentsdiff);
+        // @description Toggles the display of cents differences above the accidentals
+        
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -3215,6 +3240,27 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
 void notation_class_add_font_attributes(t_class *c, char obj_type){
     CLASS_STICKY_ATTR(c,"category",0,"Font");
 
+    
+    CLASS_ATTR_SYM(c,"slotlabelsfont", 0, t_notation_obj, slot_labels_font);
+    CLASS_ATTR_STYLE_LABEL(c, "slotlabelsfont", 0, "font", "Slot Labels Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"slotlabelsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "slotlabelsfont", (method)NULL, (method)notationobj_setattr_slot_labels_font);
+    // @description Sets the font for slot labels
+
+    CLASS_ATTR_CHAR(c,"slotlabelsfontface",0, t_notation_obj, slot_labels_font_face);
+    CLASS_ATTR_STYLE_LABEL(c,"slotlabelsfontface",0,"text","Slot Labels Font Style");
+    CLASS_ATTR_ENUMINDEX(c,"slotlabelsfontface", 0, "regular bold italic bold italic");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slotlabelsfontface", 0, "1");
+    // @description Sets the font style of slot labels
+
+    
+    CLASS_ATTR_DOUBLE(c,"slotlabelsfontsize",0, t_notation_obj, slot_labels_font_size);
+    CLASS_ATTR_STYLE_LABEL(c,"slotlabelsfontsize",0,"text","Slot Labels Font Size");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slotlabelsfontsize", 0, "5");
+    CLASS_ATTR_ACCESSORS(c, "slotlabelsfontsize", (method)NULL, (method)notationobj_setattr_slot_labels_font_size);
+    // @description Sets the font size of slot labels (rescaled according to the <m>vzoom</m>).
+
+    
     if (obj_type != k_NOTATION_OBJECT_SLOT) {
 
         CLASS_ATTR_DOUBLE(c,"rulerlabelsfontsize",0, t_notation_obj, ruler_labels_font_size);
@@ -3243,7 +3289,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"markersfont", 0, "Arial");
         CLASS_ATTR_ACCESSORS(c, "markersfont", (method)NULL, (method)notationobj_setattr_markers_font);
         // @exclude bach.slot
-        // @description Sets the font size of markers
+        // @description Sets the font for markers
 
         CLASS_ATTR_DOUBLE(c,"markersfontsize",0, t_notation_obj, markers_font_size);
         CLASS_ATTR_STYLE_LABEL(c,"markersfontsize",0,"text","Markers Font Size");
@@ -3272,6 +3318,13 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         // @description Sets the font size of lyrics (rescaled according to the <m>vzoom</m>).
         
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            CLASS_ATTR_DOUBLE(c,"tupletfontsize",0, t_notation_obj, tuplets_font_size);
+            CLASS_ATTR_STYLE_LABEL(c,"tupletfontsize",0,"text","Tuplets Font Size");
+            CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"tupletfontsize", 0, "10");
+            CLASS_ATTR_ACCESSORS(c, "tupletfontsize", (method)NULL, (method)notationobj_setattr_tuplets_font_size);
+            // @exclude bach.slot, bach.roll
+            // @description Sets the font size of tuplets (rescaled according to the <m>vzoom</m>).
+
             CLASS_ATTR_DOUBLE(c,"temposize",0, t_notation_obj, tempo_size);
             CLASS_ATTR_STYLE_LABEL(c,"temposize",0,"text","Tempi Relative Size");
             CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"temposize", 0, "0.7");
@@ -3306,6 +3359,14 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         CLASS_ATTR_ACCESSORS(c, "annotationfontsize", (method)NULL, (method)notationobj_setattr_annotation_font_size);
         // @exclude bach.slot
         // @description Sets the font size for textual annotations over the staff (handled via slot linkage).
+
+        CLASS_ATTR_DOUBLE(c,"centsdifffontsize",0, t_notation_obj, cents_differences_font_size);
+        CLASS_ATTR_STYLE_LABEL(c,"centsdifffontsize",0,"text","Cents Differences Font Size");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"centsdifffontsize",0,"8");
+        CLASS_ATTR_FILTER_MIN(c, "rulerlabelsfontsize", 1.);
+        // @exclude bach.slot
+        // @description Sets the font size of cents differences display
+
 
     }
 
@@ -3921,6 +3982,24 @@ t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *
     return MAX_ERR_NONE;
 }
 
+
+t_max_err notationobj_setattr_slot_labels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && atom_gettype(av) == A_SYM)
+        r_ob->slot_labels_font = atom_getsym(av);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
+t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && is_atom_number(av))
+        r_ob->slot_labels_font_size = atom_getfloat(av);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
+
 void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beamings){
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         t_scorevoice *voice;
@@ -3954,6 +4033,17 @@ t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *a
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return MAX_ERR_NONE;
 }
+
+t_max_err notationobj_setattr_tuplets_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && is_atom_number(av))
+        r_ob->tuplets_font_size = atom_getfloat(av);
+
+    implicitely_recalculate_all(r_ob, false);
+
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
+
 
 t_max_err notationobj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))
@@ -4005,6 +4095,7 @@ t_max_err notationobj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *a
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return MAX_ERR_NONE;
 }
+
 
 t_max_err notationobj_setattr_annotation_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))

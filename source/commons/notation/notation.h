@@ -393,7 +393,6 @@
 
 #define CONST_TEXT_FRACTIONS_PT 7.5                                ///< For <zoom_y> = 1, size (in pt) of the font used to write the fractions-like and cents-like accidentals (as '-1/5' or '+34c')
 #define CONST_WIDTH_ADD_FRACTIONS 2                                ///< Additional pad (in pixels) in fractions-like and cents-like accidentals, to better show the + and - signs
-#define CONST_TUPLET_BASE_PT 10                                    ///< For <zoom_y> = 1, size (in pt) of the font used to write the numbers for the tuplets
 
 // 8va and 15ma clefs graphic constants
 #define CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE 10        ///< Unscaled horizontal shift (in pixels) from the beginning of the staff of the middle textbox position to write the small octave number over the G clef
@@ -464,7 +463,7 @@
 
 // lyrics
 #define CONST_NUM_DASH_PER_UX 0.05                ///< Number of dash characters '-' per horizontal unscaled pixel, when two lyrics syllabes are joined by '- - - - - - - -'.
-#define CONST_UX_MINIMUM_SPACE_FOR_DASH 3.5        ///< Minimum unscaled horizontal width between syllables in order to be able to paint a " - - - " line. 
+#define CONST_UX_MINIMUM_SPACE_FOR_DASH 3.0        ///< Minimum unscaled horizontal width between syllables in order to be able to paint a " - - - " line. 
                                                 ///< If the separation is narrower, no dash is painted
 #define CONST_WORD_EXTENSIONS_UY_SHIFT 12        ///< Unscaled vertical shift of the word extensions, with respect to the top of the writing box for the lyrics. 
                                                 ///< Extensions are the "_____" situated after a syllable e.g. to account for a melisma: "be______" 
@@ -4256,9 +4255,13 @@ typedef struct _notation_obj
                                                         ///< By default this is 0 (when right clicking no slot is popped out, but the contextual menu!)
     
     char        show_slot_numbers;            ///< Do we want to show the slot number in transparence, in the slot window?
+    char        show_slot_names;               ///< Do we want to show the slot names in the slot window?
     char        show_slot_labels;            ///< Do we want to display automatically computated labels for function points in the slot windows of slots of type #k_SLOT_TYPE_FUNCTION, and the labels for the bars of the intlist and floatlist slots?
+    t_symbol      *slot_labels_font;        ///< Font used to display slot labels
+    double        slot_labels_font_size;    ///< Size in pt of the font for writing the slot labels (for <zoom_y> = 1)
+    char        slot_labels_font_face;       ///< Style of the font for writing slot labels (regular, bold, italic, bold italic)
     char        show_slot_legend;            ///< Do we want to display the upper-right slot legend?
-    char        dynfilter_interp_mode;        ///< Interpolation mode for the dynamic filters in a #k_SLOT_TYPE_DYNFILTER. 
+    char        dynfilter_interp_mode;        ///< Interpolation mode for the dynamic filters in a #k_SLOT_TYPE_DYNFILTER.
                                             ///< 0 = the interpolation happens through biquad coefficients, 
                                             ///< 1 = the interpolation happens through freq/gain/Q parameters (currently the only one used – and this is not user changable –, for this is the only one who makes sense)
 
@@ -4316,7 +4319,7 @@ typedef struct _notation_obj
     
     // tempo
     double      tempo_size;                     ///< A multiplier for tempo size with respect to standard note size.
-    
+
     // lyrics
     double        lyrics_font_size;                    ///< Font size for the lyrics (for zoom_y = 1)
     double        lyrics_uy_pos;                        ///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
@@ -4337,6 +4340,8 @@ typedef struct _notation_obj
 
     char        annotation_alignment;                    ///< Alignment type for the annotations, must be one of the #e_alignments
 
+    char        show_end_marker_for_regions;            ///< Display end marker for regions
+    ///
     // command fields, arrays (containing one element for each command)
     t_commandinfo commands[CONST_MAX_COMMANDS];
     
@@ -4419,6 +4424,9 @@ typedef struct _notation_obj
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
     char        accidentals_display_type;    ///< Type of display for the accidentals; must be one of the #e_accidentals_display_type
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
+    char        show_cents_differences;           ///< Flag saying if we also display a cents difference w.r. to the displayed (screen) accidentals
+    double      cents_differences_font_size;       ///< Font size for cents differences
+    t_symbol    *cents_symbol;                    ///< Symbol used to represent cents or MIDIcents
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
     t_symbol    **full_acc_repr;                    ///< List of accidental representation symbols (one for each voice).
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
@@ -4482,7 +4490,7 @@ typedef struct _notation_obj
                                                         ///< This flag is updated each time the play is started.
     
     char        breakpoints_have_velocity;            ///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
-    char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads
+    char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads (0 = none,  1= all, 2 = only internal)
     
     char        notify_with;                           ///< Notification type through last outlet (0 = bang, 1 = operation label, 2 = redo transaction, 3 = undo transaction, 4 = individual redo ticks, 5 = individual undo ticks)
     char        last_operation_is;         ///< -1 = undo, 1 = redo, 0 = anything else
@@ -4558,12 +4566,17 @@ typedef struct _notation_obj
 
     
     // fonts
-    t_symbol    *noteheads_font;    ///< Name of the font (as symbol) used for the notation elements (all but accidentals and articulations)
-    t_symbol    *accidentals_font;    ///< Name of the font (as symbol) used for the accidentals
-    t_symbol    *articulations_font;///< Name of the font (as symbol) used for the articuations
-    t_symbol    *lyrics_font;///< Name of the font (as symbol) used for the articuations
-    t_symbol    *annotations_font;///< Name of the font (as symbol) used for the articuations
-    double        legend_font_size;    ///< Size in pt of the legend (fixed!)
+    t_symbol    *noteheads_font;        ///< Name of the font (as symbol) used for the notation elements (all but accidentals and articulations)
+    t_symbol    *accidentals_font;      ///< Name of the font (as symbol) used for the accidentals
+    t_symbol    *articulations_font;    ///< Name of the font (as symbol) used for the articuations
+    t_symbol    *lyrics_font;           ///< Name of the font (as symbol) used for the lyrics
+    t_symbol    *tempo_font;            ///< Name of the font (as symbol) used for the tempo
+    t_symbol    *measurenumber_font;    ///< Name of the font (as symbol) used for the measure numbers
+    t_symbol    *tuplets_font;          ///< Name of the font (as symbol) used for the tuplets
+    t_symbol    *rulerlabels_font;      ///< Name of the font (as symbol) used for the ruler labels
+    t_symbol    *annotations_font;      ///< Name of the font (as symbol) used for the annotations
+    double        legend_font_size;     ///< Size in pt of the legend (fixed!)
+    double        tuplets_font_size;    ///< Font size for the tuplets (for zoom_y = 1)
 
     
     // typographical preferences
@@ -7123,9 +7136,10 @@ long getdomain(t_notation_obj *r_ob);
     @ingroup                    notation
     @param r_ob                    The notation object
     @param    new_zoom_100_based    The new zoom, 100 being the 100%.
-    @remark                Zoom values are clipped between 1 and #CONST_MAX_ZOOM.
+    @param      dontcheck           Flag preventing from clipping between #CONST_MIN_ZOOM and #CONST_MAX_ZOOM
+    @remark                Zoom values are clipped between #CONST_MIN_ZOOM and #CONST_MAX_ZOOM.
  */
-void change_zoom(t_notation_obj *r_ob, double new_zoom_100_based);
+void change_zoom(t_notation_obj *r_ob, double new_zoom_100_based, bool dontcheck=false);
 
 
 
@@ -10416,7 +10430,7 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                                     Leave NULL if you don't care for the information.
  */ 
 void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, 
-                           t_jfont *jf_acc_bogus, t_jrgba *color, t_note *curr_nt, long clef, 
+                           t_jfont *jf_acc_bogus, t_jrgba *color, t_note *curr_nt, long clef,
                            double note_y_real, double stem_x, 
                            double *acc_uascent, double *acc_udescent);
 
@@ -17518,9 +17532,12 @@ t_max_err notationobj_setattr_voicespacing(t_notation_obj *r_ob, t_object *attr,
 t_max_err notationobj_setattr_hidevoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_markers_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_markers_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_slot_labels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_tuplets_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_tempo_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -17558,7 +17575,12 @@ t_max_err notationobj_set_voicespacing(t_notation_obj *r_ob, long ac, double *va
 t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_rulerlabels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_tuplets_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_measurenumber_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_tempo_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
@@ -18957,6 +18979,8 @@ t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice);
 t_chord *chord_get_first_nongrace(t_notation_obj *r_ob, t_measure *meas);
 t_note *note_get_nearest(t_notation_obj *r_ob, double xpos, double ypos, long num_voice); // leave num_voice < 0 for auto find
 t_measure *measure_from_ux(t_notation_obj *r_ob, long num_voice, double ux, char always_return_something);
+
+double unscaled_xposition_snap_to_nearest_chord(t_notation_obj *r_ob, double ux, char snap_to_note_tails_also, char snap_to_breakpoints_also);
 
 t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms);
 t_llll *notationobj_get_interp_tempo(t_notation_obj *r_ob, t_timepoint tp);

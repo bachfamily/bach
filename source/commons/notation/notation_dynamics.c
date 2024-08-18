@@ -950,13 +950,13 @@ double paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_no
                 
                 if (boxed) xpos += dyn->dynamics_left_uext * r_ob->zoom_y;
                 
-                if (!boxed && (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && xpos + dyn->dynamics_right_uext > center_x + duration_x))
+                if (!boxed && !dynamics_mark_is_zero(mark) && (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && xpos + dyn->dynamics_right_uext > center_x + duration_x))
                     xpos = center_x + duration_x - dyn->dynamics_right_uext;
             }
             
             double cur = xpos, end_previous_hairpin_here = xpos;
             if (r_ob->show_dynamics || force_show) {
-                if (dynamics_mark_is_zero(mark)) {
+                if (dynamics_mark_is_zero(mark)) { //287.59
                     if (!dont_paint)
                         paint_circle_stroken(g, *color, xpos + (paint_mode == 2 ? ZEROCIRCLE_RADIUS : 0), ypos, ZEROCIRCLE_RADIUS, 1);
                     is_dynamic_zero = true;

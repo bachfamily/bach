@@ -1,0 +1,11 @@
+T__0=1
+T__1=2
+UINT=3
+NOTENAME=4
+ACCIDENTAL=5
+UPLUS=6
+UMINUS=7
+'t'=1
+'/'=2
+'+'=6
+'-'=7
