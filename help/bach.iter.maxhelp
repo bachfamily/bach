@@ -133,7 +133,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 320.0, 107.5, 489.0, 36.0 ],
-									"text" : "Notice that the output data has one more level of parentheses w.r. to the input data (what is output is the llll containing the whole list, see #maxdepth to know more). ",
+									"text" : "Notice that the output data has one more level of parentheses w.r.t. the input data (what is output is the llll containing the whole list, see #maxdepth to know more). ",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 

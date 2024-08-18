@@ -116,7 +116,7 @@ typedef struct _ratnum // [bach.ratnum] structure
 	char					output_mode; 
 	char					autoreduce;
 	char					show_triangle; // show/hide triangle	
-	double					zoom_y;	// zoom y, w.r. to the original object
+	double					zoom_y;	// zoom y, w.r.t. the original object
 
 	t_systhread_mutex		c_mutex;
 

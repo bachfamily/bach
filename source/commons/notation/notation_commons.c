@@ -3246,12 +3246,78 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
         else
             nt = ((t_note *)firstsel);
         
-        char onset_text[256], dur_text[256];
+        char onset_text[256], dur_text[256], cents_text[256];
 //        time_to_char_buf(r_ob, chord_get_onset_ms(r_ob, nt->parent), onset_text, 256);
 //        time_to_char_buf(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? nt->parent->duration_ms : nt->duration, dur_text, 256);
         time_to_char_buf(r_ob, notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)(nt->parent)), onset_text, 256);
         time_to_char_buf(r_ob, notation_item_get_duration_ms_accurate(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? (t_notation_item *)nt->parent : (t_notation_item *)nt), dur_text, 256);
 
+        std::string legend;
+        if (r_ob->show_note_names) {
+            legend += note_get_pitch(r_ob, nt).toString();
+            legend += "   ";
+        }
+        
+        if (obj_type == k_NOTATION_OBJECT_ROLL) {
+            legend += "Onset ";
+            legend += onset_text;
+            legend += "   ";
+        }
+        
+        t_voice *voice = nt->parent ? chord_get_voice(r_ob, nt->parent) : NULL;
+        if (voice && voice->notation_style == k_VOICE_NOTATION_STYLE_JI && !nt->pitch_original.isNaP() && (nt->pitch_original.isPureJI() || !nt->pitch_original.isPureET())) {
+            t_rational r;
+            if (!nt->pitch_original.isPureJI()) {
+                r = nt->pitch_original.getRatio();
+            } else {
+                r = nt->pitch_original.getRatio()/r_ob->ji_base_for_ratios.getRatio();
+            }
+            legend += "Ratio ";
+            legend += std::to_string(r.num());
+            legend += "/";
+            legend += std::to_string(r.den());
+            legend += " (w.r.t. ";
+            if (!nt->pitch_original.isPureJI()) {
+                legend += t_pitch(nt->pitch_original.getWhiteKeyET(), nt->pitch_original.getAlterET(), 0).toString();
+            } else {
+                legend += r_ob->ji_base_for_ratios.toString(true, false, false, true);
+            }
+            legend += ")   ";
+        }
+        
+        legend += "Cents ";
+        snprintf_zero(cents_text, 255, "%.1f", nt->midicents);
+        legend += cents_text;
+        legend += "   ";
+
+        if (obj_type == k_NOTATION_OBJECT_ROLL) {
+            legend += "Duration ";
+            legend += dur_text;
+            legend += "   ";
+        } else if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            legend += "Duration ";
+            legend += std::to_string(nt->parent->r_sym_duration.num());
+            legend += "/";
+            legend += std::to_string(nt->parent->r_sym_duration.den());
+            legend += "(";
+            legend += dur_text;
+            legend += ")";
+            legend += "   ";
+        }
+        
+        legend += "Velocity ";
+        legend += std::to_string(nt->velocity);
+
+        if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            legend += "   ";
+            legend += "Onset ";
+            legend += onset_text;
+        }
+        
+        snprintf_zero(legend_text, 255, "%s", legend.c_str());
+
+    
+    /*
         if (r_ob->show_note_names) {
             char notename[255];
             note_get_pitch(r_ob, nt).toTextBuf(notename, 255);
@@ -3265,6 +3331,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
             else if (obj_type == k_NOTATION_OBJECT_ROLL)
                 snprintf(legend_text, 255, "Onset %s   Cents %.1f   Duration %s   Velocity %ld", onset_text, nt->midicents, dur_text, nt->velocity);
         }
+     */
         
     } else if (num_sel == 1 && firstsel && firstsel->type == k_CHORD) { // single chord
         t_chord *ch = (t_chord *)firstsel;
@@ -3274,10 +3341,11 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
         
         
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
-            snprintf(legend_text, 255, "Duration " RATIONAL_PRINTF_FMT "   Onset %s   Duration %s", rat_abs(ch->r_sym_duration).r_num, ch->r_sym_duration.r_den, onset_text, dur_text);
+            snprintf(legend_text, 255, "Duration " RATIONAL_PRINTF_FMT " (%s)   Onset %s", rat_abs(ch->r_sym_duration).r_num, ch->r_sym_duration.r_den, dur_text, onset_text);
         } else if (obj_type == k_NOTATION_OBJECT_ROLL) {
-            snprintf(legend_text, 255, "Onset %s  Duration %s", onset_text, dur_text);
+            snprintf(legend_text, 255, "Onset %s   Duration %s", onset_text, dur_text);
         }
+        
     } else if (num_sel == 1 && firstsel && firstsel->type == k_PITCH_BREAKPOINT) {
         t_bpt *bpt = (t_bpt *)firstsel;
         t_note *nt = bpt->owner;
@@ -15660,7 +15728,7 @@ void correct_tuplets_units_and_multiplier_for_level(t_notation_obj *r_ob, t_meas
                     min_unit = rat_gcd(min_unit, get_level_rduration(r_ob, subll, true, true, true, false));
                 } else {
                     // we go further, and have a look to what's inside the llll.
-                    // this is something we want to do usually when we correct the tuplets w.r. to inner levels which might have
+                    // this is something we want to do usually when we correct the tuplets w.r.t. inner levels which might have
                     // been created by beamings, but which might not necessarily be tuplet levels 
                     if (is_level_tuplet(subll)) {
                         min_unit = rat_gcd(min_unit, ((t_rhythm_level_properties *)subll->l_thing.w_obj)->tupletinfo.tuplet_sym_duration);
@@ -25363,7 +25431,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             else
                 chord->notehead_unicode_character = r_ob->notation_typo_preferences.noteheads_unicode_characters[3]; */
             
-            // changing the extensions w.r. to the flags
+            // changing the extensions w.r.t. the flags
             if (chord->beams_depth == 0) { // no beaming
                 if (denlog2 == 3) {
                     if (chord->right_uextension < r_ob->notation_typo_preferences.flag_uwidths[0])
@@ -25377,7 +25445,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                 }
             }
             
-            // changing the extensions w.r. to the lyrics
+            // changing the extensions w.r.t. the lyrics
             if (r_ob->lyrics_affect_spacing && chord->lyrics && chord->lyrics->label){
                 double this_left_uextension = -chord->lyrics->lyrics_ux_shift + (chord->direction == 1 ? 0.5 : -0.5) * chord_get_mainside_notehead_uwidth(r_ob, chord->r_sym_duration, chord);
                 double this_right_uextension = chord->lyrics->lyrics_uwidth - this_left_uextension; 
@@ -25435,7 +25503,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             chord->right_uextension += 0;
         }
         
-        // changing the extensions w.r. to the dynamics
+        // changing the extensions w.r.t. the dynamics
         if (r_ob->dynamics_affect_spacing && chord_has_dynamics(chord)){
             t_dynamics *dyn = chord_get_dynamics(chord);
             if (dyn) {
@@ -25546,6 +25614,42 @@ double snap_to_microtonal_grid_do(double cents, long tone_division){
 // it's basically what "bach.mcapprox" does: converts 5144 into 5100 for semitone grid, into 5150 for quartertone grid...
 double snap_to_microtonal_grid(t_notation_obj *r_ob, double cents){
     return snap_to_microtonal_grid_do(cents, r_ob->tone_division);
+}
+
+long ratio_fold_octaves(t_rational *r)
+{
+    long count = 0;
+    
+    if (*r <= 0)
+        return count;
+    
+    while (*r >= 2) {
+        *r /= 2;
+        count ++;
+    }
+    while (*r < 1) {
+        *r *= 2;
+        count --;
+    }
+    return count;
+}
+
+long ratio_fold_octaves(double *r)
+{
+    long count = 0;
+    
+    if (*r <= 0)
+        return count;
+    
+    while (*r >= 2) {
+        *r /= 2;
+        count ++;
+    }
+    while (*r < 1) {
+        *r *= 2;
+        count --;
+    }
+    return count;
 }
 
 double cents_to_freqratio(t_notation_obj *r_ob, double cents)
@@ -42599,6 +42703,124 @@ double get_next_step_depending_on_editing_ranges(t_notation_obj *r_ob, double mi
     }
     
     return midicents + (delta_steps * (200. / r_ob->tone_division));
+}
+
+
+t_rational get_next_rational_in_farey_sequence_depending_on_editing_ranges(t_notation_obj *r_ob, double r, long voicenum, long delta_steps)
+{
+//    if (!r_ob->constraint_pitches_when_editing || r_ob->constraint_pitches_when_editing->l_depth < 2) {
+    std::vector<t_rational> farey = get_farey_sequence(r_ob->ji_limit, long2rat(1), r_ob->ji_limit);
+    long len = farey.size();
+    double folded_r = r;
+    long octaves = 0;
+    const double epsilon = 0.001;
+    t_rational res = t_rational(0, 0);
+    octaves += ratio_fold_octaves(&folded_r);
+
+    if (delta_steps > 0) {
+        for (long s = 0; s < delta_steps; s++) {
+            t_rational next = genrat(2, 1);
+            for (long i = 0; i < len; i++) {
+                if ((double)farey[i] > folded_r + epsilon) {
+                    next = farey[i];
+                    res = next;
+                    break;
+                }
+            }
+            folded_r = next;
+            octaves += ratio_fold_octaves(&folded_r);
+            ratio_fold_octaves(&res);
+        }
+    } else if (delta_steps < 0) {
+        for (long s = 0; s < -delta_steps; s++) {
+            if (folded_r - epsilon < 1) {
+                folded_r *= 2;
+                octaves -= 1;
+            }
+            t_rational prev = genrat(1, 1);
+            for (long i = len-1; i >= 0; i--) {
+                if ((double)farey[i] < folded_r - epsilon) {
+                    prev = farey[i];
+                    res = prev;
+                    break;
+                }
+            }
+            folded_r = prev;
+            octaves -= ratio_fold_octaves(&folded_r);
+            ratio_fold_octaves(&res);
+        }
+    }
+    if (res.den() == 0) {
+        return get_best_jilimited_approximation(folded_r, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh);
+    } else {
+        return res * long_long_pow(2, octaves);
+    }
+    //    }
+    
+    // TODO: constraint editing
+    /*
+     t_llllelem *voice_el = llll_getindex(r_ob->constraint_pitches_when_editing, voicenum + 1, I_STANDARD);
+     if (!voice_el)
+     voice_el = r_ob->constraint_pitches_when_editing->l_tail;
+     
+     if (voice_el && hatom_gettype(&voice_el->l_hatom) == H_LLLL) {
+     t_llll *ll = hatom_getllll(&voice_el->l_hatom), *temp;
+     double midicents_temp = midicents;
+     char inside_range = 0, range_hit = 0;
+     t_llllelem *snap_el = ysnap_double_to_editing_range(&midicents_temp, ll, &inside_range, &range_hit);
+     char direction = (delta_steps > 0 ? 1 : -1);
+     
+     long count = labs(delta_steps);
+     while (count > 0 && snap_el)  {
+     if (hatom_gettype(&snap_el->l_hatom) == H_LLLL && (temp = hatom_getllll(&snap_el->l_hatom)) && temp->l_size >= 2 &&
+     is_hatom_number(&temp->l_head->l_hatom) && is_hatom_number(&temp->l_head->l_next->l_hatom)) {
+     // subrange
+     if (delta_steps > 0 && range_hit == 1) {
+     snap_el = snap_el->l_next;
+     count--;
+     } else if (delta_steps < 0 && range_hit == -1) {
+     snap_el = snap_el->l_prev;
+     count--;
+     } else {
+     double start = hatom_getdouble(&temp->l_head->l_hatom);
+     double end = hatom_getdouble(&temp->l_head->l_next->l_hatom);
+     double curr_mc = midicents_temp;
+     
+     double test_res = curr_mc + (count * direction * (200. / r_ob->tone_division));
+     if (delta_steps > 0 && test_res <= end)
+     return snap_to_microtonal_grid(r_ob, test_res);
+     if (delta_steps < 0 && test_res >= start)
+     return snap_to_microtonal_grid(r_ob, test_res);
+     while (count > 0 && (delta_steps > 0 ? (curr_mc <= end) : (curr_mc >= start)) &&
+     ((delta_steps > 0 && curr_mc <= end) || (delta_steps < 0 && curr_mc >= start))) {
+     curr_mc = curr_mc + (direction * (200. / r_ob->tone_division));
+     count--;
+     }
+     if (count == 0)
+     return test_res <= start ? start : (test_res >= end ? end :  snap_to_microtonal_grid(r_ob, test_res));
+     snap_el = delta_steps > 0 ? snap_el->l_next : snap_el->l_prev;
+     }
+     } else {
+     snap_el = delta_steps > 0 ? snap_el->l_next : snap_el->l_prev;
+     count--;
+     }
+     }
+     
+     if (snap_el) {
+     if (is_hatom_number(&snap_el->l_hatom))
+     return hatom_getdouble(&snap_el->l_hatom);
+     else if (hatom_gettype(&snap_el->l_hatom) == H_LLLL && (temp = hatom_getllll(&snap_el->l_hatom)) && temp->l_size >= 2 &&
+     is_hatom_number(&temp->l_head->l_hatom) && is_hatom_number(&temp->l_head->l_next->l_hatom)) {
+     double start = hatom_getdouble(&temp->l_head->l_hatom);
+     double end = hatom_getdouble(&temp->l_head->l_next->l_hatom);
+     return (delta_steps > 0 ? start : end);
+     }
+     }
+     }
+     
+     return midicents + (delta_steps * (200. / r_ob->tone_division));
+     
+     */
 }
 
 

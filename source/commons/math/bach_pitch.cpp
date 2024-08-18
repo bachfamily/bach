@@ -567,7 +567,7 @@ t_rational t_pitch::getHEJICommasAsRational() const {
     return r;
 }
 
-std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const
+std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace, t_bool writeNaturalCsAsJI) const
 {
     std::string s;
     t_int8 octave;
@@ -585,9 +585,11 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
             p = *this;
         }
         t_int8 plof = p.getPlofJI();
+        bool pureJI = p.isPureJI();
+        bool pureET = p.isPureET();
 
-        if (!p.isPureJI() || p.isPureET()) {
-            // not pure JI or both pure JI and pureET (that is, it's a C with no alteration or deviation)
+        if ((!pureJI || pureET) && (!(pureJI && pureET && writeNaturalCsAsJI))) {
+            // not pure JI or both pure JI and pureET (that is, it's a C with no alteration or deviation – except if we ask them to be written as JI)
             if (mirror)
                 s = '-';
             s += degree2name[p.p_whiteKeyET];
@@ -646,7 +648,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
             } else if (sharps < 0) {
                 s += std::string(-sharps, 'b');
             }
-            std::vector<int8_t> commas = p.getHEJICommas();
+            std::vector<int8_t> commas = p.getHEJICommas(true);
             if (commas.size()) {
                 s += "{";
                 for (auto c: commas) {

@@ -13190,6 +13190,13 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     newnote = build_note((t_notation_obj *)x, yposition_to_mc((t_notation_obj *)x, pt.y, NULL, NULL), 1000, CONST_DEFAULT_NEW_NOTE_VELOCITY);
                                     if (newnote) {
+                                        
+                                        if (curr_ch->parent->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) {
+                                            t_rational r = get_best_jilimited_approximation(cents_to_freqratio((t_notation_obj *)x, newnote->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
+                                            newnote->midicents = freqratio_to_cents((t_notation_obj *)x, (double)r);
+                                            newnote->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getRatio());
+                                        }
+                                        
 #ifdef BACH_CHORDS_HAVE_SLOTS
                                         if (notation_item_has_slot_content((t_notation_obj *)x, (t_notation_item *)curr_ch)) {
                                             clone_slots_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, (t_notation_item *)newnote, k_CLONE_FOR_ORIGINAL);

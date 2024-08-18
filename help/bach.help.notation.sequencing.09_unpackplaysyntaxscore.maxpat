@@ -131,7 +131,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 45.0, 404.0, 113.0, 36.0 ],
 					"style" : "",
-					"text" : "rational onset w.r. to the measure:"
+					"text" : "rational onset w.r.t. the measure:"
 				}
 
 			}

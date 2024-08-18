@@ -7071,6 +7071,41 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
 
 
 
+std::vector<t_rational> get_farey_sequence(long order, t_rational offset, long max_limit)
+{
+    std::vector<t_rational> res;
+    
+    t_rational r1 = genrat(0, 1);
+    t_rational r2 = genrat(1, order);
+    t_rational t;
+    long k;
+    
+    res.push_back(r1+offset);
+    res.push_back(r2+offset);
+
+    // If ⁠a/b⁠ and ⁠c/d⁠ are the two given entries, and ⁠p/q⁠ is the unknown next entry, then ⁠c/d⁠ = ⁠(a + p)/(b + q)⁠.
+    while (r2.den() > 1) {
+        k = (order + r1.den()) / r2.den();
+        t = r1;
+        r1 = r2;
+        r2 = genrat(r2.num() * k - t.num(), r2.den() * k - t.den());
+        t_rational ro = r2+offset;
+        if (max_limit == 0 || (rational_get_jilimit(ro) <= max_limit))
+            res.push_back(ro);
+    }
+    
+    return res;
+}
+
+t_llll *llll_farey(long order, t_rational offset, long max_limit)
+{
+    t_llll *res = llll_get();
+    std::vector<t_rational> farey = get_farey_sequence(order, offset, max_limit);
+    for (auto& r: farey)
+        llll_appendrat(res, r);
+    return res;
+}
+
 
 
 

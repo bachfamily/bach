@@ -481,15 +481,9 @@ public:
         p_JIexpVector.addOctaves(oct);
     }
 
-    bool isPureET() const { return p_JIexpVector.allZerosButOctaves(); }
-    bool isPureJI() const { return p_whiteKeyET == 0 && p_alterET.num() == 0; }
-    bool isPurePythagorean() const {
-        if (isPureJI()) {
-            return p_JIexpVector.allZerosButOctavesAndTwelfths();
-        } else {
-            return false;
-        }
-    }
+    bool isPureET() const { return !isNaP() && p_JIexpVector.allZerosButOctaves(); }
+    bool isPureJI() const { return !isNaP() && p_whiteKeyET == 0 && p_alterET.num() == 0; }
+    bool isPurePythagorean() const { return isPureJI() && p_JIexpVector.allZerosButOctavesAndTwelfths(); }
 
 
     
@@ -512,10 +506,19 @@ public:
     
     t_int8 getSharpsJI() const { return (getPlofJI()+1)/7; };
     
-    std::vector<int8_t> getHEJICommas() const {
+    std::vector<int8_t> getHEJICommas(bool removeTrailingZeros = false) const {
         std::vector<int8_t> v = p_JIexpVector.get();
-        std::vector<int8_t> HEJIcommas(BACH_PRIMES_JI_SIZE - 2);
-        for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE - 2; i++) { // HEJI commas are from 5-limit on
+        long num_i = BACH_PRIMES_JI_SIZE - 2;
+        if (removeTrailingZeros) {
+            for (long j = BACH_PRIMES_JI_SIZE-1; j >= 0; j--) {
+                if (v[j] == 0)
+                    num_i = j-1;
+                else
+                    break;
+            }
+        }
+        std::vector<int8_t> HEJIcommas(num_i);
+        for (int8_t i = 0; i < num_i; i++) { // HEJI commas are from 5-limit on
             int8_t this_comma = v[i+2];
             char dir = HEJIcommasExponentsDirection[i];
             HEJIcommas[i] = -dir * this_comma; // TODO: or the opposite? Is there a minus sign missing? check
@@ -792,7 +795,7 @@ public:
         return (p_alterET.r_den == 0);
     }
     
-    std::string toString(t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false) const;
+    std::string toString(t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false, t_bool writeNaturalCsAsJI = false) const;
     
     long toTextBuf(char *buf, long bufSize, t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false) const;
     

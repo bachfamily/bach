@@ -5459,8 +5459,8 @@ t_rational get_grace_note_equivalent(t_score *x, t_chord *gracechord)
 }
 
 // calculates    chord->onset = global onset (in ms)
-//                chord->r_tuttipoint_onset_sec = rational onset w.r. to the tuttipoint (actually in sec)
-//                chord->tuttipoint_onset_ms = onset w.r. to the tuttipoint (in ms)
+//                chord->r_tuttipoint_onset_sec = rational onset w.r.t. the tuttipoint (actually in sec)
+//                chord->tuttipoint_onset_ms = onset w.r.t. the tuttipoint (in ms)
 //                also calcolates the chord->duration_ms and the note->duration_ms fields
 void calculate_all_chords_remaining_onsets(t_score *x)
 {
@@ -5554,8 +5554,8 @@ void calculate_all_chords_remaining_onsets(t_score *x)
 }
 
 // calculates    chord->onset = global onset (in ms)
-//                chord->r_tuttipoint_onset_sec = rational onset w.r. to the tuttipoint (actually in sec)
-//                chord->tuttipoint_onset_ms = onset w.r. to the tuttipoint (in ms)
+//                chord->r_tuttipoint_onset_sec = rational onset w.r.t. the tuttipoint (actually in sec)
+//                chord->tuttipoint_onset_ms = onset w.r.t. the tuttipoint (in ms)
 void calculate_all_tempi_remaining_onsets(t_score *x)
 {
     t_scorevoice *voice; t_measure *measure; t_tempo *tempo;
@@ -5997,7 +5997,7 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt)
 // this really spaces all things properly
 void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt) 
 { 
-    // this is the spacing function: assign, within the tuttipoint, to each chord an offset_ux, w.r. to the tuttipoint beginning.
+    // this is the spacing function: assign, within the tuttipoint, to each chord an offset_ux, w.r.t. the tuttipoint beginning.
     
     long i;
     t_measure **meas, *this_meas;
@@ -6892,7 +6892,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
         
         
         // *****************************
-        // re-scaling aligning points w.r. to the symbolic durations
+        // re-scaling aligning points w.r.t. the symbolic durations
         // *****************************
 
         // the sense is: if we have 50px spacing for 1/8 and 40px spacing for a quarter, there's something wrong about it. We get the 40->100=2*50;

@@ -61,7 +61,7 @@ VERSION NOTES:
 - bach.quantize: removed puzzling innocuous errors for SmartMix mode
 
 - bach.roll, bach.score:
-    á Now clefs and keys behave properly w.r. to undo, even if changed via messages
+    á Now clefs and keys behave properly w.r.t. undo, even if changed via messages
     á Fixed bug causing non-refresh for keepselectioniflostfocus
     á Now setdl works in lambda mode properly
     á New @annotationalignment attribute setting the text alignment for annotations

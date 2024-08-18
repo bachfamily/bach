@@ -464,7 +464,7 @@ void swap_et_accidentals_for_ji_et(t_uint8 *accidentals, int numAccidentals)
 // accidentals must be allocated with MAX_NUM_ACCIDENTALS+1 size
 void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *accidentals, int *numAccidentals)
 {
-    if (pitch.isPureET()) {
+    if (pitch.isPureET() && !pitch.isPureJI()) { // if it's purely ET but not a C
         // use JI ET characters, the ones with the lines above (but approximate to half tones, though!
         t_pitch q = pitch.approxET(2);
         int n;

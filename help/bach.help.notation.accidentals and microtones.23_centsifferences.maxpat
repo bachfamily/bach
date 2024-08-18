@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 65.5, 153.0, 360.0, 21.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "Here's a harmonic series with all the cents differences w.r. to ",
+					"text" : "Here's a harmonic series with all the cents differences w.r.t. ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

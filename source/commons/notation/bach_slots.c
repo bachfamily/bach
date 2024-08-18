@@ -1637,7 +1637,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
     
 	r_ob->slot_window_active_nozoom = build_rect(slot_window_active_x1, slot_window_active_y1, slot_window_active_width, slot_window_active_height);
 
-	// modifying activeslotwin w.r. to zoom
+	// modifying activeslotwin w.r.t. zoom
 	if (((!slot_is_temporal(r_ob, s)) || r_ob->obj_type == k_NOTATION_OBJECT_SLOT) && (can_slot_be_hzoomed(r_ob, s) || can_slot_be_hmoved(r_ob, s))) {
 		slot_window_active_width *= r_ob->slot_window_hzoom_factor;
 		slot_window_active_x1 = slot_window_active_x1 - r_ob->slot_window_zoomed_start * slot_window_active_width;
@@ -2007,7 +2007,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 							else if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_FLOATMATRIX)
 								snprintf_zero(value_str, 50, "%.2f%s", curr_val, unit);
 							
-							// do we display it at left or at right, w.r. to the bar?
+							// do we display it at left or at right, w.r.t. the bar?
 							if (bar_width < h_cell_size/2.) {
 								write_text_standard_singleline(g, jf_slot_smallvalues, slot_textcolor, value_str,
 												  slot_window_table_x1 + col * h_cell_size + bar_width + 2, slot_window_table_y1 + row * v_cell_size, h_cell_size - bar_width - 2, v_cell_size);
@@ -3066,7 +3066,7 @@ void paint_function_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect fun
 				snprintf_zero(label, 100, "%.*f", num_decimal_points, point.y);
 				jfont_text_measure(jf_label_font, label, &ww, &hh);
 				
-				// choosing label direction ( 1 = up, -1 = down, w.r. to the point )
+				// choosing label direction ( 1 = up, -1 = down, w.r.t. the point )
 				if (!temp->next && !temp->prev) {
 					direction = (point_screen.y > displayed_bounding_rectangle.y + displayed_bounding_rectangle.height / 2. ? 1 : -1); 
 				} else if (!temp->next) {

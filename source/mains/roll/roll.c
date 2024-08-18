@@ -10311,7 +10311,7 @@ void insert_chord(t_roll *x, t_rollvoice *voice, t_chord *chord, unsigned long f
     }
 }
 
-// force_append = 1 forces the chord to be put at the end of the list, otherwise it is put in the correct position w.r. to ms
+// force_append = 1 forces the chord to be put at the end of the list, otherwise it is put in the correct position w.r.t. ms
 t_chord* addchord_from_notes(t_roll *x, long voicenumber, double onset, long unused, long num_notes, 
                                 t_note *firstnote, t_note *lastnote, char force_append, unsigned long force_ID) {
 // add a chord, starting from a linked list of notes
@@ -14103,7 +14103,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 
 t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, char mode, char *old_chord_deleted, char allow_voice_change)
 {
-// mode == 0: delta are the delta-steps on the scale (e.g. from C3 to F3, it is 5 steps in the semitone scale, 10 steps in the quartertonal scale)
+// mode == 0: delta are the delta-steps on the scale (e.g. from C3 to F3, it is 5 steps in the semitone scale, 10 steps in the quartertonal scale), if in JI these are steps in the Farey sequence
 // mode == 1: delta is delta_midicents
 // returns a pointer to the new chord, if the chord has changed.
 // also changes note to a new note if note has changed voice
@@ -14115,6 +14115,8 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
     double prev_mc = note->midicents; // mc before change
     char octave_jump = false;
     long num_octaves_jump = 0;
+    bool ji = (note->parent->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) && abs(delta) != (6 * x->r_ob.tone_division);
+    // (if we shift by octaves, we don't need the ji Farey approximation)
 
     if (old_chord_deleted) 
         *old_chord_deleted = false;
@@ -14122,8 +14124,16 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
     note_old_system = onset_to_system_index((t_notation_obj *) x, note->parent->onset);
     if (mode == 0) { // snapped to grid
         octave_jump = (((long)delta) % (6 * x->r_ob.tone_division) == 0);
-        if (octave_jump) num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
-        note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->voiceparent->v_ob.number, delta);
+        if (octave_jump) 
+            num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
+        if (ji) {
+            double r = cents_to_freqratio((t_notation_obj *)x, note->midicents);
+            t_rational r_new = get_next_rational_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, r, note->parent->voiceparent->v_ob.number, delta);
+            note->pitch_original = t_pitch(r_new * x->r_ob.ji_base_for_ratios.getRatio());
+            note->midicents = note->pitch_original.toMCdouble();
+        } else {
+            note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->voiceparent->v_ob.number, delta);
+        }
     } else
         note->midicents += delta;
     
@@ -14140,10 +14150,13 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
             note->pitch_original.addOctaves(num_octaves_jump);
             note->pitch_displayed.addOctaves(num_octaves_jump);
         } else {
-            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+            if (!ji)
+                note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
         }
-        constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice); 
-        update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, note->parent);
+        if (!ji) {
+            constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice);
+            update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, note->parent);
+        }
     
     } else { // note is changing voice!
         double threshold_y, change_mc1, change_mc2;
@@ -15396,6 +15409,14 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             if (temp){
                 if (is_editable((t_notation_obj *)x, k_SELECTION, x->r_ob.num_selecteditems > 0 ? k_MULTIPLE_SELECTION : k_SINGLE_SELECTION))
                     notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)temp);
+                if (temp->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) {
+                    t_note *nt = temp->firstnote;
+                    if (nt) {
+                        t_rational r = get_best_jilimited_approximation(cents_to_freqratio((t_notation_obj *)x, nt->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
+                        nt->midicents = freqratio_to_cents((t_notation_obj *)x, (double)r);
+                        nt->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getRatio());
+                    }
+                }
                 if (x->r_ob.snap_pitch_to_grid_when_editing) {
                     t_note *nt;
                     for (nt = temp->firstnote; nt; nt = nt->next){
@@ -17456,6 +17477,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                 return 1;
             }
         } else if ((keycode == JKEY_UPARROW || keycode == JKEY_DOWNARROW) && is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_PITCH)) {
+            // TODO: account for JI
             change_selection_breakpoint_pitch((t_notation_obj *)x, (keycode == JKEY_UPARROW ? 1 : -1) * (modifiers & eShiftKey ? 1200 : 200 / x->r_ob.tone_division));
             handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, keycode == JKEY_UPARROW ? k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION : k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION);
         } else {

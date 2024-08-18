@@ -3242,7 +3242,7 @@ typedef struct _voice
     double            middleC_y;        ///< Y position (in pixels) of the middle C inside the voice. This is computed in compute_middleC_position_for_voice(),
                                     ///< and updated as the zoom or voice configuration change. This y position is the base to build stafflines and to place
                                     ///< notes, so it is throuroughly used in the code.
-    double            offset_y;        ///< Vertical offset of the voice w.r. to the top of the roll.
+    double            offset_y;        ///< Vertical offset of the voice w.r.t. the top of the roll.
     long            midichannel;    ///< Midichannel globally associated to the voice
     long            clef;            ///< Clef (and thus subsequently staff type) associated to the voice. This must be one of the #e_clefs (by default, #k_CLEF_G) 
 
@@ -4438,7 +4438,7 @@ typedef struct _notation_obj
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
     char        accidentals_display_type;    ///< Type of display for the accidentals; must be one of the #e_accidentals_display_type
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
-    char        show_cents_differences;           ///< Flag saying if we also display a cents difference w.r. to the displayed (screen) accidentals
+    char        show_cents_differences;           ///< Flag saying if we also display a cents difference w.r.t. the displayed (screen) accidentals
     double      cents_differences_font_size;       ///< Font size for cents differences
     t_symbol    *cents_symbol;                    ///< Symbol used to represent cents or MIDIcents
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
@@ -7735,6 +7735,8 @@ double snap_to_jilimit(t_notation_obj *r_ob, double cents);
 // These two function account for the JI base contained in r_ob
 double cents_to_freqratio(t_notation_obj *r_ob, double cents);
 double freqratio_to_cents(t_notation_obj *r_ob, double ratio);
+long ratio_fold_octaves(t_rational *r); // returns number of folded octaves
+long ratio_fold_octaves(double *r); // returns number of folded octaves
 
 
 /**    Snap a pitch (in midicents) to the current microtonal grid for a given tone division.
@@ -9918,6 +9920,7 @@ void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, doub
  */
 double get_next_step_depending_on_editing_ranges(t_notation_obj *r_ob, double midicents, long voicenum, long delta_steps);
 
+t_rational get_next_rational_in_farey_sequence_depending_on_editing_ranges(t_notation_obj *r_ob, double r, long voicenum, long delta_steps);
 
 
 

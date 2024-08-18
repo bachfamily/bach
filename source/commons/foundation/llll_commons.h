@@ -1063,6 +1063,9 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 // return a geometric series (see bach.arithmser)
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err);
 
+// farey sequence of a given order
+std::vector<t_rational> get_farey_sequence(long order, t_rational offset, long max_limit);
+t_llll *llll_farey(long order, t_rational offset, long max_limit);
 
 
 
