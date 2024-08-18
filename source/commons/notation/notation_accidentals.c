@@ -26,7 +26,7 @@
 
 
 
-t_shortRational note_get_screen_accidental_ordinary(t_note *nt)
+t_shortRational note_get_display_accidental_ordinary(t_note *nt)
 {
     if (nt->pitch_displayed.isPureET()) {
         return nt->pitch_displayed.getAlterET();
@@ -37,7 +37,7 @@ t_shortRational note_get_screen_accidental_ordinary(t_note *nt)
     }
 }
 
-t_rational note_get_screen_accidental_JIcommas(t_note *nt)
+t_rational note_get_display_accidental_JIcommas(t_note *nt)
 {
     if (nt->pitch_displayed.isPureET()) {
         return genrat(1, 1);
@@ -48,7 +48,7 @@ t_rational note_get_screen_accidental_JIcommas(t_note *nt)
     }
 }
 
-double note_get_screen_accidental_cents(t_note *nt)
+double note_get_display_accidental_cents(t_note *nt)
 {
     if (nt->pitch_displayed.isPureET()) {
         return nt->pitch_displayed.getAlterET() * 200.;
@@ -103,17 +103,30 @@ void note_get_display_accidentals(t_note *nt, t_uint8 *accidentals)
 }
 
 
-// *unicodeChar accidental_text must be initialized with size CONST_MAX_ACCIDENTALS+1
-void note_get_accidentals_unicode_chars(t_notation_obj *r_ob, t_note *nt, unicodeChar *accidental_text)
+// *unicodeChar accidental_text must be initialized with size 2*(CONST_MAX_ACCIDENTALS+1)
+void note_get_accidentals_unicode_chars(t_notation_obj *r_ob, t_note *nt, unicodeChar *accidental_text, long *accidental_text_len)
 {
     long i = 0;
-    for (; i < nt->num_accidentals && i < CONST_MAX_ACCIDENTALS; i++) {
-        if (nt->accidentals[i] >= 0 && nt->accidentals[i] < BACH_NUM_ACCIDENTALS)
-            accidental_text[i] = r_ob->accidentals_typo_preferences.unicode_characters[nt->accidentals[i]];
-        else
-            accidental_text[i] = 0;
+    if (r_ob->accidentals_typo_preferences.space_character == 0) {
+        for (; i < nt->num_accidentals && i < CONST_MAX_ACCIDENTALS; i++) {
+            if (nt->accidentals[i] >= 0 && nt->accidentals[i] < BACH_NUM_ACCIDENTALS)
+                accidental_text[i] = r_ob->accidentals_typo_preferences.unicode_characters[nt->accidentals[i]];
+            else
+                accidental_text[i] = 0;
+        }
+        *accidental_text_len = i;
+        accidental_text[i] = 0; // terminating 0
+    } else {
+        accidental_text[0] = 0;
+        for (; i < nt->num_accidentals && i < CONST_MAX_ACCIDENTALS; i++) {
+            if (nt->accidentals[i] >= 0 && nt->accidentals[i] < BACH_NUM_ACCIDENTALS)
+                accidental_text[2*i] = r_ob->accidentals_typo_preferences.unicode_characters[nt->accidentals[i]];
+            else
+                accidental_text[2*i] = 0;
+            accidental_text[2*i+1] = i < nt->num_accidentals - 1 ? r_ob->accidentals_typo_preferences.space_character : 0; // space (or terminating zero)
+        }
+        *accidental_text_len = (nt->num_accidentals > 0 ? 2*nt->num_accidentals-1 : 0);
     }
-    accidental_text[i] = 0; // terminating 0
 }
 
 //buf must be already allocated with size >= 20
@@ -124,8 +137,8 @@ void note_get_accidental_as_fraction(t_notation_obj *r_ob, t_note *nt, char *buf
     
     buf[0] = 0;
     if (nt->pitch_displayed.isPureET()) {
-        num = note_get_screen_accidental_ordinary(nt).num();
-        den = note_get_screen_accidental_ordinary(nt).den();
+        num = note_get_display_accidental_ordinary(nt).num();
+        den = note_get_display_accidental_ordinary(nt).den();
         if (r_ob->accidentals_display_type == k_ACCIDENTALS_UNREDUCED_FRACTION && den < r_ob->tone_division) {
             long factor = r_ob->tone_division / den;
             den *= factor;
@@ -160,10 +173,11 @@ void note_get_accidental_as_cents(t_notation_obj *r_ob, t_note *nt, char *buf)
         t_rational comma = p.getHEJICommasAsRational();
         cents = log2(comma.num()*1./comma.den())*1200. + p.getAlterET()*200.;
     }
+    
     if (cents >= 0)
-        snprintf_zero(buf, 20, "+%dc", (int)cents);
+        snprintf_zero(buf, 20, "+%dc%s", (int)cents, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
     else
-        snprintf_zero(buf, 20, "-%dc", (int)(-cents));
+        snprintf_zero(buf, 20, "-%dc%s", (int)(-cents), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
 }
 
 double accidentals_get_uascent(t_notation_obj *r_ob, t_uint8 *accidentals)
@@ -253,12 +267,17 @@ double note_get_accidental_udescent(t_notation_obj *r_ob, t_note *note)
 double accidentals_get_uwidth(t_notation_obj *r_ob, t_uint8 *accidentals)
 {
     double w = 0;
+    long count = 0;
     for (long i = 0; i < CONST_MAX_ACCIDENTALS; i++) {
         if (accidentals[i] == BACH_ACCIDENTAL_NONE)
             break;
-        else if (accidentals[i] >= 0 && accidentals[i] < BACH_NUM_ACCIDENTALS)
+        else if (accidentals[i] >= 0 && accidentals[i] < BACH_NUM_ACCIDENTALS) {
+            count++;
             w += r_ob->accidentals_typo_preferences.uwidth[accidentals[i]];
+        }
     }
+    
+    w += (count - 1) * r_ob->accidentals_typo_preferences.space_uwidth;
     return w;
 }
 
@@ -312,7 +331,7 @@ double note_get_accidental_uwidth(t_notation_obj *r_ob, t_note *nt, char always_
 }
 
 
-e_bach_accidental get_accidental_ET(t_notation_obj *r_ob, t_rational accidental)
+e_bach_accidental rational_to_accidental_ET(t_notation_obj *r_ob, t_rational accidental)
 {
     if (rat_long_cmp(accidental, -1) <= 0)
         return BACH_ACCIDENTAL_DOUBLEFLAT;
@@ -381,7 +400,7 @@ e_bach_accidental get_accidental_ET(t_notation_obj *r_ob, t_rational accidental)
 
 
 // accidentals must be allocated with MAX_NUM_ACCIDENTALS+1 size
-void get_accidental_characters_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals)
+void get_accidentals_for_pitch_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals)
 {
     int j = 0;
     t_rational alter = p.getAlterET();
@@ -390,7 +409,7 @@ void get_accidental_characters_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *acci
         j = 1;
     } else {
         while (j < CONST_MAX_ACCIDENTALS && alter.num() != 0){
-            accidentals[j] = get_accidental_ET(r_ob, alter);
+            accidentals[j] = rational_to_accidental_ET(r_ob, alter);
             j++;
             if (alter >= -1 && alter <= 1)
                 break; // done
@@ -443,20 +462,19 @@ void swap_et_accidentals_for_ji_et(t_uint8 *accidentals, int numAccidentals)
 }
 
 // accidentals must be allocated with MAX_NUM_ACCIDENTALS+1 size
-void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *accidentals, int *numAccidentals)
+void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *accidentals, int *numAccidentals)
 {
     if (pitch.isPureET()) {
         // use JI ET characters, the ones with the lines above (but approximate to half tones, though!
         t_pitch q = pitch.approxET(2);
         int n;
-        get_accidental_characters_ET(r_ob, q, accidentals, &n);
+        get_accidentals_for_pitch_ET(r_ob, q, accidentals, &n);
         swap_et_accidentals_for_ji_et(accidentals, n);
         if (numAccidentals)
             *numAccidentals = n;
     } else {
         
         std::vector<int8_t> hejicommas = pitch.getHEJICommas();
-        
         t_uint8 *curChar = accidentals;
         int numChars = 0;
         
@@ -480,16 +498,16 @@ void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
             }
         } else if (num_base_accs_abs == 0 && hejicommas[0] != 0) { // 5-limit
             long hejicomma_abs = abs(hejicommas[0]);
-            long hejicomma_size = (hejicommas[0] >= 0 ? 1 : -1);
+            long hejicomma_sign = (hejicommas[0] >= 0 ? 1 : -1);
             while (hejicomma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS - 1) {
                 if (hejicomma_abs >= 3) {
-                    *curChar = (hejicomma_size < 0 ? BACH_ACCIDENTAL_JI_NATURAL_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_NATURAL_ARROW_DOWN_THRICE);
+                    *curChar = (hejicomma_sign > 0 ? BACH_ACCIDENTAL_JI_NATURAL_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_NATURAL_ARROW_DOWN_THRICE);
                     hejicomma_abs -= 3;
                 } else if (hejicomma_abs >= 2) {
-                    *curChar = (hejicomma_size < 0 ? BACH_ACCIDENTAL_JI_NATURAL_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_NATURAL_ARROW_DOWN_TWICE);
+                    *curChar = (hejicomma_sign > 0 ? BACH_ACCIDENTAL_JI_NATURAL_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_NATURAL_ARROW_DOWN_TWICE);
                     hejicomma_abs -= 2;
                 } else if (hejicomma_abs == 1) {
-                    *curChar = (hejicomma_size < 0 ? BACH_ACCIDENTAL_JI_NATURAL_ARROW_UP : BACH_ACCIDENTAL_JI_NATURAL_ARROW_DOWN);
+                    *curChar = (hejicomma_sign > 0 ? BACH_ACCIDENTAL_JI_NATURAL_ARROW_UP : BACH_ACCIDENTAL_JI_NATURAL_ARROW_DOWN);
                     hejicomma_abs -= 1;
                 }
                 curChar++;
@@ -503,13 +521,13 @@ void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                 if (num_base_accs_abs >= 2) {
                     if (hejicomma_5abs > 0) {
                         if (hejicomma_5abs >= 3) {
-                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_DOWN_THRICE) : (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_DOWN_THRICE));
+                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_DOWN_THRICE) : (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_DOWN_THRICE));
                             hejicomma_5abs -= 3;
                         } else if (hejicomma_5abs >= 2) {
-                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_DOWN_TWICE) : (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_DOWN_TWICE));
+                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_DOWN_TWICE) : (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_DOWN_TWICE));
                             hejicomma_5abs -= 2;
                         } else if (hejicomma_5abs == 1) {
-                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_UP : BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_DOWN) : (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_UP : BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_DOWN));
+                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_UP : BACH_ACCIDENTAL_JI_DOUBLESHARP_ARROW_DOWN) : (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_UP : BACH_ACCIDENTAL_JI_DOUBLEFLAT_ARROW_DOWN));
                             hejicomma_5abs -= 1;
                         }
                     } else {
@@ -520,13 +538,13 @@ void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                 } else if (num_base_accs_abs == 1) {
                     if (hejicomma_5abs > 0) {
                         if (hejicomma_5abs >= 3) {
-                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_SHARP_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_SHARP_ARROW_DOWN_THRICE) : (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_FLAT_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_FLAT_ARROW_DOWN_THRICE));
+                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_SHARP_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_SHARP_ARROW_DOWN_THRICE) : (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_FLAT_ARROW_UP_THRICE : BACH_ACCIDENTAL_JI_FLAT_ARROW_DOWN_THRICE));
                             hejicomma_5abs -= 3;
                         } else if (hejicomma_5abs >= 2) {
-                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_SHARP_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_SHARP_ARROW_DOWN_TWICE) : (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_FLAT_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_FLAT_ARROW_DOWN_TWICE));
+                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_SHARP_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_SHARP_ARROW_DOWN_TWICE) : (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_FLAT_ARROW_UP_TWICE : BACH_ACCIDENTAL_JI_FLAT_ARROW_DOWN_TWICE));
                             hejicomma_5abs -= 2;
                         } else if (hejicomma_5abs == 1) {
-                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_SHARP_ARROW_UP : BACH_ACCIDENTAL_JI_SHARP_ARROW_DOWN) : (hejicomma_5sign < 0 ? BACH_ACCIDENTAL_JI_FLAT_ARROW_UP : BACH_ACCIDENTAL_JI_FLAT_ARROW_DOWN));
+                            *curChar = (num_base_accs_sign > 0 ? (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_SHARP_ARROW_UP : BACH_ACCIDENTAL_JI_SHARP_ARROW_DOWN) : (hejicomma_5sign > 0 ? BACH_ACCIDENTAL_JI_FLAT_ARROW_UP : BACH_ACCIDENTAL_JI_FLAT_ARROW_DOWN));
                             hejicomma_5abs -= 1;
                         }
                     } else {
@@ -691,7 +709,8 @@ void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
         for (long i = 0; i < numChars; i++)
             accidentals[numChars - i - 1] = temp[i];
         
-        *numAccidentals = numChars;
+        if (numAccidentals)
+            *numAccidentals = numChars;
         accidentals[numChars] = BACH_ACCIDENTAL_NONE;
     }
 }

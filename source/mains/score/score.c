@@ -1150,7 +1150,7 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
 void score_sel_snap_pitch_to_grid(t_score *x){
     char changed;
     t_llll *garbage;
-    changed = snap_pitch_to_grid_for_selection((t_notation_obj *) x);
+    changed = snap_pitch_to_current_display_for_selection((t_notation_obj *) x);
 
     garbage = llll_get();
     lock_general_mutex((t_notation_obj *)x);
@@ -1160,7 +1160,7 @@ void score_sel_snap_pitch_to_grid(t_score *x){
 
     llll_free(garbage);
 
-    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION);
 }
 
 void score_sel_resetarticulations(t_score *x)
@@ -11371,7 +11371,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     move_selection_breakpoint(x, 0., delta_y, 1.);
 
                     if (x->r_ob.breakpoints_have_noteheads == 1 && x->r_ob.snap_pitch_to_grid_when_editing)
-                        snap_pitch_to_grid_for_selection((t_notation_obj *)x);
+                        snap_pitch_to_current_display_for_selection((t_notation_obj *)x);
 
                     changed = 1;
                 }
@@ -11438,7 +11438,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 move_selection_breakpoint(x, delta_x * can_change_onset, delta_y * can_change_mc, tail_only);
 
                 if (x->r_ob.breakpoints_have_noteheads && x->r_ob.snap_pitch_to_grid_when_editing)
-                    snap_pitch_to_grid_for_selection((t_notation_obj *)x);
+                    snap_pitch_to_current_display_for_selection((t_notation_obj *)x);
                 
                 x->r_ob.floatdragging_x = pt.x;
                 x->r_ob.floatdragging_y = pt.y;
@@ -11871,7 +11871,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                     if (nt->r_it.flags & k_FLAG_SHIFT) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
+                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
                     }
                 }
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
@@ -11883,7 +11883,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
             } else {
                 note_compute_approximation((t_notation_obj *) x, note);
                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                    snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, note);
+                    snap_pitch_to_displayed_for_note((t_notation_obj *) x, note);
             }
                 
             if (true) { // !old_chord_deleted) {
@@ -11931,7 +11931,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                                 if (nt->r_it.flags & k_FLAG_SHIFT) {
                                     note_compute_approximation((t_notation_obj *) x, nt);
                                     if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                        snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
+                                        snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
                                 }
                             }
                             measure_validate_accidentals((t_notation_obj *) x, newch->parent);
@@ -11954,7 +11954,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                             note_compute_approximation((t_notation_obj *) x, nt);
                             if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
+                                snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
                         }
                     }
                     measure_validate_accidentals((t_notation_obj *) x, oldch->parent);
@@ -12002,7 +12002,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                                     if (nt->r_it.flags & k_FLAG_SHIFT) {
                                         note_compute_approximation((t_notation_obj *) x, nt);
                                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
+                                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
                                     }
                                 } 
                             }
@@ -12023,7 +12023,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                     for (nt = oldch->firstnote; nt; nt = nt->next) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
+                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
                     }
                     measure_validate_accidentals((t_notation_obj *) x, oldch->parent);
                     chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
@@ -13208,7 +13208,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)curr_ch);
                                     note_compute_approximation((t_notation_obj *) x, newnote);
                                     if (x->r_ob.snap_pitch_to_grid_when_editing) 
-                                        snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, newnote);
+                                        snap_pitch_to_displayed_for_note((t_notation_obj *) x, newnote);
                                     constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &newnote->midicents, curr_ch->parent->voiceparent->v_ob.number);
                             
                                     recompute_all_for_measure((t_notation_obj *)x, curr_ch->parent, true);
@@ -14732,7 +14732,7 @@ t_llll* get_score_values_for_xml_as_llll(t_score *x){
                     t_llll* note_llll = llll_get();
                     
                     llll_appendlong(note_llll, note_get_display_midicents(temp_note), 0, WHITENULL_llll); // step midicents
-                    llll_appendrat(note_llll, note_get_screen_accidental_ordinary(temp_note), 0, WHITENULL_llll); // screen accidental
+                    llll_appendrat(note_llll, note_get_display_accidental_ordinary(temp_note), 0, WHITENULL_llll); // screen accidental
                     llll_appendlong(note_llll, temp_note->show_accidentals, 0, WHITENULL_llll); // is accidental shown?
                     llll_appendlong(note_llll, temp_note->velocity, 0, WHITENULL_llll); // velocity
                     llll_appendlong(note_llll, (temp_note->tie_to) ? 1 : 0, 0, WHITENULL_llll); // start_tie?                    
@@ -14829,7 +14829,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
     if (x->r_ob.changed_while_dragging && x->r_ob.active_slot_num < 0) {
         if (x->r_ob.snap_pitch_to_grid_when_editing)
-            snap_pitch_to_grid_for_selection((t_notation_obj *)x);
+            snap_pitch_to_current_display_for_selection((t_notation_obj *)x);
     }
 
     if (x->r_ob.j_dragging_operation == k_UNDO_OP_UNKNOWN)
@@ -17371,8 +17371,8 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             if (modifiers & eCommandKey) {
                 if (is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_PITCH)){
                     if (modifiers & eShiftKey) {
-                        snap_pitch_to_grid_for_selection((t_notation_obj *) x);
-                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+                        snap_pitch_to_current_display_for_selection((t_notation_obj *) x);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION);
                         return 1;
                     } else {
                         enharmonically_respell_selection((t_notation_obj *) x);

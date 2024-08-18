@@ -416,11 +416,20 @@ t_rational rat_long_diff(t_rational rat1, t_atom_long num);
 
 /**	Raise a rational number to an integer exponent
 	@ingroup		rational
-	@param	rat1	The rational number.
-	@param	num		The integer exponent.
-	@return			The result of the exponentiation.	
+	@param	base	The rational number.
+	@param	power	The integer exponent.
+	@return			The result of the exponentiation.
  */
-t_rational rat_long_pow(t_rational rat, t_atom_long num);
+t_rational rat_long_pow(t_rational base, t_atom_long power);
+
+
+/**    Raise an integer number to a (possibly negative) integer exponent
+    @ingroup        rational
+    @param    base    The base.
+    @param    power       The integer exponent.
+    @return            The result of the exponentiation.
+ */
+t_rational long_long_pow(long base, t_atom_long power);
 
 
 /**	Return the difference of a long number and a rational one
@@ -699,6 +708,9 @@ std::vector<t_rational> rational_approximation_with_primes(double v, const std::
                                                            const double tenneyHeightFactor = 50,
                                                            const double tenneyHeightExp =0.2);
 
+
+long rational_get_jilimit(t_rational r);
+t_rational get_best_jilimited_approximation(double num, long jilimit, double mc_thresh);
 
 /**	Approximate a rational with another one having a specific denominator.
 	@param	rat		The rational number to approximate.

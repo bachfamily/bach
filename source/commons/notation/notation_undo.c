@@ -621,8 +621,14 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_CLEAR_SLURS:
             sprintf(buf, "Clear Slurs");
             break;
-        case k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION:
-            sprintf(buf, "Snap Pitch To Grid");
+        case k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION:
+            sprintf(buf, "Snap Pitch To Current Display");
+            break;
+        case k_UNDO_OP_SNAP_PITCH_TO_ET_GRID_FOR_SELECTION:
+            sprintf(buf, "Snap Pitch To Equal-Tempered Grid");
+            break;
+        case k_UNDO_OP_SNAP_PITCH_TO_JI_LIMIT_FOR_SELECTION:
+            sprintf(buf, "Snap Pitch To Just Intonation Limit");
             break;
         case k_UNDO_OP_SNAP_ONSET_TO_GRID_FOR_SELECTION:
             sprintf(buf, "Snap Onset To Grid");
@@ -1046,6 +1052,9 @@ void undo_op_to_string(long undo_op, char *buf)
             break;
         case k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE:
             sprintf(buf, "Enharmonically Respell Note");
+            break;
+        case k_UNDO_OP_APPROXIMATE_TO_JI_RATIO:
+            sprintf(buf, "Approximate to JI Ratio");
             break;
         case k_UNDO_OP_CHANGE_BARLINE_TYPE:
             sprintf(buf, "Change Barline");

@@ -695,7 +695,7 @@ void paint_keysigaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_a
         if (this_acc.r_num != 0) {
             t_jfont *font;
             double pos_y = mc_to_yposition(r_ob, clef_mcs[mapsto[i]], voice);
-            e_bach_accidental acc = get_accidental_ET(r_ob, this_acc);
+            e_bach_accidental acc = rational_to_accidental_ET(r_ob, this_acc);
             acc_text[0] = r_ob->accidentals_typo_preferences.unicode_characters[acc];
             if (acc_text[0] == 0) {
                 font = jf_acc_bogus;
@@ -1992,9 +1992,10 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
                 acc_x = stem_x + curr_nt->accidental_stem_delta_ux * r_ob->zoom_y - r_ob->j_inset_x;
                 acc_y = note_y_real + (r_ob->noteheads_typo_preferences.nhpref[k_NOTEHEAD_BLACK_NOTE].uwidth * 0.58 * r_ob->zoom_y) - r_ob->j_inset_y;
             } else {
-                unicodeChar accidental_text[CONST_MAX_ACCIDENTALS+1];
-                note_get_accidentals_unicode_chars(r_ob, curr_nt, accidental_text);
-                acccharacters_utf = charset_unicodetoutf8_debug(accidental_text, curr_nt->num_accidentals, &outlen);
+                unicodeChar accidental_text[2*(CONST_MAX_ACCIDENTALS+1)];
+                long accidental_text_len = 0;
+                note_get_accidentals_unicode_chars(r_ob, curr_nt, accidental_text, &accidental_text_len);
+                acccharacters_utf = charset_unicodetoutf8_debug(accidental_text, accidental_text_len, &outlen);
                 acc_x = stem_x + curr_nt->accidental_stem_delta_ux * r_ob->zoom_y - r_ob->j_inset_x + r_ob->accidentals_typo_preferences.ux_shift * r_ob->zoom_y;
                 acc_y = note_y_real + r_ob->accidentals_typo_preferences.uy_shift * r_ob->zoom_y; // - r_ob->j_inset_y;
             }
@@ -2042,7 +2043,7 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
                 jfont_destroy_debug(jf_custom_fractions);
             
         } else if (r_ob->accidentals_display_type == k_ACCIDENTALS_CENTS) { // show cents difference
-            double floatacc = note_get_screen_accidental_cents(curr_nt);
+            double floatacc = note_get_display_accidental_cents(curr_nt);
             char cents_text[20];
             double width, height, left_bottom_corner_x, left_bottom_corner_y;
             t_jfont *jf_custom_fractions = jf_text_fractions;
@@ -2067,14 +2068,14 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
                 jfont_destroy_debug(jf_custom_fractions);
         }
         
-        if (r_ob->show_cents_differences && abs((long)round(curr_nt->midicents - (double)curr_nt->pitch_displayed.toMC())) > 1) {
+        if (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt)) {
             t_jfont *jf_cents_difference = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(r_ob->cents_differences_font_size * r_ob->zoom_y) * accidentals_resize);
-            long diff_val = (long)round(curr_nt->midicents - (double)note_get_screen_midicents_with_accidental(curr_nt));
+            long diff_val = (long)round(curr_nt->midicents - curr_nt->pitch_displayed.toMCdouble());
             char diff_text[64];
             double dwidth = 0, dheight = 0;
-            double middle_x = acc_x + get_accidental_uwidth(r_ob, note_get_screen_accidental(curr_nt), false)*0.5;
+            double middle_x = acc_x + note_get_accidental_uwidth(r_ob, curr_nt, false)*0.5;
 //                paint_line(g, get_grey(0), acc_x, 0, acc_x, 100, 1);
-            double tuext = get_accidental_top_uextension(r_ob, note_get_screen_accidental(curr_nt));
+            double tuext = note_get_accidental_uascent(r_ob, curr_nt);
             double yy = note_y_real - tuext * r_ob->zoom_y * accidentals_resize - 1*r_ob->zoom_y;
 //                paint_line(g, get_grey(0), 0, acc_y, 100, acc_y, 1);
             snprintf_zero(diff_text, 64, "%s%ld%s", diff_val > 0 ? "+" : "-", abs(diff_val), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
@@ -5214,7 +5215,7 @@ double get_key_uwidth(t_notation_obj *r_ob, t_voice *voice) { // returns un unsc
     temp[1] = BACH_ACCIDENTAL_NONE;
     for (i = 0; i < 7; i++)
         if (voice->acc_pattern[i].r_num != 0) {
-            temp[0] = get_accidental_ET(r_ob, voice->acc_pattern[i]);
+            temp[0] = rational_to_accidental_ET(r_ob, voice->acc_pattern[i]);
             width += (accidentals_get_uwidth(r_ob, temp) + CONST_KEYSIGNATURE_USPACE_BETWEEN_ACC);
         }
     return width;
@@ -8610,6 +8611,16 @@ void measure_accidentals(t_notation_obj *r_ob, t_symbol *font)
     cpost(str.c_str());
     */
     
+    if (r_ob->accidentals_typo_preferences.space_character) {
+        char *acccharacters_utf;
+        long outlen = 0;
+        acccharacters_utf = charset_unicodetoutf8_debug(&(r_ob->accidentals_typo_preferences.space_character), 1, &outlen);
+        jfont_text_measure(jfont, acccharacters_utf, &width, &height);
+        r_ob->accidentals_typo_preferences.space_uwidth = width;
+        bach_freeptr(acccharacters_utf);
+    } else {
+        r_ob->accidentals_typo_preferences.space_uwidth = 0;
+    }
     jfont_destroy_debug(jfont);
 }
 
@@ -8633,6 +8644,8 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     }
     r_ob->accidentals_typo_preferences.et_dyadic_depth = 2;
     r_ob->accidentals_typo_preferences.supports_ji = false;
+    r_ob->accidentals_typo_preferences.space_character = 0;
+    r_ob->accidentals_typo_preferences.space_uwidth = 0;
 
 #ifdef BACH_MAX
     double juce_mul = 1;
@@ -8671,11 +8684,14 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->accidentals_typo_preferences.ux_shift = 0.; // TO DO
         r_ob->accidentals_typo_preferences.uy_shift = 48.5; // TO DO
         r_ob->accidentals_typo_preferences.et_dyadic_depth = 8; // TO DO
+        r_ob->accidentals_typo_preferences.space_character = 32; // space is 32 here?
         fill_accidental_characters_SMuFL(r_ob);
         measure_accidentals(r_ob, font);
         // calculated via a python script (measurefonts.py)
         fill_double_array(r_ob->accidentals_typo_preferences.uascent, 96, 0.0, 11.0, 11.0, 16.0, 11.0, 11.0, 13.0, 11.0, 11.0, 14.0, 11.0, 11.0, 16.0, 9.0, 9.0, 13.0, 8.0, 7.0, 14.0, 9.0, 9.0, 13.0, 9.0, 9.0, 15.0, 3.0, 3.0, 9.0, 11.0, 11.0, 9.0, 9.0, 3.0, 13.0, 13.0, 11.0, 12.0, 8.0, 11.0, 11.0, 9.0, 9.0, 3.0, 16.0, 16.0, 13.0, 15.0, 11.0, 11.0, 11.0, 8.0, 9.0, 3.0, 18.0, 18.0, 16.0, 18.0, 14.0, 11.0, 11.0, 8.0, 9.0, 3.0, 3.0, 11.0, 8.0, 10.0, 9.0, 11.0, 10.0, 11.0, 5.0, 5.0, 2.0, 2.0, 8.0, 3.0, 7.0, 15.0, 15.0, 10.0, 17.0, 15.0, 6.0, 2.0, 8.0, 8.0, 12.0, 15.0, 11.0, 11.0, 9.0, 11.0, 6.0, 8.0, 11.0);
         fill_double_array(r_ob->accidentals_typo_preferences.udescent, 96, 0.0, 10.0, 4.0, 4.0, 13.0, 4.0, 5.0, 11.0, 4.0, 5.0, 12.0, 4.0, 4.0, 13.0, 8.0, 9.0, 13.0, 9.0, 8.0, 13.0, 8.0, 9.0, 15.0, 9.0, 8.0, 9.0, 3.0, 3.0, 4.0, 4.0, 8.0, 8.0, 3.0, 5.0, 5.0, 8.0, 9.0, 3.0, 9.0, 9.0, 10.0, 12.0, 8.0, 5.0, 5.0, 8.0, 9.0, 3.0, 12.0, 12.0, 13.0, 15.0, 11.0, 5.0, 5.0, 8.0, 8.0, 3.0, 15.0, 15.0, 16.0, 18.0, 14.0, 10.0, 2.0, 10.0, 7.0, 8.0, 5.0, 8.0, 5.0, 4.0, 4.0, 3.0, 3.0, 3.0, 8.0, 8.0, 0.0, 7.0, 11.0, 8.0, 10.0, 3.0, 0.0, 0.0, 0.0, 8.0, 5.0, 5.0, 5.0, 8.0, 9.0, 3.0, 9.0, 5.0);
+        
+
 //        extend_accidental_measures(r_ob, 0., 0., 0., false); // extend
         
         // binary unicode characters
@@ -24597,11 +24613,11 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             midicents[i] = note_get_display_midicents(curr_nt);
             switch (voice->notation_style) {
                 case k_VOICE_NOTATION_STYLE_ET:
-                    get_accidental_characters_ET(r_ob, curr_nt->pitch_displayed, accidentals[i], NULL);
+                    get_accidentals_for_pitch_ET(r_ob, curr_nt->pitch_displayed, accidentals[i], NULL);
                     break;
 
                 case k_VOICE_NOTATION_STYLE_JI:
-                    get_accidental_characters_JI(r_ob, curr_nt->pitch_displayed, accidentals[i], NULL);
+                    get_accidentals_for_pitch_JI(r_ob, curr_nt->pitch_displayed, accidentals[i], NULL);
                     break;
 
                 default:
@@ -24633,7 +24649,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                         if (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt)) {
                             curr_nt->show_accidentals = true;
                         } else {
-                            curr_nt->show_accidentals = show_accidental[i];
+                            curr_nt->show_accidentals = show_accidentals[i];
                         }
                         break;
                         
@@ -25514,26 +25530,57 @@ long get_bits_from_figure(t_rational figure){
     return beambits;
 }
 
-void snap_pitch_to_displayed_pitch_for_note(t_notation_obj *r_ob, t_note *note) {
+void snap_pitch_to_displayed_for_note(t_notation_obj *r_ob, t_note *note) {
     //    note_set_auto_enharmonicity(note); // dg: 2019/01/26, why did I put this? this should not be here
     note->midicents = note->pitch_displayed.toMCdouble();
 }
 
-double snap_to_microtonal_grid_do(double pitch, long tone_division){
-    double temp = 200./tone_division; 
-    double res = temp * round(pitch/temp);
+double snap_to_microtonal_grid_do(double cents, long tone_division){
+    double temp = 200./tone_division;
+    double res = temp * round(cents/temp);
     return res;
 }
 
+
+
 // it's basically what "bach.mcapprox" does: converts 5144 into 5100 for semitone grid, into 5150 for quartertone grid...
-double snap_to_microtonal_grid(t_notation_obj *r_ob, double pitch){
-    return snap_to_microtonal_grid_do(pitch, r_ob->tone_division);
+double snap_to_microtonal_grid(t_notation_obj *r_ob, double cents){
+    return snap_to_microtonal_grid_do(cents, r_ob->tone_division);
 }
 
-void snap_pitch_to_grid_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt) {
+double cents_to_freqratio(t_notation_obj *r_ob, double cents)
+{
+    return pow(2, cents/1200.)/r_ob->ji_base_for_ratios_as_double;
+}
+
+double freqratio_to_cents(t_notation_obj *r_ob, double ratio)
+{
+    return 1200. * log2(ratio * r_ob->ji_base_for_ratios_as_double);
+}
+
+
+double snap_to_jilimit(t_notation_obj *r_ob, double cents){
+    t_rational r = get_best_jilimited_approximation(cents_to_freqratio(r_ob, cents), r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh);
+    return freqratio_to_cents(r_ob, (double)r);
+}
+
+void snap_pitch_to_current_grid_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt) {
     
     t_note *nt = bpt->owner;
-    bpt->delta_mc = snap_to_microtonal_grid(r_ob, nt->midicents + bpt->delta_mc) - nt->midicents;
+    t_voice *v;
+    if (nt && nt->parent && (v = chord_get_voice(r_ob, nt->parent))) {
+        switch (v->notation_style) {
+            case k_VOICE_NOTATION_STYLE_JI:
+                bpt->delta_mc = snap_to_jilimit(r_ob, nt->midicents + bpt->delta_mc) - nt->midicents;
+                break;
+
+            case k_VOICE_NOTATION_STYLE_ET:
+                bpt->delta_mc = snap_to_microtonal_grid(r_ob, nt->midicents + bpt->delta_mc) - nt->midicents;
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 // screen_midicents and accidentals have to be sized AT LEAST CONST_MAX_ENHARMONICITY_OPTIONS to be safe!!
@@ -25634,7 +25681,8 @@ void note_set_pitch_from_notename(t_notation_obj *r_ob, t_note *note, t_symbol *
     note_compute_approximation(r_ob, note);
 }
 
-void note_retranscribe_enharmonically_ET(t_notation_obj *r_ob, t_note *note, char auto_mode, long new_screen_midicents, t_rational new_screen_accidental) {
+void note_retranscribe_enharmonically_ET(t_notation_obj *r_ob, t_note *note, char auto_mode, long new_screen_midicents, t_rational new_screen_accidental) 
+{
     long screen_mc = note_get_display_midicents(note);
     t_rational screen_acc = note->pitch_displayed.getAlterET();
     if (auto_mode) {
@@ -25653,6 +25701,25 @@ void note_retranscribe_enharmonically_ET(t_notation_obj *r_ob, t_note *note, cha
     }
     note_set_user_enharmonicity_from_display_representation(note, screen_mc, screen_acc);
 
+    
+    chord_set_recompute_parameters_flag(r_ob,  note->parent);
+    note_compute_approximation(r_ob, note);
+    if (note->parent->is_score_chord) { // only for score!
+        note->parent->parent->need_check_ties = true;
+        measure_validate_accidentals(r_ob, note->parent->parent);
+        recompute_all_measure_chord_parameters(r_ob, note->parent->parent);
+        note->parent->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
+        set_need_perform_analysis_and_change_flag(r_ob);
+    }
+}
+
+
+
+void note_retranscribe_as_JI_ratio(t_notation_obj *r_ob, t_note *note, t_rational ratio) 
+{
+    double cents = freqratio_to_cents(r_ob, ratio);
+    note->pitch_original = t_pitch(ratio * r_ob->ji_base_for_ratios.getRatio());
+    note->midicents = cents;
     
     chord_set_recompute_parameters_flag(r_ob,  note->parent);
     note_compute_approximation(r_ob, note);
@@ -33074,7 +33141,7 @@ char change_pitch_to_selection_from_diatonic_step(t_notation_obj *r_ob, long dia
     return iterate_notewise_changes_on_selection(r_ob, (notationobj_note_fn) change_pitch_to_note_from_diatonic_step_fn, &ds, true, k_CHORD, false);
 }
 
-char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob){ 
+char snap_pitch_to_current_display_for_selection(t_notation_obj *r_ob){ 
     t_notation_item *curr_it = r_ob->firstselecteditem;
     char changed = 0;
     lock_general_mutex(r_ob);    
@@ -33084,7 +33151,7 @@ char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob){
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                snap_pitch_to_displayed_pitch_for_note(r_ob, nt);
+                snap_pitch_to_displayed_for_note(r_ob, nt);
                 changed = 1;
             }
         } else if (curr_it->type == k_CHORD) {
@@ -33092,7 +33159,7 @@ char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob){
             while (temp_nt) {
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                     undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                    snap_pitch_to_displayed_pitch_for_note(r_ob, temp_nt);
+                    snap_pitch_to_displayed_for_note(r_ob, temp_nt);
                     changed = 1;
                 }
                 temp_nt = temp_nt->next;
@@ -33104,7 +33171,7 @@ char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob){
                 while (temp_nt) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                         undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                        snap_pitch_to_displayed_pitch_for_note(r_ob, temp_nt);
+                        snap_pitch_to_displayed_for_note(r_ob, temp_nt);
                         changed = 1;
                     }
                     temp_nt = temp_nt->next;
@@ -33116,7 +33183,7 @@ char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob){
             t_note *nt = bpt->owner;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                snap_pitch_to_grid_for_breakpoint(r_ob, bpt);
+                snap_pitch_to_current_grid_for_breakpoint(r_ob, bpt);
                 changed = 1;
             }
         }
@@ -33125,6 +33192,152 @@ char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob){
     unlock_general_mutex(r_ob);    
     return changed;
 }
+
+
+
+void snap_pitch_to_current_ji_limit_for_note(t_notation_obj *r_ob, t_note *note) {
+    //    note_set_auto_enharmonicity(note); // dg: 2019/01/26, why did I put this? this should not be here
+    if (!note->pitch_original.isNaP() && note->pitch_original.isPureJI() && rational_get_jilimit(note->pitch_original.getRatio()) <= r_ob->ji_limit) {
+        // nothing to do!
+    } else {
+        t_rational r = get_best_jilimited_approximation(cents_to_freqratio(r_ob, note->midicents), r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh);
+        note->midicents = freqratio_to_cents(r_ob, (double)r);
+        note->pitch_original.setJI(r * r_ob->ji_base_for_ratios.getRatio());
+    }
+    note_compute_approximation(r_ob, note);
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+        recompute_all_for_measure(r_ob, note->parent->parent, false);
+    else
+        chord_set_recompute_parameters_flag(r_ob,  note->parent);
+    set_need_perform_analysis_and_change_flag(r_ob);
+}
+
+void snap_pitch_to_current_ji_limit_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt) {
+    t_note *nt = bpt->owner;
+    bpt->delta_mc = snap_to_jilimit(r_ob, nt->midicents + bpt->delta_mc) - nt->midicents;
+}
+
+char snap_pitch_to_current_ji_limit_for_selection(t_notation_obj *r_ob){
+    t_notation_item *curr_it = r_ob->firstselecteditem;
+    char changed = 0;
+    lock_general_mutex(r_ob);
+    while (curr_it) { // cycle on the selected items
+
+        if (curr_it->type == k_NOTE) { // it is a note
+            t_note *nt = (t_note *) curr_it;
+            if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                snap_pitch_to_current_ji_limit_for_note(r_ob, nt);
+                changed = 1;
+            }
+        } else if (curr_it->type == k_CHORD) {
+            t_note *temp_nt = ((t_chord *)curr_it)->firstnote;
+            while (temp_nt) {
+                if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
+                    undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                    snap_pitch_to_current_ji_limit_for_note(r_ob, temp_nt);
+                    changed = 1;
+                }
+                temp_nt = temp_nt->next;
+            }
+        } else if (curr_it->type == k_MEASURE) {
+            t_chord *temp_ch = ((t_measure *)curr_it)->firstchord;
+            while (temp_ch) {
+                t_note *temp_nt = temp_ch->firstnote;
+                while (temp_nt) {
+                    if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
+                        undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                        snap_pitch_to_current_ji_limit_for_note(r_ob, temp_nt);
+                        changed = 1;
+                    }
+                    temp_nt = temp_nt->next;
+                }
+                temp_ch = temp_ch->next;
+            }
+        } else if (curr_it->type == k_PITCH_BREAKPOINT) {
+            t_bpt *bpt = (t_bpt *)curr_it;
+            t_note *nt = bpt->owner;
+            if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                snap_pitch_to_current_ji_limit_for_breakpoint(r_ob, bpt);
+                changed = 1;
+            }
+        }
+        curr_it = curr_it->next_selected;
+    }
+    unlock_general_mutex(r_ob);
+    return changed;
+}
+
+
+
+void snap_pitch_to_et_tonedivision_for_note(t_notation_obj *r_ob, t_note *note, long tonedivision) {
+    t_pitch p = t_pitch::fromMC(note->midicents, tonedivision);
+    note->pitch_original = p;
+    note->pitch_displayed = p;
+    note->midicents = p.toMCdouble();
+}
+
+void snap_pitch_to_et_tonedivision_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt, long tonedivision) 
+{
+    t_note *nt = bpt->owner;
+    if (nt)
+        bpt->delta_mc = snap_to_microtonal_grid_do(nt->midicents + bpt->delta_mc, tonedivision) - nt->midicents;
+}
+
+char snap_pitch_to_et_tonedivision_for_selection(t_notation_obj *r_ob, long tonedivision){
+    t_notation_item *curr_it = r_ob->firstselecteditem;
+    char changed = 0;
+    lock_general_mutex(r_ob);
+    while (curr_it) { // cycle on the selected items
+
+        if (curr_it->type == k_NOTE) { // it is a note
+            t_note *nt = (t_note *) curr_it;
+            if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                snap_pitch_to_et_tonedivision_for_note(r_ob, nt, tonedivision);
+                changed = 1;
+            }
+        } else if (curr_it->type == k_CHORD) {
+            t_note *temp_nt = ((t_chord *)curr_it)->firstnote;
+            while (temp_nt) {
+                if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
+                    undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                    snap_pitch_to_et_tonedivision_for_note(r_ob, temp_nt, tonedivision);
+                    changed = 1;
+                }
+                temp_nt = temp_nt->next;
+            }
+        } else if (curr_it->type == k_MEASURE) {
+            t_chord *temp_ch = ((t_measure *)curr_it)->firstchord;
+            while (temp_ch) {
+                t_note *temp_nt = temp_ch->firstnote;
+                while (temp_nt) {
+                    if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
+                        undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                        snap_pitch_to_et_tonedivision_for_note(r_ob, temp_nt, tonedivision);
+                        changed = 1;
+                    }
+                    temp_nt = temp_nt->next;
+                }
+                temp_ch = temp_ch->next;
+            }
+        } else if (curr_it->type == k_PITCH_BREAKPOINT) {
+            t_bpt *bpt = (t_bpt *)curr_it;
+            t_note *nt = bpt->owner;
+            if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                snap_pitch_to_current_grid_for_breakpoint(r_ob, bpt);
+                changed = 1;
+            }
+        }
+        curr_it = curr_it->next_selected;
+    }
+    unlock_general_mutex(r_ob);
+    return changed;
+}
+
+
 
 
 char enharmonically_respell_selection(t_notation_obj *r_ob){ 
@@ -35776,6 +35989,12 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     // Inspector is bach inspector
     r_ob->m_inspector.bach_managing = true;
     
+    // TODO: possibly change defaults for these two lines below, and expose them as attributes!
+    r_ob->ji_limit = 5; // what should be the default? 5 seems like a conservative choice, pretty much like 12-EDO
+    r_ob->ji_base_for_ratios = t_pitch(genrat(32, 1)); // C5 by default: Should it be C0?
+    r_ob->ji_base_for_ratios_as_double = (double)r_ob->ji_base_for_ratios.getRatio();
+    r_ob->ji_limit_approx_mcthresh = 67; // is this a good default? it's two thirds of a tone, it's what HEJI used to define their commas
+
     r_ob->last_undo_marker = NULL;
     r_ob->need_send_automessage = false;
     r_ob->need_send_changed_bang = false;

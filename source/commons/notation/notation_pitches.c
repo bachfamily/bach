@@ -171,32 +171,62 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
 void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
 {
     t_voice *voice = (nt->parent && nt->parent->is_score_chord) ? (t_voice *)nt->parent->parent->voiceparent : (t_voice *)nt->parent->voiceparent;
+    
+    if (voice->notation_style == k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH ||
+        voice->notation_style == k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ) {
+        return; // nothing to approximate: there will be no accidentals, just a continuous field
+    }
+    
     long auto_screen_mc;
     t_rational auto_screen_acc;
-    if (note_is_original_pitch_userdefined(nt)) { // the pitch is explicitly defined by the user (either enharmonicity or JI)
-        mc_to_display_approximation_ET(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
-        
-        if (!(is_natural_note(note_get_display_midicents(nt)))) {
-            object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
-            long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
-            nt->pitch_displayed.setET((int)positive_mod(steps, 7), auto_screen_acc, (int)integer_div_round_down(steps, 7));
-            note_set_auto_enharmonicity(nt);
-        } else {
-            nt->pitch_displayed = nt->pitch_original;
+    if (voice->notation_style == k_VOICE_NOTATION_STYLE_ET) {
+        if (note_is_original_pitch_userdefined(nt)) { // the pitch is explicitly defined by the user
             
-            if (nt->pitch_original.isPureET()) {
-                t_rational auto_mc = auto_screen_acc * 200 + auto_screen_mc;
-                if (nt->pitch_original.toMCrat() != auto_mc) {
-                    object_warn((t_object *)r_ob, "Warning: mismatch with current microtonal approximation settings, input accidental might not be displayed.");
-                    
-                    nt->pitch_displayed.setET(nt->pitch_displayed.getWhiteKeyET(), (auto_mc - scaleposition_to_midicents(nt->pitch_displayed.toStepsET() - 5 * 7))/200, nt->pitch_displayed.getOctave());
+            mc_to_display_approximation_ET(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
+            
+            if (!(is_natural_note(note_get_display_midicents(nt)))) {
+                object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
+                long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
+                nt->pitch_displayed.setET((int)positive_mod(steps, 7), auto_screen_acc, (int)integer_div_round_down(steps, 7));
+                note_set_auto_enharmonicity(nt);
+            } else {
+                nt->pitch_displayed = nt->pitch_original;
+                
+                if (nt->pitch_original.isPureET()) {
+                    t_rational auto_mc = auto_screen_acc * 200 + auto_screen_mc;
+                    if (nt->pitch_original.toMCrat() != auto_mc) {
+                        object_warn((t_object *)r_ob, "Warning: mismatch with current microtonal approximation settings, input accidental might not be displayed.");
+                        
+                        nt->pitch_displayed.setET(nt->pitch_displayed.getWhiteKeyET(), (auto_mc - scaleposition_to_midicents(nt->pitch_displayed.toStepsET() - 5 * 7))/200, nt->pitch_displayed.getOctave());
+                    }
                 }
             }
+        } else { // use default ET approximation
+            mc_to_display_approximation_ET(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
+            long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
+            nt->pitch_displayed.setET(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
         }
-    } else { // use default ET approximation
-        mc_to_display_approximation_ET(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
-        long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
-        nt->pitch_displayed.setET(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
+    } else { // must be JI VOICE NOTATION STYLE
+        if (note_is_original_pitch_userdefined(nt)) { // the pitch is explicitly defined
+            
+            if (nt->pitch_original.isPureET()) {
+                nt->pitch_displayed = nt->pitch_original.approxET(2); // tone division = 2 here!
+                // we only have HEJI ET-accidentals for sharps and flats (the accidentals with the lines)
+
+            } else {
+                nt->pitch_displayed = nt->pitch_original.approxJI_primelimit(r_ob->ji_limit); // ignores higher commas
+                
+                if (fabs(nt->pitch_displayed.toMCdouble()) - fabs(nt->pitch_original.toMCdouble()) > 100.) {
+                    object_warn((t_object *)r_ob, "Warning: discarding commas higher than the current just intonation limit has produced a discrepancy of more than 100 cents.");
+                    object_warn((t_object *)r_ob, "\tConsider increasing the 'jilimit' attribute.");
+                }
+            }
+
+        } else { // cents introduced: finding ET approximation
+            mc_to_display_approximation_ET_do(2, k_ACC_AUTO, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
+            long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
+            nt->pitch_displayed.setET(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
+        }
     }
 }
 

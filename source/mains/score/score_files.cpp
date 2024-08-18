@@ -748,7 +748,7 @@ char *note_and_acc_to_lilypond_buf(t_notation_obj *r_ob, t_note *note)
     
     // accidental
     long i;
-    t_rational note_screen_accidental = note_get_screen_accidental_ordinary(note);
+    t_rational note_screen_accidental = note_get_display_accidental_ordinary(note);
     if (rat_rat_cmp(note_screen_accidental, genrat(0, 1)) == 0){
         // most common case, nothing to do
     } else if (rat_rat_cmp(note_screen_accidental, genrat(1, 4)) == 0){

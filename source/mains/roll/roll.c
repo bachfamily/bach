@@ -1543,8 +1543,8 @@ void roll_addslur(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 
 
 void roll_sel_snap_pitch_to_grid(t_roll *x){
-    snap_pitch_to_grid_for_selection((t_notation_obj *) x);
-    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+    snap_pitch_to_current_display_for_selection((t_notation_obj *) x);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION);
 }
 
 char snap_onset_to_grid_for_selection(t_roll *x){ 
@@ -10032,7 +10032,7 @@ void snap_pitch_to_grid_voice(t_roll *x, t_rollvoice *voice) {
     while(curr_ch){ // cycle on the chords
         t_note *curr_nt = curr_ch->firstnote; 
         while(curr_nt){ // cycle on the chords
-            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, curr_nt);
+            snap_pitch_to_displayed_for_note((t_notation_obj *) x, curr_nt);
             curr_nt = curr_nt->next;
         }
         chord_set_recompute_parameters_flag((t_notation_obj *)x, curr_ch);
@@ -13625,7 +13625,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                             delta_y *= CONST_FINER_FROM_KEYBOARD;
                         move_selection_breakpoint(x, 0., delta_y, 1.);
                         if (x->r_ob.breakpoints_have_noteheads == 1 && x->r_ob.snap_pitch_to_grid_when_editing)
-                            snap_pitch_to_grid_for_selection((t_notation_obj *)x);
+                            snap_pitch_to_current_display_for_selection((t_notation_obj *)x);
                         changed = 1;
                     }
                 } else {
@@ -13639,7 +13639,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     move_selection_breakpoint(x, delta_x * can_change_onset, delta_y * can_change_mc, 0);                
 
                     if (x->r_ob.breakpoints_have_noteheads && x->r_ob.snap_pitch_to_grid_when_editing)
-                        snap_pitch_to_grid_for_selection((t_notation_obj *)x);
+                        snap_pitch_to_current_display_for_selection((t_notation_obj *)x);
                 }
                 changed = 1;
                 
@@ -14315,14 +14315,14 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
                     if (nt->r_it.flags & k_FLAG_SHIFT) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
+                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
                     }
                 }
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
             } else {
                 note_compute_approximation((t_notation_obj *) x, note);
                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                    snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, note);
+                    snap_pitch_to_displayed_for_note((t_notation_obj *) x, note);
             }
 
             if (!old_chord_deleted) {
@@ -14358,7 +14358,7 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
                             if (true){ //(nt->flags & k_FLAG_SHIFT) {
                                 note_compute_approximation((t_notation_obj *) x, nt);
                                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                    snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
+                                    snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
                             }
                         }
                         chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
@@ -14372,7 +14372,7 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
                     if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
+                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
                     }
                 }
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
@@ -15400,7 +15400,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     t_note *nt;
                     for (nt = temp->firstnote; nt; nt = nt->next){
                         note_compute_approximation((t_notation_obj *) x, nt);
-                        snap_pitch_to_displayed_pitch_for_note((t_notation_obj *) x, nt);
+                        snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
                     }
                 }
                 if (x->r_ob.snap_onset_to_grid_when_editing)
@@ -16013,7 +16013,7 @@ void snap_onset_tail_pitch_to_grid_for_selection_if_needed(t_roll *x)
         snap_tail_to_grid_for_selection((t_notation_obj *)x);
     
     if (x->r_ob.snap_pitch_to_grid_when_editing && x->r_ob.j_dragging_direction != 1)
-        snap_pitch_to_grid_for_selection((t_notation_obj *)x);
+        snap_pitch_to_current_display_for_selection((t_notation_obj *)x);
 }
 
 void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
@@ -17732,8 +17732,8 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                 if (!is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_PITCH)) return 0;
                 if (modifiers & eShiftKey){
                     if (is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_PITCH)) {
-                        snap_pitch_to_grid_for_selection((t_notation_obj *) x);
-                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+                        snap_pitch_to_current_display_for_selection((t_notation_obj *) x);
+                        handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION);
                     }
                     return 1;
                 } else {

@@ -52,7 +52,7 @@ const t_atom_short t_pitch::degree2PC[] = {0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17,
 const t_atom_short t_pitch::PC2degree[] = {0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6};
 const char t_pitch::degree2name[] = { 'C', 'D', 'E', 'F', 'G', 'A', 'B' };
 
-const t_rational t_pitch::primes_inv[BACH_PRIMES_JI_SIZE] = {{1, 2}, {1, 3}, {1, 5}, {1, 7}, {1, 11}, {1, 13}, {1, 17}, {1, 19}, {1, 23}, {1, 29}, {1, 31}, {1, 37}, {1, 41}, {1, 47}, {1, 53}};
+//const t_rational t_pitch::primes_inv[BACH_PRIMES_JI_SIZE] = {{1, 2}, {1, 3}, {1, 5}, {1, 7}, {1, 11}, {1, 13}, {1, 17}, {1, 19}, {1, 23}, {1, 29}, {1, 31}, {1, 37}, {1, 41}, {1, 47}, {1, 53}};
 
 const t_rational t_pitch::HEJIcommasRatios[BACH_PRIMES_JI_SIZE-2] = {{81,80}, {64,63}, {32,33}, {27,26}, {2187,2176}, {512,513}, {729,736}, {256,261}, {32,31}, {36,37}, {81,82}, {128,129}, {729,752}};
 
@@ -274,13 +274,14 @@ t_rational t_pitch::expVector::getRatio() const {
     t_rational r({1, 1});
     int i;
     for (i = 0; i < 7; i++) {
-        if (data[i] != 0)
-            r *= rat_long_pow(primes_inv[i], data[i]);
+        long d = get(i);
+        if (d != 0)
+            r *= long_long_pow(primes[i], d);
     }
     for ( ; i < 15; i++) {
         long n;
         if ((n = get(i)) != 0)
-            r *= rat_long_pow(primes_inv[(i - 7) / 2 + 7], n);
+            r *= long_long_pow(primes[(i - 7) / 2 + 7], n);
     }
     return r;
 };
@@ -289,13 +290,14 @@ double t_pitch::expVector::getRatioAsDouble() const {
     double r = 1.;
     int i;
     for (i = 0; i < 7; i++) {
-        if (data[i] != 0)
-            r *= pow(primes_inv_double[i], data[i]);
+        long d = get(i);
+        if (d != 0)
+            r *= pow(primes[i], d);
     }
     for ( ; i < 15; i++) {
         long n;
         if ((n = get(i)) != 0)
-            r *= pow(primes_inv_double[(i - 7) / 2 + 7], n);
+            r *= pow(primes[(i - 7) / 2 + 7], n);
     }
     return r;
 };

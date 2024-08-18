@@ -56,10 +56,14 @@ public:
 class t_pitch
 {
 public:
-    static int constexpr primes[BACH_PRIMES_JI_SIZE] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 37};
-    static const t_rational primes_inv[BACH_PRIMES_JI_SIZE];
-    static double constexpr primes_inv_double[BACH_PRIMES_JI_SIZE] = {1./2., 1./3., 1./5., 1./7., 1./11., 1./13., 1./17., 1./19., 1./23., 1./29, 1./31., 1./37., 1./41., 1./43., 1./47.};
-    
+    static int constexpr primes[BACH_PRIMES_JI_SIZE] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
+//  TODO: @Andrea, I don't think you need primes_inv at all (there was a bug in getRatio())
+//    static const t_rational primes_inv[BACH_PRIMES_JI_SIZE];
+//    static double constexpr primes_inv_double[BACH_PRIMES_JI_SIZE] = {1./2., 1./3., 1./5., 1./7., 1./11., 1./13., 1./17., 1./19., 1./23., 1./29, 1./31., 1./37., 1./41., 1./43., 1./47.};
+
+    // a map from number to the greatest prime <= number
+    static int constexpr primes_locate[51] = {-1, -1, 0, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14};
+
     static t_atom_short constexpr numFifthsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {0,1,4,-2,-1,3,7,-3,6,-2,0,2,4,-1,6}; // a major third contributes 4 diatonic fifths, etc.
     
     // TODO: check comment
@@ -127,7 +131,9 @@ private:
             t_shortRational what = r;
             int8_t exponent;
             int i = 0;
-            
+
+            clear();
+
             if (what < 0)
                 what *= -1;
             what.reduce();
@@ -501,17 +507,17 @@ public:
     t_atom_short getWhiteKeyET() const { return p_whiteKeyET; }
     t_atom_short getWhiteKeyJI() const { return p_JIexpVector.getWhiteKeyJI(); }
 
-    t_int8 getPlofJI() const { return p_JIexpVector.getPlof(); }
+    int getPlofJI() const { return p_JIexpVector.getPlof(); }
     
     t_int8 getSharpsJI() const { return (getPlofJI()+1)/7; };
     
     std::vector<int8_t> getHEJICommas() const {
-        std::vector<int8_t> v = p_JIexpVector.get(); // TODO: @Andrea: how do I copy the vector? -- SOLVED
+        std::vector<int8_t> v = p_JIexpVector.get();
         std::vector<int8_t> HEJIcommas(BACH_PRIMES_JI_SIZE - 2);
         for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE - 2; i++) { // HEJI commas are from 5-limit on
             int8_t this_comma = v[i+2];
             char dir = HEJIcommasExponentsDirection[i];
-            HEJIcommas[i] = dir * this_comma; // TODO: or the opposite? Is there a minus sign missing? check
+            HEJIcommas[i] = -dir * this_comma; // TODO: or the opposite? Is there a minus sign missing? check
             v[0] -= this_comma * HEJIcommasExponents2[i];
             v[1] -= this_comma * HEJIcommasExponents3[i];
             v[i+2] -= this_comma;
@@ -651,7 +657,12 @@ public:
     {
         return fromMC(mc, tone_division, accidentals_preferences, NULL, NULL);
     }
-    
+
+    static t_pitch fromMC(double mc, long tone_division)
+    {
+        return fromMC(mc, tone_division, k_ACC_AUTO, NULL, NULL);
+    }
+
     static t_pitch fromMC(double mc)
     {
         // return pitch at maximum precision
@@ -721,17 +732,21 @@ public:
 
     std::vector<t_rational> getJIconvergents(long howmany, double threshMC, bool includeSemiconvergents, const std::vector<int> &allowed_primes = {});
 
-
-    // TODO: @daniele: ApproxJI to some harmonic
-    t_pitch approxJI_JIcomp_primelimit(long primelimit) {
-        // This is more complicated: it approximates the ratio only with primes <= primelimit
-        t_rational r = getRatio();
-        // TO DO, non trivial!
-    }
-
+    
+    // this simply approximates the JI component discarding all commas above some primelimit
     t_pitch approxJI_primelimit(long primelimit) {
-        // see above
-        // TO DO, non trivial!
+        if (primelimit < 3) { // pathological case
+            std::vector<int8_t> commas(BACH_PRIMES_JI_SIZE-2, 0);
+            return t_pitch(p_whiteKeyET, p_alterET, 0, commas, getOctave());
+        } else {
+            std::vector<int8_t> commas = getHEJICommas();
+            long len_commas = commas.size();
+            long primeidx = primes_locate[primelimit];
+            for (int i = MAX(0, primeidx-1); i < len_commas; i++) {
+                commas[i] = 0;
+            }
+            return t_pitch(p_whiteKeyET, p_alterET, getPlofJI(), commas, getOctave());
+        }
     }
 
     

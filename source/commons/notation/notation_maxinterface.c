@@ -941,11 +941,24 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
 
     
     // approximate (700)
+    char buf[100];
     if (note) {
-        char temp[100];
-        snprintf_zero(temp, 100, "Snap Pitch To Current Tone Division (%ld-EDO)", r_ob->tone_division * 6);
-        note_get_ET_enharmonic_possibilities(r_ob, note, &curr_idx);
-        jpopupmenu_additem(r_ob->popup_note_approximate_et, 471, temp, NULL, 0, 0, NULL);
+        t_voice *voice = chord_get_voice(r_ob, note->parent);
+        if (voice && voice->notation_style == k_VOICE_NOTATION_STYLE_ET)  {
+            snprintf_zero(buf, 100, "To Current Tone Division (%ld-EDO)", r_ob->tone_division * 6);
+            jpopupmenu_additem(r_ob->popup_note_approximate, 701, buf, NULL, 0, 0, NULL);
+        } else {
+            snprintf_zero(buf, 100, "To Current JI Limit (%ld)", r_ob->ji_limit);
+            jpopupmenu_additem(r_ob->popup_note_approximate, 702, buf, NULL, 0, 0, NULL);
+        }
+        
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 711, "To Semitones (12-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 712, "To Third-tones (18-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 713, "To Quarter-tones (24-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 714, "To Sixth-tones (36-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 715, "To Eighth-tones (48-EDO)", NULL, 0, 0, NULL);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 716, "To Cents (200-EDO)", NULL, 0, 0, NULL);
+        
 //        for (i = 0; i < CONST_MAX_ENHARMONICITY_OPTIONS; i++) {
 //            char *outname = NULL;
 //            midicents2notename(r_ob->middleC_octave, r_ob->current_enharmonic_list_display_mc[i], r_ob->current_enharmonic_list_display_alter_ET[i], r_ob->note_names_style, true, &outname);
@@ -953,21 +966,51 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
 //            bach_freeptr(outname);
 //        }
         
-        const std::vector<int> allowed_primes = {2, 3, 5};
+        // JI approximations
+        const std::vector<int> allowed_primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
         const double err_thresh_mc = 66.66667;
         const long maxden = 10000;
         const double bestErrorRelativeTolerance = 1.2;
         const double tenneyHeightFactor = 50;
         const double tenneyHeightExp = 0.2;
-        std::vector<t_rational> approxs = rational_approximation_with_primes(log2(note->midicents/1200.), allowed_primes, err_thresh_mc, true, maxden);
-        for (auto& r: approxs) {
-            snprintf_zero(temp, 100, "%ld/%ld (%ld-limit, error = %ld¢")
-            jpopupmenu_additem(r_ob->popup_note_enharmonicity, 400 + i + 1, outname, NULL, i == curr_idx, 0, NULL);
-            bach_freeptr(outname);
+        const double howManyConvergents = 10;
+        std::vector<t_rational> approxs = get_convergents(cents_to_freqratio(r_ob, note->midicents), howManyConvergents, true, err_thresh_mc, true, true, allowed_primes); // all primes allowed
+//        std::vector<t_rational> approxs = rational_approximation_with_primes(pow(2., note->midicents/1200.), allowed_primes, err_thresh_mc, true, maxden);
+        
+        if (r_ob->current_ji_approximation_ratio_list)
+            bach_freeptr(r_ob->current_ji_approximation_ratio_list);
+        
+        // num approxs must be < 25
+        const long MAX_APPROXS = 20;
+        
+        long num_approxs = approxs.size();
+        r_ob->current_ji_approximation_ratio_list_size = MIN(MAX_APPROXS, num_approxs);
+        if (num_approxs >= 1) {
+            r_ob->current_ji_approximation_ratio_list = (t_rational *)bach_newptr(num_approxs * sizeof(t_rational));
+            
+            for (long i = 0; i < approxs.size() && i < MAX_APPROXS; i++) {
+                t_rational r = approxs[i];
+                r_ob->current_ji_approximation_ratio_list[i] = r;
+                long limit = rational_get_jilimit(r);
+                double err = freqratio_to_cents(r_ob, r) - note->midicents;
+                double abs_err = fabs(err);
+                if (abs_err == 0)
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, no error)", r.num(), r.den(), limit, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                else if (abs_err > 5)
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %ld%s)", r.num(), r.den(), limit, (long)round(err), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                else if (abs_err > 1)
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %.1f%s)", r.num(), r.den(), limit, err, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                else if (abs_err > 0.1)
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %.2f%s)", r.num(), r.den(), limit, err, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                else
+                    snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %.3f%s)", r.num(), r.den(), limit, err, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+                jpopupmenu_additem(r_ob->popup_note_approximate_ji, 750 + i + 1, buf, NULL, note->pitch_displayed.isPureJI() && note->pitch_displayed.getRatio()/r_ob->ji_base_for_ratios.getRatio() == r, 0, NULL);
+            }
         }
     }
-    jpopupmenu_addsubmenu(r_ob->popup_note_copy, "Equal Temperament", r_ob->popup_note_approximate_et, 0);
-    jpopupmenu_addsubmenu(r_ob->popup_note_copy, "Just Intonation", r_ob->popup_note_approximate_ji, 0);
+    jpopupmenu_addsubmenu(r_ob->popup_note_approximate, "Equal Temperament", r_ob->popup_note_approximate_et, 0);
+    snprintf_zero(buf, 100, "Just Intonation (ratios w.r. to %s)", r_ob->ji_base_for_ratios.toString().c_str());
+    jpopupmenu_addsubmenu(r_ob->popup_note_approximate, buf, r_ob->popup_note_approximate_ji, 0);
     jpopupmenu_addsubmenu(r_ob->popup_note, "Approximate", r_ob->popup_note_approximate, 0);
 
 
@@ -1512,6 +1555,7 @@ void notation_class_add_notation_attributes(t_class *c, char obj_type){
 	notation_class_add_showhide_attributes(c, obj_type);
 	notation_class_add_font_attributes(c, obj_type);
 	notation_class_add_settings_attributes(c, obj_type);
+    notation_class_add_ji_attributes(c, obj_type);
 	notation_class_add_slots_attributes(c, obj_type);
 	notation_class_add_play_attributes(c, obj_type);
 	notation_class_add_color_attributes(c, obj_type);
@@ -2209,6 +2253,29 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
+}
+
+void notation_class_add_ji_attributes(t_class *c, char obj_type) 
+{
+    CLASS_STICKY_ATTR(c,"category",0,"Just Intonation");
+    
+    CLASS_ATTR_LONG(c, "jilimit", 0, t_notation_obj, ji_limit);
+    CLASS_ATTR_STYLE_LABEL(c,"jilimit",0,"text","JI Harmonic Limit");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jilimit",0,"5");
+    CLASS_ATTR_BASIC(c,"jilimit", 0);
+    // TODO: @Daniele Write the proper setter
+//    CLASS_ATTR_ACCESSORS(c, "jilimit", (method)NULL, (method)notationobj_setattr_jilimit);
+    // @description Sets the just intonation harmonic limit for the score display.
+    // This is the analogous, for just intonation, of the <m>tonedivision</m> attribute, in that
+    // it doesn't change the profound nature of the pitch (which can very well be in a higher limit)
+    // but it only trims its display to the selected harmonic prime number, and adjusts the interface
+    // accordingly
+
+    CLASS_ATTR_DOUBLE(c, "jiapproxthresh", 0, t_notation_obj, ji_limit_approx_mcthresh);
+    CLASS_ATTR_STYLE_LABEL(c,"jiapproxthresh",0,"text","JI Approximation Threshold (Cents)");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jiapproxthresh",0,"67");
+    // @description Sets the approximation threshold for automatically converting cents into just intonation.
+    
 }
 
 void notation_class_add_settings_attributes(t_class *c, char obj_type){
@@ -4416,6 +4483,7 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
         return k_CHANGED_SEND_BANG;
     }
 
+
     if (chosenelem == 451) {
         res = lock_selection(r_ob, false);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LOCK_SELECTION);
@@ -4448,10 +4516,28 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
         res = no_muted(r_ob);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_NO_MUTES);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
-    } else if (chosenelem == 471) {
-        res = snap_pitch_to_grid_for_selection(r_ob);
-        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
+    } else if (chosenelem == 701) { // approximation to display
+        res = snap_pitch_to_current_display_for_selection(r_ob);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION);
         return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
+    } else if (chosenelem == 702) { // approximation to current ji limit
+        res = snap_pitch_to_current_ji_limit_for_selection(r_ob);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_JI_LIMIT_FOR_SELECTION);
+        return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
+    } else if (chosenelem >= 711 && chosenelem <= 716) { // et approximation
+        std::vector<int> tonedivisions = {2, 3, 4, 6, 8, 100};
+        res = snap_pitch_to_et_tonedivision_for_selection(r_ob, tonedivisions[chosenelem-711]);
+        handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_ET_GRID_FOR_SELECTION);
+        return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
+    } else if (chosenelem >= 751 && chosenelem <= 781) { // ji approximation
+        long chosen_idx = chosenelem - 751;
+        if (chosen_idx >= 0 && chosen_idx < r_ob->current_ji_approximation_ratio_list_size) {
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)note->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            note_retranscribe_as_JI_ratio(r_ob, note, r_ob->current_ji_approximation_ratio_list[chosen_idx]);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_APPROXIMATE_TO_JI_RATIO);
+            return k_CHANGED_SEND_BANG;
+        }
     } else if (chosenelem == 472) {
         res = reset_selection_enharmonicity(r_ob);
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
@@ -5468,6 +5554,9 @@ void notationobj_free(t_notation_obj *r_ob)
     bach_freeptr(r_ob->measure_play_cursor);
     bach_freeptr(r_ob->voice_part);
 
+    if (r_ob->current_ji_approximation_ratio_list)
+        bach_freeptr(r_ob->current_ji_approximation_ratio_list);
+    
     // Slot-related stuff
     bach_freeptr(r_ob->background_slots);
     bach_freeptr(r_ob->popup_menu_slots);

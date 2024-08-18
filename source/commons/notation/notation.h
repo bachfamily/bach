@@ -1784,7 +1784,9 @@ typedef enum _undo_operations
     k_UNDO_OP_ASSIGN_VELOCITIES,
     k_UNDO_OP_CLEAR_MARKERS,
     k_UNDO_OP_CLEAR_SLURS,
-    k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION,
+    k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION,
+    k_UNDO_OP_SNAP_PITCH_TO_ET_GRID_FOR_SELECTION,
+    k_UNDO_OP_SNAP_PITCH_TO_JI_LIMIT_FOR_SELECTION,
     k_UNDO_OP_SNAP_ONSET_TO_GRID_FOR_SELECTION,
     k_UNDO_OP_SNAP_TAIL_TO_GRID_FOR_SELECTION,
     k_UNDO_OP_RESET_ALL_ENHARMONICITIES,
@@ -1929,6 +1931,7 @@ typedef enum _undo_operations
     k_UNDO_OP_NO_SOLOS,
     k_UNDO_OP_NO_MUTES,
     k_UNDO_OP_ENHARMONICALLY_RESPELL_NOTE,
+    k_UNDO_OP_APPROXIMATE_TO_JI_RATIO,
     k_UNDO_OP_CHANGE_BARLINE_TYPE,
     k_UNDO_OP_CHANGE_TIME_SIGNATURE_FOR_SELECTED_MEASURES,
     k_UNDO_OP_LOCK_RHYTHMIC_TREE_FOR_SELECTION,
@@ -3710,14 +3713,14 @@ typedef struct _accidentals_typo_preferences
     double            base_pt;                            ///< Font size for the accidentals for zoom_y = 1.
     double            ux_shift;                            ///< Unscaled horizontal shift (in pixels) of the accidentals with respect to a default reference position (usually 0.)
     double            uy_shift;                            ///< Unscaled vertical shift (in pixels) of the accidental text box, with respect to the vertical pitch reference position.
-                                                        ///< (This is usually much bigger than 0, depending on the font!)
+    ///< (This is usually much bigger than 0, depending on the font!)
     
     // binary accidentals
     short             et_dyadic_depth; ///< Depth of the equal-temperament dyadic character mapping.
-                                    ///< Depending on the font, this is a number telling how deep in the binary semitone subdivision we can go, still having accidental symbols
-                                    ///< mapped to be used as accidentals for the specified subdivision.
-                                    ///< Common values are: 2 = the font has only semitones alteration; 4 = has also quartertonal alterations; 8 = has also octotonal alterations
-                                    ///< Values greater than 8 are not supported.
+    ///< Depending on the font, this is a number telling how deep in the binary semitone subdivision we can go, still having accidental symbols
+    ///< mapped to be used as accidentals for the specified subdivision.
+    ///< Common values are: 2 = the font has only semitones alteration; 4 = has also quartertonal alterations; 8 = has also octotonal alterations
+    ///< Values greater than 8 are not supported.
     short             et_triadic_depth; ///< Depth of the equal-temperament triadic character mapping (only support is for 6).
     bool              supports_ji;
     
@@ -3725,6 +3728,9 @@ typedef struct _accidentals_typo_preferences
     double            uascent[BACH_NUM_ACCIDENTALS];            ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the topmost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
     double            udescent[BACH_NUM_ACCIDENTALS];        ///< Unscaled extension (in pixels) of the accidental from the vertical pitch reference position to the bottommost accidental point. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
     double            uwidth[BACH_NUM_ACCIDENTALS];                    ///< Unscaled width (in pixels) of the accidental. Sequence is the previously exposed octotonal sequence, from -1tone to +1tone.
+    
+    unicodeChar       space_character; ///< Codepoint of the space character
+    double            space_uwidth; ///< Width of the space character
 } t_accidentals_typo_preferences;
 
 
@@ -4104,8 +4110,16 @@ typedef struct _notation_obj
     t_llll            *stafflines_as_llll;    ///< Stafflines as an llll
     
     // autoclear
-    char            autoclear;                ///< If this flag is set, when a reconstruction bang is received, the object is automatically cleared first, and only THEN rebuilt.
+    char            autoclear;                   ///< If this flag is set, when a reconstruction bang is received,
+                                                 ///  the object is automatically cleared first, and only THEN rebuilt.
 
+    // just intonation references
+    // TODO: expose this field as attribute
+    long            ji_limit;                    ///< JI limit for editing and display
+    t_pitch         ji_base_for_ratios;          ///< Base pitch used as reference for JI ratios (e.g. C5 or C{}5, or D{}5...)
+    double          ji_base_for_ratios_as_double;///< Same, as double (e.g. 32., or 36....)
+    double          ji_limit_approx_mcthresh;    ///< Cents threshold for error while approximating cents to JI
+    
     // measure numbers
     char            *show_measure_numbers;            ///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
                                                     ///< It is an array with #CONST_MAX_VOICES elements allocated in notationobj_init() and freed by notationobj_free()
@@ -4931,10 +4945,17 @@ typedef struct _notation_obj
     t_jpopupmenu *popup_filters;                ///< Contextual menu when clicking on a slotwindow of a #k_SLOT_TYPE_FILTER type of slot
     t_jpopupmenu *popup_articulations;            ///< Contextual menu when clicking on an articulation
 
-    long        current_enharmonic_list_display_mc[5];    ///< The enharmonic possibilities which pops up when using contextual menus, are saved in these two fields.
+    long        current_enharmonic_list_display_mc[5];  ///< The enharmonic possibilities which pops up when using
+                                                        ///< contextual menus, are saved in these two fields.
                                                         ///< This first one keeps the 5 possibilities for the screen midicents (diatonic pitch shown on screen, ignoring accidentals)
     t_rational    current_enharmonic_list_display_alter_ET[5];    ///< This second one keeps the 5 possibilities for the accidentals (related to the 5 screen midicents possibilities)
 
+    t_rational    *current_ji_approximation_ratio_list;  ///< The enharmonic possibilities which pops up when using
+                                                         ///< contextual menus, are saved in these two fields.
+                                                         ///< This first one keeps the 5 possibilities for the screen midicents (diatonic pitch shown on screen, ignoring accidentals)
+    long    current_ji_approximation_ratio_list_size;  ///< The size of the list above
+
+    
     t_jfont *popup_main_font;                    ///< Font name (as symbol) for the main contextual menus
     t_jfont *popup_secondary_font;                ///< Font name (as symbol) for the contextual submenus
 
@@ -5513,9 +5534,9 @@ long note_get_display_midicents(t_note *nt);
  */
 //t_shortRational note_get_screen_accidental(t_note *nt);
 
-t_shortRational note_get_screen_accidental_ordinary(t_note *nt);
-t_rational note_get_screen_accidental_JIcommas(t_note *nt);
-double note_get_screen_accidental_cents(t_note *nt);
+t_shortRational note_get_display_accidental_ordinary(t_note *nt);
+t_rational note_get_display_accidental_JIcommas(t_note *nt);
+double note_get_display_accidental_cents(t_note *nt);
 bool pitch_has_accidentals(t_pitch *p);
 bool note_has_accidentals(t_note *nt);
 
@@ -6438,16 +6459,15 @@ double note_get_accidental_uwidth(t_notation_obj *r_ob, t_note *nt, char always_
 double accidentals_get_udescent(t_notation_obj *r_ob, t_uint8 *accidentals);
 double accidentals_get_uascent(t_notation_obj *r_ob, t_uint8 *accidentals);
 double accidentals_get_uwidth(t_notation_obj *r_ob, t_uint8 *accidentals);
-void get_accidental_characters_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals);
 void note_get_accidental_as_cents(t_notation_obj *r_ob, t_note *nt, char *buf);
 void note_get_accidental_as_fraction(t_notation_obj *r_ob, t_note *nt, char *buf);
-void note_get_accidentals_unicode_chars(t_notation_obj *r_ob, t_note *nt, unicodeChar *accidental_text);
+void note_get_accidentals_unicode_chars(t_notation_obj *r_ob, t_note *nt, unicodeChar *accidental_text, long *accidental_text_len);
 bool note_has_accidentals(t_note *nt);
 bool note_has_no_accidentals_or_has_natural(t_note *nt);
 
-e_bach_accidental get_accidental_ET(t_notation_obj *r_ob, t_rational accidental);
-void get_accidental_characters_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals);
-void get_accidental_characters_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *accidentals, int *numAccidentals);
+e_bach_accidental rational_to_accidental_ET(t_notation_obj *r_ob, t_rational accidental);
+void get_accidentals_for_pitch_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals);
+void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *accidentals, int *numAccidentals);
 bool note_accidental_equals_alter_ET(t_notation_obj *r_ob, t_note *nt, t_shortRational alterET);
 
 bool accidentals_eq(t_uint8 *accidentals1, t_uint8 *accidentals2);
@@ -7706,20 +7726,25 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note *nt);
 /**    Snap a pitch (in midicents) to the current microtonal grid for the notation object.
     @ingroup        notation
     @param r_ob        The notation object
-    @param pitch    Midicents to be snapped
+    @param cents    Midicents to be snapped
     @return            Midicents snapped to the microtonal grid
  */
-double snap_to_microtonal_grid(t_notation_obj *r_ob, double pitch);
+double snap_to_microtonal_grid(t_notation_obj *r_ob, double cents);
+double snap_to_jilimit(t_notation_obj *r_ob, double cents);
+
+// These two function account for the JI base contained in r_ob
+double cents_to_freqratio(t_notation_obj *r_ob, double cents);
+double freqratio_to_cents(t_notation_obj *r_ob, double ratio);
 
 
 /**    Snap a pitch (in midicents) to the current microtonal grid for a given tone division.
     @remark            This is as snap_to_microtonal_grid(), but doesn't need a notation obejct.
     @ingroup        notation
-    @param pitch    Midicents to be snapped
+    @param cents    Midicents to be snapped
     @param tone_division    The tone division (number of steps in which the tone is divided: 2 = semitonal, 4 = quartertonal...)
     @return            Midicents snapped to the microtonal grid
  */
-double snap_to_microtonal_grid_do(double pitch, long tone_division);
+double snap_to_microtonal_grid_do(double cents, long tone_division);
 
 
 /**    Modify a pitch in order to be sure that it isn't a NaN or infinite.
@@ -7753,8 +7778,8 @@ int get_middle_scaleposition(int clef);
     If the chord is a [bach.roll] chord, it first calls note_compute_approximation() on each note. Then it calculates:
     - the <notehead_resize>, <accidentals_resize>, <notehead_uwidth> fields of all notes
     - the <scaleposition> field for all notes
-    - the <show_accidental> fields (only for [bach.roll]: for [bach.score] this is done in validate_accidentals_for_measure())
-    - the <direction> field (chord direction), you can impose it by setting the <imposed_direction> field different from 0, before calling 
+    - the <show_accidental> fields (only for [bach.roll]: for [bach.score] this is done in measure_validate_accidentals())
+    - the <direction> field (chord direction), you can impose it by setting the <imposed_direction> field different from 0, before calling
         for chord_calculate_parameters(); leave it to 0 for automatic calculatio - if we're in [bach.roll] and we don't show stems, by default the stem will be upward
     - the <left_uextension> and <right_uextension>, <lyrics_portion_of_left_uextension> fields of the chord (representing the unscaled amount of pixels, 
         at the left and right of the stem line, needed to paint the chord)
@@ -9628,7 +9653,9 @@ void set_matrix_parameters_from_slotinfo(t_notation_obj *r_ob, long slot_num);
     @param    note    The note
     @see            snap_pitch_to_grid_for_selection()
  */ 
-void snap_pitch_to_displayed_pitch_for_note(t_notation_obj *r_ob, t_note *note);
+void snap_pitch_to_displayed_for_note(t_notation_obj *r_ob, t_note *note);
+
+char snap_pitch_to_et_tonedivision_for_selection(t_notation_obj *r_ob, long tonedivision);
 
 
 /**    Snap the pitch of all the selected notes to the microtonal grid (works exactly as snap_pitch_to_grid_for_note(), but for all the notes in 
@@ -9637,7 +9664,10 @@ void snap_pitch_to_displayed_pitch_for_note(t_notation_obj *r_ob, t_note *note);
     @param    r_ob    The notation object
     @see            snap_pitch_to_grid_for_note()
  */ 
-char snap_pitch_to_grid_for_selection(t_notation_obj *r_ob);
+char snap_pitch_to_current_display_for_selection(t_notation_obj *r_ob);
+
+
+char snap_pitch_to_current_ji_limit_for_selection(t_notation_obj *r_ob);
 
 
 /**    Snap the onset of a chord to the time grid (ruler or grid, if any). Only works for [bach.roll], currently.
@@ -9692,6 +9722,7 @@ char snap_tail_to_grid_for_selection(t_notation_obj *r_ob);
  */ 
 void note_retranscribe_enharmonically_ET(t_notation_obj *r_ob, t_note *note, char auto_mode, long new_screen_midicents, t_rational new_screen_accidental);
 
+void note_retranscribe_as_JI_ratio(t_notation_obj *r_ob, t_note *note, t_rational ratio);
 
 /**    Enharmonically retranscribe the pitch of all the selected note (works exactly as enharmonically_retranscribe_note(), but for all the notes in 
     the current object selection, and only in the default automatic mode, <auto_mode> = 1) 
@@ -11241,7 +11272,7 @@ char move_breakpoint(t_notation_obj *r_ob, t_bpt *breakpoint, double delta_rel_x
     @param    bpt        The breakpoint
     @remark            What is snapped is of course not the <delta_mc> field, but its absolute pitch position (so the note's mc plus the breakpoint delta_mc).
  */ 
-void snap_pitch_to_grid_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt);
+void snap_pitch_to_current_grid_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt);
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -13650,7 +13681,7 @@ char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *
     @param    r_ob    The notation object
     @param    chord    The chord
     @param    also_put_show_accidental_to_false    If this is 1, all the t_note::show_accidental flag are set to false.
-                                                in which case, you usually might want to call validate_accidentals_for_measure() after this
+                                                in which case, you usually might want to call measure_validate_accidentals() after this
  */
 void chord_compute_note_approximations(t_notation_obj *r_ob, t_chord *chord, char also_put_show_accidental_to_false);
 
@@ -13660,7 +13691,7 @@ void chord_compute_note_approximations(t_notation_obj *r_ob, t_chord *chord, cha
     @param    r_ob    The notation object
     @param    measure    The measure
     @param    also_put_show_accidental_to_false    If this is 1, all the t_note::show_accidental flag are set to false.
-                                                in which case, you usually might want to call validate_accidentals_for_measure() after this
+                                                in which case, you usually might want to call measure_validate_accidentals() after this
  */
 void compute_note_approximations_for_measure(t_notation_obj *r_ob, t_measure *measure, char also_put_show_accidental_to_false);        
 
@@ -13672,6 +13703,8 @@ void compute_note_approximations_for_measure(t_notation_obj *r_ob, t_measure *me
     @param    measure    The measure
  */
 void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure);
+
+bool note_has_significant_cents_difference_with_screen_representation(t_notation_obj *r_ob, t_note *nt);
 
 
 
@@ -17488,6 +17521,14 @@ void notation_class_add_pitches_attributes(t_class *c, char obj_type);
     @param        obj_type    The object type (one of the #e_notation_objects)
  */
 void notation_class_add_settings_attributes(t_class *c, char obj_type);
+
+
+/** Add to a class all the common attributes concerning just intonation
+    @ingroup    attributes
+    @param        c            The class
+    @param        obj_type    The object type (one of the #e_notation_objects)
+ */
+void notation_class_add_ji_attributes(t_class *c, char obj_type);
 
 
 /** Add to a class all the common attributes concerning colors

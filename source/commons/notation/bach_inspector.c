@@ -1759,7 +1759,7 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
             long styleidx = (*((long *)field));
             *ac = 1;
             *av = (t_atom *)bach_newptr(sizeof(t_atom));
-            atom_setsym(*av, notationstyle_to_symbol((e_voice_notation_style) styleidx));
+            atom_setlong(*av, styleidx);
             return;
 		} else if (attr->name == _llllobj_sym_stafflines) {
 			t_voice *voice = (t_voice *)obj;
