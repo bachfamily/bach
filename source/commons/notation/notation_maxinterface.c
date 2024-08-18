@@ -860,6 +860,12 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
         jpopupmenu_destroy(r_ob->popup_note);
     if (r_ob->popup_note_enharmonicity)
         jpopupmenu_destroy(r_ob->popup_note_enharmonicity);
+    if (r_ob->popup_note_approximate)
+        jpopupmenu_destroy(r_ob->popup_note_approximate);
+    if (r_ob->popup_note_approximate_et)
+        jpopupmenu_destroy(r_ob->popup_note_approximate_et);
+    if (r_ob->popup_note_approximate_ji)
+        jpopupmenu_destroy(r_ob->popup_note_approximate_ji);
     if (r_ob->popup_note_slots)
         jpopupmenu_destroy(r_ob->popup_note_slots);
     if (r_ob->popup_note_paste)
@@ -873,6 +879,9 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
 
     r_ob->popup_note = jpopupmenu_create();
     r_ob->popup_note_enharmonicity = jpopupmenu_create();
+    r_ob->popup_note_approximate = jpopupmenu_create();
+    r_ob->popup_note_approximate_et = jpopupmenu_create();
+    r_ob->popup_note_approximate_ji = jpopupmenu_create();
     r_ob->popup_note_slots = jpopupmenu_create();
     r_ob->popup_note_copy = jpopupmenu_create();
     r_ob->popup_note_copy_slot = jpopupmenu_create();
@@ -920,6 +929,7 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
     // enharmonicity (400)
     if (note && note->pitch_displayed.isPureET()) {
         note_get_ET_enharmonic_possibilities(r_ob, note, &curr_idx);
+        jpopupmenu_additem(r_ob->popup_note_enharmonicity, 472, "Auto", NULL, 0, 0, NULL);
         for (i = 0; i < CONST_MAX_ENHARMONICITY_OPTIONS; i++) {
             char *outname = NULL;
             midicents2notename(r_ob->middleC_octave, r_ob->current_enharmonic_list_display_mc[i], r_ob->current_enharmonic_list_display_alter_ET[i], r_ob->note_names_style, true, &outname);
@@ -928,6 +938,37 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
         }
     }
     jpopupmenu_addsubmenu(r_ob->popup_note, "Enharmonicity", r_ob->popup_note_enharmonicity, !note->pitch_displayed.isPureET());
+
+    
+    // approximate (700)
+    if (note) {
+        char temp[100];
+        snprintf_zero(temp, 100, "Snap Pitch To Current Tone Division (%ld-EDO)", r_ob->tone_division * 6);
+        note_get_ET_enharmonic_possibilities(r_ob, note, &curr_idx);
+        jpopupmenu_additem(r_ob->popup_note_approximate_et, 471, temp, NULL, 0, 0, NULL);
+//        for (i = 0; i < CONST_MAX_ENHARMONICITY_OPTIONS; i++) {
+//            char *outname = NULL;
+//            midicents2notename(r_ob->middleC_octave, r_ob->current_enharmonic_list_display_mc[i], r_ob->current_enharmonic_list_display_alter_ET[i], r_ob->note_names_style, true, &outname);
+//            jpopupmenu_additem(r_ob->popup_note_enharmonicity, 400 + i + 1, outname, NULL, i == curr_idx, 0, NULL);
+//            bach_freeptr(outname);
+//        }
+        
+        const std::vector<int> allowed_primes = {2, 3, 5};
+        const double err_thresh_mc = 66.66667;
+        const long maxden = 10000;
+        const double bestErrorRelativeTolerance = 1.2;
+        const double tenneyHeightFactor = 50;
+        const double tenneyHeightExp = 0.2;
+        std::vector<t_rational> approxs = rational_approximation_with_primes(log2(note->midicents/1200.), allowed_primes, err_thresh_mc, true, maxden);
+        for (auto& r: approxs) {
+            snprintf_zero(temp, 100, "%ld/%ld (%ld-limit, error = %ld¢")
+            jpopupmenu_additem(r_ob->popup_note_enharmonicity, 400 + i + 1, outname, NULL, i == curr_idx, 0, NULL);
+            bach_freeptr(outname);
+        }
+    }
+    jpopupmenu_addsubmenu(r_ob->popup_note_copy, "Equal Temperament", r_ob->popup_note_approximate_et, 0);
+    jpopupmenu_addsubmenu(r_ob->popup_note_copy, "Just Intonation", r_ob->popup_note_approximate_ji, 0);
+    jpopupmenu_addsubmenu(r_ob->popup_note, "Approximate", r_ob->popup_note_approximate, 0);
 
 
     // slots (300)
@@ -967,8 +1008,8 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
 
     // various (470)
     jpopupmenu_addseperator(r_ob->popup_note);
-    jpopupmenu_additem(r_ob->popup_note, 471, "Snap Pitch To Grid", NULL, 0, 0, NULL);
-    jpopupmenu_additem(r_ob->popup_note, 472, "Retranscribe Pitches", NULL, 0, 0, NULL);
+//    jpopupmenu_additem(r_ob->popup_note, 471, "Snap Pitch To Grid", NULL, 0, 0, NULL);
+//    jpopupmenu_additem(r_ob->popup_note, 472, "Retranscribe Pitches", NULL, 0, 0, NULL);
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         jpopupmenu_additem(r_ob->popup_note, 473, "Align In Time", NULL, 0, 0, NULL);
         jpopupmenu_additem(r_ob->popup_note, 474, "Evenly Distribute In Time", NULL, 0, 0, NULL);

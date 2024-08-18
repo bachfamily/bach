@@ -4904,6 +4904,9 @@ typedef struct _notation_obj
     t_jpopupmenu *popup_durationline;            ///< Main contextual menu when clicking on a duration line
     t_jpopupmenu *popup_note_slots;                ///< Contextual submenu for the slots (when clicking on a note, chord, or mixed selection)
     t_jpopupmenu *popup_note_enharmonicity;        ///< Contextual submenu for the enharmonicity possibilities (when clicking on a note, chord, or mixed selection)
+    t_jpopupmenu *popup_note_approximate;        ///< Contextual submenu for the approximation possibilities (when clicking on a note, chord, or mixed selection)
+    t_jpopupmenu *popup_note_approximate_et;        ///< Contextual submenu for the approximation equal-tempered possibilities (when clicking on a note, chord, or mixed selection)
+    t_jpopupmenu *popup_note_approximate_ji;        ///< Contextual submenu for the approximation just intonation possibilities (when clicking on a note, chord, or mixed selection)
     t_jpopupmenu *popup_note_copy;              ///< Contextual submenu when copying selection
     t_jpopupmenu *popup_note_copy_slot;         ///< Contextual subsubmenu when copying a given slot
     t_jpopupmenu *popup_note_paste_slot;        ///< Contextual subsubmenu when pasting a given slot

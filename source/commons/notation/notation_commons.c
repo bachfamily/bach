@@ -1944,8 +1944,9 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
     
 
 
-void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jrgba *color,
-                            t_note *curr_nt, long clef, double note_y_real, double stem_x, 
+void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, 
+                            t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jrgba *color,
+                            t_note *curr_nt, long clef, double note_y_real, double stem_x,
                             double *acc_uascent, double *acc_udescent){
     if (curr_nt->show_accidentals)  { // Is there one or more accidentals to show??
         
@@ -2005,8 +2006,9 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
                 acc_y = note_y_real + r_ob->accidentals_typo_preferences.uy_shift * r_ob->zoom_y * accidentals_resize; // - r_ob->j_inset_y;
             }
                         
-            write_text(g, need_jf_custom_accidentals ? (is_bogus ? jf_custom_accidentals_bogus : jf_custom_accidentals) : (is_bogus ? jf_acc_bogus : jf_acc), 
-                                          *color, acccharacters, r_ob->j_inset_x, 0, acc_x, acc_y, JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMRIGHT, true, false);
+            write_text(g, need_jf_custom_accidentals ? 
+                       (is_bogus ? jf_custom_accidentals_bogus : jf_custom_accidentals) : (is_bogus ? jf_acc_bogus : jf_acc), 
+                       *color, acccharacters, r_ob->j_inset_x, 0, acc_x, acc_y, JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMRIGHT, true, false);
 
             bach_freeptr(acccharacters_utf);
             if (need_jf_custom_accidentals) {
@@ -35954,6 +35956,9 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->popup_note = NULL;
     r_ob->popup_note_slots = NULL;
     r_ob->popup_note_enharmonicity = NULL;
+    r_ob->popup_note_approximate = NULL;
+    r_ob->popup_note_approximate_et = NULL;
+    r_ob->popup_note_approximate_ji = NULL;
     r_ob->popup_note_copy = r_ob->popup_note_paste = r_ob->popup_note_copy_slot = r_ob->popup_note_paste_slot = NULL;
     r_ob->popup_measure = NULL;
     r_ob->popup_measure_timesignature = NULL;
