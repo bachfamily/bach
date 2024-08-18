@@ -341,7 +341,7 @@ public:
         p_alterET = (sat.mc - octave * 1200 - whiteKey2MC[p_whiteKeyET]) / 200;
     }
     
-    void plofUnpack(const t_uint8 plof, t_uint8 *exp2, t_uint8 *exp3, t_uint8 *whiteKey) {
+    void plofUnpack(const t_int8 plof, t_int8 *exp2, t_int8 *exp3, t_uint8 *whiteKey) {
         // Pythagorean line of fifths position to exponents (of 2 and 3 primes) and whiteKey (diatonic C major degree)
         *exp2 = 0;
         *exp3 = 0;
@@ -368,12 +368,13 @@ public:
         }
     }
     
-    t_pitch(const t_uint8 plof, const std::vector<t_int8> HEJIcommas, const t_uint8 octave) : p_whiteKeyET(0), p_alterET(0) {
+    t_pitch(const t_int8 plof, const std::vector<t_int8> HEJIcommas, const t_int8 octave) : p_whiteKeyET(0), p_alterET(0) {
         setJI(plof, HEJIcommas, octave);
     }
     
-    void setJI(const t_uint8 plof, const std::vector<t_int8> HEJIcommas, const t_uint8 octave) {
-        t_uint8 expof2, expof3, whiteKey;
+    void setJI(const t_int8 plof, const std::vector<t_int8> HEJIcommas, const t_int8 octave) {
+        t_int8 expof2, expof3;
+        t_uint8 whiteKey;
         plofUnpack(plof, &expof2, &expof3, &whiteKey);
         
         std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE, 0);
@@ -396,21 +397,21 @@ public:
         p_alterET = {0, 1};
     }
     
-    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_uint8 plof, const std::vector<t_int8> HEJIcommas, const t_uint8 octave) : t_pitch(plof, HEJIcommas, octave) {
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_int8 plof, const std::vector<t_int8> HEJIcommas, const t_int8 octave) : t_pitch(plof, HEJIcommas, octave) {
         p_whiteKeyET = degree;
         p_alterET = alter;
     }
     
-    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const std::vector<t_int8> &exponents, const t_uint8 addOctave = 0) : p_JIexpVector(exponents), p_whiteKeyET(degree), p_alterET(alter) {
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const std::vector<t_int8> &exponents, const t_int8 addOctave = 0) : p_JIexpVector(exponents), p_whiteKeyET(degree), p_alterET(alter) {
         p_JIexpVector.addOctaves(addOctave);
     }
     
-    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_shortRational &r, const t_uint8 addOctave = 0) : p_whiteKeyET(degree), p_alterET(alter) {
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_shortRational &r, const t_int8 addOctave = 0) : p_whiteKeyET(degree), p_alterET(alter) {
         setJI(r);
         p_JIexpVector.addOctaves(addOctave);
     }
     
-    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_rational &r, const t_uint8 addOctave = 0) : p_whiteKeyET(degree), p_alterET(alter) {
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_rational &r, const t_int8 addOctave = 0) : p_whiteKeyET(degree), p_alterET(alter) {
         setJI(r);
         p_JIexpVector.addOctaves(addOctave);
     }
@@ -440,7 +441,7 @@ public:
         setOctave(octave);
     }
     
-    void set(const t_atom_short degree, const t_tinyRational &alter, const t_shortRational &r, const t_uint8 addOctave = 0) {
+    void set(const t_atom_short degree, const t_tinyRational &alter, const t_shortRational &r, const t_int8 addOctave = 0) {
         p_whiteKeyET = degree;
         p_alterET = alter;
         setJI(r);
@@ -507,7 +508,7 @@ public:
     t_atom_short getWhiteKeyET() const { return p_whiteKeyET; }
     t_atom_short getWhiteKeyJI() const { return p_JIexpVector.getWhiteKeyJI(); }
 
-    int getPlofJI() const { return p_JIexpVector.getPlof(); }
+    t_int8 getPlofJI() const { return p_JIexpVector.getPlof(); }
     
     t_int8 getSharpsJI() const { return (getPlofJI()+1)/7; };
     
