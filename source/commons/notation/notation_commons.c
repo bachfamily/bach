@@ -12453,8 +12453,8 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
                 temp_ch2 = temp_ch;
                 while (temp_ch2){
                     temp_nt2 = (temp_ch2 == temp_ch) ? temp_nt->next : temp_ch2->firstnote;
-                    bool temp_nt2_has_no_acc_or_has_natural = note_has_no_accidentals_or_has_natural(temp_nt2);
                     while (temp_nt2) {
+                        bool temp_nt2_has_no_acc_or_has_natural = note_has_no_accidentals_or_has_natural(temp_nt2);
                         bool cmp = accidentals_eq(curr_accidentals, temp_nt2->accidentals);
                         if ((temp_nt2->r_it.flags & k_FLAG_VALIDATEACCIDENTALS) && (note_get_display_midicents(temp_nt2) == curr_midicents)) {
                             already_done_octave_cautionary_accidental = false;
