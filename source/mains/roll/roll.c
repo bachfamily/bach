@@ -242,6 +242,8 @@ void roll_sel_sendcommand(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_snap_pitch_to_grid(t_roll *x);
 void roll_sel_snap_onset_to_grid(t_roll *x);
 void roll_sel_snap_tail_to_grid(t_roll *x);
+void roll_sel_approxji(t_roll *x, long jilimit);
+void roll_sel_approxet(t_roll *x, long tonedivision);
 void roll_sel_resetgraphic(t_roll *x);
 void roll_legato(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_glissando(t_roll *x, t_symbol *s, long argc, t_atom *argv);
@@ -1542,12 +1544,26 @@ void roll_addslur(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 }
 
 
-void roll_sel_snap_pitch_to_grid(t_roll *x){
+void roll_sel_snap_pitch_to_grid(t_roll *x)
+{
     snap_pitch_to_current_display_for_selection((t_notation_obj *) x);
     handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION);
 }
 
-char snap_onset_to_grid_for_selection(t_roll *x){ 
+void roll_sel_approxet(t_roll *x, long tonedivision)
+{
+    snap_pitch_to_et_tonedivision_for_selection((t_notation_obj *)x, tonedivision == 0 ? x->r_ob.tone_division : tonedivision);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_ET_GRID_FOR_SELECTION);
+}
+
+
+void roll_sel_approxji(t_roll *x, long jilimit)
+{
+    snap_pitch_to_ji_limit_for_selection((t_notation_obj *)x, jilimit == 0 ? x->r_ob.ji_limit : jilimit);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_JI_LIMIT_FOR_SELECTION);
+}
+
+char snap_onset_to_grid_for_selection(t_roll *x){
     if (x->r_ob.show_grid == 1 || x->r_ob.ruler > 0) { 
         char res = iterate_chordwise_changes_on_selection((t_notation_obj *)x, (notationobj_chord_fn) snap_onset_to_grid_for_chord, NULL, true, k_CHORD, true);
         check_all_chords_order(x);
@@ -5530,10 +5546,24 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) roll_sel_sendcommand, "sendcommand", A_GIMME, 0);
     
     
-    // @method snappitchtogrid @digest Snap selected notes' pitches to the current microtonal grid
+    // @method snappitchtogrid @digest Snap selected pitches to the current microtonal settings
     // @description @copy BACH_DOC_MESSAGE_SNAPPITCHTOGRID
     // @seealso respell, snaponsettogrid, snaptailtogrid
     class_addmethod(c, (method) roll_sel_snap_pitch_to_grid, "snappitchtogrid", 0);
+
+    
+    // @method approxet @digest Approximate selected pitches to equal temperament
+    // @description @copy BACH_DOC_MESSAGE_APPROXET
+    // @seealso snappitchtogrid, approxji
+    // @marg 0 @name tonedivision @optional 1 @type int
+    class_addmethod(c, (method) roll_sel_approxet, "approxet", A_DEFLONG);
+
+
+    // @method approxji @digest Approximate selected pitches with just intonation
+    // @description @copy BACH_DOC_MESSAGE_APPROXJI
+    // @seealso snappitchtogrid, approxet
+    // @marg 0 @name jilimit @optional 1 @type int
+    class_addmethod(c, (method) roll_sel_approxji, "approxji", A_DEFLONG);
 
 
     // @method snaponsettogrid @digest Snap selected chords' onsets to the current temporal grid
@@ -10032,7 +10062,7 @@ void snap_pitch_to_grid_voice(t_roll *x, t_rollvoice *voice) {
     while(curr_ch){ // cycle on the chords
         t_note *curr_nt = curr_ch->firstnote; 
         while(curr_nt){ // cycle on the chords
-            snap_pitch_to_displayed_for_note((t_notation_obj *) x, curr_nt);
+            note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, curr_nt);
             curr_nt = curr_nt->next;
         }
         chord_set_recompute_parameters_flag((t_notation_obj *)x, curr_ch);
@@ -14127,7 +14157,7 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         if (octave_jump) 
             num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
         if (ji) {
-            double r = cents_to_freqratio((t_notation_obj *)x, note->midicents);
+            double r = notationobj_cents_to_freqratio((t_notation_obj *)x, note->midicents);
             t_rational r_new = get_next_rational_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, r, note->parent->voiceparent->v_ob.number, delta);
             note->pitch_original = t_pitch(r_new * x->r_ob.ji_base_for_ratios.getRatio());
             note->midicents = note->pitch_original.toMCdouble();
@@ -14328,14 +14358,14 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
                     if (nt->r_it.flags & k_FLAG_SHIFT) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
+                            note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                     }
                 }
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
             } else {
                 note_compute_approximation((t_notation_obj *) x, note);
                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                    snap_pitch_to_displayed_for_note((t_notation_obj *) x, note);
+                    note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, note);
             }
 
             if (!old_chord_deleted) {
@@ -14371,7 +14401,7 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
                             if (true){ //(nt->flags & k_FLAG_SHIFT) {
                                 note_compute_approximation((t_notation_obj *) x, nt);
                                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                    snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
+                                    note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                             }
                         }
                         chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
@@ -14385,7 +14415,7 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
                     if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
+                            note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                     }
                 }
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
@@ -15412,8 +15442,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                 if (temp->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) {
                     t_note *nt = temp->firstnote;
                     if (nt) {
-                        t_rational r = get_best_jilimited_approximation(cents_to_freqratio((t_notation_obj *)x, nt->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
-                        nt->midicents = freqratio_to_cents((t_notation_obj *)x, (double)r);
+                        t_rational r = get_best_jilimited_approximation(notationobj_cents_to_freqratio((t_notation_obj *)x, nt->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
+                        nt->midicents = notationobj_freqratio_to_cents((t_notation_obj *)x, (double)r);
                         nt->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getRatio());
                     }
                 }
@@ -15421,7 +15451,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     t_note *nt;
                     for (nt = temp->firstnote; nt; nt = nt->next){
                         note_compute_approximation((t_notation_obj *) x, nt);
-                        snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
+                        note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                     }
                 }
                 if (x->r_ob.snap_onset_to_grid_when_editing)

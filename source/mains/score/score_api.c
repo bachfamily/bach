@@ -3579,7 +3579,7 @@ void snap_pitch_to_grid_voice(t_score *x, t_scorevoice *voice)
         while(curr_ch){ // cycle on the chords
             t_note *curr_nt = curr_ch->firstnote; 
             while(curr_nt){ // cycle on the chords
-                snap_pitch_to_displayed_for_note((t_notation_obj *) x, curr_nt);
+                note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, curr_nt);
                 curr_nt = curr_nt->next;
             }
             chord_set_recompute_parameters_flag((t_notation_obj *)x, curr_ch);

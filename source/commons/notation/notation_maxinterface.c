@@ -974,7 +974,7 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
         const double tenneyHeightFactor = 50;
         const double tenneyHeightExp = 0.2;
         const double howManyConvergents = 10;
-        std::vector<t_rational> approxs = get_convergents(cents_to_freqratio(r_ob, note->midicents), howManyConvergents, true, err_thresh_mc, true, true, allowed_primes); // all primes allowed
+        std::vector<t_rational> approxs = get_convergents(notationobj_cents_to_freqratio(r_ob, note->midicents), howManyConvergents, true, err_thresh_mc, true, true, allowed_primes); // all primes allowed
 //        std::vector<t_rational> approxs = rational_approximation_with_primes(pow(2., note->midicents/1200.), allowed_primes, err_thresh_mc, true, maxden);
         
         if (r_ob->current_ji_approximation_ratio_list)
@@ -992,7 +992,7 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
                 t_rational r = approxs[i];
                 r_ob->current_ji_approximation_ratio_list[i] = r;
                 long limit = rational_get_jilimit(r);
-                double err = freqratio_to_cents(r_ob, r) - note->midicents;
+                double err = notationobj_freqratio_to_cents(r_ob, r) - note->midicents;
                 double abs_err = fabs(err);
                 if (abs_err == 0)
                     snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, no error)", r.num(), r.den(), limit, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");

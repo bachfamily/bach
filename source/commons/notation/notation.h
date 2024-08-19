@@ -5534,9 +5534,9 @@ long note_get_display_midicents(t_note *nt);
  */
 //t_shortRational note_get_screen_accidental(t_note *nt);
 
-t_shortRational note_get_display_accidental_ordinary(t_note *nt);
-t_rational note_get_display_accidental_JIcommas(t_note *nt);
-double note_get_display_accidental_cents(t_note *nt);
+t_shortRational note_get_display_accidentals_ordinary(t_note *nt);
+t_rational note_get_display_accidentals_JIcommas(t_note *nt);
+double note_get_display_accidentals_cents(t_note *nt);
 bool pitch_has_accidentals(t_pitch *p);
 bool note_has_accidentals(t_note *nt);
 
@@ -7723,30 +7723,32 @@ char check_notes_order(t_chord *chord);
 void note_compute_approximation(t_notation_obj *r_ob, t_note *nt);
 
 
+/**    Snap a pitch (in midicents) to the current microtonal grid for a given tone division.
+    @ingroup        notation
+    @param cents    Midicents to be snapped
+    @param tone_division    The tone division (number of steps in which the tone is divided: 2 = semitonal, 4 = quartertonal...)
+    @return            Midicents snapped to the microtonal grid
+ */
+double snap_to_microtonal_grid(double cents, long tone_division);
+
 /**    Snap a pitch (in midicents) to the current microtonal grid for the notation object.
     @ingroup        notation
     @param r_ob        The notation object
     @param cents    Midicents to be snapped
     @return            Midicents snapped to the microtonal grid
  */
-double snap_to_microtonal_grid(t_notation_obj *r_ob, double cents);
-double snap_to_jilimit(t_notation_obj *r_ob, double cents);
+double notationobj_snap_to_microtonal_grid(t_notation_obj *r_ob, double cents);
 
-// These two function account for the JI base contained in r_ob
-double cents_to_freqratio(t_notation_obj *r_ob, double cents);
-double freqratio_to_cents(t_notation_obj *r_ob, double ratio);
+double snap_to_jilimit(double cents, long jilimit, double jierrthresh, double baseratio);
+double notationobj_snap_to_jilimit(t_notation_obj *r_ob, double cents);
+
 long ratio_fold_octaves(t_rational *r); // returns number of folded octaves
 long ratio_fold_octaves(double *r); // returns number of folded octaves
-
-
-/**    Snap a pitch (in midicents) to the current microtonal grid for a given tone division.
-    @remark            This is as snap_to_microtonal_grid(), but doesn't need a notation obejct.
-    @ingroup        notation
-    @param cents    Midicents to be snapped
-    @param tone_division    The tone division (number of steps in which the tone is divided: 2 = semitonal, 4 = quartertonal...)
-    @return            Midicents snapped to the microtonal grid
- */
-double snap_to_microtonal_grid_do(double cents, long tone_division);
+double cents_to_freqratio(t_notation_obj *r_ob, double cents, double baseratio);
+double freqratio_to_cents(t_notation_obj *r_ob, double ratio, double baseratio);
+// These two function account for the JI base contained in r_ob
+double notationobj_cents_to_freqratio(t_notation_obj *r_ob, double cents);
+double notationobj_freqratio_to_cents(t_notation_obj *r_ob, double ratio);
 
 
 /**    Modify a pitch in order to be sure that it isn't a NaN or infinite.
@@ -9655,7 +9657,8 @@ void set_matrix_parameters_from_slotinfo(t_notation_obj *r_ob, long slot_num);
     @param    note    The note
     @see            snap_pitch_to_grid_for_selection()
  */ 
-void snap_pitch_to_displayed_for_note(t_notation_obj *r_ob, t_note *note);
+void note_snap_midicents_to_displayed_pitch(t_notation_obj *r_ob, t_note *note);
+void note_snap_original_pitch_to_display_pitch(t_notation_obj *r_ob, t_note *note);
 
 char snap_pitch_to_et_tonedivision_for_selection(t_notation_obj *r_ob, long tonedivision);
 
@@ -9668,6 +9671,7 @@ char snap_pitch_to_et_tonedivision_for_selection(t_notation_obj *r_ob, long tone
  */ 
 char snap_pitch_to_current_display_for_selection(t_notation_obj *r_ob);
 
+char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit);
 
 char snap_pitch_to_current_ji_limit_for_selection(t_notation_obj *r_ob);
 

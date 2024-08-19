@@ -131,6 +131,8 @@ void score_subscore(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_collapse(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_merge(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_snap_pitch_to_grid(t_score *x, t_symbol *s, long argc, t_atom *argv);
+void score_sel_approxji(t_score *x, long jilimit);
+void score_sel_approxet(t_score *x, long tonedivision);
 
 t_llll* get_score_values_as_llll_for_pwgl(t_score *x);
 
@@ -1147,18 +1149,39 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
 }
 
-void score_sel_snap_pitch_to_grid(t_score *x){
-    char changed;
-    t_llll *garbage;
-    changed = snap_pitch_to_current_display_for_selection((t_notation_obj *) x);
+void score_sel_approxet(t_score *x, long tonedivision)
+{
+    snap_pitch_to_et_tonedivision_for_selection((t_notation_obj *)x, tonedivision == 0 ? x->r_ob.tone_division : tonedivision);
 
-    garbage = llll_get();
     lock_general_mutex((t_notation_obj *)x);
     perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
     close_slot_window((t_notation_obj *)x); // if we were in slot view...
     unlock_general_mutex((t_notation_obj *)x);
 
-    llll_free(garbage);
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_ET_GRID_FOR_SELECTION);
+}
+
+
+void score_sel_approxji(t_score *x, long jilimit)
+{
+    snap_pitch_to_ji_limit_for_selection((t_notation_obj *)x, jilimit == 0 ? x->r_ob.ji_limit : jilimit);
+
+    lock_general_mutex((t_notation_obj *)x);
+    perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
+    close_slot_window((t_notation_obj *)x); // if we were in slot view...
+    unlock_general_mutex((t_notation_obj *)x);
+
+    handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_JI_LIMIT_FOR_SELECTION);
+}
+
+void score_sel_snap_pitch_to_grid(t_score *x)
+{
+    snap_pitch_to_current_display_for_selection((t_notation_obj *) x);
+
+    lock_general_mutex((t_notation_obj *)x);
+    perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DO);
+    close_slot_window((t_notation_obj *)x); // if we were in slot view...
+    unlock_general_mutex((t_notation_obj *)x);
 
     handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_CURRENT_DISPLAY_FOR_SELECTION);
 }
@@ -5908,6 +5931,20 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @seealso respell, snaponsettogrid, snaptailtogrid
     class_addmethod(c, (method) score_sel_snap_pitch_to_grid, "snappitchtogrid", 0);
     
+    
+    // @method approxet @digest Approximate selected pitches to equal temperament
+    // @description @copy BACH_DOC_MESSAGE_APPROXET
+    // @seealso snappitchtogrid, approxji
+    // @marg 0 @name tonedivision @optional 1 @type int
+    class_addmethod(c, (method) score_sel_approxet, "approxet", A_DEFLONG);
+
+
+    // @method approxji @digest Approximate selected pitches with just intonation
+    // @description @copy BACH_DOC_MESSAGE_APPROXJI
+    // @seealso snappitchtogrid, approxet
+    // @marg 0 @name jilimit @optional 1 @type int
+    class_addmethod(c, (method) score_sel_approxji, "approxji", A_DEFLONG);
+
     
     // @method respell @digest Respell selected notes automatically
     // @description @copy BACH_DOC_MESSAGE_RESPELL
@@ -11871,7 +11908,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                     if (nt->r_it.flags & k_FLAG_SHIFT) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
+                            note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                     }
                 }
                 chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
@@ -11883,7 +11920,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
             } else {
                 note_compute_approximation((t_notation_obj *) x, note);
                 if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                    snap_pitch_to_displayed_for_note((t_notation_obj *) x, note);
+                    note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, note);
             }
                 
             if (true) { // !old_chord_deleted) {
@@ -11931,7 +11968,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                                 if (nt->r_it.flags & k_FLAG_SHIFT) {
                                     note_compute_approximation((t_notation_obj *) x, nt);
                                     if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                        snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
+                                        note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                                 }
                             }
                             measure_validate_accidentals((t_notation_obj *) x, newch->parent);
@@ -11954,7 +11991,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
                             note_compute_approximation((t_notation_obj *) x, nt);
                             if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
+                                note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                         }
                     }
                     measure_validate_accidentals((t_notation_obj *) x, oldch->parent);
@@ -12002,7 +12039,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                                     if (nt->r_it.flags & k_FLAG_SHIFT) {
                                         note_compute_approximation((t_notation_obj *) x, nt);
                                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
+                                            note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                                     }
                                 } 
                             }
@@ -12023,7 +12060,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                     for (nt = oldch->firstnote; nt; nt = nt->next) {
                         note_compute_approximation((t_notation_obj *) x, nt);
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
-                            snap_pitch_to_displayed_for_note((t_notation_obj *) x, nt);
+                            note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                     }
                     measure_validate_accidentals((t_notation_obj *) x, oldch->parent);
                     chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
@@ -13192,8 +13229,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     if (newnote) {
                                         
                                         if (curr_ch->parent->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) {
-                                            t_rational r = get_best_jilimited_approximation(cents_to_freqratio((t_notation_obj *)x, newnote->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
-                                            newnote->midicents = freqratio_to_cents((t_notation_obj *)x, (double)r);
+                                            t_rational r = get_best_jilimited_approximation(notationobj_cents_to_freqratio((t_notation_obj *)x, newnote->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
+                                            newnote->midicents = notationobj_freqratio_to_cents((t_notation_obj *)x, (double)r);
                                             newnote->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getRatio());
                                         }
                                         
@@ -13215,7 +13252,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)curr_ch);
                                     note_compute_approximation((t_notation_obj *) x, newnote);
                                     if (x->r_ob.snap_pitch_to_grid_when_editing) 
-                                        snap_pitch_to_displayed_for_note((t_notation_obj *) x, newnote);
+                                        note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, newnote);
                                     constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &newnote->midicents, curr_ch->parent->voiceparent->v_ob.number);
                             
                                     recompute_all_for_measure((t_notation_obj *)x, curr_ch->parent, true);
@@ -14739,7 +14776,7 @@ t_llll* get_score_values_for_xml_as_llll(t_score *x){
                     t_llll* note_llll = llll_get();
                     
                     llll_appendlong(note_llll, note_get_display_midicents(temp_note), 0, WHITENULL_llll); // step midicents
-                    llll_appendrat(note_llll, note_get_display_accidental_ordinary(temp_note), 0, WHITENULL_llll); // screen accidental
+                    llll_appendrat(note_llll, note_get_display_accidentals_ordinary(temp_note), 0, WHITENULL_llll); // screen accidental
                     llll_appendlong(note_llll, temp_note->show_accidentals, 0, WHITENULL_llll); // is accidental shown?
                     llll_appendlong(note_llll, temp_note->velocity, 0, WHITENULL_llll); // velocity
                     llll_appendlong(note_llll, (temp_note->tie_to) ? 1 : 0, 0, WHITENULL_llll); // start_tie?                    

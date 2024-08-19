@@ -1461,8 +1461,20 @@
 
 #define BACH_DOC_MESSAGE_SNAPPITCHTOGRID
 	// The <m>snappitchtogrid</m> message snaps the midicents of each selected note to the
-	// currently active microtonal grid (see the <m>tonedivision</m> attribute).
-	
+	// currently displayed pitch.
+
+#define BACH_DOC_MESSAGE_APPROXET
+    // The <m>approxet</m> message approximates the pitches of each selected note to the
+    // currently defined equal temperament (see the <m>tonedivision</m> attribute).
+    // If an additional integer argument is provided, it is consider to be a custom tonedivision
+    // for the approximation
+
+#define BACH_DOC_MESSAGE_APPROXJI
+    // The <m>approxji</m> message approximates the pitches of each selected note to the
+    // currently defined just intonation limit (see the <m>jilimit</m> attribute).
+    // If an additional integer argument is provided, it is consider to be the custom prime limit
+    // for the approximation
+
 	
 #define BACH_DOC_MESSAGE_NAME
 	// The word <m>name</m>, followed by a symbol, a number or an llll, assigns such content as names for the

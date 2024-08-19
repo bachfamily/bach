@@ -26,7 +26,7 @@
 
 
 
-t_shortRational note_get_display_accidental_ordinary(t_note *nt)
+t_shortRational note_get_display_accidentals_ordinary(t_note *nt)
 {
     if (nt->pitch_displayed.isPureET()) {
         return nt->pitch_displayed.getAlterET();
@@ -37,7 +37,7 @@ t_shortRational note_get_display_accidental_ordinary(t_note *nt)
     }
 }
 
-t_rational note_get_display_accidental_JIcommas(t_note *nt)
+t_rational note_get_display_accidentals_JIcommas(t_note *nt)
 {
     if (nt->pitch_displayed.isPureET()) {
         return genrat(1, 1);
@@ -48,7 +48,7 @@ t_rational note_get_display_accidental_JIcommas(t_note *nt)
     }
 }
 
-double note_get_display_accidental_cents(t_note *nt)
+double note_get_display_accidentals_cents(t_note *nt)
 {
     if (nt->pitch_displayed.isPureET()) {
         return nt->pitch_displayed.getAlterET() * 200.;
@@ -137,8 +137,8 @@ void note_get_accidental_as_fraction(t_notation_obj *r_ob, t_note *nt, char *buf
     
     buf[0] = 0;
     if (nt->pitch_displayed.isPureET()) {
-        num = note_get_display_accidental_ordinary(nt).num();
-        den = note_get_display_accidental_ordinary(nt).den();
+        num = note_get_display_accidentals_ordinary(nt).num();
+        den = note_get_display_accidentals_ordinary(nt).den();
         if (r_ob->accidentals_display_type == k_ACCIDENTALS_UNREDUCED_FRACTION && den < r_ob->tone_division) {
             long factor = r_ob->tone_division / den;
             den *= factor;
@@ -598,7 +598,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                         
                     case 2: // 11-limit
                         while (comma_abs > 0) {
-                            *curChar = (comma_sign < 0 ? BACH_ACCIDENTAL_JI_COMMA_11_UP : BACH_ACCIDENTAL_JI_COMMA_11_DOWN);
+                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_11_UP : BACH_ACCIDENTAL_JI_COMMA_11_DOWN);
                             curChar++;
                             numChars++;
                             comma_abs -= 1;
@@ -607,7 +607,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                         
                     case 3: // 13-limit
                         while (comma_abs > 0) {
-                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_13_UP : BACH_ACCIDENTAL_JI_COMMA_13_UP);
+                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_13_UP : BACH_ACCIDENTAL_JI_COMMA_13_DOWN);
                             curChar++;
                             numChars++;
                             comma_abs -= 1;
@@ -625,7 +625,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                         
                     case 5: // 19-limit
                         while (comma_abs > 0) {
-                            *curChar = (comma_sign < 0 ? BACH_ACCIDENTAL_JI_COMMA_19_UP : BACH_ACCIDENTAL_JI_COMMA_19_DOWN);
+                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_19_UP : BACH_ACCIDENTAL_JI_COMMA_19_DOWN);
                             curChar++;
                             numChars++;
                             comma_abs -= 1;
@@ -644,7 +644,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                         
                     case 7: // 29-limit
                         while (comma_abs > 0) {
-                            *curChar = (comma_sign < 0 ? BACH_ACCIDENTAL_JI_COMMA_29_UP : BACH_ACCIDENTAL_JI_COMMA_29_DOWN);
+                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_29_UP : BACH_ACCIDENTAL_JI_COMMA_29_DOWN);
                             curChar++;
                             numChars++;
                             comma_abs -= 1;
@@ -653,7 +653,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                         
                     case 8: // 31-limit
                         while (comma_abs > 0) {
-                            *curChar = (comma_sign < 0 ? BACH_ACCIDENTAL_JI_COMMA_31_UP : BACH_ACCIDENTAL_JI_COMMA_31_DOWN);
+                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_31_UP : BACH_ACCIDENTAL_JI_COMMA_31_DOWN);
                             curChar++;
                             numChars++;
                             comma_abs -= 1;
@@ -662,7 +662,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                         
                     case 9: // 37-limit
                         while (comma_abs > 0) {
-                            *curChar = (comma_sign < 0 ? BACH_ACCIDENTAL_JI_COMMA_37_UP : BACH_ACCIDENTAL_JI_COMMA_37_DOWN);
+                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_37_UP : BACH_ACCIDENTAL_JI_COMMA_37_DOWN);
                             curChar++;
                             numChars++;
                             comma_abs -= 1;
@@ -671,7 +671,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                         
                     case 10: // 41-limit
                         while (comma_abs > 0) {
-                            *curChar = (comma_sign < 0 ? BACH_ACCIDENTAL_JI_COMMA_41_UP : BACH_ACCIDENTAL_JI_COMMA_41_DOWN);
+                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_41_UP : BACH_ACCIDENTAL_JI_COMMA_41_DOWN);
                             curChar++;
                             numChars++;
                             comma_abs -= 1;
@@ -680,7 +680,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                         
                     case 11: // 43-limit
                         while (comma_abs > 0) {
-                            *curChar = (comma_sign < 0 ? BACH_ACCIDENTAL_JI_COMMA_43_UP : BACH_ACCIDENTAL_JI_COMMA_43_DOWN);
+                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_43_UP : BACH_ACCIDENTAL_JI_COMMA_43_DOWN);
                             curChar++;
                             numChars++;
                             comma_abs -= 1;
@@ -689,7 +689,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
                         
                     case 12: // 47-limit
                         while (comma_abs > 0) {
-                            *curChar = (comma_sign < 0 ? BACH_ACCIDENTAL_JI_COMMA_47_UP : BACH_ACCIDENTAL_JI_COMMA_47_DOWN);
+                            *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_47_UP : BACH_ACCIDENTAL_JI_COMMA_47_DOWN);
                             curChar++;
                             numChars++;
                             comma_abs -= 1;

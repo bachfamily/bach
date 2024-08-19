@@ -10,6 +10,7 @@ VERSION NOTES:
    á now support slurs
    á now feature a new system of notification of interface actions that provides details on the elements being modified. See the new "notifywith" message.
    á Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
+   á "snappitchtogrid" message has been renamed "approxet", but the old name is kept for backward compatibility
 
 - bach.score:
     á fixed bug causing wrong playback for grace notes!

@@ -696,10 +696,10 @@ t_rational approx_double_with_rat_smart_permanence(double number, double toleran
 
 
 // Get continued fraction convergents for number num
-std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {});
-std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {});
-std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {});
-std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {});
+std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
+std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
+std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
+std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
 
 std::vector<t_rational> rational_approximation_with_primes(double v, const std::vector<int> &allowed_primes,
                                                            double err_thresh, bool log_error, long maxden,
@@ -709,6 +709,7 @@ std::vector<t_rational> rational_approximation_with_primes(double v, const std::
                                                            const double tenneyHeightExp =0.2);
 
 
+double rational_get_tenney_height(t_rational r);
 long rational_get_jilimit(t_rational r);
 t_rational get_best_jilimited_approximation(double num, long jilimit, double mc_thresh);
 
