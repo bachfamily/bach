@@ -25678,6 +25678,12 @@ double notationobj_freqratio_to_cents(t_notation_obj *r_ob, double ratio)
 }
 
 
+t_pitch notationobj_get_best_jilimited_approximation(t_notation_obj *r_ob, double cents)
+{
+    t_rational r = get_best_jilimited_approximation(notationobj_cents_to_freqratio(r_ob, cents), r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh);
+    return t_pitch(r * r_ob->ji_base_for_ratios.getRatio());
+}
+
 double snap_to_jilimit(double cents, long jilimit, double jierrthresh, double baseratio){
     t_rational r = get_best_jilimited_approximation(cents_to_freqratio(cents, baseratio), jilimit, jierrthresh);
     return freqratio_to_cents((double)r, baseratio);

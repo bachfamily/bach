@@ -11677,6 +11677,8 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
     double prev_mc = note->midicents; // mc before change
     char octave_jump = false;
     long num_octaves_jump = 0;
+    bool ji = (note->parent->parent->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) && abs(delta) != (6 * x->r_ob.tone_division);
+    // (if we shift by octaves, we don't need the ji Farey approximation)
 
     if (old_chord_deleted) 
         *old_chord_deleted = false;
@@ -11684,10 +11686,21 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
     if (mode == 0) {
         octave_jump = (((long)delta) % (6 * x->r_ob.tone_division) == 0);
         if (octave_jump) num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
-        note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->parent->voiceparent->v_ob.number, delta);
+        if (ji) {
+            double r = notationobj_cents_to_freqratio((t_notation_obj *)x, note->midicents);
+            t_rational r_new = get_next_rational_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, r, note->parent->parent->voiceparent->v_ob.number, delta);
+            note->pitch_original = t_pitch(r_new * x->r_ob.ji_base_for_ratios.getRatio());
+            note->midicents = note->pitch_original.toMCdouble();
+        } else {
+            note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->parent->voiceparent->v_ob.number, delta);
+        }
 //        note->midicents += (delta * (200. / x->r_ob.tone_division));
-    } else
+    } else {
         note->midicents += delta;
+        if (ji) {
+            note->pitch_original = notationobj_get_best_jilimited_approximation((t_notation_obj *)x, note->midicents);
+        }
+    }
 
     note_y_real = mc_to_yposition((t_notation_obj *)x, note->midicents, (t_voice *) note->parent->parent->voiceparent);
 
@@ -18082,6 +18095,7 @@ char score_sel_dilate_mc(t_score *x, double mc_factor, double fixed_mc_y_pixel){
             nt->midicents = fixed_mc_point + (nt->midicents - fixed_mc_point) * mc_factor;
             if (nt->midicents < 0)
                 nt->midicents = 0;
+            note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, nt);
             recompute_all_for_measure((t_notation_obj *) x, nt->parent->parent, false);
             changed = 1;
         } else if (curr_it->type == k_CHORD) {
@@ -18096,6 +18110,7 @@ char score_sel_dilate_mc(t_score *x, double mc_factor, double fixed_mc_y_pixel){
                 nt->midicents = fixed_mc_point + (nt->midicents - fixed_mc_point) * mc_factor;
                 if (nt->midicents < 0)
                     nt->midicents = 0;
+                note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, nt);
             }
             recompute_all_for_measure((t_notation_obj *) x, chord->parent, false);
             changed = 1;

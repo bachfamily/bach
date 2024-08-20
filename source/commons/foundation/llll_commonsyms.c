@@ -143,6 +143,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_onsets = gensym("onsets");
     x->s_cent = gensym("cent");
     x->s_cents = gensym("cents");
+    x->s_midinote = gensym("midinote");
+    x->s_frequency = gensym("frequency");
     x->s_deltacents = gensym("deltacents");
     x->s_duration = gensym("duration");
     x->s_durations = gensym("durations");

@@ -212,8 +212,7 @@ char double_double_cmp_with_threshold(double num1, double num2, double threshold
 	@param		reference_freq	Frequence (in Hz) of the diapason A (e.g. 440)
 	@return						The midicents value
  */
-double f2mc(double freq, double reference_freq = 440.);
-double f2mc(double f, double basefreq, double basepitch);
+double f2mc(double f, double basefreq = 440., double basepitch = 6900.);
 t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch);
 
 /**	Convert a midicents value into a frequence.
@@ -222,8 +221,7 @@ t_llll *llll_f2mc(t_llll *ll, double basefreq, double basepitch);
 	@param		reference_freq	Frequence (in Hz) of the diapason A (e.g. 440)
 	@return						The frequence value in Hz
  */
-double mc2f(double mc, double reference_freq = 440.);
-double mc2f(double mc, double basefreq, double basepitch);
+double mc2f(double mc, double basefreq = 440., double basepitch = 6900.);
 t_llll *llll_mc2f(t_llll *ll, double basefreq, double basepitch);
 
 

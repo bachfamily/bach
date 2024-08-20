@@ -123,6 +123,8 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_onsets;
 	t_symbol	*s_cent;
 	t_symbol	*s_cents;
+    t_symbol    *s_midinote;
+    t_symbol    *s_frequency;
 	t_symbol	*s_deltacents;
 	t_symbol	*s_duration;
 	t_symbol	*s_durations;
@@ -542,6 +544,8 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_onsets			(_llllobj_common_symbols->s_onsets)
 #define _llllobj_sym_cent			(_llllobj_common_symbols->s_cent)
 #define _llllobj_sym_cents			(_llllobj_common_symbols->s_cents)
+#define _llllobj_sym_midinote       (_llllobj_common_symbols->s_midinote)
+#define _llllobj_sym_frequency      (_llllobj_common_symbols->s_frequency)
 #define _llllobj_sym_deltacents		(_llllobj_common_symbols->s_deltacents)
 #define _llllobj_sym_duration		(_llllobj_common_symbols->s_duration)
 #define _llllobj_sym_durations		(_llllobj_common_symbols->s_durations)

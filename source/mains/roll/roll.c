@@ -14164,8 +14164,10 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->voiceparent->v_ob.number, delta);
         }
-    } else
+    } else {
         note->midicents += delta;
+        note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, note);
+    }
     
     note_y_real = note_old_system * x->r_ob.system_jump + mc_to_yposition((t_notation_obj *)x, note->midicents, (t_voice *) note->parent->voiceparent);
     note_new_system = yposition_to_systemnumber((t_notation_obj *) x, note_y_real);
@@ -18796,6 +18798,7 @@ char roll_sel_dilate_mc(t_roll *x, double mc_factor, double fixed_mc_y_pixel){
             nt->midicents = fixed_mc_point + (nt->midicents - fixed_mc_point) * mc_factor;
             if (nt->midicents < 0)
                 nt->midicents = 0;
+            note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, nt);
             chord_set_recompute_parameters_flag((t_notation_obj *)x, nt->parent);
             changed = 1;
         } else if (curr_it->type == k_CHORD) {
@@ -18811,6 +18814,8 @@ char roll_sel_dilate_mc(t_roll *x, double mc_factor, double fixed_mc_y_pixel){
                 nt->midicents = fixed_mc_point + (nt->midicents - fixed_mc_point) * mc_factor;
                 if (nt->midicents < 0)
                     nt->midicents = 0;
+                
+                note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, nt);
 //                dev_post("%.2f = %.2f + (%.2f - %.2f) * %.2f", nt->midicents, fixed_mc_point, old_mc, fixed_mc_point, mc_factor);
             }
             chord_set_recompute_parameters_flag((t_notation_obj *)x, chord);

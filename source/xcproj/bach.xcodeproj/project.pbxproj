@@ -600,6 +600,8 @@
 		1ED51E311F73F5EA0021C2D5 /* mc2p.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ED51E2F1F73F5EA0021C2D5 /* mc2p.c */; };
 		1ED51E341F73F5EA0021C2D5 /* p2mc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ED51E301F73F5EA0021C2D5 /* p2mc.c */; };
 		1EDA0D1F2C6BC5B000319759 /* bach_accidentals.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 1EDA0D1E2C6BC5B000319759 /* bach_accidentals.hpp */; };
+		1EFD2E7A2C74D77000CF9871 /* libMTSMaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1EFD2E782C74D77000CF9871 /* libMTSMaster.cpp */; };
+		1EFD2E7B2C74D77000CF9871 /* libMTSMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EFD2E792C74D77000CF9871 /* libMTSMaster.h */; };
 		91040DA51FB1ABCD009E91CD /* bach_parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91040DA31FB1ABCD009E91CD /* bach_parser.hpp */; };
 		91071DB12100DB5900452762 /* bach_codableobj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91071DAF2100DB5900452762 /* bach_codableobj.cpp */; };
 		91071DB22100DB5900452762 /* bach_codableobj.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91071DB02100DB5900452762 /* bach_codableobj.hpp */; };
@@ -3624,6 +3626,8 @@
 		1ED51E301F73F5EA0021C2D5 /* p2mc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p2mc.c; sourceTree = "<group>"; };
 		1EDA0D1E2C6BC5B000319759 /* bach_accidentals.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bach_accidentals.hpp; sourceTree = "<group>"; };
 		1EE928E3153B13FF00341C71 /* bach_inspector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_inspector.c; sourceTree = "<group>"; };
+		1EFD2E782C74D77000CF9871 /* libMTSMaster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = libMTSMaster.cpp; path = "MTS-ESP-main/Master/libMTSMaster.cpp"; sourceTree = "<group>"; };
+		1EFD2E792C74D77000CF9871 /* libMTSMaster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libMTSMaster.h; path = "MTS-ESP-main/Master/libMTSMaster.h"; sourceTree = "<group>"; };
 		22CF10220EE984600054F513 /* bach.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = bach.xcconfig; sourceTree = "<group>"; };
 		91040DA31FB1ABCD009E91CD /* bach_parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bach_parser.hpp; sourceTree = "<group>"; };
 		91071DAF2100DB5900452762 /* bach_codableobj.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bach_codableobj.cpp; sourceTree = "<group>"; };
@@ -6321,6 +6325,15 @@
 			path = patreon;
 			sourceTree = "<group>";
 		};
+		1EFD2E772C74D75800CF9871 /* MTS-ESP */ = {
+			isa = PBXGroup;
+			children = (
+				1EFD2E782C74D77000CF9871 /* libMTSMaster.cpp */,
+				1EFD2E792C74D77000CF9871 /* libMTSMaster.h */,
+			);
+			name = "MTS-ESP";
+			sourceTree = "<group>";
+		};
 		911BB20617CBA88F00B513E8 /* c74support */ = {
 			isa = PBXGroup;
 			children = (
@@ -6994,6 +7007,7 @@
 		9157F5AC232F6F1500A4ADAB /* libraries */ = {
 			isa = PBXGroup;
 			children = (
+				1EFD2E772C74D75800CF9871 /* MTS-ESP */,
 				00992C172C2EE6CC00DA02CD /* antlr4-cpp-runtime-4-src */,
 				91C603FE18C0D9CD0027BB79 /* sdif */,
 				1E3B57CA15ACECA900B32D1F /* kiss_fft */,
@@ -7683,6 +7697,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EFD2E7B2C74D77000CF9871 /* libMTSMaster.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14004,6 +14019,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EFD2E7A2C74D77000CF9871 /* libMTSMaster.cpp in Sources */,
 				916120521DD3D5E1003CEE3A /* playkeys.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

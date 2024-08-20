@@ -986,6 +986,9 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
     double x = 1. / (num - a0);
     long a1 = (long)floor(x);
 
+    if (stop_at_this_an != 0 && a1 > stop_at_this_an)
+        return convs;
+    
     if (includeSemiconvergents) {
         for (long j = 1; j < a1; j++) {
             long p = j * p0 + 1;

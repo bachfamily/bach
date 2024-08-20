@@ -86,6 +86,14 @@ void note_set_displayed_user_enharmonicity(t_note *nt, t_pitch pitch)
     nt->pitch_displayed = pitch;
 }
 
+void note_set_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob, t_note *nt)
+{
+    t_voice *voice = notation_item_get_voice(r_ob, (t_notation_item *)nt);
+    if (voice->notation_style == k_VOICE_NOTATION_STYLE_JI) {
+        nt->pitch_original = notationobj_get_best_jilimited_approximation(r_ob, nt->midicents);
+        nt->midicents = nt->pitch_original.toMCdouble();
+    }
+}
 
 void note_appendpitch_to_llll(t_notation_obj *r_ob, t_llll *ll, t_note *note, long pitchmode)
 {

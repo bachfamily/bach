@@ -5576,6 +5576,7 @@ void note_set_user_enharmonicity(t_note *nt, t_pitch pitch, char also_assign_mc 
 void note_set_enharmonicity(t_note *nt, t_pitch pitch); // if pitch is NaP it'll be auto, otherwise user
 void note_set_displayed_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc);
 void note_set_displayed_user_enharmonicity(t_note *nt, t_pitch pitch);
+void note_set_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob, t_note *nt);
 
 void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode);
 void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
@@ -7741,6 +7742,7 @@ double notationobj_snap_to_microtonal_grid(t_notation_obj *r_ob, double cents);
 
 double snap_to_jilimit(double cents, long jilimit, double jierrthresh, double baseratio);
 double notationobj_snap_to_jilimit(t_notation_obj *r_ob, double cents);
+t_pitch notationobj_get_best_jilimited_approximation(t_notation_obj *r_ob, double cents);
 
 long ratio_fold_octaves(t_rational *r); // returns number of folded octaves
 long ratio_fold_octaves(double *r); // returns number of folded octaves

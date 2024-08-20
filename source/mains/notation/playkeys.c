@@ -64,8 +64,10 @@
 #include "foundation/llll_commons_ext.h"
 
 #include "notation/notation.h"
+#include "libMTSMaster.h"
 
-
+long PLAYKEYS_MTSESP_COUNT = 0;
+bool PLAYKEYS_MTSESP_IS_MASTER = false;
 
 enum playkeys_properties
 {
@@ -74,6 +76,8 @@ enum playkeys_properties
     k_PLAYKEYS_ONSET,
     k_PLAYKEYS_SYMONSET,
     k_PLAYKEYS_CENTS,
+    k_PLAYKEYS_MIDINOTE,
+    k_PLAYKEYS_FREQUENCY,
     k_PLAYKEYS_PITCH,
     k_PLAYKEYS_DURATION,
     k_PLAYKEYS_SYMDURATION,
@@ -186,8 +190,16 @@ typedef struct _playkeys
     t_bach_atomic_lock      n_process_lock;
 
     t_llll                    *n_empty;
+    
+    // tuning
+    double                  basepitch;
+    double                  basefreq;
 
     long                    n_creatingnewobject;
+    
+    // MTS-ESP
+    char send_mtsesp;                           ///< Use MTS-ESP to send Midi Tuning Standard tuning information on each played note
+
 } t_playkeys;
 
 
@@ -208,6 +220,8 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av);
 
 long playkeys_func(t_hatom *key, t_llll *what);
 void playkeys_output(t_playkeys *x);
+
+t_max_err playkeys_setattr_mtsesp(t_playkeys *x, t_object *attr, long ac, t_atom *av);
 
 t_class *playkeys_class;
 
@@ -304,6 +318,8 @@ long get_default_allowed_notationitems_for_property(long property)
         case k_PLAYKEYS_ONSET: return standard_set;
         case k_PLAYKEYS_SYMONSET: return score_set;
         case k_PLAYKEYS_CENTS: return standard_set;
+        case k_PLAYKEYS_MIDINOTE: return standard_set;
+        case k_PLAYKEYS_FREQUENCY: return standard_set;
         case k_PLAYKEYS_PITCH: return standard_set;
         case k_PLAYKEYS_DURATION: return standard_set;
         case k_PLAYKEYS_SYMDURATION: return score_set;
@@ -348,6 +364,10 @@ long symbol_to_property(t_symbol *s)
         return k_PLAYKEYS_SYMONSET;
     if (s == _llllobj_sym_cents)
         return k_PLAYKEYS_CENTS;
+    if (s == _llllobj_sym_midinote)
+        return k_PLAYKEYS_MIDINOTE;
+    if (s == _llllobj_sym_frequency)
+        return k_PLAYKEYS_FREQUENCY;
     if (s == _llllobj_sym_pitch)
         return k_PLAYKEYS_PITCH;
     if (s == _llllobj_sym_duration)
@@ -430,6 +450,8 @@ t_symbol *property_to_symbol(long property)
         case k_PLAYKEYS_ONSET: return _llllobj_sym_onset;
         case k_PLAYKEYS_SYMONSET: return _llllobj_sym_symonset;
         case k_PLAYKEYS_CENTS: return _llllobj_sym_cents;
+        case k_PLAYKEYS_MIDINOTE: return _llllobj_sym_midinote;
+        case k_PLAYKEYS_FREQUENCY: return _llllobj_sym_frequency;
         case k_PLAYKEYS_PITCH: return _llllobj_sym_pitch;
         case k_PLAYKEYS_DURATION: return _llllobj_sym_duration;
         case k_PLAYKEYS_SYMDURATION: return _llllobj_sym_symduration;
@@ -559,6 +581,29 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_LABEL(c, "voicefilter", 0, "Filter Voices");
     // @description Limits the output of items to one or more voices (specified in the array).
     // If no voice is set, all elements are output. Use voice 0 to only output elements that do not have any voice.
+
+    CLASS_STICKY_ATTR_CLEAR(c, "category");
+
+    CLASS_STICKY_ATTR(c,"category",0,"Tuning");
+
+    CLASS_ATTR_CHAR(c, "mtsesp", 0, t_playkeys, send_mtsesp);
+    CLASS_ATTR_LABEL(c, "mtsesp", 0, "Act as MTS-ESP Master");
+    CLASS_ATTR_ACCESSORS(c, "mtsesp", (method)NULL, (method)playkeys_setattr_mtsesp);
+    CLASS_ATTR_STYLE(c, "mtsesp",        0, "onoff");
+    // @description Toggles the ability for <o>bach.playkeys</o> to act as MTS-ESP Master
+    // whenever a "midinote" key is used. The object will send specific tuning information
+    // about any outgoing note so that any MTS-ESP compliant plugins loaded in <o>vst~</o>
+    // can be influenced automatically.
+    
+    CLASS_ATTR_DOUBLE(c, "basepitch",        0,    t_playkeys, basepitch);
+    CLASS_ATTR_LABEL(c, "basepitch",        0, "Reference Pitch");
+    CLASS_ATTR_STYLE(c, "basepitch",        0, "text");
+    // @description Sets the reference pitch for tuning.
+
+    CLASS_ATTR_DOUBLE(c, "basefreq",        0,    t_playkeys, basefreq);
+    CLASS_ATTR_LABEL(c, "basefreq",        0, "Reference Frequency");
+    CLASS_ATTR_STYLE(c, "basefreq",        0, "text");
+    // @description Sets the frequency of the reference pitch (<m>basepitch</m>).
 
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -753,6 +798,30 @@ void playkeys_handle_flattening_and_nullmode(t_playkeys *x, t_llll **ll, long in
 
 }
 
+t_max_err playkeys_setattr_mtsesp(t_playkeys *x, t_object *attr, long ac, t_atom *av)
+{
+    if (!x->n_creatingnewobject) {
+        object_error((t_object *)x, "Attribute \"mtsesp\" is static and can only be set in the object box.");
+        return MAX_ERR_GENERIC;
+    }
+    
+    if (ac >= 1 && atom_gettype(av) == A_LONG && atom_getlong(av)) {
+        if (PLAYKEYS_MTSESP_COUNT == 0) { // first object!
+            if (MTS_CanRegisterMaster()) {
+                PLAYKEYS_MTSESP_IS_MASTER = true;
+                MTS_RegisterMaster();
+            } else {
+                PLAYKEYS_MTSESP_IS_MASTER = false;
+                object_warn((t_object *)x, "Cannot register bach.playkeys as MTS-ESP master.");
+                object_warn((t_object *)x, "\tCheck that any other MTS-ESP master application is shut and then reload.");
+            }
+        }
+        PLAYKEYS_MTSESP_COUNT++;
+    }
+    
+    return MAX_ERR_NONE;
+}
+    
 t_max_err playkeys_setattr_process(t_playkeys *x, t_object *attr, long ac, t_atom *av)
 {
     if (!x->n_creatingnewobject) {
@@ -928,6 +997,11 @@ void extract_voicename_and_append_it(t_llll *out, t_llll *this_path)
     }
 }
 
+
+void playkeys_send_mtsesp(long midinote, double freq)
+{
+    MTS_SetNoteTuning(freq, midinote);
+}
 
 void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
 {
@@ -1274,7 +1348,10 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                     }
                         break;
 
+
                     case k_PLAYKEYS_CENTS:
+                    case k_PLAYKEYS_MIDINOTE:
+                    case k_PLAYKEYS_FREQUENCY:
                     {
                         switch (incoming) {
                             case k_PLAYKEYS_INCOMING_ROLLNOTE:
@@ -1288,8 +1365,22 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
                                     if (!can_llll_be_a_note(notell))
                                         break;
-                                    if ((target_el = llll_getindex(notell, 1, I_STANDARD)))
-                                        llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
+                                    if ((target_el = llll_getindex(notell, 1, I_STANDARD))) {
+                                        switch (this_key->property) {
+                                            case k_PLAYKEYS_MIDINOTE:
+                                                playkeys_send_mtsesp((long)round(hatom_getdouble(&target_el->l_hatom)/100.), mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch));
+                                                llll_appendlong(found, (long)round(hatom_getdouble(&target_el->l_hatom)/100.));
+                                                break;
+
+                                            case k_PLAYKEYS_FREQUENCY:
+                                                llll_appenddouble(found, mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch));
+                                                break;
+
+                                            default:
+                                                llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
+                                                break;
+                                        }
+                                    }
                                 }
                                 break;
 
@@ -1304,8 +1395,20 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
                                     if (!can_llll_be_a_note(notell))
                                         break;
-                                    if ((target_el = llll_getindex(notell, 1, I_STANDARD)))
-                                        llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
+                                    if ((target_el = llll_getindex(notell, 1, I_STANDARD))) {
+                                        switch (this_key->property) {
+                                            case k_PLAYKEYS_MIDINOTE:
+                                                playkeys_send_mtsesp((long)round(hatom_getdouble(&target_el->l_hatom)/100.), mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch));
+                                                llll_appendlong(found, (long)round(hatom_getdouble(&target_el->l_hatom)/100.));
+                                                break;
+                                            case k_PLAYKEYS_FREQUENCY:
+                                                llll_appenddouble(found, mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch));
+                                                break;
+                                            default:
+                                                llll_appenddouble(found, hatom_getdouble(&target_el->l_hatom));
+                                                break;
+                                        }
+                                    }
                                 }
                                 break;
 
@@ -1314,7 +1417,6 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                         }
                     }
                         break;
-
 
                     case k_PLAYKEYS_VELOCITY:
                     {
@@ -2604,6 +2706,13 @@ void playkeys_free(t_playkeys *x)
     bach_freeptr(x->n_keys);
     llll_free(x->n_empty);
     llllobj_obj_free((t_llllobj_object *) x);
+    
+    if (x->send_mtsesp) {
+        PLAYKEYS_MTSESP_COUNT--;
+        if (PLAYKEYS_MTSESP_IS_MASTER && PLAYKEYS_MTSESP_COUNT == 0) { // last object!
+            MTS_DeregisterMaster();
+        }
+    }
 }
 
 t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
@@ -2625,8 +2734,8 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         // join them in a single llll in the form
         // <b>[slot <m>name_or_number</m> <m>name_or_number</m>...]</b>,
         // Allowed parameters to retrieve correspond to the following symbols:
-        // "type", "onset", "symonset", "cents", "pitch", "duration", "symduration", "tail", "velocity",
-        // "midichannel", "tie", "voicenumber", "chordindex", "noteindex, "path" (these last three only meaningful
+        // "type", "onset", "symonset", "cents", "midinote" (12-EDO approximation), "pitch", "duration", "symduration", "tail", "velocity",
+        // "midichannel", "tie", "voicenumber", "chordindex", "noteindex", "path" (these last three only meaningful
         // if <m>playoutfullpath</m> is active for the notation object), "measurenumber"
         // (only meaningful for notes and chords if <m>playoutfullpath</m> is active for the notation object), "breakpoints",
         // "measureinfo", "name", "tempo", "quartertempo", "slot", "playoffset" (for partial played notes with
@@ -2649,6 +2758,9 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
 
         x->n_autoassigncommands = 1;
         x->n_notationitems_to_process = -1; // all of them
+        
+        x->basefreq = 440.;
+        x->basepitch = 6900;
 
         t_llll *args_ll = llll_parse(true_ac, av);
 
