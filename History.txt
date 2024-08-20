@@ -23,6 +23,9 @@ VERSION NOTES:
 - bach.float2rat, and rational approximations:
     á the error has switched sign, as is more reasonable. When the approximation is above the original, the error is now positive.
 
+- bach.playkeys:
+    á now has MST-ESP support and can drive VST instrument microtonality
+
 *****************
 *** IMPORTANT ***
 *****************
