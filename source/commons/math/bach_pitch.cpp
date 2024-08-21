@@ -151,9 +151,9 @@ void t_pitch::expVector::set(const int idx, const int8_t v) {
     }
     if (idx >= 7 && idx <= 14) {
         if (idx & 1) {
-            data[(idx - 8) / 2 + 7] &= (v & 0x0f) << 4;
+            data[(idx - 7) / 2 + 7] |= (v & 0x0f) << 4;
         } else {
-            data[(idx - 7) / 2 + 7] &= (v & 0x0f) << 4;
+            data[(idx - 8) / 2 + 7] |= (v & 0x0f);
         }
         return;
     }
@@ -180,9 +180,9 @@ int8_t t_pitch::expVector::get(const int idx) const {
     }
     if (idx >= 7 && idx <= 14) {
         if (idx & 1) {
-            return getRNibble(data[idx]);
+            return getLNibble(data[(idx - 7) / 2 + 7]);
         } else {
-            return getLNibble(data[idx]);
+            return getRNibble(data[(idx - 8) / 2 + 7]);
         }
     }
     return 0;
@@ -281,7 +281,7 @@ t_rational t_pitch::expVector::getRatio() const {
     for ( ; i < 15; i++) {
         long n;
         if ((n = get(i)) != 0)
-            r *= long_long_pow(primes[(i - 7) / 2 + 7], n);
+            r *= long_long_pow(primes[i], n);
     }
     return r;
 };
