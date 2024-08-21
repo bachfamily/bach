@@ -138,7 +138,7 @@ private:
                 what *= -1;
             what.reduce();
             while (what != 1 && i < BACH_PRIMES_JI_SIZE) {
-                long this_prime = primes[i];
+                const long this_prime = primes[i];
                 if (what.r_num % this_prime == 0) {
                     exponent = 0;
                     do {
