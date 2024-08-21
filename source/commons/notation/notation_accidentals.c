@@ -573,6 +573,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
             }
         }
         
+//        t_pitch pppp = t_pitch(genrat(29, 4));
         
         // from 7-limit onwards
         for (long i = 1; i < BACH_PRIMES_JI_SIZE - 1 && numChars < CONST_MAX_ACCIDENTALS; i++) {

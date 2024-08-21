@@ -346,6 +346,7 @@ public:
         *exp2 = 0;
         *exp3 = 0;
         *whiteKey = 0;
+        t_int8 wK = 0;
         short abs_plof = (plof >= 0 ? plof : -plof);
         char sign = (plof >= 0 ? 1 : -1);
         t_shortRational mul = t_shortRational(sign >= 0 ? 3 : 2, sign >= 0 ? 2 : 3);
@@ -357,15 +358,16 @@ public:
                 *exp3 -= 1;
                 *exp2 += 1;
             }
-            *whiteKey = *whiteKey + 4 * sign;
-            if (*whiteKey < 0 || *whiteKey >= 7) {
-                *whiteKey = positive_mod(*whiteKey, 7);
+            wK = wK + 4 * sign;
+            if (wK < 0 || wK >= 7) {
+                wK = positive_mod(wK, 7);
                 if (sign >= 0)
                     *exp2 -= 1;
                 else
                     *exp2 += 1;
             }
         }
+        *whiteKey = wK;
     }
     
     t_pitch(const t_int8 plof, const std::vector<t_int8> HEJIcommas, const t_int8 octave) : p_whiteKeyET(0), p_alterET(0) {
@@ -742,7 +744,7 @@ public:
         if (primelimit < 3) { // pathological case
             std::vector<int8_t> commas(BACH_PRIMES_JI_SIZE-2, 0);
             return t_pitch(p_whiteKeyET, p_alterET, 0, commas, getOctave());
-        } else {
+        } else { // TODO: if already within limit, leave it
             std::vector<int8_t> commas = getHEJICommas();
             long len_commas = commas.size();
             long primeidx = primes_locate[primelimit];

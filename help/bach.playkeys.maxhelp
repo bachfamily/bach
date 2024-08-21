@@ -90,6 +90,45 @@
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
+									"id" : "obj-8",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 659.0, 376.0, 150.0, 21.0 ],
+									"text" : "e.g."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"bubbleside" : 3,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-11",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 105.0, 446.5, 162.0, 54.0 ],
+									"text" : "Force reset of whole system – ONLY useful after Max crashes"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-13",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 269.0, 462.0, 108.0, 23.0 ],
+									"text" : "forceresetmtsesp"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"id" : "obj-17",
 									"linecount" : 9,
 									"maxclass" : "comment",
@@ -107,7 +146,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 634.0, 437.0, 108.0, 23.0 ],
+									"patching_rect" : [ 688.0, 375.0, 108.0, 23.0 ],
 									"text" : "plug \"Pianoteq 8\""
 								}
 
@@ -177,7 +216,7 @@
 									"maxclass" : "ezdac~",
 									"numinlets" : 2,
 									"numoutlets" : 0,
-									"patching_rect" : [ 533.571428571428555, 426.0, 45.0, 45.0 ]
+									"patching_rect" : [ 533.571428571428555, 444.0, 45.0, 45.0 ]
 								}
 
 							}
@@ -194,7 +233,7 @@
 									"numoutlets" : 8,
 									"offset" : [ 0.0, 0.0 ],
 									"outlettype" : [ "signal", "signal", "", "list", "int", "", "", "" ],
-									"patching_rect" : [ 533.571428571428555, 391.0, 92.5, 23.0 ],
+									"patching_rect" : [ 533.571428571428555, 409.0, 92.5, 23.0 ],
 									"save" : [ "#N", "vst~", "loaduniqueid", 0, ";" ],
 									"saved_attribute_attributes" : 									{
 										"valueof" : 										{
@@ -415,6 +454,14 @@
 									"destination" : [ "obj-29", 0 ],
 									"midpoints" : [ 346.928571428571445, 431.666666666666629, 429.5, 431.666666666666629, 429.5, 237.0, 454.071428571428555, 237.0 ],
 									"source" : [ "obj-1", 6 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-29", 0 ],
+									"midpoints" : [ 278.5, 506.0, 427.0, 506.0, 427.0, 244.0, 454.071428571428555, 244.0 ],
+									"source" : [ "obj-13", 0 ]
 								}
 
 							}
