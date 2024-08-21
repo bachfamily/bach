@@ -1959,7 +1959,7 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
             double acc_top, acc_bottom;
             t_jfont *jf_custom_accidentals = NULL, *jf_custom_accidentals_bogus = NULL;
             char need_jf_custom_accidentals = false;
-            char acccharacters[15]; 
+            char acccharacters[2048];
             long outlen;
             char *acccharacters_utf;
             char is_bogus;
@@ -1989,17 +1989,18 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
             
             if (is_bogus) {
                 acccharacters_utf = charset_unicodetoutf8_debug(&r_ob->accidentals_typo_preferences.unicode_characters[BACH_ACCIDENTAL_BOGUS], 1, &outlen);
-                acc_x = stem_x + curr_nt->accidental_stem_delta_ux * r_ob->zoom_y - r_ob->j_inset_x;
+                acc_x = stem_x + curr_nt->accidental_stem_delta_ux * r_ob->zoom_y;
                 acc_y = note_y_real + (r_ob->noteheads_typo_preferences.nhpref[k_NOTEHEAD_BLACK_NOTE].uwidth * 0.58 * r_ob->zoom_y) - r_ob->j_inset_y;
             } else {
                 unicodeChar accidental_text[2*(CONST_MAX_ACCIDENTALS+1)];
                 long accidental_text_len = 0;
                 note_get_accidentals_unicode_chars(r_ob, curr_nt, accidental_text, &accidental_text_len);
                 acccharacters_utf = charset_unicodetoutf8_debug(accidental_text, accidental_text_len, &outlen);
-                acc_x = stem_x + curr_nt->accidental_stem_delta_ux * r_ob->zoom_y - r_ob->j_inset_x + r_ob->accidentals_typo_preferences.ux_shift * r_ob->zoom_y;
+                acc_x = stem_x + curr_nt->accidental_stem_delta_ux * r_ob->zoom_y + r_ob->accidentals_typo_preferences.ux_shift * r_ob->zoom_y;
                 acc_y = note_y_real + r_ob->accidentals_typo_preferences.uy_shift * r_ob->zoom_y; // - r_ob->j_inset_y;
             }
-            strncpy(acccharacters, acccharacters_utf, 14);
+            snprintf_zero(acccharacters, 2048, "%s", acccharacters_utf);
+//            strncpy(acccharacters, acccharacters_utf, 2047);
 
             if (accidentals_resize != 1.){
                 need_jf_custom_accidentals = true;
@@ -2007,10 +2008,8 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
                 jf_custom_accidentals_bogus = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(8.8 * r_ob->zoom_y) * accidentals_resize);
                 acc_y = note_y_real + r_ob->accidentals_typo_preferences.uy_shift * r_ob->zoom_y * accidentals_resize; // - r_ob->j_inset_y;
             }
-                        
-            write_text(g, need_jf_custom_accidentals ? 
-                       (is_bogus ? jf_custom_accidentals_bogus : jf_custom_accidentals) : (is_bogus ? jf_acc_bogus : jf_acc), 
-                       *color, acccharacters, r_ob->j_inset_x, 0, acc_x, acc_y, JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMRIGHT, true, false);
+                  
+            write_text(g, need_jf_custom_accidentals ? (is_bogus ? jf_custom_accidentals_bogus : jf_custom_accidentals) : (is_bogus ? jf_acc_bogus : jf_acc), *color, acccharacters, 0, 0, acc_x, acc_y, JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMRIGHT, true, false);
 
             bach_freeptr(acccharacters_utf);
             if (need_jf_custom_accidentals) {
@@ -27249,6 +27248,28 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
 }
 
 
+t_llll *note_get_selected_as_llll(t_notation_obj *r_ob)
+{
+    t_llll *out = llll_get();
+    t_notation_item *selit = r_ob->firstselecteditem;
+    for (selit = r_ob->firstselecteditem; selit; selit = selit->next_selected) {
+        if (selit->type == k_NOTE) {
+            llll_appendobj(out, selit);
+        } else if (selit->type == k_CHORD) {
+            for (t_note *nt = ((t_chord *)selit)->firstnote; nt; nt = nt->next) {
+                llll_appendobj(out, nt);
+            }
+        } else if (selit->type == k_MEASURE) {
+            for (t_chord *ch = ((t_measure *)selit)->firstchord; ch; ch = ch->next) {
+                for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
+                    llll_appendobj(out, nt);
+                }
+            }
+        }
+    }
+    return out;
+}
+
 t_note *note_get_first_selected(t_notation_obj *r_ob)
 {
     t_notation_item *selit = r_ob->firstselecteditem;
@@ -33437,6 +33458,10 @@ char snap_pitch_to_et_tonedivision_for_selection(t_notation_obj *r_ob, long tone
                 snap_pitch_to_et_tonedivision_for_note(r_ob, nt, tonedivision);
                 changed = 1;
             }
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+                chord_set_recompute_parameters_flag(r_ob, nt->parent);
+            else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                recompute_all_for_measure(r_ob, nt->parent->parent, false);
         } else if (curr_it->type == k_CHORD) {
             t_note *temp_nt = ((t_chord *)curr_it)->firstnote;
             while (temp_nt) {
@@ -33447,6 +33472,10 @@ char snap_pitch_to_et_tonedivision_for_selection(t_notation_obj *r_ob, long tone
                 }
                 temp_nt = temp_nt->next;
             }
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+                chord_set_recompute_parameters_flag(r_ob, ((t_chord *)curr_it));
+            else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                recompute_all_for_measure(r_ob, ((t_chord *)curr_it)->parent, false);
         } else if (curr_it->type == k_MEASURE) {
             t_chord *temp_ch = ((t_measure *)curr_it)->firstchord;
             while (temp_ch) {
@@ -33461,6 +33490,7 @@ char snap_pitch_to_et_tonedivision_for_selection(t_notation_obj *r_ob, long tone
                 }
                 temp_ch = temp_ch->next;
             }
+            recompute_all_for_measure(r_ob, ((t_measure *)curr_it), false);
         } else if (curr_it->type == k_PITCH_BREAKPOINT) {
             t_bpt *bpt = (t_bpt *)curr_it;
             t_note *nt = bpt->owner;
@@ -33526,6 +33556,73 @@ char enharmonically_respell_selection(t_notation_obj *r_ob){
     }
     unlock_general_mutex(r_ob);
     return changed;
+}
+
+bool note_should_be_treated_as_ji(t_notation_obj *r_ob, t_note *nt)
+{
+    t_voice *voice = notation_item_get_voice(r_ob, (t_notation_item *)nt);
+    if (voice->notation_style == k_VOICE_NOTATION_STYLE_JI) {
+        return nt->pitch_original.isPureJI();
+    } else {
+        return nt->pitch_original.isPureJI() && !nt->pitch_original.isPureET();
+    }
+}
+
+void note_set_ratio_wrt_other_note(t_notation_obj *r_ob, t_note *refnote, t_note *nt, t_hatom *ratio)
+{
+    if (note_should_be_treated_as_ji(r_ob, refnote) && (hatom_gettype(ratio) == H_LONG || hatom_gettype(ratio) == H_RAT || (hatom_gettype(ratio) == H_PITCH && hatom_getpitch(ratio).isPureJI()))) {
+        // JI version
+        t_rational r;
+        if (hatom_gettype(ratio) == H_PITCH)
+            r = hatom_getpitch(ratio).getRatio();
+        else
+            r = hatom_getrational(ratio);
+        nt->pitch_original = t_pitch(refnote->pitch_original.getRatio() * r);
+        nt->midicents = nt->pitch_original.toMCdouble();
+    } else {
+        // ET version
+        double r = hatom_getdouble(ratio);
+        nt->pitch_original = t_pitch::NaP;
+        nt->midicents = notationobj_freqratio_to_cents(r_ob, notationobj_cents_to_freqratio(r_ob, refnote->midicents) * r);
+    }
+}
+
+
+
+void notationobj_setintervalratio(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    bool changed = false;
+    t_llll *ll = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    if (ll) {
+        if (ll->l_size >= 1 && r_ob->num_selecteditems >= 1) {
+            t_llll *notes = note_get_selected_as_llll(r_ob);
+            if (notes->l_size >= 2) {
+                t_note *refnote = (t_note *)hatom_getobj(&notes->l_head->l_hatom);
+                t_llllelem *ratioel, *el;
+                for (el = notes->l_head->l_next, ratioel = ll->l_head; el && ratioel; el = el->l_next, ratioel = ratioel->l_next ? ratioel->l_next : ratioel) {
+                    t_note *nt = (t_note *)hatom_getobj(&el->l_hatom);
+                    undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                    note_set_ratio_wrt_other_note(r_ob, refnote, nt, &ratioel->l_hatom);
+                    refnote = nt;
+                    note_compute_approximation(r_ob, nt);
+                    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+                        chord_set_recompute_parameters_flag(r_ob, nt->parent);
+                    else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                        recompute_all_for_measure(r_ob, nt->parent->parent, false);
+                    changed = true;
+                }
+            }
+            note_get_first_selected(r_ob);
+        }
+    }
+    llll_free(ll);
+    
+    if (changed && r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+        set_need_perform_analysis_and_change_flag(r_ob);
+
+    // TO DO recompute stuff
+    handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SET_PITCH_RATIO_FOR_SELECTION);
+
 }
 
 void recompute_all_measure_chord_parameters(t_notation_obj *r_ob, t_measure *measure)

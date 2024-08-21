@@ -589,11 +589,13 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_CHAR(c, "mtsesp", 0, t_playkeys, send_mtsesp);
     CLASS_ATTR_LABEL(c, "mtsesp", 0, "Act as MTS-ESP Master");
     CLASS_ATTR_ACCESSORS(c, "mtsesp", (method)NULL, (method)playkeys_setattr_mtsesp);
-    CLASS_ATTR_STYLE(c, "mtsesp",        0, "onoff");
+    CLASS_ATTR_STYLE(c, "mtsesp",        0, "enumindex");
+    CLASS_ATTR_ENUMINDEX(c,"mtsesp", 0, "Don't Globally Multichannel");
     // @description Toggles the ability for <o>bach.playkeys</o> to act as MTS-ESP Master
     // whenever a "midinote" key is used. The object will send specific tuning information
     // about any outgoing note so that any MTS-ESP compliant plugins loaded in <o>vst~</o>
-    // can be influenced automatically.
+    // can be influenced automatically. Choices are: don't send MTS-ESP messages (0),
+    // send them globally (1), send them on a channel-by-channel basis (2)
     
     CLASS_ATTR_DOUBLE(c, "basepitch",        0,    t_playkeys, basepitch);
     CLASS_ATTR_LABEL(c, "basepitch",        0, "Reference Pitch");
@@ -805,7 +807,8 @@ t_max_err playkeys_setattr_mtsesp(t_playkeys *x, t_object *attr, long ac, t_atom
         return MAX_ERR_GENERIC;
     }
     
-    if (ac >= 1 && atom_gettype(av) == A_LONG && atom_getlong(av)) {
+    if (ac >= 1 && atom_gettype(av) == A_LONG && atom_getlong(av) > 0) {
+        x->send_mtsesp = atom_getlong(av);
         if (PLAYKEYS_MTSESP_COUNT == 0) { // first object!
             if (MTS_CanRegisterMaster()) {
                 PLAYKEYS_MTSESP_IS_MASTER = true;
@@ -814,6 +817,11 @@ t_max_err playkeys_setattr_mtsesp(t_playkeys *x, t_object *attr, long ac, t_atom
                 PLAYKEYS_MTSESP_IS_MASTER = false;
                 object_warn((t_object *)x, "Cannot register bach.playkeys as MTS-ESP master.");
                 object_warn((t_object *)x, "\tCheck that any other MTS-ESP master application is shut and then reload.");
+            }
+            
+            if (x->send_mtsesp == 2) { // multichannel
+                for (long i = 0; i < 16; i++)
+                    MTS_SetMultiChannel(true, i);
             }
         }
         PLAYKEYS_MTSESP_COUNT++;
@@ -998,9 +1006,12 @@ void extract_voicename_and_append_it(t_llll *out, t_llll *this_path)
 }
 
 
-void playkeys_send_mtsesp(long midinote, double freq)
+void playkeys_send_mtsesp(t_playkeys *x, long midinote, double freq, long midichannel)
 {
-    MTS_SetNoteTuning(freq, midinote);
+    if (x->send_mtsesp == 1)
+        MTS_SetNoteTuning(freq, midinote);
+    else if (x->send_mtsesp == 2)
+        MTS_SetMultiChannelNoteTuning(freq, midinote, midichannel);
 }
 
 void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
@@ -1368,7 +1379,13 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     if ((target_el = llll_getindex(notell, 1, I_STANDARD))) {
                                         switch (this_key->property) {
                                             case k_PLAYKEYS_MIDINOTE:
-                                                playkeys_send_mtsesp((long)round(hatom_getdouble(&target_el->l_hatom)/100.), mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch));
+                                                if (x->send_mtsesp > 0) {
+                                                    long midichannel = -1;
+                                                    t_llllelem *target_el_mc = llll_getindex(in_ll, 3, I_STANDARD);
+                                                    if (target_el_mc)
+                                                        midichannel = hatom_getlong(&target_el_mc->l_hatom);
+                                                    playkeys_send_mtsesp(x, (long)round(hatom_getdouble(&target_el->l_hatom)/100.), mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch), midichannel);
+                                                }
                                                 llll_appendlong(found, (long)round(hatom_getdouble(&target_el->l_hatom)/100.));
                                                 break;
 
@@ -1398,7 +1415,13 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     if ((target_el = llll_getindex(notell, 1, I_STANDARD))) {
                                         switch (this_key->property) {
                                             case k_PLAYKEYS_MIDINOTE:
-                                                playkeys_send_mtsesp((long)round(hatom_getdouble(&target_el->l_hatom)/100.), mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch));
+                                                if (x->send_mtsesp > 0) {
+                                                    long midichannel = -1;
+                                                    t_llllelem *target_el_mc = llll_getindex(in_ll, 3, I_STANDARD);
+                                                    if (target_el_mc)
+                                                        midichannel = hatom_getlong(&target_el_mc->l_hatom);
+                                                    playkeys_send_mtsesp(x, (long)round(hatom_getdouble(&target_el->l_hatom)/100.), mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch), midichannel);
+                                                }
                                                 llll_appendlong(found, (long)round(hatom_getdouble(&target_el->l_hatom)/100.));
                                                 break;
                                             case k_PLAYKEYS_FREQUENCY:

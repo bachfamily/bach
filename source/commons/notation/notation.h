@@ -1797,6 +1797,7 @@ typedef enum _undo_operations
     k_UNDO_OP_CHANGE_TAIL_FOR_SELECTION,
     k_UNDO_OP_CHANGE_CENTS_FOR_SELECTION,
     k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION,
+    k_UNDO_OP_SET_PITCH_RATIO_FOR_SELECTION,
     k_UNDO_OP_CHANGE_POC_FOR_SELECTION,
     k_UNDO_OP_CHANGE_MEASUREINFO_FOR_SELECTION,
     k_UNDO_OP_CHANGE_VOICE_FOR_SELECTION,
@@ -5577,6 +5578,7 @@ void note_set_enharmonicity(t_note *nt, t_pitch pitch); // if pitch is NaP it'll
 void note_set_displayed_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc);
 void note_set_displayed_user_enharmonicity(t_note *nt, t_pitch pitch);
 void note_set_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob, t_note *nt);
+char notationobj_set_selection_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob);
 
 void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode);
 void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
@@ -9762,6 +9764,9 @@ void note_set_pitch_from_notename(t_notation_obj *r_ob, t_note *note, t_symbol *
 void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch);
 
 
+void notationobj_setintervalratio(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
+
+
 /**    Get the pitch of a note. If the note has user-defined pitch, this is the pitch that the user inserted 
     (which might differ from the displayed one, for instance because it was incompatible for microtonality),
     otherwise it returns the displayed pitch.
@@ -11736,6 +11741,7 @@ t_chord *chord_get_first_selected(t_notation_obj *r_ob);
  */
 t_note *note_get_first_selected(t_notation_obj *r_ob);
 
+t_llll *note_get_selected_as_llll(t_notation_obj *r_ob);
 
 // TBD
 t_dynamics *dynamics_get_first_selected(t_notation_obj *r_ob);

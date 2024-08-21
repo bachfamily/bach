@@ -660,6 +660,9 @@ void undo_op_to_string(long undo_op, char *buf)
         case k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION:
             sprintf(buf, "Change Pitch");
             break;
+        case k_UNDO_OP_SET_PITCH_RATIO_FOR_SELECTION:
+            sprintf(buf, "Set Pitch Ratio");
+            break;
         case k_UNDO_OP_CHANGE_POC_FOR_SELECTION:
             sprintf(buf, "Change Pitch Or Cents");
             break;

@@ -5565,6 +5565,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @marg 0 @name jilimit @optional 1 @type int
     class_addmethod(c, (method) roll_sel_approxji, "approxji", A_DEFLONG);
 
+    class_addmethod(c, (method) notationobj_setintervalratio, "setintervalratio", A_GIMME);
+
 
     // @method snaponsettogrid @digest Snap selected chords' onsets to the current temporal grid
     // @description The <m>snaponsettogrid</m> message snaps the onset of each selected chord (or 
@@ -16129,6 +16131,16 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
         t_slur *slur = ((t_slur *)x->r_ob.j_mousedown_ptr);
         slur_set_recompute_position_flag(slur);
     }
+    
+    if (x->r_ob.j_mousedown_obj_type == k_DILATION_RECTANGLE_TOPLEFT_SQ ||
+         x->r_ob.j_mousedown_obj_type == k_DILATION_RECTANGLE_TOPRIGHT_SQ ||
+         x->r_ob.j_mousedown_obj_type == k_DILATION_RECTANGLE_TOPMIDDLE_SQ ||
+         x->r_ob.j_mousedown_obj_type == k_DILATION_RECTANGLE_BOTTOMLEFT_SQ ||
+         x->r_ob.j_mousedown_obj_type == k_DILATION_RECTANGLE_BOTTOMRIGHT_SQ ||
+         x->r_ob.j_mousedown_obj_type == k_DILATION_RECTANGLE_BOTTOMMIDDLE_SQ ||
+         x->r_ob.j_mousedown_obj_type == k_DILATION_RECTANGLE_BODY) {
+        notationobj_set_selection_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x);
+    }
 
     if (!there_are_dangling_undo_ticks && !x->r_ob.item_changed_at_mousedown && x->r_ob.j_mouse_hasbeendragged && ((x->r_ob.j_mousedown_obj_type >= k_DILATION_RECTANGLE_TOPLEFT_SQ && x->r_ob.j_mousedown_obj_type <= k_DILATION_RECTANGLE_MIDDLERIGHT_SQ) ||
         x->r_ob.j_mousedown_obj_type == k_DILATION_RECTANGLE_BODY)) {
@@ -16140,6 +16152,7 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
                 if (ch->onset < 0)
                     ch->onset = 0;
         check_all_chords_order(x);
+        notationobj_set_selection_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x);
         unlock_general_mutex((t_notation_obj *)x);
         recompute_total_length((t_notation_obj *)x);
     }
@@ -18798,7 +18811,7 @@ char roll_sel_dilate_mc(t_roll *x, double mc_factor, double fixed_mc_y_pixel){
             nt->midicents = fixed_mc_point + (nt->midicents - fixed_mc_point) * mc_factor;
             if (nt->midicents < 0)
                 nt->midicents = 0;
-            note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, nt);
+            nt->pitch_original = t_pitch::NaP;
             chord_set_recompute_parameters_flag((t_notation_obj *)x, nt->parent);
             changed = 1;
         } else if (curr_it->type == k_CHORD) {
@@ -18814,9 +18827,7 @@ char roll_sel_dilate_mc(t_roll *x, double mc_factor, double fixed_mc_y_pixel){
                 nt->midicents = fixed_mc_point + (nt->midicents - fixed_mc_point) * mc_factor;
                 if (nt->midicents < 0)
                     nt->midicents = 0;
-                
-                note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, nt);
-//                dev_post("%.2f = %.2f + (%.2f - %.2f) * %.2f", nt->midicents, fixed_mc_point, old_mc, fixed_mc_point, mc_factor);
+                nt->pitch_original = t_pitch::NaP;
             }
             chord_set_recompute_parameters_flag((t_notation_obj *)x, chord);
             changed = 1;

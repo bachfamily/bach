@@ -95,6 +95,42 @@ void note_set_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob, t
     }
 }
 
+char notationobj_set_selection_to_best_jilimited_approximation_if_jivoice(t_notation_obj *r_ob)
+{
+    char changed = 0;
+    lock_general_mutex(r_ob);
+    t_notation_item *curr_it = r_ob->firstselecteditem;
+    while (curr_it) {
+        t_voice *v = notation_item_get_voice(r_ob, curr_it);
+        if (v && v->notation_style == k_VOICE_NOTATION_STYLE_JI) {
+            if (curr_it->type == k_NOTE) {
+                t_note *nt = (t_note *) curr_it;
+                note_set_to_best_jilimited_approximation_if_jivoice(r_ob, nt);
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+                    recompute_all_for_measure(r_ob, nt->parent->parent, false);
+                } else {
+                    chord_set_recompute_parameters_flag(r_ob, nt->parent);
+                }
+                changed = 1;
+            } else if (curr_it->type == k_CHORD) {
+                t_chord *chord = (t_chord *) curr_it;
+                for (t_note *nt = chord->firstnote; nt; nt = nt->next) {
+                    note_set_to_best_jilimited_approximation_if_jivoice(r_ob, nt);
+                }
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+                    recompute_all_for_measure(r_ob, chord->parent, false);
+                } else {
+                    chord_set_recompute_parameters_flag(r_ob, chord);
+                }
+                changed = 1;
+            }
+        }
+        curr_it = curr_it->next_selected;
+    }
+    unlock_general_mutex(r_ob);
+    return changed;
+}
+
 void note_appendpitch_to_llll(t_notation_obj *r_ob, t_llll *ll, t_note *note, long pitchmode)
 {
     switch (pitchmode) {
