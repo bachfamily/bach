@@ -68,6 +68,12 @@
 
 long PLAYKEYS_MTSESP_COUNT = 0;
 bool PLAYKEYS_MTSESP_IS_MASTER = false;
+double PLAYKEYS_MTSESP_FORCEDTUNING_GLOBAL[128];
+double PLAYKEYS_MTSESP_FORCEDTUNING_CHANNELBASED[16][128];
+t_bach_atomic_lock        PLAYKEYS_MTSESP_LOCK = 0;
+t_qelem*                  PLAYKEYS_MTSESP_QELEM;
+const long PLAYKEYS_MTSESP_SAFETY_DELAY = 250; // safety delay time to avoid microtonal collisions for MTS-ESP modes 3 and 4
+
 
 enum playkeys_properties
 {
@@ -222,6 +228,7 @@ long playkeys_func(t_hatom *key, t_llll *what);
 void playkeys_output(t_playkeys *x);
 
 t_max_err playkeys_setattr_mtsesp(t_playkeys *x, t_object *attr, long ac, t_atom *av);
+void playkeys_forceresetmtsesp(t_playkeys *x);
 
 t_class *playkeys_class;
 
@@ -519,6 +526,12 @@ void C74_EXPORT ext_main(void *moduleRef)
     class_addmethod(c, (method)playkeys_int,        "int",            A_LONG,        0);
     class_addmethod(c, (method)playkeys_float,        "float",        A_FLOAT,    0);
     class_addmethod(c, (method)playkeys_anything,    "list",            A_GIMME,    0);
+    
+    // @method forceresetmtsesp @digest Force reset for MTS-ESP system
+    // @description
+    // Resets everything in the MTS-ESP system, including the master connection status and client count.
+    // IMPORTANT: This is only intended to be used in case the master plug-in is running crashes.
+    class_addmethod(c, (method)playkeys_forceresetmtsesp,    "forceresetmtsesp",    0);
 
     // @method bang @digest Perform last operation
     // @description The playkeys are searched for in the most recently received llll.
@@ -590,12 +603,14 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_LABEL(c, "mtsesp", 0, "Act as MTS-ESP Master");
     CLASS_ATTR_ACCESSORS(c, "mtsesp", (method)NULL, (method)playkeys_setattr_mtsesp);
     CLASS_ATTR_STYLE(c, "mtsesp",        0, "enumindex");
-    CLASS_ATTR_ENUMINDEX(c,"mtsesp", 0, "Don't Globally Multichannel");
+    CLASS_ATTR_ENUMINDEX(c,"mtsesp", 0, "Don't Globally Multichannel Globally Avoiding Collisions Multichannel Avoiding Collisions");
     // @description Toggles the ability for <o>bach.playkeys</o> to act as MTS-ESP Master
     // whenever a "midinote" key is used. The object will send specific tuning information
     // about any outgoing note so that any MTS-ESP compliant plugins loaded in <o>vst~</o>
     // can be influenced automatically. Choices are: don't send MTS-ESP messages (0),
-    // send them globally (1), send them on a channel-by-channel basis (2)
+    // send them globally (1), send them on a channel-by-channel basis (2), and then two variants
+    // of #1 and #2 that also try to allow for microtonal cluster to be played by possibly
+    // assigning different MIDI notes to outgoing pitches.
     
     CLASS_ATTR_DOUBLE(c, "basepitch",        0,    t_playkeys, basepitch);
     CLASS_ATTR_LABEL(c, "basepitch",        0, "Reference Pitch");
@@ -823,6 +838,14 @@ t_max_err playkeys_setattr_mtsesp(t_playkeys *x, t_object *attr, long ac, t_atom
                 for (long i = 0; i < 16; i++)
                     MTS_SetMultiChannel(true, i);
             }
+            
+            MTS_SetScaleName("bach dynamic tuning");
+            
+            for (long i = 0; i < 128; i++)
+                PLAYKEYS_MTSESP_FORCEDTUNING_GLOBAL[i] = 0;
+            for (long c = 0; c < 16; c++)
+                for (long i = 0; i < 128; i++)
+                    PLAYKEYS_MTSESP_FORCEDTUNING_CHANNELBASED[c][i] = 0;
         }
         PLAYKEYS_MTSESP_COUNT++;
     }
@@ -830,6 +853,7 @@ t_max_err playkeys_setattr_mtsesp(t_playkeys *x, t_object *attr, long ac, t_atom
     return MAX_ERR_NONE;
 }
     
+
 t_max_err playkeys_setattr_process(t_playkeys *x, t_object *attr, long ac, t_atom *av)
 {
     if (!x->n_creatingnewobject) {
@@ -1005,13 +1029,167 @@ void extract_voicename_and_append_it(t_llll *out, t_llll *this_path)
     }
 }
 
-
-void playkeys_send_mtsesp(t_playkeys *x, long midinote, double freq, long midichannel)
+void zero_out_mtsesp_forcedtuning_global(t_playkeys *x, t_symbol *s, long ac, t_atom *av)
 {
-    if (x->send_mtsesp == 1)
-        MTS_SetNoteTuning(freq, midinote);
-    else if (x->send_mtsesp == 2)
-        MTS_SetMultiChannelNoteTuning(freq, midinote, midichannel);
+    if (ac && av) {
+        long m = atom_getlong(av);
+        bach_atomic_lock(&PLAYKEYS_MTSESP_LOCK);
+        if (m >= 0 && m < 127)
+            PLAYKEYS_MTSESP_FORCEDTUNING_GLOBAL[m] = 0;
+        bach_atomic_unlock(&PLAYKEYS_MTSESP_LOCK);
+    }
+}
+
+void zero_out_mtsesp_forcedtuning_channelbased(t_playkeys *x, t_symbol *s, long ac, t_atom *av)
+{
+    if (ac >= 2 && av) {
+        long m = atom_getlong(av);
+        long c = atom_getlong(av+1);
+        bach_atomic_lock(&PLAYKEYS_MTSESP_LOCK);
+        if (m >= 0 && m < 127 && c >= 0 && c < 16)
+            PLAYKEYS_MTSESP_FORCEDTUNING_CHANNELBASED[c][m] = 0;
+        bach_atomic_unlock(&PLAYKEYS_MTSESP_LOCK);
+    }
+}
+
+
+
+void playkeys_send_mtsesp(t_playkeys *x, long *midinote, double freq, long midichannel, double duration)
+{
+    long m = *midinote;
+    if (m >= 0 && m < 127) {
+        switch (x->send_mtsesp) {
+            case 1:
+                MTS_SetNoteTuning(freq, m);
+                break;
+                
+            case 2:
+                if (midichannel >= 0 && midichannel < 16)
+                    MTS_SetMultiChannelNoteTuning(freq, m, midichannel);
+                break;
+                
+            case 3:
+            {
+                bool ok = true;
+                bach_atomic_lock(&PLAYKEYS_MTSESP_LOCK);
+                if (PLAYKEYS_MTSESP_FORCEDTUNING_GLOBAL[m] != 0 && PLAYKEYS_MTSESP_FORCEDTUNING_GLOBAL[m] != freq) {
+                    // avoid collision: find a "free" midinote above or below
+                    ok = false;
+                    for (long i = 1; i < 127; i++) {
+                        if (m+i < 127 && PLAYKEYS_MTSESP_FORCEDTUNING_GLOBAL[m+i] == 0) {
+                            *midinote = m + i;
+                            ok = true;
+                            break;
+                        }
+                        if (m-i >= 0 && PLAYKEYS_MTSESP_FORCEDTUNING_GLOBAL[m-i] == 0) {
+                            *midinote = m - i;
+                            ok = true;
+                            break;
+                        }
+                    }
+                }
+                if (ok && *midinote >= 0 && *midinote < 127) {
+                    PLAYKEYS_MTSESP_FORCEDTUNING_GLOBAL[*midinote] = freq;
+                    t_atom a;
+                    atom_setlong(&a, *midinote);
+                    schedule_delay(x, (method)zero_out_mtsesp_forcedtuning_global, duration + PLAYKEYS_MTSESP_SAFETY_DELAY, NULL, 1, &a);
+                }
+                bach_atomic_unlock(&PLAYKEYS_MTSESP_LOCK);
+                if (ok && *midinote >= 0 && *midinote < 127)
+                    MTS_SetNoteTuning(freq, *midinote);
+            }
+                break;
+                
+            case 4:
+            {
+                bool ok = true;
+                if (midichannel >= 0 && midichannel < 16) {
+                    bach_atomic_lock(&PLAYKEYS_MTSESP_LOCK);
+                    if (PLAYKEYS_MTSESP_FORCEDTUNING_CHANNELBASED[midichannel][m] != 0 && PLAYKEYS_MTSESP_FORCEDTUNING_CHANNELBASED[midichannel][m] != freq) {
+                        // avoid collision: find a "free" midinote above or below
+                        ok = false;
+                        for (long i = 1; i < 127; i++) {
+                            if (m+i < 127 && PLAYKEYS_MTSESP_FORCEDTUNING_CHANNELBASED[midichannel][m+i] == 0) {
+                                *midinote = m + i;
+                                ok = true;
+                                break;
+                            }
+                            if (m-i >= 0 && PLAYKEYS_MTSESP_FORCEDTUNING_CHANNELBASED[midichannel][m-i] == 0) {
+                                *midinote = m - i;
+                                ok = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (ok && *midinote >= 0 && *midinote < 127) {
+                        PLAYKEYS_MTSESP_FORCEDTUNING_CHANNELBASED[midichannel][*midinote] = freq;
+                        t_atom a[2];
+                        atom_setlong(a, *midinote);
+                        atom_setlong(a+1, midichannel);
+                        schedule_delay(x, (method)zero_out_mtsesp_forcedtuning_channelbased, duration + PLAYKEYS_MTSESP_SAFETY_DELAY, NULL, 2, a);
+                    }
+                    bach_atomic_unlock(&PLAYKEYS_MTSESP_LOCK);
+                    if (ok && *midinote >= 0 && *midinote < 127) {
+                        MTS_SetMultiChannelNoteTuning(freq, *midinote, midichannel);
+                    }
+                }
+            }
+                break;
+                
+            default:
+                break;
+        }
+    }
+}
+
+void playkeys_forceresetmtsesp(t_playkeys *x)
+{
+    MTS_Reinitialize();
+}
+
+long playkeys_inll_to_midichannel(t_playkeys *x, t_llll *in_ll)
+{
+    long midichannel = -1;
+    t_llllelem *target_el_mc = llll_getindex(in_ll, 3, I_STANDARD);
+    if (target_el_mc)
+        midichannel = hatom_getlong(&target_el_mc->l_hatom);
+    return midichannel;
+}
+
+double playkeys_inll_to_noteduration(t_playkeys *x, t_llll *in_ll, playkeys_incoming incoming)
+{
+    double duration = 0;
+    t_llllelem *target_el;
+    switch (incoming) {
+        case k_PLAYKEYS_INCOMING_ROLLNOTE:
+        case k_PLAYKEYS_INCOMING_ROLLCHORD:
+        case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+        case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+            for (t_llllelem *startnoteel = getindex_2levels(in_ll, 4, 2); startnoteel; startnoteel = startnoteel->l_next) {
+                if (hatom_gettype(&startnoteel->l_hatom) != H_LLLL)
+                    break;
+                t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
+                if (!can_llll_be_a_note(notell))
+                    break;
+                if ((target_el = llll_getindex(notell, 2, I_STANDARD)))
+                    duration = hatom_getdouble(&target_el->l_hatom);
+            }
+            break;
+            
+        case k_PLAYKEYS_INCOMING_SCORENOTE:
+        case k_PLAYKEYS_INCOMING_SCORECHORD:
+        case k_PLAYKEYS_INCOMING_SCOREREST:
+        case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+        case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+        case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+            if ((target_el = getindex_2levels(in_ll, 4, 2)))
+                duration = hatom_getdouble(&target_el->l_hatom);
+            break;
+            
+        default:
+            break;
+    }
+    return duration;
 }
 
 void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
@@ -1379,14 +1557,15 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     if ((target_el = llll_getindex(notell, 1, I_STANDARD))) {
                                         switch (this_key->property) {
                                             case k_PLAYKEYS_MIDINOTE:
+                                            {
+                                                long midinote = (long)round(hatom_getdouble(&target_el->l_hatom)/100.);
                                                 if (x->send_mtsesp > 0) {
-                                                    long midichannel = -1;
-                                                    t_llllelem *target_el_mc = llll_getindex(in_ll, 3, I_STANDARD);
-                                                    if (target_el_mc)
-                                                        midichannel = hatom_getlong(&target_el_mc->l_hatom);
-                                                    playkeys_send_mtsesp(x, (long)round(hatom_getdouble(&target_el->l_hatom)/100.), mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch), midichannel);
+                                                    long midichannel = playkeys_inll_to_midichannel(x, in_ll);
+                                                    double duration = x->send_mtsesp > 2 ? playkeys_inll_to_noteduration(x, in_ll, (playkeys_incoming)incoming) : 0;
+                                                    playkeys_send_mtsesp(x, &midinote, mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch), midichannel, duration);
                                                 }
-                                                llll_appendlong(found, (long)round(hatom_getdouble(&target_el->l_hatom)/100.));
+                                                llll_appendlong(found, midinote);
+                                            }
                                                 break;
 
                                             case k_PLAYKEYS_FREQUENCY:
@@ -1415,14 +1594,15 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                     if ((target_el = llll_getindex(notell, 1, I_STANDARD))) {
                                         switch (this_key->property) {
                                             case k_PLAYKEYS_MIDINOTE:
+                                            {
+                                                long midinote = (long)round(hatom_getdouble(&target_el->l_hatom)/100.);
+                                                double duration = x->send_mtsesp > 2 ? playkeys_inll_to_noteduration(x, in_ll, (playkeys_incoming)incoming) : 0;
                                                 if (x->send_mtsesp > 0) {
-                                                    long midichannel = -1;
-                                                    t_llllelem *target_el_mc = llll_getindex(in_ll, 3, I_STANDARD);
-                                                    if (target_el_mc)
-                                                        midichannel = hatom_getlong(&target_el_mc->l_hatom);
-                                                    playkeys_send_mtsesp(x, (long)round(hatom_getdouble(&target_el->l_hatom)/100.), mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch), midichannel);
+                                                    long midichannel = playkeys_inll_to_midichannel(x, in_ll);
+                                                    playkeys_send_mtsesp(x, &midinote, mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch), midichannel, duration);
                                                 }
-                                                llll_appendlong(found, (long)round(hatom_getdouble(&target_el->l_hatom)/100.));
+                                                llll_appendlong(found, midinote);
+                                            }
                                                 break;
                                             case k_PLAYKEYS_FREQUENCY:
                                                 llll_appenddouble(found, mc2f(hatom_getdouble(&target_el->l_hatom), x->basefreq, x->basepitch));
