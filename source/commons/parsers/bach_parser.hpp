@@ -171,17 +171,23 @@ public:
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
         if (!*next)
             return p;
-        t_atom_short tSign = eatSign(&next);
-        t_atom_short tNum = (t_atom_short) strtol(next, &next, 10) * tSign;
-        if (*next != '/') {
-            p.p_alterET += tNum;
-        } else {
-            t_int16 tDen = (t_int16) strtol(++next, &next, 10);
-            p.p_alterET += t_tinyRational(tNum, tDen);
+        // if we are here, we surely have a sign
+        // if it's followed by a digit it introduces an alteration (as in +1/10t)
+        // if it's followed by a letter it introduces the JI part
+        if (isdigit(*(next + 1))) {
+            t_atom_short tSign = eatSign(&next);
+            t_atom_short tNum = (t_atom_short) strtol(next, &next, 10) * tSign;
+            if (*next != '/') {
+                p.p_alterET += tNum;
+            } else {
+                t_int16 tDen = (t_int16) strtol(++next, &next, 10);
+                p.p_alterET += t_tinyRational(tNum, tDen);
+            }
+            ++next; // t
         }
         if (!*next)
             return p;
-        t_pitch JIpart = eatPitchPureJI(pos);
+        t_pitch JIpart = eatPitchPureJI(next);
         return p + JIpart;
     }
     
@@ -190,13 +196,13 @@ public:
         t_atom_short sign = eatSign(&next);
         t_atom_short plof = t_pitch::text2wkplof(*next++);
         t_atom_short sharps = t_pitch::text2JIsharps(&next);
-        plof += sharps * 4;
+        plof += sharps * 7;
         next++; // {
-        std::vector<int8_t> monzo;
-        if (*next != '}') { // monzo
+        std::vector<int8_t> commas;
+        if (*next != '}') { // commas
             while (1) {
-                int8_t comma = (int8_t) strtol(++next, &next, 10);
-                monzo.push_back(comma);
+                int8_t c = (int8_t) strtol(next, &next, 10);
+                commas.push_back(c);
                 if (*next == '}')
                     break;
                 else
@@ -205,7 +211,7 @@ public:
         }
         ++next; // }
         t_uint8 octave = (t_uint8) strtol(next, &next, 10);
-        t_pitch p = adjustPitchSign(t_pitch(plof, monzo, octave), sign);
+        t_pitch p = adjustPitchSign(t_pitch(plof, commas, octave), sign);
 
         if (!*next)
             return p;

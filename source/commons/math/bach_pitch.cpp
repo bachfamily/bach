@@ -438,8 +438,8 @@ t_pitch t_pitch::operator-(const t_pitch &b) const
 {
     t_pitch diff = t_pitchMatrices::getDiff(p_whiteKeyET, b.p_whiteKeyET);
     t_int8 oct = diff.getOctave();
-    diff.p_alterET += p_alterET + b.p_alterET;
-    diff.p_JIexpVector = p_JIexpVector + b.p_JIexpVector;
+    diff.p_alterET += p_alterET - b.p_alterET;
+    diff.p_JIexpVector = p_JIexpVector - b.p_JIexpVector;
     diff.p_JIexpVector.addOctaves(oct);
     return diff;
 }
@@ -605,7 +605,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
         bool pureJI = p.isPureJI();
         bool pureET = p.isPureET();
 
-        if ((!pureJI || pureET) && (!(pureJI && pureET && writeNaturalCsAsJI))) {
+        if ((!pureJI) && (!(pureJI && pureET && writeNaturalCsAsJI))) {
             // not pure JI or both pure JI and pureET (that is, it's a C with no alteration or deviation – except if we ask them to be written as JI)
             if (mirror)
                 s = '-';
@@ -642,13 +642,15 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
                 }
             }
             if (include_octave)
-                s += std::to_string(mirror ? -octave : octave);
+                s += std::to_string(mirror ? -octave - 1 : octave);
             
             if (remainder > natural)
                 s += "+" + std::to_string(remainder.num()) + "/" + std::to_string(remainder.den()) + "t";
             else if (remainder < natural)
                 s += std::to_string(remainder.num()) + "/" + std::to_string(remainder.den()) + "t";
-        } else {
+        }
+        
+        if (!pureET) {
             // pure JI but not pureET (that is, it's not a pure C)
             if (mirror)
                 s += '-';

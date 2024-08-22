@@ -387,7 +387,7 @@ public:
         std::vector<int8_t> exponents(BACH_PRIMES_JI_SIZE, 0);
         exponents[0] = expof2;
         exponents[1] = expof3;
-        for (long i = 0; i < BACH_PRIMES_JI_SIZE-2; i++) { // HEJIcommas start from 5-limit
+        for (long i = 0; i < BACH_PRIMES_JI_SIZE-2 && i < HEJIcommas.size(); i++) { // HEJIcommas start from 5-limit
             const char dir = HEJIcommasExponentsDirection[i];
             exponents[0] += dir * HEJIcommas[i] * HEJIcommasExponents2[i];
             exponents[1] += dir * HEJIcommas[i] * HEJIcommasExponents3[i];
@@ -500,7 +500,7 @@ public:
         p_JIexpVector.setFromRatio(r);
     }
     
-    void addJIratio(const t_rational r) {
+    void addJIratio(const t_shortRational r) {
         p_JIexpVector.addFromRatio(r);
     }
     
@@ -519,7 +519,7 @@ public:
         if (removeTrailingZeros) {
             for (long j = BACH_PRIMES_JI_SIZE-1; j >= 0; j--) {
                 if (v[j] == 0)
-                    num_i = j-1;
+                    num_i = j-2;
                 else
                     break;
             }
@@ -815,7 +815,7 @@ public:
     }
     
     static t_int8 text2wkplof(int c) {
-        static constexpr t_int8 wkplof[] = {0, 2, 4, -1, 1, 3, 5};
+        static constexpr t_int8 wkplof[] = {3, 5, 0, 2, 4, -1, 1};
         c -= c < 'a' ? 'A' : 'a';
         if (c >= 0 && c <= 6)
             return wkplof[c];
