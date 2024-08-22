@@ -359,6 +359,7 @@ long positive_mod(long num, long mod)
     return ((num % mod) + mod) % mod;
 }
 
+
 t_atom_short positive_mod(t_atom_short num, t_atom_short mod)
 {
     if (num >= 0)
@@ -1294,7 +1295,7 @@ t_rational get_best_jilimited_approximation(double num, long jilimit, double mc_
     }
     
     // let's start with convergents
-    std::vector<t_rational> convergents = get_convergents(num, 5, true, mc_thresh, true, true, allowed_primes, 1000, 0);
+    std::vector<t_rational> convergents = get_convergents(num, 20, true, mc_thresh, true, true, allowed_primes, 1000, 0);
 
     std::sort(convergents.begin(), convergents.end(), make_cmpr(num));
 

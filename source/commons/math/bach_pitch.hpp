@@ -67,7 +67,7 @@ public:
     static t_atom_short constexpr numFifthsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {0,1,4,-2,-1,3,7,-3,6,-2,0,2,4,-1,6}; // a major third contributes 4 diatonic fifths, etc.
     
     // TODO: check comment
-    static t_atom_short constexpr numDiatonicStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,29,30,31,34,35,36,37,38,38}; // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 5/1 is 16, a 7/1 is 20, and so on.
+    static t_atom_short constexpr numDiatonicStepsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {7,11,16,20,24,26,28,30,31,34,35,36,37,38,38}; // number of diatonic steps per prime factor (an octave is 7 diatonic steps, a perfect twelfth 11, a 5/1 is 16, a 7/1 is 20, and so on.
     
     static const t_rational HEJIcommasRatios[BACH_PRIMES_JI_SIZE-2];
     /*
@@ -218,7 +218,8 @@ private:
                 for (int8_t i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
                     steps += get(i) * numDiatonicStepsPerPrimeFactor[i];
                 }
-                return steps / 7;
+                return integer_div_round_down(steps, 7);
+//                return steps / 7;
             }
         }
         

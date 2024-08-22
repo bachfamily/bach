@@ -7077,13 +7077,18 @@ std::vector<t_rational> get_farey_sequence(long order, t_rational offset, long m
     
     t_rational r1 = genrat(0, 1);
     t_rational r2 = genrat(1, order);
+    t_rational r1o = r1 + offset;
+    t_rational r2o = r2 + offset;
     t_rational t;
     long k;
     
-    res.push_back(r1+offset);
-    res.push_back(r2+offset);
+    if (max_limit == 0 || (rational_get_jilimit(r1o) <= max_limit))
+        res.push_back(r1o);
 
-    // If ⁠a/b⁠ and ⁠c/d⁠ are the two given entries, and ⁠p/q⁠ is the unknown next entry, then ⁠c/d⁠ = ⁠(a + p)/(b + q)⁠.
+    if (max_limit == 0 || (rational_get_jilimit(r2o) <= max_limit))
+        res.push_back(r2o);
+
+    // If ⁠a/b⁠ and ⁠c/d⁠ are the two consecutive entries, and ⁠p/q⁠ is the unknown next entry, then ⁠c/d⁠ = ⁠(a + p)/(b + q)⁠.
     while (r2.den() > 1) {
         k = (order + r1.den()) / r2.den();
         t = r1;
