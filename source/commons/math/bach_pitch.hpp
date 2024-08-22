@@ -511,7 +511,7 @@ public:
 
     t_int8 getPlofJI() const { return p_JIexpVector.getPlof(); }
     
-    t_int8 getSharpsJI() const { return (getPlofJI()+1)/7; };
+    t_int8 getSharpsJI() const { return integer_div_round_down(getPlofJI() + 1, 7); };
     
     std::vector<int8_t> getHEJICommas(bool removeTrailingZeros = false) const {
         std::vector<int8_t> v = p_JIexpVector.get();
