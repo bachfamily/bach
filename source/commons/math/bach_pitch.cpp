@@ -290,15 +290,10 @@ t_pitch::expVector t_pitch::expVector::operator-() const
 t_rational t_pitch::expVector::getRatio() const {
     t_rational r({1, 1});
     int i;
-    for (i = 0; i < 7; i++) {
+    for (i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
         long d = get(i);
         if (d != 0)
             r *= long_long_pow(primes[i], d);
-    }
-    for ( ; i < 15; i++) {
-        long n;
-        if ((n = get(i)) != 0)
-            r *= long_long_pow(primes[i], n);
     }
     return r;
 };
@@ -306,18 +301,14 @@ t_rational t_pitch::expVector::getRatio() const {
 double t_pitch::expVector::getRatioAsDouble() const {
     double r = 1.;
     int i;
-    for (i = 0; i < 7; i++) {
+    for (i = 0; i < BACH_PRIMES_JI_SIZE; i++) {
         long d = get(i);
         if (d != 0)
             r *= pow(primes[i], d);
     }
-    for ( ; i < 15; i++) {
-        long n;
-        if ((n = get(i)) != 0)
-            r *= pow(primes[(i - 7) / 2 + 7], n);
-    }
     return r;
 };
+
 
 bool t_pitch::expVector::allZeros() const {
     return *reinterpret_cast<const t_int64*>(data) == 0 && *reinterpret_cast<const t_int16*>(data + 8) == 0 && *(data + 10) == 0;
