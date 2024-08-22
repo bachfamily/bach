@@ -644,6 +644,9 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
             if (include_octave)
                 s += std::to_string(mirror ? -octave - 1 : octave);
             
+            if (mirror)
+                remainder = -remainder;
+            
             if (remainder > natural)
                 s += "+" + std::to_string(remainder.num()) + "/" + std::to_string(remainder.den()) + "t";
             else if (remainder < natural)
