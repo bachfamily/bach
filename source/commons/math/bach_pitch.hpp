@@ -190,7 +190,11 @@ private:
         void clear();
         void set(const std::vector<int8_t> &v);
         void set(const int idx, const int8_t v);
-        
+    
+    private:
+        void setHighPrimeUnsafe(const int idx, const int8_t v);
+    
+    public:
         std::vector<int8_t> get() const;
         int8_t get(const int idx) const;
         

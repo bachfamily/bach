@@ -123,10 +123,10 @@ void t_pitch::expVector::clear() {
 
 void t_pitch::expVector::set(const std::vector<int8_t> &v) {
     clear();
-    size_t s = v.size();
-    const int8_t* d = v.data();
+    const size_t s = v.size();
+    //const int8_t* d = v.data();
     int i;
-    
+    /*
     if (s < 8) {
         for (i = 0; i < s && i < 7; i++) {
             data[i] = d[i];
@@ -142,6 +142,23 @@ void t_pitch::expVector::set(const std::vector<int8_t> &v) {
         case 10:    data[9] = (d[12] & 0x0f) | ((d[11] & 0x0f) << 4);
         case 9:     data[8] = (d[10] & 0x0f) | ((d[9] & 0x0f) << 4);
     }
+     */
+    
+    for (i = 0; i < s && i < 7; i++) {
+        data[i] = v[i];
+    }
+    for (; i < s && i < 15; i++) {
+        setHighPrimeUnsafe(i, v[i]);
+    }
+}
+
+void t_pitch::expVector::setHighPrimeUnsafe(const int idx, const int8_t v) {
+        if (idx & 1) {
+            data[(idx - 7) / 2 + 7] |= (v & 0x0f) << 4;
+        } else {
+            data[(idx - 8) / 2 + 7] |= (v & 0x0f);
+        }
+        return;
 }
 
 void t_pitch::expVector::set(const int idx, const int8_t v) {
