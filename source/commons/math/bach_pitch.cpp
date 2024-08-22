@@ -589,10 +589,10 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
     std::string s;
     t_int8 octave;
     t_pitch p;
-    bool mirror;
     if (p_alterET.den() == 0) {
         s = "NaP";
     } else {
+        bool mirror;
         octave = getOctave();
         if (octave < 0 && !always_positive) {
             mirror = true;
@@ -605,7 +605,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
         bool pureJI = p.isPureJI();
         bool pureET = p.isPureET();
 
-        if ((!pureJI) && (!(pureJI && pureET && writeNaturalCsAsJI))) {
+        if (!pureJI || (pureET && !writeNaturalCsAsJI)) {
             // not pure JI or both pure JI and pureET (that is, it's a C with no alteration or deviation – except if we ask them to be written as JI)
             if (mirror)
                 s = '-';
@@ -654,10 +654,9 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
         }
         
         if (!pureET) {
-            // pure JI but not pureET (that is, it's not a pure C)
             if (mirror)
                 s += '-';
-            else if (!p.isPureJI())
+            else if (!pureJI)
                 s += '+';
             t_int8 sharps = p.getSharpsJI();
             if (plof >= 0) {
@@ -681,7 +680,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
                 s += "{}";
             }
             if (p.isPureJI()) {
-                s += std::to_string(mirror ? -octave : octave);
+                s += std::to_string(mirror ? -octave - 1 : octave);
             } else {
                 s += "0";
             }
