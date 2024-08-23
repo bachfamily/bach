@@ -1857,6 +1857,14 @@ t_llll *symbol_and_rational_to_llll(t_symbol *sym, t_rational r)
     return this_ll;
 }
 
+t_llll *symbol_and_pitch_to_llll(t_symbol *sym, t_pitch p)
+{
+    t_llll *this_ll = llll_get();
+    llll_appendsym(this_ll, sym, 0, WHITENULL_llll);
+    llll_appendpitch(this_ll, p, 0, WHITENULL_llll);
+    return this_ll;
+}
+
 t_llll *symbol_and_symbol_to_llll(t_symbol *sym1, t_symbol *sym2)
 {
     t_llll *this_ll = llll_get();

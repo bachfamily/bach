@@ -462,11 +462,13 @@ void swap_et_accidentals_for_ji_et(t_uint8 *accidentals, int numAccidentals)
 }
 
 // accidentals must be allocated with MAX_NUM_ACCIDENTALS+1 size
-void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *accidentals, int *numAccidentals)
+void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed, t_uint8 *accidentals, int *numAccidentals, t_pitch pitch_original)
 {
-    if (pitch.isPureET() && !pitch.isPureJI()) { // if it's purely ET but not a C
+    if ((pitch_displayed.isPureET() && !pitch_displayed.isPureJI()) || 
+        pitch_original.isNaP() ||
+        (pitch_original.isPureET() && !pitch_original.isPureJI())) {
         // use JI ET characters, the ones with the lines above (but approximate to half tones, though!
-        t_pitch q = pitch.approxET(2);
+        t_pitch q = pitch_displayed.approxET(2);
         int n;
         get_accidentals_for_pitch_ET(r_ob, q, accidentals, &n);
         swap_et_accidentals_for_ji_et(accidentals, n);
@@ -474,12 +476,12 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *
             *numAccidentals = n;
     } else {
         
-        std::vector<int8_t> hejicommas = pitch.getHEJICommas();
+        std::vector<int8_t> hejicommas = pitch_displayed.getHEJICommas();
         t_uint8 *curChar = accidentals;
         int numChars = 0;
         
         // 3-limit and 5-limit: to do: standard accidental
-        long plof_offset = 1 + pitch.getPlofJI();
+        long plof_offset = 1 + pitch_displayed.getPlofJI();
         long num_base_accs = (plof_offset - positive_mod(plof_offset, 7)) / 7;
         long num_base_accs_abs = abs(num_base_accs);
         long num_base_accs_sign = (num_base_accs >= 0 ? 1 : -1);

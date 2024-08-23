@@ -6470,7 +6470,7 @@ bool note_has_no_accidentals_or_has_natural(t_note *nt);
 
 e_bach_accidental rational_to_accidental_ET(t_notation_obj *r_ob, t_rational accidental);
 void get_accidentals_for_pitch_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals);
-void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch, t_uint8 *accidentals, int *numAccidentals);
+void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed, t_uint8 *accidentals, int *numAccidentals, t_pitch pitch_original);
 bool note_accidental_equals_alter_ET(t_notation_obj *r_ob, t_note *nt, t_shortRational alterET);
 
 bool accidentals_eq(t_uint8 *accidentals1, t_uint8 *accidentals2);
@@ -17580,6 +17580,7 @@ t_max_err notationobj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_objec
 t_max_err notationobj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_jilimit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);

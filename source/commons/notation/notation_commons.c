@@ -24684,7 +24684,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                     break;
 
                 case k_VOICE_NOTATION_STYLE_JI:
-                    get_accidentals_for_pitch_JI(r_ob, curr_nt->pitch_displayed, accidentals[i], NULL);
+                    get_accidentals_for_pitch_JI(r_ob, curr_nt->pitch_displayed, accidentals[i], NULL, curr_nt->pitch_original);
                     break;
 
                 default:
@@ -38686,6 +38686,15 @@ void set_numvoices(t_notation_obj *r_ob, long num_voices)
     t_atom av;
     atom_setlong(&av, num_voices);
     notationobj_setattr_numvoices(r_ob, NULL, 1, &av);
+}
+
+t_max_err notationobj_setattr_jilimit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        r_ob->ji_limit = MAX(1, atom_getlong(av));
+        implicitely_recalculate_all(r_ob, false);
+    }
+    return MAX_ERR_NONE;
 }
 
 t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)

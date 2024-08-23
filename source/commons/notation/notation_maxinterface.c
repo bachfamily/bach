@@ -2263,8 +2263,7 @@ void notation_class_add_ji_attributes(t_class *c, char obj_type)
     CLASS_ATTR_STYLE_LABEL(c,"jilimit",0,"text","JI Harmonic Limit");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jilimit",0,"5");
     CLASS_ATTR_BASIC(c,"jilimit", 0);
-    // TODO: @Daniele Write the proper setter
-//    CLASS_ATTR_ACCESSORS(c, "jilimit", (method)NULL, (method)notationobj_setattr_jilimit);
+    CLASS_ATTR_ACCESSORS(c, "jilimit", (method)NULL, (method)notationobj_setattr_jilimit);
     // @description Sets the just intonation harmonic limit for the score display.
     // This is the analogous, for just intonation, of the <m>tonedivision</m> attribute, in that
     // it doesn't change the profound nature of the pitch (which can very well be in a higher limit)

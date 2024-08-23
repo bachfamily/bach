@@ -651,7 +651,7 @@ t_tonnetz_diatonic_interval diatonic_interval_diff_no_freqratio(t_tonnetz_diaton
 
 double freqratio_to_mc(t_rational freqratio)
 {
-	return 1200. * log(((double)freqratio.r_num)/freqratio.r_den)/log(2.0);
+	return 1200. * log2(((double)freqratio.r_num)/freqratio.r_den);
 }
 
 void diatonic_interval_to_screen_midicents_and_accidental(t_tonnetz_diatonic_interval interval, long *screen_midicents, t_rational *screen_accidental, long modulo)
