@@ -4121,6 +4121,7 @@ typedef struct _notation_obj
     t_pitch         ji_base_for_ratios;          ///< Base pitch used as reference for JI ratios (e.g. C5 or C{}5, or D{}5...)
     double          ji_base_for_ratios_as_double;///< Same, as double (e.g. 32., or 36....)
     double          ji_limit_approx_mcthresh;    ///< Cents threshold for error while approximating cents to JI
+    char            ji_always_show_pythagorean_accidentals;     ///< Always show naturals for JI pitches
     
     // measure numbers
     char            *show_measure_numbers;            ///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
@@ -17582,6 +17583,7 @@ t_max_err notationobj_setattr_voicenames_font(t_notation_obj *r_ob, t_object *at
 t_max_err notationobj_setattr_nonantialiasedstaff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_jilimit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_jialwaysshowpythacc(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_keys(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_midichannels(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);

@@ -11694,6 +11694,7 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->parent->voiceparent->v_ob.number, delta);
         }
+        recompute_all_for_measure((t_notation_obj *)x, note->parent->parent, false);
 //        note->midicents += (delta * (200. / x->r_ob.tone_division));
     } else {
         note->midicents += delta;
@@ -11716,9 +11717,13 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
             note->pitch_original.addOctaves(num_octaves_jump);
             note->pitch_displayed.addOctaves(num_octaves_jump);
         } else {
-            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+            if (!ji) {
+                note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+            }
         }
-        constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice);
+        if (!ji) {
+            constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice);
+        }
     } else { // note is changing voice!
         t_scorevoice *new_voice = scorevoice_get_nth(x, note_new_voice);
 //        post("voices: FROM %d TO %d", note->parent->voiceparent->v_ob.number, new_voice->v_ob.number);

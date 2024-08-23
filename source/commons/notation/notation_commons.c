@@ -3298,7 +3298,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
             legend += std::to_string(nt->parent->r_sym_duration.num());
             legend += "/";
             legend += std::to_string(nt->parent->r_sym_duration.den());
-            legend += "(";
+            legend += " (";
             legend += dur_text;
             legend += ")";
             legend += "   ";
@@ -8750,7 +8750,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 #ifdef BACH_JUCE
         double juce_mul = 2.5;
 #endif
-        r_ob->accidentals_typo_preferences.gap_between_accidentals_of_different_notes_of_same_chord_uwidth = 3.;
+        r_ob->accidentals_typo_preferences.gap_between_accidentals_of_different_notes_of_same_chord_uwidth = 2.4;
         r_ob->accidentals_typo_preferences.gap_between_accidentals_and_note_uwidth = 1.5;
 
         r_ob->accidentals_typo_preferences.base_pt = 24. * juce_mul;
@@ -12404,7 +12404,8 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
                 } else if (ds < 0 || (ds >= 0 && note_accidental_equals_alter_ET(r_ob, temp_nt, acc_pattern[ds]))) { // the note IS in the scale
 
                     if (note_has_accidentals(temp_nt) &&
-                        (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS)) {
+                        (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS ||
+                         r_ob->ji_always_show_pythagorean_accidentals)) {
                         // we did say ALWAYS to accidentals show
 
                         temp_nt->show_accidentals = true;
@@ -24702,12 +24703,12 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             reordered[i] = i; // default mapping
             
             // deciding whether to show the accidental
-            if (chord->is_score_chord) // score
+            if (chord->is_score_chord) { // score
                 show_accidentals[i] = curr_nt->show_accidentals;
-            else { // roll (we calculate the show/hide here!)
+            } else { // roll (we calculate the show/hide here!)
                 t_voice *voice = (t_voice *)chord->voiceparent;
                 if (voice->key == 0)
-                    show_accidentals[i] = !(accidentals[i][0] == BACH_ACCIDENTAL_NONE || (accidentals[i][0] == BACH_ACCIDENTAL_NATURAL && accidentals[i][1] == BACH_ACCIDENTAL_NONE));
+                    show_accidentals[i] = !(accidentals[i][0] == BACH_ACCIDENTAL_NONE || ((accidentals[i][0] == BACH_ACCIDENTAL_NATURAL || (!r_ob->ji_always_show_pythagorean_accidentals && accidentals[i][0] == BACH_ACCIDENTAL_JI_NATURAL)) && accidentals[i][1] == BACH_ACCIDENTAL_NONE));
                 else {
                     long ds = midicents2diatonicstep(note_get_display_midicents(curr_nt));
                     if (ds >= 0 && note_accidental_equals_alter_ET(r_ob, curr_nt, voice->acc_pattern[ds]))
@@ -36236,7 +36237,8 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->ji_base_for_ratios = t_pitch(genrat(32, 1)); // C5 by default: Should it be C0?
     r_ob->ji_base_for_ratios_as_double = (double)r_ob->ji_base_for_ratios.getRatio();
     r_ob->ji_limit_approx_mcthresh = 67; // is this a good default? it's two thirds of a tone, it's what HEJI used to define their commas
-
+    r_ob->ji_always_show_pythagorean_accidentals = false;
+    
     r_ob->last_undo_marker = NULL;
     r_ob->need_send_automessage = false;
     r_ob->need_send_changed_bang = false;
@@ -38702,6 +38704,16 @@ t_max_err notationobj_setattr_jilimit(t_notation_obj *r_ob, t_object *attr, long
     }
     return MAX_ERR_NONE;
 }
+
+t_max_err notationobj_setattr_jialwaysshowpythacc(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        r_ob->ji_always_show_pythagorean_accidentals = atom_getlong(av);
+        implicitely_recalculate_all(r_ob, false);
+    }
+    return MAX_ERR_NONE;
+}
+
 
 t_max_err notationobj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {

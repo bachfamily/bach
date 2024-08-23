@@ -2270,6 +2270,12 @@ void notation_class_add_ji_attributes(t_class *c, char obj_type)
     // but it only trims its display to the selected harmonic prime number, and adjusts the interface
     // accordingly
 
+    CLASS_ATTR_CHAR(c, "jialwaysshowpythacc", 0, t_notation_obj, ji_always_show_pythagorean_accidentals);
+    CLASS_ATTR_STYLE_LABEL(c,"jialwaysshowpythacc",0,"onoff","Always Show JI Pythagorean Accidentals");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jialwaysshowpythacc",0,"0");
+    CLASS_ATTR_ACCESSORS(c, "jialwaysshowpythacc", (method)NULL, (method)notationobj_setattr_jialwaysshowpythacc);
+    // @description Toggles the ability to always display accidentals for Pythagorean diatonic pitches in jusst intonation.
+    
     CLASS_ATTR_DOUBLE(c, "jiapproxthresh", 0, t_notation_obj, ji_limit_approx_mcthresh);
     CLASS_ATTR_STYLE_LABEL(c,"jiapproxthresh",0,"text","JI Approximation Threshold (Cents)");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jiapproxthresh",0,"67");
