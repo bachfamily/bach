@@ -295,8 +295,16 @@ private:
     static constexpr double C0freq = 8.1757989156437073336828122976032719176391;
     ;
     
+
+public: // should be private
     expVector p_JIexpVector;
     t_uint8 p_whiteKeyET;
+
+// TODO: p_alterET should be made private
+// all non-static data member should have the same access control
+// for t_pitch to be Plain Old Data, otherwise we have this issue
+// in objects with attributes and containing t_pitch in their object struct:
+// https://stackoverflow.com/questions/53850100/warning-offset-of-on-non-standard-layout-type-derivedclass
 public: // because solves a lot of small issues... for now...
     t_tinyRational p_alterET;
 private:

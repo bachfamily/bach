@@ -882,6 +882,75 @@ t_max_err GETTER(STRUCT *x, t_object *attr, long *ac, t_atom **av) \
 
 
 
+//////////////////////////////
+// PITCH ATTRIBUTE MANAGEMENT
+
+
+
+// Objects having pitch attributes may call this macro before the main() function
+// It defines default getter and setter functions
+// STRUCT is the object struct
+// FIELD is the struct field containing the pointer to the llll that should be treated as an attribute
+// GETTER is the name of the getter function
+// SETTER is the name of the setter function
+
+#define DEFINE_PITCH_ATTR_DEFAULT_GETTER_AND_SETTER(STRUCT, FIELD, GETTER, SETTER) \
+DEFINE_PITCH_ATTR_DEFAULT_GETTER(STRUCT, FIELD, GETTER) \
+DEFINE_PITCH_ATTR_DEFAULT_SETTER(STRUCT, FIELD, SETTER) \
+
+
+
+
+// Objects having pitch attributes may call this macro before the main() function
+// It defines a default setter for an pitch attribute
+// STRUCT is the object struct
+// FIELD is the struct field containing the pointer to the llll that should be treated as an attribute
+// SETTER is the name of the setter function
+
+#define DEFINE_PITCH_ATTR_DEFAULT_SETTER(STRUCT, FIELD, SETTER) \
+t_max_err SETTER(STRUCT *x, t_object *attr, long ac, t_atom *av) \
+{ \
+    t_symbol *pitchSym; \
+    if (ac == 1 && (pitchSym = atom_getsym(av)) != nullptr) { \
+        t_pitch p; \
+        t_pitchParser parser; \
+        p = parser.parse(pitchSym->s_name); \
+        if (p != t_pitch::NaP) { \
+            x->FIELD = p; \
+        } \
+    } \
+    return MAX_ERR_NONE; \
+}
+
+// Objects having pitch attributes may call this macro before the main() function
+// It defines a default getter for an llll attribute
+// STRUCT is the object struct
+// FIELD is the struct field containing the pointer to the llll that should be treated as an attribute
+// GETTER is the name of the getter function
+
+#define DEFINE_PITCH_ATTR_DEFAULT_GETTER(STRUCT, FIELD, GETTER) \
+t_max_err GETTER(STRUCT *x, t_object *attr, long *ac, t_atom **av) \
+{ \
+    if (*ac && *av) { \
+        dev_post("Error in pitch_Max_attr_get!"); \
+    } else { \
+        *ac = 1; \
+        *av = (t_atom*) sysmem_newptr(sizeof(t_atom)); \
+        t_symbol *pitchSym = gensym((x->FIELD).toString().c_str()); \
+        atom_setsym(*av, pitchSym); \
+    } \
+    return MAX_ERR_NONE; \
+}
+
+
+
+
+// Objects having pitch attributes may call this macro in the main() function
+// It defines the actual attribute
+#define CLASS_ATTR_PITCH(c,attrname,flags,structname,structmember,getter,setter) \
+    class_addattr((c), attr_offset_new(attrname, USESYM(symbol), (flags), (method)getter, (method)setter, calcoffset(structname, structmember)))
+
+
 
 
 ///////////////////
