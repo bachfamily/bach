@@ -810,7 +810,7 @@ public:
         return (p_alterET.r_den == 0);
     }
     
-    std::string toString(t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false, t_bool writeNaturalCsAsJI = false) const;
+    std::string toString(t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false) const;
     
     long toTextBuf(char *buf, long bufSize, t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false) const;
     

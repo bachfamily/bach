@@ -1009,7 +1009,7 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
         }
     }
     jpopupmenu_addsubmenu(r_ob->popup_note_approximate, "Equal Temperament", r_ob->popup_note_approximate_et, 0);
-    snprintf_zero(buf, 100, "Just Intonation (ratios w.r.t. %s)", r_ob->ji_base_for_ratios.toString(true, false, false, true).c_str());
+    snprintf_zero(buf, 100, "Just Intonation (ratios w.r.t. %s)", r_ob->ji_base_for_ratios.toString().c_str());
     jpopupmenu_addsubmenu(r_ob->popup_note_approximate, buf, r_ob->popup_note_approximate_ji, 0);
     jpopupmenu_addsubmenu(r_ob->popup_note, "Approximate", r_ob->popup_note_approximate, 0);
 
