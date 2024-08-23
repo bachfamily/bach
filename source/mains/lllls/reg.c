@@ -72,7 +72,7 @@ typedef struct _reg
     long                    n_embed;
     long                    n_in;
     t_object                *m_editor;
-    t_pitch                 dummypitch;
+    t_pitch                 dummypitch; // TODO: togliere!!!
 } t_reg;
 
 //DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_reg, dummy, reg_getattr_dummy, reg_setattr_dummy)
