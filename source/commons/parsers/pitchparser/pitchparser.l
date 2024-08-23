@@ -26,12 +26,14 @@
 %option prefix="pitchparser_"
 
 
-SEPARATOR ([ \t\n\(\)\[\]\{\}])
-UINT ([0-9]+)
-UFLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+))
-URAT ({UINT}[/][+-]?{UINT})
+INTEGER ([+-]?[0-9]+)
+FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
+SIMPLEFLOAT ([+-]?(([0-9]*\.[0-9]+)|([0-9]+\.)))
+BACH_RATIONAL ({INTEGER}[/]{INTEGER})
 NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq\^v]+)
+JIPITCH ([+-]?{NOTENAME}[#xb]*\{(({INTEGER}:)*{INTEGER})?\}{INTEGER}({INTEGER}([/]{INTEGER})?r)?)
+
 
 %{
     #ifndef BACH_MAX
@@ -66,27 +68,13 @@ ACCIDENTAL ([#bxdq\^v]+)
     t_pitch *p = yyextra;
 %}
 
-^[-+]?{NOTENAME}{ACCIDENTAL}?[-+]?{UINT} {
-    *p = t_parser::eatPitchAsNameAccInt(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", p->degree(), p->alter().num(), p->alter().den(), p->octave());
+^[-+]?{NOTENAME}(({ACCIDENTAL}?{INTEGER})|({INTEGER}{ACCIDENTAL}))({INTEGER}([/]{INTEGER})?t)?{JIPITCH}? {
+    *p = t_parser::eatPitchWithET(yytext);
     return P_MORE;
 }
 
-^[-+]?{NOTENAME}[-+]?{UINT}{ACCIDENTAL} {
-    *p = t_parser::eatPitchAsNameIntAcc(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", p->degree(), p->alter().num(), p->alter().den(), p->octave());
-    return P_MORE;
-}
-
-^[-+]?{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}+t {
-    *p = t_parser::eatPitchAsNameAccIntIntT(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", p->degree(), p->alter().num(), p->alter().den(), p->octave());
-    return P_MORE;
-}
-
-^[-+]?{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}[/][-+]?{UINT}t {
-    *p = t_parser::eatPitchAsNameAccIntRatT(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", p->degree(), p->alter().num(), p->alter().den(), p->octave());
+^{JIPITCH} {
+    *p = t_parser::eatPitchPureJI(yytext);
     return P_MORE;
 }
 

@@ -61,6 +61,7 @@
 #include "foundation/llllobj.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
+#include "parsers/pitchparser/pitchparser.h"
 
 //#define parsertests
 
@@ -71,6 +72,7 @@ typedef struct _reg
     long                    n_embed;
     long                    n_in;
     t_object                *m_editor;
+    t_pitch                 dummypitch;
 } t_reg;
 
 //DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_reg, dummy, reg_getattr_dummy, reg_setattr_dummy)
@@ -96,6 +98,7 @@ void reg_dblclick(t_reg *x);
 
 t_class *reg_class;
 
+DEFINE_PITCH_ATTR_DEFAULT_GETTER_AND_SETTER(t_reg, dummypitch, reg_getattr_dummypitch, reg_setattr_dummypitch);
 
 void C74_EXPORT ext_main(void *moduleRef)
 {
@@ -145,6 +148,10 @@ void C74_EXPORT ext_main(void *moduleRef)
     // @description When set to 1, the stored llll is saved with the patcher
     // and will be available, to be retrieved with a bang, next time the patch is loaded.
     
+    CLASS_ATTR_PITCH(c, "dummypitch", 0, t_reg, dummypitch, reg_getattr_dummypitch, reg_setattr_dummypitch);
+    
+    CLASS_ATTR_LLLL(c, "dummyll", 0, t_reg, dummyll, reg_getattr_dummyll, reg_setattr_dummyll);
+
     class_register(CLASS_BOX, c);
     
     reg_class = c;
