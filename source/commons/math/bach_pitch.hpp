@@ -829,6 +829,7 @@ public:
         while (go) {
             switch(**pos) {
                 case '#': sharps++; (*pos)++; break;
+                case 'x': sharps += 2; (*pos)++; break;
                 case 'b': sharps--; (*pos)++; break;
                 default: go = false; break;
             }

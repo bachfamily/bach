@@ -655,8 +655,12 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
             } else {
                 s += (-plof * 3 + 2) % 7 + 'A';
             }
-            if (sharps > 0) {
-                s += std::string(sharps, '#');
+            if (sharps > 1) {
+                s += std::string(sharps / 2, 'x');
+                sharps %= 2;
+            }
+            if (sharps == 1) {
+                s += "#";
             } else if (sharps < 0) {
                 s += std::string(-sharps, 'b');
             }

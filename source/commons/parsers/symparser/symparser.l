@@ -35,7 +35,7 @@ SIMPLEFLOAT ([+-]?(([0-9]*\.[0-9]+)|([0-9]+\.)))
 BACH_RATIONAL ({INTEGER}[/]{INTEGER})
 NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq\^v]+)
-JIPITCH ([+-]?{NOTENAME}[#b]*\{(({INTEGER}:)*{INTEGER})?\}{INTEGER}({INTEGER}([/]{INTEGER})?r)?)
+JIPITCH ([+-]?{NOTENAME}[#xb]*\{(({INTEGER}:)*{INTEGER})?\}{INTEGER}({INTEGER}([/]{INTEGER})?r)?)
 
 %{
     #ifndef BACH_MAX
