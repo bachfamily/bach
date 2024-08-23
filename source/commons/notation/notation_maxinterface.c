@@ -22,11 +22,14 @@
 #include "notation/notation_attrs.h"
 #include "notation/notation_undo.h"
 #include "notation/notation_markers.h"
+#include "parsers/pitchparser/pitchparser.h"
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_getattr_pitcheditrange);
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, constraint_pitches_when_editing, notationobj_setattr_pitcheditrange);
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, default_noteslots, notationobj_getattr_defaultnoteslots)
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, default_noteslots, notationobj_setattr_defaultnoteslots);
+
+DEFINE_PITCH_ATTR_DEFAULT_GETTER(t_notation_obj, ji_base_for_ratios, notationobj_getattr_jibase);
 
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(midichannels_as_longlist, num_voices)
 DEFINE_NOTATIONOBJ_SYMPTR_GETTER(notationstyles_as_symlist, num_voices)
@@ -34,6 +37,27 @@ DEFINE_NOTATIONOBJ_ATOMPTR_GETTER(prevent_editing_atom, num_prevent_editing_elem
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(background_slots, num_background_slots)
 DEFINE_NOTATIONOBJ_LONGPTR_GETTER(popup_menu_slots, num_popup_menu_slots)
 
+
+t_max_err notationobj_setattr_jibase(t_notation_obj *x, t_object *attr, long ac, t_atom *av)
+{
+    t_symbol *pitchSym;
+    if (ac == 1 && (pitchSym = atom_getsym(av)) != nullptr) {
+        t_pitch p;
+        t_pitchParser parser;
+        p = parser.parse(pitchSym->s_name);
+        if (p != t_pitch::NaP) {
+            if (!p.isPureJI()) {
+                // gotta make it pure JI to compute JIratios properly...
+                const std::vector<t_int8> HEJIcommas(BACH_PRIMES_JI_SIZE-2, 0);
+                t_pitch q = t_pitch(p.getPlofET(), HEJIcommas, p.getOctave());
+                x->ji_base_for_ratios = q;
+            } else {
+                x->ji_base_for_ratios = p;
+            }
+        }
+    }
+    return MAX_ERR_NONE;
+}
 
 
 
@@ -2269,6 +2293,12 @@ void notation_class_add_ji_attributes(t_class *c, char obj_type)
     // it doesn't change the profound nature of the pitch (which can very well be in a higher limit)
     // but it only trims its display to the selected harmonic prime number, and adjusts the interface
     // accordingly
+    
+    CLASS_ATTR_PITCH(c, "jibase", 0, t_notation_obj, ji_base_for_ratios, notationobj_getattr_jibase, notationobj_setattr_jibase);
+    CLASS_ATTR_STYLE_LABEL(c,"jibase",0,"text","Reference Diatonic Pitch for JI Ratios");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jibase",0,"C5");
+    CLASS_ATTR_BASIC(c,"jibase", 0);
+    // @description Sets the reference diatonic pitch for just intonation ratios.
 
     CLASS_ATTR_CHAR(c, "jialwaysshowpythacc", 0, t_notation_obj, ji_always_show_pythagorean_accidentals);
     CLASS_ATTR_STYLE_LABEL(c,"jialwaysshowpythacc",0,"onoff","Always Show JI Pythagorean Accidentals");
@@ -6165,8 +6195,8 @@ long notationstyle_from_symbol(t_symbol *s)
         return k_VOICE_NOTATION_STYLE_JI;
     else if (s == gensym("continuous") || s == gensym("linear") || s == gensym("linpitch") || s == gensym("continuous linear pitch") || s == gensym("Continuous Linear Pitch"))
         return k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH;
-    else if (s == gensym("linfreq") || s == gensym("continuous linear frequency") || s == gensym("Continuous Linear Frequency"))
-        return k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ;
+//    else if (s == gensym("linfreq") || s == gensym("continuous linear frequency") || s == gensym("Continuous Linear Frequency"))
+//        return k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ;
     else
         return k_VOICE_NOTATION_STYLE_ET;
 }

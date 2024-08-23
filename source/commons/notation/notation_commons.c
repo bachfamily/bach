@@ -1366,7 +1366,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     ch->imposed_direction = -1;
     foo->midicents = midicents;
     note_compute_approximation(r_ob, foo);
-    chord_calculate_parameters(r_ob, ch, get_voice_clef(r_ob, voice), false);
+    chord_calculate_parameters(r_ob, ch, false);
     
     // ledger lines
     double ledger_lines_y[CONST_MAX_LEDGER_LINES]; 
@@ -1983,7 +1983,7 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
             
             // drawing accidental
             if (curr_nt->num_accidentals == 0)  // Weird: if (curr_nt->show_accidental) there's an accidental to show: let's check; otherwise it is bogus
-                chord_calculate_parameters(r_ob, curr_nt->parent, clef, false);
+                chord_calculate_parameters(r_ob, curr_nt->parent, false);
             
             is_bogus = (curr_nt->num_accidentals == 0 || (curr_nt->num_accidentals == 1 && curr_nt->accidentals[0] == BACH_ACCIDENTAL_BOGUS));
             
@@ -5542,6 +5542,12 @@ double scaleposition_to_uyposition(t_notation_obj *r_ob, long scaleposition, t_v
     return scaleposition_to_yposition(r_ob, scaleposition, v_ob)/r_ob->zoom_y;
 }
 
+
+double mc_to_yposition_continuous(t_notation_obj *r_ob, double mc, t_voice *v_ob)
+{
+    return v_ob->middleC_y - (mc - 6000)/100. * r_ob->step_y;
+}
+
 // *note is only needed if notehead is custom
 double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize, char ignore_custom_noteheads)
 { // discretized to the possible locations of the notehead ON the staff line or BETWEEN two staff lines
@@ -5551,6 +5557,11 @@ double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_
 
 double mc_to_yposition_in_scale(t_notation_obj *r_ob, double mc, t_voice *v_ob){ // discretized to the possible locations of the notehead ON the staff line or BETWEEN two staff lines
 //no CONST_Y_NOTE_TRANSL constant: this returns the REAL pixel position corresponding to a given midicent!
+    
+    if (v_ob->notation_style == k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH) {
+        return mc_to_yposition_continuous(r_ob, mc, v_ob);
+    }
+
     long oct = floor(mc / 1200.);
     double pitch = mc - oct * 1200.; 
     long sc_pitch;
@@ -5578,15 +5589,25 @@ double mc_to_yposition_in_scale(t_notation_obj *r_ob, double mc, t_voice *v_ob){
     return to_return; // + voiceoffset;
 }
 
+
 double mc_to_yposition_quantized(t_notation_obj *r_ob, double mc, t_voice *v_ob)
 {
+    if (v_ob->notation_style == k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH) {
+        return mc_to_yposition_continuous(r_ob, mc, v_ob);
+    }
+
     long screen_mc;
     t_rational screen_acc;
     mc_to_display_approximation_ET(r_ob, mc, &screen_mc, &screen_acc, v_ob->acc_pattern, v_ob->full_repr);    // automatic approximation
     return mc_to_yposition_in_scale(r_ob, screen_mc, v_ob);
 }
 
-double mc_to_yposition(t_notation_obj *r_ob, double mc, t_voice *v_ob){
+double mc_to_yposition(t_notation_obj *r_ob, double mc, t_voice *v_ob)
+{
+    if (v_ob->notation_style == k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH) {
+        return mc_to_yposition_continuous(r_ob, mc, v_ob);
+    }
+    
 //no CONST_Y_NOTE_TRANSL constant: this returns the REAL pixel position corresponding to a given midicent!
     double to_return;
     long oct = floor(mc / 1200.);
@@ -12405,7 +12426,7 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
 
                     if (note_has_accidentals(temp_nt) &&
                         (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS ||
-                         r_ob->ji_always_show_pythagorean_accidentals)) {
+                         (note_should_be_treated_as_ji(r_ob, temp_nt) && r_ob->ji_always_show_pythagorean_accidentals && r_ob->show_accidentals_preferences != k_SHOW_ACC_NONE))) {
                         // we did say ALWAYS to accidentals show
 
                         temp_nt->show_accidentals = true;
@@ -12482,12 +12503,12 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
                                 curr_parent = temp_nt2->parent;
                                 if (!already_postponed_accidental_on_next_untied_note) already_postponed_accidental_on_next_untied_note = true;
                             } else if  (((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && !temp_nt2_has_no_acc_or_has_natural) || // tied, need to show all accidentals
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && !temp_nt2_has_no_acc_or_has_natural) ||
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && !temp_nt2_has_no_acc_or_has_natural) ||
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural) || // these three should NEVER be the case (beginning of the measure?!? that's not the first position-note!)
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural) ||
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural) ||
-                                        ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_CLASSICAL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural)) {
+                                ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && !temp_nt2_has_no_acc_or_has_natural) ||
+                                ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_ALWAYS) && !temp_nt2_has_no_acc_or_has_natural) ||
+                                ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural) || // these three should NEVER be the case (beginning of the measure?!? that's not the first position-note!)
+                                ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural) ||
+                                ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural) ||
+                                ((temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_CLASSICAL) && (r_ob->show_accidentals_tie_preferences == k_SHOW_ACC_TIES_MEASURE_BEGINNING) && (!(temp_nt2->parent->prev)) && !temp_nt2_has_no_acc_or_has_natural)) {
                                 temp_nt2->show_accidentals = true;
                                 already_done_octave_cautionary_accidental = false;
                                 count_for_octave_cautionary_acc = 0;
@@ -24604,12 +24625,15 @@ void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note){
     }
 }
 
-void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, char reset_graphical_position_values) {
-// calculates all the parameters of a chord (such as notehead positions, accidental positions, width...) in order to simplify the drawing process 
+void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values) 
+{
+// calculates all the parameters of a chord (such as notehead positions, accidental positions, width...) in order to simplify the drawing process
 // direction = 0: auto; 1: upwards, -1: downwards; 
 // clef: a clef indicated by its MiddleC scaleposition with respect to the first staff line (e.g.: Gclef = -2, Fclef = 10, SopranoClef = 0, and so on)   
 //         standard clef combinations are also possible (see the constants in the header)
 
+    t_voice *voice = notation_item_get_voice(r_ob, (t_notation_item *)chord);
+    int clef = (voice ? voice->clef : k_CLEF_G);
     if (!(chord->is_score_chord && rat_long_cmp(chord->r_sym_duration, 0) == -1) && chord->num_notes > 0) { // it's NOT a rest!
         t_voice *voice = r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent;
         
@@ -25675,12 +25699,12 @@ double freqratio_to_cents(double ratio, double baseratio)
 
 double notationobj_cents_to_freqratio(t_notation_obj *r_ob, double cents)
 {
-    return cents_to_freqratio(cents, r_ob->ji_base_for_ratios_as_double);
+    return cents_to_freqratio(cents, (double)r_ob->ji_base_for_ratios.getRatio());
 }
 
 double notationobj_freqratio_to_cents(t_notation_obj *r_ob, double ratio)
 {
-    return freqratio_to_cents(ratio, r_ob->ji_base_for_ratios_as_double);
+    return freqratio_to_cents(ratio, (double)r_ob->ji_base_for_ratios.getRatio());
 }
 
 
@@ -25696,7 +25720,7 @@ double snap_to_jilimit(double cents, long jilimit, double jierrthresh, double ba
 }
 
 double notationobj_snap_to_jilimit(t_notation_obj *r_ob, double cents){
-    return snap_to_jilimit(cents, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, r_ob->ji_base_for_ratios_as_double);
+    return snap_to_jilimit(cents, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
 }
 
 void snap_pitch_to_current_grid_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt) {
@@ -25787,6 +25811,7 @@ void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
     
     chord_set_recompute_parameters_flag(r_ob,  note->parent);
     if (note->parent->is_score_chord) { // only for score!
+        chord_calculate_parameters(r_ob, note->parent, true);
         note->parent->parent->need_check_ties = true;
         measure_validate_accidentals(r_ob, note->parent->parent);
         note->parent->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
@@ -33369,7 +33394,7 @@ void snap_pitch_to_ji_limit_for_note(t_notation_obj *r_ob, t_note *note, long ji
 }
 
 void snap_pitch_to_current_ji_limit_for_note(t_notation_obj *r_ob, t_note *note) {
-    snap_pitch_to_ji_limit_for_note(r_ob, note, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, r_ob->ji_base_for_ratios_as_double);
+    snap_pitch_to_ji_limit_for_note(r_ob, note, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
 }
 
 void snap_pitch_to_ji_limit_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt, long jilimit, double jierrthresh, double baseratio) {
@@ -33378,7 +33403,7 @@ void snap_pitch_to_ji_limit_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt, lon
 }
 
 void snap_pitch_to_current_ji_limit_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt) {
-    snap_pitch_to_ji_limit_for_breakpoint(r_ob, bpt, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, r_ob->ji_base_for_ratios_as_double);
+    snap_pitch_to_ji_limit_for_breakpoint(r_ob, bpt, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
 }
 
 char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
@@ -33391,7 +33416,7 @@ char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                snap_pitch_to_ji_limit_for_note(r_ob, nt, jilimit, r_ob->ji_limit_approx_mcthresh, r_ob->ji_base_for_ratios_as_double);
+                snap_pitch_to_ji_limit_for_note(r_ob, nt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
                 changed = 1;
             }
         } else if (curr_it->type == k_CHORD) {
@@ -33399,7 +33424,7 @@ char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
             while (temp_nt) {
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                     undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                    snap_pitch_to_ji_limit_for_note(r_ob, temp_nt, jilimit, r_ob->ji_limit_approx_mcthresh, r_ob->ji_base_for_ratios_as_double);
+                    snap_pitch_to_ji_limit_for_note(r_ob, temp_nt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
                     changed = 1;
                 }
                 temp_nt = temp_nt->next;
@@ -33411,7 +33436,7 @@ char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
                 while (temp_nt) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                         undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                        snap_pitch_to_ji_limit_for_note(r_ob, temp_nt, jilimit, r_ob->ji_limit_approx_mcthresh, r_ob->ji_base_for_ratios_as_double);
+                        snap_pitch_to_ji_limit_for_note(r_ob, temp_nt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
                         changed = 1;
                     }
                     temp_nt = temp_nt->next;
@@ -33423,7 +33448,7 @@ char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
             t_note *nt = bpt->owner;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                snap_pitch_to_ji_limit_for_breakpoint(r_ob, bpt, jilimit, r_ob->ji_limit_approx_mcthresh, r_ob->ji_base_for_ratios_as_double);
+                snap_pitch_to_ji_limit_for_breakpoint(r_ob, bpt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
                 changed = 1;
             }
         }
@@ -36235,7 +36260,6 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     // TODO: possibly change defaults for these two lines below, and expose them as attributes!
     r_ob->ji_limit = 5; // what should be the default? 5 seems like a conservative choice, pretty much like 12-EDO
     r_ob->ji_base_for_ratios = t_pitch(genrat(32, 1)); // C5 by default: Should it be C0?
-    r_ob->ji_base_for_ratios_as_double = (double)r_ob->ji_base_for_ratios.getRatio();
     r_ob->ji_limit_approx_mcthresh = 67; // is this a good default? it's two thirds of a tone, it's what HEJI used to define their commas
     r_ob->ji_always_show_pythagorean_accidentals = false;
     

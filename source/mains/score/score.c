@@ -10417,6 +10417,8 @@ void overtype_voice(t_score *x, t_scorevoice *voice, t_timepoint *from_here, t_t
         if (num > 0)
             check_measure_autocompletion(x, fakemeas); // we now count on autocompletion to trim stuff properly
         compute_note_approximations_for_measure((t_notation_obj *)x, fakemeas, false);
+        for (t_chord *ch = fakemeas->firstchord; ch; ch = ch->next)
+            chord_calculate_parameters((t_notation_obj *)x, ch, false);
         measure_validate_accidentals((t_notation_obj *)x, fakemeas);
 
         llll_free(ts);
@@ -11694,7 +11696,7 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->parent->voiceparent->v_ob.number, delta);
         }
-        recompute_all_for_measure((t_notation_obj *)x, note->parent->parent, false);
+//        recompute_all_for_measure((t_notation_obj *)x, note->parent->parent, false);
 //        note->midicents += (delta * (200. / x->r_ob.tone_division));
     } else {
         note->midicents += delta;
@@ -11702,6 +11704,7 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
             note->pitch_original = notationobj_get_best_jilimited_approximation((t_notation_obj *)x, note->midicents);
         }
     }
+    note_compute_approximation((t_notation_obj *)x, note);
 
     note_y_real = mc_to_yposition((t_notation_obj *)x, note->midicents, (t_voice *) note->parent->parent->voiceparent);
 
@@ -11942,8 +11945,9 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
             }
                 
             if (true) { // !old_chord_deleted) {
+//                chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
+                chord_calculate_parameters((t_notation_obj *) x, oldch, false);
                 measure_validate_accidentals((t_notation_obj *) x, oldch->parent);
-                chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
                 oldch->parent->need_recompute_beams_positions = true;
             }
 
@@ -11989,8 +11993,9 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                                         note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                                 }
                             }
+//                            chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
+                            chord_calculate_parameters((t_notation_obj *) x, newch, false);
                             measure_validate_accidentals((t_notation_obj *) x, newch->parent);
-                            chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
                             //                        newch->parent->need_recompute_beams_positions = true;
                             if (!x->r_ob.j_mouse_is_down)
                                 recompute_all_for_measure((t_notation_obj *)x, newch->parent, false);
@@ -12012,8 +12017,9 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                                 note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                         }
                     }
+//                    chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
+                    chord_calculate_parameters((t_notation_obj *) x, oldch, false);
                     measure_validate_accidentals((t_notation_obj *) x, oldch->parent);
-                    chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
                     oldch->parent->need_recompute_beams_positions = true;
                     if (!x->r_ob.j_mouse_is_down) {
                         if (is_in_voiceensemble)
@@ -12061,8 +12067,9 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                                     }
                                 } 
                             }
+//                            chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
+                            chord_calculate_parameters((t_notation_obj *) x, newch, false);
                             measure_validate_accidentals((t_notation_obj *) x, newch->parent);
-                            chord_set_recompute_parameters_flag((t_notation_obj *)x, newch);
 //                            newch->parent->need_recompute_beams_positions = true;
                             oldch->parent->need_recompute_beamings = true;
                             newch->parent->need_recompute_beamings = true;
@@ -12080,8 +12087,9 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                         if (change_pitch_must_actually_snap_to_grid((t_notation_obj *)x, mode, snap_pitch_to_grid)) 
                             note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, nt);
                     }
+//                    chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
+                    chord_calculate_parameters((t_notation_obj *) x, oldch, false);
                     measure_validate_accidentals((t_notation_obj *) x, oldch->parent);
-                    chord_set_recompute_parameters_flag((t_notation_obj *)x, oldch);
                     oldch->parent->need_recompute_beams_positions = true;
                 }
 
@@ -15522,8 +15530,8 @@ t_chord *tie_untie_notes_on_linear_edit(t_score *x){
         for (nt = chord->firstnote; nt; nt = nt->next) {
             if (!cursor_nt || cursor_nt == nt) {
                 tie_untie_note(nt);
+                chord_calculate_parameters((t_notation_obj *) x, nt->parent, true);
                 measure_validate_accidentals((t_notation_obj *) x, nt->parent->parent);
-                chord_calculate_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->parent->voiceparent), true);
             }
         }        
     }
@@ -15574,7 +15582,7 @@ t_chord *make_chord_or_note_sharp_or_flat_on_linear_edit(t_score *x, char direct
                     note_set_user_enharmonicity(nt, p);
                     note_set_displayed_user_enharmonicity(nt, p);
 
-                    chord_calculate_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->parent->voiceparent), true);
+                    chord_calculate_parameters((t_notation_obj *) x, nt->parent, true);
                 }
             }        
             
@@ -15628,7 +15636,7 @@ t_chord *change_pitch_from_linear_edit(t_score *x, long diatonic_step)
                 if (!cursor_nt || cursor_nt == nt) {
                     note_set_user_enharmonicity_from_display_representation(nt, mc, long2rat(0), true);
                     note_compute_approximation((t_notation_obj *)x, nt);
-                    chord_calculate_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->parent->voiceparent), true);
+                    chord_calculate_parameters((t_notation_obj *) x, nt->parent, true);
                 }
             }
             
@@ -15673,7 +15681,7 @@ void add_note_to_chord_from_linear_edit(t_score *x, long force_diatonic_step){
         note_set_user_enharmonicity_from_display_representation(this_nt, argv[1], long2rat(0), true);
         note_insert((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
         note_compute_approximation((t_notation_obj *) x, this_nt);
-        chord_calculate_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->parent->voiceparent), false);
+        chord_calculate_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, false);
         measure_validate_accidentals((t_notation_obj *) x, x->r_ob.notation_cursor.measure);
         x->r_ob.notation_cursor.measure->need_recompute_beams_positions = true;
     }
@@ -16546,8 +16554,8 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                         lock_general_mutex((t_notation_obj *)x);
                         undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)ch->parent, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                         turn_chord_into_rest_or_into_note(x, ch, x->r_ob.notation_cursor.midicents);
+                        chord_calculate_parameters((t_notation_obj *) x, ch, true);
                         measure_validate_accidentals((t_notation_obj *) x, ch->parent);
-                        chord_calculate_parameters((t_notation_obj *) x, ch, get_voice_clef((t_notation_obj *)x, (t_voice *)ch->parent->voiceparent), true);
                         unlock_general_mutex((t_notation_obj *)x);
 
                         if (x->r_ob.playback_during_linear_editing && x->r_ob.notation_cursor.chord)
@@ -16789,7 +16797,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                     undo_tick_create_for_notation_item((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.measure, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                                     edited_chord->r_sym_duration = rat_rat_prod(edited_chord->r_sym_duration, genrat(3, 2));
                                     edited_chord->dont_split_for_ts_boxes = true;
-                                    chord_calculate_parameters((t_notation_obj *) x, edited_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)edited_chord->parent->voiceparent), true);
+                                    chord_calculate_parameters((t_notation_obj *) x, edited_chord, true);
                                     set_tuplet_levels_as_keep_levels(x->r_ob.notation_cursor.measure->rhythmic_tree);
                                     set_level_type_flag_for_level(x->r_ob.notation_cursor.measure->rhythmic_tree, k_RHYTHM_LEVEL_IGNORE);
                                     op = k_UNDO_OP_LINEAR_EDIT_ADD_DOT;
@@ -16819,7 +16827,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                     op = k_UNDO_OP_LINEAR_EDIT_ADD_CHORD;
                                     x->r_ob.force_diatonic_step = -1;
                                 }
-                                chord_calculate_parameters((t_notation_obj *) x, edited_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)edited_chord->parent->voiceparent), true);
+                                chord_calculate_parameters((t_notation_obj *) x, edited_chord, true);
                                 set_tuplet_levels_as_keep_levels(x->r_ob.notation_cursor.measure->rhythmic_tree);
                                 verbose_post_rhythmic_tree((t_notation_obj *)x, x->firstvoice->lastmeasure, gensym("before4b"), 1);
                                 if (!is_level_tuplet(x->r_ob.notation_cursor.measure->rhythmic_tree))
@@ -18579,7 +18587,7 @@ void add_grace_chord_at_note_tail(t_score *x, t_note *nt, t_rational grace_dur)
     
     note_insert((t_notation_obj *) x, new_chord, new_note, 0);
     note_compute_approximation((t_notation_obj *) x, new_note);
-    chord_calculate_parameters((t_notation_obj *) x, new_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)meas->voiceparent), false);
+    chord_calculate_parameters((t_notation_obj *) x, new_chord, false);
     measure_validate_accidentals((t_notation_obj *) x, meas);
     recompute_all_for_measure((t_notation_obj *) x, meas, true);
 }
@@ -18603,7 +18611,7 @@ void add_grace_chord_at_chord_tail(t_score *x, t_chord *ch, t_rational grace_dur
     if (new_chord->num_notes == 0) {
         chord_delete_from_measure((t_notation_obj *)x, new_chord, false);
     } else {
-        chord_calculate_parameters((t_notation_obj *) x, new_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)meas->voiceparent), false);
+        chord_calculate_parameters((t_notation_obj *) x, new_chord, false);
         measure_validate_accidentals((t_notation_obj *) x, meas);
         recompute_all_for_measure((t_notation_obj *) x, meas, true);
     }

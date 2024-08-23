@@ -72,7 +72,7 @@ typedef struct _reg
     long                    n_embed;
     long                    n_in;
     t_object                *m_editor;
-    t_pitch                 dummypitch; // TODO: togliere!!!
+//    t_pitch                 dummypitch; // TODO: togliere!!!
 } t_reg;
 
 void reg_assist(t_reg *x, void *b, long m, long a, char *s);
@@ -96,7 +96,7 @@ void reg_dblclick(t_reg *x);
 
 t_class *reg_class;
 
-DEFINE_PITCH_ATTR_DEFAULT_GETTER_AND_SETTER(t_reg, dummypitch, reg_getattr_dummypitch, reg_setattr_dummypitch);
+//DEFINE_PITCH_ATTR_DEFAULT_GETTER_AND_SETTER(t_reg, dummypitch, reg_getattr_dummypitch, reg_setattr_dummypitch);
 
 void C74_EXPORT ext_main(void *moduleRef)
 {
@@ -146,7 +146,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     // @description When set to 1, the stored llll is saved with the patcher
     // and will be available, to be retrieved with a bang, next time the patch is loaded.
     
-    CLASS_ATTR_PITCH(c, "dummypitch", 0, t_reg, dummypitch, reg_getattr_dummypitch, reg_setattr_dummypitch);
+//    CLASS_ATTR_PITCH(c, "dummypitch", 0, t_reg, dummypitch, reg_getattr_dummypitch, reg_setattr_dummypitch);
     
     class_register(CLASS_BOX, c);
     

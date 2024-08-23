@@ -269,6 +269,7 @@ public:
     static const t_pitch middleC; // middle C
     static const t_pitch C0; // C0
     static const t_atom_short whiteKey2MC[];
+    static const t_atom_short whiteKey2Plof[];
     static const t_atom_short degree2PC[];
     static const t_atom_short PC2degree[];
     static const char degree2name[];
@@ -518,8 +519,26 @@ public:
     t_atom_short getWhiteKeyJI() const { return p_JIexpVector.getWhiteKeyJI(); }
 
     t_int8 getPlofJI() const { return p_JIexpVector.getPlof(); }
-    
     t_int8 getSharpsJI() const { return integer_div_round_down(getPlofJI() + 1, 7); };
+
+    // TODO: Andrea, add const stuff... I had issues
+    // possibly approximated to semitones
+    t_int8 getSharpsET() {
+        t_pitch pappr = approxET(2);
+        return (pappr.getAlterET() * 2).num();
+    };
+
+    // TODO: Andrea, add const stuff... I had issues
+    // possibly approximated to semitones
+    t_int8 getPlofET() {
+        t_pitch pappr = approxET(2);
+        t_atom_short wket = getWhiteKeyET();
+        t_int8 plof = 0;
+        if (wket >= 0 & wket < 7)
+            plof += whiteKey2Plof[getWhiteKeyET()];
+        plof += getSharpsET() * 7;
+        return plof;
+    }
     
     std::vector<int8_t> getHEJICommas(bool removeTrailingZeros = false) const {
         std::vector<int8_t> v = p_JIexpVector.get();

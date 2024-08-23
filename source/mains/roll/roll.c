@@ -10046,7 +10046,7 @@ void process_chord_parameters_calculation_NOW(t_roll *x){
                 assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
                 chord_assign_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom, jf_dynamics_roman_nozoom);
                 compute_middleC_position_for_all_voices((t_notation_obj *) x);
-                chord_calculate_parameters((t_notation_obj *) x, curr_ch, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), true);
+                chord_calculate_parameters((t_notation_obj *) x, curr_ch, true);
                 curr_ch->need_recompute_parameters = false;
             }
         }
@@ -11592,6 +11592,11 @@ char check_chords_order_for_voice(t_roll *x, t_rollvoice *voice){
     return changed;
 }
 
+int chord_get_clef(t_notation_obj *r_ob, t_chord *ch)
+{
+    t_voice *voice = notation_item_get_voice(r_ob, (t_notation_item *)ch);
+    return (int)(voice ? voice->clef : k_CLEF_G);
+}
 
 // see e_chord_position_in_screen
 e_chord_position_in_screen chord_get_screen_position_for_painting(t_roll *x, t_chord *curr_ch)
@@ -11821,7 +11826,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     if (curr_ch->need_recompute_parameters) { // we have to recalculate chord parameters
         assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
         chord_assign_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom, jf_dynamics_roman_nozoom);
-        chord_calculate_parameters((t_notation_obj *) x, curr_ch, clef, true);
+        chord_calculate_parameters((t_notation_obj *) x, curr_ch, true);
         curr_ch->need_recompute_parameters = false;
     }
     
@@ -16724,7 +16729,7 @@ t_chord *roll_make_chord_or_note_sharp_or_flat_on_linear_edit(t_roll *x, char di
 
                 note_set_user_enharmonicity(nt, t_pitch(nt->pitch_displayed.getWhiteKeyET(), rat_rat_sum(nt->pitch_displayed.getAlterET(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.getOctave()));
                 
-                chord_calculate_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->voiceparent), true);
+                chord_calculate_parameters((t_notation_obj *) x, nt->parent, true);
             }
         }
     }
@@ -16800,7 +16805,7 @@ t_chord *roll_change_pitch_from_linear_edit(t_roll *x, long diatonic_step)
             if (!cursor_nt || cursor_nt == nt) {
                 note_set_user_enharmonicity_from_display_representation(nt, mc, long2rat(0), true);
                 note_compute_approximation((t_notation_obj *)x, nt);
-                chord_calculate_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->voiceparent), true);
+                chord_calculate_parameters((t_notation_obj *) x, nt->parent, true);
             }
         }
         
@@ -16895,7 +16900,7 @@ void roll_add_note_to_chord_from_linear_edit(t_roll *x, long number, long force_
         note_set_user_enharmonicity_from_display_representation(this_nt, argv[1], long2rat(0), true);
         note_insert((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
         note_compute_approximation((t_notation_obj *) x, this_nt);
-        chord_calculate_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->voiceparent), false);
+        chord_calculate_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, false);
     }
 }
 
@@ -16908,7 +16913,7 @@ t_chord *roll_add_new_chord_from_linear_edit(t_roll *x, char number, long force_
         t_chord *new_chord = addchord_from_notes(x, x->r_ob.notation_cursor.voice->number, x->r_ob.notation_cursor.onset, 0, 0, NULL, NULL, false, 0);
         x->r_ob.notation_cursor.chord = new_chord;
         roll_add_note_to_chord_from_linear_edit(x, number, force_diatonic_step, false);
-        chord_calculate_parameters((t_notation_obj *) x, new_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)new_chord->voiceparent), true);
+        chord_calculate_parameters((t_notation_obj *) x, new_chord, true);
         return new_chord;
     }
     return NULL;

@@ -466,8 +466,8 @@ void notationobj_declare_bach_attributes(t_notation_obj *r_ob)
     notationstyles[0] = gensym("Equal Temperament");
     notationstyles[1] = gensym("Just Intonation");
     notationstyles[2] = gensym("Linear Pitch");
-    notationstyles[3] = gensym("Linear Frequency");
-    bach_attribute_add_enumindex(bach_attribute_get(man, k_VOICE, _llllobj_sym_notationstyle), 4, notationstyles);
+//    notationstyles[3] = gensym("Linear Frequency");
+    bach_attribute_add_enumindex(bach_attribute_get(man, k_VOICE, _llllobj_sym_notationstyle), 3, notationstyles);
 
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_lock, "Lock", k_VOICE, t_voice, locked, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_mute, "Mute", k_VOICE, t_voice, muted, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);

@@ -48,6 +48,7 @@ const t_pitch t_pitch::middleC = t_pitch(0, natural, 5); // middle C
 const t_pitch t_pitch::C0 = t_pitch(0, natural, 0); // C0
 
 const t_atom_short t_pitch::whiteKey2MC[] = {0, 200, 400, 500, 700, 900, 1100};
+const t_atom_short t_pitch::whiteKey2Plof[] = {0, 2, 4, -1, 1, 3, 5};
 const t_atom_short t_pitch::degree2PC[] = {0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23};
 const t_atom_short t_pitch::PC2degree[] = {0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6};
 const char t_pitch::degree2name[] = { 'C', 'D', 'E', 'F', 'G', 'A', 'B' };

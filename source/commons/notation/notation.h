@@ -4119,7 +4119,6 @@ typedef struct _notation_obj
     // TODO: expose this field as attribute
     long            ji_limit;                    ///< JI limit for editing and display
     t_pitch         ji_base_for_ratios;          ///< Base pitch used as reference for JI ratios (e.g. C5 or C{}5, or D{}5...)
-    double          ji_base_for_ratios_as_double;///< Same, as double (e.g. 32., or 36....)
     double          ji_limit_approx_mcthresh;    ///< Cents threshold for error while approximating cents to JI
     char            ji_always_show_pythagorean_accidentals;     ///< Always show naturals for JI pitches
     
@@ -6357,6 +6356,8 @@ void chord_set_recompute_parameters_flag(t_notation_obj *r_ob, t_chord *ch);
  */
 char chord_get_placement_in_screen(t_notation_obj *r_ob, t_chord *chord);
 
+int chord_get_clef(t_notation_obj *r_ob, t_chord *ch);
+
 
 /** Tell if a given vertical pixel position is inside the staff (or staves) of a given voice.
     @ingroup        notation_graphics
@@ -7801,12 +7802,10 @@ int get_middle_scaleposition(int clef);
     @ingroup                                notation
     @param    r_ob                            The notation object
     @param    chord                            The chord
-    @param    clef                            The clef or clef combination, as one of the #e_clefs (typically this could be in roll the chord->voiceparent->v_ob.clef, 
-                                            in score the chord->parent->voiceparent->v_ob.clef)
     @param    reset_graphical_position_values    Set this to 1 if you also want to reset the graphical position values. Namely this resets the <topmost_y>, <bottommost_y>, 
                                             <beam_y>, <topmost_y_noacc>, <bottommost_y_noacc> fields, and then call for reset_articulation_position_for_chord()
  */
-void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, char reset_graphical_position_values);
+void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values);
 
 
 /**    Fill the <notehead_resize> and <accidentals_resize> fields for a given note, depening if the note size is linked to some slot, or
@@ -9743,6 +9742,8 @@ void note_retranscribe_as_JI_ratio(t_notation_obj *r_ob, t_note *note, t_rationa
  */ 
 char enharmonically_respell_selection(t_notation_obj *r_ob);
 
+
+bool note_should_be_treated_as_ji(t_notation_obj *r_ob, t_note *nt);
 
 /**    DEPRECATED, OBSOLETE: use note_set_pitch().
     Properly set all the note pitch and accidental fields (also screen ones) starting from a note name (as symbo).

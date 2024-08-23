@@ -31,13 +31,19 @@ const long subs_count = 2;
 //Midicents of the screen diatonic note, ignoring accidental. For example, for the Eb above the middle C, this will be 6400 (the midicents of the E)
 long note_get_display_midicents(t_note *nt)
 {
-    return nt->pitch_displayed.toMC_wo_accidental();
+    if (nt->pitch_displayed == t_pitch::NaP)
+        return nt->midicents;
+    else
+        return nt->pitch_displayed.toMC_wo_accidental();
 }
 
 
 double note_get_display_midicents_with_accidental(t_note *nt)
 {
-    return nt->pitch_displayed.toMCdouble();
+    if (nt->pitch_displayed == t_pitch::NaP)
+        return nt->midicents;
+    else
+        return nt->pitch_displayed.toMCdouble();
 }
 
 char note_is_original_pitch_userdefined(t_note *nt)
@@ -218,6 +224,7 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
     
     if (voice->notation_style == k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH ||
         voice->notation_style == k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ) {
+        nt->pitch_displayed = t_pitch::NaP;
         return; // nothing to approximate: there will be no accidentals, just a continuous field
     }
     
