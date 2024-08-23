@@ -7720,7 +7720,7 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                             double note_bottom = note_get_accidental_udescent((t_notation_obj *)x, note);
                             if (!((n_uy - n_top < note_uy + note_bottom && n_uy + n_bottom < note_uy - note_top) ||
                                 (n_uy - n_top > note_uy + note_bottom && n_uy + n_bottom > note_uy - note_top))) {
-                                acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + note_get_accidental_uwidth((t_notation_obj *)x, n, false) - 1.5); // + CONST_UX_ACC_SEPARATION_FROM_ACC);
+                                acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + note_get_accidental_uwidth((t_notation_obj *)x, n, false) - 1.5); 
                             }
                         }
                     }

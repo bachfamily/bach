@@ -3977,6 +3977,7 @@ void jiwheel_mousedrag(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifi
 {
     t_pt center;
     double radius;
+    bool changed = false;
     get_radius_and_center(x, patcherview, &radius, &center.x, &center.y);
 
     x->mouse_is_dragging = true;
@@ -3992,16 +3993,20 @@ void jiwheel_mousedrag(t_jiwheel *x, t_object *patcherview, t_pt pt, long modifi
         if (x->sel1_ratio.r_num != 0) {
             long sel_pitch_idx = pt_to_wheelpitch_idx(x, patcherview, pt);
             if (sel_pitch_idx >= 0 && sel_pitch_idx < x->num_pitches) {
-                x->sel2_ratio = x->curr_pitches[sel_pitch_idx].ratio;
-                jiwheel_sync_interval(x);
-                if (x->auto_move_intwheel)
-                    jiwheel_set_intwheel_from_selection(x);
+                if (x->curr_pitches[sel_pitch_idx].ratio != x->sel2_ratio) {
+                    x->sel2_ratio = x->curr_pitches[sel_pitch_idx].ratio;
+                    changed = true;
+                    jiwheel_sync_interval(x);
+                    if (x->auto_move_intwheel)
+                        jiwheel_set_intwheel_from_selection(x);
+                }
             }
         }
     }
     systhread_mutex_unlock(x->c_mutex);
     
-    jiwheel_output_selection(x);
+    if (changed)
+        jiwheel_output_selection(x);
     
     jbox_redraw((t_jbox *)x);
     
@@ -4187,6 +4192,7 @@ t_llll *jiwheel_get_wheelpitch_as_llll(t_jiwheel *x, t_wheelpitch *p, bool as_in
 void jiwheel_set_pitch(t_jiwheel *x, t_pitch p)
 {
     t_pitch q = p; //p % t_pitch(genrat(2, 1));
+    jiwheel_clear_selection(x);
     x->sel1_ratio = q.getRatio();
     x->sel2_ratio = genrat(0, 1);
 //    jiwheel_sync_interval(x);
@@ -4211,13 +4217,14 @@ void jiwheel_set_interval(t_jiwheel *x, t_pitch p1, t_pitch p2)
     }
     x->sel1_ratio = q1.getRatio();
     x->sel2_ratio = q2.getRatio();
-    jiwheel_sync_interval(x);
-    jiwheel_set_intwheel_from_selection(x);
     
     t_object *patcherparent;
     object_obex_lookup(x, gensym("#P"), &patcherparent);
     jiwheel_build_pitches(x, jpatcher_get_firstview(patcherparent));
-    
+
+    jiwheel_sync_interval(x);
+    jiwheel_set_intwheel_from_selection(x);
+
     jiwheel_output_selection(x);
     jbox_redraw((t_jbox *)x);
 }

@@ -575,7 +575,7 @@ t_rational t_pitch::getHEJICommasAsRational() const {
     return r;
 }
 
-std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace, t_bool writeNaturalCsAsJI) const
+std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const
 {
     std::string s;
     t_int8 octave;
@@ -596,7 +596,7 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive, t_b
         bool pureJI = p.isPureJI();
         bool pureET = p.isPureET();
 
-        if (!pureJI || (pureET && !writeNaturalCsAsJI)) {
+        if (!pureJI || pureET) {
             // not pure JI or both pure JI and pureET (that is, it's a C with no alteration or deviation – except if we ask them to be written as JI)
             if (mirror)
                 s = '-';

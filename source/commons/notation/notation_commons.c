@@ -3279,7 +3279,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
             if (!nt->pitch_original.isPureJI()) {
                 legend += t_pitch(nt->pitch_original.getWhiteKeyET(), nt->pitch_original.getAlterET(), 0).toString();
             } else {
-                legend += r_ob->ji_base_for_ratios.toString(true, false, false, true);
+                legend += r_ob->ji_base_for_ratios.toString();
             }
             legend += ")   ";
         }
@@ -8714,6 +8714,9 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     r_ob->accidentals_typo_preferences.space_character = 0;
     r_ob->accidentals_typo_preferences.space_uwidth = 0;
 
+    r_ob->accidentals_typo_preferences.gap_between_accidentals_of_different_notes_of_same_chord_uwidth = 0.8;
+    r_ob->accidentals_typo_preferences.gap_between_accidentals_and_note_uwidth = 1.5;
+
 #ifdef BACH_MAX
     double juce_mul = 1;
 #endif
@@ -8747,6 +8750,9 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 #ifdef BACH_JUCE
         double juce_mul = 2.5;
 #endif
+        r_ob->accidentals_typo_preferences.gap_between_accidentals_of_different_notes_of_same_chord_uwidth = 3.;
+        r_ob->accidentals_typo_preferences.gap_between_accidentals_and_note_uwidth = 1.5;
+
         r_ob->accidentals_typo_preferences.base_pt = 24. * juce_mul;
         r_ob->accidentals_typo_preferences.ux_shift = 0.; // TO DO
         r_ob->accidentals_typo_preferences.uy_shift = 48.5; // TO DO
@@ -25190,7 +25196,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             max_1 = CLAMP(max_1, 0, scalepos_extension * 10 - 1);
             
             for (j = min_1; j < max_1; j++)
-                left_limit[j] = MIN(left_limit[j], note_x_real[i] - (noteheads_uwidths[i] / 2.) - CONST_UX_ACC_SEPARATION_FROM_NOTE);
+                left_limit[j] = MIN(left_limit[j], note_x_real[i] - (noteheads_uwidths[i] / 2.) - r_ob->accidentals_typo_preferences.gap_between_accidentals_and_note_uwidth);
             
             if (note_need_aux_stem[i] && (r_ob->show_stems == k_SHOW_STEMS_MAIN_AND_AUXILIARY)) { // we take into account the auxiliary stems
                 if (this_direction == 1) { // stem upwards
@@ -25201,7 +25207,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                     max_1 = rel_scalepos * 10;
                 }
                 for (j = min_1; j < max_1; j++)
-                    left_limit[j] = MIN(left_limit[j], note_x_real[i] - CONST_UX_ACC_SEPARATION_FROM_NOTE);
+                    left_limit[j] = MIN(left_limit[j], note_x_real[i] - r_ob->accidentals_typo_preferences.gap_between_accidentals_and_note_uwidth);
             }
         }
 
@@ -25274,7 +25280,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
                     left_uext = delta;
             
             // updating leftlimits
-            new_left_limit = best_x_pos - acc_width - CONST_UX_ACC_SEPARATION_FROM_ACC;
+            new_left_limit = best_x_pos - acc_width - r_ob->accidentals_typo_preferences.gap_between_accidentals_of_different_notes_of_same_chord_uwidth;
 
 //            k_start = (scaleposition[best_i]-start_scalepos)*10 - floor(get_accidental_udescent(r_ob, accidentals_copy[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);
 //            k_end = (scaleposition[best_i]-start_scalepos)*10 + ceil(get_accidental_uascent(r_ob, accidentals_copy[best_i]) * 10. * r_ob->zoom_y / r_ob->step_y);

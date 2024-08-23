@@ -584,7 +584,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
             if (comma_abs != 0) {
                 switch (i) {
                     case 1: // 7-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             if (comma_abs >= 2) {
                                 *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_7_UP_TWICE : BACH_ACCIDENTAL_JI_COMMA_7_DOWN_TWICE);
                                 curChar++;
@@ -600,7 +600,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 2: // 11-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_11_UP : BACH_ACCIDENTAL_JI_COMMA_11_DOWN);
                             curChar++;
                             numChars++;
@@ -609,7 +609,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 3: // 13-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_13_UP : BACH_ACCIDENTAL_JI_COMMA_13_DOWN);
                             curChar++;
                             numChars++;
@@ -618,7 +618,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 4: // 17-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_17_UP : BACH_ACCIDENTAL_JI_COMMA_17_DOWN);
                             curChar++;
                             numChars++;
@@ -627,7 +627,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 5: // 19-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_19_UP : BACH_ACCIDENTAL_JI_COMMA_19_DOWN);
                             curChar++;
                             numChars++;
@@ -636,7 +636,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 6: // 23-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_23_UP : BACH_ACCIDENTAL_JI_COMMA_23_DOWN);
                             curChar++;
                             numChars++;
@@ -646,7 +646,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         
                         
                     case 7: // 29-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_29_UP : BACH_ACCIDENTAL_JI_COMMA_29_DOWN);
                             curChar++;
                             numChars++;
@@ -655,7 +655,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 8: // 31-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_31_UP : BACH_ACCIDENTAL_JI_COMMA_31_DOWN);
                             curChar++;
                             numChars++;
@@ -664,7 +664,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 9: // 37-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_37_UP : BACH_ACCIDENTAL_JI_COMMA_37_DOWN);
                             curChar++;
                             numChars++;
@@ -673,7 +673,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 10: // 41-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_41_UP : BACH_ACCIDENTAL_JI_COMMA_41_DOWN);
                             curChar++;
                             numChars++;
@@ -682,7 +682,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 11: // 43-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_43_UP : BACH_ACCIDENTAL_JI_COMMA_43_DOWN);
                             curChar++;
                             numChars++;
@@ -691,7 +691,7 @@ void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed,
                         break;
                         
                     case 12: // 47-limit
-                        while (comma_abs > 0) {
+                        while (comma_abs > 0 && numChars < CONST_MAX_ACCIDENTALS) {
                             *curChar = (comma_sign > 0 ? BACH_ACCIDENTAL_JI_COMMA_47_UP : BACH_ACCIDENTAL_JI_COMMA_47_DOWN);
                             curChar++;
                             numChars++;

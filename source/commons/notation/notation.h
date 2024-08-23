@@ -385,8 +385,6 @@
 #define CONST_CHORD_DOT_USEPARATION 2.                            ///< Unscaled separation (in pixels) between a note and its first dot
 #define CONST_DOT_DOT_USEPARATION 4.                            ///< Unscaled separation (in pixels) between a dot, and the next one
 #define CONST_DOT_UWIDTH 4                                        ///< Reserved width, during spacing calculation, for one dot
-#define CONST_UX_ACC_SEPARATION_FROM_ACC 0.8                    ///< Unscaled separation (in pixels) between two accidentals
-#define CONST_UX_ACC_SEPARATION_FROM_NOTE 1.5 // was: 3                    ///< Unscaled separation (in pixels) between a note and its accidental (if there's no other accidental horizontally in between)
 #define CONST_SCORE_TIE_ADDITIONAL_USPACING 6                    ///< Unscaled horizontal additional spacing if note has a tie which starts on it
 
 #define CONST_FIGURE_IN_TUPLET_LEGEND_RATIO 0.55                ///< Rescaling factor of the small note in the tuplet ratio specification, as 'aq:b'
@@ -3732,6 +3730,9 @@ typedef struct _accidentals_typo_preferences
     
     unicodeChar       space_character; ///< Codepoint of the space character
     double            space_uwidth; ///< Width of the space character
+    
+    double            gap_between_accidentals_of_different_notes_of_same_chord_uwidth;
+    double            gap_between_accidentals_and_note_uwidth;
 } t_accidentals_typo_preferences;
 
 
