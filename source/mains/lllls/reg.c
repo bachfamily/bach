@@ -75,8 +75,6 @@ typedef struct _reg
     t_pitch                 dummypitch; // TODO: togliere!!!
 } t_reg;
 
-//DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_reg, dummy, reg_getattr_dummy, reg_setattr_dummy)
-
 void reg_assist(t_reg *x, void *b, long m, long a, char *s);
 void reg_inletinfo(t_reg *x, void *b, long a, char *t);
 void reg_appendtodictionary(t_reg *x, t_dictionary *d);
@@ -150,8 +148,6 @@ void C74_EXPORT ext_main(void *moduleRef)
     
     CLASS_ATTR_PITCH(c, "dummypitch", 0, t_reg, dummypitch, reg_getattr_dummypitch, reg_setattr_dummypitch);
     
-    CLASS_ATTR_LLLL(c, "dummyll", 0, t_reg, dummyll, reg_getattr_dummyll, reg_setattr_dummyll);
-
     class_register(CLASS_BOX, c);
     
     reg_class = c;
