@@ -146,8 +146,8 @@ void send_voicepixelpos(t_notation_obj *r_ob, char obj_type, long num_voices, vo
     lock_general_mutex(r_ob);
     for (i = 0; i < num_voices; i++){
         t_llll *inner_llll = llll_get();
-        double staff_top = get_staff_top_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
-        double staff_bottom = get_staff_bottom_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+        double staff_top = voice_get_staff_top_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+        double staff_bottom = voice_get_staff_bottom_y(r_ob, (t_voice *) curr_voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
         llll_appenddouble(inner_llll, ((t_voice *) curr_voice)->middleC_y, 0, WHITENULL_llll);
         llll_appenddouble(inner_llll, staff_bottom, 0, WHITENULL_llll);
         llll_appenddouble(inner_llll, staff_top, 0, WHITENULL_llll);
@@ -968,12 +968,12 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
     char buf[100];
     if (note) {
         t_voice *voice = chord_get_voice(r_ob, note->parent);
-        if (voice && voice->notation_style == k_VOICE_NOTATION_STYLE_ET)  {
-            snprintf_zero(buf, 100, "To Current Tone Division (%ld-EDO)", r_ob->tone_division * 6);
-            jpopupmenu_additem(r_ob->popup_note_approximate, 701, buf, NULL, 0, 0, NULL);
-        } else {
+        if (voice && voice->notation_style == k_VOICE_NOTATION_STYLE_JI) {
             snprintf_zero(buf, 100, "To Current JI Limit (%ld)", r_ob->ji_limit);
             jpopupmenu_additem(r_ob->popup_note_approximate, 702, buf, NULL, 0, 0, NULL);
+        } else {
+            snprintf_zero(buf, 100, "To Current Tone Division (%ld-EDO)", r_ob->tone_division * 6);
+            jpopupmenu_additem(r_ob->popup_note_approximate, 701, buf, NULL, 0, 0, NULL);
         }
         
         jpopupmenu_additem(r_ob->popup_note_approximate_et, 711, "To Semitones (12-EDO)", NULL, 0, 0, NULL);
@@ -1924,7 +1924,6 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Sets the color of the key signature, in RGBA format.
 
-
         CLASS_ATTR_RGBA(c,"notecolor", 0, t_notation_obj, j_note_rgba);
         CLASS_ATTR_STYLE_LABEL(c, "notecolor",0,"rgba","Note Color");
         CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"notecolor",0,"0. 0. 0. 1.");
@@ -1961,7 +1960,39 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Sets the color of dynamics, in RGBA format.
 
+        CLASS_ATTR_RGBA(c,"pianorolllightcolor", 0, t_notation_obj, j_pianoroll_light_rgba);
+        CLASS_ATTR_STYLE_LABEL(c, "pianorolllightcolor",0,"rgba","Piano Roll Light Color");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"pianorolllightcolor",0,"0. 0. 0. 0.1");
+        // @exclude bach.slot
+        // @description Sets the color of light piano roll background, in RGBA format.
+
+        CLASS_ATTR_RGBA(c,"pianorolldarkcolor", 0, t_notation_obj, j_pianoroll_dark_rgba);
+        CLASS_ATTR_STYLE_LABEL(c, "pianorolldarkcolor",0,"rgba","Piano Roll Dark Color");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"pianorolldarkcolor",0,"0. 0. 0. 0.3");
+        // @exclude bach.slot
+        // @description Sets the color of dark piano roll background, in RGBA format.
+
+
         if (obj_type == k_NOTATION_OBJECT_SCORE) {
+            
+            CLASS_ATTR_RGBA(c,"timesigcolor", 0, t_notation_obj, j_timesig_rgba);
+            CLASS_ATTR_STYLE_LABEL(c, "timesigcolor",0,"rgba","Time Signature Color");
+            CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"timesigcolor",0,"0. 0. 0. 1.");
+            // @exclude bach.slot, bach.roll
+            // @description Sets the color of the time signature, in RGBA format.
+
+            CLASS_ATTR_RGBA(c,"barlinecolor", 0, t_notation_obj, j_barline_rgba);
+            CLASS_ATTR_STYLE_LABEL(c, "barlinecolor",0,"rgba","Barline Color");
+            CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"barlinecolor",0,"0. 0. 0. 1.");
+            // @exclude bach.slot, bach.roll
+            // @description Sets the color of the barline, in RGBA format.
+
+            CLASS_ATTR_RGBA(c,"measurenumbercolor", 0, t_notation_obj, j_measnum_rgba);
+            CLASS_ATTR_STYLE_LABEL(c, "measurenumbercolor",0,"rgba","Measure Number Color");
+            CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"measurenumbercolor",0,"0. 0. 0. 1.");
+            // @exclude bach.slot, bach.roll
+            // @description Sets the color of the measure numbers, in RGBA format.
+            
             CLASS_ATTR_RGBA(c,"beamcolor", 0, t_notation_obj, j_beam_rgba);
             CLASS_ATTR_STYLE_LABEL(c, "beamcolor",0,"rgba","Beam Color");
             CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"beamcolor",0,"0. 0. 0. 1.");
@@ -2102,6 +2133,21 @@ void notation_class_add_color_attributes(t_class *c, char obj_type)
 void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 	CLASS_STICKY_ATTR(c,"category",0,"Appearance");
 
+    CLASS_ATTR_CHAR(c,"pianorolltype",0, t_notation_obj, pianoroll_display_type);
+    CLASS_ATTR_STYLE_LABEL(c,"pianorolltype",0,"enumindex","Piano Roll Display Type");
+    CLASS_ATTR_ENUMINDEX(c,"pianorolltype", 0, "White-Key Lines Black-Key Lines Background Stripes");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorolltype",0,"0");
+    // @exclude bach.slot
+    // Sets the type of piano roll display for voices whose notation style is set to "linear".
+    
+    CLASS_ATTR_CHAR(c,"pianorollkeyboardtype",0, t_notation_obj, pianoroll_keyboard_type);
+    CLASS_ATTR_STYLE_LABEL(c,"pianorollkeyboardtype",0,"enumindex","Piano Roll Keyboard  Type");
+    CLASS_ATTR_ENUMINDEX(c,"pianorollkeyboardtype", 0, "Classic Uniform");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorollkeyboardtype",0,"0");
+    // @exclude bach.slot
+    // Sets the type of piano roll keyboard for voices whose notation style is set to "linear".
+    
+    
     CLASS_ATTR_CHAR(c,"slursavoidchords",0, t_notation_obj, slurs_avoid_chords);
     CLASS_ATTR_STYLE_LABEL(c,"slursavoidchords",0,"onoff","Slurs Avoid Chords");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidchords",0,"1");
@@ -5174,8 +5220,8 @@ void start_editing_voicename(t_notation_obj *r_ob, t_object *patcherview, t_voic
 
     r_ob->is_editing_type = k_VOICENAME;
     r_ob->is_editing_voice_name = voice->number;
-    top = get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
-    bottom = get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+    top = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+    bottom = voice_get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
 
     object_attr_setlong(r_ob, gensym("fontface"), 0);
 
@@ -5247,7 +5293,7 @@ void start_editing_lyrics(t_notation_obj *r_ob, t_object *patcherview, t_chord *
     r_ob->is_editing_chord = chord;
     r_ob->is_editing_slot_number = r_ob->link_lyrics_to_slot - 1;
 
-    top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->lyrics_uy_pos * r_ob->zoom_y;
+    top = voice_get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->lyrics_uy_pos * r_ob->zoom_y;
     left = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, chord->onset, NULL) : unscaled_xposition_to_xposition(r_ob, chord_get_alignment_ux(r_ob, chord)))
     + chord->lyrics->lyrics_ux_shift * r_ob->zoom_y;
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
@@ -5294,7 +5340,7 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
     r_ob->is_editing_chord = chord;
     r_ob->is_editing_slot_number = r_ob->link_dynamics_to_slot - 1;
 
-    top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->dynamics_uy_pos * r_ob->zoom_y - 8 * r_ob->zoom_y;
+    top = voice_get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) - r_ob->dynamics_uy_pos * r_ob->zoom_y - 8 * r_ob->zoom_y;
     left = chord_get_alignment_x(r_ob, chord) - get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;
 
     textfield_set_wordwrap(textfield, 0);
@@ -6194,7 +6240,7 @@ long notationstyle_from_symbol(t_symbol *s)
     if (s == gensym("ji") || s == gensym("just") || s == gensym("justintonation") || s == gensym("just intonation") || s == gensym("Just Intonation"))
         return k_VOICE_NOTATION_STYLE_JI;
     else if (s == gensym("continuous") || s == gensym("linear") || s == gensym("linpitch") || s == gensym("continuous linear pitch") || s == gensym("Continuous Linear Pitch"))
-        return k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH;
+        return k_VOICE_NOTATION_STYLE_LINEAR_PITCH;
 //    else if (s == gensym("linfreq") || s == gensym("continuous linear frequency") || s == gensym("Continuous Linear Frequency"))
 //        return k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ;
     else
@@ -6212,11 +6258,11 @@ t_symbol *notationstyle_to_symbol(e_voice_notation_style s)
             return _llllobj_sym_ji;
             break;
 
-        case k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH:
+        case k_VOICE_NOTATION_STYLE_LINEAR_PITCH:
             return _llllobj_sym_linpitch;
             break;
 
-        case k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ:
+        case k_VOICE_NOTATION_STYLE_LINEAR_FREQ:
             return _llllobj_sym_linfreq;
             break;
 
@@ -6502,7 +6548,7 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                     if (ux >= 0) {
                         long voicenum = yposition_to_voicenumber(r_ob, pt.y, NULL, k_VOICEENSEMBLE_INTERFACE_FIRST);
                         t_voice *voice = voice_get_nth_safe(r_ob, voicenum);
-                        if (voice) {
+                        if (voice && voice->notation_style != k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
                             double mc = yposition_to_mc(r_ob, pt.y, NULL, NULL);
                             long screen_mc;
                             t_rational screen_acc;

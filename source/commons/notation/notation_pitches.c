@@ -56,9 +56,17 @@ void note_set_auto_enharmonicity(t_note *nt)
     nt->pitch_original = t_pitch::NaP;
 }
 
+t_voice *note_get_voice(t_note *nt)
+{
+    if (nt->parent && nt->parent->is_score_chord)
+        return (t_voice *)nt->parent->parent->voiceparent;
+    else
+        return (t_voice *)nt->parent->voiceparent;
+}
+
 void note_set_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc, char also_assign_mc)
 {
-    long steps = midicents_to_diatsteps_from_C0(NULL, screen_mc);
+    long steps = midicents_to_diatsteps_from_C0(NULL, screen_mc, note_get_voice(nt));
     nt->pitch_original = t_pitch(steps % 7, screen_acc, steps / 7);
     if (also_assign_mc)
         nt->midicents = nt->pitch_original.toMCdouble();
@@ -83,7 +91,7 @@ void note_set_enharmonicity(t_note *nt, t_pitch pitch)
 
 void note_set_displayed_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc)
 {
-    long steps = midicents_to_diatsteps_from_C0(NULL, screen_mc);
+    long steps = midicents_to_diatsteps_from_C0(NULL, screen_mc, note_get_voice(nt));
     nt->pitch_displayed = t_pitch(steps % 7, screen_acc, steps / 7);
 }
 
@@ -222,8 +230,8 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
 {
     t_voice *voice = (nt->parent && nt->parent->is_score_chord) ? (t_voice *)nt->parent->parent->voiceparent : (t_voice *)nt->parent->voiceparent;
     
-    if (voice->notation_style == k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH ||
-        voice->notation_style == k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ) {
+    if (voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH ||
+        voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_FREQ) {
         nt->pitch_displayed = t_pitch::NaP;
         return; // nothing to approximate: there will be no accidentals, just a continuous field
     }
@@ -237,7 +245,7 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
             
             if (!(is_natural_note(note_get_display_midicents(nt)))) {
                 object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
-                long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
+                long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc, voice);
                 nt->pitch_displayed.setET((int)positive_mod(steps, 7), auto_screen_acc, (int)integer_div_round_down(steps, 7));
                 note_set_auto_enharmonicity(nt);
             } else {
@@ -254,7 +262,7 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
             }
         } else { // use default ET approximation
             mc_to_display_approximation_ET(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);	// automatic approximation
-            long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
+            long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc, voice);
             nt->pitch_displayed.setET(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
         }
     } else { // must be JI VOICE NOTATION STYLE
@@ -275,7 +283,7 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
 
         } else { // cents introduced: finding ET approximation
             mc_to_display_approximation_ET_do(2, k_ACC_AUTO, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
-            long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc);
+            long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc, voice);
             nt->pitch_displayed.setET(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
         }
     }

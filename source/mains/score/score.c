@@ -12757,7 +12757,7 @@ int is_in_tempo_shape(t_score *x, t_tempo *tempo, long point_x, long point_y){
     if (tempo->owner && !tempo->owner->prev && tempo->changepoint.r_num == 0 && !tempo_get_next(tempo)) // very first tempo!
         tempo_x = x->r_ob.j_inset_x + 1 + x->r_ob.notation_typo_preferences.clef_ux_shift + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y;
     tempo_width = tempo->real_x_width;
-    tempo_y = get_staff_top_y((t_notation_obj *)x, (t_voice *) tempo->owner->voiceparent, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) + (-x->r_ob.tempi_uy_pos + tempo->uy_offset) * x->r_ob.zoom_y;
+    tempo_y = voice_get_staff_top_y((t_notation_obj *)x, (t_voice *) tempo->owner->voiceparent, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY) + (-x->r_ob.tempi_uy_pos + tempo->uy_offset) * x->r_ob.zoom_y;
 
 //    post("***** note_NN: %dd    note_x: %.2f   note_y: %.2f   point_x: %ld   point_y: %ld   dist: %.2f", note_NN, note_x, note_y, point_x, point_y, dist);
     if ((point_x > tempo_x) && (point_x < tempo_x + tempo_width) && (point_y > tempo_y) && (point_y < tempo_y + 10 * x->r_ob.zoom_y))
@@ -13628,7 +13628,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     x->r_ob.notation_cursor.midicents = round(mc/100) * 100;
                     mc_to_display_approximation_ET((t_notation_obj *) x, x->r_ob.notation_cursor.midicents, &screen_nt, &screen_acc, voice->v_ob.acc_pattern, voice->v_ob.full_repr);
                     x->r_ob.notation_cursor.midicents = screen_nt;
-                    x->r_ob.notation_cursor.step = midicents_to_diatsteps_from_middleC((t_notation_obj *) x, screen_nt);
+                    x->r_ob.notation_cursor.step = midicents_to_diatsteps_from_middleC((t_notation_obj *) x, screen_nt, (t_voice *)voice);
                     move_linear_edit_cursor_depending_on_edit_ranges((t_notation_obj *)x, 0, 0);
                     
                     llll_clear(x->r_ob.notation_cursor.touched_measures);
