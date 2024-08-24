@@ -197,14 +197,10 @@ public:
         return p;
     }
     
-    static t_pitch eatPitchJIBaseComp(char *pos, char **after) {
+    static std::vector<int8_t> eatJICommas(char *pos, char **after) {
         char *next = pos;
-        t_atom_short sign = eatSign(&next);
-        t_atom_short plof = t_pitch::text2wkplof(*next++);
-        t_atom_short sharps = t_pitch::text2JIsharps(&next);
-        plof += sharps * 7;
-        next++; // {
         std::vector<int8_t> commas;
+        next++; // {
         if (*next != '}') { // commas
             while (1) {
                 int8_t c = (int8_t) strtol(next, &next, 10);
@@ -216,7 +212,27 @@ public:
             }
         }
         ++next; // }
-        t_uint8 octave = (t_uint8) strtol(next, &next, 10);
+        *after = next;
+        return commas;
+    }
+    
+    static t_pitch eatPitchJIBaseComp(char *pos, char **after) {
+        char *next = pos;
+        t_atom_short sign = eatSign(&next);
+        t_atom_short plof;
+        t_int8 octave;
+        std::vector<int8_t> commas;
+        if (*next != '{') {
+            plof = t_pitch::text2wkplof(*next++);
+            t_atom_short sharps = t_pitch::text2JIsharps(&next);
+            plof += sharps * 7;
+            commas = eatJICommas(next, &next);
+            octave = (t_int8) strtol(next, &next, 10);
+        } else {
+            plof = 0;
+            commas = eatJICommas(next, &next);
+            octave = 0;
+        }
         t_pitch p = adjustPitchSign(t_pitch(plof, commas, octave), sign);
         *after = next;
         return p;
