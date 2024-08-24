@@ -98,7 +98,7 @@ public:
     
     // nothing to do, because our mempool is stack-allocated
     void freePtr(const void *ptr) {}
-
+    
     
     
     static t_rational eatRational(char *pos)
@@ -138,7 +138,7 @@ public:
         t_atom_short octave = static_cast<t_atom_short>(strtol(next, &next, 10));
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
         p.p_alterET += t_tinyRational(static_cast<t_atom_short>(strtol(next, NULL, 10)),
-                                     1);
+                                      1);
         return p;
     }
     
@@ -150,12 +150,11 @@ public:
         t_shortRational alter = t_pitch::text2alter(&next);
         long octave = strtol(next, &next, 10);
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
-        p.p_alterET += t_tinyRational(static_cast<t_int16>(strtol(next, &next, 10)),
-                                     static_cast<t_int16>(strtol(next + 1, NULL, 10)));
+        p.p_alterET += t_tinyRational(static_cast<t_int16>(strtol(next, &next, 10)), static_cast<t_int16>(strtol(next + 1, NULL, 10)));
         return p;
     }
     
-    static t_pitch eatPitchWithET(char *pos) {
+    static t_pitch eatPitchETBaseComp(char *pos, char **after) {
         char *next = pos;
         t_atom_short sign = eatSign(&next);
         t_atom_short degree = t_pitch::text2degree(*next++);
@@ -169,29 +168,36 @@ public:
             octave = strtol(next, &next, 10);
         }
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
-        if (!*next)
-            return p;
-        // if we are here, we surely have a sign
-        // if it's followed by a digit it introduces an alteration (as in +1/10t)
-        // if it's followed by a letter it introduces the JI part
-        if (isdigit(*(next + 1))) {
-            t_atom_short tSign = eatSign(&next);
-            t_atom_short tNum = (t_atom_short) strtol(next, &next, 10) * tSign;
-            if (*next != '/') {
-                p.p_alterET += tNum;
-            } else {
-                t_int16 tDen = (t_int16) strtol(++next, &next, 10);
-                p.p_alterET += t_tinyRational(tNum, tDen);
-            }
-            ++next; // t
-        }
-        if (!*next)
-            return p;
-        t_pitch JIpart = eatPitchPureJI(next);
-        return p + JIpart;
+        *after = next;
+        return p;
     }
     
-    static t_pitch eatPitchPureJI(char *pos) {
+    static t_pitch eatPitchETTComp(char *pos, char **after) {
+        t_pitch p = t_pitch::C0;
+        char *next = pos;
+        t_atom_short tSign = eatSign(&next);
+        t_atom_short tNum = (t_atom_short) strtol(next, &next, 10) * tSign;
+        if (*next != '/') {
+            p.p_alterET += tNum;
+        } else {
+            t_int16 tDen = (t_int16) strtol(++next, &next, 10);
+            p.p_alterET += t_tinyRational(tNum, tDen);
+        }
+        ++next; // t
+        
+        *after = next;
+        return p;
+    }
+    
+    static t_pitch eatPitchETFull(char *pos, char **after) {
+        char *next;
+        t_pitch p = eatPitchETBaseComp(pos, &next);
+        p += eatPitchETTComp(next, &next);
+        *after = next;
+        return p;
+    }
+    
+    static t_pitch eatPitchJIBaseComp(char *pos, char **after) {
         char *next = pos;
         t_atom_short sign = eatSign(&next);
         t_atom_short plof = t_pitch::text2wkplof(*next++);
@@ -212,10 +218,13 @@ public:
         ++next; // }
         t_uint8 octave = (t_uint8) strtol(next, &next, 10);
         t_pitch p = adjustPitchSign(t_pitch(plof, commas, octave), sign);
-
-        if (!*next)
-            return p;
-        t_atom_short rSign = eatSign(&next);
+        *after = next;
+        return p;
+    }
+    
+    static t_pitch eatPitchJIRComp(char *pos) {
+        char *next = pos;
+        t_pitch p = t_pitch::C0;
         t_atom_short rNum = (t_atom_short) strtol(next, &next, 10);
         if (*next != '/') {
             p.addJIratio(t_shortRational(rNum, 1));
@@ -223,6 +232,20 @@ public:
             t_atom_short rDen = (t_atom_short) strtol(++next, &next, 10);
             p.addJIratio(t_shortRational(rNum, rDen));
         }
+        return p;
+    }
+    
+    static t_pitch eatPitchJIFull(char *pos) {
+        char *next;
+        t_pitch p = eatPitchJIBaseComp(pos, &next);
+        p += eatPitchJIRComp(next);
+        return p;
+    }
+    
+    static t_pitch eatPitchComplete(char *pos) {
+        char *next;
+        t_pitch p = eatPitchETFull(pos, &next);
+        p += eatPitchJIFull(next);
         return p;
     }
     
