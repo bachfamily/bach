@@ -12070,7 +12070,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
                 if (tmp->type == k_CHORD && (t_chord *)tmp != curr_ch){
                     t_chord *tmpch = (t_chord *) tmp;
                     if (tmpch->onset <= curr_ch->onset) {
-                        double tmp_staff_top_y = (tmpch->voiceparent == curr_ch->voiceparent ? staff_top_y : get_staff_top_y((t_notation_obj *) x, (t_voice *)tmpch->voiceparent, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY));
+                        double tmp_staff_top_y = (tmpch->voiceparent == curr_ch->voiceparent ? staff_top_y : voice_get_staff_top_y((t_notation_obj *) x, (t_voice *)tmpch->voiceparent, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY));
                         paint_dashed_line(g, stemcolor, chord_get_stem_x((t_notation_obj *) x, tmpch), tmp_staff_top_y + (x->r_ob.show_stems > 0 ? tmpch->stemtip_stafftop_uy : (tmpch->direction == -1 ? tmpch->bottommostnote_stafftop_uy : tmpch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y,
                                           stem_x, staff_top_y + (x->r_ob.show_stems > 0 ? curr_ch->stemtip_stafftop_uy : (curr_ch->direction == -1 ? curr_ch->bottommostnote_stafftop_uy : curr_ch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y, 0.5, 2);
                     }
@@ -12220,7 +12220,7 @@ void roll_preprocess_group_beamings(t_roll *x)
                         highest_y = this_y;
                     if (this_y > lowest_y)
                         lowest_y = this_y;
-                    average_scaleposition += midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_display_midicents(nt));
+                    average_scaleposition += midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_display_midicents(nt), (t_voice *)ch->voiceparent);
                     countnotes ++;
                 }
             }
@@ -12338,8 +12338,8 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             //            paint_line((t_notation_obj *) x, g, x->r_ob.j_selection_rgba, 0, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2. + CONST_VOICE_THRESHOLD) *  x->r_ob.zoom_y, rect.width, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2 + CONST_VOICE_THRESHOLD) * x->r_ob.zoom_y, 1.);
             //    
             compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
-            staff_bottom_y = get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
-            staff_top_y = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+            staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+            staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
             
             if (voice_linear_edited) {
                 double x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL);
@@ -12349,9 +12349,13 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             
             // paint staff lines
             if (voice->v_ob.part_index == 0)
-                for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-                    paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1.,
-								  voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
+                for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
+                    if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
+                        paint_staff_lines_pianoroll((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
+                    else
+                        paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1.,
+                                          voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
+                }
 			
 			// clefs later! at the end!
 #ifdef BACH_PAINT_IDS
@@ -12517,8 +12521,8 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 //            paint_line((t_notation_obj *) x, g, x->r_ob.j_selection_rgba, 0, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2. + CONST_VOICE_THRESHOLD) *  x->r_ob.zoom_y, rect.width, voice->v_ob.offset_y + ((CONST_DEFAULT_ROLLVOICES_SPACING_UY - voice->prev->v_ob.vertical_spacing) / 2 + CONST_VOICE_THRESHOLD) * x->r_ob.zoom_y, 1.);
                 //
                 compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
-                staff_bottom_y = get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
-                staff_top_y = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+                staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+                staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                 
                 if (voice_linear_edited) {
                     double x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL);
@@ -12528,9 +12532,13 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 
                 // paint staff lines
                 if (voice->v_ob.part_index == 0)
-                    for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-                        paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1.,
-                                          voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
+                    for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
+                        if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
+                            paint_staff_lines_pianoroll((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
+                        else
+                            paint_staff_lines((t_notation_obj *)x, g, end_x_to_repaint, rect.width - x->r_ob.j_inset_x, 1.,
+                                              voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
+                    }
                 
                 // clefs later! at the end!
 #ifdef BACH_PAINT_IDS
@@ -12616,22 +12624,30 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
                 t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
                 t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-                double staff_top_y = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
-                double staff_bottom_y = get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+                double staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+                double staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
                 char is_in_voiceensemble = (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1);
                 char part_direction = is_in_voiceensemble ? (voice->v_ob.part_index % 2 == 1 ? -1 : 1) : 0;
 
                 if (voice->v_ob.hidden)
                     continue;
                 
-                // repaint first parts of staves
-                for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-                    paint_staff_lines((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
+                // paint first parts of staves
+                for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
+                    if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
+                        paint_staff_lines_pianoroll((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
+                    else
+                        paint_staff_lines((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
+                }
                 
                 // paint clefs
-                for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-                    paint_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
-                
+                for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
+                    if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
+                        paint_keyboard_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
+                    else
+                        paint_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
+                }
+                    
                 if (x->r_ob.show_initial_rule == 2 || (x->r_ob.show_initial_rule == 1 && voice_get_first_visible((t_notation_obj *)x) != voice_get_last_visible((t_notation_obj *)x)))
                     paint_initial_rule((t_notation_obj *)x, g, clefcolor);
                 else
@@ -12824,8 +12840,8 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
 			t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
             t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-            double staff_top_y = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
-            double staff_bottom_y = get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+            double staff_top_y = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
+            double staff_bottom_y = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_IGNORE);
 
             if (voice->v_ob.hidden)
                 continue;
@@ -12834,12 +12850,20 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                 continue;
             
             // repaint first parts of staves
-            for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
+            for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
+                if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
+                    paint_staff_lines_pianoroll((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor);
+                else
                     paint_staff_lines((t_notation_obj *)x, g, x->r_ob.j_inset_x + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y, end_x_to_repaint, 1., voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
-			
-			// paint clefs
-			for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-				paint_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
+            }
+            
+            // paint clefs
+            for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
+                if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH)
+                    paint_keyboard_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
+                else
+                    paint_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
+            }
 			
             if (x->r_ob.show_initial_rule == 2 || (x->r_ob.show_initial_rule == 1 && voice_get_first_visible((t_notation_obj *)x) != voice_get_last_visible((t_notation_obj *)x)))
                 paint_initial_rule((t_notation_obj *)x, g, clefcolor);
@@ -15226,7 +15250,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             x->r_ob.notation_cursor.midicents = round(mc/100) * 100;
             mc_to_display_approximation_ET((t_notation_obj *) x, x->r_ob.notation_cursor.midicents, &screen_nt, &screen_acc, voice->v_ob.acc_pattern, voice->v_ob.full_repr);
             x->r_ob.notation_cursor.midicents = screen_nt;
-            x->r_ob.notation_cursor.step = midicents_to_diatsteps_from_middleC((t_notation_obj *) x, screen_nt);
+            x->r_ob.notation_cursor.step = midicents_to_diatsteps_from_middleC((t_notation_obj *) x, screen_nt, (t_voice *)voice);
             if (x->r_ob.show_grid && x->r_ob.snap_linear_edit_to_grid_when_editing)
                 roll_linear_edit_snap_cursor_to_grid(x); // snap to chord is then inside
             else

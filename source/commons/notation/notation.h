@@ -1678,6 +1678,26 @@ typedef enum _clone_for_types
 } e_clone_for_types;
 
 
+/** Piano roll display types.
+    @ingroup    notation
+ */
+typedef enum _pianoroll_display_type {
+    k_PIANOROLL_DISPLAY_WHITEKEY_LINES = 0,            ///< Lines corresponding to white keys
+    k_PIANOROLL_DISPLAY_BLACKKEY_LINES = 1,            ///< Lines corresponding to black keys
+    k_PIANOROLL_DISPLAY_BACKGROUND_STRIPES = 2,            ///< Background stripes
+} e_pianoroll_display_type;
+
+
+/** Piano roll keyboard types.
+    @ingroup    notation
+ */
+typedef enum _pianoroll_keyboard_type {
+    k_PIANOROLL_KEYBOARD_CLASSIC = 0,            ///< Classic piano keyboard
+    k_PIANOROLL_KEYBOARD_UNIFORM = 1,            ///< Uniform keyboard
+} e_pianoroll_keyboard_type;
+
+
+
 
 /** Actions to perform when something has changed, given as argument for handle_change() or handle_change_if_there_are_dangling_undo_ticks().
     See also the convenience combinations #k_CHANGED_DO_NOTHING, #k_CHANGED_STANDARD_SEND_BANG, #k_CHANGED_STANDARD_UNDO_MARKER and #k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG.
@@ -3211,8 +3231,8 @@ typedef enum _voice_notation_style
 {
     k_VOICE_NOTATION_STYLE_ET = 0,          ///< Equal tempered
     k_VOICE_NOTATION_STYLE_JI = 1,          ///< Just intonation
-    k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_PITCH = 2,       ///< Continuous linear pitch space
-    k_VOICE_NOTATION_STYLE_CONTINUOUS_LINEAR_FREQ = 3,       ///< Continuous linear frequential space
+    k_VOICE_NOTATION_STYLE_LINEAR_PITCH = 2,       ///< Continuous linear pitch space
+    k_VOICE_NOTATION_STYLE_LINEAR_FREQ = 3,       ///< Continuous linear frequential space: unimplemented yet, and problematic: notation objects shouldn't take care of frequency conversions, I think
 } e_voice_notation_style;
 
 
@@ -4128,6 +4148,10 @@ typedef struct _notation_obj
     double            measure_numbers_font_size;        ///< Font size for the measure numbers (for zoom_y = 1, will be scaled according to the zoom)
     char            show_measure_numbers_on_first_measure; ///< Whether to show also the very first measure number
     
+    // pianoroll display
+    char        pianoroll_display_type; ///< One of the e_pianoroll_display_type
+    char        pianoroll_keyboard_type; ///< One of the e_pianoroll_keyboard_type
+
     // private, utilities
     long        add_staff;                    ///< (PRIVATE) Flag which is 1 during the process of staff adding
     long        add_voice;                    ///< (PRIVATE) Flag which is 1 during the process of voice adding
@@ -4610,6 +4634,9 @@ typedef struct _notation_obj
     t_jrgba        j_clef_rgba;                    ///< Color of the clefs
     t_jrgba     j_auxiliaryclef_rgba;           ///< Color of the auxiliary clefs
     t_jrgba        j_keysig_rgba;                    ///< Color of the key signature
+    t_jrgba        j_timesig_rgba;                    ///< Color of the time signature
+    t_jrgba        j_barline_rgba;                    ///< Color of the barlines
+    t_jrgba        j_measnum_rgba;                    ///< Color of the measrue numbers
     t_jrgba        j_note_rgba;                    ///< Color of the notes
     t_jrgba        j_accidentals_rgba;                ///< Color of the accidentals
     t_jrgba        j_rest_rgba;                    ///< Color of the rests
@@ -4637,6 +4664,8 @@ typedef struct _notation_obj
     t_jrgba        j_lyrics_rgba;                    ///< Color of the lyrics
     t_jrgba        j_linear_edit_rgba;                ///< Color related to the speedy edit (for [bach.score])
     t_jrgba        j_loop_rgba;                    ///< Color related to loop region
+    t_jrgba        j_pianoroll_dark_rgba;                ///< Color of a dark pianoroll background
+    t_jrgba        j_pianoroll_light_rgba;                ///< Color of a light pianoroll background
 
     // graphical values
     double        corner_roundness;        ///< Roundness of the corners
@@ -5372,7 +5401,11 @@ double mc_to_yposition_in_scale(t_notation_obj *r_ob, double mc, t_voice *v_ob);
 double mc_to_yposition_in_scale_for_notes(t_notation_obj *r_ob, t_note *note, t_voice *v_ob, double notehead_resize, char ignore_custom_noteheads);
 
 
-/**    Convert midicents into graphical pitch data: i.e. the midicents of the displayed diatonic note and the displayed accidental. 
+double mc_to_yposition_linear(t_notation_obj *r_ob, double mc, t_voice *v_ob);
+double yposition_to_mc_linear(t_notation_obj *r_ob, double mc, t_voice *v_ob);
+
+
+/**    Convert midicents into graphical pitch data: i.e. the midicents of the displayed diatonic note and the displayed accidental.
     @ingroup                    conversions
     @param r_ob                    The notation object
     @param mc                    Midicents
@@ -5408,6 +5441,7 @@ void mc_to_display_approximation_ET_do(long tone_division, char accidentals_pref
     @ingroup            conversions
     @param r_ob            The notation object (or NULL if none)
     @param midicents    Midicents
+    @param voice    Voice
     @return                The number of diatonic steps from the middle C (see #e_clefs for more info about steps)
  
     @remark                For instance, if <midicents> is 6400, the function returns 2 (since the note is 2 steps above middle C
@@ -5418,24 +5452,27 @@ void mc_to_display_approximation_ET_do(long tone_division, char accidentals_pref
                         long note_steps;
                         note = obtain_note_somewhere(...);
                         note_compute_approximation(r_ob, note); // This line is only needed if the note is newly created, and its approximation values have not been yet computed
-                        note_steps = midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(note));
+                        note_steps = midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(note), voice);
                         @endcode
                         And NOT this:
                         @code
-                        note_steps = midicents_to_diatsteps_from_middleC(r_ob, note->midicents);
+                        note_steps = midicents_to_diatsteps_from_middleC(r_ob, note->midicents, voice);
                         @endcode
     @see                scaleposition_to_midicents()
 */
-long midicents_to_diatsteps_from_middleC(t_notation_obj *r_ob, long midicents);
+long midicents_to_diatsteps_from_middleC(t_notation_obj *r_ob, long midicents, t_voice *voice);
+
+long diatsteps_from_middleC_to_chromsteps_from_middleC(long steps);
 
 /**    As midicents_to_diatsteps_from_middleC() but steps are computed from C0 = 0
     @ingroup            conversions
     @param r_ob            The notation object (or NULL if none)
     @param midicents    Midicents
+    @param voice    Voice
     @return                The number of diatonic steps from C0
     @see                midicents_to_diatsteps_from_middleC()
 */
-long midicents_to_diatsteps_from_C0(t_notation_obj *r_ob, long midicents);
+long midicents_to_diatsteps_from_C0(t_notation_obj *r_ob, long midicents, t_voice *voice);
 
 
 /**    Convert a scaleposition in steps into the midicents value (considering step 0 = middle C, step 7 = higher C and so on).
@@ -10304,6 +10341,9 @@ void paint_tie(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, d
  */
 void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color, t_jrgba auxcolor);
 
+bool midicents_is_whitekey(long mc);
+
+void paint_keyboard_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color, t_jrgba auxcolor);
 
 /**    Paint the accollatura for a clef combination (if the <clef> is a simple clef, it does nothing)
     @ingroup            notation_paint
@@ -10549,6 +10589,7 @@ double paint_label_for_ruler(t_notation_obj *r_ob, t_jgraphics* g, double millis
 void paint_staff_lines(t_notation_obj *r_ob, t_jgraphics* g, double x1, double x2, double width, double middleC_y, long clef, 
                        t_jrgba main_staff_color, t_jrgba aux_staff_color, long num_staff_lines, char *staff_lines);
 
+void paint_staff_lines_pianoroll(t_notation_obj *r_ob, t_jgraphics *g, double x1, double x2, double width, double middleC_y, long clef, t_jrgba color);
 
 // TBD
 void paint_left_vertical_staffline(t_notation_obj *r_ob, t_jgraphics* g, t_voice *voice, t_jrgba color);
@@ -13182,7 +13223,7 @@ double get_key_uwidth(t_notation_obj *r_ob, t_voice *voice);
  @param    nonstandard_stafflines    Choose what to do with staves with non-standard stafflines.
     @return        The vertical pixel position of the topmost staff line of the input voice
 */
-double get_staff_top_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
+double voice_get_staff_top_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
 
 
 /** Obtain the vertical pixel position of the staff bottom line of a given voice.
@@ -13192,7 +13233,10 @@ double get_staff_top_y(t_notation_obj *x, t_voice *voice, e_nonstandard_stafflin
     @param    nonstandard_stafflines    Choose what to do with staves with non-standard stafflines.
     @return        The vertical pixel position of the bottommost staff line of the input voice
 */
-double get_staff_bottom_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
+double voice_get_staff_bottom_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
+
+
+void get_pianoroll_display_range(t_notation_obj *r_ob, long clef, long *mincents, long *maxcents);
 
 
 /** Obtain the number of steps between the bottommost staff line and the topmost staff line for a given voice.
