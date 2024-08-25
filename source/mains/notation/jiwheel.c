@@ -1572,14 +1572,14 @@ void C74_EXPORT ext_main(void *moduleRef)
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"limits",0,"any");
         CLASS_ATTR_BASIC(c,"limits",0);
         // @description Sets the allowed limits for the displayed pitches. Leave "any" to unconstrain.
-        // Use "<=" as first element to choose limits less or equal to a certain number.
+        // Use the less or equal sign as first symbol to select limits less or equal to a certain number.
 
         CLASS_ATTR_ATOM_VARSIZE(c, "primes", 0, t_jiwheel, allowed_primes, allowed_primes_count, MAX_ALLOWED_PRIMES);
         CLASS_ATTR_STYLE_LABEL(c,"primes",0,"text","Allowed Primes");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"primes",0,"any");
         CLASS_ATTR_BASIC(c,"primes",0);
         // @description Sets the allowed primes for the displayed pitches. Leave "any" to unconstrain.
-        // Use "<=" as first element to choose limits less or equal to a certain number.
+        // Use the less or equal sign as first symbol to select limits less or equal to a certain number.
         // Notice that this is slightly different than <m>limits</m>: when using <m>limits</m> one
         // is constraining the highest prime appearing in the ratio, while when using <m>primes</m>
         // one is constraining _all_ the primes appearing in the ratio.

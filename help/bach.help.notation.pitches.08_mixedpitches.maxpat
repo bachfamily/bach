@@ -40,16 +40,57 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-27",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 164.0, 220.0, 150.0, 20.0 ],
+					"text" : "cents"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"format" : 6,
+					"id" : "obj-25",
+					"maxclass" : "flonum",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 94.0, 219.0, 69.0, 22.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-23",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 94.0, 186.0, 160.0, 22.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80300
+					}
+,
+					"text" : "bach.expr float($x1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-14",
+					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 239.0, 171.0, 324.0, 40.0 ],
-					"text" : "This is a note one Pythagorean comma higher than middle C: it must be the Pythagorean B#{}4 !"
+					"patching_rect" : [ 170.0, 118.0, 382.0, 40.0 ],
+					"presentation_linecount" : 2,
+					"text" : "You can combine t and r specification. This is a just third over (tempered) E5 plus one twelfth of a tone."
 				}
 
 			}
@@ -57,13 +98,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-8",
+					"id" : "obj-22",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 98.0, 183.0, 136.0, 23.0 ],
-					"text" : "C{}5+531441/524288r"
+					"patching_rect" : [ 77.0, 126.0, 91.0, 23.0 ],
+					"text" : "E5+1/12t+5/4r"
 				}
 
 			}
@@ -72,26 +113,12 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-7",
+					"id" : "obj-2",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 169.0, 141.0, 191.0, 25.0 ],
-					"text" : "This is the harmonic seventh"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-6",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 98.0, 142.0, 64.0, 23.0 ],
-					"text" : "C{}5+7/4r"
+					"patching_rect" : [ 77.0, 81.0, 443.0, 25.0 ],
+					"text" : "A pure fifth over tempered E5"
 				}
 
 			}
@@ -101,26 +128,12 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 21.0, 222.0, 61.0, 22.0 ],
+					"patching_rect" : [ 21.0, 203.0, 61.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80300
 					}
 ,
 					"text" : "bach.print"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-3",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 89.0, 107.0, 443.0, 25.0 ],
-					"text" : "This is a 5-limit justly tuned E over middle C, at a frequency of 5/4 from it"
 				}
 
 			}
@@ -133,8 +146,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 21.0, 108.0, 64.0, 23.0 ],
-					"text" : "C{}5+5/4r"
+					"patching_rect" : [ 21.0, 82.0, 58.0, 23.0 ],
+					"text" : "E5+G{}0"
 				}
 
 			}
@@ -162,7 +175,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 602.0, 19.0 ],
-					"text" : "See Also: ji",
+					"text" : "See Also:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -193,7 +206,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 364.0, 23.0 ],
-					"text" : "Writing justly tuned intervals as ratio",
+					"text" : "Mixed pitches",
 					"varname" : "title"
 				}
 
@@ -208,7 +221,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 602.0, 31.0 ],
-					"text" : "Tags: syntax, note, name, pitch, notename, pitches, just, intonation, justintonation, ji, ratio, interval, r, writing, comma, justly, tuned",
+					"text" : "Tags: syntax, note, name, pitch, notename, pitches, just, intonation, justintonation, ji, mixed, equal-tempered, et, hybrid, combine",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -220,14 +233,14 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "bach.hypercomment",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 32.0, 613.0, 50.0 ],
+					"patching_rect" : [ 6.0, 32.0, 613.0, 36.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "Another way you can produce justly intervals is by using a\n+<num>/<den>r \nsyntax in addition to an ordinary pitch. ",
+					"text" : "Mixed pitches have both an equal-tempered and a just-intonation component.\nYou can think of them as justly tuned intervals that refer to an equal-tempered note:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -235,7 +248,8 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
+					"destination" : [ "obj-23", 0 ],
+					"order" : 0,
 					"source" : [ "obj-1", 0 ]
 				}
 
@@ -243,19 +257,40 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-6", 0 ]
+					"order" : 1,
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-23", 0 ],
+					"order" : 0,
+					"source" : [ "obj-22", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-8", 0 ]
+					"order" : 1,
+					"source" : [ "obj-22", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-25", 0 ],
+					"source" : [ "obj-23", 0 ]
 				}
 
 			}
  ],
 		"dependency_cache" : [ 			{
+				"name" : "bach.expr.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.hypercomment.mxo",
 				"type" : "iLaX"
 			}

@@ -704,7 +704,7 @@
 			</digest>
 			<description>
 				Sets the allowed limits for the displayed pitches. Leave "any" to unconstrain.
-				Use "<=" as first element to choose limits less or equal to a certain number.
+                Use the less or equal sign as first symbol to choose limits less or equal to a certain number.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
@@ -876,7 +876,7 @@
 			</digest>
 			<description>
 				Sets the allowed primes for the displayed pitches. Leave "any" to unconstrain.
-				Use "<=" as first element to choose limits less or equal to a certain number.
+                Use the less or equal sign as first symbol to choose limits less or equal to a certain number.
 				Notice that this is slightly different than <m>limits</m>: when using <m>limits</m> one
 				is constraining the highest prime appearing in the ratio, while when using <m>primes</m>
 				one is constraining _all_ the primes appearing in the ratio.
