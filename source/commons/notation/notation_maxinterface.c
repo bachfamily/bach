@@ -3115,6 +3115,14 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
 		// @exclude bach.slot
 		// @description Toggles the display of the duration lines.
 
+        CLASS_ATTR_CHAR(c,"shownoteheads",0, t_notation_obj, show_noteheads);
+        CLASS_ATTR_STYLE_LABEL(c,"shownoteheads",0,"onoff","Show Noteheads");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"shownoteheads",0,"1");
+        // @exclude bach.slot
+        // @description Toggles the display of noteheads. When noteheads are not displayed,
+        // the notation object will override the <m>align</m> attribute and align
+        // every chord with respect to its stem.
+
 		CLASS_ATTR_CHAR(c,"showtails",0, t_notation_obj, show_tails);
 		CLASS_ATTR_STYLE_LABEL(c,"showtails",0,"onoff","Show Note Tails");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showtails",0, "1");
@@ -6750,6 +6758,10 @@ t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol
                 change_linkto_slot_flag(r_ob, r_ob->link_dynamics_to_slot - 1, k_SLOT_LINKAGE_DYNAMICS);
             else if (attrname == gensym("linkdlcolortoslot"))
                 change_linkto_slot_flag(r_ob, r_ob->link_dlcolor_to_slot - 1, k_SLOT_LINKAGE_DURATIONLINE_COLOR);
+        }
+        
+        if (attrname == gensym("shownoteheads")) {
+            object_attr_setdisabled((t_object *)r_ob, gensym("align"), r_ob->show_noteheads ? 0 : 1);
         }
         
         if (attrname == gensym("slursavoidaccidentals") || attrname == gensym("slursavoidchords")) {

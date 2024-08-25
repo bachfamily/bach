@@ -76,6 +76,7 @@ VERSION NOTES:
     á New display of deviations in cents (@showcentsdiff, @centssymbol: new attributes)
     á @breakpointshavenoteheads: new value "Internal Only" added to display noteheads only for internal breakpoints
     á fixed bug causing wrong partial note float slot playback
+    á @shownoteheads: new attribute
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved

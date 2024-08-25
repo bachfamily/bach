@@ -5978,12 +5978,13 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt)
             
             for (chord = this_meas->firstchord; chord; chord = chord->next) {
                 double alignment_point = chord->tuttipoint_onset_ms *  x->r_ob.spacing_width * XSCALE_FACTOR * wf;
+                e_chord_align_mode chalign = x->r_ob.show_noteheads ? (e_chord_align_mode)x->r_ob.align_chords_with_what : k_CHORD_ALIGN_WITH_STEMS;
                 chord->alignment_ux = alignment_point;
-                if (x->r_ob.align_chords_with_what == k_CHORD_ALIGN_WITH_STEMS)
+                if (chalign == k_CHORD_ALIGN_WITH_STEMS)
                     chord->stem_offset_ux = alignment_point;
-                else if (x->r_ob.align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER)
+                else if (chalign == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER)
                     chord->stem_offset_ux = alignment_point + chord->direction * chord_get_mainside_notehead_uwidth((t_notation_obj *)x, chord->r_sym_duration, chord)/2.;
-                else if (x->r_ob.align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END)
+                else if (chalign == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END)
                     chord->stem_offset_ux = alignment_point - x->r_ob.zoom_y * notehead_get_uwidth((t_notation_obj *)x, chord->r_sym_duration, chord->firstnote, true);
             }
             
@@ -9510,8 +9511,10 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         }
                         
                         // draw the notehead
-                        if (x->r_ob.dl_spans_ties < 2 || !curr_nt->tie_from)
-                            paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, 0, grace_ratio);
+                        if (x->r_ob.show_noteheads) {
+                            if (x->r_ob.dl_spans_ties < 2 || !curr_nt->tie_from)
+                                paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, 0, grace_ratio);
+                        }
                         
                         //                        paint_line(g, build_jrgba(1, 0, 0, 0.5), chord_alignment_point_x, 0, chord_alignment_point_x, rect.height, 1.);
                         //                        dev_post("note voice %ld; alignment_pt: %.2f, stem_x: %.2f, notehead_width: %.2f", voice->v_ob.number + 1, chord_alignment_point_x, stem_x, curr_nt->notehead_uwidth * x->r_ob.zoom_y);

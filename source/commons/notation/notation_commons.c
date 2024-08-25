@@ -1616,7 +1616,12 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
     double (*mc_to_ypos)(t_notation_obj *, double, t_voice *) = r_ob->breakpoints_have_noteheads ? mc_to_yposition_quantized : mc_to_yposition;
     double mc_or_screen_mc = r_ob->breakpoints_have_noteheads ? curr_nt->midicents : note_get_display_midicents(curr_nt);
         
-    double start_x = curr_nt->center.x + (curr_nt->notehead_uwidth / 2. + get_notehead_durationline_start_ux_shift(r_ob, curr_nt)) * r_ob->zoom_y;
+    double start_x;
+    if (r_ob->show_noteheads == 0) {
+        start_x = curr_nt->parent->stem_x;
+    } else {
+        start_x = curr_nt->center.x + (curr_nt->notehead_uwidth / 2. + get_notehead_durationline_start_ux_shift(r_ob, curr_nt)) * r_ob->zoom_y;
+    }
     if (r_ob->show_durations && r_ob->allow_glissandi) { // there are nontrivial breakpoints (trivial bpts are head and tail)
         t_bpt *temp = curr_nt->firstbreakpoint->next;
         double prev_bpt_y = system_shift + mc_to_yposition(r_ob, note_get_display_midicents(curr_nt), voice);
@@ -26563,14 +26568,15 @@ void add_tempi(t_notation_obj *r_ob, t_scorevoice *voice, long measure_num, t_ll
 double get_stem_x_from_alignment_point_x(t_notation_obj *r_ob, t_chord *chord, double chord_alignment_x)
 {
     double stem_x = 0;
+    e_chord_align_mode chalign = r_ob->show_noteheads ? (e_chord_align_mode)r_ob->align_chords_with_what : k_CHORD_ALIGN_WITH_STEMS;
 
-    if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER ||
-        r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END) {
+    if (chalign == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER ||
+        chalign == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END) {
         t_note *nt = get_principal_note(r_ob, chord);
         double note_width = get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;
         
         if (!r_ob->forceround_stems_to_semiinteger && nt) {
-            if (r_ob->align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER)
+            if (chalign == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER)
                 stem_x = chord_alignment_x + chord->direction * note_width / 2.;
             else
                 stem_x = (chord->direction == 1 ? chord_alignment_x : chord_alignment_x - note_width);
@@ -36622,6 +36628,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->need_send_changed_bang = false;
     r_ob->last_event_number = -1;
     r_ob->show_ties = true;
+    r_ob->show_noteheads = true;
     r_ob->show_beams = true;
     r_ob->show_flags = true;
     r_ob->show_dots = true;
@@ -36714,8 +36721,10 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     // INITIALIZING OTHER STUFF
     // ************************
     
-    for (i = 0; i < CONST_MAX_VOICES; i++)
+    for (i = 0; i < CONST_MAX_VOICES; i++) {
         r_ob->full_acc_repr[i] = _llllobj_sym_default;
+        r_ob->notationstyles_as_symlist[i] = _llllobj_sym_et;
+    }
         
     clear_prevent_edit(&r_ob->prevent_edit);
     r_ob->num_prevent_editing_elems = 0;
@@ -38891,12 +38900,23 @@ void change_single_midichannel(t_notation_obj *r_ob, t_voice* voice, long new_mi
 
 void change_single_notationstyle(t_notation_obj *r_ob, t_voice* voice, t_symbol *new_notationstyle, char also_add_undo_tick)
 {
-    // TODO: operate like clefs!
+    t_atom av[CONST_MAX_VOICES];
+    long i;
+    t_voice *tmpvoice;
+    
     if (also_add_undo_tick)
         undo_tick_create_for_header(r_ob, k_HEADER_NOTATIONSTYLES);
-    voice->notation_style = notationstyle_from_symbol(new_notationstyle);
-    r_ob->notationstyles_as_symlist[voice->number] = notationstyle_to_symbol((e_voice_notation_style) voice->notation_style);
+
+    for (i = 0, tmpvoice = r_ob->firstvoice; i < r_ob->num_voices && tmpvoice; i++, tmpvoice = voice_get_next(r_ob, tmpvoice)) {
+        if (tmpvoice == voice)
+            atom_setsym(av+i, new_notationstyle);
+        else
+            atom_setsym(av+i, r_ob->notationstyles_as_symlist[tmpvoice->number]);
+    }
+
+    object_method_typed(r_ob, gensym("notationstyles"), r_ob->num_voices, av, NULL); // undo marker here put here inside, if needed
 }
+
 
 
 void change_voiceensemble_key(t_notation_obj *r_ob, t_voice* any_voice_in_voiceensemble, t_symbol *new_key, char also_add_undo_tick)

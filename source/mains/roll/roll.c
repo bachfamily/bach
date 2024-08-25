@@ -11972,7 +11972,9 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             }
             
             // draw the notehead
-            paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, system_shift, 1.);
+            if (x->r_ob.show_noteheads) {
+                paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, system_shift, 1.);
+            }
             
 #ifdef BACH_PAINT_IDS
             if (curr_nt->r_it.ID > 0) {
@@ -19054,7 +19056,7 @@ void roll_delete_voice(t_roll *x, t_rollvoice *voice)
     elem = llll_getindex(x->r_ob.voicenames_as_llll, voicenumber_to_delete + 1, I_MODULO);
     llll_destroyelem(elem);
     set_voicenames_from_llll((t_notation_obj *)x, x->r_ob.voicenames_as_llll, false); // resync
-    
+
     update_solos((t_notation_obj *)x);
 
     

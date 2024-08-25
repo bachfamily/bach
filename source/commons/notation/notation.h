@@ -4846,6 +4846,7 @@ typedef struct _notation_obj
     char        show_flags;                     ///< Flag telling if we want to show the chord flags
     char        show_beams;                     ///< Flag telling if we want to show the beams
     char        show_ties;                      ///< Flag telling if we want to show the ties
+    char        show_noteheads;                 ///< Flag telling if we want to show the noteheads
     char        show_dots;                      ///< Flag telling if we want to show the augmentation dots
     e_show_rests_preferences    show_rests;     ///< Flag telling if we want to show the rests
     

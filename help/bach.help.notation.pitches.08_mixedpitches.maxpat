@@ -89,7 +89,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 170.0, 118.0, 382.0, 40.0 ],
-					"presentation_linecount" : 2,
 					"text" : "You can combine t and r specification. This is a just third over (tempered) E5 plus one twelfth of a tone."
 				}
 
