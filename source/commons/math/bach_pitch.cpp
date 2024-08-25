@@ -218,7 +218,7 @@ t_pitch::expVector t_pitch::expVector::operator+(const t_pitch::expVector& b) co
     for (i = 0; i < 7; i++)
         r.data[i] = data[i] + b.data[i];
     for ( ; i < 11; i++)
-        r.data[i] = (((getLNibble(data[i]) + getLNibble(b.data[i])) & 0xf0) << 4) + ((getRNibble(data[i]) + getRNibble(b.data[i])) & 0x0f);
+        r.data[i] = (((getLNibble(data[i]) + getLNibble(b.data[i])) & 0x0f) << 4) + ((getRNibble(data[i]) + getRNibble(b.data[i])) & 0x0f);
     return r;
 }
 
@@ -229,7 +229,7 @@ t_pitch::expVector t_pitch::expVector::operator-(const t_pitch::expVector& b) co
     for (i = 0; i < 7; i++)
         r.data[i] = data[i] - b.data[i];
     for ( ; i < 11; i++)
-        r.data[i] = (((getLNibble(data[i]) - getLNibble(b.data[i])) & 0xf0) << 4) | ((getRNibble(data[i]) - getRNibble(b.data[i])) & 0x0f);
+        r.data[i] = (((getLNibble(data[i]) - getLNibble(b.data[i])) & 0x0f) << 4) | ((getRNibble(data[i]) - getRNibble(b.data[i])) & 0x0f);
     return r;
 }
 
@@ -240,7 +240,7 @@ t_pitch::expVector t_pitch::expVector::operator*(const t_pitch::expVector& b) co
     for (i = 0; i < 7; i++)
         r.data[i] = data[i] * b.data[i];
     for ( ; i < 11; i++)
-        r.data[i] = (((getLNibble(data[i]) * getLNibble(b.data[i])) & 0xf0) << 4) + ((getRNibble(data[i]) * getRNibble(b.data[i])) & 0x0f);
+        r.data[i] = (((getLNibble(data[i]) * getLNibble(b.data[i])) & 0x0f) << 4) + ((getRNibble(data[i]) * getRNibble(b.data[i])) & 0x0f);
     return r;
 }
 
@@ -251,7 +251,7 @@ t_pitch::expVector t_pitch::expVector::operator*(t_atom_long b) const
     for (i = 0; i < 7; i++)
         r.data[i] = data[i] * b;
     for ( ; i < 11; i++)
-        r.data[i] = (((getLNibble(data[i]) * b) & 0xf0) << 4) + ((getRNibble(data[i]) * b) & 0x0f);
+        r.data[i] = (((getLNibble(data[i]) * b) & 0x0f) << 4) + ((getRNibble(data[i]) * b) & 0x0f);
     return r;
 }
 
@@ -262,7 +262,7 @@ t_pitch::expVector t_pitch::expVector::operator/(t_atom_long b) const
     for (i = 0; i < 7; i++)
         r.data[i] = data[i] / b;
     for ( ; i < 11; i++)
-        r.data[i] = (((getLNibble(data[i]) / b) & 0xf0) << 4) + ((getRNibble(data[i]) / b) & 0x0f);
+        r.data[i] = (((getLNibble(data[i]) / b) & 0x0f) << 4) + ((getRNibble(data[i]) / b) & 0x0f);
     return r;
 }
 
@@ -273,7 +273,7 @@ t_pitch::expVector t_pitch::expVector::operator/(const t_pitch::expVector& b) co
     for (i = 0; i < 7; i++)
         r.data[i] = data[i] / b.data[i];
     for ( ; i < 11; i++)
-        r.data[i] = (((getLNibble(data[i]) / getLNibble(b.data[i])) & 0xf0) << 4) + ((getRNibble(data[i]) / getRNibble(b.data[i])) & 0x0f);
+        r.data[i] = (((getLNibble(data[i]) / getLNibble(b.data[i])) & 0x0f) << 4) + ((getRNibble(data[i]) / getRNibble(b.data[i])) & 0x0f);
     return r;
 }
 
@@ -284,7 +284,7 @@ t_pitch::expVector t_pitch::expVector::operator-() const
     for (i = 0; i < 7; i++)
         r.data[i] = -data[i];
     for ( ; i < 11; i++)
-        r.data[i] = (((-getLNibble(data[i])) & 0xf0) << 4) + ((-getRNibble(data[i])) & 0x0f);
+        r.data[i] = (((-getLNibble(data[i])) & 0x0f) << 4) + ((-getRNibble(data[i])) & 0x0f);
     return r;
 }
 
