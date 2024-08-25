@@ -74,7 +74,7 @@ JIPITCHR ({INTEGER}([/]{INTEGER})?r)
 
 
 ^[-+]?{ETPITCHBASE}[-+]{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchETTComp(next, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
@@ -83,7 +83,7 @@ JIPITCHR ({INTEGER}([/]{INTEGER})?r)
 }
 
 ^[-+]?{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETTComp(yytext, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
     *p += t_parser::eatPitchJIRComp(next);
@@ -91,7 +91,7 @@ JIPITCHR ({INTEGER}([/]{INTEGER})?r)
 }
 
 ^[-+]?{ETPITCHBASE}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
     *p += t_parser::eatPitchJIRComp(next);
@@ -99,7 +99,7 @@ JIPITCHR ({INTEGER}([/]{INTEGER})?r)
 }
 
 ^[-+]?{ETPITCHBASE}[-+]{ETPITCHT}[-+]{JIPITCHR} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchETTComp(next, &next);
     *p += t_parser::eatPitchJIRComp(next);
@@ -107,7 +107,7 @@ JIPITCHR ({INTEGER}([/]{INTEGER})?r)
 }
 
 ^[-+]?{ETPITCHBASE}[-+]{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS}) {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchETTComp(next, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
@@ -115,61 +115,61 @@ JIPITCHR ({INTEGER}([/]{INTEGER})?r)
 }
 
 ^[-+]?({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchJIBaseComp(yytext, &next);
     *p += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHT}[-+]{JIPITCHR} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETTComp(yytext, &next);
     *p += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS}) {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETTComp(yytext, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE}[-+]{JIPITCHR} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchJIRComp(next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS}) {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE}[-+]{ETPITCHT} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchETTComp(next, &next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHBASE} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     return P_MORE;
 }
 
 ^[-+]?{ETPITCHT} {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETTComp(yytext, &next);
     return P_MORE;
 }
 
 ^[-+]?({JIPITCHBASE}|{JIPITCHCOMMAS}) {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchJIBaseComp(yytext, &next);
     return P_MORE;
 }

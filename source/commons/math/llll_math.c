@@ -519,6 +519,50 @@ void hatom_op_uminus(t_hatom *h1, t_hatom *res)
     }
 }
 
+void hatom_op_t(t_hatom *h1, t_hatom *res)
+{
+    t_pitch p;
+    switch (hatom_gettype(h1)) {
+        case H_DOUBLE:
+            p.setET(0, t_tinyRational(h1->h_w.w_double));
+            break;
+        case H_RAT:
+            p.setET(0, t_tinyRational(h1->h_w.w_rat));
+            break;
+        case H_LONG:
+            p.setET(0, t_tinyRational(h1->h_w.w_long));
+            break;
+        case H_PITCH:
+            p.setET(0, h1->h_w.w_pitch.toMCrat());
+            break;
+        default:
+            p.setET(0);
+    }
+    hatom_setpitch(res, p);
+}
+
+void hatom_op_r(t_hatom *h1, t_hatom *res)
+{
+    t_pitch p;
+    switch (hatom_gettype(h1)) {
+        case H_DOUBLE:
+            p.setJI(t_rational(h1->h_w.w_double));
+            break;
+        case H_RAT:
+            p.setJI(t_rational(h1->h_w.w_rat));
+            break;
+        case H_LONG:
+            p.setJI(t_rational(h1->h_w.w_long));
+            break;
+        case H_PITCH:
+            p.setJI(h1->h_w.w_pitch.toMCrat());
+            break;
+        default:
+            p.setET(0);
+    }
+    hatom_setpitch(res, p);
+}
+
 void hatom_op_plus_numbersonly(t_hatom *h1, t_hatom *h2, t_hatom *res)
 {
     t_uint32 h1_type = hatom_gettype(h1);

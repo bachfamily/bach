@@ -99,6 +99,8 @@ public:
 
 typedef astUnaryOperator<hatom_op_uminus> astOperatorUMinus;
 typedef astUnaryOperator<hatom_op_bitnot> astOperatorBitNot;
+typedef astUnaryOperator<hatom_op_t> astOperatorT;
+typedef astUnaryOperator<hatom_op_r> astOperatorR;
 
 typedef astBinaryOperator<hatom_op_plus_with_symbols> astOperatorPlus;
 typedef astBinaryOperator<hatom_op_minus> astOperatorMinus;

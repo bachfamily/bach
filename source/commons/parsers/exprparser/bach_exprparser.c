@@ -1564,7 +1564,7 @@ case 39:
 YY_RULE_SETUP
 {
     BEGIN BINARY;
-    char *next;
+    const char *next;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchETBaseComp(yytext, &next));
 }
 	YY_BREAK
@@ -1572,7 +1572,7 @@ case 40:
 YY_RULE_SETUP
 {
     BEGIN BINARY;
-    char *next;
+    const char *next;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchJIBaseComp(yytext, &next));
 }
 	YY_BREAK

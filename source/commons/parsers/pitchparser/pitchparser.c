@@ -1113,7 +1113,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchETTComp(next, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
@@ -1124,7 +1124,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETTComp(yytext, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
     *p += t_parser::eatPitchJIRComp(next);
@@ -1134,7 +1134,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
     *p += t_parser::eatPitchJIRComp(next);
@@ -1144,7 +1144,7 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchETTComp(next, &next);
     *p += t_parser::eatPitchJIRComp(next);
@@ -1154,7 +1154,7 @@ YY_RULE_SETUP
 case 5:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchETTComp(next, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
@@ -1164,7 +1164,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchJIBaseComp(yytext, &next);
     *p += t_parser::eatPitchJIRComp(next);
     return P_MORE;
@@ -1173,7 +1173,7 @@ YY_RULE_SETUP
 case 7:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETTComp(yytext, &next);
     *p += t_parser::eatPitchJIRComp(next);
     return P_MORE;
@@ -1182,7 +1182,7 @@ YY_RULE_SETUP
 case 8:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETTComp(yytext, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
@@ -1191,7 +1191,7 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchJIRComp(next);
     return P_MORE;
@@ -1200,7 +1200,7 @@ YY_RULE_SETUP
 case 10:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchJIBaseComp(next, &next);
     return P_MORE;
@@ -1209,7 +1209,7 @@ YY_RULE_SETUP
 case 11:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     *p += t_parser::eatPitchETTComp(next, &next);
     return P_MORE;
@@ -1218,7 +1218,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETBaseComp(yytext, &next);
     return P_MORE;
 }
@@ -1226,7 +1226,7 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchETTComp(yytext, &next);
     return P_MORE;
 }
@@ -1234,7 +1234,7 @@ YY_RULE_SETUP
 case 14:
 YY_RULE_SETUP
 {
-    char *next;
+    const char *next;
     *p = t_parser::eatPitchJIBaseComp(yytext, &next);
     return P_MORE;
 }

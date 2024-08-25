@@ -91,13 +91,17 @@ public:
 
     virtual std::any visitExprBinary(bellParser::ExprBinaryContext *context) = 0;
 
+    virtual std::any visitExprTR(bellParser::ExprTRContext *context) = 0;
+
     virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *context) = 0;
 
     virtual std::any visitItemUint(bellParser::ItemUintContext *context) = 0;
 
     virtual std::any visitItemUfloat(bellParser::ItemUfloatContext *context) = 0;
 
-    virtual std::any visitItemUpitch(bellParser::ItemUpitchContext *context) = 0;
+    virtual std::any visitItemETPitch(bellParser::ItemETPitchContext *context) = 0;
+
+    virtual std::any visitItemJIPitch(bellParser::ItemJIPitchContext *context) = 0;
 
     virtual std::any visitItemPi(bellParser::ItemPiContext *context) = 0;
 
@@ -110,8 +114,6 @@ public:
     virtual std::any visitItemBIF(bellParser::ItemBIFContext *context) = 0;
 
     virtual std::any visitItemOF(bellParser::ItemOFContext *context) = 0;
-
-    virtual std::any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *context) = 0;
 
     virtual std::any visitItemInlet(bellParser::ItemInletContext *context) = 0;
 

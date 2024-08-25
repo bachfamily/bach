@@ -125,6 +125,8 @@ void hatom_op_gt(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_ge(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_lt(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_le(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_op_t(t_hatom *h1, t_hatom *res);
+void hatom_op_r(t_hatom *h1, t_hatom *res);
 
 
 #endif // _LLLL_MATH_H_

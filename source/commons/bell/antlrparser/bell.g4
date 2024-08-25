@@ -168,6 +168,7 @@ expr: (item|var|funcall|listEnd) #exprSimple
 | <assoc=right> expr op=POW expr #exprBinary 
 | (UPLUS|UMINUS)+ expr #exprUPlusMinus
 | expr op=(TIMES|DIV|DIVDIV|REM) expr #exprBinary
+| expr op=(T|R) #exprTR
 | expr op=(PLUS|MINUS) expr #exprBinary
 | expr op=(LSHIFT|RSHIFT) expr #exprBinary
 | expr op=RANGE expr #exprBinary
@@ -185,14 +186,16 @@ expr: (item|var|funcall|listEnd) #exprSimple
 
 item: UINT #itemUint
 | UFLOAT #itemUfloat
-| UPITCH #itemUpitch
+//| UPITCH #itemUpitch
+| ETPITCHBASE #itemETPitch
+| (JIPITCHBASE|JIPITCHCOMMAS) #itemJIPitch
 | K_PI #itemPi
 | BTSYMBOL #itemBtSymbol
 | (DQSYMBOL|SQSYMBOL) #itemQSymbol
 | EMPTYSYMBOL #itemEmptySymbol
 | BIF #itemBIF
 | OF #itemOF
-| MAXFUNCTION #itemMaxFunction
+//| MAXFUNCTION #itemMaxFunction
 | type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
 | DIRINLET #itemDirInlet
 | ARGCOUNT #itemArgcount
@@ -238,14 +241,21 @@ UFLOAT: { notUintRange()}? (((([0-9]* '.' [0-9]+) | ([0-9]+ '.'))
          ([0-9]+[eE]([-+]?)[0-9]+)) 
         { noParams = false; noUnary = true; };
 
-UPITCH: NOTENAME ACCIDENTAL? [+-]* UINT ([+-]* (UINT|RAT) 't')?
- { noParams = false; noUnary = true; };
+ETPITCHBASE: NOTENAME ACCIDENTAL? INT  { noParams = false; noUnary = true; };
+JIPITCHBASE: NOTENAME (('{' (INT ':')* INT '}')|('{}')) INT { noParams = false; noUnary = true; }; 
+JIPITCHCOMMAS: ('{' (INT ':')* INT '}')|('{}') { noParams = false; noUnary = true; }; 
 
-K_PI: 'pi' { noParams = false; noUnary = true; };
+T: 't' { noParams = false; noUnary = true; };
+R: 'r' { noParams = false; noUnary = true; };
 
 fragment NOTENAME: ([a-g]|[A-G]);
 fragment ACCIDENTAL: ([#bxdq^v]+);
 fragment RAT: UINT '/' [+-]* UINT;
+fragment INT: [+-]? UINT;
+
+K_PI: 'pi' { noParams = false; noUnary = true; };
+
+
 
 BTSYMBOL: '`' (~[ \t\r\n\u0001])+ { noParams = true; noUnary = true; };
 DQSYMBOL: '"' ( '\\"' | ~["] )* ~'\\' '"' { noParams = true; noUnary = true; };
@@ -407,7 +417,7 @@ ARCONCAT: '!_=' { noParams = true; noUnary = false; };
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };
 
-MAXFUNCTION: '{' .+? '}' { noParams = false; noUnary = true; };
+//MAXFUNCTION: '{' .+? '}' { noParams = false; noUnary = true; };
 
 FUNDEF: '->' { noParams = true; noUnary = false; };
 LIFT: '-^' { noParams = true; noUnary = false; };

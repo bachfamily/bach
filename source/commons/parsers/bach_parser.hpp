@@ -48,7 +48,7 @@ private:
             return -p;
     }
     
-    static t_atom_short eatSign(char **pos) {
+    static t_atom_short eatSign(const char **pos) {
         t_atom_short sign = 1;
         switch (**pos) {
             case '-':
@@ -109,7 +109,7 @@ public:
         return t_rational(num, den);
     }
     
-    static t_pitch eatPitchAsNameAccInt(char *pos)
+    static t_pitch eatPitchAsNameAccInt(const char *pos)
     {
         t_atom_short sign = eatSign(&pos);
         t_atom_short degree = t_pitch::text2degree(*pos);
@@ -119,68 +119,68 @@ public:
         return adjustPitchSign(t_pitch(degree, alter, octave), sign);
     }
     
-    static t_pitch eatPitchAsNameIntAcc(char *pos)
+    static t_pitch eatPitchAsNameIntAcc(const char *pos)
     {
         t_atom_short sign = eatSign(&pos);
         t_atom_short degree = t_pitch::text2degree(*pos);
-        char *acc;
-        t_atom_short octave = static_cast<t_atom_short>(strtol(pos + 1, &acc, 10));
+        const char *acc;
+        t_atom_short octave = static_cast<t_atom_short>(strtol(pos + 1, const_cast<char**>(&acc), 10));
         t_shortRational alter = t_pitch::text2alter(&acc);
         return adjustPitchSign(t_pitch(degree, alter, octave), sign);
     }
     
-    static t_pitch eatPitchAsNameAccIntIntT(char *pos)
+    static t_pitch eatPitchAsNameAccIntIntT(const char *pos)
     {
         t_atom_short sign = eatSign(&pos);
         t_atom_short degree = t_pitch::text2degree(*pos);
-        char *next = pos + 1;
+        const char *next = pos + 1;
         t_shortRational alter = t_pitch::text2alter(&next);
-        t_atom_short octave = static_cast<t_atom_short>(strtol(next, &next, 10));
+        t_atom_short octave = static_cast<t_atom_short>(strtol(next, const_cast<char**>(&next), 10));
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
         p.p_alterET += t_tinyRational(static_cast<t_atom_short>(strtol(next, NULL, 10)),
                                       1);
         return p;
     }
     
-    static t_pitch eatPitchAsNameAccIntRatT(char *pos)
+    static t_pitch eatPitchAsNameAccIntRatT(const char *pos)
     {
         t_atom_short sign = eatSign(&pos);
         t_atom_short degree = t_pitch::text2degree(*pos);
-        char *next = pos + 1;
+        const char *next = pos + 1;
         t_shortRational alter = t_pitch::text2alter(&next);
-        long octave = strtol(next, &next, 10);
+        long octave = strtol(next, const_cast<char**>(&next), 10);
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
-        p.p_alterET += t_tinyRational(static_cast<t_int16>(strtol(next, &next, 10)), static_cast<t_int16>(strtol(next + 1, NULL, 10)));
+        p.p_alterET += t_tinyRational(static_cast<t_int16>(strtol(next, const_cast<char**>(&next), 10)), static_cast<t_int16>(strtol(next + 1, NULL, 10)));
         return p;
     }
     
-    static t_pitch eatPitchETBaseComp(char *pos, char **after) {
-        char *next = pos;
+    static t_pitch eatPitchETBaseComp(const char *pos, const char **after) {
+        const char *next = pos;
         t_atom_short sign = eatSign(&next);
         t_atom_short degree = t_pitch::text2degree(*next++);
         long octave;
         t_shortRational alter;
         if (isdigit(*next)) {
-            octave = strtol(next, &next, 10);
+            octave = strtol(next, const_cast<char**>(&next), 10);
             alter = t_pitch::text2alter(&next);
         } else {
             alter = t_pitch::text2alter(&next);
-            octave = strtol(next, &next, 10);
+            octave = strtol(next, const_cast<char**>(&next), 10);
         }
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
         *after = next;
         return p;
     }
     
-    static t_pitch eatPitchETTComp(char *pos, char **after) {
+    static t_pitch eatPitchETTComp(const char *pos, const char **after) {
         t_pitch p = t_pitch::C0;
-        char *next = pos;
+        const char *next = pos;
         t_atom_short tSign = eatSign(&next);
-        t_atom_short tNum = (t_atom_short) strtol(next, &next, 10) * tSign;
+        t_atom_short tNum = (t_atom_short) strtol(next, const_cast<char**>(&next), 10) * tSign;
         if (*next != '/') {
             p.p_alterET += tNum;
         } else {
-            t_int16 tDen = (t_int16) strtol(++next, &next, 10);
+            t_int16 tDen = (t_int16) strtol(++next, const_cast<char**>(&next), 10);
             p.p_alterET += t_tinyRational(tNum, tDen);
         }
         ++next; // t
@@ -189,21 +189,21 @@ public:
         return p;
     }
     
-    static t_pitch eatPitchETFull(char *pos, char **after) {
-        char *next;
+    static t_pitch eatPitchETFull(const char *pos, const char **after) {
+        const char *next;
         t_pitch p = eatPitchETBaseComp(pos, &next);
         p += eatPitchETTComp(next, &next);
         *after = next;
         return p;
     }
     
-    static std::vector<int8_t> eatJICommas(char *pos, char **after) {
-        char *next = pos;
+    static std::vector<int8_t> eatJICommas(const char *pos, const char **after) {
+        const char *next = pos;
         std::vector<int8_t> commas;
         next++; // {
         if (*next != '}') { // commas
             while (1) {
-                int8_t c = (int8_t) strtol(next, &next, 10);
+                int8_t c = (int8_t) strtol(next, const_cast<char**>(&next), 10);
                 commas.push_back(c);
                 if (*next == '}')
                     break;
@@ -216,8 +216,8 @@ public:
         return commas;
     }
     
-    static t_pitch eatPitchJIBaseComp(char *pos, char **after) {
-        char *next = pos;
+    static t_pitch eatPitchJIBaseComp(const char *pos, const char **after) {
+        const char *next = pos;
         t_atom_short sign = eatSign(&next);
         t_atom_short plof;
         t_int8 octave;
@@ -227,7 +227,7 @@ public:
             t_atom_short sharps = t_pitch::text2JIsharps(&next);
             plof += sharps * 7;
             commas = eatJICommas(next, &next);
-            octave = (t_int8) strtol(next, &next, 10);
+            octave = (t_int8) strtol(next, const_cast<char**>(&next), 10);
         } else {
             plof = 0;
             commas = eatJICommas(next, &next);
@@ -238,28 +238,28 @@ public:
         return p;
     }
     
-    static t_pitch eatPitchJIRComp(char *pos) {
-        char *next = pos;
+    static t_pitch eatPitchJIRComp(const char *pos) {
+        const char *next = pos;
         t_pitch p = t_pitch::C0;
-        t_atom_short rNum = (t_atom_short) strtol(next, &next, 10);
+        t_atom_short rNum = (t_atom_short) strtol(next, const_cast<char**>(&next), 10);
         if (*next != '/') {
             p.addJIratio(t_shortRational(rNum, 1));
         } else {
-            t_atom_short rDen = (t_atom_short) strtol(++next, &next, 10);
+            t_atom_short rDen = (t_atom_short) strtol(++next, const_cast<char**>(&next), 10);
             p.addJIratio(t_shortRational(rNum, rDen));
         }
         return p;
     }
     
-    static t_pitch eatPitchJIFull(char *pos) {
-        char *next;
+    static t_pitch eatPitchJIFull(const char *pos) {
+        const char *next;
         t_pitch p = eatPitchJIBaseComp(pos, &next);
         p += eatPitchJIRComp(next);
         return p;
     }
     
-    static t_pitch eatPitchComplete(char *pos) {
-        char *next;
+    static t_pitch eatPitchComplete(const char *pos) {
+        const char *next;
         t_pitch p = eatPitchETFull(pos, &next);
         p += eatPitchJIFull(next);
         return p;

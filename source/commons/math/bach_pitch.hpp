@@ -850,7 +850,7 @@ public:
             return 0;
     }
     
-    static t_int8 text2JIsharps(char** const pos) {
+    static t_int8 text2JIsharps(const char** const pos) {
         t_int8 sharps = 0;
         bool go = true;
         while (go) {
@@ -884,7 +884,7 @@ public:
 */
 
     // upon return, pos points to the first character after the sequence of accidentals
-    static t_shortRational text2alter(char **pos)
+    static t_shortRational text2alter(const char **pos)
     {
         t_shortRational alter = {0, 1};
         int go = 1;

@@ -159,6 +159,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitExprTR(bellParser::ExprTRContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitExprLvalue(bellParser::ExprLvalueContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -171,7 +175,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitItemUpitch(bellParser::ItemUpitchContext *ctx) override {
+  virtual std::any visitItemETPitch(bellParser::ItemETPitchContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitItemJIPitch(bellParser::ItemJIPitchContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -196,10 +204,6 @@ public:
   }
 
   virtual std::any visitItemOF(bellParser::ItemOFContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *ctx) override {
     return visitChildren(ctx);
   }
 

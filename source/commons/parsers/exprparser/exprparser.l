@@ -360,13 +360,13 @@ JIPITCHBASE ({NOTENAME}[#xb]*{JIPITCHCOMMAS}{INTEGER})
 
 {ETPITCHBASE} {
     BEGIN BINARY;
-    char *next;
+    const char *next;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchETBaseComp(yytext, &next));
 }
 
 {JIPITCHBASE}|{JIPITCHCOMMAS} {
     BEGIN BINARY;
-    char *next;
+    const char *next;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchJIBaseComp(yytext, &next));
 }
 

@@ -16,7 +16,7 @@
 #include "preprocBaseVisitor.h"
 #include "ast.hpp"
 #include "stringparser.h"
-
+#include "parsers/bach_parser.hpp"
 #include <algorithm>
 #include <string>
 #include <functional>
@@ -375,15 +375,20 @@ public:
         return r;
     }
     
-    antlrcpp::Any visitItemUpitch(bellParser::ItemUpitchContext *context) override {
-        std::string ptxt = context->UPITCH()->getText();
-        ANTLRInputStream input(ptxt);
-        pitchLexer lexer(&input);
-        CommonTokenStream tokens(&lexer);
-        pitchParser parser(&tokens);
-        pitchParser::PchContext* tree = parser.pch();
-        pchListener visitor;
-        t_pitch p = std::any_cast<t_pitch>(visitor.visit(tree));
+    antlrcpp::Any visitItemETPitch(bellParser::ItemETPitchContext *context) override {
+        std::string pString = context->ETPITCHBASE()->getText();
+        const char *pTxt = pString.c_str();
+        const char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(pTxt, &next);
+        astNode *r = new astConst(p, params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemJIPitch(bellParser::ItemJIPitchContext *context) override {
+        std::string pString = context->children[0]->getText();
+        const char *pTxt = pString.c_str();
+        const char *next;
+        t_pitch p = t_parser::eatPitchJIBaseComp(pTxt, &next);
         astNode *r = new astConst(p, params->owner);
         return r;
     }
@@ -457,7 +462,7 @@ public:
         astNode *r = new astConst(fn, params->owner);
         return r;
     }
-    
+    /*
     antlrcpp::Any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *context) override {
         auto t = context->MAXFUNCTION()->getText();
         t.erase(0, 1);
@@ -466,7 +471,7 @@ public:
         params->funcs->insert(fn);
         astNode *r = new astConst(fn, params->owner);
         return r;
-    }
+    }*/
     
     antlrcpp::Any visitItemDirInlet(bellParser::ItemDirInletContext *context) override {
         auto txt = context->DIRINLET()->getText();
@@ -657,12 +662,22 @@ public:
     }
     
     antlrcpp::Any visitExprUPlusMinus(bellParser::ExprUPlusMinusContext *context) override {
-        astNode *n = safeAnyCast<astNode*>(visit(context->children.back()));
+        astNode *n = safeAnyCast<astNode*>(visit(context->expr()));
         if (n && context->UMINUS().size() % 2)
             n = new astOperatorUMinus(n, params->owner);
         return n;
     }
 
+    antlrcpp::Any visitExprTR(bellParser::ExprTRContext *context) override {
+        astNode *n = safeAnyCast<astNode*>(visit(context->expr()));
+        astNode *r;
+        switch(context->op->getType()) {
+            case bellParser::T: r = new astOperatorT(n, params->owner); break;
+            case bellParser::R: r = new astOperatorR(n, params->owner); break;
+        }
+        return r;
+    }
+    
     antlrcpp::Any visitExprNot(bellParser::ExprNotContext *context) override {
         astNode *n = safeAnyCast<astNode*>(visit(context->children.back()));
         if (!n) {
