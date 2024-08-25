@@ -14603,6 +14603,7 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
     
     t_llll* out_llll = llll_get();
     t_llll *midichannels = llll_get(); 
+    t_llll *notationstyles = llll_get();
     t_llll *clefs = llll_get();
     t_llll *keys = llll_get();
     t_llll *voicenames = llll_get();
@@ -14635,6 +14636,7 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
     }
 
     llll_appendsym(midichannels, _llllobj_sym_midichannels, 0, WHITENULL_llll);
+    llll_appendsym(notationstyles, _llllobj_sym_notationstyles, 0, WHITENULL_llll);
     llll_appendsym(clefs, _llllobj_sym_clefs, 0, WHITENULL_llll);
     llll_appendsym(keys, _llllobj_sym_keys, 0, WHITENULL_llll);
     llll_appendsym(voicenames, _llllobj_sym_voicenames, 0, WHITENULL_llll);
@@ -14660,9 +14662,10 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
         }
         
         if (we_take_it[voice->v_ob.number]) {
-            llll_appendlong(midichannels, voice->v_ob.midichannel, 0, WHITENULL_llll);
-            llll_appendsym(clefs, x->r_ob.clefs_as_symlist[voice->v_ob.number], 0, WHITENULL_llll);
-            llll_appendsym(keys, x->r_ob.keys_as_symlist[voice->v_ob.number], 0, WHITENULL_llll);
+            llll_appendlong(midichannels, voice->v_ob.midichannel);
+            llll_appendsym(notationstyles, notationstyle_to_symbol((e_voice_notation_style) voice->v_ob.notation_style));
+            llll_appendsym(clefs, x->r_ob.clefs_as_symlist[voice->v_ob.number]);
+            llll_appendsym(keys, x->r_ob.keys_as_symlist[voice->v_ob.number]);
             llll_append_notation_item_name(voicenames, (t_notation_item *)voice);
 //            llll_appendsym(voicenames, voice->v_ob.r_it.name, 0, WHITENULL_llll);
             llll_appenddouble(voicespacing, x->r_ob.voiceuspacing_as_floatlist[voice->v_ob.number]);
@@ -14697,8 +14700,13 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
     else 
         llll_free(midichannels);
 
+    if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_notationstyles))
+        llll_appendllll(out_llll, notationstyles, 0, WHITENULL_llll);
+    else
+        llll_free(notationstyles);
+
     if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_stafflines))
-        llll_appendllll(out_llll, stafflines, 0, WHITENULL_llll); // midichannels
+        llll_appendllll(out_llll, stafflines, 0, WHITENULL_llll);
     else 
         llll_free(stafflines);
     

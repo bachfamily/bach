@@ -104,7 +104,7 @@ double notationobj_get_supposed_standard_uheight(t_notation_obj *r_ob)
                 if (voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
                     long minmc, maxmc;
                     get_pianoroll_display_range(r_ob, voice->clef, &minmc, &maxmc);
-                    one_system_height += ((maxmc - minmc)/100) * CONST_STEP_UY;
+                    one_system_height += (6 + (maxmc - minmc)/100) * CONST_STEP_UY;
                 } else {
                     one_system_height += get_num_staves_voice(r_ob, voice) * 14 * CONST_STEP_UY;
                 }
@@ -548,6 +548,15 @@ void paint_staff_lines_pianoroll(t_notation_obj *r_ob, t_jgraphics *g, double x1
             }
             break;
 
+        case k_PIANOROLL_DISPLAY_C_LINES:
+            for (long mc = minmc; mc <= maxmc; mc+=100) {
+                if (mc % 1200 == 0) {
+                    double this_y = middleC_y - ((mc - 6000)/100.) * r_ob->step_y;
+                    paint_line(g, color, x1, this_y, x2, this_y, width);
+                }
+            }
+            break;
+            
         case k_PIANOROLL_DISPLAY_BACKGROUND_STRIPES:
         {
             t_rect rect;
@@ -10120,19 +10129,26 @@ void compute_middleC_position_for_voice(t_notation_obj *r_ob, t_voice *voice){
     long clef = get_voice_clef(r_ob, voice);
     
     // deciding middleC position
-    if (clef == k_CLEF_FFGG || clef == k_CLEF_FGG || clef == k_CLEF_GG || clef == k_CLEF_G15ma)
-        voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y;
-    else if (clef == k_CLEF_FFG || clef == k_CLEF_FG || clef == k_CLEF_G || clef == k_CLEF_NONE || clef == k_CLEF_PERCUSSION)
-        voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y - 14 * CONST_STEP_UY * r_ob->zoom_y;
-    else if (clef == k_CLEF_FF || clef == k_CLEF_F)
-        voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y - (14 + 12) * CONST_STEP_UY * r_ob->zoom_y;
-    else if (clef == k_CLEF_F15mb)
-        voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y - (2 * 14 + 12) * CONST_STEP_UY * r_ob->zoom_y;
-    else if (clef == k_CLEF_SOPRANO || clef == k_CLEF_ALTO || clef == k_CLEF_TENOR || clef == k_CLEF_MEZZO || clef == k_CLEF_BARYTONE || clef == k_CLEF_G8va || clef == k_CLEF_F8vb
-             || clef == k_CLEF_G8vb || clef == k_CLEF_F8va || clef == k_CLEF_G15mb || clef == k_CLEF_F15ma) //TO DO: CHECK
-        voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y - (14 + (clef + 2)) * CONST_STEP_UY * r_ob->zoom_y;
-    else
-        voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y;
+    if (voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+        long mincents, maxcents;
+        get_pianoroll_display_range(r_ob, clef, &mincents, &maxcents);
+        long d = (maxcents - 6000)/100;
+        voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y + (d - 24) * CONST_STEP_UY * r_ob->zoom_y;
+    } else {
+        if (clef == k_CLEF_FFGG || clef == k_CLEF_FGG || clef == k_CLEF_GG || clef == k_CLEF_G15ma)
+            voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y;
+        else if (clef == k_CLEF_FFG || clef == k_CLEF_FG || clef == k_CLEF_G || clef == k_CLEF_NONE || clef == k_CLEF_PERCUSSION)
+            voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y - 14 * CONST_STEP_UY * r_ob->zoom_y;
+        else if (clef == k_CLEF_FF || clef == k_CLEF_F)
+            voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y - (14 + 12) * CONST_STEP_UY * r_ob->zoom_y;
+        else if (clef == k_CLEF_F15mb)
+            voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y - (2 * 14 + 12) * CONST_STEP_UY * r_ob->zoom_y;
+        else if (clef == k_CLEF_SOPRANO || clef == k_CLEF_ALTO || clef == k_CLEF_TENOR || clef == k_CLEF_MEZZO || clef == k_CLEF_BARYTONE || clef == k_CLEF_G8va || clef == k_CLEF_F8vb
+                 || clef == k_CLEF_G8vb || clef == k_CLEF_F8va || clef == k_CLEF_G15mb || clef == k_CLEF_F15ma) //TO DO: CHECK
+            voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y - (14 + (clef + 2)) * CONST_STEP_UY * r_ob->zoom_y;
+        else
+            voice->middleC_y = y_adjust_staff + voice_vertical_offset + CONST_MIDDLEC_UY * r_ob->zoom_y;
+    }
     
     // taking vertical scrollbar into account
     if (r_ob->need_vscrollbar && r_ob->show_vscrollbar)
@@ -11956,7 +11972,55 @@ void get_ledger_lines(t_notation_obj *r_ob, t_voice *v_ob, long scaleposition, i
     }
 
     if (v_ob->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+        long mincents, maxcents;
+        get_pianoroll_display_range(r_ob, clef, &mincents, &maxcents);
+        long maxcents_scalepos = (maxcents-6000)/100;
+        long mincents_scalepos = (mincents-6000)/100;
         *num_ledger_lines = 0;
+        switch (r_ob->pianoroll_display_type) {
+            case k_PIANOROLL_DISPLAY_C_LINES:
+                while (scaleposition < mincents_scalepos) {
+                    if (scaleposition % 12 == 0)
+                        append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
+                    scaleposition += 1;
+                }
+                while (scaleposition > maxcents_scalepos) {
+                    if (scaleposition % 12 == 0)
+                        append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
+                    scaleposition -= 1;
+                }
+                break;
+
+            case k_PIANOROLL_DISPLAY_WHITEKEY_LINES:
+                while (scaleposition < mincents_scalepos) {
+                    if (scaleposition % 12 == 0 || scaleposition % 12 == 2 || scaleposition % 12 == 4 || scaleposition % 12 == 5 || scaleposition % 12 == 7 || scaleposition % 12 == 9 || scaleposition % 12 == 11)
+                        append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
+                    scaleposition += 1;
+                }
+                while (scaleposition > maxcents_scalepos) {
+                    if (scaleposition % 12 == 0 || scaleposition % 12 == 2 || scaleposition % 12 == 4 || scaleposition % 12 == 5 || scaleposition % 12 == 7 || scaleposition % 12 == 9 || scaleposition % 12 == 11)
+                        append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
+                    scaleposition -= 1;
+                }
+                break;
+
+            case k_PIANOROLL_DISPLAY_BLACKKEY_LINES:
+                while (scaleposition < mincents_scalepos) {
+                    if (scaleposition % 12 == 1 || scaleposition % 12 == 3 || scaleposition % 12 == 6 || scaleposition % 12 == 8 || scaleposition % 12 == 10)
+                        append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
+                    scaleposition += 1;
+                }
+                while (scaleposition > maxcents_scalepos) {
+                    if (scaleposition % 12 == 1 || scaleposition % 12 == 3 || scaleposition % 12 == 6 || scaleposition % 12 == 8 || scaleposition % 12 == 10)
+                        append_ledger_line(scaleposition_to_yposition(r_ob, scaleposition, v_ob), ledger_y, num_ledger_lines);
+                    scaleposition -= 1;
+                }
+                break;
+                
+            case k_PIANOROLL_DISPLAY_BACKGROUND_STRIPES:
+            default:
+                break;
+        }
         return;
     }
 
@@ -38720,7 +38784,7 @@ void calculate_voice_offsets(t_notation_obj *r_ob)
             if (voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
                 long minmc, maxmc;
                 get_pianoroll_display_range(r_ob, voice->clef, &minmc, &maxmc);
-                offset += ((maxmc - minmc)/100) * CONST_STEP_UY * r_ob->zoom_y;
+                offset += (6 + (maxmc - minmc)/100) * CONST_STEP_UY * r_ob->zoom_y;
             } else {
                 offset += get_num_staves_voice(r_ob, voice) * 14 * CONST_STEP_UY * r_ob->zoom_y;
             }
@@ -38827,6 +38891,7 @@ void change_single_midichannel(t_notation_obj *r_ob, t_voice* voice, long new_mi
 
 void change_single_notationstyle(t_notation_obj *r_ob, t_voice* voice, t_symbol *new_notationstyle, char also_add_undo_tick)
 {
+    // TODO: operate like clefs!
     if (also_add_undo_tick)
         undo_tick_create_for_header(r_ob, k_HEADER_NOTATIONSTYLES);
     voice->notation_style = notationstyle_from_symbol(new_notationstyle);
@@ -38916,6 +38981,23 @@ void set_notationstyles_from_llll(t_notation_obj *r_ob, t_llll* notationstyles){
             r_ob->notationstyles_as_symlist[((t_voice *)voice)->number] = notationstyle_to_symbol((e_voice_notation_style)((t_voice *)voice)->notation_style);
             voice = voice_get_next(r_ob, (t_voice *) voice);
         }
+
+        // calculate voice offsets
+        calculate_voice_offsets(r_ob);
+        
+        // re-setting rectangle dimension
+        if (r_ob->link_vzoom_to_height) // AUTO-ZOOM
+            auto_set_rectangle_size(r_ob);
+        else
+            calculate_voice_offsets(r_ob);
+        
+        r_ob->key_signature_uwidth = get_max_key_uwidth(r_ob);
+        if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+            calculate_ms_on_a_line(r_ob);
+            recalculate_num_systems(r_ob);
+        }
+        r_ob->system_jump = get_system_jump(r_ob);
+        
         implicitely_recalculate_all(r_ob, false);
     }
 }
@@ -38926,13 +39008,17 @@ double get_max_key_uwidth(t_notation_obj *r_ob) {
     double max_width = 0.; 
     char there_is_some_key = false;
     while (voice && ((t_voice *)voice)->number < r_ob->num_voices) {
-        double this_width = get_key_uwidth(r_ob, (t_voice *)voice);
-        if (!there_is_some_key && this_width > 0.)
-            there_is_some_key = true;
-        if (this_width > max_width) max_width = this_width;
+        if (((t_voice *)voice)->notation_style != k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+            double this_width = get_key_uwidth(r_ob, (t_voice *)voice);
+            if (!there_is_some_key && this_width > 0.)
+                there_is_some_key = true;
+            if (this_width > max_width)
+                max_width = this_width;
+        }
         voice = voice_get_next(r_ob, (t_voice *) voice);
-    } 
-    if (there_is_some_key) max_width += CONST_USPACE_AFTER_KEY_SIGNATURE;
+    }
+    if (there_is_some_key) 
+        max_width += CONST_USPACE_AFTER_KEY_SIGNATURE;
     return max_width;
 }
 

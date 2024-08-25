@@ -149,7 +149,11 @@
 				Define formula for R variable (radius)
 			</digest>
 			<description>
-				Syntax: <b>exprr <m>&lt;llll: expression&gt;</m> </b><br />				<br />
+				Syntax: <b>exprr <m>&lt;llll: expression&gt;</m> </b><br />
+				Examples:<br />
+				• <b>exprr $f1</b>   <i>→ map radius on angle (Archimedean spiral)</i><br />
+				• <b>exprr $f2 + $f1 * log($f2+2)</b>   <i>→ define formula for radius, with $f2 being some parameter</i><br />
+				<br />
 				In polar mode (see <m>graphtype</m> attribute), you can define the expression for the radius R with respect to the
 				angle Theta, such as R = f(Theta), with Theta being the independent variable (angle in radians).
 				After the <m>exprr</m> symbol, a formula in <o>bach.expr</o>
@@ -164,7 +168,11 @@
 				Define formula for X variable
 			</digest>
 			<description>
-				Syntax: <b>exprx <m>&lt;llll: expression&gt;</m> </b><br />				<br />
+				Syntax: <b>exprx <m>&lt;llll: expression&gt;</m> </b><br />
+				Examples:<br />
+				• <b>exprx sin($f1+cos($f1))</b>   <i>→ define formula for x</i><br />
+				• <b>exprx sin($f1+cos($f1*$f2))</b>   <i>→ the same, $f2 being some parameter</i><br />
+				<br />
 				In parametric mode (see <m>graphtype</m> attribute) you can define separately the expressions for the X and Y variables.
 				Via <m>exprx</m> one defines the formula for the X variable, as X = f(T), where T is the independent variable.
 				After the <m>exprx</m> symbol, a formula in <o>bach.expr</o>
@@ -180,7 +188,11 @@
 				Define formula for Y variable
 			</digest>
 			<description>
-				Syntax: <b>expry <m>&lt;llll: expression&gt;</m> </b><br />				<br />
+				Syntax: <b>expry <m>&lt;llll: expression&gt;</m> </b><br />
+				Examples:<br />
+				• <b>expry $f1*sin($f1*$f1)</b>   <i>→ define formula for y</i><br />
+				• <b>expry $f2*sin($f1*$f1)</b>   <i>→ the same, $f2 being some parameter</i><br />
+				<br />
 				Via <m>expry</m> one defines the formula for the Y variable, either as Y = f(X), in cartesian mode, or as
 				Y = f(T), in parametric mode (see <m>graphtype</m> attribute), where X and T are the indepentent variables.
 				After the <m>expry</m> symbol, a formula in <o>bach.expr</o>

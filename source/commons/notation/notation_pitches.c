@@ -60,8 +60,10 @@ t_voice *note_get_voice(t_note *nt)
 {
     if (nt->parent && nt->parent->is_score_chord)
         return (t_voice *)nt->parent->parent->voiceparent;
-    else
+    else if (nt->parent)
         return (t_voice *)nt->parent->voiceparent;
+    else
+        return NULL;
 }
 
 void note_set_user_enharmonicity_from_display_representation(t_note *nt, double screen_mc, t_rational screen_acc, char also_assign_mc)

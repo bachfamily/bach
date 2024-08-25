@@ -1955,6 +1955,46 @@
       "The World Outside"
     ]
   },
+  "bach.jiwheel": {
+    "digest": "Just intonation clock diagram",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach just intonation",
+      "bach interface",
+      "U/I"
+    ],
+    "keywords": [
+      "jiwheel",
+      "diagram",
+      "clock",
+      "just intonation",
+      "ratio",
+      "Helmholtz-Ellis",
+      "wheel",
+      "rotate"
+    ],
+    "seealso": [
+      "bach.primeform",
+      "bach.pcsetinfo",
+      "bach.mod+",
+      "bach.mod-",
+      "bach.modtimes",
+      "bach.compl"
+    ],
+    "palette": {
+      "category": [
+        "bach",
+        "bach objects",
+        "bach just intonation",
+        "bach interface",
+        "U/I"
+      ],
+      "action": "bach.jiwheel",
+      "pic": "bach.jiwheel.svg"
+    }
+  },
   "bach.transcribe": {
     "digest": "Fills a <o>bach.roll</o> according to incoming MIDI data",
     "module": "bach",

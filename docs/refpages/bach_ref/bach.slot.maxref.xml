@@ -1349,6 +1349,37 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="centsdifffontsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Cents Differences Font Size
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="8" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cents Differences Font Size" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="centssymbol" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Cents Symbol
+			</digest>
+			<description>
+				Symbol used to represent cents (or MIDIcents).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="¢" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Cents Symbol" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="dynamicsoutputmode" get="1" set="1" type="int" size="1">
 			<digest>
 				Dynamics Output Mode
@@ -1427,7 +1458,6 @@
 			<description>
 			</description>
 			<attributelist>
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -1449,6 +1479,73 @@
 			</description>
 			<attributelist>
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jialwaysshowpythacc" get="1" set="1" type="int" size="1">
+			<digest>
+				Always Show JI Pythagorean Accidentals
+			</digest>
+			<description>
+				Toggles the ability to always display accidentals for Pythagorean diatonic pitches in jusst intonation.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Always Show JI Pythagorean Accidentals" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="jiapproxthresh" get="1" set="1" type="float" size="1">
+			<digest>
+				JI Approximation Threshold (Cents)
+			</digest>
+			<description>
+				Sets the approximation threshold for automatically converting cents into just intonation.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="67" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="JI Approximation Threshold (Cents)" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jibase" get="1" set="1" type="" size="1">
+			<digest>
+				Reference Diatonic Pitch for JI Ratios
+			</digest>
+			<description>
+				Sets the reference diatonic pitch for just intonation ratios.
+			</description>
+			<attributelist>
+				<attribute name="default" get="1" set="1" type="" size="1" value="C5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Reference Diatonic Pitch for JI Ratios" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jilimit" get="1" set="1" type="int" size="1">
+			<digest>
+				JI Harmonic Limit
+			</digest>
+			<description>
+				Sets the just intonation harmonic limit for the score display.
+				This is the analogous, for just intonation, of the <m>tonedivision</m> attribute, in that
+				it doesn't change the profound nature of the pitch (which can very well be in a higher limit)
+				but it only trims its display to the selected harmonic prime number, and adjusts the interface
+				accordingly
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Just Intonation" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="JI Harmonic Limit" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -1829,6 +1926,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="showcentsdiff" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Cents Differences
+			</digest>
+			<description>
+				Toggles the display of cents differences above the accidentals
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Cents Differences" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="showfocus" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Object Focus
@@ -1877,6 +1990,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="showslotnames" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Slot Names In Slot Window
+			</digest>
+			<description>
+				Toggles the display of slot names in the slot windows.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Slot Names In Slot Window" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="showslotnumbers" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Slot Numbers In Slot Window
@@ -1904,6 +2033,23 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Slurs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="singlelyricsdash" get="1" set="1" type="int" size="1">
+			<digest>
+				Lyrics Always Connect With A Single Dash
+			</digest>
+			<description>
+				Toggles the ability to always connect lyrics with single dashes, and not with repeated dashes
+				when the space between them is too large
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Always Connect With A Single Dash" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
@@ -1937,6 +2083,52 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
 				<attribute name="default" get="1" set="1" type="float" size="1" value="1.3" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Function Slot Point Radius" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="slotlabelsfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Slot Labels Font
+			</digest>
+			<description>
+				Sets the font for slot labels
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slot Labels Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="slotlabelsfontface" get="1" set="1" type="int" size="1">
+			<digest>
+				Slot Labels Font Style
+			</digest>
+			<description>
+				Sets the font style of slot labels
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slot Labels Font Style" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="slotlabelsfontsize" get="1" set="1" type="float" size="1">
+			<digest>
+				Slot Labels Font Size
+			</digest>
+			<description>
+				Sets the font size of slot labels (rescaled according to the <m>vzoom</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="5" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Slot Labels Font Size" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />

@@ -10604,8 +10604,11 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
 
             // paint key signature
-            for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-                paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
+            for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
+                if (voice->v_ob.notation_style != k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+                    paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
+                }
+            }
             
             // paint the accollatura
             if (x->r_ob.show_accollatura && voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)
