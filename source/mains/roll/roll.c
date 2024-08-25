@@ -10938,7 +10938,7 @@ void roll_subroll(t_roll *x, t_symbol *s, long argc, t_atom *argv){
                     t_symbol *sym = hatom_getsym(&inputlist->l_head->l_hatom);
                     t_llll *temp = symbol2llll(sym);
                     t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, temp);
-                    if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                    if (!it || it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
                         object_error((t_object *)x, "Item does not exist or is not a marker region.");
                     } else {
                         from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
@@ -10962,7 +10962,7 @@ void roll_subroll(t_roll *x, t_symbol *s, long argc, t_atom *argv){
                     // region name?
                     which_voices = llll_get(); // all voices
                     t_notation_item *it = names_to_single_notation_item((t_notation_obj *)x, firstll);
-                    if (it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
+                    if (!it || it->type != k_MARKER || !marker_is_region((t_marker *)it)) {
                         object_error((t_object *)x, "Item does not exist or is not a marker region.");
                     } else {
                         from_ms = marker_get_onset_ms((t_notation_obj *)x, (t_marker *)it);
@@ -11872,7 +11872,12 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
         for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) { // cycle on the notes
             if (is_notehead_inscreen_for_painting(x, curr_nt)) {
                 int num_ledger_lines = 0; int i;
-                long scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
+                long scaleposition;
+                if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+                    scaleposition = ((long)curr_nt->midicents - 6000)/100;
+                } else {
+                    scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
+                }
                 get_ledger_lines((t_notation_obj *) x, (t_voice *) voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
                 double note_x_real = stem_x + get_notehead_ux_shift((t_notation_obj *) x, curr_nt) * x->r_ob.zoom_y + curr_nt->notecenter_stem_delta_ux * x->r_ob.zoom_y;
 
@@ -12655,8 +12660,11 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                         paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
 
                 // paint key signature
-                for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-                    paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
+                for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
+                    if (voice->v_ob.notation_style != k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+                        paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
+                    }
+                }
                 
                 
                 // paint the accollatura
@@ -12872,8 +12880,11 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                     paint_left_vertical_staffline((t_notation_obj *)x, g, (t_voice *)voice, mainstaffcolor);
 
 			// paint key signature
-			for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-				paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
+            for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++) {
+                if (voice->v_ob.notation_style != k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+                    paint_keysignature((t_notation_obj *)x, g, jf_acc, jf_acc_bogus, voice->v_ob.middleC_y + k * system_jump, (t_voice *)voice, keysigcolor);
+                }
+            }
 
             // paint the accollatura
             if (x->r_ob.show_accollatura && voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1)
@@ -15574,6 +15585,7 @@ void send_extras_values_as_llll(t_roll *x, bool selection_only){
 t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type, char keep_ending_markers){
     t_llll* out_llll = llll_get();
     t_llll *midichannels = llll_get(); 
+    t_llll *notationstyles = llll_get();
     t_llll *clefs = llll_get();
     t_llll *keys = llll_get();
     t_llll *voicenames = llll_get();
@@ -15596,6 +15608,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
     llll_appendsym(clefs, _llllobj_sym_clefs, 0, WHITENULL_llll);
     llll_appendsym(keys, _llllobj_sym_keys, 0, WHITENULL_llll);
     llll_appendsym(midichannels, _llllobj_sym_midichannels, 0, WHITENULL_llll);
+    llll_appendsym(notationstyles, _llllobj_sym_notationstyles, 0, WHITENULL_llll);
     llll_appendsym(voicenames, _llllobj_sym_voicenames, 0, WHITENULL_llll);
     llll_appendsym(voicespacing, _llllobj_sym_voicespacing, 0, WHITENULL_llll);
     llll_appendsym(stafflines, _llllobj_sym_stafflines, 0, WHITENULL_llll);
@@ -15620,6 +15633,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
         
         if (we_take_it[voice->v_ob.number]) {
             llll_appendlong(midichannels, voice->v_ob.midichannel, 0, WHITENULL_llll);
+            llll_appendsym(notationstyles, notationstyle_to_symbol((e_voice_notation_style)voice->v_ob.notation_style));
             llll_appendsym(clefs, x->r_ob.clefs_as_symlist[voice->v_ob.number], 0, WHITENULL_llll);
             llll_appendsym(keys, x->r_ob.keys_as_symlist[voice->v_ob.number], 0, WHITENULL_llll);
             llll_append_notation_item_name(voicenames, (t_notation_item *)voice);
@@ -15661,7 +15675,12 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
     else
         llll_free(midichannels);
 
-    if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_stafflines)) 
+    if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_notationstyles))
+        llll_appendllll(out_llll, notationstyles, 0, WHITENULL_llll);
+    else
+        llll_free(notationstyles);
+    
+    if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_stafflines))
         llll_appendllll(out_llll, stafflines, 0, WHITENULL_llll); // stafflines
     else
         llll_free(stafflines);
@@ -15784,11 +15803,11 @@ t_llll* get_subvoice_values_as_llll(t_roll *x, t_rollvoice *voice, double start_
                 to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, false);
             }
         } else {
-            if (temp_chord->onset >= start_ms && temp_chord->onset + max_duration <= end_ms) {
+            if (temp_chord->onset >= start_ms && temp_chord->onset + max_duration <= end_ms) { // whole chord within boundaries
                 to_append = get_rollchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, false);
-            } else if ((temp_chord->onset >= start_ms && temp_chord->onset <= end_ms) || 
-                       (temp_chord->onset + max_duration >= start_ms && temp_chord->onset + max_duration <= end_ms) ||
-                       (temp_chord->onset < start_ms && temp_chord->onset + max_duration > end_ms)) {
+            } else if ((temp_chord->onset >= start_ms && temp_chord->onset <= end_ms) || // onset is within boundaries
+                       (temp_chord->onset + max_duration > start_ms && temp_chord->onset + max_duration <= end_ms) || // tail is within boundaries
+                       (temp_chord->onset < start_ms && temp_chord->onset + max_duration > end_ms)) { // chord starts before the region beginning and ends after the region end
                 to_append = get_rollpartialchord_values_as_llll((t_notation_obj *) x, temp_chord, k_CONSIDER_FOR_SUBDUMPING, start_ms, end_ms);
             }
         }

@@ -1682,9 +1682,10 @@ typedef enum _clone_for_types
     @ingroup    notation
  */
 typedef enum _pianoroll_display_type {
-    k_PIANOROLL_DISPLAY_WHITEKEY_LINES = 0,            ///< Lines corresponding to white keys
-    k_PIANOROLL_DISPLAY_BLACKKEY_LINES = 1,            ///< Lines corresponding to black keys
-    k_PIANOROLL_DISPLAY_BACKGROUND_STRIPES = 2,            ///< Background stripes
+    k_PIANOROLL_DISPLAY_BACKGROUND_STRIPES = 0,        ///< Background stripes
+    k_PIANOROLL_DISPLAY_WHITEKEY_LINES = 1,            ///< Lines corresponding to white keys
+    k_PIANOROLL_DISPLAY_BLACKKEY_LINES = 2,            ///< Lines corresponding to black keys
+    k_PIANOROLL_DISPLAY_C_LINES = 3,                   ///< Lines corresponding to C's
 } e_pianoroll_display_type;
 
 

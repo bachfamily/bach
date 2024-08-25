@@ -2135,7 +2135,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 
     CLASS_ATTR_CHAR(c,"pianorolltype",0, t_notation_obj, pianoroll_display_type);
     CLASS_ATTR_STYLE_LABEL(c,"pianorolltype",0,"enumindex","Piano Roll Display Type");
-    CLASS_ATTR_ENUMINDEX(c,"pianorolltype", 0, "White-Key Lines Black-Key Lines Background Stripes");
+    CLASS_ATTR_ENUMINDEX(c,"pianorolltype", 0, "Background Stripes White-Key Lines Black-Key Lines C-Lines");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorolltype",0,"0");
     // @exclude bach.slot
     // Sets the type of piano roll display for voices whose notation style is set to "linear".
@@ -4148,7 +4148,8 @@ t_max_err notationobj_setattr_slot_labels_font_size(t_notation_obj *r_ob, t_obje
 }
 
 
-void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beamings){
+void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beamings)
+{
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         t_scorevoice *voice;
         t_measure *meas;
@@ -6749,6 +6750,10 @@ t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol
                 change_linkto_slot_flag(r_ob, r_ob->link_dynamics_to_slot - 1, k_SLOT_LINKAGE_DYNAMICS);
             else if (attrname == gensym("linkdlcolortoslot"))
                 change_linkto_slot_flag(r_ob, r_ob->link_dlcolor_to_slot - 1, k_SLOT_LINKAGE_DURATIONLINE_COLOR);
+        }
+        
+        if (attrname == gensym("slursavoidaccidentals") || attrname == gensym("slursavoidchords")) {
+            notationobj_reset_all_slurs_position(r_ob);
         }
 
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);

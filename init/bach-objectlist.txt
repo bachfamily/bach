@@ -80,6 +80,7 @@ max oblist "bach objects" bach.readsdif;
 max oblist "bach objects" bach.writesdif;
 max oblist "bach objects" bach.write;
 max oblist "bach objects" bach.omtree2bachtree;
+max oblist "bach objects" bach.jiwheel;
 max oblist "bach objects" bach.transcribe;
 max oblist "bach objects" bach.beatunbox;
 max oblist "bach objects" bach.p2mc;

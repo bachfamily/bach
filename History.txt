@@ -40,6 +40,7 @@ VERSION NOTES:
         . function definitions must have at least one argument.
           e.g., (-> 1) is not a valid function definition anymore. A dummy argument must be provided, as in ($x -> 1). Nonetheless, all arguments are optional in function calls, so $f = ($x -> 1); $f() is still perfectly valid and functional.
 
+- bach.roll: the subroll message doesn't output partial notes of duration 0 any longer
 
 =======
 - bach.stream: 
