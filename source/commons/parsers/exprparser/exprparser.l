@@ -30,11 +30,16 @@
 
 SEPARATOR ([ \t\n\r\(\)\[\]\{\}])
 UINT ([0-9]+)
+INTEGER ([+-]?{UINT})
 UFLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+))
 URAT ({UINT}[/][+-]?{UINT})
 NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq\^v]+)
 NO_SPACES ([^ \t\n\r\f\v\x01])
+
+ETPITCHBASE ({NOTENAME}(({ACCIDENTAL}?{INTEGER})|({INTEGER}{ACCIDENTAL})))
+JIPITCHCOMMAS (\{(({INTEGER}:)*{INTEGER})?\})
+JIPITCHBASE ({NOTENAME}[#xb]*{JIPITCHCOMMAS}{INTEGER})
 
 %{
     #ifndef BACH_MAX
@@ -353,24 +358,16 @@ NO_SPACES ([^ \t\n\r\f\v\x01])
     return lexpr_append_lexeme_SYMBOL(epd->lexeme, gensym(""));
 }
 
-{NOTENAME}{ACCIDENTAL}?[-+]?{UINT} {
+{ETPITCHBASE} {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccInt(yytext));
+    char *next;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchETBaseComp(yytext, &next));
 }
 
-{NOTENAME}[-+]?{UINT}{ACCIDENTAL} {
+{JIPITCHBASE}|{JIPITCHCOMMAS} {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameIntAcc(yytext));
-}
-
-{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}+t {
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntIntT(yytext));
-}
-
-{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}[/][-+]?{UINT}t {
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntRatT(yytext));
+    char *next;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchJIBaseComp(yytext, &next));
 }
 
 {UINT}t {
@@ -387,13 +384,31 @@ NO_SPACES ([^ \t\n\r\f\v\x01])
 
 {UFLOAT}t {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(atof(yytext)), 0));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_tinyRational(atof(yytext)), 0));
 }
 
 t {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_pitch::dblsharp, 0));
 }
+
+{UINT}r {
+    t_shortRational ratio = t_rational(atoi(yytext), 1);
+    BEGIN BINARY;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(ratio));
+}
+
+{URAT}r {
+    char *textend;
+    BEGIN BINARY;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(t_parser::eatRational(yytext)));
+}
+
+{UFLOAT}r {
+    BEGIN BINARY;
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(t_rational(atof(yytext))));
+}
+
 
 "pi"  { BEGIN BINARY; return lexpr_append_lexeme_FLOAT(epd->lexeme, M_PI); }
 

@@ -34,6 +34,11 @@ SIMPLEFLOAT ((-?)(([0-9]*\.[0-9]+)|([0-9]+\.)))
 RATIONAL ({INTEGER}[/]{INTEGER})
 NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq\^v]+)
+ETPITCHBASE ({NOTENAME}(({ACCIDENTAL}?{INTEGER})|({INTEGER}{ACCIDENTAL})))
+ETPITCHT ({INTEGER}([/]{INTEGER})?t)
+JIPITCHCOMMAS (\{(({INTEGER}:)*{INTEGER})?\})
+JIPITCHBASE ({NOTENAME}[#xb]*{JIPITCHCOMMAS}{INTEGER})
+JIPITCHR ({INTEGER}([/]{INTEGER})?r)
 ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
 
 %{
@@ -111,27 +116,124 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
 
 <INITIAL,NO_L,NO_b,NO_Lb,NO_e,NO_Le,NO_be,NO_Lbe,NO_l,NO_Ll,NO_bl,NO_Lbl,NO_el,NO_Lel,NO_bel,NO_Lbel,NO_r,NO_Lr,NO_br,NO_Lbr,NO_er,NO_Ler,NO_ber,NO_Lber,NO_lr,NO_Llr,NO_blr,NO_Lblr,NO_elr,NO_Lelr,NO_belr,NO_Lbelr,NO_s,NO_Ls,NO_bs,NO_Lbs,NO_es,NO_Les,NO_bes,NO_Lbes,NO_ls,NO_Lls,NO_bls,NO_Lbls,NO_els,NO_Lels,NO_bels,NO_Lbels,NO_rs,NO_Lrs,NO_brs,NO_Lbrs,NO_ers,NO_Lers,NO_bers,NO_Lbers,NO_lrs,NO_Llrs,NO_blrs,NO_Lblrs,NO_elrs,NO_Lelrs,NO_belrs,NO_Lbelrs>{
     
-    [-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER} {
-        yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
-        parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+    [-+]?{ETPITCHBASE}[-+]{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
+        char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(yytext, &next);
+        p += t_parser::eatPitchETTComp(next, &next);
+        p += t_parser::eatPitchJIBaseComp(next, &next);
+        p += t_parser::eatPitchJIRComp(next);
+        yylval->p = p;
         return BACH_PITCH;
     }
-    
-    [-+]?{NOTENAME}{INTEGER}{ACCIDENTAL} {
-        yylval->p = t_parser::eatPitchAsNameIntAcc(yytext);
-        parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+
+    [-+]?{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
+        char *next;
+        t_pitch p = t_parser::eatPitchETTComp(yytext, &next);
+        p += t_parser::eatPitchJIBaseComp(next, &next);
+        p += t_parser::eatPitchJIRComp(next);
+        yylval->p = p;
         return BACH_PITCH;
     }
-    
-    [-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
-        yylval->p = t_parser::eatPitchAsNameAccIntIntT(yytext);
-        parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+
+    [-+]?{ETPITCHBASE}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
+        char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(yytext, &next);
+        p += t_parser::eatPitchJIBaseComp(next, &next);
+        p += t_parser::eatPitchJIRComp(next);
+        yylval->p = p;
         return BACH_PITCH;
     }
-    
-    [-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
-        yylval->p = t_parser::eatPitchAsNameAccIntRatT(yytext);
-        parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+
+    [-+]?{ETPITCHBASE}[-+]{ETPITCHT}[-+]{JIPITCHR} {
+        char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(yytext, &next);
+        p += t_parser::eatPitchETTComp(next, &next);
+        p += t_parser::eatPitchJIRComp(next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?{ETPITCHBASE}[-+]{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS}) {
+        char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(yytext, &next);
+        p += t_parser::eatPitchETTComp(next, &next);
+        p += t_parser::eatPitchJIBaseComp(next, &next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?({JIPITCHBASE}|{JIPITCHCOMMAS})[-+]{JIPITCHR} {
+        char *next;
+        t_pitch p = t_parser::eatPitchJIBaseComp(yytext, &next);
+        p += t_parser::eatPitchJIRComp(next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?{ETPITCHT}[-+]{JIPITCHR} {
+        char *next;
+        t_pitch p = t_parser::eatPitchETTComp(yytext, &next);
+        p += t_parser::eatPitchJIRComp(next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?{ETPITCHT}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS}) {
+        char *next;
+        t_pitch p = t_parser::eatPitchETTComp(yytext, &next);
+        p += t_parser::eatPitchJIBaseComp(next, &next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?{ETPITCHBASE}[-+]{JIPITCHR} {
+        char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(yytext, &next);
+        p += t_parser::eatPitchJIRComp(next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?{ETPITCHBASE}[-+]({JIPITCHBASE}|{JIPITCHCOMMAS}) {
+        char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(yytext, &next);
+        p += t_parser::eatPitchJIBaseComp(next, &next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?{ETPITCHBASE}[-+]{ETPITCHT} {
+        char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(yytext, &next);
+        p += t_parser::eatPitchETTComp(next, &next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?{ETPITCHBASE} {
+        char *next;
+        t_pitch p = t_parser::eatPitchETBaseComp(yytext, &next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?{ETPITCHT} {
+        char *next;
+        t_pitch p = t_parser::eatPitchETTComp(yytext, &next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?({JIPITCHBASE}|{JIPITCHCOMMAS}) {
+        char *next;
+        t_pitch p = t_parser::eatPitchJIBaseComp(yytext, &next);
+        yylval->p = p;
+        return BACH_PITCH;
+    }
+
+    [-+]?{JIPITCHR} {
+        t_pitch p = t_parser::eatPitchJIRComp(yytext);
+        yylval->p = p;
         return BACH_PITCH;
     }
 }
