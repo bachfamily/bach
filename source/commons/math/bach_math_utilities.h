@@ -478,11 +478,12 @@ void change_rational_from_llllelem(t_rational *number, t_llllelem *modify, char 
 	@param force_snap_direction	Leave 0 for standard behavior. Any positive integer forces the snapping to be a "ceil"-like snapping (snapped values
 								must be greater or equal than original value); any negative integer forces the snapping to be "floor"-like snapping
 								(snapped values must be less or equal to the original value).
+    @param  snap_index                      An optional pointer that will contain the index of the snapped value
 	@return						The llllelem of #ysnap_possibilities to which the value has been snapped (or NULL if none)
 	@remark						This is used for the the slot y-snapping (and z-snapping)
 	@ingroup					math
  */
-t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_snap_direction);
+t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_snap_direction, long *snap_index = NULL);
 
 
 

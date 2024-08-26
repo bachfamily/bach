@@ -270,12 +270,20 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
     } else { // must be JI VOICE NOTATION STYLE
         if (note_is_original_pitch_userdefined(nt)) { // the pitch is explicitly defined
             
-            if (nt->pitch_original.isPureET()) {
+            if (nt->pitch_original.isPureJI()) {
+                nt->pitch_displayed = nt->pitch_original.approxJI_primelimit(r_ob->ji_limit); // ignores higher commas
+                
+                if (fabs(nt->pitch_displayed.toMCdouble()) - fabs(nt->pitch_original.toMCdouble()) > 100.) {
+                    object_warn((t_object *)r_ob, "Warning: discarding commas higher than the current just intonation limit has produced a discrepancy of more than 100 cents.");
+                    object_warn((t_object *)r_ob, "\tConsider increasing the 'jilimit' attribute.");
+                }
+            } else if (nt->pitch_original.isPureET()) {
                 nt->pitch_displayed = nt->pitch_original.approxET(2); // tone division = 2 here!
                 // we only have HEJI ET-accidentals for sharps and flats (the accidentals with the lines)
                 
             } else {
-                nt->pitch_displayed = nt->pitch_original.approxJI_primelimit(r_ob->ji_limit); // ignores higher commas
+                t_pitch p = nt->pitch_original.getDisplayPitchAsJI();
+                nt->pitch_displayed = p.approxJI_primelimit(r_ob->ji_limit); // ignores higher commas
                 
                 if (fabs(nt->pitch_displayed.toMCdouble()) - fabs(nt->pitch_original.toMCdouble()) > 100.) {
                     object_warn((t_object *)r_ob, "Warning: discarding commas higher than the current just intonation limit has produced a discrepancy of more than 100 cents.");

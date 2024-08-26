@@ -3445,9 +3445,9 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
         if (voice && voice->notation_style == k_VOICE_NOTATION_STYLE_JI && !nt->pitch_original.isNaP() && (nt->pitch_original.isPureJI() || !nt->pitch_original.isPureET())) {
             t_rational r;
             if (!nt->pitch_original.isPureJI()) {
-                r = nt->pitch_original.getRatio();
+                r = nt->pitch_original.getJIRatio();
             } else {
-                r = nt->pitch_original.getRatio()/r_ob->ji_base_for_ratios.getRatio();
+                r = nt->pitch_original.getJIRatio()/r_ob->ji_base_for_ratios.getJIRatio();
             }
             legend += "Ratio ";
             legend += std::to_string(r.num());
@@ -26056,28 +26056,29 @@ double freqratio_to_cents(double ratio, double baseratio)
 
 double notationobj_cents_to_freqratio(t_notation_obj *r_ob, double cents)
 {
-    return cents_to_freqratio(cents, (double)r_ob->ji_base_for_ratios.getRatio());
+    return cents_to_freqratio(cents, (double)r_ob->ji_base_for_ratios.getJIRatio());
 }
 
 double notationobj_freqratio_to_cents(t_notation_obj *r_ob, double ratio)
 {
-    return freqratio_to_cents(ratio, (double)r_ob->ji_base_for_ratios.getRatio());
+    return freqratio_to_cents(ratio, (double)r_ob->ji_base_for_ratios.getJIRatio());
 }
 
 
 t_pitch notationobj_get_best_jilimited_approximation(t_notation_obj *r_ob, double cents)
 {
     t_rational r = get_best_jilimited_approximation(notationobj_cents_to_freqratio(r_ob, cents), r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh);
-    return t_pitch(r * r_ob->ji_base_for_ratios.getRatio());
+    return t_pitch(r * r_ob->ji_base_for_ratios.getJIRatio());
 }
 
-double snap_to_jilimit(double cents, long jilimit, double jierrthresh, double baseratio){
+double snap_to_jilimit(double cents, long jilimit, double jierrthresh, double baseratio, t_rational *ratio){
     t_rational r = get_best_jilimited_approximation(cents_to_freqratio(cents, baseratio), jilimit, jierrthresh);
+    if (ratio) *ratio = r;
     return freqratio_to_cents((double)r, baseratio);
 }
 
-double notationobj_snap_to_jilimit(t_notation_obj *r_ob, double cents){
-    return snap_to_jilimit(cents, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
+double notationobj_snap_to_jilimit(t_notation_obj *r_ob, double cents, t_rational *ratio){
+    return snap_to_jilimit(cents, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getJIRatio(), ratio);
 }
 
 void snap_pitch_to_current_grid_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt) {
@@ -26235,7 +26236,7 @@ void note_retranscribe_enharmonically_ET(t_notation_obj *r_ob, t_note *note, cha
 void note_retranscribe_as_JI_ratio(t_notation_obj *r_ob, t_note *note, t_rational ratio) 
 {
     double cents = notationobj_freqratio_to_cents(r_ob, ratio);
-    note->pitch_original = t_pitch(ratio * r_ob->ji_base_for_ratios.getRatio());
+    note->pitch_original = t_pitch(ratio * r_ob->ji_base_for_ratios.getJIRatio());
     note->midicents = cents;
     
     chord_set_recompute_parameters_flag(r_ob,  note->parent);
@@ -33735,7 +33736,7 @@ char snap_pitch_to_current_display_for_selection(t_notation_obj *r_ob){
 
 
 void snap_pitch_to_ji_limit_for_note(t_notation_obj *r_ob, t_note *note, long jilimit, double jierrthresh, double baseratio) {
-    if (!note->pitch_original.isNaP() && note->pitch_original.isPureJI() && rational_get_jilimit(note->pitch_original.getRatio()) <= jilimit) {
+    if (!note->pitch_original.isNaP() && note->pitch_original.isPureJI() && rational_get_jilimit(note->pitch_original.getJIRatio()) <= jilimit) {
         // nothing to do!
     } else {
         t_rational r = get_best_jilimited_approximation(cents_to_freqratio(note->midicents, baseratio), jilimit, jierrthresh);
@@ -33751,7 +33752,7 @@ void snap_pitch_to_ji_limit_for_note(t_notation_obj *r_ob, t_note *note, long ji
 }
 
 void snap_pitch_to_current_ji_limit_for_note(t_notation_obj *r_ob, t_note *note) {
-    snap_pitch_to_ji_limit_for_note(r_ob, note, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
+    snap_pitch_to_ji_limit_for_note(r_ob, note, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getJIRatio());
 }
 
 void snap_pitch_to_ji_limit_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt, long jilimit, double jierrthresh, double baseratio) {
@@ -33760,7 +33761,7 @@ void snap_pitch_to_ji_limit_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt, lon
 }
 
 void snap_pitch_to_current_ji_limit_for_breakpoint(t_notation_obj *r_ob, t_bpt *bpt) {
-    snap_pitch_to_ji_limit_for_breakpoint(r_ob, bpt, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
+    snap_pitch_to_ji_limit_for_breakpoint(r_ob, bpt, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getJIRatio());
 }
 
 char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
@@ -33773,7 +33774,7 @@ char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                snap_pitch_to_ji_limit_for_note(r_ob, nt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
+                snap_pitch_to_ji_limit_for_note(r_ob, nt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getJIRatio());
                 changed = 1;
             }
         } else if (curr_it->type == k_CHORD) {
@@ -33781,7 +33782,7 @@ char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
             while (temp_nt) {
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                     undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                    snap_pitch_to_ji_limit_for_note(r_ob, temp_nt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
+                    snap_pitch_to_ji_limit_for_note(r_ob, temp_nt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getJIRatio());
                     changed = 1;
                 }
                 temp_nt = temp_nt->next;
@@ -33793,7 +33794,7 @@ char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
                 while (temp_nt) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
                         undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                        snap_pitch_to_ji_limit_for_note(r_ob, temp_nt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
+                        snap_pitch_to_ji_limit_for_note(r_ob, temp_nt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getJIRatio());
                         changed = 1;
                     }
                     temp_nt = temp_nt->next;
@@ -33805,7 +33806,7 @@ char snap_pitch_to_ji_limit_for_selection(t_notation_obj *r_ob, long jilimit){
             t_note *nt = bpt->owner;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                 undo_tick_create_for_selected_notation_item(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-                snap_pitch_to_ji_limit_for_breakpoint(r_ob, bpt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getRatio());
+                snap_pitch_to_ji_limit_for_breakpoint(r_ob, bpt, jilimit, r_ob->ji_limit_approx_mcthresh, (double)r_ob->ji_base_for_ratios.getJIRatio());
                 changed = 1;
             }
         }
@@ -33957,16 +33958,24 @@ bool note_should_be_treated_as_ji(t_notation_obj *r_ob, t_note *nt)
     }
 }
 
+bool note_should_be_treated_as_mixed_et_and_ji(t_notation_obj *r_ob, t_note *nt)
+{
+    if (nt->pitch_original != t_pitch::NaP && !nt->pitch_original.isPureJI() && !nt->pitch_original.isPureET()) {
+        return true;
+    }
+    return false;
+}
+
 void note_set_ratio_wrt_other_note(t_notation_obj *r_ob, t_note *refnote, t_note *nt, t_hatom *ratio)
 {
     if (note_should_be_treated_as_ji(r_ob, refnote) && (hatom_gettype(ratio) == H_LONG || hatom_gettype(ratio) == H_RAT || (hatom_gettype(ratio) == H_PITCH && hatom_getpitch(ratio).isPureJI()))) {
         // JI version
         t_rational r;
         if (hatom_gettype(ratio) == H_PITCH)
-            r = hatom_getpitch(ratio).getRatio();
+            r = hatom_getpitch(ratio).getJIRatio();
         else
             r = hatom_getrational(ratio);
-        nt->pitch_original = t_pitch(refnote->pitch_original.getRatio() * r);
+        nt->pitch_original = t_pitch(refnote->pitch_original.getJIRatio() * r);
         nt->midicents = nt->pitch_original.toMCdouble();
     } else {
         // ET version
@@ -43113,7 +43122,7 @@ void score_gathered2separate_syntax(t_llll *gathered, t_llll **measureinfo, t_ll
 }
 
 
-double get_midicents_from_double_elem_or_notename(t_notation_obj *r_ob, t_llllelem *elem)
+double get_midicents_from_double_or_pitch_llllelem(t_notation_obj *r_ob, t_llllelem *elem)
 {
     if (hatom_gettype(&elem->l_hatom) == H_SYM)
         return notename2midicents(r_ob->middleC_octave, &r_ob->last_used_octave, hatom_getsym(&elem->l_hatom)->s_name, NULL, NULL);
@@ -43124,6 +43133,97 @@ double get_midicents_from_double_elem_or_notename(t_notation_obj *r_ob, t_llllel
     else
         return 0;
 }
+
+void note_constrain_pitch_depending_on_editing_ranges(t_notation_obj *r_ob, t_note *nt, long voicenum)
+{
+    if (!r_ob->constraint_pitches_when_editing || r_ob->constraint_pitches_when_editing->l_depth < 2)
+        return; // nothing to do
+    
+    t_llllelem *voice_el = llll_getindex(r_ob->constraint_pitches_when_editing, voicenum + 1, I_STANDARD);
+    if (!voice_el)
+        voice_el = r_ob->constraint_pitches_when_editing->l_tail;
+    
+    if (voice_el && hatom_gettype(&voice_el->l_hatom) == H_LLLL) {
+        t_llll *ll = hatom_getllll(&voice_el->l_hatom);
+        if (ll->l_depth == 1) { // all single notes
+            t_llll *values = llll_get();
+            t_llllelem *subelem;
+            for (subelem = ll->l_head; subelem; subelem = subelem->l_next)
+                llll_appenddouble(values, get_midicents_from_double_or_pitch_llllelem(r_ob, subelem));
+            long idx = -1;
+            ysnap_double(&nt->midicents, values, 0, &idx);
+            nt->pitch_original = t_pitch::NaP;
+            if (idx >= -1) {
+                t_llllelem *sn = llll_getindex(ll, idx+1, I_STANDARD);
+                if (sn && hatom_gettype(&sn->l_hatom) == H_PITCH) {
+                    nt->pitch_original = hatom_getpitch(&sn->l_hatom);
+                }
+            }
+            llll_free(values);
+        } else if (ll->l_depth == 2 && ll->l_size == 1) {
+            if (ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_LLLL) {
+                t_llll *subll = hatom_getllll(&ll->l_head->l_hatom);
+                if (subll && subll->l_head) { // subll must be flat, since ll->l_depth = 2.
+                    double min = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_head);
+                    double max = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_tail);
+                    if (nt->midicents < min) {
+                        nt->midicents = min;
+                        if (hatom_gettype(&subll->l_head->l_hatom) == H_PITCH) {
+                            nt->pitch_original = hatom_getpitch(&subll->l_head->l_hatom);
+                        } else {
+                            nt->pitch_original = t_pitch::NaP;
+                        }
+                    } else if (nt->midicents > max) {
+                        nt->midicents = max;
+                        if (hatom_gettype(&subll->l_tail->l_hatom) == H_PITCH) {
+                            nt->pitch_original = hatom_getpitch(&subll->l_tail->l_hatom);
+                        } else {
+                            nt->pitch_original = t_pitch::NaP;
+                        }
+                    }
+                }
+            }
+        } else {
+            t_llllelem *elem;
+            char mc_already_correct = false;
+            t_llll *extremes = llll_get();
+            for (elem = ll->l_head; elem; elem = elem->l_next) {
+                if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
+                    t_llll *subll = hatom_getllll(&elem->l_hatom);
+                    if (subll && subll->l_depth == 1 && subll->l_head) {
+                        double min = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_head);
+                        double max = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_tail);
+                        if (nt->midicents >= min && nt->midicents <= max) {
+                            mc_already_correct = true;
+                            break;
+                        }
+                        llll_appendhatom_clone(extremes, &subll->l_head->l_hatom);
+                        llll_appendhatom_clone(extremes, &subll->l_tail->l_hatom);
+                    }
+                } else if (is_hatom_number(&elem->l_hatom)) {
+                    double this_val = get_midicents_from_double_or_pitch_llllelem(r_ob, elem);
+                    if (this_val == nt->midicents) {
+                        mc_already_correct = true;
+                        break;
+                    }
+                    llll_appendhatom_clone(extremes, &elem->l_hatom);
+                }
+            }
+            if (!mc_already_correct) {
+                long idx = -1;
+                ysnap_double(&nt->midicents, extremes, 0, &idx);
+                if (idx >= 0) {
+                    t_llllelem *sn = llll_getindex(extremes, idx + 1, I_STANDARD);
+                    if (sn && hatom_gettype(&sn->l_hatom) == H_PITCH) {
+                        nt->pitch_original = hatom_getpitch(&sn->l_hatom);
+                    }
+                }
+            }
+            llll_free(extremes);
+        }
+    }
+}
+
 
 // voicenum is 0-based
 void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, double *midicents, long voicenum)
@@ -43141,15 +43241,15 @@ void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, doub
             t_llll *values = llll_get();
             t_llllelem *subelem;
             for (subelem = ll->l_head; subelem; subelem = subelem->l_next)
-                llll_appenddouble(values, get_midicents_from_double_elem_or_notename(r_ob, subelem), 0, WHITENULL_llll);
+                llll_appenddouble(values, get_midicents_from_double_or_pitch_llllelem(r_ob, subelem), 0, WHITENULL_llll);
             ysnap_double(midicents, values, 0);
             llll_free(values);
         } else if (ll->l_depth == 2 && ll->l_size == 1) {
             if (ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_LLLL) {
                 t_llll *subll = hatom_getllll(&ll->l_head->l_hatom);
                 if (subll && subll->l_head) { // subll must be flat, since ll->l_depth = 2.
-                    double min = get_midicents_from_double_elem_or_notename(r_ob, subll->l_head);
-                    double max = get_midicents_from_double_elem_or_notename(r_ob, subll->l_tail);
+                    double min = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_head);
+                    double max = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_tail);
                     clip_double(midicents, min, max);
                 }
             }
@@ -43161,8 +43261,8 @@ void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, doub
                 if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
                     t_llll *subll = hatom_getllll(&elem->l_hatom);
                     if (subll && subll->l_depth == 1 && subll->l_head) { 
-                        double min = get_midicents_from_double_elem_or_notename(r_ob, subll->l_head);
-                        double max = get_midicents_from_double_elem_or_notename(r_ob, subll->l_tail);
+                        double min = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_head);
+                        double max = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_tail);
                         if (*midicents >= min && *midicents <= max) {
                             mc_already_correct = true;
                             break;
@@ -43171,7 +43271,7 @@ void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, doub
                         llll_appenddouble(extremes, max, 0, WHITENULL_llll);
                     }
                 } else if (is_hatom_number(&elem->l_hatom)) {
-                    double this_val = get_midicents_from_double_elem_or_notename(r_ob, elem);
+                    double this_val = get_midicents_from_double_or_pitch_llllelem(r_ob, elem);
                     if (this_val == *midicents) {
                         mc_already_correct = true;
                         break;
@@ -43185,6 +43285,8 @@ void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, doub
         }
     }
 }
+
+
 
 t_llllelem *ysnap_double_to_editing_range(double *val, t_llll *editing_range, char *inside_range, char *range_hit)
 {
@@ -43221,6 +43323,7 @@ t_llllelem *ysnap_double_to_editing_range(double *val, t_llll *editing_range, ch
         *inside_range = false;
     return ysnap_double(val, editing_range, 0);
 }
+
 
 double get_next_step_depending_on_editing_ranges(t_notation_obj *r_ob, double midicents, long voicenum, long delta_steps)
 {
@@ -43276,10 +43379,13 @@ double get_next_step_depending_on_editing_ranges(t_notation_obj *r_ob, double mi
         }
         
         if (snap_el) {
-            if (is_hatom_number(&snap_el->l_hatom))
+            if (hatom_gettype(&snap_el->l_hatom) == H_PITCH) {
                 return hatom_getdouble(&snap_el->l_hatom);
-            else if (hatom_gettype(&snap_el->l_hatom) == H_LLLL && (temp = hatom_getllll(&snap_el->l_hatom)) && temp->l_size >= 2 &&
-                     is_hatom_number(&temp->l_head->l_hatom) && is_hatom_number(&temp->l_head->l_next->l_hatom)) {
+            } else if (is_hatom_number(&snap_el->l_hatom)) {
+                return hatom_getdouble(&snap_el->l_hatom);
+            } else if (hatom_gettype(&snap_el->l_hatom) == H_LLLL && (temp = hatom_getllll(&snap_el->l_hatom)) && temp->l_size >= 2 &&
+                     (is_hatom_number(&temp->l_head->l_hatom) || hatom_gettype(&temp->l_head->l_hatom) == H_PITCH) &&
+                       (is_hatom_number(&temp->l_head->l_next->l_hatom) || hatom_gettype(&temp->l_head->l_next->l_hatom) == H_PITCH)) {
                 double start = hatom_getdouble(&temp->l_head->l_hatom);
                 double end = hatom_getdouble(&temp->l_head->l_next->l_hatom);
                 return (delta_steps > 0 ? start : end);
@@ -43291,9 +43397,8 @@ double get_next_step_depending_on_editing_ranges(t_notation_obj *r_ob, double mi
 }
 
 
-t_rational get_next_rational_in_farey_sequence_depending_on_editing_ranges(t_notation_obj *r_ob, double r, long voicenum, long delta_steps)
+t_rational get_next_rational_in_farey_sequence(t_notation_obj *r_ob, double r, long delta_steps)
 {
-//    if (!r_ob->constraint_pitches_when_editing || r_ob->constraint_pitches_when_editing->l_depth < 2) {
     std::vector<t_rational> farey = get_farey_sequence(2 * r_ob->ji_limit, long2rat(1), r_ob->ji_limit);
     long len = farey.size();
     double folded_r = r;
@@ -43301,7 +43406,7 @@ t_rational get_next_rational_in_farey_sequence_depending_on_editing_ranges(t_not
     const double epsilon = 0.001;
     t_rational res = t_rational(0, 0);
     octaves += ratio_fold_octaves(&folded_r);
-
+    
     if (delta_steps > 0) {
         for (long s = 0; s < delta_steps; s++) {
             t_rational next = genrat(2, 1);
@@ -43340,72 +43445,146 @@ t_rational get_next_rational_in_farey_sequence_depending_on_editing_ranges(t_not
     } else {
         return res * long_long_pow(2, octaves);
     }
-    //    }
+}
+
+void note_set_next_step_in_farey_sequence_depending_on_editing_ranges(t_notation_obj *r_ob, t_note *note, long delta_steps)
+{
+    t_voice *voice = notation_item_get_voice(r_ob, (t_notation_item *)note);
+    long voicenum = voice->number;
+    bool mixed = (note->pitch_original.isNaP() || note->pitch_original.isPureJI() || note->pitch_original.isPureET()) ? false : true;
+    double r = mixed ? (double)note->pitch_original.getJIRatioNoOctave() : notationobj_cents_to_freqratio(r_ob, note->midicents);
     
-    // TODO: constraint editing
-    /*
-     t_llllelem *voice_el = llll_getindex(r_ob->constraint_pitches_when_editing, voicenum + 1, I_STANDARD);
-     if (!voice_el)
-     voice_el = r_ob->constraint_pitches_when_editing->l_tail;
-     
-     if (voice_el && hatom_gettype(&voice_el->l_hatom) == H_LLLL) {
-     t_llll *ll = hatom_getllll(&voice_el->l_hatom), *temp;
-     double midicents_temp = midicents;
-     char inside_range = 0, range_hit = 0;
-     t_llllelem *snap_el = ysnap_double_to_editing_range(&midicents_temp, ll, &inside_range, &range_hit);
-     char direction = (delta_steps > 0 ? 1 : -1);
-     
-     long count = labs(delta_steps);
-     while (count > 0 && snap_el)  {
-     if (hatom_gettype(&snap_el->l_hatom) == H_LLLL && (temp = hatom_getllll(&snap_el->l_hatom)) && temp->l_size >= 2 &&
-     is_hatom_number(&temp->l_head->l_hatom) && is_hatom_number(&temp->l_head->l_next->l_hatom)) {
-     // subrange
-     if (delta_steps > 0 && range_hit == 1) {
-     snap_el = snap_el->l_next;
-     count--;
-     } else if (delta_steps < 0 && range_hit == -1) {
-     snap_el = snap_el->l_prev;
-     count--;
-     } else {
-     double start = hatom_getdouble(&temp->l_head->l_hatom);
-     double end = hatom_getdouble(&temp->l_head->l_next->l_hatom);
-     double curr_mc = midicents_temp;
-     
-     double test_res = curr_mc + (count * direction * (200. / r_ob->tone_division));
-     if (delta_steps > 0 && test_res <= end)
-     return snap_to_microtonal_grid(r_ob, test_res);
-     if (delta_steps < 0 && test_res >= start)
-     return snap_to_microtonal_grid(r_ob, test_res);
-     while (count > 0 && (delta_steps > 0 ? (curr_mc <= end) : (curr_mc >= start)) &&
-     ((delta_steps > 0 && curr_mc <= end) || (delta_steps < 0 && curr_mc >= start))) {
-     curr_mc = curr_mc + (direction * (200. / r_ob->tone_division));
-     count--;
-     }
-     if (count == 0)
-     return test_res <= start ? start : (test_res >= end ? end :  snap_to_microtonal_grid(r_ob, test_res));
-     snap_el = delta_steps > 0 ? snap_el->l_next : snap_el->l_prev;
-     }
-     } else {
-     snap_el = delta_steps > 0 ? snap_el->l_next : snap_el->l_prev;
-     count--;
-     }
-     }
-     
-     if (snap_el) {
-     if (is_hatom_number(&snap_el->l_hatom))
-     return hatom_getdouble(&snap_el->l_hatom);
-     else if (hatom_gettype(&snap_el->l_hatom) == H_LLLL && (temp = hatom_getllll(&snap_el->l_hatom)) && temp->l_size >= 2 &&
-     is_hatom_number(&temp->l_head->l_hatom) && is_hatom_number(&temp->l_head->l_next->l_hatom)) {
-     double start = hatom_getdouble(&temp->l_head->l_hatom);
-     double end = hatom_getdouble(&temp->l_head->l_next->l_hatom);
-     return (delta_steps > 0 ? start : end);
-     }
-     }
-     }
-     
-     return midicents + (delta_steps * (200. / r_ob->tone_division));
-     
-     */
+    if (!r_ob->constraint_pitches_when_editing || r_ob->constraint_pitches_when_editing->l_depth < 2) {
+        // simple case
+        t_rational r_new = get_next_rational_in_farey_sequence(r_ob, r, delta_steps);
+        note->pitch_original = mixed ? t_pitch(note->pitch_original.getWhiteKeyET(), note->pitch_original.getAlterET(), r_new, note->pitch_original.getOctave()) : t_pitch(r_new * r_ob->ji_base_for_ratios.getJIRatio());
+        note->midicents = note->pitch_original.toMCdouble();
+        return;
+    }
+    
+    
+    t_llllelem *voice_el = llll_getindex(r_ob->constraint_pitches_when_editing, voicenum + 1, I_STANDARD);
+    if (!voice_el)
+        voice_el = r_ob->constraint_pitches_when_editing->l_tail;
+    
+    if (voice_el && hatom_gettype(&voice_el->l_hatom) == H_LLLL) {
+        t_llll *ll = hatom_getllll(&voice_el->l_hatom), *temp;
+        double r_temp = r;
+        char inside_range = 0, range_hit = 0;
+        double midicents = notationobj_freqratio_to_cents(r_ob, r);
+        t_llllelem *snap_el = ysnap_double_to_editing_range(&midicents, ll, &inside_range, &range_hit);
+        char direction = (delta_steps > 0 ? 1 : -1);
+        
+        long count = labs(delta_steps);
+        while (count > 0 && snap_el)  {
+            if (hatom_gettype(&snap_el->l_hatom) == H_LLLL && (temp = hatom_getllll(&snap_el->l_hatom)) && temp->l_size >= 2 &&
+                (is_hatom_number(&temp->l_head->l_hatom) || hatom_gettype(&temp->l_head->l_hatom) == H_PITCH) &&
+                (is_hatom_number(&temp->l_head->l_next->l_hatom) || hatom_gettype(&temp->l_head->l_hatom) == H_PITCH)) {
+                // subrange
+                if (delta_steps > 0 && range_hit == 1) {
+                    snap_el = snap_el->l_next;
+                    count--;
+                } else if (delta_steps < 0 && range_hit == -1) {
+                    snap_el = snap_el->l_prev;
+                    count--;
+                } else {
+                    double start = hatom_getdouble(&temp->l_head->l_hatom);
+                    double end = hatom_getdouble(&temp->l_head->l_next->l_hatom);
+                    double curr_mc = midicents;
+                    
+                    t_rational new_r = get_next_rational_in_farey_sequence(r_ob, r, count * direction);
+                    double test_res = notationobj_freqratio_to_cents(r_ob, new_r);
+                    
+                    if ((delta_steps > 0 && test_res <= end) || (delta_steps < 0 && test_res >= start)) {
+                        t_rational r_new = get_best_jilimited_approximation(new_r, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh);
+                        note->pitch_original = mixed ? t_pitch(note->pitch_original.getWhiteKeyET(), note->pitch_original.getAlterET(), r_new, note->pitch_original.getOctave()) : t_pitch(r_new * r_ob->ji_base_for_ratios.getJIRatio());
+                        note->midicents = note->pitch_original.toMCdouble();
+                        return;
+                    }
+
+                    while (count > 0 && (delta_steps > 0 ? (curr_mc <= end) : (curr_mc >= start)) &&
+                           ((delta_steps > 0 && curr_mc <= end) || (delta_steps < 0 && curr_mc >= start))) {
+                        t_rational new_r = get_next_rational_in_farey_sequence(r_ob, r, direction);
+                        curr_mc = notationobj_freqratio_to_cents(r_ob, new_r);
+                        count--;
+                    }
+                    if (count == 0) {
+                        if (test_res <= start) {
+                            if (hatom_gettype(&temp->l_head->l_hatom) == H_PITCH) {
+                                note->pitch_original = hatom_getpitch(&temp->l_head->l_hatom);
+                                note->midicents = note->pitch_original.toMCdouble();
+                            } else {
+                                note->pitch_original = t_pitch::NaP;
+                                note->midicents = start;
+                            }
+                        } else if (test_res >= end) {
+                            if (hatom_gettype(&temp->l_head->l_next->l_hatom) == H_PITCH) {
+                                note->pitch_original = hatom_getpitch(&temp->l_head->l_next->l_hatom);
+                                note->midicents = note->pitch_original.toMCdouble();
+                            } else {
+                                note->pitch_original = t_pitch::NaP;
+                                note->midicents = start;
+                            }
+                        } else {
+                            t_rational r_new = get_best_jilimited_approximation(new_r, r_ob->ji_limit, r_ob->ji_limit_approx_mcthresh);
+                            note->pitch_original = t_pitch(r_new * r_ob->ji_base_for_ratios.getJIRatio());
+                            note->midicents = note->pitch_original.toMCdouble();
+                        }
+                        return;
+                    }
+                    snap_el = delta_steps > 0 ? snap_el->l_next : snap_el->l_prev;
+                }
+            } else {
+                snap_el = delta_steps > 0 ? snap_el->l_next : snap_el->l_prev;
+                count--;
+            }
+        }
+        
+        if (snap_el) {
+            if (hatom_gettype(&snap_el->l_hatom) == H_PITCH) {
+                note->pitch_original = hatom_getpitch(&snap_el->l_hatom);
+                note->midicents = note->pitch_original.toMCdouble();
+                return;
+            } else if (is_hatom_number(&snap_el->l_hatom)) {
+                note->pitch_original = t_pitch::NaP;
+                note->midicents = hatom_getdouble(&snap_el->l_hatom);
+                return;
+            } else if (hatom_gettype(&snap_el->l_hatom) == H_LLLL && (temp = hatom_getllll(&snap_el->l_hatom)) && temp->l_size >= 2 &&
+                       (is_hatom_number(&temp->l_head->l_hatom) || hatom_gettype(&temp->l_head->l_hatom) == H_PITCH) &&
+                       (is_hatom_number(&temp->l_head->l_next->l_hatom) || hatom_gettype(&temp->l_head->l_next->l_hatom) == H_PITCH)) {
+                double start = hatom_getdouble(&temp->l_head->l_hatom);
+                double end = hatom_getdouble(&temp->l_head->l_next->l_hatom);
+                if (delta_steps > 0) {
+                    if (hatom_gettype(&temp->l_head->l_hatom) == H_PITCH) {
+                        note->pitch_original = hatom_getpitch(&temp->l_head->l_hatom);
+                        note->midicents = note->pitch_original.toMCdouble();
+                        return;
+                    } else {
+                        note->pitch_original = t_pitch::NaP;
+                        note->midicents = start;
+                        return;
+                    }
+                } else {
+                    if (hatom_gettype(&temp->l_head->l_next->l_hatom) == H_PITCH) {
+                        note->pitch_original = hatom_getpitch(&temp->l_head->l_next->l_hatom);
+                        note->midicents = note->pitch_original.toMCdouble();
+                        return;
+                    } else {
+                        note->pitch_original = t_pitch::NaP;
+                        note->midicents = end;
+                        return;
+                   }
+                }
+            }
+        }
+    }
+    
+    {
+        t_rational r_new = get_next_rational_in_farey_sequence(r_ob, r, delta_steps);
+        note->pitch_original = mixed ? t_pitch(note->pitch_original.getWhiteKeyET(), note->pitch_original.getAlterET(), r_new, note->pitch_original.getOctave()) : t_pitch(r_new * r_ob->ji_base_for_ratios.getJIRatio());
+        note->midicents = note->pitch_original.toMCdouble();
+    }
+    return;
 }
 
 
@@ -44765,7 +44944,7 @@ void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char
             t_llll *values = llll_get();
             t_llllelem *subelem;
             for (subelem = ll->l_head; subelem; subelem = subelem->l_next)
-                llll_appenddouble(values, get_midicents_from_double_elem_or_notename(r_ob, subelem), 0, WHITENULL_llll);
+                llll_appenddouble(values, get_midicents_from_double_or_pitch_llllelem(r_ob, subelem), 0, WHITENULL_llll);
             if (!ysnap_double(&this_midicents, values, direction))
                 failed = true;
             llll_free(values);
@@ -44773,8 +44952,8 @@ void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char
             if (ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_LLLL) {
                 t_llll *subll = hatom_getllll(&ll->l_head->l_hatom);
                 if (subll && subll->l_head) { // subll must be flat, since ll->l_depth = 2.
-                    double min = get_midicents_from_double_elem_or_notename(r_ob, subll->l_head);
-                    double max = get_midicents_from_double_elem_or_notename(r_ob, subll->l_tail);
+                    double min = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_head);
+                    double max = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_tail);
                     clip_double(&this_midicents, min, max);
                 }
             }
@@ -44786,8 +44965,8 @@ void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char
                 if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
                     t_llll *subll = hatom_getllll(&elem->l_hatom);
                     if (subll && subll->l_depth == 1 && subll->l_head) {
-                        double min = get_midicents_from_double_elem_or_notename(r_ob, subll->l_head);
-                        double max = get_midicents_from_double_elem_or_notename(r_ob, subll->l_tail);
+                        double min = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_head);
+                        double max = get_midicents_from_double_or_pitch_llllelem(r_ob, subll->l_tail);
                         if (this_midicents >= min && this_midicents <= max) {
                             mc_already_correct = true;
                             break;
@@ -44796,7 +44975,7 @@ void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char
                         llll_appenddouble(extremes, max, 0, WHITENULL_llll);
                     }
                 } else if (is_hatom_number(&elem->l_hatom)) {
-                    double this_val = get_midicents_from_double_elem_or_notename(r_ob, elem);
+                    double this_val = get_midicents_from_double_or_pitch_llllelem(r_ob, elem);
                     if (this_val == this_midicents) {
                         mc_already_correct = true;
                         break;

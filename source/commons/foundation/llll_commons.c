@@ -6912,9 +6912,9 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
                     llll_appendpitch(outll, v, 0, WHITENULL_llll);
             }
         } else if ((step.isPureJI() && start.isPureJI() && end.isPureJI())) {
-            t_rational stepRatio = step.getRatio();
-            t_rational startRatio = start.getRatio();
-            t_rational endRatio = end.getRatio();
+            t_rational stepRatio = step.getJIRatio();
+            t_rational startRatio = start.getJIRatio();
+            t_rational endRatio = end.getJIRatio();
             t_rational v;
             if (stepRatio.r_num > 0) {
                 for (v = startRatio, count = 0; v <= endRatio && count < maxcount; v += stepRatio, count++)

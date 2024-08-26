@@ -1028,7 +1028,7 @@ void build_popup_note_menu(t_notation_obj *r_ob, t_note *note, e_element_types c
                     snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %.2f%s)", r.num(), r.den(), limit, err, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
                 else
                     snprintf_zero(buf, 100, "%ld/%ld (%ld-limit, error = %.3f%s)", r.num(), r.den(), limit, err, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
-                jpopupmenu_additem(r_ob->popup_note_approximate_ji, 750 + i + 1, buf, NULL, note->pitch_displayed.isPureJI() && note->pitch_displayed.getRatio()/r_ob->ji_base_for_ratios.getRatio() == r, 0, NULL);
+                jpopupmenu_additem(r_ob->popup_note_approximate_ji, 750 + i + 1, buf, NULL, note->pitch_displayed.isPureJI() && note->pitch_displayed.getJIRatio()/r_ob->ji_base_for_ratios.getJIRatio() == r, 0, NULL);
             }
         }
     }
@@ -2329,34 +2329,46 @@ void notation_class_add_ji_attributes(t_class *c, char obj_type)
 {
     CLASS_STICKY_ATTR(c,"category",0,"Just Intonation");
     
-    CLASS_ATTR_LONG(c, "jilimit", 0, t_notation_obj, ji_limit);
-    CLASS_ATTR_STYLE_LABEL(c,"jilimit",0,"text","JI Harmonic Limit");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jilimit",0,"5");
-    CLASS_ATTR_BASIC(c,"jilimit", 0);
-    CLASS_ATTR_ACCESSORS(c, "jilimit", (method)NULL, (method)notationobj_setattr_jilimit);
-    // @description Sets the just intonation harmonic limit for the score display.
-    // This is the analogous, for just intonation, of the <m>tonedivision</m> attribute, in that
-    // it doesn't change the profound nature of the pitch (which can very well be in a higher limit)
-    // but it only trims its display to the selected harmonic prime number, and adjusts the interface
-    // accordingly
-    
-    CLASS_ATTR_PITCH(c, "jibase", 0, t_notation_obj, ji_base_for_ratios, notationobj_getattr_jibase, notationobj_setattr_jibase);
-    CLASS_ATTR_STYLE_LABEL(c,"jibase",0,"text","Reference Diatonic Pitch for JI Ratios");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jibase",0,"C5");
-    CLASS_ATTR_BASIC(c,"jibase", 0);
-    // @description Sets the reference diatonic pitch for just intonation ratios.
-
-    CLASS_ATTR_CHAR(c, "jialwaysshowpythacc", 0, t_notation_obj, ji_always_show_pythagorean_accidentals);
-    CLASS_ATTR_STYLE_LABEL(c,"jialwaysshowpythacc",0,"onoff","Always Show JI Pythagorean Accidentals");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jialwaysshowpythacc",0,"0");
-    CLASS_ATTR_ACCESSORS(c, "jialwaysshowpythacc", (method)NULL, (method)notationobj_setattr_jialwaysshowpythacc);
-    // @description Toggles the ability to always display accidentals for Pythagorean diatonic pitches in jusst intonation.
-    
-    CLASS_ATTR_DOUBLE(c, "jiapproxthresh", 0, t_notation_obj, ji_limit_approx_mcthresh);
-    CLASS_ATTR_STYLE_LABEL(c,"jiapproxthresh",0,"text","JI Approximation Threshold (Cents)");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jiapproxthresh",0,"67");
-    // @description Sets the approximation threshold for automatically converting cents into just intonation.
-    
+    if (obj_type == k_NOTATION_OBJECT_ROLL || obj_type == k_NOTATION_OBJECT_SCORE) {
+        CLASS_ATTR_LONG(c, "jilimit", 0, t_notation_obj, ji_limit);
+        CLASS_ATTR_STYLE_LABEL(c,"jilimit",0,"text","JI Harmonic Limit");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jilimit",0,"5");
+        CLASS_ATTR_BASIC(c,"jilimit", 0);
+        CLASS_ATTR_ACCESSORS(c, "jilimit", (method)NULL, (method)notationobj_setattr_jilimit);
+        // @exclude bach.slot
+        // @description Sets the just intonation harmonic limit for the score display.
+        // This is the analogous, for just intonation, of the <m>tonedivision</m> attribute, in that
+        // it doesn't change the profound nature of the pitch (which can very well be in a higher limit)
+        // but it only trims its display to the selected harmonic prime number, and adjusts the interface
+        // accordingly
+        
+        CLASS_ATTR_PITCH(c, "jibase", 0, t_notation_obj, ji_base_for_ratios, notationobj_getattr_jibase, notationobj_setattr_jibase);
+        CLASS_ATTR_STYLE_LABEL(c,"jibase",0,"text","Reference Diatonic Pitch for JI Ratios");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jibase",0,"C5");
+        CLASS_ATTR_BASIC(c,"jibase", 0);
+        // @exclude bach.slot
+        // @description Sets the reference diatonic pitch for just intonation ratios.
+        
+        CLASS_ATTR_CHAR(c, "jialwaysshowpythacc", 0, t_notation_obj, ji_always_show_pythagorean_accidentals);
+        CLASS_ATTR_STYLE_LABEL(c,"jialwaysshowpythacc",0,"onoff","Always Show JI Pythagorean Accidentals");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jialwaysshowpythacc",0,"0");
+        CLASS_ATTR_ACCESSORS(c, "jialwaysshowpythacc", (method)NULL, (method)notationobj_setattr_jialwaysshowpythacc);
+        // @exclude bach.slot
+        // @description Toggles the ability to always display accidentals for Pythagorean diatonic pitches in jusst intonation.
+        
+        CLASS_ATTR_CHAR(c, "jishowetoffset", 0, t_notation_obj, ji_show_et_offsets);
+        CLASS_ATTR_STYLE_LABEL(c,"jishowetoffset",0,"onoff","Show Equal-Tempered Offset for Mixed Pitches");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jishowetoffset",0,"0");
+        // @exclude bach.slot
+        // @description Toggles the ability to display the equal-tempered offsets for mixed pitches (including
+        // both an equal-tempered offset and a non-trivial just intonation portion).
+        
+        CLASS_ATTR_DOUBLE(c, "jiapproxthresh", 0, t_notation_obj, ji_limit_approx_mcthresh);
+        CLASS_ATTR_STYLE_LABEL(c,"jiapproxthresh",0,"text","JI Approximation Threshold (Cents)");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jiapproxthresh",0,"67");
+        // @exclude bach.slot
+        // @description Sets the approximation threshold for automatically converting cents into just intonation.
+    }
 }
 
 void notation_class_add_settings_attributes(t_class *c, char obj_type){

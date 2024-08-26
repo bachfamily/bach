@@ -11689,10 +11689,7 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         octave_jump = (((long)delta) % (6 * x->r_ob.tone_division) == 0);
         if (octave_jump) num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
         if (ji) {
-            double r = notationobj_cents_to_freqratio((t_notation_obj *)x, note->midicents);
-            t_rational r_new = get_next_rational_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, r, note->parent->parent->voiceparent->v_ob.number, delta);
-            note->pitch_original = t_pitch(r_new * x->r_ob.ji_base_for_ratios.getRatio());
-            note->midicents = note->pitch_original.toMCdouble();
+            note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->parent->voiceparent->v_ob.number, delta);
         }
@@ -11724,9 +11721,11 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
                 note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
             }
         }
-        if (!ji) {
-            constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice);
-        }
+
+        note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
+//        if (!ji) {
+//            constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice);
+//        }
     } else { // note is changing voice!
         t_scorevoice *new_voice = scorevoice_get_nth(x, note_new_voice);
 //        post("voices: FROM %d TO %d", note->parent->voiceparent->v_ob.number, new_voice->v_ob.number);
@@ -11746,7 +11745,8 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         change_mc2 = yposition_to_mc((t_notation_obj *)x, threshold_y, (t_voice *)note->parent->parent->voiceparent, NULL);
         note_in_new_voice->midicents = change_mc1 - ((mode == 0 ? -delta * (200. / x->r_ob.tone_division) : -delta) - (note->midicents - change_mc2));
 
-        constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note_in_new_voice->midicents, note_new_voice); 
+        note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note_in_new_voice, note_new_voice);
+//        constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note_in_new_voice->midicents, note_new_voice);
 
         // we look if there's a chord EXACTLY with the same onset, we add the note to the chord!
         temp_meas = new_voice->firstmeasure;
@@ -13257,7 +13257,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                         if (curr_ch->parent->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) {
                                             t_rational r = get_best_jilimited_approximation(notationobj_cents_to_freqratio((t_notation_obj *)x, newnote->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
                                             newnote->midicents = notationobj_freqratio_to_cents((t_notation_obj *)x, (double)r);
-                                            newnote->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getRatio());
+                                            newnote->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getJIRatio());
                                         }
                                         
 #ifdef BACH_CHORDS_HAVE_SLOTS
@@ -13279,7 +13279,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                     note_compute_approximation((t_notation_obj *) x, newnote);
                                     if (x->r_ob.snap_pitch_to_grid_when_editing) 
                                         note_snap_midicents_to_displayed_pitch((t_notation_obj *) x, newnote);
-                                    constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &newnote->midicents, curr_ch->parent->voiceparent->v_ob.number);
+                                    note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, newnote, curr_ch->parent->voiceparent->v_ob.number);
+//                                    constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &newnote->midicents, curr_ch->parent->voiceparent->v_ob.number);
                             
                                     recompute_all_for_measure((t_notation_obj *)x, curr_ch->parent, true);
                                     check_if_need_to_flatten_level_when_turning_rest_to_note(x, curr_ch);
@@ -15584,7 +15585,8 @@ t_chord *make_chord_or_note_sharp_or_flat_on_linear_edit(t_score *x, char direct
             for (nt = temp->firstnote; nt; nt = nt->next) {
                 if (!cursor_nt || cursor_nt == nt) {
                     nt->midicents = nt->midicents + step * direction;
-                    constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &nt->midicents, chord->parent->voiceparent->v_ob.number); 
+                    note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, nt, chord->parent->voiceparent->v_ob.number);
+//                    constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &nt->midicents, chord->parent->voiceparent->v_ob.number);
                     
                     t_pitch p = t_pitch(nt->pitch_displayed.getWhiteKeyET(), rat_rat_sum(nt->pitch_displayed.getAlterET(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.getOctave());
                     note_set_user_enharmonicity(nt, p);

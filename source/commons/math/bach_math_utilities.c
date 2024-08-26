@@ -612,20 +612,23 @@ int perfect_log2(long number){ // computes the precise log2 logarithm (n) if num
 
 
 // snap a given *value to the nearest of the possibilities
-t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_snap_direction){
+t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_snap_direction, long *snap_index){
 	double best_diff = -1, best_snapvalue = 0;
+    long best_snapindex = -1;
 	t_llllelem *elem, *res = NULL;
 	
 	if (!value || !ysnap_possibilities || !ysnap_possibilities->l_head)
 		return NULL;
 	
-	for (elem = ysnap_possibilities->l_head; elem; elem = elem->l_next) {
-		if (is_hatom_number(&elem->l_hatom)) {
+    long i = 0;
+	for (elem = ysnap_possibilities->l_head; elem; elem = elem->l_next, i++) {
+		if (is_hatom_number(&elem->l_hatom) || hatom_gettype(&elem->l_hatom) == H_PITCH) {
 			double this_snapvalue = hatom_getdouble(&elem->l_hatom);
 			if (!force_snap_direction || (force_snap_direction > 0 && this_snapvalue >= *value) || (force_snap_direction < 0 && this_snapvalue <= *value)) {
 				double this_diff = fabs(this_snapvalue - *value);
 				if (best_diff < 0 || this_diff < best_diff){
 					best_diff = this_diff;
+                    best_snapindex = i;
 					best_snapvalue = this_snapvalue;
 					res = elem;
 				}
@@ -635,8 +638,12 @@ t_llllelem *ysnap_double(double *value, t_llll *ysnap_possibilities, char force_
 	
 	if (best_diff >= 0) {
 		*value = best_snapvalue;
-		return res; 
+        if (snap_index)
+            *snap_index = best_snapindex;
+		return res;
 	} else {
+        if (snap_index)
+            *snap_index = -1;
 		return NULL;
 	}
 

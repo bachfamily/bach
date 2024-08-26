@@ -4142,6 +4142,7 @@ typedef struct _notation_obj
     t_pitch         ji_base_for_ratios;          ///< Base pitch used as reference for JI ratios (e.g. C5 or C{}5, or D{}5...)
     double          ji_limit_approx_mcthresh;    ///< Cents threshold for error while approximating cents to JI
     char            ji_always_show_pythagorean_accidentals;     ///< Always show naturals for JI pitches
+    char            ji_show_et_offsets;         ///< Show equal-tempered offsets for JI notes, if any
     
     // measure numbers
     char            *show_measure_numbers;            ///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
@@ -6024,7 +6025,7 @@ char is_diatonic_step_after_degree_semitone(long degree);
     @param    elem        The llllelem containing either the pitch of the note as double or a note name
     @return                The midicents of the note
 */
-double get_midicents_from_double_elem_or_notename(t_notation_obj *r_ob, t_llllelem *elem);
+double get_midicents_from_double_or_pitch_llllelem(t_notation_obj *r_ob, t_llllelem *elem);
 
 
 /**    Retrieve some standard equal-tempered enharmonic possibilities for the graphical representation of a note.
@@ -7784,8 +7785,8 @@ double snap_to_microtonal_grid(double cents, long tone_division);
  */
 double notationobj_snap_to_microtonal_grid(t_notation_obj *r_ob, double cents);
 
-double snap_to_jilimit(double cents, long jilimit, double jierrthresh, double baseratio);
-double notationobj_snap_to_jilimit(t_notation_obj *r_ob, double cents);
+double snap_to_jilimit(double cents, long jilimit, double jierrthresh, double baseratio, t_rational *ratio = NULL);
+double notationobj_snap_to_jilimit(t_notation_obj *r_ob, double cents, t_rational *ratio = NULL);
 t_pitch notationobj_get_best_jilimited_approximation(t_notation_obj *r_ob, double cents);
 
 long ratio_fold_octaves(t_rational *r); // returns number of folded octaves
@@ -9783,6 +9784,7 @@ char enharmonically_respell_selection(t_notation_obj *r_ob);
 
 
 bool note_should_be_treated_as_ji(t_notation_obj *r_ob, t_note *nt);
+bool note_should_be_treated_as_mixed_et_and_ji(t_notation_obj *r_ob, t_note *nt);
 
 /**    DEPRECATED, OBSOLETE: use note_set_pitch().
     Properly set all the note pitch and accidental fields (also screen ones) starting from a note name (as symbo).
@@ -9959,6 +9961,8 @@ void set_all_prevent_edit_to_value(t_prevent_edit *pe, long val);
  */
 void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, double *midicents, long voicenum);
 
+void note_constrain_pitch_depending_on_editing_ranges(t_notation_obj *r_ob, t_note *nt, long voicenum);
+
 
 
 /** Obtain the midicents a cerain number "steps" above or below a certain midicent. This number of steps is the #delta_steps,
@@ -9973,7 +9977,8 @@ void constraint_midicents_depending_on_editing_ranges(t_notation_obj *r_ob, doub
  */
 double get_next_step_depending_on_editing_ranges(t_notation_obj *r_ob, double midicents, long voicenum, long delta_steps);
 
-t_rational get_next_rational_in_farey_sequence_depending_on_editing_ranges(t_notation_obj *r_ob, double r, long voicenum, long delta_steps);
+t_rational get_next_rational_in_farey_sequence(t_notation_obj *r_ob, double r, long delta_steps);
+void note_set_next_step_in_farey_sequence_depending_on_editing_ranges(t_notation_obj *r_ob, t_note *note, long delta_steps);
 
 
 

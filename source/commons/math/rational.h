@@ -712,6 +712,7 @@ std::vector<t_rational> rational_approximation_with_primes(double v, const std::
 double rational_get_tenney_height(t_rational r);
 long rational_get_jilimit(t_rational r);
 t_rational get_best_jilimited_approximation(double num, long jilimit, double mc_thresh);
+t_rational get_best_jilimited_approximation(t_rational r, long jilimit, double mc_thresh);
 
 /**	Approximate a rational with another one having a specific denominator.
 	@param	rat		The rational number to approximate.

@@ -311,7 +311,8 @@ public: // because solves a lot of small issues... for now...
 private:
     double JIComponentToFreq() const;
     double JIComponentToMC() const;
-    
+
+public:
     t_rational ETComponentToMCratNoOctave() const;
     double ETComponentToMCdoubleNoOctave() const;
     
@@ -427,8 +428,10 @@ public:
         p_JIexpVector.addOctaves(addOctave);
     }
     
-    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_rational &r, const t_int8 addOctave = 0) : p_whiteKeyET(degree), p_alterET(alter) {
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_rational &r, const t_int8 addOctave = 0) {
         setJI(r);
+        p_whiteKeyET = degree;
+        p_alterET = alter;
         p_JIexpVector.addOctaves(addOctave);
     }
     
@@ -513,7 +516,12 @@ public:
         p_JIexpVector.addFromRatio(r);
     }
     
-    t_rational getRatio() const { return p_JIexpVector.getRatio(); }
+    t_rational getJIRatio() const { return p_JIexpVector.getRatio(); }
+    t_rational getJIRatioNoOctave() const {
+        t_pitch q = *this;
+        q.setOctave(0);
+        return q.p_JIexpVector.getRatio();
+    }
 
     t_atom_short getWhiteKeyET() const { return p_whiteKeyET; }
     t_atom_short getWhiteKeyJI() const { return p_JIexpVector.getWhiteKeyJI(); }
@@ -594,9 +602,9 @@ public:
         t_tinyRational err;
         t_int8 plofET = approxPlofFromET(&err);
         t_int8 plofJI = getPlofJI();
-        t_int8 plofETwk = (plofET * 4) % 7;
-        t_int8 plofJIwk = (plofJI * 4) % 7;
-        t_int8 octave = getOctave() + (plofETwk + plofJIwk > 6);
+        t_int8 whiteKeyET = positive_mod(plofET * 4, 7);
+        t_int8 whiteKeyJI = positive_mod(plofJI * 4, 7);
+        t_int8 octave = getOctave() + (whiteKeyET + whiteKeyJI > 6);
         std::vector<t_int8> commas = getHEJICommas();
         return t_pitch(0, err, plofET + plofJI, commas, octave);
     }

@@ -495,8 +495,8 @@ t_pitch t_pitch::operator/(const t_rational &b) const
 t_pitch t_pitch::operator%(const t_pitch &b) const
 {
     if (isPureJI()) {
-        t_rational r = getRatio();
-        t_rational r2 = b.getRatio();
+        t_rational r = getJIRatio();
+        t_rational r2 = b.getJIRatio();
 
         while (rat_rat_cmp(r, r2) > 0) {
             r /= r2;
@@ -529,7 +529,7 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
 // A few functions providing JI approximations. The ones with JIcomp only approximate the just intonation component.
 void t_pitch::approxJI_JIcomp_up_to_maxden(t_atom_long max_den, char direction) // Approximate only the JI part of the pitch
 {
-    t_shortRational r = getRatio();
+    t_shortRational r = getJIRatio();
     double error = 0.;
     if (r.r_den > max_den) {
         r = approx_double_with_rat_up_to_maxden(rat2double(r), max_den, direction, &error);
@@ -553,7 +553,7 @@ double t_pitch::approxJI_up_to_maxden(t_atom_long max_den, char direction) // Ap
 // these two function provide a list of "best" approximations that can be proposed in the interface (e.g. contextual menu)
 // they are based on continued fraction representations.
 std::vector<t_rational> t_pitch::getJIconvergents_JIcomp(long howmany, double threshMC, bool includeSemiconvergents, const std::vector<int> &allowed_primes) {
-    t_shortRational r = getRatio();
+    t_shortRational r = getJIRatio();
     std::vector<t_rational> conv = get_convergents(r, howmany, true, threshMC, true, includeSemiconvergents, allowed_primes);
     return conv;
 }

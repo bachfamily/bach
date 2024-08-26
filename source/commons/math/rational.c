@@ -1344,6 +1344,14 @@ t_urrational approx_double_with_rat_fixed_den_no_reduce(double number, t_atom_lo
 	return outrat;
 }
 
+t_rational get_best_jilimited_approximation(t_rational r, long jilimit, double mc_thresh)
+{
+    if (rational_get_jilimit(r) <= jilimit)
+        return r;
+    else
+        return get_best_jilimited_approximation((double)r, jilimit, mc_thresh);
+}
+
 t_rational approx_double_with_rat_fixed_den(double number, t_atom_long den, char direction, double *error, bool log_error) {
 	t_urrational urrat = approx_double_with_rat_fixed_den_no_reduce(number, den, direction, error, log_error);
 	return urrat2rat(urrat);

@@ -11852,11 +11852,25 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     if (x->r_ob.show_stems > 0 || (x->r_ob.show_groups == 4 && curr_ch->r_it.group)) {
         if (curr_ch->direction == 1) { // stem upwards
             double tip_y = last_note_y_real - octave_stem_length;
+/*            if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI && x->r_ob.ji_show_et_offsets) {
+                for (t_note *tempnt = curr_ch->firstnote; tempnt; tempnt = tempnt->next) {
+                    if (note_should_be_treated_as_mixed_et_and_ji((t_notation_obj *)x, tempnt)) {
+                        tip_y = MIN(tip_y, octave_stem_length*0.5 + mc_to_yposition_in_scale((t_notation_obj *)x, tempnt->pitch_original.ETComponentToMCdoubleWithOctave(), (t_voice *)voice));
+                    }
+                }
+            } */
             if (curr_ch->r_it.group && x->r_ob.show_groups == 4)
                 tip_y = curr_ch->r_it.group->beam_y;
             paint_line(g, stemcolor, stem_x, first_note_y_real, stem_x, tip_y, CONST_STEM_WIDTH);
         } else if (curr_ch->direction == -1) { // stem downwards
             double tip_y = first_note_y_real + octave_stem_length;
+/*            if (voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI && x->r_ob.ji_show_et_offsets) {
+                for (t_note *tempnt = curr_ch->firstnote; tempnt; tempnt = tempnt->next) {
+                    if (note_should_be_treated_as_mixed_et_and_ji((t_notation_obj *)x, tempnt)) {
+                        tip_y = MAX(tip_y, octave_stem_length*0.5 + mc_to_yposition_in_scale((t_notation_obj *)x, tempnt->pitch_original.ETComponentToMCdoubleWithOctave(), (t_voice *)voice));
+                    }
+                }
+            } */
             if (curr_ch->r_it.group && x->r_ob.show_groups == 4)
                 tip_y = curr_ch->r_it.group->beam_y;
             paint_line(g, stemcolor, stem_x, last_note_y_real, stem_x, tip_y, CONST_STEM_WIDTH);
@@ -11974,6 +11988,13 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             // draw the notehead
             if (x->r_ob.show_noteheads) {
                 paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, system_shift, 1.);
+            }
+            
+            if (x->r_ob.ji_show_et_offsets && voice->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) {
+                if (note_should_be_treated_as_mixed_et_and_ji((t_notation_obj *) x, curr_nt)) {
+//                    double x_notina = x->r_ob.show_stems ? stem_x : note_x_real;
+                    paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, notecolor, curr_nt->pitch_original.ETComponentToMCdoubleWithOctave(), note_x_real, curr_nt, 0, CONST_GRACE_CHORD_SIZE);
+                }
             }
             
 #ifdef BACH_PAINT_IDS
@@ -14201,10 +14222,7 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         if (octave_jump) 
             num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
         if (ji) {
-            double r = notationobj_cents_to_freqratio((t_notation_obj *)x, note->midicents);
-            t_rational r_new = get_next_rational_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, r, note->parent->voiceparent->v_ob.number, delta);
-            note->pitch_original = t_pitch(r_new * x->r_ob.ji_base_for_ratios.getRatio());
-            note->midicents = note->pitch_original.toMCdouble();
+            note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->voiceparent->v_ob.number, delta);
         }
@@ -14229,10 +14247,11 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
             if (!ji)
                 note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
         }
-        if (!ji) {
-            constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice);
-            update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, note->parent);
-        }
+        
+        note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
+        if (!ji)
+            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+        update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, note->parent);
     
     } else { // note is changing voice!
         double threshold_y, change_mc1, change_mc2;
@@ -14256,7 +14275,8 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
 //        note_in_new_voice->midicents = change_mc1 - ((-delta) - (note->midicents - change_mc2));
         note_in_new_voice->midicents = change_mc1 - ((mode == 0 ? -delta * (200. / x->r_ob.tone_division) : -delta) - (note->midicents - change_mc2));
 
-        constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note_in_new_voice->midicents, note_new_voice); 
+        note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note_in_new_voice, note_new_voice);
+//        constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note_in_new_voice->midicents, note_new_voice);
 
 
         // we look if there's a chord EXACTLY with the same onset, we add the note to the chord!
@@ -15490,7 +15510,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     if (nt) {
                         t_rational r = get_best_jilimited_approximation(notationobj_cents_to_freqratio((t_notation_obj *)x, nt->midicents), x->r_ob.ji_limit, x->r_ob.ji_limit_approx_mcthresh);
                         nt->midicents = notationobj_freqratio_to_cents((t_notation_obj *)x, (double)r);
-                        nt->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getRatio());
+                        nt->pitch_original.setJI(r * x->r_ob.ji_base_for_ratios.getJIRatio());
                     }
                 }
                 if (x->r_ob.snap_pitch_to_grid_when_editing) {
@@ -15504,7 +15524,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     snap_onset_to_grid_for_chord((t_notation_obj *) x, temp, NULL);
                 if (x->r_ob.snap_tail_to_grid_when_editing)
                     snap_tail_to_grid_for_note((t_notation_obj *) x, temp->firstnote, NULL);
-                constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &temp->firstnote->midicents, voicenum); 
+                note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, temp->firstnote, voicenum);
+//                constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &temp->firstnote->midicents, voicenum);
             }
             
             x->r_ob.item_changed_at_mousedown = 1;
@@ -16770,7 +16791,8 @@ t_chord *roll_make_chord_or_note_sharp_or_flat_on_linear_edit(t_roll *x, char di
         for (nt = chord->firstnote; nt; nt = nt->next) {
             if (!cursor_nt || cursor_nt == nt) {
                 nt->midicents = nt->midicents + step * direction;
-                constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &nt->midicents, chord->voiceparent->v_ob.number);
+                note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, nt, chord->voiceparent->v_ob.number);
+//                constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &nt->midicents, chord->voiceparent->v_ob.number);
 
                 note_set_user_enharmonicity(nt, t_pitch(nt->pitch_displayed.getWhiteKeyET(), rat_rat_sum(nt->pitch_displayed.getAlterET(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.getOctave()));
                 

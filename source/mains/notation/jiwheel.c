@@ -4193,7 +4193,7 @@ void jiwheel_set_pitch(t_jiwheel *x, t_pitch p)
 {
     t_pitch q = p; //p % t_pitch(genrat(2, 1));
     jiwheel_clear_selection(x);
-    x->sel1_ratio = q.getRatio();
+    x->sel1_ratio = q.getJIRatio();
     x->sel2_ratio = genrat(0, 1);
 //    jiwheel_sync_interval(x);
 //    jiwheel_set_intwheel_from_selection(x);
@@ -4210,13 +4210,13 @@ void jiwheel_set_interval(t_jiwheel *x, t_pitch p1, t_pitch p2)
 {
     t_pitch q1 = p1 % t_pitch(genrat(2, 1));
     t_pitch q2 = p2 % t_pitch(genrat(2, 1));
-    if (q1.getRatio() > q2.getRatio()) {
+    if (q1.getJIRatio() > q2.getJIRatio()) {
         t_pitch temp = q2;
         q2 = q1;
         q1 = temp;
     }
-    x->sel1_ratio = q1.getRatio();
-    x->sel2_ratio = q2.getRatio();
+    x->sel1_ratio = q1.getJIRatio();
+    x->sel2_ratio = q2.getJIRatio();
     
     t_object *patcherparent;
     object_obex_lookup(x, gensym("#P"), &patcherparent);
