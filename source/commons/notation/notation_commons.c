@@ -10091,16 +10091,20 @@ t_group *build_and_append_group_from_selection(t_notation_obj *r_ob){
     return newgroup;
 }
 
-
 void append_element_in_group(t_notation_obj *r_ob, t_group *group, t_notation_item *item){
     if (group) {
         if (group->lastelem) { // not at the beginning
             item->next_group_item = NULL;
+#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
             item->prev_group_item = group->lastelem;
+#endif
             group->lastelem->next_group_item = item;
             group->lastelem = item;
         } else { // no tempos in the voices yet
-            item->next_group_item = item->prev_group_item = NULL;
+            item->next_group_item = NULL;
+#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
+            item->prev_group_item = NULL;
+#endif
             group->firstelem = group->lastelem = item;
         }
         
@@ -10115,6 +10119,8 @@ void append_element_in_group(t_notation_obj *r_ob, t_group *group, t_notation_it
 }
 
 
+
+#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
 void remove_element_from_group(t_notation_obj *r_ob, t_group *group, t_notation_item *element){
     if (group && element){
         group->num_elements--;
@@ -10142,7 +10148,41 @@ void remove_element_from_group(t_notation_obj *r_ob, t_group *group, t_notation_
         }
     }
 }
-
+#else
+void remove_element_from_group(t_notation_obj *r_ob, t_group *group, t_notation_item *element){
+    if (group && element){
+        group->num_elements--;
+        if (group->num_elements > 0) {
+            if (group->firstelem != element) { // not the first el
+                t_notation_item *prev_group_item = NULL;
+                for (t_notation_item *e = group->firstelem; e; e = e->next_group_item) {
+                    if (e->next_group_item == element) {
+                        prev_group_item = e;
+                        break;
+                    }
+                }
+                if (element->next_group_item) { // not the last el
+                    if (prev_group_item)
+                        prev_group_item->next_group_item = element->next_group_item;
+                } else { // last el
+                    prev_group_item->next_group_item = NULL;
+                    group->lastelem = prev_group_item;
+                }
+            } else { // first el
+                if (element->next_group_item) { // some el remain
+                    group->firstelem = element->next_group_item;
+                } else { // there was just 1 el
+                    group->firstelem = group->lastelem = NULL;
+                    group->num_elements = 0;
+                    delete_group(r_ob, group);
+                }
+            }
+        } else {
+            delete_group(r_ob, group);
+        }
+    }
+}
+#endif
 
 t_group *build_group(){ 
     t_group *outgroup = (t_group *)bach_newptr(sizeof(t_group));
@@ -10210,7 +10250,9 @@ void delete_group(t_notation_obj *r_ob, t_group *group){
         t_notation_item *next = item->next_group_item;
         item->group = NULL;
         item->next_group_item = NULL;
+#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
         item->prev_group_item = NULL;
+#endif
         item = next;
     }
     
@@ -27426,7 +27468,8 @@ void clear_selection(t_notation_obj *r_ob)
     t_notation_item *temp = r_ob->firstselecteditem;
     while (temp){
         t_notation_item *next = temp->next_selected;
-        temp->prev_selected = temp->next_selected = NULL;
+        temp->prev_selected = NULL;
+        temp->next_selected = NULL;
         temp->selected = false;
         temp = next;
     }
@@ -27542,8 +27585,12 @@ void notation_item_init(t_notation_item *it, e_element_types item_type)
     it->names = item_type_has_names(item_type) ? llll_get() : NULL;
     it->label_families = item_type_has_names(item_type) ? llll_get() : NULL;
     it->group = NULL;
-    it->next_selected = it->prev_selected = it->next_preselected = it->prev_preselected = NULL;
-    it->next_group_item = it->prev_group_item = NULL;
+    it->next_selected = it->next_preselected = NULL;
+    it->prev_selected = it->prev_preselected = NULL;
+    it->next_group_item = NULL;
+#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
+    it->prev_group_item = NULL;
+#endif
     it->selected = it->preselected = false;
     it->type = item_type;
     it->flags = (e_bach_internal_notation_flags) 0;
@@ -32638,7 +32685,7 @@ double get_barline_uwidth(t_notation_obj *r_ob, char barline_type)
         case k_BARLINE_REPEAT_START:
             return 6+CONST_BARLINE_USPACE_FOR_REPEAT + 1;
         case k_BARLINE_REPEAT_END_AND_START:
-            return 6+CONST_BARLINE_USPACE_FOR_REPEAT*2 + 1;
+            return 10+CONST_BARLINE_USPACE_FOR_REPEAT*2 + 1;
     }
     return 0;
 }

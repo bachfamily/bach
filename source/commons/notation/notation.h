@@ -87,6 +87,9 @@
 
     #define BACH_SUPPORT_SLURS
 
+//    #define BACH_GROUPS_ARE_DOUBLE_LINKED
+
+
     #ifdef CONFIGURATION_Development
 
         // Handy flags for debugging:
@@ -2165,29 +2168,34 @@ typedef enum _annotations_filterdup_mode {
  */
 typedef struct _notation_item
 {
-    e_element_types    type;        ///< Type of the notation item, it can be one of the following: #k_NOTE, #k_CHORD, #k_DURATION_LINE, #k_PITCH_BREAKPOINT, 
-                                ///  #k_LYRICS, #k_DYNAMICS, #k_MEASURE, #k_VOICE, #k_TEMPO, #k_MARKER. In any of these cases, the pointer to this notation item will also
-                                ///  be the pointer respectively to a #t_note, #t_chord, #t_duration_line, #t_bpt, #t_lyrics, #t_dynamics, #t_measure, #t_voice, #t_tempo, #t_marker.
+    e_element_types    type;        ///< Type of the notation item, it can be one of the following: #k_NOTE, #k_CHORD, #k_DURATION_LINE, #k_PITCH_BREAKPOINT,
+    ///  #k_LYRICS, #k_DYNAMICS, #k_MEASURE, #k_VOICE, #k_TEMPO, #k_MARKER. In any of these cases, the pointer to this notation item will also
+    ///  be the pointer respectively to a #t_note, #t_chord, #t_duration_line, #t_bpt, #t_lyrics, #t_dynamics, #t_measure, #t_voice, #t_tempo, #t_marker.
+    
+    // these two are here high because of alignment (if I put them here the whole structure is lighter)
+    char                    selected;            ///< Is the notation element selected?
+    char                    preselected;        ///< Is the notation element preselected?
+    
     unsigned long    ID;            ///< ID (> 0) of the notation item, or 0 if none. Not all items have ID, only the ones whose tracking is meaningful for undo purposes.
-                                ///< Beware that, for instance, if #type = #k_MEASURE, this ID is by no means the measure number, just a variously assigned ID.
-
+    ///< Beware that, for instance, if #type = #k_MEASURE, this ID is by no means the measure number, just a variously assigned ID.
+    
     t_llll            *names;                ///< llll containing the name or names of the notation item. Names can be also organized in sublist, such as <b>[foo 1] [fee 2 bar] [bar 3]</b>
-    t_llll            *label_families;    ///< Name-labeling families to which the item belongs, in the form of (<pointer_to_family> <pointer_to_llllelem_corresponding_to_notation_item>) (<family> <lllelem>)... 
-                                        ///< where the pointer to the family is a H_OBJ pointing to the correct t_bach_family structure.
+    t_llll            *label_families;    ///< Name-labeling families to which the item belongs, in the form of (<pointer_to_family> <pointer_to_llllelem_corresponding_to_notation_item>) (<family> <lllelem>)...
+    ///< where the pointer to the family is a H_OBJ pointing to the correct t_bach_family structure.
     
     long                    flags;            ///< Generic flags, internal, a combination of #e_bach_internal_notation_flags for private use
     
-    char                    selected;            ///< Is the notation element selected?
     struct _notation_item    *next_selected;        ///< Pointer to the next selected notation item
     struct _notation_item    *prev_selected;        ///< Pointer to the previous selected notation item
     
-    char                    preselected;        ///< Is the notation element preselected?
     struct _notation_item    *next_preselected;    ///< Pointer to the next preselected notation item
     struct _notation_item    *prev_preselected;    ///< Pointer to the previous preselected notation item
     
     struct _group            *group;                ///< Group to which the element belongs
     struct _notation_item    *next_group_item;    ///< Pointer to the next item in the same group
+#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
     struct _notation_item    *prev_group_item;    ///< Pointer to the next item in the same group
+#endif
 } t_notation_item;
 
 
@@ -3221,14 +3229,7 @@ typedef struct _measure
                                         ///< Most lllls also contain as <l_thing> field a #t_rhythm_level_properties structure specifying the type of rhythmic level
     char            lock_rhythmic_tree;    ///< This is 1 if the beaming tree is locked, 0 otherwise. In case this is 1, no retranscription is performed, unless new data from messages is inserted
                                         ///< This flag is saved, so that locked measure remain locked when the object is saved
-    
-    // Settings about repeats
-/*    char  repeat_start;        ///< Starts a repeat section
-    char  repeat_end;          ///< Ends a repeat section
-    long  repeat_num;          ///< If the measure barline has <end_repeats>, this says how many times to repeat the portion
-    long  repeat_endinglength; ///< If the measure barline has <end_repeats>, this contains the number of measure of the initial endings (0 makes for the standard repeat, but this allows to make something akin to 1-----| and 2----> endings
-*/
-    
+
     // double linked list
     struct _measure*    next;        ///< Pointer to the next measure
     struct _measure*    prev;        ///< Pointer to the previous measure

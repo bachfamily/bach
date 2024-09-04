@@ -1102,6 +1102,9 @@ long barline_to_lilypond_buf(t_notation_obj *r_ob, t_measure *measure, char **bu
         case k_BARLINE_TICK:
             return snprintf_zero(*buf, 30, "\t\t\t\\bar \"'\"\r\n");
             break;
+        case k_BARLINE_REPEAT_START:
+            return snprintf_zero(*buf, 30, "\t\t\t\\bar \"|.\"\r\n");
+            break;
         default:
             return snprintf_zero(*buf, 30, "\t\t\t|\r\n");
             break;
