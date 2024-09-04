@@ -77,6 +77,8 @@ VERSION NOTES:
     á @breakpointshavenoteheads: new value "Internal Only" added to display noteheads only for internal breakpoints
     á fixed bug causing wrong partial note float slot playback
     á @shownoteheads: new attribute
+    á @spaceafterbarline, @spacebetweenbarlineandts, @spaceafterts: new fine-tuning spacing attributes
+    á Now support repeat signs, as 're', 'rs' and 'res' measure barlines (repeat end, repeat start, repeat end and start)
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved

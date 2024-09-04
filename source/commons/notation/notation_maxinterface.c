@@ -773,6 +773,9 @@ void build_popup_barline_menu(t_notation_obj *r_ob, t_measure *measure)
     jpopupmenu_additem(r_ob->popup_barline, 1207, "Solid (s)", NULL, measure->end_barline->barline_type == k_BARLINE_SOLID, 0, NULL);
     jpopupmenu_additem(r_ob->popup_barline, 1208, "Tick (k)", NULL, measure->end_barline->barline_type == k_BARLINE_TICK, 0, NULL);
     jpopupmenu_additem(r_ob->popup_barline, 1209, "Intervoices (i)", NULL, measure->end_barline->barline_type == k_BARLINE_INTERVOICES, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_barline, 1210, "Repeat Start (rs)", NULL, measure->end_barline->barline_type == k_BARLINE_INTERVOICES, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_barline, 1211, "Repeat End (re)", NULL, measure->end_barline->barline_type == k_BARLINE_INTERVOICES, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_barline, 1212, "Repeat End And Start (res)", NULL, measure->end_barline->barline_type == k_BARLINE_INTERVOICES, 0, NULL);
 
     jpopupmenu_setfont(r_ob->popup_barline, r_ob->popup_main_font);
 }
@@ -4783,6 +4786,22 @@ char get_all_tuttipoint_barlines(t_notation_obj *r_ob, t_measure_end_barline *re
         return 0;
 }
 
+void synchronize_repeats_across_voices(t_notation_obj *r_ob, t_measure *measure)
+{
+    t_measure_end_barline *barline_across[CONST_MAX_VOICES];
+    if (r_ob->draw_barlines_across_staves && is_barline_tuttipoint(r_ob, measure->end_barline)) {
+        long i;
+        get_all_tuttipoint_barlines(r_ob, measure->end_barline, barline_across);
+        for (i = 0; i < r_ob->num_voices; i++) {
+            undo_tick_create_for_notation_item(r_ob, (t_notation_item *)barline_across[i]->owner, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+            barline_across[i]->barline_type = measure->end_barline->barline_type;
+            recompute_all_for_measure(r_ob, barline_across[i]->owner, false);
+            if (barline_across[i]->owner->next)
+                recompute_all_for_measure(r_ob, barline_across[i]->owner->next, false);
+        }
+    }
+}
+
 long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifiers){
     int screen_x, screen_y;
     t_pt screen;
@@ -4833,6 +4852,15 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
         case 1209:
             new_barline = k_BARLINE_INTERVOICES;
             break;
+        case 1210:
+            new_barline = k_BARLINE_REPEAT_START;
+            break;
+        case 1211:
+            new_barline = k_BARLINE_REPEAT_END;
+            break;
+        case 1212:
+            new_barline = k_BARLINE_REPEAT_END_AND_START;
+            break;
     }
 
     if (new_barline >= 0) {
@@ -4844,11 +4872,15 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                 undo_tick_create_for_notation_item(r_ob, (t_notation_item *)barline_across[i]->owner, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
                 barline_across[i]->barline_type = new_barline;
                 recompute_all_for_measure(r_ob, barline_across[i]->owner, false);
+                if (barline_across[i]->owner->next)
+                    recompute_all_for_measure(r_ob, barline_across[i]->owner->next, false);
             }
         } else {
             undo_tick_create_for_notation_item(r_ob, (t_notation_item *)measure, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
             measure->end_barline->barline_type = new_barline;
             recompute_all_for_measure(r_ob, measure, false);
+            if (measure->next)
+                recompute_all_for_measure(r_ob, measure->next, false);
         }
 
         handle_change_if_there_are_dangling_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_BARLINE_TYPE);
@@ -6779,6 +6811,14 @@ t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol
         if (attrname == gensym("slursavoidaccidentals") || attrname == gensym("slursavoidchords")) {
             notationobj_reset_all_slurs_position(r_ob);
         }
+        
+        if (attrname == gensym("spaceafterbarline") || attrname == gensym("spacebetweenbarlineandts") || attrname == gensym("spaceafterts")) {
+            implicitely_recalculate_all(r_ob, false);
+        }
+        
+//        if (attrname == gensym("temp")) {
+//            load_notation_typo_preferences(r_ob, r_ob->noteheads_font);
+//        }
 
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }

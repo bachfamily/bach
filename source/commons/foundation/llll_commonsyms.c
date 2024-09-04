@@ -453,6 +453,11 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_openslot = gensym("openslot");
     x->s_sample = gensym("sample");
 
+    x->s_repeatstart = gensym("repeatstart");
+    x->s_repeatend = gensym("repeatend");
+    x->s_repeatnum = gensym("repeatnum");
+    x->s_repeatendinglength = gensym("repeatendinglength");
+
     x->s_left = gensym("left");
     x->s_right = gensym("right");
     x->s_nearest = gensym("nearest");

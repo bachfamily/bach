@@ -159,6 +159,11 @@ void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g
     write_text_standard(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, r_ob->width - x1 + 30 * r_ob->zoom_y, r_ob->height - y1 + 30 * r_ob->zoom_y);
 }
 
+void write_text_vcentered_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+{
+    write_text(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1 - 30 * r_ob->zoom_y, r_ob->width - x1 + 30 * r_ob->zoom_y, 60 * r_ob->zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_VCENTERED, false, false);
+}
+
 void write_text_standard_account_for_vinset_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
 {
     write_text_standard_singleline(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, r_ob->width - x1 + 30 * r_ob->zoom_y, r_ob->height - y1 + 30 * r_ob->zoom_y);
@@ -286,7 +291,7 @@ void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_
     int num_ts = ((clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FFGG) || (clef == k_CLEF_FG)) ? 2 : 1; // number of time signatures to paint
     double *tsbox_y1a = (double *) bach_newptr(num_ts * sizeof(double));
     double *tsbox_y1b = (double *) bach_newptr(num_ts * sizeof(double));
-    double tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux) + CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS * r_ob->zoom_y;
+    double tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux) + (curr_meas->prev ? (measure_get_barline_uwidth(r_ob, curr_meas->prev) + r_ob->uwidth_after_barline_with_ts) * r_ob->zoom_y : 0);
     double tsbox_x_width = curr_meas->timesignature_uwidth * r_ob->zoom_y * (big ? r_ob->big_time_signatures_ratio : 1);
     double tsbox_y_height;
     char num_txt[150]; char den_txt[50]; 
@@ -295,7 +300,7 @@ void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_
     
     if (r_ob->spacing_type == k_SPACING_PROPORTIONAL) {
         if (r_ob->show_time_signatures != 2)
-            tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux)  - CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS * r_ob->zoom_y - tsbox_x_width;
+            tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux) - (curr_meas->prev ? r_ob->uwidth_after_barline_with_ts : 0) * r_ob->zoom_y - tsbox_x_width;
         else {
             tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux) - tsbox_x_width / 2.;
         }
@@ -5091,9 +5096,9 @@ char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double
 
 void get_left_and_right_barline_ux_tolerances(t_notation_obj *r_ob, t_measure *measure, double *left, double *right){
     if (measure)
-        *left = measure->prev ? measure_get_barline_ux_width(r_ob, measure->prev) + CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE : 0;
+        *left = measure->prev ? measure_get_barline_uwidth(r_ob, measure->prev) + CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE : 0;
     else
-        *left = get_barline_ux_width(r_ob, k_BARLINE_FINAL) + CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE;
+        *left = get_barline_uwidth(r_ob, k_BARLINE_FINAL) + CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE;
     *right = CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE;
 }
 
@@ -6860,6 +6865,10 @@ void set_notehead_names(t_noteheads_typo_preferences *ntp, long art_ID, t_symbol
     ntp->nhpref[art_ID].alias[4] = alias5;
 }
 
+void assign_noteheads_chars_SMuFL(t_notation_obj *r_ob) // t_symbol *font)
+{
+    assign_noteheads_chars(r_ob, 4, 57504, 57506, 57507, 57508);
+}
 
 void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 {
@@ -6868,6 +6877,7 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     //assigning all names
     long i;
     double base_pt = 24;
+    bool smufl = false;
     
     if (fontnameeq(font->s_name, "November for bach")) {
         assign_noteheads_chars(r_ob, 4, 'R', 'S', 'T', 'U');
@@ -6876,11 +6886,12 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         assign_noteheads_dl_start_shift(r_ob, -0.7);
         
     } else if (fontnameeq(font->s_name, "Bravura")) {
-        assign_noteheads_chars(r_ob, 4, 57504, 57506, 57507, 57508);
+        smufl = true;
+        assign_noteheads_chars_SMuFL(r_ob);
         assign_noteheads_shifts(r_ob, 0., 18.3, 0., 3.2); // TO DO
-        assign_noteheads_uwidths(r_ob, 4, 9., 9., 7.1, 7.1); // TO DO
+        assign_noteheads_uwidths(r_ob, 4, 14.0, 10.0, 7.1, 7.1); // TO DO
         assign_noteheads_dl_start_shift(r_ob, -0.7); // TO DO
-            
+
     } else if (fontnameeq(font->s_name, "Maestro")) {
         assign_noteheads_chars(r_ob, 4, 87, 119, 729, 339);
 //        assign_noteheads_shifts(r_ob, 0.3, 4.9, 0.2, 3.2);
@@ -6959,27 +6970,38 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_CROSS; // *** NOTEHEAD: CROSS ***
     set_notehead_names(ntp, i, gensym("cross"), gensym("cross"), gensym("x"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    ntp->nhpref[i].uwidth -= 1.5;
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 57513);
+        if (fontnameeq(font->s_name, "Bravura")) {
+            ntp->nhpref[i].uwidth += 1.;
+        }
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61632);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'X');
     } else {
         set_all_unicode_characters(r_ob, i, 191);
     }
-    ntp->nhpref[i].uwidth -= 1.5;
     ntp->nhpref[i].uy_shift += 0.05;
 
 
     i = k_NOTEHEAD_DIAMOND;
     set_notehead_names(ntp, i, gensym("diamond"), gensym("diamond"), gensym("diam"), gensym("harmonic"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    ntp->nhpref[i].uwidth -= 1.2;
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 57562);
+        if (fontnameeq(font->s_name, "Bravura")) {
+            ntp->nhpref[i].uwidth += 2.;
+            ntp->nhpref[i].ux_shift = -0.2;
+        }
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61519);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'V');
     } else {
         set_all_unicode_characters(r_ob, i, 'O');
     }
-    ntp->nhpref[i].uwidth -= 1.2;
 
     
     i = k_NOTEHEAD_NONE;
@@ -6992,7 +7014,13 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_ACCENT;
     set_notehead_names(ntp, i, gensym("accent"), gensym("acc"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 58528);
+        if (fontnameeq(font->s_name, "Bravura")) {
+            ntp->nhpref[i].uy_shift += -3;
+            ntp->nhpref[i].uwidth += -1;
+        }
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61502);
         ntp->nhpref[i].uy_shift -= 2.9;
     } else if (fontnameeq(font->s_name, "November for bach")) {
@@ -7008,7 +7036,12 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_PLUS;
     set_notehead_names(ntp, i, gensym("plus"), gensym("plus"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 57519);
+        if (fontnameeq(font->s_name, "Bravura")) {
+            ntp->nhpref[i].uwidth -= 0.5;
+        }
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61483);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'z');
@@ -7019,19 +7052,26 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_BLACK_SQUARE;
     set_notehead_names(ntp, i, gensym("blacksquare"), gensym("blacksquare"), gensym("blacksq"), gensym("bsquare"), gensym("bsq"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    ntp->nhpref[i].uwidth -= 0.5;
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 57529);
+        if (fontnameeq(font->s_name, "Bravura")) {
+            ntp->nhpref[i].uwidth += 1.;
+        }
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'Y');
     } else {
         set_all_unicode_characters(r_ob, i, 8211);
     }
-    ntp->nhpref[i].uwidth -= 0.5;
 
     
     i = k_NOTEHEAD_WHITE_SQUARE;
     set_notehead_names(ntp, i, gensym("whitesquare"), gensym("whitesquare"), gensym("whitesq"), gensym("wsquare"), gensym("wsq"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 57528);
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '\\');
@@ -7043,7 +7083,12 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     //    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
     i = k_NOTEHEAD_SQUARE;
     set_notehead_names(ntp, i, gensym("square"), gensym("square"), gensym("sq"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_black = 57529;
+        r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_white = 57528;
+        r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_whole = 57528;
+        r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_doublewhole = 57528;
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '\\');
@@ -7057,7 +7102,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_BLACK_RHOMBUS;
     set_notehead_names(ntp, i, gensym("blackrhombus"), gensym("blackrhombus"), gensym("blackrh"), gensym("brhombus"), gensym("brh"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 57563);
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '[');
@@ -7069,7 +7116,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_WHITE_RHOMBUS;
     set_notehead_names(ntp, i, gensym("whiterhombus"), gensym("whiterhombus"), gensym("whiterh"), gensym("wrhombus"), gensym("wrh"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 57565);
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '^');
@@ -7082,7 +7131,12 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         i = k_NOTEHEAD_RHOMBUS;
         set_notehead_names(ntp, i, gensym("rhombus"), gensym("rhombus"), gensym("rh"));
-        if (fontnameeq(font->s_name, "Boulez")) {
+        if (smufl) {
+            r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_black = 57563;
+            r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_white = 57565;
+            r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_whole = 57566;
+            r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_doublewhole = 57567;
+        } else if (fontnameeq(font->s_name, "Boulez")) {
             set_all_unicode_characters(r_ob, i, 0);
         } else if (fontnameeq(font->s_name, "November for bach")) {
             set_all_unicode_characters(r_ob, i, '^');
@@ -7099,7 +7153,12 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_BLACK_TRIANGLE;
     set_notehead_names(ntp, i, gensym("blacktriangle"), gensym("blacktriangle"), gensym("blacktri"), gensym("btri"), gensym("btriangle"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 57534);
+        if (fontnameeq(font->s_name, "Bravura")) {
+            ntp->nhpref[i].durationline_start_ux_shift -= 1.;
+        }
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'Z');
@@ -7112,7 +7171,12 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_WHITE_TRIANGLE;
     set_notehead_names(ntp, i, gensym("whitetriangle"), gensym("whitetriangle"), gensym("whitetri"), gensym("wtri"), gensym("wtriangle"));
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        set_all_unicode_characters(r_ob, i, 57533);
+        if (fontnameeq(font->s_name, "Bravura")) {
+            ntp->nhpref[i].durationline_start_ux_shift -= 0.5;
+        }
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
     } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, ']');
@@ -7126,7 +7190,12 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         i = k_NOTEHEAD_TRIANGLE;
         set_notehead_names(ntp, i, gensym("triangle"), gensym("triangle"), gensym("tri"));
-        if (fontnameeq(font->s_name, "Boulez")) {
+        if (smufl) {
+            r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_black = 57534;
+            r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_white = 57533;
+            r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_whole = 57531;
+            r_ob->noteheads_typo_preferences.nhpref[i].unicode_character_doublewhole = 57530;
+        } else if (fontnameeq(font->s_name, "Boulez")) {
             set_all_unicode_characters(r_ob, i, 0);
         } else if (fontnameeq(font->s_name, "November for bach")) {
             set_all_unicode_characters(r_ob, i, ']');
@@ -7210,13 +7279,84 @@ void set_notation_typo_preferences_from_llll(t_notation_obj *r_ob, t_llll *ll)
 
 }
 
+void fill_notation_typo_preferences_SMuFL(t_notation_obj *r_ob, double juce_mul = 1.)
+{
+    r_ob->notation_typo_preferences.base_pt = 24. * juce_mul;
+    r_ob->notation_typo_preferences.base_pt_ts = 24. * juce_mul;
+    r_ob->notation_typo_preferences.ts_uy_shift = -42; // TO DO
+    fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 57472, 57473, 57474, 57475, 57476, 57477, 57478, 57479, 57480, 57481);
+    r_ob->notation_typo_preferences.plus_unicode_character = 57484;
+    r_ob->notation_typo_preferences.dot_unicode_character = 57852;
+    r_ob->notation_typo_preferences.rest_ux_shift = 0.; // TO DO
+    r_ob->notation_typo_preferences.rest_uy_shift = 0; // 18.3; // TO DO
+    fill_long_array(r_ob->notation_typo_preferences.nominal_staff_line_shift, 9, 0, 1, 0, 0, 0, 0, 0, 0, 0);
+
+    fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 58594, 58595, 58596, 58597, 58598, 58599, 58600, 58601, 58602);
+    fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 57424, 57442, 57436, 57450);
+    r_ob->notation_typo_preferences.clef_ux_shift = 0.; // TO DO
+    r_ob->notation_typo_preferences.clef_uy_shift = 4.4;
+    // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
+    // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions
+    fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); // TO DO
+    fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 57920, 57921, 57922, 57923, 57936, 57937);
+    fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // TO DO
+    r_ob->notation_typo_preferences.flag_ux_shift = 0.;
+    fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -50.5, -23.9, -50.5, -23.9, -55.0, -19.0);
+    r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4;
+    r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4;
+}
+
+// this only works well for widths: ascents and descents are global for the font and quite off...
+// there's a measurefonts.py script in the tools folder that helps out for ascents and descents
+void measure_notation_stuff(t_notation_obj *r_ob, t_symbol *font)
+{
+    t_jfont *jfont = jfont_create_debug(font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->accidentals_typo_preferences.base_pt);
+    t_jgraphics_font_extents extents;
+    jfont_extents(jfont, &extents);
+    double width, height;
+    for (long i = 0; i < BACH_NUM_ACCIDENTALS; i++) {
+        if (r_ob->accidentals_typo_preferences.unicode_characters[i]) {
+            char *acccharacters_utf;
+            long outlen = 0;
+            acccharacters_utf = charset_unicodetoutf8_debug(&(r_ob->accidentals_typo_preferences.unicode_characters[i]), 1, &outlen);
+            jfont_text_measure(jfont, acccharacters_utf, &width, &height);
+            r_ob->accidentals_typo_preferences.uwidth[i] = width;
+            r_ob->accidentals_typo_preferences.uascent[i] = extents.ascent;
+            r_ob->accidentals_typo_preferences.udescent[i] = extents.descent;
+            bach_freeptr(acccharacters_utf);
+        }
+    }
+   
+    /*
+    std::string str;
+    for (long i = 0; i < BACH_NUM_ACCIDENTALS; i++) {
+        str += std::to_string(r_ob->accidentals_typo_preferences.unicode_characters[i]);
+        str += ", ";
+    }
+    cpost(str.c_str());
+    */
+    
+    if (r_ob->accidentals_typo_preferences.space_character) {
+        char *acccharacters_utf;
+        long outlen = 0;
+        acccharacters_utf = charset_unicodetoutf8_debug(&(r_ob->accidentals_typo_preferences.space_character), 1, &outlen);
+        jfont_text_measure(jfont, acccharacters_utf, &width, &height);
+        r_ob->accidentals_typo_preferences.space_uwidth = width;
+        bach_freeptr(acccharacters_utf);
+    } else {
+        r_ob->accidentals_typo_preferences.space_uwidth = 0;
+    }
+    jfont_destroy_debug(jfont);
+}
+
 
 void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 {
     double juce_mul = 1;
 //    fill_double_array(r_ob->notation_typo_preferences.rest_uwidths, 9, 7.3, 7.3, 7.3, 7.1, 7.0, 7.1,  7.8,  8.7,   9.6);
     fill_double_array(r_ob->notation_typo_preferences.rest_uwidths, 9, 7.3, 7.7, 7.7, 7.1, 8.1, 8.6,  9.1,  9.4,   10.);
-    
+    fill_long_array(r_ob->notation_typo_preferences.nominal_staff_line_shift, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+
     if (fontnameeq(font->s_name, "November for bach")) {
 #ifdef BACH_JUCE
         juce_mul = 2.5;
@@ -7234,7 +7374,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.2;
 //        r_ob->notation_typo_preferences.small_notehead_uy_shift = -4.3 + add_y_shift;
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
-        r_ob->notation_typo_preferences.rest_uy_shift = 7.75;
+        r_ob->notation_typo_preferences.rest_uy_shift = 0.; //7.75;
         //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 7.5, 7.5, 7.6, 7.6); // was THIS!
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 8., 8., 7.9, 7.9);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 'C','D', 'E', 'F', 'G', 'H', 'I', 'J', 'K');
@@ -7252,7 +7392,8 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.; //55;
         
     } else if (fontnameeq(font->s_name, "Bravura")) {
-        r_ob->notation_typo_preferences.base_pt = 24. * juce_mul;
+        fill_notation_typo_preferences_SMuFL(r_ob);
+/*        r_ob->notation_typo_preferences.base_pt = 24. * juce_mul;
         r_ob->notation_typo_preferences.base_pt_ts = 24. * juce_mul;
         r_ob->notation_typo_preferences.ts_uy_shift = -42; // TO DO
         fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 57472, 57473, 57474, 57475, 57476, 57477, 57478, 57479, 57480, 57481);
@@ -7272,7 +7413,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.flag_ux_shift = 0.; // TO DO
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -29.4+6, -21.+12, -29.4+6, -21.+12, -32.9+6, -18.4+12);  // TO DO: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.; // TO DO
-        r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.; // TO DO
+        r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.; // TO DO */
         
     } else if (fontnameeq(font->s_name, "Maestro")) {
 #ifdef BACH_JUCE
@@ -7290,7 +7431,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.2;
 //        r_ob->notation_typo_preferences.small_notehead_uy_shift = -3.2;
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
-        r_ob->notation_typo_preferences.rest_uy_shift = -1.;
+        r_ob->notation_typo_preferences.rest_uy_shift = 0.; //-1.;
         //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 7.5, 7.5, 7.6, 7.6); // was THIS!
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 8., 8., 7.85, 7.85);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222, 8721, 211, 338, 8240, 8776, 174, 217, 194);
@@ -7322,7 +7463,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.6;
 //        r_ob->notation_typo_preferences.small_notehead_uy_shift = 0.4;
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
-        r_ob->notation_typo_preferences.rest_uy_shift = 4.4;
+        r_ob->notation_typo_preferences.rest_uy_shift = 0.; //4.4;
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 9.4, 8.4, 6.8, 6.8);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 61666, 61623, 61678, 61646, 61668, 61637, 61608, 61684, 61669);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 61478, 61503, 61506, 61654);
@@ -7385,7 +7526,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.;
 //        r_ob->notation_typo_preferences.small_notehead_uy_shift = -0.4;
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
-        r_ob->notation_typo_preferences.rest_uy_shift = 1.2;
+         r_ob->notation_typo_preferences.rest_uy_shift = 0.; //1.2;
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 8., 7.6, 7.0, 7.0);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222, 931, 211, 338, 8240, 8776, 174, 217, 194);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38, 63, 66, 247);
@@ -7411,7 +7552,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.;
 //        r_ob->notation_typo_preferences.small_notehead_uy_shift = 0.;
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
-        r_ob->notation_typo_preferences.rest_uy_shift = 2.1;
+        r_ob->notation_typo_preferences.rest_uy_shift = 0.; //2.1;
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 10.4, 9.4, 8.5, 8.5);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222, 8721, 211, 338, 8240, 8776, 174, 217, 194);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38, 63, 66, 247);
@@ -7439,7 +7580,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //        r_ob->notation_typo_preferences.small_notehead_ux_shift = 0.;
 //        r_ob->notation_typo_preferences.small_notehead_uy_shift = 0.;
         r_ob->notation_typo_preferences.rest_ux_shift = 0.;
-        r_ob->notation_typo_preferences.rest_uy_shift = 2.4; 
+        r_ob->notation_typo_preferences.rest_uy_shift = 0.; //2.4; 
 //        fill_double_array(r_ob->notation_typo_preferences.notehead_uwidths, 4, 8., 7.6, 7.1, 7.1);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 8222, 8721, 211, 338, 8240, 8776, 174, 217, 194);
         fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 38, 63, 66, 247);
@@ -7474,6 +7615,7 @@ void set_articulation_names(t_articulations_typo_preferences *atp, long art_ID, 
 void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, t_symbol *font)
 {
     long i;
+    bool smufl = (fontnameeq(font->s_name, "Bravura"));
     
     // Setting all xml fields to none: for standard articulations they will be handled directly by the export xml function
     for (i = 0; i < k_NUM_STANDARD_ARTICULATIONS; i++)
@@ -7497,7 +7639,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_STACCATO; // *** ARTICULATION: STACCATO ***
     set_articulation_names(atp, i, gensym("staccato"), gensym("stacc"));
     atp->artpref[i].base_pt = 24.;
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        atp->artpref[i].main_char = 58530;
+        atp->artpref[i].flipped_char = 58530;
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61486;
         atp->artpref[i].flipped_char = 61486;
     } else if (fontnameeq(font->s_name, "November for bach")) {
@@ -7517,6 +7662,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
     } else if (fontnameeq(font->s_name, "November for bach")) {
+        atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25.4;
+        atp->artpref[i].main_char_uy_shift = 2.5;
+        atp->artpref[i].flipped_char_uy_shift = -2.5;
+    } else if (fontnameeq(font->s_name, "Bravura")) { // TO DO
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25.4;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
@@ -7540,7 +7689,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_ACCENT; // *** ARTICULATION: ACCENT ***
     set_articulation_names(atp, i, gensym("accent"), gensym("acc"));
     atp->artpref[i].base_pt = 24.;
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        atp->artpref[i].main_char = atp->artpref[i].flipped_char = 58528;
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61502;
     } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 47;
@@ -7584,7 +7735,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_PORTATO; // *** ARTICULATION: PORTATO ***
     set_articulation_names(atp, i, gensym("portato"), gensym("port"), gensym("por"));
     atp->artpref[i].base_pt = 24.;
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        atp->artpref[i].main_char = atp->artpref[i].flipped_char = 58532;
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61485;
         atp->artpref[i].flipped_char = 61485;
     } else if (fontnameeq(font->s_name, "November for bach")) {
@@ -7626,7 +7779,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TRILL; // *** ARTICULATION: TRILL ***
     set_articulation_names(atp, i, gensym("trill"), gensym("tr"));
     atp->artpref[i].base_pt = 24.;
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        atp->artpref[i].main_char = atp->artpref[i].flipped_char = 58726;
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61657;
         atp->artpref[i].flipped_char = 61657;
     } else if (fontnameeq(font->s_name, "November for bach")) {
@@ -7711,7 +7866,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TRILL_NATURAL; // *** ARTICULATION: TRILL NATURAL ***
     set_articulation_names(atp, i, gensym("trilln"), gensym("trn"));
     atp->artpref[i].base_pt = 24.;
-    if (fontnameeq(font->s_name, "Boulez")) {
+    if (smufl) {
+        atp->artpref[i].main_char = atp->artpref[i].flipped_char = 58726;
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61657;
         atp->artpref[i].flipped_char = 61657;
     } else if (fontnameeq(font->s_name, "November for bach")) {
@@ -9500,8 +9657,7 @@ void set_measure_parameters(t_notation_obj *r_ob, t_measure *measure, t_llll *pa
                                 measure->end_barline->barline_type = l == 0 ? 'a' : l;
                             } else if (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM) {
                                 t_symbol *thissym = hatom_getsym(&this_llll->l_head->l_next->l_hatom);
-                                if (thissym && strlen(thissym->s_name) > 0)
-                                    measure->end_barline->barline_type = thissym->s_name[0];
+                                measure->end_barline->barline_type = symbol_to_barline_type(thissym);
                             }
                         }
                     } else if (router == _llllobj_sym_usecustomboxes){
@@ -10342,6 +10498,139 @@ double voice_get_staff_bottom_y(t_notation_obj *r_ob, t_voice *voice, e_nonstand
     return staff_bottom;
 }
 
+//nonstandard_stafflines=0: ignore them
+// middle_staff_y must be initialized at least as a double[4] array
+void voice_get_staves_middle_lines_y(t_notation_obj *r_ob, t_voice *voice, long *num_staves, double *middle_staff_y)
+{
+    if (voice->notation_style == k_VOICE_NOTATION_STYLE_LINEAR_PITCH) {
+        long minmc, maxmc;
+        get_pianoroll_display_range(r_ob, voice->clef, &minmc, &maxmc);
+        double mc_mean = (minmc + maxmc)/2.;
+        double mc;
+        // snap to lines
+        switch (r_ob->pianoroll_display_type) {
+            case k_PIANOROLL_DISPLAY_C_LINES:
+                mc = round(mc_mean/1200.)*1200;
+                break;
+                
+            case k_PIANOROLL_DISPLAY_WHITEKEY_LINES:
+            {
+                double err = 0;
+                long pc = positive_mod(round(mc_mean/100.), 12);
+                mc = round(mc_mean/100.)*100;
+                if (pc == 1 || pc == 3 || pc == 6 || pc == 8 || pc == 10) {
+                    if (mc - mc_mean > 0)
+                        mc += 100;
+                    else
+                        mc -= 100;
+                }
+            }
+                break;
+
+            case k_PIANOROLL_DISPLAY_BLACKKEY_LINES:
+            {
+                long pc = positive_mod(round(mc_mean/100.), 12);
+                mc = round(mc_mean/100.)*100;
+                if (pc == 0) {
+                    mc += 100;
+                } else if (pc == 4) {
+                    mc -= 100;
+                } else if (pc == 5) {
+                    mc += 100;
+                } else if (pc == 11) {
+                    mc -= 100;
+                } else if (pc == 2 || pc == 7 || pc == 9) {
+                    if (mc - mc_mean > 0)
+                        mc += 100;
+                    else
+                        mc -= 100;
+                }
+            }
+                break;
+
+
+            default:
+                mc = round(mc_mean/100.)*100;
+                break;
+        }
+        *num_staves = 1;
+        middle_staff_y[0] = mc_to_yposition(r_ob, mc, voice);
+        return;
+    }
+
+    double staff_midline_y = -100000; //0.;
+    long clef = get_voice_clef(r_ob, voice);
+
+    switch (clef) {
+        case k_CLEF_SOPRANO:
+        case k_CLEF_ALTO:
+        case k_CLEF_TENOR:
+        case k_CLEF_MEZZO:
+        case k_CLEF_BARYTONE:
+        case k_CLEF_G:
+        case k_CLEF_G8va:
+        case k_CLEF_G8vb:
+        case k_CLEF_G15ma:
+        case k_CLEF_G15mb:
+        case k_CLEF_F:
+        case k_CLEF_F8va:
+        case k_CLEF_F8vb:
+        case k_CLEF_F15ma:
+        case k_CLEF_F15mb:
+            *num_staves = 1;
+            middle_staff_y[0] = voice->middleC_y + (clef - 4) * r_ob->step_y;
+            break;
+
+        case k_CLEF_PERCUSSION:
+        case k_CLEF_NONE:
+            *num_staves = 1;
+            middle_staff_y[0] = voice->middleC_y - 6 * r_ob->step_y;
+            break;
+
+        // combinations:
+        case k_CLEF_FG:
+            *num_staves = 2;
+            middle_staff_y[0] = voice->middleC_y + 6 * r_ob->step_y;
+            middle_staff_y[1] = voice->middleC_y - 6 * r_ob->step_y;
+            break;
+
+        case k_CLEF_FF:
+            *num_staves = 2;
+            middle_staff_y[0] = voice->middleC_y + 20 * r_ob->step_y;
+            middle_staff_y[1] = voice->middleC_y + 6 * r_ob->step_y;
+            break;
+
+        case k_CLEF_GG:
+            *num_staves = 2;
+            middle_staff_y[0] = voice->middleC_y - 6 * r_ob->step_y;
+            middle_staff_y[1] = voice->middleC_y - 20 * r_ob->step_y;
+            break;
+
+        case k_CLEF_FGG:
+            *num_staves = 3;
+            middle_staff_y[0] = voice->middleC_y + 6 * r_ob->step_y;
+            middle_staff_y[0] = voice->middleC_y - 6 * r_ob->step_y;
+            middle_staff_y[1] = voice->middleC_y - 20 * r_ob->step_y;
+            break;
+
+        case k_CLEF_FFG:
+            *num_staves = 3;
+            middle_staff_y[0] = voice->middleC_y + 20 * r_ob->step_y;
+            middle_staff_y[1] = voice->middleC_y + 6 * r_ob->step_y;
+            middle_staff_y[0] = voice->middleC_y - 6 * r_ob->step_y;
+            break;
+
+        case k_CLEF_FFGG:
+            *num_staves = 4;
+            middle_staff_y[0] = voice->middleC_y + 20 * r_ob->step_y;
+            middle_staff_y[1] = voice->middleC_y + 6 * r_ob->step_y;
+            middle_staff_y[0] = voice->middleC_y - 6 * r_ob->step_y;
+            middle_staff_y[0] = voice->middleC_y - 20 * r_ob->step_y;
+            break;
+    }
+
+}
+
 // computes the nth (0-based) measure of a score voice
 t_measure* measure_get_nth(t_scorevoice *voice, long n)
 {
@@ -10851,6 +11140,11 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
     outmeas->show_measure_number = true;
     outmeas->force_measure_number = false;
     outmeas->forced_measure_number = 0;
+    
+/*    outmeas->repeat_start = false;
+    outmeas->repeat_end = false;
+    outmeas->repeat_num = 1;
+    outmeas->repeat_endinglength = 0;*/
 
     outmeas->rhythmic_tree = llll_get();
 //    outmeas->ties_tree = NULL;
@@ -11804,6 +12098,11 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
     newmeasure->show_measure_number = measure->show_measure_number;
     newmeasure->force_measure_number = measure->force_measure_number;
     newmeasure->forced_measure_number = measure->forced_measure_number;
+
+/*    newmeasure->repeat_start = measure->repeat_start;
+    newmeasure->repeat_end = measure->repeat_end;
+    newmeasure->repeat_num = measure->repeat_num;
+    newmeasure->repeat_endinglength = measure->repeat_endinglength; */
 
     newmeasure->info_for_pwgl = llll_get();
     newmeasure->measure_filling = measure->measure_filling;
@@ -23106,6 +23405,20 @@ long get_tie_corresponding_to_mc(t_llll *ties, t_llll *mc, double this_mc, doubl
 }
 
 
+char symbol_to_barline_type(t_symbol *thissym)
+{
+    if (thissym == gensym("rs")) {
+        return k_BARLINE_REPEAT_START;
+    } else if (thissym == gensym("re") || thissym == gensym("r")) {
+        return k_BARLINE_REPEAT_END;
+    } else if (thissym == gensym("res")) {
+        return k_BARLINE_REPEAT_END_AND_START;
+    } else if (thissym && strlen(thissym->s_name) > 0) {
+        return (e_barline_modifier)thissym->s_name[0];
+    }
+    return 'a'; //automatic
+}
+
 e_header_elems header_symbol_to_long(t_symbol *this_sym)
 {
     if (this_sym == _llllobj_sym_body)
@@ -24181,6 +24494,36 @@ double rest_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration)
         return r_ob->notation_typo_preferences.rest_uwidths[1];
     
     return r_ob->notation_typo_preferences.rest_uwidths[0];
+}
+
+
+long rest_get_nominal_staff_line_shift(t_notation_obj *r_ob, t_rational r_sym_duration)
+{
+    if (rat_rat_cmp(rat_abs(r_sym_duration), RAT_1OVER128) <= 0)
+        return r_ob->notation_typo_preferences.nominal_staff_line_shift[8];
+
+    if (rat_rat_cmp(rat_abs(r_sym_duration), RAT_1OVER64) <= 0)
+        return r_ob->notation_typo_preferences.nominal_staff_line_shift[7];
+
+    if (rat_rat_cmp(rat_abs(r_sym_duration), RAT_1OVER32) <= 0)
+        return r_ob->notation_typo_preferences.nominal_staff_line_shift[6];
+
+    if (rat_rat_cmp(rat_abs(r_sym_duration), RAT_1OVER16) <= 0)
+        return r_ob->notation_typo_preferences.nominal_staff_line_shift[5];
+
+    if (rat_rat_cmp(rat_abs(r_sym_duration), RAT_1OVER8) <= 0)
+        return r_ob->notation_typo_preferences.nominal_staff_line_shift[4];
+
+    if (rat_rat_cmp(rat_abs(r_sym_duration), RAT_1OVER4) <= 0)
+        return r_ob->notation_typo_preferences.nominal_staff_line_shift[3];
+
+    if (rat_rat_cmp(rat_abs(r_sym_duration), RAT_1OVER2) <= 0)
+        return r_ob->notation_typo_preferences.nominal_staff_line_shift[2];
+    
+    if (rat_rat_cmp(rat_abs(r_sym_duration), genrat(1, 1)) <= 0)
+        return r_ob->notation_typo_preferences.nominal_staff_line_shift[1];
+    
+    return r_ob->notation_typo_preferences.nominal_staff_line_shift[0];
 }
 
 double rest_get_top_extension_in_steps(t_notation_obj *r_ob, t_rational r_sym_duration) { // these are in STEP_y!!! (e.g. 3.5 = 3.5 step_y steps)
@@ -30691,12 +31034,20 @@ t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure
     llll_appendllll(ts_tempo_llll, measure_get_tempi_as_llll(measure, prepend_this_tempo), 0, WHITENULL_llll);
     
     if (measure->end_barline->barline_type > 0 && measure->end_barline->barline_type != 'a') {
-        char mystring[2];
         t_llll *barlinellll = llll_get();
         llll_appendsym(barlinellll, _llllobj_sym_barline, 0, WHITENULL_llll);
-        mystring[0] = measure->end_barline->barline_type;
-        mystring[1] = 0;
-        llll_appendsym(barlinellll, gensym(mystring), 0, WHITENULL_llll);
+        if (measure->end_barline->barline_type == k_BARLINE_REPEAT_END) {
+            llll_appendsym(barlinellll, gensym("re"), 0, WHITENULL_llll);
+        } else if (measure->end_barline->barline_type == k_BARLINE_REPEAT_START) {
+            llll_appendsym(barlinellll, gensym("rs"), 0, WHITENULL_llll);
+        } else if (measure->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) {
+            llll_appendsym(barlinellll, gensym("res"), 0, WHITENULL_llll);
+        } else {
+            char mystring[2];
+            mystring[0] = measure->end_barline->barline_type;
+            mystring[1] = 0;
+            llll_appendsym(barlinellll, gensym(mystring), 0, WHITENULL_llll);
+        }
         //        llll_appendlong(barlinellll, measure->end_barline->barline_type, 0, WHITENULL_llll);
         llll_appendllll(ts_tempo_llll, barlinellll, 0, WHITENULL_llll);
     }
@@ -32236,7 +32587,36 @@ void recalculate_voicenames_width(t_notation_obj *r_ob) {
 
 
 // won't accept "automatic"
-double get_barline_ux_width(t_notation_obj *r_ob, char barline_type)
+double get_barline_left_offset_ux(t_notation_obj *r_ob, char barline_type)
+{
+    switch (barline_type) {
+        case k_BARLINE_NORMAL:
+        case k_BARLINE_DASHED:
+        case k_BARLINE_POINTS:
+        case k_BARLINE_TICK:
+        case k_BARLINE_INTERVOICES:
+            return 0;
+        case k_BARLINE_HIDDEN:
+            return 0;
+        case k_BARLINE_SOLID:
+            return 0.5;
+        case k_BARLINE_DOUBLE:
+            return 1.5;
+        case k_BARLINE_FINAL:
+            return 3;
+        case k_BARLINE_REPEAT_END:
+            return 6+CONST_BARLINE_USPACE_FOR_REPEAT - 2;
+        case k_BARLINE_REPEAT_START:
+            return 1;
+        case k_BARLINE_REPEAT_END_AND_START:
+            return 6+CONST_BARLINE_USPACE_FOR_REPEAT - 2;
+    }
+    return 0;
+}
+
+
+// won't accept "automatic"
+double get_barline_uwidth(t_notation_obj *r_ob, char barline_type)
 {
     switch (barline_type) {
         case k_BARLINE_NORMAL:
@@ -32253,19 +32633,55 @@ double get_barline_ux_width(t_notation_obj *r_ob, char barline_type)
             return 4;
         case k_BARLINE_FINAL:
             return 6;
+        case k_BARLINE_REPEAT_END:
+            return 6+CONST_BARLINE_USPACE_FOR_REPEAT + 1;
+        case k_BARLINE_REPEAT_START:
+            return 6+CONST_BARLINE_USPACE_FOR_REPEAT + 1;
+        case k_BARLINE_REPEAT_END_AND_START:
+            return 6+CONST_BARLINE_USPACE_FOR_REPEAT*2 + 1;
     }
     return 0;
 }
 
-double measure_get_barline_ux_width(t_notation_obj *r_ob, t_measure *meas)
+
+// won't accept "automatic"
+double get_barline_right_offset_ux(t_notation_obj *r_ob, char barline_type)
+{
+    return MAX(0, get_barline_uwidth(r_ob, barline_type) - get_barline_left_offset_ux(r_ob, barline_type));
+}
+
+double measure_get_barline_uwidth(t_notation_obj *r_ob, t_measure *meas)
 {
     char barline_type = meas->end_barline->barline_type;
     
     if (barline_type == 0 || barline_type == k_BARLINE_AUTOMATIC)
         barline_type = meas->next ? k_BARLINE_NORMAL : k_BARLINE_FINAL;
     
-    return get_barline_ux_width(r_ob, barline_type);
+    return get_barline_uwidth(r_ob, barline_type);
 }
+
+double measure_get_barline_left_offset_ux(t_notation_obj *r_ob, t_measure *meas)
+{
+    char barline_type = meas->end_barline->barline_type;
+    
+    if (barline_type == 0 || barline_type == k_BARLINE_AUTOMATIC)
+        barline_type = meas->next ? k_BARLINE_NORMAL : k_BARLINE_FINAL;
+    
+    return get_barline_left_offset_ux(r_ob, barline_type);
+}
+
+double measure_get_barline_right_offset_ux(t_notation_obj *r_ob, t_measure *meas)
+{
+    char barline_type = meas->end_barline->barline_type;
+    
+    if (barline_type == 0 || barline_type == k_BARLINE_AUTOMATIC)
+        barline_type = meas->next ? k_BARLINE_NORMAL : k_BARLINE_FINAL;
+    
+    return get_barline_right_offset_ux(r_ob, barline_type);
+}
+
+
+
 
 
 // only used by roll
@@ -36644,6 +37060,11 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->show_stems = k_SHOW_STEMS_MAIN_AND_AUXILIARY;
     r_ob->voicenames_as_llll = get_nilnil();
     
+    
+    r_ob->uwidth_after_barline_with_no_ts = 5;
+    r_ob->uwidth_after_barline_with_ts = 6;
+    r_ob->uwidth_after_ts = 8;
+    
     r_ob->rests_float_steps_part_shift = 4;
     r_ob->show_end_marker_for_regions = true;
     r_ob->show_cents_differences = false;
@@ -39628,6 +40049,25 @@ t_max_err notationobj_set_keys(t_notation_obj *r_ob, t_symbol **keys)
 }
 
 
+
+/// REPEATS
+///
+/*
+ void synchronize_repeats_for_measure(t_notation_obj *r_ob, t_measure *meas, bool add_undo_tick)
+{
+    t_llll *meas_ll = measure_get_aligned_measures_as_llll(r_ob, meas);
+    for (t_llllelem *el = meas_ll->l_head; el; el = el->l_next) {
+        t_measure *thismeas = (t_measure *)hatom_getobj(&el->l_hatom);
+        if (add_undo_tick)
+            undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)thismeas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+        thismeas->repeat_start = meas->repeat_start;
+        thismeas->repeat_end = meas->repeat_end;
+        thismeas->repeat_endinglength = meas->repeat_endinglength;
+        thismeas->repeat_num = meas->repeat_num;
+        recompute_all_for_measure(r_ob, thismeas, true);
+    }
+}
+*/
 
 /// LOCAL SPACING
 

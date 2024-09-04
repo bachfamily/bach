@@ -1094,16 +1094,24 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
             recompute_total_length(r_ob);
             update_hscrollbar(r_ob, 1);
         }
-	} else if (attr->owner_type == k_MEASURE) {
-		if (attr->name == _llllobj_sym_lockrhythmictree)
-			recompute_all_for_measure(r_ob, (t_measure *)obj, true);
-		else if (attr->name == _llllobj_sym_boxes || attr->name == _llllobj_sym_usecustomboxes) {
-			synchronize_boxes_for_measure(r_ob, (t_measure *)obj);
-			recompute_all_for_measure(r_ob, (t_measure *)obj, true);
-		} else
-			recompute_all_for_measure(r_ob, (t_measure *)obj, false);
-	} else if (attr->owner_type == k_VOICE) {
-		if (attr->name == _llllobj_sym_name) {
+    } else if (attr->owner_type == k_MEASURE) {
+        if (attr->name == _llllobj_sym_lockrhythmictree) {
+            recompute_all_for_measure(r_ob, (t_measure *)obj, true);
+        } else if (attr->name == _llllobj_sym_boxes || attr->name == _llllobj_sym_usecustomboxes) {
+            synchronize_boxes_for_measure(r_ob, (t_measure *)obj);
+            recompute_all_for_measure(r_ob, (t_measure *)obj, true);
+        } else if (attr->name == _llllobj_sym_barline) {
+            recompute_all_for_measure(r_ob, (t_measure *)obj, true);
+            if (((t_measure *)obj)->next)
+                recompute_all_for_measure(r_ob, (((t_measure *)obj)->next), true);
+/*        } else if (strncmp(attr->name->s_name, "repeat", 6) == 0) {
+            recompute_all_for_measure(r_ob, (t_measure *)obj, true);
+            if (((t_measure *)obj)->next)
+                recompute_all_for_measure(r_ob, (((t_measure *)obj)->next), true); */
+        } else
+            recompute_all_for_measure(r_ob, (t_measure *)obj, false);
+    } else if (attr->owner_type == k_VOICE) {
+        if (attr->name == _llllobj_sym_name) {
 			recalculate_voicenames_width(r_ob);
 			update_hscrollbar(r_ob, 0);
 		}
@@ -1178,6 +1186,10 @@ long bach_default_attr_inactive(t_notation_obj *r_ob, void *elem, t_bach_attribu
 		} else if (attr->name == _llllobj_sym_boxes) {
 			if (!((t_measure *)elem)->custom_boxing)
 				return 1;	// inactive
+        } else if (attr->name == _llllobj_sym_repeatnum || attr->name == _llllobj_sym_repeatendinglength) {
+            if ((((t_measure *)elem)->end_barline->barline_type != k_BARLINE_REPEAT_END) &&
+                (((t_measure *)elem)->end_barline->barline_type != k_BARLINE_REPEAT_END_AND_START))
+                return 1;    // inactive
 		}
 	} else if (attr->owner_type == k_SLOTINFO) {
 		char slot_type = ((t_slotinfo *)elem)->slot_type;
@@ -1407,6 +1419,15 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
                     case 9:
                         barline_type_as_char = k_BARLINE_INTERVOICES;
                         break;
+                    case 10:
+                        barline_type_as_char = k_BARLINE_REPEAT_START;
+                        break;
+                    case 11:
+                        barline_type_as_char = k_BARLINE_REPEAT_END;
+                        break;
+                    case 12:
+                        barline_type_as_char = k_BARLINE_REPEAT_END_AND_START;
+                        break;
 					default:
 						barline_type_as_char = k_BARLINE_AUTOMATIC;
 						break;
@@ -1415,6 +1436,30 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 				recompute_all_for_measure(r_ob, (t_measure *)obj, false);
 			}
 			return;
+/*        } else if (attr->name == _llllobj_sym_repeatstart) {
+            if (ac && av && atom_gettype(av) == A_LONG) {
+                ((t_measure *)obj)->repeat_start = atom_getlong(av) > 0 ? 1 : 0;
+                synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
+            }
+            return;
+        } else if (attr->name == _llllobj_sym_repeatend) {
+            if (ac && av && atom_gettype(av) == A_LONG) {
+                ((t_measure *)obj)->repeat_end = atom_getlong(av) > 0 ? 1 : 0;
+                synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
+            }
+            return;
+        } else if (attr->name == _llllobj_sym_repeatnum) {
+            if (ac && av && atom_gettype(av) == A_LONG) {
+                ((t_measure *)obj)->repeat_num = MAX(1, atom_getlong(av));
+                synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
+            }
+            return;
+        } else if (attr->name == _llllobj_sym_repeatendinglength) {
+            if (ac && av && atom_gettype(av) == A_LONG) {
+                ((t_measure *)obj)->repeat_endinglength = MAX(0, abs(atom_getlong(av)));
+                synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
+            }
+            return; */
 		} else if (attr->name == _llllobj_sym_lockwidth) {
 			if (ac && av && atom_gettype(av) == A_LONG && atom_getlong(av)) {
 				assign_local_spacing_width_multiplier(r_ob, ((t_measure *)obj)->tuttipoint_reference, 1.);
@@ -1722,6 +1767,15 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
                     break;
                 case k_BARLINE_INTERVOICES:
                     idx = 9;
+                    break;
+                case k_BARLINE_REPEAT_START:
+                    idx = 10;
+                    break;
+                case k_BARLINE_REPEAT_END:
+                    idx = 11;
+                    break;
+                case k_BARLINE_REPEAT_END_AND_START:
+                    idx = 12;
                     break;
 				default:
 					idx = 0;

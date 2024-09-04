@@ -427,6 +427,11 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_active;
 	t_symbol	*s_openslot;
 	t_symbol	*s_sample;
+    
+    t_symbol    *s_repeatstart;
+    t_symbol    *s_repeatend;
+    t_symbol    *s_repeatnum;
+    t_symbol    *s_repeatendinglength;
 
 	t_symbol	*s_left;
 	t_symbol	*s_right;
@@ -852,6 +857,11 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_active	(_llllobj_common_symbols->s_active)
 #define _llllobj_sym_openslot	(_llllobj_common_symbols->s_openslot)
 #define _llllobj_sym_sample	(_llllobj_common_symbols->s_sample)
+
+#define _llllobj_sym_repeatstart      (_llllobj_common_symbols->s_repeatstart)
+#define _llllobj_sym_repeatend        (_llllobj_common_symbols->s_repeatend)
+#define _llllobj_sym_repeatnum        (_llllobj_common_symbols->s_repeatnum)
+#define _llllobj_sym_repeatendinglength     (_llllobj_common_symbols->s_repeatendinglength)
 
 #define _llllobj_sym_left	(_llllobj_common_symbols->s_left)
 #define _llllobj_sym_right	(_llllobj_common_symbols->s_right)

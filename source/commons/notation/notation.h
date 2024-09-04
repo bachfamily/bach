@@ -242,6 +242,9 @@
 #define CONST_SLUR_AVOID_OBJECTS_PAD 2
 #define CONST_SLUR_AVOID_LAST_ACCIDENTALS_PAD 0
 
+#define CONST_BARLINE_USPACE_FOR_REPEAT 3   ///< Unscaled space to be added to a barline if it has a repeat
+#define CONST_REPEAT_CIRCLE_SIZE_IN_STEPS 0.4
+
 #define CONST_LABEL_FAMILY_NOTE_STARTING_URADIUS 6.
 #define CONST_LABEL_FAMILY_NOTE_SEPARATION_URADIUS 4.
 #define CONST_LABEL_FAMILY_LINE_WIDTH 1.5
@@ -377,10 +380,6 @@
                                                         ///< (This is used to avoid the case where beamings get too "tall" even just for a sequence of 1/16 notes)
 #define CONST_VERTICAL_USEPARATION_RESTS_FROM_BEAM 5.    ///< Unscaled vertical additional separation between a rest and a beam inside which the rest lies
 
-// score spacing constants
-#define CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_NO_TS 6        ///< Unscaled horizontal blank space (in pixels) after a measure barline, when no time signature in the measure is needed
-#define CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS 5        ///< Unscaled horizontal blank space (in pixels) after a measure barline, before the time signature (if there's a time signature
-#define CONST_SCORE_USPACE_AFTER_TS 14                            ///< Unscaled horizontal blank space (in pixels) after a time signature, before drawing the measure chords 
 #define CONST_REST_DOT_USEPARATION 2.                            ///< Unscaled separation (in pixels) between a rest and its first dot
 #define CONST_CHORD_DOT_USEPARATION 2.                            ///< Unscaled separation (in pixels) between a note and its first dot
 #define CONST_DOT_DOT_USEPARATION 4.                            ///< Unscaled separation (in pixels) between a dot, and the next one
@@ -1135,7 +1134,10 @@ typedef enum _barline_modifier {
     k_BARLINE_HIDDEN = 'h',        ///< Hidden barline
     k_BARLINE_SOLID = 's',         ///< Solid barline (thicker than the normal one)
     k_BARLINE_TICK = 'k',          ///< Tick
-    k_BARLINE_INTERVOICES = 'i'    ///< Intervoice barline only
+    k_BARLINE_INTERVOICES = 'i',    ///< Intervoice barline only
+    k_BARLINE_REPEAT_START = 'w',       ///< Starts a repeat
+    k_BARLINE_REPEAT_END = 'x',         ///< Ends a repeat
+    k_BARLINE_REPEAT_END_AND_START = 'y',  ///< Starts and ends a repeat
 } e_barline_modifier;
 
 
@@ -3102,14 +3104,16 @@ typedef struct _rhythm_level_properties
 } t_rhythm_level_properties;
 
 
+
 /** The data structure representing a measure end barline (only used inside [bach.score]).
     @ingroup    notation
  */ 
 typedef struct _measure_end_barline
 {
     t_notation_item        r_it;            ///< Notation item, containing common stuff for all notation items.
-    struct _measure        *owner;            ///< The measure which owns it 
+    struct _measure        *owner;            ///< The measure which owns it
     char                barline_type;    ///< Type of ending barline. Must be one of #e_barline_modifier. By default it is #k_BARLINE_AUTOMATIC.
+
 } t_measure_end_barline;
 
 
@@ -3217,6 +3221,13 @@ typedef struct _measure
                                         ///< Most lllls also contain as <l_thing> field a #t_rhythm_level_properties structure specifying the type of rhythmic level
     char            lock_rhythmic_tree;    ///< This is 1 if the beaming tree is locked, 0 otherwise. In case this is 1, no retranscription is performed, unless new data from messages is inserted
                                         ///< This flag is saved, so that locked measure remain locked when the object is saved
+    
+    // Settings about repeats
+/*    char  repeat_start;        ///< Starts a repeat section
+    char  repeat_end;          ///< Ends a repeat section
+    long  repeat_num;          ///< If the measure barline has <end_repeats>, this says how many times to repeat the portion
+    long  repeat_endinglength; ///< If the measure barline has <end_repeats>, this contains the number of measure of the initial endings (0 makes for the standard repeat, but this allows to make something akin to 1-----| and 2----> endings
+*/
     
     // double linked list
     struct _measure*    next;        ///< Pointer to the next measure
@@ -3372,7 +3383,6 @@ typedef struct _tuttipoint
     char        need_recompute_spacing;            ///< A flag telling if we need to recompute the spacing within this tuttipoint region, one of the #e_spacing_calculation_types
     long        flag;                            ///< Internal, for private use: generic flag.
     
-    ////
     double      data;                           ///< Internal
     
     // double linked list
@@ -3640,6 +3650,7 @@ typedef struct _notation_typo_preferences
     double            rest_uwidths[9];                ///< Unscaled widths of the rests symbols for: DOUBLEWHOLE, WHOLE, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64, 1/128
     double            rest_ux_shift;                    ///< Unscaled horizontal shift of the rests, with respect to a default reference position
     double            rest_uy_shift;                    ///< Unscaled vertical shift of the rests, with respect to a default reference position
+    long              nominal_staff_line_shift[9];      ///< Nominal staff line shift w.r. to the middle staff line, in staff lines (1 = staffline above)
 
     // clefs
     unicodeChar        clefs_unicode_characters[4];    ///< Unicode characters for the clefs: G clef, F clef, C clef, Percussion clef
@@ -4901,6 +4912,10 @@ typedef struct _notation_obj
     double        minimum_uwidth_for_measure;                    ///< Unscaled minimum width for ANY measure, leave 0 for unused
     double        minimum_uwidth_per_sym_unit_for_measure;    ///< Unscaled minimum width per symbolic unit for ANY measure, leave 0. for unused
 
+    // score appearance
+    double uwidth_after_barline_with_no_ts; ///< Unscaled horizontal blank space (in unscaled pixels) after a measure barline, when no time signature in the measure is needed
+    double uwidth_after_barline_with_ts;    ///< Unscaled horizontal blank space (in unscaled pixels) after a measure barline, before the time signature (if there's a time signature
+    double uwidth_after_ts;                 ///< Unscaled horizontal blank space after time signature (un unscaled pixels)
     
     // play
     char        allow_play_from_interface;    ///< Flag telling if we allow playing from the interface
@@ -5068,8 +5083,7 @@ typedef struct _notation_obj
     t_symbol    *grace_note_equivalent_sym;                        ///< Playing equivalent for a 1/8 grace note (if this is 1/64, it'll mean that a grace quaver note will be played as a 64th note) 
     t_rational    grace_note_equivalent;                            ///< As #grace_note_equivalent_sym, but translated into a rational value
     double        max_percentage_of_chord_taken_by_grace_notes;    ///< Maximum percentage of the chord duration that can be taken by subsequent grace notes
-    
-    
+
     // functions
     rebuild_fn                        rebuild_function;                ///< Pointer to the function setting the whole object from llll
     notationobj_fn                    clearall_function;    ///< Pointer to the function creating the undo tick for the whole object
@@ -5133,6 +5147,8 @@ typedef struct _notation_obj
                                                 ///< will ensure compatibility (whenever possible...) with bach 0.7.9, and so on.
     
     char                dont_change_size_now;   ///< Internal flag to overcome an issue of  jbox_set_fontname() changing the size of the object
+    
+    double  temp[6];
 } t_notation_obj;
 
 
@@ -5933,6 +5949,8 @@ long actiontypesym2actiontypeid(t_symbol *sym);
  */
 e_header_elems header_symbol_to_long(t_symbol *this_sym);
 
+char symbol_to_barline_type(t_symbol *thissym);
+
 
 /** Convert an llll containing the symbols of header objects into a combination of #e_header_elems.
     @ingroup    conversions
@@ -6270,7 +6288,9 @@ long get_bits_from_figure(t_rational figure);
     @param barline    Barline type (one of the #e_barline_modifier)
     @return            The unscaled width of the barline
  */
-double get_barline_ux_width(t_notation_obj *r_ob, char barline);
+double get_barline_uwidth(t_notation_obj *r_ob, char barline);
+double get_barline_left_offset_ux(t_notation_obj *r_ob, char barline_type);
+double get_barline_right_offset_ux(t_notation_obj *r_ob, char barline_type);
 
 
 /**    Obtain the unscaled width of a measure barline in pixels.
@@ -6279,7 +6299,9 @@ double get_barline_ux_width(t_notation_obj *r_ob, char barline);
     @param measure    The measure
     @return            The unscaled width of the barline
  */
-double measure_get_barline_ux_width(t_notation_obj *r_ob, t_measure *meas);
+double measure_get_barline_uwidth(t_notation_obj *r_ob, t_measure *meas);
+double measure_get_barline_left_offset_ux(t_notation_obj *r_ob, t_measure *meas);
+double measure_get_barline_right_offset_ux(t_notation_obj *r_ob, t_measure *meas);
 
 
 
@@ -6764,6 +6786,8 @@ double get_stem_x_from_alignment_point_x(t_notation_obj *r_ob, t_chord *chord, d
     @param    return            The unscaled width of the rest.
 */
 double rest_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration);
+
+long rest_get_nominal_staff_line_shift(t_notation_obj *r_ob, t_rational r_sym_duration);
 
 
 /**    Get the top vertical extension (from the rest vertical barycenter position upwards) of a rest, in steps.
@@ -11064,6 +11088,8 @@ void write_text_standard_account_for_insets_singleline(t_notation_obj *r_ob, t_j
  */ 
 void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
+void write_text_vcentered_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1);
+
 void write_text_standard_account_for_vinset_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
 #endif
@@ -13242,6 +13268,8 @@ double voice_get_staff_top_y(t_notation_obj *x, t_voice *voice, e_nonstandard_st
 */
 double voice_get_staff_bottom_y(t_notation_obj *x, t_voice *voice, e_nonstandard_staffline_topbottom_options nonstandard_stafflines);
 
+void voice_get_staves_middle_lines_y(t_notation_obj *r_ob, t_voice *voice, long *num_staves, double *middle_staff_y);
+
 
 void get_pianoroll_display_range(t_notation_obj *r_ob, long clef, long *mincents, long *maxcents);
 
@@ -14229,6 +14257,7 @@ char get_all_tuttipoint_barlines(t_notation_obj *r_ob, t_measure_end_barline *re
 // TBD
 t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *meas);
 
+void synchronize_repeats_for_measure(t_notation_obj *r_ob, t_measure *meas, bool add_undo_tick);
 
 /**    Set the t_chord::need_recompute_parameters flags for all the chords in a given measure, and also sets the t_notation_obj::need_perform_analysis_and_change flag.
     Those flags will force the chord graphic parameters to be recomputed at the next paint cycle.

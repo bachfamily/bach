@@ -7279,6 +7279,8 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 526 120"); // new dimensions
     // @exclude bach.score
 
+//    CLASS_ATTR_DOUBLE_ARRAY(c, "temp", 0, t_notation_obj, temp, 6);
+
     CLASS_STICKY_ATTR(c,"category",0,"Appearance");
     
     CLASS_ATTR_CHAR(c,"align",0, t_notation_obj, align_chords_with_what);
@@ -7774,6 +7776,27 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"measurenumberfontsize", 0, "9");
     // @description Sets the font size with which measure numbers are displayed. 
     
+    CLASS_STICKY_ATTR_CLEAR(c, "category");
+
+    
+    CLASS_STICKY_ATTR(c,"category",0,"Appearance");
+    
+    CLASS_ATTR_DOUBLE(c,"spaceafterbarline",0, t_notation_obj, uwidth_after_barline_with_no_ts);
+    CLASS_ATTR_STYLE_LABEL(c,"spaceafterbarline",0,"text","Empty Space After Barline With No Time Signature");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"spaceafterbarline", 0, "6");
+    // @description Sets the width of the empty space after a barline with no time signature.
+
+    CLASS_ATTR_DOUBLE(c,"spacebetweenbarlineandts",0, t_notation_obj, uwidth_after_barline_with_ts);
+    CLASS_ATTR_STYLE_LABEL(c,"spacebetweenbarlineandts",0,"text","Empty Space Between Barline And Time Signature");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"spacebetweenbarlineandts", 0, "5");
+    // @description Sets the width of the empty space between a barline and a time signature.
+
+    CLASS_ATTR_DOUBLE(c,"spaceafterts",0, t_notation_obj, uwidth_after_ts);
+    CLASS_ATTR_STYLE_LABEL(c,"spaceafterts",0,"text","Empty Space After Time Signature");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"spaceafterts", 0, "8");
+    // @description Sets the width of the empty space after a time signature.
+
+
     CLASS_STICKY_ATTR_CLEAR(c, "category");
     
     
@@ -11723,6 +11746,9 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         }
 
         note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note, note_new_voice);
+        if (!ji)
+            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+        
 //        if (!ji) {
 //            constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice);
 //        }
@@ -11746,6 +11772,8 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         note_in_new_voice->midicents = change_mc1 - ((mode == 0 ? -delta * (200. / x->r_ob.tone_division) : -delta) - (note->midicents - change_mc2));
 
         note_constrain_pitch_depending_on_editing_ranges((t_notation_obj *)x, note_in_new_voice, note_new_voice);
+        if (!ji)
+            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
 //        constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note_in_new_voice->midicents, note_new_voice);
 
         // we look if there's a chord EXACTLY with the same onset, we add the note to the chord!

@@ -3,14 +3,14 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 5,
-			"revision" : 3,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 100.0, 100.0, 929.0, 581.0 ],
+		"rect" : [ 100.0, 100.0, 938.0, 581.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -52,14 +52,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
-							"revision" : 3,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 929.0, 555.0 ],
+						"rect" : [ 100.0, 126.0, 938.0, 555.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -209,14 +209,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
-							"revision" : 3,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 929.0, 555.0 ],
+						"rect" : [ 0.0, 26.0, 938.0, 555.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -548,6 +548,7 @@
 									"loop" : [ 0.0, 0.0 ],
 									"maxclass" : "bach.roll",
 									"midichannels" : [ 16, 1, 3 ],
+									"notationstyles" : [ "et", "et", "et" ],
 									"numinlets" : 6,
 									"numoutlets" : 8,
 									"numparts" : [ 1, 1, 1 ],
@@ -716,14 +717,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
-							"revision" : 3,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 929.0, 555.0 ],
+						"rect" : [ 0.0, 26.0, 938.0, 555.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -772,6 +773,20 @@
 			}
  ],
 		"lines" : [  ],
+		"parameters" : 		{
+			"obj-9::obj-1::obj-7::obj-2" : [ "Slope", "Slope", 0 ],
+			"parameterbanks" : 			{
+				"0" : 				{
+					"index" : 0,
+					"name" : "",
+					"parameters" : [ "-", "-", "-", "-", "-", "-", "-", "-" ]
+				}
+
+			}
+,
+			"inherited_shortname" : 1
+		}
+,
 		"dependency_cache" : [ 			{
 				"name" : "bach.+.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
@@ -884,7 +899,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.welcome.maxpat",
+				"name" : "bach.help.notation.slots.12d_slopemapping.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
@@ -988,6 +1003,10 @@
 			}
 , 			{
 				"name" : "bach.slice.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.slot.mxo",
 				"type" : "iLaX"
 			}
 , 			{

@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 5,
-			"revision" : 3,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -52,14 +52,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
-							"revision" : 3,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 955.0, 547.0 ],
+						"rect" : [ 74.0, 126.0, 955.0, 547.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -209,14 +209,14 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
-							"revision" : 3,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 74.0, 126.0, 955.0, 547.0 ],
+						"rect" : [ 0.0, 26.0, 955.0, 547.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -535,6 +535,7 @@
 									"markersfontsize" : 11.0,
 									"maxclass" : "bach.score",
 									"midichannels" : [ 1, 2, 3, 4 ],
+									"notationstyles" : [ "et", "et", "et", "et" ],
 									"numinlets" : 7,
 									"numoutlets" : 9,
 									"numparts" : [ 1, 1, 1, 1 ],
@@ -702,8 +703,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 5,
-							"revision" : 3,
+							"minor" : 6,
+							"revision" : 1,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -870,7 +871,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.welcome.maxpat",
+				"name" : "bach.help.notation.syntax.40_measureinfo.32_barlinetypes.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
