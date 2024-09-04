@@ -1447,16 +1447,16 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
                 ((t_measure *)obj)->repeat_end = atom_getlong(av) > 0 ? 1 : 0;
                 synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
             }
-            return;
+            return; */
         } else if (attr->name == _llllobj_sym_repeatnum) {
             if (ac && av && atom_gettype(av) == A_LONG) {
-                ((t_measure *)obj)->repeat_num = MAX(1, atom_getlong(av));
-                synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
+                ((t_measure *)obj)->end_barline->repeat_num = MAX(1, atom_getlong(av));
+                synchronize_repeats_across_voices(r_ob, (t_measure *)obj);
             }
             return;
-        } else if (attr->name == _llllobj_sym_repeatendinglength) {
+/*        } else if (attr->name == _llllobj_sym_repeatendinglength) {
             if (ac && av && atom_gettype(av) == A_LONG) {
-                ((t_measure *)obj)->repeat_endinglength = MAX(0, abs(atom_getlong(av)));
+                ((t_measure *)obj)->end_barline->repeat_alternate_ending_length = MAX(0, abs(atom_getlong(av)));
                 synchronize_repeats_for_measure(r_ob, (t_measure *)obj, true);
             }
             return; */

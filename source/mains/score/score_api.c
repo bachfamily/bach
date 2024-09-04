@@ -11216,7 +11216,7 @@ void score_declare_bach_attributes(t_score *x){
 
 //    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_repeatstart, (char *)"Start Repeat", k_MEASURE, t_measure, repeat_start, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 //    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_repeatend, (char *)"End Repeat", k_MEASURE, t_measure, repeat_end, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
-//    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_repeatnum, (char *)"Number of Repetitions", k_MEASURE, t_measure, repeat_num, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_repeatnum, (char *)"Number of Repetitions", k_MEASURE, t_measure, repeat_num_dummy, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 //    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_repeatendinglength, (char *)"Alternative Ending Length", k_MEASURE, t_measure, repeat_endinglength, k_BACH_ATTR_LONG, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 
     

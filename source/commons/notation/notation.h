@@ -87,7 +87,7 @@
 
     #define BACH_SUPPORT_SLURS
 
-//    #define BACH_GROUPS_ARE_DOUBLE_LINKED
+//    #define BACH_GROUPS_ARE_DOUBLY_LINKED     ///< Commenting this line saves 8 bytes in the t_notation_item structure
 
 
     #ifdef CONFIGURATION_Development
@@ -2193,7 +2193,7 @@ typedef struct _notation_item
     
     struct _group            *group;                ///< Group to which the element belongs
     struct _notation_item    *next_group_item;    ///< Pointer to the next item in the same group
-#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
+#ifdef BACH_GROUPS_ARE_DOUBLY_LINKED
     struct _notation_item    *prev_group_item;    ///< Pointer to the next item in the same group
 #endif
 } t_notation_item;
@@ -3118,10 +3118,12 @@ typedef struct _rhythm_level_properties
  */ 
 typedef struct _measure_end_barline
 {
-    t_notation_item        r_it;            ///< Notation item, containing common stuff for all notation items.
-    struct _measure        *owner;            ///< The measure which owns it
-    char                barline_type;    ///< Type of ending barline. Must be one of #e_barline_modifier. By default it is #k_BARLINE_AUTOMATIC.
-
+    t_notation_item     r_it;            ///< Notation item, containing common stuff for all notation items.
+    struct _measure     *owner;            ///< The measure which owns it
+    char          barline_type;    ///< Type of ending barline. Must be one of #e_barline_modifier. By default it is #k_BARLINE_AUTOMATIC.
+    t_uint16      repeat_num;      ///< Number of repeat times (only applicable if barline types are of type ...._REPEAT_...)
+    t_uint16      repeat_alternate_ending_length; ///< Length of alternate ending for repeating
+    t_uint16      repeat_count;      ///< Current repetition count during playback (set at runtime)
 } t_measure_end_barline;
 
 
@@ -3205,7 +3207,8 @@ typedef struct _measure
 
     struct _measure_end_barline        *end_barline;        ///< Measure end barline
     char                            end_barline_dummy;    ///< Dummy field only used by bach attribute system
-
+    char                            repeat_num_dummy;     ///< Dummy field only used by bach attribute system
+    
     // flags
     char            need_recompute_beamings;            ///< Flag telling if we have to reanalyze the beamings inside the measure
     char            need_recompute_beams_positions;        ///< Flag telling if we have only to recompute the beaming positions, leaving the beaming structure untouched 
@@ -4543,6 +4546,9 @@ typedef struct _notation_obj
                                                         ///< will check that the current timing is NO bigger than the loop end, otherwise it'll simply schedule immediately the loop end.
                                                         ///< This flag is updated each time the play is started.
     
+//    t_timepoint            repeat_teleport_to;        ///< Teleport ending position for a repeat sign as timepoint (used internally)
+//    double                 repeat_teleport_to_ms;     ///< Teleport ending position for a repeat sign in milliseconds (used internally)
+    
     char        breakpoints_have_velocity;            ///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
     char        breakpoints_have_noteheads;            ///< Flag telling if the breakpoints are shown as standard classical noteheads (0 = none,  1= all, 2 = only internal)
     
@@ -4605,6 +4611,7 @@ typedef struct _notation_obj
     char    show_lock_color_when;    ///< Flag telling when the lock color has to be shown on locked elements; must be one of the #e_show_when 
     char    show_solo_color_when;     ///< Flag telling when the solo color has to be shown on soloed elements; must be one of the #e_show_when
     char    are_there_solos;        ///< Flag telling if, globally, there are soloed elements in the score (1) or not (0)
+    char    are_there_repeats;        ///< Flag telling if, globally, there are repeats in the score (1) or not (0)
     char    allow_mute;                ///< Allow muting elements
     char    allow_solo;                ///< Allow solo-ing elements
     char    allow_lock;                ///< Allow locking elements
@@ -14257,8 +14264,7 @@ char get_all_tuttipoint_barlines(t_notation_obj *r_ob, t_measure_end_barline *re
 
 // TBD
 t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *meas);
-
-void synchronize_repeats_for_measure(t_notation_obj *r_ob, t_measure *meas, bool add_undo_tick);
+void synchronize_repeats_across_voices(t_notation_obj *r_ob, t_measure *measure);
 
 /**    Set the t_chord::need_recompute_parameters flags for all the chords in a given measure, and also sets the t_notation_obj::need_perform_analysis_and_change flag.
     Those flags will force the chord graphic parameters to be recomputed at the next paint cycle.
@@ -15718,6 +15724,8 @@ char no_solo(t_notation_obj *r_ob);
                     @endcode
  */
 char are_there_solos(t_notation_obj *r_ob);
+
+char are_there_repeats(t_notation_obj *r_ob, bool zero_out_counts);
 
 
 /**    Remove all solo or mute flags set to rests.

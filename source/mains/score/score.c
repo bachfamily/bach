@@ -4146,7 +4146,8 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_scorevoice *voice;
     
     x->r_ob.are_there_solos = are_there_solos((t_notation_obj *) x);
-    
+    x->r_ob.are_there_repeats = are_there_repeats((t_notation_obj *) x, true);
+
     // setting automatic end
     end_ms = x->r_ob.length_ms_till_last_note;
     x->r_ob.play_head_fixed_end_ms = -1;
@@ -4565,6 +4566,40 @@ void score_task(t_score *x)
                 last_scheduled_ms = x->r_ob.loop_region.start.position_ms;
                 x->r_ob.play_head_ms = last_scheduled_ms;
                 x->r_ob.dont_schedule_loop_start = false;
+            } else if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_MEASURE_END_BARLINE) {
+                // scheduling repeat jump
+                // gotta find the position we jump to
+                t_measure *owner = ((t_measure_end_barline *)x->r_ob.scheduled_item)->owner;
+                double teleport_to_ms = 0;
+                for (t_measure *m = owner ? owner->prev : NULL; m; m = m->prev) {
+                    if (m->end_barline->barline_type == k_BARLINE_REPEAT_START || m->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) {
+                        teleport_to_ms = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)m->next);
+                    }
+                }
+                
+                // increase count
+                t_measure_end_barline *barline = (t_measure_end_barline *)x->r_ob.scheduled_item;
+                barline->repeat_count = positive_mod(barline->repeat_count + 1, MAX(1, barline->repeat_num));
+                
+                // repeat: setting the chord_play_cursor, measure_play_cursor and tempo_play_cursor to NULL for every voice
+                for (i = 0; i < x->r_ob.num_voices; i++) {
+                    x->r_ob.chord_play_cursor[i] = NULL;
+                    x->r_ob.tempo_play_cursor[i] = NULL;
+                    x->r_ob.measure_play_cursor[i] = NULL;
+                }
+                x->r_ob.marker_play_cursor = NULL;
+                
+                // we reset the start play time, and we set the starting playhead position to the loop start position
+                setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
+                if (x->r_ob.play_head_start_ms != teleport_to_ms) {
+                    x->r_ob.play_head_start_ms = teleport_to_ms;
+                    x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, teleport_to_ms, 1);
+                }
+                
+                last_scheduled_ms = teleport_to_ms;
+                x->r_ob.play_head_ms = last_scheduled_ms;
+//                x->r_ob.dont_schedule_loop_start = false;
+                
             } else {
                 last_scheduled_ms = x->r_ob.scheduled_ms;
                 if (scheduled_item_type == k_LOOP_START)

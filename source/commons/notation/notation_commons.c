@@ -10095,14 +10095,14 @@ void append_element_in_group(t_notation_obj *r_ob, t_group *group, t_notation_it
     if (group) {
         if (group->lastelem) { // not at the beginning
             item->next_group_item = NULL;
-#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
+#ifdef BACH_GROUPS_ARE_DOUBLY_LINKED
             item->prev_group_item = group->lastelem;
 #endif
             group->lastelem->next_group_item = item;
             group->lastelem = item;
         } else { // no tempos in the voices yet
             item->next_group_item = NULL;
-#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
+#ifdef BACH_GROUPS_ARE_DOUBLY_LINKED
             item->prev_group_item = NULL;
 #endif
             group->firstelem = group->lastelem = item;
@@ -10120,7 +10120,7 @@ void append_element_in_group(t_notation_obj *r_ob, t_group *group, t_notation_it
 
 
 
-#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
+#ifdef BACH_GROUPS_ARE_DOUBLY_LINKED
 void remove_element_from_group(t_notation_obj *r_ob, t_group *group, t_notation_item *element){
     if (group && element){
         group->num_elements--;
@@ -10250,7 +10250,7 @@ void delete_group(t_notation_obj *r_ob, t_group *group){
         t_notation_item *next = item->next_group_item;
         item->group = NULL;
         item->next_group_item = NULL;
-#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
+#ifdef BACH_GROUPS_ARE_DOUBLY_LINKED
         item->prev_group_item = NULL;
 #endif
         item = next;
@@ -11135,6 +11135,9 @@ t_measure_end_barline *build_measure_end_barline(t_notation_obj *r_ob, t_measure
     notation_item_init(&b->r_it, k_MEASURE_END_BARLINE);
     b->barline_type = k_BARLINE_AUTOMATIC;
     b->owner = measure_ref;
+    b->repeat_num = 2;
+    b->repeat_count = 0;
+    b->repeat_alternate_ending_length = 0;
     return b;
 }
 
@@ -11183,10 +11186,6 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
     outmeas->force_measure_number = false;
     outmeas->forced_measure_number = 0;
     
-/*    outmeas->repeat_start = false;
-    outmeas->repeat_end = false;
-    outmeas->repeat_num = 1;
-    outmeas->repeat_endinglength = 0;*/
 
     outmeas->rhythmic_tree = llll_get();
 //    outmeas->ties_tree = NULL;
@@ -12140,11 +12139,6 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
     newmeasure->show_measure_number = measure->show_measure_number;
     newmeasure->force_measure_number = measure->force_measure_number;
     newmeasure->forced_measure_number = measure->forced_measure_number;
-
-/*    newmeasure->repeat_start = measure->repeat_start;
-    newmeasure->repeat_end = measure->repeat_end;
-    newmeasure->repeat_num = measure->repeat_num;
-    newmeasure->repeat_endinglength = measure->repeat_endinglength; */
 
     newmeasure->info_for_pwgl = llll_get();
     newmeasure->measure_filling = measure->measure_filling;
@@ -15009,6 +15003,29 @@ void check_mute_solo_flags_for_rests(t_notation_obj *r_ob){
             }
         }
     }
+}
+
+char are_there_repeats(t_notation_obj *r_ob, bool zero_out_counts)
+{
+    t_voice *voice;
+    bool res = false;
+    for (voice = (t_voice *) r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = (t_voice *) voice_get_next(r_ob, voice)){
+        t_measure *meas;
+        for (meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next){
+            if (meas->end_barline->barline_type == k_BARLINE_REPEAT_END ||
+                meas->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) {
+                if (meas->end_barline->repeat_num > 1) {
+                    if (!zero_out_counts)
+                        return true;
+                    else {
+                        meas->end_barline->repeat_count = 0;
+                        res = true;
+                    }
+                }
+            }
+        }
+    }
+    return res;
 }
 
 char are_there_solos(t_notation_obj *r_ob){
@@ -27588,7 +27605,7 @@ void notation_item_init(t_notation_item *it, e_element_types item_type)
     it->next_selected = it->next_preselected = NULL;
     it->prev_selected = it->prev_preselected = NULL;
     it->next_group_item = NULL;
-#ifdef BACH_GROUPS_ARE_DOUBLE_LINKED
+#ifdef BACH_GROUPS_ARE_DOUBLY_LINKED
     it->prev_group_item = NULL;
 #endif
     it->selected = it->preselected = false;
@@ -37453,6 +37470,14 @@ double notation_item_get_onset_ms(t_notation_obj *r_ob, t_notation_item *it)
         case k_LYRICS: return ((t_lyrics *)it)->owner->onset;
         case k_DYNAMICS: return notation_item_get_onset_ms(r_ob, ((t_dynamics *)it)->owner_item);
         case k_MEASURE: return ((t_measure *)it)->tuttipoint_onset_ms + ((t_measure *)it)->tuttipoint_reference->onset_ms;
+        case k_MEASURE_END_BARLINE:
+        {
+            t_measure *owner = ((t_measure_end_barline *)it)->owner;
+            if (owner->next)
+                return owner->next->tuttipoint_onset_ms + owner->next->tuttipoint_reference->onset_ms;
+            else
+                return owner->tuttipoint_onset_ms + owner->tuttipoint_reference->onset_ms + owner->total_duration_ms;
+        }
         case k_TEMPO: return ((t_tempo *)it)->onset;
         case k_VOICE: return 0;
         case k_MARKER:
@@ -37529,6 +37554,14 @@ double notation_item_get_onset_ms_accurate(t_notation_obj *r_ob, t_notation_item
         case k_DURATION_LINE: return notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)((t_duration_line *)it)->owner);
         case k_MEASURE:
             return ((t_measure *)it)->tuttipoint_reference->onset_ms + ((t_measure *)it)->tuttipoint_onset_ms;
+        case k_MEASURE_END_BARLINE:
+        {
+            t_measure *owner = ((t_measure_end_barline *)it)->owner;
+            if (owner->next)
+                return owner->next->tuttipoint_onset_ms + owner->next->tuttipoint_reference->onset_ms;
+            else
+                return owner->tuttipoint_onset_ms + owner->tuttipoint_reference->onset_ms + owner->total_duration_ms;
+        }
         case k_TEMPO:
             return ((t_tempo *)it)->owner->tuttipoint_reference->onset_ms + ((t_tempo *)it)->measure_onset_ms;
         case k_VOICE: return 0;
@@ -40096,26 +40129,6 @@ t_max_err notationobj_set_keys(t_notation_obj *r_ob, t_symbol **keys)
 }
 
 
-
-/// REPEATS
-///
-/*
- void synchronize_repeats_for_measure(t_notation_obj *r_ob, t_measure *meas, bool add_undo_tick)
-{
-    t_llll *meas_ll = measure_get_aligned_measures_as_llll(r_ob, meas);
-    for (t_llllelem *el = meas_ll->l_head; el; el = el->l_next) {
-        t_measure *thismeas = (t_measure *)hatom_getobj(&el->l_hatom);
-        if (add_undo_tick)
-            undo_tick_create_for_selected_notation_item(r_ob, (t_notation_item *)thismeas, k_MEASURE, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
-        thismeas->repeat_start = meas->repeat_start;
-        thismeas->repeat_end = meas->repeat_end;
-        thismeas->repeat_endinglength = meas->repeat_endinglength;
-        thismeas->repeat_num = meas->repeat_num;
-        recompute_all_for_measure(r_ob, thismeas, true);
-    }
-}
-*/
-
 /// LOCAL SPACING
 
 void assign_local_spacing_width_multiplier(t_notation_obj *r_ob, t_tuttipoint *tpt, double new_value){
@@ -40518,7 +40531,7 @@ t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms){
         }
     }
     
-    if (r_ob->play_measures && r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && (r_ob->play_measures || r_ob->are_there_repeats)) {
         t_measure *measure;
         for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)){
             for (measure = r_ob->measure_play_cursor[voice->number] ? measure_get_next(r_ob->measure_play_cursor[voice->number]) :
@@ -40532,15 +40545,41 @@ t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms){
                         r_ob->measure_play_cursor[voice->number] = measure;
                     else
                         notationobj_throw_issue(r_ob);
-                } else if (should_element_be_played(r_ob, (t_notation_item *)measure)) {
-                    if (measure_onset >= current_ms && (!nextitemtoplay || measure_onset - current_ms < best_difference)) {
-                        best_difference = measure_onset - current_ms;
-                        nextitemtoplay = (t_notation_item *)measure;
-                    } else if (measure_onset >= current_ms) {
-                        break;
+                } else {
+                    if (r_ob->are_there_repeats || (r_ob->play_measures && should_element_be_played(r_ob, (t_notation_item *)measure))) {
+                        if (measure_onset >= current_ms && (!nextitemtoplay || measure_onset - current_ms < best_difference)) {
+                            if (r_ob->are_there_repeats && voice->number == 0 && //< we only repeats on the first voice, otherwise it's potentially a mess! We don't have independent play cursors for different voices...
+                                measure->prev &&
+                                (measure->prev->end_barline->barline_type == k_BARLINE_REPEAT_END || measure->prev->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) &&
+                                measure->prev->end_barline->repeat_count < measure->prev->end_barline->repeat_num - 1) {
+                                // scheduling repeat!
+                                best_difference = measure_onset - current_ms;
+                                nextitemtoplay = (t_notation_item *)measure->prev->end_barline;
+                            } else if (r_ob->play_measures) {
+                                best_difference = measure_onset - current_ms;
+                                nextitemtoplay = (t_notation_item *)measure;
+                            }
+                        } else if (measure_onset >= current_ms) {
+                            break;
+                        }
                     }
                 }
             }
+            
+            // scheduling repeat at the last measure?
+            if (!measure && r_ob->are_there_repeats &&  voice->number == 0 &&
+                (((t_scorevoice *)voice)->lastmeasure->end_barline->barline_type == k_BARLINE_REPEAT_END ||
+                 ((t_scorevoice *)voice)->lastmeasure->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) &&
+                ((t_scorevoice *)voice)->lastmeasure->end_barline->repeat_count < ((t_scorevoice *)voice)->lastmeasure->end_barline->repeat_num - 1) {
+                double end_onset = notation_item_get_tail_ms(r_ob, (t_notation_item *)(((t_scorevoice *)voice)->lastmeasure));
+                if (!nextitemtoplay || end_onset - current_ms < best_difference) {
+                    best_difference = end_onset - current_ms;
+                    nextitemtoplay = (t_notation_item *)((t_scorevoice *)voice)->lastmeasure->end_barline;
+                }
+            }
+            
+            if (!r_ob->play_measures)
+                break; //< we only needed the first voice for the repeat scheduling
         }
     }
     
