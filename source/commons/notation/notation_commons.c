@@ -15009,18 +15009,16 @@ char are_there_repeats(t_notation_obj *r_ob, bool zero_out_counts)
 {
     t_voice *voice;
     bool res = false;
-    for (voice = (t_voice *) r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = (t_voice *) voice_get_next(r_ob, voice)){
-        t_measure *meas;
-        for (meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next){
-            if (meas->end_barline->barline_type == k_BARLINE_REPEAT_END ||
-                meas->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) {
-                if (meas->end_barline->repeat_num > 1) {
-                    if (!zero_out_counts)
-                        return true;
-                    else {
-                        meas->end_barline->repeat_count = 0;
-                        res = true;
-                    }
+    // we only search in the first voice, because either all voices are synchronous, or repeats will be a mess!
+    for (t_measure *meas = ((t_scorevoice *)r_ob->firstvoice)->firstmeasure; meas; meas = meas->next){
+        if (meas->end_barline->barline_type == k_BARLINE_REPEAT_END ||
+            meas->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) {
+            if (meas->end_barline->repeat_num > 1) {
+                if (!zero_out_counts)
+                    return true;
+                else {
+                    meas->end_barline->repeat_count = 0;
+                    res = true;
                 }
             }
         }
@@ -40567,7 +40565,7 @@ t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms){
             }
             
             // scheduling repeat at the last measure?
-            if (!measure && r_ob->are_there_repeats &&  voice->number == 0 &&
+            if (!measure && r_ob->are_there_repeats && voice->number == 0 &&
                 (((t_scorevoice *)voice)->lastmeasure->end_barline->barline_type == k_BARLINE_REPEAT_END ||
                  ((t_scorevoice *)voice)->lastmeasure->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) &&
                 ((t_scorevoice *)voice)->lastmeasure->end_barline->repeat_count < ((t_scorevoice *)voice)->lastmeasure->end_barline->repeat_num - 1) {
