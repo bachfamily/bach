@@ -1783,6 +1783,11 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 			}
 			atom_setlong(*av, idx);
 			return;
+        } else if (attr->name == _llllobj_sym_repeatnum) {
+            *ac = 1;
+            *av = (t_atom *)bach_newptr(sizeof(t_atom));
+            atom_setlong(*av, ((t_measure *)obj)->end_barline->repeat_num);
+            return;
 		} else if (attr->name == _llllobj_sym_number) {
 			*ac = 1;
 			*av = (t_atom *)bach_newptr(sizeof(t_atom));

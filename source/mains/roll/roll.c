@@ -14225,6 +14225,7 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
             note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->voiceparent->v_ob.number, delta);
+            note->pitch_original = t_pitch::NaP;
         }
     } else {
         note->midicents += delta;

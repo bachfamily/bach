@@ -3122,7 +3122,7 @@ typedef struct _measure_end_barline
     struct _measure     *owner;            ///< The measure which owns it
     char          barline_type;    ///< Type of ending barline. Must be one of #e_barline_modifier. By default it is #k_BARLINE_AUTOMATIC.
     t_uint16      repeat_num;      ///< Number of repeat times (only applicable if barline types are of type ...._REPEAT_...)
-    t_uint16      repeat_alternate_ending_length; ///< Length of alternate ending for repeating
+//    t_uint16      repeat_alternate_ending_length; ///< Length of alternate ending for repeating: unsupported for now
     t_uint16      repeat_count;      ///< Current repetition count during playback (set at runtime)
 } t_measure_end_barline;
 
@@ -4612,6 +4612,7 @@ typedef struct _notation_obj
     char    show_solo_color_when;     ///< Flag telling when the solo color has to be shown on soloed elements; must be one of the #e_show_when
     char    are_there_solos;        ///< Flag telling if, globally, there are soloed elements in the score (1) or not (0)
     char    are_there_repeats;        ///< Flag telling if, globally, there are repeats in the score (1) or not (0)
+    char    show_repeat_times;          ///< Show how many times a repeat will repeat (0 = no, 1 = only for repeat_num != 2, 2 = always)
     char    allow_mute;                ///< Allow muting elements
     char    allow_solo;                ///< Allow solo-ing elements
     char    allow_lock;                ///< Allow locking elements
@@ -11097,6 +11098,10 @@ void write_text_standard_account_for_insets_singleline(t_notation_obj *r_ob, t_j
 void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
 void write_text_vcentered_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1);
+
+void write_text_hcentered_top_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1);
+
+void write_text_hcentered_bottom_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1);
 
 void write_text_standard_account_for_vinset_singleline(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 

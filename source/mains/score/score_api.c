@@ -10126,6 +10126,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 end_barline_x = round_to_semiinteger(domain_end_pixel) - 1;
             }
             
+            long show_repeat_num = 0;
             if (!x->r_ob.pagelike_barlines || !(fabs(end_barline_x - domain_start_pixel) < THRESH_PAGELIKE_BARLINES_START)) {
                 switch (barline_type) { // barline width
                     case k_BARLINE_NORMAL:
@@ -10176,6 +10177,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         }
                         paint_line(g, barline_color, end_barline_x+(CONST_BARLINE_USPACE_FOR_REPEAT * x->r_ob.zoom_y), staff_top, end_barline_x+(CONST_BARLINE_USPACE_FOR_REPEAT * x->r_ob.zoom_y), end_barline_y, 1.);
                         paint_line(g, barline_color, end_barline_x+(CONST_BARLINE_USPACE_FOR_REPEAT + 4) * x->r_ob.zoom_y, staff_top, end_barline_x+(CONST_BARLINE_USPACE_FOR_REPEAT + 4) * x->r_ob.zoom_y, end_barline_y, 3.5  * x->r_ob.zoom_y);
+                        
+                        if (x->r_ob.show_repeat_times == 2 ||
+                            (x->r_ob.show_repeat_times == 1 && curr_meas->end_barline->repeat_num != 2)) {
+                            show_repeat_num = curr_meas->end_barline->repeat_num;
+                        }
                     }
                         break;
                     case k_BARLINE_REPEAT_START:
@@ -10214,6 +10220,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         paint_line(g, barline_color, end_barline_x+(CONST_BARLINE_USPACE_FOR_REPEAT * x->r_ob.zoom_y), staff_top, end_barline_x+(CONST_BARLINE_USPACE_FOR_REPEAT * x->r_ob.zoom_y), end_barline_y, 1.);
                         paint_line(g, barline_color, end_barline_x+(CONST_BARLINE_USPACE_FOR_REPEAT + 4) * x->r_ob.zoom_y, staff_top, end_barline_x+(CONST_BARLINE_USPACE_FOR_REPEAT + 4) * x->r_ob.zoom_y, end_barline_y, 3.5  * x->r_ob.zoom_y);
                         paint_line(g, barline_color, end_barline_x + delta_x - CONST_BARLINE_USPACE_FOR_REPEAT * x->r_ob.zoom_y, staff_top, end_barline_x + delta_x - CONST_BARLINE_USPACE_FOR_REPEAT * x->r_ob.zoom_y, end_barline_y, 1.);
+                        
+                        if (x->r_ob.show_repeat_times == 2 ||
+                            (x->r_ob.show_repeat_times == 1 && curr_meas->end_barline->repeat_num != 2)) {
+                            show_repeat_num = curr_meas->end_barline->repeat_num;
+                        }
                     }
                         break;
                 }
@@ -10221,10 +10232,10 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             
             
             // measure numbers?
+            double measure_number_x = end_barline_x + measure_get_barline_left_offset_ux((t_notation_obj *)x, curr_meas) * x->r_ob.zoom_y;
+            bool measure_number_displayed = false;
             measure_numbers_top_y = staff_top;
             if (x->r_ob.show_measure_numbers[voice->v_ob.number] && curr_meas->next && curr_meas->next->show_measure_number && (!measure_across || (t_voice *)voice == first_visible_voice)) {
-                double measure_number_x = end_barline_x;
-                measure_number_x += measure_get_barline_left_offset_ux((t_notation_obj *)x, curr_meas) * x->r_ob.zoom_y;
                 if (x->r_ob.pagelike_barlines && fabs(measure_number_x - domain_end_pixel) < THRESH_PAGELIKE_BARLINES_END) {
                     // this is at the end of the line, won't paint this number
                 } else if (x->r_ob.pagelike_barlines && fabs(measure_number_x - domain_start_pixel) < THRESH_PAGELIKE_BARLINES_START) {
@@ -10237,6 +10248,19 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     jfont_text_measure(jf_measure_num, measurenum_txt, &measurenum_width, &measurenum_height);
                     measure_numbers_top_y = staff_top - measurenum_height - CONST_MEASURE_NUMBER_STAFF_USEPARATION * x->r_ob.zoom_y - (curr_meas->end_barline->barline_type == k_BARLINE_TICK ? 2 * x->r_ob.zoom_y : 0);
                     write_text_standard_account_for_vinset((t_notation_obj *) x, g, jf_measure_num, x->r_ob.j_measnum_rgba, measurenum_txt, measure_number_x - measurenum_width/2., measure_numbers_top_y);
+                    measure_number_displayed = true;
+                }
+            }
+            
+            if (show_repeat_num > 0) {
+                char tempbuf[16];
+                snprintf_zero(tempbuf, 16, "[00%d]", show_repeat_num);
+                tempbuf[1] = 195;
+                tempbuf[2] = 151;
+                if (measure_number_displayed) {
+                    write_text_hcentered_top_account_for_vinset((t_notation_obj *)x, g, jf_measure_num, x->r_ob.j_barline_rgba, tempbuf, measure_number_x, measure_numbers_top_y - x->r_ob.measure_numbers_font_size * x->r_ob.zoom_y);
+                } else {
+                    write_text_hcentered_bottom_account_for_vinset((t_notation_obj *)x, g, jf_measure_num, x->r_ob.j_barline_rgba, tempbuf, measure_number_x, staff_top - CONST_MEASURE_NUMBER_STAFF_USEPARATION * x->r_ob.zoom_y);
                 }
             }
             

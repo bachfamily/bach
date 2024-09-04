@@ -4574,6 +4574,7 @@ void score_task(t_score *x)
                 for (t_measure *m = owner ? owner->prev : NULL; m; m = m->prev) {
                     if (m->end_barline->barline_type == k_BARLINE_REPEAT_START || m->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) {
                         teleport_to_ms = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)m->next);
+                        break;
                     }
                 }
                 
@@ -7315,6 +7316,16 @@ void C74_EXPORT ext_main(void *moduleRef){
     // @exclude bach.score
 
 //    CLASS_ATTR_DOUBLE_ARRAY(c, "temp", 0, t_notation_obj, temp, 6);
+
+    CLASS_STICKY_ATTR(c,"category",0,"Show");
+    
+    CLASS_ATTR_CHAR(c,"showrepeatnums",0, t_notation_obj, show_repeat_times);
+    CLASS_ATTR_STYLE_LABEL(c,"showrepeatnums",0,"enumindex","Show Number of Repetitions");
+    CLASS_ATTR_ENUMINDEX(c,"showrepeatnums", 0, "Don't If Non-Standard Always");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showrepeatnums",0,"1");
+    CLASS_ATTR_FILTER_CLIP(c, "showrepeatnums", 0, 2);
+    
+    CLASS_STICKY_ATTR_CLEAR(c, "category");
 
     CLASS_STICKY_ATTR(c,"category",0,"Appearance");
     
@@ -11750,6 +11761,7 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
             note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->parent->voiceparent->v_ob.number, delta);
+            note->pitch_original = t_pitch::NaP;
         }
 //        recompute_all_for_measure((t_notation_obj *)x, note->parent->parent, false);
 //        note->midicents += (delta * (200. / x->r_ob.tone_division));

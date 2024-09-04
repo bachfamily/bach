@@ -159,6 +159,16 @@ void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g
     write_text_standard(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1, r_ob->width - x1 + 30 * r_ob->zoom_y, r_ob->height - y1 + 30 * r_ob->zoom_y);
 }
 
+void write_text_hcentered_top_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+{
+    write_text(g, jf, textcolor, text, x1 - 30 * r_ob->zoom_y, r_ob->j_inset_y + y1, 60 * r_ob->zoom_y, r_ob->height - (r_ob->j_inset_y + y1), JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
+}
+
+void write_text_hcentered_bottom_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
+{
+    write_text(g, jf, textcolor, text, x1 - 30 * r_ob->zoom_y, 0, 60 * r_ob->zoom_y, r_ob->j_inset_y + y1, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM, false, false);
+}
+
 void write_text_vcentered_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1)
 {
     write_text(g, jf, textcolor, text, x1, r_ob->j_inset_y + y1 - 30 * r_ob->zoom_y, r_ob->width - x1 + 30 * r_ob->zoom_y, 60 * r_ob->zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_VCENTERED, false, false);
@@ -9660,6 +9670,13 @@ void set_measure_parameters(t_notation_obj *r_ob, t_measure *measure, t_llll *pa
                                 measure->end_barline->barline_type = symbol_to_barline_type(thissym);
                             }
                         }
+                    } else if (router == _llllobj_sym_repeatnum){
+                        if (this_llll->l_head->l_next) {
+                            if (is_hatom_number(&this_llll->l_head->l_next->l_hatom)) {
+                                long l = hatom_getlong(&this_llll->l_head->l_next->l_hatom);
+                                measure->end_barline->repeat_num = MAX(1, l);
+                            }
+                        }
                     } else if (router == _llllobj_sym_usecustomboxes){
                         if (this_llll->l_head->l_next && is_hatom_number(&this_llll->l_head->l_next->l_hatom)) {
                             long num = hatom_getlong(&this_llll->l_head->l_next->l_hatom);
@@ -11137,7 +11154,7 @@ t_measure_end_barline *build_measure_end_barline(t_notation_obj *r_ob, t_measure
     b->owner = measure_ref;
     b->repeat_num = 2;
     b->repeat_count = 0;
-    b->repeat_alternate_ending_length = 0;
+//    b->repeat_alternate_ending_length = 0;
     return b;
 }
 
@@ -31096,14 +31113,17 @@ t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure
     llll_appendllll(ts_tempo_llll, measure_get_tempi_as_llll(measure, prepend_this_tempo), 0, WHITENULL_llll);
     
     if (measure->end_barline->barline_type > 0 && measure->end_barline->barline_type != 'a') {
+        bool repeat_end = false;
         t_llll *barlinellll = llll_get();
         llll_appendsym(barlinellll, _llllobj_sym_barline, 0, WHITENULL_llll);
         if (measure->end_barline->barline_type == k_BARLINE_REPEAT_END) {
             llll_appendsym(barlinellll, gensym("re"), 0, WHITENULL_llll);
+            repeat_end = true;
         } else if (measure->end_barline->barline_type == k_BARLINE_REPEAT_START) {
             llll_appendsym(barlinellll, gensym("rs"), 0, WHITENULL_llll);
         } else if (measure->end_barline->barline_type == k_BARLINE_REPEAT_END_AND_START) {
             llll_appendsym(barlinellll, gensym("res"), 0, WHITENULL_llll);
+            repeat_end = true;
         } else {
             char mystring[2];
             mystring[0] = measure->end_barline->barline_type;
@@ -31112,6 +31132,10 @@ t_llll* measure_get_measureinfo_as_llll(t_notation_obj *r_ob, t_measure *measure
         }
         //        llll_appendlong(barlinellll, measure->end_barline->barline_type, 0, WHITENULL_llll);
         llll_appendllll(ts_tempo_llll, barlinellll, 0, WHITENULL_llll);
+        
+        if (repeat_end) {
+            llll_appendllll(ts_tempo_llll, symbol_and_long_to_llll(_llllobj_sym_repeatnum, measure->end_barline->repeat_num));
+        }
     }
     
     if (measure->local_spacing_width_multiplier != 1.) {
@@ -37103,6 +37127,8 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
 
     // Inspector is bach inspector
     r_ob->m_inspector.bach_managing = true;
+    
+    r_ob->show_repeat_times = 1;
     
     // TODO: possibly change defaults for these two lines below, and expose them as attributes!
     r_ob->ji_limit = 5; // what should be the default? 5 seems like a conservative choice, pretty much like 12-EDO
