@@ -794,7 +794,7 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     
     
     if (octave_shift != 0 || (r_ob->show_aux_clefs && (clef == k_CLEF_FFGG || clef == k_CLEF_FGG || clef == k_CLEF_FFG || clef == k_CLEF_GG || clef == k_CLEF_FF))) {
-        jf_littleclefnumber = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_CLEF_OCTAVE_NUMBER_BASE_PT * zoom_y);
+        jf_littleclefnumber = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, r_ob->notation_typo_preferences.clef_num_base_pt * zoom_y);
         octave_text = get_clef_octave_shift_for_clef_text(clef);
     }
     
@@ -802,37 +802,73 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     if (r_ob->show_aux_clefs && jf_littleclefnumber) {
         if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_GG)) {
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + 2 * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + 2 * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + r_ob->notation_typo_preferences.clef_F15ma_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + 2 * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - r_ob->notation_typo_preferences.clef_F15ma_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
         if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FF)) {
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 - 2 * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 - 2 * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + r_ob->notation_typo_preferences.clef_F15mb_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 - 2 * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - r_ob->notation_typo_preferences.clef_F15mb_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
     }
     
+    double nux = 0, nuy = 0;
+    switch (clef) {
+        case k_CLEF_G15ma:
+            nux = r_ob->notation_typo_preferences.clef_G15ma_num_ushift.x;
+            nuy = r_ob->notation_typo_preferences.clef_G15ma_num_ushift.y;
+            break;
+        case k_CLEF_G8va:
+            nux = r_ob->notation_typo_preferences.clef_G8va_num_ushift.x;
+            nuy = r_ob->notation_typo_preferences.clef_G8va_num_ushift.y;
+            break;
+        case k_CLEF_G15mb:
+            nux = r_ob->notation_typo_preferences.clef_G15mb_num_ushift.x;
+            nuy = r_ob->notation_typo_preferences.clef_G15mb_num_ushift.y;
+            break;
+        case k_CLEF_G8vb:
+            nux = r_ob->notation_typo_preferences.clef_G8vb_num_ushift.x;
+            nuy = r_ob->notation_typo_preferences.clef_G8vb_num_ushift.y;
+            break;
+        case k_CLEF_F15ma:
+            nux = r_ob->notation_typo_preferences.clef_F15ma_num_ushift.x;
+            nuy = r_ob->notation_typo_preferences.clef_F15ma_num_ushift.y;
+            break;
+        case k_CLEF_F8va:
+            nux = r_ob->notation_typo_preferences.clef_F8va_num_ushift.x;
+            nuy = r_ob->notation_typo_preferences.clef_F8va_num_ushift.y;
+            break;
+        case k_CLEF_F15mb:
+            nux = r_ob->notation_typo_preferences.clef_F15mb_num_ushift.x;
+            nuy = r_ob->notation_typo_preferences.clef_F15mb_num_ushift.y;
+            break;
+        case k_CLEF_F8vb:
+            nux = r_ob->notation_typo_preferences.clef_F8vb_num_ushift.x;
+            nuy = r_ob->notation_typo_preferences.clef_F8vb_num_ushift.y;
+            break;
+    }
+
     switch (clef) {
         case k_CLEF_G15ma:
         case k_CLEF_G8va:
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_G15mb:
         case k_CLEF_G8vb:
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
             
         case k_CLEF_F15ma:
         case k_CLEF_F8va:
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_F15mb:
         case k_CLEF_F8vb:
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_ALTO:
@@ -7379,6 +7415,16 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     fill_double_array(r_ob->notation_typo_preferences.rest_uwidths, 9, 7.3, 7.7, 7.7, 7.1, 8.1, 8.6,  9.1,  9.4,   10.);
     fill_long_array(r_ob->notation_typo_preferences.nominal_staff_line_shift, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
+    r_ob->notation_typo_preferences.clef_num_base_pt = 9;
+    r_ob->notation_typo_preferences.clef_G15ma_num_ushift = build_pt(0, 0);
+    r_ob->notation_typo_preferences.clef_G8va_num_ushift = build_pt(0, 0);
+    r_ob->notation_typo_preferences.clef_F15ma_num_ushift = build_pt(0, 0);
+    r_ob->notation_typo_preferences.clef_F8va_num_ushift = build_pt(0, 0);
+    r_ob->notation_typo_preferences.clef_G15mb_num_ushift = build_pt(0, 0);
+    r_ob->notation_typo_preferences.clef_G8vb_num_ushift = build_pt(0, 0);
+    r_ob->notation_typo_preferences.clef_F15mb_num_ushift = build_pt(0, 0);
+    r_ob->notation_typo_preferences.clef_F8vb_num_ushift = build_pt(0, 0);
+
     if (fontnameeq(font->s_name, "November for bach")) {
 #ifdef BACH_JUCE
         juce_mul = 2.5;
@@ -7415,6 +7461,29 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         
     } else if (fontnameeq(font->s_name, "Bravura")) {
         fill_notation_typo_preferences_SMuFL(r_ob);
+        
+        r_ob->notation_typo_preferences.clef_num_base_pt = 8;
+
+        r_ob->notation_typo_preferences.clef_G15ma_num_ushift.x = 1.5;
+        r_ob->notation_typo_preferences.clef_G8va_num_ushift.x = 1.5;
+        r_ob->notation_typo_preferences.clef_F15ma_num_ushift.x = 1.5;
+        r_ob->notation_typo_preferences.clef_F8va_num_ushift.x = 1.5;
+
+        r_ob->notation_typo_preferences.clef_G15ma_num_ushift.y = 0.5;
+        r_ob->notation_typo_preferences.clef_G8va_num_ushift.y = 0.5;
+        r_ob->notation_typo_preferences.clef_F15ma_num_ushift.y = 0.3;
+        r_ob->notation_typo_preferences.clef_F8va_num_ushift.y = 0.3;
+
+        r_ob->notation_typo_preferences.clef_G15mb_num_ushift.x = -0.5;
+        r_ob->notation_typo_preferences.clef_G8vb_num_ushift.x = -0.5;
+        r_ob->notation_typo_preferences.clef_F15mb_num_ushift.x = 2;
+        r_ob->notation_typo_preferences.clef_F8vb_num_ushift.x = 0;
+
+        r_ob->notation_typo_preferences.clef_G15mb_num_ushift.y = 0.5;
+        r_ob->notation_typo_preferences.clef_G8vb_num_ushift.y = 0.5;
+        r_ob->notation_typo_preferences.clef_F15mb_num_ushift.y = 0.3;
+        r_ob->notation_typo_preferences.clef_F8vb_num_ushift.y = 0.3;
+
 /*        r_ob->notation_typo_preferences.base_pt = 24. * juce_mul;
         r_ob->notation_typo_preferences.base_pt_ts = 24. * juce_mul;
         r_ob->notation_typo_preferences.ts_uy_shift = -42; // TO DO

@@ -403,7 +403,6 @@
 #define CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW 15.8    ///< Unscaled vertical shift (in pixels), with respect to the G clef textbox, of the top textbox boundary to write the small octave number under the G clef
 #define CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE 15        ///< Unscaled vertical shift (in pixels), with respect to the F clef textbox, of the top textbox boundary to write the small octave number over the F clef
 #define CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW 23    ///< Unscaled vertical shift (in pixels), with respect to the F clef textbox, of the top textbox boundary to write the small octave number under the F clef
-#define CONST_CLEF_OCTAVE_NUMBER_BASE_PT 9        ///< Dimension in pt (for <zoom_y> = 1) of the small "15" number under the F clef
 /** @}*/
 
 
@@ -3660,7 +3659,17 @@ typedef struct _notation_typo_preferences
     unicodeChar        clefs_unicode_characters[4];    ///< Unicode characters for the clefs: G clef, F clef, C clef, Percussion clef
     double            clef_ux_shift;                    ///< Unscaled horizontal shift of the clefs, with respect to a default reference position
     double            clef_uy_shift;                    ///< Unscaled vertical shift of the clefs, with respect to a default reference position
-        
+
+    double            clef_num_base_pt;                 ///< Base pt for the clef numbers (will be in Arial bold)
+    t_pt              clef_G15ma_num_ushift;            ///< Shift to clef numbers for each specific clef (unscaled)
+    t_pt              clef_G8va_num_ushift;
+    t_pt              clef_F15ma_num_ushift;
+    t_pt              clef_F8va_num_ushift;
+    t_pt              clef_G15mb_num_ushift;
+    t_pt              clef_G8vb_num_ushift;
+    t_pt              clef_F15mb_num_ushift;
+    t_pt              clef_F8vb_num_ushift;
+
     // flags
     unicodeChar        flag_unicode_characters[6];        ///< Unicode characters for the following flags: 1/8 (stem up), 1/8 (stem down), 
                                                     ///< 1/16 (stem up), 1/16 (stem down), further flag (stem up), further flag (stem down).
