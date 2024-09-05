@@ -3714,7 +3714,10 @@ typedef struct _articulation_preferences
     unicodeChar        extension_line_char;            ///< Unicode character for the articulation extension (e.g. the '~' character for the tr~~~~~~)
     double            extension_line_uy_offset;      ///< Unscaled vertical offset for the articulation extension line with respect to the associated articulation position.
                                                                                 ///< E.g. this is useful to shift the ~~~~~~ higher or lower with respect to the 'tr' symbol.
-    
+    unicodeChar       superscript_char;               ///< Superscript chars, used by trills
+    double            superscript_char_ux_shift;      ///< Superscript chars horizontal shift
+    double            superscript_char_uy_shift;      ///< Superscript chars vertical shift
+
     // XML export stuff
     t_symbol        *xmlornament;
     t_symbol        *xmltechnical;
@@ -3732,6 +3735,7 @@ typedef struct _articulations_typo_preferences
 {
     long                        num_articulations;  // number of defined articulations (<= CONST_MAX_ARTICULATIONS), including the NONE one
     t_articulation_preferences  *artpref;           // actual articulation preferences for each one of them (allocated at startup with size #CONST_MAX_ARTICULATIONS)
+    double                      card_uy_shift;      //< Vertical shift for painting articulation within the slot window ("cards")
 } t_articulations_typo_preferences;
 
 
@@ -4944,7 +4948,8 @@ typedef struct _notation_obj
                                         ///< by the mobile playtime playcursor)
     double        play_head_fixed_end_ms; ///< Fixed end in milliseconds for the play to stop. Once reached this millisecond position, the stop function is called, and the play is over.
                                         ///< If this value is negative (e.g. -1), no end is given, and the play stops only when the score reading is over.
-    
+    double        play_head_reset_start_ms_when_play_ends; ///< if positive, sets a position for the reset of the play_head after play ends
+    ///<
     double        theoretical_play_step_ms;    ///< Approximative step (in milliseconds) for playhead redraw. 0 means that the score is redrawn at each
                                             ///< scheduled event. The "approximative" adjective is due to the fact that we need an integer number of ticks 
                                             ///< between two scheduled events, so this might slightly vary in each scheduled interval
@@ -6606,7 +6611,7 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font);
     @param r_ob        The notation object
     @param font        The font name
  */
-void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, t_symbol *font);
+void load_articulations_typo_preferences(t_notation_obj *r_ob, t_articulations_typo_preferences *atp, t_symbol *font);
 
 
 // Internal
@@ -11098,6 +11103,8 @@ void write_text_standard_account_for_insets_singleline(t_notation_obj *r_ob, t_j
 void write_text_standard_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char * text, double x1, double y1);
 
 void write_text_vcentered_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1);
+
+void write_text_vcentered_and_hcentered_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char  *text, double x1, double y1);
 
 void write_text_hcentered_top_account_for_vinset(t_notation_obj *r_ob, t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1);
 

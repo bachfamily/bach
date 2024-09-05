@@ -7460,7 +7460,7 @@ t_max_err roll_setattr_articulations_font(t_roll *x, t_object *attr, long ac, t_
         if (size && text) {
             t_symbol *font = gensym(text);
             x->r_ob.articulations_font = font;
-            load_articulations_typo_preferences(&x->r_ob.articulations_typo_preferences, font);
+            load_articulations_typo_preferences((t_notation_obj *)x, &x->r_ob.articulations_typo_preferences, font);
             reset_all_articulations_positions((t_notation_obj *)x);
             notationobj_reset_all_slurs_position((t_notation_obj *) x);
             x->r_ob.firsttime = true;

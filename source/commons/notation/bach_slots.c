@@ -1128,12 +1128,26 @@ void paint_articulations_cards_in_slot(t_notation_obj *r_ob, t_jgraphics* g, t_r
         char selected = is_long_in_llll_first_level(selected_arts, id);
         double width, height;
         t_symbol *font = r_ob->articulations_typo_preferences.artpref[id].font;
-        double fontsize = r_ob->articulations_typo_preferences.artpref[id].base_pt * zoom_y * 0.75;
+        double fontsize = r_ob->articulations_typo_preferences.artpref[id].base_pt * zoom_y * 0.65;
         t_jfont *jf_art = jfont_create_debug(font ? font->s_name : r_ob->articulations_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, fontsize);
         char *buf = articulation_to_text_buf(&r_ob->articulations_typo_preferences, id);
         jfont_text_measure(jf_art, buf, &width, &height);
         paint_rectangle(cards_g, build_jrgba(1, 1, 1, 1), selected ? change_alpha(slot_color, 0.5) : build_jrgba(0.9, 0.9, 0.9, 0.5), cur_x, cur_y, card_width, card_height, 1);
-        write_text(cards_g, jf_art, label_color, buf, cur_x, cur_y, card_width, card_height, JGRAPHICS_TEXT_JUSTIFICATION_CENTERED, true, false);
+        write_text(cards_g, jf_art, label_color, buf, cur_x, cur_y - r_ob->articulations_typo_preferences.card_uy_shift * r_ob->zoom_y, card_width, card_height, JGRAPHICS_TEXT_JUSTIFICATION_CENTERED, true, false);
+        
+        if (r_ob->articulations_typo_preferences.artpref[id].superscript_char > 0) {
+            char *articulation_utf = NULL;
+            char articulation_txt[5];
+            long articulation_utf_len;
+            articulation_utf = charset_unicodetoutf8_debug(&r_ob->articulations_typo_preferences.artpref[id].superscript_char, 1, &articulation_utf_len);
+            strncpy(articulation_txt, articulation_utf, 4);
+            bach_freeptr(articulation_utf);
+            write_text(cards_g, jf_art, label_color, articulation_txt,
+                       cur_x + r_ob->articulations_typo_preferences.artpref[id].superscript_char_ux_shift * r_ob->zoom_y * 0.65,
+                       cur_y - r_ob->articulations_typo_preferences.card_uy_shift * r_ob->zoom_y - r_ob->articulations_typo_preferences.artpref[id].superscript_char_uy_shift * r_ob->zoom_y * 0.65,
+                       card_width, card_height, JGRAPHICS_TEXT_JUSTIFICATION_CENTERED, true, false);
+        }
+        
         bach_freeptr(buf);
         jfont_destroy_debug(jf_art);
     }

@@ -4148,6 +4148,8 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
     x->r_ob.are_there_solos = are_there_solos((t_notation_obj *) x);
     x->r_ob.are_there_repeats = are_there_repeats((t_notation_obj *) x, true);
 
+    x->r_ob.play_head_reset_start_ms_when_play_ends = -1; // which means: don't reset
+    
     // setting automatic end
     end_ms = x->r_ob.length_ms_till_last_note;
     x->r_ob.play_head_fixed_end_ms = -1;
@@ -4593,6 +4595,9 @@ void score_task(t_score *x)
                 // we reset the start play time, and we set the starting playhead position to the loop start position
                 setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
                 if (x->r_ob.play_head_start_ms != teleport_to_ms) {
+                    if (x->r_ob.play_head_reset_start_ms_when_play_ends < 0) {
+                        x->r_ob.play_head_reset_start_ms_when_play_ends = x->r_ob.play_head_start_ms;
+                    }
                     x->r_ob.play_head_start_ms = teleport_to_ms;
                     x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, teleport_to_ms, 1);
                 }
@@ -4775,7 +4780,13 @@ void score_task(t_score *x)
             x->r_ob.only_play_selection = false;
             x->r_ob.playback_deferlow = false;
             x->r_ob.play_step_count = 0;
+            if (x->r_ob.play_head_reset_start_ms_when_play_ends >= 0) {
+                x->r_ob.play_head_start_ms = x->r_ob.play_head_reset_start_ms_when_play_ends;
+                x->r_ob.play_head_start_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_start_ms, 1);
+            }
+
             unlock_general_mutex((t_notation_obj *)x);
+            
             
             if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
                 notationobj_append_prescheduled_event((t_notation_obj *)x, end_time, NULL, 0, true);
@@ -7315,7 +7326,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 526 120"); // new dimensions
     // @exclude bach.score
 
-//    CLASS_ATTR_DOUBLE_ARRAY(c, "temp", 0, t_notation_obj, temp, 6);
+    CLASS_ATTR_DOUBLE_ARRAY(c, "temp", 0, t_notation_obj, temp, 6);
 
     CLASS_STICKY_ATTR(c,"category",0,"Show");
     

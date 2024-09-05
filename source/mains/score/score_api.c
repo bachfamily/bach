@@ -627,7 +627,7 @@ void scoreapi_set_articulations_font(t_score *x, t_symbol *font)
     if (!font)
         return;
     x->r_ob.articulations_font = font;
-    load_articulations_typo_preferences(&x->r_ob.articulations_typo_preferences, font);
+    load_articulations_typo_preferences((t_notation_obj *)x, &x->r_ob.articulations_typo_preferences, font);
     x->r_ob.firsttime = true;
     recompute_all_and_redraw(x);
 }

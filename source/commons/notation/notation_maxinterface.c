@@ -6816,9 +6816,10 @@ t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol
             implicitely_recalculate_all(r_ob, false);
         }
         
-//        if (attrname == gensym("temp")) {
+        if (attrname == gensym("temp")) {
 //            load_notation_typo_preferences(r_ob, r_ob->noteheads_font);
-//        }
+            load_articulations_typo_preferences(r_ob, &r_ob->articulations_typo_preferences, r_ob->articulations_font);
+        }
 
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }

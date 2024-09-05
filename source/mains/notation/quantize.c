@@ -3395,7 +3395,7 @@ t_quantize *quantize_new(t_symbol *s, short ac, t_atom *av)
         /// Articulations handling
         x->articulations_typo_preferences.num_articulations = k_NUM_STANDARD_ARTICULATIONS;
         x->articulations_typo_preferences.artpref = (t_articulation_preferences *)bach_newptrclear(CONST_MAX_ARTICULATIONS * sizeof(t_articulation_preferences));
-        load_articulations_typo_preferences(&x->articulations_typo_preferences, gensym("November for bach"));
+        load_articulations_typo_preferences(NULL, &x->articulations_typo_preferences, gensym("November for bach"));
         
         
         attr_args_process(x, ac, av);
