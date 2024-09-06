@@ -2412,9 +2412,6 @@ void reset_all_articulations_positions(t_notation_obj *r_ob)
 }
 
 
-
-
-
 // use stem_direction == 0 for rests
 // part direction == 0 for no-parting 1 for above 2 for below
 void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_articulation *art, t_notation_item *articulation_owner,
@@ -2628,12 +2625,12 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
             if (debug)
                 paint_circle_filled(g, build_jrgba(0,0,1,1), left_x, left_y, 1);
             
-            art->x_pos = left_x - stem_x;
+            art->x_pos = left_x - stem_x; // w.r. to stem x
             art->flipped = flipped;
             art->y_pos = left_y - voice->middleC_y;
             art->width = articulation_width;
             art->height = (flipped ? r_ob->articulations_typo_preferences.artpref[ID].flipped_uheight : r_ob->articulations_typo_preferences.artpref[ID].main_uheight) * r_ob->zoom_y;
-            art->middle_x_pos = left_x + articulation_width / 2.;
+            art->middle_x_pos = left_x + articulation_width / 2. - stem_x; // w.r. to stem x
             art->middle_y_pos = left_y + (flipped ? r_ob->articulations_typo_preferences.artpref[ID].flipped_uy_center : r_ob->articulations_typo_preferences.artpref[ID].main_uy_center) * r_ob->zoom_y;
         }
         art->need_recompute_position = false;
@@ -13383,9 +13380,14 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
                         (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS ||
                          (note_should_be_treated_as_ji(r_ob, temp_nt) && r_ob->ji_always_show_pythagorean_accidentals && r_ob->show_accidentals_preferences != k_SHOW_ACC_NONE))) {
                         // we did say ALWAYS to accidentals show
-
+                        
                         temp_nt->show_accidentals = true;
-                    
+                    } else if (note_has_accidentals(temp_nt) &&
+                               measure->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI &&
+                               temp_nt->pitch_displayed.isPureET() && !temp_nt->pitch_displayed.isPureJI()) {
+                        // must display ET-accidentals in JI context
+                        temp_nt->show_accidentals = true;
+                        
                     } else {
                         temp_nt->show_accidentals = false;
                         
@@ -27368,7 +27370,15 @@ int is_in_tail_shape(t_notation_obj *r_ob, t_note *note, long point_x, long poin
 
 int is_in_articulation_shape(t_notation_obj *r_ob, t_articulation *art, long point_x, long point_y)
 {
-    if (fabs(point_x - art->middle_x_pos) <= art->width / 2. + CONST_ARTICULATION_SELECTION_HORIZONTAL_UTOLERANCE * r_ob->zoom_y &&
+    double stem_x = 0;
+    if (art->owner && art->owner->type == k_CHORD) {
+        stem_x = ((t_chord *)art->owner)->stem_x;
+    } else if (art->owner && art->owner->type == k_NOTE) {
+        stem_x = ((t_note *)art->owner)->parent->stem_x;
+    } else {
+        return 0;
+    }
+    if (fabs(point_x - (stem_x + art->middle_x_pos)) <= art->width / 2. + CONST_ARTICULATION_SELECTION_HORIZONTAL_UTOLERANCE * r_ob->zoom_y &&
         fabs(point_y - art->middle_y_pos) <= art->height / 2. + CONST_ARTICULATION_SELECTION_VERTICAL_UTOLERANCE * r_ob->zoom_y)
         return 1;
     else

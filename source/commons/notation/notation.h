@@ -2449,7 +2449,7 @@ typedef struct _articulation
     char            flipped;                    ///< Is flipped 
     double            x_pos;                        ///< Pixel x value of the "writing-box" for the articulation, centered on the chord stem (thus it is 0 if the x value is exactly at the chord stem).
     double            y_pos;                        ///< Pixel y value of the "writing-box" for the articulation, relative to the corresponding voice middle C position
-    double            middle_x_pos;                ///< Pixel x value of the middle position of the bounding rectangle for the articulation (it is absolute, in pixel)
+    double            middle_x_pos;                ///< Pixel x value of the middle position of the bounding rectangle for the articulation (w.r.t. the stem x position)
     double            middle_y_pos;                ///< Pixel y value of the middle position of the bounding rectangle for the articulation
     double            width;                        ///< Width in pixel of the bounding rectangle 
     double            height;                        ///< Height in pixel of the bounding rectangle
