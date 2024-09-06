@@ -2562,7 +2562,7 @@ typedef struct _note
 //    long            scaleposition;                                ///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
                                                                 ///< E.g. for the F# above the middle C, this is 3 (C->D->E->F). For the B just below the middle C, this is -1.
     char            need_auxiliary_stem;                        ///< Flag telling if the notehead is attached to the stem (0) or not (1, and thus needs the auxiliary stem)
-    char            num_accidentals;                            ///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
+    t_uint8         num_accidentals;                            ///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
     t_uint8         accidentals[CONST_MAX_ACCIDENTALS + 1];     ///< List of numbers from #e_bach_accidentals
 //    unicodeChar        accidental_text[CONST_MAX_ACCIDENTALS + 1]; ///< Unicode chararcters for the text of the accidental
     double            notecenter_stem_delta_ux;                    ///< Unscaled horizontal deplacement of the x of the notehead center pixel, with respect to the stem position
@@ -6557,8 +6557,8 @@ bool note_has_accidentals(t_note *nt);
 bool note_has_no_accidentals_or_has_natural(t_note *nt);
 
 e_bach_accidental rational_to_accidental_ET(t_notation_obj *r_ob, t_rational accidental);
-void get_accidentals_for_pitch_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals);
-void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed, t_uint8 *accidentals, int *numAccidentals, t_pitch pitch_original);
+void get_accidentals_for_pitch_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, t_uint8 *numAccidentals);
+void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed, t_uint8 *accidentals, t_uint8 *numAccidentals, t_pitch pitch_original);
 bool note_accidental_equals_alter_ET(t_notation_obj *r_ob, t_note *nt, t_shortRational alterET);
 
 bool accidentals_eq(t_uint8 *accidentals1, t_uint8 *accidentals2);

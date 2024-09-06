@@ -25731,6 +25731,8 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
             curr_nt->notehead_ID = get_notehead_specs_from_note(r_ob, curr_nt, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false, false);
             
             midicents[i] = note_get_display_midicents(curr_nt);
+            sysmem_copyptr(curr_nt->accidentals, accidentals[i], (CONST_MAX_ACCIDENTALS + 1) * sizeof(t_uint8));
+            /*
             switch (voice->notation_style) {
                 case k_VOICE_NOTATION_STYLE_ET:
                     get_accidentals_for_pitch_ET(r_ob, curr_nt->pitch_displayed, accidentals[i], NULL);
@@ -25744,12 +25746,14 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
                     accidentals[i][0] = BACH_ACCIDENTAL_NONE;
                     break;
             }
+             */
+            
 
             
             reordered[i] = i; // default mapping
             
             // deciding whether to show the accidental
-            if (chord->is_score_chord) { // score
+            if (chord->is_score_chord) { // score: in bach.score this is done *after* measure_validate_accidentals()
                 show_accidentals[i] = curr_nt->show_accidentals;
             } else { // roll (we calculate the show/hide here!)
                 t_voice *voice = (t_voice *)chord->voiceparent;

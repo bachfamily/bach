@@ -400,7 +400,7 @@ e_bach_accidental rational_to_accidental_ET(t_notation_obj *r_ob, t_rational acc
 
 
 // accidentals must be allocated with MAX_NUM_ACCIDENTALS+1 size
-void get_accidentals_for_pitch_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, int *numAccidentals)
+void get_accidentals_for_pitch_ET(t_notation_obj *r_ob, t_pitch p, t_uint8 *accidentals, t_uint8 *numAccidentals)
 {
     int j = 0;
     t_rational alter = p.getAlterET();
@@ -462,14 +462,14 @@ void swap_et_accidentals_for_ji_et(t_uint8 *accidentals, int numAccidentals)
 }
 
 // accidentals must be allocated with MAX_NUM_ACCIDENTALS+1 size
-void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed, t_uint8 *accidentals, int *numAccidentals, t_pitch pitch_original)
+void get_accidentals_for_pitch_JI(t_notation_obj *r_ob, t_pitch pitch_displayed, t_uint8 *accidentals, t_uint8 *numAccidentals, t_pitch pitch_original)
 {
     if ((pitch_displayed.isPureET() && !pitch_displayed.isPureJI()) || 
         pitch_original.isNaP() ||
         (pitch_original.isPureET() && !pitch_original.isPureJI())) {
         // use JI ET characters, the ones with the lines above (but approximate to half tones, though!
         t_pitch q = pitch_displayed.approxET(2);
-        int n;
+        t_uint8 n;
         get_accidentals_for_pitch_ET(r_ob, q, accidentals, &n);
         swap_et_accidentals_for_ji_et(accidentals, n);
         if (numAccidentals)

@@ -14229,6 +14229,7 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         }
     } else {
         note->midicents += delta;
+        note->pitch_original = t_pitch::NaP;
         note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, note);
     }
     

@@ -11778,9 +11778,8 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
 //        note->midicents += (delta * (200. / x->r_ob.tone_division));
     } else {
         note->midicents += delta;
-        if (ji) {
-            note->pitch_original = notationobj_get_best_jilimited_approximation((t_notation_obj *)x, note->midicents);
-        }
+        note->pitch_original = t_pitch::NaP;
+        note_set_to_best_jilimited_approximation_if_jivoice((t_notation_obj *)x, note);
     }
     note_compute_approximation((t_notation_obj *)x, note);
 

@@ -290,12 +290,28 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
                     object_warn((t_object *)r_ob, "\tConsider increasing the 'jilimit' attribute.");
                 }
             }
-
+            
         } else { // cents introduced: finding ET approximation
             mc_to_display_approximation_ET_do(2, k_ACC_AUTO, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
             long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc, voice);
             nt->pitch_displayed.setET(positive_mod(steps, 7), auto_screen_acc, integer_div_round_down(steps, 7));
         }
+    }
+    
+    // calculate accidentals
+    switch (voice->notation_style) {
+        case k_VOICE_NOTATION_STYLE_ET:
+            get_accidentals_for_pitch_ET(r_ob, nt->pitch_displayed, nt->accidentals, &nt->num_accidentals);
+            break;
+            
+        case k_VOICE_NOTATION_STYLE_JI:
+            get_accidentals_for_pitch_JI(r_ob, nt->pitch_displayed, nt->accidentals, &nt->num_accidentals, nt->pitch_original);
+            break;
+            
+        default:
+            nt->accidentals[0] = BACH_ACCIDENTAL_NONE;
+            nt->num_accidentals = 0;
+            break;
     }
 }
 
