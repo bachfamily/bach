@@ -72,8 +72,6 @@
     #define BACH_CHORDS_HAVE_SLOTS
 //    #define BACH_MARKERS_HAVE_SLOTS   ///< Not yet ready for this!
 
-    // #define BACH_SUPPORT_SLURS       ///< Not yet ready for this!
-
     // THESE THREE SHOULD NOT BE DEFINED; they increase the size of the t_note without actually gaining that much in CPU speed.
     //#define BACH_SLOTS_HAVE_LASTITEM              ///< Last item is saved inside slot structure
     //#define BACH_SLOTS_HAVE_ACTIVEITEM            ///< Active item is saved inside slot structure
@@ -86,6 +84,7 @@
     #define BACH_NEW_LLLLSLOT_SYNTAX            ///< This one might or might not be advisable. Removes the outer ( ) in the llll and matrix slot syntax 
 
     #define BACH_SUPPORT_SLURS
+//    #define BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX ///< Disabled from bach 0.9; re-enable it for old syntax support
 
 //    #define BACH_GROUPS_ARE_DOUBLY_LINKED     ///< Commenting this line saves 8 bytes in the t_notation_item structure
 
@@ -2485,9 +2484,9 @@ typedef struct _slur
     // painting parameters
     double            start_ux;                    ///< x of the pixel of the slur starting point
     double            start_y;                    ///< y of the pixel of the slur starting point
-    double            cp1_ux;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
+    double            cp1_relx;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp1_y;                        ///< y of the pixel of the slur first control point
-    double            cp2_ux;                    ///< relative x of the pixel of the slur second control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
+    double            cp2_relx;                    ///< relative x of the pixel of the slur second control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp2_y;                        ///< y of the pixel of the slur second control point
     double            end_ux;                        ///< x of the pixel of the slur end point    
     double            end_y;                        ///< y of the pixel of the slur end point
@@ -2553,10 +2552,11 @@ typedef struct _note
     char        played;                    ///< Flag telling if the note is being played
     char        solo;                    ///< Flag telling if the note is soloed
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // articulations, ***only for backward compatibility***
     long                  num_articulations;        ///< Number of articulations really attached to the note
     t_articulation        *articulation;            ///< The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
-
+#endif
     
     // Fixed painting parameters (calculated at some point, and not recalculated if not needed)
 //    long            scaleposition;                                ///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
@@ -2840,10 +2840,12 @@ typedef struct _chord
     // used by tree beaming handling and for groups linking
     double            stemtip_stafftop_uy;                ///< Unscaled vertical shift (in pixels) of the topmost stem point, with respect to the staff top
     double            topmost_stafftop_uy;                ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, with respect to the staff top
-    double            bottommost_stafftop_uy;                ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, with respect to the staff top
-    double            topmost_stafftop_uy_noacc;            ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, if we ignore the accidentals
-    double            bottommost_stafftop_uy_noacc;        ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, if we ignore the accidentals
-//    double            beam_stafftop_uy;                    ///< Unscaled vertical shift (in pixels) of the point of the flag or beam nearest to the a note
+    double            bottommost_stafftop_uy;             ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, with respect to the staff top
+    double            topmost_stafftop_uy_notuplets;      ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, with respect to the staff top ignoring tuplet signs
+    double            bottommost_stafftop_uy_notuplets;   ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, with respect to the staff top ignoring tuplet signs
+    double            topmost_stafftop_uy_noacc;          ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, if we ignore the accidentals
+    double            bottommost_stafftop_uy_noacc;       ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, if we ignore the accidentals
+//    double            beam_stafftop_uy;                 ///< Unscaled vertical shift (in pixels) of the point of the flag or beam nearest to the a note
     double            topmostnote_stafftop_uy;            ///< Unscaled vertical shift (in pixels) of the topmost note center, with respect to the staff top
     double            bottommostnote_stafftop_uy;            ///< Unscaled vertical shift (in pixels) of the bottommost note center, with respect to the staff top
     
@@ -2871,20 +2873,23 @@ typedef struct _chord
                                                         ///< actual symbolic figure used to display the 1/12 chord. Analogously, a chord lasting 3/8 will have a figure of 1/4, and then a dot.
                                                         ///< The chord figure is always positive, even if the chord is a rest.
                                                         ///< Also: for rests spanning the whole measure, the figure is simply 1. 
-    char            num_dots;                            ///< Number of dots that the chord has.
     
     // tuplet parameters, only used by [bach.score] 
     t_rational        overall_tuplet_ratio;        ///< If the chord is within a tuplet, here we have the tuplet ratio (for instance, a quaver tuplet, having symbolic duration of 1/12, has ratio 2/3)
                                                 ///< Please consider that this is the OVERALL ratio (should the chord be in nested tuplets). This means that this is the precise
                                                 ///< ratio between the symbolic duration <r_sym_duration> and the <figure>.
     
+    char            num_dots;                            ///< Number of dots that the chord has.
+
     // beamings
-    long            beams_depth;                ///< Number of beaming lines over the chord
+    t_uint8            beams_depth;                ///< Number of beaming lines over the chord
     
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // articulations (for the moment, only implemented in [bach.score])
     // These are deprecated and will be removed at some point: use the articulation-typed slots instead
     long            num_articulations;        ///< (DEPRECATED) Number of articulations really attached to the note
     t_articulation    *articulation;            ///< (DEPRECATED) The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
+#endif
     
     struct _lyrics      *lyrics;                ///< The chord piece of lyrics (it is always allocated).
     t_slot              *dynamics_slot;          ///< Pointer to the slot containing the dynamics
@@ -6289,7 +6294,7 @@ void get_staff_range_mc(int clef, long *mc_min, long *mc_max);
     @remark Only standard figures should be introduced; nevertheless if nonstandard figures are introduced, they are considered as default tuplets
             and the corresponding beams number is returned (e.g. 1/24 -> 2).
 */ 
-long get_num_beams_from_figure(t_rational figure);
+t_uint8 get_num_beams_from_figure(t_rational figure);
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -7905,6 +7910,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
 void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note);
 double velocity_to_notesize_factor(t_notation_obj *r_ob, long velocity);
 
+void chord_calculate_staff_uy_stuff(t_notation_obj *r_ob, t_chord *chord);
 
 /**    Retrieve the y position of the ledger lines relative to a given scaleposition (see the <scaleposition> field in the #t_note structure). 
     @ingroup    notation
@@ -8018,6 +8024,8 @@ void marker_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_marker
     @see    chord_check_dependencies_before_deleting_it()
  */
 void dynamics_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_dynamics *dyn);
+
+void articulation_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_articulation *art);
 
 /**    Check and erase all the dependencies for a pitch breakpoint (supposedly because we want to delete the breakpoint right after).
     @ingroup            notation
@@ -10566,15 +10574,19 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
     @param    clef                    The clef or clef combination of the note's voice (one of the #e_clefs)
     @param    note_y_real                The y pixel of the center of the notehead 
     @param    stem_x                    The x pixel of the chord stem
-    @param    acc_uascent        Pointer which will be filled with the unscaled top extension of the accidental (see #e_accidentals_typo_preferences) 
-                                    Leave NULL if you don't care for the information.
-    @param    acc_udescent    Pointer which will be filled with the unscaled bottom extension of the accidental (see #e_accidentals_typo_preferences). 
-                                    Leave NULL if you don't care for the information.
- */ 
+    @param  set_topmost_bottommost_stuff    Toggles the ability to set the topmost/bottommost chord fields
+ */
 void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t_jfont *jf_text_fractions, 
                            t_jfont *jf_acc_bogus, t_jrgba *color, t_note *curr_nt, long clef,
-                           double note_y_real, double stem_x, 
-                           double *acc_uascent, double *acc_udescent);
+                           double note_y_real, double stem_x, bool set_topmost_bottommost_stuff);
+
+
+double chord_get_bottommost_y_noacc(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_topmost_y_notuplets(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_bottommost_y_notuplets(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_topmost_y_noacc(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_bottommost_y(t_notation_obj *r_ob, t_chord *chord);
+double chord_get_topmost_y(t_notation_obj *r_ob, t_chord *chord);
 
 
 /**    Paint an articulation
@@ -11496,14 +11508,16 @@ void destroy_articulation(t_articulation *art);
 t_articulation *build_articulation(t_notation_obj *r_ob, long articulation_ID, t_notation_item *owner, t_slotitem *parent, t_symbol *original_name);
 
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
 /**    Delete a given articulation of a given notation item.
     @ingroup                        articulations
     @param    r_ob                    The notation object
     @param    owner                    The notation item owning the articulation (either a #k_CHORD or a #k_NOTE)
-    @param    articulation_number        The 0-based index of the articulation (among all the owner's articulations). 
- */ 
+    @param    articulation_number        The 0-based index of the articulation (among all the owner's articulations).
+ @remark    Deprecated, old way to deal with articulations
+ */
 void delete_articulation_from_notation_item(t_notation_obj *r_ob, t_notation_item *owner, long articulation_number);
-
+#endif
 
 /**    Delete all articulations of a given notation item.
     @ingroup                        articulations

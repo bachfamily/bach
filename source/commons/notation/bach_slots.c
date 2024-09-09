@@ -4533,6 +4533,9 @@ void slotitem_delete(t_notation_obj *r_ob, long slot_num, t_slotitem *item){
         } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS) {
             dynamics_check_dependencies_before_deleting_it(r_ob, (t_dynamics *) item->item);
             free_dynamics(r_ob, (t_dynamics *) item->item);
+        } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_ARTICULATIONS) {
+            articulation_check_dependencies_before_deleting_it(r_ob, (t_articulation *)item->item);
+            bach_freeptr(item->item);
         } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_LLLL || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_INTMATRIX ||
 			r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_FLOATMATRIX || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_TOGGLEMATRIX)
 			llll_free((t_llll *) item->item);

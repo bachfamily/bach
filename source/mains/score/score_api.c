@@ -4096,8 +4096,10 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
     
     this_ch->is_grace_chord = 0;
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     this_ch->num_articulations = 0;
     this_ch->articulation = NULL;
+#endif
     
 #ifdef BACH_SUPPORT_SLURS
     this_ch->num_slurs_to = 0;
@@ -4177,8 +4179,10 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 
             this_ch->is_grace_chord = 0;
             
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
             this_ch->num_articulations = 0;
             this_ch->articulation = NULL;
+#endif
             
 #ifdef BACH_SUPPORT_SLURS
             this_ch->num_slurs_to = 0;
@@ -8895,7 +8899,7 @@ void paint_repeat_dots(t_score *x, t_jgraphics *g, t_voice *voice, t_jrgba barli
     }
 }
 
-void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphics *g, t_rect rect, double end_x_to_repaint_no_inset, double last_staff_bottom, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_ts, t_jfont *jf_ts_big, t_jfont *jf_tempi, t_jfont *jf_text, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_text_markers, t_jfont *jf_tempi_italic, t_jfont *jf_tempi_figure, t_jfont *jf_measure_num, t_jfont *jf_tuplets, t_jfont *jf_lyrics, t_jfont *jf_lyrics_nozoom, t_jfont *jf_ann, t_jfont *jf_small_dynamics, t_jfont *jf_small_dynamics_roman, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, t_pt *force_xy_position, t_llll *repaint_these_measure_nums)
+void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphics *g, t_rect rect, double end_x_to_repaint_no_inset, double last_staff_bottom, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_ts, t_jfont *jf_ts_big, t_jfont *jf_tempi, t_jfont *jf_text, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_text_markers, t_jfont *jf_tempi_italic, t_jfont *jf_tempi_figure, t_jfont *jf_measure_num, t_jfont *jf_tuplets, t_jfont *jf_lyrics, t_jfont *jf_lyrics_nozoom, t_jfont *jf_ann, t_jfont *jf_small_dynamics, t_jfont *jf_small_dynamics_roman, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, t_llll *repaint_these_measure_nums)
 {
 	t_jfont *jf_grace = NULL;
 	t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
@@ -8956,14 +8960,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     staff_top = voice_get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
     staff_bottom = voice_get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
 
-    // possible forced shift
-    if (force_xy_position) {
-        this_middleC_y = this_middleC_y - staff_top + force_xy_position->y;
-        staff_bottom = this_middleC_y - staff_top + force_xy_position->y;
-        staff_top = force_xy_position->y;
-    }
-
-
     // paint staff lines
     double staff_lines_end = rect.width - x->r_ob.j_inset_x;
     // check if we have to trim them
@@ -9021,8 +9017,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         if (curr_tuttipt->next && curr_tuttipt->next->measure[voice->v_ob.number] == curr_meas) {
             curr_tuttipt = curr_tuttipt->next;
             tuttipoint_ux = curr_tuttipt->offset_ux;
-            if (force_xy_position)
-                tuttipoint_ux = tuttipoint_ux - xposition_to_unscaled_xposition((t_notation_obj *)x, (unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.firsttuttipoint->offset_ux) - force_xy_position->x));
         }
         
 #ifdef BACH_SPACING_DEBUG
@@ -9110,8 +9104,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         // chords and notes!
         octave_stem_length =  mc_to_yposition_in_scale((t_notation_obj *) x,6000, (t_voice *) voice) - mc_to_yposition_in_scale((t_notation_obj *) x,7200, (t_voice *) voice); // y_length corresponding to 1 octave 
         for (curr_ch = curr_meas->firstchord; curr_ch; curr_ch = curr_ch->next) { // cycle on the chords
-            
-            double accidental_top_extension = 0., accidental_bottom_extension = 0.; // local top-bottom values for the accidental
             
             // finding stem position // to do: handle scrollbar
             double chord_alignment_point_x = unscaled_xposition_to_xposition((t_notation_obj *)x, tuttipoint_ux + curr_ch->alignment_ux);
@@ -9621,10 +9613,12 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         }
                         
                         // need to put accidentals?
-                        note_paint_accidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, &accidental_top_extension, &accidental_bottom_extension);
+                        note_paint_accidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, true);
                         
                         // need to put articulations
                         if (x->r_ob.show_articulations){
+
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                             // OLD-WAY: note-attached articulations.
                             for (i = 0; i < curr_nt->num_articulations; i++) {
                                 char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)(&(curr_nt->articulation[i])));
@@ -9651,10 +9645,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                     }
                                 }
                             }
+#endif
+                            
                         }
                         
                     }
-                    
                     
                     
                 } else if (x->r_ob.show_rests > 0) { // it is a rest (sorry... "pause" is used sometimes instead of rest... italian-to-english poorly made translation...)
@@ -9841,6 +9836,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     paint_chord_label_families((t_notation_obj *)x, view, g, curr_ch, label_family_chord_shape_radius);
                 
                 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                 // OLD WAY:
 				// need to put chord-attached articulations ?
 				if (x->r_ob.show_articulations){
@@ -9854,6 +9850,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 										   chord_first_notehead_uwidth * x->r_ob.zoom_y, end_pos, part_direction);
 					}
 				}
+#endif
 				
 				// lyrics word extensions?
 				if (x->r_ob.show_lyrics && x->r_ob.show_lyrics_word_extensions) {
@@ -10402,8 +10399,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             if (curr_tuttipt->next && curr_tuttipt->next->measure[voice->v_ob.number] == curr_meas) {
                 curr_tuttipt = curr_tuttipt->next;
                 tuttipoint_ux = curr_tuttipt->offset_ux;
-                if (force_xy_position)
-                    tuttipoint_ux = tuttipoint_ux - xposition_to_unscaled_xposition((t_notation_obj *)x, (unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.firsttuttipoint->offset_ux) - force_xy_position->x));
             }
             
             if (tuttipoint_ux + curr_meas->start_barline_offset_ux > x->r_ob.screen_ux_end)
@@ -10552,7 +10547,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
             paint_scorevoice(x, voice, view, g, rect, end_x_to_repaint_no_inset, last_staff_bottom,
                             jf, jf_acc, jf_text_fractions, jf_acc_bogus, jf_ts, jf_ts_big, jf_tempi, jf_text,
                             jf_text_small, jf_text_smallbold, jf_text_markers, jf_tempi_italic, jf_tempi_figure, 
-                            jf_measure_num, jf_tuplets, jf_lyrics, jf_lyrics_nozoom, jf_ann, jf_small_dynamics, jf_small_dynamics_roman, jf_dynamics, jf_dynamics_roman, NULL, repaint_these_measure_nums);
+                            jf_measure_num, jf_tuplets, jf_lyrics, jf_lyrics_nozoom, jf_ann, jf_small_dynamics, jf_small_dynamics_roman, jf_dynamics, jf_dynamics_roman, repaint_these_measure_nums);
             
         unlock_general_mutex((t_notation_obj *)x);
 

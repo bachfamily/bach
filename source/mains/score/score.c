@@ -13412,7 +13412,11 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 // clicked articulation?
                 if (!clicked_ptr) { // looking for the clicked note, if any
                     long a;
+                    
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
+
                     // OLD WAY: articulation as a field
+
                     t_chord *curr_ch; t_note *curr_nt;
                     for (curr_ch = curr_meas->firstchord; curr_ch && !clicked_ptr; curr_ch = curr_ch->next) {
                         for (a = 0; a < curr_ch->num_articulations && !clicked_ptr; a++) {
@@ -13454,6 +13458,9 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                             }
                         }
                     }
+
+#endif
+                    
                 }
                 
                 
@@ -13479,6 +13486,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                         } else if (modifiers == eCommandKey && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)curr_ch))) { // delete articulation
                                             if (is_editable((t_notation_obj *)x, k_ARTICULATION, k_DELETION)) {
                                                 undo_tick_create_for_notation_item((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_TYPE_CHANGE, _llllobj_sym_state);
+                                                
                                                 slotitem_delete((t_notation_obj *)x, s, item);
                                                 handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
                                                 x->r_ob.item_changed_at_mousedown = 1;
@@ -13683,8 +13691,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
             t_slur *slur = (t_slur *)hatom_getobj(&slur_el->l_hatom);
             double base = slur->end_ux - slur->start_ux;
             if (is_pt_in_quadrilater(this_ux, this_y, slur->start_ux, slur->start_y,
-                                     slur->start_ux + slur->cp1_ux * base, slur->cp1_y,
-                                     slur->start_ux + slur->cp2_ux * base, slur->cp2_y,
+                                     slur->start_ux + slur->cp1_relx * base, slur->cp1_y,
+                                     slur->start_ux + slur->cp2_relx * base, slur->cp2_y,
                                      slur->end_ux, slur->end_y)){
                 clicked_ptr = slur;
                 clicked_obj = k_SLUR;

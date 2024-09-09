@@ -869,6 +869,8 @@ char get_bezier_subdivision_points(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double t,
  */
 t_pt get_single_bezier_subdivision_point(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double t);
 
+t_pt bezier_sample(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double t);
+double bezier_x_to_t(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double x, double tolerance, t_pt *sampled_pt); // iterative algorithm, within tolerance...
 
                                                  
 /**    Paint a slur like the one used to gather tuplets (if slur and NOT bracket is chosen, of course). Actually, this is just a 3-rd order bezier curve,

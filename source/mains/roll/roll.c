@@ -10384,8 +10384,10 @@ t_chord* addchord_from_notes(t_roll *x, long voicenumber, double onset, long unu
     this_ch->r_sym_duration = RAT_1OVER4;
     this_ch->r_sym_onset = long2rat(0);
     
-    this_ch->num_articulations = 0; 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
+    this_ch->num_articulations = 0;
     this_ch->articulation = NULL;
+#endif
     
 #ifdef BACH_SUPPORT_SLURS
     this_ch->num_slurs_to = 0;
@@ -10480,8 +10482,10 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
             this_ch->r_sym_duration = RAT_1OVER4;
             this_ch->r_sym_onset = long2rat(0);
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
             this_ch->num_articulations = 0;
             this_ch->articulation = NULL;
+#endif
             
 #ifdef BACH_SUPPORT_SLURS
             this_ch->num_slurs_to = 0;
@@ -12007,7 +12011,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
 #endif
             
             // need to put accidentals?
-            note_paint_accidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, NULL, NULL);
+            note_paint_accidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, false);
             
             
         }
@@ -14978,6 +14982,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                             slotitem_delete((t_notation_obj *)x, s, item);
                                             handle_change_if_there_are_dangling_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
                                             x->r_ob.item_changed_at_mousedown = 1;
+                                            reset_articulation_position_for_chord((t_notation_obj *)x, curr_ch);
                                         }
                                         unlock_general_mutex((t_notation_obj *)x);
                                         return;
@@ -15259,8 +15264,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             t_slur *slur = (t_slur *)hatom_getobj(&slur_el->l_hatom);
             double base = slur->end_ux - slur->start_ux;
             if (is_pt_in_quadrilater(this_ux, this_y, slur->start_ux, slur->start_y,
-                                     slur->start_ux + slur->cp1_ux * base, slur->cp1_y,
-                                     slur->start_ux + slur->cp2_ux * base, slur->cp2_y,
+                                     slur->start_ux + slur->cp1_relx * base, slur->cp1_y,
+                                     slur->start_ux + slur->cp2_relx * base, slur->cp2_y,
                                      slur->end_ux, slur->end_y)){
                 clicked_ptr = slur;
                 clicked_obj = k_SLUR;

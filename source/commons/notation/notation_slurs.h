@@ -68,6 +68,9 @@ void chord_reset_slur_positions(t_chord *ch);
 long slur_get_length_in_chords(t_slur *slur);
 t_llll *chord_get_slurs_as_llll(t_chord *ch, char prepend_slur_symbol);
 
+void slur_compute_control_points_methodA(t_notation_obj *r_ob, t_slur *slur);
+void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur);
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE
 #endif

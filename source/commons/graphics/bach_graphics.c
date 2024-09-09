@@ -997,6 +997,50 @@ t_pt get_single_bezier_subdivision_point(t_pt p0, t_pt p1, t_pt p2, t_pt p3, dou
     return subd_pt[0];
 }
 
+t_pt bezier_sample(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double t)
+{
+    t_pt res;
+    double omt = (1-t);
+    double omtsq = (1-t)*(1-t);
+    double omtc = omtsq * omt;
+    double tsq = t * t;
+    double tc = t * tsq;
+//    res.x = (1-t)*(1-t)*(1-t)*p0.x + 3*(1-t)*(1-t)*t*p1.x + 3*(1-t)*t*t*p2.x + t*t*t*p3.x;
+//    res.y = (1-t)*(1-t)*(1-t)*p0.y + 3*(1-t)*(1-t)*t*p1.y + 3*(1-t)*t*t*p2.y + t*t*t*p3.y;
+    res.x = omtc*p0.x + 3*omtsq*t*p1.x + 3*omt*tsq*p2.x + tc*p3.x;
+    res.y = omtc*p0.y + 3*omtsq*t*p1.y + 3*omt*tsq*p2.y + tc*p3.y;
+    return res;
+}
+
+double bezier_x_to_t(t_pt p0, t_pt p1, t_pt p2, t_pt p3, double x, double tolerance, t_pt *sampled_pt)
+{
+    double tL = 0, tR = 1;
+    const long MAX_ITER = 100;
+    long i = 0;
+    
+    while (i < MAX_ITER) {
+        double t = 0.5*(tL + tR);
+        t_pt p = bezier_sample(p0, p1, p2, p3, t);
+        double diff = p.x - x;
+        if (fabs(diff) < tolerance) {
+            if (sampled_pt)
+                *sampled_pt = p;
+            return t;
+        }
+        
+        if (diff < 0) {
+            tL = t;
+        } else {
+            tR = t;
+        }
+        
+        i++;
+    }
+    if (sampled_pt)
+        *sampled_pt = p0;
+    return tL;
+}
+
 
 void paint_simple_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width)
 {

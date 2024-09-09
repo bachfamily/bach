@@ -1448,7 +1448,11 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     }
                     
                     
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                     if (note && (note->num_articulations > 0 || (isfirstnote && chord->num_articulations > 0) || articulations_slot >= 0)) {
+#else
+                    if (note && articulations_slot >= 0) {
+#endif
                         long i;
                         mxml_node_t *ornaments = NULL;
                         mxml_node_t *technical = NULL;
@@ -1478,6 +1482,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         
                         // 1. first the ornaments, who might require different <ornaments> elements
                         {
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                             //      OLD WAY of assigning articulations:
                             for (i = 0; i < note->num_articulations; i++) {
                                 long id = note->articulation[i].articulation_ID;
@@ -1490,6 +1495,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                     bach_xml_add_ornament(atp, &ornaments, notations, id);
                                 }
                             }
+#endif
                             
                             //      NEW WAY of assigning articulations:
                             if (articulations_slot >= 0 && articulations_slot < CONST_MAX_SLOTS) {
@@ -1503,6 +1509,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         
                         // 2. then technical and articulations
                         {
+
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                             // old way (the weird interleaved-fashion of this part is due to the fact that standard articulations must apparently
                             // be put BEFORE other-articulations in order to be properly parsed by Finale
                             for (i = 0; i < note->num_articulations; i++)
@@ -1521,6 +1529,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                     bach_xml_add_technical_or_articulation(atp, &technical, &articulations, notations, chord->articulation[i].articulation_ID, 2);
                             }
                             
+#endif
                             
                             // new way
                             if (articulations_slot >= 0 && articulations_slot < CONST_MAX_SLOTS) {
@@ -1533,6 +1542,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         
                         // 3. then fermatas (hopefully one!)
                         {
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                             // old way:
                             for (i = 0; i < note->num_articulations; i++) {
                                 long id = note->articulation[i].articulation_ID;
@@ -1551,6 +1561,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                     }
                                 }
                             }
+#endif
                             
                             // new way:
                             if (articulations_slot >= 0 && articulations_slot < CONST_MAX_SLOTS) {

@@ -195,6 +195,9 @@ double accidentals_get_uascent(t_notation_obj *r_ob, t_uint8 *accidentals)
 
 double note_get_accidental_uascent(t_notation_obj *r_ob, t_note *note)
 {
+    if (!note->show_accidentals)
+        return 0;
+    
     switch (r_ob->accidentals_display_type) {
         case k_ACCIDENTALS_NO_DISPLAY:
             return 0;
@@ -237,6 +240,9 @@ double accidentals_get_udescent(t_notation_obj *r_ob, t_uint8 *accidentals)
 
 double note_get_accidental_udescent(t_notation_obj *r_ob, t_note *note)
 {
+    if (!note->show_accidentals)
+        return 0;
+
     switch (r_ob->accidentals_display_type) {
         case k_ACCIDENTALS_NO_DISPLAY:
             return 0;
@@ -281,7 +287,11 @@ double accidentals_get_uwidth(t_notation_obj *r_ob, t_uint8 *accidentals)
     return w;
 }
 
-double note_get_accidental_uwidth(t_notation_obj *r_ob, t_note *nt, char always_classical_display){
+double note_get_accidental_uwidth(t_notation_obj *r_ob, t_note *nt, char always_classical_display)
+{
+    if (!nt->show_accidentals)
+        return 0;
+
 //returns the accidental unscaled width in the BASE CASE (i.e. for the base_pt, e.g. Maestro 24, Sonora 40, ...)
     char accidentals_display_type = always_classical_display ? k_ACCIDENTALS_CLASSICAL : r_ob->accidentals_display_type;
     switch (r_ob->accidentals_display_type) {

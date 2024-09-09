@@ -1610,7 +1610,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     foo->notehead_resize = 1.;
     paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, mc_to_yposition_in_scale_for_notes(r_ob, foo, voice, 0.7, false), system_shift, small_note_ratio);
     note_paint_accidentals(r_ob, g, jf_smallacc, jf_text_fractions, jf_smallaccbogus, &color, foo,
-                          get_voice_clef(r_ob, voice), mc_to_yposition_in_scale(r_ob, note_get_display_midicents(foo), voice), notehead_left_x, NULL, NULL);
+                          get_voice_clef(r_ob, voice), mc_to_yposition_in_scale(r_ob, note_get_display_midicents(foo), voice), notehead_left_x, false);
     free_chord(r_ob, ch);
     jfont_destroy_debug(jf_smallnote);
     jfont_destroy_debug(jf_smallacc);
@@ -2178,14 +2178,14 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
 
 void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, 
                             t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jrgba *color,
-                            t_note *curr_nt, long clef, double note_y_real, double stem_x,
-                            double *acc_uascent, double *acc_udescent){
+                            t_note *curr_nt, long clef, double note_y_real, double stem_x, bool set_topmost_bottommost_stuff){
     if (curr_nt->show_accidentals)  { // Is there one or more accidentals to show??
         
         t_chord *curr_ch = curr_nt->parent;
         double grace_ratio = curr_ch->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.;
         double accidentals_resize = 1;
         double acc_x = 0, acc_y = 0;
+        double acc_ascent = 0, acc_descent = 0;
 
         if (r_ob->accidentals_display_type == k_ACCIDENTALS_CLASSICAL) { // classical accidental
             // updating top/bottom values if needed
@@ -2199,18 +2199,14 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
             
             accidentals_resize = curr_nt->accidentals_resize * grace_ratio;
 
-            if (acc_uascent) 
-                *acc_uascent = note_get_accidental_uascent(r_ob, curr_nt) * r_ob->zoom_y * accidentals_resize;
-            if (acc_udescent)
-                *acc_udescent = note_get_accidental_udescent(r_ob, curr_nt) * r_ob->zoom_y * accidentals_resize;
-            if (acc_uascent) {
-                acc_top = note_y_real - 0.7 * *acc_uascent;
-                if (acc_top < curr_ch->topmost_y) 
+            acc_ascent = note_get_accidental_uascent(r_ob, curr_nt) * r_ob->zoom_y * accidentals_resize;
+            acc_descent = note_get_accidental_udescent(r_ob, curr_nt) * r_ob->zoom_y * accidentals_resize;
+            if (set_topmost_bottommost_stuff) {
+                acc_top = note_y_real - acc_ascent;
+                if (acc_top < curr_ch->topmost_y)
                     curr_ch->topmost_y = acc_top;
-            }
-            if (acc_udescent) {
-                acc_bottom = note_y_real + 0.7 * *acc_udescent;
-                if (acc_bottom > curr_ch->bottommost_y) 
+                acc_bottom = note_y_real + acc_descent;
+                if (acc_bottom > curr_ch->bottommost_y)
                     curr_ch->bottommost_y = acc_bottom;
             }
             
@@ -2324,12 +2320,14 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
 void reset_articulation_position_for_chord(t_notation_obj *r_ob, t_chord *ch)
 {
     long i; t_note *nt;
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     for (i = 0; i < ch->num_articulations; i++)
         ch->articulation[i].need_recompute_position = true;
     for (nt = ch->firstnote; nt; nt = nt->next){
         for (i = 0; i < nt->num_articulations; i++)
             nt->articulation[i].need_recompute_position = true;
     }
+#endif
     
     ch->topmost_y = DBL_SMALLEST;
     ch->bottommost_y = DBL_SMALLEST;
@@ -2385,8 +2383,12 @@ void reset_all_articulations_positions(t_notation_obj *r_ob)
     t_voice *voice; t_chord *chord; t_note *note; long i;
     for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
         for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
+            
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
             for (i = 0; i < chord->num_articulations; i++)
                 chord->articulation[i].need_recompute_position = true;
+#endif
+            
             if (r_ob->link_articulations_to_slot > 0 && r_ob->link_articulations_to_slot <= CONST_MAX_SLOTS) {
                 long s = r_ob->link_articulations_to_slot - 1;
                 if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_ARTICULATIONS) {
@@ -2396,8 +2398,10 @@ void reset_all_articulations_positions(t_notation_obj *r_ob)
                 }
             }
             for (note = chord->firstnote; note; note = note->next) {
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                 for (i = 0; i < note->num_articulations; i++)
                     note->articulation[i].need_recompute_position = true;
+#endif
                 if (r_ob->link_articulations_to_slot > 0 && r_ob->link_articulations_to_slot <= CONST_MAX_SLOTS) {
                     long s = r_ob->link_articulations_to_slot - 1;
                     if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_ARTICULATIONS) {
@@ -2487,7 +2491,7 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 beam_y = chord->firstnote ? chord->beam_y : voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
                 if (r_ob->articulations_typo_preferences.artpref[ID].options & k_ARTICULATION_OPTION_SHIFT_WITH_BEAMS) {
-                    long nb = get_num_beams_from_figure(chord->figure);
+                    t_uint8 nb = get_num_beams_from_figure(chord->figure);
                     if (nb > 1) {
                         if (stem_direction < 0)
                             beam_y -= (nb - 1) * CONST_BEAMINGS_UDISTANCE * r_ob->zoom_y;
@@ -2640,12 +2644,16 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
     
     if (!art->flipped) {
         double top_y_with_articulation = real_y_pos + (r_ob->articulations_typo_preferences.artpref[ID].main_uy_center - r_ob->articulations_typo_preferences.artpref[ID].main_uheight/2.) * r_ob->zoom_y;
-        if (top_y_with_articulation < chord->topmost_y) chord->topmost_y = top_y_with_articulation;
-        if (top_y_with_articulation < chord->topmost_y_noacc) chord->topmost_y_noacc = top_y_with_articulation;
+        if (top_y_with_articulation < chord->topmost_y) 
+            chord->topmost_y = top_y_with_articulation;
+        if (top_y_with_articulation < chord->topmost_y_noacc) 
+            chord->topmost_y_noacc = top_y_with_articulation;
     } else {
         double bottom_y_with_articulation = real_y_pos + (r_ob->articulations_typo_preferences.artpref[ID].flipped_uy_center + r_ob->articulations_typo_preferences.artpref[ID].flipped_uheight/2.) * r_ob->zoom_y;
-        if (bottom_y_with_articulation > chord->bottommost_y) chord->bottommost_y = bottom_y_with_articulation;
-        if (bottom_y_with_articulation > chord->bottommost_y_noacc) chord->bottommost_y_noacc = bottom_y_with_articulation;
+        if (bottom_y_with_articulation > chord->bottommost_y) 
+            chord->bottommost_y = bottom_y_with_articulation;
+        if (bottom_y_with_articulation > chord->bottommost_y_noacc) 
+            chord->bottommost_y_noacc = bottom_y_with_articulation;
     }
     
     
@@ -2866,254 +2874,7 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
     double slur_base_length;
     
     if (slur->need_recompute_position) {
-        t_chord *start = slur->start_chord, *end = slur->end_chord;
-        char direction = (slur->direction) ? slur->direction : -start->direction;
-        double alpha;
-        double long_base, delta_ux, a, b, h;
-        char reversed = false;
-        t_chord *chord;
-        double raise1_y = 0, raise2_y = 0, raisestart_y = 0, raiseend_y = 0;
-        
-/*        // gotta switch start and end notes? (if chords are reversed!)
-        if (is_chord_before_chord(r_ob, end, start)){
-            t_chord *temp;
-            temp = start;
-            start = end;
-            end = temp;
-            reversed = true;
-        } 
-   */
-        t_note *start_nt = start->lastnote;
-        t_note *end_nt = end->lastnote;
-        if (direction < 0) {
-            start_nt = start->firstnote;
-            end_nt = end->firstnote;
-        }
-        
-        // standard positioning for start point and end point
-        double staff_top_y = voice_get_staff_top_y(r_ob, chord_get_voice(r_ob, start), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
-        double staff_bottom_y = voice_get_staff_bottom_y(r_ob, chord_get_voice(r_ob, start), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
-        
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-            slur->start_ux = start->parent->tuttipoint_reference->offset_ux + start->stem_offset_ux + (start_nt ? start_nt->notecenter_stem_delta_ux : 0);
-            slur->end_ux = end->parent->tuttipoint_reference->offset_ux + end->stem_offset_ux + (end_nt ? end_nt->notecenter_stem_delta_ux : 0);
-        } else {
-            slur->start_ux = chord_get_alignment_ux(r_ob, start) + (start_nt ? start_nt->notecenter_stem_delta_ux : 0);
-            slur->end_ux = chord_get_alignment_ux(r_ob, end) + (end_nt ? end_nt->notecenter_stem_delta_ux : 0);
-        }
-        slur->start_y = (start_nt ? start_nt->center.y : (direction > 0 ? staff_top_y : staff_bottom_y))  + 2 * r_ob->step_y * (- direction);
-        slur->end_y = (end_nt ? end_nt->center.y : (direction > 0 ? staff_top_y : staff_bottom_y)) + 2 * r_ob->step_y * (- direction);
-
-        // particular cases for start point and end point
-        if (direction == -1 && end->direction == -1) {
-            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                slur->end_ux = end->parent->tuttipoint_reference->offset_ux + end->stem_offset_ux - CONST_SLUR_USEPARATION_FROM_STEM;
-            } else {
-                slur->end_ux = chord_get_stem_ux(r_ob, end) - CONST_SLUR_USEPARATION_FROM_STEM;
-            }
-        } else if (direction == 1 && start->direction == 1) {
-            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                slur->start_ux = start->parent->tuttipoint_reference->offset_ux + start->stem_offset_ux + CONST_SLUR_USEPARATION_FROM_STEM;
-            } else {
-                slur->start_ux = chord_get_stem_ux(r_ob, start) + CONST_SLUR_USEPARATION_FROM_STEM;
-            }
-        }
-
-        if (slur->start_ux == slur->end_ux) slur->end_ux += 5 * r_ob->zoom_y;
-
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-            if (direction * end->direction == 1 && rat_long_cmp(end->figure, 1) < 0) {
-                // if the slur ends on a stem rather than a notehead
-                slur->end_ux = xposition_to_unscaled_xposition(r_ob, end->stem_x) - CONST_SLUR_USEPARATION_FROM_STEM;
-                if (direction == 1)
-                    slur->end_y = end->topmost_y + 2 * r_ob->step_y;
-                else
-                    slur->end_y = end->bottommost_y - 2 * r_ob->step_y;
-            } else if (direction * start->direction == 1 && rat_long_cmp(start->figure, 1) < 0) {
-                // if the slur starts on a stem rather than a notehead
-                slur->start_ux = xposition_to_unscaled_xposition(r_ob, start->stem_x) + CONST_SLUR_USEPARATION_FROM_STEM;
-                if (direction == 1)
-                    slur->start_y = start->topmost_y + 2 * r_ob->step_y;
-                else
-                    slur->start_y = start->bottommost_y - 2 * r_ob->step_y;
-            }
-        }
-        
-        // nudging end point if the chord has an accidental
-        bool end_pt_is_on_an_accidental = false;
-        fill_topmost_bottommost_fields(r_ob, end, staff_top_y);
-        if (direction > 0) {
-            if (end->topmost_y_noacc - CONST_EPSILON5 > end->topmost_y)
-                end_pt_is_on_an_accidental = true;
-        } else {
-            if (end->bottommost_y_noacc + CONST_EPSILON5 < end->bottommost_y)
-                end_pt_is_on_an_accidental = true;
-        }
-        if (r_ob->slurs_avoid_accidentals && end_pt_is_on_an_accidental) {
-            slur->end_y -= 2 * r_ob->step_y * direction;
-        }
-
-
-        // calculating standard control points
-        delta_ux = slur->end_ux - slur->start_ux;
-        long_base = sqrt(delta_ux * delta_ux + (slur->start_y - slur->end_y) * (slur->start_y - slur->end_y));
-        alpha = fabs(atan(-(slur->end_y - slur->start_y)/(slur->end_ux - slur->start_ux)));
-
-        a = long_base * CLAMP(0.3 - 0.12 * long_base/400., 0.18, 0.3);
-        b = long_base - a;
-        h = CLAMP(CONST_SLUR_MIN_UHEIGHT + (CONST_SLUR_MAX_UHEIGHT - CONST_SLUR_MIN_UHEIGHT) * long_base/400., CONST_SLUR_MIN_UHEIGHT, CONST_SLUR_MAX_UHEIGHT) * r_ob->zoom_y;
-        
-        if ((direction == 1 && slur->end_y <= slur->start_y) || (direction == -1 && slur->end_y >= slur->start_y)) {
-            slur->cp1_ux = a * cos(alpha) - h * sin(alpha);
-            slur->cp1_y = (slur->cp1_ux * tan(alpha) + h / cos(alpha)) * (- direction);
-            slur->cp2_ux = b * cos(alpha) - h * sin(alpha);
-            slur->cp2_y = (slur->cp2_ux * tan(alpha) + h / cos(alpha)) * (- direction);
-            slur->cp1_ux += slur->start_ux;
-            slur->cp2_ux += slur->start_ux;
-            slur->cp1_y += slur->start_y;
-            slur->cp2_y += slur->start_y;
-        } else {
-            slur->cp1_ux = slur->start_ux + a / cos(alpha) + (h - a*tan(alpha)) * sin(alpha);
-            slur->cp1_y = slur->start_y + (h - a*tan(alpha)) * cos(alpha) * (- direction);
-            slur->cp2_ux = slur->start_ux + b / cos(alpha) + (h - b*tan(alpha)) * sin(alpha);
-            slur->cp2_y = slur->start_y + (h - b*tan(alpha)) * cos(alpha) * (- direction);
-        }
-
-        // modify (if needed) control points, so that the slur does not cross notes or stems
-        const long MAX_TRIES = 100;
-        if (r_ob->slurs_avoid_chords && direction != 0 && start != end) {
-            for (   chord = chord_get_next(start);
-                    chord && chord_get_prev(chord) != end; // && chord_get_prev(chord) != chord_get_prev(end->parent);
-                 chord = chord_get_next(chord)) {
-                
-                long count = 0;
-                char is_good = false;
-                double d1, d2, d, s, s_used, d_step;
-                double stem_ux = xposition_to_unscaled_xposition(r_ob, chord->stem_x);
-                
-                double pt_y;
-                
-                fill_topmost_bottommost_fields(r_ob, chord, staff_top_y);
-
-                double chord_topmost_y = chord->topmost_y;
-                double chord_bottommost_y = chord->bottommost_y;
-                double chord_topmost_y_noacc = chord->topmost_y_noacc;
-                double chord_bottommost_y_noacc = chord->bottommost_y_noacc;
-                
-                if (direction > 0) {
-                    pt_y = (r_ob->slurs_avoid_accidentals ? chord_topmost_y : chord_topmost_y_noacc) - CONST_SLUR_AVOID_OBJECTS_PAD * r_ob->zoom_y;
-                } else {
-                    pt_y = (r_ob->slurs_avoid_accidentals ? chord_bottommost_y : chord_bottommost_y_noacc) + CONST_SLUR_AVOID_OBJECTS_PAD * r_ob->zoom_y;
-                }
-                
-                // last chord
-                if (chord == end) {
-                    continue;
-                }
-                /*
-                 if (chord->topmost_y_noacc + CONST_EPSILON5 < chord->topmost_y) {
-                 // the topmost point is on an accidental. gotta find its deplacement!
-                 t_note *nt;
-                 double topmost = chord->lastnote->center.y;
-                 double delta_ux_candidate = 0.;
-                 for (nt = end->firstnote; nt; nt = nt->next) {
-                 double new_candidate = nt->center.y - note_get_accidental_uascent(r_ob, nt) * r_ob->zoom_y;
-                 if (new_candidate < topmost) {
-                 topmost = new_candidate;
-                 delta_ux_candidate = nt->accidental_stem_delta_ux;
-                 }
-                 }
-                 stem_ux += delta_ux_candidate;
-                 top_y = topmost - CONST_SLUR_AVOID_LAST_ACCIDENTALS_PAD * r_ob->zoom_y;
-                 } */
-                
-                d1 = pt_line_distance_vertical(stem_ux, pt_y, slur->start_ux, slur->start_y, slur->cp2_ux, slur->cp2_y);
-                d2 = pt_line_distance_vertical(stem_ux, pt_y, slur->cp1_ux, slur->cp1_y, slur->end_ux, slur->end_y);
-                
-                // how big is the superposition?
-                if (direction > 0) {
-                    is_good = (d1 < 0 && d2 < 0);
-                    d = MAX(d1 > 0 ? fabs(d1) : 0, d2 > 0 ? fabs(d2) : 0.);
-                } else {
-                    is_good = (d1 > 0 && d2 > 0);
-                    d = MAX(d1 < 0 ? fabs(d1) : 0, d2 < 0 ? fabs(d2) : 0.);
-                }
-                
-                // we compute the position of chord between the start chord and the end chord
-                s = CLAMP((stem_ux - slur->start_ux)/(slur->end_ux - slur->start_ux), 0., 1.);
-                s_used = s;
-                //                    s_used = r_ob->slurs_always_symmetrical ? 0.5 : s; // if slurs are always symmetrical, we always modify left side as much as right side
-                
-                d_step = d/3; //3 must become some CONST_SLUR_AUTOFIND_SHAPE_STEP
-                
-                while (!is_good && count < MAX_TRIES) {
-                    // what do we do? We could:
-                    // A. raise start/end points;
-                    // B. shift control points left/right;
-                    // C. raise control points
-                    double w_a = 0, w_b = 0, w_c = 0;
-                    double t1, t2;
-                    
-                    // getting weights w_a, w_b, w_c
-                    w_b = CLAMP(fabs(s-0.5) * 2. * CLAMP(long_base/4000., 0., 1.), 0., 1.);
-                    if (slur->cp1_ux - d_step * w_b * (1 - s_used) < slur->start_ux ||
-                        slur->cp2_ux + d_step * w_b * s_used > slur->end_ux)
-                        w_b = 0;
-                    
-                    t1 = MAX(raise1_y, raise2_y)/h;
-                    t2 = MAX(raisestart_y, raiseend_y)/h;
-                    w_a = (1 - w_b) * CLAMP((t1 - 1)/3. - (t2 - 1)/3. + fabs(s-0.5), 0., 1.);
-                    w_c = 1 - w_b - w_a;
-                    
-                    // applying A., B., and C.
-                    if (w_a > 0.) {
-                        raisestart_y += d_step * w_a * (1 - s);
-                        raiseend_y += d_step * w_a * s;
-                        slur->start_y -= d_step * w_a * (1 - s) * direction;
-                        slur->end_y -= d_step * w_a * s * direction;
-                    }
-                    
-                    if (w_b > 0.) {
-                        slur->cp1_ux -= d_step * w_b * (1 - s_used);
-                        slur->cp2_ux += d_step * w_b * s_used;
-                    }
-                    
-                    if (w_c > 0.) {
-                        // we raise the control points
-                        raise1_y += d_step * w_c * (1 - s_used);
-                        raise2_y += d_step * w_c * s_used;
-                        slur->cp1_y -= d_step * w_c * (1 - s_used) * direction;
-                        slur->cp2_y -= d_step * w_c * s_used * direction;
-                    }
-                    
-                    d1 = pt_line_distance_vertical(stem_ux, pt_y, slur->start_ux, slur->start_y, slur->cp2_ux, slur->cp2_y);
-                    d2 = pt_line_distance_vertical(stem_ux, pt_y, slur->cp1_ux, slur->cp1_y, slur->end_ux, slur->end_y);
-                    
-                    if (direction > 0) {
-                        is_good = (d1 < 0 && d2 < 0);
-                    } else {
-                        is_good = (d1 > 0 && d2 > 0);
-                    }
-                    
-                    count++;
-                }
-                if (count == MAX_TRIES) {
-                    dev_post("Slur couldn't be correctly painted");
-                }
-            }
-        }
-
-        slur->cp1_ux = (slur->cp1_ux - slur->start_ux) / delta_ux;
-        slur->cp2_ux = (slur->cp2_ux - slur->start_ux) / delta_ux;
-
-        if (reversed) {
-            double temp;
-            temp = slur->start_ux; slur->start_ux = slur->end_ux; slur->end_ux = temp;
-            temp = slur->start_y; slur->start_y = slur->end_y; slur->end_y = temp;
-//            temp = slur->cp1_ux; slur->cp1_ux = slur->cp2_ux; slur->cp2_ux = temp;
-            temp = slur->cp1_y; slur->cp1_y = slur->cp2_y; slur->cp2_y = temp;
-        }
-        slur->need_recompute_position = false;
+        slur_compute_control_points_methodB(r_ob, slur);
     }
     
     // real painting
@@ -3122,9 +2883,9 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
     x4 = unscaled_xposition_to_xposition(r_ob, slur->end_ux);
     y4 = slur->end_y;
     slur_base_length = slur->end_ux - slur->start_ux;
-    x2 = unscaled_xposition_to_xposition(r_ob, slur->start_ux + slur->cp1_ux * slur_base_length);
+    x2 = unscaled_xposition_to_xposition(r_ob, slur->start_ux + slur->cp1_relx * slur_base_length);
     y2 = slur->cp1_y;
-    x3 = unscaled_xposition_to_xposition(r_ob, slur->start_ux + slur->cp2_ux * slur_base_length);
+    x3 = unscaled_xposition_to_xposition(r_ob, slur->start_ux + slur->cp2_relx * slur_base_length);
     y3 = slur->cp2_y;
 #ifdef BACH_MAX
     jgraphics_set_line_width(g, 0.); 
@@ -11619,8 +11380,10 @@ t_note *build_note_from_ac_av(t_notation_obj *r_ob, long argc, double *argv){
     note->notehead_uwidth = 0;
 
     
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     note->num_articulations = 0;
     note->articulation = NULL;
+#endif
     
     note->notehead_resize = note->accidentals_resize = 1.;
     
@@ -11699,9 +11462,11 @@ t_chord *build_chord_from_notes(t_notation_obj *r_ob, t_note *firstnote, t_note 
     this_ch->is_grace_chord = false;
     this_ch->dont_split_for_ts_boxes = false;
 
-    this_ch->num_articulations = 0; 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
+    this_ch->num_articulations = 0;
     this_ch->articulation = NULL;
-
+#endif
+    
 #ifdef BACH_SUPPORT_SLURS
     this_ch->num_slurs_to = 0;
     this_ch->num_slurs_from = 0;
@@ -11962,8 +11727,10 @@ t_note* clone_note(t_notation_obj *r_ob, t_note *note, e_clone_for_types clone_f
             cloned_nt->articulation[i].owner = (t_notation_item *)cloned_nt;
         }
     } else { */
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     cloned_nt->num_articulations = 0;
     cloned_nt->articulation = NULL;
+#endif
 //    }
     
     cloned_nt->parent = note->parent; // same chord, for now
@@ -12237,8 +12004,10 @@ t_chord* clone_chord(t_notation_obj *r_ob, t_chord *chord, e_clone_for_types clo
             newchord->articulation[i].owner = (t_notation_item *)newchord;
         }
     } else { */
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
         newchord->num_articulations = 0;
         newchord->articulation = NULL;
+#endif
 //    }
     
 #ifdef BACH_SUPPORT_SLURS
@@ -12328,9 +12097,11 @@ t_chord* clone_selected_notes_into_chord(t_notation_obj *r_ob, t_chord *chord, e
     newchord->is_grace_chord = chord->is_grace_chord;
     newchord->dont_split_for_ts_boxes = chord->dont_split_for_ts_boxes;
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     newchord->num_articulations = 0;
     newchord->articulation = NULL;
-
+#endif
+    
 #ifdef BACH_SUPPORT_SLURS
     newchord->num_slurs_to = 0;
     newchord->num_slurs_from = 0;
@@ -13514,7 +13285,65 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
             }
         }
     }
+    
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        // should always be the case
+        for (temp_ch = measure->firstchord; temp_ch; temp_ch = temp_ch->next)
+            chord_calculate_staff_uy_stuff(r_ob, temp_ch);
+    }
 }
+
+
+double chord_get_topmost_y(t_notation_obj *r_ob, t_chord *chord)
+{
+    t_voice *voice = chord_get_voice(r_ob, chord);
+    double staff_top = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    return staff_top + chord->topmost_stafftop_uy * r_ob->zoom_y;
+}
+
+double chord_get_bottommost_y(t_notation_obj *r_ob, t_chord *chord)
+{
+    t_voice *voice = chord_get_voice(r_ob, chord);
+    double staff_top = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    return staff_top + chord->bottommost_stafftop_uy * r_ob->zoom_y;
+}
+
+double chord_get_topmost_y_noacc(t_notation_obj *r_ob, t_chord *chord)
+{
+    t_voice *voice = chord_get_voice(r_ob, chord);
+    double staff_top = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    return staff_top + chord->topmost_stafftop_uy_noacc * r_ob->zoom_y;
+}
+
+double chord_get_bottommost_y_noacc(t_notation_obj *r_ob, t_chord *chord)
+{
+    t_voice *voice = chord_get_voice(r_ob, chord);
+    double staff_top = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    return staff_top + chord->bottommost_stafftop_uy_noacc * r_ob->zoom_y;
+}
+
+double chord_get_topmost_y_notuplets(t_notation_obj *r_ob, t_chord *chord)
+{
+    t_voice *voice = chord_get_voice(r_ob, chord);
+    double staff_top = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    return staff_top + chord->topmost_stafftop_uy_notuplets * r_ob->zoom_y;
+}
+
+double chord_get_bottommost_y_notuplets(t_notation_obj *r_ob, t_chord *chord)
+{
+    t_voice *voice = chord_get_voice(r_ob, chord);
+    double staff_top = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    return staff_top + chord->bottommost_stafftop_uy_notuplets * r_ob->zoom_y;
+}
+
+double chord_get_beam_y(t_notation_obj *r_ob, t_chord *chord)
+{
+    t_voice *voice = chord_get_voice(r_ob, chord);
+    double staff_top = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    return staff_top + chord->stemtip_stafftop_uy * r_ob->zoom_y;
+}
+
+
 
 // is_entire_measure == 1 means that we ask for the width of an entire measure
 // "gamma" is the "gamma" parameter in the function documentation, elsewhere called spacing_width
@@ -16287,7 +16116,7 @@ long get_default_beam_number_for_level(t_notation_obj *r_ob, t_llll *level, char
         } else if (r_ob->extend_beams_over_rests == k_EXTEND_BEAMS_OVER_RESTS_FIRST_BEAM_ONLY)
             rest_force_num = (rest_force_num < 0) ? 1 : MIN(rest_force_num, 1);
         else if (r_ob->extend_beams_over_rests == k_EXTEND_BEAMS_OVER_RESTS_TILL_REST_BEAM_VALUE){
-            char this_num_beams = get_num_beams_from_figure(((t_chord *)hatom_getobj(&first_nonrest_elem->l_hatom))->figure);
+            t_uint8 this_num_beams = get_num_beams_from_figure(((t_chord *)hatom_getobj(&first_nonrest_elem->l_hatom))->figure);
             rest_force_num = (rest_force_num < 0) ? this_num_beams : MIN(rest_force_num, this_num_beams);
         }
         first_nonrest_elem = first_nonrest_elem->l_next;
@@ -16320,7 +16149,7 @@ long get_default_beam_number_for_level(t_notation_obj *r_ob, t_llll *level, char
     for (elem = first_nonrest_elem; elem; elem = elem->l_next){
         t_chord *ch = (t_chord *)hatom_getobj(&elem->l_hatom);
         if (ch->r_sym_duration.r_num > 0){
-            long this_num_beams = get_num_beams_from_figure(ch->figure);
+            t_uint8 this_num_beams = get_num_beams_from_figure(ch->figure);
             if (this_num_beams < num)
                 num = this_num_beams;
         } else {
@@ -16332,7 +16161,7 @@ long get_default_beam_number_for_level(t_notation_obj *r_ob, t_llll *level, char
                     if (num > 1)
                         num = 1;
                 } else if (r_ob->extend_beams_over_rests == k_EXTEND_BEAMS_OVER_RESTS_TILL_REST_BEAM_VALUE){
-                    char this_num_beams = get_num_beams_from_figure(ch->figure);
+                    t_uint8 this_num_beams = get_num_beams_from_figure(ch->figure);
                     if (num > this_num_beams)
                         num = this_num_beams;
                 }
@@ -16461,7 +16290,7 @@ char refine_beams_for_level_once(t_notation_obj *r_ob, t_llll *box, char for_sub
     while (box_elem) {
         t_llllelem *next_box_elem = box_elem->l_next;
         t_rational this_figure = RAT_1OVER4;
-        long this_num_beams = 0;
+        t_uint8 this_num_beams = 0;
         char is_rest = false;
         char is_llll = false;
         char can_incorporate_llll = false;
@@ -20652,7 +20481,7 @@ void process_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure, long beamin
         curr_ch->beam_y = DBL_SMALLEST;
         curr_ch->topmost_y_noacc = DBL_SMALLEST;
         curr_ch->bottommost_y_noacc = DBL_SMALLEST;
-        curr_ch->topmost_stafftop_uy = curr_ch->bottommost_stafftop_uy = curr_ch->topmost_stafftop_uy_noacc = curr_ch->bottommost_stafftop_uy_noacc = -32000;
+        curr_ch->topmost_stafftop_uy = curr_ch->bottommost_stafftop_uy = curr_ch->topmost_stafftop_uy_noacc = curr_ch->bottommost_stafftop_uy_noacc = curr_ch->topmost_stafftop_uy_notuplets = curr_ch->bottommost_stafftop_uy_notuplets = -32000;
     }
     
     // We update the num_chords field of the measure. This might NOT be needed, if we used the chord_insert_in_measure() function, but we'll keep it for now.
@@ -21296,11 +21125,13 @@ long build_measure_beams_for_level_fn(void *data, t_hatom *a, const t_llll *addr
                             
                             if (beaming_direction == 1) {
                                 temp_ch->topmost_stafftop_uy = temp_ch->stemtip_stafftop_uy;
-                                temp_ch->topmost_stafftop_uy_noacc = temp_ch->stemtip_stafftop_uy; 
+                                temp_ch->topmost_stafftop_uy_noacc = temp_ch->stemtip_stafftop_uy;
+                                temp_ch->topmost_stafftop_uy_notuplets = temp_ch->stemtip_stafftop_uy;
                             }
                             if (beaming_direction == -1) {
                                 temp_ch->bottommost_stafftop_uy = temp_ch->stemtip_stafftop_uy;
                                 temp_ch->bottommost_stafftop_uy_noacc = temp_ch->stemtip_stafftop_uy;
+                                temp_ch->bottommost_stafftop_uy_notuplets = temp_ch->stemtip_stafftop_uy;
                             }
 //                            temp_ch->beam_stafftop_uy = temp_ch->stemtip_stafftop_uy + MAX(0, temp_ch->beams_depth - 1) * CONST_BEAMINGS_UDISTANCE * (temp_ch->direction == 1 ? 1 : -1);
                         }
@@ -21328,7 +21159,8 @@ long build_measure_beams_for_level_fn(void *data, t_hatom *a, const t_llll *addr
                                         if (minimum_uy_pos < beam_uy_pos) {
                                             temp_ch->float_steps += -MIN(r_ob->max_rest_floating_steps, ceil((beam_uy_pos - minimum_uy_pos) / CONST_STEP_UY));
                                             temp_ch->bottommost_stafftop_uy += temp_ch->float_steps * CONST_STEP_UY;
-                                            temp_ch->bottommost_stafftop_uy_noacc = MAX(temp_ch->bottommost_stafftop_uy, temp_ch->bottommost_stafftop_uy_noacc);
+//                                            temp_ch->bottommost_stafftop_uy_noacc = MAX(temp_ch->bottommost_stafftop_uy, temp_ch->bottommost_stafftop_uy_noacc);
+//                                            temp_ch->bottommost_stafftop_uy_notuplets = MAX(temp_ch->bottommost_stafftop_uy, temp_ch->bottommost_stafftop_uy_notuplets);
                                         } else
                                             temp_ch->float_steps += 0;
                                     } else {
@@ -21336,6 +21168,7 @@ long build_measure_beams_for_level_fn(void *data, t_hatom *a, const t_llll *addr
                                             temp_ch->float_steps += MIN(r_ob->max_rest_floating_steps, ceil((minimum_uy_pos - beam_uy_pos) / CONST_STEP_UY));
                                             temp_ch->topmost_stafftop_uy += temp_ch->float_steps * CONST_STEP_UY;
                                             temp_ch->topmost_stafftop_uy_noacc = MIN(temp_ch->topmost_stafftop_uy, temp_ch->topmost_stafftop_uy_noacc);
+                                            temp_ch->topmost_stafftop_uy_notuplets = MIN(temp_ch->topmost_stafftop_uy, temp_ch->topmost_stafftop_uy_notuplets);
                                         } else
                                             temp_ch->float_steps += 0;
                                     }
@@ -21390,7 +21223,7 @@ long build_measure_beams_for_level_fn(void *data, t_hatom *a, const t_llll *addr
                             
                             if (temp_ch->r_sym_duration.r_num > 0 && temp_ch->rhythmic_tree_elem->l_parent && temp_ch->rhythmic_tree_elem->l_parent->l_thing.w_obj) {
                                 char ch_level_beams = get_highest_ancestor_beam_number(temp_ch->rhythmic_tree_elem, true); 
-                                char ch_beams = temp_ch->beams_depth;
+                                t_uint8 ch_beams = temp_ch->beams_depth;
                                 if (ch_level_beams < ch_beams){
                                     long i;
                                     for (i = ch_level_beams + 1; i <= ch_beams; i++){
@@ -21507,18 +21340,20 @@ void reset_stemtip_topmost_bottommost_stafftop_uy_positions(t_notation_obj *r_ob
                 chord->stemtip_stafftop_uy = MAX(CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION, chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * grace_ratio);
                 chord->topmost_stafftop_uy = chord->topmostnote_stafftop_uy - MAX(CONST_STEP_UY, note_get_accidental_uascent(r_ob, chord->lastnote));
                 chord->topmost_stafftop_uy_noacc = chord->topmostnote_stafftop_uy - CONST_STEP_UY;
-                chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->stemtip_stafftop_uy;
+                chord->topmost_stafftop_uy_notuplets = chord->topmost_stafftop_uy;
+                chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->bottommost_stafftop_uy_notuplets = chord->stemtip_stafftop_uy;
             } else if (chord->direction == 1) {
                 chord->stemtip_stafftop_uy = MIN(num_staff_steps * CONST_STEP_UY - CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION, chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * grace_ratio);
-                chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->stemtip_stafftop_uy;
-                chord->bottommost_stafftop_uy = chord->bottommostnote_stafftop_uy + MAX(CONST_STEP_UY, note_get_accidental_uascent(r_ob, chord->firstnote));
+                chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->topmost_stafftop_uy_notuplets = chord->stemtip_stafftop_uy;
+                chord->bottommost_stafftop_uy = chord->bottommostnote_stafftop_uy + MAX(CONST_STEP_UY, note_get_accidental_udescent(r_ob, chord->firstnote));
                 chord->bottommost_stafftop_uy_noacc = chord->bottommostnote_stafftop_uy + CONST_STEP_UY;
+                chord->bottommost_stafftop_uy_notuplets = chord->bottommost_stafftop_uy;
             }
         } else {
             double stafftop = voice_get_staff_top_y(r_ob, (t_voice *)measure->voiceparent, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
             double restpos = rest_get_nonfloating_yposition(r_ob, chord, NULL, NULL);
-            chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = (restpos - stafftop)/r_ob->zoom_y - rest_get_top_extension_in_steps(r_ob, chord->figure) * CONST_STEP_UY;
-            chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = (restpos - stafftop)/r_ob->zoom_y + rest_get_bottom_extension_in_steps(r_ob, chord->figure) * CONST_STEP_UY;
+            chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->topmost_stafftop_uy_notuplets = (restpos - stafftop)/r_ob->zoom_y - rest_get_top_extension_in_steps(r_ob, chord->figure) * CONST_STEP_UY;
+            chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->bottommost_stafftop_uy_notuplets = (restpos - stafftop)/r_ob->zoom_y + rest_get_bottom_extension_in_steps(r_ob, chord->figure) * CONST_STEP_UY;
         }
     }
 }
@@ -21680,10 +21515,12 @@ void build_measure_tuplet_beams_for_level(t_notation_obj *r_ob, t_llll *box, t_j
                         if (tuplet_direction == 1) {
                             double additional = (beam->tuplet_text2[0] ? 9 : 0);
                             ch->topmost_stafftop_uy = MIN(ch->topmost_stafftop_uy, rescale(ch->stem_offset_ux, first_ux_pos, end_ux_pos, first_uy_pos, last_uy_pos) - CONST_TUPLET_USPACE_FROM_FURTHER_STUFF - additional);
-                            ch->topmost_stafftop_uy_noacc = MIN(ch->topmost_stafftop_uy_noacc, ch->topmost_stafftop_uy);
+//                            ch->topmost_stafftop_uy_noacc = MIN(ch->topmost_stafftop_uy_noacc, ch->topmost_stafftop_uy);
+//                            ch->topmost_stafftop_uy_notuplets = MIN(ch->topmost_stafftop_uy_notuplets, ch->topmost_stafftop_uy);
                         } else if (tuplet_direction == -1) {
                             ch->bottommost_stafftop_uy = MAX(ch->bottommost_stafftop_uy, rescale(ch->stem_offset_ux, first_ux_pos, end_ux_pos, first_uy_pos, last_uy_pos) + CONST_TUPLET_USPACE_FROM_FURTHER_STUFF);
-                            ch->bottommost_stafftop_uy_noacc = MAX(ch->bottommost_stafftop_uy_noacc, ch->bottommost_stafftop_uy);
+//                            ch->bottommost_stafftop_uy_noacc = MAX(ch->bottommost_stafftop_uy_noacc, ch->bottommost_stafftop_uy);
+//                            ch->bottommost_stafftop_uy_notuplets = MAX(ch->bottommost_stafftop_uy_notuplets, ch->bottommost_stafftop_uy);
                         }
                         if (ch == end_ch)
                             break;
@@ -23014,6 +22851,22 @@ void dynamics_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_dyna
     }
 }
 
+void articulation_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_articulation *art)
+{
+    if (notation_item_is_selected(r_ob, (t_notation_item *)art))
+        notation_item_delete_from_selection(r_ob, (t_notation_item *)art);
+    
+    if (notation_item_is_preselected(r_ob, (t_notation_item *)art))
+        notation_item_delete_from_preselection(r_ob, (t_notation_item *)art);
+    
+    if (r_ob->j_mousedown_ptr == art)
+        set_mousedown(r_ob, NULL, k_NONE);
+    
+    if (r_ob->j_last_mousedown_ptr == art) {
+        r_ob->j_last_mousedown_ptr = NULL;
+        r_ob->j_last_mousedown_obj_type = k_NONE;
+    }
+}
 
 void breakpoint_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_bpt *bpt)
 {
@@ -25647,6 +25500,52 @@ void calculate_note_sizes_from_slots(t_notation_obj *r_ob, t_note *note){
     }
 }
 
+
+void chord_calculate_staff_uy_stuff(t_notation_obj *r_ob, t_chord *chord)
+{
+    double ratio = chord->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.;
+    t_voice *voice = notation_item_get_voice(r_ob, (t_notation_item *)chord);
+    double staff_top_y = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    double staff_bottom_y = voice_get_staff_bottom_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+    for (t_note *curr_nt = chord->firstnote; curr_nt; curr_nt = curr_nt->next) {
+        double note_y = mc_to_yposition(r_ob, note_get_display_midicents(curr_nt), voice);
+        
+        double curr_nt_center_stafftop_uy = (note_y - staff_top_y)/r_ob->zoom_y;
+        curr_nt->center_stafftop_uy = curr_nt_center_stafftop_uy;
+        
+        if (!curr_nt->prev) {
+            chord->bottommostnote_stafftop_uy = curr_nt_center_stafftop_uy;
+            if (chord->direction == 1) {
+                chord->bottommost_stafftop_uy_noacc = chord->bottommostnote_stafftop_uy + CONST_STEP_UY * ratio;
+                chord->bottommost_stafftop_uy = chord->bottommostnote_stafftop_uy + MAX(CONST_STEP_UY * ratio, note_get_accidental_udescent(r_ob,curr_nt));
+                chord->bottommost_stafftop_uy_notuplets = chord->bottommost_stafftop_uy;
+            } else {
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                    chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->bottommost_stafftop_uy_notuplets = MAX(0, chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio);
+                else
+                    chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->bottommost_stafftop_uy_notuplets = chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio;
+            }
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL && chord->direction == -1)
+                chord->stemtip_stafftop_uy = chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio;
+        }
+        if (!curr_nt->next) {
+            chord->topmostnote_stafftop_uy = curr_nt_center_stafftop_uy;
+            if (chord->direction == -1) {
+                chord->topmost_stafftop_uy_noacc = chord->topmostnote_stafftop_uy - CONST_STEP_UY * ratio;
+                chord->topmost_stafftop_uy = chord->topmostnote_stafftop_uy - MAX(CONST_STEP_UY * ratio, note_get_accidental_uascent(r_ob, curr_nt));
+                chord->topmost_stafftop_uy_notuplets = chord->topmost_stafftop_uy;
+            } else {
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                    chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->topmost_stafftop_uy_notuplets = MIN(staff_bottom_y - staff_top_y - CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION, chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio);
+                else
+                    chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->topmost_stafftop_uy_notuplets = chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio;
+            }
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL && chord->direction == 1)
+                chord->stemtip_stafftop_uy = chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio;
+        }
+    }
+}
+
 void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset_graphical_position_values) 
 {
 // calculates all the parameters of a chord (such as notehead positions, accidental positions, width...) in order to simplify the drawing process
@@ -26394,44 +26293,14 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
 //            curr_nt->accidental_udescent = (curr_nt->num_accidentals > 0) ? get_accidental_udescent(r_ob, accidental[reordered_i]) * ratio : 0.;
 //            curr_nt->scaleposition = scaleposition[reordered_i];
             
-            note_y = mc_to_yposition(r_ob, note_get_display_midicents(curr_nt), voice);
-            
-            double curr_nt_center_stafftop_uy = (note_y - staff_top_y)/r_ob->zoom_y;
-            curr_nt->center_stafftop_uy = curr_nt_center_stafftop_uy;
-            
-            if (!curr_nt->prev) {
-                chord->bottommostnote_stafftop_uy = curr_nt_center_stafftop_uy;
-                if (chord->direction == 1) {
-                    chord->bottommost_stafftop_uy_noacc = chord->bottommostnote_stafftop_uy + CONST_STEP_UY * ratio;
-                    chord->bottommost_stafftop_uy = chord->bottommostnote_stafftop_uy + MAX(CONST_STEP_UY * ratio, note_get_accidental_udescent(r_ob,curr_nt));
-                } else {
-                    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                        chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = MAX(0, chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio);
-                    else
-                        chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio;
-                }
-                if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL && chord->direction == -1) 
-                    chord->stemtip_stafftop_uy = chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio;
-            }
-            if (!curr_nt->next) {
-                chord->topmostnote_stafftop_uy = curr_nt_center_stafftop_uy;
-                if (chord->direction == -1) {
-                    chord->topmost_stafftop_uy_noacc = chord->topmostnote_stafftop_uy - CONST_STEP_UY * ratio;
-                    chord->topmost_stafftop_uy = chord->topmostnote_stafftop_uy - MAX(CONST_STEP_UY * ratio, note_get_accidental_uascent(r_ob, curr_nt));
-                } else {
-                    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-                        chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = MIN(staff_bottom_y - staff_top_y - CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION, chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio);
-                    else
-                        chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio;
-                }
-                if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL && chord->direction == 1)
-                    chord->stemtip_stafftop_uy = chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio;
-            }
-            
             i++;
             curr_nt = curr_nt->next;
         }
-        
+
+        if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+            chord_calculate_staff_uy_stuff(r_ob, chord);
+        // for bach score, we do this after measure accidental validation
+
 //        dev_post("chord->topmostnote_stafftop_uy: %.2f", chord->topmostnote_stafftop_uy);
 
         bach_freeptr(midicents);
@@ -26633,7 +26502,7 @@ void compute_chord_figure(t_notation_obj *r_ob, t_chord *chord, char warn_when_w
     rat_reduce(&chord->figure);
 }
 
-long get_num_beams_from_figure(t_rational figure){
+t_uint8 get_num_beams_from_figure(t_rational figure){
     t_rational eight = RAT_1OVER8;
     if (rat_rat_cmp(figure, eight) > 0)
         return 0;
@@ -26646,7 +26515,7 @@ long get_num_beams_from_figure(t_rational figure){
 
 long get_bits_from_figure(t_rational figure){
     long beambits = 0;
-    long num_bits = get_num_beams_from_figure(figure);
+    t_uint8 num_bits = get_num_beams_from_figure(figure);
 //    t_rational r_num_bits = rat_rat_div(RAT_1OVER8, figure);
     // (r_num_bits.r_den == 1) ? ( (perfect_log2(r_num_bits.r_num) > 0) ? ( perfect_log2(r_num_bits.r_num) + 1) : floor(log2(r_num_bits.r_num) + 1)) : 
     //                                            floor(log2(rat2double(r_num_bits)) + 1);
@@ -26979,9 +26848,11 @@ void free_note(t_notation_obj *r_ob, t_note *note)
 
     bach_freeptr(note->durationline);
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     if (note->articulation)
         bach_freeptr(note->articulation);
-
+#endif
+    
     note->r_it.ID = BACH_MAGIC_BAD; // to know we freed...
 
 #ifdef BACH_CHECK_NOTATION_ITEMS
@@ -27037,9 +26908,11 @@ void free_chord(t_notation_obj *r_ob, t_chord *chord)
     free_notationitem_slots(r_ob, (t_notation_item *)chord);
 #endif
     
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     if (chord->articulation)
         bach_freeptr(chord->articulation);
-
+#endif
+    
     chord->r_it.ID = BACH_MAGIC_BAD; // to have a clue that we freed...
     bach_freeptr(chord);
     chord = NULL;
@@ -28556,20 +28429,29 @@ void delete_all_articulations_from_notation_item(t_notation_obj *r_ob, t_notatio
 {
     if (owner->type == k_CHORD) {
         t_chord *ch = (t_chord *) owner;
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
         ch->num_articulations = 0;
         bach_freeptr(ch->articulation);
         ch->articulation = NULL;
+#endif
+        if (r_ob->link_articulations_to_slot > 0 && r_ob->link_articulations_to_slot <= CONST_MAX_SLOTS) {
+            notation_item_clear_slot(r_ob, owner, r_ob->link_articulations_to_slot - 1);
+        }
     } else if (owner->type == k_NOTE) {
         t_note *nt = (t_note *) owner;
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
         nt->num_articulations = 0;
         bach_freeptr(nt->articulation);
         nt->articulation = NULL;
+#endif
         if (r_ob->link_articulations_to_slot > 0 && r_ob->link_articulations_to_slot <= CONST_MAX_SLOTS) {
             note_clear_slot(r_ob, nt, r_ob->link_articulations_to_slot - 1);
         }
     }
 }
 
+
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
 void delete_articulation_from_notation_item(t_notation_obj *r_ob, t_notation_item *owner, long articulation_number)
 {
     void *articulation_owner = owner;
@@ -28606,7 +28488,7 @@ void delete_articulation_from_notation_item(t_notation_obj *r_ob, t_notation_ite
         reset_articulation_position_for_chord(r_ob, ch);
     }
 }
-
+#endif
 
 char delete_articulations_in_selection(t_notation_obj *r_ob)
 {
@@ -28649,6 +28531,7 @@ char delete_articulations_in_selection(t_notation_obj *r_ob)
                 t_chord *ch = (owner->type == k_NOTE) ? ((t_note *) owner)->parent : ((t_chord *) owner);
                 notation_item_delete_from_selection(r_ob, curr_it);
                 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
                 // OLD WAY
                 delete_articulation_from_notation_item(r_ob, owner, art->number);
                 if (owner->type == k_NOTE) {
@@ -28656,6 +28539,7 @@ char delete_articulations_in_selection(t_notation_obj *r_ob)
                 } else if (owner->type == k_CHORD) {
                     ((t_chord *)owner)->bottommost_y_noacc = ((t_chord *)owner)->topmost_y_noacc = DBL_SMALLEST;
                 }
+#endif
                 
                 // NEW WAY
                 if (r_ob->link_articulations_to_slot > 0 && r_ob->link_articulations_to_slot <= CONST_MAX_SLOTS) {
@@ -28699,6 +28583,7 @@ void destroy_articulation(t_articulation *art)
 void add_articulation_to_notation_item(t_notation_obj *r_ob, t_notation_item *item, long articulation_ID)
 {
     // OLD WAY!!!
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
 /*    if (item->type == k_CHORD) {
         t_chord *ch = (t_chord *)item;
         if (ch->num_articulations == 0)
@@ -28727,6 +28612,7 @@ void add_articulation_to_notation_item(t_notation_obj *r_ob, t_notation_item *it
         nt->num_articulations++;
     }
  */
+#endif
     
     // NEW WAY: via Slot-linkage ;-)
 
@@ -29808,6 +29694,7 @@ t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     return out_llll;
 }
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
 t_llll* note_get_articulation_values_as_llll(t_notation_obj *r_ob, t_note *note){
     long i;
     t_llll* out_llll = llll_get();
@@ -29819,9 +29706,10 @@ t_llll* note_get_articulation_values_as_llll(t_notation_obj *r_ob, t_note *note)
     }
     return out_llll;
 }
+#endif
 
 
-
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
 t_llll* chord_get_articulation_values_as_llll(t_notation_obj *r_ob, t_chord *chord){
     long i;
     t_llll* out_llll = llll_get();
@@ -29833,7 +29721,7 @@ t_llll* chord_get_articulation_values_as_llll(t_notation_obj *r_ob, t_chord *cho
     }
     return out_llll;
 }
-
+#endif
 
 t_llll *get_biquad_as_full_llll(t_notation_obj *r_ob, t_biquad *bqd)
 {
@@ -30478,10 +30366,12 @@ t_llll* note_get_extras_values_as_llll(t_notation_obj *r_ob, t_note *note)
         }
     }
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // see if we need articulations
     if (note->num_articulations > 0)
         llll_appendllll(out_llll, note_get_articulation_values_as_llll(r_ob, note), 0, WHITENULL_llll);
-
+#endif
+    
     if (needslots)
         llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, false), 0, WHITENULL_llll);    
     return out_llll;
@@ -30531,11 +30421,13 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
     if (notation_item_has_slot_content(r_ob, (t_notation_item *)note))
         llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, mode, false), 0, WHITENULL_llll);    
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // see if we need articulations
     if (note->num_articulations > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)
         llll_appendllll(out_llll, note_get_articulation_values_as_llll(r_ob, note), 0, WHITENULL_llll);    
-
-    if (mode == k_CONSIDER_FOR_UNDO || (note->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)) 
+#endif
+    
+    if (mode == k_CONSIDER_FOR_UNDO || (note->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
         llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)note, true), 0, WHITENULL_llll);
 
     if (mode == k_CONSIDER_FOR_SAMPLING)
@@ -30661,9 +30553,11 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     if (notation_item_has_slot_content(r_ob, (t_notation_item *)note))
         llll_appendllll(out_llll, notation_item_get_partial_slots_values_as_llll(r_ob, (t_notation_item *)note, mode, false, start_x_rel, end_x_rel), 0, WHITENULL_llll);
     
-    // see if we need articulation extras 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
+    // see if we need articulation extras
     if (note->num_articulations > 0)
         llll_appendllll(out_llll, note_get_articulation_values_as_llll(r_ob, note), 0, WHITENULL_llll);    
+#endif
     
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)note);
     
@@ -30851,12 +30745,14 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     if (notation_item_has_slot_content(r_ob, (t_notation_item *)note, mode) && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END)
         llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, mode, false), 0, WHITENULL_llll);    
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     // see if we need articulations
     if (note->num_articulations > 0 && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END && 
         mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)
         llll_appendllll(out_llll, note_get_articulation_values_as_llll(r_ob, note), 0, WHITENULL_llll);    
-
-    if (mode == k_CONSIDER_FOR_UNDO || (note->r_it.names->l_size >0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)) 
+#endif
+    
+    if (mode == k_CONSIDER_FOR_UNDO || (note->r_it.names->l_size >0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
         llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)note, true), 0, WHITENULL_llll);
 
     llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)note);
@@ -31639,10 +31535,12 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
     if (!chord->firstnote && notation_item_has_slot_content(r_ob, (t_notation_item *)chord) && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END)
         llll_appendllll(out_llll, notation_item_get_slots_values_as_llll(r_ob, (t_notation_item *)chord, mode, false), 0, WHITENULL_llll);
 
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
     if (chord->num_articulations > 0)
         llll_appendllll(out_llll, chord_get_articulation_values_as_llll(r_ob, chord), 0, WHITENULL_llll);
-
-    if (mode == k_CONSIDER_FOR_UNDO || (chord->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)) 
+#endif
+    
+    if (mode == k_CONSIDER_FOR_UNDO || (chord->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
         llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)chord, true), 0, WHITENULL_llll);
 
     if (mode == k_CONSIDER_FOR_UNDO || (chord->num_slurs_to > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL))
@@ -32250,6 +32148,9 @@ void set_articulations_to_element_from_llll(t_notation_obj *r_ob, t_notation_ite
     if (articulations){
         t_llllelem *elem;
         long this_num_articulations = articulations->l_size;
+        
+        
+#ifdef BACH_SUPPORT_OLD_ARTICULATIONS_SYNTAX
         t_articulation **array = NULL;
         
         if (type == k_NOTE) {
@@ -32285,6 +32186,28 @@ void set_articulations_to_element_from_llll(t_notation_obj *r_ob, t_notation_ite
                 }
             }
         }
+#else
+        
+        // import from old syntax
+        int articulations_slot = r_ob->link_articulations_to_slot - 1;
+        if (this_num_articulations > 0 && articulations_slot >= 0 && articulations_slot < CONST_MAX_SLOTS) {
+            notation_item_clear_slot(r_ob, item, articulations_slot);
+            t_slot *slot = notation_item_get_slot_extended(r_ob, item, articulations_slot, true);
+            if (slot) {
+                long i = 0;
+                for (t_llllelem *elem = articulations->l_head; elem && i < this_num_articulations; elem = elem->l_next, i++) {
+                    t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                    if (hatom_gettype(&elem->l_hatom) == H_SYM) {
+                        thisitem->item = build_articulation(r_ob, notationobj_articulation_symbol2id(r_ob, hatom_getsym(&elem->l_hatom)), item, thisitem, hatom_getsym(&elem->l_hatom));
+                    } else {
+                        thisitem->item = build_articulation(r_ob, hatom_getlong(&elem->l_hatom), item, thisitem, notationobj_articulation_id2symbol(r_ob, hatom_getlong(&elem->l_hatom)));
+                    }
+                    ((t_articulation *)thisitem->item)->need_recompute_position = true;
+                    slotitem_append(thisitem);
+                }
+            }
+        }
+#endif
     }
 }
 
