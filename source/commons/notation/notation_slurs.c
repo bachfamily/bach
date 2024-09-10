@@ -879,16 +879,22 @@ void fill_slur_stuff(t_notation_obj *r_ob, t_slur *slur, double *cp1_ux, double 
     
 }
 
+double chord_get_extremum_for_slur(t_notation_obj *r_ob, t_chord *chord, char direction)
+{
+    double pt_y;
+    if (direction > 0) {
+        pt_y = (r_ob->slurs_avoid_accidentals ? chord_get_topmost_y_notuplets(r_ob, chord) - CONST_SLUR_AVOID_NOTE_WO_ACCIDENTAL_PAD * r_ob->zoom_y : chord_get_topmost_y_noacc(r_ob, chord)) - CONST_SLUR_AVOID_OBJECTS_PAD * r_ob->zoom_y;
+    } else {
+        pt_y = (r_ob->slurs_avoid_accidentals ? chord_get_bottommost_y_notuplets(r_ob, chord) + CONST_SLUR_AVOID_NOTE_WO_ACCIDENTAL_PAD * r_ob->zoom_y : chord_get_bottommost_y_noacc(r_ob, chord)) + CONST_SLUR_AVOID_OBJECTS_PAD * r_ob->zoom_y;
+    }
+    return pt_y;
+}
+
 double bezier_chord_dist(t_notation_obj *r_ob, t_slur *slur, double cp1_ux, double cp2_ux, t_chord *chord, char direction)
 {
     double stem_ux = xposition_to_unscaled_xposition(r_ob, chord->stem_x);
-    double pt_y;
-    if (direction > 0) {
-        pt_y = (r_ob->slurs_avoid_accidentals ? chord_get_topmost_y_notuplets(r_ob, chord) : chord_get_topmost_y_noacc(r_ob, chord)) - CONST_SLUR_AVOID_OBJECTS_PAD * r_ob->zoom_y;
-    } else {
-        pt_y = (r_ob->slurs_avoid_accidentals ? chord_get_bottommost_y_notuplets(r_ob, chord) : chord_get_bottommost_y_noacc(r_ob, chord)) + CONST_SLUR_AVOID_OBJECTS_PAD * r_ob->zoom_y;
-    }
-
+    double pt_y = chord_get_extremum_for_slur(r_ob, chord, direction);
+    
     t_pt sampled_pt;
     double t = bezier_x_to_t(build_pt(slur->start_ux, slur->start_y), build_pt(cp1_ux, slur->cp1_y), build_pt(cp2_ux, slur->cp2_y), build_pt(slur->end_ux, slur->end_y), stem_ux, 1, &sampled_pt);
     double bezy = sampled_pt.y; //(1-t)*(1-t)*(1-t)*slur->start_y + 3*t*(1-t)*(1-t)*slur->cp1_y + 3*t*t*(1-t)*slur->cp2_y + t*t*t*slur->end_y;
@@ -966,10 +972,10 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
     bool end_pt_is_on_an_accidental = false;
     fill_topmost_bottommost_fields(r_ob, end, staff_top_y);
     if (direction > 0) {
-        if (chord_get_topmost_y_noacc(r_ob, end) - CONST_EPSILON5 > chord_get_topmost_y(r_ob, end))
+        if (chord_get_topmost_y_noacc(r_ob, end) - CONST_EPSILON5 > chord_get_topmost_y_notuplets(r_ob, end))
             end_pt_is_on_an_accidental = true;
     } else {
-        if (chord_get_bottommost_y_noacc(r_ob, end) + CONST_EPSILON5 < chord_get_bottommost_y(r_ob, end))
+        if (chord_get_bottommost_y_noacc(r_ob, end) + CONST_EPSILON5 < chord_get_bottommost_y_notuplets(r_ob, end))
             end_pt_is_on_an_accidental = true;
     }
     if (r_ob->slurs_avoid_accidentals && end_pt_is_on_an_accidental) {
@@ -1028,7 +1034,7 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
             const double DEFAULT_REL_DISTANCE = 0.4;
             const double DEFAULT_ANGLE = rescale(CLAMP(delta_ux, 60, 1000), 5, 100, 20, 10) * PI/180.; // between 20° and 5°
             const double ANGLE_DIL_FACTOR = 2.;
-            const double DEFAULT_TENSION = 0.8, MAX_TENSION = 1.1;
+            const double DEFAULT_TENSION = 0.5, MAX_TENSION = 1.1;
             
             double distL = DEFAULT_REL_DISTANCE * delta_ux, distR = DEFAULT_REL_DISTANCE * delta_ux;
             double angleL = -DEFAULT_ANGLE, angleR = DEFAULT_ANGLE;
@@ -1057,11 +1063,12 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
                 for (chord = chord_get_next(start); chord && chord_get_prev(chord) != middle; chord = chord_get_next(chord)) {
                     double chord_stem_ux = xposition_to_unscaled_xposition(r_ob, chord->stem_x);
                     double dx = chord_stem_ux - slur->start_ux;
-                    double dy;
+                    double dy = chord_get_extremum_for_slur(r_ob, chord, direction) - slur->start_y;
+/*                    double dy;
                     if (direction >= 0)
                         dy = (r_ob->slurs_avoid_accidentals ? chord_get_topmost_y_notuplets(r_ob, chord) : chord_get_topmost_y_noacc(r_ob, chord)) - slur->start_y;
                     else
-                        dy = (r_ob->slurs_avoid_accidentals ? chord_get_bottommost_y_notuplets(r_ob, chord) : chord_get_bottommost_y_noacc(r_ob, chord)) - slur->start_y;
+                        dy = (r_ob->slurs_avoid_accidentals ? chord_get_bottommost_y_notuplets(r_ob, chord) : chord_get_bottommost_y_noacc(r_ob, chord)) - slur->start_y;*/
                     
                     
                     double dist = sqrt(dx*dx + dy*dy);
@@ -1081,11 +1088,12 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
                 for (chord = chord_get_prev(end); chord && chord && chord_get_next(chord) != middle; chord = chord_get_prev(chord)) {
                     double chord_stem_ux = xposition_to_unscaled_xposition(r_ob, chord->stem_x);
                     double dx = chord_stem_ux - slur->end_ux;
-                    double dy;
+                    double dy = chord_get_extremum_for_slur(r_ob, chord, direction) - slur->end_y;
+/*                    double dy;
                     if (direction >= 0)
                         dy = (r_ob->slurs_avoid_accidentals ? chord_get_topmost_y_notuplets(r_ob, chord) : chord_get_topmost_y_noacc(r_ob, chord)) - slur->end_y;
                     else
-                        dy = (r_ob->slurs_avoid_accidentals ? chord_get_bottommost_y_notuplets(r_ob, chord) : chord_get_bottommost_y_noacc(r_ob, chord)) - slur->end_y;
+                        dy = (r_ob->slurs_avoid_accidentals ? chord_get_bottommost_y_notuplets(r_ob, chord) : chord_get_bottommost_y_noacc(r_ob, chord)) - slur->end_y;*/
                     
                     double dist = sqrt(dx*dx + dy*dy);
                     double angle = atan2(-direction * dy, -dx);
@@ -1112,7 +1120,6 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
                 // now this could still lead to collisions, so we check
                 //            const long MAX_TRIES = 20;
                 for (chord = chord_get_next(start); chord && chord != end; chord = chord_get_next(chord)) {
-                    long count = 0;
                     double d = bezier_chord_dist(r_ob, slur, cp1_ux, cp2_ux, chord, direction);
                     bool must_fix = (direction * d < 0);
                     
@@ -1152,6 +1159,16 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
                     }
                 }
                 
+                //                    if (triangle_get_orientation(build_pt(slur->start_ux, slur->start_y), build_pt(cp1_ux, slur->cp1_y), build_pt(cp2_ux, slur->cp2_y)) > 0) {
+
+                // ensure convexity
+                if (pt_line_distance_vertical_signed(cp1_ux, slur->cp1_y, slur->start_ux, slur->start_y, cp2_ux, slur->cp2_y) * direction > 0) {
+                    slur->cp1_y = rescale(cp1_ux, slur->start_ux, cp2_ux, slur->start_y, slur->cp2_y);
+                }
+                if (pt_line_distance_vertical_signed(cp2_ux, slur->cp2_y, cp1_ux, slur->cp1_y, slur->end_ux, slur->end_y) * direction > 0) {
+                    slur->cp2_y = rescale(cp2_ux, cp1_ux, slur->end_ux, slur->cp1_y, slur->end_y);
+                }
+
                 done = true;
             }
         }

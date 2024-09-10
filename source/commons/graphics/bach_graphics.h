@@ -356,6 +356,7 @@ double pt_line_distance(double ptx, double pty, double x1, double y1, double x2,
                     distance will be null (which is also the case if the line is purely vertical).
  */
 double pt_line_distance_vertical(double ptx, double pty, double x1, double y1, double x2, double y2);
+double pt_line_distance_vertical_signed(double ptx, double pty, double x1, double y1, double x2, double y2);
 
 /**    Find the distance between a point and a line segment (not the whole infinite line!)
     @ingroup    geometry

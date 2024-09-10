@@ -2113,7 +2113,9 @@ double pt_segment_distance(t_pt pt, t_pt v, t_pt w)
     return pt_pt_distance(pt, projection);
 }
 
-// distance calculated on the y vertical line passing from ptx pty
+// distance calculated on the y vertical line passing from ptx pty, signed.
+// BEware, there's something odd about how this is computed. Use the function below.
+// THis is kept for legacy
 double pt_line_distance_vertical(double ptx, double pty, double x1, double y1, double x2, double y2) {
     double squared_length_12 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
 
@@ -2126,6 +2128,21 @@ double pt_line_distance_vertical(double ptx, double pty, double x1, double y1, d
         return pty - y1;
     }
 }
+
+
+double pt_line_distance_vertical_signed(double ptx, double pty, double x1, double y1, double x2, double y2) {
+    double squared_length_12 = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+
+    if (x2 == x1) {
+        return 0;
+    } else if (squared_length_12 > 0) {
+        double intersection_y = y1 + (ptx - x1) * (y2 - y1)/(x2 - x1);
+        return pty - intersection_y;
+    } else {
+        return pty - y1;
+    }
+}
+
 
 double pt_polygon_distance(t_pt pt, t_polygon *poly)
 {

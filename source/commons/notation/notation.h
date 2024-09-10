@@ -241,6 +241,7 @@
 #define CONST_SLUR_MIN_UHEIGHT 4.2                            ///< Unscaled minimum overall height of a slur (precisely: minimum unscaled height of the bounding trapece)
 #define CONST_SLUR_MAX_UHEIGHT 21                            ///< Unscaled maximum overall height of a slur (precisely: maximum unscaled height of the bounding trapece)
 
+#define CONST_SLUR_AVOID_NOTE_WO_ACCIDENTAL_PAD 2
 #define CONST_SLUR_AVOID_OBJECTS_PAD 2
 #define CONST_SLUR_AVOID_LAST_ACCIDENTALS_PAD 0
 
@@ -2839,6 +2840,10 @@ typedef struct _chord
     
     // used by tree beaming handling and for groups linking
     double            stemtip_stafftop_uy;                ///< Unscaled vertical shift (in pixels) of the topmost stem point, with respect to the staff top
+    
+    // Now: these are so that topmost_stafftop_uy > topmost_stafftop_uy_notuplets > topmost_stafftop_uy_noacc
+    // The first one includes every aspect of the chord, the second one ignores tuplets, the third one ALSO ignores accidentals
+    // Similarly for the bottom parts
     double            topmost_stafftop_uy;                ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, with respect to the staff top
     double            bottommost_stafftop_uy;             ///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, with respect to the staff top
     double            topmost_stafftop_uy_notuplets;      ///< Unscaled vertical shift (in pixels) of the topmost point in the chord, with respect to the staff top ignoring tuplet signs
