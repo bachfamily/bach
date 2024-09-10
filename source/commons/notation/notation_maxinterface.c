@@ -1416,9 +1416,9 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
     t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
     t_atom_long *av_long = NULL;
-    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0;
+    long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0, has_showtempointerpline = 0, has_continuousbang = 0, has_additionalstartpad = 0;
     t_atom_long dblclicksendsvalues = 0;
-    double slotbgalpha = 0, backgroundslotfontsize = 0;
+    double slotbgalpha = 0, backgroundslotfontsize = 0, additionalstartpad = 0;
     t_atom_long velocityhandling = -1, notificationsformessages = -1, showtempointerpline = 0, continuousbang = -1;
     char brand_new_creation = 0;
 
@@ -1476,6 +1476,9 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     if ((has_slotsbgalpha = dictionary_hasentry(d, gensym("slotsbgalpha"))))
         dictionary_getfloat(d, gensym("slotsbgalpha"), &slotbgalpha);
 
+    if ((has_additionalstartpad = dictionary_hasentry(d, gensym("additionalstartpad"))))
+        dictionary_getfloat(d, gensym("additionalstartpad"), &additionalstartpad);
+    
     if ((has_backgroundslotfontsize = dictionary_hasentry(d, gensym("backgroundslotfontsize"))))
         dictionary_getfloat(d, gensym("backgroundslotfontsize"), &backgroundslotfontsize);
 
@@ -1550,6 +1553,9 @@ void notationobj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_di
     
     if (has_continuousbang)
         object_attr_setchar(x, gensym("notifycontinuously"), continuousbang);
+
+    if (has_additionalstartpad)
+        object_attr_setfloat(x, gensym("padafterclef"), additionalstartpad);
 
     if (dblclicksendsvalues) {
         r_ob->play_offline_bitfield[k_PLAYOFFLINE_KEY_DOUBLECLICK] = 1;
@@ -2216,14 +2222,21 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // (also see <m>highlightdomain</m>).
 
 
-        CLASS_ATTR_DOUBLE(c, "additionalstartpad", 0, t_notation_obj, additional_ux_start_pad);
-        CLASS_ATTR_STYLE_LABEL(c,"additionalstartpad",0,"text","Additional Start Pad");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"additionalstartpad",0,"0.");
+        // this used to be called "additionalstartpad"
+        CLASS_ATTR_DOUBLE(c, "padafterclef", 0, t_notation_obj, additional_ux_start_pad_after_clef);
+        CLASS_ATTR_STYLE_LABEL(c,"padafterclef",0,"text","Pad After Clef");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"padafterclef",0,"0.");
         // @exclude bach.slot
-        // @description Sets an additional left pad to the domain display start, in pixels (rescaled according to the <m>vzoom</m>),
+        // @description Shifts the beginning of the musical content after the clefs (and key signatures), in pixels
+        // (rescaled according to the <m>vzoom</m>),
         // This pad is located right after each clef, before the music content starts.
         // @copyif bach.roll BACH_DOC_ROLL_START_PAD
 
+        CLASS_ATTR_DOUBLE(c, "padbeforeclef", 0, t_notation_obj, additional_ux_start_pad_before_clef);
+        CLASS_ATTR_STYLE_LABEL(c,"padbeforeclef",0,"text","Pad Before Clef");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"padbeforeclef",0,"0.");
+        // @exclude bach.slot
+        // @description Sets an additional left pad before the clef, in pixels (rescaled according to the <m>vzoom</m>).
 
         CLASS_ATTR_DOUBLE(c, "playheadwidth", 0, t_notation_obj, playhead_width);
         CLASS_ATTR_STYLE_LABEL(c,"playheadwidth",0,"text","Playhead Width");

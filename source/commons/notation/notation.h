@@ -4753,8 +4753,9 @@ typedef struct _notation_obj
     char        show_note_names;                    ///< Flags telling if we want to show the note names in the upper legend when a note is selected
     long        last_used_octave;                    ///< Internal, private use: it keeps track of the last used octave while entering notes with notenames, so that when a user
                                                     ///< enters "C3 D E", the object understands that D and E are always at the 3rd octave. 
-    double        additional_ux_start_pad;            ///< Unscaled width of an additional starting pad, to shift the beginning of the staff farther or nearer with respect to the clefs 
-    char        show_ledger_lines;                    ///< Flags telling if we want to show the ledger lines: 
+    double      additional_ux_start_pad_after_clef; ///< Unscaled width of an additional starting pad after clef and key signatures
+    double      additional_ux_start_pad_before_clef; ///< Unscaled width of an additional starting pad before clef
+    char        show_ledger_lines;                    ///< Flags telling if we want to show the ledger lines:
                                                     ///< 0 = Never show ledger lines; 1 = Show them in the standard way (default) ; 2 = Always refer ledger lines to the main staves, 
                                                     ///< which means that if there's a note in a auxiliary staff, we'll show ledger lines between the auxiliary and the main staff 
     double        head_vertical_additional_uspace;    ///< Unscaled additional vertical space at the top of the object. 
@@ -6359,6 +6360,8 @@ void adjust_zoom_for_non_antialiased_lines(t_notation_obj *r_ob);
  */
 void update_hscrollbar(t_notation_obj *r_ob, char from_what);
 
+
+double notationobj_get_starting_pads_ux(t_notation_obj *r_ob);
 
 /**    Refresh the position of the horizontal scrollbar (refresh all the horizontal scrollbar fields in the structure.
     @ingroup            notation_graphics

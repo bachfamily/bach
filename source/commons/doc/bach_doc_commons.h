@@ -1080,9 +1080,9 @@
 	// <br /> <br />
 
 #define BACH_DOC_ROLL_START_PAD
-	// In <o>bach.roll</o>, this pad is extremely useful if you have chords around 0ms
-	// having a lot of accidentals. In this case you can shift, via this pad, the position of the 0ms on the screen, so that all accidentals
-	// are correctly displayed. Also see the message <m>adjustadditionalstartpad</m>.
+	// In <o>bach.roll</o>, this pad is particularly useful if you have chords around 0ms
+	// bearing many accidentals. In this case you can shift, via this pad, the position of the 0ms on the screen, so that all accidentals
+	// are correctly displayed. Also see the message <m>adjustpadafterclef</m>.
 	// <br /> <br />
 	
 #define BACH_DOC_STAFFLINE_STEP

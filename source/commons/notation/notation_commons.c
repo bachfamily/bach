@@ -779,6 +779,7 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
      */
     
     double voice_names_uwidth = r_ob->voice_names_uwidth;
+    double padbeforeclefs = r_ob->additional_ux_start_pad_before_clef;
     double zoom_y = r_ob->zoom_y, step_y = r_ob->step_y;
     double clef_ux_shift = r_ob->notation_typo_preferences.clef_ux_shift;
     double clef_uy_shift = r_ob->notation_typo_preferences.clef_uy_shift;
@@ -786,11 +787,13 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
 
     t_jfont *jf_littleclefnumber = NULL;
     const char *octave_text = NULL;
+    
+    double clef_x = 1 + (clef_ux_shift + voice_names_uwidth + padbeforeclefs) * zoom_y;
 
     if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_GG) ||  (clef == k_CLEF_G))
-        write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift) * step_y);
+        write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, clef_x, middleC_y - (15.8 + clef_uy_shift) * step_y);
     if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_FF) ||  (clef == k_CLEF_F))
-        write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + clef_uy_shift) * step_y);
+        write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + clef_uy_shift) * step_y);
     
     
     if (octave_shift != 0 || (r_ob->show_aux_clefs && (clef == k_CLEF_FFGG || clef == k_CLEF_FGG || clef == k_CLEF_FFG || clef == k_CLEF_GG || clef == k_CLEF_FF))) {
@@ -801,11 +804,11 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
 
     if (r_ob->show_aux_clefs && jf_littleclefnumber) {
         if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_GG)) {
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + 2 * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Gclefchar, clef_x, middleC_y - (15.8 + 2 * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + r_ob->notation_typo_preferences.clef_F15ma_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + 2 * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - r_ob->notation_typo_preferences.clef_F15ma_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
         if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FF)) {
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 - 2 * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Fclefchar, clef_x, middleC_y - (7.6 - 2 * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + r_ob->notation_typo_preferences.clef_F15mb_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 - 2 * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - r_ob->notation_typo_preferences.clef_F15mb_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
     }
@@ -849,25 +852,25 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     switch (clef) {
         case k_CLEF_G15ma:
         case k_CLEF_G8va:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, clef_x, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_G15mb:
         case k_CLEF_G8vb:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, clef_x, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
             
         case k_CLEF_F15ma:
         case k_CLEF_F8va:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_F15mb:
         case k_CLEF_F8vb:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
@@ -875,15 +878,15 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
         case k_CLEF_TENOR:
         case k_CLEF_MEZZO:
         case k_CLEF_SOPRANO:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Cclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift - 4) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Cclefchar, clef_x, middleC_y - (15.8 + clef_uy_shift - 4) * step_y);
             break;
 
         case k_CLEF_BARYTONE:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + clef_uy_shift + 0) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + clef_uy_shift + 0) * step_y);
             break;
             
         case k_CLEF_PERCUSSION:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Pclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift + 2) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Pclefchar, clef_x, middleC_y - (15.8 + clef_uy_shift + 2) * step_y);
             break;
             
         default:
@@ -898,7 +901,7 @@ void paint_keysigaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_a
 {
     unicodeChar acc_text[10]; 
     long i;
-    double pos_x = r_ob->zoom_y * CONST_UX_KEYSIGNATURE_START + r_ob->j_inset_x + r_ob->voice_names_uwidth * r_ob->zoom_y;
+    double pos_x = r_ob->zoom_y * CONST_UX_KEYSIGNATURE_START + r_ob->j_inset_x + (r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef) * r_ob->zoom_y;
     acc_text[1] = 0;
     for (i = 0; i < 7; i++){ 
         t_rational this_acc = acc_pattern[mapsto[i]]; //acc_pattern[0]
@@ -1978,11 +1981,15 @@ void paint_measure_label_families(t_notation_obj *r_ob, t_object *view, t_jgraph
     }
 }
 
+double notationobj_get_starting_pads_ux(t_notation_obj *r_ob)
+{
+    return r_ob->additional_ux_start_pad_after_clef + r_ob->additional_ux_start_pad_before_clef;
+}
 
 double label_family_contour_ux_to_x(t_notation_obj *r_ob, double ux)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-        return ux + r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad - r_ob->screen_ms_start * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
+        return ux + r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + notationobj_get_starting_pads_ux(r_ob) - r_ob->screen_ms_start * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
 //        return r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (ux - r_ob->screen_ms_start * CONST_X_SCALING) * r_ob->zoom_x) + r_ob->j_inset_x;
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
         return unscaled_xposition_to_xposition(r_ob, ux/(r_ob->zoom_x * r_ob->zoom_y));
@@ -4198,9 +4205,9 @@ double onset_to_xposition_roll(t_notation_obj *r_ob, double onset, long *system)
         this_system = 0;
     
     if (r_ob->view == k_VIEW_SCROLL)
-        res = r_ob->zoom_y * (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (onset - r_ob->screen_ms_start) * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
+        res = r_ob->zoom_y * (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + notationobj_get_starting_pads_ux(r_ob) + (onset - r_ob->screen_ms_start) * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
     else
-        res = r_ob->zoom_y * (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (onset - this_system * r_ob->ms_on_a_line) * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
+        res = r_ob->zoom_y * (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + notationobj_get_starting_pads_ux(r_ob) + (onset - this_system * r_ob->ms_on_a_line) * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
     
     if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
         t_llll *ll = llll_get();
@@ -4238,7 +4245,7 @@ double get_predomain_width_pixels(t_notation_obj *r_ob)
 double xposition_to_onset(t_notation_obj *r_ob, double xposition, long system)
 {
     double res = system * r_ob->ms_on_a_line + r_ob->screen_ms_start +
-                (((xposition - r_ob->j_inset_x) / r_ob->zoom_y) - get_ux_left_start(r_ob) - r_ob->key_signature_uwidth - r_ob->voice_names_uwidth - r_ob->additional_ux_start_pad) / (CONST_X_SCALING * r_ob->zoom_x);
+                (((xposition - r_ob->j_inset_x) / r_ob->zoom_y) - get_ux_left_start(r_ob) - r_ob->key_signature_uwidth - r_ob->voice_names_uwidth - notationobj_get_starting_pads_ux(r_ob)) / (CONST_X_SCALING * r_ob->zoom_x);
     if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
         t_llll *ll = llll_get();
         r_ob->lambda_val = res;
@@ -4271,14 +4278,14 @@ double unscaled_xposition_to_xposition(t_notation_obj *r_ob, double unscaled_x_p
     double const_left_start = get_ux_left_start(r_ob);
     double const_x_scaling = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? 1. : CONST_X_SCALING_SCORE);
 
-    return r_ob->j_inset_x + (const_left_start + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y + const_x_scaling * (unscaled_x_pos - r_ob->screen_ux_start) * r_ob->zoom_x * r_ob->zoom_y;
+    return r_ob->j_inset_x + (const_left_start + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + notationobj_get_starting_pads_ux(r_ob)) * r_ob->zoom_y + const_x_scaling * (unscaled_x_pos - r_ob->screen_ux_start) * r_ob->zoom_x * r_ob->zoom_y;
 }
 
 double xposition_to_unscaled_xposition(t_notation_obj *r_ob, double x_position){
     double const_left_start = get_ux_left_start(r_ob);
     double const_x_scaling = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? 1. : CONST_X_SCALING_SCORE);
     
-    return r_ob->screen_ux_start + (x_position - r_ob->j_inset_x - (const_left_start + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (const_x_scaling * r_ob->zoom_x * r_ob->zoom_y);
+    return r_ob->screen_ux_start + (x_position - r_ob->j_inset_x - (const_left_start + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + notationobj_get_starting_pads_ux(r_ob)) * r_ob->zoom_y) / (const_x_scaling * r_ob->zoom_x * r_ob->zoom_y);
 }
 
 double deltauxpixels_to_deltaxpixels(t_notation_obj *r_ob, double deltauxpixels){
@@ -6030,7 +6037,7 @@ void update_domain(t_notation_obj *r_ob) {
 
     if (object_type == k_NOTATION_OBJECT_ROLL) {
 
-        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (1 * r_ob->zoom_x * r_ob->zoom_y);
+        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + notationobj_get_starting_pads_ux(r_ob)) * r_ob->zoom_y) / (1 * r_ob->zoom_x * r_ob->zoom_y);
  
 //        dev_post("domain_ux: %.2f", r_ob->domain_ux);
         
@@ -6047,7 +6054,7 @@ void update_domain(t_notation_obj *r_ob) {
             
         }
     } else if (object_type == k_NOTATION_OBJECT_SCORE) {
-        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
+        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (get_ux_left_start(r_ob) + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + notationobj_get_starting_pads_ux(r_ob)) * r_ob->zoom_y) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
         r_ob->screen_ux_end = r_ob->screen_ux_start + r_ob->domain_ux;
     }
 }
@@ -37551,7 +37558,8 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->are_there_solos = false;
     r_ob->n_lexpr = NULL;
     r_ob->ruler_mode = 0; // fixed ruler
-    r_ob->additional_ux_start_pad = 0.;
+    r_ob->additional_ux_start_pad_after_clef = 0.;
+    r_ob->additional_ux_start_pad_before_clef = 0.;
     r_ob->hide_tempi_when_equal_on_all_voices = 1;
     r_ob->need_send_rebuild_done_after_paint = false;
     r_ob->j_mouse_is_over = true;

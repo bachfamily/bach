@@ -5708,11 +5708,12 @@ void C74_EXPORT ext_main(void *moduleRef){
     class_addmethod(c, (method) roll_anything, "explodechords", A_GIMME, 0);
 
 
-    // @method adjustadditionalstartpad @digest Adjust additional start pad automatically 
-    // @description The <m>adjustadditionalstartpad</m> adjusts automatically the additional
+    // @method adjustpadafterclef @digest Adjust pad after clef automatically
+    // @description The <m>adjustpadafterclef</m> adjusts automatically the additional
     // padding space at the beginning of the <o>bach.roll</o>, so that all accidentals
-    // of the notes near the beginning can be properly displayed. Also see the <m>additionalstartpad</m> attribute.
+    // of the notes near the beginning can be properly displayed. Also see the <m>padafterclef</m> attribute.
     class_addmethod(c, (method) roll_adjustadditionalstartpad, "adjustadditionalstartpad", 0);
+    class_addmethod(c, (method) roll_adjustadditionalstartpad, "adjustpadafterclef", 0);
 
 
     // @method fixvzoom @digest Fix the vertical zoom value 
@@ -7609,7 +7610,7 @@ void roll_adjustadditionalstartpad(t_roll *x){
             }
         }
 
-    x->r_ob.additional_ux_start_pad = -this_pad;
+    x->r_ob.additional_ux_start_pad_after_clef = -this_pad;
     update_hscrollbar((t_notation_obj *) x, 0);
     notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
@@ -11606,7 +11607,7 @@ int chord_get_clef(t_notation_obj *r_ob, t_chord *ch)
 e_chord_position_in_screen chord_get_screen_position_for_painting(t_roll *x, t_chord *curr_ch)
 {
     double max_note_duration = chord_get_max_duration((t_notation_obj *) x, curr_ch);
-    double startpad_ms = x->r_ob.additional_ux_start_pad == 0 ? 0 : deltaxpixels_to_deltaonset((t_notation_obj *) x, x->r_ob.additional_ux_start_pad * x->r_ob.zoom_x);
+    double startpad_ms = notationobj_get_starting_pads_ux((t_notation_obj *)x) == 0 ? 0 : deltaxpixels_to_deltaonset((t_notation_obj *) x, notationobj_get_starting_pads_ux((t_notation_obj *)x) * x->r_ob.zoom_x);
     double max_chord_tail = curr_ch->onset + max_note_duration;
     
     switch (x->r_ob.view) {
@@ -11647,8 +11648,8 @@ e_chord_position_in_screen chord_get_screen_position_for_painting(t_roll *x, t_c
 
 char is_notehead_inscreen_for_painting(t_roll *x, t_note *curr_nt){
     t_chord *curr_ch = curr_nt->parent;
-    double startpad_ms = x->r_ob.additional_ux_start_pad == 0 ? 0 : deltaxpixels_to_deltaonset((t_notation_obj *) x, x->r_ob.additional_ux_start_pad * x->r_ob.zoom_x);
-    if ((x->r_ob.view == k_VIEW_SCROLL && (curr_ch->onset + curr_nt->duration >= x->r_ob.screen_ms_start - startpad_ms - 300 / x->r_ob.zoom_x) && 
+    double startpad_ms = notationobj_get_starting_pads_ux((t_notation_obj *)x) == 0 ? 0 : deltaxpixels_to_deltaonset((t_notation_obj *) x, notationobj_get_starting_pads_ux((t_notation_obj *)x) * x->r_ob.zoom_x);
+    if ((x->r_ob.view == k_VIEW_SCROLL && (curr_ch->onset + curr_nt->duration >= x->r_ob.screen_ms_start - startpad_ms - 300 / x->r_ob.zoom_x) &&
                              (curr_ch->onset - 20 / x->r_ob.zoom_x <= x->r_ob.screen_ms_end)) ||
                             (x->r_ob.view != k_VIEW_SCROLL))
         return true;
@@ -12314,7 +12315,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 		t_rollvoice *voice;
 		double system_jump = x->r_ob.system_jump;
 		double octave_stem_length = 7 * x->r_ob.step_y;
-        double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+        double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad_before_clef) * x->r_ob.zoom_y + x->r_ob.j_inset_x;
         double predomain_width = get_predomain_width_pixels((t_notation_obj *)x);
 
         // some constant that will be useful later for the "retouches" left to do, in order to have things working properly
@@ -12514,7 +12515,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
         if (g) {
             t_rollvoice *voice;
             double system_jump = x->r_ob.system_jump;
-            double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+            double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad_before_clef) * x->r_ob.zoom_y + x->r_ob.j_inset_x;
             
             // some constant that will be useful later for the "retouches" left to do, in order to have things working properly
             // e.g.: if some notes have been drawn over these parts, we cover the notes with the keys/background/staves...
@@ -12626,8 +12627,8 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
             /*        double nu_end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start) - CONST_X_LEFT_START_DELETE_UX_ROLL - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
              double nu_fadestart_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start) - CONST_X_LEFT_START_FADE_UX_ROLL - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
              */
-            double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
-            double fadestart = ((x->r_ob.show_clefs > 0) * 15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+            double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad_before_clef) * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+            double fadestart = ((x->r_ob.show_clefs > 0) * 15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad_before_clef) * x->r_ob.zoom_y + x->r_ob.j_inset_x;
             
             if (!x->r_ob.fade_predomain)
                 end_x_to_repaint = fadestart = get_predomain_width_pixels((t_notation_obj *)x);
@@ -12838,8 +12839,8 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 /*        double nu_end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start) - CONST_X_LEFT_START_DELETE_UX_ROLL - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
         double nu_fadestart_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start) - CONST_X_LEFT_START_FADE_UX_ROLL - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
   */
-        double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
-        double fadestart = ((x->r_ob.show_clefs > 0) * 15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+        double end_x_to_repaint = ((x->r_ob.show_clefs > 0) * 22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad_before_clef) * x->r_ob.zoom_y + x->r_ob.j_inset_x;
+        double fadestart = ((x->r_ob.show_clefs > 0) * 15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad_before_clef) * x->r_ob.zoom_y + x->r_ob.j_inset_x;
 
 /*        double old_fadestart_no_inset = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_FADE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
         double old_end_x_to_repaint_no_inset = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_DELETE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;

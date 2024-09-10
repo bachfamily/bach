@@ -12,6 +12,9 @@ VERSION NOTES:
    á Markers have a duration, i.e. they can actually be used as regions to identify portion of the scores
    á "snappitchtogrid" message has been renamed "approxet", but the old name is kept for backward compatibility
    á barlines, time signatures and measure numbers have their own independent colors (new attributes)
+   á @additionalstartpad is now called @padafterclef (and a new @padbeforeclef now exists);
+     The "adjustadditionalstartpad" message is also renamed to "adjustpadafterclef".
+     The old nomenclature is still understood for backward compatibility, but please switch to the new nomenclature.
 
 - bach.score:
     á fixed bug causing wrong playback for grace notes!

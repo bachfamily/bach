@@ -10496,7 +10496,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
         
         // some constant that will be useful later for the "retouches" left to do, in order to have things working properly 
         // e.g.: if some notes have been drawn over these parts, we cover the notes with the keys/background/staves...
-        end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start - CONST_X_LEFT_START_DELETE_UX_SCORE) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
+        end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start - CONST_X_LEFT_START_DELETE_UX_SCORE) - x->r_ob.additional_ux_start_pad_after_clef * x->r_ob.zoom_y;
 
         // defining fonts
         jf_text_small = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small)
@@ -10646,8 +10646,8 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
     
     if (g) {
         t_jfont *jf_voice_names = jfont_create_debug(x->r_ob.voice_names_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y); 
-        double end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start - CONST_X_LEFT_START_DELETE_UX_SCORE) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
-        double fadestart_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start - CONST_X_LEFT_START_FADE_UX_SCORE / x->r_ob.zoom_x) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
+        double end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start - CONST_X_LEFT_START_DELETE_UX_SCORE) - x->r_ob.additional_ux_start_pad_after_clef * x->r_ob.zoom_y;
+        double fadestart_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start - CONST_X_LEFT_START_FADE_UX_SCORE / x->r_ob.zoom_x) - x->r_ob.additional_ux_start_pad_after_clef * x->r_ob.zoom_y;
         t_scorevoice *voice;
         double system_jump = x->r_ob.system_jump;
 
