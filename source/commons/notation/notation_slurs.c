@@ -139,7 +139,8 @@ void notationobj_make_temporary_slurs_permanent(t_notation_obj *r_ob)
             for (long i = 0; endchord && i < tempslur->temporary_extension; i++)
                 endchord = chord_get_next(endchord);
             t_llll *names = get_names_as_llll((t_notation_item *)tempslur, false);
-            slur_add(r_ob, tempslur->start_chord, endchord, names, tempslur->direction);
+            if (tempslur->start_chord && endchord)
+                slur_add(r_ob, tempslur->start_chord, endchord, names, tempslur->direction);
             llll_free(names);
         }
         notation_item_free((t_notation_item *)tempslur);
@@ -969,17 +970,21 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
     }
     
     // nudging end point if the chord has an accidental
-    bool end_pt_is_on_an_accidental = false;
     fill_topmost_bottommost_fields(r_ob, end, staff_top_y);
-    if (direction > 0) {
-        if (chord_get_topmost_y_noacc(r_ob, end) - CONST_EPSILON5 > chord_get_topmost_y_notuplets(r_ob, end))
-            end_pt_is_on_an_accidental = true;
-    } else {
-        if (chord_get_bottommost_y_noacc(r_ob, end) + CONST_EPSILON5 < chord_get_bottommost_y_notuplets(r_ob, end))
-            end_pt_is_on_an_accidental = true;
-    }
-    if (r_ob->slurs_avoid_accidentals && end_pt_is_on_an_accidental) {
-        slur->end_y -= 2 * r_ob->step_y * direction;
+    if (r_ob->slurs_avoid_accidentals) {
+        if (direction > 0) {
+            double chord_topmost_noacc = chord_get_topmost_y_noacc(r_ob, end);
+            double chord_topmost_notuplets = chord_get_topmost_y_notuplets(r_ob, end);
+            if (chord_get_topmost_y_noacc(r_ob, end) - CONST_EPSILON5 > chord_get_topmost_y_notuplets(r_ob, end)) {
+                slur->end_y -= (chord_topmost_notuplets - chord_topmost_noacc);
+            }
+        } else {
+            double chord_bottommost_noacc = chord_get_bottommost_y_noacc(r_ob, end);
+            double chord_bottommost_notuplets = chord_get_bottommost_y_notuplets(r_ob, end);
+            if (chord_bottommost_noacc + CONST_EPSILON5 < chord_bottommost_notuplets) {
+                slur->end_y += (chord_bottommost_notuplets - chord_bottommost_noacc);
+            }
+        }
     }
 
 

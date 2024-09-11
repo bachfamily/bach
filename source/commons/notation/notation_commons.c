@@ -13154,11 +13154,13 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
                     
                 } else if (ds < 0 || (ds >= 0 && note_accidental_equals_alter_ET(r_ob, temp_nt, acc_pattern[ds]))) { // the note IS in the scale
 
-                    if (note_has_accidentals(temp_nt) &&
-                        (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION || r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS ||
-                         (note_should_be_treated_as_ji(r_ob, temp_nt) && r_ob->ji_always_show_pythagorean_accidentals && r_ob->show_accidentals_preferences != k_SHOW_ACC_NONE))) {
+                    if (note_has_accidentals(temp_nt) && (note_should_be_treated_as_ji(r_ob, temp_nt) && r_ob->ji_always_show_pythagorean_accidentals && r_ob->show_accidentals_preferences != k_SHOW_ACC_NONE)) {
+                        temp_nt->show_accidentals = true;
+                    } else if (!note_has_no_accidentals_or_has_natural(temp_nt) &&
+                        (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED ||
+                         r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION ||
+                         r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NONATURALS)) {
                         // we did say ALWAYS to accidentals show
-                        
                         temp_nt->show_accidentals = true;
                     } else if (note_has_accidentals(temp_nt) &&
                                measure->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI &&
@@ -13226,7 +13228,7 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
 //                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION) && curr_parent && (temp_nt2->parent != curr_parent->next) && (note_get_screen_accidental(temp_nt2).r_num != 0)) || // untied, need to show all accidentals (no repetition), chords are not near, there's an accidental
                                 ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION) && !temp_nt2_has_no_acc_or_has_natural && (!cmp || repeat_base != temp_nt2->parent->prev)) || // untied, need to show all accidentals (no repetition), chords are not near, there's an accidental
                                 ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED) && !cmp && temp_nt2_has_no_acc_or_has_natural) || // untied, need to show all accidentals, there's a return to the natural
-                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION) && (cmp != 0) && temp_nt2_has_no_acc_or_has_natural) || // untied, need to show all accidentals (no repetition), chords are not near, there's a return to the natural
+                                ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALLALTERED_NOREPETITION) && !cmp && temp_nt2_has_no_acc_or_has_natural) || // untied, need to show all accidentals (no repetition), chords are not near, there's a return to the natural
                                 ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_CLASSICAL) && !cmp) || // untied, classical accidentals, accidental has changed (no matter how)
                                 ((!temp_nt2->tie_from) && (r_ob->show_accidentals_preferences == k_SHOW_ACC_CLASSICAL) && !already_postponed_accidental_on_next_untied_note &&
                                     !(cmp && key != 0 && ds >= 0 && note_accidental_equals_alter_ET(r_ob, temp_nt, acc_pattern[ds])))) { // prev note was tied so we gotta put the accidental
@@ -37913,7 +37915,7 @@ double notation_item_get_tail_ms_accurate(t_notation_obj *r_ob, t_notation_item 
         case k_DURATION_LINE: return notation_item_get_tail_ms_accurate(r_ob, (t_notation_item *)((t_duration_line *)it)->owner);
         case k_MEASURE:
             return ((t_measure *)it)->tuttipoint_reference->onset_ms + ((t_measure *)it)->tuttipoint_onset_ms + ((t_measure *)it)->total_duration_ms;
-        case k_TEMPO: notation_item_get_onset_ms_accurate(r_ob, it);
+        case k_TEMPO: return notation_item_get_onset_ms_accurate(r_ob, it);
         case k_VOICE: {
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
                 t_chord *lastchord = chord_get_last(r_ob, (t_voice *)it);
