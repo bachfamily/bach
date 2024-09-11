@@ -9625,7 +9625,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 t_jrgba articulationcolor = articulation_get_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
                                 paint_articulation((t_notation_obj *) x, g, &articulationcolor, &curr_nt->articulation[i], (t_notation_item *)curr_nt, curr_ch->direction, stem_x, note_x_real, note_y_real, notehead_uwidth, end_pos, part_direction);
                             }
-                            
+#endif
+
                             // NEW WAY: slot-attached articulations
                             if (x->r_ob.link_articulations_to_slot > 0 && x->r_ob.link_articulations_to_slot < CONST_MAX_SLOTS) {
                                 long s = x->r_ob.link_articulations_to_slot - 1;
@@ -9645,7 +9646,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                     }
                                 }
                             }
-#endif
                             
                         }
                         

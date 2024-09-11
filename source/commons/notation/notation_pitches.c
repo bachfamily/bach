@@ -243,16 +243,15 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
     if (voice->notation_style == k_VOICE_NOTATION_STYLE_ET) {
         if (note_is_original_pitch_userdefined(nt)) { // the pitch is explicitly defined by the user
             
+            nt->pitch_displayed = nt->pitch_original;
             mc_to_display_approximation_ET(r_ob, nt->midicents, &auto_screen_mc, &auto_screen_acc, voice->acc_pattern, voice->full_repr);
-            
+
             if (!(is_natural_note(note_get_display_midicents(nt)))) {
                 object_error((t_object *)r_ob, "Error: wrong approximation found! Automatically changed to default.");
                 long steps = midicents_to_diatsteps_from_C0(r_ob, auto_screen_mc, voice);
                 nt->pitch_displayed.setET((int)positive_mod(steps, 7), auto_screen_acc, (int)integer_div_round_down(steps, 7));
                 note_set_auto_enharmonicity(nt);
             } else {
-                nt->pitch_displayed = nt->pitch_original;
-                
                 if (nt->pitch_original.isPureET()) {
                     t_rational auto_mc = auto_screen_acc * 200 + auto_screen_mc;
                     if (nt->pitch_original.toMCrat() != auto_mc) {
