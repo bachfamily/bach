@@ -805,11 +805,11 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     if (r_ob->show_aux_clefs && jf_littleclefnumber) {
         if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_GG)) {
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Gclefchar, clef_x, middleC_y - (15.8 + 2 * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + r_ob->notation_typo_preferences.clef_F15ma_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + 2 * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - r_ob->notation_typo_preferences.clef_F15ma_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + r_ob->notation_typo_preferences.clef_F15ma_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + 2 * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - r_ob->notation_typo_preferences.clef_F15ma_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
         if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FF)) {
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Fclefchar, clef_x, middleC_y - (7.6 - 2 * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + r_ob->notation_typo_preferences.clef_F15mb_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 - 2 * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - r_ob->notation_typo_preferences.clef_F15mb_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + r_ob->notation_typo_preferences.clef_F15mb_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 - 2 * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - r_ob->notation_typo_preferences.clef_F15mb_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
     }
     
@@ -853,25 +853,25 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
         case k_CLEF_G15ma:
         case k_CLEF_G8va:
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, clef_x, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_G15mb:
         case k_CLEF_G8vb:
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, clef_x, middleC_y - (15.8 + octave_shift * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
             
         case k_CLEF_F15ma:
         case k_CLEF_F8va:
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_F15mb:
         case k_CLEF_F8vb:
             write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
-            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_ALTO:
@@ -2183,6 +2183,15 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
 }
 
 
+bool note_must_show_cents(t_notation_obj *r_ob, t_note *nt)
+{
+    if ((r_ob->show_cents_differences == k_SHOW_CENTS_MODE_ORIGINAL_MINUS_SCREEN && note_has_significant_cents_difference_with_screen_representation(r_ob, nt)) ||
+        (r_ob->show_cents_differences == k_SHOW_CENTS_MODE_ACCIDENTAL && note_has_accidentals(nt))) {
+        return true;
+    }
+    return false;
+}
+
 void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, 
                             t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jrgba *color,
                             t_note *curr_nt, long clef, double note_y_real, double stem_x, bool set_topmost_bottommost_stuff){
@@ -2245,7 +2254,11 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
                 acc_y = note_y_real + r_ob->accidentals_typo_preferences.uy_shift * r_ob->zoom_y * accidentals_resize; // - r_ob->j_inset_y;
             }
                   
-            write_text(g, need_jf_custom_accidentals ? (is_bogus ? jf_custom_accidentals_bogus : jf_custom_accidentals) : (is_bogus ? jf_acc_bogus : jf_acc), *color, acccharacters, 0, 0, acc_x, acc_y, JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMRIGHT, true, false);
+            if (r_ob->accidentals_location == 1) { // special case: accidentals over note
+                write_text(g, need_jf_custom_accidentals ? (is_bogus ? jf_custom_accidentals_bogus : jf_custom_accidentals) : (is_bogus ? jf_acc_bogus : jf_acc), *color, acccharacters, stem_x + curr_nt->notecenter_stem_delta_ux * r_ob->zoom_y - 200, 0, 2*200, acc_y - acc_descent - 3 * r_ob->zoom_y * accidentals_resize, JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM | JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED, true, false);
+            } else {
+                write_text(g, need_jf_custom_accidentals ? (is_bogus ? jf_custom_accidentals_bogus : jf_custom_accidentals) : (is_bogus ? jf_acc_bogus : jf_acc), *color, acccharacters, 0, 0, acc_x, acc_y, JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMRIGHT, true, false);
+            }
 
             bach_freeptr(acccharacters_utf);
             if (need_jf_custom_accidentals) {
@@ -2303,7 +2316,7 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
                 jfont_destroy_debug(jf_custom_fractions);
         }
         
-        if (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt)) {
+        if (note_must_show_cents(r_ob, curr_nt)) {
             t_jfont *jf_cents_difference = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(r_ob->cents_differences_font_size * r_ob->zoom_y) * accidentals_resize);
             long diff_val = (long)round(curr_nt->midicents - curr_nt->pitch_displayed.toMCdouble());
             char diff_text[64];
@@ -2313,7 +2326,10 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
             double tuext = note_get_accidental_uascent(r_ob, curr_nt);
             double yy = note_y_real - tuext * r_ob->zoom_y * accidentals_resize - 1*r_ob->zoom_y;
 //                paint_line(g, get_grey(0), 0, acc_y, 100, acc_y, 1);
-            snprintf_zero(diff_text, 64, "%s%ld%s", diff_val > 0 ? "+" : "-", abs(diff_val), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+            if (r_ob->show_cents_differences == k_SHOW_CENTS_MODE_ACCIDENTAL)
+                note_get_accidental_as_cents(r_ob, curr_nt, diff_text);
+            else
+                snprintf_zero(diff_text, 64, "%s%ld%s", diff_val > 0 ? "+" : "-", abs(diff_val), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
             jfont_text_measure(jf_cents_difference, diff_text, &dwidth, &dheight);
             paint_filledrectangle(g, build_jrgba(1, 1, 1, 1), middle_x-dwidth/2., yy - dheight, dwidth, dheight);
             write_text(g, jf_cents_difference, *color, diff_text, middle_x-dwidth/2., yy - dheight, dwidth*2, dheight*2, JGRAPHICS_TEXT_JUSTIFICATION_TOPLEFT, true, false);
@@ -2632,6 +2648,20 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
             } else { // articulation under note
                 left_y -= r_ob->articulations_typo_preferences.artpref[ID].flipped_uy_center * r_ob->zoom_y;
             }
+/*
+            if (r_ob->articulations_typo_preferences.artpref[ID].options & k_ARTICULATION_OPTION_INSIDE_SLURS) {
+                double staff_top_y = voice_get_staff_top_y(r_ob, voice, k_NONSTANDARD_STAFFLINES_TOPBOTTOM_EXTENDONLY);
+                if (stem_direction < 0) {
+                    double articulation_stafftop_uy = (left_y - articulation_height / 2. - staff_top_y)/r_ob->zoom_y - CONST_ARTICULATION_SLUR_USEP;
+                    chord->topmost_stafftop_uy_noacc = MIN(chord->topmost_stafftop_uy_noacc, articulation_stafftop_uy);
+                    chord->topmost_stafftop_uy_notuplets = MIN(chord->topmost_stafftop_uy_notuplets, articulation_stafftop_uy);
+                } else if (stem_direction > 0){
+                    double articulation_stafftop_uy = (left_y + articulation_height / 2. - staff_top_y)/r_ob->zoom_y + CONST_ARTICULATION_SLUR_USEP;
+                    chord->bottommost_stafftop_uy = MAX(chord->bottommost_stafftop_uy_noacc, articulation_stafftop_uy);
+                    chord->bottommost_stafftop_uy_notuplets = MAX(chord->bottommost_stafftop_uy_notuplets, articulation_stafftop_uy);
+                }
+            }
+ */
             
             if (debug)
                 paint_circle_filled(g, build_jrgba(0,0,1,1), left_x, left_y, 1);
@@ -6706,13 +6736,15 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         assign_noteheads_chars(r_ob, 4, 'R', 'S', 'T', 'U');
         assign_noteheads_shifts(r_ob, -0.1, -3.6, 0., -4.2);
         assign_noteheads_uwidths(r_ob, 4, 9., 9., 7.5, 7.5);
+//        assign_noteheads_uwidths(r_ob, 4, r_ob->temp[0], r_ob->temp[0], r_ob->temp[1], r_ob->temp[1]);
         assign_noteheads_dl_start_shift(r_ob, -0.7);
         
     } else if (fontnameeq(font->s_name, "Bravura")) {
         smufl = true;
         assign_noteheads_chars_SMuFL(r_ob);
         assign_noteheads_shifts(r_ob, 0., 18.3, 0., 3.2); // TO DO
-        assign_noteheads_uwidths(r_ob, 4, 14.0, 10.0, 7.1, 7.1); // TO DO
+        assign_noteheads_uwidths(r_ob, 4, 14.0, 9., 7.35, 7.35); // TO DO
+//        assign_noteheads_uwidths(r_ob, 4, r_ob->temp[0], r_ob->temp[0], r_ob->temp[1], r_ob->temp[1]);
         assign_noteheads_dl_start_shift(r_ob, -0.7); // TO DO
 
     } else if (fontnameeq(font->s_name, "Maestro")) {
@@ -7051,6 +7083,8 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     k_NOTEHEAD_WHITE_TRIANGLE,   
     k_NUM_STANDARD_NOTEHEADS,
  */
+    
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 }
 
 
@@ -7519,7 +7553,7 @@ void load_articulations_typo_preferences(t_notation_obj *r_ob, t_articulations_t
         atp->artpref[i].flipped_char = 46;
     }
     atp->artpref[i].positioning = k_ARTICULATION_POSITIONING_NOTE_SIDE;
-    atp->artpref[i].options = k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_NEW_CHORD + k_ARTICULATION_OPTION_AVOID_STAFF_LINES + k_ARTICULATION_OPTION_CENTER_OVER_NOTE;
+    atp->artpref[i].options = k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_NEW_CHORD + k_ARTICULATION_OPTION_AVOID_STAFF_LINES + k_ARTICULATION_OPTION_CENTER_OVER_NOTE + k_ARTICULATION_OPTION_INSIDE_SLURS;
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
@@ -13113,6 +13147,10 @@ bool note_has_significant_cents_difference_with_screen_representation(t_notation
     return (abs((long)round(nt->midicents - nt->pitch_displayed.toMCdouble())) > 0);
 }
 
+bool note_has_significant_cents_difference_with_screen_representation_wo_accidental(t_notation_obj *r_ob, t_note *nt){
+    return (abs((long)round(nt->midicents - nt->pitch_displayed.toMC_wo_accidental())) > 0);
+}
+
 
 void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
 // validates (= choose whether to show/to hide) the accidentals for the measure, depending on the choosen preferences (show/hide, accidental_tie_preferences...)
@@ -13149,9 +13187,12 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
                 if (r_ob->show_accidentals_preferences == k_SHOW_ACC_ALL) {
                     temp_nt->show_accidentals = true;
                     
-                } else if (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, temp_nt)) {
+                } else if (r_ob->show_cents_differences == k_SHOW_CENTS_MODE_ORIGINAL_MINUS_SCREEN && note_has_significant_cents_difference_with_screen_representation(r_ob, temp_nt)) {
                     temp_nt->show_accidentals = true;
-                    
+
+                } else if (r_ob->show_cents_differences == k_SHOW_CENTS_MODE_ACCIDENTAL && note_has_significant_cents_difference_with_screen_representation_wo_accidental(r_ob, temp_nt)) {
+                    temp_nt->show_accidentals = true;
+
                 } else if (ds < 0 || (ds >= 0 && note_accidental_equals_alter_ET(r_ob, temp_nt, acc_pattern[ds]))) { // the note IS in the scale
 
                     if (note_has_accidentals(temp_nt) && (note_should_be_treated_as_ji(r_ob, temp_nt) && r_ob->ji_always_show_pythagorean_accidentals && r_ob->show_accidentals_preferences != k_SHOW_ACC_NONE)) {
@@ -13295,11 +13336,13 @@ void measure_validate_accidentals(t_notation_obj *r_ob, t_measure *measure) {
         }
     }
     
+    /*
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         // should always be the case
         for (temp_ch = measure->firstchord; temp_ch; temp_ch = temp_ch->next)
             chord_calculate_staff_uy_stuff(r_ob, temp_ch);
     }
+     */
 }
 
 
@@ -24561,8 +24604,8 @@ double get_principal_notehead_uwidth(t_notation_obj *r_ob, t_chord *chord)
 {
     t_note *nt = get_principal_note(r_ob, chord);
     if (nt)
-        return notehead_get_uwidth(r_ob, chord->r_sym_duration, nt, true);
-    return rest_get_uwidth(r_ob, chord->r_sym_duration);
+        return notehead_get_uwidth(r_ob, chord->figure, nt, true);
+    return rest_get_uwidth(r_ob, chord->figure);
 }
 
 void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char *opaque_bg)
@@ -25532,10 +25575,10 @@ void chord_calculate_staff_uy_stuff(t_notation_obj *r_ob, t_chord *chord)
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                     chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->bottommost_stafftop_uy_notuplets = MAX(0, chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio);
                 else
-                    chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->bottommost_stafftop_uy_notuplets = chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio;
+                    chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->bottommost_stafftop_uy_notuplets = chord->bottommostnote_stafftop_uy + (r_ob->show_stems != 0) * 7 * CONST_STEP_UY * ratio;
             }
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL && chord->direction == -1)
-                chord->stemtip_stafftop_uy = chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio;
+                chord->stemtip_stafftop_uy = chord->bottommostnote_stafftop_uy + (r_ob->show_stems != 0) * 7 * CONST_STEP_UY * ratio;
         }
         if (!curr_nt->next) {
             chord->topmostnote_stafftop_uy = curr_nt_center_stafftop_uy;
@@ -25547,10 +25590,10 @@ void chord_calculate_staff_uy_stuff(t_notation_obj *r_ob, t_chord *chord)
                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                     chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->topmost_stafftop_uy_notuplets = MIN(staff_bottom_y - staff_top_y - CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION, chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio);
                 else
-                    chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->topmost_stafftop_uy_notuplets = chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio;
+                    chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->topmost_stafftop_uy_notuplets = chord->topmostnote_stafftop_uy - (r_ob->show_stems != 0) * 7 * CONST_STEP_UY * ratio;
             }
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL && chord->direction == 1)
-                chord->stemtip_stafftop_uy = chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio;
+                chord->stemtip_stafftop_uy = chord->topmostnote_stafftop_uy - (r_ob->show_stems != 0) * 7 * CONST_STEP_UY * ratio;
         }
     }
 }
@@ -25666,7 +25709,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
             } else { // roll (we calculate the show/hide here!)
                 t_voice *voice = (t_voice *)chord->voiceparent;
                 if (voice->key == 0)
-                    show_accidentals[i] = !(accidentals[i][0] == BACH_ACCIDENTAL_NONE || ((accidentals[i][0] == BACH_ACCIDENTAL_NATURAL || (!r_ob->ji_always_show_pythagorean_accidentals && accidentals[i][0] == BACH_ACCIDENTAL_JI_NATURAL)) && accidentals[i][1] == BACH_ACCIDENTAL_NONE));
+                    show_accidentals[i] = !(accidentals[i][0] == BACH_ACCIDENTAL_NONE || ((accidentals[i][0] == BACH_ACCIDENTAL_NATURAL || (!r_ob->ji_always_show_pythagorean_accidentals && r_ob->show_cents_differences != k_SHOW_CENTS_MODE_ACCIDENTAL && accidentals[i][0] == BACH_ACCIDENTAL_JI_NATURAL)) && accidentals[i][1] == BACH_ACCIDENTAL_NONE));
                 else {
                     long ds = midicents2diatonicstep(note_get_display_midicents(curr_nt));
                     if (ds >= 0 && note_accidental_equals_alter_ET(r_ob, curr_nt, voice->acc_pattern[ds]))
@@ -25678,7 +25721,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
                 switch (r_ob->show_accidentals_preferences) {
                     case k_SHOW_ACC_CLASSICAL:
                     case k_SHOW_ACC_ALLALTERED_NONATURALS:
-                        if (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt)) {
+                        if (r_ob->show_cents_differences == k_SHOW_CENTS_MODE_ORIGINAL_MINUS_SCREEN && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt)) {
                             curr_nt->show_accidentals = true;
                         } else {
                             curr_nt->show_accidentals = show_accidentals[i];
@@ -25697,7 +25740,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
                     {
                         if (show_accidentals[i])
                             curr_nt->show_accidentals = true;
-                        else if (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt))
+                        else if (r_ob->show_cents_differences == k_SHOW_CENTS_MODE_ORIGINAL_MINUS_SCREEN && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt))
                             curr_nt->show_accidentals = true;
                         else {
                             curr_nt->show_accidentals = false;
@@ -25726,7 +25769,8 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
                         
                     case k_SHOW_ACC_ALLALTERED_NOREPETITION:
                     {
-                        if (show_accidentals[i] || (r_ob->show_cents_differences && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt))) {
+                        if (show_accidentals[i] || 
+                            (r_ob->show_cents_differences == k_SHOW_CENTS_MODE_ORIGINAL_MINUS_SCREEN && note_has_significant_cents_difference_with_screen_representation(r_ob, curr_nt))) {
                             curr_nt->show_accidentals = true;
 
                             // we look for a previous chord having the same note with the same "accidental"
@@ -25739,7 +25783,8 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
                                 char must_break = false;
                                 for (temp_nt = temp_ch->firstnote; temp_nt; temp_nt = temp_nt->next) {
                                     if (note_get_display_midicents(temp_nt) == note_get_display_midicents(curr_nt)) {
-                                        if (accidentals_eq(temp_nt->accidentals, accidentals[i]) && (!r_ob->show_cents_differences || round(temp_nt->midicents) == round(curr_nt->midicents)))
+                                        if (accidentals_eq(temp_nt->accidentals, accidentals[i]) && 
+                                            (r_ob->show_cents_differences == k_SHOW_CENTS_MODE_DONT || round(temp_nt->midicents) == round(curr_nt->midicents)))
                                             curr_nt->show_accidentals = false;
                                         must_break = true;
                                         break;
@@ -26306,9 +26351,7 @@ void chord_calculate_parameters(t_notation_obj *r_ob, t_chord *chord, char reset
             curr_nt = curr_nt->next;
         }
 
-        if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-            chord_calculate_staff_uy_stuff(r_ob, chord);
-        // for bach score, we do this after measure accidental validation
+        chord_calculate_staff_uy_stuff(r_ob, chord);
 
 //        dev_post("chord->topmostnote_stafftop_uy: %.2f", chord->topmostnote_stafftop_uy);
 
@@ -37358,6 +37401,7 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->show_stems = k_SHOW_STEMS_MAIN_AND_AUXILIARY;
     r_ob->voicenames_as_llll = get_nilnil();
     
+    r_ob->shift_voiceensemble_unisons = 1;
     
     r_ob->uwidth_after_barline_with_no_ts = 5;
     r_ob->uwidth_after_barline_with_ts = 6;
@@ -39737,15 +39781,17 @@ void set_notationstyles_from_llll(t_notation_obj *r_ob, t_llll* notationstyles){
     if (notationstyles) {
         t_llllelem *elem;
         void *voice = r_ob->firstvoice;
-        for (elem = notationstyles->l_head; elem && voice && ((t_voice *)voice)->number < r_ob->num_voices; elem = elem->l_next) {
-            long type = hatom_gettype(&elem->l_hatom);
-            if (type == H_SYM) {
-                ((t_voice *)voice)->notation_style = (e_voice_notation_style)notationstyle_from_symbol(hatom_getsym(&elem->l_hatom));
-            } else {
-                ((t_voice *)voice)->notation_style = k_VOICE_NOTATION_STYLE_ET;
+        if (notationstyles->l_head) {
+            for (elem = notationstyles->l_head; voice && ((t_voice *)voice)->number < r_ob->num_voices; elem = elem->l_next ? elem->l_next : elem) {
+                long type = hatom_gettype(&elem->l_hatom);
+                if (type == H_SYM) {
+                    ((t_voice *)voice)->notation_style = (e_voice_notation_style)notationstyle_from_symbol(hatom_getsym(&elem->l_hatom));
+                } else {
+                    ((t_voice *)voice)->notation_style = k_VOICE_NOTATION_STYLE_ET;
+                }
+                r_ob->notationstyles_as_symlist[((t_voice *)voice)->number] = notationstyle_to_symbol((e_voice_notation_style)((t_voice *)voice)->notation_style);
+                voice = voice_get_next(r_ob, (t_voice *) voice);
             }
-            r_ob->notationstyles_as_symlist[((t_voice *)voice)->number] = notationstyle_to_symbol((e_voice_notation_style)((t_voice *)voice)->notation_style);
-            voice = voice_get_next(r_ob, (t_voice *) voice);
         }
 
         // calculate voice offsets

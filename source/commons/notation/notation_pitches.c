@@ -409,6 +409,8 @@ t_pitch position_on_line_of_fifths_to_pitch(long pos)
 
 long pitch_to_position_on_line_of_fifths(t_pitch p)
 {
+    return p.getPlofET();
+    /*
     // TODO: this should be embedded within the pitch class
     
     t_pitch snapped_p = pitch_snap_alteration_to_semitones(p);
@@ -452,6 +454,7 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
     }
     
     return 0;
+     */
 }
 
 t_llll *pt3d_to_llll(t_pt3d pt)
@@ -1516,7 +1519,7 @@ long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_para
         t_llll *respell_note_keys = llll_get();
         for (t_llllelem *nel = notes->l_head; nel; nel = nel->l_next) {
             t_voice *note_voice = notation_item_get_voice(r_ob, (t_notation_item *)hatom_getobj(&nel->l_hatom));
-            llll_appendlong(respell_note_pos, autospell_respell_note_wr_to_LCE(r_ob, params, ((t_note *)hatom_getobj(&nel->l_hatom)), this_pos, true, false));
+            llll_appendlong(respell_note_pos, autospell_respell_note_wr_to_LCE(r_ob, params, ((t_note *)hatom_getobj(&nel->l_hatom)), this_pos, true, params->verbose));
             llll_appenddouble(respell_note_keys, note_voice ? note_voice->key : 0);
         }
         double key_avg = llll_average_of_plain_double_llll(respell_note_keys);

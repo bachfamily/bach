@@ -407,7 +407,7 @@
 									"outlettype" : [ "", "", "", "", "", "", "", "" ],
 									"patching_rect" : [ 10.0, 119.0, 401.0, 302.666666666666629 ],
 									"pitcheditrange" : [ "null" ],
-									"showcentsdiff" : 1,
+									"showcents" : 1,
 									"stafflines" : [ 5 ],
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
 									"tonedivision" : 8,

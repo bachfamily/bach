@@ -7736,7 +7736,10 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                     for (n = c->firstnote; n; n = n->next) {
                         long n_steps = midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_display_midicents(n), v);
 
-                        if (n_steps == note_steps + 1 || n_steps == note_steps || n_steps == note_steps - 1) {
+                        if (n_steps == note_steps + 1 || n_steps == note_steps - 1 ||
+                            (n_steps == note_steps && (n->pitch_displayed != note->pitch_displayed ||
+                                                       (n->parent->notehead_unicode_character != note->parent->notehead_unicode_character && x->r_ob.shift_voiceensemble_unisons == 1) ||
+                                                       x->r_ob.shift_voiceensemble_unisons == 2))) {
                             shift = MAX(shift, notehead_get_uwidth((t_notation_obj *)x, c->r_sym_duration, n, true));
                         }
                         
@@ -10342,8 +10345,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     if (veryfirsttempo)
                         tempibox_x1 = x->r_ob.j_inset_x + 1 + x->r_ob.notation_typo_preferences.clef_ux_shift; // we put the tempo over the clef
                     
-                    tempocolor = ((x->r_ob.num_selecteditems == 1) && (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_tempo))) ?
-                    x->r_ob.j_selection_rgba : x->r_ob.j_tempi_rgba;
+//                    tempocolor = ((x->r_ob.num_selecteditems == 1) && (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_tempo))) ?
+                    tempocolor = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_tempo) ? x->r_ob.j_selection_rgba : x->r_ob.j_tempi_rgba;
                     
                     // tempo figure.
                     line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, curr_tempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * x->r_ob.tempo_size;
@@ -11804,7 +11807,7 @@ void score_swap_voiceensembles(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
 
 // moves the last voice in a given point.
 // idx_of_the_stafflist_element_in_llll is 1-based
-void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, long idx_of_the_stafflist_element_in_llll, t_scorevoice *ceilmeasure_from_this_voice)
+void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, t_symbol *notation_style, long idx_of_the_stafflist_element_in_llll, t_scorevoice *ceilmeasure_from_this_voice)
 {
     t_scorevoice *tmp_voice;
     t_llllelem *elem, *nth;
@@ -11869,6 +11872,7 @@ void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this
 
         change_single_key((t_notation_obj *)x, (t_voice *)voice_to_move, key, false);
         change_single_clef((t_notation_obj *)x, (t_voice *)voice_to_move, clef, false);
+        change_single_notationstyle((t_notation_obj *)x, (t_voice *)voice_to_move, notation_style, false);
         voice_to_move->v_ob.midichannel = midichannel;
         voice_to_move->v_ob.locked = voice_to_move->v_ob.solo = voice_to_move->v_ob.hidden = voice_to_move->v_ob.muted = 0;
 

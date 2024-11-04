@@ -2156,17 +2156,28 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
     // @exclude bach.slot
     // Sets the type of piano roll keyboard for voices whose notation style is set to "linear".
     
+    if (obj_type == k_NOTATION_OBJECT_SCORE) {
+        CLASS_ATTR_CHAR(c,"shiftunisons",0, t_notation_obj, shift_voiceensemble_unisons);
+        CLASS_ATTR_STYLE_LABEL(c,"shiftunisons",0,"enumindex","Shift Unisons in Different Parts");
+        CLASS_ATTR_ENUMINDEX(c,"shiftunisons", 0, "Never Only With Equal Notehead Always");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"shiftunisons",0,"1");
+        // @exclude bach.slot, bach.roll
+        // Handles the way unisons are adjusted when in different parts: 0 = don't adjust; 1 = shift notes when
+        // they have equal notehead; 2 = always shift notes.
+    }
     
     CLASS_ATTR_CHAR(c,"slursavoidchords",0, t_notation_obj, slurs_avoid_chords);
     CLASS_ATTR_STYLE_LABEL(c,"slursavoidchords",0,"onoff","Slurs Avoid Chords");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidchords",0,"1");
     // @exclude bach.slot
+    // Toggles the ability for slurs to avoid chords.
 
     CLASS_ATTR_CHAR(c,"slursavoidaccidentals",0, t_notation_obj, slurs_avoid_accidentals);
     CLASS_ATTR_STYLE_LABEL(c,"slursavoidaccidentals",0,"onoff","Slurs Avoid Accidentals");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"slursavoidaccidentals",0,"1");
     // @exclude bach.slot
-    
+    // Toggles the ability for slurs to avoid accidentals.
+
 	CLASS_ATTR_DOUBLE(c, "rounded", 0, t_notation_obj, corner_roundness); 
 	CLASS_ATTR_STYLE_LABEL(c,"rounded",0,"text","Roundness of Box Corners");
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"rounded",0,"0."); // default SHOULD BE: "6.", but only when corner clipping will perfectly work!
@@ -3410,12 +3421,14 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type)
         // @exclude bach.slot
         // @description Toggles the display of the initial vertical line running through all the staves.
 
-        CLASS_ATTR_CHAR(c, "showcentsdiff", 0, t_notation_obj, show_cents_differences);
-        CLASS_ATTR_STYLE_LABEL(c,"showcentsdiff",0,"onoff","Show Cents Differences");
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showcentsdiff",0,"0");
-        CLASS_ATTR_ACCESSORS(c, "showcentsdiff", (method)NULL, (method)notationobj_setattr_showcentsdiff);
-        // @description Toggles the display of cents differences above the accidentals
-        
+        CLASS_ATTR_CHAR(c, "showcents", 0, t_notation_obj, show_cents_differences);
+        CLASS_ATTR_STYLE_LABEL(c,"showcents",0,"enumindex","Show Cents");
+        CLASS_ATTR_ENUMINDEX(c,"showcents", 0, "Don't DifferenceWithDisplay Accidental");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showcents",0,"0");
+        CLASS_ATTR_ACCESSORS(c, "showcents", (method)NULL, (method)notationobj_setattr_showcents);
+        // @description Toggles the display of cents differences above the accidentals, either detailing
+        // the difference between the actual note and the displayed one (1) or detailing the
+        // contribution of the displayed accidental in cents (2).
     }
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -6825,14 +6838,17 @@ t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol
             notationobj_reset_all_slurs_position(r_ob);
         }
         
-        if (attrname == gensym("spaceafterbarline") || attrname == gensym("spacebetweenbarlineandts") || attrname == gensym("spaceafterts")) {
+        if (attrname == gensym("spaceafterbarline") || attrname == gensym("spacebetweenbarlineandts") || attrname == gensym("spaceafterts") || attrname == gensym("shiftunisons")) {
             implicitely_recalculate_all(r_ob, false);
         }
         
+        /*
         if (attrname == gensym("temp")) {
-            load_notation_typo_preferences(r_ob, r_ob->noteheads_font);
+            load_noteheads_typo_preferences(r_ob, r_ob->noteheads_font);
+//            load_notation_typo_preferences(r_ob, r_ob->noteheads_font);
 //            load_articulations_typo_preferences(r_ob, &r_ob->articulations_typo_preferences, r_ob->articulations_font);
         }
+         */
 
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }

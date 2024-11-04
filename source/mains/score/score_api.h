@@ -250,7 +250,7 @@ char has_measure_attached_markers(t_score *x, t_measure *meas);
 
 void score_delete_voice(t_score *x, t_scorevoice *voice);
 void score_delete_voiceensemble(t_score *x, t_voice *any_voice_in_voice_ensemble);
-void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, long idx_of_the_stafflist_element_in_llll, t_scorevoice *ceilmeasure_from_this_voice);
+void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, t_symbol *notation_style, long idx_of_the_stafflist_element_in_llll, t_scorevoice *ceilmeasure_from_this_voice);
 void score_swap_voices(t_score *x, t_scorevoice *v1, t_scorevoice *v2);
 void score_swap_voiceensembles(t_score *x, t_scorevoice *v1, t_scorevoice *v2);
 t_tuttipoint *build_tuttipoint(t_score *x);

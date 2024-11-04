@@ -907,15 +907,25 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
     t_chord *start = slur->start_chord, *end = slur->end_chord;
     char direction = (slur->direction) ? slur->direction : -start->direction;
     double alpha;
-    double long_base, delta_ux, a, b, h;
     t_chord *chord;
     double raise1_y = 0, raise2_y = 0, raisestart_y = 0, raiseend_y = 0;
+    bool for_graces = false;
     
     t_note *start_nt = start->lastnote;
     t_note *end_nt = end->lastnote;
     if (direction < 0) {
         start_nt = start->firstnote;
         end_nt = end->firstnote;
+    }
+    
+    if (!end_nt->parent->is_grace_chord && start_nt->parent != end_nt->parent) {
+        for_graces = true;
+        for (t_chord *ch = start_nt->parent; ch && ch != end_nt->parent; ch = ch->next) {
+            if (!ch->is_grace_chord) {
+                for_graces = false;
+                break;
+            }
+        }
     }
     
     // standard positioning for start point and end point
@@ -926,8 +936,8 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
         slur->start_ux = start->parent->tuttipoint_reference->offset_ux + start->stem_offset_ux + (start_nt ? start_nt->notecenter_stem_delta_ux : 0);
         slur->end_ux = end->parent->tuttipoint_reference->offset_ux + end->stem_offset_ux + (end_nt ? end_nt->notecenter_stem_delta_ux : 0);
     } else {
-        slur->start_ux = chord_get_alignment_ux(r_ob, start) + (start_nt ? start_nt->notecenter_stem_delta_ux : 0);
-        slur->end_ux = chord_get_alignment_ux(r_ob, end) + (end_nt ? end_nt->notecenter_stem_delta_ux : 0);
+        slur->start_ux = chord_get_stem_ux(r_ob, start) + (start_nt ? start_nt->notecenter_stem_delta_ux : 0);
+        slur->end_ux = chord_get_stem_ux(r_ob, end) + (end_nt ? end_nt->notecenter_stem_delta_ux : 0);
     }
     slur->start_y = (start_nt ? start_nt->center.y : (direction > 0 ? staff_top_y : staff_bottom_y))  + 2 * r_ob->step_y * (- direction);
     slur->end_y = (end_nt ? end_nt->center.y : (direction > 0 ? staff_top_y : staff_bottom_y)) + 2 * r_ob->step_y * (- direction);
@@ -955,11 +965,22 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
         if (direction * end->direction == 1 && rat_long_cmp(end->figure, 1) < 0) {
             // if the slur ends on a stem rather than a notehead
             slur->end_ux = xposition_to_unscaled_xposition(r_ob, end->stem_x) - CONST_SLUR_USEPARATION_FROM_STEM;
+            double candidate_end_y = 0;
             if (direction == 1)
-                slur->end_y = chord_get_topmost_y_notuplets(r_ob, end) - stem_slur_separation_in_steps * r_ob->step_y;
+                candidate_end_y = chord_get_topmost_y_notuplets(r_ob, end) - stem_slur_separation_in_steps * r_ob->step_y;
             else
-                slur->end_y = chord_get_bottommost_y_notuplets(r_ob, end) + stem_slur_separation_in_steps * r_ob->step_y;
-        } else if (direction * start->direction == 1 && rat_long_cmp(start->figure, 1) < 0) {
+                candidate_end_y = chord_get_bottommost_y_notuplets(r_ob, end) + stem_slur_separation_in_steps * r_ob->step_y;
+            if (for_graces) { // nudging for slurs including grace notes
+                if ((direction == 1 && candidate_end_y < slur->end_y) ||
+                    (direction == -1 && candidate_end_y < slur->end_y)) {
+                    // nothing to do
+                    slur->end_y = candidate_end_y;
+                }
+            } else {
+                slur->end_y = candidate_end_y;
+            }
+        }
+        if (direction * start->direction == 1 && rat_long_cmp(start->figure, 1) < 0) {
             // if the slur starts on a stem rather than a notehead
             slur->start_ux = xposition_to_unscaled_xposition(r_ob, start->stem_x) + CONST_SLUR_USEPARATION_FROM_STEM;
             if (direction == 1)
@@ -976,7 +997,7 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
             double chord_topmost_noacc = chord_get_topmost_y_noacc(r_ob, end);
             double chord_topmost_notuplets = chord_get_topmost_y_notuplets(r_ob, end);
             if (chord_get_topmost_y_noacc(r_ob, end) - CONST_EPSILON5 > chord_get_topmost_y_notuplets(r_ob, end)) {
-                slur->end_y -= (chord_topmost_notuplets - chord_topmost_noacc);
+                slur->end_y -= (chord_topmost_noacc - chord_topmost_notuplets);
             }
         } else {
             double chord_bottommost_noacc = chord_get_bottommost_y_noacc(r_ob, end);
@@ -989,33 +1010,55 @@ void slur_compute_control_points_methodB(t_notation_obj *r_ob, t_slur *slur)
 
 
     // calculating standard control points
-    delta_ux = slur->end_ux - slur->start_ux;
-    long_base = sqrt(delta_ux * delta_ux + (slur->start_y - slur->end_y) * (slur->start_y - slur->end_y));
-    alpha = fabs(atan(-(slur->end_y - slur->start_y)/(slur->end_ux - slur->start_ux)));
+    double delta_ux = slur->end_ux - slur->start_ux;
+    double delta_x = deltauxpixels_to_deltaxpixels(r_ob, delta_ux);
+    double delta_y = slur->end_y - slur->start_y;
+    double long_base = sqrt(delta_x * delta_x + delta_y * delta_y);
+    alpha = fabs(atan(-delta_y/delta_x));
 
+    double cp1_x = 0, cp2_x = 0;
     double cp1_ux = 0, cp2_ux = 0;
 
     // first, setting a simple case
     {
-        a = long_base * CLAMP(0.3 - 0.12 * long_base/400., 0.18, 0.3);
-        b = long_base - a;
-        h = CLAMP(CONST_SLUR_MIN_UHEIGHT + (CONST_SLUR_MAX_UHEIGHT - CONST_SLUR_MIN_UHEIGHT) * long_base/400., CONST_SLUR_MIN_UHEIGHT, CONST_SLUR_MAX_UHEIGHT) * r_ob->zoom_y;
+/*        double a = long_base * CLAMP(0.3 - 0.12 * long_base/400., 0.18, 0.3);
+        double b = long_base - a;
+        double h = CLAMP(CONST_SLUR_MIN_UHEIGHT + (CONST_SLUR_MAX_UHEIGHT - CONST_SLUR_MIN_UHEIGHT) * long_base/400., CONST_SLUR_MIN_UHEIGHT, CONST_SLUR_MAX_UHEIGHT) * r_ob->zoom_y;
         
         if ((direction == 1 && slur->end_y <= slur->start_y) || (direction == -1 && slur->end_y >= slur->start_y)) {
             cp1_ux = a * cos(alpha) - h * sin(alpha);
             slur->cp1_y = (cp1_ux * tan(alpha) + h / cos(alpha)) * (- direction);
             cp2_ux = b * cos(alpha) - h * sin(alpha);
             slur->cp2_y = (cp2_ux * tan(alpha) + h / cos(alpha)) * (- direction);
-            cp1_ux += slur->start_ux;
-            cp2_ux += slur->start_ux;
-            slur->cp1_y += slur->start_y;
-            slur->cp2_y += slur->start_y;
-        } else {
-            cp1_ux = slur->start_ux + a / cos(alpha) + (h - a*tan(alpha)) * sin(alpha);
-            slur->cp1_y = slur->start_y + (h - a*tan(alpha)) * cos(alpha) * (- direction);
-            cp2_ux = slur->start_ux + b / cos(alpha) + (h - b*tan(alpha)) * sin(alpha);
-            slur->cp2_y = slur->start_y + (h - b*tan(alpha)) * cos(alpha) * (- direction);
-        }
+        } else { */
+        /*            cp1_ux = a / cos(alpha) + (h - a*tan(alpha)) * sin(alpha);
+                    slur->cp1_y = (h - a*tan(alpha)) * cos(alpha) * (- direction);
+                    cp2_ux = b / cos(alpha) + (h - b*tan(alpha)) * sin(alpha);
+                    slur->cp2_y = (h - b*tan(alpha)) * cos(alpha) * (- direction);*/
+        //        }
+
+        double L = 0.2 * long_base;
+        double H = direction * CLAMP(CONST_SLUR_MIN_UHEIGHT + (CONST_SLUR_MAX_UHEIGHT - CONST_SLUR_MIN_UHEIGHT) * delta_ux/400., CONST_SLUR_MIN_UHEIGHT, CONST_SLUR_MAX_UHEIGHT) * r_ob->zoom_y;
+        double slur_start_x = unscaled_xposition_to_xposition(r_ob, slur->start_ux);
+        double slur_end_x = unscaled_xposition_to_xposition(r_ob, slur->end_ux);
+        double cp1_y, cp2_y;
+        
+        double angle1 = alpha * (slur->end_y >= slur->start_y ? -1 : 1);
+        double add_x = L * cos(angle1) - H * sin(angle1);
+        double add_y = L * sin(angle1) + H * cos(angle1);
+        cp1_x = slur_start_x + add_x;
+        cp1_y = slur->start_y - add_y;
+        
+        double angle2 = alpha * (slur->end_y >= slur->start_y ? 1 : -1);
+        add_x = L * cos(angle2) - H * sin(angle2);
+        add_y = L * sin(angle2) + H * cos(angle2);
+        cp2_x = slur_end_x - add_x;
+        cp2_y = slur->end_y - add_y;
+
+        cp1_ux = xposition_to_unscaled_xposition(r_ob, cp1_x);
+        cp2_ux = xposition_to_unscaled_xposition(r_ob, cp2_x);
+        slur->cp1_y = cp1_y;
+        slur->cp2_y = cp2_y;
     }
     
     bool done = true;
