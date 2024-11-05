@@ -156,6 +156,8 @@ private:
         }
         
         void addFromRatio(const t_shortRational r) {
+            if (r.num() == 0)
+                return;
             t_shortRational what = r;
             int8_t exponent;
             int i = 0;
