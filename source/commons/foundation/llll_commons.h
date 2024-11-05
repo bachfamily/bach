@@ -958,7 +958,7 @@ void llll_insert_llll_at_address(t_llll *ll, t_llll *address, t_llll *subs_model
 // flatten ll between mindepth and maxdepth
 // spikemode 1 makes a () appear in place of a )(
 // freething sets whether and how the l_thing field of lllls must be freed
-void llll_flat(t_llll *ll, t_atom_long minlevel, t_atom_long maxlevel, long spikemode = 0, e_freething_modes freething = LLLL_FREETHING_DONT);
+void llll_flat(t_llll *ll, t_atom_long minlevel = 1, t_atom_long maxlevel = -1, long spikemode = 0, e_freething_modes freething = LLLL_FREETHING_DONT);
 
 // ---DESTRUCTIVE - inplace
 // flatten ll up to maxdepth

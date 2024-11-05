@@ -45,6 +45,7 @@
 	#define WHITENULL_llll				((t_llll *) WHITENULL)
 	#define WHITENULL_llllelem			((t_llllelem *) WHITENULL)
 	#define LLLL_IDX_BASE				1 // can be 0 or 1, also affects the behaviour of append @triggers, collector's collections and msort's base
+    #define BACH_PRIMES_JI_SIZE         15
 
 	//#define BACH_SAFE_LLLLS
 

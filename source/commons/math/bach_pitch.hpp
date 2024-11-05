@@ -50,20 +50,17 @@ public:
 
 };
 
-
-#define BACH_PRIMES_JI_SIZE 15
-
 class t_pitch
 {
 public:
     static int constexpr primes[BACH_PRIMES_JI_SIZE] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47};
-//  TODO: @Andrea, I don't think you need primes_inv at all (there was a bug in getRatio())
-//    static const t_rational primes_inv[BACH_PRIMES_JI_SIZE];
-//    static double constexpr primes_inv_double[BACH_PRIMES_JI_SIZE] = {1./2., 1./3., 1./5., 1./7., 1./11., 1./13., 1./17., 1./19., 1./23., 1./29, 1./31., 1./37., 1./41., 1./43., 1./47.};
-
+    //  TODO: @Andrea, I don't think you need primes_inv at all (there was a bug in getRatio())
+    //    static const t_rational primes_inv[BACH_PRIMES_JI_SIZE];
+    //    static double constexpr primes_inv_double[BACH_PRIMES_JI_SIZE] = {1./2., 1./3., 1./5., 1./7., 1./11., 1./13., 1./17., 1./19., 1./23., 1./29, 1./31., 1./37., 1./41., 1./43., 1./47.};
+    
     // a map from number to the greatest prime <= number
     static int constexpr primes_locate[51] = {-1, -1, 0, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 9, 9, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14};
-
+    
     static t_atom_short constexpr numFifthsPerPrimeFactor[BACH_PRIMES_JI_SIZE] = {0,1,4,-2,-1,3,7,-3,6,-2,0,2,4,-1,6}; // a major third contributes 4 diatonic fifths, etc.
     
     // TODO: check comment
@@ -131,9 +128,9 @@ private:
             t_shortRational what = r;
             int8_t exponent;
             int i = 0;
-
+            
             clear();
-
+            
             if (what < 0)
                 what *= -1;
             what.reduce();
@@ -190,10 +187,10 @@ private:
         void clear();
         void set(const std::vector<int8_t> &v);
         void set(const int idx, const int8_t v);
-    
+        
     private:
         void setHighPrimeUnsafe(const int idx, const int8_t v);
-    
+        
     public:
         std::vector<int8_t> get() const;
         int8_t get(const int idx) const;
@@ -219,7 +216,7 @@ private:
                     steps += get(i) * numDiatonicStepsPerPrimeFactor[i];
                 }
                 return integer_div_round_down(steps, 7);
-//                return steps / 7;
+                //                return steps / 7;
             }
         }
         
@@ -296,22 +293,22 @@ private:
     static constexpr double C0freq = 8.1757989156437073336828122976032719176391;
     ;
     
-
+    
 public: // should be private
     expVector p_JIexpVector;
     t_uint8 p_whiteKeyET;
-
-// TODO: p_alterET should be made private
-// all non-static data member should have the same access control
-// for t_pitch to be Plain Old Data, otherwise we have this issue
-// in objects with attributes and containing t_pitch in their object struct:
-// https://stackoverflow.com/questions/53850100/warning-offset-of-on-non-standard-layout-type-derivedclass
+    
+    // TODO: p_alterET should be made private
+    // all non-static data member should have the same access control
+    // for t_pitch to be Plain Old Data, otherwise we have this issue
+    // in objects with attributes and containing t_pitch in their object struct:
+    // https://stackoverflow.com/questions/53850100/warning-offset-of-on-non-standard-layout-type-derivedclass
 public: // because solves a lot of small issues... for now...
     t_tinyRational p_alterET;
 private:
     double JIComponentToFreq() const;
     double JIComponentToMC() const;
-
+    
 public:
     t_rational ETComponentToMCratNoOctave() const;
     double ETComponentToMCdoubleNoOctave() const;
@@ -414,7 +411,7 @@ public:
         p_alterET = {0, 1};
     }
     
-    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_int8 plof, const std::vector<t_int8> HEJIcommas, const t_int8 octave) : t_pitch(plof, HEJIcommas, octave) {
+    t_pitch(const t_atom_short degree, const t_tinyRational &alter, const t_int8 plof, const std::vector<t_int8> &HEJIcommas, const t_int8 octave) : t_pitch(plof, HEJIcommas, octave) {
         p_whiteKeyET = degree;
         p_alterET = alter;
     }
@@ -433,6 +430,13 @@ public:
         p_whiteKeyET = degree;
         p_alterET = alter;
         p_JIexpVector.addOctaves(addOctave);
+    }
+    
+    t_pitch(t_int8 whiteKeyJI, t_int8 sharps, const std::vector<t_int8> &HEJIcommas, const std::vector<t_int8> &exponents, const t_shortRational &r, const t_int8 octave = 0): p_whiteKeyET(0), p_alterET(0) {
+        t_int8 plof = whiteKey2Plof_safe(whiteKeyJI) + sharps * 7;
+        setJI(plof, HEJIcommas, octave - sharps * 4 / 7);
+        p_JIexpVector += exponents;
+        p_JIexpVector.addFromRatio(r);
     }
     
     void setJI(const t_shortRational r) {
@@ -491,7 +495,7 @@ public:
     void setOctave(t_int8 oct) {
         p_JIexpVector.setOctave(oct);
     }
-
+    
     t_int8 getOctave() const {
         return p_JIexpVector.getOctave();
     }
@@ -499,12 +503,12 @@ public:
     void addOctaves(t_int8 oct) {
         p_JIexpVector.addOctaves(oct);
     }
-
+    
     bool isPureET() const { return !isNaP() && p_JIexpVector.allZerosButOctaves(); }
     bool isPureJI() const { return !isNaP() && p_whiteKeyET == 0 && p_alterET.num() == 0; }
     bool isPurePythagorean() const { return isPureJI() && p_JIexpVector.allZerosButOctavesAndTwelfths(); }
-
-
+    
+    
     
     void setJI(const t_rational r) {
         p_whiteKeyET = 0;
@@ -522,30 +526,43 @@ public:
         q.setOctave(0);
         return q.p_JIexpVector.getRatio();
     }
-
+    
     t_atom_short getWhiteKeyET() const { return p_whiteKeyET; }
     t_atom_short getWhiteKeyJI() const { return p_JIexpVector.getWhiteKeyJI(); }
-
+    
     t_int8 getPlofJI() const { return p_JIexpVector.getPlof(); }
     t_int8 getSharpsJI() const { return integer_div_round_down(getPlofJI() + 1, 7); };
-
+    
     // TODO: Andrea, add const stuff... I had issues
     // possibly approximated to semitones
     t_int8 getSharpsET() {
         t_pitch pappr = approxET(2);
         return (pappr.getAlterET() * 2).num();
     };
-
+    
     // TODO: Andrea, add const stuff... I had issues
     // possibly approximated to semitones
     t_int8 getPlofET() {
         t_pitch pappr = approxET(2);
-        t_atom_short wket = getWhiteKeyET();
+        const t_atom_short wket = getWhiteKeyET();
         t_int8 plof = 0;
-        if (wket >= 0 & wket < 7)
-            plof += whiteKey2Plof[getWhiteKeyET()];
+        if (wket >= 0 && wket < 7)
+            plof += whiteKey2Plof[wket];
         plof += getSharpsET() * 7;
         return plof;
+    }
+    
+    static t_int8 whiteKey2Plof_safe(t_atom_long wk) {
+        if (wk >= 0 && wk < 7)
+            return whiteKey2Plof[wk];
+        else
+            return 0;
+    }
+    
+    static t_pitch whiteKeySharpsOctaveAndCommas2JIPitch(t_int8 wk, t_int8 s, t_int8 o, const std::vector<t_int8> HEJIcommas) {
+        t_int8 plof = whiteKey2Plof_safe(wk) + s * 7;
+        o -= s * 4 / 7;
+        return t_pitch(plof, HEJIcommas, o);
     }
     
     std::vector<int8_t> getHEJICommas(bool removeTrailingZeros = false) const {

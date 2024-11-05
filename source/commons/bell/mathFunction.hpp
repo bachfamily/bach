@@ -101,6 +101,81 @@ public:
     }
 };
 
+class t_fnMakepitch : public t_mathFunction<8>
+{
+public:
+    t_fnMakepitch() : t_mathFunction<8>((method) hatom_fn_makepitch_ext, "makepitch") {
+        setArgument("whitekeyET", 0L);
+        setArgument("alterET", 0L);
+        setArgument("octave", 0L);
+        setArgument("whitekeyJI", 0L);
+        setArgument("sharpsJI", 0L);
+        setArgument("commas");
+        setArgument("ratio", t_rational(0, 1));
+        setArgument("monzo");
+    }
+
+    t_llll* call(const t_execEnv &context) {
+        t_llll *lists[8];
+        lists[0] = context.argv[1];
+        lists[1] = context.argv[2];
+        lists[2] = context.argv[3];
+        lists[3] = context.argv[4];
+        lists[4] = context.argv[5];
+        lists[6] = context.argv[7];
+        
+        t_llll *trash = llll_get();
+
+        {
+            // commas
+            t_llll *x = context.argv[6];
+            t_llll *y = llll_get();
+            if (x->l_depth == 1) {
+                llll_appendobj(y, x);
+            } else {
+                for (t_llllelem *e = x->l_head; e; e = e->l_next) {
+                    if (t_llll *l = hatom_getllll(&e->l_hatom); l != nullptr) {
+                        llll_appendobj(y, l);
+                    } else {
+                        l = llll_get();
+                        llll_appendhatom(l, &e->l_hatom);
+                        llll_appendobj(y, l);
+                        llll_appendllll(trash, l);
+                    }
+                }
+            }
+            lists[5] = y;
+        }
+        
+        {
+            // monzo
+            t_llll *x = context.argv[8];
+            t_llll *y = llll_get();
+            if (x->l_depth == 1) {
+                llll_appendobj(y, x);
+            } else {
+                for (t_llllelem *e = x->l_head; e; e = e->l_next) {
+                    if (t_llll *l = hatom_getllll(&e->l_hatom); l != nullptr) {
+                        llll_appendobj(y, l);
+                    } else {
+                        l = llll_get();
+                        llll_appendhatom(l, &e->l_hatom);
+                        llll_appendobj(y, l);
+                        llll_appendllll(trash, l);
+                    }
+                }
+            }
+            lists[7] = y;
+        }
+        
+        t_llll *res = llllIterator<8>::run(lists);
+        llll_free(trash);
+        llll_free(lists[5]);
+        llll_free(lists[7]);
+        return res;
+    }
+};
+
 template<void (*FN)(t_hatom*, t_hatom*)>
 class astConvInlet : public astInlet, public llllIterator<1>
 {

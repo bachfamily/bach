@@ -4833,7 +4833,7 @@ void llll_insert_llll_at_address(t_llll *ll, t_llll *address, t_llll *subs_model
 
 void llll_flatten(t_llll *ll, t_atom_long maxdepth, long spikemode)
 {
-    llll_flat(ll, 0, maxdepth, spikemode, LLLL_FREETHING_DONT);
+    llll_flat(ll, 1, maxdepth, spikemode, LLLL_FREETHING_DONT);
     pedantic_llll_check(ll);
 }
 

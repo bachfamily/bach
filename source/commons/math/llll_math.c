@@ -20,7 +20,7 @@
 #include <math.h>
 #include "foundation/hatom.h"
 #include "math/llll_math.h"
-#include "foundation/llll_comparisons.h"
+#include "foundation/llll_commons.h"
 
 #ifdef WIN_VERSION
 
@@ -240,6 +240,57 @@ void hatom_fn_cents(t_hatom *a1, t_hatom *res)
         *res = *a1;
     }
 }
+
+
+template<int maxSize>
+std::vector<t_int8> llll_to_int8Vector(t_llll *ll)
+{
+    auto c = std::vector<t_int8>();
+    if (ll && ll->l_size) {
+        if (ll->l_depth > 1) {
+            ll = llll_clone(ll);
+            llll_flat(ll);
+        } else {
+            llll_retain(ll);
+        }
+        t_llllelem *el;
+        int count;
+        for (el = ll->l_head, count = 0; el && count < maxSize; el = el->l_next, count++) {
+            t_atom_long l = hatom_getlong(&el->l_hatom);
+            c.push_back((t_int8) l);
+        }
+        llll_release(ll);
+    }
+    return c;
+}
+
+
+void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
+                    t_hatom *alterET,       // normally rational
+                    t_hatom *octave,        // normally integer
+                    t_hatom *whitekeyJI,    // normally integer
+                    t_hatom *sharpsJI,      // normally integer
+                    t_hatom *commas,        // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *ratio,         // normally rational
+                    t_hatom *monzo,         // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *res
+                    )
+{
+    t_atom_short wkET = (t_atom_short) hatom_getlong(whitekeyET);
+    t_rational aET = hatom_getrational(alterET);
+    t_atom_short o = (t_atom_short) hatom_getlong(octave);
+    t_atom_short wkJI = (t_atom_short) hatom_getlong(whitekeyJI);
+    t_atom_short sJI = (t_atom_short) hatom_getlong(sharpsJI);
+    t_rational r = hatom_getrational(ratio);
+    auto c = llll_to_int8Vector<BACH_PRIMES_JI_SIZE - 2>(static_cast<t_llll*>(hatom_getobj(commas)));
+    auto m = llll_to_int8Vector<BACH_PRIMES_JI_SIZE>(static_cast<t_llll*>(hatom_getobj(monzo)));
+    
+    const t_pitch p(wkET, aET, o);
+    const t_pitch q(wkJI, sJI, c, m, r);
+    hatom_setpitch(res, p + q);
+}
+
+
 
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {

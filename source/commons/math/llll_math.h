@@ -85,7 +85,16 @@ void hatom_fn_makepitchsc(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_approx(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_enharm(t_hatom *h1, t_hatom *h2, t_hatom *res);
 
-
+void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
+                    t_hatom *alterET,       // normally rational
+                    t_hatom *octave,        // normally integer
+                    t_hatom *whitekeyJI,    // normally integer
+                    t_hatom *sharpsJI,      // normally integer
+                    t_hatom *commas,        // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *ratio,         // normally rational
+                    t_hatom *monzo,         // normally flat llll of integers passed as a H_OBJ
+                    t_hatom *res
+                            );
 
 
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res);
