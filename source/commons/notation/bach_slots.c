@@ -10183,10 +10183,10 @@ t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t
     return MAX_ERR_NONE;
 }
 
-t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+t_max_err notationobj_setattr_showcents(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac) {
-        r_ob->show_cents_differences = CLAMP(atom_getlong(av), 0, 1);
+        r_ob->show_cents_differences = CLAMP(atom_getlong(av), 0, 2);
         quick_notationobj_recompute_all_chord_parameters(r_ob);
     }
 

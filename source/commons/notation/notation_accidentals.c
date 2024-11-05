@@ -79,7 +79,7 @@ bool note_has_accidentals(t_note *nt)
 
 bool note_has_no_accidentals_or_has_natural(t_note *nt)
 {
-    if (nt->num_accidentals == 0 || (nt->num_accidentals == 1 && nt->accidentals[0] == BACH_ACCIDENTAL_NATURAL))
+    if (nt->num_accidentals == 0 || (nt->num_accidentals == 1 && (nt->accidentals[0] == BACH_ACCIDENTAL_NATURAL || nt->accidentals[0] == BACH_ACCIDENTAL_JI_NATURAL)))
         return true;
     return false;
 }
@@ -175,9 +175,9 @@ void note_get_accidental_as_cents(t_notation_obj *r_ob, t_note *nt, char *buf)
     }
     
     if (cents >= 0)
-        snprintf_zero(buf, 20, "+%dc%s", (int)cents, r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+        snprintf_zero(buf, 20, "+%d%s", (int)round(cents), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
     else
-        snprintf_zero(buf, 20, "-%dc%s", (int)(-cents), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
+        snprintf_zero(buf, 20, "-%d%s", (int)round(-cents), r_ob->cents_symbol ? r_ob->cents_symbol->s_name : "");
 }
 
 double accidentals_get_uascent(t_notation_obj *r_ob, t_uint8 *accidentals)

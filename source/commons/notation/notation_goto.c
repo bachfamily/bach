@@ -704,7 +704,9 @@ t_llll *goto_get_first_notation_item_before_ms(t_notation_obj *r_ob, t_goto_para
     goto_copy_allowed_types(par->allowed_types, allowed_types);
     
     // I don't think we need this when scrolling backwards... Actually in this form it gave problems with tied sequences
-    char not_tied_from = false; //(par->tiemode == k_GOTO_TIEMODE_FROM || par->tiemode == k_GOTO_TIEMODE_ALL);
+//    char not_tied_from = false; //(par->tiemode == k_GOTO_TIEMODE_FROM || par->tiemode == k_GOTO_TIEMODE_ALL);
+    // ...except we actually DO! See https://www.bachproject.net/forum/viewtopic.php?f=2&t=1211
+    char not_tied_from = (par->tiemode == k_GOTO_TIEMODE_FROM || par->tiemode == k_GOTO_TIEMODE_ALL);
 
     if (par->num_allowed_types == 0 && r_ob->lastselecteditem)
         if (r_ob->lastselecteditem->type > 0 && r_ob->lastselecteditem->type < k_NUM_ELEMENT_TYPES)
@@ -1599,10 +1601,15 @@ void notationobj_goto_parseargs(t_notation_obj *r_ob, t_llll *args)
         if (par.to == k_GOTO_ONSETPOINT_AUTO)
             par.to = k_GOTO_ONSETPOINT_HEAD;
     } else if (par.command == _llllobj_sym_prev) {
-        if (par.from == k_GOTO_ONSETPOINT_AUTO)
+        // WHY WAS THIS TAIL???
+/*        if (par.from == k_GOTO_ONSETPOINT_AUTO)
             par.from = k_GOTO_ONSETPOINT_TAIL;
         if (par.to == k_GOTO_ONSETPOINT_AUTO)
-            par.to = k_GOTO_ONSETPOINT_TAIL;
+            par.to = k_GOTO_ONSETPOINT_TAIL; */
+        if (par.from == k_GOTO_ONSETPOINT_AUTO)
+            par.from = k_GOTO_ONSETPOINT_HEAD;
+        if (par.to == k_GOTO_ONSETPOINT_AUTO)
+            par.to = k_GOTO_ONSETPOINT_HEAD;
     }
     
     

@@ -15,6 +15,7 @@ VERSION NOTES:
    á @additionalstartpad is now called @padafterclef (and a new @padbeforeclef now exists);
      The "adjustadditionalstartpad" message is also renamed to "adjustpadafterclef".
      The old nomenclature is still understood for backward compatibility, but please switch to the new nomenclature.
+   á The "goto" system has changed some of the defaults for going BACKWARDS, which now involve heads (onsets) not tails.
 
 - bach.score:
     á fixed bug causing wrong playback for grace notes!
@@ -76,13 +77,15 @@ VERSION NOTES:
     á New @annotationalignment attribute setting the text alignment for annotations
     á Added "opaque" spec for custom noteheads, thus allowing a better implementation of tablatures
     á @showpartbrackets, @showinitialrule: new attributes
-    á New display of deviations in cents (@showcentsdiff, @centssymbol: new attributes)
+    á New display of deviations in cents (@showcents, @centssymbol: new attributes)
     á @breakpointshavenoteheads: new value "Internal Only" added to display noteheads only for internal breakpoints
     á fixed bug causing wrong partial note float slot playback
     á @shownoteheads: new attribute
     á @spaceafterbarline, @spacebetweenbarlineandts, @spaceafterts: new fine-tuning spacing attributes
     á Now support repeats. Repeat barlines are 're', 'rs' and 'res' measure barlines (repeat end, repeat start, repeat end and start),
         and there's a repeatnum measure parameter to define the number of repetitions (which can also be displayed via @showrepeatnum).
+    á Fixed crashes with the goto system and tempi
+    á @shiftunisons: new attribute to handle shifting of unisons in different parts
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved

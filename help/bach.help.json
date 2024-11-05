@@ -1306,7 +1306,7 @@
 				"filename" : [ "bach.help.notation.accidentals and microtones.23_centsifferences.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "accidental" ],
-				"tags" : [ "accidental", "display", "deviation", "difference", "cents", "showcentsdiff" ],
+				"tags" : [ "accidental", "display", "deviation", "difference", "cents", "showcents" ],
 				"title" : [ "Displaying deviations in cents" ]
 			}
 		},

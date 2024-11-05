@@ -7326,7 +7326,7 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 526 120"); // new dimensions
     // @exclude bach.score
 
-    CLASS_ATTR_DOUBLE_ARRAY(c, "temp", 0, t_notation_obj, temp, 6);
+//    CLASS_ATTR_DOUBLE_ARRAY(c, "temp", 0, t_notation_obj, temp, 6);
 
     CLASS_STICKY_ATTR(c,"category",0,"Show");
     
@@ -10179,7 +10179,9 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                                 create_whole_score_undo_tick_nolock(x);
                                 
                                 score_move_and_reinitialize_last_voice(x, voice->prev, x->r_ob.keys_as_symlist[ref_idx],
-                                                                       ref->v_ob.clef, ref_def ? get_names_as_llll((t_notation_item *)ref, false) : llll_get(), ref->v_ob.midichannel, ref->v_ob.number + 1, NULL);
+                                                                       ref->v_ob.clef, ref_def ? get_names_as_llll((t_notation_item *)ref, false) : llll_get(), ref->v_ob.midichannel, 
+                                                                       notationstyle_to_symbol((e_voice_notation_style)ref->v_ob.notation_style),
+                                                                       ref->v_ob.number + 1, NULL);
 
                                 if (voice_content_ll) {
                                     long i;
@@ -12949,7 +12951,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                         if (!is_editable((t_notation_obj *)x, k_VOICE, k_CREATION)) return;
                         lock_general_mutex((t_notation_obj *)x);
                         create_whole_score_undo_tick_nolock(x);
-                        score_move_and_reinitialize_last_voice(x, chosenelem == 2002 ? (t_scorevoice *)voiceensemble_get_lastvoice((t_notation_obj *)x, (t_voice *)voice) : (voiceensemble_get_firstvoice((t_notation_obj *)x, (t_voice *)voice) ? ((t_scorevoice *)voiceensemble_get_firstvoice((t_notation_obj *)x, (t_voice *)voice))->prev : voice->prev), x->r_ob.keys_as_symlist[voice->v_ob.number], get_voice_clef((t_notation_obj *)x, (t_voice *)voice), llll_get(), voice->v_ob.midichannel, voice->v_ob.number + 1, voice);
+                        score_move_and_reinitialize_last_voice(x, chosenelem == 2002 ? (t_scorevoice *)voiceensemble_get_lastvoice((t_notation_obj *)x, (t_voice *)voice) : (voiceensemble_get_firstvoice((t_notation_obj *)x, (t_voice *)voice) ? ((t_scorevoice *)voiceensemble_get_firstvoice((t_notation_obj *)x, (t_voice *)voice))->prev : voice->prev), x->r_ob.keys_as_symlist[voice->v_ob.number], get_voice_clef((t_notation_obj *)x, (t_voice *)voice), llll_get(), voice->v_ob.midichannel, notationstyle_to_symbol((e_voice_notation_style)voice->v_ob.notation_style), voice->v_ob.number + 1, voice);
                         unlock_general_mutex((t_notation_obj *)x);
                         handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_INSERT_VOICE);
 
@@ -15693,8 +15695,13 @@ t_chord *make_chord_or_note_sharp_or_flat_on_linear_edit(t_score *x, char direct
                 break;
         }
 
-        if (orig_chord)
+        if (orig_chord) {
+//            chord_set_recompute_parameters_flag((t_notation_obj *)x, orig_chord);
             measure_validate_accidentals((t_notation_obj *) x, orig_chord->parent);
+            recompute_all_for_measure((t_notation_obj *)x, orig_chord->parent, false);
+        }
+
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
     }
     return orig_chord;
 }

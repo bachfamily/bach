@@ -446,7 +446,7 @@
                                                                 ///< If one clicks above or below the bounding rectangle by at most #CONST_ARTICULATION_SELECTION_HORIZONTAL_UTOLERANCE, the articulation is still selected
 #define CONST_ARTICULATION_EXTENSION_END_UTRIM 10                ///< Unscaled left nudge of the right limit of the textbox containing an articulation extension. 
                                                                 ///< This applies for instance at teh '~~~~~~~' line for the trill, so that the articulation extension does not overflow on the next chord
-
+#define CONST_ARTICULATION_SLUR_USEP 1        ///< Unscaled separation between articulation and slur
 
 // slurs
 #define CONST_SLUR_START_END_POINT_SEL_WIDTH 4            ///< (UNSUPPORTED) Width and height of the rectangle (in pixels) around the slur starting or ending point, allowing to select those points
@@ -978,6 +978,20 @@ typedef enum _accidentals_display_type {
     k_ACCIDENTALS_CENTS = 4                    ///< Display accidentals only as cents differences (+25c, -74c...)
 } e_accidentals_display_type;
 
+/** Accidental display type. Accidentals can be displayed in various ways: classically, as fractions and as cents differences.
+    The two latter cases work with no matter which microtonal division; the classical view only works for semitone, quartertone and eighttone division,
+    and only if the chosen accidental fonts have the proper symbols (e.g. Boulez does NOT allow quartertones). If the classical view is chosen when the
+    microtonal division is not supported, some 'bogus' accidentals are shown instead.
+    @ingroup    notation
+    @see        #e_accidentals_preferences
+ */
+typedef enum _show_cents_mode {
+    k_SHOW_CENTS_MODE_DONT = 0,                         ///< Don't ever display cents differences
+    k_SHOW_CENTS_MODE_ORIGINAL_MINUS_SCREEN = 1,        ///< Display the difference between the true pitch and the displayed one (including accidentals)
+    k_SHOW_CENTS_MODE_ACCIDENTAL = 2,      ///< Essentially display the cents of the accidental
+} e_show_cents_mode;
+
+
 
 /** Alignment positions (only supported in bach.roll)
     @remark        bach.score only supports #k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER.
@@ -1288,6 +1302,7 @@ typedef enum _articulation_options {
                                                                  ///< is split, the articulation is assigned to all notes (if more than one),
                                                                  ///< and not just to the first one
                                                                  ///< For instance, to a whole tied sequence of notes quantizing the single original one
+    k_ARTICULATION_OPTION_INSIDE_SLURS = 0x400,         ///< Articulation is inside slurs - UNIMPLEMENTED YET
 } e_articulation_options;
 
 
@@ -2483,7 +2498,7 @@ typedef struct _slur
     t_llllelem      *elem;  ///< Corresponding element in the notation object "slurs" llll
     
     // painting parameters
-    double            start_ux;                    ///< x of the pixel of the slur starting point
+    double            start_ux;                    ///< x of the pixel of the slur starting point (unscaled)
     double            start_y;                    ///< y of the pixel of the slur starting point
     double            cp1_relx;                    ///< relative x of the pixel of the slur first control point. This is a relative value, between 0. and 1., where 0. = start_x and 1. = end_x.
     double            cp1_y;                        ///< y of the pixel of the slur first control point
@@ -3791,7 +3806,7 @@ typedef struct _accidentals_typo_preferences
     double            space_uwidth; ///< Width of the space character
     
     double            gap_between_accidentals_of_different_notes_of_same_chord_uwidth;
-    double            gap_between_accidentals_and_note_uwidth;
+    double            gap_between_accidentals_and_note_uwidth; ///< Space between an accidental and its own note
 } t_accidentals_typo_preferences;
 
 
@@ -4503,8 +4518,9 @@ typedef struct _notation_obj
     char        velocity_handling;            ///< Parameter handling the way we display the velocity on screen. This must be one of #e_velocity_handling 
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
     char        accidentals_display_type;    ///< Type of display for the accidentals; must be one of the #e_accidentals_display_type
+    char        accidentals_location;        ///< Currently undocumented and working for bach.roll only (0 = ordinary, 1=above note)
     e_accidentals_preferences    accidentals_preferences;    ///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
-    char        show_cents_differences;           ///< Flag saying if we also display a cents difference w.r.t. the displayed (screen) accidentals
+    char        show_cents_differences;           ///< One of the #e_show_cents_mode
     double      cents_differences_font_size;       ///< Font size for cents differences
     t_symbol    *cents_symbol;                    ///< Symbol used to represent cents or MIDIcents
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
@@ -5118,6 +5134,8 @@ typedef struct _notation_obj
     t_rational    grace_note_equivalent;                            ///< As #grace_note_equivalent_sym, but translated into a rational value
     double        max_percentage_of_chord_taken_by_grace_notes;    ///< Maximum percentage of the chord duration that can be taken by subsequent grace notes
 
+    char        shift_voiceensemble_unisons;        ///< If 0, it doesn't shift unisons, if 1 it shifts them when noteheads are different, if 2 it shifts them always
+    
     // functions
     rebuild_fn                        rebuild_function;                ///< Pointer to the function setting the whole object from llll
     notationobj_fn                    clearall_function;    ///< Pointer to the function creating the undo tick for the whole object
@@ -10588,6 +10606,7 @@ void note_paint_accidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_ac
                            t_jfont *jf_acc_bogus, t_jrgba *color, t_note *curr_nt, long clef,
                            double note_y_real, double stem_x, bool set_topmost_bottommost_stuff);
 
+bool note_must_show_cents(t_notation_obj *r_ob, t_note nt);
 
 double chord_get_bottommost_y_noacc(t_notation_obj *r_ob, t_chord *chord);
 double chord_get_topmost_y_notuplets(t_notation_obj *r_ob, t_chord *chord);
@@ -17768,7 +17787,7 @@ t_max_err notationobj_set_voicespacing(t_notation_obj *r_ob, long ac, double *va
 t_max_err notationobj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
-t_max_err notationobj_setattr_showcentsdiff(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notationobj_setattr_showcents(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_rulerlabels_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notationobj_setattr_tuplets_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);

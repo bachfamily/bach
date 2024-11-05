@@ -301,7 +301,7 @@ void roll_declare_bach_attributes(t_roll *x);
 
 void roll_delete_voice(t_roll *x, t_rollvoice *voice);
 void roll_delete_voiceensemble(t_roll *x, t_voice *any_voice_in_voice_ensemble);
-void roll_move_and_reinitialize_last_voice(t_roll *x, t_rollvoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, long idx_of_the_stafflist_element_in_llll);
+void roll_move_and_reinitialize_last_voice(t_roll *x, t_rollvoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, t_symbol *notationstyle, long idx_of_the_stafflist_element_in_llll);
 void roll_swap_voices(t_roll *x, t_rollvoice *v1, t_rollvoice *v2);
 void roll_swap_voiceensembles(t_roll *x, t_rollvoice *v1, t_rollvoice *v2);
 
@@ -6988,8 +6988,13 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_ACCESSORS(c, "accidentalsgraphic", (method)NULL, (method)roll_setattr_accidentalsgraphic);
     CLASS_ATTR_BASIC(c,"accidentalsgraphic",0);
     // @description @copy BACH_DOC_ACCIDENTALSGRAPHIC
-    
-    CLASS_ATTR_CHAR_UNSAFE(c, "accidentalspreferences", 0, t_notation_obj, accidentals_preferences); 
+
+    CLASS_ATTR_CHAR(c, "accidentalslocation", 0, t_notation_obj, accidentals_location);
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"accidentalslocation", 0,"0");
+    CLASS_ATTR_INVISIBLE(c, "accidentalslocation", 1); // just for now: undocumented
+    // @exclude all
+
+    CLASS_ATTR_CHAR_UNSAFE(c, "accidentalspreferences", 0, t_notation_obj, accidentals_preferences);
     CLASS_ATTR_STYLE_LABEL(c,"accidentalspreferences",0,"enumindex","Accidental Preferences");
     CLASS_ATTR_ENUMINDEX(c,"accidentalspreferences", 0, "Auto Sharps Flats Custom");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"accidentalspreferences",0,"0");
@@ -8381,7 +8386,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                                 create_whole_roll_undo_tick(x);
                                 
                                 roll_move_and_reinitialize_last_voice(x, voice->prev, x->r_ob.keys_as_symlist[ref_idx],
-                                                                       ref->v_ob.clef, ref_def ? get_names_as_llll((t_notation_item *)ref, false) : llll_get(), ref->v_ob.midichannel, ref->v_ob.number + 1);
+                                                                       ref->v_ob.clef, ref_def ? get_names_as_llll((t_notation_item *)ref, false) : llll_get(), ref->v_ob.midichannel, notationstyle_to_symbol((e_voice_notation_style) ref->v_ob.notation_style), ref->v_ob.number + 1);
                                 if (voice_content_ll) {
                                     long i;
                                     t_llll *ll = llll_get();
@@ -14612,7 +14617,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     if (chosenelem == 2001 || chosenelem == 2002) {
                         if (!is_editable((t_notation_obj *)x, k_VOICE, k_CREATION)) return;
                         create_whole_roll_undo_tick(x);
-                        roll_move_and_reinitialize_last_voice(x, chosenelem == 2002 ? (t_rollvoice *)voiceensemble_get_lastvoice((t_notation_obj *)x, (t_voice *)voice) : (voiceensemble_get_firstvoice((t_notation_obj *)x, (t_voice *)voice) ? ((t_rollvoice *)voiceensemble_get_firstvoice((t_notation_obj *)x, (t_voice *)voice))->prev : voice->prev), x->r_ob.keys_as_symlist[voice->v_ob.number], get_voice_clef((t_notation_obj *)x, (t_voice *)voice), llll_get(), voice->v_ob.midichannel, voice->v_ob.number + 1);
+                        roll_move_and_reinitialize_last_voice(x, chosenelem == 2002 ? (t_rollvoice *)voiceensemble_get_lastvoice((t_notation_obj *)x, (t_voice *)voice) : (voiceensemble_get_firstvoice((t_notation_obj *)x, (t_voice *)voice) ? ((t_rollvoice *)voiceensemble_get_firstvoice((t_notation_obj *)x, (t_voice *)voice))->prev : voice->prev), x->r_ob.keys_as_symlist[voice->v_ob.number], get_voice_clef((t_notation_obj *)x, (t_voice *)voice), llll_get(), voice->v_ob.midichannel, notationstyle_to_symbol((e_voice_notation_style) voice->v_ob.notation_style), voice->v_ob.number + 1);
                         handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_INSERT_VOICE);
                         return;
                     }
@@ -19226,7 +19231,7 @@ void roll_swap_voiceensembles(t_roll *x, t_rollvoice *v1, t_rollvoice *v2)
 
 // moves the last voice in a given point.
 // idx_of_the_stafflist_element_in_llll is 1-based
-void roll_move_and_reinitialize_last_voice(t_roll *x, t_rollvoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, long idx_of_the_stafflist_element_in_llll)
+void roll_move_and_reinitialize_last_voice(t_roll *x, t_rollvoice *after_this_voice, t_symbol *key, long clef, t_llll *voicename, long midichannel, t_symbol *notationstyle, long idx_of_the_stafflist_element_in_llll)
 {
     t_rollvoice *tmp_voice;
     t_llllelem *elem, *nth;
@@ -19291,6 +19296,7 @@ void roll_move_and_reinitialize_last_voice(t_roll *x, t_rollvoice *after_this_vo
 
         change_single_key((t_notation_obj *)x, (t_voice *)voice_to_move, key, false);
         change_single_clef((t_notation_obj *)x, (t_voice *)voice_to_move, clef, false);
+        change_single_notationstyle((t_notation_obj *)x, (t_voice *)voice_to_move, notationstyle, false);
         voice_to_move->v_ob.midichannel = midichannel;
         voice_to_move->v_ob.locked = voice_to_move->v_ob.solo = voice_to_move->v_ob.hidden = voice_to_move->v_ob.muted = 0;
         
