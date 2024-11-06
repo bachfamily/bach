@@ -1136,6 +1136,9 @@ double rational_get_tenney_height(t_rational r)
 
 long rational_get_jilimit(t_rational r)
 {
+    if (r.r_num == 0)
+        return 1;
+    
     t_rational s = r;
     rat_reduce(&s);
     long num = s.num();
