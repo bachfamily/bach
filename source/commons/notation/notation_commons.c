@@ -4069,8 +4069,9 @@ void paint_small_note(t_notation_obj *r_ob,  t_jgraphics* g, t_jrgba color, t_ra
     llll_gather_if_drawable(drawablellll, r_ob->max_dots);
 
     *width = 0.;
-    jf = jfont_create_debug(r_ob->noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, ratio * r_ob->notation_typo_preferences.base_pt * r_ob->zoom_y);
-    jf_tuplets = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, ratio * round(8.5 * r_ob->zoom_y)); 
+    const char *jfont = r_ob->noteheads_font ? r_ob->noteheads_font->s_name : BACH_DEFAULT_NOTATION_FONT;
+    jf = jfont_create_debug(jfont, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, ratio * r_ob->notation_typo_preferences.base_pt * r_ob->zoom_y);
+    jf_tuplets = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, ratio * round(8.5 * r_ob->zoom_y));
     elem = drawablellll->l_head;
     x_offset = 0.; first_note_x = -1.;
     while (elem) {
@@ -4155,7 +4156,14 @@ void paint_small_note(t_notation_obj *r_ob,  t_jgraphics* g, t_jrgba color, t_ra
         get_notehead_specs_from_rdur(r_ob, duration, NULL, NULL, NULL, NULL, &small_ux_shift, &small_uy_shift, NULL, NULL);
         note_x = x_pos + x_offset + small_ux_shift * r_ob->zoom_y * ratio;
         if (first_note_x == -1) first_note_x = note_x;
-        note_y = y_pos - 30.2 * r_ob->zoom_y * ratio - small_uy_shift * r_ob->zoom_y * ratio; // to be calibrated
+        
+        if (strcmp(jfont, "Bravura") == 0) {
+            note_y = y_pos - 44.1 * r_ob->zoom_y * ratio - small_uy_shift * r_ob->zoom_y * ratio; // to be calibrated
+            dot_y = y_pos - 46 * r_ob->zoom_y * ratio;
+        } else {
+            note_y = y_pos - 30.2 * r_ob->zoom_y * ratio - small_uy_shift * r_ob->zoom_y * ratio; // to be calibrated
+            dot_y = y_pos - 28.6 * r_ob->zoom_y * ratio;
+        }
         noteheadchars_utf = charset_unicodetoutf8_debug(&notehead_char, 1, &noteheadchars_len);
         strncpy(noteheadchars, noteheadchars_utf, 14);
         bach_freeptr(noteheadchars_utf);
@@ -4163,7 +4171,6 @@ void paint_small_note(t_notation_obj *r_ob,  t_jgraphics* g, t_jrgba color, t_ra
         
         // draw dot(s) if needed
         dot_x_offset = 1.5 * notewidth * r_ob->zoom_y * ratio;
-        dot_y = y_pos - 28.6 * r_ob->zoom_y * ratio;
         for (j=0; j<num_dots; j++) {
             unicodeChar dot_char = r_ob->notation_typo_preferences.dot_unicode_character;
             char dot_txt[5];
@@ -6551,6 +6558,16 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
 }
 
 
+const char *notationobj_get_dynamic_fontname(t_notation_obj *r_ob)
+{
+    if (r_ob->noteheads_font) {
+        if (strcmp(r_ob->noteheads_font->s_name, "Bravura") == 0) {
+            return "Bravura";
+        }
+    }
+    return "November for bach";
+}
+
 t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba dynamicscolor = r_ob->j_dynamics_rgba;
@@ -6742,8 +6759,10 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     } else if (fontnameeq(font->s_name, "Bravura")) {
         smufl = true;
         assign_noteheads_chars_SMuFL(r_ob);
-        assign_noteheads_shifts(r_ob, 0., 18.3, 0., 3.2); // TO DO
-        assign_noteheads_uwidths(r_ob, 4, 14.0, 9., 7.35, 7.35); // TO DO
+        assign_noteheads_shifts(r_ob, 0., 18.3, 0., 3.2);
+        assign_noteheads_shifts(r_ob, -0.15, 18.3, -0.1, 3.2);
+        assign_noteheads_uwidths(r_ob, 4, 14.0, 9., 6.7, 6.7);
+//        assign_noteheads_uwidths(r_ob, 4, 14.0, 9., r_ob->temp[0], r_ob->temp[0]); // TO DO
 //        assign_noteheads_uwidths(r_ob, 4, r_ob->temp[0], r_ob->temp[0], r_ob->temp[1], r_ob->temp[1]);
         assign_noteheads_dl_start_shift(r_ob, -0.7); // TO DO
 

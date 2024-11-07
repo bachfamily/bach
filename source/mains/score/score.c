@@ -7774,21 +7774,21 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_SYM(c,"notationfont", 0, t_notation_obj, noteheads_font);
     CLASS_ATTR_ALIAS(c,"notationfont", "ntfont");
     CLASS_ATTR_STYLE_LABEL(c, "notationfont",0,"font","Notation Font");
-    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"notationfont",0,"\"November for bach\"");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"notationfont",0, BACH_DEFAULT_NOTATION_FONT_ESC);
     CLASS_ATTR_ACCESSORS(c, "notationfont", (method)NULL, (method)score_set_noteheads_font);
     // @description @copy BACH_DOC_NOTATION_FONT
 
     CLASS_ATTR_SYM(c,"accidentalsfont", 0, t_notation_obj, accidentals_font);
     CLASS_ATTR_ALIAS(c,"accidentalsfont", "acfont");
     CLASS_ATTR_STYLE_LABEL(c, "accidentalsfont", 0, "font", "Accidentals Font"); 
-    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"accidentalsfont", 0, "\"November for bach\"");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"accidentalsfont", 0, BACH_DEFAULT_ACCIDENTALS_FONT_ESC);
     CLASS_ATTR_ACCESSORS(c, "accidentalsfont", (method)NULL, (method)score_set_accidentals_font);
     // @description @copy BACH_DOC_ACCIDENTALS_FONT
 
     CLASS_ATTR_SYM(c,"articulationsfont", 0, t_notation_obj, articulations_font);
     CLASS_ATTR_ALIAS(c,"articulationsfont", "acfont");
     CLASS_ATTR_STYLE_LABEL(c, "articulationsfont", 0, "font", "Articulations Font");
-    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"articulationsfont", 0, "\"November for bach\"");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"articulationsfont", 0, BACH_DEFAULT_ARTICULATIONS_FONT_ESC);
     CLASS_ATTR_ACCESSORS(c, "articulationsfont", (method)NULL, (method)score_set_articulations_font);
     // @description @copy BACH_DOC_ARTICULATIONS_FONT
 

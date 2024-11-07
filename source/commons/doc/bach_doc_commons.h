@@ -2314,9 +2314,10 @@
 	// <br /> <br />
 
 #define BACH_DOC_NOTATION_FONT
-	// @description Sets the font used to display all notation elements except accidentals. 
-	// The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and 
-	// automatically loaded at bach startup. "November for bach" is a light version of the famous November font. 
+	// @description Sets the font used to display all notation elements except accidentals.
+    // The bach package by default loads the "Bravura" font, developed by Steinberg.
+	// The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+	// "November for bach" is a light version of the famous November font.
 	// The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique, 
 	// warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares. 
 	// You can purchase November from this web address: www.klemm-music.de/notation/november/.
@@ -2324,23 +2325,23 @@
 
 #define BACH_DOC_ACCIDENTALS_FONT
 	// @description Sets the font used to display accidentals. 
-	// The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and 
-	// automatically loaded at bach startup. "November for bach" is a light version of the famous November font. 
-	// The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique, 
-	// warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares. 
-	// You can purchase November from this web address: www.klemm-music.de/notation/november/.
-	// Other supported fonts are: Accidentals (up to the eighth-tones), Tamburo (up to the quartertones), 
-	// Maestro, Petrucci, Boulez, Engraver Font Set (up to the semitones).
-
-#define BACH_DOC_ARTICULATIONS_FONT
-    // @description Sets the font used to display articulations.
-    // The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and
-    // automatically loaded at bach startup. "November for bach" is a light version of the famous November font.
+    // The bach package by default loads the "Bravura" font, developed by Steinberg.
+    // The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+    // "November for bach" is a light version of the famous November font.
     // The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
     // warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
     // You can purchase November from this web address: www.klemm-music.de/notation/november/.
-    // Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set. Not all articulations are supported by all fonts.
-    // You can however always define custom articulations with any font of your choice.
+    // Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set.
+
+#define BACH_DOC_ARTICULATIONS_FONT
+    // @description Sets the font used to display articulations.
+    // The bach package by default loads the "Bravura" font, developed by Steinberg.
+    // The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+    // "November for bach" is a light version of the famous November font.
+    // The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
+    // warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
+    // You can purchase November from this web address: www.klemm-music.de/notation/november/.
+    // Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set.
 
 #define BACH_DOC_LYRICS_FONT
     // @description Sets the font used to display lyrics (default is Arial).

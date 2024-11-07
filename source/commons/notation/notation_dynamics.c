@@ -936,6 +936,10 @@ double paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_no
         if (paint_mode == 2)
             y_adj_for_dynamics -= 0.15 * font_size;
         
+        if (strcmp(notationobj_get_dynamic_fontname(r_ob), "Bravura") == 0) { // adjustment for bravura
+            y_adj_for_dynamics += -0.88 * font_size;
+        }
+        
 //        paint_line(g, build_jrgba(0, 0, 0, 1), 0, ypos, 500, ypos, 1);
 //        paint_line(g, build_jrgba(1, 0, 0, 1), 0, ypos + y_adj_for_dynamics, 500, ypos + y_adj_for_dynamics, 1);
 //        paint_line(g, build_jrgba(0, 1, 0, 1), 0, ypos + y_adj_for_romans, 500, ypos + y_adj_for_romans, 1);
@@ -1299,26 +1303,52 @@ t_symbol *dynamics_mark_parse_string_to_typographic_text(t_notation_obj *r_ob, c
         return gensym(dynamics);
     }
     
+    bool notation_font_is_Bravura = (strcmp(notationobj_get_dynamic_fontname(r_ob), "Bravura") == 0);
+    
     char *c = buf;
     long cur = 0;
     while (c && *c && cur < CONST_MAX_NUM_DYNAMICS_CHARS - 5) {
         switch (*c) {
             case 'p':
                 if (strncasecmp(c, "pppp", 4) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 128;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 169;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 128;
+                    }
                     c+=4;
                 } else if (strncasecmp(c, "ppp", 3) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 129;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 170;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 129;
+                    }
                     c+=3;
                 } else if (strncasecmp(c, "pp", 2) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 130;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 171;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 130;
+                    }
                     c+=2;
                 } else if (strncasecmp(c, "p", 1) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 131;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 160;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 131;
+                    }
                     c+=1;
                 } else
                     c++;
@@ -1326,12 +1356,24 @@ t_symbol *dynamics_mark_parse_string_to_typographic_text(t_notation_obj *r_ob, c
                 
             case 'm':
                 if (strncasecmp(c, "mp", 2) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 132;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 172;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 132;
+                    }
                     c+=2;
                 } else if (strncasecmp(c, "mf", 2) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 133;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 173;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 133;
+                    }
                     c+=2;
                 } else
                     c++;
@@ -1339,28 +1381,64 @@ t_symbol *dynamics_mark_parse_string_to_typographic_text(t_notation_obj *r_ob, c
                 
             case 'f':
                 if (strncasecmp(c, "ffff", 4) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 137;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 177;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 137;
+                    }
                     c+=4;
                 } else if (strncasecmp(c, "fff", 3) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 136;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 176;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 136;
+                    }
                     c+=3;
                 } else if (strncasecmp(c, "ff", 2) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 135;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 175;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 135;
+                    }
                     c+=2;
                 } else if (strncasecmp(c, "fz", 2) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 138;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 181;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 138;
+                    }
                     c+=2;
                 } else if (strncasecmp(c, "fp", 2) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 140;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 180;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 140;
+                    }
                     c+=2;
                 } else if (strncasecmp(c, "f", 1) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 134;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 162;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 134;
+                    }
                     c+=1;
                 } else
                     c++;
@@ -1368,16 +1446,34 @@ t_symbol *dynamics_mark_parse_string_to_typographic_text(t_notation_obj *r_ob, c
                 
             case 's':
                 if (strncasecmp(c, "sffz", 4) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 139;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 187;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 139;
+                    }
                     c+=4;
                 } else if (strncasecmp(c, "sfz", 3) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 141;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 185;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 141;
+                    }
                     c+=3;
                 } else if (strncasecmp(c, "sf", 2) == 0) {
-                    dynamics[cur++] = 195;
-                    dynamics[cur++] = 142;
+                    if (notation_font_is_Bravura) {
+                        dynamics[cur++] = 238;
+                        dynamics[cur++] = 148;
+                        dynamics[cur++] = 182;
+                    } else {
+                        dynamics[cur++] = 195;
+                        dynamics[cur++] = 142;
+                    }
                     c+=2;
                 } else
                     c++;
@@ -1437,6 +1533,38 @@ t_dynamics_mark *build_dynamics_mark(long num_words)
     ds->prev = ds->next = NULL;
     ds->dynamics_mark_attachment = k_DYNAMICS_MARK_ATTACHMENT_AUTO;
     return ds;
+}
+
+void notationobj_reparse_dynamics(t_notation_obj *r_ob, t_dynamics *dyn)
+{
+    for (t_dynamics_mark *thismark = dyn->firstmark; thismark; thismark = thismark->next) {
+        for (long i = 0; i < thismark->num_words; i++) {
+            if (!thismark->is_roman[i]) {
+                if (thismark->text_deparsed) {
+                    thismark->text_typographic[i] = dynamics_mark_parse_string_to_typographic_text(r_ob, thismark->text_deparsed[i]->s_name);
+                }
+            }
+        }
+    }
+}
+
+void notationobj_reparse_all_dynamics(t_notation_obj *r_ob)
+{
+    long dynamics_slot = r_ob->link_dynamics_to_slot-1;
+    if (r_ob->slotinfo[dynamics_slot].slot_type == k_SLOT_TYPE_DYNAMICS) {
+        if (dynamics_slot >= 0 && dynamics_slot < CONST_MAX_SLOTS) {
+            for (t_voice *v = r_ob->firstvoice; v; v = voice_get_next(r_ob, v)) {
+                for (t_chord *c = voice_get_first_chord(r_ob, v); c; c = chord_get_next(c)) {
+                    
+                    if (chord_has_dynamics(c)) {
+                        t_dynamics *dyn = chord_get_dynamics(c);
+                        notationobj_reparse_dynamics(r_ob, dyn);
+                    }
+                    
+                }
+            }
+        }
+    }
 }
 
 t_dynamics *dynamics_from_textbuf(t_notation_obj *r_ob, t_notation_item *owner, char *buf)

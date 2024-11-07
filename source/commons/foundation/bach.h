@@ -67,6 +67,23 @@
 	#define pedantic_llll_check(ll) ((void) 0)
     #define dev_llll_post(ll, mindepth, maxdepth, max_decimals, client, fn) ((void) 0)
 
+    #define BACH_BRAVURA_DEFAULT
+
+#ifdef BACH_BRAVURA_DEFAULT
+    #define BACH_DEFAULT_NOTATION_FONT "Bravura"
+    #define BACH_DEFAULT_ACCIDENTALS_FONT "Bravura"
+    #define BACH_DEFAULT_ARTICULATIONS_FONT "Bravura"
+    #define BACH_DEFAULT_NOTATION_FONT_ESC "\"Bravura\""
+    #define BACH_DEFAULT_ACCIDENTALS_FONT_ESC "\"Bravura\""
+    #define BACH_DEFAULT_ARTICULATIONS_FONT_ESC "\"Bravura\""
+#else
+    #define BACH_DEFAULT_NOTATION_FONT "November for bach"
+    #define BACH_DEFAULT_ACCIDENTALS_FONT "November for bach"
+    #define BACH_DEFAULT_ARTICULATIONS_FONT "November for bach"
+    #define BACH_DEFAULT_NOTATION_FONT_ESC "\"November for bach\""
+    #define BACH_DEFAULT_ACCIDENTALS_FONT_ESC "\"November for bach\""
+    #define BACH_DEFAULT_ARTICULATIONS_FONT_ESC "\"November for bach\""
+#endif
 
 	#define dev_cprintf(...) ((void) 0)
 

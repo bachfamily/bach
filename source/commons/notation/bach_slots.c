@@ -1466,7 +1466,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
     jf_slot_function_point_labels = jfont_create_debug(r_ob->slot_labels_font ? r_ob->slot_labels_font->s_name : "Arial", 
                                                        r_ob->slot_labels_font_face >= 2 ? JGRAPHICS_FONT_SLANT_ITALIC : JGRAPHICS_FONT_SLANT_NORMAL,
                                                        r_ob->slot_labels_font_face % 2 == 1 ? JGRAPHICS_FONT_WEIGHT_BOLD : JGRAPHICS_FONT_WEIGHT_NORMAL, round(r_ob->slot_labels_font_size * zoom_y));
-    jf_slot_dynamics = jfont_create_debug(BACH_DEFAULT_NOTATION_FONT, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(18 * zoom_y));
+    jf_slot_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname(r_ob), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(18 * zoom_y));
     jf_slot_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(9 * zoom_y));
     if (has_x_labels || has_y_labels)
         jf_slot_function_grid_labels = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(5 * zoom_y));
