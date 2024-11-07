@@ -124,7 +124,7 @@ void C74_EXPORT ext_main(void *moduleRef)
     CLASS_ATTR_LONG(c, "order",    0,    t_fareyser, n_order);
     CLASS_ATTR_LABEL(c, "order", 0, "Order");
     CLASS_ATTR_BASIC(c, "order", 0);
-    CLASS_ATTR_FILTER_MIN(c, "order", "1");
+    CLASS_ATTR_FILTER_MIN(c, "order", 1);
     // @description Sets the order of the Farey series, i.e. the largest term showing up.
 
     CLASS_ATTR_LONG(c, "jilimit",    0,    t_fareyser, n_jilimit);
