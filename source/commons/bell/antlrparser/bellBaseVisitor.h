@@ -123,15 +123,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitLvalueSpecs(bellParser::LvalueSpecsContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual std::any visitLvalue(bellParser::LvalueContext *ctx) override {
     return visitChildren(ctx);
   }
 
   virtual std::any visitFakeLvalue(bellParser::FakeLvalueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitLvalueSpecs(bellParser::LvalueSpecsContext *ctx) override {
     return visitChildren(ctx);
   }
 

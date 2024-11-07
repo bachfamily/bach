@@ -41,7 +41,7 @@ public:
     RuleArgsByNameList = 12, RuleArgsByPositionList = 13, RuleSimpleFuncall = 14, 
     RuleDataFlowAndLvalueSpecsUItem = 15, RuleDataFlowAndLvalueSpecsItem = 16, 
     RuleFuncall = 17, RuleVar = 18, RuleLvalueSpecsUFinal = 19, RuleLvalueSpecsFinal = 20, 
-    RuleLvalueSpecs = 21, RuleLvalue = 22, RuleFakeLvalue = 23, RuleListEnd = 24, 
+    RuleLvalue = 21, RuleFakeLvalue = 22, RuleLvalueSpecs = 23, RuleListEnd = 24, 
     RuleExpr = 25, RuleItem = 26, RuleAssignment = 27, RuleConditional = 28, 
     RuleList = 29
   };
@@ -89,9 +89,9 @@ public:
   class VarContext;
   class LvalueSpecsUFinalContext;
   class LvalueSpecsFinalContext;
-  class LvalueSpecsContext;
   class LvalueContext;
   class FakeLvalueContext;
+  class LvalueSpecsContext;
   class ListEndContext;
   class ExprContext;
   class ItemContext;
@@ -520,25 +520,6 @@ public:
 
   LvalueSpecsFinalContext* lvalueSpecsFinal();
 
-  class  LvalueSpecsContext : public antlr4::ParserRuleContext {
-  public:
-    LvalueSpecsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<DataFlowAndLvalueSpecsItemContext *> dataFlowAndLvalueSpecsItem();
-    DataFlowAndLvalueSpecsItemContext* dataFlowAndLvalueSpecsItem(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> NTH();
-    antlr4::tree::TerminalNode* NTH(size_t i);
-    std::vector<antlr4::tree::TerminalNode *> KEY();
-    antlr4::tree::TerminalNode* KEY(size_t i);
-    LvalueSpecsFinalContext *lvalueSpecsFinal();
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  LvalueSpecsContext* lvalueSpecs();
-
   class  LvalueContext : public antlr4::ParserRuleContext {
   public:
     LvalueContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -557,8 +538,9 @@ public:
   public:
     FakeLvalueContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ItemContext *item();
     LvalueSpecsContext *lvalueSpecs();
+    ItemContext *item();
+    FuncallContext *funcall();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -566,6 +548,25 @@ public:
   };
 
   FakeLvalueContext* fakeLvalue();
+
+  class  LvalueSpecsContext : public antlr4::ParserRuleContext {
+  public:
+    LvalueSpecsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<DataFlowAndLvalueSpecsItemContext *> dataFlowAndLvalueSpecsItem();
+    DataFlowAndLvalueSpecsItemContext* dataFlowAndLvalueSpecsItem(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> NTH();
+    antlr4::tree::TerminalNode* NTH(size_t i);
+    std::vector<antlr4::tree::TerminalNode *> KEY();
+    antlr4::tree::TerminalNode* KEY(size_t i);
+    LvalueSpecsFinalContext *lvalueSpecsFinal();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  LvalueSpecsContext* lvalueSpecs();
 
   class  ListEndContext : public antlr4::ParserRuleContext {
   public:

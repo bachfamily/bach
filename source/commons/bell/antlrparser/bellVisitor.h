@@ -73,11 +73,11 @@ public:
 
     virtual std::any visitLvalueSpecsFinal(bellParser::LvalueSpecsFinalContext *context) = 0;
 
-    virtual std::any visitLvalueSpecs(bellParser::LvalueSpecsContext *context) = 0;
-
     virtual std::any visitLvalue(bellParser::LvalueContext *context) = 0;
 
     virtual std::any visitFakeLvalue(bellParser::FakeLvalueContext *context) = 0;
+
+    virtual std::any visitLvalueSpecs(bellParser::LvalueSpecsContext *context) = 0;
 
     virtual std::any visitListEnd(bellParser::ListEndContext *context) = 0;
 

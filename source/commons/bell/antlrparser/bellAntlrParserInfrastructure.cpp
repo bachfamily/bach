@@ -359,7 +359,7 @@ public:
         *(params->localVariablesAuxMapStack--) = nullptr;
         delete *(params->liftedVariablesStack);
         *(params->liftedVariablesStack--) = nullptr;
-        //--(params->argumentsStackV);
+        --(params->argumentsStackV);
         return r;
     }
     
