@@ -1,7 +1,7 @@
 {
 	"name" : "bach",
 	"displayname" : "",
-	"version" : "0.8.3",
+	"version" : "0.8.9",
 	"author" : "Andrea Agostini and Daniele Ghisi",
 	"authors" : [  ],
 	"description" : "bach: automated composer's helper - a library for real-time computer-assisted composition",
