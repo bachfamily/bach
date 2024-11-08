@@ -430,6 +430,7 @@ public:
             switch (*inPtr) {
                 case 1:
                     *outPtr++ = ' ';
+                    (*params->codeac)++;
                     inPtr++;
                     break;
                 case '\\':
