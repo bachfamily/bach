@@ -544,7 +544,7 @@
  *  @{
  */
 #define CONST_MAX_NUM_DYNAMICS_PER_CHORD 64                 ///< Max number of dynamics for a chord (used in sequence)
-#define CONST_MAX_NUM_DYNAMICS_CHARS 64                     ///< Max number of character per dynamics
+#define CONST_MAX_NUM_DYNAMICS_CHARS 96                     ///< Max number of character per dynamics
 #define CONST_USPACE_BETWEEN_DYNAMICS_MARK_WORDS 2          ///< Space between words inside the same dynamics mark
 #define CONST_MIN_UWIDTH_BETWEEN_DYNAMICS 10
 #define CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD 4           ///< Small left nudge for first roman word inside a dynamic mark
@@ -6867,6 +6867,8 @@ double rest_get_bottom_extension_in_steps(t_notation_obj *r_ob, t_rational r_sym
 // -----------------------------------
 // NOTATION COLORS
 // -----------------------------------
+
+const char *notationobj_get_dynamic_fontname(t_notation_obj *r_ob);
 
 /**    Change a given color depending if the element is selected, played, locked, muted, solo or speedy-edited.
     So the element might assume the selection color, play color, locked color, muted color, solo color or a combination of these. Or the speedy edit color.
@@ -19255,6 +19257,7 @@ t_llll *dynamics_to_llll_full(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll_detailed(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll_plain(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll(t_notation_obj *r_ob, t_dynamics *dyn, e_data_considering_types mode);
+void notationobj_reparse_all_dynamics(t_notation_obj *r_ob);
 
 void dynamics_mark_measure(t_dynamics_mark *mark, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom, double *w, double *h);
 void dynamics_mark_to_textbuf(t_dynamics_mark *mark, char *buf, long buf_size);

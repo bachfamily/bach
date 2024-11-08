@@ -6909,21 +6909,21 @@ void C74_EXPORT ext_main(void *moduleRef){
     CLASS_ATTR_SYM(c,"notationfont", 0, t_notation_obj, noteheads_font);
     CLASS_ATTR_ALIAS(c,"notationfont", "ntfont");
     CLASS_ATTR_STYLE_LABEL(c, "notationfont",0,"font","Notation Font");
-    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"notationfont",0,"\"November for bach\"");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"notationfont",0, BACH_DEFAULT_NOTATION_FONT_ESC);
     CLASS_ATTR_ACCESSORS(c, "notationfont", (method)NULL, (method)roll_setattr_noteheads_font);
     // @description @copy BACH_DOC_NOTATION_FONT
 
     CLASS_ATTR_SYM(c,"accidentalsfont", 0, t_notation_obj, accidentals_font);
     CLASS_ATTR_ALIAS(c,"accidentalsfont", "acfont");
     CLASS_ATTR_STYLE_LABEL(c, "accidentalsfont",0,"font","Accidentals Font"); 
-    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"accidentalsfont", 0, "\"November for bach\"");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"accidentalsfont", 0, BACH_DEFAULT_ACCIDENTALS_FONT_ESC);
     CLASS_ATTR_ACCESSORS(c, "accidentalsfont", (method)NULL, (method)roll_setattr_accidentals_font);
     // @description @copy BACH_DOC_ACCIDENTALS_FONT
     
     CLASS_ATTR_SYM(c,"articulationsfont", 0, t_notation_obj, articulations_font);
     CLASS_ATTR_ALIAS(c,"articulationsfont", "acfont");
     CLASS_ATTR_STYLE_LABEL(c, "articulationsfont", 0, "font", "Articulations Font");
-    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"articulationsfont", 0, "\"November for bach\"");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"articulationsfont", 0, BACH_DEFAULT_ARTICULATIONS_FONT_ESC);
     CLASS_ATTR_ACCESSORS(c, "articulationsfont", (method)NULL, (method)roll_setattr_articulations_font);
     // @description @copy BACH_DOC_ARTICULATIONS_FONT
 
@@ -7422,6 +7422,7 @@ t_max_err roll_setattr_noteheads_font(t_roll *x, t_object *attr, long ac, t_atom
             x->r_ob.noteheads_font = gensym(text);
             load_notation_typo_preferences((t_notation_obj *) x, x->r_ob.noteheads_font);
             load_noteheads_typo_preferences((t_notation_obj *) x, x->r_ob.noteheads_font);
+            notationobj_reparse_all_dynamics((t_notation_obj *) x);
             recalculate_all_chord_parameters(x);
             notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
             bach_freeptr(text);
@@ -10042,7 +10043,7 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
 void process_chord_parameters_calculation_NOW(t_roll *x){
     t_rollvoice *voice;
     t_jfont *jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
-    t_jfont *jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
+    t_jfont *jf_dynamics_nozoom = jfont_create_debug(x->r_ob.noteheads_font ? x->r_ob.noteheads_font->s_name : BACH_DEFAULT_NOTATION_FONT, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
     t_jfont *jf_dynamics_roman_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
 
     for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
@@ -12332,11 +12333,11 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
         jf_lyrics = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size * x->r_ob.zoom_y);
         jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
         jf_ann = jfont_create_debug(x->r_ob.annotations_font ? x->r_ob.annotations_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.annotation_font_size * x->r_ob.zoom_y);
-        jf_small_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
+        jf_small_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
         jf_small_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
-        jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
+        jf_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
         jf_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y);
-        jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
+        jf_dynamics_nozoom = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
         jf_dynamics_roman_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
 
         
@@ -12531,11 +12532,11 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
             if (!jf_lyrics) jf_lyrics = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size * x->r_ob.zoom_y);
             if (!jf_lyrics_nozoom) jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
             if (!jf_ann) jf_ann = jfont_create_debug(x->r_ob.annotations_font ? x->r_ob.annotations_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.annotation_font_size * x->r_ob.zoom_y);
-            if (!jf_small_dynamics) jf_small_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
+            if (!jf_small_dynamics) jf_small_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
             if (!jf_small_dynamics_roman) jf_small_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
-            if (!jf_dynamics) jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
+            if (!jf_dynamics) jf_dynamics = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
             if (!jf_dynamics_roman) jf_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y);
-            if (!jf_dynamics_nozoom) jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
+            if (!jf_dynamics_nozoom) jf_dynamics_nozoom = jfont_create_debug(notationobj_get_dynamic_fontname((t_notation_obj *)x), JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
             if (!jf_dynamics_roman_nozoom) jf_dynamics_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
 
             roll_preprocess_group_beamings(x);
