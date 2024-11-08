@@ -143,6 +143,7 @@ lvalueSpecsUFinal: conditional
 | whileloop
 | forloop
 | fundef
+| funcall
 ;
 
 lvalueSpecsFinal: (UPLUS|UMINUS)* lvalueSpecsUFinal

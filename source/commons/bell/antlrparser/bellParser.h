@@ -549,6 +549,7 @@ public:
     WhileloopContext *whileloop();
     ForloopContext *forloop();
     FundefContext *fundef();
+    FuncallContext *funcall();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
