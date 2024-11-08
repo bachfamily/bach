@@ -43,7 +43,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 13.0, 278.0, 208.0, 84.0 ],
 					"text" : "You can right-click/two-fingers tap on clefs to have a wide range of options for operating on the corresponding voice.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -63,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 272.0, 310.0, 277.0, 69.0 ],
 					"text" : "Or in bach.score right-click/two-fingers tap on measures to change their properties such as time signatures, or rhythmic tree shape.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -105,7 +105,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 160.5, 233.0, 83.0 ],
 					"text" : "A very handy tool is also the \"legato\" function, making each note end exactly when the following ones begins (so that in the end you get a completely monophonic line).",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 28.0, 99.0, 370.0, 84.0 ],
 					"text" : "For instance, in bach.roll, you perform a selection and then rightclick/two-fingers tap on them to display the contextual menu. Among the possibilities: you can lock/unlock/solo them, align them, respace them, retranscribe them, dump them.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

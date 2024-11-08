@@ -100,7 +100,7 @@
 					"patching_rect" : [ 313.0, 135.0, 175.0, 55.0 ],
 					"style" : "",
 					"text" : "Try to click on this duration line and drag it up",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -52,7 +52,7 @@
 					"patching_rect" : [ 170.75, 392.0, 338.0, 55.0 ],
 					"style" : "",
 					"text" : "Use Cmd+Shift+G (mac) or Ctrl+Shift+G (win) to add a rhythmic tree level around the selected content",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -70,7 +70,7 @@
 					"patching_rect" : [ 282.0, 320.0, 292.0, 40.0 ],
 					"style" : "",
 					"text" : "Use Cmd+Shift+H (mac) or Ctrl+Shift+H (win) to destroy a single tree level",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -88,7 +88,7 @@
 					"patching_rect" : [ 282.0, 360.0, 309.0, 40.0 ],
 					"style" : "",
 					"text" : "Use Cmd+Shift+F (mac) or Ctrl+Shift+F (win) to fix (stick) selected tree levels as \"original\" levels",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -107,7 +107,7 @@
 					"patching_rect" : [ 32.0, 281.5, 292.0, 55.0 ],
 					"style" : "",
 					"text" : "Use Cmd+Shift+J (mac) or Ctrl+Shift+J (win) to completely destroy the tree of selected levels",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -157,7 +157,7 @@
 					"patching_rect" : [ 192.5, 108.5, 277.0, 40.0 ],
 					"style" : "",
 					"text" : "Use Alt+Tab to also reparse all tuplets",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -176,7 +176,7 @@
 					"patching_rect" : [ 170.75, 71.0, 329.0, 55.0 ],
 					"style" : "",
 					"text" : "Select a portion of score and press Tab to retranscribe it automatically, keeping existing tuplets untouched",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

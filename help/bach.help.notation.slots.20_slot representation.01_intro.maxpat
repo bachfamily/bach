@@ -58,7 +58,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 195.0, 241.0, 186.0, 40.0 ],
 					"text" : "Either via the slotinfo \"Slot Representation\" attribute",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

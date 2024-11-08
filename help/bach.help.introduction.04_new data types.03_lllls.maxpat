@@ -66,7 +66,7 @@
 					"patching_rect" : [ 6.0, 358.0, 522.0, 21.0 ],
 					"style" : "",
 					"text" : "Tip: If you press Shift+B, an empty box containing the \"bach.\" word immediately appears!",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

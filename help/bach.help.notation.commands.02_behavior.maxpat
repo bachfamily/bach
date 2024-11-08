@@ -162,7 +162,7 @@
 					"patching_rect" : [ 34.0, 303.0, 302.0, 40.0 ],
 					"style" : "",
 					"text" : "Perform a selection and press key G, P, or Shift+S",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

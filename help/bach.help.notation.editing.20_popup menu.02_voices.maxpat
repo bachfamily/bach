@@ -50,7 +50,7 @@
 					"patching_rect" : [ 188.0, 428.5, 245.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all muted elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -68,7 +68,7 @@
 					"patching_rect" : [ 188.0, 403.5, 245.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all solo elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -86,7 +86,7 @@
 					"patching_rect" : [ 188.0, 378.5, 245.0, 25.0 ],
 					"style" : "",
 					"text" : "Set the voice as solo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -103,7 +103,7 @@
 					"patching_rect" : [ 188.0, 353.5, 245.0, 25.0 ],
 					"style" : "",
 					"text" : "Mute the voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -120,7 +120,7 @@
 					"patching_rect" : [ 188.0, 331.5, 245.0, 25.0 ],
 					"style" : "",
 					"text" : "Lock the voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -137,7 +137,7 @@
 					"patching_rect" : [ 188.0, 278.5, 245.0, 25.0 ],
 					"style" : "",
 					"text" : "Insert a voice after the clicked voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -154,7 +154,7 @@
 					"patching_rect" : [ 188.0, 256.5, 245.0, 25.0 ],
 					"style" : "",
 					"text" : "Insert a voice before the clicked voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -171,7 +171,7 @@
 					"patching_rect" : [ 188.0, 236.5, 171.0, 25.0 ],
 					"style" : "",
 					"text" : "Delete the clicked voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -189,7 +189,7 @@
 					"patching_rect" : [ 188.0, 218.5, 394.0, 25.0 ],
 					"style" : "",
 					"text" : "Change the midichannels (choose among the proposed ones)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -206,7 +206,7 @@
 					"patching_rect" : [ 188.0, 192.5, 394.0, 25.0 ],
 					"style" : "",
 					"text" : "Change the key signature (choose among the proposed ones)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -224,7 +224,7 @@
 					"patching_rect" : [ 188.0, 167.5, 327.0, 25.0 ],
 					"style" : "",
 					"text" : "Change the clef (choose among the proposed ones)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -241,7 +241,7 @@
 					"patching_rect" : [ 188.0, 137.5, 171.0, 25.0 ],
 					"style" : "",
 					"text" : "Open the voice inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

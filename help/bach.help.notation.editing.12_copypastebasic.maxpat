@@ -51,7 +51,7 @@
 					"patching_rect" : [ 82.0, 221.0, 312.0, 54.0 ],
 					"style" : "",
 					"text" : "Use Cmd+Shift+V (mac) or Ctrl+Shift+V (win) to paste the content at its original position. Beware: chords will exactly overlap with the existing ones.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -71,7 +71,7 @@
 					"presentation_rect" : [ 118.0, 242.666656, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Use Cmd+Alt+V (mac) or Ctrl+Shift+V (win) to \"paste-replace\", i.e. to replace the selected content with the copied one.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -89,7 +89,7 @@
 					"patching_rect" : [ 317.0, 383.666656, 248.0, 54.0 ],
 					"style" : "",
 					"text" : "Then select a destination measure (or range of measures), and press Cmd+V (mac) or Ctrl+V (win) to paste.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -107,7 +107,7 @@
 					"patching_rect" : [ 331.0, 422.666656, 234.0, 40.0 ],
 					"style" : "",
 					"text" : "(Add the Shift key to also paste tempi)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -204,7 +204,7 @@
 					"patching_rect" : [ 175.0, 299.0, 327.0, 55.0 ],
 					"style" : "",
 					"text" : "Select a measure, or a range of measures, and use Cmd+C (mac) or Ctrl+C (win) to copy",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -223,7 +223,7 @@
 					"patching_rect" : [ 38.75, 113.0, 199.0, 55.0 ],
 					"style" : "",
 					"text" : "Use Cmd+X (mac) or Ctrl+X (win) to cut the content",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -243,7 +243,7 @@
 					"patching_rect" : [ 273.5, 84.0, 154.0, 84.0 ],
 					"style" : "",
 					"text" : "Use Cmd+V (mac) or Ctrl+V (win) to paste the content at the current mouse position.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -262,7 +262,7 @@
 					"patching_rect" : [ 38.75, 57.0, 199.0, 69.0 ],
 					"style" : "",
 					"text" : "Select the content you want to copy, then press Cmd+C (mac) or Ctrl+C (win)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

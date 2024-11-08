@@ -96,7 +96,7 @@
 					"patching_rect" : [ 6.0, 433.0, 578.0, 36.0 ],
 					"style" : "",
 					"text" : "Also: when snapping is on, pressing the Control key (mac) or Shift+Ctrl key (windows) before releasing the mouse button will prevent snapping.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -116,7 +116,7 @@
 					"patching_rect" : [ 38.0, 360.0, 530.0, 69.0 ],
 					"style" : "",
 					"text" : "If \"snaponset\" is active, when you select a note and press the left/right keyboard arrows, the onset will change according to the current subgrid (light grey subdivisions). If you add the Shift key, the onset will change according to the current grid (darker grey divisions).",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -51,7 +51,7 @@
 					"patching_rect" : [ 44.0, 373.0, 272.0, 54.0 ],
 					"style" : "",
 					"text" : "Shift+Alt+click on the notehead and drag up or down, to create a new note in the same chord",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -86,7 +86,7 @@
 					"patching_rect" : [ 44.0, 430.0, 278.0, 40.0 ],
 					"style" : "",
 					"text" : "Or simply Alt+click on the notehead and drag it to copy it elsewhere, in a new chord",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -131,7 +131,7 @@
 					"patching_rect" : [ 293.0, 197.0, 237.0, 69.0 ],
 					"style" : "",
 					"text" : "You can delete notes by Cmd+clicking (mac) or Ctrl+clicking (win) again on their notehead",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -151,7 +151,7 @@
 					"patching_rect" : [ 6.0, 197.0, 237.0, 55.0 ],
 					"style" : "",
 					"text" : "You can change a note's pitch by clicking on it and dragging up or down.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -167,7 +167,7 @@
 					"patching_rect" : [ 11.0, 291.0, 267.0, 36.0 ],
 					"style" : "",
 					"text" : "Keep shift pressed if you want to either move vertically or move horizontally",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -187,7 +187,7 @@
 					"patching_rect" : [ 6.0, 236.0, 277.0, 55.0 ],
 					"style" : "",
 					"text" : "You can modify the chord onset by clicking on a notehead and dragging left or right.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -223,7 +223,7 @@
 					"patching_rect" : [ 6.0, 69.0, 228.0, 69.0 ],
 					"style" : "",
 					"text" : "The simplest way to introduce a chord in bach.roll is to Cmd+click (mac) or Ctrl+click (win)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

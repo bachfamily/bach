@@ -51,7 +51,7 @@
 					"patching_rect" : [ 279.0, 51.0, 318.0, 69.0 ],
 					"style" : "",
 					"text" : "The simplest way to change the pitch of a note is to click on its notehead, and then drag it up or down. Holding the Shift key pressed helps not to change chord onset.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -71,7 +71,7 @@
 					"patching_rect" : [ 295.0, 105.0, 307.0, 55.0 ],
 					"style" : "",
 					"text" : "Also add Shift+Ctrl (mac) in order to allow notes to changing voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -106,7 +106,7 @@
 					"patching_rect" : [ 295.0, 387.166656, 226.0, 54.0 ],
 					"style" : "",
 					"text" : "You can do the same for all \"note\" letters in anglo-saxon notation: \nA, B, C, D, E, F, G.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"patching_rect" : [ 281.0, 160.0, 329.0, 54.0 ],
 					"style" : "",
 					"text" : "Another way is to select the note, and then use the keyboard arrows: ↑ or ↓. The note will he shifted of 1 step (with respect to the current microtonal division)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -160,7 +160,7 @@
 					"patching_rect" : [ 6.0, 329.0, 367.0, 55.0 ],
 					"style" : "",
 					"text" : "Select this note, and press Ctrl+A (mac) or Shift+Ctrl+Alt+A (win), to transform it into a A (the \"nearest\" one)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -288,7 +288,7 @@
 					"patching_rect" : [ 243.0, 201.0, 240.0, 55.0 ],
 					"style" : "",
 					"text" : "If you add the Shift key, notes will be transposed of 1 octave (up or down)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -341,7 +341,7 @@
 					"patching_rect" : [ 163.0, 242.0, 423.0, 55.0 ],
 					"style" : "",
 					"text" : "If you add the Shift+Cmd key, you'll prevent notes from being assigned to different voices, and you'll keep them in their original voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

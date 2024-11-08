@@ -264,7 +264,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 374.5, 124.0, 238.0, 36.0 ],
 					"text" : "While dragging, the cursor will override the existing envelope points.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -283,7 +283,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 236.0, 69.0, 303.0, 69.0 ],
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+click (win) anywhere but on a point or segment, then drag to draw your envelope",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

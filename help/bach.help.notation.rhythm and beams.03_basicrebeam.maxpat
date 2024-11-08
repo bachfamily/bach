@@ -167,7 +167,7 @@
 					"patching_rect" : [ 219.5, 276.5, 280.0, 55.0 ],
 					"style" : "",
 					"text" : "Use Alt+Tab to also reparse all tuplets, as the \"rebeam 1\" message.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -186,7 +186,7 @@
 					"patching_rect" : [ 219.5, 220.5, 280.0, 69.0 ],
 					"style" : "",
 					"text" : "Select a portion of score and press Tab to rebeam it automatically, keeping existing tuplets untouched as the \"rebeam\" message.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -42,7 +42,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 337.0, 166.25, 274.5, 69.0 ],
 					"text" : "If attachment is \"Measure position\", here one sets the timepoint to which the marker is attached, as: measure number, point in measure and voice number",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -61,7 +61,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 337.0, 166.25, 274.5, 69.0 ],
 					"text" : "If attachment is \"Measure position\", here one sets the timepoint to which the marker is attached, as: measure number, point in measure and voice number",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -79,7 +79,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 337.0, 166.25, 274.5, 69.0 ],
 					"text" : "If attachment is \"Measure position\", here one sets the timepoint to which the marker is attached, as: measure number, point in measure and voice number",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -114,7 +114,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 390.5, 132.25, 221.0, 40.0 ],
 					"text" : "If attachment is \"Milliseconds position\", here one sets the onset",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -133,7 +133,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 78.5, 250.5, 174.0, 55.0 ],
 					"text" : "These are instructions to navigate in the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -151,7 +151,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 393.5, 107.25, 161.0, 25.0 ],
 					"text" : "Set marker attachment",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -169,7 +169,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 346.5, 85.25, 142.0, 25.0 ],
 					"text" : "Set marker name(s)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

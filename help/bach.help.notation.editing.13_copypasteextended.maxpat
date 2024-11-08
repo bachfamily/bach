@@ -43,7 +43,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 179.0, 294.0, 202.0, 84.0 ],
 					"text" : "You can select stuff in one voice and then paste the content to another voice, simply by moving the mouse on the target voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

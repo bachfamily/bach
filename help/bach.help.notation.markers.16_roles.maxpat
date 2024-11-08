@@ -98,7 +98,7 @@
 					"patching_rect" : [ 411.0, 428.833344, 188.0, 40.0 ],
 					"style" : "",
 					"text" : "Marker roles can be also changed via the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

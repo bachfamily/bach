@@ -51,7 +51,7 @@
 					"patching_rect" : [ 363.0, 338.0, 235.0, 36.0 ],
 					"style" : "",
 					"text" : "Right click on an articulation to change or delete it from a popup menu",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -70,7 +70,7 @@
 					"patching_rect" : [ 252.0, 255.0, 258.0, 54.0 ],
 					"style" : "",
 					"text" : "Or select a portion of chords and notes, and press Alt+Backspace to delete all their articulations",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -90,7 +90,7 @@
 					"patching_rect" : [ 36.0, 286.333313, 218.0, 55.0 ],
 					"style" : "",
 					"text" : "Select a chord, and press Alt+G to add a \"gruppetto\" sign",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -156,7 +156,7 @@
 					"patching_rect" : [ 228.5, 215.0, 246.0, 40.0 ],
 					"style" : "",
 					"text" : "Click on an articulation to select it, and press Backspace to delete it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -176,7 +176,7 @@
 					"patching_rect" : [ 105.0, 176.0, 218.0, 55.0 ],
 					"style" : "",
 					"text" : "You can iterate this to add more staccato signs!",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -196,7 +196,7 @@
 					"patching_rect" : [ 105.0, 135.0, 218.0, 55.0 ],
 					"style" : "",
 					"text" : "Select a chord, and press Alt+S to add a \"staccato\" sign",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

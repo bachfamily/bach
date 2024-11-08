@@ -57,7 +57,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 211.5, 255.0, 206.0, 40.0 ],
 					"text" : "Doubleclick inside the window to edit the llll directly",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -76,7 +76,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 403.5, 255.0, 206.0, 40.0 ],
 					"text" : "Press Enter once you have finished, to store the new llll",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -95,7 +95,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 127.5, 96.0, 206.0, 40.0 ],
 					"text" : "Doubleclick inside the window to edit the text directly",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -114,7 +114,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 319.5, 96.0, 206.0, 40.0 ],
 					"text" : "Press Enter once you have finished, to store the new text",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

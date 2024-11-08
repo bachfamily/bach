@@ -69,7 +69,7 @@
 					"patching_rect" : [ 30.5, 324.0, 241.0, 98.0 ],
 					"style" : "",
 					"text" : "A right-click (or two-fingers tap) on a clef will pop up a menu allowing to manage the voice. You can add a new voice below or above the clicked on, or you can delete the clicked voice.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

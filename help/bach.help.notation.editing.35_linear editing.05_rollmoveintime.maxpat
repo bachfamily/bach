@@ -129,7 +129,7 @@
 					"patching_rect" : [ 449.0, 230.0, 138.0, 40.0 ],
 					"style" : "",
 					"text" : "Use Cmd+up/down to change voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -199,7 +199,7 @@
 					"patching_rect" : [ 10.0, 295.0, 206.0, 84.0 ],
 					"style" : "",
 					"text" : "Use Cmd+left/right arrows to move \"by chord\" in time. The cursor will be snapped to previous/next chord or chord end.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -219,7 +219,7 @@
 					"patching_rect" : [ 6.0, 75.0, 254.0, 98.0 ],
 					"style" : "",
 					"text" : "Use left/right arrows to move \"by absolute position\" in time. The cursor will not be snapped to any element.\n- add Shift to move 4x faster\n- add Alt to move slower (by 1 ms)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

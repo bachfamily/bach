@@ -166,7 +166,7 @@
 					"patching_rect" : [ 306.5, 55.0, 236.0, 84.0 ],
 					"style" : "",
 					"text" : "When the playhead cursor is visible, you can Alt+click on any position to move it. (Without releasing the mouse you can also drag it continuously)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -186,7 +186,7 @@
 					"patching_rect" : [ 52.0, 55.0, 237.0, 69.0 ],
 					"style" : "",
 					"text" : "When the notation object has the focus, use Cmd+P (mac) or Ctrl+P (win) to show/hide the playhead cursor",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

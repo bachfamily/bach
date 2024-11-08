@@ -305,7 +305,7 @@
 					"patching_rect" : [ 170.5, 224.0, 264.0, 55.0 ],
 					"style" : "",
 					"text" : "Cmd+J (mac) or Ctrl+J (win) to solo/unsolo selected musical elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -50,7 +50,7 @@
 					"patching_rect" : [ 205.0, 173.0, 151.0, 54.0 ],
 					"style" : "",
 					"text" : "...and are multipliers applied to this basic step (in ms).\n",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -70,7 +70,7 @@
 					"presentation_rect" : [ 346.0, 176.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "This step can be modified during linear editing, by using Ctrl+\"+\" and Ctrl+\"-\" (mac) or Shift+Ctrl+\"+\" and Shift+Ctrl+\"-\" (win), when the cursor is NOT aligned on ANY chord.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -103,7 +103,7 @@
 					"presentation_rect" : [ 334.0, 107.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "These correspond to the keys 1 through 9 and then 0...",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -155,7 +155,7 @@
 					"patching_rect" : [ 16.0, 370.0, 355.0, 84.0 ],
 					"style" : "",
 					"text" : "On the other hand, if you use Ctrl+\"+\" and Ctrl+\"-\" (mac) or Shift+Ctrl+\"+\" and Shift+Ctrl+\"-\" (win) when the cursor is ON some chord, you will fine tune its duration by 1ms. \nAlso add the Alt key to make the modification multiplicative",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -271,7 +271,7 @@
 					"presentation_rect" : [ 339.0, 277.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "By default the fine tuning will be by 1ms. Add the Alt key to have it multiplicative (i.e. make step double or half of current one)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

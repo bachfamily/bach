@@ -40,7 +40,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 357.0, 193.625, 150.0, 25.0 ],
 					"text" : "Set the chord as solo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -57,7 +57,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 357.0, 172.5, 114.0, 25.0 ],
 					"text" : "Mute the chord",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -74,7 +74,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 357.0, 151.375, 113.0, 25.0 ],
 					"text" : "Lock the chord",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -93,7 +93,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 158.5, 260.0, 174.0, 55.0 ],
 					"text" : "These are instructions to navigate in the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -110,7 +110,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 357.0, 129.125, 241.0, 25.0 ],
 					"text" : "Change chord onset (in milliseconds)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -127,7 +127,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 357.0, 108.0, 175.0, 25.0 ],
 					"text" : "Assign or modify name(s)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

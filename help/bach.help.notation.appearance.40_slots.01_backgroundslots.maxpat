@@ -82,7 +82,7 @@
 					"patching_rect" : [ 34.0, 84.0, 197.0, 50.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "Via the slotinfo inspector, with its \"Kept In Background\" attribute (see #slotinfo+inspector)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

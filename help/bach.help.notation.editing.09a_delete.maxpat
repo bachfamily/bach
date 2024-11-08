@@ -85,7 +85,7 @@
 					"patching_rect" : [ 62.5, 299.0, 309.0, 55.0 ],
 					"style" : "",
 					"text" : "...while adding the Shift key will delete the measure themselves (if measures are selected)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -118,7 +118,7 @@
 					"patching_rect" : [ 126.0, 64.0, 166.0, 54.0 ],
 					"style" : "",
 					"text" : "The simplest way to delete a selection is to use Backspace.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -155,7 +155,7 @@
 					"patching_rect" : [ 6.0, 255.0, 429.0, 55.0 ],
 					"style" : "",
 					"text" : "In bach.score, simple Backspace will delete notes (if selected) or measure content (if a measure is selected)...",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -284,7 +284,7 @@
 					"patching_rect" : [ 278.0, 64.0, 288.0, 54.0 ],
 					"style" : "",
 					"text" : "Add the Shift key in order to ripple-delete the content (i.e. move the following music backwards in order to fill the gap)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

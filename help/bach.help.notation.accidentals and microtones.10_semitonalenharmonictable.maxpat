@@ -71,7 +71,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 320.5, 280.0, 242.5, 40.0 ],
 					"text" : "Try to change the pitches of the notes!",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

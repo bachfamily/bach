@@ -140,30 +140,33 @@ public:
     t_rat & operator/=(const t_rat &b);
     t_rat & operator%=(t_rat b);
     
-    t_rat & fold(t_rat b) { 
+    t_rat fold(t_rat b) { 
         // "folds" a rational as a pitch multiplicatively, so that it lies inside the fundamenetal "pseudooctave" between 1 and b
         // for NEGATIVE numbers, this returns the negative of the positive version (fold(-a, b) = -fold(a, b))
         // when b < 1
         t_rat<T> a = *this;
-        
+        t_rat<T> invalid, oneoverzero;
+        invalid.r_num = invalid.r_den = 0;
+        oneoverzero.r_num = oneoverzero.r_den = 0;
+
         // the matter of signs on anything mod-related is a nightmare in implementations.
         // Here, we assume that  fold(a, b) = fold(a, 1/b), and that both a and b must be >0
         // otherwise an error is returned (0/0)
         
         if (a.r_num == 0 )
-            return *this; // either 0 or invalid rational: let's keep them this way
+            return a; // either 0 or invalid rational: let's keep them this way
 
         if (b.r_den == 0)
-            return t_rat(0, 0); // invalid rational
+            return invalid; // invalid rational
 
         if (b <= 0 || a <= 0)
-            return t_rat(0, 0); // invalid rational
+            return invalid; // invalid rational
 
         if (b == 1)
-            return t_rat(1, 0); // 1/0 as output: folding by 1 is just like dividing by 0
+            return oneoverzero; // 1/0 as output: folding by 1 is just like dividing by 0
         
         if (b < 1)
-            b = 1/b;
+            b = b.inv();
         
         // iterative version
         while (a >= b) { // TODO: there must be a non-iterative way via logarithms – still...

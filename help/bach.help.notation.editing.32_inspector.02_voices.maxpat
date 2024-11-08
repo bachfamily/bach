@@ -42,7 +42,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 94.5, 296.0, 174.0, 55.0 ],
 					"text" : "These are the instruction to navigate in the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -59,7 +59,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 376.0, 250.0, 147.0, 25.0 ],
 					"text" : "Set the voice as solo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -76,7 +76,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 376.0, 229.0, 112.0, 25.0 ],
 					"text" : "Mute the voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -93,7 +93,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 376.0, 207.0, 111.0, 25.0 ],
 					"text" : "Lock the voice",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -110,7 +110,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 376.0, 186.0, 197.0, 25.0 ],
 					"text" : "Change the staff lines pattern",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -127,7 +127,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 376.0, 164.0, 175.0, 25.0 ],
 					"text" : "Choose the key signature",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -144,7 +144,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 376.0, 140.0, 118.0, 25.0 ],
 					"text" : "Choose the clef",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -161,7 +161,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 376.0, 118.0, 158.0, 25.0 ],
 					"text" : "Assign a MIDI channel",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -178,7 +178,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 376.0, 96.0, 231.0, 25.0 ],
 					"text" : "Assign or modify the voice name(s)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -51,7 +51,7 @@
 					"presentation_rect" : [ 15.0, 223.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Snapping interface for measure-attached markers is the opposite than for millisecond-attached markers: by default they snap to the nearest score chord, but you can press Shift to have them interpolate smoothly across chords:",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -69,7 +69,7 @@
 					"patching_rect" : [ 6.0, 39.0, 542.0, 50.0 ],
 					"style" : "",
 					"text" : "When one or more milliseconds-attached markers are selected, you can drag them by keeping the Shift key pressed in order to have them \"magnetically\" snap to the nearest chord. For bach.roll, markers are also snapped to note tails and/or pitch breakpoints.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 5,
-			"revision" : 5,
+			"minor" : 6,
+			"revision" : 1,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -43,7 +43,7 @@
 					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"hyperlinkcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
+					"hyperlinkcolor" : [ 0.7, 0.7, 0.7, 1.0 ],
 					"id" : "obj-2",
 					"linecount" : 7,
 					"linkend" : [ ".", ":", "!", "?", "\u003b", "(", ")", "[", "]", "{", "}" ],
@@ -53,6 +53,13 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 237.0, 612.0, 108.0 ],
+					"saved_attribute_attributes" : 					{
+						"hyperlinkcolor" : 						{
+							"expression" : "themecolor.theme_textcolor"
+						}
+
+					}
+,
 					"showhand" : 0,
 					"text" : "The following specifications will refer to unzoomed situations, and will be scaled according to the zoom:\n– xshift: horizontal shift (positive values move right)\n– yshift: vertical shift (positive values move up)\n– width: the width of the notehead\n– xshiftsmall: same as xshift, but for grace notes\n– yshiftsmall: same as yshift, but for grace notes\n– dlstartxshift: horizontal offset for the beginning of the duration line",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
@@ -87,7 +94,7 @@
 					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"hyperlinkcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
+					"hyperlinkcolor" : [ 0.7, 0.7, 0.7, 1.0 ],
 					"id" : "obj-9",
 					"linecount" : 13,
 					"linkend" : [ ".", ":", "!", "?", "\u003b", "(", ")", "[", "]", "{", "}" ],
@@ -97,6 +104,13 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 33.0, 612.0, 195.0 ],
+					"saved_attribute_attributes" : 					{
+						"hyperlinkcolor" : 						{
+							"expression" : "themecolor.theme_textcolor"
+						}
+
+					}
+,
 					"showhand" : 0,
 					"text" : "The possible fields to be assigned to a newly defined notehead are the following ones:\n– fullname: a symbol defining the articulation full name (e.g. \"curly\")\n– shortname: a symbol defining the articulation short name (e.g. \"cr\")\n– alias: up to 5 other names which will be mapped on the articulation when found in articulation slots\n– font: a symbol containing the font name, or \"default\" (in order to use the defined \"notationfont\")\n– basept: the basic font size (corresponding to a no-vzoom situation). \n– char: symbol or unicode value determining the notehead character. \n            \n\n\n\n\n– opaque: whether the background is opaque or not ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],

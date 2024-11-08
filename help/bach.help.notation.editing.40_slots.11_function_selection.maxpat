@@ -99,7 +99,7 @@
 					"patching_rect" : [ 230.0, 134.0, 144.0, 55.0 ],
 					"presentation_rect" : [ 34.0, 79.0, 0.0, 0.0 ],
 					"text" : "Repeat the command to select more points",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -119,7 +119,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 222.0, 244.0, 247.5, 84.0 ],
 					"text" : "You can move all selected points at once, and you can delete them all by pressing Cmd+click (mac) or Ctrl+click (win) on any of them",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -138,7 +138,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 308.5, 72.0, 246.0, 55.0 ],
 					"text" : "Click on the window header (the upper darker part) to clear the selection",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -158,7 +158,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 32.0, 112.0, 260.0, 55.0 ],
 					"text" : "Shift + click anywhere (except on a point) and drag to select function points",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
