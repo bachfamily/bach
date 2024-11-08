@@ -11670,8 +11670,8 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
         t_marker *marker;
         t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
 
-        double playhead_y1, playhead_y2;
-        get_playhead_ypos((t_notation_obj *)x, &playhead_y1, &playhead_y2);
+        double marker_y1, marker_y2;
+        get_markers_ys((t_notation_obj *)x, &marker_y1, &marker_y2);
 
         lock_markers_mutex((t_notation_obj *)x);
         markers_check_update_name_uwidth((t_notation_obj *)x);
@@ -11706,7 +11706,7 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
 
                 double this_marker_end_x = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL);
                 char marker_is_being_edited = (x->r_ob.is_editing_type == k_MARKERNAME && x->r_ob.is_editing_marker == marker);
-                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, !marker_is_being_edited, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
+                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, marker_y1, marker_y2, is_region, x->r_ob.markers_line_width, !marker_is_being_edited, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
             } else if (marker_onset >= x->r_ob.screen_ms_end) {
                 break;
             }
@@ -11727,9 +11727,9 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
         t_marker *marker;
         t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
         
-        double playhead_y1, playhead_y2;
-        get_playhead_ypos((t_notation_obj *)x, &playhead_y1, &playhead_y2);
-        
+        double marker_y1, marker_y2;
+        get_markers_ys((t_notation_obj *)x, &marker_y1, &marker_y2);
+
         lock_markers_mutex((t_notation_obj *)x);
         markers_check_update_name_uwidth((t_notation_obj *)x);
         double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0, prev_region_marker_x = -30000, prev_region_marker_width = 0;
@@ -11767,7 +11767,7 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
                 
                 double this_marker_end_x = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL);
 
-                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, must_paint_name, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
+                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, marker_y1, marker_y2, is_region, x->r_ob.markers_line_width, must_paint_name, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
             } else if (marker_onset >= x->r_ob.screen_ms_end)
                 break;
         }
