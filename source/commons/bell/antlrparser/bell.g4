@@ -120,14 +120,18 @@ simpleFuncall: (item|var) PARAMS CLOSED
 | simpleFuncall PARAMS argsByPositionList ','? argsByNameList CLOSED
 ;
 
-dataFlowAndLvalueSpecsUItem: item|var|simpleFuncall
+lvalueSpecsUItem: item|var
 ;
 
-dataFlowAndLvalueSpecsItem: (UPLUS|UMINUS)* dataFlowAndLvalueSpecsUItem
+lvalueSpecsItem: (UPLUS|UMINUS)* lvalueSpecsUItem
 ;
 
-funcall: simpleFuncall
-| dataFlowAndLvalueSpecsItem ('.' simpleFuncall)+
+dataflowHead: (item|simpleFuncall) #dataflowHeadSimple
+| lvalue #dataflowHeadLvalue
+;
+
+funcall: simpleFuncall #funcallSimple
+| dataflowHead ('.' simpleFuncall)+ #funcallDataflow
 ;
 
 var: (KEEP|UNKEEP)? LOCALVAR #varLocal
@@ -144,14 +148,14 @@ lvalueSpecsUFinal: conditional
 lvalueSpecsFinal: (UPLUS|UMINUS)* lvalueSpecsUFinal
 ;
 
-lvalueSpecs: {ending = false;} ((NTH|KEY) dataFlowAndLvalueSpecsItem)+
-| {ending = true;} ((NTH|KEY) dataFlowAndLvalueSpecsItem)* ((NTH|KEY) lvalueSpecsFinal)
-;
-
 lvalue: var lvalueSpecs?
 ;
 
-fakeLvalue: item lvalueSpecs
+fakeLvalue: (item|funcall) lvalueSpecs
+;
+
+lvalueSpecs: {ending = false;} ((NTH|KEY) lvalueSpecsItem)+
+| {ending = true;} ((NTH|KEY) lvalueSpecsItem)* ((NTH|KEY) lvalueSpecsFinal)
 ;
 
 listEnd: conditional

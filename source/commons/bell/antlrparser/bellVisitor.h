@@ -57,11 +57,17 @@ public:
 
     virtual std::any visitSimpleFuncall(bellParser::SimpleFuncallContext *context) = 0;
 
-    virtual std::any visitDataFlowAndLvalueSpecsUItem(bellParser::DataFlowAndLvalueSpecsUItemContext *context) = 0;
+    virtual std::any visitLvalueSpecsUItem(bellParser::LvalueSpecsUItemContext *context) = 0;
 
-    virtual std::any visitDataFlowAndLvalueSpecsItem(bellParser::DataFlowAndLvalueSpecsItemContext *context) = 0;
+    virtual std::any visitLvalueSpecsItem(bellParser::LvalueSpecsItemContext *context) = 0;
 
-    virtual std::any visitFuncall(bellParser::FuncallContext *context) = 0;
+    virtual std::any visitDataflowHeadSimple(bellParser::DataflowHeadSimpleContext *context) = 0;
+
+    virtual std::any visitDataflowHeadLvalue(bellParser::DataflowHeadLvalueContext *context) = 0;
+
+    virtual std::any visitFuncallSimple(bellParser::FuncallSimpleContext *context) = 0;
+
+    virtual std::any visitFuncallDataflow(bellParser::FuncallDataflowContext *context) = 0;
 
     virtual std::any visitVarLocal(bellParser::VarLocalContext *context) = 0;
 

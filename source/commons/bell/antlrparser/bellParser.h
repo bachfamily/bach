@@ -39,11 +39,11 @@ public:
     RuleLiftedargList = 4, RuleFundef = 5, RuleSequence = 6, RuleNullified = 7, 
     RuleWhileloop = 8, RuleForarg = 9, RuleForargList = 10, RuleForloop = 11, 
     RuleArgsByNameList = 12, RuleArgsByPositionList = 13, RuleSimpleFuncall = 14, 
-    RuleDataFlowAndLvalueSpecsUItem = 15, RuleDataFlowAndLvalueSpecsItem = 16, 
-    RuleFuncall = 17, RuleVar = 18, RuleLvalueSpecsUFinal = 19, RuleLvalueSpecsFinal = 20, 
-    RuleLvalue = 21, RuleFakeLvalue = 22, RuleLvalueSpecs = 23, RuleListEnd = 24, 
-    RuleExpr = 25, RuleItem = 26, RuleAssignment = 27, RuleConditional = 28, 
-    RuleList = 29
+    RuleLvalueSpecsUItem = 15, RuleLvalueSpecsItem = 16, RuleDataflowHead = 17, 
+    RuleFuncall = 18, RuleVar = 19, RuleLvalueSpecsUFinal = 20, RuleLvalueSpecsFinal = 21, 
+    RuleLvalue = 22, RuleFakeLvalue = 23, RuleLvalueSpecs = 24, RuleListEnd = 25, 
+    RuleExpr = 26, RuleItem = 27, RuleAssignment = 28, RuleConditional = 29, 
+    RuleList = 30
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -83,8 +83,9 @@ public:
   class ArgsByNameListContext;
   class ArgsByPositionListContext;
   class SimpleFuncallContext;
-  class DataFlowAndLvalueSpecsUItemContext;
-  class DataFlowAndLvalueSpecsItemContext;
+  class LvalueSpecsUItemContext;
+  class LvalueSpecsItemContext;
+  class DataflowHeadContext;
   class FuncallContext;
   class VarContext;
   class LvalueSpecsUFinalContext;
@@ -394,26 +395,25 @@ public:
 
   SimpleFuncallContext* simpleFuncall();
   SimpleFuncallContext* simpleFuncall(int precedence);
-  class  DataFlowAndLvalueSpecsUItemContext : public antlr4::ParserRuleContext {
+  class  LvalueSpecsUItemContext : public antlr4::ParserRuleContext {
   public:
-    DataFlowAndLvalueSpecsUItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    LvalueSpecsUItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ItemContext *item();
     VarContext *var();
-    SimpleFuncallContext *simpleFuncall();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
-  DataFlowAndLvalueSpecsUItemContext* dataFlowAndLvalueSpecsUItem();
+  LvalueSpecsUItemContext* lvalueSpecsUItem();
 
-  class  DataFlowAndLvalueSpecsItemContext : public antlr4::ParserRuleContext {
+  class  LvalueSpecsItemContext : public antlr4::ParserRuleContext {
   public:
-    DataFlowAndLvalueSpecsItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    LvalueSpecsItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    DataFlowAndLvalueSpecsUItemContext *dataFlowAndLvalueSpecsUItem();
+    LvalueSpecsUItemContext *lvalueSpecsUItem();
     std::vector<antlr4::tree::TerminalNode *> UPLUS();
     antlr4::tree::TerminalNode* UPLUS(size_t i);
     std::vector<antlr4::tree::TerminalNode *> UMINUS();
@@ -424,21 +424,75 @@ public:
    
   };
 
-  DataFlowAndLvalueSpecsItemContext* dataFlowAndLvalueSpecsItem();
+  LvalueSpecsItemContext* lvalueSpecsItem();
+
+  class  DataflowHeadContext : public antlr4::ParserRuleContext {
+  public:
+    DataflowHeadContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    DataflowHeadContext() = default;
+    void copyFrom(DataflowHeadContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  DataflowHeadLvalueContext : public DataflowHeadContext {
+  public:
+    DataflowHeadLvalueContext(DataflowHeadContext *ctx);
+
+    LvalueContext *lvalue();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  DataflowHeadSimpleContext : public DataflowHeadContext {
+  public:
+    DataflowHeadSimpleContext(DataflowHeadContext *ctx);
+
+    ItemContext *item();
+    SimpleFuncallContext *simpleFuncall();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  DataflowHeadContext* dataflowHead();
 
   class  FuncallContext : public antlr4::ParserRuleContext {
   public:
     FuncallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<SimpleFuncallContext *> simpleFuncall();
-    SimpleFuncallContext* simpleFuncall(size_t i);
-    DataFlowAndLvalueSpecsItemContext *dataFlowAndLvalueSpecsItem();
-    std::vector<antlr4::tree::TerminalNode *> KEY();
-    antlr4::tree::TerminalNode* KEY(size_t i);
+   
+    FuncallContext() = default;
+    void copyFrom(FuncallContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
 
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  FuncallSimpleContext : public FuncallContext {
+  public:
+    FuncallSimpleContext(FuncallContext *ctx);
+
+    SimpleFuncallContext *simpleFuncall();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
+  };
+
+  class  FuncallDataflowContext : public FuncallContext {
+  public:
+    FuncallDataflowContext(FuncallContext *ctx);
+
+    DataflowHeadContext *dataflowHead();
+    std::vector<antlr4::tree::TerminalNode *> KEY();
+    antlr4::tree::TerminalNode* KEY(size_t i);
+    std::vector<SimpleFuncallContext *> simpleFuncall();
+    SimpleFuncallContext* simpleFuncall(size_t i);
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
   FuncallContext* funcall();
@@ -553,8 +607,8 @@ public:
   public:
     LvalueSpecsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    std::vector<DataFlowAndLvalueSpecsItemContext *> dataFlowAndLvalueSpecsItem();
-    DataFlowAndLvalueSpecsItemContext* dataFlowAndLvalueSpecsItem(size_t i);
+    std::vector<LvalueSpecsItemContext *> lvalueSpecsItem();
+    LvalueSpecsItemContext* lvalueSpecsItem(size_t i);
     std::vector<antlr4::tree::TerminalNode *> NTH();
     antlr4::tree::TerminalNode* NTH(size_t i);
     std::vector<antlr4::tree::TerminalNode *> KEY();

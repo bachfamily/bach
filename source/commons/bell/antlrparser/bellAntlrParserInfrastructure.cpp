@@ -254,26 +254,40 @@ public:
         return n;
     }
     
-    antlrcpp::Any visitDataFlowAndLvalueSpecsUItem(bellParser::DataFlowAndLvalueSpecsUItemContext *ctx) override {
+    antlrcpp::Any visitLvalueSpecsUItem(bellParser::LvalueSpecsUItemContext *ctx) override {
         return visit(ctx->children[0]);
     }
     
-    antlrcpp::Any visitDataFlowAndLvalueSpecsItem(bellParser::DataFlowAndLvalueSpecsItemContext *ctx) override {
+    antlrcpp::Any visitLvalueSpecsItem(bellParser::LvalueSpecsItemContext *ctx) override {
         if (ctx->UMINUS().size() % 2 == 0) {
-            return visit(ctx->dataFlowAndLvalueSpecsUItem());
+            return visit(ctx->lvalueSpecsUItem());
         } else {
-            auto u = safeAnyCast<astNode*>(visit(ctx->dataFlowAndLvalueSpecsUItem()));
+            auto u = safeAnyCast<astNode*>(visit(ctx->lvalueSpecsUItem()));
             astNode* r = new astOperatorUMinus(u, params->owner);
             return r;
         }
         
     }
 
-    antlrcpp::Any visitFuncall(bellParser::FuncallContext *context) override {
-        if (!context->dataFlowAndLvalueSpecsItem()) {
-            return visit(context->simpleFuncall(0));
-        }
-        auto x = safeAnyCast<astNode*>(visit(context->dataFlowAndLvalueSpecsItem()));
+    antlrcpp::Any visitFuncallSimple(bellParser::FuncallSimpleContext *context) override {
+        return visit(context->simpleFuncall());
+    }
+    
+    antlrcpp::Any visitDataflowHeadSimple(bellParser::DataflowHeadSimpleContext *context) override {
+        return visit(context->children[0]);
+    }
+    
+    antlrcpp::Any visitDataflowHeadLvalue(bellParser::DataflowHeadLvalueContext *context) override {
+        lvalue *v = safeAnyCast<lvalue*>(visit(context->lvalue()));
+        astNode *n = v->getVar();
+        lvalueSpecs *s = v->getSpecs();
+        if (s)
+            n = s->toReadNode(n, params->owner);
+        return n;
+    }
+    
+    antlrcpp::Any visitFuncallDataflow(bellParser::FuncallDataflowContext *context) override {
+        auto x = safeAnyCast<astNode*>(visit(context->dataflowHead()));
         astFunctionCall* y;
         for (auto p: context->simpleFuncall()) {
             y = dynamic_cast<astFunctionCall*>(safeAnyCast<astNode*>(visit(p)));
@@ -592,7 +606,7 @@ public:
     }
     
     antlrcpp::Any visitFakeLvalue(bellParser::FakeLvalueContext *context) override {
-        auto v = safeAnyCast<astNode*>(visit(context->item()));
+        auto v = safeAnyCast<astNode*>(visit(context->children[0]));
         auto s = safeAnyCast<lvalueSpecs*>(visit(context->lvalueSpecs()));
         auto l = new fakeLvalue(v, s);
         return l;

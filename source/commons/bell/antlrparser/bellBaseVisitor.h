@@ -91,15 +91,27 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitDataFlowAndLvalueSpecsUItem(bellParser::DataFlowAndLvalueSpecsUItemContext *ctx) override {
+  virtual std::any visitLvalueSpecsUItem(bellParser::LvalueSpecsUItemContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitDataFlowAndLvalueSpecsItem(bellParser::DataFlowAndLvalueSpecsItemContext *ctx) override {
+  virtual std::any visitLvalueSpecsItem(bellParser::LvalueSpecsItemContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitFuncall(bellParser::FuncallContext *ctx) override {
+  virtual std::any visitDataflowHeadSimple(bellParser::DataflowHeadSimpleContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitDataflowHeadLvalue(bellParser::DataflowHeadLvalueContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFuncallSimple(bellParser::FuncallSimpleContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual std::any visitFuncallDataflow(bellParser::FuncallDataflowContext *ctx) override {
     return visitChildren(ctx);
   }
 
