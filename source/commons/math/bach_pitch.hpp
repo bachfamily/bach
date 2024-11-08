@@ -503,7 +503,8 @@ public:
     }
     
     void addOctaves(t_int8 oct) {
-        p_JIexpVector.addOctaves(oct);
+        if (!isNaP())
+            p_JIexpVector.addOctaves(oct);
     }
     
     bool isPureET() const { return !isNaP() && p_JIexpVector.allZerosButOctaves(); }

@@ -11761,7 +11761,7 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
     double prev_mc = note->midicents; // mc before change
     char octave_jump = false;
     long num_octaves_jump = 0;
-    bool ji = (note->parent->parent->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) && abs(delta) != (6 * x->r_ob.tone_division);
+    bool ji = (note->parent->parent->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI);
     // (if we shift by octaves, we don't need the ji Farey approximation)
 
     if (old_chord_deleted) 
@@ -11769,9 +11769,11 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
     
     if (mode == 0) {
         octave_jump = (((long)delta) % (6 * x->r_ob.tone_division) == 0);
-        if (octave_jump) num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
+        if (octave_jump) 
+            num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
         if (ji) {
-            note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
+            if (abs(delta) != (6 * x->r_ob.tone_division))
+                note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->parent->voiceparent->v_ob.number, delta);
             note->pitch_original = t_pitch::NaP;
@@ -11798,6 +11800,9 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         if (octave_jump) {
             note->pitch_original.addOctaves(num_octaves_jump);
             note->pitch_displayed.addOctaves(num_octaves_jump);
+            if (ji && note->pitch_original.isNaP()) {
+                note->midicents += 1200;
+            }
         } else {
             if (!ji) {
                 note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
