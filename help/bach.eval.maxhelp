@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 71.0, 100.0, 949.0, 579.0 ],
+		"rect" : [ 673.0, 100.0, 949.0, 579.0 ],
 		"gridsize" : [ 5.0, 5.0 ],
 		"showrootpatcherontab" : 0,
 		"showontab" : 0,
@@ -366,7 +366,7 @@
 
 											}
  ],
-										"originid" : "pat-15"
+										"originid" : "pat-17"
 									}
 ,
 									"patching_rect" : [ 811.0, 308.0, 19.0, 23.0 ],
@@ -712,7 +712,7 @@
 
 							}
  ],
-						"originid" : "pat-13"
+						"originid" : "pat-15"
 					}
 ,
 					"patching_rect" : [ 112.5, 322.0, 49.0, 22.0 ],
@@ -1086,7 +1086,7 @@
 
 											}
  ],
-										"originid" : "pat-19"
+										"originid" : "pat-21"
 									}
 ,
 									"patching_rect" : [ 788.5, 181.0, 91.0, 23.0 ],
@@ -1275,7 +1275,7 @@
 
 							}
  ],
-						"originid" : "pat-17"
+						"originid" : "pat-19"
 					}
 ,
 					"patching_rect" : [ 65.5, 249.0, 95.0, 22.0 ],
@@ -1804,7 +1804,7 @@
 
 							}
  ],
-						"originid" : "pat-21"
+						"originid" : "pat-23"
 					}
 ,
 					"patching_rect" : [ 51.0, 211.0, 166.0, 22.0 ],
@@ -2118,7 +2118,7 @@
 
 															}
  ],
-														"originid" : "pat-28"
+														"originid" : "pat-30"
 													}
 ,
 													"patching_rect" : [ 18.0, 93.0, 416.0, 144.0 ],
@@ -2319,7 +2319,7 @@
 
 															}
  ],
-														"originid" : "pat-31"
+														"originid" : "pat-33"
 													}
 ,
 													"patching_rect" : [ 18.0, 242.0, 416.0, 144.0 ],
@@ -2354,7 +2354,7 @@
 
 											}
  ],
-										"originid" : "pat-25"
+										"originid" : "pat-27"
 									}
 ,
 									"patching_rect" : [ 617.0, 495.0, 78.0, 23.0 ],
@@ -2730,7 +2730,7 @@
 
 							}
  ],
-						"originid" : "pat-23"
+						"originid" : "pat-25"
 					}
 ,
 					"patching_rect" : [ 36.0, 181.0, 142.0, 22.0 ],
@@ -3492,7 +3492,7 @@
 
 							}
  ],
-						"originid" : "pat-33"
+						"originid" : "pat-35"
 					}
 ,
 					"patching_rect" : [ 26.0, 152.0, 59.0, 22.0 ],
@@ -3859,7 +3859,7 @@
 
 							}
  ],
-						"originid" : "pat-35"
+						"originid" : "pat-37"
 					}
 ,
 					"patching_rect" : [ 21.0, 119.0, 73.0, 22.0 ],
@@ -4231,7 +4231,7 @@
 
 							}
  ],
-						"originid" : "pat-37"
+						"originid" : "pat-39"
 					}
 ,
 					"patching_rect" : [ 92.0, 289.0, 107.0, 22.0 ],
@@ -4264,7 +4264,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 71.0, 126.0, 949.0, 553.0 ],
+						"rect" : [ 673.0, 126.0, 949.0, 553.0 ],
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
 						"boxes" : [ 							{
@@ -4341,7 +4341,7 @@
 
 							}
  ],
-						"originid" : "pat-39"
+						"originid" : "pat-41"
 					}
 ,
 					"patching_rect" : [ 127.0, 358.0, 113.0, 22.0 ],
@@ -4752,7 +4752,7 @@
 
 							}
  ],
-						"originid" : "pat-167"
+						"originid" : "pat-169"
 					}
 ,
 					"patching_rect" : [ 10.0, 85.0, 50.0, 22.0 ],
@@ -4806,7 +4806,7 @@
 						"showontab" : 1,
 						"boxes" : [  ],
 						"lines" : [  ],
-						"originid" : "pat-169"
+						"originid" : "pat-171"
 					}
 ,
 					"patching_rect" : [ 268.0, 346.0, 50.0, 22.0 ],
@@ -4822,7 +4822,7 @@
 			}
  ],
 		"lines" : [  ],
-		"originid" : "pat-11",
+		"originid" : "pat-13",
 		"dependency_cache" : [ 			{
 				"name" : "bach.+.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
@@ -4907,7 +4907,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.help.bell.060_functions.090_functionfun.maxpat",
+				"name" : "bach.help.bell.010_basics.120_comments.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",

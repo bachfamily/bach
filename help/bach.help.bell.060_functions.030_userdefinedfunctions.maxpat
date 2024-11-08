@@ -2,52 +2,27 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 5,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
+		"rect" : [ 479.0, 188.0, 617.0, 539.0 ],
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-4",
-					"linecount" : 10,
+					"linecount" : 11,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 148.5, 569.0, 152.0 ],
-					"text" : "where the argument names follow the same convention as local variables, the argument defaults are expressions that are evaluated only if the corresponding argument is not passed at function call, and the body is an expression that is evaluated at every function call, and can refer the argument names as if they were regular local variables. The return value of the body is the return value of the function call.\n\n(note: the above structure leaves out variadic functions, which will be discussed further)\n\nAlthough not strictly necessary, in most practical cases a function definition is assigned to a variable, thus allowing subsequent parts of the program to call it later.",
+					"patching_rect" : [ 6.0, 148.5, 569.0, 166.0 ],
+					"text" : "where the argument names follow the same convention as local variables, the argument defaults are expressions that are evaluated only if the corresponding argument is not passed at function call, and the body is an expression that is evaluated at every function call, and can refer the argument names as if they were regular local variables. The return value of the body is the return value of the function call.\n\n(note: the above structure leaves out some advanced features, which will be discussed further: functions without arguments, lifted variables and variadic functions.)\n\nAlthough not strictly necessary, in most practical cases a function definition is assigned to a variable, thus allowing subsequent parts of the program to call it later.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -75,7 +50,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 47.0, 565.0, 21.0 ],
-					"text" : "Functions can be defined through the -> operator. The general syntax for a function definition is:",
+					"text" : "Functions can be defined through the -> operator. The basic syntax for a function definition is:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -214,6 +189,7 @@
 
 			}
  ],
+		"originid" : "pat-217",
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"

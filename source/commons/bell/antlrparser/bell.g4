@@ -75,6 +75,7 @@ funarg: LOCALVAR (ASSIGN list)? #funargVar
 ;
 
 funargList: funarg (',' funarg)*
+| VOID
 ;
 
 liftedargList: LIFT (LOCALVAR ',')* LOCALVAR
@@ -322,7 +323,7 @@ GLOBALVAR: ID { noParams = false; noUnary = true; };
 PATCHERVAR: '#' ID { noParams = false; noUnary = true; };
 LOCALVAR: '\\'? '$' ID { noParams = false; noUnary = true; };
 NAMEDPARAM: '\\'? '@' ID { noParams = true; noUnary = true; };
-
+VOID: '$' { noParams = false; noUnary = true; };
 fragment ID: [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?;
 
 
