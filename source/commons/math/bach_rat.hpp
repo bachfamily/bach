@@ -139,6 +139,48 @@ public:
     t_rat & operator*=(const t_rat &b);
     t_rat & operator/=(const t_rat &b);
     t_rat & operator%=(t_rat b);
+    
+    t_rat & fold(t_rat b) { 
+        // "folds" a rational as a pitch multiplicatively, so that it lies inside the fundamenetal "pseudooctave" between 1 and b
+        // for NEGATIVE numbers, this returns the negative of the positive version (fold(-a, b) = -fold(a, b))
+        // when b < 1
+        t_rat<T> a = *this;
+        
+        // the matter of signs on anything mod-related is a nightmare in implementations.
+        // Here, we assume that  fold(a, b) = fold(a, 1/b), and that both a and b must be >0
+        // otherwise an error is returned (0/0)
+        
+        if (a.r_num == 0 )
+            return *this; // either 0 or invalid rational: let's keep them this way
+
+        if (b.r_den == 0)
+            return t_rat(0, 0); // invalid rational
+
+        if (b <= 0 || a <= 0)
+            return t_rat(0, 0); // invalid rational
+
+        if (b == 1)
+            return t_rat(1, 0); // 1/0 as output: folding by 1 is just like dividing by 0
+        
+        if (b < 1)
+            b = 1/b;
+        
+        // iterative version
+        while (a >= b) { // TODO: there must be a non-iterative way via logarithms – still...
+            a /= b;
+        }
+        while (a < 1) {
+            a *= b;
+        }
+
+        // log-based version , but that's not faster, since ipow() is iterative :-)
+/*        double L = log(a)/log(b);
+        long Lfloor = (long)floor(L);
+        return sign * a / ipow(b, Lfloor); */
+
+         
+        return a;
+    }
 
     template <typename U> t_rat & operator+=(const U b) {
         t_rat<T>::r_num += t_rat<T>::r_den * b;
