@@ -64,6 +64,7 @@
 <refpage name='bach.float2rat.maxref.xml'/>
 <refpage name='bach.fft.maxref.xml'/>
 <refpage name='bach.integrate.maxref.xml'/>
+<refpage name='bach.fareyser.maxref.xml'/>
 <refpage name='bach.geomser.maxref.xml'/>
 <refpage name='bach.prime.maxref.xml'/>
 <refpage name='bach.weights.maxref.xml'/>

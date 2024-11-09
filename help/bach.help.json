@@ -359,6 +359,13 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "name", "named", "position", "variable", "local", "default", "argument" ],
 				"title" : [ "User-defined functions" ]
 			},
+			"Userdefinedfunctionswithoutarguments" : {
+				"filename" : [ "bach.help.bell.060_functions.035_userdefinedfunctionswithoutarguments.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "argument", "dollar" ],
+				"title" : [ "User-defined functions without arguments" ]
+			},
 			"Globalfunctionsandfunctionassignment" : {
 				"filename" : [ "bach.help.bell.060_functions.040_globalfunctionsandfunctionassignment.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
@@ -1306,7 +1313,7 @@
 				"filename" : [ "bach.help.notation.accidentals and microtones.23_centsifferences.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "accidental" ],
-				"tags" : [ "accidental", "display", "deviation", "difference", "cents", "showcents" ],
+				"tags" : [ "accidental", "display", "deviation", "difference", "cents", "showcentsdiff", "showcents", "centsdifferences", "centsdiff", "show" ],
 				"title" : [ "Displaying deviations in cents" ]
 			}
 		},
@@ -1399,8 +1406,8 @@
 				"filename" : [ "bach.help.notation.appearance.12_additionalstartpad.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "vzoom" ],
-				"tags" : [ "appearance", "pad", "startpad", "additional", "padding", "space", "additionalstartpad", "adjustadditionalstartpad", "start", "pretime", "pre", "time" ],
-				"title" : [ "Additional padding space" ]
+				"tags" : [ "appearance", "pad", "startpad", "additional", "padding", "space", "additionalstartpad", "adjustadditionalstartpad", "start", "pretime", "pre", "time", "after", "before", "padbeforeclef", "padafterclef", "clef" ],
+				"title" : [ "Padding space before and after clefs" ]
 			},
 			"Inset" : {
 				"filename" : [ "bach.help.notation.appearance.13_inset.maxpat" ],
@@ -3850,7 +3857,7 @@
 				"filename" : [ "bach.help.notation.messages.51_setmeasureparameters.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "syntax+measure+parameter" ],
-				"tags" : [ "message", "measure", "parameter", "set", "setmeasureparameters", "width", "barline", "number", "shownumber" ],
+				"tags" : [ "message", "measure", "parameter", "set", "setmeasureparameters", "width", "barline", "number", "shownumber", "measureparameter" ],
 				"title" : [ "Setting measure parameters" ]
 			},
 			"Scroll" : {
@@ -4250,8 +4257,15 @@
 				"filename" : [ "bach.help.notation.pitches.07_pitchsyntaxjir.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "ji" ],
-				"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "just", "intonation", "justintonation", "ji", "ratio", "interval", "r" ],
-				"title" : [ "Writing justly tuned intervals as ratios or commas" ]
+				"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "just", "intonation", "justintonation", "ji", "ratio", "interval", "r", "writing", "comma", "justly", "tuned" ],
+				"title" : [ "Writing justly tuned intervals as ratio" ]
+			},
+			"Mixedpitches" : {
+				"filename" : [ "bach.help.notation.pitches.08_mixedpitches.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [  ],
+				"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "just", "intonation", "justintonation", "ji", "mixed", "equal-tempered", "et", "hybrid", "combine" ],
+				"title" : [ "Mixed pitches" ]
 			},
 			"Intervals" : {
 				"filename" : [ "bach.help.notation.pitches.09_intervals.maxpat" ],
@@ -5122,6 +5136,13 @@
 				"seealso" : [ "loop+notification", "show+loop" ],
 				"tags" : [ "sequencer", "sequencing", "loop", "region", "useloop", "showloop" ],
 				"title" : [ "Loop region interface" ]
+			},
+			"Repeats" : {
+				"filename" : [ "bach.help.notation.sequencing.24_repeats.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "loop+region", "repeat+number" ],
+				"tags" : [ "sequencer", "sequencing", "repeat", "loop" ],
+				"title" : [ "Repeats" ]
 			},
 			"Offlineplay" : {
 				"filename" : [ "bach.help.notation.sequencing.25_offlineplay.maxpat" ],
@@ -6159,12 +6180,19 @@
 					"tags" : [ "syntax", "measureinfo", "measure", "parameter", "width", "widthfactor", "auto" ],
 					"title" : [ "Measure width parameters" ]
 				},
-				"Barlinetypes" : {
-					"filename" : [ "bach.help.notation.syntax.40_measureinfo.32_barlinetypes.maxpat" ],
+				"A_barlinetypes" : {
+					"filename" : [ "bach.help.notation.syntax.40_measureinfo.32a_barlinetypes.maxpat" ],
 					"objects" : [ "bach.score", "bach.quantize" ],
 					"seealso" : [ "measureinfo", "measure+parameter", "zoom", "vzoom", "measure+width+lock" ],
-					"tags" : [ "syntax", "measureinfo", "measure", "parameter", "barline", "type", "automatic", "dashed", "normal", "dotted", "double", "solid", "final", "hidden", "tick", "intervoice" ],
+					"tags" : [ "syntax", "measureinfo", "measure", "parameter", "barline", "type", "automatic", "dashed", "normal", "dotted", "double", "solid", "final", "hidden", "tick", "intervoice", "repeat", "sign", "start", "end" ],
 					"title" : [ "Barline types" ]
+				},
+				"B_repeatnum" : {
+					"filename" : [ "bach.help.notation.syntax.40_measureinfo.32b_repeatnum.maxpat" ],
+					"objects" : [ "bach.score" ],
+					"seealso" : [ "measureinfo", "measure+parameter", "barline+type" ],
+					"tags" : [ "syntax", "measureinfo", "measure", "parameter", "barline", "repeat", "num", "number", "repetitions", "ritornello", "cycle", "loop", "repeatnum" ],
+					"title" : [ "Number of repetitions" ]
 				},
 				"Measurenumbers" : {
 					"filename" : [ "bach.help.notation.syntax.40_measureinfo.33_measurenumbers.maxpat" ],
