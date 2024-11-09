@@ -8742,6 +8742,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidentals Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -8879,6 +8880,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -8899,6 +8901,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulations Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -9542,6 +9545,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -9631,6 +9635,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Measure Numbers Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -9718,6 +9723,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -9968,6 +9974,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Ruler Labels Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -10648,6 +10655,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tempo Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -10747,6 +10755,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Tuplet Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>

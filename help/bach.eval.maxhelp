@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 673.0, 100.0, 949.0, 579.0 ],
+		"rect" : [ 271.0, 100.0, 949.0, 579.0 ],
 		"gridsize" : [ 5.0, 5.0 ],
 		"showrootpatcherontab" : 0,
 		"showontab" : 0,
@@ -366,7 +366,7 @@
 
 											}
  ],
-										"originid" : "pat-17"
+										"originid" : "pat-15"
 									}
 ,
 									"patching_rect" : [ 811.0, 308.0, 19.0, 23.0 ],
@@ -712,7 +712,7 @@
 
 							}
  ],
-						"originid" : "pat-15"
+						"originid" : "pat-13"
 					}
 ,
 					"patching_rect" : [ 112.5, 322.0, 49.0, 22.0 ],
@@ -1086,7 +1086,7 @@
 
 											}
  ],
-										"originid" : "pat-21"
+										"originid" : "pat-19"
 									}
 ,
 									"patching_rect" : [ 788.5, 181.0, 91.0, 23.0 ],
@@ -1275,7 +1275,7 @@
 
 							}
  ],
-						"originid" : "pat-19"
+						"originid" : "pat-17"
 					}
 ,
 					"patching_rect" : [ 65.5, 249.0, 95.0, 22.0 ],
@@ -1804,7 +1804,7 @@
 
 							}
  ],
-						"originid" : "pat-23"
+						"originid" : "pat-21"
 					}
 ,
 					"patching_rect" : [ 51.0, 211.0, 166.0, 22.0 ],
@@ -2118,7 +2118,7 @@
 
 															}
  ],
-														"originid" : "pat-30"
+														"originid" : "pat-28"
 													}
 ,
 													"patching_rect" : [ 18.0, 93.0, 416.0, 144.0 ],
@@ -2319,7 +2319,7 @@
 
 															}
  ],
-														"originid" : "pat-33"
+														"originid" : "pat-31"
 													}
 ,
 													"patching_rect" : [ 18.0, 242.0, 416.0, 144.0 ],
@@ -2354,7 +2354,7 @@
 
 											}
  ],
-										"originid" : "pat-27"
+										"originid" : "pat-25"
 									}
 ,
 									"patching_rect" : [ 617.0, 495.0, 78.0, 23.0 ],
@@ -2730,7 +2730,7 @@
 
 							}
  ],
-						"originid" : "pat-25"
+						"originid" : "pat-23"
 					}
 ,
 					"patching_rect" : [ 36.0, 181.0, 142.0, 22.0 ],
@@ -3492,7 +3492,7 @@
 
 							}
  ],
-						"originid" : "pat-35"
+						"originid" : "pat-33"
 					}
 ,
 					"patching_rect" : [ 26.0, 152.0, 59.0, 22.0 ],
@@ -3859,7 +3859,7 @@
 
 							}
  ],
-						"originid" : "pat-37"
+						"originid" : "pat-35"
 					}
 ,
 					"patching_rect" : [ 21.0, 119.0, 73.0, 22.0 ],
@@ -3892,7 +3892,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
+						"rect" : [ 271.0, 126.0, 949.0, 553.0 ],
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
 						"boxes" : [ 							{
@@ -4033,20 +4033,6 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 164.0, 71.0, 251.0, 83.0 ],
 									"text" : "The auto attribute causes the code to be executed as soon as it is received (that is, when the object is created, or when the text editor is closed, or when a file is loaded)."
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"fontname" : "Arial",
-									"fontsize" : 13.0,
-									"id" : "obj-23",
-									"linecount" : 3,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 469.0, 638.0, 50.0 ],
-									"text" : "... user-defined variables and functions, and more. In fact, bach.eval implements a small but Turing-complete programming language, conceived to be as much compatible with the expr family as possible. \nPlease, refer to the \"Help Center\" tab to know everything about both the language and the object in itself."
 								}
 
 							}
@@ -4231,7 +4217,7 @@
 
 							}
  ],
-						"originid" : "pat-39"
+						"originid" : "pat-37"
 					}
 ,
 					"patching_rect" : [ 92.0, 289.0, 107.0, 22.0 ],
@@ -4264,7 +4250,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 673.0, 126.0, 949.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 949.0, 553.0 ],
 						"gridsize" : [ 5.0, 5.0 ],
 						"showontab" : 1,
 						"boxes" : [ 							{
@@ -4341,7 +4327,7 @@
 
 							}
  ],
-						"originid" : "pat-41"
+						"originid" : "pat-39"
 					}
 ,
 					"patching_rect" : [ 127.0, 358.0, 113.0, 22.0 ],
@@ -4752,7 +4738,7 @@
 
 							}
  ],
-						"originid" : "pat-169"
+						"originid" : "pat-167"
 					}
 ,
 					"patching_rect" : [ 10.0, 85.0, 50.0, 22.0 ],
@@ -4806,7 +4792,7 @@
 						"showontab" : 1,
 						"boxes" : [  ],
 						"lines" : [  ],
-						"originid" : "pat-171"
+						"originid" : "pat-169"
 					}
 ,
 					"patching_rect" : [ 268.0, 346.0, 50.0, 22.0 ],
@@ -4822,7 +4808,7 @@
 			}
  ],
 		"lines" : [  ],
-		"originid" : "pat-13",
+		"originid" : "pat-11",
 		"dependency_cache" : [ 			{
 				"name" : "bach.+.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/patchers",
@@ -4907,7 +4893,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.help.bell.010_basics.120_comments.maxpat",
+				"name" : "bach.help.bell.040_variables.040_localvariableslifecycle.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
@@ -4975,6 +4961,10 @@
 				"type" : "iLaX"
 			}
 , 			{
+				"name" : "bach.pack.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.pick.mxo",
 				"type" : "iLaX"
 			}
@@ -5037,6 +5027,10 @@
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
+			}
+, 			{
+				"name" : "bach.textout.mxo",
+				"type" : "iLaX"
 			}
 , 			{
 				"name" : "bach.tree.mxo",

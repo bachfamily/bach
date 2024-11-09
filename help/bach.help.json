@@ -387,26 +387,26 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "scoping", "propagation", "lift", "lifted" ],
 				"title" : [ "Lifted variables" ]
 			},
+			"Liftedlocalvariablesexamples" : {
+				"filename" : [ "bach.help.bell.060_functions.062_liftedlocalvariablesexamples.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable", "global+function" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "scoping", "lift", "lifted" ],
+				"title" : [ "Lifted variables: examples" ]
+			},
 			"Keepingthevalueofalocalvariables" : {
-				"filename" : [ "bach.help.bell.060_functions.062_keepingthevalueofalocalvariables.maxpat" ],
+				"filename" : [ "bach.help.bell.060_functions.064_keepingthevalueofalocalvariables.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [  ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static" ],
 				"title" : [ "Keeping the value of a local variable" ]
 			},
 			"Keepingvaluesinsidefunctions" : {
-				"filename" : [ "bach.help.bell.060_functions.064_keepingvaluesinsidefunctions.maxpat" ],
+				"filename" : [ "bach.help.bell.060_functions.066_keepingvaluesinsidefunctions.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [  ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static" ],
 				"title" : [ "Keeping values inside functions" ]
-			},
-			"Precedenceofvariableinitialization" : {
-				"filename" : [ "bach.help.bell.060_functions.066_precedenceofvariableinitialization.maxpat" ],
-				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [  ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static", "initialization", "order", "precedence" ],
-				"title" : [ "Precedence of variable initialization" ]
 			},
 			"Unkeepingvalues" : {
 				"filename" : [ "bach.help.bell.060_functions.068_unkeepingvalues.maxpat" ],
@@ -415,12 +415,12 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static", "unkeep" ],
 				"title" : [ "Unkeeping values" ]
 			},
-			"Scopeoflocalvariablesexamples" : {
-				"filename" : [ "bach.help.bell.060_functions.070_scopeoflocalvariablesexamples.maxpat" ],
+			"Precedenceofvariableinitialization" : {
+				"filename" : [ "bach.help.bell.060_functions.070_precedenceofvariableinitialization.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "global+variable", "global+function" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "scoping", "lift", "lifted" ],
-				"title" : [ "Lifted local variables: examples" ]
+				"seealso" : [  ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static", "initialization", "order", "precedence" ],
+				"title" : [ "Precedence of variable initialization" ]
 			},
 			"Argumentnames" : {
 				"filename" : [ "bach.help.bell.060_functions.080_argumentnames.maxpat" ],
