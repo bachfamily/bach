@@ -201,7 +201,7 @@ item: UINT #itemUint
 | EMPTYSYMBOL #itemEmptySymbol
 | BIF #itemBIF
 | OF #itemOF
-//| MAXFUNCTION #itemMaxFunction
+| MAXFUNCTION #itemMaxFunction
 | type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
 | DIRINLET #itemDirInlet
 | ARGCOUNT #itemArgcount
@@ -423,7 +423,7 @@ ARCONCAT: '!_=' { noParams = true; noUnary = false; };
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };
 
-//MAXFUNCTION: '{' .+? '}' { noParams = false; noUnary = true; };
+MAXFUNCTION: '[|' .+? '|]' { noParams = false; noUnary = true; };
 
 FUNDEF: '->' { noParams = true; noUnary = false; };
 LIFT: '-^' { noParams = true; noUnary = false; };

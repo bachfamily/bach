@@ -436,6 +436,13 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "literal", "user", "defined", "argument" ],
 				"title" : [ "Function fun" ]
 			},
+			"Outputtingfunctionsasdata" : {
+				"filename" : [ "bach.help.bell.060_functions.095_outputtingfunctionsasdata.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable", "lambda" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "literal", "user", "defined", "argument" ],
+				"title" : [ "Outputting functions as data" ]
+			},
 			"Dataflowstylefunctioncalls" : {
 				"filename" : [ "bach.help.bell.060_functions.100_dataflowstylefunctioncalls.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],

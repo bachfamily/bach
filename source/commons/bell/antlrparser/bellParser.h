@@ -30,8 +30,9 @@ public:
     ALOGAND = 90, ALOGANDEXT = 91, LOGXOR = 92, ALOGXOR = 93, LOGOR = 94, 
     ALOGOR = 95, LOGOREXT = 96, ALOGOREXT = 97, LSHIFT = 98, ALSHIFT = 99, 
     RSHIFT = 100, ARSHIFT = 101, REPEAT = 102, AREPEAT = 103, AAPPLY = 104, 
-    ACONCAT = 105, ARCONCAT = 106, OPEN = 107, PARAMS = 108, FUNDEF = 109, 
-    LIFT = 110, ELLIPSIS = 111, BLOCKCOMMENT = 112, LINECOMMENT = 113, ANYTHING = 114
+    ACONCAT = 105, ARCONCAT = 106, OPEN = 107, PARAMS = 108, MAXFUNCTION = 109, 
+    FUNDEF = 110, LIFT = 111, ELLIPSIS = 112, BLOCKCOMMENT = 113, LINECOMMENT = 114, 
+    ANYTHING = 115
   };
 
   enum {
@@ -829,6 +830,15 @@ public:
     ItemDirInletContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *DIRINLET();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemMaxFunctionContext : public ItemContext {
+  public:
+    ItemMaxFunctionContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *MAXFUNCTION();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

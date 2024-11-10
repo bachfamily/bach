@@ -121,6 +121,8 @@ public:
 
     virtual std::any visitItemOF(bellParser::ItemOFContext *context) = 0;
 
+    virtual std::any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *context) = 0;
+
     virtual std::any visitItemInlet(bellParser::ItemInletContext *context) = 0;
 
     virtual std::any visitItemDirInlet(bellParser::ItemDirInletContext *context) = 0;
