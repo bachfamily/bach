@@ -42,7 +42,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 8.0, 310.5, 255.0, 40.0 ],
 					"text" : "Click inside the slot window and drag left/right to change the cutoff frequency",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -61,7 +61,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 8.0, 335.5, 139.0, 55.0 ],
 					"text" : "Add Shift+Cmd (mac) for fine editing",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -79,7 +79,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 439.0, 331.5, 165.0, 40.0 ],
 					"text" : "Cmd+Alt+click to revert the gain to 0dB",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -97,7 +97,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 413.0, 289.5, 191.0, 40.0 ],
 					"text" : "Shift+click and drag up/down to change the gain",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -116,7 +116,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 217.0, 350.5, 163.0, 84.0 ],
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+click (win) and drag up/down to change the Q (or slope)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -154,7 +154,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 8.0, 210.5, 182.0, 69.0 ],
 					"text" : "Always right-click or two-fingers tap on the filter display to change its type via the popup menu",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -209,7 +209,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 217.0, 73.5, 330.0, 54.0 ],
 					"text" : "To add a filter, right-click or performa two-fingers tap on the inner part of the slot window: a pop up menu appears, allowing you to choose the filter type",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

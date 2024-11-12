@@ -51,7 +51,7 @@
 					"patching_rect" : [ 73.0, 316.0, 256.0, 69.0 ],
 					"style" : "",
 					"text" : "Click on a breakpoint and drag to change its pitch and position. (Keep Shift key pressed to change either one)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -70,7 +70,7 @@
 					"patching_rect" : [ 314.0, 316.0, 258.0, 40.0 ],
 					"style" : "",
 					"text" : "Use Shift+Cmd (mac) or Shift+Ctrl (win) key to fine edit (either pitch or position).",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -89,7 +89,7 @@
 					"patching_rect" : [ 389.0, 119.5, 223.0, 83.0 ],
 					"style" : "",
 					"text" : "If you're moving the tail (either via mouse, or via keyboard arrows) and you don't want such respacing behaviour, just keep Alt key pressed",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -109,7 +109,7 @@
 					"patching_rect" : [ 404.0, 187.5, 213.0, 98.0 ],
 					"style" : "",
 					"text" : "If you're using the mouse, and you also add the Shift+Cmd (mac) or Shift+Ctrl (win) keys right after you have clicked, you are allowed to finely edit the tail position",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -129,7 +129,7 @@
 					"patching_rect" : [ 64.0, 132.0, 285.0, 55.0 ],
 					"style" : "",
 					"text" : "Keeping also the Shift+Cmd (mac) or Shift+Ctrl (win) key pressed allows fine editing.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -243,7 +243,7 @@
 					"patching_rect" : [ 80.5, 223.0, 280.0, 69.0 ],
 					"style" : "",
 					"text" : "Or, if you're extending the note via the keyboard and you're already using the Alt key, add the Ctrl key (mac) or Shift+Ctrl key (win)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -298,7 +298,7 @@
 					"patching_rect" : [ 64.0, 67.0, 282.0, 84.0 ],
 					"style" : "",
 					"text" : "In bach.roll you can change the tail position by selecting it and using left/right arrows, or by selecting the whole note and extending it.\nThis respaces all the breakpoints accordingly.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

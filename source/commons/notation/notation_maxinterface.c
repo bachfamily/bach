@@ -2150,11 +2150,29 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
     // Sets the type of piano roll display for voices whose notation style is set to "linear".
     
     CLASS_ATTR_CHAR(c,"pianorollkeyboardtype",0, t_notation_obj, pianoroll_keyboard_type);
-    CLASS_ATTR_STYLE_LABEL(c,"pianorollkeyboardtype",0,"enumindex","Piano Roll Keyboard  Type");
+    CLASS_ATTR_STYLE_LABEL(c,"pianorollkeyboardtype",0,"enumindex","Piano Roll Keyboard Type");
     CLASS_ATTR_ENUMINDEX(c,"pianorollkeyboardtype", 0, "Classic Uniform");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"pianorollkeyboardtype",0,"0");
     // @exclude bach.slot
     // Sets the type of piano roll keyboard for voices whose notation style is set to "linear".
+    
+    CLASS_ATTR_DOUBLE(c, "markerwidth", 0, t_notation_obj, markers_line_width);
+    CLASS_ATTR_STYLE_LABEL(c,"markerwidth",0,"text","Marker Line Width");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markerwidth",0,"1.5");
+    // @exclude bach.slot
+    // Sets the line width for markers.
+
+    CLASS_ATTR_CHAR(c, "markerspan", 0, t_notation_obj, markers_span);
+    CLASS_ATTR_STYLE_LABEL(c,"markerspan",0,"enumindex","Marker Vertical Span");
+    CLASS_ATTR_ENUMINDEX(c,"markerspan", 0, "PlayHead Above First Staff Till Last Staff Between Staves");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"markerspan",0,"0");
+    // @exclude bach.slot
+    // Sets the type of vertical span of markers: <br />
+    // - Playhead (0): like the playhead cursor (default)
+    // - Above First Staff (1): only above first staff
+    // - Till Last Staff (2): only clip to first staff
+    // - Between Staves (3): only between staves, like a barline
+
     
     if (obj_type == k_NOTATION_OBJECT_SCORE) {
         CLASS_ATTR_CHAR(c,"shiftunisons",0, t_notation_obj, shift_voiceensemble_unisons);

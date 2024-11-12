@@ -42,7 +42,7 @@
 					"patching_rect" : [ 220.5, 382.0, 228.0, 83.0 ],
 					"presentation_rect" : [ 220.5, 385.0, 0.0, 0.0 ],
 					"text" : "Once you've defined the zsnap values, drag a point up/down while keeping Shift+Alt+Ctrl (mac) key pressed: it'll be only allowed to reach one of the defined values",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -202,7 +202,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 206.5, 153.0, 208.0, 83.0 ],
 					"text" : "Once you've defined the ysnap values, drag a point up/down while keeping Shift+Alt key pressed: it'll be only allowed to reach one of the defined values",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

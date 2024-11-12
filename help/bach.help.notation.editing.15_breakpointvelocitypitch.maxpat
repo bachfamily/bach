@@ -69,7 +69,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 323.0, 354.5, 257.0, 54.0 ],
 					"text" : "If you change the main note pitch, all the breakpoints will be transposed accordingly!",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -120,7 +120,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 261.0, 414.916655999999989, 344.0, 40.0 ],
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+click (win) and then drag up or down to change a breakpoint's velocity",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -172,7 +172,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 79.0, 332.0, 257.0, 40.0 ],
 					"text" : "Also, adding Shift works to change octave",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -316,7 +316,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 79.0, 283.5, 257.0, 69.0 ],
 					"text" : "Select an individual breakpoint and use the up/down arrows to change its pitch, as you would do with notes. ",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

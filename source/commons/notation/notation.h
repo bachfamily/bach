@@ -209,7 +209,6 @@
  *  @{
  */
 // common graphic constants
-#define CONST_MARKER_LINE_WIDTH 1.5                             ///< Width of a marker
 #define CONST_MARKER_REGION_TEXT_WHITENING 0.8                  ///< Proportion for whitening out the marker color to be painted on a region strip
 #define CONST_MIDDLEC_UY 112                                    ///< Unscaled pixel y position of the middle C for a single voice having staff #k_CLEF_FFGG,
 #define CONST_STEP_UY 3                                            ///< Unscaled height of a step (see #e_clefs to know more about steps), i.e. HALF of the unscaled distance between two staff lines
@@ -1386,6 +1385,18 @@ typedef enum _custom_spacing_mode
     k_CUSTOMSPACING_PIXELINWINDOW = 1,    ///< Pixels refer to the proper pixel position inside the window
     k_CUSTOMSPACING_PIXELFROMSTART = 2,    ///< Pixels are asked and retrieved "from the beginning of the score"
 } e_custom_spacing_mode;
+
+
+
+/** Flags for notation elements that need to be saved in the gathered syntax dump
+    @ingroup    markers
+ */
+typedef enum _bach_marker_span {
+    k_MARKER_SPAN_PLAYHEAD = 0,
+    k_MARKER_SPAN_ABOVEFIRSTSTAFF = 1,
+    k_MARKER_SPAN_UNTILLASTSTAFF = 2,
+    k_MARKER_SPAN_BETWEENSTAVES = 3,
+} e_bach_marker_span;
 
 
 
@@ -4436,6 +4447,9 @@ typedef struct _notation_obj
     char        annotation_alignment;                    ///< Alignment type for the annotations, must be one of the #e_alignments
 
     char        show_end_marker_for_regions;            ///< Display end marker for regions
+    double      markers_line_width;                      ///< Marker line width
+    char        markers_span;                           ///< Type of markers span visualization
+    
     ///
     // command fields, arrays (containing one element for each command)
     t_commandinfo commands[CONST_MAX_COMMANDS];
@@ -18644,6 +18658,8 @@ void lock_markers_mutex(t_notation_obj *r_ob);
     @param        r_ob            The notation object
  */
 void unlock_markers_mutex(t_notation_obj *r_ob);
+
+void get_markers_ys(t_notation_obj *r_ob, double *y1, double *y2);
 
 
 /** Verify that a chord has the correct stored number of notes, and that all the parenting works fine.

@@ -40,7 +40,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 221.0, 420.0, 382.0, 50.0 ],
 					"text" : "To delete neighbours points while dragging a spat point, keep the Alt key pressed, but press it after having clicked on the spat point (otherwise you'll switch the interpolation type!)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -59,7 +59,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 232.0, 78.0, 167.0, 40.0 ],
 					"text" : "Click on a spat point and then drag to move it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -78,7 +78,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 386.0, 78.0, 224.0, 40.0 ],
 					"text" : "Add the Shift key to change either horizontal or vertical position",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -114,7 +114,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 207.0, 325.0, 297.0, 40.0 ],
 					"text" : "Alt+click on a spat point to switch interpolation type: from circular to linear and vice versa",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -154,7 +154,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 267.0, 196.0, 197.0, 55.0 ],
 					"text" : "Cmd+click (mac) or Ctrl+click (win) on a spat point to delete it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -191,7 +191,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 32.0, 182.0, 235.0, 69.0 ],
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+click (win) on a spat point, and then drag up or down to change the angle value",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -226,7 +226,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 32.0, 92.0, 151.0, 40.0 ],
 					"text" : "Click to add a spat point",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

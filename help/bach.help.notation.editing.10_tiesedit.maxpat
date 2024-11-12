@@ -52,7 +52,7 @@
 					"patching_rect" : [ 237.5, 219.0, 264.0, 55.0 ],
 					"style" : "",
 					"text" : "Click once on this note to select the chord; click again to select the note",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -131,7 +131,7 @@
 					"patching_rect" : [ 172.0, 56.0, 229.0, 40.0 ],
 					"style" : "",
 					"text" : "Click on a note once, and drag it up",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -209,7 +209,7 @@
 					"patching_rect" : [ 282.0, 413.0, 159.0, 40.0 ],
 					"style" : "",
 					"text" : "Try to click on a note and drag it up",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

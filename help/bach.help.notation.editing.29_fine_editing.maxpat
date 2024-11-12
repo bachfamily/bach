@@ -42,7 +42,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 12.5, 151.0, 257.0, 84.0 ],
 					"text" : "The general rule is just one: add the Shift+Cmd (mac) or Shift+Ctrl (win) while mousedragging, in order to finely edit the parameter",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

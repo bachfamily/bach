@@ -50,7 +50,7 @@
 					"patching_rect" : [ 292.0, 134.5, 298.0, 25.0 ],
 					"style" : "",
 					"text" : "Paste something (content, duration lines, slots)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -68,7 +68,7 @@
 					"patching_rect" : [ 292.0, 113.5, 293.0, 25.0 ],
 					"style" : "",
 					"text" : "Copy something (content, duration lines, slots)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -86,7 +86,7 @@
 					"patching_rect" : [ 180.0, 406.5, 395.0, 25.0 ],
 					"style" : "",
 					"text" : "Have each chord end exactly when the next one begins (legato)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -104,7 +104,7 @@
 					"patching_rect" : [ 219.0, 431.5, 254.0, 25.0 ],
 					"style" : "",
 					"text" : "Dump the selection through the playout",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -122,7 +122,7 @@
 					"patching_rect" : [ 270.0, 385.5, 207.0, 25.0 ],
 					"style" : "",
 					"text" : "Distribute onsets evenly in time",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -157,7 +157,7 @@
 					"patching_rect" : [ 266.0, 366.5, 286.0, 25.0 ],
 					"style" : "",
 					"text" : "Align all onsets in time (to the leftmost onset)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -175,7 +175,7 @@
 					"patching_rect" : [ 266.0, 346.5, 255.0, 25.0 ],
 					"style" : "",
 					"text" : "Enharmonically respell selected pitches",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -193,7 +193,7 @@
 					"patching_rect" : [ 266.0, 323.5, 296.0, 25.0 ],
 					"style" : "",
 					"text" : "Snap all selected pitches to the microtonal grid",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -227,7 +227,7 @@
 					"patching_rect" : [ 194.0, 302.5, 189.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all muted elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -245,7 +245,7 @@
 					"patching_rect" : [ 194.0, 280.5, 176.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all solo elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -262,7 +262,7 @@
 					"patching_rect" : [ 174.0, 255.5, 168.0, 25.0 ],
 					"style" : "",
 					"text" : "Set the selection as solo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -279,7 +279,7 @@
 					"patching_rect" : [ 174.0, 234.5, 133.0, 25.0 ],
 					"style" : "",
 					"text" : "Mute the selection",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -296,7 +296,7 @@
 					"patching_rect" : [ 174.0, 213.5, 132.0, 25.0 ],
 					"style" : "",
 					"text" : "Lock the selection",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -315,7 +315,7 @@
 					"patching_rect" : [ 297.0, 191.0, 283.0, 54.0 ],
 					"style" : "",
 					"text" : "Open a slot window (if any slot has its \"popup\" info attribute set to 1, this does not appear greyed, and such slots shows up)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -334,7 +334,7 @@
 					"patching_rect" : [ 297.0, 156.5, 293.0, 40.0 ],
 					"style" : "",
 					"text" : "Choose the enharmonicity for the note which has been clicked",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -353,7 +353,7 @@
 					"patching_rect" : [ 292.0, 77.5, 293.0, 40.0 ],
 					"style" : "",
 					"text" : "Open the inspector for the element which has been clicked (so for a single note or chord!)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

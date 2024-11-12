@@ -85,9 +85,9 @@ double marker_get_voffset(t_notation_obj *r_ob, t_marker *mk)
 
 double marker_get_top_y(t_notation_obj *r_ob, t_marker *mk)
 {
-    double playhead_y1;
-    get_playhead_ypos(r_ob, &playhead_y1, NULL);
-    return playhead_y1 + marker_get_voffset(r_ob, mk);
+    double marker_y1, marker_y2;
+    get_markers_ys(r_ob, &marker_y1, &marker_y2);
+    return marker_y1 + marker_get_voffset(r_ob, mk);
 }
 
 

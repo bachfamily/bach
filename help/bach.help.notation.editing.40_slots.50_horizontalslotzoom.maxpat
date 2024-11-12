@@ -172,7 +172,7 @@
 					"patching_rect" : [ 220.0, 180.5, 208.0, 40.0 ],
 					"presentation_rect" : [ 220.0, 195.5, 0.0, 0.0 ],
 					"text" : "Use the mousewheel left/right to navigate in the content",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -238,7 +238,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 220.0, 115.5, 208.0, 69.0 ],
 					"text" : "Cmd+mousewheel up/down (mac) or Ctrl+mousewheel up/down (win) to zoom horizontally in the slot content",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

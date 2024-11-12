@@ -50,7 +50,7 @@
 					"patching_rect" : [ 268.0, 372.0, 229.0, 40.0 ],
 					"style" : "",
 					"text" : "The \"zslope\" can be also changed via the slotinfo inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -161,7 +161,7 @@
 					"patching_rect" : [ 270.0, 97.0, 205.0, 25.0 ],
 					"style" : "",
 					"text" : "Either via the slotinfo inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

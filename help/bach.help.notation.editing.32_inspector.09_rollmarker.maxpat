@@ -59,7 +59,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 349.0, 168.25, 229.0, 69.0 ],
 					"text" : "In case the marker role requires it, here you can assign the marker value (the content linked to the marker role)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -76,7 +76,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 377.0, 143.25, 183.0, 25.0 ],
 					"text" : "Assign a role to the marker",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -95,7 +95,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 70.5, 213.5, 174.0, 55.0 ],
 					"text" : "These are instructions to navigate in the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -112,7 +112,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 349.0, 124.25, 223.0, 25.0 ],
 					"text" : "Set marker onset (in milliseconds)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -129,7 +129,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 348.0, 103.125, 142.0, 25.0 ],
 					"text" : "Set marker name(s)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

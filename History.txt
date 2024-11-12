@@ -86,6 +86,7 @@ VERSION NOTES:
         and there's a repeatnum measure parameter to define the number of repetitions (which can also be displayed via @showrepeatnum).
     á Fixed crashes with the goto system and tempi
     á @shiftunisons: new attribute to handle shifting of unisons in different parts
+    á @markerwidth, @markerspan: two new attributes to control the appearance of markers
 
 - bach.roll, bach.score, bach.score2roll:
     Now user-defined pitches are correctly preserved

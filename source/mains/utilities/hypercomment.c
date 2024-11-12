@@ -220,7 +220,8 @@ void C74_EXPORT ext_main(void *moduleRef)
     // @description Color of the hyperlinks in the text
 #else
     CLASS_ATTR_RGBA(c, "hyperlinkcolor", 0, t_hypercomment, j_hypertextcolor);
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "hyperlinkcolor", 0, "0.34 0.45 0.16 1.");
+//    CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "hyperlinkcolor", 0, "0.34 0.45 0.16 1.");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "hyperlinkcolor", 0, "0.441 0.612 0.239 1.");
     CLASS_ATTR_STYLE_LABEL(c, "hyperlinkcolor", 0, "rgba", "Hyperlink Color");
     CLASS_ATTR_BASIC(c, "hyperlinkcolor", 0);
 #endif
@@ -233,9 +234,18 @@ void C74_EXPORT ext_main(void *moduleRef)
     // @description Color of the text
 #else
     CLASS_ATTR_RGBA(c, "textcolor", 0, t_hypercomment, j_textcolor);
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "textcolor", 0, "0. 0. 0. 1.");
+    CLASS_ATTR_ATTR_PARSE(c, "textcolor", "preview", USESYM(symbol), 0, "text_letter");
     CLASS_ATTR_STYLE_LABEL(c, "textcolor", 0, "rgba", "Text Color");
+    CLASS_ATTR_PAINT(c, "textcolor", 0);
+    CLASS_ATTR_SAVE(c, "textcolor", 0);
+    CLASS_ATTR_CATEGORY(c, "textcolor", 0, "Color");
     CLASS_ATTR_BASIC(c, "textcolor", 0);
+    class_attr_setstyle(c, "textcolor");
+    
+//    CLASS_ATTR_RGBA(c, "textcolor", 0, t_hypercomment, j_textcolor);
+//    CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "textcolor", 0, "0. 0. 0. 1.");
+//    CLASS_ATTR_STYLE_LABEL(c, "textcolor", 0, "rgba", "Text Color");
+//    CLASS_ATTR_BASIC(c, "textcolor", 0);
     // @exclude all
 #endif
 

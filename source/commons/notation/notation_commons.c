@@ -37430,6 +37430,8 @@ void notationobj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, n
     r_ob->show_end_marker_for_regions = true;
     r_ob->show_cents_differences = false;
     r_ob->cents_symbol = gensym("¢");
+    r_ob->markers_line_width = 1.5;
+    r_ob->markers_span = 0;
     
     r_ob->tuplets_font = gensym("Arial");
     r_ob->tuplets_font_size = 10;
@@ -45046,6 +45048,35 @@ void lock_markers_mutex(t_notation_obj *r_ob)
 void unlock_markers_mutex(t_notation_obj *r_ob)
 {
     systhread_mutex_unlock(r_ob->c_markers_mutex);
+}
+
+void get_markers_ys(t_notation_obj *r_ob, double *y1, double *y2)
+{
+    get_playhead_ypos(r_ob, y1, y2);
+    switch (r_ob->markers_span) {
+        case k_MARKER_SPAN_PLAYHEAD:
+            break;
+
+        case k_MARKER_SPAN_ABOVEFIRSTSTAFF:
+            if (r_ob->firstvoice)
+                *y2 = voice_get_staff_top_y(r_ob, voice_get_first_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
+            break;
+
+        case k_MARKER_SPAN_UNTILLASTSTAFF:
+            if (r_ob->lastvoice)
+                *y2 = voice_get_staff_bottom_y(r_ob, voice_get_last_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
+            break;
+
+        case k_MARKER_SPAN_BETWEENSTAVES:
+            if (r_ob->firstvoice && r_ob->lastvoice) {
+                *y1 = voice_get_staff_top_y(r_ob, voice_get_first_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
+                *y2 = voice_get_staff_bottom_y(r_ob, voice_get_last_visible(r_ob), k_NONSTANDARD_STAFFLINES_TOPBOTTOM_ACCOUNT);
+            }
+            break;
+
+        default:
+            break;
+    }
 }
 
 void notationobj_reset_slotinfo(t_notation_obj *r_ob)

@@ -61,7 +61,7 @@
 					"patching_rect" : [ 115.5, 273.0, 184.0, 69.0 ],
 					"presentation_rect" : [ 197.0, 314.0, 0.0, 0.0 ],
 					"text" : "To close a slot window, press the Esc key, or just click outside the slot window",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -98,7 +98,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 54.0, 346.5, 236.0, 69.0 ],
 					"text" : "If more than one note is selected, there's no way to open slot windows: only one slot window at a time can be open and edited.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -201,7 +201,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 343.0, 172.0, 184.0, 40.0 ],
 					"text" : "The same is true for bach.slot",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -254,7 +254,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 16.0, 85.0, 347.0, 69.0 ],
 					"text" : "When a slot window is open and the object has the focus, press Shift+Tab to switch to the next slot window, or Alt+Shift+Tab to switch to the previous one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

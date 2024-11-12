@@ -51,7 +51,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 324.0, 242.416672000000005, 277.0, 40.0 ],
 					"text" : "Select a breakpoint or note tail and press Esc to revert its slope to linear (0)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -105,7 +105,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 29.0, 159.0, 294.0, 69.0 ],
 					"text" : "Ctrl+click (mac) on a segment of duration line and then drag up or down in order to change the slope ",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

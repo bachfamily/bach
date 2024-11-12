@@ -305,7 +305,7 @@
 					"patching_rect" : [ 217.0, 209.0, 167.0, 69.0 ],
 					"style" : "",
 					"text" : "Cmd+U (mac) or Ctrl+U (win) to mute/unmute selected musical elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

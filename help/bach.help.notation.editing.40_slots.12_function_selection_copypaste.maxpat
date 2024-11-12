@@ -80,7 +80,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 300.0, 246.0, 247.5, 55.0 ],
 					"text" : "Move the mouse anywhere else, and press Cmd+V (mac) or Ctrl+V (win)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -100,7 +100,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 300.0, 282.0, 247.5, 69.0 ],
 					"text" : "Add the Ctrl key (mac) or Shift key (win) to also preserve original notes inside the pasted region",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -120,7 +120,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 244.0, 115.0, 150.0, 55.0 ],
 					"text" : "Use Cmd+X (mac) or Ctrl+X (win) to cut",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -140,7 +140,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 244.0, 80.5, 150.0, 55.0 ],
 					"text" : "Press Cmd+C (mac) or Ctrl+C (win) to copy",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -177,7 +177,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 42.0, 84.5, 194.0, 69.0 ],
 					"text" : "Select some points, by Shift+clicking anywhere and dragging a selection rectangle",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

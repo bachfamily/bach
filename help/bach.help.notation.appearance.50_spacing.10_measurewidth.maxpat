@@ -97,7 +97,7 @@
 					"patching_rect" : [ 231.0, 270.0, 378.0, 36.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "or you have to select the measure and press Cmd+Shift+L (mac) or Ctrl+Shift+L (win), see #edit+barline+lock.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -60,7 +60,7 @@
 					"patching_rect" : [ 324.0, 269.0, 215.0, 54.0 ],
 					"presentation_rect" : [ 101.0, 255.0, 0.0, 0.0 ],
 					"text" : "Select some chords and press Cmd+F (mac) or Ctrl+F (win) to distribute their onset evenly",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -126,7 +126,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 102.0, 62.0, 277.0, 69.0 ],
 					"text" : "Select some chords and press Cmd+Y (mac) or Ctrl+Shift+A (win) to align them in time, so that they end up having the same onset",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

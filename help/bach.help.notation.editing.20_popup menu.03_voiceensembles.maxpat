@@ -66,7 +66,7 @@
 					"patching_rect" : [ 182.0, 111.5, 366.0, 25.0 ],
 					"style" : "",
 					"text" : "Open the inspector for the first voice of the voice ensemble",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -84,7 +84,7 @@
 					"patching_rect" : [ 184.5, 382.5, 309.0, 25.0 ],
 					"style" : "",
 					"text" : "Set all voices of the voice ensemble as solo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -101,7 +101,7 @@
 					"patching_rect" : [ 184.5, 357.5, 309.0, 25.0 ],
 					"style" : "",
 					"text" : "Mute all the voices of the voice ensemble",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -118,7 +118,7 @@
 					"patching_rect" : [ 184.5, 332.5, 309.0, 25.0 ],
 					"style" : "",
 					"text" : "Lock all the voices of the voice ensemble",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -135,7 +135,7 @@
 					"patching_rect" : [ 182.0, 277.5, 250.0, 25.0 ],
 					"style" : "",
 					"text" : "Insert a voice after the voice ensemble",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -152,7 +152,7 @@
 					"patching_rect" : [ 182.0, 255.5, 261.0, 25.0 ],
 					"style" : "",
 					"text" : "Insert a voice before the voice ensemble",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -169,7 +169,7 @@
 					"patching_rect" : [ 182.0, 233.5, 273.0, 25.0 ],
 					"style" : "",
 					"text" : "Delete all the voices in the voice ensemble",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -187,7 +187,7 @@
 					"patching_rect" : [ 182.0, 209.5, 394.0, 25.0 ],
 					"style" : "",
 					"text" : "Change the midichannels for every voice of the ensemble",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -204,7 +204,7 @@
 					"patching_rect" : [ 182.0, 183.5, 394.0, 25.0 ],
 					"style" : "",
 					"text" : "Change the key signature for every voice of the ensemble",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -222,7 +222,7 @@
 					"patching_rect" : [ 182.0, 158.5, 327.0, 25.0 ],
 					"style" : "",
 					"text" : "Change the clef for every voice of the ensemble",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -239,7 +239,7 @@
 					"patching_rect" : [ 182.0, 138.5, 296.0, 25.0 ],
 					"style" : "",
 					"text" : "Break the voice ensemble into separate voices",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

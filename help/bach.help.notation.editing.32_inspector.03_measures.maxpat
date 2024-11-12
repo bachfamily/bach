@@ -40,7 +40,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 412.5, 376.0, 176.0, 25.0 ],
 					"text" : "...if yes: specify the boxes",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -57,7 +57,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 379.5, 354.0, 214.0, 25.0 ],
 					"text" : "Use custom boxes for beaming?",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -74,7 +74,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 379.5, 332.0, 233.0, 25.0 ],
 					"text" : "...if no: set a local spacing multiplier",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -91,7 +91,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 409.5, 311.0, 178.0, 25.0 ],
 					"text" : "...if yes: set width in pixels",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -108,7 +108,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 362.0, 292.0, 188.0, 25.0 ],
 					"text" : "Use a fixed measure width?",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 362.0, 272.0, 218.0, 25.0 ],
 					"text" : "...if yes: specify measure number",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -142,7 +142,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 362.0, 250.0, 224.0, 25.0 ],
 					"text" : "Need a custom measure number?",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -159,7 +159,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 362.0, 228.0, 194.0, 25.0 ],
 					"text" : "Display the measure number",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -176,7 +176,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 449.5, 207.0, 141.0, 25.0 ],
 					"text" : "Change end barline",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -193,7 +193,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 185.0, 168.0, 25.0 ],
 					"text" : "Lock the rhythmic tree",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -210,7 +210,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 163.0, 168.0, 25.0 ],
 					"text" : "Set the measure as solo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -227,7 +227,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 143.0, 131.0, 25.0 ],
 					"text" : "Mute the measure",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -246,7 +246,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 211.5, 419.0, 174.0, 55.0 ],
 					"text" : "These are instructions to navigate in the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -263,7 +263,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 122.0, 131.0, 25.0 ],
 					"text" : "Lock the measure",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -280,7 +280,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 101.0, 158.0, 25.0 ],
 					"text" : "Change time signature",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -297,7 +297,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 81.0, 175.0, 25.0 ],
 					"text" : "Assign or modify name(s)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

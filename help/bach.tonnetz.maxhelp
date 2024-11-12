@@ -5332,7 +5332,7 @@
 									"patching_rect" : [ 395.0, 169.0, 267.0, 40.0 ],
 									"style" : "",
 									"text" : "Or you can use Cmd (mac) or Ctrl (win) + the keyboard arrows to translate content",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -5381,7 +5381,7 @@
 									"patching_rect" : [ 564.0, 412.0, 216.0, 40.0 ],
 									"style" : "",
 									"text" : "Spacebar to output points as for \"dumpselection\" command",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -5649,7 +5649,7 @@
 									"patching_rect" : [ 564.0, 362.0, 216.0, 40.0 ],
 									"style" : "",
 									"text" : "Alt+click on any point to output it singularly without selecting it",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -5667,7 +5667,7 @@
 									"patching_rect" : [ 564.0, 308.0, 228.0, 54.0 ],
 									"style" : "",
 									"text" : "Ctrl+click&drag (mac) or Shift+Ctrl+click&drag (win) on a point to change its veocity",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -5685,7 +5685,7 @@
 									"patching_rect" : [ 564.0, 268.0, 212.0, 40.0 ],
 									"style" : "",
 									"text" : "Cmd+click (mac) or Ctrk+click (win) to delete a point",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -5702,7 +5702,7 @@
 									"patching_rect" : [ 564.0, 243.0, 150.0, 25.0 ],
 									"style" : "",
 									"text" : "Click to select a point",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -5721,7 +5721,7 @@
 									"patching_rect" : [ 617.0, 207.0, 220.0, 40.0 ],
 									"style" : "",
 									"text" : "Also with Cmd+Shift+D (mac) or Ctrl+Shift+D (win)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -5738,7 +5738,7 @@
 									"patching_rect" : [ 359.0, 93.0, 215.0, 25.0 ],
 									"style" : "",
 									"text" : "Or Cmd+R (mac) or Ctrl+R (win)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -5755,7 +5755,7 @@
 									"patching_rect" : [ 306.0, 66.0, 354.0, 25.0 ],
 									"style" : "",
 									"text" : "Also you can have this with Cmd+T (mac) or Ctrl+T (win)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -7063,7 +7063,7 @@
 									"patching_rect" : [ 543.5, 466.0, 255.5, 40.0 ],
 									"style" : "",
 									"text" : "Ctrl+Alt (mac) or Shift+Ctrl+Alt (win) + click&drag to move the tonnetz center",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -7082,7 +7082,7 @@
 									"patching_rect" : [ 562.5, 492.0, 228.0, 40.0 ],
 									"style" : "",
 									"text" : "Press Esc to reset the center position",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -7160,7 +7160,7 @@
 									"patching_rect" : [ 574.0, 341.0, 280.0, 21.0 ],
 									"style" : "",
 									"text" : "Hold the mouse and drag to select more points",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -7267,7 +7267,7 @@
 									"patching_rect" : [ 555.0, 302.0, 206.0, 40.0 ],
 									"style" : "",
 									"text" : "Cmd+click (mac) or Ctrl+click (win) to un-select them",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -7284,7 +7284,7 @@
 									"patching_rect" : [ 555.0, 280.0, 206.0, 25.0 ],
 									"style" : "",
 									"text" : "Click on points to select them",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -7303,7 +7303,7 @@
 									"patching_rect" : [ 542.5, 423.0, 300.0, 40.0 ],
 									"style" : "",
 									"text" : "Cmd+mousewheel (mac) or Ctrl+mousewheel (win) down/up to zoom in/out",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}

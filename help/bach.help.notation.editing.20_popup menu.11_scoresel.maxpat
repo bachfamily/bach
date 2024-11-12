@@ -50,7 +50,7 @@
 					"patching_rect" : [ 122.0, 90.0, 184.0, 25.0 ],
 					"style" : "",
 					"text" : "Pasteduration lines or slots",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -68,7 +68,7 @@
 					"patching_rect" : [ 122.0, 70.0, 184.0, 25.0 ],
 					"style" : "",
 					"text" : "Copy duration lines or slots",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -103,7 +103,7 @@
 					"patching_rect" : [ 3.0, 326.5, 83.0, 98.0 ],
 					"style" : "",
 					"text" : "\n\nRhythmic trees\nhandling\n\n",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -137,7 +137,7 @@
 					"patching_rect" : [ 226.5, 419.5, 323.5, 25.0 ],
 					"style" : "",
 					"text" : "Destroy just 1 level of the selection rhythmic tree",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -154,7 +154,7 @@
 					"patching_rect" : [ 208.0, 399.5, 298.0, 25.0 ],
 					"style" : "",
 					"text" : "Wrap selection inside a new rhythmic tree level",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -171,7 +171,7 @@
 					"patching_rect" : [ 200.0, 378.5, 361.0, 25.0 ],
 					"style" : "",
 					"text" : "Flatten completely the rhythmic tree (all separate chords)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -188,7 +188,7 @@
 					"patching_rect" : [ 185.0, 359.5, 371.0, 25.0 ],
 					"style" : "",
 					"text" : "Fix current tree as original (and lock measure rhythmic tree)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -205,7 +205,7 @@
 					"patching_rect" : [ 325.0, 341.5, 233.0, 25.0 ],
 					"style" : "",
 					"text" : "Auto-recalculate (also tuplet levels!)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -222,7 +222,7 @@
 					"patching_rect" : [ 325.0, 320.5, 254.0, 25.0 ],
 					"style" : "",
 					"text" : "Auto-recalculate (but keep tuplet levels)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -239,7 +239,7 @@
 					"patching_rect" : [ 162.0, 442.0, 254.0, 25.0 ],
 					"style" : "",
 					"text" : "Dump the selection through the playout",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -256,7 +256,7 @@
 					"patching_rect" : [ 129.0, 302.5, 377.0, 25.0 ],
 					"style" : "",
 					"text" : "Delete all rests between chords, possibly extending chords",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -291,7 +291,7 @@
 					"patching_rect" : [ 201.0, 281.5, 365.0, 25.0 ],
 					"style" : "",
 					"text" : "Automatically enharmonically retranscribe selected pitches",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -309,7 +309,7 @@
 					"patching_rect" : [ 191.0, 261.5, 296.0, 25.0 ],
 					"style" : "",
 					"text" : "Snap all selected pitches to the microtonal grid",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -343,7 +343,7 @@
 					"patching_rect" : [ 153.0, 241.5, 189.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all muted elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -361,7 +361,7 @@
 					"patching_rect" : [ 153.0, 218.5, 176.0, 25.0 ],
 					"style" : "",
 					"text" : "Remove all solo elements",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -378,7 +378,7 @@
 					"patching_rect" : [ 117.0, 198.5, 168.0, 25.0 ],
 					"style" : "",
 					"text" : "Set the selection as solo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -395,7 +395,7 @@
 					"patching_rect" : [ 117.0, 177.5, 133.0, 25.0 ],
 					"style" : "",
 					"text" : "Mute the selection",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -412,7 +412,7 @@
 					"patching_rect" : [ 117.0, 156.5, 132.0, 25.0 ],
 					"style" : "",
 					"text" : "Lock the selection",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -431,7 +431,7 @@
 					"patching_rect" : [ 235.0, 143.5, 365.0, 54.0 ],
 					"style" : "",
 					"text" : "Open a slot window (if any slot has its \"popup\" info attribute set to 1, this does not appear greyed, and such slots shows up)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -449,7 +449,7 @@
 					"patching_rect" : [ 169.0, 115.0, 150.0, 25.0 ],
 					"style" : "",
 					"text" : "Switch enharmonicity",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -468,7 +468,7 @@
 					"patching_rect" : [ 176.0, 28.0, 370.0, 40.0 ],
 					"style" : "",
 					"text" : "Open the inspector for the element which has been clicked (thus for a single note or chord!)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

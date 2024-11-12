@@ -76,7 +76,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 87.0, 166.5, 184.0, 84.0 ],
 					"text" : "Select a measure and \nCmd+Shift+T (mac) or Ctrl+Shift+T (win) to lock/unlock its rhythmic tree",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

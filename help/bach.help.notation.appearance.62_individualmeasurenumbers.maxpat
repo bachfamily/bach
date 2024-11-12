@@ -132,7 +132,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 67.0, 321.163635, 370.0, 69.0 ],
 					"text" : "Select a measure and open its bach inspector. You will find all the parameters handling the measure numbers, ready to be modified",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

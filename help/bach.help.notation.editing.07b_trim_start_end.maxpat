@@ -100,7 +100,7 @@
 					"patching_rect" : [ 270.0, 164.0, 247.0, 40.0 ],
 					"style" : "",
 					"text" : "Shift+Ctrl+click'n'drag on the tail to trim it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -117,7 +117,7 @@
 					"patching_rect" : [ 10.0, 95.0, 391.0, 21.0 ],
 					"style" : "",
 					"text" : "The key combination to trim/extend is always Shift+Ctrl (mac) only",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -136,7 +136,7 @@
 					"patching_rect" : [ 79.0, 220.0, 177.0, 40.0 ],
 					"style" : "",
 					"text" : "Same thing for the notehead",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -173,7 +173,7 @@
 					"patching_rect" : [ 269.0, 220.0, 298.0, 54.0 ],
 					"style" : "",
 					"text" : "Another way is to trim/extend the note tail is to select the note and press Shift+Alt+Ctrl+← or Shift+Alt+Ctrl+→.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

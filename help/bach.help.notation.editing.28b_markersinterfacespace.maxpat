@@ -89,7 +89,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 96.0, 94.0, 348.0, 55.0 ],
 					"text" : "Ctrl+click (Mac) or Shift+Ctrl+click (win) on this marker, then drag it right to insert time at the marker timepoint",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -106,7 +106,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 287.0, 488.0, 36.0 ],
 					"text" : "Add the Cmd key (so Ctrl+Cmd + click and drag) to compress/expand the region between one marker and the previous one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -123,7 +123,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 39.0, 542.0, 50.0 ],
 					"text" : "In bach.roll, Ctrl+click (Mac) or Shift+Ctrl+click (Win) on a marker and then drag it to move all following elements along with the marker. This is handy if you need to insert or remove time in the timeline.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

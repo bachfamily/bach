@@ -147,7 +147,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 267.59375, 274.5, 175.0, 54.0 ],
 									"text" : "Cmd+click (mac) or Ctrl+click (win) on a point to delete it",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -164,7 +164,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 267.59375, 336.0, 191.0, 40.0 ],
 									"text" : "...or click on a point and drag to move it",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -180,7 +180,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 259.59375, 243.0, 191.0, 25.0 ],
 									"text" : "Alt+click to add a point",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -920,7 +920,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 511.59375, 275.5, 218.0, 54.0 ],
 									"text" : "or Cmd+click (mac) or Ctrl+click (win) on a the tip of the arrow of a vector to delete it",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -937,7 +937,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 627.0, 360.0, 102.59375, 69.0 ],
 									"text" : "...or click on the arrow tip and drag to move it",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -954,7 +954,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 525.0, 211.0, 191.0, 40.0 ],
 									"text" : "...or you can Alt+click to add a vector",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -1580,7 +1580,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 515.0, 294.5, 175.0, 54.0 ],
 									"text" : "or Cmd+click (mac) or Ctrl+click (win) on a point to delete it",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -1597,7 +1597,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 633.59375, 364.0, 89.0, 69.0 ],
 									"text" : "...or click on a point and drag to move it",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -1614,7 +1614,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 364.59375, 251.0, 232.0, 25.0 ],
 									"text" : "...or you can Alt+click to add a point",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}

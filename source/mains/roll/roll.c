@@ -11670,8 +11670,8 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
         t_marker *marker;
         t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
 
-        double playhead_y1, playhead_y2;
-        get_playhead_ypos((t_notation_obj *)x, &playhead_y1, &playhead_y2);
+        double marker_y1, marker_y2;
+        get_markers_ys((t_notation_obj *)x, &marker_y1, &marker_y2);
 
         lock_markers_mutex((t_notation_obj *)x);
         markers_check_update_name_uwidth((t_notation_obj *)x);
@@ -11706,7 +11706,7 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
 
                 double this_marker_end_x = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL);
                 char marker_is_being_edited = (x->r_ob.is_editing_type == k_MARKERNAME && x->r_ob.is_editing_marker == marker);
-                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, !marker_is_being_edited, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
+                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, marker_y1, marker_y2, is_region, x->r_ob.markers_line_width, !marker_is_being_edited, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
             } else if (marker_onset >= x->r_ob.screen_ms_end) {
                 break;
             }
@@ -11727,9 +11727,9 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
         t_marker *marker;
         t_jfont *jf_text_markers = jfont_create_debug(x->r_ob.markers_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
         
-        double playhead_y1, playhead_y2;
-        get_playhead_ypos((t_notation_obj *)x, &playhead_y1, &playhead_y2);
-        
+        double marker_y1, marker_y2;
+        get_markers_ys((t_notation_obj *)x, &marker_y1, &marker_y2);
+
         lock_markers_mutex((t_notation_obj *)x);
         markers_check_update_name_uwidth((t_notation_obj *)x);
         double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0, prev_region_marker_x = -30000, prev_region_marker_width = 0;
@@ -11767,7 +11767,7 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
                 
                 double this_marker_end_x = onset_to_xposition_roll((t_notation_obj *)x, marker_end, NULL);
 
-                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, playhead_y1, playhead_y2, is_region, CONST_MARKER_LINE_WIDTH, must_paint_name, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
+                paint_marker((t_notation_obj *) x, g, markerlinecolor, &markertextcolor, jf_text_markers, marker, this_marker_x, this_marker_end_x, marker_y1, marker_y2, is_region, x->r_ob.markers_line_width, must_paint_name, &prev_marker_width, &prev_marker_x, &prev_marker_width, prev_region_marker, &prev_region_marker_x, &prev_region_marker_width);
             } else if (marker_onset >= x->r_ob.screen_ms_end)
                 break;
         }
@@ -14221,7 +14221,7 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
     double prev_mc = note->midicents; // mc before change
     char octave_jump = false;
     long num_octaves_jump = 0;
-    bool ji = (note->parent->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI) && abs(delta) != (6 * x->r_ob.tone_division);
+    bool ji = (note->parent->voiceparent->v_ob.notation_style == k_VOICE_NOTATION_STYLE_JI);
     // (if we shift by octaves, we don't need the ji Farey approximation)
 
     if (old_chord_deleted) 
@@ -14233,7 +14233,8 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         if (octave_jump) 
             num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
         if (ji) {
-            note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
+            if (abs(delta) != (6 * x->r_ob.tone_division))
+                note_set_next_step_in_farey_sequence_depending_on_editing_ranges((t_notation_obj *)x, note, delta);
         } else {
             note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->voiceparent->v_ob.number, delta);
             note->pitch_original = t_pitch::NaP;
@@ -14256,6 +14257,9 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         if (octave_jump) {
             note->pitch_original.addOctaves(num_octaves_jump);
             note->pitch_displayed.addOctaves(num_octaves_jump);
+            if (ji && note->pitch_original.isNaP()) {
+                note->midicents += 1200 * num_octaves_jump;
+            }
         } else {
             if (!ji)
                 note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!

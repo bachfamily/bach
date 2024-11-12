@@ -497,16 +497,9 @@ t_pitch t_pitch::operator%(const t_pitch &b) const
     if (isPureJI()) {
         t_rational r = getJIRatio();
         t_rational r2 = b.getJIRatio();
+        
+        return t_pitch(r.fold(r2)); // fold ratio multiplicatively
 
-        while (rat_rat_cmp(r, r2) > 0) {
-            r /= r2;
-        }
-        while (rat_rat_cmp(r, long2rat(1)) < 0) {
-            r *= r2;
-        }
-        
-        return t_pitch(r);
-        
     } else {
         if (b.toMCdouble() == 0)
             return t_pitch::NaP;

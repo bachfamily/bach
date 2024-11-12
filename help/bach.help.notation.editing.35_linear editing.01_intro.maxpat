@@ -70,7 +70,7 @@
 					"patching_rect" : [ 83.25, 165.0, 395.0, 84.0 ],
 					"style" : "",
 					"text" : "To enter linear edit mode, Ctrl+click (mac) or Shift+Ctrl+click (win) on the staff, at the desired position (for bach.roll) or measure (for bach.score). Be careful not to click on any existing musical item, only on an empty portion of staff.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -90,7 +90,7 @@
 					"patching_rect" : [ 83.25, 165.0, 395.0, 84.0 ],
 					"style" : "",
 					"text" : "To enter linear edit mode, Ctrl+click (mac) or Shift+Ctrl+click (win) on the staff, at the desired position (for bach.roll) or measure (for bach.score). Be careful not to click on any existing musical item, only on an empty portion of staff.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -170,7 +170,7 @@
 					"patching_rect" : [ 398.0, 351.0, 184.0, 54.0 ],
 					"style" : "",
 					"text" : "Use the up/down arrows to modify the pitch position of the cursor",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

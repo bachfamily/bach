@@ -153,7 +153,7 @@
 					"patching_rect" : [ 143.0, 95.0, 398.0, 40.0 ],
 					"style" : "",
 					"text" : "Via the inspector: open a slot window and press Cmd+I (mac) or Ctrl+Alt+I (win) to open the inspector for the slotinfo.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
