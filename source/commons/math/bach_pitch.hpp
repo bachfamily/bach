@@ -589,6 +589,19 @@ public:
         }
         return HEJIcommas;
     }
+    
+    std::vector<int8_t> getExponents(bool removeTrailingZeros = false) const {
+        std::vector<int8_t> v = p_JIexpVector.get();
+        if (removeTrailingZeros) {
+            for (long j = BACH_PRIMES_JI_SIZE - 1; j > 0; j--) {
+                if (v[j] == 0)
+                    v.pop_back();
+                else
+                    break;
+            }
+        }
+        return v;
+    }
 
     t_rational getHEJICommasAsRational() const;
 

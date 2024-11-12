@@ -482,8 +482,9 @@ public:
         auto t = context->MAXFUNCTION()->getText();
         t.pop_back();
         t.pop_back();
+        t.pop_back();
         char cstr[MAX_SYM_LENGTH];
-        const char *inPtr = t.c_str() + 2;
+        const char *inPtr = t.c_str() + 3;
         char *outPtr = cstr;
         int n = 0;
         while (*inPtr && n < MAX_SYM_LENGTH - 1) {

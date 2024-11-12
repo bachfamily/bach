@@ -1109,3 +1109,20 @@ void hatom_op_le(t_hatom *h1, t_hatom *h2, t_hatom *res)
     else
         hatom_setlong(res, llll_leq_hatom(h1, h2));
 }
+
+t_llll *t_int8Vector2Llll(const std::vector<int8_t> &v) {
+    t_llll *ll = llll_get();
+    for (const int i : v) {
+        llll_appendlong(ll, i);
+    }
+    return ll;
+}
+
+t_llll *getHEJICommas(const t_pitch &p) {
+    return t_int8Vector2Llll(p.getHEJICommas());
+}
+
+t_llll *getMonzo(const t_pitch &p) {
+    return t_int8Vector2Llll(p.getExponents());
+}
+
