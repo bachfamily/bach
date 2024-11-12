@@ -67,7 +67,7 @@
 					"patching_rect" : [ 451.5, 257.0, 143.5, 69.0 ],
 					"style" : "",
 					"text" : "...or simply drag'n'drop the file to open on the notation object",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

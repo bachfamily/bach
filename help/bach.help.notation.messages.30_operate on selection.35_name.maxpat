@@ -75,7 +75,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 241.0, 312.0, 217.0, 55.0 ],
 					"text" : "You can also set names directly via the inspector of any notation item",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -3126,7 +3126,7 @@
 									"patching_rect" : [ 201.0, 447.0, 273.0, 25.0 ],
 									"style" : "",
 									"text" : "Alt+click on any point to output it singularly",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3144,7 +3144,7 @@
 									"patching_rect" : [ 209.0, 396.0, 267.0, 54.0 ],
 									"style" : "",
 									"text" : "Ctrl+Alt+click&drag (mac) or Shift+Ctrl+Alt+click&drag (win) on the modulo to change it",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3162,7 +3162,7 @@
 									"patching_rect" : [ 209.0, 342.0, 267.0, 54.0 ],
 									"style" : "",
 									"text" : "Ctrl+click&drag (mac) or Shift+Ctrl+click&drag (win) on a point to change its velocity",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3179,7 +3179,7 @@
 									"patching_rect" : [ 209.0, 317.0, 328.0, 25.0 ],
 									"style" : "",
 									"text" : "Cmd+click (mac) or Ctrk+click (win) to delete a point",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3196,7 +3196,7 @@
 									"patching_rect" : [ 209.0, 292.0, 150.0, 25.0 ],
 									"style" : "",
 									"text" : "Click to select a point",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3243,7 +3243,7 @@
 									"patching_rect" : [ 187.0, 263.0, 444.0, 25.0 ],
 									"style" : "",
 									"text" : "you can also dump values with Cmd+Shift+D (mac) or Ctrl+Shift+D (win)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3262,7 +3262,7 @@
 									"patching_rect" : [ 459.0, 224.0, 250.0, 40.0 ],
 									"style" : "",
 									"text" : "Also you can have this with Cmd+I (mac) or Ctrl+I (win)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3280,7 +3280,7 @@
 									"patching_rect" : [ 417.0, 175.0, 250.0, 40.0 ],
 									"style" : "",
 									"text" : "Also you can have this with Cmd+C (mac) or Ctrl+R (win)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3298,7 +3298,7 @@
 									"patching_rect" : [ 436.0, 96.0, 250.0, 40.0 ],
 									"style" : "",
 									"text" : "Also you can have this with Cmd+R (mac) or Ctrl+R (win)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3375,7 +3375,7 @@
 									"patching_rect" : [ 370.0, 68.0, 249.0, 25.0 ],
 									"style" : "",
 									"text" : "Also with Cmd+T (mac) or Ctrl+T (win)",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}
@@ -3779,7 +3779,7 @@
 									"patching_rect" : [ 240.617188, 404.0, 274.0, 54.0 ],
 									"style" : "",
 									"text" : "Alt to click on a point to output it singularly with a \"point <point_name>\" llll output through the first outlet",
-									"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
 
 							}

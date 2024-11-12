@@ -89,7 +89,7 @@
 					"presentation_rect" : [ 360.5, 230.0, 0.0, 0.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "Tip: defining the #slot+default value is convenient: Cmd+Alt+clicking (mac) or Ctrl+Alt+clicking (win) on the slot bar, will revert the number to the default one.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

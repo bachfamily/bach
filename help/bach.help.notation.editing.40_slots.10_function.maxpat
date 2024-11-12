@@ -88,7 +88,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 124.5, 126.0, 307.0, 113.0 ],
 					"text" : "If the \"mousehover\" attribute is set to 1, If you move the mouse over existing function points, a circle appears, allowing you to select them and move them. The same is true for any function segment: move the mouse over the segment and it becomes thicked: then you can shift it up or down.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -107,7 +107,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 414.5, 212.0, 197.0, 69.0 ],
 					"text" : "Keep Shift+Ctrl (mac) pressed while horizontally moving point to also move all the following points",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -127,7 +127,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 40.0, 319.0, 247.5, 69.0 ],
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+click (win) on a segment or on its ending point, and then drag up/down to change its slope",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -164,7 +164,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 414.5, 145.0, 201.0, 69.0 ],
 					"text" : "Keep Shift pressed while moving a point to change either its horizontal or its vertical position (but not both)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -183,7 +183,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 124.5, 225.0, 251.0, 55.0 ],
 					"text" : "Keep Alt key pressed while moving a point to delete neighbour points",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -203,7 +203,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 451.5, 402.0, 141.0, 69.0 ],
 					"text" : "Alt+doubleclick on a point to snap it to the value of the next one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -222,7 +222,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 287.5, 402.0, 164.0, 69.0 ],
 					"text" : "Shift+doubleclick on a point to snap it to the value of the previous one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -242,7 +242,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 418.0, 285.0, 198.0, 69.0 ],
 					"text" : "Doubleclick on a point to snap it to the average point between the previous and the next one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -260,7 +260,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 292.0, 98.0, 208.0, 40.0 ],
 					"text" : "Cmd+click (mac) or Ctrl+click (win) on a point to delete it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -298,7 +298,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 221.5, 58.0, 210.0, 40.0 ],
 					"text" : "Click in any position to add a point",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

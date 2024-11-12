@@ -43,7 +43,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 174.5, 204.5, 173.0, 69.0 ],
 					"text" : "Add the Shift key in bach.roll to activate the auto-snap to existing chords",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -63,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 376.5, 204.5, 185.0, 69.0 ],
 					"text" : "Add the Shift key in bach.score to avoid the auto-snap to existing chords",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -100,7 +100,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 174.5, 167.0, 419.0, 55.0 ],
 					"text" : "Click and drag a loop boundary to shift it, or Ctrl+click (mac) or Shift+Ctrl+click (win) and then drag to create brand new loop extremes",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -120,7 +120,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 68.0, 324.5, 138.0, 55.0 ],
 					"text" : "Drag the loop bar to shift the whole loop",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -140,7 +140,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 200.0, 390.0, 402.0, 84.0 ],
 					"text" : "When the play cursor is displayed - use Cmd+P (mac) or Ctrl+P (win) - you can use the Enter key to set it at the beginning of the loop region, if the loop region is shown; otherwise the cursor will be set at the beginning of the bach.roll or bach.score",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -159,7 +159,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 353.0, 53.5, 249.0, 69.0 ],
 					"text" : "When the object has focus, and nothing is selected, use Cmd+Shift+L (mac) or Ctrl+Shift+L (win) to toggle loop activation",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -178,7 +178,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 80.5, 53.5, 207.0, 69.0 ],
 					"text" : "When the object has focus, and nothing is selected,\nuse Cmd+L (mac) or Ctrl+L (win) to toggle loop display",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

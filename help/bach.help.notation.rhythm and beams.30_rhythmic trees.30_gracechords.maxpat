@@ -103,7 +103,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 48.0, 408.0, 353.0, 55.0 ],
 					"text" : "You can easily toggle grace chords via the chord inspector, or within the linear editing system, by pressing X.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

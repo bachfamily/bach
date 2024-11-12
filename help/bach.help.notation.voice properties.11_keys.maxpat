@@ -105,7 +105,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 361.0, 326.0, 163.0, 36.0 ],
 					"text" : "...or you can change keys via the voice's inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 22.5, 293.0, 314.0, 55.0 ],
 					"text" : "A right-click (or two-fingers tap) on a clef will pop up a menu allowing to chose the voice's key signature",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

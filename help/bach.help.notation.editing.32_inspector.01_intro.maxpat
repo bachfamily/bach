@@ -67,7 +67,7 @@
 					"patching_rect" : [ 190.0, 444.0, 263.5, 25.0 ],
 					"style" : "",
 					"text" : "This also works for bach.slot, of course!",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -107,7 +107,7 @@
 					"patching_rect" : [ 12.0, 379.0, 419.5, 69.0 ],
 					"style" : "",
 					"text" : "You can also inspect the slotinfo for any given slot. Just open the bach inspector when the corresponding slot window is open, and you will be able to change all attributes defining your slot in a very immediate way.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"patching_rect" : [ 249.5, 349.0, 312.0, 40.0 ],
 					"style" : "",
 					"text" : "All notation items can be inspected, markers and pitch breakpoints included.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -206,7 +206,7 @@
 					"patching_rect" : [ 310.5, 67.0, 305.5, 54.0 ],
 					"style" : "",
 					"text" : "To open the bach inspector for a given notation item, select it, and then press Cmd+I (mac) or Ctrl+Alt+I (win)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

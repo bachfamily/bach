@@ -52,7 +52,7 @@
 					"presentation_rect" : [ 155.0, 335.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Do the same here",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -120,7 +120,7 @@
 					"patching_rect" : [ 156.0, 136.0, 247.0, 69.0 ],
 					"style" : "",
 					"text" : "Shift+Ctrl+click anywhere on a duration line in order to split the note (a \"scissor\" cursor will appear)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

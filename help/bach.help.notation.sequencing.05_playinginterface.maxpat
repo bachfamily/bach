@@ -52,7 +52,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 427.0, 362.083344000000011, 183.5, 54.0 ],
 					"text" : "...and Alt+V to play the entire chords (if single notes were selected)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -70,7 +70,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 436.5, 289.166687000000024, 174.0, 54.0 ],
 					"text" : "You can select anything and press V to play offline",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -89,7 +89,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 240.083344000000011, 231.0, 69.0 ],
 					"text" : "If you perform a selection, and then press Shift+spacebar, only the selected content will be played",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 360.0, 58.083351, 232.0, 112.0 ],
 					"text" : "If you stop with Shift+spacebar (instead of with the simple spacebar), this will pause the sequencing. When you resume it (again with the spacebar), it'll begin starting from the last reached temporal position.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -161,7 +161,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 8.0, 58.083351, 231.0, 55.0 ],
 					"text" : "When the object has the focus, use the spacebar to start/stop playing.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

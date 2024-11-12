@@ -128,7 +128,7 @@
 					"patching_rect" : [ 383.0, 167.0, 198.0, 50.0 ],
 					"style" : "",
 					"text" : "...or you can assign MIDI channels via the voice's inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -148,7 +148,7 @@
 					"patching_rect" : [ 22.5, 134.0, 314.0, 55.0 ],
 					"style" : "",
 					"text" : "A right-click (or two-fingers tap) on a clef will pop up a menu allowing to chose the voice's MIDI channel",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

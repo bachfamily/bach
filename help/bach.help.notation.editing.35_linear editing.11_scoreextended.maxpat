@@ -50,7 +50,7 @@
 					"patching_rect" : [ 424.0, 253.0, 142.0, 40.0 ],
 					"style" : "",
 					"text" : "Use R to turn chords into rests",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -70,7 +70,7 @@
 					"patching_rect" : [ 303.0, 181.0, 313.0, 55.0 ],
 					"style" : "",
 					"text" : "Use T to add a tie/untie to the note on the cursor \n(if any, otherwise the whole chord will be tied/untied)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -90,7 +90,7 @@
 					"patching_rect" : [ 412.0, 128.0, 204.0, 69.0 ],
 					"style" : "",
 					"text" : "Use Ctrl (mac) or Shift+Ctrl (win) in addition to the number keys to add chords before the cursor",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -110,7 +110,7 @@
 					"patching_rect" : [ 6.0, 163.0, 252.0, 69.0 ],
 					"style" : "",
 					"text" : "When the cursor is exactly on a note, press Shift+Backspace to delete it. Press Backspace to delete the whole chord",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -128,7 +128,7 @@
 					"patching_rect" : [ 424.0, 329.333344, 178.0, 54.0 ],
 					"style" : "",
 					"text" : "Use Cmd (mac) or Ctrl (win) + any arrow key to navigate inside the score",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -144,7 +144,7 @@
 					"patching_rect" : [ 473.0, 387.833344, 130.0, 36.0 ],
 					"style" : "",
 					"text" : "Press ESC to exit the linear edit mode.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -163,7 +163,7 @@
 					"patching_rect" : [ 18.0, 339.833344, 251.0, 84.0 ],
 					"style" : "",
 					"text" : "You can insert tuplets, by using Alt+3/5/6/7/9, and then press ordinary number keys, in order to build 3-plets, 5-plets, 6-plets, 7-plets, 9-plets.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -181,7 +181,7 @@
 					"patching_rect" : [ 254.0, 380.666687, 204.0, 40.0 ],
 					"style" : "",
 					"text" : "For instance: Alt+3, then 4, 4, 4 will build a 8th notes triplet.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -215,7 +215,7 @@
 					"patching_rect" : [ 424.0, 291.333344, 188.0, 40.0 ],
 					"style" : "",
 					"text" : "Use X to turn a chord into a grace chord, and viceversa",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -233,7 +233,7 @@
 					"patching_rect" : [ 424.0, 219.0, 142.0, 40.0 ],
 					"style" : "",
 					"text" : "Use the period key to add a dot\n",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -253,7 +253,7 @@
 					"patching_rect" : [ 6.0, 113.0, 310.0, 69.0 ],
 					"style" : "",
 					"text" : "Use N to add a note to the chord where the cursor is, at the vertical cursor position. Use a letter A-G to change the pitch of the existing note.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

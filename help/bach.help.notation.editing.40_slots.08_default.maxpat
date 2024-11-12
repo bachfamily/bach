@@ -40,7 +40,7 @@
 					"presentation_rect" : [ 102.0, 220.0, 0.0, 0.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "You can open the #slotinfo+inspector, and set the number in the \"Default\" attribute field.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -106,7 +106,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 92.0, 367.166656, 255.0, 84.0 ],
 					"text" : "Once you have defined a slot default, Cmd+Alt+click (mac) or Ctrl+Alt+click (win) on one of the strips, to revert the corresponding number to the default value",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

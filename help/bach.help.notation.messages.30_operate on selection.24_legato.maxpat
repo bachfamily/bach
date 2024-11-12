@@ -198,7 +198,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 214.0, 253.0, 386.0, 69.0 ],
 					"text" : "Both in bach.roll and in bach.score, you can also select a portion of chords, and a \"legato\" on them can be performed using the popup menu (right click or two-fingers tap on one of the selected noteheads)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

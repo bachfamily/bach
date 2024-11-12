@@ -43,7 +43,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 234.5, 199.0, 210.0, 69.0 ],
 					"text" : "Click on one of the squares, and drag it: you can dilate the content horizontally, vertically, or both",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -63,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 34.0, 216.5, 212.0, 83.0 ],
 					"text" : "Or you can simply shift the content (in time or in pitch) by dragging the whole yellowish dilation rectangle: click on its center and then drag.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -99,7 +99,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 316.5, 94.0, 210.0, 84.0 ],
 					"text" : "Before releasing the mouse button, press the Cmd key (mac) or the Ctrl key (win). Then release the mouse button.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -119,7 +119,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 20.0, 84.0, 295.0, 69.0 ],
 					"text" : "Draw a selection rectangle, around the portion of bach.roll you want to compress, expand, or simply shift. But don't release the mouse button!",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

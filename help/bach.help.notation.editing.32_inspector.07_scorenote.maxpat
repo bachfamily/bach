@@ -40,7 +40,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 228.875, 142.0, 25.0 ],
 					"text" : "Set the note as solo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -57,7 +57,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 207.75, 107.0, 25.0 ],
 					"text" : "Mute the note",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -74,7 +74,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 186.625, 106.0, 25.0 ],
 					"text" : "Lock the note",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -91,7 +91,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 165.5, 164.0, 25.0 ],
 					"text" : "Tie note to the next one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -108,7 +108,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 144.375, 179.0, 25.0 ],
 					"text" : "Change velocity (1 to 127)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -127,7 +127,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 175.5, 294.0, 174.0, 55.0 ],
 					"text" : "These are instructions to navigate in the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -144,7 +144,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 123.25, 178.0, 25.0 ],
 					"text" : "Change pitch (note name)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -161,7 +161,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 102.125, 171.0, 25.0 ],
 					"text" : "Change pitch (midicents)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -178,7 +178,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 372.0, 81.0, 175.0, 25.0 ],
 					"text" : "Assign or modify name(s)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

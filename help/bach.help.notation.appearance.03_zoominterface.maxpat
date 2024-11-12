@@ -43,7 +43,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 129.0, 291.0, 410.0, 84.0 ],
 					"text" : "Keep Alt+Cmd (mac) or Alt+Ctrl (win) key pressed, and make a rectangle selection on the score: the selection rectangle actually will be painted in a reddish color. As soon as you release it, the screen will be zoomed (in time) exactly to the rectangle you have drawn.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -63,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 129.0, 359.0, 306.0, 55.0 ],
 					"text" : "You can add the Shift key to zoom out (in this case the rectangle defines a zoom ratio)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -130,7 +130,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 13.0, 75.0, 364.0, 84.0 ],
 					"text" : "Keep the Cmd (mac) or Ctrl (win) key pressed and use the mouse wheel or the upward/downward two-fingers scroll on the track pads: the zoom increases when moving down, and decreases when moving up.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

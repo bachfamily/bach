@@ -202,7 +202,7 @@
 					"patching_rect" : [ 291.0, 108.25, 299.0, 40.0 ],
 					"style" : "",
 					"text" : "Filter types can be chosen by right-clicking (or by performing a two-fingers tap) on the display",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

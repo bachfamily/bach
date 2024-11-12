@@ -84,7 +84,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 214.0, 415.5, 266.0, 40.0 ],
 					"text" : "To reset a note tail vertical positioning, select it and press Backspace.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -103,7 +103,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 214.0, 377.0, 374.0, 40.0 ],
 					"text" : "To delete a pitch breakpoint, select it and press Backspace,\nAlternatively Cmd+click (mac) or Ctrl+click on it.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -223,7 +223,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 229.5, 200.0, 289.0, 40.0 ],
 					"text" : "You can then move it simply by clicking on it, and shifting it up, down, left or right.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -239,7 +239,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 308.0, 286.833344, 285.0, 50.0 ],
 					"text" : "In bach.roll, if you want to make the note longer without creating a glissando, keep the Shift key pressed while dragging left or right.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -257,7 +257,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 273.0, 244.0, 212.0, 40.0 ],
 					"text" : "Note tails can be moved too! Just click on them and drag.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -277,7 +277,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 4.0, 192.5, 173.0, 55.0 ],
 					"text" : "Alt+click on a duration line to create a pitch breakpoint",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

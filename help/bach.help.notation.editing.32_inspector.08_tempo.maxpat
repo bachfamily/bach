@@ -117,7 +117,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 320.0, 176.25, 259.0, 54.0 ],
 					"text" : "Toggles the tempo interpolation towards next tempo (rall. if next tempo is slower, acc. if next tempo is faster)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -136,7 +136,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 93.5, 233.0, 174.0, 55.0 ],
 					"text" : "These are instructions to navigate in the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -153,7 +153,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 313.0, 152.25, 290.0, 25.0 ],
 					"text" : "Set tempo symbolic onset inside the measure",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -170,7 +170,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 312.0, 130.125, 121.0, 25.0 ],
 					"text" : "Set tempo value",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -187,7 +187,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 312.0, 108.125, 123.0, 25.0 ],
 					"text" : "Set tempo figure",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

@@ -167,7 +167,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 319.5, 238.5, 208.0, 84.0 ],
 					"text" : "Select a measure and then\nCmd+Shift+L (mac) or Ctrl+Shift+L (win) to lock/unlock its ending barline",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

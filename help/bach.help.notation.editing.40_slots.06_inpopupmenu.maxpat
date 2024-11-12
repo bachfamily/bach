@@ -74,7 +74,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 166.0, 363.0, 382.0, 69.0 ],
 					"text" : "To test, right-click (or perform a two-fingers tap) on a notehead: now the \"Slots\" menu should not be grayed any more, but should contain the names of the slot you have assigned to it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -176,7 +176,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 161.5, 181.0, 84.0 ],
 					"text" : "You can open the slotinfo inspector and check the toggle near the \"Is In Popup Menu\" attribute",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

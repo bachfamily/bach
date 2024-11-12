@@ -52,7 +52,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 424.0, 284.0, 171.0, 84.0 ],
 					"text" : "Cmd+click (mac) or Ctrl+click (win) on the strip right side to turn the region into a simple marker",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -70,7 +70,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 73.0, 133.0, 186.0, 69.0 ],
 					"text" : "Click exactly here and drag to the right to assign a duration to the marker (i.e. to turn it into a region)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -88,7 +88,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 39.0, 190.0, 201.0, 69.0 ],
 					"text" : "Add Shift to avoid magnetic snap to nearest chord (or to enforce magnetic snap in bach.roll)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -123,7 +123,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 58.0, 306.0, 176.0, 69.0 ],
 					"text" : "Double click on the region strip to select all the elements in the region",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -160,7 +160,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 234.0, 300.0, 176.0, 69.0 ],
 					"text" : "Double click on the strip right side in order to extend the marker till the next one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

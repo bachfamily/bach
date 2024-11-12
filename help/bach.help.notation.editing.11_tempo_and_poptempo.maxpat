@@ -59,7 +59,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 14.0, 309.5, 265.0, 69.0 ],
 					"text" : "Select a tempo and press Cmd+Alt+Shift+I (mac) or Ctrl+Alt+Shift+I (win) to toggle the interpolation towards the next tempo",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -104,7 +104,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 358.0, 50.5, 192.0, 113.0 ],
 					"text" : "Cmd+Alt+click (mac) or Ctrl+Alt+click (win) inside a staff, avoiding all noteheads: the current tempo will pop up, and you will be able to change it as explained at left",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -124,7 +124,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 13.0, 138.5, 184.0, 84.0 ],
 					"text" : "Ctrl+click (mac) or Shift+Ctrl+Click (win) on the tempo value and drag up or down to increase/decrease it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -144,7 +144,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 87.5, 50.5, 240.0, 69.0 ],
 					"text" : "Opening the tempo inspector is always a valid choice: select the tempo and press Cmd+I (mac) or Ctrl+I (win)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

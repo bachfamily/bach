@@ -168,7 +168,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 10.0, 401.0, 140.0, 50.0 ],
 					"text" : "...or you can change voice names via the voice's inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -188,7 +188,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 10.0, 231.0, 150.0, 170.0 ],
 					"text" : "A doubleclick at the beginning of the voice, BEFORE the clef, will allow you to enter directly a voice name if no voice name is present. Otherwise, doubleclick on a voice name to edit it directly.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

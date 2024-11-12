@@ -117,7 +117,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 296.5, 331.666656, 277.0, 54.0 ],
 					"text" : "If you expand the size of the object (when the patch is unlocked), the vertical zoom changes accordingly",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -137,7 +137,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 21.0, 119.0, 234.0, 69.0 ],
 					"text" : "if you Shift+click on a clef and then drag up/down to move the staff, the object size will change accordingly",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

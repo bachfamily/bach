@@ -51,7 +51,7 @@
 					"presentation_rect" : [ 6.0, 235.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "By also adding the Cmd key (hence Cmd+Ctrl+click & drag), the movement will stretch the region between the edited marker and the previous one.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -105,7 +105,7 @@
 					"patching_rect" : [ 6.0, 39.0, 542.0, 50.0 ],
 					"style" : "",
 					"text" : "In bach.roll, on a Macintosh, you can Ctrl+click on a marker, and drag it in order to move all the following content along with the marker. This lets you easily add or delete silence in the timeline.",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

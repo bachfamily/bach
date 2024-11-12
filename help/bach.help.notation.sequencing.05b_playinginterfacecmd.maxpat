@@ -53,7 +53,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 251.0, 268.166687000000024, 166.0, 69.0 ],
 					"text" : "This editor plays notes off-line by using either v or doubleclicking",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -86,7 +86,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 427.0, 248.166687000000024, 105.0, 55.0 ],
 					"text" : "Left-click on a note to play it",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -181,7 +181,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 34.0, 83.083350999999993, 204.0, 55.0 ],
 					"text" : "You can select anything and press lowercase V to play offline",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -199,7 +199,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 221.0, 83.083350999999993, 184.0, 54.0 ],
 					"text" : "...and Shift+lowercase V to play the entire chords (if single notes were selected)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

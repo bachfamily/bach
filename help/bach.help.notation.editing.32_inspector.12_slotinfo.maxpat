@@ -67,7 +67,7 @@
 					"patching_rect" : [ 272.0, 410.107147, 314.0, 25.0 ],
 					"style" : "",
 					"text" : "Pop up slot directly from right-clicks on noteheads",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -84,7 +84,7 @@
 					"patching_rect" : [ 376.5, 392.964294, 184.0, 25.0 ],
 					"style" : "",
 					"text" : "Set or modify a slot linkage",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -101,7 +101,7 @@
 					"patching_rect" : [ 305.0, 375.821442, 252.0, 25.0 ],
 					"style" : "",
 					"text" : "Add slot to the right-click popup menu?",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -118,7 +118,7 @@
 					"patching_rect" : [ 305.0, 358.678558, 297.0, 25.0 ],
 					"style" : "",
 					"text" : "Always display the slot content in background?",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -135,7 +135,7 @@
 					"patching_rect" : [ 305.0, 341.535706, 243.0, 25.0 ],
 					"style" : "",
 					"text" : "Slot window height (or \"auto\" symbol)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -152,7 +152,7 @@
 					"patching_rect" : [ 305.0, 324.392853, 262.0, 25.0 ],
 					"style" : "",
 					"text" : "Slot window width (or \"temporal\" symbol)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -169,7 +169,7 @@
 					"patching_rect" : [ 305.0, 307.25, 296.0, 25.0 ],
 					"style" : "",
 					"text" : "Single slot for tied notes? (only for bach.score)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -186,7 +186,7 @@
 					"patching_rect" : [ 286.0, 290.107147, 141.0, 25.0 ],
 					"style" : "",
 					"text" : "Slot representation",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -203,7 +203,7 @@
 					"patching_rect" : [ 286.0, 272.964294, 235.0, 25.0 ],
 					"style" : "",
 					"text" : "Default slot value (for numeric slots)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -220,7 +220,7 @@
 					"patching_rect" : [ 331.0, 255.821426, 274.0, 25.0 ],
 					"style" : "",
 					"text" : "Z axis values for 3dfunction point snapping",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -237,7 +237,7 @@
 					"patching_rect" : [ 331.0, 238.678574, 260.0, 25.0 ],
 					"style" : "",
 					"text" : "Y axis values for function point snapping",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -254,7 +254,7 @@
 					"patching_rect" : [ 331.0, 221.535721, 253.0, 25.0 ],
 					"style" : "",
 					"text" : "Z axis slope display parameter (-1 to 1)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -271,7 +271,7 @@
 					"patching_rect" : [ 331.0, 204.392853, 204.0, 25.0 ],
 					"style" : "",
 					"text" : "Z axis minimum and maximum",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -288,7 +288,7 @@
 					"patching_rect" : [ 331.0, 187.25, 253.0, 25.0 ],
 					"style" : "",
 					"text" : "Y axis slope display parameter (-1 to 1)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -305,7 +305,7 @@
 					"patching_rect" : [ 331.0, 170.107147, 204.0, 25.0 ],
 					"style" : "",
 					"text" : "Y axis minimum and maximum",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -322,7 +322,7 @@
 					"patching_rect" : [ 331.0, 152.964279, 254.0, 25.0 ],
 					"style" : "",
 					"text" : "X axis slope display parameter (-1 to 1)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -339,7 +339,7 @@
 					"patching_rect" : [ 331.0, 135.821426, 204.0, 25.0 ],
 					"style" : "",
 					"text" : "X axis minimum and maximum",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -356,7 +356,7 @@
 					"patching_rect" : [ 363.0, 118.678574, 82.0, 25.0 ],
 					"style" : "",
 					"text" : "Slot color",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -373,7 +373,7 @@
 					"patching_rect" : [ 363.0, 101.535713, 139.0, 25.0 ],
 					"style" : "",
 					"text" : "Hotkey to open slot",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -390,7 +390,7 @@
 					"patching_rect" : [ 363.0, 84.39286, 78.0, 25.0 ],
 					"style" : "",
 					"text" : "Slot type",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -407,7 +407,7 @@
 					"patching_rect" : [ 363.0, 67.25, 86.0, 25.0 ],
 					"style" : "",
 					"text" : "Slot name",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -425,7 +425,7 @@
 					"patching_rect" : [ 300.0, 436.107147, 253.0, 25.0 ],
 					"style" : "",
 					"text" : "Instructions to navigate in the inspector",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}

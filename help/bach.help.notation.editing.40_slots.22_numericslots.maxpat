@@ -53,7 +53,7 @@
 					"presentation_rect" : [ 70.5, 137.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Double click on the number to type in a new one directly",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -91,7 +91,7 @@
 					"patching_rect" : [ 254.5, 160.5, 167.0, 84.0 ],
 					"style" : "",
 					"text" : "Cmd+Alt+click (mac) or Ctrl+Alt+click (win) on a strip to revert the value to the default one",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -111,7 +111,7 @@
 					"patching_rect" : [ 429.5, 66.0, 169.0, 69.0 ],
 					"style" : "",
 					"text" : "Add Shift+Cmd (mac) or Shift+Ctrl (win) keys to fine edit the slot value",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -131,7 +131,7 @@
 					"patching_rect" : [ 429.5, 25.0, 167.0, 55.0 ],
 					"style" : "",
 					"text" : "Or click on the handle and drag it to change the value",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -169,7 +169,7 @@
 					"patching_rect" : [ 63.5, 85.0, 267.0, 55.0 ],
 					"style" : "",
 					"text" : "Click on the strip to add a number (if \"None\" is displayed, meaning that the slot is empty)",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -232,7 +232,7 @@
 					"patching_rect" : [ 421.5, 300.0, 183.0, 69.0 ],
 					"style" : "",
 					"text" : "Cmd+click (mac) or Ctrl+click (win) on a strip to delete the corresponding number",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
@@ -250,7 +250,7 @@
 					"patching_rect" : [ 220.5, 351.0, 136.0, 83.0 ],
 					"style" : "",
 					"text" : "Click on \"add number...\" to append a new number to the existing ones",
-					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
+					"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 				}
 
 			}
