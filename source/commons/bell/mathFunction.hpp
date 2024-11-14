@@ -117,19 +117,20 @@ public:
     }
 
     t_llll* call(const t_execEnv &context) {
-        t_llll *lists[8];
-        lists[0] = context.argv[1];
-        lists[1] = context.argv[2];
-        lists[2] = context.argv[3];
-        lists[3] = context.argv[4];
-        lists[4] = context.argv[5];
-        lists[6] = context.argv[7];
+        t_llll *lists[9];
+        lists[0] = context.argv[1]; // etwhitekey
+        lists[1] = context.argv[2]; // etalter
+        lists[2] = context.argv[3]; // octave
+        lists[3] = context.argv[4]; // jiwhitekey
+        lists[4] = context.argv[5]; // jisharps
+        lists[5] = context.argv[6]; // jiplof
+        lists[7] = context.argv[8]; // jiratio
         
         t_llll *trash = llll_get();
 
         {
             // commas
-            t_llll *x = context.argv[6];
+            t_llll *x = context.argv[7];
             t_llll *y = llll_get();
             if (x->l_depth == 1) {
                 llll_appendobj(y, x);
@@ -145,12 +146,12 @@ public:
                     }
                 }
             }
-            lists[5] = y;
+            lists[6] = y;
         }
         
         {
             // monzo
-            t_llll *x = context.argv[8];
+            t_llll *x = context.argv[9];
             t_llll *y = llll_get();
             if (x->l_depth == 1) {
                 llll_appendobj(y, x);
@@ -166,13 +167,13 @@ public:
                     }
                 }
             }
-            lists[7] = y;
+            lists[8] = y;
         }
         
         t_llll *res = llllIterator<9>::run(lists);
         llll_free(trash);
-        llll_free(lists[5]);
-        llll_free(lists[7]);
+        llll_free(lists[6]);
+        llll_free(lists[8]);
         return res;
     }
 };
