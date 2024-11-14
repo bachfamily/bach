@@ -1326,6 +1326,10 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["maximum"] = new t_fnMaximum;
     (*bifTable)["mc2f"] = new t_fnMc2f;
     (*bifTable)["f2mc"] = new t_fnF2mc;
+    (*bifTable)["commas"] = new t_fnCommas;
+    (*bifTable)["monzo"] = new t_fnMonzo;
+    (*bifTable)["pitchkeys"] = new t_fnPitchkeys;
+
     
     (*bifTable)["outlet"] = new t_fnOutlet;
     (*bifTable)["inlet"] = new t_fnInlet;
@@ -1370,6 +1374,18 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["octave"] = new t_mathUnaryFunctionAA<hatom_fn_octave>("octave");
     (*bifTable)["alter"] = new t_mathUnaryFunctionAA<hatom_fn_alter>("alter");
     (*bifTable)["cents"] = new t_mathUnaryFunctionAA<hatom_fn_cents>("cents");
+    (*bifTable)["etwhitekey"] = new t_mathUnaryFunctionAA<hatom_fn_etwhitekey>("etwhitekey");
+    (*bifTable)["jiwhitekey"] = new t_mathUnaryFunctionAA<hatom_fn_jiwhitekey>("jiwhitekey");
+    (*bifTable)["et"] = new t_mathUnaryFunctionAA<hatom_fn_et>("et");
+    (*bifTable)["ji"] = new t_mathUnaryFunctionAA<hatom_fn_ji>("ji");
+    (*bifTable)["jiratio"] = new t_mathUnaryFunctionAA<hatom_fn_jiratio>("jiratio");
+    (*bifTable)["jiplof"] = new t_mathUnaryFunctionAA<hatom_fn_jiplof>("jiplof");
+    (*bifTable)["etplof"] = new t_mathUnaryFunctionAA<hatom_fn_etplof>("etplof");
+    (*bifTable)["jisharps"] = new t_mathUnaryFunctionAA<hatom_fn_jisharps>("jisharps");
+    (*bifTable)["etsharps"] = new t_mathUnaryFunctionAA<hatom_fn_etsharps>("etsharps");
+    (*bifTable)["etalter"] = new t_mathUnaryFunctionAA<hatom_fn_etalter>("etalter");
+
+    (*bifTable)["foldratio"] = new t_mathBinaryFunctionAAA<hatom_fn_fold>("foldratio");
     
     (*bifTable)["pow"] = new t_mathBinaryFunctionAAA<hatom_op_pow>("pow", "base", "exponent");
     (*bifTable)["mod"] = new t_mathBinaryFunctionAAA<hatom_fn_mod>("mod", "x", "y");

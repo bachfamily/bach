@@ -1470,6 +1470,27 @@
       "bach.reducefunction"
     ]
   },
+  "bach.fareyser": {
+    "digest": "Farey series",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "series",
+      "arithmetic",
+      "step",
+      "compute",
+      "calculate"
+    ],
+    "seealso": [
+      "bach.primeser",
+      "bach.geomser",
+      "bach.recurser"
+    ]
+  },
   "bach.geomser": {
     "digest": "Geometric series",
     "module": "bach",

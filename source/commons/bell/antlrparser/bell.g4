@@ -75,6 +75,7 @@ funarg: LOCALVAR (ASSIGN list)? #funargVar
 ;
 
 funargList: funarg (',' funarg)*
+| VOID
 ;
 
 liftedargList: LIFT (LOCALVAR ',')* LOCALVAR
@@ -143,6 +144,7 @@ lvalueSpecsUFinal: conditional
 | whileloop
 | forloop
 | fundef
+| funcall
 ;
 
 lvalueSpecsFinal: (UPLUS|UMINUS)* lvalueSpecsUFinal
@@ -199,7 +201,7 @@ item: UINT #itemUint
 | EMPTYSYMBOL #itemEmptySymbol
 | BIF #itemBIF
 | OF #itemOF
-//| MAXFUNCTION #itemMaxFunction
+| MAXFUNCTION #itemMaxFunction
 | type=(INLET|INTINLET|FLOATINLET|RATINLET|PITCHINLET) #itemInlet
 | DIRINLET #itemDirInlet
 | ARGCOUNT #itemArgcount
@@ -302,7 +304,9 @@ BIF:
     |'cos'|'sin'|'tan'|'exp'|'log'|'acos'|'asin'|'atan'|'cosh'|'sinh'|'tanh'
     |'exp2'|'log2'|'sqrt'|'ceil'|'acosh'|'asinh'|'atanh'|'log10'|'floor'|'round'|'trunc'
     |'fmod'|'atan2'|'hypot'|'pow'|'int'|'rat'|'num'|'den'|'abs'|'sgn'
-    |'float'|'pitch'|'degree'|'octave'|'alter'|'cents'|'mod'|'min'|'max'|'random'
+    |'float'|'pitch'|'degree'|'octave'|'alter'|'cents'
+    |'etwhitekey'|'jiwhitekey'|'et'|'ji'|'jiratio'|'jiplof'|'etplof'|'jisharps'|'etsharps'|'etalter'|'foldratio'|'commas'|'monzo'|'pitchkeys'
+    |'mod'|'min'|'max'|'random'
     |'bessel'|'approx'|'enharm'|'makepitch'|'makepitchsc'|'mc2f'|'f2mc'|'minimum'|'maximum'|'sum'|'prod'
     |'outlet'|'inlet'
     |'#+'|'#-'|'#u-'|'#*'|'#/'|'#//'|'#%'|'#=='|'#!='|'#<'|'#>'|'#<='|'#>='
@@ -321,7 +325,7 @@ GLOBALVAR: ID { noParams = false; noUnary = true; };
 PATCHERVAR: '#' ID { noParams = false; noUnary = true; };
 LOCALVAR: '\\'? '$' ID { noParams = false; noUnary = true; };
 NAMEDPARAM: '\\'? '@' ID { noParams = true; noUnary = true; };
-
+VOID: '$' { noParams = false; noUnary = true; };
 fragment ID: [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?;
 
 
@@ -421,7 +425,7 @@ ARCONCAT: '!_=' { noParams = true; noUnary = false; };
 OPEN: { noParams }? '(' { noParams = true; noUnary = false; };
 PARAMS: { !noParams }? '(' { noParams = true; noUnary = false; };
 
-//MAXFUNCTION: '{' .+? '}' { noParams = false; noUnary = true; };
+MAXFUNCTION: '<<<' .+? '>>>' { noParams = false; noUnary = true; };
 
 FUNDEF: '->' { noParams = true; noUnary = false; };
 LIFT: '-^' { noParams = true; noUnary = false; };

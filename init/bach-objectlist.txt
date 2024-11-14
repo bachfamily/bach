@@ -62,6 +62,7 @@ max oblist "bach objects" bach.derive;
 max oblist "bach objects" bach.float2rat;
 max oblist "bach objects" bach.fft;
 max oblist "bach objects" bach.integrate;
+max oblist "bach objects" bach.fareyser;
 max oblist "bach objects" bach.geomser;
 max oblist "bach objects" bach.prime;
 max oblist "bach objects" bach.weights;

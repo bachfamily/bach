@@ -304,4 +304,26 @@ public:
     t_llll* call(const t_execEnv &context);
 };
 
+class t_fnCommas : public t_builtInFunction
+{
+public:
+    t_fnCommas();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnMonzo : public t_builtInFunction
+{
+public:
+    t_fnMonzo();
+    t_llll* call(const t_execEnv &context);
+};
+
+class t_fnPitchkeys : public t_builtInFunction
+{
+public:
+    t_fnPitchkeys();
+    t_llll* call(const t_execEnv &context);
+};
+
+
 #endif /* builtInFunction_hpp */

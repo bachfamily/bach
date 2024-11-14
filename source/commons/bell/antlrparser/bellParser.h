@@ -19,19 +19,20 @@ public:
     DO = 25, COLLECT = 26, INLET = 27, INTINLET = 28, RATINLET = 29, FLOATINLET = 30, 
     PITCHINLET = 31, OUTLET = 32, DIRINLET = 33, DIROUTLET = 34, BIF = 35, 
     OF = 36, ARGCOUNT = 37, KEEP = 38, UNKEEP = 39, INIT = 40, GLOBALVAR = 41, 
-    PATCHERVAR = 42, LOCALVAR = 43, NAMEDPARAM = 44, PUSH = 45, POP = 46, 
-    CLOSED = 47, NTH = 48, PICK = 49, KEY = 50, ANTH = 51, APICK = 52, NULLIFY = 53, 
-    ASSIGN = 54, WHITESPACE = 55, NEWATOM = 56, POW = 57, APOW = 58, TIMES = 59, 
-    ATIMES = 60, DIVDIV = 61, ADIVDIV = 62, DIV = 63, ADIV = 64, REM = 65, 
-    AREM = 66, PLUS = 67, APLUS = 68, UPLUS = 69, MINUS = 70, AMINUS = 71, 
-    UMINUS = 72, EQUAL = 73, NEQ = 74, LOGNOT = 75, BITNOT = 76, LT = 77, 
-    GT = 78, LEQ = 79, GEQ = 80, BITAND = 81, ABITAND = 82, BITXOR = 83, 
-    ABITXOR = 84, BITOR = 85, ABITOR = 86, LOGAND = 87, LOGANDEXT = 88, 
-    ALOGAND = 89, ALOGANDEXT = 90, LOGXOR = 91, ALOGXOR = 92, LOGOR = 93, 
-    ALOGOR = 94, LOGOREXT = 95, ALOGOREXT = 96, LSHIFT = 97, ALSHIFT = 98, 
-    RSHIFT = 99, ARSHIFT = 100, REPEAT = 101, AREPEAT = 102, AAPPLY = 103, 
-    ACONCAT = 104, ARCONCAT = 105, OPEN = 106, PARAMS = 107, FUNDEF = 108, 
-    LIFT = 109, ELLIPSIS = 110, BLOCKCOMMENT = 111, LINECOMMENT = 112, ANYTHING = 113
+    PATCHERVAR = 42, LOCALVAR = 43, NAMEDPARAM = 44, VOID = 45, PUSH = 46, 
+    POP = 47, CLOSED = 48, NTH = 49, PICK = 50, KEY = 51, ANTH = 52, APICK = 53, 
+    NULLIFY = 54, ASSIGN = 55, WHITESPACE = 56, NEWATOM = 57, POW = 58, 
+    APOW = 59, TIMES = 60, ATIMES = 61, DIVDIV = 62, ADIVDIV = 63, DIV = 64, 
+    ADIV = 65, REM = 66, AREM = 67, PLUS = 68, APLUS = 69, UPLUS = 70, MINUS = 71, 
+    AMINUS = 72, UMINUS = 73, EQUAL = 74, NEQ = 75, LOGNOT = 76, BITNOT = 77, 
+    LT = 78, GT = 79, LEQ = 80, GEQ = 81, BITAND = 82, ABITAND = 83, BITXOR = 84, 
+    ABITXOR = 85, BITOR = 86, ABITOR = 87, LOGAND = 88, LOGANDEXT = 89, 
+    ALOGAND = 90, ALOGANDEXT = 91, LOGXOR = 92, ALOGXOR = 93, LOGOR = 94, 
+    ALOGOR = 95, LOGOREXT = 96, ALOGOREXT = 97, LSHIFT = 98, ALSHIFT = 99, 
+    RSHIFT = 100, ARSHIFT = 101, REPEAT = 102, AREPEAT = 103, AAPPLY = 104, 
+    ACONCAT = 105, ARCONCAT = 106, OPEN = 107, PARAMS = 108, MAXFUNCTION = 109, 
+    FUNDEF = 110, LIFT = 111, ELLIPSIS = 112, BLOCKCOMMENT = 113, LINECOMMENT = 114, 
+    ANYTHING = 115
   };
 
   enum {
@@ -207,6 +208,7 @@ public:
     virtual size_t getRuleIndex() const override;
     std::vector<FunargContext *> funarg();
     FunargContext* funarg(size_t i);
+    antlr4::tree::TerminalNode *VOID();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -549,6 +551,7 @@ public:
     WhileloopContext *whileloop();
     ForloopContext *forloop();
     FundefContext *fundef();
+    FuncallContext *funcall();
 
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -827,6 +830,15 @@ public:
     ItemDirInletContext(ItemContext *ctx);
 
     antlr4::tree::TerminalNode *DIRINLET();
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  ItemMaxFunctionContext : public ItemContext {
+  public:
+    ItemMaxFunctionContext(ItemContext *ctx);
+
+    antlr4::tree::TerminalNode *MAXFUNCTION();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };

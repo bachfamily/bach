@@ -90,13 +90,13 @@
 			</digest>
 			<description>
 				@description Sets the font used to display accidentals.
-				The official notation bach font is "November for bach", created by Robert Piéchaud (www.poeticprocessing.net) and
-				automatically loaded at bach startup. "November for bach" is a light version of the famous November font.
+				The bach package by default loads the "Bravura" font, developed by Steinberg.
+				The bach package also includes the font "November for bach", created by Robert Piéchaud (www.poeticprocessing.net).
+				"November for bach" is a light version of the famous November font.
 				The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique,
 				warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares.
 				You can purchase November from this web address: www.klemm-music.de/notation/november/.
-				Other supported fonts are: Accidentals (up to the eighth-tones), Tamburo (up to the quartertones),
-				Maestro, Petrucci, Boulez, Engraver Font Set (up to the semitones).
+				Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set.
 				<br />
 				The accidentals font must be SMUFL-compliant.
 			</description>
@@ -704,7 +704,7 @@
 			</digest>
 			<description>
 				Sets the allowed limits for the displayed pitches. Leave "any" to unconstrain.
-                Use the less or equal sign as first symbol to choose limits less or equal to a certain number.
+				Use the less or equal sign as first symbol to select limits less or equal to a certain number.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
@@ -876,7 +876,7 @@
 			</digest>
 			<description>
 				Sets the allowed primes for the displayed pitches. Leave "any" to unconstrain.
-                Use the less or equal sign as first symbol to choose limits less or equal to a certain number.
+				Use the less or equal sign as first symbol to select limits less or equal to a certain number.
 				Notice that this is slightly different than <m>limits</m>: when using <m>limits</m> one
 				is constraining the highest prime appearing in the ratio, while when using <m>primes</m>
 				one is constraining _all_ the primes appearing in the ratio.

@@ -2,41 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
 		"rect" : [ 48.0, 151.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"id" : "obj-1",
@@ -74,16 +49,15 @@
 , 			{
 				"box" : 				{
 					"bubble" : 1,
-					"bubblepoint" : 0.88,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"linecount" : 6,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 183.0, 177.0, 341.0, 98.0 ],
-					"text" : "Instead of the $outlet function, you can use the $o<n> pseudovariables, which can be set but not read.\nThe number of extra outlets is automatically inferred from the $o<n> pseudovariables used in the code.\nThis can be useful if you plan to change dynamically the expression with one addressing more outlets."
+					"patching_rect" : [ 179.0, 229.0, 341.0, 54.0 ],
+					"text" : "You can set the @extraoutlets attribute anyway.\nThis can be useful if you plan to change dynamically the expression with one addressing more outlets."
 				}
 
 			}
@@ -98,6 +72,7 @@
 					"outlettype" : [ "", "", "" ],
 					"patching_rect" : [ 20.0, 237.0, 154.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -115,8 +90,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 237.5, 363.0, 192.0, 40.0 ],
-					"text" : "Quite often, the result outlet is the one you don't need."
+					"patching_rect" : [ 238.0, 363.0, 273.0, 40.0 ],
+					"text" : "If you use the extra outlets, it could be that the result outlet is the one you don't need."
 				}
 
 			}
@@ -153,6 +128,7 @@
 					"outlettype" : [ "", "", "" ],
 					"patching_rect" : [ 20.0, 364.0, 208.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -244,6 +220,7 @@
 					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 20.0, 99.0, 161.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -383,6 +360,7 @@
 
 			}
  ],
+		"originid" : "pat-454",
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"

@@ -670,8 +670,6 @@ double random_double_in_range(double a, double b) {
     return a + r;
 }
 
-
-
 t_llll *llll_mc2f(t_llll *ll, double basefreq, double basepitch)
 {
     t_llllelem **elempile = (t_llllelem**) bach_newptr(ll->l_depth * sizeof(t_llllelem*));
@@ -795,3 +793,4 @@ t_lexpr_token get_sqrt_function(){
     mysqrt.t_contents.c_func.f_type = H_DOUBLE;
     return mysqrt;
 }
+

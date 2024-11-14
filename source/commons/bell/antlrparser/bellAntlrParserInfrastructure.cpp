@@ -430,6 +430,7 @@ public:
             switch (*inPtr) {
                 case 1:
                     *outPtr++ = ' ';
+                    (*params->codeac)++;
                     inPtr++;
                     break;
                 case '\\':
@@ -476,16 +477,37 @@ public:
         astNode *r = new astConst(fn, params->owner);
         return r;
     }
-    /*
+    
     antlrcpp::Any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *context) override {
         auto t = context->MAXFUNCTION()->getText();
-        t.erase(0, 1);
         t.pop_back();
-        auto *fn = new t_maxFunction(t);
+        t.pop_back();
+        t.pop_back();
+        char cstr[MAX_SYM_LENGTH];
+        const char *inPtr = t.c_str() + 3;
+        char *outPtr = cstr;
+        int n = 0;
+        while (*inPtr && n < MAX_SYM_LENGTH - 1) {
+            switch (*inPtr) {
+                case 1:
+                    *outPtr++ = ' ';
+                    (*params->codeac)++;
+                    inPtr++;
+                    break;
+                case '\\':
+                    inPtr++;
+                default:
+                    *outPtr++ = *inPtr++;
+                    break;
+            }
+            n++;
+        }
+        *outPtr = 0;
+        auto *fn = new t_maxFunction(cstr);
         params->funcs->insert(fn);
         astNode *r = new astConst(fn, params->owner);
         return r;
-    }*/
+    }
     
     antlrcpp::Any visitItemDirInlet(bellParser::ItemDirInletContext *context) override {
         auto txt = context->DIRINLET()->getText();

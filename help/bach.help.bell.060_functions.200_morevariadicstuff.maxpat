@@ -2,41 +2,16 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 8,
+			"major" : 9,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
 		"rect" : [ 103.0, 211.0, 617.0, 539.0 ],
-		"bglocked" : 0,
-		"openinpresentation" : 0,
-		"default_fontsize" : 13.0,
-		"default_fontface" : 0,
-		"default_fontname" : "Arial",
-		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 1,
-		"objectsnaponopen" : 1,
-		"statusbarvisible" : 2,
-		"toolbarvisible" : 1,
-		"lefttoolbarpinned" : 0,
-		"toptoolbarpinned" : 0,
-		"righttoolbarpinned" : 0,
-		"bottomtoolbarpinned" : 0,
-		"toolbars_unpinned_last_save" : 0,
-		"tallnewobj" : 0,
-		"boxanimatetime" : 200,
-		"enablehscroll" : 1,
-		"enablevscroll" : 1,
-		"devicewidth" : 0.0,
-		"description" : "",
-		"digest" : "",
-		"tags" : "",
-		"style" : "",
-		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
@@ -85,6 +60,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 345.0, 345.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -126,6 +102,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 231.0, 235.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -155,26 +132,27 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 260.0, 57.0, 316.0, 98.0 ],
+					"patching_rect" : [ 255.0, 57.0, 318.0, 98.0 ],
 					"text" : "Here, we can pass $greeting by position. We use $argcount and $args in a loop for iterating over the incoming lists.\nAlso, notice that we declare a $x variable after the ellipsis, for preventing $x to be passed to Greet by propagation, and that $x is not seen by $argcount."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "Greet = $greeting, <...>, $x -> for $x in arithmser(2, $argcount) do print($greeting $args($x)) ",
+					"code" : "Greet = $greeting, <...>, $x -> for $x in 2 ... $argcount do print($greeting $args($x)) ",
 					"id" : "obj-6",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 80.0, 244.0, 52.0 ],
+					"patching_rect" : [ 6.0, 80.0, 242.0, 52.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80900
 					}
 ,
-					"text" : "bach.eval Greet = $greeting\\, <...>\\, $x -> for $x in arithmser(2\\, $argcount) do print($greeting $args($x)) @auto 1"
+					"text" : "bach.eval Greet = $greeting\\, <...>\\, $x -> for $x in 2 ... $argcount do print($greeting $args($x)) @auto 1"
 				}
 
 			}
@@ -275,6 +253,7 @@
 
 			}
  ],
+		"originid" : "pat-430",
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"

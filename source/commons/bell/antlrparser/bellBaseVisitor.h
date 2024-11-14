@@ -219,6 +219,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitItemMaxFunction(bellParser::ItemMaxFunctionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitItemInlet(bellParser::ItemInletContext *ctx) override {
     return visitChildren(ctx);
   }

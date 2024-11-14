@@ -57,7 +57,8 @@ double atanh(double number);
 double round(double number);
 double trunc(double number);
 double trunc_at(double number, long position);
-	
+double fold(double a, double b);
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE
 #endif
@@ -85,11 +86,23 @@ void hatom_fn_makepitchsc(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_approx(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_enharm(t_hatom *h1, t_hatom *h2, t_hatom *res);
 
+void hatom_fn_etwhitekey(t_hatom *arg, t_hatom *res);
+void hatom_fn_jiwhitekey(t_hatom *arg, t_hatom *res);
+void hatom_fn_et(t_hatom *arg, t_hatom *res);
+void hatom_fn_ji(t_hatom *arg, t_hatom *res);
+void hatom_fn_jiratio(t_hatom *arg, t_hatom *res);
+void hatom_fn_jiplof(t_hatom *arg, t_hatom *res);
+void hatom_fn_etplof(t_hatom *arg, t_hatom *res);
+void hatom_fn_jisharps(t_hatom *arg, t_hatom *res);
+void hatom_fn_etsharps(t_hatom *arg, t_hatom *res);
+void hatom_fn_etalter(t_hatom *arg, t_hatom *res);
+
 void hatom_fn_makepitch_ext(t_hatom *whitekeyET,    // normally integer
                     t_hatom *alterET,       // normally rational
                     t_hatom *octave,        // normally integer
                     t_hatom *whitekeyJI,    // normally integer
                     t_hatom *sharpsJI,      // normally integer
+                    t_hatom *plofJI,        // normally integer
                     t_hatom *commas,        // normally flat llll of integers passed as a H_OBJ
                     t_hatom *ratio,         // normally rational
                     t_hatom *monzo,         // normally flat llll of integers passed as a H_OBJ
@@ -101,11 +114,15 @@ void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_pow(t_hatom *h1, t_hatom *h2, t_hatom *res); // deprecated: use hatom_op_pow instead
 void hatom_fn_abs(t_hatom *arg, t_hatom *res);
 void hatom_fn_sgn(t_hatom *arg, t_hatom *res);
+
+
 void hatom_fn_mod(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_remainder(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_jn(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_min(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_max(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_fn_fold(t_hatom *h1, t_hatom *h2, t_hatom *res);
+
 
 void hatom_op_plus(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_plus_with_symbols(t_hatom *h1, t_hatom *h2, t_hatom *res);
@@ -137,5 +154,7 @@ void hatom_op_le(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_t(t_hatom *h1, t_hatom *res);
 void hatom_op_r(t_hatom *h1, t_hatom *res);
 
+t_llll *getHEJICommas(const t_pitch &p);
+t_llll *getMonzo(const t_pitch &p);
 
 #endif // _LLLL_MATH_H_

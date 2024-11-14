@@ -434,8 +434,8 @@ public:
         p_JIexpVector.addOctaves(addOctave);
     }
     
-    t_pitch(t_int8 whiteKeyJI, t_int8 sharps, const std::vector<t_int8> &HEJIcommas, const std::vector<t_int8> &exponents, const t_shortRational &r, const t_int8 octave = 0): p_whiteKeyET(0), p_alterET(0) {
-        t_int8 plof = whiteKey2Plof_safe(whiteKeyJI) + sharps * 7;
+    t_pitch(t_int8 whiteKeyJI, t_int8 sharps, t_int8 plof, const std::vector<t_int8> &HEJIcommas, const std::vector<t_int8> &exponents, const t_shortRational &r, const t_int8 octave = 0): p_whiteKeyET(0), p_alterET(0) {
+        plof += whiteKey2Plof_safe(whiteKeyJI) + sharps * 7;
         setJI(plof, HEJIcommas, octave - sharps * 4 / 7);
         p_JIexpVector += exponents;
         p_JIexpVector.addFromRatio(r);
@@ -589,6 +589,19 @@ public:
             v[i+2] -= this_comma;
         }
         return HEJIcommas;
+    }
+    
+    std::vector<int8_t> getExponents(bool removeTrailingZeros = false) const {
+        std::vector<int8_t> v = p_JIexpVector.get();
+        if (removeTrailingZeros) {
+            for (long j = BACH_PRIMES_JI_SIZE - 1; j > 0; j--) {
+                if (v[j] == 0)
+                    v.pop_back();
+                else
+                    break;
+            }
+        }
+        return v;
     }
 
     t_rational getHEJICommasAsRational() const;

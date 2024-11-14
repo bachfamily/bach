@@ -140,7 +140,7 @@ public:
     t_rat & operator/=(const t_rat &b);
     t_rat & operator%=(t_rat b);
     
-    t_rat fold(t_rat b) {
+    t_rat fold(t_rat b) const {
         // "folds" a rational as a pitch multiplicatively, so that it lies inside the fundamenetal "pseudooctave" between 1 and b
         // Similarly to r=mod(a,b), i.e. there is an integer q s.t. a=qb+r (with r<b) , q and r unique
         // f = fold(a, b): there is an integer p s.t. a = f · b^p; f and p are unique
@@ -154,7 +154,7 @@ public:
         // Here, we assume that  fold(a, b) = fold(a, 1/b), and that both a and b must be >0
         // otherwise an invalid rational is returned (0/0)
         
-        if (a.r_num == 0 )
+        if (a.r_num == 0)
             return a; // either 0 or invalid rational: let's keep them this way
 
         if (b.r_den == 0)
