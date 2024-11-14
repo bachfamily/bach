@@ -109,7 +109,9 @@ t_max_err codableobj_buildAst(t_codableobj *x,
         return 0;
     t_max_err err = MAX_ERR_NONE;
     t_mainFunction *newMain;
-    if (x->c_bellversion != 1) {
+    t_atom_long version = x->c_bellversion != 0 ? x->c_bellversion : bach->b_defaultbellversion;
+    
+    if (version == 2) {
         newMain = codableobj_parse_buffer_antlr(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
     } else {
         newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
@@ -768,7 +770,7 @@ t_symbol *at_bellversion = gensym("@bellversion");
 
 void codableobj_fetch_bellversion(t_codableobj *x, long ac, t_atom *av)
 {
-    x->c_bellversion = 2;
+    x->c_bellversion = 0;
     for (long i = ac - 1; i >= 0; i--) {
         t_symbol *s = atom_getsym(av + i);
         if (s == at_bellversion && i < ac - 1) {
