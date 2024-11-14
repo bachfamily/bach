@@ -112,7 +112,7 @@ public:
         setArgument("jisharps", 0L);
         setArgument("jiplof", 0L);
         setArgument("commas");
-        setArgument("ratio", t_rational(0, 1));
+        setArgument("jiratio", t_rational(0, 1));
         setArgument("monzo");
     }
 

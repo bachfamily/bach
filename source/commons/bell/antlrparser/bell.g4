@@ -305,7 +305,7 @@ BIF:
     |'exp2'|'log2'|'sqrt'|'ceil'|'acosh'|'asinh'|'atanh'|'log10'|'floor'|'round'|'trunc'
     |'fmod'|'atan2'|'hypot'|'pow'|'int'|'rat'|'num'|'den'|'abs'|'sgn'
     |'float'|'pitch'|'degree'|'octave'|'alter'|'cents'
-    |'etwhitekey'|'jiwhitekey'|'et'|'ji'|'jiratio'|'jiplof'|'etplof'|'jisharps'|'etsharps'|'etalter'|'foldratio'|'commas'|'monzo'
+    |'etwhitekey'|'jiwhitekey'|'et'|'ji'|'jiratio'|'jiplof'|'etplof'|'jisharps'|'etsharps'|'etalter'|'foldratio'|'commas'|'monzo'|'pitchkeys'
     |'mod'|'min'|'max'|'random'
     |'bessel'|'approx'|'enharm'|'makepitch'|'makepitchsc'|'mc2f'|'f2mc'|'minimum'|'maximum'|'sum'|'prod'
     |'outlet'|'inlet'

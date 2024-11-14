@@ -318,6 +318,12 @@ public:
     t_llll* call(const t_execEnv &context);
 };
 
+class t_fnPitchkeys : public t_builtInFunction
+{
+public:
+    t_fnPitchkeys();
+    t_llll* call(const t_execEnv &context);
+};
 
 
 #endif /* builtInFunction_hpp */

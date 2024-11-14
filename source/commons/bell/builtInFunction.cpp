@@ -897,3 +897,67 @@ t_llll* t_fnMonzo::call(const t_execEnv &context)
     return getMonzo(p);
 }
 
+
+///////////////
+
+
+t_fnPitchkeys::t_fnPitchkeys() : t_builtInFunction("pitchkeys") {
+    setArgument("x", llll_get());
+}
+
+t_llll* t_fnPitchkeys::call(const t_execEnv &context)
+{
+    t_llllelem *h = context.argv[1]->l_head;
+    if (!h)
+        return llll_get();
+    t_pitch p = hatom_getpitch(&h->l_hatom);
+    
+    t_llll *res = llll_get();
+    
+    t_llll *etwkll = llll_get();
+    llll_appendsym(etwkll, gensym("etwhitekey"));
+    llll_appendlong(etwkll, p.getWhiteKeyET());
+    llll_appendllll(res, etwkll);
+    
+    t_llll *etalterll = llll_get();
+    llll_appendsym(etalterll, gensym("etalter"));
+    llll_appendrat(etalterll, p.getAlterET());
+    llll_appendllll(res, etalterll);
+    
+    t_llll *octavell = llll_get();
+    llll_appendsym(octavell, gensym("octave"));
+    llll_appendlong(octavell, p.getOctave());
+    llll_appendllll(res, octavell);
+    
+    t_llll *jiwhitekeyll = llll_get();
+    llll_appendsym(jiwhitekeyll, gensym("jiwhitekey"));
+    llll_appendlong(jiwhitekeyll, p.getWhiteKeyJI());
+    llll_appendllll(res, jiwhitekeyll);
+    
+    t_llll *jisharpsll = llll_get();
+    llll_appendsym(jisharpsll, gensym("jisharps"));
+    llll_appendlong(jisharpsll, p.getSharpsJI());
+    llll_appendllll(res, jisharpsll);
+    
+    t_llll *jiplofll = llll_get();
+    llll_appendsym(jiplofll, gensym("jiplof"));
+    llll_appendlong(jiplofll, p.getPlofJI());
+    llll_appendllll(res, jiplofll);
+    
+    t_llll *commasll = llll_get();
+    llll_appendsym(commasll, gensym("commas"));
+    llll_chain(commasll, getHEJICommas(p));
+    llll_appendllll(res, commasll);
+    
+    t_llll *jiratioll = llll_get();
+    llll_appendsym(jiratioll, gensym("jiratio"));
+    llll_appendrat(jiratioll, p.getJIRatio());
+    llll_appendllll(res, jiratioll);
+    
+    t_llll *monzoll = llll_get();
+    llll_appendsym(monzoll, gensym("monzo"));
+    llll_chain(monzoll, getMonzo(p));
+    llll_appendllll(res, monzoll);
+    
+    return res;
+}

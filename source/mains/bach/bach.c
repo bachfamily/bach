@@ -1328,6 +1328,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["f2mc"] = new t_fnF2mc;
     (*bifTable)["commas"] = new t_fnCommas;
     (*bifTable)["monzo"] = new t_fnMonzo;
+    (*bifTable)["pitchkeys"] = new t_fnPitchkeys;
 
     
     (*bifTable)["outlet"] = new t_fnOutlet;
