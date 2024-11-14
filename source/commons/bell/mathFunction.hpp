@@ -101,15 +101,16 @@ public:
     }
 };
 
-class t_fnMakepitch : public t_mathFunction<8>
+class t_fnMakepitch : public t_mathFunction<9>
 {
 public:
-    t_fnMakepitch() : t_mathFunction<8>((method) hatom_fn_makepitch_ext, "makepitch") {
-        setArgument("whitekeyET", 0L);
-        setArgument("alterET", 0L);
+    t_fnMakepitch() : t_mathFunction<9>((method) hatom_fn_makepitch_ext, "makepitch") {
+        setArgument("etwhitekey", 0L);
+        setArgument("etalter", 0L);
         setArgument("octave", 0L);
-        setArgument("whitekeyJI", 0L);
-        setArgument("sharpsJI", 0L);
+        setArgument("jiwhitekey", 0L);
+        setArgument("jisharps", 0L);
+        setArgument("jiplof", 0L);
         setArgument("commas");
         setArgument("ratio", t_rational(0, 1));
         setArgument("monzo");
@@ -168,7 +169,7 @@ public:
             lists[7] = y;
         }
         
-        t_llll *res = llllIterator<8>::run(lists);
+        t_llll *res = llllIterator<9>::run(lists);
         llll_free(trash);
         llll_free(lists[5]);
         llll_free(lists[7]);

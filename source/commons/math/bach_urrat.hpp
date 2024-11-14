@@ -126,5 +126,4 @@ t_urrat<T> t_urrat<T>::inv(void) const
     return t_urrat<T>(r_den, r_num);
 }
 
-
 #endif /* bach_urrat_hpp */

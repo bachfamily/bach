@@ -825,7 +825,6 @@ t_llll* t_fnProd::call(const t_execEnv &context)
 ///////////////
 
 
-
 t_fnMc2f::t_fnMc2f() : t_builtInFunction("mc2f") {
     setArgument("mc", llll_get());
     setArgument("basefreq", 440.);
@@ -863,3 +862,38 @@ t_llll* t_fnF2mc::call(const t_execEnv &context) {
     //llll_free(f);
     return ll;
 }
+
+
+///////////////
+
+
+t_fnCommas::t_fnCommas() : t_builtInFunction("commas") {
+    setArgument("x", llll_get());
+}
+
+t_llll* t_fnCommas::call(const t_execEnv &context)
+{
+    t_llllelem *h = context.argv[1]->l_head;
+    if (!h)
+        return llll_get();
+    t_pitch p = hatom_getpitch(&h->l_hatom);
+    return getHEJICommas(p);
+}
+
+
+///////////////
+
+
+t_fnMonzo::t_fnMonzo() : t_builtInFunction("monzo") {
+    setArgument("x", llll_get());
+}
+
+t_llll* t_fnMonzo::call(const t_execEnv &context)
+{
+    t_llllelem *h = context.argv[1]->l_head;
+    if (!h)
+        return llll_get();
+    t_pitch p = hatom_getpitch(&h->l_hatom);
+    return getMonzo(p);
+}
+
