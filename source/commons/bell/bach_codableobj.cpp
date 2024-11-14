@@ -109,11 +109,11 @@ t_max_err codableobj_buildAst(t_codableobj *x,
         return 0;
     t_max_err err = MAX_ERR_NONE;
     t_mainFunction *newMain;
-    //if (x->c_bellversion == 2) {
+    if (x->c_bellversion != 1) {
         newMain = codableobj_parse_buffer_antlr(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
-    //} else {
-    //    newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
-    //}
+    } else {
+        newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
+    }
     if (newMain) {
         if (x->c_main)
             x->c_main->decrease();
