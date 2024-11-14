@@ -1326,8 +1326,8 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["maximum"] = new t_fnMaximum;
     (*bifTable)["mc2f"] = new t_fnMc2f;
     (*bifTable)["f2mc"] = new t_fnF2mc;
-    (*bifTable)["monzo"] = new t_fnF2mc;
-    (*bifTable)["commas"] = new t_fnF2mc;
+    (*bifTable)["commas"] = new t_fnCommas;
+    (*bifTable)["monzo"] = new t_fnMonzo;
 
     
     (*bifTable)["outlet"] = new t_fnOutlet;
@@ -1384,7 +1384,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["etsharps"] = new t_mathUnaryFunctionAA<hatom_fn_etsharps>("etsharps");
     (*bifTable)["etalter"] = new t_mathUnaryFunctionAA<hatom_fn_etalter>("etalter");
 
-    (*bifTable)["foldratio"] = new t_mathUnaryFunctionAA<hatom_fn_cents>("foldratio");
+    (*bifTable)["foldratio"] = new t_mathBinaryFunctionAAA<hatom_fn_fold>("foldratio");
     
     (*bifTable)["pow"] = new t_mathBinaryFunctionAAA<hatom_op_pow>("pow", "base", "exponent");
     (*bifTable)["mod"] = new t_mathBinaryFunctionAAA<hatom_fn_mod>("mod", "x", "y");

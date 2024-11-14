@@ -728,6 +728,7 @@ void hatom_fn_fold(t_hatom *h1, t_hatom *h2, t_hatom *res)
         const t_rational r1 = hatom_getrational(h1);
         const t_rational r2 = hatom_getrational(h2);
         const t_rational r = r1.fold(r2);
+        hatom_setrational(res, r);
     }
         
 }
