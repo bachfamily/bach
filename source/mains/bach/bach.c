@@ -90,6 +90,7 @@ void bach_installatompackage(t_bach *x);
 void bach_clearatomcachefolder(t_bach *x);
 void bach_unlock(t_bach *x, t_atom_long l);
 void bach_nonative(t_bach *x, t_atom_long l);
+void bach_defaultbellversion(t_bach *x, t_atom_long l);
 void *bach_llll_from_phonenumber_and_retain(t_bach *x, t_atom_long l);
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
 char bach_load_default_font(void);
@@ -164,6 +165,7 @@ void C74_EXPORT ext_main(void *moduleRef)
 
     class_addmethod(c, (method) bach_unlock, "unlock", A_LONG, 0);
     class_addmethod(c, (method) bach_nonative, "nonative", A_LONG, 0);
+    class_addmethod(c, (method) bach_defaultbellversion, "defaultbellversion", A_LONG, 0);
     class_addmethod(c, (method) bach_init_bifs, "initbifs", 0);
     class_addmethod(c, (method) bach_llll_from_phonenumber_and_retain, "llllfromphonenumberandretain", A_LONG, 0);
 
@@ -584,6 +586,13 @@ void *bach_llll_from_phonenumber_and_retain(t_bach *x, t_atom_long l)
 }
 
 
+void bach_defaultbellversion(t_bach *x, t_atom_long l)
+{
+    if (l == 1 || l == 2)
+        x->b_defaultbellversion = l;
+    else
+        object_error((t_object *) x, "%ld is not a valid bell version");
+}
 
 long parse_version_string(char *str, long *major, long *minor, long *revision, long *maintenance)
 {
@@ -714,6 +723,8 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     bach_setup(x);
     
     x->b_buildnumber_sym = get_buildnumber_sym();
+    
+    x->b_defaultbellversion = BACH_BELL_VERSION;
 
     
     // Filling version fields

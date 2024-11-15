@@ -358,6 +358,7 @@ typedef struct _bach {
     t_object             *b_ss;
     t_bool               b_no_ss;
     t_bool              b_nonative;
+    t_atom_long         b_defaultbellversion;
     
     class pvManager     *b_thePvManager;
     
