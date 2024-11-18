@@ -128,7 +128,7 @@ lvalueSpecsItem: (UPLUS|UMINUS)* lvalueSpecsUItem
 ;
 
 dataflowHead: (item|simpleFuncall) #dataflowHeadSimple
-| lvalue #dataflowHeadLvalue
+| var #dataflowHeadLvalue
 ;
 
 funcall: simpleFuncall #funcallSimple

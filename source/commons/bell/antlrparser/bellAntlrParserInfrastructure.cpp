@@ -278,12 +278,12 @@ public:
     }
     
     antlrcpp::Any visitDataflowHeadLvalue(bellParser::DataflowHeadLvalueContext *context) override {
-        lvalue *v = safeAnyCast<lvalue*>(visit(context->lvalue()));
-        astNode *n = v->getVar();
+        auto *v = safeAnyCast<astNode*>(visit(context->var()));
+        /*astNode *n = v->getVar();
         lvalueSpecs *s = v->getSpecs();
         if (s)
-            n = s->toReadNode(n, params->owner);
-        return n;
+            n = s->toReadNode(n, params->owner);*/
+        return v;
     }
     
     antlrcpp::Any visitFuncallDataflow(bellParser::FuncallDataflowContext *context) override {

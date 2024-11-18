@@ -197,7 +197,7 @@ void bellParserInitialize() {
   	1,0,0,0,267,270,1,0,0,0,268,266,1,0,0,0,268,269,1,0,0,0,269,271,1,0,0,
   	0,270,268,1,0,0,0,271,272,3,30,15,0,272,33,1,0,0,0,273,276,3,54,27,0,
   	274,276,3,28,14,0,275,273,1,0,0,0,275,274,1,0,0,0,276,279,1,0,0,0,277,
-  	279,3,44,22,0,278,275,1,0,0,0,278,277,1,0,0,0,279,35,1,0,0,0,280,289,
+  	279,3,38,19,0,278,275,1,0,0,0,278,277,1,0,0,0,279,35,1,0,0,0,280,289,
   	3,28,14,0,281,284,3,34,17,0,282,283,5,51,0,0,283,285,3,28,14,0,284,282,
   	1,0,0,0,285,286,1,0,0,0,286,284,1,0,0,0,286,287,1,0,0,0,287,289,1,0,0,
   	0,288,280,1,0,0,0,288,281,1,0,0,0,289,37,1,0,0,0,290,292,7,2,0,0,291,
@@ -2234,8 +2234,8 @@ void bellParser::DataflowHeadContext::copyFrom(DataflowHeadContext *ctx) {
 
 //----------------- DataflowHeadLvalueContext ------------------------------------------------------------------
 
-bellParser::LvalueContext* bellParser::DataflowHeadLvalueContext::lvalue() {
-  return getRuleContext<bellParser::LvalueContext>(0);
+bellParser::VarContext* bellParser::DataflowHeadLvalueContext::var() {
+  return getRuleContext<bellParser::VarContext>(0);
 }
 
 bellParser::DataflowHeadLvalueContext::DataflowHeadLvalueContext(DataflowHeadContext *ctx) { copyFrom(ctx); }
@@ -2309,7 +2309,7 @@ bellParser::DataflowHeadContext* bellParser::dataflowHead() {
       _localctx = _tracker.createInstance<bellParser::DataflowHeadLvalueContext>(_localctx);
       enterOuterAlt(_localctx, 2);
       setState(277);
-      lvalue();
+      var();
       break;
     }
 

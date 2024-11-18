@@ -445,7 +445,7 @@ public:
   public:
     DataflowHeadLvalueContext(DataflowHeadContext *ctx);
 
-    LvalueContext *lvalue();
+    VarContext *var();
 
     virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
