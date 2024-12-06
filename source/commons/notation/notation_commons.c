@@ -7170,7 +7170,7 @@ void fill_notation_typo_preferences_SMuFL(t_notation_obj *r_ob, double juce_mul 
     fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 58594, 58595, 58596, 58597, 58598, 58599, 58600, 58601, 58602);
     fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 57424, 57442, 57436, 57450);
     r_ob->notation_typo_preferences.clef_ux_shift = 0.; // TO DO
-    r_ob->notation_typo_preferences.clef_uy_shift = 4.4;
+    r_ob->notation_typo_preferences.clef_uy_shift = 4.5;
     // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
     // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions
     fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); // TO DO
