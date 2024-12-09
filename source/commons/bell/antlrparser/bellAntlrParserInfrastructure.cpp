@@ -281,7 +281,7 @@ public:
         auto *v = safeAnyCast<astNode*>(visit(context->var()));
         /*astNode *n = v->getVar();
         lvalueSpecs *s = v->getSpecs();
-        if (s)
+        if fa(s)
             n = s->toReadNode(n, params->owner);*/
         return v;
     }
@@ -443,6 +443,11 @@ public:
         }
         *(outPtr - 1) = 0;
         astNode *r = new astConst(gensym(cstr), params->owner);
+        return r;
+    }
+    
+    antlrcpp::Any visitItemEmptySymbol(bellParser::ItemEmptySymbolContext *context) override {
+        astNode* r = new astConst(gensym(""), params->owner);
         return r;
     }
     
@@ -982,6 +987,8 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x, long *codeac, t_a
     lexer.setCodeac(params.codeac);
     CommonTokenStream tokens(&lexer);
     bellParser parser(&tokens);
+    parser.setTrace(true);
+    parser.setProfile(true);
     parser.removeErrorListeners();
     parser.addErrorListener(new bellErrorListener());
         

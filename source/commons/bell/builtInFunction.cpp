@@ -772,6 +772,26 @@ t_llll* t_fnGeomser::call(const t_execEnv &context) {
 
 ///////////////
 
+
+t_fnFareyser::t_fnFareyser() : t_builtInFunction("fareyser") {
+    setArgument("order", 0L);
+    setArgument("offset", t_rational({0, 1}));
+    setArgument("maxlimit", 0L);
+}
+
+t_llll* t_fnFareyser::call(const t_execEnv &context) {
+    long order = context.argv[1]->l_size ? hatom_getlong(&context.argv[1]->l_head->l_hatom) : 0;
+    t_rational offset = context.argv[2]->l_size ? hatom_getrational(&context.argv[2]->l_head->l_hatom) : t_rational({0, 1});
+    long max_limit = context.argv[3]->l_size ? hatom_getlong(&context.argv[3]->l_head->l_hatom) : 0;
+    
+    t_llll *ll = llll_farey(order, offset, max_limit);
+        
+    return ll;
+}
+
+
+///////////////
+
 t_fnSum::t_fnSum() : t_builtInFunction("sum")
 {
     setArgument("llll");

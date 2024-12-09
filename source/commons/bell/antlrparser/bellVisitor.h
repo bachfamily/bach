@@ -39,6 +39,8 @@ public:
 
     virtual std::any visitFundef(bellParser::FundefContext *context) = 0;
 
+    virtual std::any visitList(bellParser::ListContext *context) = 0;
+
     virtual std::any visitSequence(bellParser::SequenceContext *context) = 0;
 
     virtual std::any visitNullified(bellParser::NullifiedContext *context) = 0;
@@ -154,8 +156,6 @@ public:
     virtual std::any visitIfthen(bellParser::IfthenContext *context) = 0;
 
     virtual std::any visitIfthenelse(bellParser::IfthenelseContext *context) = 0;
-
-    virtual std::any visitList(bellParser::ListContext *context) = 0;
 
 
 };

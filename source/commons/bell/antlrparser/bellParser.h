@@ -37,14 +37,14 @@ public:
 
   enum {
     RuleEverything = 0, RuleProgram = 1, RuleFunarg = 2, RuleFunargList = 3, 
-    RuleLiftedargList = 4, RuleFundef = 5, RuleSequence = 6, RuleNullified = 7, 
-    RuleWhileloop = 8, RuleForarg = 9, RuleForargList = 10, RuleForloop = 11, 
-    RuleArgsByNameList = 12, RuleArgsByPositionList = 13, RuleSimpleFuncall = 14, 
-    RuleLvalueSpecsUItem = 15, RuleLvalueSpecsItem = 16, RuleDataflowHead = 17, 
-    RuleFuncall = 18, RuleVar = 19, RuleLvalueSpecsUFinal = 20, RuleLvalueSpecsFinal = 21, 
-    RuleLvalue = 22, RuleFakeLvalue = 23, RuleLvalueSpecs = 24, RuleListEnd = 25, 
-    RuleExpr = 26, RuleItem = 27, RuleAssignment = 28, RuleConditional = 29, 
-    RuleList = 30
+    RuleLiftedargList = 4, RuleFundef = 5, RuleList = 6, RuleSequence = 7, 
+    RuleNullified = 8, RuleWhileloop = 9, RuleForarg = 10, RuleForargList = 11, 
+    RuleForloop = 12, RuleArgsByNameList = 13, RuleArgsByPositionList = 14, 
+    RuleSimpleFuncall = 15, RuleLvalueSpecsUItem = 16, RuleLvalueSpecsItem = 17, 
+    RuleDataflowHead = 18, RuleFuncall = 19, RuleVar = 20, RuleLvalueSpecsUFinal = 21, 
+    RuleLvalueSpecsFinal = 22, RuleLvalue = 23, RuleFakeLvalue = 24, RuleLvalueSpecs = 25, 
+    RuleListEnd = 26, RuleExpr = 27, RuleItem = 28, RuleAssignment = 29, 
+    RuleConditional = 30
   };
 
   explicit bellParser(antlr4::TokenStream *input);
@@ -75,6 +75,7 @@ public:
   class FunargListContext;
   class LiftedargListContext;
   class FundefContext;
+  class ListContext;
   class SequenceContext;
   class NullifiedContext;
   class WhileloopContext;
@@ -98,8 +99,7 @@ public:
   class ExprContext;
   class ItemContext;
   class AssignmentContext;
-  class ConditionalContext;
-  class ListContext; 
+  class ConditionalContext; 
 
   class  EverythingContext : public antlr4::ParserRuleContext {
   public:
@@ -247,6 +247,20 @@ public:
   };
 
   FundefContext* fundef();
+
+  class  ListContext : public antlr4::ParserRuleContext {
+  public:
+    ListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  ListContext* list();
 
   class  SequenceContext : public antlr4::ParserRuleContext {
   public:
@@ -1127,20 +1141,6 @@ public:
   };
 
   ConditionalContext* conditional();
-
-  class  ListContext : public antlr4::ParserRuleContext {
-  public:
-    ListContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ListContext* list();
 
 
   bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;

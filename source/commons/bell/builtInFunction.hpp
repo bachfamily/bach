@@ -276,6 +276,13 @@ public:
     t_llll* call(const t_execEnv &context);
 };
 
+class t_fnFareyser : public t_builtInFunction
+{
+public:
+    t_fnFareyser();
+    t_llll* call(const t_execEnv &context);
+};
+
 class t_fnSum : public t_builtInFunction
 {
 public:

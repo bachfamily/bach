@@ -55,6 +55,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual std::any visitList(bellParser::ListContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual std::any visitSequence(bellParser::SequenceContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -284,10 +288,6 @@ public:
   }
 
   virtual std::any visitIfthenelse(bellParser::IfthenelseContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual std::any visitList(bellParser::ListContext *ctx) override {
     return visitChildren(ctx);
   }
 

@@ -84,6 +84,9 @@ liftedargList: LIFT (LOCALVAR ',')* LOCALVAR
 fundef: funargList liftedargList? FUNDEF list
 ;
 
+list: expr+
+;
+
 sequence: list
 | nullified+ list? 
 ;
@@ -231,8 +234,6 @@ conditional: IF sequence THEN list #ifthen
 | IF sequence THEN sequence ELSE list #ifthenelse
 ;
 
-list: expr+
-;
 
 
 
@@ -266,7 +267,7 @@ K_PI: 'pi' { noParams = false; noUnary = true; };
 BTSYMBOL: '`' (~[ \t\r\n\u0001])+ { noParams = true; noUnary = true; };
 DQSYMBOL: '"' ( '\\"' | ~["] )* ~'\\' '"' { noParams = true; noUnary = true; };
 SQSYMBOL: '\'' ( '\\\'' | ~['] )* ~[\\] '\'' { noParams = true; noUnary = true; };
-EMPTYSYMBOL: ('""' | '\'\''){ noParams = true; noUnary = true; };
+EMPTYSYMBOL: ('""' | '\'\'') { noParams = true; noUnary = true; };
 
 BACHNULL: 'null' { noParams = false; noUnary = false; };
 BACHNIL: 'nil' { noParams = false; noUnary = false; };
@@ -300,7 +301,7 @@ BIF:
     ('length'|'depth'|'is'|'nth'|'sort'|'contains'|'rev'|'rot'|'trans'|'flat'|'slice'|'left'
     |'right'|'subs'|'insert'|'find'|'finditems'|'findaddrs'|'scramble'|'minmax'|'perm'|'comb'
     |'cartesianprod'|'wrap'|'group'|'delace'|'thin'|'classify'|'union'|'intersection'|'symdiff'|'diff'
-    |'primeser'|'arithmser'|'geomser'|'map'|'reduce'|'apply'
+    |'primeser'|'arithmser'|'geomser'|'fareyser'|'map'|'reduce'|'apply'
     |'cos'|'sin'|'tan'|'exp'|'log'|'acos'|'asin'|'atan'|'cosh'|'sinh'|'tanh'
     |'exp2'|'log2'|'sqrt'|'ceil'|'acosh'|'asinh'|'atanh'|'log10'|'floor'|'round'|'trunc'
     |'fmod'|'atan2'|'hypot'|'pow'|'int'|'rat'|'num'|'den'|'abs'|'sgn'

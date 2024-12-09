@@ -1327,6 +1327,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["primeser"] = new t_fnPrimeser;
     (*bifTable)["arithmser"] = new t_fnArithmser;
     (*bifTable)["geomser"] = new t_fnGeomser;
+    (*bifTable)["fareyser"] = new t_fnFareyser;
     (*bifTable)["map"] = new t_fnMap;
     (*bifTable)["reduce"] = new t_fnReduce;
     (*bifTable)["apply"] = new t_fnApply;
