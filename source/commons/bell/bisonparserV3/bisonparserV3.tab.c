@@ -52,15 +52,16 @@
 
 
 /* Substitute the variable and function names.  */
-#define yyparse stringparser_parse
-#define yylex   stringparser_lex
-#define yyerror stringparser_error
-#define yydebug stringparser_debug
+#define yyparse bisonparserV3_parse
+#define yylex   bisonparserV3_lex
+#define yyerror bisonparserV3_error
+#define yydebug bisonparserV3_debug
 
 /* First part of user prologue.  */
+#line 1 "bisonparserV3.y"
 
     /*
-     *  stringparser.y
+     *  bisonparserV3.y
      *
      * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
      *
@@ -77,6 +78,7 @@
      * If not, see <https://www.gnu.org/licenses/>.
      *
      */
+#line 28 "bisonparserV3.y"
 
     #ifdef CONFIGURATION_Development
     //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
@@ -107,6 +109,7 @@
 
     
 
+#line 113 "bisonparserV3.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -129,7 +132,7 @@
 #  endif
 # endif
 
-#include "stringparser.tab.h"
+#include "bisonparserV3.tab.h"
 
 /* Symbol kind.  */
 enum yysymbol_kind_t
@@ -289,13 +292,14 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 static YYSTYPE yyval_default;
 
 /* Second part of user prologue.  */
+#line 151 "bisonparserV3.y"
 
-    #include "stringparser_tab_nolines.h"
+    #include "bisonparserV3_tab_nolines.h"
     
     #define YY_HEADER_EXPORT_START_CONDITIONS
     #define YY_NO_UNISTD_H
     
-    #include "stringparser_lex_nolines.h"
+    #include "bisonparserV3_lex_nolines.h"
     
 
     
@@ -307,11 +311,12 @@ static YYSTYPE yyval_default;
     const char *s);
     
     
-    YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf);
-    void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
+    YY_BUFFER_STATE bisonparserV3_scan_string(yyscan_t myscanner, const char *buf);
+    void bisonparserV3_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
 
 
 
+#line 320 "bisonparserV3.tab.c"
 
 
 #include <stddef.h>
@@ -1617,10 +1622,10 @@ static const short yyconfl[] =
 #define yylval (yystackp->yyval)
 #undef yylloc
 #define yylloc (yystackp->yyloc)
-#define stringparser_nerrs yynerrs
-#define stringparser_char yychar
-#define stringparser_lval yylval
-#define stringparser_lloc yylloc
+#define bisonparserV3_nerrs yynerrs
+#define bisonparserV3_char yychar
+#define bisonparserV3_lval yylval
+#define bisonparserV3_lloc yylloc
 
 enum { YYENOMEM = -2 };
 
@@ -2132,55 +2137,68 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
   switch (yyrule)
     {
   case 2: /* program: %empty  */
+#line 191 "bisonparserV3.y"
                 {
     params->ast = new astConst(llll_get(), params->owner);
     *params->codeac = -1;
     code_dev_post ("parse: empty program\n");
 }
+#line 2147 "bisonparserV3.tab.c"
     break;
 
   case 3: /* program: NAMEDPARAM  */
+#line 196 "bisonparserV3.y"
              {
     params->ast = new astConst(llll_get(), params->owner);
     *params->codeac = 0;
     code_dev_post ("parse: NAMEDPARAM: empty program\n");
     YYACCEPT;
 }
+#line 2158 "bisonparserV3.tab.c"
     break;
 
   case 4: /* program: sequence  */
+#line 202 "bisonparserV3.y"
            {
     params->ast = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n);
     *params->codeac = -1;
     code_dev_post("codeac: %ld", *params->codeac);
     code_dev_post ("parse: sequence: program\n");
 }
+#line 2169 "bisonparserV3.tab.c"
     break;
 
   case 5: /* program: sequence NAMEDPARAM  */
+#line 208 "bisonparserV3.y"
                       {
     params->ast = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.n);
     code_dev_post("codeac: %ld", *params->codeac);
     code_dev_post ("parse: sequence NAMEDPARAM: program\n");
     YYACCEPT;
 }
+#line 2180 "bisonparserV3.tab.c"
     break;
 
   case 7: /* sequence: sequence SEQ list  */
+#line 217 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astSequence((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: seq\n");
 }
+#line 2189 "bisonparserV3.tab.c"
     break;
 
   case 8: /* ifThenElse: IF_KW sequence THEN_KW list  */
+#line 223 "bisonparserV3.y"
                                          {
     ((*yyvalp).n) = new astIfThenElse((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), nullptr, params->owner);
     code_dev_post ("parse: if then\n");
 }
+#line 2198 "bisonparserV3.tab.c"
     break;
 
   case 9: /* ifThenElse: IF_KW sequence THEN_KW list ELSE_KW list  */
+#line 227 "bisonparserV3.y"
                                            {
     // ask JLG: this causes 26 r/r conflicts.
     // Putting
@@ -2202,132 +2220,168 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astIfThenElse((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: if then else\n");
 }
+#line 2224 "bisonparserV3.tab.c"
     break;
 
   case 10: /* whileloop: WHILE_KW sequence DO_KW list  */
+#line 249 "bisonparserV3.y"
                                          {
     ((*yyvalp).n) = new astWhileLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: while...do\n");
 }
+#line 2233 "bisonparserV3.tab.c"
     break;
 
   case 11: /* whileloop: WHILE_KW sequence COLLECT_KW list  */
+#line 253 "bisonparserV3.y"
                                     {
     ((*yyvalp).n) = new astWhileLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: while...collect\n");
 }
+#line 2242 "bisonparserV3.tab.c"
     break;
 
   case 12: /* forloop: FOR_KW forargList DO_KW list  */
+#line 260 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.fal), nullptr, nullptr, nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList DO_KW list\n");
 }
+#line 2251 "bisonparserV3.tab.c"
     break;
 
   case 13: /* forloop: FOR_KW forargList WITH_KW argsByNameList DO_KW list  */
+#line 265 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.fal), nullptr, nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: forargList WITH_KW argsByNameList DO_KW list\n");
 }
+#line 2260 "bisonparserV3.tab.c"
     break;
 
   case 14: /* forloop: FOR_KW forargList AS_KW sequence DO_KW list  */
+#line 270 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList AS_KW sequence DO_KW list\n");
 }
+#line 2269 "bisonparserV3.tab.c"
     break;
 
   case 15: /* forloop: FOR_KW forargList AS_KW sequence WITH_KW argsByNameList DO_KW list  */
+#line 275 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-6)].yystate.yysemantics.yyval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList DO_KW list\n");
 }
+#line 2278 "bisonparserV3.tab.c"
     break;
 
   case 16: /* forloop: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence DO_KW list  */
+#line 280 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_DO>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-6)].yystate.yysemantics.yyval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence DO_KW list\n");
 }
+#line 2287 "bisonparserV3.tab.c"
     break;
 
   case 17: /* forloop: FOR_KW forargList COLLECT_KW list  */
+#line 285 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.fal), nullptr, nullptr, nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList COLLECT_KW list\n");
 }
+#line 2296 "bisonparserV3.tab.c"
     break;
 
   case 18: /* forloop: FOR_KW forargList WITH_KW argsByNameList COLLECT_KW list  */
+#line 290 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.fal), nullptr, nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: forargList WITH_KW argsByNameList COLLECT_KW list\n");
 }
+#line 2305 "bisonparserV3.tab.c"
     break;
 
   case 19: /* forloop: FOR_KW forargList AS_KW sequence COLLECT_KW list  */
+#line 295 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList AS_KW sequence COLLECT_KW list\n");
 }
+#line 2314 "bisonparserV3.tab.c"
     break;
 
   case 20: /* forloop: FOR_KW forargList AS_KW sequence WITH_KW argsByNameList COLLECT_KW list  */
+#line 300 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-6)].yystate.yysemantics.yyval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList COLLECT_KW list\n");
 }
+#line 2323 "bisonparserV3.tab.c"
     break;
 
   case 21: /* forloop: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence COLLECT_KW list  */
+#line 305 "bisonparserV3.y"
 {
     ((*yyvalp).n) = new astForLoop<E_LOOP_COLLECT>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-6)].yystate.yysemantics.yyval.fal), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.snpl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence COLLECT_KW list\n");
 }
+#line 2332 "bisonparserV3.tab.c"
     break;
 
   case 22: /* forargList: forarg  */
+#line 311 "bisonparserV3.y"
                     {
     ((*yyvalp).fal) = new countedList<forArg *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.forarg));
     code_dev_post ("parse: for iterator (first term)\n");
 }
+#line 2341 "bisonparserV3.tab.c"
     break;
 
   case 23: /* forargList: forargList COMMA forarg  */
+#line 315 "bisonparserV3.y"
                           {
     ((*yyvalp).fal) = new countedList<forArg *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.forarg), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.fal));
     code_dev_post ("parse: for iterator (subsequent term)\n");
 }
+#line 2350 "bisonparserV3.tab.c"
     break;
 
   case 24: /* forarg: LOCALVAR IN_KW sequence  */
+#line 321 "bisonparserV3.y"
                                  {
     ((*yyvalp).forarg) = new forArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n));
     addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym));
     code_dev_post ("parse: for iterator with index");
 }
+#line 2360 "bisonparserV3.tab.c"
     break;
 
   case 25: /* forarg: LOCALVAR LOCALVAR IN_KW sequence  */
+#line 326 "bisonparserV3.y"
                                    {
     addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.sym));
     addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym));
     ((*yyvalp).forarg) = new forArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n));
     code_dev_post ("parse: for iterator with index and address");
 }
+#line 2371 "bisonparserV3.tab.c"
     break;
 
   case 26: /* $@1: %empty  */
+#line 334 "bisonparserV3.y"
                            {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     *++(params->argumentsStack) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.funarglist);
 }
+#line 2381 "bisonparserV3.tab.c"
     break;
 
   case 27: /* fundef: funargList FUNDEF $@1 list  */
+#line 338 "bisonparserV3.y"
        {
     t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     params->funcs->insert(fn);
@@ -2341,9 +2395,11 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->argumentsStack);
     code_dev_post ("parse: user defined function funargList FUNDEF");
 }
+#line 2399 "bisonparserV3.tab.c"
     break;
 
   case 28: /* $@2: %empty  */
+#line 351 "bisonparserV3.y"
          {
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
@@ -2351,9 +2407,11 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     params->fnDepth++;
     *++(params->argumentsStack) = nullptr;
 }
+#line 2411 "bisonparserV3.tab.c"
     break;
 
   case 29: /* fundef: FUNDEF $@2 list  */
+#line 357 "bisonparserV3.y"
        {
     t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     params->funcs->insert(fn);
@@ -2367,9 +2425,11 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->argumentsStack);
     code_dev_post ("parse: user defined function FUNDEF");
 }
+#line 2429 "bisonparserV3.tab.c"
     break;
 
   case 30: /* $@3: %empty  */
+#line 370 "bisonparserV3.y"
                                   {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
@@ -2380,9 +2440,11 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     }
     *++(params->argumentsStack) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.funarglist);
 }
+#line 2444 "bisonparserV3.tab.c"
     break;
 
   case 31: /* fundef: funargList liftedargList FUNDEF $@3 list  */
+#line 379 "bisonparserV3.y"
        {
     t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     params->funcs->insert(fn);
@@ -2396,9 +2458,11 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->argumentsStack);
     code_dev_post ("parse: user defined function funargList liftedargList");
 }
+#line 2462 "bisonparserV3.tab.c"
     break;
 
   case 32: /* $@4: %empty  */
+#line 392 "bisonparserV3.y"
                        {
     params->fnDepth++;
     ++(params->localVariablesStack);
@@ -2411,9 +2475,11 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
         (*(params->liftedVariablesStack))->insert(v->getItem().getName());
     }
 }
+#line 2479 "bisonparserV3.tab.c"
     break;
 
   case 33: /* fundef: liftedargList FUNDEF $@4 list  */
+#line 403 "bisonparserV3.y"
        {
     t_function *fn = new t_userFunction(*++(params->argumentsStack), *(params->localVariablesStack), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     params->funcs->insert(fn);
@@ -2427,9 +2493,11 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     --(params->argumentsStack);
     code_dev_post ("parse: user defined function liftedargList FUNDEF");
 }
+#line 2497 "bisonparserV3.tab.c"
     break;
 
   case 34: /* funargList: LOCALVAR  */
+#line 418 "bisonparserV3.y"
                       {
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
@@ -2437,18 +2505,22 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     (**(params->localVariablesAuxMapStack))[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)] = 1;
     code_dev_post ("parse: funargList (first term, no default)\n");
 }
+#line 2509 "bisonparserV3.tab.c"
     break;
 
   case 35: /* funargList: ELLIPSIS  */
+#line 425 "bisonparserV3.y"
            {
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg(gensym("<...>")));
     code_dev_post ("parse: ELLIPSIS");
 }
+#line 2520 "bisonparserV3.tab.c"
     break;
 
   case 36: /* $@5: %empty  */
+#line 431 "bisonparserV3.y"
                   {
     // two levels are pushed:
     // one for the function, whose definition is beginning here,
@@ -2458,9 +2530,11 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     (**(params->localVariablesAuxMapStack))[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.sym)] = 1;
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
 }
+#line 2534 "bisonparserV3.tab.c"
     break;
 
   case 37: /* funargList: LOCALVAR ASSIGN $@5 list  */
+#line 439 "bisonparserV3.y"
        {
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), *(params->localVariablesStack)));
     delete *(params->localVariablesAuxMapStack);
@@ -2470,32 +2544,40 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesStack--) = nullptr;
     code_dev_post ("parse: funargList (first term, with default)\n");
 }
+#line 2548 "bisonparserV3.tab.c"
     break;
 
   case 38: /* funargList: funargList COMMA LOCALVAR  */
+#line 448 "bisonparserV3.y"
                             {
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.funarglist));
     (**(params->localVariablesAuxMapStack))[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)] = 1;
     code_dev_post ("parse: funargList (subsequent term, no default)\n");
 }
+#line 2558 "bisonparserV3.tab.c"
     break;
 
   case 39: /* funargList: funargList COMMA ELLIPSIS  */
+#line 453 "bisonparserV3.y"
                             {
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg(gensym("<...>")), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.funarglist));
     code_dev_post ("parse: funargList (subsequent term, no default)\n");
 }
+#line 2567 "bisonparserV3.tab.c"
     break;
 
   case 40: /* $@6: %empty  */
+#line 457 "bisonparserV3.y"
                                    {
     (**(params->localVariablesAuxMapStack))[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.sym)] = 1;
     ++(params->localVariablesStack);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
 }
+#line 2577 "bisonparserV3.tab.c"
     break;
 
   case 41: /* funargList: funargList COMMA LOCALVAR ASSIGN $@6 list  */
+#line 461 "bisonparserV3.y"
        {
     ((*yyvalp).funarglist) = new countedList<funArg *>(new funArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), *(params->localVariablesStack)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-5)].yystate.yysemantics.yyval.funarglist));
     delete *(params->localVariablesAuxMapStack);
@@ -2503,128 +2585,162 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     *(params->localVariablesStack--) = nullptr;
     code_dev_post ("parse: funargList (subsequent term, with default)\n");
 }
+#line 2589 "bisonparserV3.tab.c"
     break;
 
   case 42: /* liftedargList: LIFT LOCALVAR  */
+#line 470 "bisonparserV3.y"
                               {
     ((*yyvalp).liftedarglist) = new countedList<t_localVar>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
     code_dev_post ("parse: liftedargList (first term)\n");
 }
+#line 2598 "bisonparserV3.tab.c"
     break;
 
   case 43: /* liftedargList: liftedargList COMMA LOCALVAR  */
+#line 474 "bisonparserV3.y"
                                {
     ((*yyvalp).liftedarglist) = new countedList<t_localVar>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.liftedarglist));
     code_dev_post ("parse: liftedargList (subsequent term)\n");
 }
+#line 2607 "bisonparserV3.tab.c"
     break;
 
   case 45: /* functionApplication: exp APPLY funcall  */
+#line 482 "bisonparserV3.y"
 {
     (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc)->addDataflowStyleArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n));
     code_dev_post ("parse: term APPLY funcall");
     ((*yyvalp).fc) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc);
 }
+#line 2617 "bisonparserV3.tab.c"
     break;
 
   case 46: /* funcall: term STARTPARAMS argsByPositionList CLOSEDROUND  */
+#line 488 "bisonparserV3.y"
                                                           {
     ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.nl), nullptr, params->owner);
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.nl);
     code_dev_post ("parse: function call with args by position");
 }
+#line 2627 "bisonparserV3.tab.c"
     break;
 
   case 47: /* funcall: term STARTPARAMS argsByNameList CLOSEDROUND  */
+#line 493 "bisonparserV3.y"
                                               {
     ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), nullptr, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.snpl), params->owner);
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.snpl);
     code_dev_post ("parse: function call with args by name");
 }
+#line 2637 "bisonparserV3.tab.c"
     break;
 
   case 48: /* funcall: term STARTPARAMS argsByPositionList COMMA argsByNameList CLOSEDROUND  */
+#line 498 "bisonparserV3.y"
                                                                        {
     ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-5)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.nl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.snpl), params->owner);
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.nl);
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.snpl);
     code_dev_post ("parse: function call with args by position and by name");
 }
+#line 2648 "bisonparserV3.tab.c"
     break;
 
   case 49: /* funcall: term STARTPARAMS argsByPositionList argsByNameList CLOSEDROUND  */
+#line 504 "bisonparserV3.y"
                                                                  {
     ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-4)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.nl), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.snpl), params->owner);
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.nl);
     delete (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.snpl);
     code_dev_post ("parse: function call with args by position and by name");
 }
+#line 2659 "bisonparserV3.tab.c"
     break;
 
   case 50: /* funcall: term STARTPARAMS CLOSEDROUND  */
+#line 510 "bisonparserV3.y"
                                {
     ((*yyvalp).fc) = new astFunctionCall((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: function call with no args");
 }
+#line 2668 "bisonparserV3.tab.c"
     break;
 
   case 51: /* argsByPositionList: sequence  */
+#line 516 "bisonparserV3.y"
                               {
     ((*yyvalp).nl) = new countedList<astNode *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n));
     code_dev_post ("parse: argsByPositionList (first term)\n");
 }
+#line 2677 "bisonparserV3.tab.c"
     break;
 
   case 52: /* argsByPositionList: argsByPositionList COMMA sequence  */
+#line 520 "bisonparserV3.y"
                                     {
     ((*yyvalp).nl) = new countedList<astNode *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.nl));
     code_dev_post ("parse: argsByPositionList (subsequent term)\n");
 }
+#line 2686 "bisonparserV3.tab.c"
     break;
 
   case 53: /* argsByNameList: argByName  */
+#line 526 "bisonparserV3.y"
                            {
     ((*yyvalp).snpl) = new countedList<symNodePair *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.snp));
     code_dev_post ("parse: argsByNameList (first term)\n");
 }
+#line 2695 "bisonparserV3.tab.c"
     break;
 
   case 54: /* argsByNameList: argsByNameList COMMA argByName  */
+#line 530 "bisonparserV3.y"
                                  {
     ((*yyvalp).snpl) = new countedList<symNodePair *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.snp), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.snpl));
     code_dev_post ("parse: argsByNameList (subsequent term)\n");
 }
+#line 2704 "bisonparserV3.tab.c"
     break;
 
   case 55: /* argsByNameList: argsByNameList argByName  */
+#line 534 "bisonparserV3.y"
                            {
     ((*yyvalp).snpl) = new countedList<symNodePair *>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.snp), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.snpl));
     code_dev_post ("parse: argsByNameList (subsequent term)\n");
 }
+#line 2713 "bisonparserV3.tab.c"
     break;
 
   case 56: /* argByName: NAMEDPARAM sequence  */
+#line 540 "bisonparserV3.y"
                                 {
     ((*yyvalp).snp) = new symNodePair((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n));
     code_dev_post ("parse: named parameter %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.sym)->s_name);
 }
+#line 2722 "bisonparserV3.tab.c"
     break;
 
   case 59: /* list: simpleList listEnd  */
+#line 547 "bisonparserV3.y"
                                   {
     ((*yyvalp).n) = new astConcat((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: cat\n");
 }
+#line 2731 "bisonparserV3.tab.c"
     break;
 
   case 66: /* simpleList: simpleList exp  */
+#line 561 "bisonparserV3.y"
                               {
     ((*yyvalp).n) = new astConcat((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: cat\n");
 }
+#line 2740 "bisonparserV3.tab.c"
     break;
 
   case 68: /* assignment: OUTLET ASSIGN list  */
+#line 568 "bisonparserV3.y"
                      {
     if (params->dataOutlets && (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.l) > *(params->dataOutlets))
         *(params->dataOutlets) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.l);
@@ -2637,9 +2753,11 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
     code_dev_post("parse: OUTLET ASSIGN list");
 }
+#line 2757 "bisonparserV3.tab.c"
     break;
 
   case 69: /* assignment: DIROUTLET ASSIGN list  */
+#line 580 "bisonparserV3.y"
                         {
     if (params->directOutlets && (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.l) > *(params->directOutlets))
         *(params->directOutlets) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.l);
@@ -2649,319 +2767,409 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
     code_dev_post("parse: DIROUTLET ASSIGN list");
 }
+#line 2771 "bisonparserV3.tab.c"
     break;
 
   case 70: /* assign: var ASSIGN list  */
+#line 591 "bisonparserV3.y"
                          {
     ((*yyvalp).n) = new astAssign((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ASSIGN list");
 }
+#line 2780 "bisonparserV3.tab.c"
     break;
 
   case 71: /* assign: INIT LOCALVAR ASSIGN list  */
+#line 595 "bisonparserV3.y"
                             {
     addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym));
     ((*yyvalp).n) = new astInit((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.sym), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: INIT LOCALVAR ASSIGN list");
 }
+#line 2790 "bisonparserV3.tab.c"
     break;
 
   case 72: /* assign: var lvalueStepList ASSIGN list  */
+#line 600 "bisonparserV3.y"
                                  {
     ((*yyvalp).n) = new astRichAssignment<E_RA_STANDARD>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ASSIGN list");
 }
+#line 2799 "bisonparserV3.tab.c"
     break;
 
   case 73: /* assign: var APLUS list  */
+#line 604 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astOperatorAPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var APLUS list");
 }
+#line 2808 "bisonparserV3.tab.c"
     break;
 
   case 74: /* assign: var lvalueStepList APLUS list  */
+#line 608 "bisonparserV3.y"
                                 {
     ((*yyvalp).n) = new astOperatorRAPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APLUS list");
 }
+#line 2817 "bisonparserV3.tab.c"
     break;
 
   case 75: /* assign: var AMINUS list  */
+#line 612 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astOperatorAMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var AMINUS list");
 }
+#line 2826 "bisonparserV3.tab.c"
     break;
 
   case 76: /* assign: var lvalueStepList AMINUS list  */
+#line 616 "bisonparserV3.y"
                                  {
     ((*yyvalp).n) = new astOperatorRAMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AMINUS list");
 }
+#line 2835 "bisonparserV3.tab.c"
     break;
 
   case 77: /* assign: var ATIMES list  */
+#line 620 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astOperatorATimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ATIMES list");
 }
+#line 2844 "bisonparserV3.tab.c"
     break;
 
   case 78: /* assign: var lvalueStepList ATIMES list  */
+#line 624 "bisonparserV3.y"
                                  {
     ((*yyvalp).n) = new astOperatorRATimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ATIMES list");
 }
+#line 2853 "bisonparserV3.tab.c"
     break;
 
   case 79: /* assign: var APOWOP list  */
+#line 628 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astOperatorAPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var APOWOP list");
 }
+#line 2862 "bisonparserV3.tab.c"
     break;
 
   case 80: /* assign: var lvalueStepList APOWOP list  */
+#line 632 "bisonparserV3.y"
                                  {
     ((*yyvalp).n) = new astOperatorRAPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APOWOP list");
 }
+#line 2871 "bisonparserV3.tab.c"
     break;
 
   case 81: /* assign: var ADIV list  */
+#line 636 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astOperatorADiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ADIV list");
 }
+#line 2880 "bisonparserV3.tab.c"
     break;
 
   case 82: /* assign: var lvalueStepList ADIV list  */
+#line 640 "bisonparserV3.y"
                                {
     ((*yyvalp).n) = new astOperatorRADiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIV list");
 }
+#line 2889 "bisonparserV3.tab.c"
     break;
 
   case 83: /* assign: var ADIVDIV list  */
+#line 644 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astOperatorADivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ADIVDIV list");
 }
+#line 2898 "bisonparserV3.tab.c"
     break;
 
   case 84: /* assign: var lvalueStepList ADIVDIV list  */
+#line 648 "bisonparserV3.y"
                                   {
     ((*yyvalp).n) = new astOperatorRADivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIVDIV list");
 }
+#line 2907 "bisonparserV3.tab.c"
     break;
 
   case 85: /* assign: var AREM list  */
+#line 652 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astOperatorARemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var AREM list");
 }
+#line 2916 "bisonparserV3.tab.c"
     break;
 
   case 86: /* assign: var lvalueStepList AREM list  */
+#line 656 "bisonparserV3.y"
                                {
     ((*yyvalp).n) = new astOperatorRARemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AREM list");
 }
+#line 2925 "bisonparserV3.tab.c"
     break;
 
   case 87: /* assign: var ABITAND list  */
+#line 660 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astOperatorABitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ABITAND list");
 }
+#line 2934 "bisonparserV3.tab.c"
     break;
 
   case 88: /* assign: var lvalueStepList ABITAND list  */
+#line 664 "bisonparserV3.y"
                                   {
     ((*yyvalp).n) = new astOperatorRABitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITAND list");
 }
+#line 2943 "bisonparserV3.tab.c"
     break;
 
   case 89: /* assign: var ABITXOR list  */
+#line 668 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astOperatorABitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ABITXOR list");
 }
+#line 2952 "bisonparserV3.tab.c"
     break;
 
   case 90: /* assign: var lvalueStepList ABITXOR list  */
+#line 672 "bisonparserV3.y"
                                   {
     ((*yyvalp).n) = new astOperatorRABitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITXOR list");
 }
+#line 2961 "bisonparserV3.tab.c"
     break;
 
   case 91: /* assign: var ABITOR list  */
+#line 676 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astOperatorABitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: localVar ABITOR list");
 }
+#line 2970 "bisonparserV3.tab.c"
     break;
 
   case 92: /* assign: var lvalueStepList ABITOR list  */
+#line 680 "bisonparserV3.y"
                                  {
     ((*yyvalp).n) = new astOperatorRABitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITOR list");
 }
+#line 2979 "bisonparserV3.tab.c"
     break;
 
   case 93: /* assign: var ALSHIFT list  */
+#line 684 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astOperatorALShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ALSHIFT list");
 }
+#line 2988 "bisonparserV3.tab.c"
     break;
 
   case 94: /* assign: var lvalueStepList ALSHIFT list  */
+#line 688 "bisonparserV3.y"
                                   {
     ((*yyvalp).n) = new astOperatorRALShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALSHIFT list");
 }
+#line 2997 "bisonparserV3.tab.c"
     break;
 
   case 95: /* assign: var ARSHIFT list  */
+#line 692 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astOperatorARShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ARSHIFT list");
 }
+#line 3006 "bisonparserV3.tab.c"
     break;
 
   case 96: /* assign: var lvalueStepList ARSHIFT list  */
+#line 696 "bisonparserV3.y"
                                   {
     ((*yyvalp).n) = new astOperatorRARShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARSHIFT list");
 }
+#line 3015 "bisonparserV3.tab.c"
     break;
 
   case 97: /* assign: var ALOGAND list  */
+#line 700 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astSCAAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ALOGAND list");
 }
+#line 3024 "bisonparserV3.tab.c"
     break;
 
   case 98: /* assign: var lvalueStepList ALOGAND list  */
+#line 704 "bisonparserV3.y"
                                   {
     ((*yyvalp).n) = new astLogRASCAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGAND list");
 }
+#line 3033 "bisonparserV3.tab.c"
     break;
 
   case 99: /* assign: var ALOGANDEXT list  */
+#line 708 "bisonparserV3.y"
                       {
     ((*yyvalp).n) = new astSCAAndExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ALOGANDEXT list");
 }
+#line 3042 "bisonparserV3.tab.c"
     break;
 
   case 100: /* assign: var lvalueStepList ALOGANDEXT list  */
+#line 712 "bisonparserV3.y"
                                      {
     ((*yyvalp).n) = new astSCRichAccessAndExt<astRichAssignment<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGANDEXT list");
 }
+#line 3051 "bisonparserV3.tab.c"
     break;
 
   case 101: /* assign: var ALOGXOR list  */
+#line 716 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astLogAXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ALOGXOR list");
 }
+#line 3060 "bisonparserV3.tab.c"
     break;
 
   case 102: /* assign: var lvalueStepList ALOGXOR list  */
+#line 720 "bisonparserV3.y"
                                   {
     ((*yyvalp).n) = new astLogRAXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGXOR list");
 }
+#line 3069 "bisonparserV3.tab.c"
     break;
 
   case 103: /* assign: var ALOGOR list  */
+#line 724 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astSCAOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ALOGOR list");
 }
+#line 3078 "bisonparserV3.tab.c"
     break;
 
   case 104: /* assign: var lvalueStepList ALOGOR list  */
+#line 728 "bisonparserV3.y"
                                  {
     ((*yyvalp).n) = new astLogRASCOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOR list");
 }
+#line 3087 "bisonparserV3.tab.c"
     break;
 
   case 105: /* assign: var ALOGOREXT list  */
+#line 732 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astSCAOrExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: var ALOGOREXT list");
 }
+#line 3096 "bisonparserV3.tab.c"
     break;
 
   case 106: /* assign: var lvalueStepList ALOGOREXT list  */
+#line 736 "bisonparserV3.y"
                                     {
     ((*yyvalp).n) = new astSCRichAccessOrExt<astRichAssignment<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOREXT list");
 }
+#line 3105 "bisonparserV3.tab.c"
     break;
 
   case 107: /* assign: var ANTHOP list  */
+#line 740 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astNthAssignOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: var ANTHOP list op\n");
 }
+#line 3114 "bisonparserV3.tab.c"
     break;
 
   case 108: /* assign: var lvalueStepList ANTHOP list  */
+#line 744 "bisonparserV3.y"
                                  {
     ((*yyvalp).n) = new astRichAccessNthOp<astRichAssignment<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ANTHOP list");
 }
+#line 3123 "bisonparserV3.tab.c"
     break;
 
   case 109: /* assign: var ACONCAT list  */
+#line 748 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astConcatAssignOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: var ACONCAT list op\n");
 }
+#line 3132 "bisonparserV3.tab.c"
     break;
 
   case 110: /* assign: var lvalueStepList ACONCAT list  */
+#line 752 "bisonparserV3.y"
                                   {
     ((*yyvalp).n) = new astRichAccessConcatOp<astRichAssignment<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ACONCAT list");
 }
+#line 3141 "bisonparserV3.tab.c"
     break;
 
   case 111: /* assign: var ARCONCAT list  */
+#line 756 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astRevConcatAssignOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: var ARCONCAT list op\n");
 }
+#line 3150 "bisonparserV3.tab.c"
     break;
 
   case 112: /* assign: var lvalueStepList ARCONCAT list  */
+#line 760 "bisonparserV3.y"
                                    {
     ((*yyvalp).n) = new astRichAccessRConcatOp<astRichAssignment<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
+#line 3159 "bisonparserV3.tab.c"
     break;
 
   case 113: /* assign: localVar AAPPLY funcall  */
+#line 764 "bisonparserV3.y"
                           {
     (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc)->addDataflowStyleArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lv));
     ((*yyvalp).n) = new astAssign(new astLocalVar((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lv)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc), params->owner);
     code_dev_post ("parse: localVar AAPPLY funcall");
 }
+#line 3169 "bisonparserV3.tab.c"
     break;
 
   case 114: /* assign: patcherVar AAPPLY funcall  */
+#line 769 "bisonparserV3.y"
                             {
     (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc)->addDataflowStyleArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.pv));
     astPatcherVar *v = new astPatcherVar((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.pv));
@@ -2969,775 +3177,993 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astAssign(v, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc), params->owner);
     code_dev_post ("parse: patcherVar AAPPLY funcall");
 }
+#line 3181 "bisonparserV3.tab.c"
     break;
 
   case 115: /* assign: globalVar AAPPLY funcall  */
+#line 776 "bisonparserV3.y"
                            {
     (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc)->addDataflowStyleArg((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.gv));
     ((*yyvalp).n) = new astAssign(new astGlobalVar((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.gv)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc), params->owner);
     code_dev_post ("parse: globalVar AAPPLY funcall");
 }
+#line 3191 "bisonparserV3.tab.c"
     break;
 
   case 116: /* assign: var lvalueStepList AAPPLY funcall  */
+#line 781 "bisonparserV3.y"
                                     {
     (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc)->addDataflowStyleArg(new astConst(params->owner));
     ((*yyvalp).n) = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.var), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
+#line 3201 "bisonparserV3.tab.c"
     break;
 
   case 117: /* lvalueStepList: NTHOP lvalueStepParams  */
+#line 789 "bisonparserV3.y"
                                        {
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_NTH, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n)));
     code_dev_post ("parse: lvalueStepList (NTH first term)");
 }
+#line 3210 "bisonparserV3.tab.c"
     break;
 
   case 118: /* lvalueStepList: APPLY lvalueStepParams  */
+#line 793 "bisonparserV3.y"
                          {
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_KEY, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n)));
     code_dev_post ("parse: lvalueStepList (KEY first term)");
 }
+#line 3219 "bisonparserV3.tab.c"
     break;
 
   case 119: /* lvalueStepList: lvalueStepList NTHOP lvalueStepParams  */
+#line 797 "bisonparserV3.y"
                                         {
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_NTH, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl));
     code_dev_post ("parse: lvalueStepList (NTH subsequent term)");
 }
+#line 3228 "bisonparserV3.tab.c"
     break;
 
   case 120: /* lvalueStepList: lvalueStepList APPLY lvalueStepParams  */
+#line 801 "bisonparserV3.y"
                                         {
     ((*yyvalp).lvsl) = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_KEY, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n)), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl));
     code_dev_post ("parse: lvalueStepList (KEY subsequent term)");
 }
+#line 3237 "bisonparserV3.tab.c"
     break;
 
   case 122: /* lvalueStepParams: lvalueStepParams exp  */
+#line 809 "bisonparserV3.y"
                                               {
     ((*yyvalp).n) = new astConcat((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: cat\n");
 }
+#line 3246 "bisonparserV3.tab.c"
     break;
 
   case 124: /* exp: UPLUS listEnd  */
+#line 816 "bisonparserV3.y"
                 { ((*yyvalp).n) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n); }
+#line 3252 "bisonparserV3.tab.c"
     break;
 
   case 125: /* exp: UMINUS listEnd  */
+#line 817 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astOperatorUMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: U-\n");
 }
+#line 3261 "bisonparserV3.tab.c"
     break;
 
   case 126: /* exp: LOGNOT listEnd  */
+#line 821 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astLogNot((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: !\n");
 }
+#line 3270 "bisonparserV3.tab.c"
     break;
 
   case 127: /* exp: BITNOT listEnd  */
+#line 825 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astOperatorBitNot((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: ~\n");
 }
+#line 3279 "bisonparserV3.tab.c"
     break;
 
   case 128: /* exp: exp PLUS listEnd  */
+#line 829 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astOperatorPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: +\n");
 }
+#line 3288 "bisonparserV3.tab.c"
     break;
 
   case 129: /* exp: exp MINUS listEnd  */
+#line 833 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astOperatorMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: -\n");
 }
+#line 3297 "bisonparserV3.tab.c"
     break;
 
   case 130: /* exp: exp TIMES listEnd  */
+#line 837 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astOperatorTimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: *\n");
 }
+#line 3306 "bisonparserV3.tab.c"
     break;
 
   case 131: /* exp: exp DIV listEnd  */
+#line 841 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astOperatorDiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: /\n");
 }
+#line 3315 "bisonparserV3.tab.c"
     break;
 
   case 132: /* exp: exp DIVDIV listEnd  */
+#line 845 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astOperatorDivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: //\n");
 }
+#line 3324 "bisonparserV3.tab.c"
     break;
 
   case 133: /* exp: exp REM listEnd  */
+#line 849 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astOperatorRemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: %\n");
 }
+#line 3333 "bisonparserV3.tab.c"
     break;
 
   case 134: /* exp: exp POWOP listEnd  */
+#line 853 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astOperatorPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: **\n");
 }
+#line 3342 "bisonparserV3.tab.c"
     break;
 
   case 135: /* exp: exp BITAND listEnd  */
+#line 857 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astOperatorBitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: &\n");
 }
+#line 3351 "bisonparserV3.tab.c"
     break;
 
   case 136: /* exp: exp BITXOR listEnd  */
+#line 861 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astOperatorBitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: ^\n");
 }
+#line 3360 "bisonparserV3.tab.c"
     break;
 
   case 137: /* exp: exp BITOR listEnd  */
+#line 865 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: |\n");
 }
+#line 3369 "bisonparserV3.tab.c"
     break;
 
   case 138: /* exp: exp LSHIFT listEnd  */
+#line 869 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astOperatorLShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: <<\n");
 }
+#line 3378 "bisonparserV3.tab.c"
     break;
 
   case 139: /* exp: exp RSHIFT listEnd  */
+#line 873 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astOperatorRShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: >>\n");
 }
+#line 3387 "bisonparserV3.tab.c"
     break;
 
   case 140: /* exp: exp EQUAL listEnd  */
+#line 877 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astComparatorEq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: ==\n");
 }
+#line 3396 "bisonparserV3.tab.c"
     break;
 
   case 141: /* exp: exp NEQ listEnd  */
+#line 881 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astComparatorNeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: !=\n");
 }
+#line 3405 "bisonparserV3.tab.c"
     break;
 
   case 142: /* exp: exp LT listEnd  */
+#line 885 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astComparatorLt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
+#line 3414 "bisonparserV3.tab.c"
     break;
 
   case 143: /* exp: exp GT listEnd  */
+#line 889 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astComparatorGt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
+#line 3423 "bisonparserV3.tab.c"
     break;
 
   case 144: /* exp: exp LEQ listEnd  */
+#line 893 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astComparatorLeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: <=\n");
 }
+#line 3432 "bisonparserV3.tab.c"
     break;
 
   case 145: /* exp: exp GEQ listEnd  */
+#line 897 "bisonparserV3.y"
                   {
     ((*yyvalp).n) = new astComparatorGeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: >=\n");
 }
+#line 3441 "bisonparserV3.tab.c"
     break;
 
   case 146: /* exp: exp LOGOR listEnd  */
+#line 901 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astSCOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: ||\n");
 }
+#line 3450 "bisonparserV3.tab.c"
     break;
 
   case 147: /* exp: exp LOGAND listEnd  */
+#line 905 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astSCAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
+#line 3459 "bisonparserV3.tab.c"
     break;
 
   case 148: /* exp: exp LOGXOR listEnd  */
+#line 909 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astLogXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
+#line 3468 "bisonparserV3.tab.c"
     break;
 
   case 149: /* exp: exp LOGOREXT listEnd  */
+#line 913 "bisonparserV3.y"
                        {
     ((*yyvalp).n) = new astSCOrExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: |||\n");
 }
+#line 3477 "bisonparserV3.tab.c"
     break;
 
   case 150: /* exp: exp LOGANDEXT listEnd  */
+#line 917 "bisonparserV3.y"
                         {
     ((*yyvalp).n) = new astSCAndExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: &&&\n");
 }
+#line 3486 "bisonparserV3.tab.c"
     break;
 
   case 151: /* exp: exp NTHOP listEnd  */
+#line 921 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astNthOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: nthop (exp NTHOP listEnd)\n");
 }
+#line 3495 "bisonparserV3.tab.c"
     break;
 
   case 152: /* exp: exp PICKOP listEnd  */
+#line 925 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astPickOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: nthop\n");
 }
+#line 3504 "bisonparserV3.tab.c"
     break;
 
   case 153: /* exp: exp RANGE listEnd  */
+#line 929 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astRangeOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
+#line 3513 "bisonparserV3.tab.c"
     break;
 
   case 154: /* exp: exp REPEAT listEnd  */
+#line 933 "bisonparserV3.y"
                      {
     ((*yyvalp).n) = new astRepeatOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
+#line 3522 "bisonparserV3.tab.c"
     break;
 
   case 155: /* exp: exp APPLY listEnd  */
+#line 937 "bisonparserV3.y"
                              {
     ((*yyvalp).n) = new astKeyOp<e_keyOpStandard>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: access\n");
 }
+#line 3531 "bisonparserV3.tab.c"
     break;
 
   case 156: /* exp: exp ACCESS_UNWRAP listEnd  */
+#line 941 "bisonparserV3.y"
                             {
     ((*yyvalp).n) = new astKeyOp<e_keyOpUnwrapping>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: access\n");
 }
+#line 3540 "bisonparserV3.tab.c"
     break;
 
   case 157: /* exp: UPLUS exp  */
+#line 946 "bisonparserV3.y"
             { ((*yyvalp).n) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n); }
+#line 3546 "bisonparserV3.tab.c"
     break;
 
   case 158: /* exp: UMINUS exp  */
+#line 947 "bisonparserV3.y"
              {
     ((*yyvalp).n) = new astOperatorUMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: U-\n");
 }
+#line 3555 "bisonparserV3.tab.c"
     break;
 
   case 159: /* exp: LOGNOT exp  */
+#line 951 "bisonparserV3.y"
              {
     ((*yyvalp).n) = new astLogNot((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: !\n");
 }
+#line 3564 "bisonparserV3.tab.c"
     break;
 
   case 160: /* exp: BITNOT exp  */
+#line 955 "bisonparserV3.y"
              {
     ((*yyvalp).n) = new astOperatorBitNot((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: ~\n");
 }
+#line 3573 "bisonparserV3.tab.c"
     break;
 
   case 161: /* exp: exp PLUS exp  */
+#line 959 "bisonparserV3.y"
                {
     ((*yyvalp).n) = new astOperatorPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: +\n");
 }
+#line 3582 "bisonparserV3.tab.c"
     break;
 
   case 162: /* exp: exp MINUS exp  */
+#line 963 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astOperatorMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: -\n");
 }
+#line 3591 "bisonparserV3.tab.c"
     break;
 
   case 163: /* exp: exp TIMES exp  */
+#line 967 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astOperatorTimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: *\n");
 }
+#line 3600 "bisonparserV3.tab.c"
     break;
 
   case 164: /* exp: exp DIV exp  */
+#line 971 "bisonparserV3.y"
               {
     ((*yyvalp).n) = new astOperatorDiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: /\n");
 }
+#line 3609 "bisonparserV3.tab.c"
     break;
 
   case 165: /* exp: exp DIVDIV exp  */
+#line 975 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astOperatorDivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: //\n");
 }
+#line 3618 "bisonparserV3.tab.c"
     break;
 
   case 166: /* exp: exp REM exp  */
+#line 979 "bisonparserV3.y"
               {
     ((*yyvalp).n) = new astOperatorRemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: %\n");
 }
+#line 3627 "bisonparserV3.tab.c"
     break;
 
   case 167: /* exp: exp POWOP exp  */
+#line 983 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astOperatorPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: **\n");
 }
+#line 3636 "bisonparserV3.tab.c"
     break;
 
   case 168: /* exp: exp BITAND exp  */
+#line 987 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astOperatorBitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: &\n");
 }
+#line 3645 "bisonparserV3.tab.c"
     break;
 
   case 169: /* exp: exp BITXOR exp  */
+#line 991 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astOperatorBitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: ^\n");
 }
+#line 3654 "bisonparserV3.tab.c"
     break;
 
   case 170: /* exp: exp BITOR exp  */
+#line 995 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: |\n");
 }
+#line 3663 "bisonparserV3.tab.c"
     break;
 
   case 171: /* exp: exp LSHIFT exp  */
+#line 999 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: <<\n");
 }
+#line 3672 "bisonparserV3.tab.c"
     break;
 
   case 172: /* exp: exp RSHIFT exp  */
+#line 1003 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astOperatorBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: >>\n");
 }
+#line 3681 "bisonparserV3.tab.c"
     break;
 
   case 173: /* exp: exp EQUAL exp  */
+#line 1007 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astComparatorEq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: ==\n");
 }
+#line 3690 "bisonparserV3.tab.c"
     break;
 
   case 174: /* exp: exp NEQ exp  */
+#line 1011 "bisonparserV3.y"
               {
     ((*yyvalp).n) = new astComparatorNeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: !=\n");
 }
+#line 3699 "bisonparserV3.tab.c"
     break;
 
   case 175: /* exp: exp LT exp  */
+#line 1015 "bisonparserV3.y"
              {
     ((*yyvalp).n) = new astComparatorLt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
+#line 3708 "bisonparserV3.tab.c"
     break;
 
   case 176: /* exp: exp GT exp  */
+#line 1019 "bisonparserV3.y"
              {
     ((*yyvalp).n) = new astComparatorGt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: <\n");
 }
+#line 3717 "bisonparserV3.tab.c"
     break;
 
   case 177: /* exp: exp LEQ exp  */
+#line 1023 "bisonparserV3.y"
               {
     ((*yyvalp).n) = new astComparatorLeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: <=\n");
 }
+#line 3726 "bisonparserV3.tab.c"
     break;
 
   case 178: /* exp: exp GEQ exp  */
+#line 1027 "bisonparserV3.y"
               {
     ((*yyvalp).n) = new astComparatorGeq((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: >=\n");
 }
+#line 3735 "bisonparserV3.tab.c"
     break;
 
   case 179: /* exp: exp LOGOR exp  */
+#line 1031 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astSCOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: ||\n");
 }
+#line 3744 "bisonparserV3.tab.c"
     break;
 
   case 180: /* exp: exp LOGAND exp  */
+#line 1035 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astSCAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
+#line 3753 "bisonparserV3.tab.c"
     break;
 
   case 181: /* exp: exp LOGXOR exp  */
+#line 1039 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astLogXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: &&\n");
 }
+#line 3762 "bisonparserV3.tab.c"
     break;
 
   case 182: /* exp: exp LOGOREXT exp  */
+#line 1043 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astSCOrExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: |||\n");
 }
+#line 3771 "bisonparserV3.tab.c"
     break;
 
   case 183: /* exp: exp LOGANDEXT exp  */
+#line 1047 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astSCAndExt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: &&&\n");
 }
+#line 3780 "bisonparserV3.tab.c"
     break;
 
   case 184: /* exp: exp NTHOP exp  */
+#line 1051 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astNthOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: nthop (exp NTHOP exp)\n");
 }
+#line 3789 "bisonparserV3.tab.c"
     break;
 
   case 185: /* exp: exp PICKOP exp  */
+#line 1055 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astPickOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: nthop\n");
 }
+#line 3798 "bisonparserV3.tab.c"
     break;
 
   case 186: /* exp: exp RANGE exp  */
+#line 1059 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astRangeOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
+#line 3807 "bisonparserV3.tab.c"
     break;
 
   case 187: /* exp: exp REPEAT exp  */
+#line 1063 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astRepeatOp((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: range\n");
 }
+#line 3816 "bisonparserV3.tab.c"
     break;
 
   case 188: /* exp: exp APPLY exp  */
+#line 1067 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astKeyOp<e_keyOpStandard>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: access\n");
 }
+#line 3825 "bisonparserV3.tab.c"
     break;
 
   case 189: /* exp: exp ACCESS_UNWRAP exp  */
+#line 1071 "bisonparserV3.y"
                         {
     ((*yyvalp).n) = new astKeyOp<e_keyOpUnwrapping>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post ("parse: access_unwrap\n");
 }
+#line 3834 "bisonparserV3.tab.c"
     break;
 
   case 190: /* exp: term lvalueStepList ASSIGN list  */
+#line 1076 "bisonparserV3.y"
                                            {
     ((*yyvalp).n) = new astRichEdit<E_RA_STANDARD>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ASSIGN list");
 }
+#line 3843 "bisonparserV3.tab.c"
     break;
 
   case 191: /* exp: term lvalueStepList APLUS list  */
+#line 1080 "bisonparserV3.y"
                                           {
     ((*yyvalp).n) = new astOperatorREPlus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APLUS list");
 }
+#line 3852 "bisonparserV3.tab.c"
     break;
 
   case 192: /* exp: term lvalueStepList AMINUS list  */
+#line 1084 "bisonparserV3.y"
                                            {
     ((*yyvalp).n) = new astOperatorREMinus((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AMINUS list");
 }
+#line 3861 "bisonparserV3.tab.c"
     break;
 
   case 193: /* exp: term lvalueStepList ATIMES list  */
+#line 1088 "bisonparserV3.y"
                                            {
     ((*yyvalp).n) = new astOperatorRETimes((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ATIMES list");
 }
+#line 3870 "bisonparserV3.tab.c"
     break;
 
   case 194: /* exp: term lvalueStepList APOWOP list  */
+#line 1092 "bisonparserV3.y"
                                            {
     ((*yyvalp).n) = new astOperatorREPow((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList APOWOP list");
 }
+#line 3879 "bisonparserV3.tab.c"
     break;
 
   case 195: /* exp: term lvalueStepList ADIV list  */
+#line 1096 "bisonparserV3.y"
                                          {
     ((*yyvalp).n) = new astOperatorREDiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIV list");
 }
+#line 3888 "bisonparserV3.tab.c"
     break;
 
   case 196: /* exp: term lvalueStepList ADIVDIV list  */
+#line 1100 "bisonparserV3.y"
                                             {
     ((*yyvalp).n) = new astOperatorREDivdiv((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ADIVDIV list");
 }
+#line 3897 "bisonparserV3.tab.c"
     break;
 
   case 197: /* exp: term lvalueStepList AREM list  */
+#line 1104 "bisonparserV3.y"
                                          {
     ((*yyvalp).n) = new astOperatorRERemainder((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AREM list");
 }
+#line 3906 "bisonparserV3.tab.c"
     break;
 
   case 198: /* exp: term lvalueStepList ABITAND list  */
+#line 1108 "bisonparserV3.y"
                                             {
     ((*yyvalp).n) = new astOperatorREBitAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITAND list");
 }
+#line 3915 "bisonparserV3.tab.c"
     break;
 
   case 199: /* exp: term lvalueStepList ABITXOR list  */
+#line 1112 "bisonparserV3.y"
                                             {
     ((*yyvalp).n) = new astOperatorREBitXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITXOR list");
 }
+#line 3924 "bisonparserV3.tab.c"
     break;
 
   case 200: /* exp: term lvalueStepList ABITOR list  */
+#line 1116 "bisonparserV3.y"
                                            {
     ((*yyvalp).n) = new astOperatorREBitOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ABITOR list");
 }
+#line 3933 "bisonparserV3.tab.c"
     break;
 
   case 201: /* exp: term lvalueStepList ALSHIFT list  */
+#line 1120 "bisonparserV3.y"
                                             {
     ((*yyvalp).n) = new astOperatorRELShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALSHIFT list");
 }
+#line 3942 "bisonparserV3.tab.c"
     break;
 
   case 202: /* exp: term lvalueStepList ARSHIFT list  */
+#line 1124 "bisonparserV3.y"
                                             {
     ((*yyvalp).n) = new astOperatorRERShift((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARSHIFT list");
 }
+#line 3951 "bisonparserV3.tab.c"
     break;
 
   case 203: /* exp: term lvalueStepList ALOGAND list  */
+#line 1128 "bisonparserV3.y"
                                             {
     ((*yyvalp).n) = new astLogRESCAnd((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGAND list");
 }
+#line 3960 "bisonparserV3.tab.c"
     break;
 
   case 204: /* exp: term lvalueStepList ALOGANDEXT list  */
+#line 1132 "bisonparserV3.y"
                                                {
     ((*yyvalp).n) = new astSCRichAccessAndExt<astRichEdit<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGANDEXT list");
 }
+#line 3969 "bisonparserV3.tab.c"
     break;
 
   case 205: /* exp: term lvalueStepList ALOGXOR list  */
+#line 1136 "bisonparserV3.y"
                                             {
     ((*yyvalp).n) = new astLogREXor((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGXOR list");
 }
+#line 3978 "bisonparserV3.tab.c"
     break;
 
   case 206: /* exp: term lvalueStepList ALOGOR list  */
+#line 1140 "bisonparserV3.y"
                                            {
     ((*yyvalp).n) = new astLogRESCOr((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOR list");
 }
+#line 3987 "bisonparserV3.tab.c"
     break;
 
   case 207: /* exp: term lvalueStepList ALOGOREXT list  */
+#line 1144 "bisonparserV3.y"
                                               {
     ((*yyvalp).n) = new astSCRichAccessOrExt<astRichEdit<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ALOGOREXT list");
 }
+#line 3996 "bisonparserV3.tab.c"
     break;
 
   case 208: /* exp: term lvalueStepList ANTHOP list  */
+#line 1148 "bisonparserV3.y"
                                            {
     ((*yyvalp).n) = new astRichAccessNthOp<astRichEdit<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ANTHOP list");
 }
+#line 4005 "bisonparserV3.tab.c"
     break;
 
   case 209: /* exp: term lvalueStepList ACONCAT list  */
+#line 1152 "bisonparserV3.y"
                                             {
     ((*yyvalp).n) = new astRichAccessConcatOp<astRichEdit<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ACONCAT list");
 }
+#line 4014 "bisonparserV3.tab.c"
     break;
 
   case 210: /* exp: term lvalueStepList ARCONCAT list  */
+#line 1156 "bisonparserV3.y"
                                              {
     ((*yyvalp).n) = new astRichAccessRConcatOp<astRichEdit<E_RA_STANDARD>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList ARCONCAT list");
 }
+#line 4023 "bisonparserV3.tab.c"
     break;
 
   case 211: /* exp: term lvalueStepList AAPPLY funcall  */
+#line 1160 "bisonparserV3.y"
                                               {
     (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc)->addDataflowStyleArg(new astConst(params->owner));
     ((*yyvalp).n) = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.n), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.fc), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.lvsl), params->owner);
     code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
+#line 4033 "bisonparserV3.tab.c"
     break;
 
   case 212: /* term: LONG_LITERAL  */
+#line 1167 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l), params->owner);
     code_dev_post("parse: INT %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l));
 }
+#line 4042 "bisonparserV3.tab.c"
     break;
 
   case 213: /* term: RAT_LITERAL  */
+#line 1171 "bisonparserV3.y"
               {
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.r), params->owner);
     code_dev_post("parse: RAT_LITERAL %ld/%ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.r).num(), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.r).den());
 }
+#line 4051 "bisonparserV3.tab.c"
     break;
 
   case 214: /* term: DOUBLE_LITERAL  */
+#line 1175 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.d), params->owner);
     code_dev_post("parse: DOUBLE_LITERAL %lf", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.d));
 }
+#line 4060 "bisonparserV3.tab.c"
     break;
 
   case 215: /* term: PITCH_LITERAL  */
+#line 1179 "bisonparserV3.y"
                 {
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.p), params->owner);
     code_dev_post("parse: PITCH_LITERAL %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.p).toSym()->s_name);
 }
+#line 4069 "bisonparserV3.tab.c"
     break;
 
   case 216: /* term: SYMBOL_LITERAL  */
+#line 1183 "bisonparserV3.y"
                  {
     ((*yyvalp).n) = new astConst((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), params->owner);
     code_dev_post("parse: SYMBOL_LITERAL %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
+#line 4078 "bisonparserV3.tab.c"
     break;
 
   case 217: /* term: BACHNULL  */
+#line 1187 "bisonparserV3.y"
            {
     ((*yyvalp).n) = new astConst(llll_get(), params->owner);
     code_dev_post("parse: NULL");
 }
+#line 4087 "bisonparserV3.tab.c"
     break;
 
   case 218: /* term: ARGCOUNT  */
+#line 1191 "bisonparserV3.y"
            {
     auto fnConst = new astConst((*(params->bifs))["$argcount"], params->owner);
     ((*yyvalp).n) = new astFunctionCall(fnConst, params->owner);
     code_dev_post("parse: ARGCOUNT");
 }
+#line 4097 "bisonparserV3.tab.c"
     break;
 
   case 219: /* term: BACHNIL  */
+#line 1196 "bisonparserV3.y"
           {
     t_llll *ll = llll_get();
     llll_appendllll(ll, llll_get());
     ((*yyvalp).n) = new astConst(ll, params->owner);
     code_dev_post("parse: NIL");
 }
+#line 4108 "bisonparserV3.tab.c"
     break;
 
   case 220: /* term: INLET  */
+#line 1202 "bisonparserV3.y"
         {
     if (params->dataInlets && params->fnDepth == 0 && (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l) > *(params->dataInlets))
         *(params->dataInlets) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l);
     ((*yyvalp).n) = new astInlet((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l), params->owner);
     code_dev_post ("parse: INLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l));
 }
+#line 4119 "bisonparserV3.tab.c"
     break;
 
   case 221: /* term: INTINLET  */
+#line 1208 "bisonparserV3.y"
            {
     if (params->dataInlets && params->fnDepth == 0 && (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l) > *(params->dataInlets))
     *(params->dataInlets) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l);
     ((*yyvalp).n) = new astConvInlet<hatom_fn_int>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l), params->owner);
     code_dev_post ("parse: INTINLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l));
 }
+#line 4130 "bisonparserV3.tab.c"
     break;
 
   case 222: /* term: RATINLET  */
+#line 1214 "bisonparserV3.y"
            {
     if (params->dataInlets && params->fnDepth == 0 && (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l) > *(params->dataInlets))
     *(params->dataInlets) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l);
     ((*yyvalp).n) = new astConvInlet<hatom_fn_rat>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l), params->owner);
     code_dev_post ("parse: RATINLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l));
 }
+#line 4141 "bisonparserV3.tab.c"
     break;
 
   case 223: /* term: FLOATINLET  */
+#line 1220 "bisonparserV3.y"
              {
     if (params->dataInlets && params->fnDepth == 0 && (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l) > *(params->dataInlets))
     *(params->dataInlets) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l);
     ((*yyvalp).n) = new astConvInlet<hatom_fn_float>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l), params->owner);
     code_dev_post ("parse: FLOATINLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l));
 }
+#line 4152 "bisonparserV3.tab.c"
     break;
 
   case 224: /* term: PITCHINLET  */
+#line 1226 "bisonparserV3.y"
              {
     if (params->dataInlets && params->fnDepth == 0 && (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l) > *(params->dataInlets))
     *(params->dataInlets) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l);
     ((*yyvalp).n) = new astConvInlet<hatom_fn_pitch>((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l), params->owner);
     code_dev_post ("parse: PITCHINLET %ld", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l));
 }
+#line 4163 "bisonparserV3.tab.c"
     break;
 
   case 225: /* term: DIRINLET  */
+#line 1232 "bisonparserV3.y"
            {
     if (params->directInlets && (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l) > *(params->directInlets))
         *(params->directInlets) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.l);
@@ -3747,105 +4173,131 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
     ((*yyvalp).n) = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
     code_dev_post("parse: DIRINLET");
 }
+#line 4177 "bisonparserV3.tab.c"
     break;
 
   case 226: /* term: OPEN sequence CLOSEDROUND  */
+#line 1241 "bisonparserV3.y"
                             {
     ((*yyvalp).n) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.n);
     code_dev_post ("parse: []\n");
 }
+#line 4186 "bisonparserV3.tab.c"
     break;
 
   case 227: /* term: OPEN CLOSEDROUND  */
+#line 1245 "bisonparserV3.y"
                    {
     ((*yyvalp).n) = new astConst(llll_get(), params->owner);
 }
+#line 4194 "bisonparserV3.tab.c"
     break;
 
   case 228: /* term: PUSH sequence POP  */
+#line 1248 "bisonparserV3.y"
                     {
     ((*yyvalp).n) = new astWrap((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.n), params->owner);
     code_dev_post("parse: []\n");
 }
+#line 4203 "bisonparserV3.tab.c"
     break;
 
   case 229: /* term: PUSH POP  */
+#line 1252 "bisonparserV3.y"
            {
     t_llll *ll = llll_get();
     llll_appendllll(ll, llll_get());
     ((*yyvalp).n) = new astConst(ll, params->owner);
     code_dev_post("parse: PushPop");
 }
+#line 4214 "bisonparserV3.tab.c"
     break;
 
   case 230: /* term: BIF  */
+#line 1258 "bisonparserV3.y"
       {
     t_function *fn = (*(params->bifs))[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name];
     ((*yyvalp).n) = new astConst(fn, params->owner);
     code_dev_post("parse: bif %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
+#line 4224 "bisonparserV3.tab.c"
     break;
 
   case 231: /* term: OF  */
+#line 1263 "bisonparserV3.y"
      {
     t_function *fn = (*(params->ofTable))[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name];
     ((*yyvalp).n) = new astConst(fn, params->owner);
     code_dev_post("parse: owned function %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
+#line 4234 "bisonparserV3.tab.c"
     break;
 
   case 232: /* term: MAXFUNCTION  */
+#line 1268 "bisonparserV3.y"
               {
     t_function *fn = new t_maxFunction(std::string((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.text)));
     params->funcs->insert(fn);
     ((*yyvalp).n) = new astConst(fn, params->owner);
     code_dev_post("parse: Max function %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.text));
 }
+#line 4245 "bisonparserV3.tab.c"
     break;
 
   case 238: /* globalVar: GLOBALVAR  */
+#line 1283 "bisonparserV3.y"
                      {
     astGlobalVar *v = new astGlobalVar(params->gvt, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), params->owner);
     params->globalVariables->insert(v->getVar());
     ((*yyvalp).gv) = v;
     code_dev_post ("parse: Global variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
+#line 4256 "bisonparserV3.tab.c"
     break;
 
   case 239: /* patcherVar: PATCHERVAR  */
+#line 1291 "bisonparserV3.y"
                        {
     astPatcherVar *v = new astPatcherVar((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), params->owner);
     (*params->name2patcherVars)[(YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)].insert(v);
     ((*yyvalp).pv) = v;
     code_dev_post ("parse: Patcher variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
+#line 4267 "bisonparserV3.tab.c"
     break;
 
   case 240: /* localVar: LOCALVAR  */
+#line 1299 "bisonparserV3.y"
                    {
     ((*yyvalp).lv) = new astLocalVar((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), params->owner);
     addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
     code_dev_post ("parse: Local variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
+#line 4277 "bisonparserV3.tab.c"
     break;
 
   case 241: /* localVar: KEEP LOCALVAR  */
+#line 1304 "bisonparserV3.y"
                 {
     ((*yyvalp).lv) = new astKeep((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), params->owner);
     addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
     code_dev_post ("parse: Keep local variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
+#line 4287 "bisonparserV3.tab.c"
     break;
 
   case 242: /* localVar: UNKEEP LOCALVAR  */
+#line 1309 "bisonparserV3.y"
                   {
     ((*yyvalp).lv) = new astUnkeep((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym), params->owner);
     addVariableToScope<e_flexBison>(params, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym));
     code_dev_post ("parse: Unkeep local variable %s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sym)->s_name);
 }
+#line 4297 "bisonparserV3.tab.c"
     break;
 
 
+#line 4301 "bisonparserV3.tab.c"
 
       default: break;
     }
@@ -5243,6 +5695,7 @@ yyparse (void *scanner, struct _parseParams *params)
   yylval = yyval_default;
 
   /* User initialization code.  */
+#line 181 "bisonparserV3.y"
 {
     #ifdef YYDEBUG
     #if YYDEBUG == 1
@@ -5251,6 +5704,7 @@ yyparse (void *scanner, struct _parseParams *params)
     #endif
 }
 
+#line 5708 "bisonparserV3.tab.c"
 
 
   if (! yyinitGLRStack (yystackp, YYINITDEPTH))
@@ -5538,25 +5992,26 @@ yypdumpstack (yyGLRStack* yystackp)
 #undef yynerrs
 
 /* Substitute the variable and function names.  */
-#define yyparse stringparser_parse
-#define yylex   stringparser_lex
-#define yyerror stringparser_error
-#define yylval  stringparser_lval
-#define yychar  stringparser_char
-#define yydebug stringparser_debug
-#define yynerrs stringparser_nerrs
+#define yyparse bisonparserV3_parse
+#define yylex   bisonparserV3_lex
+#define yyerror bisonparserV3_error
+#define yylval  bisonparserV3_lval
+#define yychar  bisonparserV3_char
+#define yydebug bisonparserV3_debug
+#define yynerrs bisonparserV3_nerrs
 
 
+#line 1318 "bisonparserV3.y"
 
 
-t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *directInlets, t_atom_long *directOutlets)
+t_mainFunction *codableobj_parse_buffer_v3(t_codableobj *x, long *codeac, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *directInlets, t_atom_long *directOutlets)
 {
     yyscan_t myscanner;
     
     t_lexparams lexparams;
     
-    stringparser_lex_init_extra(&lexparams, &myscanner);
-    stringparser_scan_string(myscanner, x->c_text);
+    bisonparserV3_lex_init_extra(&lexparams, &myscanner);
+    bisonparserV3_scan_string(myscanner, x->c_text);
     
     t_parseParams params;
     params.ast = NULL;
@@ -5585,7 +6040,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.funcs = new std::unordered_set<t_function*>;
     
     code_dev_post("--- BUILDING AST!\n");
-    stringparser_parse(myscanner, &params);
+    bisonparserV3_parse(myscanner, &params);
     
     for (int i = 0; i < 256; i++) {
         if (params.localVariablesAuxMapStack[i] == nullptr)
@@ -5593,7 +6048,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
         delete params.localVariablesAuxMapStack[i];
     }
     
-    stringparser_lex_destroy(myscanner);
+    bisonparserV3_lex_destroy(myscanner);
     
     code_dev_post("first attribute at %ld", *params.codeac);
     

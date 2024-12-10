@@ -15,7 +15,7 @@
 #include "preproc.h"
 #include "preprocBaseVisitor.h"
 #include "ast.hpp"
-#include "stringparser.h"
+#include "bellparser_commons.h"
 #include "parsers/bach_parser.hpp"
 #include <algorithm>
 #include <string>

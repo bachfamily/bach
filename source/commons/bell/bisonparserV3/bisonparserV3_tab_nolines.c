@@ -52,15 +52,15 @@
 
 
 /* Substitute the variable and function names.  */
-#define yyparse stringparser_parse
-#define yylex   stringparser_lex
-#define yyerror stringparser_error
-#define yydebug stringparser_debug
+#define yyparse bisonparserV3_parse
+#define yylex   bisonparserV3_lex
+#define yyerror bisonparserV3_error
+#define yydebug bisonparserV3_debug
 
 /* First part of user prologue.  */
 
     /*
-     *  stringparser.y
+     *  bisonparserV3.y
      *
      * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
      *
@@ -129,7 +129,7 @@
 #  endif
 # endif
 
-#include "stringparser.tab.h"
+#include "bisonparserV3.tab.h"
 
 /* Symbol kind.  */
 enum yysymbol_kind_t
@@ -290,12 +290,12 @@ static YYSTYPE yyval_default;
 
 /* Second part of user prologue.  */
 
-    #include "stringparser_tab_nolines.h"
+    #include "bisonparserV3_tab_nolines.h"
     
     #define YY_HEADER_EXPORT_START_CONDITIONS
     #define YY_NO_UNISTD_H
     
-    #include "stringparser_lex_nolines.h"
+    #include "bisonparserV3_lex_nolines.h"
     
 
     
@@ -307,8 +307,8 @@ static YYSTYPE yyval_default;
     const char *s);
     
     
-    YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf);
-    void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
+    YY_BUFFER_STATE bisonparserV3_scan_string(yyscan_t myscanner, const char *buf);
+    void bisonparserV3_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
 
 
 
@@ -1617,10 +1617,10 @@ static const short yyconfl[] =
 #define yylval (yystackp->yyval)
 #undef yylloc
 #define yylloc (yystackp->yyloc)
-#define stringparser_nerrs yynerrs
-#define stringparser_char yychar
-#define stringparser_lval yylval
-#define stringparser_lloc yylloc
+#define bisonparserV3_nerrs yynerrs
+#define bisonparserV3_char yychar
+#define bisonparserV3_lval yylval
+#define bisonparserV3_lloc yylloc
 
 enum { YYENOMEM = -2 };
 
@@ -5538,25 +5538,25 @@ yypdumpstack (yyGLRStack* yystackp)
 #undef yynerrs
 
 /* Substitute the variable and function names.  */
-#define yyparse stringparser_parse
-#define yylex   stringparser_lex
-#define yyerror stringparser_error
-#define yylval  stringparser_lval
-#define yychar  stringparser_char
-#define yydebug stringparser_debug
-#define yynerrs stringparser_nerrs
+#define yyparse bisonparserV3_parse
+#define yylex   bisonparserV3_lex
+#define yyerror bisonparserV3_error
+#define yylval  bisonparserV3_lval
+#define yychar  bisonparserV3_char
+#define yydebug bisonparserV3_debug
+#define yynerrs bisonparserV3_nerrs
 
 
 
 
-t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *directInlets, t_atom_long *directOutlets)
+t_mainFunction *codableobj_parse_buffer_v3(t_codableobj *x, long *codeac, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *directInlets, t_atom_long *directOutlets)
 {
     yyscan_t myscanner;
     
     t_lexparams lexparams;
     
-    stringparser_lex_init_extra(&lexparams, &myscanner);
-    stringparser_scan_string(myscanner, x->c_text);
+    bisonparserV3_lex_init_extra(&lexparams, &myscanner);
+    bisonparserV3_scan_string(myscanner, x->c_text);
     
     t_parseParams params;
     params.ast = NULL;
@@ -5585,7 +5585,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.funcs = new std::unordered_set<t_function*>;
     
     code_dev_post("--- BUILDING AST!\n");
-    stringparser_parse(myscanner, &params);
+    bisonparserV3_parse(myscanner, &params);
     
     for (int i = 0; i < 256; i++) {
         if (params.localVariablesAuxMapStack[i] == nullptr)
@@ -5593,7 +5593,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
         delete params.localVariablesAuxMapStack[i];
     }
     
-    stringparser_lex_destroy(myscanner);
+    bisonparserV3_lex_destroy(myscanner);
     
     code_dev_post("first attribute at %ld", *params.codeac);
     

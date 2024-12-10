@@ -1,6 +1,6 @@
 %{
     /*
-     *  stringparser.l
+     *  bisonparserV3.l
      *
      * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
      *
@@ -21,9 +21,9 @@
 
 %option noyywrap nodefault yylineno reentrant bison-bridge
 %option never-interactive
-%option outfile="stringparser.c"
-%option header-file="stringparser.lex.h"
-%option prefix="stringparser_"
+%option outfile="bisonparserV3.c"
+%option header-file="bisonparserV3.lex.h"
+%option prefix="bisonparserV3_"
 
 SEPARATOR           ([[:space:]\(\)\[\]\{\}+\-*/%!=~_<>;,.:\\\x01])
 SEPARATOR_STRICT    ([[:space:]\)\]+\-*/%!=~_<>;,:\\\x01])
@@ -66,7 +66,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     #include "bell/ast.hpp"
     #include "bellparser_commons.h"
 
-    #include "stringparser_tab_nolines.h"
+    #include "bisonparserV3_tab_nolines.h"
     
     #define YY_DECL int yylex \
     (YYSTYPE *yylval_param, yyscan_t yyscanner, struct _parseParams *params)
@@ -75,8 +75,8 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 
 
 
-    int stringparser_newfile(yyscan_t myscanner, char *s);
-    int stringparser_popfile(yyscan_t myscanner);
+    int bisonparserV3_newfile(yyscan_t myscanner, char *s);
+    int bisonparserV3_popfile(yyscan_t myscanner);
     
     #define UNARY_NOARGS (INITIAL)
     
@@ -91,7 +91,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     };
     
 
-    t_lexparams::t_lexparams() {
+    t_lexparamsV3::t_lexparamsV3() {
         bufstack = (t_bufstack*) bach_newptr(256 * sizeof(t_bufstack));
         this_bs = bufstack;
         this_bs->text = nullptr;
@@ -99,15 +99,15 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
         state = 0;
     }
     
-    t_lexparams::~t_lexparams() {
+    t_lexparamsV3::~t_lexparamsV3() {
         bach_freeptr(bufstack);
     }
     
-    int t_lexparams::setState(int s) {
+    int t_lexparamsV3::setState(int s) {
         return state = s;
     }
     
-    int t_lexparams::getState() {
+    int t_lexparamsV3::getState() {
         return state;
     }
 
@@ -513,13 +513,13 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     int c;
     while ((c = yyinput(yyscanner)) && c != ')') ;
     code_dev_post("lex: switching to file %s", yytext);
-    if (stringparser_newfile(yyscanner, yytext))
+    if (bisonparserV3_newfile(yyscanner, yytext))
         yyterminate();
     BEGIN lexparams->getState();
 }
 
 <<EOF>> {
-    if (stringparser_popfile(yyscanner))
+    if (bisonparserV3_popfile(yyscanner))
         yyterminate();
 }
 
@@ -721,7 +721,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 ";"|"\\;" {
     code_dev_post("lex: ;");
     BEGIN lexparams->setState(UNARY_NOARGS);
-    return SEQ;
+    return NULLIFY;
 }
 
 ","|"\\," {
@@ -1031,7 +1031,7 @@ $[a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?/{SEPARATOR} {
 
 %%
 
-YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf)
+YY_BUFFER_STATE bisonparserV3_scan_string(yyscan_t myscanner, const char *buf)
 {
     YY_BUFFER_STATE bp;
     bp = yy_scan_string(buf, myscanner);
@@ -1042,13 +1042,13 @@ YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf)
     return bp;
 }
 
-void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
+void bisonparserV3_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 {
     yy_flush_buffer(bp, myscanner);
     yy_delete_buffer(bp, myscanner);
 }
 
-int stringparser_newfile(yyscan_t myscanner, char *s)
+int bisonparserV3_newfile(yyscan_t myscanner, char *s)
 {
     t_fourcc filetype[] = {'TEXT', 'BELL'};
     t_fourcc outtype;
@@ -1087,16 +1087,16 @@ int stringparser_newfile(yyscan_t myscanner, char *s)
     //yyset_lineno(1, myscanner);
     lexparams->this_bs->name = filename;
     lexparams->this_bs->text = text;
-    lexparams->this_bs->bs = stringparser_scan_string(myscanner, text);
+    lexparams->this_bs->bs = bisonparserV3_scan_string(myscanner, text);
     lexparams->files.insert({path, filename});
     return 0;
 }
 
-int stringparser_popfile(yyscan_t myscanner)
+int bisonparserV3_popfile(yyscan_t myscanner)
 {
     t_lexparams *lexparams = yyget_extra(myscanner);
     
-    stringparser_flush_and_delete_buffer(myscanner, lexparams->this_bs->bs);
+    bisonparserV3_flush_and_delete_buffer(myscanner, lexparams->this_bs->bs);
     if (!lexparams->this_bs->name)
         return 1;
     bach_freeptr(lexparams->this_bs->name);
@@ -1108,7 +1108,7 @@ int stringparser_popfile(yyscan_t myscanner)
 }
 
 
-int stringparser_error(yyscan_t myscanner, t_parseParams *params, const char *s)
+int bisonparserV3_error(yyscan_t myscanner, t_parseParams *params, const char *s)
 {
     params->ast = nullptr;
     int line = yyget_lineno(myscanner);

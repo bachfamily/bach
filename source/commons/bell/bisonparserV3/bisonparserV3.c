@@ -12,225 +12,225 @@
 #endif
 
 #ifdef yy_create_buffer
-#define stringparser__create_buffer_ALREADY_DEFINED
+#define bisonparserV3__create_buffer_ALREADY_DEFINED
 #else
-#define yy_create_buffer stringparser__create_buffer
+#define yy_create_buffer bisonparserV3__create_buffer
 #endif
 
 #ifdef yy_delete_buffer
-#define stringparser__delete_buffer_ALREADY_DEFINED
+#define bisonparserV3__delete_buffer_ALREADY_DEFINED
 #else
-#define yy_delete_buffer stringparser__delete_buffer
+#define yy_delete_buffer bisonparserV3__delete_buffer
 #endif
 
 #ifdef yy_scan_buffer
-#define stringparser__scan_buffer_ALREADY_DEFINED
+#define bisonparserV3__scan_buffer_ALREADY_DEFINED
 #else
-#define yy_scan_buffer stringparser__scan_buffer
+#define yy_scan_buffer bisonparserV3__scan_buffer
 #endif
 
 #ifdef yy_scan_string
-#define stringparser__scan_string_ALREADY_DEFINED
+#define bisonparserV3__scan_string_ALREADY_DEFINED
 #else
-#define yy_scan_string stringparser__scan_string
+#define yy_scan_string bisonparserV3__scan_string
 #endif
 
 #ifdef yy_scan_bytes
-#define stringparser__scan_bytes_ALREADY_DEFINED
+#define bisonparserV3__scan_bytes_ALREADY_DEFINED
 #else
-#define yy_scan_bytes stringparser__scan_bytes
+#define yy_scan_bytes bisonparserV3__scan_bytes
 #endif
 
 #ifdef yy_init_buffer
-#define stringparser__init_buffer_ALREADY_DEFINED
+#define bisonparserV3__init_buffer_ALREADY_DEFINED
 #else
-#define yy_init_buffer stringparser__init_buffer
+#define yy_init_buffer bisonparserV3__init_buffer
 #endif
 
 #ifdef yy_flush_buffer
-#define stringparser__flush_buffer_ALREADY_DEFINED
+#define bisonparserV3__flush_buffer_ALREADY_DEFINED
 #else
-#define yy_flush_buffer stringparser__flush_buffer
+#define yy_flush_buffer bisonparserV3__flush_buffer
 #endif
 
 #ifdef yy_load_buffer_state
-#define stringparser__load_buffer_state_ALREADY_DEFINED
+#define bisonparserV3__load_buffer_state_ALREADY_DEFINED
 #else
-#define yy_load_buffer_state stringparser__load_buffer_state
+#define yy_load_buffer_state bisonparserV3__load_buffer_state
 #endif
 
 #ifdef yy_switch_to_buffer
-#define stringparser__switch_to_buffer_ALREADY_DEFINED
+#define bisonparserV3__switch_to_buffer_ALREADY_DEFINED
 #else
-#define yy_switch_to_buffer stringparser__switch_to_buffer
+#define yy_switch_to_buffer bisonparserV3__switch_to_buffer
 #endif
 
 #ifdef yypush_buffer_state
-#define stringparser_push_buffer_state_ALREADY_DEFINED
+#define bisonparserV3_push_buffer_state_ALREADY_DEFINED
 #else
-#define yypush_buffer_state stringparser_push_buffer_state
+#define yypush_buffer_state bisonparserV3_push_buffer_state
 #endif
 
 #ifdef yypop_buffer_state
-#define stringparser_pop_buffer_state_ALREADY_DEFINED
+#define bisonparserV3_pop_buffer_state_ALREADY_DEFINED
 #else
-#define yypop_buffer_state stringparser_pop_buffer_state
+#define yypop_buffer_state bisonparserV3_pop_buffer_state
 #endif
 
 #ifdef yyensure_buffer_stack
-#define stringparser_ensure_buffer_stack_ALREADY_DEFINED
+#define bisonparserV3_ensure_buffer_stack_ALREADY_DEFINED
 #else
-#define yyensure_buffer_stack stringparser_ensure_buffer_stack
+#define yyensure_buffer_stack bisonparserV3_ensure_buffer_stack
 #endif
 
 #ifdef yylex
-#define stringparser_lex_ALREADY_DEFINED
+#define bisonparserV3_lex_ALREADY_DEFINED
 #else
-#define yylex stringparser_lex
+#define yylex bisonparserV3_lex
 #endif
 
 #ifdef yyrestart
-#define stringparser_restart_ALREADY_DEFINED
+#define bisonparserV3_restart_ALREADY_DEFINED
 #else
-#define yyrestart stringparser_restart
+#define yyrestart bisonparserV3_restart
 #endif
 
 #ifdef yylex_init
-#define stringparser_lex_init_ALREADY_DEFINED
+#define bisonparserV3_lex_init_ALREADY_DEFINED
 #else
-#define yylex_init stringparser_lex_init
+#define yylex_init bisonparserV3_lex_init
 #endif
 
 #ifdef yylex_init_extra
-#define stringparser_lex_init_extra_ALREADY_DEFINED
+#define bisonparserV3_lex_init_extra_ALREADY_DEFINED
 #else
-#define yylex_init_extra stringparser_lex_init_extra
+#define yylex_init_extra bisonparserV3_lex_init_extra
 #endif
 
 #ifdef yylex_destroy
-#define stringparser_lex_destroy_ALREADY_DEFINED
+#define bisonparserV3_lex_destroy_ALREADY_DEFINED
 #else
-#define yylex_destroy stringparser_lex_destroy
+#define yylex_destroy bisonparserV3_lex_destroy
 #endif
 
 #ifdef yyget_debug
-#define stringparser_get_debug_ALREADY_DEFINED
+#define bisonparserV3_get_debug_ALREADY_DEFINED
 #else
-#define yyget_debug stringparser_get_debug
+#define yyget_debug bisonparserV3_get_debug
 #endif
 
 #ifdef yyset_debug
-#define stringparser_set_debug_ALREADY_DEFINED
+#define bisonparserV3_set_debug_ALREADY_DEFINED
 #else
-#define yyset_debug stringparser_set_debug
+#define yyset_debug bisonparserV3_set_debug
 #endif
 
 #ifdef yyget_extra
-#define stringparser_get_extra_ALREADY_DEFINED
+#define bisonparserV3_get_extra_ALREADY_DEFINED
 #else
-#define yyget_extra stringparser_get_extra
+#define yyget_extra bisonparserV3_get_extra
 #endif
 
 #ifdef yyset_extra
-#define stringparser_set_extra_ALREADY_DEFINED
+#define bisonparserV3_set_extra_ALREADY_DEFINED
 #else
-#define yyset_extra stringparser_set_extra
+#define yyset_extra bisonparserV3_set_extra
 #endif
 
 #ifdef yyget_in
-#define stringparser_get_in_ALREADY_DEFINED
+#define bisonparserV3_get_in_ALREADY_DEFINED
 #else
-#define yyget_in stringparser_get_in
+#define yyget_in bisonparserV3_get_in
 #endif
 
 #ifdef yyset_in
-#define stringparser_set_in_ALREADY_DEFINED
+#define bisonparserV3_set_in_ALREADY_DEFINED
 #else
-#define yyset_in stringparser_set_in
+#define yyset_in bisonparserV3_set_in
 #endif
 
 #ifdef yyget_out
-#define stringparser_get_out_ALREADY_DEFINED
+#define bisonparserV3_get_out_ALREADY_DEFINED
 #else
-#define yyget_out stringparser_get_out
+#define yyget_out bisonparserV3_get_out
 #endif
 
 #ifdef yyset_out
-#define stringparser_set_out_ALREADY_DEFINED
+#define bisonparserV3_set_out_ALREADY_DEFINED
 #else
-#define yyset_out stringparser_set_out
+#define yyset_out bisonparserV3_set_out
 #endif
 
 #ifdef yyget_leng
-#define stringparser_get_leng_ALREADY_DEFINED
+#define bisonparserV3_get_leng_ALREADY_DEFINED
 #else
-#define yyget_leng stringparser_get_leng
+#define yyget_leng bisonparserV3_get_leng
 #endif
 
 #ifdef yyget_text
-#define stringparser_get_text_ALREADY_DEFINED
+#define bisonparserV3_get_text_ALREADY_DEFINED
 #else
-#define yyget_text stringparser_get_text
+#define yyget_text bisonparserV3_get_text
 #endif
 
 #ifdef yyget_lineno
-#define stringparser_get_lineno_ALREADY_DEFINED
+#define bisonparserV3_get_lineno_ALREADY_DEFINED
 #else
-#define yyget_lineno stringparser_get_lineno
+#define yyget_lineno bisonparserV3_get_lineno
 #endif
 
 #ifdef yyset_lineno
-#define stringparser_set_lineno_ALREADY_DEFINED
+#define bisonparserV3_set_lineno_ALREADY_DEFINED
 #else
-#define yyset_lineno stringparser_set_lineno
+#define yyset_lineno bisonparserV3_set_lineno
 #endif
 
 #ifdef yyget_column
-#define stringparser_get_column_ALREADY_DEFINED
+#define bisonparserV3_get_column_ALREADY_DEFINED
 #else
-#define yyget_column stringparser_get_column
+#define yyget_column bisonparserV3_get_column
 #endif
 
 #ifdef yyset_column
-#define stringparser_set_column_ALREADY_DEFINED
+#define bisonparserV3_set_column_ALREADY_DEFINED
 #else
-#define yyset_column stringparser_set_column
+#define yyset_column bisonparserV3_set_column
 #endif
 
 #ifdef yywrap
-#define stringparser_wrap_ALREADY_DEFINED
+#define bisonparserV3_wrap_ALREADY_DEFINED
 #else
-#define yywrap stringparser_wrap
+#define yywrap bisonparserV3_wrap
 #endif
 
 #ifdef yyget_lval
-#define stringparser_get_lval_ALREADY_DEFINED
+#define bisonparserV3_get_lval_ALREADY_DEFINED
 #else
-#define yyget_lval stringparser_get_lval
+#define yyget_lval bisonparserV3_get_lval
 #endif
 
 #ifdef yyset_lval
-#define stringparser_set_lval_ALREADY_DEFINED
+#define bisonparserV3_set_lval_ALREADY_DEFINED
 #else
-#define yyset_lval stringparser_set_lval
+#define yyset_lval bisonparserV3_set_lval
 #endif
 
 #ifdef yyalloc
-#define stringparser_alloc_ALREADY_DEFINED
+#define bisonparserV3_alloc_ALREADY_DEFINED
 #else
-#define yyalloc stringparser_alloc
+#define yyalloc bisonparserV3_alloc
 #endif
 
 #ifdef yyrealloc
-#define stringparser_realloc_ALREADY_DEFINED
+#define bisonparserV3_realloc_ALREADY_DEFINED
 #else
-#define yyrealloc stringparser_realloc
+#define yyrealloc bisonparserV3_realloc
 #endif
 
 #ifdef yyfree
-#define stringparser_free_ALREADY_DEFINED
+#define bisonparserV3_free_ALREADY_DEFINED
 #else
-#define yyfree stringparser_free
+#define yyfree bisonparserV3_free
 #endif
 
 /* First, we deal with  platform-specific or compiler-specific issues. */
@@ -555,7 +555,7 @@ void yyfree ( void * , yyscan_t yyscanner );
 
 /* Begin user sect3 */
 
-#define stringparser_wrap(yyscanner) (/*CONSTCOND*/1)
+#define bisonparserV3_wrap(yyscanner) (/*CONSTCOND*/1)
 #define YY_SKIP_YYWRAP
 typedef flex_uint8_t YY_CHAR;
 
@@ -1951,7 +1951,7 @@ static const flex_int32_t yy_rule_can_match_eol[138] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
     /*
-     *  stringparser.l
+     *  bisonparserV3.l
      *
      * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
      *
@@ -1991,15 +1991,15 @@ static const flex_int32_t yy_rule_can_match_eol[138] =
     #include "bell/ast.hpp"
     #include "bellparser_commons.h"
 
-    #include "stringparser_tab_nolines.h"
+    #include "bisonparserV3_tab_nolines.h"
     
     #define YY_DECL int yylex \
     (YYSTYPE *yylval_param, yyscan_t yyscanner, struct _parseParams *params)
     
     #define YY_NO_UNISTD_H
 
-    int stringparser_newfile(yyscan_t myscanner, char *s);
-    int stringparser_popfile(yyscan_t myscanner);
+    int bisonparserV3_newfile(yyscan_t myscanner, char *s);
+    int bisonparserV3_popfile(yyscan_t myscanner);
     
     #define UNARY_NOARGS (INITIAL)
     
@@ -2013,7 +2013,7 @@ static const flex_int32_t yy_rule_can_match_eol[138] =
         int line;
     };
     
-    t_lexparams::t_lexparams() {
+    t_lexparamsV3::t_lexparamsV3() {
         bufstack = (t_bufstack*) bach_newptr(256 * sizeof(t_bufstack));
         this_bs = bufstack;
         this_bs->text = nullptr;
@@ -2021,15 +2021,15 @@ static const flex_int32_t yy_rule_can_match_eol[138] =
         state = 0;
     }
     
-    t_lexparams::~t_lexparams() {
+    t_lexparamsV3::~t_lexparamsV3() {
         bach_freeptr(bufstack);
     }
     
-    int t_lexparams::setState(int s) {
+    int t_lexparamsV3::setState(int s) {
         return state = s;
     }
     
-    int t_lexparams::getState() {
+    int t_lexparamsV3::getState() {
         return state;
     }
 
@@ -2896,7 +2896,7 @@ YY_RULE_SETUP
     int c;
     while ((c = yyinput(yyscanner)) && c != ')') ;
     code_dev_post("lex: switching to file %s", yytext);
-    if (stringparser_newfile(yyscanner, yytext))
+    if (bisonparserV3_newfile(yyscanner, yytext))
         yyterminate();
     BEGIN lexparams->getState();
 }
@@ -2910,7 +2910,7 @@ case YY_STATE_EOF(LINECOMMENT):
 case YY_STATE_EOF(BLOCKCOMMENT):
 case YY_STATE_EOF(MAXOBJECT):
 {
-    if (stringparser_popfile(yyscanner))
+    if (bisonparserV3_popfile(yyscanner))
         yyterminate();
 }
 	YY_BREAK
@@ -5041,7 +5041,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf)
+YY_BUFFER_STATE bisonparserV3_scan_string(yyscan_t myscanner, const char *buf)
 {
     YY_BUFFER_STATE bp;
     bp = yy_scan_string(buf, myscanner);
@@ -5052,13 +5052,13 @@ YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf)
     return bp;
 }
 
-void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
+void bisonparserV3_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 {
     yy_flush_buffer(bp, myscanner);
     yy_delete_buffer(bp, myscanner);
 }
 
-int stringparser_newfile(yyscan_t myscanner, char *s)
+int bisonparserV3_newfile(yyscan_t myscanner, char *s)
 {
     t_fourcc filetype[] = {'TEXT', 'BELL'};
     t_fourcc outtype;
@@ -5097,16 +5097,16 @@ int stringparser_newfile(yyscan_t myscanner, char *s)
     //yyset_lineno(1, myscanner);
     lexparams->this_bs->name = filename;
     lexparams->this_bs->text = text;
-    lexparams->this_bs->bs = stringparser_scan_string(myscanner, text);
+    lexparams->this_bs->bs = bisonparserV3_scan_string(myscanner, text);
     lexparams->files.insert({path, filename});
     return 0;
 }
 
-int stringparser_popfile(yyscan_t myscanner)
+int bisonparserV3_popfile(yyscan_t myscanner)
 {
     t_lexparams *lexparams = yyget_extra(myscanner);
     
-    stringparser_flush_and_delete_buffer(myscanner, lexparams->this_bs->bs);
+    bisonparserV3_flush_and_delete_buffer(myscanner, lexparams->this_bs->bs);
     if (!lexparams->this_bs->name)
         return 1;
     bach_freeptr(lexparams->this_bs->name);
@@ -5117,7 +5117,7 @@ int stringparser_popfile(yyscan_t myscanner)
     return 0;
 }
 
-int stringparser_error(yyscan_t myscanner, t_parseParams *params, const char *s)
+int bisonparserV3_error(yyscan_t myscanner, t_parseParams *params, const char *s)
 {
     params->ast = nullptr;
     int line = yyget_lineno(myscanner);

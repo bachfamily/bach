@@ -1,6 +1,6 @@
 %{
     /*
-     *  stringparser.y
+     *  bisonparserV3.y
      *
      * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
      *
@@ -23,7 +23,7 @@
 %define parse.error verbose
 %token-table
 %glr-parser
-%name-prefix "stringparser_"
+%name-prefix "bisonparserV3_"
 
 %{
     #ifdef CONFIGURATION_Development
@@ -86,7 +86,7 @@
 %token <p> PITCH_LITERAL
 %token <sym> SYMBOL_LITERAL GLOBALVAR PATCHERVAR LOCALVAR NAMEDPARAM BIF OF
 %token <text> MAXFUNCTION
-%token SEQ
+%token NULLIFY
 %token IF_KW THEN_KW ELSE_KW
 %token WHILE_KW DO_KW FOR_KW IN_KW COLLECT_KW
 %token ASSIGN
@@ -133,7 +133,7 @@
 %nonassoc KEEP UNKEEP INIT
 
 
-%type <n> term list exp assignment assign sequence program fundef forloop whileloop simpleList lvalueStepParams ifThenElse listEnd
+%type <n> term list exp assignment assign nullified nullifiedSequence sequence program fundef forloop whileloop simpleList lvalueStepParams ifThenElse listEnd
 %type <fc> funcall functionApplication
 %type <nl> argsByPositionList
 %type <snpl> argsByNameList
@@ -149,12 +149,12 @@
 %type <forarg> forarg
 
 %{
-    #include "stringparser_tab_nolines.h"
+    #include "bisonparserV3_tab_nolines.h"
     
     #define YY_HEADER_EXPORT_START_CONDITIONS
     #define YY_NO_UNISTD_H
     
-    #include "stringparser_lex_nolines.h"
+    #include "bisonparserV3_lex_nolines.h"
     
 
     
@@ -166,8 +166,8 @@
     const char *s);
     
     
-    YY_BUFFER_STATE stringparser_scan_string(yyscan_t myscanner, const char *buf);
-    void stringparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
+    YY_BUFFER_STATE bisonparserV3_scan_string(yyscan_t myscanner, const char *buf);
+    void bisonparserV3_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
 
 
 %}
@@ -188,6 +188,8 @@
 
 %%
 
+    
+// return astNode*
 program: %empty {
     params->ast = new astConst(llll_get(), params->owner);
     *params->codeac = -1;
@@ -211,126 +213,48 @@ program: %empty {
     code_dev_post ("parse: sequence NAMEDPARAM: program\n");
     YYACCEPT;
 }
- ;
-
-sequence: list
-| sequence SEQ list {
-    $$ = new astSequence($1, $3, params->owner);
-    code_dev_post("parse: seq\n");
-}
 ;
 
-ifThenElse : IF_KW sequence THEN_KW list {
-    $$ = new astIfThenElse($2, $4, nullptr, params->owner);
-    code_dev_post ("parse: if then\n");
-}
-| IF_KW sequence THEN_KW list ELSE_KW list {
-    // ask JLG: this causes 26 r/r conflicts.
-    // Putting
-    // IF_KW sequence THEN_KW valueOrAssignment ELSE_KW valueOrAssignment
-    // would silence the conflicts, but doesn't work the same.
-    // The current version parses
-    //  if 1==1 then $a := 1 ; $b := 2 else $a := 3 ; $a
-    // as
-    //  if 1==1 then [$a := 1 ; $b := 2] else $a := 3 ; $a
-    // thus returning 1
-    // The "fixed" version, on the other hand, only considers
-    //  if 1==1 then $a := 1 ; $b := 2
-    // and discards what follows, thus resulting in 2.
-    // On the other hand, I don't want to be forced to write
-    // IF_KW sequence THEN_KW sequence
-    // in the previous rule.
-    // How do I solve this?
+
+// returns funArg*
+funarg: LOCALVAR {
     
-    $$ = new astIfThenElse($2, $4, $6, params->owner);
-    code_dev_post ("parse: if then else\n");
 }
-
-whileloop : WHILE_KW sequence DO_KW list {
-    $$ = new astWhileLoop<E_LOOP_DO>($2, $4, params->owner);
-    code_dev_post ("parse: while...do\n");
+| LOCALVAR ASSIGN list {
+    
 }
-| WHILE_KW sequence COLLECT_KW list {
-    $$ = new astWhileLoop<E_LOOP_COLLECT>($2, $4, params->owner);
-    code_dev_post ("parse: while...collect\n");
+| ELLIPSIS {
+    
 }
 ;
 
-forloop : FOR_KW forargList DO_KW list
-{
-    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, nullptr, nullptr, $4, params->owner);
-    code_dev_post ("parse: FOR_KW forargList DO_KW list\n");
+
+
+
+// returns std::vector<funArg*>*
+funargList: funarg {
+    
 }
-| FOR_KW forargList WITH_KW argsByNameList DO_KW list
-{
-    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, nullptr, $4, $6, params->owner);
-    code_dev_post ("parse: forargList WITH_KW argsByNameList DO_KW list\n");
-}
-| FOR_KW forargList AS_KW sequence DO_KW list
-{
-    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, $4, nullptr, $6, params->owner);
-    code_dev_post ("parse: FOR_KW forargList AS_KW sequence DO_KW list\n");
-}
-| FOR_KW forargList AS_KW sequence WITH_KW argsByNameList DO_KW list
-{
-    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, $4, $6, $8, params->owner);
-    code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList DO_KW list\n");
-}
-| FOR_KW forargList WITH_KW argsByNameList AS_KW sequence DO_KW list
-{
-    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, $6, $4, $8, params->owner);
-    code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence DO_KW list\n");
-}
-| FOR_KW forargList COLLECT_KW list
-{
-    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, nullptr, nullptr, $4, params->owner);
-    code_dev_post ("parse: FOR_KW forargList COLLECT_KW list\n");
-}
-| FOR_KW forargList WITH_KW argsByNameList COLLECT_KW list
-{
-    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, nullptr, $4, $6, params->owner);
-    code_dev_post ("parse: forargList WITH_KW argsByNameList COLLECT_KW list\n");
-}
-| FOR_KW forargList AS_KW sequence COLLECT_KW list
-{
-    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, $4, nullptr, $6, params->owner);
-    code_dev_post ("parse: FOR_KW forargList AS_KW sequence COLLECT_KW list\n");
-}
-| FOR_KW forargList AS_KW sequence WITH_KW argsByNameList COLLECT_KW list
-{
-    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, $4, $6, $8, params->owner);
-    code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList COLLECT_KW list\n");
-}
-| FOR_KW forargList WITH_KW argsByNameList AS_KW sequence COLLECT_KW list
-{
-    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, $6, $4, $8, params->owner);
-    code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence COLLECT_KW list\n");
+| funargList COMMA funarg {
+    
 }
 ;
 
-forargList : forarg {
-    $$ = new countedList<forArg *>($1);
-    code_dev_post ("parse: for iterator (first term)\n");
+
+// returns std::vector<t_localVar*>
+liftedargList : LIFT LOCALVAR {
+    $$ = new std::vector<t_localVar*>($2);
+    code_dev_post ("parse: liftedargList (first term)\n");
 }
-| forargList COMMA forarg {
-    $$ = new countedList<forArg *>($3, $1);
-    code_dev_post ("parse: for iterator (subsequent term)\n");
+| liftedargList COMMA LOCALVAR {
+    $1->push_back($3);
+    $$ = $1;
+    code_dev_post ("parse: liftedargList (subsequent term)\n");
 }
 ;
 
-forarg : LOCALVAR IN_KW sequence {
-    $$ = new forArg($1, nullptr, $3);
-    addVariableToScope<e_flexBison>(params, $1);
-    code_dev_post ("parse: for iterator with index");
-}
-| LOCALVAR LOCALVAR IN_KW sequence {
-    addVariableToScope<e_flexBison>(params, $1);
-    addVariableToScope<e_flexBison>(params, $2);
-    $$ = new forArg($1, $2, $4);
-    code_dev_post ("parse: for iterator with index and address");
-}
-;
 
+// returns astNode*
 fundef : funargList FUNDEF {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
@@ -415,67 +339,439 @@ fundef : funargList FUNDEF {
 }
 ;
 
-funargList : LOCALVAR {
-    ++(params->localVariablesStack);
-    *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
-    $$ = new countedList<funArg *>(new funArg($1));
-    (**(params->localVariablesAuxMapStack))[$1] = 1;
-    code_dev_post ("parse: funargList (first term, no default)\n");
-}
-| ELLIPSIS {
-    ++(params->localVariablesStack);
-    *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
-    $$ = new countedList<funArg *>(new funArg(gensym("<...>")));
-    code_dev_post ("parse: ELLIPSIS");
-} %dprec 1
-| LOCALVAR ASSIGN {
-    // two levels are pushed:
-    // one for the function, whose definition is beginning here,
-    // and one for the parameter default, which is in an inner scope
-    params->localVariablesStack += 2;
-    *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
-    (**(params->localVariablesAuxMapStack))[$1] = 1;
-    *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
-} list {
-    $$ = new countedList<funArg *>(new funArg($1, $4, *(params->localVariablesStack)));
-    delete *(params->localVariablesAuxMapStack);
+
+// returns astNode*
+list: expr {
     
-    // this pops the parameter default level
-    *(params->localVariablesAuxMapStack--) = nullptr;
-    *(params->localVariablesStack--) = nullptr;
-    code_dev_post ("parse: funargList (first term, with default)\n");
-} %dprec 2
-| funargList COMMA LOCALVAR {
-    $$ = new countedList<funArg *>(new funArg($3), $1);
-    (**(params->localVariablesAuxMapStack))[$3] = 1;
-    code_dev_post ("parse: funargList (subsequent term, no default)\n");
-}
-| funargList COMMA ELLIPSIS {
-    $$ = new countedList<funArg *>(new funArg(gensym("<...>")), $1);
-    code_dev_post ("parse: funargList (subsequent term, no default)\n");
-}
-| funargList COMMA LOCALVAR ASSIGN {
-    (**(params->localVariablesAuxMapStack))[$3] = 1;
-    ++(params->localVariablesStack);
-    *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
-} list {
-    $$ = new countedList<funArg *>(new funArg($3, $6, *(params->localVariablesStack)), $1);
-    delete *(params->localVariablesAuxMapStack);
-    *(params->localVariablesAuxMapStack--) = nullptr;
-    *(params->localVariablesStack--) = nullptr;
-    code_dev_post ("parse: funargList (subsequent term, with default)\n");
+} | list expr {
+    
 }
 ;
 
-liftedargList : LIFT LOCALVAR {
-    $$ = new countedList<t_localVar>($2);
-    code_dev_post ("parse: liftedargList (first term)\n");
+// returns astNode*
+sequence: list {
+    $$ = new astSequence($1, $3, params->owner);
+    code_dev_post("parse: seq\n");
 }
-| liftedargList COMMA LOCALVAR {
-    $$ = new countedList<t_localVar>($3, $1);
-    code_dev_post ("parse: liftedargList (subsequent term)\n");
+| sequence NULLIFY {
+    
+}
+| sequence list {
+    
 }
 ;
+
+
+// returns astNode*
+nullified: list NULLIFY {
+    
+}
+| nullified NULLIFY
+;
+
+nullifiedSequence: nullified {
+    
+}
+| nullifiedSequence nullified {
+    
+}
+| nullifiedSequence list {
+    
+}
+;
+
+
+// returns astNode*
+whileloop : WHILE_KW sequence DO_KW list {
+    $$ = new astWhileLoop<E_LOOP_DO>($2, $4, params->owner);
+    code_dev_post ("parse: while...do\n");
+}
+| WHILE_KW sequence COLLECT_KW list {
+    $$ = new astWhileLoop<E_LOOP_COLLECT>($2, $4, params->owner);
+    code_dev_post ("parse: while...collect\n");
+}
+;
+
+
+// returns forArg*
+forarg : LOCALVAR IN_KW sequence {
+    $$ = new forArg($1, nullptr, $3);
+    addVariableToScope<e_flexBison>(params, $1);
+    code_dev_post ("parse: for iterator with index");
+}
+| LOCALVAR LOCALVAR IN_KW sequence {
+    addVariableToScope<e_flexBison>(params, $1);
+    addVariableToScope<e_flexBison>(params, $2);
+    $$ = new forArg($1, $2, $4);
+    code_dev_post ("parse: for iterator with index and address");
+}
+;
+
+
+// returns std::vector<forArg*>*
+forargList : forarg {
+    $$ = new countedList<forArg *>($1);
+    code_dev_post ("parse: for iterator (first term)\n");
+}
+| forargList COMMA forarg {
+    $$ = new countedList<forArg *>($3, $1);
+    code_dev_post ("parse: for iterator (subsequent term)\n");
+}
+;
+
+
+// returns astNode*
+forloop : FOR_KW forargList DO_KW list
+{
+    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, nullptr, nullptr, $4, params->owner);
+    code_dev_post ("parse: FOR_KW forargList DO_KW list\n");
+}
+| FOR_KW forargList WITH_KW argsByNameList DO_KW list
+{
+    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, nullptr, $4, $6, params->owner);
+    code_dev_post ("parse: forargList WITH_KW argsByNameList DO_KW list\n");
+}
+| FOR_KW forargList AS_KW sequence DO_KW list
+{
+    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, $4, nullptr, $6, params->owner);
+    code_dev_post ("parse: FOR_KW forargList AS_KW sequence DO_KW list\n");
+}
+| FOR_KW forargList AS_KW sequence WITH_KW argsByNameList DO_KW list
+{
+    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, $4, $6, $8, params->owner);
+    code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList DO_KW list\n");
+}
+| FOR_KW forargList WITH_KW argsByNameList AS_KW sequence DO_KW list
+{
+    $$ = new astForLoop<E_LOOP_DO>($2, nullptr, $6, $4, $8, params->owner);
+    code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence DO_KW list\n");
+}
+| FOR_KW forargList COLLECT_KW list
+{
+    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, nullptr, nullptr, $4, params->owner);
+    code_dev_post ("parse: FOR_KW forargList COLLECT_KW list\n");
+}
+| FOR_KW forargList WITH_KW argsByNameList COLLECT_KW list
+{
+    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, nullptr, $4, $6, params->owner);
+    code_dev_post ("parse: forargList WITH_KW argsByNameList COLLECT_KW list\n");
+}
+| FOR_KW forargList AS_KW sequence COLLECT_KW list
+{
+    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, $4, nullptr, $6, params->owner);
+    code_dev_post ("parse: FOR_KW forargList AS_KW sequence COLLECT_KW list\n");
+}
+| FOR_KW forargList AS_KW sequence WITH_KW argsByNameList COLLECT_KW list
+{
+    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, $4, $6, $8, params->owner);
+    code_dev_post ("parse: forargList AS_KW sequence WITH_KW argsByNameList COLLECT_KW list\n");
+}
+| FOR_KW forargList WITH_KW argsByNameList AS_KW sequence COLLECT_KW list
+{
+    $$ = new astForLoop<E_LOOP_COLLECT>($2, nullptr, $6, $4, $8, params->owner);
+    code_dev_post ("parse: FOR_KW forargList WITH_KW argsByNameList AS_KW sequence COLLECT_KW list\n");
+}
+;
+
+
+// returns std::vector<astNode*>*
+argsByPositionList : sequence {
+    $$ = new countedList<astNode *>($1);
+    code_dev_post ("parse: argsByPositionList (first term)\n");
+} %dprec 1
+| argsByPositionList COMMA sequence {
+    $$ = new countedList<astNode *>($3, $1);
+    code_dev_post ("parse: argsByPositionList (subsequent term)\n");
+} %dprec 2
+;
+
+
+// returns std::vector<symNodePair*>*
+argsByNameList : argByName {
+    $$ = new countedList<symNodePair *>($1);
+    code_dev_post ("parse: argsByNameList (first term)\n");
+}
+| argsByNameList COMMA argByName {
+    $$ = new countedList<symNodePair *>($3, $1);
+    code_dev_post ("parse: argsByNameList (subsequent term)\n");
+}
+| argsByNameList argByName {
+    $$ = new countedList<symNodePair *>($2, $1);
+    code_dev_post ("parse: argsByNameList (subsequent term)\n");
+}
+;
+
+
+// returns symNodePair*
+argByName : NAMEDPARAM sequence {
+    $$ = new symNodePair($1, $2);
+    code_dev_post ("parse: named parameter %s", $1->s_name);
+}
+;
+
+
+// returns astNode*
+itemOrVar : item {
+    
+}
+| var {
+    
+}
+;
+
+
+// returns astNode*
+simpleFuncall : itemOrVar STARTPARAMS CLOSEDROUND {
+    
+}
+| itemOrVar STARTPARAMS argsByPositionList CLOSEDROUND {
+    
+}
+| itemOrVar STARTPARAMS argsByNameList CLOSEDROUND {
+    
+}
+| itemOrVar STARTPARAMS argsByPositionList COMMA argsByNameList CLOSEDROUND {
+    
+}
+| itemOrVar STARTPARAMS argsByPositionList  argsByNameList CLOSEDROUND {
+    
+}
+simpleFuncall STARTPARAMS CLOSEDROUND {
+    
+}
+| simpleFuncall STARTPARAMS argsByPositionList CLOSEDROUND {
+    
+}
+| simpleFuncall STARTPARAMS argsByNameList CLOSEDROUND {
+    
+}
+| simpleFuncall STARTPARAMS argsByPositionList COMMA argsByNameList CLOSEDROUND {
+    
+}
+| simpleFuncall STARTPARAMS argsByPositionList  argsByNameList CLOSEDROUND {
+    
+}
+;
+
+
+// returns int (1 / -1)
+sign : UPLUS {
+    $$ = 1;
+} 
+| UMINUS {
+    $$ = -1;
+}
+| sign UPLUS {
+    $$ = $1;
+}
+| sign UMINUS {
+    $$ = -$1;
+}
+;
+
+
+// returns astNode*
+lvalueSpecsItem : sign itemOrVar {
+    
+}
+;
+
+
+// returns astNode*
+dataflowHead : item {
+    
+}
+| simpleFuncall {
+    
+}
+| var {
+    
+}
+;
+
+
+// returns astNode*
+dataflowFuncall :
+dataflowHead APPLY simpleFuncall {
+    
+}
+| dataflowFuncall APPLY simpleFuncall {
+    
+}
+;
+
+
+// returns astNode*
+funcall:
+simpleFuncall
+| dataflowFuncall
+;
+
+
+// returns astNode*
+var: globalVar
+| localVar
+| patcherVar
+;
+
+
+// returns astNode*
+localVar: LOCALVAR {
+    $$ = new astLocalVar($1, params->owner);
+    addVariableToScope<e_flexBison>(params, $1);
+    code_dev_post ("parse: Local variable %s", $1->s_name);
+}
+| KEEP LOCALVAR {
+    $$ = new astKeep($2, params->owner);
+    addVariableToScope<e_flexBison>(params, $2);
+    code_dev_post ("parse: Keep local variable %s", $2->s_name);
+}
+| UNKEEP LOCALVAR {
+    $$ = new astUnkeep($2, params->owner);
+    addVariableToScope<e_flexBison>(params, $2);
+    code_dev_post ("parse: Unkeep local variable %s", $2->s_name);
+}
+;
+
+
+// returns astNode*
+globalVar: GLOBALVAR {
+    astGlobalVar *v = new astGlobalVar(params->gvt, $1, params->owner);
+    params->globalVariables->insert(v->getVar());
+    $$ = v;
+    code_dev_post ("parse: Global variable %s", $1->s_name);
+}
+;
+
+
+// returns astNode*
+patcherVar: PATCHERVAR {
+    astPatcherVar *v = new astPatcherVar($1, params->owner);
+    (*params->name2patcherVars)[$1].insert(v);
+    $$ = v;
+    code_dev_post ("parse: Patcher variable %s", $1->s_name);
+}
+;
+
+
+// returns astNode*
+lvalueSpecsUFinal :
+conditional
+| whileloop
+| forloop
+| fundef
+| funcall
+;
+
+
+// returns astNode*
+lvalueSpecsFinal : lvalueSpecsUFinal {
+    
+}
+| sign lvalueSpecsUFinal {
+    
+}
+;
+
+
+// returns lvalue*
+lvalue: 
+var {
+    
+}
+| var lvalueSpecs {
+    
+}
+;
+
+
+// returns astNode*
+fakeLvalueHead:
+item
+| funcall
+;
+
+
+// returns fakeLvalue*
+fakeLvalue:
+fakeLvalueHead lvalueSpecs {
+    
+}
+;
+
+
+// returns lvalueSpecs*
+lvalueSpecsNonFinalized:
+NTHOP lvalueSpecsItem {
+    
+}
+| lvalueSpecs NTHOP lvalueSpecsItem {
+    
+}
+;
+
+
+// returns lvalueSpecs*
+lvalueSpecs:
+NTHOP lvalueSpecsFinal {
+    
+}
+| lvalueSpecsNonFinalized NTHOP lvalueSpecs Final {
+    
+}
+| lvalueSpecsNonFinalized {
+    
+}
+;
+
+
+// returns astNode*
+listEnd: assignment %dprec 2
+| whileloop
+| forloop
+| ifThenElse
+| fundef %dprec 1
+;
+
+
+
+
+
+
+
+ifThenElse : IF_KW sequence THEN_KW list {
+    $$ = new astIfThenElse($2, $4, nullptr, params->owner);
+    code_dev_post ("parse: if then\n");
+}
+| IF_KW sequence THEN_KW list ELSE_KW list {
+    // ask JLG: this causes 26 r/r conflicts.
+    // Putting
+    // IF_KW sequence THEN_KW valueOrAssignment ELSE_KW valueOrAssignment
+    // would silence the conflicts, but doesn't work the same.
+    // The current version parses
+    //  if 1==1 then $a := 1 ; $b := 2 else $a := 3 ; $a
+    // as
+    //  if 1==1 then [$a := 1 ; $b := 2] else $a := 3 ; $a
+    // thus returning 1
+    // The "fixed" version, on the other hand, only considers
+    //  if 1==1 then $a := 1 ; $b := 2
+    // and discards what follows, thus resulting in 2.
+    // On the other hand, I don't want to be forced to write
+    // IF_KW sequence THEN_KW sequence
+    // in the previous rule.
+    // How do I solve this?
+    
+    $$ = new astIfThenElse($2, $4, $6, params->owner);
+    code_dev_post ("parse: if then else\n");
+}
+
+
+
+
+
+
+
+
 
 functionApplication : funcall %dprec 2
 | exp APPLY funcall
@@ -513,49 +809,8 @@ funcall : term STARTPARAMS argsByPositionList CLOSEDROUND {
 }
 ;
 
-argsByPositionList : sequence {
-    $$ = new countedList<astNode *>($1);
-    code_dev_post ("parse: argsByPositionList (first term)\n");
-} %dprec 1
-| argsByPositionList COMMA sequence {
-    $$ = new countedList<astNode *>($3, $1);
-    code_dev_post ("parse: argsByPositionList (subsequent term)\n");
-} %dprec 2
-;
 
-argsByNameList : argByName {
-    $$ = new countedList<symNodePair *>($1);
-    code_dev_post ("parse: argsByNameList (first term)\n");
-}
-| argsByNameList COMMA argByName {
-    $$ = new countedList<symNodePair *>($3, $1);
-    code_dev_post ("parse: argsByNameList (subsequent term)\n");
-}
-| argsByNameList argByName {
-    $$ = new countedList<symNodePair *>($2, $1);
-    code_dev_post ("parse: argsByNameList (subsequent term)\n");
-}
-;
 
-argByName : NAMEDPARAM sequence {
-    $$ = new symNodePair($1, $2);
-    code_dev_post ("parse: named parameter %s", $1->s_name);
-}
-
-list: listEnd %prec CONCAT %dprec 2
-| simpleList %prec CONCAT %dprec 1
-| simpleList listEnd %prec CONCAT {
-    $$ = new astConcat($1, $2, params->owner);
-    code_dev_post("parse: cat\n");
-}
-;
-
-listEnd: assignment %dprec 2
-| whileloop
-| forloop
-| ifThenElse
-| fundef %dprec 1
-;
 
 simpleList: exp %prec CONCAT
 | simpleList exp %prec CONCAT {
@@ -1271,60 +1526,21 @@ term: LONG_LITERAL {
     $$ = new astConst(fn, params->owner);
     code_dev_post("parse: Max function %s", $1);
 }
-| var
-| functionApplication
 ;
 
-var: globalVar
-| localVar
-| patcherVar
-;
-
-globalVar: GLOBALVAR {
-    astGlobalVar *v = new astGlobalVar(params->gvt, $1, params->owner);
-    params->globalVariables->insert(v->getVar());
-    $$ = v;
-    code_dev_post ("parse: Global variable %s", $1->s_name);
-}
-;
-
-patcherVar: PATCHERVAR {
-    astPatcherVar *v = new astPatcherVar($1, params->owner);
-    (*params->name2patcherVars)[$1].insert(v);
-    $$ = v;
-    code_dev_post ("parse: Patcher variable %s", $1->s_name);
-}
-;
-
-localVar: LOCALVAR {
-    $$ = new astLocalVar($1, params->owner);
-    addVariableToScope<e_flexBison>(params, $1);
-    code_dev_post ("parse: Local variable %s", $1->s_name);
-}
-| KEEP LOCALVAR {
-    $$ = new astKeep($2, params->owner);
-    addVariableToScope<e_flexBison>(params, $2);
-    code_dev_post ("parse: Keep local variable %s", $2->s_name);
-}
-| UNKEEP LOCALVAR {
-    $$ = new astUnkeep($2, params->owner);
-    addVariableToScope<e_flexBison>(params, $2);
-    code_dev_post ("parse: Unkeep local variable %s", $2->s_name);
-}
-;
 
 
 
 %%
 
-t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *directInlets, t_atom_long *directOutlets)
+t_mainFunction *codableobj_parse_buffer_v3(t_codableobj *x, long *codeac, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *directInlets, t_atom_long *directOutlets)
 {
     yyscan_t myscanner;
     
     t_lexparams lexparams;
     
-    stringparser_lex_init_extra(&lexparams, &myscanner);
-    stringparser_scan_string(myscanner, x->c_text);
+    bisonparserV3_lex_init_extra(&lexparams, &myscanner);
+    bisonparserV3_scan_string(myscanner, x->c_text);
     
     t_parseParams params;
     params.ast = NULL;
@@ -1353,7 +1569,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
     params.funcs = new std::unordered_set<t_function*>;
     
     code_dev_post("--- BUILDING AST!\n");
-    stringparser_parse(myscanner, &params);
+    bisonparserV3_parse(myscanner, &params);
     
     for (int i = 0; i < 256; i++) {
         if (params.localVariablesAuxMapStack[i] == nullptr)
@@ -1361,7 +1577,7 @@ t_mainFunction *codableobj_parse_buffer(t_codableobj *x, long *codeac, t_atom_lo
         delete params.localVariablesAuxMapStack[i];
     }
     
-    stringparser_lex_destroy(myscanner);
+    bisonparserV3_lex_destroy(myscanner);
     
     code_dev_post("first attribute at %ld", *params.codeac);
     

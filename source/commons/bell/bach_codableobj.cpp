@@ -111,11 +111,18 @@ t_max_err codableobj_buildAst(t_codableobj *x,
     t_mainFunction *newMain;
     t_atom_long version = x->c_bellversion != 0 ? x->c_bellversion : bach->b_defaultbellversion;
     
-    if (version == 2) {
-        newMain = codableobj_parse_buffer_antlr(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
-    } else {
-        newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
+    switch(version) {
+        case 2:
+            newMain = codableobj_parse_buffer_antlr(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
+            break;
+        case 3:
+            newMain = codableobj_parse_buffer_v3(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
+            break;
+        default:
+            newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
+            break;
     }
+
     if (newMain) {
         if (x->c_main)
             x->c_main->decrease();
