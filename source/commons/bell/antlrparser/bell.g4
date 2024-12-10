@@ -114,18 +114,19 @@ argsByNameList: NAMEDPARAM sequence (','? NAMEDPARAM sequence)*
 argsByPositionList: sequence (',' sequence)*
 ;
 
-simpleFuncall: (item|var) PARAMS CLOSED
-| (item|var) PARAMS argsByPositionList CLOSED
-| (item|var) PARAMS argsByNameList CLOSED
-| (item|var) PARAMS argsByPositionList ','? argsByNameList CLOSED
+lvalueSpecsUItem: item|var
+;
+
+simpleFuncall: lvalueSpecsUItem PARAMS CLOSED
+| lvalueSpecsUItem PARAMS argsByPositionList CLOSED
+| lvalueSpecsUItem PARAMS argsByNameList CLOSED
+| lvalueSpecsUItem PARAMS argsByPositionList ','? argsByNameList CLOSED
 | simpleFuncall PARAMS CLOSED
 | simpleFuncall PARAMS argsByPositionList CLOSED
 | simpleFuncall PARAMS argsByNameList CLOSED
 | simpleFuncall PARAMS argsByPositionList ','? argsByNameList CLOSED
 ;
 
-lvalueSpecsUItem: item|var
-;
 
 lvalueSpecsItem: (UPLUS|UMINUS)* lvalueSpecsUItem
 ;
