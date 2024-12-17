@@ -3000,7 +3000,7 @@ YY_RULE_SETUP
             (*params->codeac)++;
         }
     }
-    yylval->text = s;
+    yylval->textValue = s;
     code_dev_post("lex: Max object: %s", s);
     return MAXFUNCTION;
 }
@@ -3151,7 +3151,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: BIF %s", yytext);
-    yylval->sym = gensym(yytext);
+    yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
@@ -3165,7 +3165,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: BIF %s", yytext);
-    yylval->sym = gensym(yytext);
+    yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
@@ -3179,7 +3179,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: BIF %s", yytext);
-    yylval->sym = gensym(yytext);
+    yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
@@ -3193,7 +3193,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: BIF %s", yytext);
-    yylval->sym = gensym(yytext);
+    yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
@@ -3207,7 +3207,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: BIF %s", yytext);
-    yylval->sym = gensym(yytext);
+    yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
@@ -3221,7 +3221,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: OWNED FUNCTION %s", yytext);
-    yylval->sym = gensym(yytext);
+    yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return OF;
 }
@@ -3270,7 +3270,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: ;");
     BEGIN lexparams->setState(UNARY_NOARGS);
-    return SEQ;
+    return NULLIFY;
 }
 	YY_BREAK
 case 95:
@@ -3317,7 +3317,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: INTEGER %d\n", atoi(yytext));
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->l = atoi(yytext);
+    yylval->longValue = atoi(yytext);
     return LONG_LITERAL;
 }
 	YY_BREAK
@@ -3344,7 +3344,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: PI\n", atof(yytext));
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->d = M_PI;
+    yylval->doubleValue = M_PI;
     return DOUBLE_LITERAL;
 }
 	YY_BREAK
@@ -3358,7 +3358,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: DOUBLE_LITERAL %lf\n", atof(yytext));
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->d = atof(yytext);
+    yylval->doubleValue = atof(yytext);
     return DOUBLE_LITERAL;
 }
 	YY_BREAK
@@ -3372,7 +3372,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: DOUBLE_LITERAL %lf\n", atof(yytext));
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->d = atof(yytext);
+    yylval->doubleValue = atof(yytext);
     return DOUBLE_LITERAL;
 }
 	YY_BREAK
@@ -3386,7 +3386,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: PITCH_LITERAL %s\n", yytext);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
+    yylval->pitchValue = t_parser::eatPitchAsNameAccInt(yytext);
     return PITCH_LITERAL;
 }
 	YY_BREAK
@@ -3400,7 +3400,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: PITCH_LITERAL %s\n", yytext);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->p = t_parser::eatPitchAsNameIntAcc(yytext);
+    yylval->pitchValue = t_parser::eatPitchAsNameIntAcc(yytext);
     return PITCH_LITERAL;
 }
 	YY_BREAK
@@ -3414,7 +3414,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: PITCH_LITERAL %s\n", yytext);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->p = t_parser::eatPitchAsNameAccIntIntT(yytext);
+    yylval->pitchValue = t_parser::eatPitchAsNameAccIntIntT(yytext);
     return PITCH_LITERAL;
 }
 	YY_BREAK
@@ -3428,7 +3428,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: PITCH_LITERAL %s\n", yytext);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->p = t_parser::eatPitchAsNameAccIntRatT(yytext);
+    yylval->pitchValue = t_parser::eatPitchAsNameAccIntRatT(yytext);
     return PITCH_LITERAL;
 }
 	YY_BREAK
@@ -3440,8 +3440,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 3);
-    code_dev_post("lex: INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 3);
+    code_dev_post("lex: INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return INLET;
 }
@@ -3454,8 +3454,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 2);
-    code_dev_post("lex: INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 2);
+    code_dev_post("lex: INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return INLET;
 }
@@ -3468,8 +3468,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 3);
-    code_dev_post("lex: INT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 3);
+    code_dev_post("lex: INT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return INTINLET;
 }
@@ -3482,8 +3482,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 2);
-    code_dev_post("lex: INT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 2);
+    code_dev_post("lex: INT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return INTINLET;
 }
@@ -3496,8 +3496,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 3);
-    code_dev_post("lex: RAT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 3);
+    code_dev_post("lex: RAT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return RATINLET;
 }
@@ -3510,8 +3510,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 2);
-    code_dev_post("lex: RAT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 2);
+    code_dev_post("lex: RAT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return RATINLET;
 }
@@ -3524,8 +3524,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 3);
-    code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 3);
+    code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return FLOATINLET;
 }
@@ -3538,8 +3538,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 2);
-    code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 2);
+    code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return FLOATINLET;
 }
@@ -3552,8 +3552,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 3);
-    code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 3);
+    code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return PITCHINLET;
 }
@@ -3566,8 +3566,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 2);
-    code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 2);
+    code_dev_post("lex: FLOAT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return PITCHINLET;
 }
@@ -3580,8 +3580,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 3);
-    code_dev_post("lex: OUTLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 3);
+    code_dev_post("lex: OUTLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return OUTLET;
 }
@@ -3594,8 +3594,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 2);
-    code_dev_post("lex: OUTLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 2);
+    code_dev_post("lex: OUTLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return OUTLET;
 }
@@ -3608,8 +3608,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 4);
-    code_dev_post("lex: DIRECT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 4);
+    code_dev_post("lex: DIRECT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return DIRINLET;
 }
@@ -3622,8 +3622,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 3);
-    code_dev_post("lex: DIRECT INLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 3);
+    code_dev_post("lex: DIRECT INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return DIRINLET;
 }
@@ -3636,8 +3636,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 4);
-    code_dev_post("lex: DIRECT OUTLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 4);
+    code_dev_post("lex: DIRECT OUTLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return DIROUTLET;
 }
@@ -3650,8 +3650,8 @@ yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
-    yylval->l = atoi(yytext + 3);
-    code_dev_post("lex: DIRECT OUTLET VARIABLE %d\n", yylval->l);
+    yylval->longValue = atoi(yytext + 3);
+    code_dev_post("lex: DIRECT OUTLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return DIROUTLET;
 }
@@ -3665,7 +3665,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: LOCAL VARIABLE %s\n", yytext + 1);
-    yylval->sym = gensym(yytext + 1);
+    yylval->symValue = gensym(yytext + 1);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return LOCALVAR;
 }
@@ -3679,7 +3679,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: LOCAL VARIABLE %s\n", yytext + 2);
-    yylval->sym = gensym(yytext + 2);
+    yylval->symValue = gensym(yytext + 2);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return LOCALVAR;
 }
@@ -3693,7 +3693,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: NAMED FUNCTION PARAMETER %s\n", yytext + 1);
-    yylval->sym = gensym(yytext + 1);
+    yylval->symValue = gensym(yytext + 1);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
     return NAMEDPARAM;
 }
@@ -3707,7 +3707,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: PATCHER VARIABLE %s\n", yytext + 1);
-    yylval->sym = gensym(yytext + 1);
+    yylval->symValue = gensym(yytext + 1);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return PATCHERVAR;
 }
@@ -3721,7 +3721,7 @@ YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 {
     code_dev_post("lex: GLOBAL VARIABLE %s\n", yytext);
-    yylval->sym = gensym(yytext);
+    yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return GLOBALVAR;
 }
@@ -3736,7 +3736,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: BACKTICKED SYMBOL_LITERAL %s\n", yytext + 1);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->sym = gensym(yytext + 1);
+    yylval->symValue = gensym(yytext + 1);
     return SYMBOL_LITERAL;
 }
 	YY_BREAK
@@ -3758,7 +3758,7 @@ YY_RULE_SETUP
             (*params->codeac)++;
         }
     }
-    yylval->sym = gensym(s);
+    yylval->symValue = gensym(s);
     bach_freeptr(s);
     return SYMBOL_LITERAL;
 }
@@ -3781,7 +3781,7 @@ YY_RULE_SETUP
             (*params->codeac)++;
         }
     }
-    yylval->sym = gensym(s);
+    yylval->symValue = gensym(s);
     bach_freeptr(s);
     return SYMBOL_LITERAL;
 }
@@ -3796,7 +3796,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: EMPTY DOUBLE-QUOTED SYMBOL_LITERAL\n");
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->sym = gensym("");
+    yylval->symValue = gensym("");
     return SYMBOL_LITERAL;
 }
 	YY_BREAK
@@ -3810,7 +3810,7 @@ YY_RULE_SETUP
 {
     code_dev_post("lex: EMPTY SINGLE-QUOTED SYMBOL_LITERAL\n");
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->sym = gensym("");
+    yylval->symValue = gensym("");
     return SYMBOL_LITERAL;
 }
 	YY_BREAK

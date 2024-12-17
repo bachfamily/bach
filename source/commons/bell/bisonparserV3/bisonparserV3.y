@@ -56,36 +56,41 @@
     %}
 
 %union {
-    astNode *n;
-    astFunctionCall *fc;
-    astLocalVar *lv;
-    astPatcherVar *pv;
-    astGlobalVar *gv;
-    astVar *var;
+    astNode *astNodeValue;
+    astFunctionCall *astFunctionCallValue;
+    astLocalVar *astLocalVarValue;
+    astPatcherVar *astPatcherVarValue;
+    astGlobalVar *astGlobalVarValue;
+    astVar *astVarValue;
+
+    std::vector<funArg*> *funArgVector;
+    std::vector<forArg*> *forArgVector;
+    std::vector<t_localVar*> *localVarVector;
+    std::vector<astNode*> *astNodeVector;
+    std::vector<symNodePair*> *symNodePairVector;
     
-    countedList<astNode *> *nl;
-    countedList<symNodePair *> *snpl;
-    countedList<funArg *> *funarglist;
-    countedList<t_localVar> *liftedarglist;
-    countedList<forArg *> *fal;
-    lvalueStepList *lvsl;
-    symNodePair *snp;
-    forArg *forarg;
+    lvalueStepList *lvalueStepListValue;
+    symNodePair *symNodePairValue;
+    forArg *forArgValue;
+    funArg *funArgValue;
+    lvalue *lvalueValue;
+    fakeLvalue *fakeLvalueValue;
+    lvalueSpecs *lvalueSpecsValue;
     
-    long l;
-    t_rational r;
-    double d;
-    t_pitch p;
-    t_symbol *sym;
-    char *text;
+    long longValue;
+    t_rational ratValue;
+    double doubleValue;
+    t_pitch pitchValue;
+    t_symbol *symValue;
+    char *textValue;
 }
 
-%token <l> LONG_LITERAL INLET INTINLET RATINLET FLOATINLET PITCHINLET OUTLET DIRINLET DIROUTLET
-%token <r> RAT_LITERAL
-%token <d> DOUBLE_LITERAL
-%token <p> PITCH_LITERAL
-%token <sym> SYMBOL_LITERAL GLOBALVAR PATCHERVAR LOCALVAR NAMEDPARAM BIF OF
-%token <text> MAXFUNCTION
+%token <longValue> LONG_LITERAL INLET INTINLET RATINLET FLOATINLET PITCHINLET OUTLET DIRINLET DIROUTLET
+%token <ratValue> RAT_LITERAL
+%token <doubleValue> DOUBLE_LITERAL
+%token <pitchValue> PITCH_LITERAL
+%token <symValue> SYMBOL_LITERAL GLOBALVAR PATCHERVAR LOCALVAR NAMEDPARAM BIF OF
+%token <textValue> MAXFUNCTION
 %token NULLIFY
 %token IF_KW THEN_KW ELSE_KW
 %token WHILE_KW DO_KW FOR_KW IN_KW COLLECT_KW
@@ -133,20 +138,25 @@
 %nonassoc KEEP UNKEEP INIT
 
 
-%type <n> term list exp assignment assign nullified nullifiedSequence sequence program fundef forloop whileloop simpleList lvalueStepParams ifThenElse listEnd
-%type <fc> funcall functionApplication
-%type <nl> argsByPositionList
-%type <snpl> argsByNameList
-%type <funarglist> funargList
-%type <liftedarglist> liftedargList
-%type <fal> forargList
-%type <lvsl> lvalueStepList
-%type <var> var
-%type <lv> localVar
-%type <pv> patcherVar
-%type <gv> globalVar
-%type <snp> argByName
-%type <forarg> forarg
+%type <astNodeValue> program fundef list sequence nullified whileloop forloop itemOrVar lvalueSpecsItem dataflowHead lvalueSpecsUFinal lvalueSpecsFinal fakeLvalueHead assignment expr item conditional
+%type <astVarValue> var
+%type <astFunctionCallValue> funcall simpleFuncall dataflowFuncall
+%type <funArgValue> funarg
+%type <funArgVector> funargList
+%type <forArgVector> forargList
+%type <localVarVector> liftedargList
+%type <forArgValue> forarg
+%type <symNodePairVector> argsByNameList
+%type <astNodeVector> argsByPositionList listVector nullifiedSequence
+%type <symNodePairValue> argByName
+%type <longValue> sign
+%type <astLocalVarValue> localVar
+%type <astGlobalVarValue> globalVar
+%type <astPatcherVarValue> patcherVar
+%type <lvalueValue> lvalue
+%type <fakeLvalueValue> fakeLvalue
+%type <lvalueSpecsValue> lvalueSpecsNonFinalized lvalueSpecs
+
 
 %{
     #include "bisonparserV3_tab_nolines.h"
@@ -218,13 +228,20 @@ program: %empty {
 
 // returns funArg*
 funarg: LOCALVAR {
-    
+    $$ = new funArg($1);
 }
-| LOCALVAR ASSIGN list {
-    
+| LOCALVAR ASSIGN {
+    *++(params->localVariablesStackV) = new std::vector<t_localVar>;
+    *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
+} list {
+    $$ = new funArg($1, $4, *(params->localVariablesStackV));
+    delete *(params->localVariablesAuxMapStack);
+    *(params->localVariablesAuxMapStack--) = nullptr;
+    delete *(params->localVariablesStackV);
+    *(params->localVariablesStackV--) = nullptr;
 }
 | ELLIPSIS {
-    
+    $$ = new funArg(gensym("<...>"));
 }
 ;
 
@@ -232,22 +249,32 @@ funarg: LOCALVAR {
 
 
 // returns std::vector<funArg*>*
-funargList: funarg {
-    
+funargList: {
+    *++(params->localVariablesStackV) = new std::vector<t_localVar>;
+    *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
+} funarg {
+    auto v = new std::vector<funArg*>;
+    v->push_back($2);
+    $$ = v;
 }
 | funargList COMMA funarg {
-    
+    $1->push_back($3);
+    $$ = $1;
 }
 ;
 
 
 // returns std::vector<t_localVar*>
 liftedargList : LIFT LOCALVAR {
-    $$ = new std::vector<t_localVar*>($2);
+    auto v = new std::vector<t_localVar*>;
+    auto l = new t_localVar($2);
+    v->push_back(l);
+    $$ = v;
     code_dev_post ("parse: liftedargList (first term)\n");
 }
 | liftedargList COMMA LOCALVAR {
-    $1->push_back($3);
+    auto l = new t_localVar($3);
+    $1->push_back(l);
     $$ = $1;
     code_dev_post ("parse: liftedargList (subsequent term)\n");
 }
@@ -258,125 +285,133 @@ liftedargList : LIFT LOCALVAR {
 fundef : funargList FUNDEF {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->argumentsStack) = $1;
+    *++(params->argumentsStackV) = $1;
 } list {
-    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $4, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStackV), *(params->localVariablesStackV), $4, params->owner);
     params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
-    *(params->localVariablesStack--) = nullptr;
+    *(params->localVariablesStackV--) = nullptr;
     --(params->fnDepth);
     delete *(params->localVariablesAuxMapStack);
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->argumentsStack);
+    --(params->argumentsStackV);
     code_dev_post ("parse: user defined function funargList FUNDEF");
 }
 | FUNDEF {
-    ++(params->localVariablesStack);
+    ++(params->localVariablesStackV);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     params->fnDepth++;
-    *++(params->argumentsStack) = nullptr;
+    *++(params->argumentsStackV) = nullptr;
 } list {
-    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $3, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStackV), *(params->localVariablesStackV), $3, params->owner);
     params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
-    *(params->localVariablesStack--) = nullptr;;
+    *(params->localVariablesStackV--) = nullptr;;
     --(params->fnDepth);
     delete *(params->localVariablesAuxMapStack);
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->argumentsStack);
+    --(params->argumentsStackV);
     code_dev_post ("parse: user defined function FUNDEF");
 }
 | funargList liftedargList FUNDEF {
     params->fnDepth++;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    for (countedList<t_localVar> *v = $2->getHead();
-         v;
-         v = v->getNext()) {
-             (*(params->liftedVariablesStack))->insert(v->getItem().getName());
+    for (auto v : *$2) {
+        (*(params->liftedVariablesStack))->insert(v->getName());
     }
-    *++(params->argumentsStack) = $1;
+    *++(params->argumentsStackV) = $1;
 } list {
-    t_function *fn = new t_userFunction(*(params->argumentsStack), *(params->localVariablesStack), $5, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStackV), *(params->localVariablesStackV), $5, params->owner);
     params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
-    *(params->localVariablesStack--) = nullptr;
+    *(params->localVariablesStackV--) = nullptr;
     --(params->fnDepth);
     delete *(params->localVariablesAuxMapStack);
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->argumentsStack);
+    --(params->argumentsStackV);
     code_dev_post ("parse: user defined function funargList liftedargList");
 }
 | liftedargList FUNDEF {
     params->fnDepth++;
-    ++(params->localVariablesStack);
+    ++(params->localVariablesStackV);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
-    *++(params->argumentsStack) = nullptr;
-    for (countedList<t_localVar> *v = $1->getHead();
-         v;
-         v = v->getNext()) {
-        (*(params->liftedVariablesStack))->insert(v->getItem().getName());
+    *++(params->argumentsStackV) = nullptr;
+    for (auto v : *$1) {
+        (*(params->liftedVariablesStack))->insert(v->getName());
     }
 } list {
-    t_function *fn = new t_userFunction(*++(params->argumentsStack), *(params->localVariablesStack), $4, params->owner);
+    t_function *fn = new t_userFunction(*++(params->argumentsStackV), *(params->localVariablesStackV), $4, params->owner);
     params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
-    *(params->localVariablesStack--) = nullptr;;
+    *(params->localVariablesStackV--) = nullptr;;
     --(params->fnDepth);
     delete *(params->localVariablesAuxMapStack);
     *(params->localVariablesAuxMapStack--) = nullptr;
     delete *(params->liftedVariablesStack);
     *(params->liftedVariablesStack--) = nullptr;
-    --(params->argumentsStack);
+    --(params->argumentsStackV);
     code_dev_post ("parse: user defined function liftedargList FUNDEF");
 }
 ;
 
 
+// returns std::vector<astNode*>*
+listVector: expr {
+    auto v = new std::vector<astNode*>;
+    v->push_back($1);
+    $$ = v;
+} 
+| listVector expr {
+    $1->push_back($2);
+    $$ = $1;
+}
+;
+
+
 // returns astNode*
-list: expr {
-    
-} | list expr {
-    
+list: listVector {
+    $$ = new astConcat($1, params->owner);
 }
 ;
 
 // returns astNode*
-sequence: list {
-    $$ = new astSequence($1, $3, params->owner);
-    code_dev_post("parse: seq\n");
-}
-| sequence NULLIFY {
-    
-}
-| sequence list {
-    
+sequence: 
+list
+| nullifiedSequence {
+    $$ = new astConcat($1, params->owner);
 }
 ;
 
 
 // returns astNode*
 nullified: list NULLIFY {
-    
+    $$ = new astNullify($1, params->owner);
 }
 | nullified NULLIFY
 ;
 
+
+// returns std::vector<astNode*>*
 nullifiedSequence: nullified {
-    
+    auto v = new std::vector<astNode*>;
+    v->push_back($1);
+    $$ = v;
 }
 | nullifiedSequence nullified {
-    
+    $1->push_back($2);
+    $$ = $1;
 }
 | nullifiedSequence list {
-    
+    $1->push_back($2);
+    $$ = $1;
 }
 ;
 
@@ -396,12 +431,12 @@ whileloop : WHILE_KW sequence DO_KW list {
 // returns forArg*
 forarg : LOCALVAR IN_KW sequence {
     $$ = new forArg($1, nullptr, $3);
-    addVariableToScope<e_flexBison>(params, $1);
+    addVariableToScope<e_flexBisonV3>(params, $1);
     code_dev_post ("parse: for iterator with index");
 }
 | LOCALVAR LOCALVAR IN_KW sequence {
-    addVariableToScope<e_flexBison>(params, $1);
-    addVariableToScope<e_flexBison>(params, $2);
+    addVariableToScope<e_flexBisonV3>(params, $1);
+    addVariableToScope<e_flexBisonV3>(params, $2);
     $$ = new forArg($1, $2, $4);
     code_dev_post ("parse: for iterator with index and address");
 }
@@ -410,11 +445,14 @@ forarg : LOCALVAR IN_KW sequence {
 
 // returns std::vector<forArg*>*
 forargList : forarg {
-    $$ = new countedList<forArg *>($1);
+    auto v = new std::vector<forArg*>;
+    v->push_back($1);
+    $$ = v;
     code_dev_post ("parse: for iterator (first term)\n");
 }
 | forargList COMMA forarg {
-    $$ = new countedList<forArg *>($3, $1);
+    $1->push_back($3);
+    $$ = $1;
     code_dev_post ("parse: for iterator (subsequent term)\n");
 }
 ;
@@ -476,27 +514,33 @@ forloop : FOR_KW forargList DO_KW list
 
 // returns std::vector<astNode*>*
 argsByPositionList : sequence {
-    $$ = new countedList<astNode *>($1);
+    auto v = new std::vector<astNode*>;
+    v->push_back($1);
+    $$ = v;
     code_dev_post ("parse: argsByPositionList (first term)\n");
 } %dprec 1
 | argsByPositionList COMMA sequence {
-    $$ = new countedList<astNode *>($3, $1);
+    $1->push_back($3);
+    $$ = $1;
     code_dev_post ("parse: argsByPositionList (subsequent term)\n");
 } %dprec 2
 ;
 
 
 // returns std::vector<symNodePair*>*
-argsByNameList : argByName {
-    $$ = new countedList<symNodePair *>($1);
-    code_dev_post ("parse: argsByNameList (first term)\n");
+argsByNameList: argByName {
+    auto v = new std::vector<symNodePair*>;
+    v->push_back($1);
+    $$ = v;code_dev_post ("parse: argsByNameList (first term)\n");
 }
 | argsByNameList COMMA argByName {
-    $$ = new countedList<symNodePair *>($3, $1);
+    $1->push_back($3);
+    $$ = $1;
     code_dev_post ("parse: argsByNameList (subsequent term)\n");
 }
 | argsByNameList argByName {
-    $$ = new countedList<symNodePair *>($2, $1);
+    $1->push_back($2);
+    $$ = $1;
     code_dev_post ("parse: argsByNameList (subsequent term)\n");
 }
 ;
@@ -511,50 +555,46 @@ argByName : NAMEDPARAM sequence {
 
 
 // returns astNode*
-itemOrVar : item {
-    
-}
-| var {
-    
-}
+itemOrVar : item
+| var
 ;
 
 
-// returns astNode*
+// returns simpleFuncall*
 simpleFuncall : itemOrVar STARTPARAMS CLOSEDROUND {
-    
+    $$ = new astFunctionCall($1, (std::vector<astNode*>*) nullptr, (std::vector<symNodePair*>*) nullptr, params->owner);
 }
 | itemOrVar STARTPARAMS argsByPositionList CLOSEDROUND {
-    
+    $$ = new astFunctionCall($1, $3, nullptr, params->owner);
 }
 | itemOrVar STARTPARAMS argsByNameList CLOSEDROUND {
-    
+    $$ = new astFunctionCall($1, nullptr, $3, params->owner);
 }
 | itemOrVar STARTPARAMS argsByPositionList COMMA argsByNameList CLOSEDROUND {
-    
+    $$ = new astFunctionCall($1, $3, $5, params->owner);
 }
-| itemOrVar STARTPARAMS argsByPositionList  argsByNameList CLOSEDROUND {
-    
+| itemOrVar STARTPARAMS argsByPositionList argsByNameList CLOSEDROUND {
+    $$ = new astFunctionCall($1, $3, $4, params->owner);
 }
-simpleFuncall STARTPARAMS CLOSEDROUND {
-    
+| simpleFuncall STARTPARAMS CLOSEDROUND {
+    $$ = new astFunctionCall($1, (std::vector<astNode*>*) nullptr, (std::vector<symNodePair*>*) nullptr, params->owner);
 }
 | simpleFuncall STARTPARAMS argsByPositionList CLOSEDROUND {
-    
+    $$ = new astFunctionCall($1, $3, nullptr, params->owner);
 }
 | simpleFuncall STARTPARAMS argsByNameList CLOSEDROUND {
-    
+    $$ = new astFunctionCall($1, nullptr, $3, params->owner);
 }
 | simpleFuncall STARTPARAMS argsByPositionList COMMA argsByNameList CLOSEDROUND {
-    
+    $$ = new astFunctionCall($1, $3, $5, params->owner);
 }
 | simpleFuncall STARTPARAMS argsByPositionList  argsByNameList CLOSEDROUND {
-    
+    $$ = new astFunctionCall($1, $3, $4, params->owner);
 }
 ;
 
 
-// returns int (1 / -1)
+// returns long (1 / -1)
 sign : UPLUS {
     $$ = 1;
 } 
@@ -571,64 +611,65 @@ sign : UPLUS {
 
 
 // returns astNode*
-lvalueSpecsItem : sign itemOrVar {
-    
+lvalueSpecsItem : itemOrVar
+| sign itemOrVar {
+    if ($1 == -1) {
+        $$ = new astOperatorUMinus($2, params->owner);
+    } else {
+        $$ = $2;
+    }
 }
 ;
 
 
 // returns astNode*
-dataflowHead : item {
-    
-}
-| simpleFuncall {
-    
-}
-| var {
-    
-}
+dataflowHead : item
+| simpleFuncall
+| var
 ;
 
 
-// returns astNode*
+// returns astFunctionCall*
 dataflowFuncall :
 dataflowHead APPLY simpleFuncall {
-    
+    $3->addDataflowStyleArg($1);
+    $$ = $3;
 }
 | dataflowFuncall APPLY simpleFuncall {
-    
+    $3->addDataflowStyleArg($1);
+    $$ = $3;
 }
 ;
 
 
-// returns astNode*
+// returns astFunctionCall*
 funcall:
 simpleFuncall
 | dataflowFuncall
 ;
 
 
-// returns astNode*
+// returns astVar*
 var: globalVar
 | localVar
 | patcherVar
 ;
 
 
-// returns astNode*
+// returns astLocalVar*
 localVar: LOCALVAR {
     $$ = new astLocalVar($1, params->owner);
-    addVariableToScope<e_flexBison>(params, $1);
+    addVariableToScope<e_flexBisonV3>(params, $1);
     code_dev_post ("parse: Local variable %s", $1->s_name);
 }
 | KEEP LOCALVAR {
     $$ = new astKeep($2, params->owner);
-    addVariableToScope<e_flexBison>(params, $2);
+    addVariableToScope<e_flexBisonV3>(params, $2);
     code_dev_post ("parse: Keep local variable %s", $2->s_name);
 }
 | UNKEEP LOCALVAR {
     $$ = new astUnkeep($2, params->owner);
-    addVariableToScope<e_flexBison>(params, $2);
+    addVariableToScope<e_flexBisonV3>(params, $2);
     code_dev_post ("parse: Unkeep local variable %s", $2->s_name);
 }
 ;
@@ -665,11 +706,13 @@ conditional
 
 
 // returns astNode*
-lvalueSpecsFinal : lvalueSpecsUFinal {
-    
-}
+lvalueSpecsFinal : lvalueSpecsUFinal
 | sign lvalueSpecsUFinal {
-    
+    if ($1 == -1) {
+        $$ = new astOperatorUMinus($2, params->owner);
+    } else {
+        $$ = $2;
+    }
 }
 ;
 
@@ -677,10 +720,10 @@ lvalueSpecsFinal : lvalueSpecsUFinal {
 // returns lvalue*
 lvalue: 
 var {
-    
+    $$ = new lvalue($1, nullptr);
 }
 | var lvalueSpecs {
-    
+    $$ = new lvalue($1, $2);
 }
 ;
 
@@ -695,7 +738,7 @@ item
 // returns fakeLvalue*
 fakeLvalue:
 fakeLvalueHead lvalueSpecs {
-    
+    $$ = new fakeLvalue($1, $2);
 }
 ;
 
@@ -703,10 +746,26 @@ fakeLvalueHead lvalueSpecs {
 // returns lvalueSpecs*
 lvalueSpecsNonFinalized:
 NTHOP lvalueSpecsItem {
-    
+    auto s = new lvalueSpecs;
+    auto step = new lvalueStep(lvalueStep::E_LV_NTH, $2);
+    s->addStep(step);
+    $$ = s;
 }
 | lvalueSpecs NTHOP lvalueSpecsItem {
-    
+    auto step = new lvalueStep(lvalueStep::E_LV_NTH, $3);
+    $1->addStep(step);
+    $$ = $1;
+}
+| APPLY lvalueSpecsItem {
+    auto s = new lvalueSpecs;
+    auto step = new lvalueStep(lvalueStep::E_LV_KEY, $2);
+    s->addStep(step);
+    $$ = s;
+}
+| lvalueSpecs NTHOP lvalueSpecsItem {
+    auto step = new lvalueStep(lvalueStep::E_LV_KEY, $3);
+    $1->addStep(step);
+    $$ = $1;
 }
 ;
 
@@ -714,14 +773,28 @@ NTHOP lvalueSpecsItem {
 // returns lvalueSpecs*
 lvalueSpecs:
 NTHOP lvalueSpecsFinal {
-    
+    auto s = new lvalueSpecs;
+    auto step = new lvalueStep(lvalueStep::E_LV_NTH, $2);
+    s->addStep(step);
+    $$ = s;
 }
-| lvalueSpecsNonFinalized NTHOP lvalueSpecs Final {
-    
+| lvalueSpecsNonFinalized NTHOP lvalueSpecsFinal {
+    auto step = new lvalueStep(lvalueStep::E_LV_NTH, $3);
+    $1->addStep(step);
+    $$ = $1;
 }
-| lvalueSpecsNonFinalized {
-    
+| APPLY lvalueSpecsFinal {
+    auto s = new lvalueSpecs;
+    auto step = new lvalueStep(lvalueStep::E_LV_KEY, $2);
+    s->addStep(step);
+    $$ = s;
 }
+| lvalueSpecsNonFinalized APPLY lvalueSpecsFinal {
+    auto step = new lvalueStep(lvalueStep::E_LV_KEY, $3);
+    $1->addStep(step);
+    $$ = $1;
+}
+| lvalueSpecsNonFinalized
 ;
 
 
@@ -729,697 +802,154 @@ NTHOP lvalueSpecsFinal {
 listEnd: assignment %dprec 2
 | whileloop
 | forloop
-| ifThenElse
+| conditional
 | fundef %dprec 1
 ;
 
 
-
-
-
-
-
-ifThenElse : IF_KW sequence THEN_KW list {
-    $$ = new astIfThenElse($2, $4, nullptr, params->owner);
-    code_dev_post ("parse: if then\n");
+// returns astNode*
+expr :
+item
+| var
+| funcall
+| listEnd
+| lvalue {
+    astNode* n = $1->getVar();
+    auto s = $1->getSpecs();
+    if (s)
+        n = s->toReadNode(n, params->owner);
+    $$ = n;
 }
-| IF_KW sequence THEN_KW list ELSE_KW list {
-    // ask JLG: this causes 26 r/r conflicts.
-    // Putting
-    // IF_KW sequence THEN_KW valueOrAssignment ELSE_KW valueOrAssignment
-    // would silence the conflicts, but doesn't work the same.
-    // The current version parses
-    //  if 1==1 then $a := 1 ; $b := 2 else $a := 3 ; $a
-    // as
-    //  if 1==1 then [$a := 1 ; $b := 2] else $a := 3 ; $a
-    // thus returning 1
-    // The "fixed" version, on the other hand, only considers
-    //  if 1==1 then $a := 1 ; $b := 2
-    // and discards what follows, thus resulting in 2.
-    // On the other hand, I don't want to be forced to write
-    // IF_KW sequence THEN_KW sequence
-    // in the previous rule.
-    // How do I solve this?
-    
-    $$ = new astIfThenElse($2, $4, $6, params->owner);
-    code_dev_post ("parse: if then else\n");
+| fakeLvalue {
+    auto n = $1->getNode();
+    auto s = $1->getSpecs();
+    $$ = s->toReadNode(n, params->owner);
 }
-
-
-
-
-
-
-
-
-
-functionApplication : funcall %dprec 2
-| exp APPLY funcall
-{
-    $3->addDataflowStyleArg($1);
-    code_dev_post ("parse: term APPLY funcall");
-    $$ = $3;
-} %dprec 1
-
-funcall : term STARTPARAMS argsByPositionList CLOSEDROUND {
-    $$ = new astFunctionCall($1, $3, nullptr, params->owner);
-    delete $3;
-    code_dev_post ("parse: function call with args by position");
-}
-| term STARTPARAMS argsByNameList CLOSEDROUND {
-    $$ = new astFunctionCall($1, nullptr, $3, params->owner);
-    delete $3;
-    code_dev_post ("parse: function call with args by name");
-}
-| term STARTPARAMS argsByPositionList COMMA argsByNameList CLOSEDROUND {
-    $$ = new astFunctionCall($1, $3, $5, params->owner);
-    delete $3;
-    delete $5;
-    code_dev_post ("parse: function call with args by position and by name");
-}
-| term STARTPARAMS argsByPositionList argsByNameList CLOSEDROUND {
-    $$ = new astFunctionCall($1, $3, $4, params->owner);
-    delete $3;
-    delete $4;
-    code_dev_post ("parse: function call with args by position and by name");
-}
-| term STARTPARAMS CLOSEDROUND {
-    $$ = new astFunctionCall($1, params->owner);
-    code_dev_post ("parse: function call with no args");
-}
-;
-
-
-
-
-simpleList: exp %prec CONCAT
-| simpleList exp %prec CONCAT {
-    $$ = new astConcat($1, $2, params->owner);
-    code_dev_post("parse: cat\n");
-}
-;
-
-assignment: assign
-| OUTLET ASSIGN list {
-    if (params->dataOutlets && $1 > *(params->dataOutlets))
-        *(params->dataOutlets) = $1;
-    auto fnConst = new astConst((*(params->bifs))["outlet"], params->owner);
-
-
-    auto numConst = new astConst($1, params->owner);
-    auto tempList = new countedList<astNode *>(numConst);
-    tempList = new countedList<astNode *>($3, tempList);
-    $$ = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
-    code_dev_post("parse: OUTLET ASSIGN list");
-}
-| DIROUTLET ASSIGN list {
-    if (params->directOutlets && $1 > *(params->directOutlets))
-        *(params->directOutlets) = $1;
-    auto fnConst = new astConst((*(params->ofTable))["directout"], params->owner);
-    auto tempList = new countedList<astNode *>(new astConst($1, params->owner));
-    tempList = new countedList<astNode *>($3, tempList);
-    $$ = new astFunctionCall(fnConst, tempList, nullptr, params->owner);
-    code_dev_post("parse: DIROUTLET ASSIGN list");
-}
-;
-
-assign : var ASSIGN list {
-    $$ = new astAssign($1, $3, params->owner);
-    code_dev_post("parse: var ASSIGN list");
-}
-| INIT LOCALVAR ASSIGN list {
-    addVariableToScope<e_flexBison>(params, $2);
-    $$ = new astInit($2, $4, params->owner);
-    code_dev_post("parse: INIT LOCALVAR ASSIGN list");
-}
-| var lvalueStepList ASSIGN list {
-    $$ = new astRichAssignment<E_RA_STANDARD>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ASSIGN list");
-}
-| var APLUS list {
-    $$ = new astOperatorAPlus($1, $3, params->owner);
-    code_dev_post("parse: var APLUS list");
-}
-| var lvalueStepList APLUS list {
-    $$ = new astOperatorRAPlus($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList APLUS list");
-}
-| var AMINUS list {
-    $$ = new astOperatorAMinus($1, $3, params->owner);
-    code_dev_post("parse: var AMINUS list");
-}
-| var lvalueStepList AMINUS list {
-    $$ = new astOperatorRAMinus($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList AMINUS list");
-}
-| var ATIMES list {
-    $$ = new astOperatorATimes($1, $3, params->owner);
-    code_dev_post("parse: var ATIMES list");
-}
-| var lvalueStepList ATIMES list {
-    $$ = new astOperatorRATimes($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ATIMES list");
-}
-| var APOWOP list {
-    $$ = new astOperatorAPow($1, $3, params->owner);
-    code_dev_post("parse: var APOWOP list");
-}
-| var lvalueStepList APOWOP list {
-    $$ = new astOperatorRAPow($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList APOWOP list");
-}
-| var ADIV list {
-    $$ = new astOperatorADiv($1, $3, params->owner);
-    code_dev_post("parse: var ADIV list");
-}
-| var lvalueStepList ADIV list {
-    $$ = new astOperatorRADiv($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ADIV list");
-}
-| var ADIVDIV list {
-    $$ = new astOperatorADivdiv($1, $3, params->owner);
-    code_dev_post("parse: var ADIVDIV list");
-}
-| var lvalueStepList ADIVDIV list {
-    $$ = new astOperatorRADivdiv($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ADIVDIV list");
-}
-| var AREM list {
-    $$ = new astOperatorARemainder($1, $3, params->owner);
-    code_dev_post("parse: var AREM list");
-}
-| var lvalueStepList AREM list {
-    $$ = new astOperatorRARemainder($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList AREM list");
-}
-| var ABITAND list {
-    $$ = new astOperatorABitAnd($1, $3, params->owner);
-    code_dev_post("parse: var ABITAND list");
-}
-| var lvalueStepList ABITAND list {
-    $$ = new astOperatorRABitAnd($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ABITAND list");
-}
-| var ABITXOR list {
-    $$ = new astOperatorABitXor($1, $3, params->owner);
-    code_dev_post("parse: var ABITXOR list");
-}
-| var lvalueStepList ABITXOR list {
-    $$ = new astOperatorRABitXor($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ABITXOR list");
-}
-| var ABITOR list {
-    $$ = new astOperatorABitOr($1, $3, params->owner);
-    code_dev_post("parse: localVar ABITOR list");
-}
-| var lvalueStepList ABITOR list {
-    $$ = new astOperatorRABitOr($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ABITOR list");
-}
-| var ALSHIFT list {
-    $$ = new astOperatorALShift($1, $3, params->owner);
-    code_dev_post("parse: var ALSHIFT list");
-}
-| var lvalueStepList ALSHIFT list {
-    $$ = new astOperatorRALShift($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALSHIFT list");
-}
-| var ARSHIFT list {
-    $$ = new astOperatorARShift($1, $3, params->owner);
-    code_dev_post("parse: var ARSHIFT list");
-}
-| var lvalueStepList ARSHIFT list {
-    $$ = new astOperatorRARShift($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ARSHIFT list");
-}
-| var ALOGAND list {
-    $$ = new astSCAAnd($1, $3, params->owner);
-    code_dev_post("parse: var ALOGAND list");
-}
-| var lvalueStepList ALOGAND list {
-    $$ = new astLogRASCAnd($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGAND list");
-}
-| var ALOGANDEXT list {
-    $$ = new astSCAAndExt($1, $3, params->owner);
-    code_dev_post("parse: var ALOGANDEXT list");
-}
-| var lvalueStepList ALOGANDEXT list {
-    $$ = new astSCRichAccessAndExt<astRichAssignment<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGANDEXT list");
-}
-| var ALOGXOR list {
-    $$ = new astLogAXor($1, $3, params->owner);
-    code_dev_post("parse: var ALOGXOR list");
-}
-| var lvalueStepList ALOGXOR list {
-    $$ = new astLogRAXor($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGXOR list");
-}
-| var ALOGOR list {
-    $$ = new astSCAOr($1, $3, params->owner);
-    code_dev_post("parse: var ALOGOR list");
-}
-| var lvalueStepList ALOGOR list {
-    $$ = new astLogRASCOr($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGOR list");
-}
-| var ALOGOREXT list {
-    $$ = new astSCAOrExt($1, $3, params->owner);
-    code_dev_post("parse: var ALOGOREXT list");
-}
-| var lvalueStepList ALOGOREXT list {
-    $$ = new astSCRichAccessOrExt<astRichAssignment<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGOREXT list");
-}
-| var ANTHOP list {
-    $$ = new astNthAssignOp($1, $3, params->owner);
-    code_dev_post ("parse: var ANTHOP list op\n");
-}
-| var lvalueStepList ANTHOP list {
-    $$ = new astRichAccessNthOp<astRichAssignment<E_RA_STANDARD>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ANTHOP list");
-}
-| var ACONCAT list {
-    $$ = new astConcatAssignOp($1, $3, params->owner);
-    code_dev_post ("parse: var ACONCAT list op\n");
-}
-| var lvalueStepList ACONCAT list {
-    $$ = new astRichAccessConcatOp<astRichAssignment<E_RA_STANDARD>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ACONCAT list");
-}
-| var ARCONCAT list {
-    $$ = new astRevConcatAssignOp($1, $3, params->owner);
-    code_dev_post ("parse: var ARCONCAT list op\n");
-}
-| var lvalueStepList ARCONCAT list {
-    $$ = new astRichAccessRConcatOp<astRichAssignment<E_RA_STANDARD>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ARCONCAT list");
-}
-| localVar AAPPLY funcall {
-    $3->addDataflowStyleArg($1);
-    $$ = new astAssign(new astLocalVar($1), $3, params->owner);
-    code_dev_post ("parse: localVar AAPPLY funcall");
-}
-| patcherVar AAPPLY funcall {
-    $3->addDataflowStyleArg($1);
-    astPatcherVar *v = new astPatcherVar($1);
-    (*params->name2patcherVars)[v->getName()].insert(v);
-    $$ = new astAssign(v, $3, params->owner);
-    code_dev_post ("parse: patcherVar AAPPLY funcall");
-}
-| globalVar AAPPLY funcall {
-    $3->addDataflowStyleArg($1);
-    $$ = new astAssign(new astGlobalVar($1), $3, params->owner);
-    code_dev_post ("parse: globalVar AAPPLY funcall");
-}
-| var lvalueStepList AAPPLY funcall {
-    $4->addDataflowStyleArg(new astConst(params->owner));
-    $$ = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList AAPPLY list");
-}
-;
-
-
-lvalueStepList: NTHOP lvalueStepParams {
-    $$ = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_NTH, $2));
-    code_dev_post ("parse: lvalueStepList (NTH first term)");
-}
-| APPLY lvalueStepParams {
-    $$ = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_KEY, $2));
-    code_dev_post ("parse: lvalueStepList (KEY first term)");
-}
-| lvalueStepList NTHOP lvalueStepParams {
-    $$ = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_NTH, $3), $1);
-    code_dev_post ("parse: lvalueStepList (NTH subsequent term)");
-}
-| lvalueStepList APPLY lvalueStepParams {
-    $$ = new lvalueStepList(new lvalueStep(lvalueStep::E_LV_KEY, $3), $1);
-    code_dev_post ("parse: lvalueStepList (KEY subsequent term)");
-}
-;
-
-
-lvalueStepParams: exp %prec LVALUESTEPPARAMS
-| lvalueStepParams exp %prec LVALUESTEPPARAMS {
-    $$ = new astConcat($1, $2, params->owner);
-    code_dev_post("parse: cat\n");
-}
-;
-
-exp: term %dprec 2
-| UPLUS listEnd { $$ = $2; }
-| UMINUS listEnd {
-    $$ = new astOperatorUMinus($2, params->owner);
+| sign expr {
+    if ($1 == -1)
+        $$ = new astOperatorUMinus($2, params->owner);
+    else
+        $$ = $2;
     code_dev_post("parse: U-\n");
 }
-| LOGNOT listEnd {
+| LOGNOT expr {
     $$ = new astLogNot($2, params->owner);
     code_dev_post("parse: !\n");
 }
-| BITNOT listEnd {
+| BITNOT expr {
     $$ = new astOperatorBitNot($2, params->owner);
     code_dev_post("parse: ~\n");
 }
-| exp PLUS listEnd {
+| expr PLUS expr {
     $$ = new astOperatorPlus($1, $3, params->owner);
     code_dev_post ("parse: +\n");
 }
-| exp MINUS listEnd {
+| expr MINUS expr {
     $$ = new astOperatorMinus($1, $3, params->owner);
     code_dev_post ("parse: -\n");
 }
-| exp TIMES listEnd {
+| expr TIMES expr {
     $$ = new astOperatorTimes($1, $3, params->owner);
     code_dev_post ("parse: *\n");
 }
-| exp DIV listEnd {
+| expr DIV expr {
     $$ = new astOperatorDiv($1, $3, params->owner);
     code_dev_post ("parse: /\n");
 }
-| exp DIVDIV listEnd {
+| expr DIVDIV expr {
     $$ = new astOperatorDivdiv($1, $3, params->owner);
     code_dev_post ("parse: //\n");
 }
-| exp REM listEnd {
+| expr REM expr {
     $$ = new astOperatorRemainder($1, $3, params->owner);
     code_dev_post ("parse: %\n");
 }
-| exp POWOP listEnd {
+| expr POWOP expr {
     $$ = new astOperatorPow($1, $3, params->owner);
     code_dev_post ("parse: **\n");
 }
-| exp BITAND listEnd {
+| expr BITAND expr {
     $$ = new astOperatorBitAnd($1, $3, params->owner);
     code_dev_post ("parse: &\n");
 }
-| exp BITXOR listEnd {
+| expr BITXOR expr {
     $$ = new astOperatorBitXor($1, $3, params->owner);
     code_dev_post ("parse: ^\n");
 }
-| exp BITOR listEnd {
+| expr BITOR expr {
     $$ = new astOperatorBitOr($1, $3, params->owner);
     code_dev_post ("parse: |\n");
 }
-| exp LSHIFT listEnd {
-    $$ = new astOperatorLShift($1, $3, params->owner);
-    code_dev_post ("parse: <<\n");
-}
-| exp RSHIFT listEnd {
-    $$ = new astOperatorRShift($1, $3, params->owner);
-    code_dev_post ("parse: >>\n");
-}
-| exp EQUAL listEnd {
-    $$ = new astComparatorEq($1, $3, params->owner);
-    code_dev_post ("parse: ==\n");
-}
-| exp NEQ listEnd {
-    $$ = new astComparatorNeq($1, $3, params->owner);
-    code_dev_post ("parse: !=\n");
-}
-| exp LT listEnd {
-    $$ = new astComparatorLt($1, $3, params->owner);
-    code_dev_post ("parse: <\n");
-}
-| exp GT listEnd {
-    $$ = new astComparatorGt($1, $3, params->owner);
-    code_dev_post ("parse: <\n");
-}
-| exp LEQ listEnd {
-    $$ = new astComparatorLeq($1, $3, params->owner);
-    code_dev_post ("parse: <=\n");
-}
-| exp GEQ listEnd {
-    $$ = new astComparatorGeq($1, $3, params->owner);
-    code_dev_post ("parse: >=\n");
-}
-| exp LOGOR listEnd {
-    $$ = new astSCOr($1, $3, params->owner);
-    code_dev_post ("parse: ||\n");
-}
-| exp LOGAND listEnd {
-    $$ = new astSCAnd($1, $3, params->owner);
-    code_dev_post ("parse: &&\n");
-}
-| exp LOGXOR listEnd {
-    $$ = new astLogXor($1, $3, params->owner);
-    code_dev_post ("parse: &&\n");
-}
-| exp LOGOREXT listEnd {
-    $$ = new astSCOrExt($1, $3, params->owner);
-    code_dev_post ("parse: |||\n");
-}
-| exp LOGANDEXT listEnd {
-    $$ = new astSCAndExt($1, $3, params->owner);
-    code_dev_post ("parse: &&&\n");
-}
-| exp NTHOP listEnd {
-    $$ = new astNthOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop (exp NTHOP listEnd)\n");
-}
-| exp PICKOP listEnd {
-    $$ = new astPickOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop\n");
-}
-| exp RANGE listEnd {
-    $$ = new astRangeOp($1, $3, params->owner);
-    code_dev_post ("parse: range\n");
-}
-| exp REPEAT listEnd {
-    $$ = new astRepeatOp($1, $3, params->owner);
-    code_dev_post ("parse: range\n");
-}
-| exp APPLY listEnd %dprec 1 {
-    $$ = new astKeyOp<e_keyOpStandard>($1, $3, params->owner);
-    code_dev_post ("parse: access\n");
-}
-| exp ACCESS_UNWRAP listEnd {
-    $$ = new astKeyOp<e_keyOpUnwrapping>($1, $3, params->owner);
-    code_dev_post ("parse: access\n");
-}
-
-| UPLUS exp { $$ = $2; }
-| UMINUS exp {
-    $$ = new astOperatorUMinus($2, params->owner);
-    code_dev_post("parse: U-\n");
-}
-| LOGNOT exp {
-    $$ = new astLogNot($2, params->owner);
-    code_dev_post("parse: !\n");
-}
-| BITNOT exp {
-    $$ = new astOperatorBitNot($2, params->owner);
-    code_dev_post("parse: ~\n");
-}
-| exp PLUS exp {
-    $$ = new astOperatorPlus($1, $3, params->owner);
-    code_dev_post ("parse: +\n");
-}
-| exp MINUS exp {
-    $$ = new astOperatorMinus($1, $3, params->owner);
-    code_dev_post ("parse: -\n");
-}
-| exp TIMES exp {
-    $$ = new astOperatorTimes($1, $3, params->owner);
-    code_dev_post ("parse: *\n");
-}
-| exp DIV exp {
-    $$ = new astOperatorDiv($1, $3, params->owner);
-    code_dev_post ("parse: /\n");
-}
-| exp DIVDIV exp {
-    $$ = new astOperatorDivdiv($1, $3, params->owner);
-    code_dev_post ("parse: //\n");
-}
-| exp REM exp {
-    $$ = new astOperatorRemainder($1, $3, params->owner);
-    code_dev_post ("parse: %\n");
-}
-| exp POWOP exp {
-    $$ = new astOperatorPow($1, $3, params->owner);
-    code_dev_post ("parse: **\n");
-}
-| exp BITAND exp {
-    $$ = new astOperatorBitAnd($1, $3, params->owner);
-    code_dev_post ("parse: &\n");
-}
-| exp BITXOR exp {
-    $$ = new astOperatorBitXor($1, $3, params->owner);
-    code_dev_post ("parse: ^\n");
-}
-| exp BITOR exp {
-    $$ = new astOperatorBitOr($1, $3, params->owner);
-    code_dev_post ("parse: |\n");
-}
-| exp LSHIFT exp {
+| expr LSHIFT expr {
     $$ = new astOperatorBitOr($1, $3, params->owner);
     code_dev_post ("parse: <<\n");
 }
-| exp RSHIFT exp {
+| expr RSHIFT expr {
     $$ = new astOperatorBitOr($1, $3, params->owner);
     code_dev_post ("parse: >>\n");
 }
-| exp EQUAL exp {
+| expr EQUAL expr {
     $$ = new astComparatorEq($1, $3, params->owner);
     code_dev_post ("parse: ==\n");
 }
-| exp NEQ exp {
+| expr NEQ expr {
     $$ = new astComparatorNeq($1, $3, params->owner);
     code_dev_post ("parse: !=\n");
 }
-| exp LT exp {
+| expr LT expr {
     $$ = new astComparatorLt($1, $3, params->owner);
     code_dev_post ("parse: <\n");
 }
-| exp GT exp {
+| expr GT expr {
     $$ = new astComparatorGt($1, $3, params->owner);
     code_dev_post ("parse: <\n");
 }
-| exp LEQ exp {
+| expr LEQ expr {
     $$ = new astComparatorLeq($1, $3, params->owner);
     code_dev_post ("parse: <=\n");
 }
-| exp GEQ exp {
+| expr GEQ expr {
     $$ = new astComparatorGeq($1, $3, params->owner);
     code_dev_post ("parse: >=\n");
 }
-| exp LOGOR exp {
+| expr LOGOR expr {
     $$ = new astSCOr($1, $3, params->owner);
     code_dev_post ("parse: ||\n");
 }
-| exp LOGAND exp {
+| expr LOGAND expr {
     $$ = new astSCAnd($1, $3, params->owner);
     code_dev_post ("parse: &&\n");
 }
-| exp LOGXOR exp {
+| expr LOGXOR expr {
     $$ = new astLogXor($1, $3, params->owner);
     code_dev_post ("parse: &&\n");
 }
-| exp LOGOREXT exp {
+| expr LOGOREXT expr {
     $$ = new astSCOrExt($1, $3, params->owner);
     code_dev_post ("parse: |||\n");
 }
-| exp LOGANDEXT exp {
+| expr LOGANDEXT expr {
     $$ = new astSCAndExt($1, $3, params->owner);
     code_dev_post ("parse: &&&\n");
 }
-| exp NTHOP exp {
-    $$ = new astNthOp($1, $3, params->owner);
-    code_dev_post ("parse: nthop (exp NTHOP exp)\n");
-}
-| exp PICKOP exp {
+| expr PICKOP expr {
     $$ = new astPickOp($1, $3, params->owner);
     code_dev_post ("parse: nthop\n");
 }
-| exp RANGE exp {
+| expr RANGE expr {
     $$ = new astRangeOp($1, $3, params->owner);
     code_dev_post ("parse: range\n");
 }
-| exp REPEAT exp {
+| expr REPEAT expr {
     $$ = new astRepeatOp($1, $3, params->owner);
     code_dev_post ("parse: range\n");
-}
-| exp APPLY exp {
-    $$ = new astKeyOp<e_keyOpStandard>($1, $3, params->owner);
-    code_dev_post ("parse: access\n");
-} %dprec 1
-| exp ACCESS_UNWRAP exp {
-    $$ = new astKeyOp<e_keyOpUnwrapping>($1, $3, params->owner);
-    code_dev_post ("parse: access_unwrap\n");
-} %dprec 1
-
-| term lvalueStepList ASSIGN list %dprec 2 {
-    $$ = new astRichEdit<E_RA_STANDARD>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ASSIGN list");
-}
-| term lvalueStepList APLUS list %dprec 2 {
-    $$ = new astOperatorREPlus($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList APLUS list");
-}
-| term lvalueStepList AMINUS list %dprec 2 {
-    $$ = new astOperatorREMinus($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList AMINUS list");
-}
-| term lvalueStepList ATIMES list %dprec 2 {
-    $$ = new astOperatorRETimes($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ATIMES list");
-}
-| term lvalueStepList APOWOP list %dprec 2 {
-    $$ = new astOperatorREPow($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList APOWOP list");
-}
-| term lvalueStepList ADIV list %dprec 2 {
-    $$ = new astOperatorREDiv($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ADIV list");
-}
-| term lvalueStepList ADIVDIV list %dprec 2 {
-    $$ = new astOperatorREDivdiv($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ADIVDIV list");
-}
-| term lvalueStepList AREM list %dprec 2 {
-    $$ = new astOperatorRERemainder($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList AREM list");
-}
-| term lvalueStepList ABITAND list %dprec 2 {
-    $$ = new astOperatorREBitAnd($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ABITAND list");
-}
-| term lvalueStepList ABITXOR list %dprec 2 {
-    $$ = new astOperatorREBitXor($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ABITXOR list");
-}
-| term lvalueStepList ABITOR list %dprec 2 {
-    $$ = new astOperatorREBitOr($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ABITOR list");
-}
-| term lvalueStepList ALSHIFT list %dprec 2 {
-    $$ = new astOperatorRELShift($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALSHIFT list");
-}
-| term lvalueStepList ARSHIFT list %dprec 2 {
-    $$ = new astOperatorRERShift($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ARSHIFT list");
-}
-| term lvalueStepList ALOGAND list %dprec 2 {
-    $$ = new astLogRESCAnd($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGAND list");
-}
-| term lvalueStepList ALOGANDEXT list %dprec 2 {
-    $$ = new astSCRichAccessAndExt<astRichEdit<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGANDEXT list");
-}
-| term lvalueStepList ALOGXOR list %dprec 2 {
-    $$ = new astLogREXor($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGXOR list");
-}
-| term lvalueStepList ALOGOR list %dprec 2 {
-    $$ = new astLogRESCOr($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGOR list");
-}
-| term lvalueStepList ALOGOREXT list %dprec 2 {
-    $$ = new astSCRichAccessOrExt<astRichEdit<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ALOGOREXT list");
-}
-| term lvalueStepList ANTHOP list %dprec 2 {
-    $$ = new astRichAccessNthOp<astRichEdit<E_RA_STANDARD>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ANTHOP list");
-}
-| term lvalueStepList ACONCAT list %dprec 2 {
-    $$ = new astRichAccessConcatOp<astRichEdit<E_RA_STANDARD>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ACONCAT list");
-}
-| term lvalueStepList ARCONCAT list %dprec 2 {
-    $$ = new astRichAccessRConcatOp<astRichEdit<E_RA_STANDARD>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList ARCONCAT list");
-}
-| term lvalueStepList AAPPLY funcall %dprec 2 {
-    $4->addDataflowStyleArg(new astConst(params->owner));
-    $$ = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>($1, $4, $2, params->owner);
-    code_dev_post("parse: var lvalueStepList AAPPLY list");
 }
 ;
 
-term: LONG_LITERAL {
+
+// returns astNode*
+item:
+LONG_LITERAL {
     $$ = new astConst($1, params->owner);
     code_dev_post("parse: INT %ld", $1);
 }
@@ -1528,6 +1058,271 @@ term: LONG_LITERAL {
 }
 ;
 
+
+// returns astNode*
+assignment:
+INIT LOCALVAR ASSIGN list {
+    addVariableToScope<e_flexBisonV3>(params, $2);
+    $$ = new astInit($2, $4, params->owner);
+    code_dev_post("parse: INIT LOCALVAR ASSIGN list");
+}
+| lvalue ASSIGN list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astAssign($1->getVar(), $3, params->owner);
+    else
+        $$ = new astRichAssignment<E_RA_STANDARD>($1->getVar(), $3, s, params->owner);
+}
+| lvalue APOWOP list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorAPow($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRAPow($1->getVar(), $3, s, params->owner);
+}
+| lvalue ATIMES list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorATimes($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRATimes($1->getVar(), $3, s, params->owner);
+}
+| lvalue ADIVDIV list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorADivdiv($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRADivdiv($1->getVar(), $3, s, params->owner);
+}
+| lvalue ADIV list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorADiv($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRADiv($1->getVar(), $3, s, params->owner);
+}
+| lvalue AREM list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorARemainder($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRARemainder($1->getVar(), $3, s, params->owner);
+}
+| lvalue APLUS list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorAPlus($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRAPlus($1->getVar(), $3, s, params->owner);
+}
+| lvalue AMINUS list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorAMinus($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRAMinus($1->getVar(), $3, s, params->owner);
+}
+| lvalue ALOGAND list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astSCAAnd($1->getVar(), $3, params->owner);
+    else
+        $$ = new astLogRASCAnd($1->getVar(), $3, s, params->owner);
+}
+| lvalue ALOGANDEXT list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astSCAAndExt($1->getVar(), $3, params->owner);
+    else
+        $$ = new astLogRASCAndExt($1->getVar(), $3, s, params->owner);
+}
+| lvalue ALOGXOR list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astLogAXor($1->getVar(), $3, params->owner);
+    else
+        $$ = new astLogRAXor($1->getVar(), $3, s, params->owner);
+}
+| lvalue ALOGOR list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astSCAOr($1->getVar(), $3, params->owner);
+    else
+        $$ = new astLogRASCOr($1->getVar(), $3, s, params->owner);
+}
+| lvalue ALOGOREXT list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astSCAOrExt($1->getVar(), $3, params->owner);
+    else
+        $$ = new astLogRASCOrExt($1->getVar(), $3, s, params->owner);
+}
+| lvalue ABITAND list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorABitAnd($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRABitAnd($1->getVar(), $3, s, params->owner);
+}
+| lvalue ABITXOR list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorABitXor($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRABitXor($1->getVar(), $3, s, params->owner);
+}
+| lvalue ABITOR list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorABitOr($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRABitOr($1->getVar(), $3, s, params->owner);
+}
+| lvalue ALSHIFT list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorALShift($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRALShift($1->getVar(), $3, s, params->owner);
+}
+| lvalue ARSHIFT list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astOperatorARShift($1->getVar(), $3, params->owner);
+    else
+        $$ = new astOperatorRARShift($1->getVar(), $3, s, params->owner);
+}
+| lvalue ACONCAT list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astConcatAssignOp($1->getVar(), $3, params->owner);
+    else
+        $$ = new astRAConcat($1->getVar(), $3, s, params->owner);
+}
+| lvalue ARCONCAT list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astRevConcatAssignOp($1->getVar(), $3, params->owner);
+    else
+        $$ = new astRARConcat($1->getVar(), $3, s, params->owner);
+}
+| lvalue ANTHOP list {
+    if (auto s = $1->getSpecs(); s == nullptr)
+        $$ = new astNthAssignOp($1->getVar(), $3, params->owner);
+    else
+        $$ = nullptr;
+}
+
+| fakeLvalue ASSIGN list {
+    $$ = new astRichEdit<E_RA_STANDARD>($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue APOWOP list {
+    $$ = new astOperatorREPow($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ATIMES list {
+    $$ = new astOperatorRETimes($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ADIVDIV list {
+    $$ = new astOperatorREDivdiv($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ADIV list {
+    $$ = new astOperatorREDiv($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue AREM list {
+    $$ = new astOperatorRERemainder($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue APLUS list {
+    $$ = new astOperatorREPlus($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue AMINUS list {
+    $$ = new astOperatorREMinus($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ALOGAND list {
+    $$ = new astLogRESCAnd($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ALOGANDEXT list {
+    $$ = new astLogRESCAndExt($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ALOGXOR list {
+    $$ = new astLogREXor($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ALOGOR list {
+    $$ = new astLogRESCOr($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ALOGOREXT list {
+    $$ = new astLogRESCOrExt($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ABITAND list {
+    $$ = new astOperatorREBitAnd($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ABITXOR list {
+    $$ = new astOperatorREBitXor($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ABITOR list {
+    $$ = new astOperatorREBitOr($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ALSHIFT list {
+    $$ = new astOperatorRELShift($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ARSHIFT list {
+    $$ = new astOperatorRERShift($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ACONCAT list {
+    $$ = new astREConcat($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+| fakeLvalue ARCONCAT list {
+    $$ = new astRERConcat($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+
+| lvalue AAPPLY funcall {
+    if (auto s = $1->getSpecs(); s = nullptr) {
+        $3->addDataflowStyleArg(new astConst(params->owner));
+        $$ = new astAssign($1->getVar(), $3, params->owner);
+    } else {
+        $3->addDataflowStyleArg($1->getVar());
+        $$ = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>($1->getVar(), $3, s, params->owner);
+    }
+}
+
+| fakeLvalue AAPPLY funcall {
+    $3->addDataflowStyleArg(new astConst(params->owner));
+    $$ = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>($1->getNode(), $3, $1->getSpecs(), params->owner);
+}
+
+| OUTLET ASSIGN list {
+    if (params->dataOutlets && $1 > *(params->dataOutlets))
+        *(params->dataOutlets) = $1;
+    auto fnConst = new astConst((*(params->bifs))["outlet"], params->owner);
+
+
+    auto numConst = new astConst($1, params->owner);
+    auto v = new std::vector<astNode*>(2);
+    v->push_back(numConst);
+    v->push_back($3);
+    $$ = new astFunctionCall(fnConst, v, nullptr, params->owner);
+    code_dev_post("parse: OUTLET ASSIGN list");
+}
+
+| DIROUTLET ASSIGN list {
+    if (params->directOutlets && $1 > *(params->directOutlets))
+        *(params->directOutlets) = $1;
+    auto fnConst = new astConst((*(params->ofTable))["directout"], params->owner);
+    auto v = new std::vector<astNode*>(2);
+    v->push_back(new astConst($1, params->owner));
+    v->push_back($3);
+    $$ = new astFunctionCall(fnConst, v, nullptr, params->owner);
+    code_dev_post("parse: DIROUTLET ASSIGN list");
+}
+;
+
+
+
+// returns astNode*
+conditional : IF_KW sequence THEN_KW list {
+    $$ = new astIfThenElse($2, $4, nullptr, params->owner);
+    code_dev_post ("parse: if then\n");
+}
+| IF_KW sequence THEN_KW list ELSE_KW list {
+    // ask JLG: this causes 26 r/r conflicts.
+    // Putting
+    // IF_KW sequence THEN_KW valueOrAssignment ELSE_KW valueOrAssignment
+    // would silence the conflicts, but doesn't work the same.
+    // The current version parses
+    //  if 1==1 then $a := 1 ; $b := 2 else $a := 3 ; $a
+    // as
+    //  if 1==1 then [$a := 1 ; $b := 2] else $a := 3 ; $a
+    // thus returning 1
+    // The "fixed" version, on the other hand, only considers
+    //  if 1==1 then $a := 1 ; $b := 2
+    // and discards what follows, thus resulting in 2.
+    // On the other hand, I don't want to be forced to write
+    // IF_KW sequence THEN_KW sequence
+    // in the previous rule.
+    // How do I solve this?
+    
+    $$ = new astIfThenElse($2, $4, $6, params->owner);
+    code_dev_post ("parse: if then else\n");
+}
 
 
 

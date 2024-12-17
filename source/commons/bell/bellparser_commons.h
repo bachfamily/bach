@@ -83,6 +83,30 @@ struct t_tokenNames {
     const std::string replacement;
 };
 
+
+class lvalue final {
+private:
+    astVar *var;
+    lvalueSpecs *specs;
+public:
+    lvalue(astVar *v, lvalueSpecs *s) : var(v), specs(s) { }
+    ~lvalue() { }
+    astVar *getVar() { return var; }
+    lvalueSpecs *getSpecs() { return specs; }
+};
+
+class fakeLvalue final {
+private:
+    astNode *node;
+    lvalueSpecs *specs;
+public:
+    fakeLvalue(astNode *n, lvalueSpecs *s) : node(n), specs(s) { }
+    ~fakeLvalue() { }
+    astNode* getNode() { return node; }
+    lvalueSpecs* getSpecs() { return specs; }
+};
+
+
 static const t_tokenNames tokenNames[] = {
     
     { "LONG_LITERAL", "integer literal" },
@@ -199,7 +223,8 @@ static const t_tokenNames tokenNames[] = {
 
 typedef enum {
     e_flexBison,
-    e_antlr4
+    e_antlr4,
+    e_flexBisonV3
 } e_currentParser;
 
 template <e_currentParser parser>

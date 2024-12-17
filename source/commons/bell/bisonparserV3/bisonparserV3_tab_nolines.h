@@ -69,7 +69,7 @@ extern int bisonparserV3_debug;
     BIF = 275,                     /* BIF  */
     OF = 276,                      /* OF  */
     MAXFUNCTION = 277,             /* MAXFUNCTION  */
-    SEQ = 278,                     /* SEQ  */
+    NULLIFY = 278,                 /* NULLIFY  */
     IF_KW = 279,                   /* IF_KW  */
     THEN_KW = 280,                 /* THEN_KW  */
     ELSE_KW = 281,                 /* ELSE_KW  */
@@ -163,28 +163,33 @@ extern int bisonparserV3_debug;
 union YYSTYPE
 {
 
-    astNode *n;
-    astFunctionCall *fc;
-    astLocalVar *lv;
-    astPatcherVar *pv;
-    astGlobalVar *gv;
-    astVar *var;
+    astNode *astNodeValue;
+    astFunctionCall *astFunctionCallValue;
+    astLocalVar *astLocalVarValue;
+    astPatcherVar *astPatcherVarValue;
+    astGlobalVar *astGlobalVarValue;
+    astVar *astVarValue;
+
+    std::vector<funArg*> *funArgVector;
+    std::vector<forArg*> *forArgVector;
+    std::vector<t_localVar*> *localVarVector;
+    std::vector<astNode*> *astNodeVector;
+    std::vector<symNodePair*> *symNodePairVector;
     
-    countedList<astNode *> *nl;
-    countedList<symNodePair *> *snpl;
-    countedList<funArg *> *funarglist;
-    countedList<t_localVar> *liftedarglist;
-    countedList<forArg *> *fal;
-    lvalueStepList *lvsl;
-    symNodePair *snp;
-    forArg *forarg;
+    lvalueStepList *lvalueStepListValue;
+    symNodePair *symNodePairValue;
+    forArg *forArgValue;
+    funArg *funArgValue;
+    lvalue *lvalueValue;
+    fakeLvalue *fakeLvalueValue;
+    lvalueSpecs *lvalueSpecsValue;
     
-    long l;
-    t_rational r;
-    double d;
-    t_pitch p;
-    t_symbol *sym;
-    char *text;
+    long longValue;
+    t_rational ratValue;
+    double doubleValue;
+    t_pitch pitchValue;
+    t_symbol *symValue;
+    char *textValue;
 
 
 };
