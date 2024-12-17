@@ -27,7 +27,7 @@
 
 %{
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
+    #define code_dev_post post // UNCOMMENT THIS TO TURN ON VERBOSE PARSING
     #endif
     
     #ifndef code_dev_post
@@ -762,7 +762,7 @@ NTHOP lvalueSpecsItem {
     s->addStep(step);
     $$ = s;
 }
-| lvalueSpecs NTHOP lvalueSpecsItem {
+| lvalueSpecs APPLY lvalueSpecsItem {
     auto step = new lvalueStep(lvalueStep::E_LV_KEY, $3);
     $1->addStep(step);
     $$ = $1;
