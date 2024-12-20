@@ -138,7 +138,7 @@
 %nonassoc KEEP UNKEEP INIT
 
 
-%type <astNodeValue> program fundef list sequence nullified whileloop forloop itemOrVar lvalueSpecsItem dataflowHead lvalueSpecsUFinal lvalueSpecsFinal fakeLvalueHead assignment expr item conditional
+%type <astNodeValue> program fundef list sequence nullified whileloop forloop itemOrVar lvalueSpecsItem dataflowHead lvalueSpecsUFinal lvalueSpecsFinal fakeLvalueHead assignment expr item conditional listEnd 
 %type <astVarValue> var
 %type <astFunctionCallValue> funcall simpleFuncall dataflowFuncall
 %type <funArgValue> funarg
@@ -364,12 +364,12 @@ fundef : funargList FUNDEF {
 
 
 // returns std::vector<astNode*>*
-listVector: expr {
+listVector: expr %prec CONCAT {
     auto v = new std::vector<astNode*>;
     v->push_back($1);
     $$ = v;
 } 
-| listVector expr {
+| listVector expr %prec CONCAT {
     $1->push_back($2);
     $$ = $1;
 }
@@ -378,6 +378,18 @@ listVector: expr {
 
 // returns astNode*
 list: listVector {
+    if ($1->size() == 1) {
+        $$ = (*$1)[0];
+        delete $1;
+    } else {
+        $$ = new astConcat($1, params->owner);
+    }
+}
+| listEnd {
+    
+}
+| listVector listEnd {
+    $1->push_back($2);
     $$ = new astConcat($1, params->owner);
 }
 ;
@@ -386,6 +398,10 @@ list: listVector {
 sequence: 
 list
 | nullifiedSequence {
+    $$ = new astConcat($1, params->owner);
+}
+| nullifiedSequence list {
+    $1->push_back($2);
     $$ = new astConcat($1, params->owner);
 }
 ;
@@ -406,10 +422,6 @@ nullifiedSequence: nullified {
     $$ = v;
 }
 | nullifiedSequence nullified {
-    $1->push_back($2);
-    $$ = $1;
-}
-| nullifiedSequence list {
     $1->push_back($2);
     $$ = $1;
 }
@@ -806,13 +818,10 @@ listEnd: assignment %dprec 2
 | fundef %dprec 1
 ;
 
-
 // returns astNode*
 expr :
 item
-| var
 | funcall
-| listEnd
 | lvalue {
     astNode* n = $1->getVar();
     auto s = $1->getSpecs();
@@ -941,6 +950,125 @@ item
     code_dev_post ("parse: range\n");
 }
 | expr REPEAT expr {
+    $$ = new astRepeatOp($1, $3, params->owner);
+    code_dev_post ("parse: range\n");
+}
+| sign listEnd {
+    if ($1 == -1)
+        $$ = new astOperatorUMinus($2, params->owner);
+    else
+        $$ = $2;
+    code_dev_post("parse: U-\n");
+}
+| LOGNOT listEnd {
+    $$ = new astLogNot($2, params->owner);
+    code_dev_post("parse: !\n");
+}
+| BITNOT listEnd {
+    $$ = new astOperatorBitNot($2, params->owner);
+    code_dev_post("parse: ~\n");
+}
+| expr PLUS listEnd {
+    $$ = new astOperatorPlus($1, $3, params->owner);
+    code_dev_post ("parse: +\n");
+}
+| expr MINUS listEnd {
+    $$ = new astOperatorMinus($1, $3, params->owner);
+    code_dev_post ("parse: -\n");
+}
+| expr TIMES listEnd {
+    $$ = new astOperatorTimes($1, $3, params->owner);
+    code_dev_post ("parse: *\n");
+}
+| expr DIV listEnd {
+    $$ = new astOperatorDiv($1, $3, params->owner);
+    code_dev_post ("parse: /\n");
+}
+| expr DIVDIV listEnd {
+    $$ = new astOperatorDivdiv($1, $3, params->owner);
+    code_dev_post ("parse: //\n");
+}
+| expr REM listEnd {
+    $$ = new astOperatorRemainder($1, $3, params->owner);
+    code_dev_post ("parse: %\n");
+}
+| expr POWOP listEnd {
+    $$ = new astOperatorPow($1, $3, params->owner);
+    code_dev_post ("parse: **\n");
+}
+| expr BITAND listEnd {
+    $$ = new astOperatorBitAnd($1, $3, params->owner);
+    code_dev_post ("parse: &\n");
+}
+| expr BITXOR listEnd {
+    $$ = new astOperatorBitXor($1, $3, params->owner);
+    code_dev_post ("parse: ^\n");
+}
+| expr BITOR listEnd {
+    $$ = new astOperatorBitOr($1, $3, params->owner);
+    code_dev_post ("parse: |\n");
+}
+| expr LSHIFT listEnd {
+    $$ = new astOperatorBitOr($1, $3, params->owner);
+    code_dev_post ("parse: <<\n");
+}
+| expr RSHIFT listEnd {
+    $$ = new astOperatorBitOr($1, $3, params->owner);
+    code_dev_post ("parse: >>\n");
+}
+| expr EQUAL listEnd {
+    $$ = new astComparatorEq($1, $3, params->owner);
+    code_dev_post ("parse: ==\n");
+}
+| expr NEQ listEnd {
+    $$ = new astComparatorNeq($1, $3, params->owner);
+    code_dev_post ("parse: !=\n");
+}
+| expr LT listEnd {
+    $$ = new astComparatorLt($1, $3, params->owner);
+    code_dev_post ("parse: <\n");
+}
+| expr GT listEnd {
+    $$ = new astComparatorGt($1, $3, params->owner);
+    code_dev_post ("parse: <\n");
+}
+| expr LEQ listEnd {
+    $$ = new astComparatorLeq($1, $3, params->owner);
+    code_dev_post ("parse: <=\n");
+}
+| expr GEQ listEnd {
+    $$ = new astComparatorGeq($1, $3, params->owner);
+    code_dev_post ("parse: >=\n");
+}
+| expr LOGOR listEnd {
+    $$ = new astSCOr($1, $3, params->owner);
+    code_dev_post ("parse: ||\n");
+}
+| expr LOGAND listEnd {
+    $$ = new astSCAnd($1, $3, params->owner);
+    code_dev_post ("parse: &&\n");
+}
+| expr LOGXOR listEnd {
+    $$ = new astLogXor($1, $3, params->owner);
+    code_dev_post ("parse: &&\n");
+}
+| expr LOGOREXT listEnd {
+    $$ = new astSCOrExt($1, $3, params->owner);
+    code_dev_post ("parse: |||\n");
+}
+| expr LOGANDEXT listEnd {
+    $$ = new astSCAndExt($1, $3, params->owner);
+    code_dev_post ("parse: &&&\n");
+}
+| expr PICKOP listEnd {
+    $$ = new astPickOp($1, $3, params->owner);
+    code_dev_post ("parse: nthop\n");
+}
+| expr RANGE listEnd {
+    $$ = new astRangeOp($1, $3, params->owner);
+    code_dev_post ("parse: range\n");
+}
+| expr REPEAT listEnd {
     $$ = new astRepeatOp($1, $3, params->owner);
     code_dev_post ("parse: range\n");
 }
@@ -1341,14 +1469,16 @@ t_mainFunction *codableobj_parse_buffer_v3(t_codableobj *x, long *codeac, t_atom
     params.ast = NULL;
     params.fnDepth = 0;
     params.localVariablesStack = params.localVariablesStackBase;
+    params.localVariablesStackBase[0] = nullptr;
+    params.localVariablesStackBaseV[0] = new std::vector<t_localVar>;
     params.localVariablesStackV = params.localVariablesStackBaseV;
-    params.localVariablesStackV[0] = nullptr;
     params.localVariablesAuxMapStack = params.localVariablesAuxMapStackBase;
     params.localVariablesAuxMapStack[0] = new std::unordered_map<t_symbol *, int>;
     params.liftedVariablesStack = params.liftedVariablesStackBase;
     params.argumentsStack = params.argumentsStackBase;
+    params.argumentsStackBase[0] = nullptr;
+    params.argumentsStackBaseV[0] = new std::vector<funArg*>;
     params.argumentsStackV = params.argumentsStackBaseV;
-    params.argumentsStackV[0] = nullptr;
     params.gvt = bach->b_gvt;
     params.bifs = bach->b_bifTable;
     params.codeac = codeac;
@@ -1379,7 +1509,7 @@ t_mainFunction *codableobj_parse_buffer_v3(t_codableobj *x, long *codeac, t_atom
     if (params.ast) {
         t_mainFunction *mainFunction = new t_mainFunction(
             params.ast,
-            params.localVariablesStackBase[0],
+            params.localVariablesStackBaseV[0],
             params.globalVariables,
             params.name2patcherVars,
             params.funcs,
