@@ -172,6 +172,12 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return AMINUS;
 }
 
+"$" {
+    code_dev_post("lex: EMPTY FUNARGLIST ($)\n");
+    BEGIN lexparams->setState(UNARY_NOARGS);
+    return EMPTYFUNARGLIST;
+}
+
 "->" {
     code_dev_post("lex: FUNCTION DEFINITION\n");
     BEGIN lexparams->setState(UNARY_NOARGS);
@@ -573,12 +579,12 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     BEGIN lexparams->getState();
 }
 
-\{ {
+"<<<" {
     code_dev_post("lex: begin Max object");
     BEGIN MAXOBJECT;
 }
 
-<MAXOBJECT>[^\}]+ {
+<MAXOBJECT>[^>]+ {
     char *s = (char *) bach_newptr(yyleng + 1);
     strncpy_zero(s, yytext, yyleng + 1);
     for (char *c = s; *c; c++) {
@@ -592,7 +598,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return MAXFUNCTION;
 }
 
-<MAXOBJECT>\} {
+<MAXOBJECT>">>>" {
     code_dev_post("lex: end Max object");
     BEGIN lexparams->setState(NOUNARY_ARGS);
 }
@@ -813,6 +819,20 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 
 $[lx][0-9]+/{SEPARATOR} {
     yylval->longValue = atoi(yytext + 2);
+    code_dev_post("lex: INLET VARIABLE %d\n", yylval->longValue);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
+    return INLET;
+}
+
+\\$[0-9]+/{SEPARATOR} {
+    yylval->longValue = atoi(yytext + 2);
+    code_dev_post("lex: INLET VARIABLE %d\n", yylval->longValue);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
+    return INLET;
+}
+
+$[0-9]+/{SEPARATOR} {
+    yylval->longValue = atoi(yytext + 1);
     code_dev_post("lex: INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return INLET;

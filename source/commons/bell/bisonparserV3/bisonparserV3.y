@@ -100,7 +100,7 @@
 %token LOGOR LOGAND LOGOREXT LOGANDEXT
 %token EQUAL LT GT LEQ GEQ NEQ
 %token OPEN CLOSEDROUND
-%token FUNDEF
+%token FUNDEF EMPTYFUNARGLIST
 %token PUSH POP
 %token STARTPARAMS
 %token COMMA
@@ -138,7 +138,7 @@
 %nonassoc KEEP UNKEEP INIT
 
 
-%type <astNodeValue> program fundef list sequence nullified whileloop forloop itemOrVar lvalueSpecsItem dataflowHead lvalueSpecsUFinal lvalueSpecsFinal fakeLvalueHead assignment expr item conditional listEnd 
+%type <astNodeValue> program fundef list sequence nullified whileloop forloop itemOrVar lvalueSpecsItemForNth lvalueSpecsItemForDot dataflowHead lvalueSpecsUFinal lvalueSpecsFinal fakeLvalueHead assignment expr item conditional listEnd
 %type <astVarValue> var
 %type <astFunctionCallValue> funcall simpleFuncall dataflowFuncall
 %type <funArgValue> funarg
@@ -299,14 +299,14 @@ fundef : funargList FUNDEF {
     --(params->argumentsStackV);
     code_dev_post ("parse: user defined function funargList FUNDEF");
 }
-| FUNDEF {
+| EMPTYFUNARGLIST FUNDEF {
     ++(params->localVariablesStackV);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     params->fnDepth++;
     *++(params->argumentsStackV) = nullptr;
 } list {
-    t_function *fn = new t_userFunction(*(params->argumentsStackV), *(params->localVariablesStackV), $3, params->owner);
+    t_function *fn = new t_userFunction(*(params->argumentsStackV), *(params->localVariablesStackV), $4, params->owner);
     params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStackV--) = nullptr;;
@@ -338,17 +338,17 @@ fundef : funargList FUNDEF {
     --(params->argumentsStackV);
     code_dev_post ("parse: user defined function funargList liftedargList");
 }
-| liftedargList FUNDEF {
+| EMPTYFUNARGLIST liftedargList FUNDEF {
     params->fnDepth++;
     ++(params->localVariablesStackV);
     *++(params->localVariablesAuxMapStack) = new std::unordered_map<t_symbol *, int>;
     *++(params->liftedVariablesStack) = new std::unordered_set<t_symbol *>;
     *++(params->argumentsStackV) = nullptr;
-    for (auto v : *$1) {
+    for (auto v : *$2) {
         (*(params->liftedVariablesStack))->insert(v->getName());
     }
 } list {
-    t_function *fn = new t_userFunction(*++(params->argumentsStackV), *(params->localVariablesStackV), $4, params->owner);
+    t_function *fn = new t_userFunction(*++(params->argumentsStackV), *(params->localVariablesStackV), $5, params->owner);
     params->funcs->insert(fn);
     $$ = new astConst(fn, params->owner);
     *(params->localVariablesStackV--) = nullptr;;
@@ -623,7 +623,7 @@ sign : UPLUS {
 
 
 // returns astNode*
-lvalueSpecsItem : itemOrVar
+lvalueSpecsItemForDot : itemOrVar
 | sign itemOrVar {
     if ($1 == -1) {
         $$ = new astOperatorUMinus($2, params->owner);
@@ -633,11 +633,33 @@ lvalueSpecsItem : itemOrVar
 }
 ;
 
+// returns astNode*
+lvalueSpecsItemForNth : lvalueSpecsItemForDot
+| simpleFuncall
+| sign simpleFuncall {
+    if ($1 == -1) {
+        $$ = new astOperatorUMinus($2, params->owner);
+    } else {
+        $$ = $2;
+    }
+}
+;
 
 // returns astNode*
 dataflowHead : item
 | simpleFuncall
-| var
+| lvalue {
+    astNode* n = $1->getVar();
+    auto s = $1->getSpecs();
+    if (s)
+        n = s->toReadNode(n, params->owner);
+    $$ = n;
+}
+| fakeLvalue {
+    auto n = $1->getNode();
+    auto s = $1->getSpecs();
+    $$ = s->toReadNode(n, params->owner);
+}
 ;
 
 
@@ -713,7 +735,7 @@ conditional
 | whileloop
 | forloop
 | fundef
-| funcall
+//| funcall
 ;
 
 
@@ -757,24 +779,24 @@ fakeLvalueHead lvalueSpecs {
 
 // returns lvalueSpecs*
 lvalueSpecsNonFinalized:
-NTHOP lvalueSpecsItem {
+NTHOP lvalueSpecsItemForNth {
     auto s = new lvalueSpecs;
     auto step = new lvalueStep(lvalueStep::E_LV_NTH, $2);
     s->addStep(step);
     $$ = s;
 }
-| lvalueSpecs NTHOP lvalueSpecsItem {
+| lvalueSpecs NTHOP lvalueSpecsItemForNth {
     auto step = new lvalueStep(lvalueStep::E_LV_NTH, $3);
     $1->addStep(step);
     $$ = $1;
 }
-| APPLY lvalueSpecsItem {
+| APPLY lvalueSpecsItemForDot {
     auto s = new lvalueSpecs;
     auto step = new lvalueStep(lvalueStep::E_LV_KEY, $2);
     s->addStep(step);
     $$ = s;
 }
-| lvalueSpecs APPLY lvalueSpecsItem {
+| lvalueSpecs APPLY lvalueSpecsItemForDot {
     auto step = new lvalueStep(lvalueStep::E_LV_KEY, $3);
     $1->addStep(step);
     $$ = $1;
@@ -1383,18 +1405,23 @@ INIT LOCALVAR ASSIGN list {
 }
 
 | lvalue AAPPLY funcall {
-    if (auto s = $1->getSpecs(); s = nullptr) {
-        $3->addDataflowStyleArg(new astConst(params->owner));
+    if (auto s = $1->getSpecs(); s == nullptr) {
+        $3->addDataflowStyleArg($1->getVar());
         $$ = new astAssign($1->getVar(), $3, params->owner);
     } else {
-        $3->addDataflowStyleArg($1->getVar());
-        $$ = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>($1->getVar(), $3, s, params->owner);
+        auto v = $1->getVar();
+        $3->addDataflowStyleArg(new astConst(params->owner));
+        $$ = new astRichAccessApplyOp<astRichAssignment<E_RA_SHORTCIRCUIT>>(v, $3, s, params->owner);
     }
+    code_dev_post("parse: lvalue AAPPLY funcall");
 }
 
 | fakeLvalue AAPPLY funcall {
+    auto n = $1->getNode();
+    auto s = $1->getSpecs();
     $3->addDataflowStyleArg(new astConst(params->owner));
-    $$ = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>($1->getNode(), $3, $1->getSpecs(), params->owner);
+    $$ = new astRichAccessApplyOp<astRichEdit<E_RA_SHORTCIRCUIT>>(n, $3, s, params->owner);
+    code_dev_post("parse: fakeLvalue AAPPLY funcall");
 }
 
 | OUTLET ASSIGN list {
@@ -1404,7 +1431,7 @@ INIT LOCALVAR ASSIGN list {
 
 
     auto numConst = new astConst($1, params->owner);
-    auto v = new std::vector<astNode*>(2);
+    auto v = new std::vector<astNode*>;
     v->push_back(numConst);
     v->push_back($3);
     $$ = new astFunctionCall(fnConst, v, nullptr, params->owner);
@@ -1415,7 +1442,7 @@ INIT LOCALVAR ASSIGN list {
     if (params->directOutlets && $1 > *(params->directOutlets))
         *(params->directOutlets) = $1;
     auto fnConst = new astConst((*(params->ofTable))["directout"], params->owner);
-    auto v = new std::vector<astNode*>(2);
+    auto v = new std::vector<astNode*>;
     v->push_back(new astConst($1, params->owner));
     v->push_back($3);
     $$ = new astFunctionCall(fnConst, v, nullptr, params->owner);
