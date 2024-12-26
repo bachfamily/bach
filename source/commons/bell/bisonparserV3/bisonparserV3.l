@@ -39,13 +39,13 @@ FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[
 SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 
 %s NOUNARY_NOARGS NOUNARY_ARGS UNARY_ARGS
-%x IFILE LINECOMMENT BLOCKCOMMENT MAXOBJECT
+%x IFILE LINECOMMENT BLOCKCOMMENT MAXOBJECT MAXOBJECTALMOST
 
 %{
     
     
     #ifdef CONFIGURATION_Development
-    //#define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
+    #define code_dev_post post  // UNCOMMENT THIS TO TURN ON VERBOSE LEXING
     #endif
     
     #ifndef code_dev_post
@@ -580,28 +580,42 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 }
 
 "<<<" {
-    code_dev_post("lex: begin Max object");
-    BEGIN MAXOBJECT;
-}
-
-<MAXOBJECT>[^>]+ {
-    char *s = (char *) bach_newptr(yyleng + 1);
-    strncpy_zero(s, yytext, yyleng + 1);
-    for (char *c = s; *c; c++) {
-        if (*c == 1) {
-            *c = ' ';
-            (*params->codeac)++;
+    int c;
+    int minors = 0;
+    int size = 0;
+    char *txt = (char *) bach_newptr(2048);
+    char *this_txt = txt;
+    while ((c = yyinput(yyscanner)) != EOF && (minors < 3 || c == '>')) {
+        switch (c) {
+            case 1:
+                *(this_txt++) = ' ';
+                params->codeac++;
+                minors = 0;
+                break;
+            case '>':
+                *(this_txt++) = c;
+                minors++;
+                break;
+            default:
+                *(this_txt++) = c;
+                minors = 0;
+                break;
         }
     }
-    yylval->textValue = s;
-    code_dev_post("lex: Max object: %s", s);
-    return MAXFUNCTION;
+    if (c == EOF)
+        REJECT
+    else {
+        *(this_txt - 3) = 0;
+        code_dev_post("lex: max function: %s, c = %c", txt, c);
+        unput(c);
+        yylval->textValue = txt;
+        BEGIN lexparams->setState(NOUNARY_ARGS);
+        return MAXFUNCTION;
+    }
 }
 
-<MAXOBJECT>">>>" {
-    code_dev_post("lex: end Max object");
-    BEGIN lexparams->setState(NOUNARY_ARGS);
-}
+
+
 
 
 "if"/{SEPARATOR} {
@@ -819,20 +833,6 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
 
 $[lx][0-9]+/{SEPARATOR} {
     yylval->longValue = atoi(yytext + 2);
-    code_dev_post("lex: INLET VARIABLE %d\n", yylval->longValue);
-    BEGIN lexparams->setState(NOUNARY_ARGS);
-    return INLET;
-}
-
-\\$[0-9]+/{SEPARATOR} {
-    yylval->longValue = atoi(yytext + 2);
-    code_dev_post("lex: INLET VARIABLE %d\n", yylval->longValue);
-    BEGIN lexparams->setState(NOUNARY_ARGS);
-    return INLET;
-}
-
-$[0-9]+/{SEPARATOR} {
-    yylval->longValue = atoi(yytext + 1);
     code_dev_post("lex: INLET VARIABLE %d\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return INLET;

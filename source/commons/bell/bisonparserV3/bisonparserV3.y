@@ -855,13 +855,19 @@ item
     auto n = $1->getNode();
     auto s = $1->getSpecs();
     $$ = s->toReadNode(n, params->owner);
-}
+}/*
 | sign expr {
     if ($1 == -1)
         $$ = new astOperatorUMinus($2, params->owner);
     else
         $$ = $2;
     code_dev_post("parse: U-\n");
+}*/
+| UMINUS expr {
+    $$ = new astOperatorUMinus($2, params->owner);
+}
+| UPLUS expr {
+    $$ = $2;
 }
 | LOGNOT expr {
     $$ = new astLogNot($2, params->owner);
