@@ -119,7 +119,7 @@
 			#define dev_cprintf(...) cpost(__VA_ARGS__)
     #endif
 
-    // #define BACH_BRAVURA_DEFAULT  // comment this to use "November for bach" as default for Development
+    #define BACH_BRAVURA_DEFAULT  // comment this to use "November for bach" as default for Development
 #endif // CONFIGURATION_Development
 
 #ifdef CONFIGURATION_Deployment
