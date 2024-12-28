@@ -25,8 +25,8 @@
 %option header-file="bisonparserV3.lex.h"
 %option prefix="bisonparserV3_"
 
-SEPARATOR           ([[:space:]\(\)\[\]\{\}+\-*/%!=~_<>;,.:\\\x01])
-SEPARATOR_STRICT    ([[:space:]\)\]+\-*/%!=~_<>;,:\\\x01])
+SEPARATOR           ([[:space:]\(\)\[\]\{\}+\-*/%!=~_<>rt;,.:\\\x01])
+SEPARATOR_STRICT    ([[:space:]\)\]+\-*/%!=~_<>rt;,:\\\x01])
 NO_SPACES ([^ \t\n\r\f\v\x01])
 RAT_LITERAL ({INTEGER}[/]{INTEGER})
 UINT ([0-9]+)
@@ -510,6 +510,18 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return APPLY;
 }
 
+"r"/{SEPARATOR} {
+    code_dev_post("lex: r\n");
+    BEGIN lexparams->setState(UNARY_NOARGS);
+    return R;
+}
+
+"t"/{SEPARATOR} {
+    code_dev_post("lex: t\n");
+    BEGIN lexparams->setState(UNARY_NOARGS);
+    return T;
+}
+
 "include"[ \t\n]*\( {
     code_dev_post("lex: include directive");
     BEGIN IFILE;
@@ -614,10 +626,6 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     }
 }
 
-
-
-
-
 "if"/{SEPARATOR} {
     code_dev_post("lex: IF_KW\n");
     BEGIN lexparams->setState(UNARY_NOARGS);
@@ -698,6 +706,14 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     BEGIN lexparams->setState(NOUNARY_ARGS);
     return BIF;
 }
+
+("etwhitekey"|"jiwhitekey"|"et"|"ji"|"jiratio"|"jiplof"|"etplof"|"jisharps"|"etsharps"|"etalter"|"foldratio"|"commas"|"monzo"|"pitchkeys")/{SEPARATOR} {
+    code_dev_post("lex: BIF %s", yytext);
+    yylval->symValue = gensym(yytext);
+    BEGIN lexparams->setState(NOUNARY_ARGS);
+    return BIF;
+}
+
 
 ("outlet"|"inlet")/{SEPARATOR} {
     code_dev_post("lex: BIF %s", yytext);
@@ -817,11 +833,27 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return PITCH_LITERAL;
 }
 
-{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}"/"{UINT}t/{SEPARATOR} {
-    code_dev_post("lex: PITCH_LITERAL %s\n", yytext);
+
+\{ {
+    BEGIN lexparams->setState(UNARY_NOARGS);
+    const char *next;
+    yylval->longValue = 0;
+    code_dev_post("lex: JIPITCHBASE_START, plof = %ld\n", yylval->longValue);
+    return JIPITCHBASE_START;
+}
+
+\}[-+]?{UINT}/{SEPARATOR} {
+    yylval->longValue = atoi(yytext + 1);
+    code_dev_post("lex: JIPITCHBASE_END, octave = %ld\n", yylval->longValue);
     BEGIN lexparams->setState(NOUNARY_NOARGS);
-    yylval->pitchValue = t_parser::eatPitchAsNameAccIntRatT(yytext);
-    return PITCH_LITERAL;
+    return JIPITCHBASE_END;
+}
+
+\} {
+    yylval->longValue = 0;
+    code_dev_post("lex: JIPITCHBASE_END, octave = %ld\n", yylval->longValue);
+    BEGIN lexparams->setState(NOUNARY_NOARGS);
+    return JIPITCHBASE_END;
 }
 
 \\$[lx][0-9]+/{SEPARATOR} {

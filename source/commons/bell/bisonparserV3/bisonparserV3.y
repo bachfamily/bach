@@ -68,6 +68,7 @@
     std::vector<t_localVar*> *localVarVector;
     std::vector<astNode*> *astNodeVector;
     std::vector<symNodePair*> *symNodePairVector;
+    std::vector<int8_t> *int8Vector;
     
     lvalueStepList *lvalueStepListValue;
     symNodePair *symNodePairValue;
@@ -85,7 +86,7 @@
     char *textValue;
 }
 
-%token <longValue> LONG_LITERAL INLET INTINLET RATINLET FLOATINLET PITCHINLET OUTLET DIRINLET DIROUTLET
+%token <longValue> LONG_LITERAL INLET INTINLET RATINLET FLOATINLET PITCHINLET OUTLET DIRINLET DIROUTLET JIPITCHBASE_START JIPITCHBASE_END
 %token <ratValue> RAT_LITERAL
 %token <doubleValue> DOUBLE_LITERAL
 %token <pitchValue> PITCH_LITERAL
@@ -125,6 +126,7 @@
 %left RANGE
 %left LSHIFT RSHIFT
 %left PLUS MINUS
+%left R T
 %left TIMES DIV DIVDIV REM
 %right UPLUS
 %right UMINUS
@@ -138,7 +140,7 @@
 %nonassoc KEEP UNKEEP INIT
 
 
-%type <astNodeValue> program fundef list sequence nullified whileloop forloop itemOrVar lvalueSpecsItemForNth lvalueSpecsItemForDot dataflowHead lvalueSpecsUFinal lvalueSpecsFinal fakeLvalueHead assignment expr item conditional listEnd
+%type <astNodeValue> program fundef list sequence nullified whileloop forloop itemOrVar lvalueSpecsItemForNth lvalueSpecsItemForDot dataflowHead lvalueSpecsUFinal lvalueSpecsFinal fakeLvalueHead assignment expr item conditional listEnd jiPitchBase
 %type <astVarValue> var
 %type <astFunctionCallValue> funcall simpleFuncall dataflowFuncall
 %type <funArgValue> funarg
@@ -148,6 +150,7 @@
 %type <forArgValue> forarg
 %type <symNodePairVector> argsByNameList
 %type <astNodeVector> argsByPositionList listVector nullifiedSequence
+%type <int8Vector> commaVector
 %type <symNodePairValue> argByName
 %type <longValue> sign
 %type <astLocalVarValue> localVar
@@ -869,6 +872,12 @@ item
 | UPLUS expr {
     $$ = $2;
 }
+| expr R {
+    $$ = new astOperatorR($1, params->owner);
+}
+| expr T {
+    $$ = new astOperatorT($1, params->owner);
+}
 | LOGNOT expr {
     $$ = new astLogNot($2, params->owner);
     code_dev_post("parse: !\n");
@@ -1102,6 +1111,42 @@ item
 }
 ;
 
+// returns std::vector<int8_t*>
+commaVector:
+LONG_LITERAL {
+    auto v = new std::vector<int8_t>;
+    v->push_back($1);
+    $$ = v;
+    code_dev_post ("parse: commaVector: LONG_LITERAL\n");
+}
+| sign LONG_LITERAL {
+    auto v = new std::vector<int8_t>;
+    v->push_back($1 * $2);
+    $$ = v;
+    code_dev_post ("parse: commaVector: sign LONG_LITERAL\n");
+}
+| commaVector NTHOP LONG_LITERAL {
+    $1->push_back($3);
+    $$ = $1;
+    code_dev_post ("parse: commaVector NTHOP  LONG_LITERAL\n");
+
+}
+| commaVector NTHOP sign LONG_LITERAL {
+    $1->push_back($3 * $4);
+    $$ = $1;
+    code_dev_post ("parse: commaVector NTHOP sign LONG_LITERAL\n");
+}
+;
+
+// returns astConst*
+jiPitchBase:
+JIPITCHBASE_START commaVector JIPITCHBASE_END {
+    $$ = new astConst(t_pitch($1, *$2, $3));
+    delete $2;
+    code_dev_post ("parse: jiPitchBase\n");
+}
+;
+
 
 // returns astNode*
 item:
@@ -1121,6 +1166,7 @@ LONG_LITERAL {
     $$ = new astConst($1, params->owner);
     code_dev_post("parse: PITCH_LITERAL %s", $1.toSym()->s_name);
 }
+| jiPitchBase
 | SYMBOL_LITERAL {
     $$ = new astConst($1, params->owner);
     code_dev_post("parse: SYMBOL_LITERAL %s", $1->s_name);

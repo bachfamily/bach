@@ -216,6 +216,14 @@ public:
         return commas;
     }
     
+    static t_atom_short eatPlofAndSharps(const char *pos, const char **after) {
+        const char *next = pos;
+        t_atom_short plof = t_pitch::text2wkplof(*next++);
+        t_atom_short sharps = t_pitch::text2JIsharps(&next);
+        plof += sharps * 7;
+        return plof;
+    }
+    
     static t_pitch eatPitchJIBaseComp(const char *pos, const char **after) {
         const char *next = pos;
         t_atom_short sign = eatSign(&next);
@@ -223,9 +231,7 @@ public:
         t_int8 octave;
         std::vector<int8_t> commas;
         if (*next != '{') {
-            plof = t_pitch::text2wkplof(*next++);
-            t_atom_short sharps = t_pitch::text2JIsharps(&next);
-            plof += sharps * 7;
+            plof = eatPlofAndSharps(pos, &next);
             commas = eatJICommas(next, &next);
             octave = (t_int8) strtol(next, const_cast<char**>(&next), 10);
         } else {

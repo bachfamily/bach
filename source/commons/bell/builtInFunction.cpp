@@ -520,7 +520,7 @@ t_llll *t_fnMinimum::call(const t_execEnv &context)
 ///////////////
 
 
-t_fnMaximum::t_fnMaximum() : t_builtInFunction("minimum")
+t_fnMaximum::t_fnMaximum() : t_builtInFunction("maximum")
 {
     setArgument("llll");
     setArgument("depth");
