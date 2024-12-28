@@ -57,9 +57,9 @@ public:
 
     virtual std::any visitArgsByPositionList(bellParser::ArgsByPositionListContext *context) = 0;
 
-    virtual std::any visitSimpleFuncall(bellParser::SimpleFuncallContext *context) = 0;
-
     virtual std::any visitLvalueSpecsUItem(bellParser::LvalueSpecsUItemContext *context) = 0;
+
+    virtual std::any visitSimpleFuncall(bellParser::SimpleFuncallContext *context) = 0;
 
     virtual std::any visitLvalueSpecsItem(bellParser::LvalueSpecsItemContext *context) = 0;
 

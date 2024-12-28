@@ -40,7 +40,7 @@ public:
     RuleLiftedargList = 4, RuleFundef = 5, RuleList = 6, RuleSequence = 7, 
     RuleNullified = 8, RuleWhileloop = 9, RuleForarg = 10, RuleForargList = 11, 
     RuleForloop = 12, RuleArgsByNameList = 13, RuleArgsByPositionList = 14, 
-    RuleSimpleFuncall = 15, RuleLvalueSpecsUItem = 16, RuleLvalueSpecsItem = 17, 
+    RuleLvalueSpecsUItem = 15, RuleSimpleFuncall = 16, RuleLvalueSpecsItem = 17, 
     RuleDataflowHead = 18, RuleFuncall = 19, RuleVar = 20, RuleLvalueSpecsUFinal = 21, 
     RuleLvalueSpecsFinal = 22, RuleLvalue = 23, RuleFakeLvalue = 24, RuleLvalueSpecs = 25, 
     RuleListEnd = 26, RuleExpr = 27, RuleItem = 28, RuleAssignment = 29, 
@@ -84,8 +84,8 @@ public:
   class ForloopContext;
   class ArgsByNameListContext;
   class ArgsByPositionListContext;
-  class SimpleFuncallContext;
   class LvalueSpecsUItemContext;
+  class SimpleFuncallContext;
   class LvalueSpecsItemContext;
   class DataflowHeadContext;
   class FuncallContext;
@@ -392,25 +392,6 @@ public:
 
   ArgsByPositionListContext* argsByPositionList();
 
-  class  SimpleFuncallContext : public antlr4::ParserRuleContext {
-  public:
-    SimpleFuncallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *PARAMS();
-    antlr4::tree::TerminalNode *CLOSED();
-    ItemContext *item();
-    VarContext *var();
-    ArgsByPositionListContext *argsByPositionList();
-    ArgsByNameListContext *argsByNameList();
-    SimpleFuncallContext *simpleFuncall();
-
-
-    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  SimpleFuncallContext* simpleFuncall();
-  SimpleFuncallContext* simpleFuncall(int precedence);
   class  LvalueSpecsUItemContext : public antlr4::ParserRuleContext {
   public:
     LvalueSpecsUItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -425,6 +406,24 @@ public:
 
   LvalueSpecsUItemContext* lvalueSpecsUItem();
 
+  class  SimpleFuncallContext : public antlr4::ParserRuleContext {
+  public:
+    SimpleFuncallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    LvalueSpecsUItemContext *lvalueSpecsUItem();
+    antlr4::tree::TerminalNode *PARAMS();
+    antlr4::tree::TerminalNode *CLOSED();
+    ArgsByPositionListContext *argsByPositionList();
+    ArgsByNameListContext *argsByNameList();
+    SimpleFuncallContext *simpleFuncall();
+
+
+    virtual std::any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  SimpleFuncallContext* simpleFuncall();
+  SimpleFuncallContext* simpleFuncall(int precedence);
   class  LvalueSpecsItemContext : public antlr4::ParserRuleContext {
   public:
     LvalueSpecsItemContext(antlr4::ParserRuleContext *parent, size_t invokingState);

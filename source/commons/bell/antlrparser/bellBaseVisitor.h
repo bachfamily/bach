@@ -91,11 +91,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual std::any visitSimpleFuncall(bellParser::SimpleFuncallContext *ctx) override {
+  virtual std::any visitLvalueSpecsUItem(bellParser::LvalueSpecsUItemContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual std::any visitLvalueSpecsUItem(bellParser::LvalueSpecsUItemContext *ctx) override {
+  virtual std::any visitSimpleFuncall(bellParser::SimpleFuncallContext *ctx) override {
     return visitChildren(ctx);
   }
 
