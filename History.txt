@@ -30,6 +30,9 @@ VERSION NOTES:
 
 - bach.playkeys:
     á now has MST-ESP support and can drive VST instrument microtonality
+    
+- bach.expr, bach.eval and bell-compliant objects:
+    á t (meaning a whole tone alteration in equal-tempered pitches) is now an operator, with intermediate precedence between addition and multiplication. This means that C4+1/2t*2 now yields correctly Cx4, rather than Cx8 as it did previously
 
 *****************
 *** IMPORTANT ***
@@ -38,18 +41,13 @@ VERSION NOTES:
 *** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
 
 - bell: the new parser written in antlr4 breaks compatibility in a few, hopefully rare cases:
-        . an integer as the first term of a dataflow-style function call is not recognized;
-          rather, the dot is considered as the decimal point.
-          e.g., 100.sqrt() was equivalent to sqrt(100), now it is equivalent to 100. sqrt()
-        . function definitions must have at least one argument.
-          e.g., (-> 1) is not a valid function definition anymore. A dummy argument must be provided, as in ($x -> 1). Nonetheless, all arguments are optional in function calls, so $f = ($x -> 1); $f() is still perfectly valid and functional.
+        . function definitions with no arguments require a $ placeholder.
+          e.g., (-> 1) is not a valid function definition anymore, it has to be rewritten as ($ -> 1).
 
 - bach.roll: the subroll message doesn't output partial notes of duration 0 any longer
 
-=======
 - bach.stream: 
     á fixed bug causing wrong output after clear
->>>>>>> devel-dg
 
 ***********************
 *** VERSION CHANGES ***

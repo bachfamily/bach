@@ -1145,6 +1145,9 @@ JIPITCHBASE_START commaVector JIPITCHBASE_END {
     delete $2;
     code_dev_post ("parse: jiPitchBase\n");
 }
+| JIPITCHBASE_START JIPITCHBASE_END {
+    $$ = new astConst(t_pitch($1, std::vector<int8_t>(), $2));
+}
 ;
 
 
