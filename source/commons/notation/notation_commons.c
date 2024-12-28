@@ -303,7 +303,7 @@ char measure_has_visible_tempo(t_measure *meas)
 void paint_timesignature(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont *jf_ts, long clef, double staff_top, t_measure *curr_meas, char big)
 {
     long i;
-    int num_ts = ((clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FFGG) || (clef == k_CLEF_FG)) ? 2 : 1; // number of time signatures to paint
+    int num_ts = big ? 1 : (((clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FFGG) || (clef == k_CLEF_FG)) ? 2 : 1); // number of time signatures to paint
     double *tsbox_y1a = (double *) bach_newptr(num_ts * sizeof(double));
     double *tsbox_y1b = (double *) bach_newptr(num_ts * sizeof(double));
     double tsbox_x1 = unscaled_xposition_to_xposition(r_ob, (curr_meas->tuttipoint_reference ? curr_meas->tuttipoint_reference->offset_ux : 0) + curr_meas->start_barline_offset_ux) + (curr_meas->prev ? (measure_get_barline_uwidth(r_ob, curr_meas->prev) + r_ob->uwidth_after_barline_with_ts) * r_ob->zoom_y : 0);
@@ -7170,7 +7170,7 @@ void fill_notation_typo_preferences_SMuFL(t_notation_obj *r_ob, double juce_mul 
     fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 58594, 58595, 58596, 58597, 58598, 58599, 58600, 58601, 58602);
     fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 57424, 57442, 57436, 57450);
     r_ob->notation_typo_preferences.clef_ux_shift = 0.; // TO DO
-    r_ob->notation_typo_preferences.clef_uy_shift = 4.4;
+    r_ob->notation_typo_preferences.clef_uy_shift = 4.5;
     // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
     // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions
     fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); // TO DO

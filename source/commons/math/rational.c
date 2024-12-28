@@ -932,6 +932,9 @@ t_rational approx_double_with_rat_maxnum_maxden(double number, t_atom_long maxnu
 
 bool check_if_number_only_has_selected_primes(long n, const std::vector<int> &primes)
 {
+    if (n == 0)
+        return true;
+    
     for (auto piter = primes.begin(); piter != primes.end(); ++piter) {
         int p = *piter; // current prime
         while (n % p == 0)
@@ -1100,6 +1103,9 @@ bool sortByDenominator(t_rational i1, t_rational i2)
 long approximate_long_with_combination_of_primes3(long l, const std::vector<int> &primes)
 {
     long cand1 = 0, cand2 = 0;
+    
+    if (l == 0)
+        return 0;
     
     long n = l;
     while (true) {
