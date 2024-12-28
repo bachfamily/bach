@@ -100,8 +100,8 @@
     
     #include "bell/bach_codableobj.hpp"
     #include "bell/ast.hpp"
-    #include "stringparser.h"
-    
+    #include "bellparser_commons.h"
+
     extern t_bach *bach;
 
 

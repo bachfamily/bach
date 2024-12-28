@@ -588,7 +588,7 @@ void *bach_llll_from_phonenumber_and_retain(t_bach *x, t_atom_long l)
 
 void bach_defaultbellversion(t_bach *x, t_atom_long l)
 {
-    if (l == 1 || l == 2)
+    if (l >= 1 && l <= 3)
         x->b_defaultbellversion = l;
     else
         object_error((t_object *) x, "%ld is not a valid bell version");

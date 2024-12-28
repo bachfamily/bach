@@ -505,12 +505,12 @@ t_fnMinimum::t_fnMinimum() : t_builtInFunction("minimum")
 t_llll *t_fnMinimum::call(const t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
-    t_atom_long mindepth, maxdepth;
-    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
-    t_hatom *min;
-    llll_minmax(ll, &min, nullptr, nullptr, nullptr, mindepth, maxdepth);
     t_llll *res = llll_get();
-    if (min->h_type != H_NOTHING) {
+    if (ll->l_size) {
+        t_atom_long mindepth, maxdepth;
+        getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+        t_hatom *min;
+        llll_minmax(ll, &min, nullptr, nullptr, nullptr, mindepth, maxdepth);
         llll_appendhatom_clone(res, min);
     }
     return res;
@@ -520,7 +520,7 @@ t_llll *t_fnMinimum::call(const t_execEnv &context)
 ///////////////
 
 
-t_fnMaximum::t_fnMaximum() : t_builtInFunction("minimum")
+t_fnMaximum::t_fnMaximum() : t_builtInFunction("maximum")
 {
     setArgument("llll");
     setArgument("depth");
@@ -531,13 +531,13 @@ t_fnMaximum::t_fnMaximum() : t_builtInFunction("minimum")
 t_llll *t_fnMaximum::call(const t_execEnv &context)
 {
     t_llll *ll = context.argv[1];
-    t_atom_long mindepth, maxdepth;
-    getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
-    t_hatom *max;
-    llll_minmax(ll, nullptr, &max, nullptr, nullptr, mindepth, maxdepth);
     t_llll *res = llll_get();
-    if (max->h_type != H_NOTHING) {
-        llll_appendhatom_clone(res, max);
+    if (ll->l_size) {
+        t_atom_long mindepth, maxdepth;
+        getDepthsFromArguments(context.argv[2], context.argv[3], context.argv[4], &mindepth, &maxdepth);
+        t_hatom *max;
+        llll_minmax(ll, nullptr, &max, nullptr, nullptr, mindepth, maxdepth);
+            llll_appendhatom_clone(res, max);
     }
     return res;
 }

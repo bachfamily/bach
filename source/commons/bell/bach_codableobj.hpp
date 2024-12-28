@@ -103,6 +103,13 @@ t_mainFunction *codableobj_parse_buffer_antlr(t_codableobj *x,
                                         t_atom_long *directInlets = nullptr,
                                         t_atom_long *directOutlets = nullptr);
 
+t_mainFunction *codableobj_parse_buffer_v3(t_codableobj *x,
+                                        long *codeac,
+                                        t_atom_long *dataInlets = nullptr,
+                                        t_atom_long *dataOutlets = nullptr,
+                                        t_atom_long *directInlets = nullptr,
+                                        t_atom_long *directOutlets = nullptr);
+
 t_max_err codableobj_buildAst(t_codableobj *x,
                               long *codeac,
                               t_atom_long *dataInlets = nullptr,

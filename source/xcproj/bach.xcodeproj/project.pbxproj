@@ -557,6 +557,9 @@
 		00992D822C3491D400DA02CD /* bellBaseVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00992D7A2C3491D400DA02CD /* bellBaseVisitor.cpp */; };
 		00992D852C35BCF400DA02CD /* bellAntlrParserInfrastructure.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00992D832C35BCF400DA02CD /* bellAntlrParserInfrastructure.cpp */; };
 		00992D862C35BCF400DA02CD /* bellAntlrParserInfrastructure.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 00992D842C35BCF400DA02CD /* bellAntlrParserInfrastructure.hpp */; };
+		009D39EB2D073B49007A9E4C /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 009D39D62D0732D4007A9E4C /* makefile */; };
+		009D39EC2D073B57007A9E4C /* bisonparserV3_nolines.c in Sources */ = {isa = PBXBuildFile; fileRef = 009D39E72D073B0D007A9E4C /* bisonparserV3_nolines.c */; };
+		009D39ED2D073B5B007A9E4C /* bisonparserV3_tab_nolines.c in Sources */ = {isa = PBXBuildFile; fileRef = 009D39E92D073B0D007A9E4C /* bisonparserV3_tab_nolines.c */; };
 		1E1BD664223EA95F0000A1DF /* cursor_changevelocity.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */; };
 		1E2150F92CDB5ED400765044 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		1E2150FA2CDB5ED400765044 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
@@ -1301,6 +1304,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 00992D5D2C2EF2AC00DA02CD;
 			remoteInfo = bell_antlrparser;
+		};
+		009D39EE2D073E98007A9E4C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 009D39DE2D0735BD007A9E4C;
+			remoteInfo = "bell_bisonparser-v3";
 		};
 		1E2150F32CDB5ED400765044 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3575,6 +3585,18 @@
 		00992D7A2C3491D400DA02CD /* bellBaseVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bellBaseVisitor.cpp; sourceTree = "<group>"; };
 		00992D832C35BCF400DA02CD /* bellAntlrParserInfrastructure.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bellAntlrParserInfrastructure.cpp; sourceTree = "<group>"; };
 		00992D842C35BCF400DA02CD /* bellAntlrParserInfrastructure.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bellAntlrParserInfrastructure.hpp; sourceTree = "<group>"; };
+		009D39D62D0732D4007A9E4C /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		009D39D72D0732D4007A9E4C /* bellparser_commons.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bellparser_commons.h; sourceTree = "<group>"; };
+		009D39D82D0732D4007A9E4C /* bisonparserV3.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = bisonparserV3.l; sourceTree = "<group>"; };
+		009D39D92D0732D4007A9E4C /* bisonparserV3.y */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.yacc; path = bisonparserV3.y; sourceTree = "<group>"; };
+		009D39E22D073B0C007A9E4C /* bisonparserV3_tab_nolines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bisonparserV3_tab_nolines.h; sourceTree = "<group>"; };
+		009D39E32D073B0C007A9E4C /* bisonparserV3.lex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bisonparserV3.lex.h; sourceTree = "<group>"; };
+		009D39E42D073B0D007A9E4C /* bisonparserV3.tab.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bisonparserV3.tab.h; sourceTree = "<group>"; };
+		009D39E52D073B0D007A9E4C /* bisonparserV3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bisonparserV3.c; sourceTree = "<group>"; };
+		009D39E62D073B0D007A9E4C /* bisonparserV3_lex_nolines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bisonparserV3_lex_nolines.h; sourceTree = "<group>"; };
+		009D39E72D073B0D007A9E4C /* bisonparserV3_nolines.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bisonparserV3_nolines.c; sourceTree = "<group>"; };
+		009D39E82D073B0D007A9E4C /* bisonparserV3.tab.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bisonparserV3.tab.c; sourceTree = "<group>"; };
+		009D39E92D073B0D007A9E4C /* bisonparserV3_tab_nolines.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bisonparserV3_tab_nolines.c; sourceTree = "<group>"; };
 		1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_changevelocity.png; sourceTree = "<group>"; };
 		1E2150FF2CDB5ED400765044 /* bach.fareyser.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.fareyser.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E2151012CDB5F0800765044 /* fareyser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fareyser.c; sourceTree = "<group>"; };
@@ -6118,6 +6140,24 @@
 			path = antlrparser;
 			sourceTree = "<group>";
 		};
+		009D39DA2D0732D4007A9E4C /* bisonparserV3 */ = {
+			isa = PBXGroup;
+			children = (
+				009D39E62D073B0D007A9E4C /* bisonparserV3_lex_nolines.h */,
+				009D39E72D073B0D007A9E4C /* bisonparserV3_nolines.c */,
+				009D39E92D073B0D007A9E4C /* bisonparserV3_tab_nolines.c */,
+				009D39E22D073B0C007A9E4C /* bisonparserV3_tab_nolines.h */,
+				009D39E52D073B0D007A9E4C /* bisonparserV3.c */,
+				009D39E32D073B0C007A9E4C /* bisonparserV3.lex.h */,
+				009D39E82D073B0D007A9E4C /* bisonparserV3.tab.c */,
+				009D39E42D073B0D007A9E4C /* bisonparserV3.tab.h */,
+				009D39D62D0732D4007A9E4C /* makefile */,
+				009D39D82D0732D4007A9E4C /* bisonparserV3.l */,
+				009D39D92D0732D4007A9E4C /* bisonparserV3.y */,
+			);
+			path = bisonparserV3;
+			sourceTree = "<group>";
+		};
 		089C166AFE841209C02AAC07 /* iterator */ = {
 			isa = PBXGroup;
 			children = (
@@ -6595,8 +6635,10 @@
 		913D5770232B972B00BC6B45 /* bell */ = {
 			isa = PBXGroup;
 			children = (
-				00992D592C2EF26800DA02CD /* antlrparser */,
+				009D39D72D0732D4007A9E4C /* bellparser_commons.h */,
 				913D5785232B972C00BC6B45 /* stringparser */,
+				00992D592C2EF26800DA02CD /* antlrparser */,
+				009D39DA2D0732D4007A9E4C /* bisonparserV3 */,
 				91FEE6F823474658001F74B2 /* fileid.hpp */,
 				91071DB02100DB5900452762 /* bach_codableobj.hpp */,
 				91071DAF2100DB5900452762 /* bach_codableobj.cpp */,
@@ -8727,6 +8769,20 @@
 			passBuildSettingsInEnvironment = 1;
 			productName = bach_symparser;
 		};
+		009D39DE2D0735BD007A9E4C /* bell_bisonparser-v3 */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 009D39DF2D0735BD007A9E4C /* Build configuration list for PBXLegacyTarget "bell_bisonparser-v3" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "$(SRCROOT)/../commons/bell/bisonparserV3";
+			dependencies = (
+			);
+			name = "bell_bisonparser-v3";
+			passBuildSettingsInEnvironment = 1;
+			productName = bach_symparser;
+		};
 		913D57CA232B97AD00BC6B45 /* bell_strparser */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = "$(ACTION)";
@@ -9887,6 +9943,7 @@
 				91A5EC491F7D89D10052FBF6 /* PBXTargetDependency */,
 				9142BDB723462017003C19DE /* PBXTargetDependency */,
 				00992D622C2EF33900DA02CD /* PBXTargetDependency */,
+				009D39EF2D073E98007A9E4C /* PBXTargetDependency */,
 			);
 			name = lib_bach;
 			productName = _lib_everything;
@@ -11779,6 +11836,7 @@
 				91A5EC511F7E3BAF0052FBF6 /* bach_alterparser */,
 				913D57CA232B97AD00BC6B45 /* bell_strparser */,
 				00992D5D2C2EF2AC00DA02CD /* bell_antlrparser */,
+				009D39DE2D0735BD007A9E4C /* bell_bisonparser-v3 */,
 				914A85102502A59D007975FC /* bachB */,
 			);
 		};
@@ -14377,6 +14435,7 @@
 				00992D422C2EE6CD00DA02CD /* UnbufferedCharStream.cpp in Sources */,
 				00992C5B2C2EE6CC00DA02CD /* LexerTypeAction.cpp in Sources */,
 				00992D0B2C2EE6CC00DA02CD /* ConsoleErrorListener.cpp in Sources */,
+				009D39ED2D073B5B007A9E4C /* bisonparserV3_tab_nolines.c in Sources */,
 				00992D1B2C2EE6CC00DA02CD /* IntStream.cpp in Sources */,
 				91FDDC2C1FBE2B2F0040D803 /* bach_exprparser.c in Sources */,
 				1EAD55BA2C6DE20300ECBDBD /* notation_accidentals.c in Sources */,
@@ -14392,6 +14451,7 @@
 				00992D392C2EE6CD00DA02CD /* Token.cpp in Sources */,
 				91C6045518C0D9F50027BB79 /* SdifFWrite.c in Sources */,
 				00992CF52C2EE6CC00DA02CD /* ANTLRErrorListener.cpp in Sources */,
+				009D39EB2D073B49007A9E4C /* makefile in Sources */,
 				00992CC42C2EE6CC00DA02CD /* TagChunk.cpp in Sources */,
 				00992C9A2C2EE6CC00DA02CD /* DFASerializer.cpp in Sources */,
 				00992C352C2EE6CC00DA02CD /* ContextSensitivityInfo.cpp in Sources */,
@@ -14408,6 +14468,7 @@
 				91C6045918C0D9F50027BB79 /* SdifHard_OS.c in Sources */,
 				00992D0F2C2EE6CC00DA02CD /* DiagnosticErrorListener.cpp in Sources */,
 				00992C422C2EE6CC00DA02CD /* LexerAction.cpp in Sources */,
+				009D39EC2D073B57007A9E4C /* bisonparserV3_nolines.c in Sources */,
 				00992C892C2EE6CC00DA02CD /* SetTransition.cpp in Sources */,
 				00992C9C2C2EE6CC00DA02CD /* DFAState.cpp in Sources */,
 				913D57C0232B972E00BC6B45 /* ownedFunction.cpp in Sources */,
@@ -15178,6 +15239,11 @@
 			isa = PBXTargetDependency;
 			target = 00992D5D2C2EF2AC00DA02CD /* bell_antlrparser */;
 			targetProxy = 00992D612C2EF33900DA02CD /* PBXContainerItemProxy */;
+		};
+		009D39EF2D073E98007A9E4C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 009D39DE2D0735BD007A9E4C /* bell_bisonparser-v3 */;
+			targetProxy = 009D39EE2D073E98007A9E4C /* PBXContainerItemProxy */;
 		};
 		1E2150F22CDB5ED400765044 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -16668,6 +16734,87 @@
 			name = Development;
 		};
 		00992D602C2EF2AC00DA02CD /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
+		009D39E02D0735BD007A9E4C /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		009D39E12D0735BD007A9E4C /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -21877,6 +22024,15 @@
 			buildConfigurations = (
 				00992D5F2C2EF2AC00DA02CD /* Development */,
 				00992D602C2EF2AC00DA02CD /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		009D39DF2D0735BD007A9E4C /* Build configuration list for PBXLegacyTarget "bell_bisonparser-v3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				009D39E02D0735BD007A9E4C /* Development */,
+				009D39E12D0735BD007A9E4C /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;

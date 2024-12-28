@@ -1989,8 +1989,8 @@ static const flex_int32_t yy_rule_can_match_eol[138] =
     
     #include "parsers/bach_parser.hpp"
     #include "bell/ast.hpp"
-    #include "stringparser.h"
-    
+    #include "bellparser_commons.h"
+
     #include "stringparser_tab_nolines.h"
     
     #define YY_DECL int yylex \
