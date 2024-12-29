@@ -1,7 +1,7 @@
 /*
  *  bach_parser.hpp
  *
- * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+ * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License
@@ -221,6 +221,7 @@ public:
         t_atom_short plof = t_pitch::text2wkplof(*next++);
         t_atom_short sharps = t_pitch::text2JIsharps(&next);
         plof += sharps * 7;
+        *after = next;
         return plof;
     }
     
