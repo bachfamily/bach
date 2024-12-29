@@ -55,6 +55,8 @@ VERSION NOTES:
 
 - bell: bach.sum, bach.prod now work
 
+- bach.fareyser, bach.jilimit, bach.continuedfraction: new objects
+
 - bach.roll, bach.score, bach.slot:
     @bordersize, @focusbordersize: new attributes
     getfocus: new message to query whether objects have focus

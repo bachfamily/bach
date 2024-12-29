@@ -701,6 +701,9 @@ std::vector<t_rational> get_convergents(t_rational num, long howmany, bool remov
 std::vector<t_rational> get_convergents(t_tinyRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
 std::vector<t_rational> get_convergents(t_shortRational num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 100000, long max_iter = 0);
 
+// general function
+std::vector<t_rational> get_convergents_ext_and_continued_fraction(std::vector<long> &continuedfraction, std::vector<double> &errors, double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool check_for_exact_den_equality = false, long den_stop = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 1000, long max_iter = 0, bool also_fill_continuedfraction_and_errors = 0);
+
 std::vector<t_rational> rational_approximation_with_primes(double v, const std::vector<int> &allowed_primes,
                                                            double err_thresh, bool log_error, long maxden,
                                                            // three parameters to thin the list

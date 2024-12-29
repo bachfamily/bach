@@ -160,6 +160,8 @@
 			buildPhases = (
 			);
 			dependencies = (
+				1E350A062D21BFBF0009B676 /* PBXTargetDependency */,
+				1E3509F42D21B8460009B676 /* PBXTargetDependency */,
 				1E2151042CDB61BA00765044 /* PBXTargetDependency */,
 				1E784FA020274BF400F11D75 /* PBXTargetDependency */,
 				1ED51E2E1F73F5D60021C2D5 /* PBXTargetDependency */,
@@ -566,6 +568,12 @@
 		1E2151022CDB5F0800765044 /* fareyser.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E2151012CDB5F0800765044 /* fareyser.c */; };
 		1E21AC9925C4A00200CE6783 /* notation_undo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E21AC9825C4A00200CE6783 /* notation_undo.c */; };
 		1E21AC9B25C4A08100CE6783 /* notation_undo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E21AC9A25C4A08000CE6783 /* notation_undo.h */; };
+		1E3509E92D2196110009B676 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
+		1E3509EA2D2196110009B676 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
+		1E3509F22D2196540009B676 /* continuedfraction.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E3509F12D2196540009B676 /* continuedfraction.c */; };
+		1E3509FD2D21BF8A0009B676 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
+		1E3509FE2D21BF8A0009B676 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
+		1E350A082D21BFE90009B676 /* jilimit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E350A072D21BFE90009B676 /* jilimit.c */; };
 		1E53253D20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
 		1E53253E20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
 		1E53253F20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
@@ -1325,6 +1333,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1E2150F12CDB5ED400765044;
 			remoteInfo = bach.fareyser;
+		};
+		1E3509E32D2196110009B676 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 918129441611AEA700473F86;
+			remoteInfo = lib_bach;
+		};
+		1E3509F32D21B8460009B676 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1E3509E12D2196110009B676;
+			remoteInfo = bach.continuedfraction;
+		};
+		1E3509F72D21BF8A0009B676 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 918129441611AEA700473F86;
+			remoteInfo = lib_bach;
+		};
+		1E350A052D21BFBF0009B676 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1E3509F52D21BF8A0009B676;
+			remoteInfo = bach.jilimit;
 		};
 		1E5F4386152612740085FA87 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3602,6 +3638,10 @@
 		1E2151012CDB5F0800765044 /* fareyser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fareyser.c; sourceTree = "<group>"; };
 		1E21AC9825C4A00200CE6783 /* notation_undo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_undo.c; sourceTree = "<group>"; };
 		1E21AC9A25C4A08000CE6783 /* notation_undo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_undo.h; sourceTree = "<group>"; };
+		1E3509EF2D2196110009B676 /* bach.continuedfraction.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.continuedfraction.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E3509F12D2196540009B676 /* continuedfraction.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = continuedfraction.c; sourceTree = "<group>"; };
+		1E350A032D21BF8A0009B676 /* bach.jilimit.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.jilimit.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E350A072D21BFE90009B676 /* jilimit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jilimit.c; sourceTree = "<group>"; };
 		1E3B57CB15ACECA900B32D1F /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		1E3B57CC15ACECA900B32D1F /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
 		1E3B57CD15ACECA900B32D1F /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
@@ -4478,6 +4518,24 @@
 			files = (
 				1E2150F92CDB5ED400765044 /* lib_bach.a in Frameworks */,
 				1E2150FA2CDB5ED400765044 /* CoreServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E3509E82D2196110009B676 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E3509E92D2196110009B676 /* lib_bach.a in Frameworks */,
+				1E3509EA2D2196110009B676 /* CoreServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E3509FC2D21BF8A0009B676 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E3509FD2D21BF8A0009B676 /* lib_bach.a in Frameworks */,
+				1E3509FE2D21BF8A0009B676 /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6334,6 +6392,8 @@
 				0038AFA2280597160012316C /* bach.bell.out.mxo */,
 				1EA7B0172A1667FF000F66BF /* bach.jiwheel.mxo */,
 				1E2150FF2CDB5ED400765044 /* bach.fareyser.mxo */,
+				1E3509EF2D2196110009B676 /* bach.continuedfraction.mxo */,
+				1E350A032D21BF8A0009B676 /* bach.jilimit.mxo */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6793,6 +6853,7 @@
 			isa = PBXGroup;
 			children = (
 				917F0AA217E1BCD100814766 /* arithmser.c */,
+				1E3509F12D2196540009B676 /* continuedfraction.c */,
 				91B1BD0D18DB256B0056AD47 /* derive.c */,
 				91D7CA521233D37500D767D4 /* expr.c */,
 				91BE0060125A0200002763D1 /* factorize.c */,
@@ -6802,6 +6863,7 @@
 				917F0B4117E1F59000814766 /* geomser.c */,
 				91CD576513258FAC00644710 /* graph.c */,
 				91B1BD0F18DB25830056AD47 /* integrate.c */,
+				1E350A072D21BFE90009B676 /* jilimit.c */,
 				91BEFFA11259DFE9002763D1 /* prime.c */,
 				91BE00F7125A11DE002763D1 /* primeser.c */,
 				91DF79F31E91935A000EB3B8 /* resample.c */,
@@ -7505,6 +7567,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1E2150F42CDB5ED400765044 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E3509E42D2196110009B676 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E3509F82D21BF8A0009B676 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -8942,6 +9018,46 @@
 			name = bach.fareyser;
 			productName = iterator;
 			productReference = 1E2150FF2CDB5ED400765044 /* bach.fareyser.mxo */;
+			productType = "com.apple.product-type.bundle";
+		};
+		1E3509E12D2196110009B676 /* bach.continuedfraction */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1E3509EC2D2196110009B676 /* Build configuration list for PBXNativeTarget "bach.continuedfraction" */;
+			buildPhases = (
+				1E3509E42D2196110009B676 /* Headers */,
+				1E3509E52D2196110009B676 /* Resources */,
+				1E3509E62D2196110009B676 /* Sources */,
+				1E3509E82D2196110009B676 /* Frameworks */,
+				1E3509EB2D2196110009B676 /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1E3509E22D2196110009B676 /* PBXTargetDependency */,
+			);
+			name = bach.continuedfraction;
+			productName = iterator;
+			productReference = 1E3509EF2D2196110009B676 /* bach.continuedfraction.mxo */;
+			productType = "com.apple.product-type.bundle";
+		};
+		1E3509F52D21BF8A0009B676 /* bach.jilimit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1E350A002D21BF8A0009B676 /* Build configuration list for PBXNativeTarget "bach.jilimit" */;
+			buildPhases = (
+				1E3509F82D21BF8A0009B676 /* Headers */,
+				1E3509F92D21BF8A0009B676 /* Resources */,
+				1E3509FA2D21BF8A0009B676 /* Sources */,
+				1E3509FC2D21BF8A0009B676 /* Frameworks */,
+				1E3509FF2D21BF8A0009B676 /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1E3509F62D21BF8A0009B676 /* PBXTargetDependency */,
+			);
+			name = bach.jilimit;
+			productName = iterator;
+			productReference = 1E350A032D21BF8A0009B676 /* bach.jilimit.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
 		1E5F43501526109A0085FA87 /* bach.omtree2bachtree */ = {
@@ -11706,6 +11822,7 @@
 				91DA80E0131B34CD00FCB316 /* bach.circle */,
 				91D2619C1CC64C5D00C75E35 /* bach.classify */,
 				91D7C9351233B4FD00D767D4 /* bach.collect */,
+				1E3509E12D2196110009B676 /* bach.continuedfraction */,
 				91D18B4E130EE1C200A2E668 /* bach.comb */,
 				91688FF1134FA75900805BC9 /* bach.constraints */,
 				91D7C7BD1233955800D767D4 /* bach.contains */,
@@ -11745,6 +11862,7 @@
 				914EB1C21250E08800413C39 /* bach.intersection */,
 				91D7C7991233934D00D767D4 /* bach.is */,
 				91D7C8E81233A9C800D767D4 /* bach.iter */,
+				1E3509F52D21BF8A0009B676 /* bach.jilimit */,
 				91F6A6111DE6E33100237E9F /* bach.join */,
 				91D4528C127ABE2F00935949 /* bach.keys */,
 				91DA8136131B36CD00FCB316 /* bach.ivec */,
@@ -11858,6 +11976,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1E2150F52CDB5ED400765044 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E3509E52D2196110009B676 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E3509F92D21BF8A0009B676 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -12897,6 +13029,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1E3509EB2D2196110009B676 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E3509FF2D21BF8A0009B676 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1E5F43611526109A0085FA87 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
@@ -13859,6 +14005,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				1E2151022CDB5F0800765044 /* fareyser.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E3509E62D2196110009B676 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E3509F22D2196540009B676 /* continuedfraction.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E3509FA2D21BF8A0009B676 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E350A082D21BFE90009B676 /* jilimit.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15254,6 +15416,26 @@
 			isa = PBXTargetDependency;
 			target = 1E2150F12CDB5ED400765044 /* bach.fareyser */;
 			targetProxy = 1E2151032CDB61BA00765044 /* PBXContainerItemProxy */;
+		};
+		1E3509E22D2196110009B676 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 918129441611AEA700473F86 /* lib_bach */;
+			targetProxy = 1E3509E32D2196110009B676 /* PBXContainerItemProxy */;
+		};
+		1E3509F42D21B8460009B676 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1E3509E12D2196110009B676 /* bach.continuedfraction */;
+			targetProxy = 1E3509F32D21B8460009B676 /* PBXContainerItemProxy */;
+		};
+		1E3509F62D21BF8A0009B676 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 918129441611AEA700473F86 /* lib_bach */;
+			targetProxy = 1E3509F72D21BF8A0009B676 /* PBXContainerItemProxy */;
+		};
+		1E350A062D21BFBF0009B676 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1E3509F52D21BF8A0009B676 /* bach.jilimit */;
+			targetProxy = 1E350A052D21BFBF0009B676 /* PBXContainerItemProxy */;
 		};
 		1E5F4387152612740085FA87 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -16868,6 +17050,72 @@
 			name = Development;
 		};
 		1E2150FE2CDB5ED400765044 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Library/Frameworks,
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
+		1E3509ED2D2196110009B676 /* Development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Library/Frameworks,
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		1E3509EE2D2196110009B676 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Library/Frameworks,
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
+		1E350A012D21BF8A0009B676 /* Development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Library/Frameworks,
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		1E350A022D21BF8A0009B676 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
 			buildSettings = {
@@ -22042,6 +22290,24 @@
 			buildConfigurations = (
 				1E2150FD2CDB5ED400765044 /* Development */,
 				1E2150FE2CDB5ED400765044 /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		1E3509EC2D2196110009B676 /* Build configuration list for PBXNativeTarget "bach.continuedfraction" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E3509ED2D2196110009B676 /* Development */,
+				1E3509EE2D2196110009B676 /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		1E350A002D21BF8A0009B676 /* Build configuration list for PBXNativeTarget "bach.jilimit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E350A012D21BF8A0009B676 /* Development */,
+				1E350A022D21BF8A0009B676 /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;

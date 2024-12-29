@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 616.0, 245.0, 945.0, 639.0 ],
+		"rect" : [ 20.0, 151.0, 945.0, 639.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -297,7 +297,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 208.0, 19.0 ],
-					"text" : "v0.8.9.0 beta (build 20241202005406)",
+					"text" : "v0.8.9.0 beta (build 20241229141603)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -537,7 +537,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 5.0, 66.0, 833.0, 38.0 ],
-					"text" : "bach is a suite of Max objects and abstractions for computer-aided composition. The official website is                                   .\nIf bach is free, it is also thanks to generous supporters on Patreon. If you can, please consider                        for as little as 2$/month."
+					"text" : "bach is a suite of Max objects and abstractions for computer-aided composition. The official website is                                   .\nIf bach is free, it is also thanks to generous supporters on Patreon. If you can, please consider                        for as little as 2$/month.",
+					"textcolor" : [ 0.105882352941176, 0.105882352941176, 0.105882352941176, 1.0 ]
 				}
 
 			}
@@ -619,7 +620,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 920.0, 5804.0, 99.0, 22.0 ],
-									"presentation_linecount" : 2,
 									"text" : "LinearPitchMode"
 								}
 
@@ -633,8 +633,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 209.0, 5580.0, 275.0, 51.0 ],
-									"presentation_linecount" : 2,
+									"patching_rect" : [ 209.0, 5580.0, 276.0, 51.0 ],
 									"text" : "Now you can show scores in linear pitch mode (where every semitone corresponds to the same vertical distance)"
 								}
 
@@ -648,7 +647,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 16.0, 5589.0, 186.0, 33.0 ],
-									"presentation_linecount" : 2,
 									"text" : "Linear Pitch Mode"
 								}
 
@@ -675,7 +673,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 16.0, 5526.0, 152.0, 33.0 ],
-									"presentation_linecount" : 2,
 									"text" : "Just Intonation"
 								}
 
@@ -1012,7 +1009,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 143.0, 5786.0, 137.0, 40.0 ],
+									"patching_rect" : [ 143.0, 5786.0, 140.0, 40.0 ],
 									"text" : "bell: bach evaluation language on lllls"
 								}
 
@@ -1146,7 +1143,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 5398.0, 525.0, 44.0 ],
-									"text" : "New stuff introduced in bach 0.9"
+									"text" : "New stuff introduced in bach 0.9",
+									"textcolor" : [ 0.105882352941176, 0.105882352941176, 0.105882352941176, 1.0 ]
 								}
 
 							}
@@ -9614,14 +9612,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.search.maxpat",
-				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
-				"patcherrelativepath" : "../help",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.help.searchtag.maxpat",
+				"name" : "bach.help.welcome.maxpat",
 				"bootpath" : "~/Documents/Max 8/Packages/bach/help",
 				"patcherrelativepath" : "../help",
 				"type" : "JSON",

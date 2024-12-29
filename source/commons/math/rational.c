@@ -943,6 +943,17 @@ bool check_if_number_only_has_selected_primes(long n, const std::vector<int> &pr
     return n != 1 ? false : true;
 }
 
+double approximation_compute_error(long num, long den, double target, bool log_error)
+{
+    double err = 0;
+    if (log_error) {
+        err = (log2((num*1./den)/target)*1200.);
+    } else {
+        err = (num*1./den - target);
+    }
+    return err;
+}
+
 // assumes num > 0
 bool check_approximation(long num, long den, double target, bool remove_zero, double err_thresh, bool log_error, const std::vector<int> &allowed_primes)
 {
@@ -950,14 +961,9 @@ bool check_approximation(long num, long den, double target, bool remove_zero, do
         return false;
     
     if (err_thresh > 0) {
-        double err = 0;
-        if (log_error) {
-            err = fabs(log2((num*1./den)/target)*1200.);
-        } else {
-            err = fabs(num*1./den - target);
-        }
+        double err = approximation_compute_error(num, den, target, log_error);
 //        printf("%ld/%ld: err = %.5f\n", num, den, err);
-        if (err > err_thresh)
+        if (fabs(err) > err_thresh)
             return false;
     }
     
@@ -968,7 +974,7 @@ bool check_approximation(long num, long den, double target, bool remove_zero, do
     return true;
 }
 
-std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool check_for_exact_den_equality = false, long den_stop = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 1000, long max_iter = 0)
+std::vector<t_rational> get_convergents_ext_and_continued_fraction(std::vector<long> &continuedfraction, std::vector<double> &errors, double num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool check_for_exact_den_equality, long den_stop, bool includeSemiconvergents, const std::vector<int> &allowed_primes, long stop_at_this_an, long max_iter, bool also_fill_continuedfraction_and_errors)
 {
     long a0 = (long)floor(num);
     std::vector<t_rational> convs;
@@ -979,9 +985,17 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
     long q1 = (long)floor(1 / (num - a0));
     long iter = 0;
     
-    if (convs.size() < howmany && check_approximation(p0, q0, num, remove_zero, err_thresh, log_error, allowed_primes)) {
-//        printf("convergent 1: %ld/%ld\n", p0, q0);
-        convs.push_back(genrat(p0, q0));
+    if (convs.size() < howmany) {
+        if (check_approximation(p0, q0, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+            //        printf("convergent 1: %ld/%ld\n", p0, q0);
+            convs.push_back(genrat(p0, q0));
+            if (also_fill_continuedfraction_and_errors) {
+                errors.push_back(approximation_compute_error(p0, q0, num, log_error));
+            }
+        }
+        if (also_fill_continuedfraction_and_errors) {
+            continuedfraction.push_back(p0);
+        }
     }
     
     if (check_for_exact_den_equality && q0 == den_stop)
@@ -999,6 +1013,9 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
             long q = j * q0 + 0;
             if (check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
                 convs.push_back(genrat(p, q));
+                if (also_fill_continuedfraction_and_errors) {
+                    errors.push_back(approximation_compute_error(p, q, num, log_error));
+                }
                 if (convs.size() >= howmany)
                     break;
             }
@@ -1006,9 +1023,17 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
     }
     iter++;
 
-    if (convs.size() < howmany && (max_iter == 0 || iter <= max_iter) && check_approximation(p1, q1, num, remove_zero, err_thresh, log_error, allowed_primes)) {
-//        printf("convergent 2: %ld/%ld\n", p1, q1);
-        convs.push_back(genrat(p1, q1));
+    if (convs.size() < howmany && (max_iter == 0 || iter <= max_iter)) {
+        if (check_approximation(p1, q1, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+            //        printf("convergent 2: %ld/%ld\n", p1, q1);
+            convs.push_back(genrat(p1, q1));
+            if (also_fill_continuedfraction_and_errors) {
+                errors.push_back(approximation_compute_error(p1, q1, num, log_error));
+            }
+        }
+        if (also_fill_continuedfraction_and_errors) {
+            continuedfraction.push_back(a1);
+        }
     }
     iter++;
 
@@ -1030,6 +1055,9 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
                 long q = j * q1 + q0;
                 if (check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
                     convs.push_back(genrat(p, q));
+                    if (also_fill_continuedfraction_and_errors) {
+                        errors.push_back(approximation_compute_error(p, q, num, log_error));
+                    }
                     if (convs.size() >= howmany)
                         break;
                 }
@@ -1041,9 +1069,17 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
         long p = an * p1 + p0;
         long q = an * q1 + q0;
                 
-        if (convs.size() < howmany && (max_iter == 0 || iter <= max_iter) && check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
-//            printf("convergent %ld: %ld/%ld\n", i, p, q);
-            convs.push_back(genrat(p, q));
+        if (convs.size() < howmany && (max_iter == 0 || iter <= max_iter)) {
+            if (check_approximation(p, q, num, remove_zero, err_thresh, log_error, allowed_primes)) {
+                //            printf("convergent %ld: %ld/%ld\n", i, p, q);
+                convs.push_back(genrat(p, q));
+                if (also_fill_continuedfraction_and_errors) {
+                    errors.push_back(approximation_compute_error(p, q, num, log_error));
+                }
+            }
+            if (also_fill_continuedfraction_and_errors) {
+                continuedfraction.push_back(an);
+            }
         }
         iter++;
         
@@ -1072,6 +1108,12 @@ std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remov
     return convs;
 }
 
+std::vector<t_rational> get_convergents_ext(double num, long howmany, bool remove_zero = false, double err_thresh = 0, bool log_error = 0, bool check_for_exact_den_equality = false, long den_stop = 0, bool includeSemiconvergents = 0, const std::vector<int> &allowed_primes = {}, long stop_at_this_an = 1000, long max_iter = 0)
+{
+    std::vector<long> continuedfraction;
+    std::vector<double> error;
+    return get_convergents_ext_and_continued_fraction(continuedfraction, error, num, howmany, remove_zero, err_thresh, log_error, check_for_exact_den_equality, den_stop, includeSemiconvergents, allowed_primes, stop_at_this_an, max_iter, false);
+}
 
 std::vector<t_rational> get_convergents(double num, long howmany, bool remove_zero, double err_thresh, bool log_error, bool includeSemiconvergents, const std::vector<int> &allowed_primes, long stop_at_this_an, long max_iter)
 {

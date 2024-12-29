@@ -784,7 +784,7 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     double clef_ux_shift = r_ob->notation_typo_preferences.clef_ux_shift;
     double clef_uy_shift = r_ob->notation_typo_preferences.clef_uy_shift;
     long octave_shift = get_clef_octave_shift(clef);
-
+    
     t_jfont *jf_littleclefnumber = NULL;
     const char *octave_text = NULL;
     
@@ -793,7 +793,7 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_GG) ||  (clef == k_CLEF_G))
         write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Gclefchar, clef_x, middleC_y - (15.8 + clef_uy_shift) * step_y);
     if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_FF) ||  (clef == k_CLEF_F))
-        write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + clef_uy_shift) * step_y);
+        write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.8 + clef_uy_shift) * step_y);
     
     
     if (octave_shift != 0 || (r_ob->show_aux_clefs && (clef == k_CLEF_FFGG || clef == k_CLEF_FGG || clef == k_CLEF_FFG || clef == k_CLEF_GG || clef == k_CLEF_FF))) {
@@ -808,7 +808,7 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
             write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + r_ob->notation_typo_preferences.clef_F15ma_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + 2 * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - r_ob->notation_typo_preferences.clef_F15ma_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
         if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FF)) {
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Fclefchar, clef_x, middleC_y - (7.6 - 2 * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, auxcolor, Fclefchar, clef_x, middleC_y - (7.8 - 2 * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + r_ob->notation_typo_preferences.clef_F15mb_num_ushift.x) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 - 2 * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - r_ob->notation_typo_preferences.clef_F15mb_num_ushift.y) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
         }
     }
@@ -864,13 +864,13 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
             
         case k_CLEF_F15ma:
         case k_CLEF_F8va:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.8 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
         case k_CLEF_F15mb:
         case k_CLEF_F8vb:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + octave_shift * 7 + clef_uy_shift) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.8 + octave_shift * 7 + clef_uy_shift) * step_y);
             write_text(g, jf_littleclefnumber, color, octave_text, r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + r_ob->additional_ux_start_pad_before_clef + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100 + nux) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + octave_shift * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW - nuy) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
             break;
 
@@ -882,7 +882,7 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
             break;
 
         case k_CLEF_BARYTONE:
-            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.6 + clef_uy_shift + 0) * step_y);
+            write_text_standard_account_for_insets_singleline(r_ob, g, jf, color, Fclefchar, clef_x, middleC_y - (7.8 + clef_uy_shift + 0) * step_y);
             break;
             
         case k_CLEF_PERCUSSION:
@@ -7170,7 +7170,7 @@ void fill_notation_typo_preferences_SMuFL(t_notation_obj *r_ob, double juce_mul 
     fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 58594, 58595, 58596, 58597, 58598, 58599, 58600, 58601, 58602);
     fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 57424, 57442, 57436, 57450);
     r_ob->notation_typo_preferences.clef_ux_shift = 0.; // TO DO
-    r_ob->notation_typo_preferences.clef_uy_shift = 4.5;
+    r_ob->notation_typo_preferences.clef_uy_shift = 4.3; //r_ob->temp[0]; //was: 4.5
     // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
     // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions
     fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); // TO DO
@@ -7266,7 +7266,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 'C','D', 'E', 'F', 'G', 'H', 'I', 'J', 'K');
         fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 'A', '?', 'B', '@');
         r_ob->notation_typo_preferences.clef_ux_shift = 0.;
-        r_ob->notation_typo_preferences.clef_uy_shift = -2.9; //-0.1;
+        r_ob->notation_typo_preferences.clef_uy_shift = -3.0; //-0.1;
         // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions 
         fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); 

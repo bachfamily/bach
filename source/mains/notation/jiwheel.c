@@ -1487,7 +1487,7 @@ void C74_EXPORT ext_main(void *moduleRef)
         CLASS_ATTR_CHAR(c, "outputmode", 0, t_jiwheel, output_type);
         CLASS_ATTR_STYLE_LABEL(c,"outputmode",0,"enumindex","Output Mode");
         CLASS_ATTR_ENUMINDEX(c,"outputmode", 0, "None Pitches Pitches And Details");
-        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"outputsel", 0, "2");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"outputmode", 0, "2");
         // @description Sets the output mode: none (0), pitches from the first outlet (1),
         // pitches from the first outlet along with details on the second outlet (2)
 
