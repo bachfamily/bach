@@ -2,7 +2,7 @@
     /*
      *  bisonparserV3.l
      *
-     * Copyright (C) 2010-2022 Andrea Agostini and Daniele Ghisi
+     * Copyright (C) 2010-2025 Andrea Agostini and Daniele Ghisi
      *
      * This program is free software: you can redistribute it and/or modify it
      * under the terms of the GNU General Public License
@@ -833,10 +833,16 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return PITCH_LITERAL;
 }
 
+{NOTENAME}{ACCIDENTAL}?\{ {
+    BEGIN lexparams->setState(UNARY_NOARGS);
+    const char *next;
+    yylval->longValue = t_parser::eatPlofAndSharps(yytext, &next);
+    code_dev_post("lex: JIPITCHBASE_START, plof = %ld\n", yylval->longValue);
+    return JIPITCHBASE_START;
+}
 
 \{ {
     BEGIN lexparams->setState(UNARY_NOARGS);
-    const char *next;
     yylval->longValue = 0;
     code_dev_post("lex: JIPITCHBASE_START, plof = %ld\n", yylval->longValue);
     return JIPITCHBASE_START;
