@@ -19,13 +19,13 @@
 
 /**
     @file
-    pitchobj.c
+    pitch.c
     
     @name
-    bach.pitchobj
+    bach.pitch
     
     @realname
-    bach.pitchobj
+    bach.pitch
 
     @type
     object
@@ -37,10 +37,10 @@
     bachproject
     
     @digest
-    Pitches to MIDIcents conversion
+    Construction and query of pitches
     
     @description
-    Converts an llll containing pitches into the corresponding llll of MIDIcents.
+    Performs conversions, queries and construction of pitches.
     
     @discussion
     bach.pitchobj accepts microtones following the ASCII convention used throughout bach. <br />
@@ -50,13 +50,13 @@
     bach, bach objects, bach notation, bach pitches
 
     @keywords
-    convert, midicent, cent, note, name
+    convert, pitch, note, name, commas, ji, exponents, monzo, ratio
 
     @seealso
-    bach.mc2p, bach.f2mc, bach.mc2f, bach.approx
+    bach.mc2p, bach.f2mc, bach.mc2f, bach.makepitch
     
     @owner
-    Daniele Ghisi
+    Andrea Agostini
 */
 
 #include "foundation/llllobj.h"
@@ -84,7 +84,7 @@ typedef enum {
 
 typedef struct _pitchobj
 {
-    struct llllobj_object     n_ob;
+    struct llllobj_object n_ob;
     t_pitchKeys fromKeys[LLLL_MAX_INLETS];
     int nFromKeys;
     t_pitchKeys toKeys[LLLL_MAX_INLETS];
@@ -110,10 +110,7 @@ void pitchobj_anything(t_pitchobj *x, t_symbol *msg, long ac, t_atom *av);
 t_max_err pitchobj_setattr_from(t_pitchobj *x, t_object *attr, long ac, t_atom *av);
 t_max_err pitchobj_setattr_to(t_pitchobj *x, t_object *attr, long ac, t_atom *av);
 
-
-
 t_class *pitchobj_class;
-
 
 std::unordered_map<t_symbol*, t_pitchKeys> keys;
 
@@ -400,9 +397,9 @@ void pitchobj_assist(t_pitchobj *x, void *b, long m, long a, char *s)
                 sym = k.first;
                 break;
             }
-            if (sym) {
-                snprintf_zero(s, 16, "llll: %s", sym->s_name);
-            }
+        }
+        if (sym) {
+            snprintf_zero(s, 64, "llll: %s", sym->s_name);
         }
     } else {
         char *type = NULL; // @out 0 @type llll @digest The llll containing the MIDIcents
@@ -413,9 +410,9 @@ void pitchobj_assist(t_pitchobj *x, void *b, long m, long a, char *s)
                 sym = k.first;
                 break;
             }
-            if (sym) {
-                snprintf_zero(s, 16, "llll (%s): %s", type, sym->s_name);
-            }
+        }
+        if (sym) {
+            snprintf_zero(s, 64, "llll (%s): %s", type, sym->s_name);
         }
     }
 }
