@@ -113,7 +113,7 @@ t_max_err pitchobj_setattr_to(t_pitchobj *x, t_object *attr, long ac, t_atom *av
 t_class *pitchobj_class;
 
 
-std::unordered_map<const char*, t_pitchKeys> keys;
+std::unordered_map<std::string, t_pitchKeys> keys;
 
 void pitchobj_setkeys() {
     keys["pitch"] = p_PITCH;
@@ -188,9 +188,9 @@ t_max_err pitchobj_setattr_from(t_pitchobj *x, t_object *attr, long ac, t_atom *
                 x->fromKeys[i] = p_NONE;
                 object_error((t_object *) x, "Wrong \"from\" key at position %d", i + 1);
             }
-            if (i > x->nFromKeys)
-                x->nFromKeys = i;
         }
+        if (i > x->nFromKeys)
+            x->nFromKeys = i;
     }
     return MAX_ERR_NONE;
 }
@@ -206,9 +206,9 @@ t_max_err pitchobj_setattr_to(t_pitchobj *x, t_object *attr, long ac, t_atom *av
                 x->fromKeys[i] = p_NONE;
                 object_error((t_object *) x, "Wrong \"to\" key at position %d", i + 1);
             }
-            if (i > x->nToKeys)
-                x->nToKeys = i;
         }
+        if (i > x->nToKeys)
+            x->nToKeys = i;
     }
     return MAX_ERR_NONE;
 }
