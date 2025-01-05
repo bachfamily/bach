@@ -254,6 +254,7 @@ public:
 
     // to be called at every round of every lambda function
     void resetFnNamedArgs(t_function *fn, long lambdaParams);
+    void resetAndRetainFnNamedArgs(t_function *fn, long lambdaParams);
 
     void setFnLocalVariables(t_function *fn);
     void resetLocalVariables();

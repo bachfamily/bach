@@ -251,6 +251,28 @@ void t_execEnv::resetFnNamedArgs(t_function *fn, long lambdaParams)
     }
 }
 
+void t_execEnv::resetAndRetainFnNamedArgs(t_function *fn, long lambdaParams)
+{
+    long start = fn->getNamedArgumentsCountAfterEllipsis(); // <= 0
+    long end = fn->getNamedArgumentsCount(); // >= 0
+    long firstNamedArgumentOffset = end != 0 ? 0 : lambdaParams;
+    long offset = start < 0 ? 0 : firstNamedArgumentOffset;
+    for (long i = start; i <= end; i++) {
+        if (i == 0) {
+            offset = firstNamedArgumentOffset;
+            continue;
+        }
+        funArg *thisANAD = fn->getArgNameAndDefault(i);
+        t_symbol *name = thisANAD->getSym();
+        t_llll *def = argv[i + offset];
+        t_llll *old = scope[name]->get();
+        if (old != def) { // which means it has changed
+            scope[name]->set(llll_retain(def));
+        }
+        llll_release(old);
+    }
+}
+
 void t_execEnv::setLocalVariables(t_localVar *vars, t_function *fn)
 {
     if (!vars)

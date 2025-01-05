@@ -28,13 +28,13 @@ long t_fnMap::lambdaAsk(t_fnData *lambdaData, t_llll *ll, t_llll *old_address, t
     switch (numargs) {
         case 3:     lists[3] = llll_clone(new_address);
         case 2:     lists[2] = llll_clone(old_address);
-        default:    lists[1] = ll;  break;
+        default:    lists[1] = llll_retain(ll);  break;
     }
-    context->resetFnNamedArgs(fn, numargs);
+    context->resetAndRetainFnNamedArgs(fn, numargs);
     t_llll *res = fn->call(*context);
     long res_long = llll_istrue(res);
-    bell_release_llll(lists[3]);
-    bell_release_llll(lists[2]);
+    //bell_release_llll(lists[3]);
+    //bell_release_llll(lists[2]);
     bell_release_llll(res);
     return !res_long;
 }
@@ -48,12 +48,12 @@ t_llll* t_fnMap::lambdaMod(t_fnData *lambdaData, t_llll *ll, t_llll *old_address
     switch (numargs) {
         case 3:     lists[3] = llll_clone(new_address);
         case 2:     lists[2] = llll_clone(old_address);
-        default:    lists[1] = ll;  break;
+        default:    lists[1] = llll_retain(ll);  break;
     }
     context->resetFnNamedArgs(fn, numargs);
     t_llll *res = fn->call(*context);
-    bell_release_llll(lists[3]);
-    bell_release_llll(lists[2]);
+    //bell_release_llll(lists[3]);
+    //bell_release_llll(lists[2]);
     t_llll *res_clone = llll_clone(res);
     bell_release_llll(res);
     return res_clone;
