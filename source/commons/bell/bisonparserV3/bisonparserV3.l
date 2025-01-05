@@ -541,7 +541,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
         yyterminate();
 }
 
-"##"|"#!" {
+"##" {
     code_dev_post("lex: start line comment");
     BEGIN LINECOMMENT;
 }
@@ -722,7 +722,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     return BIF;
 }
 
-("#+"|"#-"|"#u-"|"#*"|"#/"|"#//"|"#%"|"#=="|"#!="|"#<"|"#>"|"#<="|"#>="|"#&"|"#^"|"#|"|"#&&"|"#^^"|"#||"|"#&&&"|"#|||"|"#<<"|"#>>")/{SEPARATOR} {
+("#+"|"#-"|"#u-"|"#*"|"#/"|"#//"|"#%"|"#=="|"#!="|"#<"|"#>"|"#<="|"#>="|"#&"|"#^"|"#|"|"#&&"|"#^^"|"#||"|"#&&&"|"#|||"|"#<<"|"#>>"|"#!")/{SEPARATOR} {
     code_dev_post("lex: BIF %s", yytext);
     yylval->symValue = gensym(yytext);
     BEGIN lexparams->setState(NOUNARY_ARGS);
