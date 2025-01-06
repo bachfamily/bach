@@ -64,7 +64,7 @@ SYMBOL_LITERAL [^$[:space:]\r\f\v\(\)\[\]+\-*/][^[:space:]\r\f\v\(\)\[\]+\-*/]*+
     
     #include "parsers/bach_parser.hpp"
     #include "bell/ast.hpp"
-    #include "bellparser_commons.h"
+    #include "bell/bellparser_commons.h"
 
     #include "bisonparserV3_tab_nolines.h"
     
