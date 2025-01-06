@@ -289,7 +289,7 @@ t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char f
                     qsort(helper, M, sizeof(t_reordering_helper), reordering_comparator);
                     
                     // now modify positions
-                    char done[N];
+                    char *done = (char *)sysmem_newptr(M * sizeof(char));
                     for (long i = 0; i < M; i++)
                         done[i] = 0;
                     for (long i = 0; i < M; i++) {
@@ -311,6 +311,8 @@ t_llllelem *undo_redo_step_marker_create(t_notation_obj *r_ob, char what, char f
                             done[i] = true;
                         }
                     }
+                    
+                    sysmem_freeptr(done);
                     
                     // finally, plug everything back
                     for (long i = 0; i < M; i++) {
