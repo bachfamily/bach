@@ -93,6 +93,8 @@ void continuedfraction_anything(t_continuedfraction *x, t_symbol *msg, short ac,
 
 t_class *continuedfraction_class;
 
+
+
 void C74_EXPORT ext_main(void *moduleRef)
 {
 	t_class *c;
@@ -124,9 +126,8 @@ void C74_EXPORT ext_main(void *moduleRef)
 	class_addmethod(c, (method)continuedfraction_assist,	"assist",		A_CANT,		0);
 	class_addmethod(c, (method)continuedfraction_inletinfo,	"inletinfo",	A_CANT,		0);
 	
-	class_register(CLASS_BOX, c);
-	continuedfraction_class = c;
-	
+    llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
+
     CLASS_ATTR_LONG(c, "numcoeffs",    0,    t_continuedfraction, n_numcoeffs);
     CLASS_ATTR_STYLE_LABEL(c, "numcoeffs", 0, "text", "Number of Coefficients to Compute");
     CLASS_ATTR_BASIC(c, "numcoeffs", 0);
@@ -150,13 +151,11 @@ void C74_EXPORT ext_main(void *moduleRef)
     // @description Chooses the algorithm for computing the error: either Linear (0) or logarithmic, as measured in Cents (1).
 
 
+    class_register(CLASS_BOX, c);
+    continuedfraction_class = c;
     
-    
-	llllobj_class_add_default_bach_attrs_and_methods(c, LLLL_OBJ_VANILLA);
-	
+    dev_post("bach.continuedfraction compiled %s %s", __DATE__, __TIME__);
 
-	dev_post("bach.continuedfraction compiled %s %s", __DATE__, __TIME__);
-	
 	return;
 }
 
@@ -304,7 +303,6 @@ t_continuedfraction *continuedfraction_new(t_symbol *s, short ac, t_atom *av)
 		// @description The number of coefficiens to compute. Default is 10.
 
 		long true_ac = attr_args_offset(ac, av);
-		attr_args_process(x, ac, av);
         x->n_err_mode = 0;
         x->n_numcoeffs = 10;
         x->n_remove_zero = false;
@@ -312,6 +310,9 @@ t_continuedfraction *continuedfraction_new(t_symbol *s, short ac, t_atom *av)
 		if (true_ac) {
             x->n_numcoeffs = MAX(1, atom_getlong(av));
 		}
+        
+        attr_args_process(x, ac, av);
+
 		llllobj_obj_setup((t_llllobj_object *) x, 0, "444");
 	} else
 		error(BACH_CANT_INSTANTIATE);

@@ -832,9 +832,12 @@
 				Output Mode
 			</digest>
 			<description>
+				Sets the output mode: none (0), pitches from the first outlet (1),
+				pitches from the first outlet along with details on the second outlet (2)
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="2" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output Mode" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
@@ -853,20 +856,6 @@
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output Octave" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="outputsel" get="1" set="1" type="" size="1">
-			<digest>
-				
-			</digest>
-			<description>
-				Sets the output mode: none (0), pitches from the first outlet (1),
-				pitches from the first outlet along with details on the second outlet (2)
-			</description>
-			<attributelist>
-				<attribute name="default" get="1" set="1" type="" size="1" value="2" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>

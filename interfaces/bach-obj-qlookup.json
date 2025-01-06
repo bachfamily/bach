@@ -1292,6 +1292,26 @@
       "bach.primeser"
     ]
   },
+  "bach.continuedfraction": {
+    "digest": "Continued fractions",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "fraction",
+      "continued",
+      "approximation",
+      "convergents"
+    ],
+    "seealso": [
+      "bach.primeser",
+      "bach.geomser",
+      "bach.recurser"
+    ]
+  },
   "bach.recurser": {
     "digest": "Series from recurrence relations",
     "module": "bach",
@@ -1330,6 +1350,27 @@
       "bach.factorize",
       "bach.prime",
       "bach.arithmser",
+      "bach.geomser",
+      "bach.recurser"
+    ]
+  },
+  "bach.jilimit": {
+    "digest": "Just intonation prime limits",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "series",
+      "arithmetic",
+      "step",
+      "compute",
+      "calculate"
+    ],
+    "seealso": [
+      "bach.primeser",
       "bach.geomser",
       "bach.recurser"
     ]

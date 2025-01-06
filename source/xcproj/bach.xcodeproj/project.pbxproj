@@ -3652,7 +3652,6 @@
 		009D39E82D073B0D007A9E4C /* bisonparserV3.tab.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bisonparserV3.tab.c; sourceTree = "<group>"; };
 		009D39E92D073B0D007A9E4C /* bisonparserV3_tab_nolines.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bisonparserV3_tab_nolines.c; sourceTree = "<group>"; };
 		009D3A062D213CCA007A9E4C /* bach.pitch.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.pitch.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		009D3A072D213CCA007A9E4C /* bach.rev copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.rev copy-Info.plist"; path = "/Users/aa/Documents/Max 8/Packages/bach/source/xcproj/bach.rev copy-Info.plist"; sourceTree = "<absolute>"; };
 		009D3A0A2D213D99007A9E4C /* pitch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pitch.cpp; sourceTree = "<group>"; };
 		1E1BD663223E9C0C0000A1DF /* cursor_changevelocity.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_changevelocity.png; sourceTree = "<group>"; };
 		1E2150FF2CDB5ED400765044 /* bach.fareyser.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.fareyser.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6257,7 +6256,6 @@
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				91BA46AC1F71585E0002D515 /* package */,
 				00812FAC27C8B9B400521C7D /* Frameworks */,
-				009D3A072D213CCA007A9E4C /* bach.rev copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -17137,7 +17135,6 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INFOPLIST_FILE = "bach.rev copy-Info.plist";
 				INSTALL_PATH = "$(AA_INSTALL_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -17154,7 +17151,6 @@
 					"\"/Library/Frameworks\"",
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
-				INFOPLIST_FILE = "bach.rev copy-Info.plist";
 				INSTALL_PATH = "$(AA_INSTALL_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
