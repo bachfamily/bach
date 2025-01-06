@@ -102,7 +102,7 @@
     
     #include "bell/bach_codableobj.hpp"
     #include "bell/ast.hpp"
-    #include "bellparser_commons.h"
+    #include "bell/bellparser_commons.h"
 
     extern t_bach *bach;
 
