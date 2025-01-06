@@ -775,7 +775,7 @@ t_llll* t_fnGeomser::call(const t_execEnv &context) {
 
 t_fnFareyser::t_fnFareyser() : t_builtInFunction("fareyser") {
     setArgument("order", 0L);
-    setArgument("offset", t_rational({0, 1}));
+    setArgument("offset", new astConst(t_rational({0, 1})));
     setArgument("maxlimit", 0L);
 }
 
